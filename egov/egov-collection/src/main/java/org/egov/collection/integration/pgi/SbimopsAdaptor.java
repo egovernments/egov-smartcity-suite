@@ -150,6 +150,7 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
     public PaymentRequest createPaymentRequest(final ServiceDetails paymentServiceDetails, final ReceiptHeader receiptHeader) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" Inside SbimopsAdaptor-createPaymentRequest ");
+        final String billServiceCode = receiptHeader.getService().getCode();
         final DefaultPaymentRequest sbiPaymentRequest = new DefaultPaymentRequest();
         sbiPaymentRequest.setParameter(SBIMOPS_DC,
                 collectionApplicationProperties.sbimopsDepartmentcode(MESSAGEKEY_SBIMOPS_DC));
@@ -161,11 +162,12 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
         sbiPaymentRequest.setParameter(SBIMOPS_RID, receiptHeader.getConsumerCode());
         sbiPaymentRequest.setParameter(SBIMOPS_TA, receiptHeader.getTotalAmount());
         final StringBuilder chStringBuilder = new StringBuilder((String.format(SBIMOPS_HOA_FORMAT,
-                collectionApplicationProperties.sbimopsHoa(ApplicationThreadLocals.getCityCode()))).replace(' ', '0'));
+                collectionApplicationProperties.sbimopsHoa(ApplicationThreadLocals.getCityCode(), billServiceCode))).replace(' ',
+                        '0'));
         chStringBuilder.append(CollectionConstants.SEPARATOR_COMMA)
                 .append(collectionApplicationProperties.sbimopsDdocode(ApplicationThreadLocals.getCityCode()).toString())
                 .append(CollectionConstants.SEPARATOR_COMMA)
-                .append(collectionApplicationProperties.sbimopsServiceCode(receiptHeader.getService().getCode()))
+                .append(collectionApplicationProperties.sbimopsServiceCode(billServiceCode))
                 .append(CollectionConstants.SEPARATOR_COMMA)
                 .append(receiptHeader.getTotalAmount().toString());
         sbiPaymentRequest.setParameter(SBIMOPS_CH, chStringBuilder.toString());
