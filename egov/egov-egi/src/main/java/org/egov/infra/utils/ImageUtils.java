@@ -93,16 +93,16 @@ public final class ImageUtils {
         return compressImage(imageFile.getInputStream(), imageFile.getOriginalFilename(), true);
     }
 
-    public static File compressImage(final InputStream imageStream, String imageFileName, boolean closeStream) throws IOException {
+    public static File compressImage(InputStream imageStream, String imageFileName, boolean closeStream) throws IOException {
         File compressedImage = Paths.get(imageFileName).toFile();
-        try (final ImageOutputStream imageOutput = createImageOutputStream(compressedImage)) {
+        try (ImageOutputStream imageOutput = createImageOutputStream(compressedImage)) {
             ImageWriter writer = getImageWritersByFormatName(defaultString(getExtension(imageFileName), JPG_FORMAT_NAME)).next();
             writer.setOutput(imageOutput);
             ImageWriteParam writeParam = writer.getDefaultWriteParam();
             if (writeParam.canWriteCompressed()) {
                 writeParam.setCompressionMode(MODE_EXPLICIT);
                 writeParam.setCompressionType(writeParam.getCompressionTypes()[0]);
-                writeParam.setCompressionQuality(0.05F);
+                writeParam.setCompressionQuality(1F);
             }
             writer.write(null, new IIOImage(read(imageStream), null, null), writeParam);
             writer.dispose();
