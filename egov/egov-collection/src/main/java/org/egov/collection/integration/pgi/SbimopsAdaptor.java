@@ -52,12 +52,16 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -125,6 +129,7 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
     public static final String SBIMOPS_CFMSID = "CFMSID";
     public static final String SBIMOPS_TAMT = "TAMT";
     public static final String SBIMOPS_BNKDT = "BNKDT";
+    private static final String UTF8 = "UTF-8";
 
     public static final String MESSAGEKEY_SBIMOPS_DC = "sbimops.department.code";
 
@@ -152,15 +157,16 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
             LOGGER.debug(" Inside SbimopsAdaptor-createPaymentRequest ");
         final String billServiceCode = receiptHeader.getService().getCode();
         final DefaultPaymentRequest sbiPaymentRequest = new DefaultPaymentRequest();
-        sbiPaymentRequest.setParameter(SBIMOPS_DC,
+        final LinkedHashMap<String, String> requestParameterMap = new LinkedHashMap<>();
+        requestParameterMap.put(SBIMOPS_DC,
                 collectionApplicationProperties.sbimopsDepartmentcode(MESSAGEKEY_SBIMOPS_DC));
         StringBuilder transactionId = new StringBuilder(receiptHeader.getId().toString())
                 .append(CollectionConstants.SEPARATOR_HYPHEN)
                 .append(receiptHeader.getConsumerCode().replace("-", "").replace("/", ""));
-        sbiPaymentRequest.setParameter(SBIMOPS_DTID, transactionId.toString());
-        sbiPaymentRequest.setParameter(SBIMOPS_RN, receiptHeader.getPayeeName());
-        sbiPaymentRequest.setParameter(SBIMOPS_RID, receiptHeader.getConsumerCode());
-        sbiPaymentRequest.setParameter(SBIMOPS_TA, receiptHeader.getTotalAmount());
+        requestParameterMap.put(SBIMOPS_DTID, transactionId.toString());
+        requestParameterMap.put(SBIMOPS_RN, receiptHeader.getPayeeName());
+        requestParameterMap.put(SBIMOPS_RID, receiptHeader.getConsumerCode());
+        requestParameterMap.put(SBIMOPS_TA, receiptHeader.getTotalAmount().toString());
         final StringBuilder chStringBuilder = new StringBuilder((String.format(SBIMOPS_HOA_FORMAT,
                 collectionApplicationProperties.sbimopsHoa(ApplicationThreadLocals.getCityCode(), billServiceCode))).replace(' ',
                         '0'));
@@ -170,28 +176,50 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
                 .append(collectionApplicationProperties.sbimopsServiceCode(billServiceCode))
                 .append(CollectionConstants.SEPARATOR_COMMA)
                 .append(receiptHeader.getTotalAmount().toString());
-        sbiPaymentRequest.setParameter(SBIMOPS_CH, chStringBuilder.toString());
+        requestParameterMap.put(SBIMOPS_CH, chStringBuilder.toString());
         final StringBuilder returnUrl = new StringBuilder(paymentServiceDetails.getCallBackurl());
         returnUrl.append("?paymentServiceId=").append(paymentServiceDetails.getId());
-        sbiPaymentRequest.setParameter(SBIMOPS_RURL, returnUrl.toString());
-
-        sbiPaymentRequest.setParameter(CollectionConstants.ONLINEPAYMENT_INVOKE_URL, paymentServiceDetails.getServiceUrl());
-        final Map<String, Object> requestParameters = sbiPaymentRequest.getRequestParameters();
-        LOGGER.info(SBIMOPS_DC + "=" + requestParameters.get(SBIMOPS_DC) + "|" +
-                SBIMOPS_DTID + "=" + requestParameters.get(SBIMOPS_DTID) + "|" +
-                SBIMOPS_RN + "=" + requestParameters.get(SBIMOPS_RN) + "|" +
-                SBIMOPS_RID + "=" + requestParameters.get(SBIMOPS_RID) + "|" +
-                SBIMOPS_TA + "=" + requestParameters.get(SBIMOPS_TA)
+        requestParameterMap.put(SBIMOPS_RURL, returnUrl.toString());
+        final StringBuilder requestURL = new StringBuilder(paymentServiceDetails.getServiceUrl()).append("?");
+        appendQueryFields(requestURL, requestParameterMap);
+        LOGGER.info(SBIMOPS_DC + "=" + requestParameterMap.get(SBIMOPS_DC) + "|" +
+                SBIMOPS_DTID + "=" + requestParameterMap.get(SBIMOPS_DTID) + "|" +
+                SBIMOPS_RN + "=" + requestParameterMap.get(SBIMOPS_RN) + "|" +
+                SBIMOPS_RID + "=" + requestParameterMap.get(SBIMOPS_RID) + "|" +
+                SBIMOPS_TA + "=" + requestParameterMap.get(SBIMOPS_TA)
                 + "|" +
-                SBIMOPS_CH + "=" + requestParameters.get(SBIMOPS_CH)
+                SBIMOPS_CH + "=" + requestParameterMap.get(SBIMOPS_CH)
                 + "|" +
-                SBIMOPS_RURL + "=" + requestParameters.get(SBIMOPS_RURL) + "|" +
+                SBIMOPS_RURL + "=" + requestParameterMap.get(SBIMOPS_RURL) + "|" +
                 CollectionConstants.ONLINEPAYMENT_INVOKE_URL + "="
-                + requestParameters.get(CollectionConstants.ONLINEPAYMENT_INVOKE_URL));
+                + requestParameterMap.get(CollectionConstants.ONLINEPAYMENT_INVOKE_URL));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("End SbimopsAdaptor-createPaymentRequest");
-
+        sbiPaymentRequest.setParameter(CollectionConstants.ONLINEPAYMENT_INVOKE_URL, requestURL);
+        LOGGER.info("SBIMOPS request URL:" + sbiPaymentRequest.getRequestParameters());
         return sbiPaymentRequest;
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private void appendQueryFields(final StringBuilder requestURL, final LinkedHashMap<String, String> fields) {
+        final List fieldNames = new ArrayList(fields.keySet());
+        final Iterator itr = fieldNames.iterator();
+        while (itr.hasNext()) {
+            final String fieldName = (String) itr.next();
+            final String fieldValue = fields.get(fieldName);
+            if (fieldValue != null && fieldValue.length() > 0)
+                // append the URL parameters
+                try {
+                requestURL.append(URLEncoder.encode(fieldName, UTF8));
+                requestURL.append('=');
+                requestURL.append(URLEncoder.encode(fieldValue, UTF8));
+                } catch (final UnsupportedEncodingException e) {
+                LOGGER.error("Error appending QueryFields", e);
+                throw new ApplicationRuntimeException(e.getMessage());
+                }
+            if (itr.hasNext())
+                requestURL.append('&');
+        }
     }
 
     @Override
