@@ -172,8 +172,8 @@ public class PropertySurveyService {
 
     private String getFunctionaryDetail(final SurveyBean surveyBean) {
         final User functionary = propService.getOwnerName(surveyBean.getProperty());
-        return functionary.getUsername().concat("::").concat(functionary.getName());
-    }
+        return functionary.getUsername().concat("::").concat(functionary.getName().trim());
+    } 
 
     private Double calculatetaxvariance(final String applicationType, final SurveyBean surveyBean, final PTGISIndex index) {
         Double taxVar;
