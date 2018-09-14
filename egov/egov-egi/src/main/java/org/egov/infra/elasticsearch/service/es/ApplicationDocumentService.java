@@ -613,7 +613,8 @@ public class ApplicationDocumentService {
                             .mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
             } else
                 slaQuery = slaQuery
-                        .filter(QueryBuilders.rangeQuery(SLA_GAP).gt(0));
+                        .filter(QueryBuilders.rangeQuery(SLA_GAP).gt(0))
+                        .mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
         } else
             slaQuery = slaQuery
                     .filter(QueryBuilders.rangeQuery(SLA_GAP).lte(0))
