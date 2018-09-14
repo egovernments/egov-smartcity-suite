@@ -66,6 +66,7 @@ public class NatureOfUsageResult {
     private String doorNumber;
     private String address;
     private BigDecimal halfYearTax;
+    private String usageName;
 
     public List<PropertyUsage> getNatureOfUsages() {
         return natureOfUsages;
@@ -162,5 +163,13 @@ public class NatureOfUsageResult {
     public void setHalfYearTax(final BigDecimal halfYearTax) {
         this.halfYearTax = halfYearTax;
     }
+
+	public String getUsageName() {
+		return usageName;
+	}
+
+	public void setUsageName(String usageName) {
+		this.usageName = usageName;
+	}
 
 }

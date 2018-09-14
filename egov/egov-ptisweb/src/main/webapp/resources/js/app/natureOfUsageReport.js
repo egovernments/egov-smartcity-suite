@@ -99,6 +99,10 @@ $(document)
 																"sTitle" : "Assessment Number"
 															},
 															{
+																"data" : "usageName",
+																"sTitle" : "Nature Of Usage"
+															},
+															{
 																"data" : "ownerName",
 																"sTitle" : "Owner Name"
 															},
