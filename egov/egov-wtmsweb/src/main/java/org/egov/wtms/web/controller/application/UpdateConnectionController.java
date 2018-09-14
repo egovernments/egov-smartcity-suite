@@ -47,6 +47,82 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.wtms.masters.entity.enums.ConnectionType.NON_METERED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATIONPDFNAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_NUMBER;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNPENDING;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CLOSERINITIATED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CREATED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_FEEPAID;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_RECONNCTIONINPROGRESS;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_RECONNDIGSIGNPENDING;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_WOGENERATED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPROVAL_COMMENT;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPROVAL_POSITION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPROVED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPROVEWORKFLOWACTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ASSISTANT_ENGINEER_DESIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CHANGEOFUSE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSECONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.COMMISSIONER_DESGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.COMM_APPROVAL_PENDING;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ERROR;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.FILE_STORE_ID_APPLICATION_NUMBER;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.FORWARDWORKFLOWACTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.JUNIOR_ASSISTANT_DESIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.JUNIOR_OR_SENIOR_ASSISTANT_DESIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MESSAGE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULETYPE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PENDING_DIGI_SIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PERMENENTCLOSECODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PROCEED_WITHOUT_METER_EST_AMT;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PROCEED_WITHOUT_NONMETER_EST_AMT;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SENIOR_ASSISTANT_DESIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNED_DOCUMENT_PREFIX;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNWORKFLOWACTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SUBMITWORKFLOWACTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WCMS_PENALTY_CHARGES_PERCENTAGE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_PREVIEW_BUTTON;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_RECONNECTIONACKNOWLDGEENT_BUTTON;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_APPROVAL_PENDING;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_BUTTON_GENERATEESTIMATE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_CLERK_APPROVED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_REJECTED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_ACTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+import javax.validation.ValidationException;
+
 import org.egov.commons.entity.ChairPerson;
 import org.egov.commons.service.ChairPersonService;
 import org.egov.eis.entity.Assignment;
@@ -89,78 +165,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-import javax.validation.ValidationException;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.egov.wtms.masters.entity.enums.ConnectionType.NON_METERED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATIONPDFNAME;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_NUMBER;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNPENDING;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CLOSERINITIATED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CREATED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_FEEPAID;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_RECONNCTIONINPROGRESS;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_RECONNDIGSIGNPENDING;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_WOGENERATED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPROVAL_COMMENT;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPROVAL_POSITION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPROVED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPROVEWORKFLOWACTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.ASSISTANT_ENGINEER_DESIGN;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CHANGEOFUSE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSECONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.COMMISSIONER_DESGN;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.COMM_APPROVAL_PENDING;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.FILE_STORE_ID_APPLICATION_NUMBER;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.FORWARDWORKFLOWACTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.JUNIOR_ASSISTANT_DESIGN;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.JUNIOR_OR_SENIOR_ASSISTANT_DESIGN;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULETYPE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.PENDING_DIGI_SIGN;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.PERMENENTCLOSECODE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.PROCEED_WITHOUT_METER_EST_AMT;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.PROCEED_WITHOUT_NONMETER_EST_AMT;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.SENIOR_ASSISTANT_DESIGN;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNED_DOCUMENT_PREFIX;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNWORKFLOWACTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.SUBMITWORKFLOWACTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WCMS_PENALTY_CHARGES_PERCENTAGE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_PREVIEW_BUTTON;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_RECONNECTIONACKNOWLDGEENT_BUTTON;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_APPROVAL_PENDING;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_BUTTON_GENERATEESTIMATE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_CLERK_APPROVED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_REJECTED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_ACTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED;
-
 @Controller
 @RequestMapping(value = "/application")
 public class UpdateConnectionController extends GenericConnectionController {
@@ -175,12 +179,15 @@ public class UpdateConnectionController extends GenericConnectionController {
     private static final String FILESTOREIDS = "fileStoreIds";
     private static final String APPROVALPOSITIONEXIST = "approvalPositionExist";
     private static final String FIELDINSPECTION = "fieldInspection";
-    private static final String MODE = "mode";
     private static final String APP_DOCUMENT_LIST = "appforDocumentList";
     private static final String DONATION_AMOUNT = "donationCharges";
     private static final String ROAD_CATEGORY_LIST = "roadCategoryList";
     private static final String REJECTED = "Rejected";
     private static final String YES = "Yes";
+    private static final String NEWCONNECTION_EDIT="newconnection-edit";
+    private static final String WATERTAX_DUE_FOR_PARENT="waterTaxDueforParent";
+    private static final String MSG_WATER_CHARGES_DUE="msg.watercharges.amount.due";
+    private static final String MSG_APPLICATION_PROCESSED="msg.application.already.exist";
 
     @Autowired
     private ConnectionDemandService connectionDemandService;
@@ -234,9 +241,9 @@ public class UpdateConnectionController extends GenericConnectionController {
                 && APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
                 && updateWaterConnectionValidator.validateRegularizationAmount(waterConnectionDetails)) {
             BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getWaterTaxDueAmount(waterConnectionDetails);
-            model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
-            model.addAttribute("message", "msg.watercharges.amount.due");
-            return "newconnection-edit";
+            model.addAttribute(WATERTAX_DUE_FOR_PARENT, waterTaxDueforParent);
+            model.addAttribute(MESSAGE, MSG_WATER_CHARGES_DUE);
+            return NEWCONNECTION_EDIT;
         }
         return loadViewData(model, request, waterConnectionDetails);
     }
@@ -376,7 +383,7 @@ public class UpdateConnectionController extends GenericConnectionController {
             isSanctionedDetailEnable = Boolean.TRUE;
 
         BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getWaterTaxDueAmount(waterConnectionDetails);
-        model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
+        model.addAttribute(WATERTAX_DUE_FOR_PARENT, waterTaxDueforParent);
         if (loggedInUserDesignation != null
                 && (loggedInUserDesignation.equals(SENIOR_ASSISTANT_DESIGN)
                 || loggedInUserDesignation.equals(JUNIOR_ASSISTANT_DESIGN))
@@ -411,7 +418,7 @@ public class UpdateConnectionController extends GenericConnectionController {
         model.addAttribute("pipeSizes", pipeSizeService.getAllActivePipeSize());
         model.addAttribute("typeOfConnection", waterConnectionDetails.getApplicationType().getCode());
         model.addAttribute("ownerPosition", waterConnectionDetails.getState().getOwnerPosition().getId());
-        return "newconnection-edit";
+        return NEWCONNECTION_EDIT;
     }
 
     private void appendModeBasedOnApplicationCreator(Model model, HttpServletRequest request,
@@ -528,7 +535,14 @@ public class UpdateConnectionController extends GenericConnectionController {
             donationCharges = Double.valueOf(request.getParameter(DONATION_AMOUNT));
         if (request.getParameter(MODE) != null)
             mode = request.getParameter(MODE);
-
+        
+        if(updateWaterConnectionValidator.applicationInProgress(waterConnectionDetails, request.getParameter("wfstateDesc"),
+                request.getParameter("statuscode"), request.getParameter("ownerPosition"), workFlowAction)) {
+            model.addAttribute(MESSAGE, MSG_APPLICATION_PROCESSED);
+            model.addAttribute(MODE, ERROR);
+            return NEWCONNECTION_EDIT;
+        }
+        
         if (PROCEEDWITHOUTDONATION.equalsIgnoreCase(workFlowAction)
                 && APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))
             waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_FEEPAID, MODULETYPE));

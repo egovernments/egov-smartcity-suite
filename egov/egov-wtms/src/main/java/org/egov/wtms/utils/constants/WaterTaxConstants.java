@@ -449,5 +449,7 @@ public class WaterTaxConstants {
     public static final String ADDNL_WATER_TAP_CONNECTION = "Additional Water Tap Connection";
     public static final String CHANGEOFUSE_WATER_TAP_CONNECTION = "Change Of Usage Water Tap Connection";
     public static final String REGLZN_WATER_TAP_CONNECTION = "Regularization connection Water Tap Connection";
+    public static final String MESSAGE = "message";
+    public static final String ERROR = "error";
 
 }

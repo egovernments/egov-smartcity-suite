@@ -87,7 +87,7 @@ $(document).ready(
         var approvalPositionExist = $('#approvalPositionExist').val();
 
         if (currentstate != 'Rejected' && status == 'ESTIMATIONNOTICEGENERATED') {
-            if (!$('#proceedWithoutDonation').val()) {
+            if (!$('#proceedWithoutDonation').val() && $("#mode").val()!="error") {
                 bootbox.alert("Collect fees to continue application");
                 $('#approvalDepartment').removeAttr('required');
                 $('#approvalDesignation').removeAttr('required');

@@ -48,17 +48,29 @@
 
 package org.egov.wtms.web.validator;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.DEPUTY_ENGINEER_DESIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.FORWARDWORKFLOWACTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SUPERINTENDING_ENGINEER_DESIGNATION;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
+import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-
-import java.math.BigDecimal;
-
-import static org.apache.commons.lang.StringUtils.isBlank;
 
 @Component
 public class UpdateWaterConnectionValidator implements Validator {
@@ -68,6 +80,12 @@ public class UpdateWaterConnectionValidator implements Validator {
 
     @Autowired
     private ConnectionDemandService connectionDemandService;
+
+    @Autowired
+    private WaterConnectionDetailsService waterConnectionDetailsService;
+
+    @Autowired
+    private AssignmentService assignmentService;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -88,4 +106,37 @@ public class UpdateWaterConnectionValidator implements Validator {
                 waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand()).compareTo(BigDecimal.ZERO) > 0 ? true : false;
     }
 
+    public boolean applicationInProgress(WaterConnectionDetails waterConnectionDetails, String stateValue,
+            String statusCode, String ownerPosition, String workFlowAction) {
+        if (waterConnectionDetails != null
+                && !REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())) {
+            WaterConnectionDetails connectionDetails = waterConnectionDetailsService
+                    .findByApplicationNumber(waterConnectionDetails.getApplicationNumber());
+            String currentUserDesignation = null;
+            if (isNotBlank(ownerPosition))
+                currentUserDesignation = waterTaxUtils.currentUserDesignation(Long.valueOf(ownerPosition));
+            if (FORWARDWORKFLOWACTION.equalsIgnoreCase(workFlowAction)
+                    && currentUserDesignation != null
+                    && (DEPUTY_ENGINEER_DESIGN.equalsIgnoreCase(currentUserDesignation)
+                            || EXECUTIVE_ENGINEER_DESIGN.equalsIgnoreCase(currentUserDesignation)
+                            || SUPERINTENDING_ENGINEER_DESIGNATION.equalsIgnoreCase(currentUserDesignation)
+                            || MUNICIPAL_ENGINEER_DESIGN.equalsIgnoreCase(currentUserDesignation)))
+                return compareDesignationWithCurrentUser(waterConnectionDetails, currentUserDesignation);
+            else
+                return connectionDetails != null
+                        && (!statusCode.equals(waterConnectionDetails.getStatus().getCode())
+                                || !stateValue.equals(waterConnectionDetails.getState().getValue()));
+        }
+        return false;
+    }
+
+    public boolean compareDesignationWithCurrentUser(WaterConnectionDetails waterConnectionDetails,
+            String currentUserDesignation) {
+        List<Assignment> assignmentList = assignmentService
+                .getAssignmentsForPosition(waterConnectionDetails.getState().getOwnerPosition().getId(), new Date());
+        for (Assignment assignment : assignmentList)
+            if (currentUserDesignation.equalsIgnoreCase(assignment.getDesignation().getName()))
+                return false;
+        return true;
+    }
 }

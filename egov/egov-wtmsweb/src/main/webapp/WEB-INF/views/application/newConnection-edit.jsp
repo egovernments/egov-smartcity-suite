@@ -66,13 +66,13 @@
     </div>
 
     <div class="page-container" id="page-container">
-        <form:hidden id="mode" path="" name="mode" value="${mode}"/>
-        <form:hidden path="" id="approvalPositionExist" value="${approvalPositionExist}"/>
-        <form:hidden path="" id="wfstateDesc" value="${waterConnectionDetails.state.value}"/>
-        <form:hidden path="" id="statuscode" value="${waterConnectionDetails.status.code}"/>
-        <form:hidden path="" id="isCommissionerLoggedIn" value="${isCommissionerLoggedIn}"/>
-        <form:hidden path="" id="wfstate" value="${waterConnectionDetails.state.id}"/>
-        <form:hidden path="" id="waterconnectiondetailid" value="${waterConnectionDetails.id}"/>
+        <input type="hidden" id="mode"  name="mode" value="${mode}"/>
+        <input type="hidden" name="approvalPositionExist" id="approvalPositionExist" value="${approvalPositionExist}"/>
+        <input type="hidden" name="wfstateDesc" id="wfstateDesc" value="${waterConnectionDetails.state.value}"/>
+        <input type="hidden" name="statuscode" id="statuscode" value="${waterConnectionDetails.status.code}"/>
+        <input type="hidden" name="isCommissionerLoggedIn" id="isCommissionerLoggedIn" value="${isCommissionerLoggedIn}"/>
+        <input type="hidden" name="wfstate" id="wfstate" value="${waterConnectionDetails.state.id}"/>
+        <input type="hidden" name="waterconnectiondetailid" id="waterconnectiondetailid" value="${waterConnectionDetails.id}"/>
         <input type="hidden" id="closerConnection" value="${waterConnectionDetails.closeConnectionType}"/>
         <input type="hidden" id="applicationType" value="${waterConnectionDetails.applicationType.code}"/>
         <input type="hidden" id="currentUser" value="${currentUser}"/>
@@ -85,8 +85,8 @@
         <input type="hidden" id="source" value="${waterConnectionDetails.source}"/>
         <input type="hidden" id="currentDemand" value="${currentDemand}"/>
         <input type="hidden" id="pendingActions" value="${pendingActions}"/>
-        <form:hidden path="" id="workFlowAction" name="workFlowAction"/>
-
+        <input type="hidden" id="workFlowAction" name="workFlowAction" value="${workFlowAction}"/>
+        <input type="hidden" id="ownerPosition" name="ownerPosition" value="${ownerPosition}" />
         <c:choose>
             <c:when test="${not empty message}">
                 <div class="text-center">

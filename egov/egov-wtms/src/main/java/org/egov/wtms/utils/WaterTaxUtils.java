@@ -216,6 +216,15 @@ public class WaterTaxUtils {
         }
         return loggedInUserDesignation;
     }
+    
+    public String currentUserDesignation(Long ownerPosition) {
+        String loggedInUserDesignation = EMPTY;
+        List<Assignment> loggedInUserAssign;
+        loggedInUserAssign = assignmentService.getAssignmentsForPosition(ownerPosition, new Date());
+        if (!loggedInUserAssign.isEmpty())
+            loggedInUserDesignation = loggedInUserAssign.get(0).getDesignation().getName();
+        return loggedInUserDesignation;
+    }
 
     public Boolean getCurrentUserRole() {
         User currentUser = getUserId() == null ? securityUtils.getCurrentUser() : userService.getUserById(getUserId());
