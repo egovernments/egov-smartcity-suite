@@ -114,7 +114,7 @@
         <property name="alwaysUseDefaultTargetUrl" value="false"/>
         <property name="defaultTargetUrl" value="/home"/>
         <property name="excludedUrlRegex">
-            <value>^https?://[^/]+/egi/(home/(.*)|inbox($|/.*))</value>
+            <value>^https?://[^/]+/egi/(home/(.*)|inbox(.*))</value>
         </property>
     </bean>
 
