@@ -119,8 +119,8 @@ $(document)
 																"sTitle" : "Address"
 															},
 															{
-																"data" : "halfYearTax",
-																"sTitle" : "Half Yearly Tax"
+																"data" : "fullYearTax",
+																"sTitle" : "Yearly Tax"
 															} ],
 															"aoColumnDefs" : [ {
 																"aTargets" : [ 2, 3, 4, 5, 6],

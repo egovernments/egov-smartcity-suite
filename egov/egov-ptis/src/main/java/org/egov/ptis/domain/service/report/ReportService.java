@@ -850,7 +850,7 @@ public class ReportService {
     public List<NatureOfUsageResult> getNatureOfUsageReportList(final HttpServletRequest request) {
         final StringBuilder query = new StringBuilder();
         query.append(
-                "select distinct pi.upicno \"assessmentNumber\", pi.ownersname \"ownerName\", pi.mobileno \"mobileNumber\", pi.houseno \"doorNumber\", pi.address \"address\", cast(pi.AGGREGATE_CURRENT_FIRSTHALF_DEMAND as numeric) \"halfYearTax\", fd.natureofusage \"usageName\" from egpt_mv_propertyInfo pi ");
+                "select distinct pi.upicno \"assessmentNumber\", pi.ownersname \"ownerName\", pi.mobileno \"mobileNumber\", pi.houseno \"doorNumber\", pi.address \"address\", cast((pi.AGGREGATE_CURRENT_FIRSTHALF_DEMAND + pi.AGGREGATE_CURRENT_SECONDHALF_DEMAND) as numeric) \"fullYearTax\", fd.natureofusage \"usageName\" from egpt_mv_propertyInfo pi ");
         final StringBuilder whereQuery = new StringBuilder(" where pi.upicno is not null and pi.isactive = true ");
         final String natureOfUsage = request.getParameter("natureOfUsage");
         final String ward = request.getParameter("ward");
