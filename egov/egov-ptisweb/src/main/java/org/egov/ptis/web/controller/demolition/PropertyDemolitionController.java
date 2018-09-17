@@ -96,7 +96,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_ST
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION_FOR_SPRING;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
@@ -155,20 +155,20 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
         User loggedInUser = securityUtils.getCurrentUser();
         if (hasChildPropertyUnderWorkflow) {
             model.addAttribute(ERROR_MSG, "error.msg.child.underworkflow");
-            return PROPERTY_VALIDATION;
+            return PROPERTY_VALIDATION_FOR_SPRING;
         }
         if (!ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName())
                 && propService.isEmployee(loggedInUser) && !propertyTaxCommonUtils.isEligibleInitiator(loggedInUser.getId())) {
             model.addAttribute(ERROR_MSG, "msg.initiator.noteligible");
-            return PROPERTY_VALIDATION;
+            return PROPERTY_VALIDATION_FOR_SPRING;
         }
         if (basicProperty.getActiveProperty().getPropertyDetail().isStructure()) {
             model.addAttribute(ERROR_MSG, "error.superstruc.prop.notallowed");
-            return PROPERTY_VALIDATION;
+            return PROPERTY_VALIDATION_FOR_SPRING;
         }
         if ((PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND).equalsIgnoreCase(property.getPropertyDetail().getPropertyTypeMaster().getCode())) {
             model.addAttribute(ERROR_MSG, "demolition.on.vlt");
-            return PROPERTY_VALIDATION;
+            return PROPERTY_VALIDATION_FOR_SPRING;
         }
         if (propertyService.isMeesevaUser(loggedInUser))
             if (meesevaApplicationNumber == null)

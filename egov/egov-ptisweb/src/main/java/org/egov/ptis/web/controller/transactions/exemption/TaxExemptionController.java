@@ -184,14 +184,14 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 && !propertyTaxCommonUtils.isEligibleInitiator(loggedInUser.getId())
                 && !citizenPortalUser) {
             model.addAttribute(ERROR_MSG, "msg.initiator.noteligible");
-            return PROPERTY_VALIDATION;
+            return PROPERTY_VALIDATION_FOR_SPRING;
         }
         if (basicProperty != null) {
             property = (PropertyImpl) basicProperty.getProperty();
             final Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
             if (ptDemand == null || ptDemand != null && ptDemand.getEgDemandDetails() == null) {
                 model.addAttribute(ERROR_MSG, "There is no tax for this property");
-                return PROPERTY_VALIDATION;
+                return PROPERTY_VALIDATION_FOR_SPRING;
             }
 
             else if (basicProperty.isUnderWorkflow()) {
@@ -200,11 +200,11 @@ public class TaxExemptionController extends GenericWorkFlowController {
             }
             if (basicProperty.getActiveProperty().getPropertyDetail().isStructure()) {
                 model.addAttribute(ERROR_MSG, "error.superstruc.prop.notallowed");
-                return PROPERTY_VALIDATION;
+                return PROPERTY_VALIDATION_FOR_SPRING;
             }
             if (taxExemptionService.isUnderWtmsWF(basicProperty.getUpicNo(), request)) {
                 model.addAttribute(ERROR_MSG, "msg.under.wtms.wf.taxexemption");
-                return PROPERTY_VALIDATION;
+                return PROPERTY_VALIDATION_FOR_SPRING;
             } else if (!isExempted) {
                 property.setEffectiveDate(taxExemptionService.getEffectiveDate());
                 final boolean hasChildPropertyUnderWorkflow = propertyTaxUtil
@@ -212,7 +212,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 if (hasChildPropertyUnderWorkflow) {
                     model.addAttribute(ERROR_MSG,
                             "Cannot proceed as this property is used in Bifurcation, which is under workflow");
-                    return PROPERTY_VALIDATION;
+                    return PROPERTY_VALIDATION_FOR_SPRING;
                 }
             }
         }
@@ -283,11 +283,11 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
             if (property.getTaxExemptedReason() != null && checkCommercialProperty((PropertyImpl)property)) {
                 model.addAttribute(ERROR_MSG, "error.commercial.prop.notallowed");
-                return PROPERTY_VALIDATION;
+                return PROPERTY_VALIDATION_FOR_SPRING;
             }
             if (property.getTaxExemptedReason() != null && hasTenant((PropertyImpl)property)) {
                 model.addAttribute(ERROR_MSG, "error.tenant.exists");
-                return PROPERTY_VALIDATION;
+                return PROPERTY_VALIDATION_FOR_SPRING;
             }
             if (!property.getBasicProperty().getActiveProperty().getIsExemptedFromTax()
                     && taxExemptionService.getTaxDues(request, model, property.getBasicProperty(), property.getEffectiveDate())) {
