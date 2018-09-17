@@ -121,7 +121,8 @@ public class UpdateWaterConnectionValidator implements Validator {
                             || EXECUTIVE_ENGINEER_DESIGN.equalsIgnoreCase(currentUserDesignation)
                             || SUPERINTENDING_ENGINEER_DESIGNATION.equalsIgnoreCase(currentUserDesignation)
                             || MUNICIPAL_ENGINEER_DESIGN.equalsIgnoreCase(currentUserDesignation)))
-                return compareDesignationWithCurrentUser(waterConnectionDetails, currentUserDesignation);
+                return !statusCode.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) 
+                        || compareDesignationWithCurrentUser(waterConnectionDetails, currentUserDesignation);
             else
                 return connectionDetails != null
                         && (!statusCode.equals(waterConnectionDetails.getStatus().getCode())
