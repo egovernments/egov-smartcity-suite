@@ -589,7 +589,7 @@ public class WaterConnectionDetailsService {
         applicationStatusChange(waterConnectionDetails, workFlowAction, mode);
         if (APPLICATION_STATUS_CLOSERDIGSIGNPENDING.equals(waterConnectionDetails.getStatus().getCode())
                 && waterConnectionDetails.getCloseConnectionType() != null
-                && workFlowAction.equals(APPROVEWORKFLOWACTION)) {
+                && APPROVEWORKFLOWACTION.equals(workFlowAction)) {
             waterConnectionDetails.setApplicationType(applicationTypeService.findByCode(CLOSINGCONNECTION));
             waterConnectionDetails.setCloseApprovalDate(new Date());
         }
@@ -848,40 +848,40 @@ public class WaterConnectionDetailsService {
                     approvalPosition = waterConnectionDetails.getState().getOwnerPosition().getId();
                 else
                     approvalPosition = waterTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(), waterConnectionDetails);
-            else if (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_APPROVED)
+            else if (APPLICATION_STATUS_APPROVED.equals(waterConnectionDetails.getStatus().getCode())
                     && isNotBlank(wfmatrix.getNextDesignation())
-                    || isNotBlank(workFlowAction) && workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)
-                    && waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERINITIATED)
-                    && waterConnectionDetails.getState().getValue().equals(WF_STATE_REJECTED))
+                    || isNotBlank(workFlowAction) && WFLOW_ACTION_STEP_REJECT.equals(workFlowAction)
+                    && APPLICATION_STATUS_CLOSERINITIATED.equals(waterConnectionDetails.getStatus().getCode())
+                    && WF_STATE_REJECTED.equals(waterConnectionDetails.getState().getValue()))
                 approvalPosition = waterTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(), waterConnectionDetails);
 
             else if (wfmatrix != null && isNotBlank(wfmatrix.getNextDesignation())
-                    && !workFlowAction.equals(APPROVEWORKFLOWACTION)
-                    && !workFlowAction.equals(SIGNWORKFLOWACTION)
-                    && !workFlowAction.equals(WF_PREVIEW_BUTTON)
-                    && (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_FEEPAID)
-                    || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_VERIFIED)
-                    || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERDIGSIGNPENDING)
-                    || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_DIGITALSIGNPENDING)
-                    || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_RECONNCTIONAPPROVED)
-                    || workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)
-                    && (waterConnectionDetails.getStatus().getCode().equals(WORKFLOW_RECONNCTIONINITIATED)
-                    || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERINITIATED)))) {
-                approvalPosition = waterTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(), waterConnectionDetails);
-            } else if (WF_PREVIEW_BUTTON.equals(workFlowAction) || workFlowAction.equals(SIGNWORKFLOWACTION)
-                    || workFlowAction.equals(APPROVEWORKFLOWACTION)
-                    && (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_FEEPAID)
+                    && !APPROVEWORKFLOWACTION.equals(workFlowAction)
+                    && !SIGNWORKFLOWACTION.equals(workFlowAction)
+                    && !WF_PREVIEW_BUTTON.equals(workFlowAction)
+                    && (APPLICATION_STATUS_FEEPAID.equals(waterConnectionDetails.getStatus().getCode())
+                    || APPLICATION_STATUS_VERIFIED.equals(waterConnectionDetails.getStatus().getCode())
+                    || APPLICATION_STATUS_CLOSERDIGSIGNPENDING.equals(waterConnectionDetails.getStatus().getCode())
                     || APPLICATION_STATUS_DIGITALSIGNPENDING.equals(waterConnectionDetails.getStatus().getCode())
-                    || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERINPROGRESS)
-                    || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_RECONNCTIONINPROGRESS)
-                    || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_APPROVED))) {
+                    || APPLICATION_STATUS_RECONNCTIONAPPROVED.equals(waterConnectionDetails.getStatus().getCode())
+                    || WFLOW_ACTION_STEP_REJECT.equals(workFlowAction)
+                    && (WORKFLOW_RECONNCTIONINITIATED.equals(waterConnectionDetails.getStatus().getCode())
+                    || APPLICATION_STATUS_CLOSERINITIATED.equals(waterConnectionDetails.getStatus().getCode())))) {
+                approvalPosition = waterTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(), waterConnectionDetails);
+            } else if (WF_PREVIEW_BUTTON.equals(workFlowAction) || SIGNWORKFLOWACTION.equals(workFlowAction)
+                    || APPROVEWORKFLOWACTION.equals(workFlowAction)
+                    && (APPLICATION_STATUS_FEEPAID.equals(waterConnectionDetails.getStatus().getCode())
+                    || APPLICATION_STATUS_DIGITALSIGNPENDING.equals(waterConnectionDetails.getStatus().getCode())
+                    || APPLICATION_STATUS_CLOSERINPROGRESS.equals(waterConnectionDetails.getStatus().getCode())
+                    || APPLICATION_STATUS_RECONNCTIONINPROGRESS.equals(waterConnectionDetails.getStatus().getCode())
+                    || APPLICATION_STATUS_APPROVED.equals(waterConnectionDetails.getStatus().getCode()))) {
                 approvalPosition = waterConnectionDetails.getState().getOwnerPosition().getId();
-            } else if (wfmatrix != null && isNotBlank(wfmatrix.getNextDesignation()) && !workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)
-                    && (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERINITIATED)
-                    || !waterConnectionDetails.getState().getValue().equals(WF_STATE_REJECTED)
-                    && (waterConnectionDetails.getStatus().getCode().equals(WORKFLOW_RECONNCTIONINITIATED)
-                    || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_RECONNCTIONINPROGRESS))
-                    || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_APPROVED))) {
+            } else if (wfmatrix != null && isNotBlank(wfmatrix.getNextDesignation()) && !WFLOW_ACTION_STEP_REJECT.equals(workFlowAction)
+                    && (APPLICATION_STATUS_CLOSERINITIATED.equals(waterConnectionDetails.getStatus().getCode())
+                    || !WF_STATE_REJECTED.equals(waterConnectionDetails.getState().getValue())
+                    && (WORKFLOW_RECONNCTIONINITIATED.equals(waterConnectionDetails.getStatus().getCode())
+                    || APPLICATION_STATUS_RECONNCTIONINPROGRESS.equals(waterConnectionDetails.getStatus().getCode()))
+                    || APPLICATION_STATUS_APPROVED.equals(waterConnectionDetails.getStatus().getCode()))) {
                 Position posobj = waterTaxUtils.getCityLevelCommissionerPosition(wfmatrix.getNextDesignation(),
                         waterConnectionDetails.getConnection().getPropertyIdentifier());
                 if (posobj != null)
