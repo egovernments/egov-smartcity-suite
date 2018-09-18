@@ -136,7 +136,7 @@ $(document).ready(function () {
                     $('#approvalPosition').empty();
                     $('#approvalPosition').append($("<option value=''>Select</option>"));
                     if (response == '') {
-                        bootbox.alert("Check valid employee assignment exist and grievance user role has assigned.")
+                        bootbox.alert("Check valid employee assignment exist and grievance user role has been assigned.")
                     } else {
                         $.each(response, function (index, employee) {
                             $('#approvalPosition').append($('<option>').text(employee.name)
