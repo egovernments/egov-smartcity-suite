@@ -61,6 +61,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.oauth2.config.annotation.builders.InMemoryClientDetailsServiceBuilder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -99,9 +100,10 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+        InMemoryClientDetailsServiceBuilder serviceBuilder = clients.inMemory();
         getSecuredClientFromResource().getClients().forEach(client -> {
             try {
-                clients.inMemory().withClient(client.getClientId()).secret(client.getClientSecret())
+                serviceBuilder.withClient(client.getClientId()).secret(client.getClientSecret())
                         .authorizedGrantTypes(GRANT_TYPE_AUTHORIZATION_CODE, GRANT_TYPE_REFRESH_TOKEN,
                                 GRANT_TYPE_PASSWORD)
                         .scopes(SCOPE_READ, SCOPE_WRITE).resourceIds(RESOURCE_ID)
