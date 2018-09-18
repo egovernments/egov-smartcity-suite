@@ -121,6 +121,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.*;
 @Transactional
 public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> {
 
+    private static final String DUE = "due";
+    private static final String NO_DEMAND = "noDemand";
     private static final Logger LOGGER = LoggerFactory.getLogger(TaxExemptionService.class);
     @PersistenceContext
     private EntityManager entityManager;
@@ -618,11 +620,12 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             return effectiveDate;
     }
     
-    public boolean getTaxDues(final HttpServletRequest request, final Model model,
+    public String getTaxDues(final HttpServletRequest request, final Model model,
             BasicProperty basicProperty, Date effectiveDate) {
         BigDecimal currentPropertyTax = BigDecimal.ZERO;
         BigDecimal currentPropertyTaxDue = BigDecimal.ZERO;
         BigDecimal arrearPropertyTaxDue = BigDecimal.ZERO;
+        boolean isDemandExist = false;
         final Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
         Installment effectiveInst = getEffectiveInst(effectiveDate);
         
@@ -649,7 +652,11 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
                 } else {
                     arrearPropertyTaxDue = arrearPropertyTaxDue.add(demand).subtract(collection);
                 }
+                isDemandExist = true;
             }
+        }
+        if (!isDemandExist) {
+            return NO_DEMAND;
         }
         final BigDecimal currentWaterTaxDue = getWaterTaxDues(basicProperty.getUpicNo(), request);
         model.addAttribute("assessementNo", basicProperty.getUpicNo());
@@ -662,9 +669,9 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         if (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0) {
             model.addAttribute("taxDuesErrorMsg", "Above tax dues must be payed before initiating "
                     + APPLICATION_TYPE_TAX_EXEMTION);
-            return true;
+            return DUE;
         }
-        return false;
+        return null;
     }
 
     private Installment getEffectiveInst(Date effectiveDate) {

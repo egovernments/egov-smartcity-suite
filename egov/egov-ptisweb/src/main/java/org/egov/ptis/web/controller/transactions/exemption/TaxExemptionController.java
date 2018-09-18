@@ -103,6 +103,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.*;
 @RequestMapping(value = { "/exemption" })
 public class TaxExemptionController extends GenericWorkFlowController {
 
+    private static final String NO_DEMAND = "noDemand";
+    private static final String DUE = "due";
     private static final String APPROVAL_POSITION = "approvalPosition";
     private static final String APPLICATION_SOURCE = "applicationSource";
     private static final String TAX_EXEMPTION = "TAX_EXEMPTION";
@@ -289,9 +291,15 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 model.addAttribute(ERROR_MSG, "error.tenant.exists");
                 return PROPERTY_VALIDATION_FOR_SPRING;
             }
-            if (!property.getBasicProperty().getActiveProperty().getIsExemptedFromTax()
-                    && taxExemptionService.getTaxDues(request, model, property.getBasicProperty(), property.getEffectiveDate())) {
-                return TARGET_TAX_DUES;
+            if (!property.getBasicProperty().getActiveProperty().getIsExemptedFromTax()) {
+                if (taxExemptionService.getTaxDues(request, model, property.getBasicProperty(), property.getEffectiveDate())
+                        .equals(DUE))
+                    return TARGET_TAX_DUES;
+                else if (taxExemptionService.getTaxDues(request, model, property.getBasicProperty(), property.getEffectiveDate())
+                        .equals(NO_DEMAND)) {
+                    model.addAttribute(ERROR_MSG, "error.nodemand.before.effectivedate");
+                    return PROPERTY_VALIDATION_FOR_SPRING;
+                }
             }
             if (StringUtils.isNotBlank(taxExemptedReason))
                 taxExemptionService.processAndStoreApplicationDocuments((PropertyImpl) property, taxExemptedReason, null);
