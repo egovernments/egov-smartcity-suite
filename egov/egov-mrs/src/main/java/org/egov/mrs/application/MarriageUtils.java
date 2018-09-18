@@ -126,7 +126,7 @@ public class MarriageUtils {
         } else
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
         return !asignList.isEmpty()
-                ? asignList.get(0).getEmployee().getUsername().concat(":: " + asignList.get(0).getEmployee().getName()) : "";
+                ? asignList.get(0).getEmployee().getUsername().concat("::" + asignList.get(0).getEmployee().getName().trim()) : "";
     }
 
     public Boolean isDigitalSignEnabled() {
