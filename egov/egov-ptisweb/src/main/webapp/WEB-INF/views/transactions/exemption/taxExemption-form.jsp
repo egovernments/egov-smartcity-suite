@@ -91,7 +91,7 @@ body
 								<spring:message code="lbl.exemption.reason" />
 								<span class="mandatory"></span>
 							</div>
-							<div class="col-sm-2 add-margin">
+							<div class="col-sm-3 add-margin text-right">
 								<form:select path="taxExemptedReason" id="taxExemptedReason"
 									name="taxExemptedReason" cssClass="form-control">
 									<form:option value="">
@@ -101,18 +101,6 @@ body
 										itemLabel="name" />
 								</form:select>
 							</div>
-							<c:if test="${!isExempted}">
-							<label class="col-sm-3"> <spring:message
-									code="lbl.exemption.effective.date" /> <span class="mandatory"></span>
-							</label>
-							<div class="col-sm-2 add-margin">
-								<form:input path="effectiveDate" id="fromDate" type="text"
-									class="form-control"
-									required="required" readOnly="true"/>
-								<form:errors path="effectiveDate"
-									cssClass="add-margin error-msg" />
-							</div>
-							</c:if>
 						</div>
 						<c:if test="${userDesignation == 'UD Revenue Inspector'}">
 						<div class="row">
@@ -298,11 +286,7 @@ jQuery('#taxExemptedReason').change(function() {
     		});
     	}
     });
-	 var enddate= $('#fromDate').val();
-	 jQuery('#fromDate').on('show', function(){
-			jQuery('#fromDate').datepicker('setEndDate', enddate);
-			});
- });
+});
  
  function attachmentToggle(exemptionReason){
 		if(exemptionReason.indexOf('public worship') != -1){
