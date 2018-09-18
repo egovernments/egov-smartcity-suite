@@ -135,11 +135,15 @@ $(document).ready(function () {
                 success: function (response) {
                     $('#approvalPosition').empty();
                     $('#approvalPosition').append($("<option value=''>Select</option>"));
-                    $.each(response, function (index, employee) {
-                        $('#approvalPosition').append($('<option>').text(employee.name)
-                            .attr('value', employee.positionId)
-                            .attr('data-employee-id', employee.empId));
-                    });
+                    if (response == '') {
+                        bootbox.alert("Check valid employee assignment exist and grievance user role has assigned.")
+                    } else {
+                        $.each(response, function (index, employee) {
+                            $('#approvalPosition').append($('<option>').text(employee.name)
+                                .attr('value', employee.positionId)
+                                .attr('data-employee-id', employee.empId));
+                        });
+                    }
                 },
                 error: function (response) {
                     console.log("failed");
