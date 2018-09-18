@@ -107,8 +107,8 @@ body
 							</label>
 							<div class="col-sm-2 add-margin">
 								<form:input path="effectiveDate" id="fromDate" type="text"
-									class="form-control datepicker"
-									required="required"/>
+									class="form-control"
+									required="required" readOnly="true"/>
 								<form:errors path="effectiveDate"
 									cssClass="add-margin error-msg" />
 							</div>
