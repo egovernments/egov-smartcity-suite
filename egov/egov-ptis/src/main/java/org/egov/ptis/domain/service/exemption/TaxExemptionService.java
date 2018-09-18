@@ -121,6 +121,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.*;
 @Transactional
 public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> {
 
+    private static final String NO_DUE = "noDue";
     private static final String DUE = "due";
     private static final String NO_DEMAND = "noDemand";
     private static final Logger LOGGER = LoggerFactory.getLogger(TaxExemptionService.class);
@@ -671,7 +672,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
                     + APPLICATION_TYPE_TAX_EXEMTION);
             return DUE;
         }
-        return null;
+        return NO_DUE;
     }
 
     private Installment getEffectiveInst(Date effectiveDate) {
