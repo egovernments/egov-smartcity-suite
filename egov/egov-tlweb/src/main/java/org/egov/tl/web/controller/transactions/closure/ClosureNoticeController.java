@@ -45,7 +45,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.tl.web.controller.transactions;
+package org.egov.tl.web.controller.transactions.closure;
 
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.tl.service.TradeLicenseService;
