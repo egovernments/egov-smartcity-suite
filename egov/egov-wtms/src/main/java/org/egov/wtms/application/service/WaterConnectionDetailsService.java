@@ -1574,7 +1574,6 @@ public class WaterConnectionDetailsService {
     }
 
     public String getReglnPendingAction(String workflowAction, String loggedInUserDesignation) {
-
         if (DEPUTY_ENGINEER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)) {
             return FORWARDWORKFLOWACTION.equals(workflowAction) ? WF_STATE_DEE_FORWARD_PENDING : WF_STATE_DEE_APPROVE_PENDING;
         } else if (EXECUTIVE_ENGINEER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)) {
@@ -1583,7 +1582,9 @@ public class WaterConnectionDetailsService {
             return FORWARDWORKFLOWACTION.equals(workflowAction) ? WF_STATE_SE_FORWARD_PENDING : WF_STATE_SE_APPROVE_PENDING;
         } else if (MUNICIPAL_ENGINEER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)) {
             return FORWARDWORKFLOWACTION.equals(workflowAction) ? WF_STATE_ME_FORWARD_PENDING : WF_STATE_ME_APPROVE_PENDING;
-        } else
+        } else if (ASSISTANT_ENGINEER_DESIGN.equalsIgnoreCase(loggedInUserDesignation))
+            return FORWARDWORKFLOWACTION.equals(workflowAction) ? AE_APPROVAL_PENDING : EMPTY;
+        else
             return EMPTY;
     }
 
