@@ -428,6 +428,7 @@ public class ComplaintIndexService {
         ComplaintIndex complaintIndex = complaintIndexRepository.findByCrnAndCityCode(complaint.getCrn(), getCityCode());
         if (complaintIndex != null) {
             beanMapperConfiguration.map(complaint, complaintIndex);
+            setCurrentOwnerDetails(complaint.getAssignee(), complaintIndex);
             complaintIndex = updateComplaintLevelIndexFields(complaintIndex);
             complaintIndex = updateEscalationLevelIndexFields(complaintIndex);
             // update status related fields in index
@@ -493,6 +494,18 @@ public class ComplaintIndexService {
             }
         }
         return complaintIndex;
+    }
+
+    private void setCurrentOwnerDetails(Position currentOwner, ComplaintIndex complaintIndex) {
+        if (currentOwner != null) {
+            final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(currentOwner.getId(), new Date());
+            final User assignedUser = !assignments.isEmpty() ? assignments.get(0).getEmployee() : null;
+            complaintIndex.setCurrentFunctionaryName(assignedUser != null
+                    ? assignedUser.getName() + " : " + currentOwner.getDeptDesig().getDesignation().getName()
+                    : NOASSIGNMENT + " : " + currentOwner.getDeptDesig().getDesignation().getName());
+            complaintIndex.setCurrentFunctionaryMobileNumber(Objects.nonNull(assignedUser)
+                    ? assignedUser.getMobileNumber() : EMPTY);
+        }
     }
 
     public ComplaintIndex updateEscalationLevelIndexFields(final ComplaintIndex complaintIndex) {
