@@ -299,7 +299,9 @@ public class DigitalSignatureWorkflowController {
             for (final Amalgamation amalProp : property.getBasicProperty().getAmalgamations())
                 amalProp.getAmalgamatedProperty().setUnderWorkflow(false);
         property.transition().end().withOwner(property.getCurrentState().getOwnerPosition()).withNextAction(null);
-        property.getBasicProperty().setUnderWorkflow(false);
+        if (propertyService.isLatestPropertyMutationClosed(property.getBasicProperty().getUpicNo())) {
+            property.getBasicProperty().setUnderWorkflow(false);
+        }
         return applicationType;
     }
 

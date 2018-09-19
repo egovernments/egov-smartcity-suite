@@ -287,7 +287,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 return REJECT_ON_TAXDUE;
             if (STRUCTURED.equals(taxDueOrStruc))
                 return COMMON_FORM;
-            if (isInAddAltDemolitionFlow() && isLatestPropertyMutationClosed()) {
+            if (isInAddAltDemolitionFlow() && propertyService.isLatestPropertyMutationClosed(basicproperty.getUpicNo())) {
                 if (isEligibleLoggedUser()) {
                     loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
                     if (loggedUserIsMeesevaUser)
@@ -1507,15 +1507,4 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public void setOtherDocuments(List<Document> otherDocuments) {
         this.otherDocuments = otherDocuments;
     }
-    
-    public boolean isLatestPropertyMutationClosed(){
-        boolean closed = true;
-        final javax.persistence.Query qry = entityManager.createNamedQuery("UNDER_WF_MUTATION_BY_UPICNO");
-        qry.setParameter("upicNo", basicproperty.getUpicNo());
-        qry.setMaxResults(1);
-        if(!qry.getResultList().isEmpty())
-            closed = false;
-        return closed;
-    }
-    
 }

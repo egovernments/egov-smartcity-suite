@@ -4616,5 +4616,14 @@ public class PropertyService {
         }
         return totalTax;
     }
-
+    
+    public boolean isLatestPropertyMutationClosed(String upicno) {
+        boolean closed = true;
+        final javax.persistence.Query qry = entityManager.createNamedQuery("UNDER_WF_MUTATION_BY_UPICNO");
+        qry.setParameter("upicNo", upicno);
+        qry.setMaxResults(1);
+        if (!qry.getResultList().isEmpty())
+            closed = false;
+        return closed;
+    }
 }
