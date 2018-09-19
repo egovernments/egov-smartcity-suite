@@ -54,6 +54,7 @@ import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.rest.support.CustomTokenEnhancer;
 import org.egov.restapi.web.security.oauth2.entity.SecuredClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -98,6 +99,9 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Autowired
     private TokenStore tokenStore;
 
+    @Autowired
+    private CustomTokenEnhancer customTokenEnhancer;
+
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         InMemoryClientDetailsServiceBuilder serviceBuilder = clients.inMemory();
@@ -117,7 +121,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
-        endpoints.tokenStore(tokenStore).authenticationManager(authenticationManager)
+        endpoints.tokenStore(tokenStore).tokenEnhancer(customTokenEnhancer).authenticationManager(authenticationManager)
                 .setClientDetailsService(clientDetailsService);
     }
 
