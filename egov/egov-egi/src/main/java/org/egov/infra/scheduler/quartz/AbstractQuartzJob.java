@@ -66,8 +66,10 @@ import javax.annotation.Resource;
 import java.util.List;
 
 import static java.lang.String.format;
+import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.egov.infra.utils.ApplicationConstant.MDC_APPNAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.MDC_UID_KEY;
 import static org.egov.infra.utils.ApplicationConstant.MDC_ULBCODE_KEY;
 import static org.egov.infra.utils.ApplicationConstant.SYSTEM_USERNAME;
 
@@ -98,6 +100,7 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
             MDC.put(MDC_APPNAME_KEY, format(APPNAME_FORMAT, moduleName, jobCtx.getJobDetail().getKey().getName()));
             for (String tenant : this.cities) {
                 MDC.put(MDC_ULBCODE_KEY, tenant);
+                MDC.put(MDC_UID_KEY, randomUUID().toString());
                 this.prepareThreadLocal(tenant);
                 this.executeJob();
             }

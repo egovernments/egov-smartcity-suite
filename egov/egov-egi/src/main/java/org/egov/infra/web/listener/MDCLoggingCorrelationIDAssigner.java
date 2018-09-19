@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,42 +46,28 @@
  *
  */
 
-package org.egov.infra.web.filter;
+package org.egov.infra.web.listener;
 
 import org.slf4j.MDC;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import java.io.IOException;
+import javax.servlet.ServletRequestEvent;
+import javax.servlet.ServletRequestListener;
 
-import static org.egov.infra.config.core.ApplicationThreadLocals.getCityName;
-import static org.egov.infra.utils.ApplicationConstant.MDC_ULBCODE_KEY;
+import static java.util.UUID.randomUUID;
+import static org.egov.infra.utils.ApplicationConstant.MDC_APPNAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.MDC_UID_KEY;
+import static org.egov.infra.web.utils.WebUtils.currentContextPath;
 
-public class MDCLoggingFilter implements Filter {
+public class MDCLoggingCorrelationIDAssigner implements ServletRequestListener {
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-
-        try {
-            MDC.put(MDC_ULBCODE_KEY, getCityName());
-            chain.doFilter(request, response);
-        } finally {
-            MDC.clear();
-        }
+    public void requestInitialized(ServletRequestEvent sre) {
+        MDC.put(MDC_UID_KEY, randomUUID().toString());
+        MDC.put(MDC_APPNAME_KEY, currentContextPath(sre.getServletRequest()).toUpperCase());
     }
 
     @Override
-    public void init(final FilterConfig filterConfig) {
-        //Do nothing
+    public void requestDestroyed(ServletRequestEvent sre) {
+        MDC.clear();
     }
-
-    @Override
-    public void destroy() {
-        //Do nothing
-    }
-
 }

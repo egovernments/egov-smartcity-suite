@@ -184,8 +184,12 @@
         <filter-name>struts2PrepareAndExecute</filter-name>
         <url-pattern>*.action</url-pattern>
     </filter-mapping>
+
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>org.egov.infra.web.listener.MDCLoggingCorrelationIDAssigner</listener-class>
     </listener>
 
     <servlet>
