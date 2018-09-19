@@ -103,7 +103,6 @@ import java.util.Optional;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static java.util.Collections.EMPTY_LIST;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.egov.commons.entity.Source.CSC;
 import static org.egov.commons.entity.Source.MEESEVA;
 import static org.egov.commons.entity.Source.ONLINE;
@@ -112,11 +111,9 @@ import static org.egov.infra.utils.StringUtils.EMPTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
-import static org.egov.wtms.masters.entity.enums.ConnectionStatus.INACTIVE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDITIONALCONNECTIONALLOWEDIFPTDUE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPCONFIGVALUEOFENABLED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CANCELLED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNPENDING;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING;
@@ -229,7 +226,7 @@ public class WaterTaxUtils {
         }
         return loggedInUserDesignation;
     }
-    
+
     public String currentUserDesignation(Long ownerPosition) {
         String loggedInUserDesignation = EMPTY;
         List<Assignment> loggedInUserAssign;

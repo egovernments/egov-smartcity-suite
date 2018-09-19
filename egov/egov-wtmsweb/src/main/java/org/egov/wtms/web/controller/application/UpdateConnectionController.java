@@ -184,10 +184,10 @@ public class UpdateConnectionController extends GenericConnectionController {
     private static final String ROAD_CATEGORY_LIST = "roadCategoryList";
     private static final String REJECTED = "Rejected";
     private static final String YES = "Yes";
-    private static final String NEWCONNECTION_EDIT="newconnection-edit";
-    private static final String WATERTAX_DUE_FOR_PARENT="waterTaxDueforParent";
-    private static final String MSG_WATER_CHARGES_DUE="msg.watercharges.amount.due";
-    private static final String MSG_APPLICATION_PROCESSED="msg.application.already.exist";
+    private static final String NEWCONNECTION_EDIT = "newconnection-edit";
+    private static final String WATERTAX_DUE_FOR_PARENT = "waterTaxDueforParent";
+    private static final String MSG_WATER_CHARGES_DUE = "msg.watercharges.amount.due";
+    private static final String MSG_APPLICATION_PROCESSED = "msg.application.already.exist";
 
     @Autowired
     private ConnectionDemandService connectionDemandService;
@@ -520,11 +520,10 @@ public class UpdateConnectionController extends GenericConnectionController {
     @PostMapping("/update/{applicationNumber}")
     public String update(@Valid @ModelAttribute WaterConnectionDetails waterConnectionDetails,
                          BindingResult resultBinder, HttpServletRequest request, Model model,
-                         @RequestParam("files") MultipartFile[] files) {
+                         @RequestParam("files") MultipartFile... files) {
 
         String mode = EMPTY;
         Double donationCharges = 0d;
-        String sourceChannel = request.getParameter("Source");
 
         String workFlowAction = isNotBlank(request.getParameter(WORKFLOW_ACTION)) ? request.getParameter(WORKFLOW_ACTION) : EMPTY;
 
@@ -535,14 +534,14 @@ public class UpdateConnectionController extends GenericConnectionController {
             donationCharges = Double.valueOf(request.getParameter(DONATION_AMOUNT));
         if (request.getParameter(MODE) != null)
             mode = request.getParameter(MODE);
-        
-        if(updateWaterConnectionValidator.applicationInProgress(waterConnectionDetails, request.getParameter("wfstateDesc"),
+
+        if (updateWaterConnectionValidator.applicationInProgress(waterConnectionDetails, request.getParameter("wfstateDesc"),
                 request.getParameter("statuscode"), request.getParameter("ownerPosition"), workFlowAction)) {
             model.addAttribute(MESSAGE, MSG_APPLICATION_PROCESSED);
             model.addAttribute(MODE, ERROR);
             return NEWCONNECTION_EDIT;
         }
-        
+
         if (PROCEEDWITHOUTDONATION.equalsIgnoreCase(workFlowAction)
                 && APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))
             waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_FEEPAID, MODULETYPE));
@@ -587,8 +586,6 @@ public class UpdateConnectionController extends GenericConnectionController {
                 waterConnectionDetailsService.getCurrentSession().evict(waterConnectionDetails);
                 waterConnectionDetails = waterConnectionDetailsService.findBy(waterConnectionDetails.getId());
             }
-
-        String approvalComent = isNotBlank(request.getParameter("approvalComent")) ? request.getParameter("approvalComent") : EMPTY;
 
         if (workFlowAction.equals(APPROVEWORKFLOWACTION)
                 && waterConnectionDetails.getStatus() != null && waterConnectionDetails.getStatus().getCode() != null
@@ -635,6 +632,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                     else
                         waterConnectionDetails.setCloseConnectionType(ClosureType.Temporary.getName());
 
+                String approvalComent = isNotBlank(request.getParameter("approvalComent")) ? request.getParameter("approvalComent") : EMPTY;
                 if (isNotBlank(workFlowAction))
                     if (APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)) {
 
@@ -720,7 +718,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                     }
                 waterConnectionDetailsService.updateWaterConnection(waterConnectionDetails, approvalPosition,
                         approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction,
-                        mode, null, sourceChannel);
+                        mode, null, request.getParameter("Source"));
             } catch (ValidationException e) {
                 throw new ValidationException(e.getMessage());
             }
@@ -767,7 +765,7 @@ public class UpdateConnectionController extends GenericConnectionController {
 
             String pathVars = new StringBuilder(waterConnectionDetails.getApplicationNumber()).append(",")
                     .append(waterTaxUtils.getApproverName(approvalPosition)).append(",")
-                    .append(currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : EMPTY).append(",")
+                    .append(currentUserAssignment == null ? EMPTY : currentUserAssignment.getDesignation().getName()).append(",")
                     .append(nextDesign).toString();
             return "redirect:/application/application-success?pathVars=" + pathVars;
         } else
