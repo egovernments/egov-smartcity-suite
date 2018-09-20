@@ -844,12 +844,13 @@ public class WaterConnectionDetailsService {
                     && (WORKFLOW_RECONNCTIONINITIATED.equals(connectionStatusCode)
                     || APPLICATION_STATUS_RECONNCTIONINPROGRESS.equals(connectionStatusCode))
                     || APPLICATION_STATUS_APPROVED.equals(connectionStatusCode))) {
-                Position posobj = waterTaxUtils.getCityLevelCommissionerPosition(wfmatrix.getNextDesignation(),
+                Position posObj = waterTaxUtils.getCityLevelCommissionerPosition(wfmatrix.getNextDesignation(),
                         waterConnectionDetails.getConnection().getPropertyIdentifier());
-                if (posobj != null)
-                    approverPosition = posobj.getId();
+                if (posObj != null)
+                    approverPosition = posObj.getId();
             }
-        } else if (wfmatrix != null && isNotBlank(wfmatrix.getNextDesignation()) && !waterTaxUtils.validateWorkflow(workFlowAction)
+        }
+        if (wfmatrix != null && isNotBlank(wfmatrix.getNextDesignation()) && !waterTaxUtils.validateWorkflow(workFlowAction)
                 && (APPLICATION_STATUS_FEEPAID.equals(connectionStatusCode)
                 || APPLICATION_STATUS_VERIFIED.equals(connectionStatusCode)
                 || APPLICATION_STATUS_CLOSERDIGSIGNPENDING.equals(connectionStatusCode)
