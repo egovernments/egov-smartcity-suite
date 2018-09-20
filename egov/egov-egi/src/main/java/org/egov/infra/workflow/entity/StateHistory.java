@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -51,6 +51,7 @@ package org.egov.infra.workflow.entity;
 import org.egov.infra.admin.master.entity.User;
 import org.hibernate.annotations.Immutable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -79,47 +80,64 @@ public class StateHistory<T extends OwnerGroup> implements Serializable {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "createdBy")
+    @JoinColumn(name = "createdBy", updatable = false)
     private User createdBy;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(updatable = false)
     private Date createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lastModifiedBy")
+    @JoinColumn(name = "lastModifiedBy", updatable = false)
     private User lastModifiedBy;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(updatable = false)
     private Date lastModifiedDate;
 
     @ManyToOne(targetEntity = State.class, fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "state_id")
+    @JoinColumn(name = "state_id", updatable = false)
     private State<T> state;
 
     @NotNull
+    @Column(updatable = false)
     private String value;
 
     @ManyToOne(targetEntity = OwnerGroup.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "OWNER_POS")
+    @JoinColumn(name = "OWNER_POS", updatable = false)
     private T ownerPosition;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "OWNER_USER")
+    @JoinColumn(name = "OWNER_USER", updatable = false)
     private User ownerUser;
 
+    @Column(updatable = false)
     private String senderName;
+
+    @Column(updatable = false)
     private String nextAction;
+
+    @Column(updatable = false)
     private String comments;
+
+    @Column(updatable = false)
     private String natureOfTask;
+
+    @Column(updatable = false)
     private String extraInfo;
+
+    @Column(updatable = false)
     private Date dateInfo;
+
+    @Column(updatable = false)
     private Date extraDateInfo;
 
     @ManyToOne(targetEntity = OwnerGroup.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "INITIATOR_POS")
+    @JoinColumn(name = "INITIATOR_POS", updatable = false)
     private T initiatorPosition;
 
     StateHistory() {
+        //Default constructor for jpa
     }
 
     public StateHistory(State<T> state) {
@@ -277,4 +295,23 @@ public class StateHistory<T extends OwnerGroup> implements Serializable {
         this.initiatorPosition = initiatorPosition;
     }
 
+    public State<T> asState() {
+        State<T> historyState = new State();
+        historyState.setCreatedBy(createdBy);
+        historyState.setCreatedDate(createdDate);
+        historyState.setLastModifiedBy(lastModifiedBy);
+        historyState.setLastModifiedDate(lastModifiedDate);
+        historyState.setValue(value);
+        historyState.setOwnerPosition(ownerPosition);
+        historyState.setOwnerUser(ownerUser);
+        historyState.setSenderName(senderName);
+        historyState.setNextAction(nextAction);
+        historyState.setComments(comments);
+        historyState.setExtraInfo(extraInfo);
+        historyState.setDateInfo(dateInfo);
+        historyState.setExtraDateInfo(extraDateInfo);
+        historyState.setNatureOfTask(natureOfTask);
+        historyState.setInitiatorPosition(initiatorPosition);
+        return historyState;
+    }
 }
