@@ -55,7 +55,6 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
-import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pgr.entity.Complaint;
@@ -76,6 +75,7 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.egov.infra.utils.ApplicationConstant.NA;
 import static org.egov.infra.utils.ApplicationConstant.SYSTEM_USERNAME;
 import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_ESCALATED;
+import static org.egov.pgr.utils.constants.PGRConstants.DELIMITER_COLON;
 import static org.egov.pgr.utils.constants.PGRConstants.NOASSIGNMENT;
 
 @Service
@@ -100,24 +100,24 @@ public class ComplaintHistoryService {
     public List<HashMap<String, Object>> getComplaintHistory(Complaint complaint) {
         List<HashMap<String, Object>> complaintHistory = new ArrayList<>();
         if (complaint != null) {
-            String complainantName = complaint.getComplainant().getName();
-            complaintHistory.add(buildComplaintHistory(complaint.getCurrentState(), complainantName));
+            complaintHistory.add(buildComplaintHistory(complaint.getCurrentState()));
             complaintHistory.addAll(complaint.getStateHistory()
                     .stream()
                     .sorted(Comparator.comparing(StateHistory<Position>::getLastModifiedDate).reversed())
-                    .map(stateHistory -> buildComplaintHistory(stateHistory.asState(), complainantName))
+                    .map(stateHistory -> buildComplaintHistory(stateHistory.asState()))
                     .collect(Collectors.toList()));
         }
         return complaintHistory;
     }
 
-    private HashMap<String, Object> buildComplaintHistory(State<Position> state, String complainantName) {
+    private HashMap<String, Object> buildComplaintHistory(State<Position> state) {
         HashMap<String, Object> history = new HashMap<>();
         history.put(DATE, state.getDateInfo());
         history.put(COMMENT, defaultString(state.getComments()));
-        history.put(STATUS, state.getLastModifiedBy().getUsername().equals(SYSTEM_USERNAME) ? COMPLAINT_ESCALATED : state.getValue());
-        history.put(UPDATEDBY, state.getLastModifiedBy().getType().equals(UserType.CITIZEN) ?
-                complainantName : state.getLastModifiedBy().getName());
+        history.put(STATUS, state.getLastModifiedBy().getUsername().equals(SYSTEM_USERNAME) ?
+                COMPLAINT_ESCALATED : state.getValue());
+        String[] senderName = state.getSenderName().split(DELIMITER_COLON);
+        history.put(UPDATEDBY, senderName.length > 1 ? senderName[1] : senderName[0]);
 
         Position ownerPosition = state.getOwnerPosition();
         User user = state.getOwnerUser();
