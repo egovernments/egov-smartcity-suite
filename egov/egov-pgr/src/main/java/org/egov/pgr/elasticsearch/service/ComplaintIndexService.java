@@ -240,16 +240,16 @@ public class ComplaintIndexService {
         complaintIndex.setIsSLA("Y");
         complaintIndex.setIfSLA(1);
         complaintIndex.setInitialFunctionaryName(
-                assignedUser != null ? assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName()
-                        : NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName());
+                assignedUser == null ? NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName()
+                        : assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName());
         complaintIndex.setInitialFunctionaryAssigneddate(new Date());
         complaintIndex.setInitialFunctionarySLADays(getFunctionarySlaDays(complaint));
         complaintIndex.setInitialFunctionaryAgeingFromDue(0);
         complaintIndex.setInitialFunctionaryIsSLA("Y");
         complaintIndex.setInitialFunctionaryIfSLA(1);
         complaintIndex.setCurrentFunctionaryName(
-                assignedUser != null ? assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName()
-                        : NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName());
+                assignedUser == null ? NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName()
+                        : assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName());
         complaintIndex.setCurrentFunctionaryMobileNumber(Objects.nonNull(assignedUser)
                 ? assignedUser.getMobileNumber() : EMPTY);
         complaintIndex.setInitialFunctionaryMobileNumber(Objects.nonNull(assignedUser)
@@ -292,9 +292,9 @@ public class ComplaintIndexService {
         // If complaint is forwarded
         if (complaint.nextOwnerId() != null && !complaint.nextOwnerId().equals(0L)) {
             complaintIndex
-                    .setCurrentFunctionaryName(assignedUser != null
-                            ? assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName()
-                            : NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName());
+                    .setCurrentFunctionaryName(assignedUser == null
+                            ? NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName()
+                            : assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName());
             complaintIndex.setCurrentFunctionaryMobileNumber(Objects.nonNull(assignedUser)
                     ? assignedUser.getMobileNumber() : EMPTY);
             complaintIndex.setCurrentFunctionaryAssigneddate(new Date());
@@ -308,8 +308,8 @@ public class ComplaintIndexService {
             complaintIndex.setComplaintIsClosed("Y");
             complaintIndex.setIfClosed(1);
             complaintIndex.setClosedByFunctionaryName(
-                    assignedUser != null ? assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName()
-                            : NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName());
+                    assignedUser == null ? NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName()
+                            : assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName());
             final long duration = Math.abs(complaintIndex.getCreatedDate().getTime() - new Date().getTime())
                     / (24 * 60 * 60 * 1000);
             complaintIndex.setComplaintDuration(duration);
@@ -356,7 +356,7 @@ public class ComplaintIndexService {
 
         final Position position = complaint.getAssignee();
         final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(position.getId(), new Date());
-        final User assignedUser = !assignments.isEmpty() ? assignments.get(0).getEmployee() : null;
+        final User assignedUser = assignments.isEmpty() ? null : assignments.get(0).getEmployee();
         final City city = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         complaintIndex.setCityCode(city.getCode());
         complaintIndex.setCityDistrictCode(city.getDistrictCode());
@@ -368,8 +368,8 @@ public class ComplaintIndexService {
         // Update current Functionary Complaint index variables
         complaintIndex
                 .setCurrentFunctionaryName(
-                        assignedUser != null ? assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName()
-                                : NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName());
+                        assignedUser == null ? NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName()
+                                : assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName());
         complaintIndex.setCurrentFunctionaryMobileNumber(Objects.nonNull(assignedUser)
                 ? assignedUser.getMobileNumber() : EMPTY);
         complaintIndex.setCurrentFunctionaryAssigneddate(new Date());
@@ -379,8 +379,8 @@ public class ComplaintIndexService {
         // For Escalation level1
         if (escalationLevel == 0) {
             complaintIndex.setEscalation1FunctionaryName(
-                    assignedUser != null ? assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName()
-                            : NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName());
+                    assignedUser == null ? NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName()
+                            : assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName());
             complaintIndex.setEscalation1FunctionaryAssigneddate(new Date());
             complaintIndex.setEscalation1FunctionarySLADays(getFunctionarySlaDays(complaint));
             complaintIndex.setEscalation1FunctionaryAgeingFromDue(0);
@@ -390,8 +390,8 @@ public class ComplaintIndexService {
         } else if (escalationLevel == 1) {
             // update escalation level 2 fields
             complaintIndex.setEscalation2FunctionaryName(
-                    assignedUser != null ? assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName()
-                            : NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName());
+                    assignedUser == null ? NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName()
+                            : assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName());
             complaintIndex.setEscalation2FunctionaryAssigneddate(new Date());
             complaintIndex.setEscalation2FunctionarySLADays(getFunctionarySlaDays(complaint));
             complaintIndex.setEscalation2FunctionaryAgeingFromDue(0);
@@ -401,8 +401,8 @@ public class ComplaintIndexService {
         } else if (escalationLevel == 2) {
             // update escalation level 3 fields
             complaintIndex.setEscalation3FunctionaryName(
-                    assignedUser != null ? assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName()
-                            : NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName());
+                    assignedUser == null ? NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName()
+                            : assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName());
             complaintIndex.setEscalation3FunctionaryAssigneddate(new Date());
             complaintIndex.setEscalation3FunctionarySLADays(getFunctionarySlaDays(complaint));
             complaintIndex.setEscalation3FunctionaryAgeingFromDue(0);
@@ -500,9 +500,9 @@ public class ComplaintIndexService {
         if (currentOwner != null) {
             final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(currentOwner.getId(), new Date());
             final User assignedUser = !assignments.isEmpty() ? assignments.get(0).getEmployee() : null;
-            complaintIndex.setCurrentFunctionaryName(assignedUser != null
-                    ? assignedUser.getName() + " : " + currentOwner.getDeptDesig().getDesignation().getName()
-                    : NOASSIGNMENT + " : " + currentOwner.getDeptDesig().getDesignation().getName());
+            complaintIndex.setCurrentFunctionaryName(assignedUser == null
+                    ? NOASSIGNMENT + " : " + currentOwner.getDeptDesig().getDesignation().getName()
+                    : assignedUser.getName() + " : " + currentOwner.getDeptDesig().getDesignation().getName());
             complaintIndex.setCurrentFunctionaryMobileNumber(Objects.nonNull(assignedUser)
                     ? assignedUser.getMobileNumber() : EMPTY);
         }
@@ -598,10 +598,7 @@ public class ComplaintIndexService {
         final Designation designation = position.getDeptDesig().getDesignation();
         final Escalation complaintEscalation = escalationService
                 .getEscalationByComplaintTypeAndDesignation(complaint.getComplaintType().getId(), designation.getId());
-        if (complaintEscalation != null)
-            return complaintEscalation.getNoOfHrs();
-        else
-            return 0;
+        return complaintEscalation == null ? 0 : complaintEscalation.getNoOfHrs();
     }
 
     // These are the methods for dashboard api's written
