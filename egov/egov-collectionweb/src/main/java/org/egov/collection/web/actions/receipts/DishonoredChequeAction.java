@@ -213,12 +213,12 @@ public class DishonoredChequeAction extends SearchFormAction {
 
             dishonorChequeService.createDishonorCheque(chequeForm);
         } catch (final ValidationException e) {
-            LOGGER.error("Error in DishonorCheque >>>>" + e);
+            LOGGER.error("Error in DishonorCheque >>>>", e);
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
-            LOGGER.error("Error in DishonorCheque >>>>" + e);
+            LOGGER.error("Error in DishonorCheque >>>>", e);
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);

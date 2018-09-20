@@ -366,7 +366,7 @@ public class ReceiptAction extends BaseFormAction {
         try {
             decodedBillXml = java.net.URLDecoder.decode(getCollectXML(), "UTF-8");
         } catch (final UnsupportedEncodingException e) {
-            LOGGER.error(getText("billreceipt.error.improperbilldata") + e);
+            LOGGER.error(getText("billreceipt.error.improperbilldata"), e);
             throw new ApplicationRuntimeException(e.getMessage());
         }
         return decodedBillXml;

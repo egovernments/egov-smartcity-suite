@@ -50,6 +50,7 @@ package org.egov.collection.web.actions.citizen.reports;
 import org.apache.commons.io.IOUtils;
 import org.egov.collection.entity.OnlinePaymentResult;
 import org.egov.collection.service.CollectionReportService;
+import org.egov.infra.exception.ApplicationException;
 import org.hibernate.SQLQuery;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,7 +98,7 @@ public class OnlinePaymentReportController {
 
     @RequestMapping(value = "/citizen/onlinePaymentReport/result", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody void springPaginationDataTablesUpdate(final HttpServletRequest request,
-            final HttpServletResponse response, final Model model) throws IOException {
+            final HttpServletResponse response, final Model model) throws IOException, ApplicationException {
 
         final String districtname = request.getParameter("districtname");
         final String ulbname = request.getParameter("ulbname");
