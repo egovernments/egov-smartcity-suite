@@ -245,41 +245,48 @@
                         <i class="fa fa-angle-down" id="toggle-his-icon"></i>
                     </div>
                 </div>
-                <div class="panel-body history-slide">
-                    <div class="row hidden-xs visible-sm visible-md visible-lg view-content header-color">
-                        <div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.date"/></div>
-                        <div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.updated.by"/></div>
-                        <div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.status"/></div>
-                        <div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.curr.owner"/></div>
-                        <div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.department"/></div>
-                        <div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.comments"/></div>
-                    </div>
+                <div class="panel-body history-slide table-responsive">
                     <c:choose>
                         <c:when test="${!complaintHistory.isEmpty()}">
-                            <c:forEach items="${complaintHistory}" var="history">
-                                <div class="row  add-border">
-                                    <div class="col-sm-2 col-xs-12 add-margin">
-                                        <fmt:formatDate value="${history.date}" var="historyDate"
-                                                        pattern="E dd/MMM/yyyy HH:mm a"/>
-                                        <c:out value="${historyDate}"/>
-                                    </div>
-                                    <div class="col-sm-2 col-xs-12 add-margin">
-                                        <c:out value="${history.updatedBy}"/>
-                                    </div>
-                                    <div class="col-sm-2 col-xs-12 add-margin">
-                                        <c:out value="${history.status}"/>
-                                    </div>
-                                    <div class="col-sm-2 col-xs-12 add-margin">
-                                        <c:out value="${history.user}"/>
-                                    </div>
-                                    <div class="col-sm-2 col-xs-12 add-margin">
-                                        <c:out value="${history.department}"/>
-                                    </div>
-                                    <div class="col-sm-2 col-xs-12 add-margin">
-                                        <c:out value="${history.comments}"/>&nbsp;
-                                    </div>
-                                </div>
-                            </c:forEach>
+                            <table class="table table-bordered nowrap" style="width:100%">
+                                <thead>
+                                <tr>
+                                    <th class="text-center"><spring:message code="lbl.updated.on"/></th>
+                                    <th class="text-center"><spring:message code="lbl.updated.by"/></th>
+                                    <th class="text-center"><spring:message code="lbl.status"/></th>
+                                    <th class="text-center"><spring:message code="lbl.curr.owner"/></th>
+                                    <th class="text-center"><spring:message code="lbl.department"/></th>
+                                    <th class="text-center"><spring:message code="lbl.comments"/></th>
+                                </tr>
+                                </thead>
+
+
+                                <tbody>
+                                <c:forEach items="${complaintHistory}" var="history">
+                                    <tr>
+                                        <td>
+                                            <fmt:formatDate value="${history.date}" var="historyDate" pattern="E dd/MMM/yyyy hh:mm a"/>
+                                            <c:out value="${historyDate}"/>
+                                        </td>
+                                        <td>
+                                            <c:out value="${history.updatedBy}"/>
+                                        </td>
+                                        <td>
+                                            <c:out value="${history.status}"/>
+                                        </td>
+                                        <td>
+                                            <c:out value="${history.user}"/>
+                                        </td>
+                                        <td>
+                                            <c:out value="${history.department}"/>
+                                        </td>
+                                        <td>
+                                            <c:out value="${history.comments}" default="N/A"/>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                                </tbody>
+                            </table>
                         </c:when>
                         <c:otherwise>
                             <div class="col-md-3 col-xs-6 add-margin"><spring:message code="msg.history.not.found"/></div>

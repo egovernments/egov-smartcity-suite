@@ -137,7 +137,7 @@ public class ComplaintUpdationController {
     public void getComplaint(@PathVariable String crnNo, Model model) {
         Complaint complaint = complaintService.getComplaintByCRN(crnNo);
         model.addAttribute(COMPLAINT_ATTRIB, complaint);
-        model.addAttribute("complaintHistory", complaintHistoryService.getHistory(complaint));
+        model.addAttribute("complaintHistory", complaintHistoryService.getComplaintHistory(complaint));
         model.addAttribute("skippableForward", complaintProcessFlowService.canSendToPreviousAssignee(complaint));
         model.addAttribute("status", complaintStatusMappingService.getStatusByRoleAndCurrentStatus(securityUtils.getCurrentUser().getRoles(), complaint.getStatus()));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());

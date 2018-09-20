@@ -744,7 +744,7 @@ public class ComplaintController extends ApiController {
         try {
             final HashMap<String, Object> container = new HashMap<>();
             final Complaint complaint = complaintService.getComplaintByCRN(complaintNo);
-            container.put("comments", complaintHistoryService.getHistory(complaint));
+            container.put("comments", complaintHistoryService.getComplaintHistory(complaint));
             return getResponseHandler().setDataAdapter(new ComplaintTypeAdapter()).success(container);
         } catch (final Exception e) {
             LOGGER.error(EGOV_API_ERROR, e);
