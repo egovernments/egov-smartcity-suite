@@ -85,7 +85,6 @@ public class ComplaintHistoryService {
     private static final String DATE = "date";
     private static final String COMMENT = "comments";
     private static final String UPDATEDBY = "updatedBy";
-    private static final String USERTYPE = "usertype";
     private static final String USER = "user";
     private static final String STATUS = "status";
     private static final String DEPT = "department";
@@ -135,7 +134,6 @@ public class ComplaintHistoryService {
             }
         } else {
             history.put(USER, user.getName());
-            history.put(USERTYPE, user.getType());
             Department department = eisCommonService.getDepartmentForUser(user.getId());
             history.put(DEPT, department == null ? NA : department.getName());
         }
