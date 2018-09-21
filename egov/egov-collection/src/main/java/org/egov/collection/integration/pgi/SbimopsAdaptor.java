@@ -65,7 +65,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
@@ -242,7 +241,7 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
             }
 
             sbiPaymentResponse.setAuthStatus(getTransactionStatus(responseMap.get(SBIMOPS_STATUS)));
-            if (StringUtils.isNotBlank(sbiPaymentResponse.getAuthStatus()) &&
+            if (isNotBlank(sbiPaymentResponse.getAuthStatus()) &&
                     sbiPaymentResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_FAILED)
                     && (!responseMap.get(SBIMOPS_STATUS).equals("F")))
                 LOGGER.error("CFMSFAILED TRANSACTION RESPONSE: " + response);
@@ -299,7 +298,7 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
             sbimopsResponse.setAuthStatus(getTransactionStatus(transactionStatus));
             sbimopsResponse.setErrorDescription(transactionStatus);
 
-            if (StringUtils.isNotBlank(sbimopsResponse.getAuthStatus()) &&
+            if (isNotBlank(sbimopsResponse.getAuthStatus()) &&
                     sbimopsResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_FAILED)
                     && (!responseParameterMap.get(SBIMOPS_STATUS).equals("F")))
                 LOGGER.error("CFMSFAILED TRANSACTION RESPONSE: " + response);
