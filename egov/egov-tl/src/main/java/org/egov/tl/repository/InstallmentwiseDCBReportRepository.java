@@ -58,6 +58,6 @@ import java.util.List;
 public interface InstallmentwiseDCBReportRepository
         extends InstallmentwiseDCBReportRepositoryCustom, JpaRepository<InstallmentWiseDCB, Long> {
 
-    List<InstallmentWiseDCB> findAllByLicenseid(Long licenseId);
+    List<InstallmentWiseDCB> findAllByLicenseId(Long licenseId);
 
 }

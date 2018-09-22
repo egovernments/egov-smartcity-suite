@@ -71,18 +71,18 @@ public class InstallmentWiseDCBResponse implements DataTableJsonAdapter<Installm
         final JsonArray installmentWiseDCBFormData = new JsonArray();
         installmentWiseDCBFormResult.forEach(installmentWiseDCBForm -> {
             final JsonObject installmentWiseResponse = new JsonObject();
-            installmentWiseResponse.addProperty("licenseid", installmentWiseDCBForm.getLicenseid());
+            installmentWiseResponse.addProperty("licenseId", installmentWiseDCBForm.getLicenseId());
             installmentWiseResponse.addProperty("active", toYesOrNo(installmentWiseDCBForm.isActive()));
-            installmentWiseResponse.addProperty("licensenumber", defaultIfBlank(installmentWiseDCBForm.getLicensenumber()));
-            installmentWiseResponse.addProperty("curr_demand", installmentWiseDCBForm.getCurrentdemand());
-            installmentWiseResponse.addProperty("arr_demand", installmentWiseDCBForm.getArreardemand());
-            installmentWiseResponse.addProperty("total_demand", installmentWiseDCBForm.getTotaldemand());
-            installmentWiseResponse.addProperty("curr_coll", installmentWiseDCBForm.getCurrentcollection());
-            installmentWiseResponse.addProperty("arr_coll", installmentWiseDCBForm.getArrearcollection());
-            installmentWiseResponse.addProperty("total_coll", installmentWiseDCBForm.getTotalcollection());
-            installmentWiseResponse.addProperty("curr_balance", installmentWiseDCBForm.getCurrentbalance());
-            installmentWiseResponse.addProperty("arr_balance", installmentWiseDCBForm.getArrearbalance());
-            installmentWiseResponse.addProperty("total_balance", installmentWiseDCBForm.getTotalbalance());
+            installmentWiseResponse.addProperty("licenseNumber", defaultIfBlank(installmentWiseDCBForm.getLicenseNumber()));
+            installmentWiseResponse.addProperty("curr_demand", installmentWiseDCBForm.getCurrentDemand());
+            installmentWiseResponse.addProperty("arr_demand", installmentWiseDCBForm.getArrearDemand());
+            installmentWiseResponse.addProperty("total_demand", installmentWiseDCBForm.getTotalDemand());
+            installmentWiseResponse.addProperty("curr_coll", installmentWiseDCBForm.getCurrentCollection());
+            installmentWiseResponse.addProperty("arr_coll", installmentWiseDCBForm.getArrearCollection());
+            installmentWiseResponse.addProperty("total_coll", installmentWiseDCBForm.getTotalCollection());
+            installmentWiseResponse.addProperty("curr_balance", installmentWiseDCBForm.getCurrentBalance());
+            installmentWiseResponse.addProperty("arr_balance", installmentWiseDCBForm.getArrearBalance());
+            installmentWiseResponse.addProperty("total_balance", installmentWiseDCBForm.getTotalBalance());
 
             installmentWiseDCBFormData.add(installmentWiseResponse);
         });

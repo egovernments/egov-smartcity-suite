@@ -64,25 +64,25 @@ public class InstallmentWiseDCB {
 
     @Id
     private Long id;
-    private String licensenumber;
-    private Long licenseid;
-    private String licaddress;
-    private String username;
-    private Long wardid;
+    private String licenseNumber;
+    private Long licenseId;
+    private String licAddress;
+    private String userName;
+    private Long wardId;
     private Long locality;
 
-    private BigDecimal currentdemand;
+    private BigDecimal currentDemand;
 
-    private BigDecimal currentcollection;
+    private BigDecimal currentCollection;
 
-    private BigDecimal currentbalance;
+    private BigDecimal currentBalance;
 
     @Transient
-    private BigDecimal arreardemand;
+    private BigDecimal arrearDemand;
     @Transient
-    private BigDecimal arrearcollection;
+    private BigDecimal arrearCollection;
     @Transient
-    private BigDecimal arrearbalance;
+    private BigDecimal arrearBalance;
 
     private boolean active;
 
@@ -92,18 +92,18 @@ public class InstallmentWiseDCB {
 
     private String financialYear;
 
-    public InstallmentWiseDCB(long licenseid, String licensenumber, boolean active, BigDecimal currentdemand,
-                              BigDecimal currentcollection, BigDecimal currentbalance, BigDecimal arreardemand,
-                              BigDecimal arrearcollection, BigDecimal arrearbalance) {
-        this.licenseid = licenseid;
-        this.licensenumber = licensenumber;
+    public InstallmentWiseDCB(long licenseId, String licenseNumber, boolean active, BigDecimal currentDemand,
+                              BigDecimal currentCollection, BigDecimal currentBalance, BigDecimal arrearDemand,
+                              BigDecimal arrearCollection, BigDecimal arrearBalance) {
+        this.licenseId = licenseId;
+        this.licenseNumber = licenseNumber;
         this.active = active;
-        this.currentdemand = currentdemand;
-        this.currentcollection = currentcollection;
-        this.currentbalance = currentbalance;
-        this.arreardemand = arreardemand;
-        this.arrearcollection = arrearcollection;
-        this.arrearbalance = arrearbalance;
+        this.currentDemand = currentDemand;
+        this.currentCollection = currentCollection;
+        this.currentBalance = currentBalance;
+        this.arrearDemand = arrearDemand;
+        this.arrearCollection = arrearCollection;
+        this.arrearBalance = arrearBalance;
 
     }
 
@@ -123,44 +123,12 @@ public class InstallmentWiseDCB {
         this.id = id;
     }
 
-    public String getLicensenumber() {
-        return licensenumber;
+    public String getLicenseNumber() {
+        return licenseNumber;
     }
 
-    public void setLicensenumber(String licensenumber) {
-        this.licensenumber = licensenumber;
-    }
-
-    public Long getLicenseid() {
-        return licenseid;
-    }
-
-    public void setLicenseid(Long licenseid) {
-        this.licenseid = licenseid;
-    }
-
-    public String getLicaddress() {
-        return licaddress;
-    }
-
-    public void setLicaddress(String licaddress) {
-        this.licaddress = licaddress;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public Long getWardid() {
-        return wardid;
-    }
-
-    public void setWardid(Long wardid) {
-        this.wardid = wardid;
+    public void setLicenseNumber(String licenseNumber) {
+        this.licenseNumber = licenseNumber;
     }
 
     public Long getLocality() {
@@ -171,54 +139,6 @@ public class InstallmentWiseDCB {
         this.locality = locality;
     }
 
-    public BigDecimal getCurrentdemand() {
-        return currentdemand;
-    }
-
-    public void setCurrentdemand(BigDecimal currentdemand) {
-        this.currentdemand = currentdemand;
-    }
-
-    public BigDecimal getCurrentcollection() {
-        return currentcollection;
-    }
-
-    public void setCurrentcollection(BigDecimal currentcollection) {
-        this.currentcollection = currentcollection;
-    }
-
-    public BigDecimal getCurrentbalance() {
-        return currentbalance;
-    }
-
-    public void setCurrentbalance(BigDecimal currentbalance) {
-        this.currentbalance = currentbalance;
-    }
-
-    public BigDecimal getArreardemand() {
-        return arreardemand;
-    }
-
-    public void setArreardemand(BigDecimal arreardemand) {
-        this.arreardemand = arreardemand;
-    }
-
-    public BigDecimal getArrearcollection() {
-        return arrearcollection;
-    }
-
-    public void setArrearcollection(BigDecimal arrearcollection) {
-        this.arrearcollection = arrearcollection;
-    }
-
-    public BigDecimal getArrearbalance() {
-        return arrearbalance;
-    }
-
-    public void setArrearbalance(BigDecimal arrearbalance) {
-        this.arrearbalance = arrearbalance;
-    }
-
     public Date getInstallment() {
         return installment;
     }
@@ -227,19 +147,84 @@ public class InstallmentWiseDCB {
         this.installment = installment;
     }
 
-    public BigDecimal getTotaldemand() {
-        return (currentdemand == null ? BigDecimal.ZERO : currentdemand).add(arreardemand == null ? BigDecimal.ZERO
-                : arreardemand);
+    public Long getLicenseId() {
+        return licenseId;
     }
 
-    public BigDecimal getTotalcollection() {
-        return (currentcollection == null ? BigDecimal.ZERO : currentcollection)
-                .add(arrearcollection == null ? BigDecimal.ZERO : arrearcollection);
+    public void setLicenseId(Long licenseId) {
+        this.licenseId = licenseId;
     }
 
-    public BigDecimal getTotalbalance() {
-        return (currentbalance == null ? BigDecimal.ZERO : currentbalance).add(arrearbalance == null ? BigDecimal.ZERO
-                : arrearbalance);
+    public String getLicAddress() {
+        return licAddress;
+    }
+
+    public void setLicAddress(String licAddress) {
+        this.licAddress = licAddress;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public Long getWardId() {
+        return wardId;
+    }
+
+    public void setWardId(Long wardId) {
+        this.wardId = wardId;
+    }
+
+    public BigDecimal getCurrentDemand() {
+        return currentDemand;
+    }
+
+    public void setCurrentDemand(BigDecimal currentDemand) {
+        this.currentDemand = currentDemand;
+    }
+
+    public BigDecimal getCurrentCollection() {
+        return currentCollection;
+    }
+
+    public void setCurrentCollection(BigDecimal currentCollection) {
+        this.currentCollection = currentCollection;
+    }
+
+    public BigDecimal getCurrentBalance() {
+        return currentBalance;
+    }
+
+    public void setCurrentBalance(BigDecimal currentBalance) {
+        this.currentBalance = currentBalance;
+    }
+
+    public BigDecimal getArrearDemand() {
+        return arrearDemand;
+    }
+
+    public void setArrearDemand(BigDecimal arrearDemand) {
+        this.arrearDemand = arrearDemand;
+    }
+
+    public BigDecimal getArrearCollection() {
+        return arrearCollection;
+    }
+
+    public void setArrearCollection(BigDecimal arrearCollection) {
+        this.arrearCollection = arrearCollection;
+    }
+
+    public BigDecimal getArrearBalance() {
+        return arrearBalance;
+    }
+
+    public void setArrearBalance(BigDecimal arrearBalance) {
+        this.arrearBalance = arrearBalance;
     }
 
     public boolean isActive() {
@@ -264,5 +249,20 @@ public class InstallmentWiseDCB {
 
     public void setFinancialYear(String financialYear) {
         this.financialYear = financialYear;
+    }
+
+    public BigDecimal getTotalDemand() {
+        return (currentDemand == null ? BigDecimal.ZERO : currentDemand).add(arrearDemand == null ? BigDecimal.ZERO
+                : arrearDemand);
+    }
+
+    public BigDecimal getTotalCollection() {
+        return (currentCollection == null ? BigDecimal.ZERO : currentCollection)
+                .add(arrearCollection == null ? BigDecimal.ZERO : arrearCollection);
+    }
+
+    public BigDecimal getTotalBalance() {
+        return (currentBalance == null ? BigDecimal.ZERO : currentBalance).add(arrearBalance == null ? BigDecimal.ZERO
+                : arrearBalance);
     }
 }

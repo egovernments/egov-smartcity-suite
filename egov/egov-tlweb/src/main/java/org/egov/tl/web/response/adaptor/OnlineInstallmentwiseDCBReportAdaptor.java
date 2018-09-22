@@ -64,9 +64,9 @@ public class OnlineInstallmentwiseDCBReportAdaptor implements JsonSerializer<Ins
         if (installmentwiseReportObj != null) {
             installmentwiseResponse.addProperty("installment", new StringBuilder(installmentwiseReportObj.getFinancialYear())
                     .append(" / ").append(installmentwiseReportObj.getDemandReason()).toString());
-            installmentwiseResponse.addProperty("currentDemand", installmentwiseReportObj.getCurrentdemand());
-            installmentwiseResponse.addProperty("currentCollection", installmentwiseReportObj.getCurrentcollection());
-            installmentwiseResponse.addProperty("currentBalance", installmentwiseReportObj.getCurrentbalance());
+            installmentwiseResponse.addProperty("currentDemand", installmentwiseReportObj.getCurrentDemand());
+            installmentwiseResponse.addProperty("currentCollection", installmentwiseReportObj.getCurrentCollection());
+            installmentwiseResponse.addProperty("currentBalance", installmentwiseReportObj.getCurrentBalance());
         }
         return installmentwiseResponse;
     }

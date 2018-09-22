@@ -67,7 +67,7 @@
                     <label class="col-sm-3 control-label text-right"><spring:message
                             code="license.licensenumber"/></label>
                     <div class="col-sm-6 add-margin">
-                        <input type="text" name="licensenumber" id="licensenumber"
+                        <input type="text" name="licenseNumber" id="licensenumber"
                                class="form-control patternvalidation" maxlength="15"/>
                     </div>
                 </div>
