@@ -87,7 +87,6 @@ public class LegacyLicenseService extends LicenseService {
 
     private static final String ARREAR = "arrear";
     private static final String CURRENT = "current";
-    private static final String TRADE_LICENSE = "Trade License";
 
     @Autowired
     private LicenseStatusService licenseStatusService;

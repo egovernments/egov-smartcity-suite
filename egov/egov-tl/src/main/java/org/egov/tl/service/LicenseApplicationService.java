@@ -57,7 +57,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
 
@@ -130,11 +129,7 @@ public class LicenseApplicationService extends TradeLicenseService {
         license.setLicenseAppType(licenseAppTypeService.getRenewLicenseApplicationType());
         if (!currentUserIsMeeseva())
             license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
-        final BigDecimal currentDemandAmount = recalculateLicenseFee(license.getCurrentDemand());
-        final BigDecimal feematrixDmdAmt = calculateFeeAmount(license);
-        if (feematrixDmdAmt.compareTo(currentDemandAmount) >= 0)
-            recalculateDemand(this.feeMatrixService.getLicenseFeeDetails(license,
-                    license.getDemand().getEgInstallmentMaster().getFromDate()), license);
+        updateDemandForChangeTradeArea(license);
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
         processAndStoreDocument(license);
         if (license.isPaid())
@@ -156,10 +151,7 @@ public class LicenseApplicationService extends TradeLicenseService {
     @Transactional
     public void updateTradeLicense(TradeLicense license, WorkflowBean workflowBean) {
         processAndStoreDocument(license);
-        final BigDecimal currentDemandAmount = recalculateLicenseFee(license.getCurrentDemand());
-        final BigDecimal feematrixDmdAmt = calculateFeeAmount(license);
-        if (feematrixDmdAmt.compareTo(currentDemandAmount) >= 0)
-            updateDemandForChangeTradeArea(license);
+        updateDemandForChangeTradeArea(license);
         license.setCollectionPending(!license.isPaid());
         if (BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             licenseProcessWorkflowService.getRejectTransition(license, workflowBean);

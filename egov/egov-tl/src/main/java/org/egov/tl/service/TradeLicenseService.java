@@ -96,6 +96,7 @@ import org.egov.tl.entity.contracts.DemandNoticeForm;
 import org.egov.tl.entity.contracts.OnlineSearchForm;
 import org.egov.tl.entity.contracts.SearchForm;
 import org.egov.tl.entity.enums.RateType;
+import org.egov.tl.entity.FeeType;
 import org.egov.tl.repository.LicenseDocumentTypeRepository;
 import org.egov.tl.repository.LicenseRepository;
 import org.egov.tl.repository.SearchTradeRepository;
@@ -134,7 +135,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.TreeMap;
 
 import static java.lang.String.format;
@@ -143,6 +144,8 @@ import static org.apache.commons.lang.StringEscapeUtils.escapeXml;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.demand.utils.DemandConstants.DEMAND_REASON_CATEGORY_FEE;
+import static org.egov.demand.utils.DemandConstants.DEMAND_REASON_CATEGORY_PENALTY;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getMunicipalityName;
 import static org.egov.infra.reporting.engine.ReportFormat.PDF;
 import static org.egov.infra.reporting.util.ReportUtil.CONTENT_TYPES;
@@ -315,48 +318,52 @@ public class TradeLicenseService {
                 ld.getEgDemandDetails().add(EgDemandDetails.fromReasonAndAmounts(tradeAmt, reason, ZERO));
             }
         }
-
         calcPenaltyDemandDetails(license, ld);
         license.setDemand(ld);
         license.recalculateBaseDemand();
     }
 
     private BigDecimal calculateAmountByRateType(TradeLicense license, FeeMatrixDetail feeMatrixDetail) {
-        Long feeTypeId = feeTypeService.findByName(LICENSE_FEE_TYPE).getId();
-        LicenseSubCategoryDetails licenseSubCategoryDetails = subCategoryDetailsService.getSubcategoryDetailBySubcategoryAndFeeType(license.getTradeName().getId(), feeTypeId);
+        List<FeeType> feeTypes = feeTypeService.findAll();
+        List<LicenseSubCategoryDetails> licenseSubCategoryDetails = subCategoryDetailsService
+                .getSubcategoryDetailBySubcategoryAndFeeType(license.getTradeName(), feeTypes);
         BigDecimal amt = ZERO;
-        if (licenseSubCategoryDetails != null) {
-            if (RateType.FLAT_BY_RANGE.equals(licenseSubCategoryDetails.getRateType()))
-                amt = feeMatrixDetail.getAmount();
-            else if (RateType.PERCENTAGE.equals(licenseSubCategoryDetails.getRateType()))
-                amt = license.getTradeArea_weight().multiply(feeMatrixDetail.getAmount())
-                        .divide(BigDecimal.valueOf(100));
-            else if (RateType.UNIT_BY_RANGE.equals(licenseSubCategoryDetails.getRateType()))
-                amt = license.getTradeArea_weight().multiply(feeMatrixDetail.getAmount());
+        for (LicenseSubCategoryDetails subCategoryDetails : licenseSubCategoryDetails) {
+            if (RateType.FLAT_BY_RANGE.equals(subCategoryDetails.getRateType()))
+                amt = amt.add(feeMatrixDetail.getAmount());
+            else if (RateType.PERCENTAGE.equals(subCategoryDetails.getRateType()))
+                amt = amt.add(license.getTradeArea_weight().multiply(feeMatrixDetail.getAmount())
+                        .divide(BigDecimal.valueOf(100)));
+            else if (RateType.UNIT_BY_RANGE.equals(subCategoryDetails.getRateType()))
+                amt = amt.add(license.getTradeArea_weight().multiply(feeMatrixDetail.getAmount()));
         }
         return amt;
     }
 
     public TradeLicense updateDemandForChangeTradeArea(TradeLicense license) {
+        final BigDecimal latestFeePaid = getFeePaidForCurrentInstallment(license.getCurrentDemand());
         final EgDemand egDemand = license.getDemand();
         Date date = new Date();
-        final Set<EgDemandDetails> demandDetails = egDemand.getEgDemandDetails();
-        final Date licenseDate = license.isNewApplication() ? license.getCommencementDate()
-                : egDemand.getEgInstallmentMaster().getFromDate();
-        final List<FeeMatrixDetail> feeList = this.feeMatrixService.getLicenseFeeDetails(license, licenseDate);
-        for (final EgDemandDetails dmd : demandDetails)
-            for (final FeeMatrixDetail fm : feeList)
-                if (egDemand.getEgInstallmentMaster().equals(dmd.getEgDemandReason().getEgInstallmentMaster()) &&
-                        dmd.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                                .equalsIgnoreCase(fm.getFeeMatrix().getFeeType().getName())) {
-                    BigDecimal tradeAmt = calculateAmountByRateType(license, fm);
-                    dmd.setAmount(tradeAmt);
-                    dmd.setModifiedDate(date);
-                }
-        calcPenaltyDemandDetails(license, egDemand);
-        license.recalculateBaseDemand();
+        if (calculateFeeAmount(license).compareTo(latestFeePaid) > 0) {
+            final Date licenseDate = license.isNewApplication() ? license.getCommencementDate()
+                    : egDemand.getEgInstallmentMaster().getFromDate();
+            final List<FeeMatrixDetail> feeList = this.feeMatrixService.getLicenseFeeDetails(license, licenseDate);
+            recalculateDemand(feeList, license);
+        } else {
+            for (final EgDemandDetails dmd : getLatestDemandDetails(egDemand)) {
+                dmd.setAmount(dmd.getAmtCollected());
+                dmd.setModifiedDate(date);
+            }
+            license.recalculateBaseDemand();
+        }
         return license;
 
+    }
+
+    public List<EgDemandDetails> getLatestDemandDetails(EgDemand egDemand) {
+        return egDemand.getEgDemandDetails().stream().filter(egDemandDetails ->
+                egDemand.getEgInstallmentMaster().equals(egDemandDetails.getEgDemandReason().getEgInstallmentMaster()))
+                .collect(Collectors.toList());
     }
 
     public void calcPenaltyDemandDetails(TradeLicense license, EgDemand demand) {
@@ -385,7 +392,7 @@ public class TradeLicenseService {
         final Map<Installment, EgDemandDetails> penaltyDemandDetails = new TreeMap<>();
         if (currentDemand != null)
             for (final EgDemandDetails dmdDet : currentDemand.getEgDemandDetails())
-                if (dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(PENALTY_DMD_REASON_CODE))
+                if (dmdDet.getReasonCategory().equals(DEMAND_REASON_CATEGORY_PENALTY))
                     penaltyDemandDetails.put(dmdDet.getEgDemandReason().getEgInstallmentMaster(), dmdDet);
 
         return penaltyDemandDetails;
@@ -395,7 +402,7 @@ public class TradeLicenseService {
         final Map<Installment, EgDemandDetails> demandDetails = new TreeMap<>();
         if (currentDemand != null)
             for (final EgDemandDetails dmdDet : currentDemand.getEgDemandDetails())
-                if (!dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(PENALTY_DMD_REASON_CODE))
+                if (!dmdDet.getReasonCategory().equals(DEMAND_REASON_CATEGORY_PENALTY))
                     demandDetails.put(dmdDet.getEgDemandReason().getEgInstallmentMaster(), dmdDet);
 
         return demandDetails;
@@ -405,7 +412,7 @@ public class TradeLicenseService {
                                                               EgDemand demand) {
         final Map<Installment, BigDecimal> installmentPenalty = new HashMap<>();
         for (final EgDemandDetails demandDetails : demand.getEgDemandDetails()) {
-            if (!demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(PENALTY_DMD_REASON_CODE)) {
+            if (!demandDetails.getReasonCategory().equals(DEMAND_REASON_CATEGORY_PENALTY)) {
                 if (fromDate == null) {
                     installmentPenalty.put(demandDetails.getEgDemandReason().getEgInstallmentMaster(),
                             penaltyRatesService.calculatePenalty(license, demandDetails.getEgDemandReason().getEgInstallmentMaster().getFromDate(),
@@ -427,13 +434,13 @@ public class TradeLicenseService {
                     PENALTY_DMD_REASON_CODE,
                     module);
             if (egDemandReasonMaster == null)
-                throw new ApplicationRuntimeException(" Penalty Demand reason Master is null in method  insertPenalty");
+                throw new ApplicationRuntimeException(" Penalty demand reason master is null in method insertPenalty");
 
             final EgDemandReason egDemandReason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
                     egDemandReasonMaster, inst, module);
 
             if (egDemandReason == null)
-                throw new ApplicationRuntimeException(" Penalty Demand reason is null in method  insertPenalty ");
+                throw new ApplicationRuntimeException(" Penalty demand reason is null in method  insertPenalty ");
 
             demandDetail = createDemandDetails(egDemandReason, ZERO, penaltyAmount);
         }
@@ -447,6 +454,7 @@ public class TradeLicenseService {
 
     public void recalculateDemand(final List<FeeMatrixDetail> feeList, TradeLicense license) {
         final EgDemand egDemand = license.getCurrentDemand();
+        Date date = new Date();
         // Recalculating current demand detail according to fee matrix
         for (final EgDemandDetails dmd : egDemand.getEgDemandDetails())
             for (final FeeMatrixDetail fm : feeList)
@@ -455,6 +463,7 @@ public class TradeLicenseService {
                                 .equalsIgnoreCase(fm.getFeeMatrix().getFeeType().getName())) {
                     BigDecimal tradeAmt = calculateAmountByRateType(license, fm);
                     dmd.setAmount(tradeAmt.setScale(0, RoundingMode.HALF_UP));
+                    dmd.setModifiedDate(date);
                 }
         calcPenaltyDemandDetails(license, egDemand);
         license.recalculateBaseDemand();
@@ -493,7 +502,7 @@ public class TradeLicenseService {
         final Map<EgDemandReason, EgDemandDetails> reasonWiseDemandDetails = new HashMap<>();
         if (currentDemand != null)
             for (final EgDemandDetails demandDetail : currentDemand.getEgDemandDetails())
-                if (LICENSE_FEE_TYPE.equals(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                if (DEMAND_REASON_CATEGORY_FEE.equals(demandDetail.getReasonCategory()))
                     reasonWiseDemandDetails.put(demandDetail.getEgDemandReason(), demandDetail);
         return reasonWiseDemandDetails;
     }
@@ -597,7 +606,8 @@ public class TradeLicenseService {
                 .filter(position -> position.getDeptDesig().getDesignation().getName().equals(COMMISSIONER_DESGN))
                 .findFirst()
                 .orElseThrow(
-                        () -> new ValidationException("error.wf.comm.pos.not.found", "You are not authorized approve this application"));
+                        () -> new ValidationException("error.wf.comm.pos.not.found",
+                                "You are not authorized approve this application"));
     }
 
     public WorkFlowMatrix getWorkFlowMatrixApi(TradeLicense license, WorkflowBean workflowBean) {
@@ -671,30 +681,21 @@ public class TradeLicenseService {
      * @param previousInstallment
      * @return
      */
-    public Map<String, Map<String, BigDecimal>> getOutstandingFeeForDemandNotice(TradeLicense license,
-                                                                                 final Installment currentInstallment, final Installment previousInstallment) {
-        final Map<String, Map<String, BigDecimal>> outstandingFee = new HashMap<>();
+    public Map<String, BigDecimal> getOutstandingFeeForDemandNotice(TradeLicense license,
+                                                                    final Installment currentInstallment, final Installment previousInstallment) {
 
         final EgDemand egDemand = license.getCurrentDemand();
         // 31st december will be considered as cutoff date for penalty calculation.
         final Date endDateOfPreviousFinancialYear = new DateTime(previousInstallment.getFromDate()).withMonthOfYear(12)
                 .withDayOfMonth(31).toDate();
-
+        Map<String, BigDecimal> feeByTypes = new HashMap<>();
+        feeByTypes.put(ARREAR, ZERO);
+        feeByTypes.put(CURRENT, ZERO);
+        feeByTypes.put(PENALTY, ZERO);
         for (final EgDemandDetails demandDetail : egDemand.getEgDemandDetails()) {
-            final String demandReason = demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster();
             final Installment installmentYear = demandDetail.getEgDemandReason().getEgInstallmentMaster();
-            Map<String, BigDecimal> feeByTypes;
-            if (!demandReason.equalsIgnoreCase(PENALTY_DMD_REASON_CODE)) {
-                if (outstandingFee.containsKey(demandReason))
-                    feeByTypes = outstandingFee.get(demandReason);
-                else {
-                    feeByTypes = new HashMap<>();
-                    feeByTypes.put(ARREAR, ZERO);
-                    feeByTypes.put(CURRENT, ZERO);
-                    feeByTypes.put(PENALTY, ZERO);
-                }
+            if (!demandDetail.getReasonCategory().equalsIgnoreCase(DEMAND_REASON_CATEGORY_PENALTY)) {
                 final BigDecimal demandAmount = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
-
                 if (demandAmount.compareTo(BigDecimal.valueOf(0)) > 0)
                     if (installmentYear.equals(currentInstallment))
                         feeByTypes.put(CURRENT, feeByTypes.get(CURRENT).add(demandAmount));
@@ -706,12 +707,9 @@ public class TradeLicenseService {
                                 endDateOfPreviousFinancialYear, demandAmount);
                         feeByTypes.put(PENALTY, feeByTypes.get(PENALTY).add(penaltyAmt));
                     }
-                outstandingFee.put(demandReason, feeByTypes);
             }
         }
-
-        return outstandingFee;
-
+        return feeByTypes;
     }
 
     public BigDecimal calculateFeeAmount(final TradeLicense license) {
@@ -726,13 +724,11 @@ public class TradeLicenseService {
         return totalAmount;
     }
 
-    public BigDecimal recalculateLicenseFee(final EgDemand egDemand) {
-        BigDecimal licenseFee = ZERO;
-        for (final EgDemandDetails demandDetail : egDemand.getEgDemandDetails())
-            if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().equals(LICENSE_FEE_TYPE)
-                    && egDemand.getEgInstallmentMaster().equals(demandDetail.getEgDemandReason().getEgInstallmentMaster()))
-                licenseFee = licenseFee.add(demandDetail.getAmtCollected());
-        return licenseFee;
+    public BigDecimal getFeePaidForCurrentInstallment(final EgDemand egDemand) {
+        return getLatestDemandDetails(egDemand).stream().filter(egDemandDetails ->
+                egDemandDetails.getReasonCategory().equals(DEMAND_REASON_CATEGORY_FEE))
+                .map(EgDemandDetails::getAmtCollected)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     @Transactional
@@ -910,10 +906,7 @@ public class TradeLicenseService {
 
     @Transactional
     public void save(TradeLicense license) {
-        final BigDecimal currentDemandAmount = recalculateLicenseFee(license.getCurrentDemand());
-        final BigDecimal feematrixDmdAmt = calculateFeeAmount(license);
-        if (feematrixDmdAmt.compareTo(currentDemandAmount) >= 0)
-            updateDemandForChangeTradeArea(license);
+        updateDemandForChangeTradeArea(license);
         processAndStoreDocument(license);
         licenseRepository.save(license);
     }
@@ -970,12 +963,9 @@ public class TradeLicenseService {
                 license.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_REJECTED));
                 license.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_REJECTED));
             }
-        if (license.hasState() && license.getState().getValue().contains(WF_REVENUECLERK_APPROVED)) {
-            final BigDecimal currentDemandAmount = recalculateLicenseFee(license.getCurrentDemand());
-            final BigDecimal recalDemandAmount = calculateFeeAmount(license);
-            if (recalDemandAmount.compareTo(currentDemandAmount) >= 0)
-                updateDemandForChangeTradeArea(license);
-        }
+        if (license.hasState() && license.getState().getValue().contains(WF_REVENUECLERK_APPROVED))
+            updateDemandForChangeTradeArea(license);
+
     }
 
     public ReportOutput generateLicenseCertificate(TradeLicense license, boolean isProvisional) {
@@ -1009,7 +999,7 @@ public class TradeLicenseService {
         reportParams.put("carporationulbType", getMunicipalityName().contains("Corporation"));
         Optional<EgDemandDetails> demandDetails = license.getCurrentDemand().getEgDemandDetails().stream()
                 .sorted(Comparator.comparing(EgDemandDetails::getInstallmentEndDate).reversed())
-                .filter(demandDetail -> demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().equals(LICENSE_FEE_TYPE))
+                .filter(demandDetail -> demandDetail.getReasonCategory().equals(DEMAND_REASON_CATEGORY_FEE))
                 .filter(demandDetail -> demandDetail.getAmtCollected().doubleValue() > 0)
                 .findFirst();
         BigDecimal amtPaid;
@@ -1175,9 +1165,8 @@ public class TradeLicenseService {
                 List<Installment> previousInstallment = installmentDao
                         .fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(
                                 licenseUtils.getModule(), currentInstallment.getToDate(), 1);
-                Map<String, Map<String, BigDecimal>> outstandingFees = getOutstandingFeeForDemandNotice(license,
+                Map<String, BigDecimal> licenseFees = getOutstandingFeeForDemandNotice(license,
                         currentInstallment, previousInstallment.get(0));
-                Map<String, BigDecimal> licenseFees = outstandingFees.get(LICENSE_FEE_TYPE);
                 finalList.add(new DemandNoticeForm(license, licenseFees, getOwnerName(license)));
             }
         }

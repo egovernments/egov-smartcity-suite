@@ -84,7 +84,9 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.tl.entity.FeeType;
 import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.LicenseApplicationService;
 import org.egov.tl.service.LicenseCitizenPortalService;
 import org.egov.tl.service.LicenseConfigurationService;
@@ -118,6 +120,8 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import static java.math.BigDecimal.ZERO;
+import static org.egov.demand.utils.DemandConstants.DEMAND_REASON_CATEGORY_FEE;
+import static org.egov.demand.utils.DemandConstants.DEMAND_REASON_CATEGORY_PENALTY;
 import static org.egov.tl.utils.Constants.*;
 
 @Service("TLCollectionsInterface")
@@ -181,6 +185,9 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
 
     @Autowired
     protected LicenseConfigurationService licenseConfigurationService;
+
+    @Autowired
+    protected FeeTypeService feeTypeService;
 
     @Transactional
     public String createLicenseBillXML(TradeLicense license) {
@@ -804,19 +811,21 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         BigDecimal latePaymentCharges = ZERO;
         final TradeLicense tradeLicense = licenseApplicationService.getLicenseByDemand(egBill.getEgDemand());
         Installment currentInstallment = tradeLicense.getDemand().getEgInstallmentMaster();
+        List<String> feeTypes = feeTypeService.findAll().stream().map(FeeType::getName).collect(Collectors.toList());
         for (final EgBillDetails billdetail : billDetails)
             if (billdetail.getCrAmount() != null && billdetail.getCrAmount().compareTo(ZERO) > 0) {
                 final String[] desc = billdetail.getDescription().split("-", 2);
                 final String dmdReason = desc[0].trim();
                 final String installment = desc[1].trim();
-                if (LICENSE_FEE_TYPE.equals(dmdReason) && installment.equals(currentInstallment.getDescription()))
+                if (feeTypes.contains(dmdReason) && installment.equals(currentInstallment.getDescription()))
                     currentInstallmentAmount = currentInstallmentAmount.add(billdetail.getCrAmount());
                 else if (PENALTY_DMD_REASON_CODE.equals(dmdReason))
                     latePaymentCharges = latePaymentCharges.add(billdetail.getCrAmount());
                 else
                     arrearAmount = arrearAmount.add(billdetail.getCrAmount());
             }
-        List<EgBillDetails> filteredBillDetails = billDetails.stream().filter(bd -> bd.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().equals(LICENSE_FEE_TYPE)).
+        List<EgBillDetails> filteredBillDetails = billDetails.stream().filter(bd -> bd.getEgDemandReason()
+                .getEgDemandReasonMaster().getEgReasonCategory().getCode().equals(DEMAND_REASON_CATEGORY_FEE)).
                 sorted(Comparator.comparing(EgBillDetails::getOrderNo)).collect(Collectors.toList());
         Integer billDetailsSize = filteredBillDetails.size();
         if (!filteredBillDetails.isEmpty() && filteredBillDetails.size() == 1) {
@@ -847,7 +856,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                             String demandReason = demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster();
                             Installment installmentYear = demandDetail.getEgDemandReason().getEgInstallmentMaster();
                             Map<String, BigDecimal> feeByTypes;
-                            if (!PENALTY_DMD_REASON_CODE.equals(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
+                            if (!DEMAND_REASON_CATEGORY_PENALTY.equals(demandDetail.getReasonCategory())
                                     && demandDetail.getAmount().subtract(demandDetail.getAmtCollected()).signum() == 1) {
                                 if (outstandingFee.containsKey(installmentYear.getDescription()))
                                     feeByTypes = outstandingFee.get(installmentYear.getDescription());
@@ -860,7 +869,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                                 BigDecimal penaltyAmt = penaltyRatesService.calculatePenalty(license, fromDate, new Date(),
                                         demandDetail.getAmount());
                                 if (penaltyAmt.compareTo(ZERO) > 0)
-                                    feeByTypes.put("Penalty", penaltyAmt.setScale(0, RoundingMode.HALF_UP));
+                                    feeByTypes.put(PENALTY_DMD_REASON_CODE, penaltyAmt.setScale(0, RoundingMode.HALF_UP));
                                 outstandingFee.put(installmentYear.getDescription(), feeByTypes);
                             }
                         }
@@ -872,10 +881,11 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     private void recalculatePenaltyAmt(Map<String, Map<String, BigDecimal>> outstandingFee, EgDemand egDemand) {
         for (final EgDemandDetails demandDetails : egDemand.getEgDemandDetails()) {
             final Installment installmentYear = demandDetails.getEgDemandReason().getEgInstallmentMaster();
-            if (PENALTY_DMD_REASON_CODE.equals(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
+            if (DEMAND_REASON_CATEGORY_PENALTY.equals(demandDetails.getReasonCategory())) {
                 Map<String, BigDecimal> feeType = outstandingFee.get(installmentYear.getDescription());
                 if (feeType != null && feeType.containsKey(PENALTY_DMD_REASON_CODE)) {
-                    feeType.put("Penalty", feeType.get(PENALTY_DMD_REASON_CODE).subtract(demandDetails.getAmtCollected()));
+                    feeType.put(PENALTY_DMD_REASON_CODE, feeType.get(PENALTY_DMD_REASON_CODE)
+                            .subtract(demandDetails.getAmtCollected()).setScale(0, RoundingMode.HALF_UP));
                     outstandingFee.put(installmentYear.getDescription(), feeType);
                 }
             }

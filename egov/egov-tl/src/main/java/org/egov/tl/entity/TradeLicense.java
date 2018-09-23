@@ -101,6 +101,7 @@ import static java.lang.System.lineSeparator;
 import static java.math.BigDecimal.ZERO;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.demand.utils.DemandConstants.DEMAND_REASON_CATEGORY_FEE;
 import static org.egov.infra.config.core.LocalizationSettings.currencySymbolUtf8;
 import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
 import static org.egov.infra.utils.ApplicationConstant.UNDERSCORE;
@@ -108,7 +109,6 @@ import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
 import static org.egov.infra.utils.StringUtils.appendTimestamp;
 import static org.egov.tl.utils.Constants.CLOSURE_APPTYPE_CODE;
-import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 import static org.egov.tl.utils.Constants.LICENSE_STATUS_CANCELLED;
 import static org.egov.tl.utils.Constants.NEW_APPTYPE_CODE;
 import static org.egov.tl.utils.Constants.PERMANENT_NATUREOFBUSINESS;
@@ -692,7 +692,7 @@ public class TradeLicense extends StateAware<Position> {
     public BigDecimal getLatestAmountPaid() {
         Optional<EgDemandDetails> demandDetails = this.getCurrentDemand().getEgDemandDetails().stream()
                 .sorted(Comparator.comparing(EgDemandDetails::getInstallmentEndDate).reversed())
-                .filter(demandDetail -> demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().equals(LICENSE_FEE_TYPE))
+                .filter(demandDetail -> demandDetail.getReasonCategory().equals(DEMAND_REASON_CATEGORY_FEE))
                 .filter(demandDetail -> demandDetail.getAmount().subtract(demandDetail.getAmtCollected())
                         .doubleValue() <= 0)
                 .findFirst();
