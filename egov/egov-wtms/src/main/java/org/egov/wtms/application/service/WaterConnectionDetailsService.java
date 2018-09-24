@@ -1187,13 +1187,17 @@ public class WaterConnectionDetailsService {
 
     private BigDecimal getAmountByInstallment(List<Object> instVsAmt) {
         BigDecimal balance = ZERO;
+        BigDecimal rebateAmount = ZERO;
         for (Object object : instVsAmt) {
             Object[] ddObject = (Object[]) object;
             BigDecimal dmdAmt = new BigDecimal((Double) ddObject[2]);
             BigDecimal collAmt = ZERO;
-            if (ddObject[2] != null)
+
+            if (ddObject[3] != null)
                 collAmt = new BigDecimal((Double) ddObject[3]);
-            balance = balance.add(dmdAmt.subtract(collAmt)).setScale(0, HALF_UP);
+            if (ddObject[4] != null)
+                rebateAmount = new BigDecimal((Double) ddObject[4]);
+            balance = balance.add(dmdAmt.subtract(collAmt.add(rebateAmount))).setScale(0, HALF_UP);
         }
         return balance;
     }

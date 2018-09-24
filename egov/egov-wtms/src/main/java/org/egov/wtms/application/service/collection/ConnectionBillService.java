@@ -185,7 +185,7 @@ public class ConnectionBillService extends BillServiceInterface {
             Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
 
             if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDebit().equalsIgnoreCase("N")
-                    && demandDetail.getAmount().compareTo(demandDetail.getAmtCollected()) > 0) {
+                    && (demandDetail.getAmount().subtract(demandDetail.getAmtRebate())).compareTo(demandDetail.getAmtCollected()) > 0) {
                 EgBillDetails billdetail = new EgBillDetails();
                 if (demandDetail.getAmount() != null) {
                     billdetail.setDrAmount(ZERO);

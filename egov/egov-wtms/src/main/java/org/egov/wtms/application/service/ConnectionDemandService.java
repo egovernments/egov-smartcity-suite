@@ -59,6 +59,8 @@ import static org.egov.wtms.masters.entity.enums.ConnectionStatus.INPROGRESS;
 import static org.egov.wtms.masters.entity.enums.ConnectionType.METERED;
 import static org.egov.wtms.masters.entity.enums.ConnectionType.NON_METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CREATED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.BPL_CATEGORY_DONATION_AMOUNT;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CATEGORY_BPL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED_CHARGES_REASON_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MONTHLY;
@@ -101,6 +103,8 @@ import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
+import org.egov.infra.admin.master.entity.AppConfig;
+import org.egov.infra.admin.master.service.AppConfigService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.DateUtils;
@@ -208,6 +212,9 @@ public class ConnectionDemandService {
     @Autowired
     private RegulariseDemandGenerationImpl regulariseDemandGenImpl;
 
+    @Autowired
+    private AppConfigService appConfigService;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -231,7 +238,12 @@ public class ConnectionDemandService {
         if (METERED.equals(waterConnectionDetails.getConnectionType()) && waterConnectionDetails.getDonationCharges() > 0.0)
             feeDetails.put(WATERTAX_DONATION_CHARGE, waterConnectionDetails.getDonationCharges());
 
-        if (donationDetails != null) {
+        if (CATEGORY_BPL.equalsIgnoreCase(waterConnectionDetails.getCategory().getName())) {
+            AppConfig appConfig = null;
+            appConfig = appConfigService.getAppConfigByModuleNameAndKeyName(MODULE_NAME, BPL_CATEGORY_DONATION_AMOUNT);
+            if (appConfig != null && !appConfig.getConfValues().isEmpty())
+                waterConnectionDetails.setDonationCharges(Long.valueOf(appConfig.getConfValues().get(0).getValue()));
+        } else if (donationDetails != null) {
             feeDetails.put(WATERTAX_DONATION_CHARGE, donationDetails.getAmount());
             waterConnectionDetails.setDonationCharges(donationDetails.getAmount());
         }
@@ -242,17 +254,53 @@ public class ConnectionDemandService {
         // discussion.
         if (installment != null) {
             Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
-            for (String demandReason : feeDetails.keySet())
-                dmdDetailSet.add(createDemandDetails((Double) feeDetails.get(demandReason), demandReason, installment));
-            egDemand = new EgDemand();
-            egDemand.setEgInstallmentMaster(installment);
-            egDemand.getEgDemandDetails().addAll(dmdDetailSet);
-            egDemand.setIsHistory("N");
-            egDemand.setCreateDate(new Date());
-            egDemand.setModifiedDate(new Date());
+            for (Map.Entry<String, Object> feeDetail : feeDetails.entrySet())
+                dmdDetailSet
+                        .add(createDemandDetails((Double) feeDetails.get(feeDetail.getKey()), feeDetail.getKey(), installment));
+            egDemand = createDemandObject(waterConnectionDetails, installment, dmdDetailSet);
         } else
             throw new ValidationException("err.water.installment.not.found");
         return egDemand;
+    }
+
+    public EgDemand createDemandObject(WaterConnectionDetails waterConnectionDetails, Installment installment,
+            Set<EgDemandDetails> dmdDetailSet) {
+        EgDemand egDemand = new EgDemand();
+        BigDecimal rebateAmount = BigDecimal.ZERO;
+        BigDecimal baseDemand = BigDecimal.ZERO;
+        for (EgDemandDetails demandDetails : dmdDetailSet)
+            baseDemand = baseDemand.add(demandDetails.getAmount());
+        if (CATEGORY_BPL.equalsIgnoreCase(waterConnectionDetails.getCategory().getName())) {
+            dmdDetailSet = demandChangesForBplCategory(dmdDetailSet);
+            for (EgDemandDetails demandDetails : dmdDetailSet)
+                if (!WATERTAX_DONATION_CHARGE
+                        .equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                    rebateAmount = rebateAmount.add(demandDetails.getAmtRebate());
+        }
+        egDemand.setBaseDemand(baseDemand);
+        egDemand.addRebateAmt(rebateAmount);
+        egDemand.setEgInstallmentMaster(installment);
+        egDemand.getEgDemandDetails().addAll(dmdDetailSet);
+        egDemand.setIsHistory("N");
+        egDemand.setCreateDate(new Date());
+        egDemand.setModifiedDate(new Date());
+        return egDemand;
+    }
+
+    public Set<EgDemandDetails> demandChangesForBplCategory(final Set<EgDemandDetails> demandDetailsSet) {
+        Set<EgDemandDetails> demandDetailSet = new HashSet<>();
+        for (EgDemandDetails demandDetail : demandDetailsSet) {
+            if (!WATERTAX_DONATION_CHARGE.equalsIgnoreCase(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                demandDetail.setAmtRebate(demandDetail.getAmount());
+            else {
+                AppConfig appConfig = null;
+                appConfig = appConfigService.getAppConfigByModuleNameAndKeyName(MODULE_NAME, BPL_CATEGORY_DONATION_AMOUNT);
+                if (appConfig != null)
+                    demandDetail.setAmount(BigDecimal.valueOf(Long.valueOf(appConfig.getConfValues().get(0).getValue())));
+            }
+            demandDetailSet.add(demandDetail);
+        }
+        return demandDetailSet;
     }
 
     public DonationDetails getDonationDetails(WaterConnectionDetails waterConnectionDetails) {

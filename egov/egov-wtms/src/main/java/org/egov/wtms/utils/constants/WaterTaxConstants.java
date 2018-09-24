@@ -451,5 +451,5 @@ public class WaterTaxConstants {
     public static final String REGLZN_WATER_TAP_CONNECTION = "Regularization connection Water Tap Connection";
     public static final String MESSAGE = "message";
     public static final String ERROR = "error";
-
+    public static final String BPL_CATEGORY_DONATION_AMOUNT="BPL_CATEGORY_DONATION_AMOUNT";
 }
