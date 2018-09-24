@@ -347,26 +347,26 @@ function validateJV()
 		var id = '<s:property value="voucherHeader.id"/>';
 		window.open("${pageContext.request.contextPath}/voucher/journalVoucherPrint-print.action?id="+id,'Print','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 	}
-	
-	function isSpecialChar(Obj){
-		var pattern=/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi;
-		var partyNameEntered = document.getElementById('voucherTypeBean.partyName').value;
-		if(partyNameEntered.trim().length == 0){
-			document.getElementById('lblError').innerHTML = "Only empty spaces are not allowed";
-			document.getElementById('voucherTypeBean.partyName').focus();
-			return false;
-		}else{
-			if(document.getElementById('voucherTypeBean.partyName').value.match(pattern))
-			{
-				document.getElementById('voucherTypeBean.partyName').focus();
-				document.getElementById('lblError').innerHTML = "Special characters are not allowed ";
-				return false;
-			}else{
-				document.getElementById('lblError').innerHTML = "";
-			}
-		} 
-		
-	  }
+
+function isSpecialChar(Obj){
+    var vType = document.getElementById('vType').value;
+    var pattern=/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi;
+    var partyNameEntered = document.getElementById('voucherTypeBean.partyName').value;
+    if(partyNameEntered.trim().length == 0 && (vType != 'JVGeneral' || vType != '-1')){
+        document.getElementById('lblError').innerHTML = "Only empty spaces are not allowed";
+        document.getElementById('voucherTypeBean.partyName').focus();
+        return false;
+    }else{
+        if(document.getElementById('voucherTypeBean.partyName').value.match(pattern)){
+            var replacedNumber = partyNameEntered.replace(/[`~!@#$%^&*()_|+\-=��?;:><'",.<>\{\}\[\]\\\/]/gi, '');
+            document.getElementById('voucherTypeBean.partyName').value = replacedNumber;
+            return false;
+        }else{
+            document.getElementById('lblError').innerHTML = "";
+        }
+    }
+
+}
 </script>
 </body>
 
