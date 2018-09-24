@@ -68,7 +68,7 @@
 			<span class="mandatory1">*</span>
 		</div></td>
 	<td class="bluebox"><s:textfield name="voucherTypeBean.partyName"
-			id="voucherTypeBean.partyName" onchange="isSpecialChar(this)" onblur="isSpecialChar(this)"
+			id="voucherTypeBean.partyName" onchange="isSpecialChar(this)" onblur="isSpecialChar(this)" onkeypress="return replaceSpecialChar(event);"
 			value="%{voucherTypeBean.partyName}" /></td>
 </tr>
 <tr>
@@ -159,6 +159,11 @@ function onChangeVSubType(){
 		document.getElementById('partyNameDivId').style.display='inline';
 	}
 	
-}    
+}
+function replaceSpecialChar(e) {
+    var k;
+    document.all ? k = e.keyCode : k = e.which;
+    return ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8 || k == 32 || (k >= 48 && k <= 57));
+}
   
 </script>
