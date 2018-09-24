@@ -205,6 +205,6 @@ public class WaterEstimationChargesPaymentService {
                 if(WATERTAX_DONATION_CHARGE.equalsIgnoreCase(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
                     return demandDetail.getAmount();
             }
-        return BigDecimal.ZERO;
+        return ZERO;
     }
 }
