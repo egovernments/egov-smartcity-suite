@@ -49,6 +49,7 @@ package org.egov.restapi.web.security.oauth2.config;
 
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -80,6 +81,7 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 @EnableAuthorizationServer
 public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
+    private static final Logger LOGGER = Logger.getLogger(AuthorizationServerConfiguration.class);
     private static final String CLIENTS_CONFIG = "restapi-secured-clients-config.json";
     private static final String CLIENTS_CONFIG_OVERRIDE = "restapi-secured-clients-config-override.json";
     private static final String SCOPE_WRITE = "write";
@@ -107,6 +109,8 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         InMemoryClientDetailsServiceBuilder serviceBuilder = clients.inMemory();
         getSecuredClientFromResource().getClients().forEach(client -> {
             try {
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Client Id:" + client.getClientId());
                 serviceBuilder.withClient(client.getClientId()).secret(client.getClientSecret())
                         .authorizedGrantTypes(GRANT_TYPE_AUTHORIZATION_CODE, GRANT_TYPE_REFRESH_TOKEN,
                                 GRANT_TYPE_PASSWORD)
@@ -134,6 +138,8 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     private Resource getClientsConfig() {
         Resource res = new ClassPathResource(CLIENTS_CONFIG_OVERRIDE);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Overridden config present:" + res.exists());
         if (!res.exists())
             res = new ClassPathResource(CLIENTS_CONFIG);
         return res;

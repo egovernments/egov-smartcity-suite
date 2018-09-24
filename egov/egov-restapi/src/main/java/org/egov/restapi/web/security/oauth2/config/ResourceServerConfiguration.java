@@ -50,6 +50,7 @@ package org.egov.restapi.web.security.oauth2.config;
 import java.io.IOException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -76,6 +77,7 @@ import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHand
 @EnableResourceServer
 public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
 
+    private static final Logger LOGGER = Logger.getLogger(ResourceServerConfiguration.class);
     private static final String APIS_CONFIG = "restapi-secured-apis-config.json";
     private static final String APIS_CONFIG_OVERRIDE = "restapi-secured-apis-config-override.json";
     private static final String RESOURCE_ID = "egov-restapi";
@@ -119,6 +121,8 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
     private Resource getResourcesConfig() {
         Resource res = new ClassPathResource(APIS_CONFIG_OVERRIDE);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Overridden config present:" + res.exists());
         if (!res.exists())
             res = new ClassPathResource(APIS_CONFIG);
         return res;
