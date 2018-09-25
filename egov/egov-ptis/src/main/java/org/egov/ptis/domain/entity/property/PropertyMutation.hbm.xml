@@ -117,4 +117,7 @@
 	<query name="UNDER_WF_MUTATION_BY_UPICNO">
 	<![CDATA[from PropertyMutation p where p.basicProperty.upicNo = :upicNo and p.state.status<>2 order by p.mutationDate desc]]>
 	</query>
+	<query name="CLOSED_MUTATION_BY_UPICNO">
+	<![CDATA[from PropertyMutation p where p.basicProperty.upicNo = :upicNo and p.state.status=2 order by p.mutationDate desc]]>
+	</query>
 </hibernate-mapping>

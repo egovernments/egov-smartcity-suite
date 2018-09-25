@@ -54,6 +54,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -80,6 +81,7 @@ import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.repository.aadharseeding.AadharSeedingRepository;
 import org.hibernate.Session;
@@ -94,6 +96,21 @@ import org.springframework.ui.Model;
 
 @Service
 public class AadharSeedingService extends GenericWorkFlowController {
+    private static final String REGISTERED_WILL_DOCUMENT = "Registered Will Document";
+
+    private static final String REGISTERED = "REGISTERED";
+
+    private static final String REGISTERED_DOCUMENT = "Registered Document";
+
+    private static final String TITLEDEED = "TITLEDEED";
+
+    private static final String SALEDEED = "SALEDEED";
+
+    private static final String PARTISION = "PARTISION";
+
+    private static final String DECREE_BY_CIVIL_COURT = "Decree by Civil Court";
+
+    private static final String CIVILCOURTDECREE = "CIVILCOURTDECREE";
 
     private static final String UPDATED = "UPDATED";
 
@@ -154,23 +171,35 @@ public class AadharSeedingService extends GenericWorkFlowController {
 
     @SuppressWarnings("unchecked")
     public List<String[]> getQueryResult(AadharSeedingRequest aadharSeedingRequest) {
-        String searchQry = "";
-        String baseQry = "select mv.propertyId, mv.ownerName, mv.houseNo, mv.propertyAddress from PropertyMaterlizeView mv "
-                + "where mv.basicPropertyID in(select p.basicProperty from PropertyImpl p where "
-                + "p.propertyDetail.structure=false and p.status in('A','I') and p.id not in(select m.property from PropertyMutation m "
-                + "where m.state.status <> 2)) and mv.basicPropertyID not in(select basicProperty from AadharSeeding)";
+        StringBuilder baseQry = new StringBuilder();
+        StringBuilder orderBy = new StringBuilder();
+        baseQry = baseQry
+                .append("select mv.propertyId, mv.ownerName, mv.houseNo, mv.propertyAddress from PropertyMaterlizeView mv where ")
+                .append("mv.basicPropertyID in(select p.basicProperty from PropertyImpl p where p.propertyDetail.structure=false ")
+                .append("and p.status in('A','I') and p.id not in(select m.property from PropertyMutation m where m.state.status <> 2))")
+                .append(" and mv.basicPropertyID not in(select basicProperty from AadharSeeding) and mv.latitude is not null and mv.longitude is not null")
+                .append(" and mv.ward is not null and mv.electionWard is not null and (mv.basicPropertyID in")
+                .append("(select mv.basicPropertyID from PropertyMaterlizeView mv where mv.usage ='VACANTLAND' ")
+                .append("and mv.sitalArea is not null) or mv.basicPropertyID in(select mv.basicPropertyID from PropertyMaterlizeView mv ")
+                .append("where mv.usage <>'VACANTLAND' and mv.totalBuiltUpArea is not null)) and (mv.basicPropertyID ")
+                .append("in(select basicPropertyId from DocumentTypeDetails where documentName like 'Registered%' or documentName like 'Patta%' and documentNo is not null and documentDate is not null) ")
+                .append("or mv.basicPropertyID in(select mv.basicPropertyID from PropertyMaterlizeView mv where trim(mv.regdDocNo) <> '' and mv.regdDocDate is not null) ")
+                .append("or mv.basicPropertyID in (select pmd.basicProperty from PropertyMutation pmd where pmd.id in(select max(pm.id) from PropertyMutation pm ")
+                .append("where pm.basicProperty=pmd.basicProperty and pm.state.status=2 group by pm.mutationDate,pm.id order by pm.mutationDate desc) ")
+                .append("and ((pmd.mutationReason.code in('PARTISION', 'SALEDEED', 'REGISTERED', 'TITLEDEED') and pmd.deedNo is not null and pmd.deedDate is not null) or ")
+                .append("(pmd.mutationReason.code='CIVILCOURTDECREE' and pmd.decreeNumber is not null and pmd.decreeDate is not null))))");
         final StringBuilder wherClause = new StringBuilder();
-        String orderBy = " order by mv.propertyId";
+        orderBy = orderBy.append(" order by mv.propertyId");
         if (isNotBlank(aadharSeedingRequest.getAssessmentNo()))
             wherClause.append(" and mv.propertyId= '" + aadharSeedingRequest.getAssessmentNo() + "'");
         if (isNotBlank(aadharSeedingRequest.getDoorNo()))
-            wherClause.append(" and mv.houseNo like '" + aadharSeedingRequest.getDoorNo() + ""+ "%'"); 
+            wherClause.append(" and mv.houseNo like '" + aadharSeedingRequest.getDoorNo() + "" + "%'");
         if (aadharSeedingRequest.getElectionWardId() != null)
             wherClause.append(" and mv.electionWard.id=" + aadharSeedingRequest.getElectionWardId());
         if (aadharSeedingRequest.getWardId() != null)
             wherClause.append(" and mv.ward.id=" + aadharSeedingRequest.getWardId());
-        searchQry = baseQry + wherClause + orderBy;
-        return entityManager.unwrap(Session.class).createQuery(searchQry).list();
+        StringBuilder searchQry = baseQry.append(wherClause).append(orderBy);
+        return entityManager.unwrap(Session.class).createQuery(searchQry.toString()).setMaxResults(500).list();
     }
 
     public void addPropertyDetailstoModel(final Model model, final String assessmentNo, final String status) {
@@ -190,11 +219,12 @@ public class AadharSeedingService extends GenericWorkFlowController {
         formData.setLongitude(basicProperty.getLongitude());
         formData.setExtentOfSite(BigDecimal.valueOf(basicProperty.getProperty().getPropertyDetail().getSitalArea() == null ? 0
                 : basicProperty.getProperty().getPropertyDetail().getSitalArea().getArea()));
-        formData.setPlinthArea(BigDecimal.valueOf(basicProperty.getProperty().getPropertyDetail().getTotalBuiltupArea() == null ? 0
-                : basicProperty.getProperty().getPropertyDetail().getTotalBuiltupArea().getArea()));
-		formData.setPropertyType(basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getType());
-		setDocumentDetails(basicProperty, formData);
-		formData.setSurveyNumber(basicProperty.getProperty().getPropertyDetail().getSurveyNumber());
+        formData.setPlinthArea(
+                BigDecimal.valueOf(basicProperty.getProperty().getPropertyDetail().getTotalBuiltupArea() == null ? 0
+                        : basicProperty.getProperty().getPropertyDetail().getTotalBuiltupArea().getArea()));
+        formData.setPropertyType(basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getType());
+        setDocumentDetails(basicProperty, formData);
+        formData.setSurveyNumber(basicProperty.getProperty().getPropertyDetail().getSurveyNumber());
         formData.setAddress(basicProperty.getAddress().toString());
         formData.setPropertyOwnerInfo(basicProperty.getPropertyOwnerInfo());
         if (status.equals(UPDATED)) {
@@ -307,22 +337,43 @@ public class AadharSeedingService extends GenericWorkFlowController {
         }
         return resultList;
     }
-    
-    private void setDocumentDetails(BasicProperty basicProperty, AadharSeedingRequest formData) {
-		final Query getdocumentsQuery = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
-		getdocumentsQuery.setParameter("basicProperty", basicProperty.getId());
 
-		List<DocumentTypeDetails> documentTypeDetails = (List<DocumentTypeDetails>) getdocumentsQuery.getResultList();
-		if (documentTypeDetails.isEmpty()) {
-			formData.setDocNo(StringUtils.isBlank(basicProperty.getRegdDocNo()) ? "N/A" : basicProperty.getRegdDocNo());
-			formData.setDocDate(basicProperty.getRegdDocDate() == null ? null : basicProperty.getRegdDocDate());
-			formData.setDocType("N/A");
-		} else {
-			formData.setDocNo(StringUtils.isBlank(documentTypeDetails.get(0).getDocumentNo()) ? "N/A"
-					: documentTypeDetails.get(0).getDocumentNo());
-			formData.setDocDate(documentTypeDetails.get(0).getDocumentDate());
-			formData.setDocType(StringUtils.isBlank(documentTypeDetails.get(0).getDocumentName()) ? "N/A"
-					: documentTypeDetails.get(0).getDocumentName());
-		}
-	}
+    private void setDocumentDetails(BasicProperty basicProperty, AadharSeedingRequest formData) {
+        final Query getdocumentsQuery = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
+        getdocumentsQuery.setParameter("basicProperty", basicProperty.getId());
+        final Query closedMutationQuery = entityManager.createNamedQuery("CLOSED_MUTATION_BY_UPICNO");
+        closedMutationQuery.setParameter("upicNo", basicProperty.getUpicNo());
+        List<DocumentTypeDetails> documentTypeDetails = (List<DocumentTypeDetails>) getdocumentsQuery.getResultList();
+        List<PropertyMutation> mutationList = (List<PropertyMutation>) closedMutationQuery.getResultList();
+       
+        if(!mutationList.isEmpty()){
+            PropertyMutation mutation= mutationList.get(0);
+            if(mutation.getMutationReason().getCode().equals(CIVILCOURTDECREE)){
+                formData.setDocNo(StringUtils.isBlank(mutation.getDecreeNumber()) ? "N/A" : mutation.getDecreeNumber());
+                formData.setDocDate(mutation.getDecreeDate() == null ? null : mutation.getDecreeDate());
+                formData.setDocumentType(DECREE_BY_CIVIL_COURT);
+            }
+            else if(Arrays.asList(PARTISION, SALEDEED, TITLEDEED).contains(mutation.getMutationReason().getCode())){
+                formData.setDocNo(StringUtils.isBlank(mutation.getDeedNo()) ? "N/A" : mutation.getDeedNo());
+                formData.setDocDate(mutation.getDeedDate() == null ? null : mutation.getDeedDate());
+                formData.setDocumentType(REGISTERED_DOCUMENT);
+            }
+            else if(mutation.getMutationReason().getCode().equals(REGISTERED)){
+                formData.setDocNo(StringUtils.isBlank(mutation.getDeedNo()) ? "N/A" : mutation.getDeedNo());
+                formData.setDocDate(mutation.getDeedDate() == null ? null : mutation.getDeedDate());
+                formData.setDocumentType(REGISTERED_WILL_DOCUMENT);
+            }
+        }
+        else if (!documentTypeDetails.isEmpty()) {
+            formData.setDocNo(StringUtils.isBlank(documentTypeDetails.get(0).getDocumentNo()) ? "N/A"
+                    : documentTypeDetails.get(0).getDocumentNo());
+            formData.setDocDate(documentTypeDetails.get(0).getDocumentDate());
+            formData.setDocType(StringUtils.isBlank(documentTypeDetails.get(0).getDocumentName()) ? "N/A"
+                    : documentTypeDetails.get(0).getDocumentName());
+        } else {
+            formData.setDocNo(StringUtils.isBlank(basicProperty.getRegdDocNo()) ? "N/A" : basicProperty.getRegdDocNo());
+            formData.setDocDate(basicProperty.getRegdDocDate() == null ? null : basicProperty.getRegdDocDate());
+            formData.setDocType("N/A");
+        }
+    }
 }

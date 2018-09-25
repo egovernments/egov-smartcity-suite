@@ -123,7 +123,7 @@ public class PropertyMVInfo implements Serializable {
     private BigDecimal sitalArea = BigDecimal.ZERO;
 
     @Column(name = "TOTAL_BUILTUP_AREA")
-    private BigDecimal toalBuiltUpArea = BigDecimal.ZERO;
+    private BigDecimal totalBuiltUpArea = BigDecimal.ZERO;
 
     @Column(name = "LATEST_STATUS")
     private Integer latestStatus;
@@ -223,6 +223,10 @@ public class PropertyMVInfo implements Serializable {
     private BigDecimal rebate = BigDecimal.ZERO;
 
     private BigDecimal adjustment = BigDecimal.ZERO;
+    
+    private BigDecimal latitude;
+
+    private BigDecimal longitude;
 
     public Integer getBasicPropertyID() {
         return basicPropertyID;
@@ -304,12 +308,12 @@ public class PropertyMVInfo implements Serializable {
         this.sitalArea = sitalArea;
     }
 
-    public BigDecimal getToalBuiltUpArea() {
-        return toalBuiltUpArea;
+    public BigDecimal getTotalBuiltUpArea() {
+        return totalBuiltUpArea;
     }
 
-    public void setToalBuiltUpArea(final BigDecimal toalBuiltUpArea) {
-        this.toalBuiltUpArea = toalBuiltUpArea;
+    public void setTotalBuiltUpArea(final BigDecimal totalBuiltUpArea) {
+        this.totalBuiltUpArea = totalBuiltUpArea;
     }
 
     public Integer getLatestStatus() {
@@ -665,6 +669,22 @@ public class PropertyMVInfo implements Serializable {
 
     public void setElectionWard(final Boundary electionWard) {
         this.electionWard = electionWard;
+    }
+
+    public BigDecimal getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(BigDecimal latitude) {
+        this.latitude = latitude;
+    }
+
+    public BigDecimal getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(BigDecimal longitude) {
+        this.longitude = longitude;
     }
 
 }
