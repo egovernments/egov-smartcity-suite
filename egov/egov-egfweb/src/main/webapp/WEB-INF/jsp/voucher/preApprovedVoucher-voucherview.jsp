@@ -147,7 +147,7 @@ function onSubmit()
 							<td width="10%" class="<c:out value='${tdclass}' />">Bill
 								Number :</td>
 							<td width="25%" class="<c:out value='${tdclass}' />"><s:property
-									value="%{getMasterName('billnumber')}" /></td>
+									value="%{getMasterName('billnumber')}" default="N/A" /></td>
 							<td width="10%"></td>
 							<td width="25%"></td>
 						</tr>
