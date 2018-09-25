@@ -55,6 +55,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -345,35 +346,27 @@ public class AadharSeedingService extends GenericWorkFlowController {
         closedMutationQuery.setParameter("upicNo", basicProperty.getUpicNo());
         List<DocumentTypeDetails> documentTypeDetails = (List<DocumentTypeDetails>) getdocumentsQuery.getResultList();
         List<PropertyMutation> mutationList = (List<PropertyMutation>) closedMutationQuery.getResultList();
-       
-        if(!mutationList.isEmpty()){
-            PropertyMutation mutation= mutationList.get(0);
-            if(mutation.getMutationReason().getCode().equals(CIVILCOURTDECREE)){
-                formData.setDocNo(StringUtils.isBlank(mutation.getDecreeNumber()) ? "N/A" : mutation.getDecreeNumber());
-                formData.setDocDate(mutation.getDecreeDate() == null ? null : mutation.getDecreeDate());
-                formData.setDocumentType(DECREE_BY_CIVIL_COURT);
+
+        if (!mutationList.isEmpty()) {
+            PropertyMutation mutation = mutationList.get(0);
+            if (mutation.getMutationReason().getCode().equals(CIVILCOURTDECREE)) {
+                setDocNoDateAndType(formData, mutation.getDecreeNumber(), mutation.getDecreeDate(), DECREE_BY_CIVIL_COURT);
+            } else if (Arrays.asList(PARTISION, SALEDEED, TITLEDEED).contains(mutation.getMutationReason().getCode())) {
+                setDocNoDateAndType(formData, mutation.getDeedNo(), mutation.getDeedDate(), REGISTERED_DOCUMENT);
+            } else if (mutation.getMutationReason().getCode().equals(REGISTERED)) {
+                setDocNoDateAndType(formData, mutation.getDeedNo(), mutation.getDeedDate(), REGISTERED_WILL_DOCUMENT);
             }
-            else if(Arrays.asList(PARTISION, SALEDEED, TITLEDEED).contains(mutation.getMutationReason().getCode())){
-                formData.setDocNo(StringUtils.isBlank(mutation.getDeedNo()) ? "N/A" : mutation.getDeedNo());
-                formData.setDocDate(mutation.getDeedDate() == null ? null : mutation.getDeedDate());
-                formData.setDocumentType(REGISTERED_DOCUMENT);
-            }
-            else if(mutation.getMutationReason().getCode().equals(REGISTERED)){
-                formData.setDocNo(StringUtils.isBlank(mutation.getDeedNo()) ? "N/A" : mutation.getDeedNo());
-                formData.setDocDate(mutation.getDeedDate() == null ? null : mutation.getDeedDate());
-                formData.setDocumentType(REGISTERED_WILL_DOCUMENT);
-            }
-        }
-        else if (!documentTypeDetails.isEmpty()) {
-            formData.setDocNo(StringUtils.isBlank(documentTypeDetails.get(0).getDocumentNo()) ? "N/A"
-                    : documentTypeDetails.get(0).getDocumentNo());
-            formData.setDocDate(documentTypeDetails.get(0).getDocumentDate());
-            formData.setDocType(StringUtils.isBlank(documentTypeDetails.get(0).getDocumentName()) ? "N/A"
-                    : documentTypeDetails.get(0).getDocumentName());
+        } else if (!documentTypeDetails.isEmpty()) {
+            setDocNoDateAndType(formData, documentTypeDetails.get(0).getDocumentNo(),
+                    documentTypeDetails.get(0).getDocumentDate(), documentTypeDetails.get(0).getDocumentName());
         } else {
-            formData.setDocNo(StringUtils.isBlank(basicProperty.getRegdDocNo()) ? "N/A" : basicProperty.getRegdDocNo());
-            formData.setDocDate(basicProperty.getRegdDocDate() == null ? null : basicProperty.getRegdDocDate());
-            formData.setDocType("N/A");
+            setDocNoDateAndType(formData, basicProperty.getRegdDocNo(), basicProperty.getRegdDocDate(), "N/A");
         }
+    }
+
+    private void setDocNoDateAndType(AadharSeedingRequest formData, String docNo, Date docDate, String docType) {
+        formData.setDocNo(StringUtils.isBlank(docNo) ? "N/A" : docNo);
+        formData.setDocDate(docDate == null ? null : docDate);
+        formData.setDocumentType(StringUtils.isBlank(docType) ? "N/A" : docType);
     }
 }
