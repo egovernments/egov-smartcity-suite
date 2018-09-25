@@ -73,6 +73,7 @@ import org.egov.ptis.domain.model.RestPropertyTaxDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.util.JsonConvertor;
+import org.egov.restapi.web.security.oauth2.utils.TokenServiceUtils;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
@@ -85,6 +86,7 @@ import org.egov.wtms.masters.entity.WaterTaxDetails;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -109,6 +111,9 @@ public class RestWaterConnectionCollection {
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
 
+    @Autowired
+    private TokenServiceUtils tokenServiceUtils;
+
     /**
      * This method is used to pay the water tax.
      *
@@ -120,25 +125,30 @@ public class RestWaterConnectionCollection {
 
     @PostMapping(value = "/v1.0/watercharges/paywatertax", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String payWaterConnectionTaxDetails(@Valid @RequestBody PayWaterTaxDetails payWaterTaxDetails,
-            HttpServletRequest request) {
-        return payWaterTaxDetails(payWaterTaxDetails, request);
+            HttpServletRequest request, final OAuth2Authentication authentication) {
+        return payWaterTaxDetails(payWaterTaxDetails, request, authentication);
     }
 
     @PostMapping(value = "/watercharges/paywatertax", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String payWaterTax(@Valid @RequestBody PayWaterTaxDetails payWaterTaxDetails,
             HttpServletRequest request) {
-        return payWaterTaxDetails(payWaterTaxDetails, request);
+        return payWaterTaxDetails(payWaterTaxDetails, request, null);
     }
 
-    public String payWaterTaxDetails(PayWaterTaxDetails payWaterTaxDetails, HttpServletRequest request) {
+    public String payWaterTaxDetails(PayWaterTaxDetails payWaterTaxDetails, HttpServletRequest request,
+            final OAuth2Authentication authentication) {
         WaterReceiptDetails waterReceiptDetails = null;
         try {
             ErrorDetails errorDetails = validatePaymentDetails(payWaterTaxDetails);
             if (errorDetails != null && isNotBlank(errorDetails.getErrorCode()))
                 return JsonConvertor.convert(errorDetails);
             else {
-                payWaterTaxDetails.setSource(request.getSession().getAttribute("source") != null
-                        ? request.getSession().getAttribute("source").toString() : "");
+                if (authentication != null) {
+                    Object source = tokenServiceUtils.getSource(authentication);
+                    payWaterTaxDetails.setSource(source == null ? "" : source.toString());
+                } else
+                    payWaterTaxDetails.setSource(request.getSession().getAttribute("source") != null
+                            ? request.getSession().getAttribute("source").toString() : "");
                 payWaterTaxDetails.setPaymentAmount(payWaterTaxDetails.getPaymentAmount().setScale(0, HALF_UP));
                 waterReceiptDetails = waterTaxExternalService.payWaterTax(payWaterTaxDetails);
             }
