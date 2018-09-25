@@ -129,7 +129,6 @@ public class TradeLicense extends StateAware<Position> {
 
     protected static final String SEQUENCE = "SEQ_EGTL_LICENSE";
     private static final long serialVersionUID = -4621190785979222546L;
-    private static final String CLOSURE_APPROVAL_URL = "/tl/viewtradelicense/viewTradeLicense-closure.action?model.id=%d";
     private static final String CLOSURE_UPDATE_URL = "/tl/license/closure/update/%d";
     private static final String NEW_RENEW_APPROVAL_URL = "/tl/newtradelicense/newTradeLicense-showForApproval.action?model.id=%d";
 
@@ -338,7 +337,7 @@ public class TradeLicense extends StateAware<Position> {
     @Override
     public String myLinkId() {
         if (CLOSURE_APPTYPE_CODE.equals(this.getLicenseAppType().getCode()))
-            return isNewWorkflow() ? format(CLOSURE_UPDATE_URL, id) : format(CLOSURE_APPROVAL_URL, id);
+            return format(CLOSURE_UPDATE_URL, id);
         else
             return format(NEW_RENEW_APPROVAL_URL, id);
     }
