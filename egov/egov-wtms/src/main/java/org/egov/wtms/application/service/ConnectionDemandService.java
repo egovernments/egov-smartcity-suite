@@ -243,6 +243,7 @@ public class ConnectionDemandService {
             appConfig = appConfigService.getAppConfigByModuleNameAndKeyName(MODULE_NAME, BPL_CATEGORY_DONATION_AMOUNT);
             if (appConfig != null && !appConfig.getConfValues().isEmpty())
                 waterConnectionDetails.setDonationCharges(Long.valueOf(appConfig.getConfValues().get(0).getValue()));
+            feeDetails.put(WATERTAX_DONATION_CHARGE, waterConnectionDetails.getDonationCharges());
         } else if (donationDetails != null) {
             feeDetails.put(WATERTAX_DONATION_CHARGE, donationDetails.getAmount());
             waterConnectionDetails.setDonationCharges(donationDetails.getAmount());
@@ -268,30 +269,31 @@ public class ConnectionDemandService {
         EgDemand egDemand = new EgDemand();
         BigDecimal rebateAmount = ZERO;
         BigDecimal baseDemand = ZERO;
-        Set<EgDemandDetails> demandDtlSet;
-        for (EgDemandDetails demandDetails : dmdDetailSet)
+        Set<EgDemandDetails> newDemandDetailSet;
+        if (CATEGORY_BPL.equalsIgnoreCase(waterConnectionDetails.getCategory().getName()))
+            newDemandDetailSet = demandChangesForBplCategory(dmdDetailSet);
+        else
+            newDemandDetailSet = dmdDetailSet;
+        for (EgDemandDetails demandDetails : newDemandDetailSet) {
             baseDemand = baseDemand.add(demandDetails.getAmount());
-        if (CATEGORY_BPL.equalsIgnoreCase(waterConnectionDetails.getCategory().getName())) {
-            demandDtlSet = demandChangesForBplCategory(dmdDetailSet);
-            for (EgDemandDetails demandDetails : dmdDetailSet)
-                if (!WATERTAX_DONATION_CHARGE
-                        .equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
-                    rebateAmount = rebateAmount.add(demandDetails.getAmtRebate());
-        } else
-            demandDtlSet = dmdDetailSet;
+            if (CATEGORY_BPL.equalsIgnoreCase(waterConnectionDetails.getCategory().getName())
+                    && !WATERTAX_DONATION_CHARGE
+                            .equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                rebateAmount = rebateAmount.add(demandDetails.getAmtRebate());
+        }
+
         egDemand.setBaseDemand(baseDemand);
         egDemand.addRebateAmt(rebateAmount);
         egDemand.setEgInstallmentMaster(installment);
-        egDemand.getEgDemandDetails().addAll(demandDtlSet);
+        egDemand.getEgDemandDetails().addAll(newDemandDetailSet);
         egDemand.setIsHistory("N");
         egDemand.setCreateDate(new Date());
         egDemand.setModifiedDate(new Date());
         return egDemand;
     }
 
-    public Set<EgDemandDetails> demandChangesForBplCategory(final Set<EgDemandDetails> demandDetailsSet) {
-        Set<EgDemandDetails> demandDetailSet = new HashSet<>();
-        for (EgDemandDetails demandDetail : demandDetailsSet) {
+    public Set<EgDemandDetails> demandChangesForBplCategory(Set<EgDemandDetails> demandDetailsSet) {
+        for (EgDemandDetails demandDetail : demandDetailsSet)
             if (WATERTAX_DONATION_CHARGE.equalsIgnoreCase(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
                 AppConfig appConfig = null;
                 appConfig = appConfigService.getAppConfigByModuleNameAndKeyName(MODULE_NAME, BPL_CATEGORY_DONATION_AMOUNT);
@@ -299,9 +301,7 @@ public class ConnectionDemandService {
                     demandDetail.setAmount(BigDecimal.valueOf(Long.valueOf(appConfig.getConfValues().get(0).getValue())));
             } else
                 demandDetail.setAmtRebate(demandDetail.getAmount());
-            demandDetailSet.add(demandDetail);
-        }
-        return demandDetailSet;
+        return demandDetailsSet;
     }
 
     public DonationDetails getDonationDetails(WaterConnectionDetails waterConnectionDetails) {
