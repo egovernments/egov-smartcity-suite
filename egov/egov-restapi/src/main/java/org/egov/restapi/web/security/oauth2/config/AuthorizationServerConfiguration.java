@@ -82,8 +82,8 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
     private static final Logger LOGGER = Logger.getLogger(AuthorizationServerConfiguration.class);
-    private static final String CLIENTS_CONFIG = "restapi-secured-clients-config.json";
-    private static final String CLIENTS_CONFIG_OVERRIDE = "restapi-secured-clients-config-override.json";
+    private static final String CLIENTS_CONFIG = "config/restapi-secured-clients-config.json";
+    private static final String CLIENTS_CONFIG_OVERRIDE = "config/restapi-secured-clients-config-override.json";
     private static final String SCOPE_WRITE = "write";
     private static final String SCOPE_READ = "read";
     private static final String GRANT_TYPE_PASSWORD = "password";
