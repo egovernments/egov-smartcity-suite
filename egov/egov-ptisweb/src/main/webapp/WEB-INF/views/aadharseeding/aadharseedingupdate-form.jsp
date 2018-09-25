@@ -231,7 +231,7 @@
 							<label><spring:message code="lbl.docType" /></label>
 						</div>
 						<div class="col-xs-3 add-margin view-content">
-							<strong><c:out value="${aadharSeedingUpdate.docType}"
+							<strong><c:out value="${aadharSeedingUpdate.documentType}"
 									default="N/A" /> </strong>
 						</div>
 					</div>

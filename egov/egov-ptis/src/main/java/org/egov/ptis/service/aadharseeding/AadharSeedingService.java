@@ -85,6 +85,7 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.repository.aadharseeding.AadharSeedingRepository;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
@@ -132,6 +133,9 @@ public class AadharSeedingService extends GenericWorkFlowController {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private transient PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     @Autowired
     @Qualifier("workflowService")
@@ -342,13 +346,9 @@ public class AadharSeedingService extends GenericWorkFlowController {
     private void setDocumentDetails(BasicProperty basicProperty, AadharSeedingRequest formData) {
         final Query getdocumentsQuery = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
         getdocumentsQuery.setParameter("basicProperty", basicProperty.getId());
-        final Query closedMutationQuery = entityManager.createNamedQuery("CLOSED_MUTATION_BY_UPICNO");
-        closedMutationQuery.setParameter("upicNo", basicProperty.getUpicNo());
         List<DocumentTypeDetails> documentTypeDetails = (List<DocumentTypeDetails>) getdocumentsQuery.getResultList();
-        List<PropertyMutation> mutationList = (List<PropertyMutation>) closedMutationQuery.getResultList();
-
-        if (!mutationList.isEmpty()) {
-            PropertyMutation mutation = mutationList.get(0);
+        PropertyMutation mutation = propertyTaxCommonUtils.getLatestApprovedMutationForAssessmentNo(basicProperty.getUpicNo());
+        if (mutation != null) {
             if (mutation.getMutationReason().getCode().equals(CIVILCOURTDECREE)) {
                 setDocNoDateAndType(formData, mutation.getDecreeNumber(), mutation.getDecreeDate(), DECREE_BY_CIVIL_COURT);
             } else if (Arrays.asList(PARTISION, SALEDEED, TITLEDEED).contains(mutation.getMutationReason().getCode())) {

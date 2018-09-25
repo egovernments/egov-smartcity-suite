@@ -118,6 +118,6 @@
 	<![CDATA[from PropertyMutation p where p.basicProperty.upicNo = :upicNo and p.state.status<>2 order by p.mutationDate desc]]>
 	</query>
 	<query name="CLOSED_MUTATION_BY_UPICNO">
-	<![CDATA[from PropertyMutation p where p.basicProperty.upicNo = :upicNo and p.state.status=2 order by p.mutationDate desc]]>
+	<![CDATA[select pm from PropertyMutation pm, PtNotice n where pm.basicProperty.upicNo =:assessmentNo and n.applicationNumber = pm.applicationNo and n.noticeType = 'Mutation Certificate' order by mutationDate desc]]>
 	</query>
 </hibernate-mapping>
