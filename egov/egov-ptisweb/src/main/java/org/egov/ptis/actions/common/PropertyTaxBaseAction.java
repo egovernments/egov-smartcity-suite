@@ -1016,7 +1016,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 	public void enableActionsForGIS(final PropertyImpl property, final List<DocumentType> documentTypes) {
 		String appConfigValue = propertyTaxCommonUtils.getAppConfigValue(APPCONFIG_GIS_THIRDPARTY_CHECKBOX_REQUIRED,
 				PTMODULENAME);
-		if (property.getState().getNextAction().endsWith(WF_STATE_COMMISSIONER_APPROVAL_PENDING)
+		if (StringUtils.isNotBlank(property.getState().getNextAction()) && property.getState().getNextAction().endsWith(WF_STATE_COMMISSIONER_APPROVAL_PENDING)
 				&& property.getSurveyVariance().compareTo(BigDecimal.TEN) > 0) {
 			showCheckboxForGIS = true;
 			if (property.isThirdPartyVerified())

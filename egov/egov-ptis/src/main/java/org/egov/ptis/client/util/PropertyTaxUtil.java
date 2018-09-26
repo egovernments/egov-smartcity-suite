@@ -1630,7 +1630,7 @@ public class PropertyTaxUtil {
     }
 
     /**
-     * API returns the percentage of tax difference between GIS survey tax and application tax Current second half taxes, exluding
+     * API returns the percentage of tax difference between GIS survey tax and application tax Current second half taxes, excluding
      * UAC penalty will be considered for the comparison
      * @param propertyImpl
      * @return BigDecimal
@@ -1645,8 +1645,9 @@ public class PropertyTaxUtil {
         if (gisProperty != null) {
             Ptdemand gisPtdemand = gisProperty.getPtDemandSet().iterator().next();
             if (gisPtdemand != null) {
+            	Map<String, Installment> gisPropYearInstMap = getInstallmentsForCurrYear(gisPtdemand.getEgInstallmentMaster().getFromDate());
                 for (EgDemandDetails demandDetails : gisPtdemand.getEgDemandDetails()) {
-                    if (gisPtdemand.getEgInstallmentMaster().getFromDate().equals(demandDetails.getInstallmentStartDate())
+                    if (gisPropYearInstMap.get(CURRENTYEAR_SECOND_HALF).getFromDate().equals(demandDetails.getInstallmentStartDate())
                             &&
                             !PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY
                                     .equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
