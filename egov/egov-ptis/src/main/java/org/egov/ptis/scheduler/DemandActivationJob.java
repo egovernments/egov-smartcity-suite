@@ -61,14 +61,14 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author Ramki
  */
-@DisallowConcurrentExecution
+
 public class DemandActivationJob extends AbstractQuartzJob {
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(DemandActivationJob.class);
 
     @Autowired
-    transient DemandActivationSchedulerService demandActivationService;
+    private DemandActivationSchedulerService demandActivationService;
 
     @Override
     public void executeJob() {
