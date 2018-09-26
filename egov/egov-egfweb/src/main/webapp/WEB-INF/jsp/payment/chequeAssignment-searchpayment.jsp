@@ -319,11 +319,6 @@
 					bootbox.alert('Select Cheque Issued Department');
 					return false;
 				}
-                var inFavourOf = document.getElementById("inFavourOf").value;
-                if(inFavourOf == ""){
-                    bootbox.alert('InFavour Of should not be empty');
-                    return false;
-                }
 				if(document.getElementById('selectedRows').value=='' || document.getElementById('selectedRows').value==0)
 				{
 					bootbox.alert('Please select the payment voucher');
@@ -732,7 +727,7 @@
 				var replacedInFavour = inFavourEntered.replace(/[`~!@#$%^&*()_|+\-=��?;:><'",.<>\{\}\[\]\\\/]/gi, '');
 				document.getElementById('inFavourOf').value = replacedInFavour;
 				if(inFavourEntered.trim() == ""){
-                    bootbox.alert('Only spaces are not allowed');
+                    bootbox.alert('Invalid In Favour Of');
                     document.getElementById('assignChequeBtn').disabled = true;
                 }else{
                     document.getElementById('assignChequeBtn').disabled = false;
