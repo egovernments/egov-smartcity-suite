@@ -120,4 +120,7 @@
 	<query name="CLOSED_MUTATION_BY_UPICNO">
 	<![CDATA[select pm from PropertyMutation pm, PtNotice n where pm.basicProperty.upicNo =:assessmentNo and n.applicationNumber = pm.applicationNo and n.noticeType = 'Mutation Certificate' order by mutationDate desc]]>
 	</query>
+	<query name="LATEST_APPROVED_MUTATION_BY_UPICNO">
+	<![CDATA[from PropertyMutation pm where pm.basicProperty.upicNo =:assessmentNo and pm.mutationReason.code in (:mutationCode) and exists (select n.applicationNumber from PtNotice n where n.applicationNumber = pm.applicationNo and n.noticeType = 'Mutation Certificate') order by mutationDate desc]]>
+	</query>
 </hibernate-mapping>
