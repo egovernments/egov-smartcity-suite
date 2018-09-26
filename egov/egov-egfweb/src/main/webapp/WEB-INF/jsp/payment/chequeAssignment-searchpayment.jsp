@@ -277,7 +277,7 @@
 						<s:if test="%{paymentMode=='cash'}">
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.infavourof" /><span
-								class="mandatory1">*</span> <s:textfield id="inFavourOf" onkeyup="isSpecialChar()" onchange="isSpecialChar()"
+								class="mandatory1">*</span> <s:textfield id="inFavourOf" onkeyup="isSpecialChar()"
 									name="inFavourOf" value="%{inFavourOf}" maxlength="50" /></td>
 						</s:if>
 					</tr>
@@ -731,6 +731,12 @@
 				var inFavourEntered = document.getElementById('inFavourOf').value;
 				var replacedInFavour = inFavourEntered.replace(/[`~!@#$%^&*()_|+\-=��?;:><'",.<>\{\}\[\]\\\/]/gi, '');
 				document.getElementById('inFavourOf').value = replacedInFavour;
+				if(inFavourEntered.trim() == ""){
+                    bootbox.alert('Only spaces are not allowed');
+                    document.getElementById('assignChequeBtn').disabled = true;
+                }else{
+                    document.getElementById('assignChequeBtn').disabled = false;
+                }
 			}
 		</script>
 	<%-- 	<s:if test="%{isFieldMandatory('department')}">
