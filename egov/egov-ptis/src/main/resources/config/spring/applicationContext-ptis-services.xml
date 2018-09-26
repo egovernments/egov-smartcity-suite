@@ -228,12 +228,4 @@
 	
 	 <!-- Collection Integration Service Bean Ends-->
 	
-	<bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
-	   <property name="transactionManager" ref="transactionManager" />
-    </bean>
-    
-    <bean id="demandActivationSchedulerService" class="org.egov.ptis.service.scheduler.DemandActivationSchedulerService" scope="prototype">
-		<property name="transactionTemplate" ref="transactionTemplate" />
-	</bean>
-   
 </beans>
