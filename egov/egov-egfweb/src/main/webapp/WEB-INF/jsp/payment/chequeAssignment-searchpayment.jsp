@@ -277,7 +277,7 @@
 						<s:if test="%{paymentMode=='cash'}">
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.infavourof" /><span
-								class="mandatory1">*</span> <s:textfield id="inFavourOf"
+								class="mandatory1">*</span> <s:textfield id="inFavourOf" onkeyup="isSpecialChar()" onchange="isSpecialChar()"
 									name="inFavourOf" value="%{inFavourOf}" maxlength="50" /></td>
 						</s:if>
 					</tr>
@@ -726,6 +726,11 @@
 						}
 					}
 					 
+			}
+			function isSpecialChar(){
+				var inFavourEntered = document.getElementById('inFavourOf').value;
+				var replacedInFavour = inFavourEntered.replace(/[`~!@#$%^&*()_|+\-=��?;:><'",.<>\{\}\[\]\\\/]/gi, '');
+				document.getElementById('inFavourOf').value = replacedInFavour;
 			}
 		</script>
 	<%-- 	<s:if test="%{isFieldMandatory('department')}">
