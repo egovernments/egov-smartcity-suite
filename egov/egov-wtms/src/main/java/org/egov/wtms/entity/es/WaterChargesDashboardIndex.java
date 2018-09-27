@@ -153,6 +153,9 @@ public class WaterChargesDashboardIndex {
     @Field(type = FieldType.Double)
     private Double nonBplExecution;
 
+    @Field(type = FieldType.Double)
+    private Double cancelledConnection;
+
     @Field(type = String, index = analyzed)
     private String address;
 
@@ -389,6 +392,14 @@ public class WaterChargesDashboardIndex {
 
     public void setNonBplExecution(Double nonBplExecution) {
         this.nonBplExecution = nonBplExecution;
+    }
+
+    public Double getCancelledConnection() {
+        return cancelledConnection;
+    }
+
+    public void setCancelledConnection(Double cancelledConnection) {
+        this.cancelledConnection = cancelledConnection;
     }
 
     public String getAddress() {
