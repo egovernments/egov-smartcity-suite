@@ -143,12 +143,13 @@ public class RestWaterConnectionCollection {
             if (errorDetails != null && isNotBlank(errorDetails.getErrorCode()))
                 return JsonConvertor.convert(errorDetails);
             else {
-                if (authentication != null) {
-                    Object source = tokenServiceUtils.getSource(authentication);
-                    payWaterTaxDetails.setSource(source == null ? "" : source.toString());
-                } else
+                if (authentication == null)
                     payWaterTaxDetails.setSource(request.getSession().getAttribute("source") != null
                             ? request.getSession().getAttribute("source").toString() : "");
+                else {
+                    Object source = tokenServiceUtils.getSource(authentication);
+                    payWaterTaxDetails.setSource(source == null ? "" : source.toString());
+                }
                 payWaterTaxDetails.setPaymentAmount(payWaterTaxDetails.getPaymentAmount().setScale(0, HALF_UP));
                 waterReceiptDetails = waterTaxExternalService.payWaterTax(payWaterTaxDetails);
             }
