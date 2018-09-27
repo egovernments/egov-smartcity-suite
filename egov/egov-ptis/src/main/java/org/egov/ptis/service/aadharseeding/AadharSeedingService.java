@@ -167,8 +167,8 @@ public class AadharSeedingService extends GenericWorkFlowController {
             AadharSearchResult arsObj = new AadharSearchResult();
             arsObj.setAddress(str[3].toString());
             arsObj.setAssessmentNo(str[0].toString());
-            arsObj.setDoorNo(str[2] != null ? str[2].toString() : "NA");
-            arsObj.setOwnerName(str[1] != null ? str[1].toString() : "NA");
+            arsObj.setDoorNo(str[2] == null ? "NA" : str[2].toString());
+            arsObj.setOwnerName(str[1] == null ? "NA" : str[1].toString());
             asrList.add(arsObj);
         }
         return asrList;
@@ -178,21 +178,10 @@ public class AadharSeedingService extends GenericWorkFlowController {
     public List<String[]> getQueryResult(AadharSeedingRequest aadharSeedingRequest) {
         StringBuilder baseQry = new StringBuilder();
         StringBuilder orderBy = new StringBuilder();
-        baseQry = baseQry
-                .append("select mv.propertyId, mv.ownerName, mv.houseNo, mv.propertyAddress from PropertyMaterlizeView mv where ")
-                .append("mv.basicPropertyID in(select p.basicProperty from PropertyImpl p where p.propertyDetail.structure=false ")
-                .append("and p.status in('A','I') and p.id not in(select m.property from PropertyMutation m where m.state.status <> 2))")
-                .append(" and mv.basicPropertyID not in(select basicProperty from AadharSeeding) and mv.latitude is not null and mv.longitude is not null")
-                .append(" and mv.ward is not null and mv.electionWard is not null and (mv.basicPropertyID in")
-                .append("(select mv.basicPropertyID from PropertyMaterlizeView mv where mv.usage ='VACANTLAND' ")
-                .append("and mv.sitalArea is not null) or mv.basicPropertyID in(select mv.basicPropertyID from PropertyMaterlizeView mv ")
-                .append("where mv.usage <>'VACANTLAND' and mv.totalBuiltUpArea is not null)) and (mv.basicPropertyID ")
-                .append("in(select basicPropertyId from DocumentTypeDetails where documentName like 'Registered%' or documentName like 'Patta%' and documentNo is not null and documentDate is not null) ")
-                .append("or mv.basicPropertyID in(select mv.basicPropertyID from PropertyMaterlizeView mv where trim(mv.regdDocNo) <> '' and mv.regdDocDate is not null) ")
-                .append("or mv.basicPropertyID in (select pmd.basicProperty from PropertyMutation pmd where pmd.id in(select max(pm.id) from PropertyMutation pm ")
-                .append("where pm.basicProperty=pmd.basicProperty and pm.state.status=2 group by pm.mutationDate,pm.id order by pm.mutationDate desc) ")
-                .append("and ((pmd.mutationReason.code in('PARTISION', 'SALEDEED', 'REGISTERED', 'TITLEDEED') and pmd.deedNo is not null and pmd.deedDate is not null) or ")
-                .append("(pmd.mutationReason.code='CIVILCOURTDECREE' and pmd.decreeNumber is not null and pmd.decreeDate is not null))))");
+        baseQry = baseQry.append("select mv.propertyId, mv.ownerName, mv.houseNo, mv.propertyAddress from PropertyMaterlizeView mv ")
+                .append("where mv.basicPropertyID in(select p.basicProperty from PropertyImpl p where ")
+                .append("p.propertyDetail.structure=false and p.status in('A','I') and p.id not in(select m.property from PropertyMutation m ")
+                .append("where m.state.status <> 2)) and mv.basicPropertyID not in(select basicProperty from AadharSeeding)");
         final StringBuilder wherClause = new StringBuilder();
         orderBy = orderBy.append(" order by mv.propertyId");
         if (isNotBlank(aadharSeedingRequest.getAssessmentNo()))
