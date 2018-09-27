@@ -135,7 +135,7 @@ public class AadharSeedingService extends GenericWorkFlowController {
     private UserService userService;
     
     @Autowired
-    private transient PropertyTaxCommonUtils propertyTaxCommonUtils;
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     @Autowired
     @Qualifier("workflowService")
@@ -160,18 +160,18 @@ public class AadharSeedingService extends GenericWorkFlowController {
         model.addAttribute("electionWardId", electionWards);
     }
 
-    public List<String[]> prepareOutput(AadharSeedingRequest aadharSeedingRequest) {
+    public List<AadharSearchResult> prepareOutput(AadharSeedingRequest aadharSeedingRequest) {
         List<String[]> aadharSeeding = getQueryResult(aadharSeedingRequest);
         List<AadharSearchResult> asrList = new ArrayList<>();
         for (Object[] str : aadharSeeding) {
             AadharSearchResult arsObj = new AadharSearchResult();
             arsObj.setAddress(str[3].toString());
             arsObj.setAssessmentNo(str[0].toString());
-            arsObj.setDoorNo(str[2].toString());
-            arsObj.setOwnerName(str[1].toString());
+            arsObj.setDoorNo(str[2] != null ? str[2].toString() : "NA");
+            arsObj.setOwnerName(str[1] != null ? str[1].toString() : "NA");
             asrList.add(arsObj);
         }
-        return aadharSeeding;
+        return asrList;
     }
 
     @SuppressWarnings("unchecked")
@@ -315,17 +315,6 @@ public class AadharSeedingService extends GenericWorkFlowController {
         aadharSeeding.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                 .withStateValue(wfmatrix.getNextState())
                 .withDateInfo(currentDate.toDate()).withNextAction(wfmatrix.getNextAction());
-    }
-
-    public void preparejasonData(List<String[]> aadharSeeding, List<AadharSearchResult> searchResultList) {
-        for (Object[] obj : aadharSeeding) {
-            AadharSearchResult resultObj = new AadharSearchResult();
-            resultObj.setAddress(obj[3].toString());
-            resultObj.setAssessmentNo(obj[0].toString());
-            resultObj.setDoorNo(obj[2].toString());
-            resultObj.setOwnerName(obj[1].toString());
-            searchResultList.add(resultObj);
-        }
     }
 
     public List<AadharSearchResult> getProperties() {

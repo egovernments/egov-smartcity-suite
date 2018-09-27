@@ -47,7 +47,6 @@
  */
 package org.egov.ptis.web.controller.aadharseeding;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -91,10 +90,8 @@ public class AadharSeedingController {
     @GetMapping(value = "/result", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchProperties(AadharSeedingRequest aadharSeedingRequest) {
-        List<String[]> aadharSeeding = aadharSeedingService.prepareOutput(aadharSeedingRequest);
-        List<AadharSearchResult> searchResultList = new ArrayList<>();
-        aadharSeedingService.preparejasonData(aadharSeeding, searchResultList);
-        return "{ \"data\":"+new GsonBuilder().create().toJson(searchResultList)+"}";
+        List<AadharSearchResult> aadharSeeding = aadharSeedingService.prepareOutput(aadharSeedingRequest);
+        return "{ \"data\":"+new GsonBuilder().create().toJson(aadharSeeding)+"}";
     }
 
     @GetMapping(value = "/peoplehubdata/{aadharNumber}", produces = MediaType.APPLICATION_JSON_VALUE)
