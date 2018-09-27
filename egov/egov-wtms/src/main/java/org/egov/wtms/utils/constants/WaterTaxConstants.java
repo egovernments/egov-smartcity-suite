@@ -356,6 +356,7 @@ public class WaterTaxConstants {
     public static final String APPLICATIONSTATUSOPEN = "Open";
     public static final String APPLICATIONSTATUSCLOSED = "Closed";
     public static final String APPLICATIONSTATUSALL = "All";
+    public static final String END = "END";
 
     public static final String RECONNECTION_ESTIMATION_NOTICE = "ReconnacknowlgementNotice";
     public static final String CLOSURE_ESTIMATION_NOTICE = "CloserConnectionAcknowldgemt";

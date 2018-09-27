@@ -61,6 +61,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTIONTYPE_MET
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_OPERATOR;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.END;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -318,7 +319,7 @@ public class WaterTaxSearchService {
 
     private void addClosingConnectionActions(WaterChargeDocument connection, boolean cscUser,
                                              boolean ulbOperator, boolean collectionOperatorRole, List<String> connectionActions) {
-        if ((cscUser || ulbOperator) && CLOSED.equals(connection.getStatus())) {
+        if ((cscUser || ulbOperator) && (CLOSED.equals(connection.getStatus()) || END.equals(connection.getStatus()))) {
             connectionActions.add(VIEW_WATER_CONNECTION);
             connectionActions.add(DOWNLOAD_CLOSURE_PROCEEDING);
             if (TEMP_CLOSURE_TYPE.equals(connection.getClosureType())) {
