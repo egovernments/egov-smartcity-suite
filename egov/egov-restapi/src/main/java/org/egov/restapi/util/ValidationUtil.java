@@ -459,6 +459,11 @@ public class ValidationUtil {
                         final BasicProperty basicProperty = basicPropertyDAO
                                 .getBasicPropertyByPropertyID(createPropDetails.getAssessmentNumber());
                         zoneNo = basicProperty.getPropertyID().getZone().getBoundaryNum().toString();
+                        if(!propertyExternalService.isBoundaryActive(zoneNo, ZONE,
+                                REVENUE_HIERARCHY_TYPE)) {
+                            errorDetails.setErrorCode(INACTIVE_ZONE_CODE);
+                            errorDetails.setErrorMessage(INACTIVE_ZONE_REQ_MSG);
+                        }
                     }
                     if (propertyExternalService.isActiveUnitRateExists(floorDetails, zoneNo,
                             floorDetails.getNatureOfUsageCode(), floorDetails.getBuildClassificationCode())) {
