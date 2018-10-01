@@ -1313,7 +1313,7 @@ public class PropertyTaxUtil {
      */
     public Date getLowestInstallmentForProperty(final Property property) {
         final String query = "select demandDetails.egDemandReason from Ptdemand ptd,EgDemandDetails demandDetails where ptd.egptProperty = :property "
-                + " and ptd.id = demandDetails.egDemand.id ";
+                + " and ptd.id = demandDetails.egDemand.id order by demandDetails.egDemandReason.egInstallmentMaster.fromDate";
         final List<EgDemandReason> egDemandReason = persistenceService.getSession().createQuery(query.toString())
                 .setEntity(PROPERTY, property).list();
         return null != egDemandReason && !egDemandReason.isEmpty() ? egDemandReason.get(0).getEgInstallmentMaster()
