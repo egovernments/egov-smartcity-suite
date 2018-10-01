@@ -300,7 +300,7 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
 
             if (isNotBlank(sbimopsResponse.getAuthStatus()) &&
                     sbimopsResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_FAILED)
-                    && (!responseParameterMap.get(SBIMOPS_STATUS).equals("F")))
+                    && (!responseParameterMap.get(SBIMOPS_STATUS.toUpperCase()).equals("F")))
                 LOGGER.error("CFMSFAILED TRANSACTION RESPONSE: " + response);
 
             if (sbimopsResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS)) {
