@@ -189,7 +189,7 @@
 									name="chequeDate" var="tempChequeDate" format="dd/MM/yyyy" />
 								<s:textfield id="chequeDate%{#s.index}"
 									name="chequeAssignmentList[%{#s.index}].chequeDate"
-									value="%{tempChequeDate}" data-date-end-date="0d"
+									value="%{tempChequeDate}" data-date-end-date="0d" onchange="validateChequeDateForChequeMode();"
 									onkeyup="DateFormat(this,this.value,event,false,'3')"
 									placeholder="DD/MM/YYYY" class="form-control datepicker"
 									data-inputmask="'mask': 'd/m/y'" /></td>
