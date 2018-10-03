@@ -102,7 +102,7 @@ public class MarriageRegistrationRequest {
     private String husbandAadhaarNo;
 
     @NotNull(message = "Provide bridegroom's parents name")
-    @Length(max = 70,message="Parents name should be less than 70 character")
+    @Length(max = 110,message="Parents name should be less than 110 character")
     private String husbandparentsName;
 
     @NotNull(message = "Provide bridegroom's eduaction qualification")
@@ -146,7 +146,7 @@ public class MarriageRegistrationRequest {
     private String wifeAadhaarNo;
 
     @NotNull(message = "Provide bride's parents name")
-    @Length(max = 70,message="Parents name should be less than 70 character")
+    @Length(max = 110,message="Parents name should be less than 110 character")
     private String wifeparentsName;
 
     @NotNull(message = "Provide bride's education qualification")

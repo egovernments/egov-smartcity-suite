@@ -60,7 +60,7 @@ public class Name {
 
     @NotNull
     @SafeHtml
-    @Length(max = 30,message="Husband/wife firstName should be less than 30 character")
+    @Length(max = 110,message="Husband/wife firstName should be less than 110 character")
     private String firstName;
 
     @NotNull

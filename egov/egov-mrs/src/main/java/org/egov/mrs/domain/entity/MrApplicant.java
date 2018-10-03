@@ -147,7 +147,7 @@ public class MrApplicant extends AbstractAuditable {
     private Set<MrApplicantDocument> applicantDocuments = new HashSet<>();
 
     @NotNull
-    @Length(max = 70)
+    @Length(max = 110)
     private String parentsName;
 
     @NotNull

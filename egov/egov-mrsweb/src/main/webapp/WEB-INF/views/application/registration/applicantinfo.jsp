@@ -65,7 +65,7 @@
 		<div class="col-sm-6">
 			<form:input path="${applicant}.name.firstName"
 				id="${applicant}.name.firstName" type="text"
-				class="form-control is_valid_alphabet inline-elem" maxlength="30"
+				class="form-control is_valid_alphabet inline-elem" maxlength="110"
 				autocomplete="off" required="required" style="width: 33%"
 				placeholder="First Name" />
 			<form:input path="${applicant}.name.middleName" id="txt-middleName"
@@ -99,7 +99,7 @@
 		<div class="col-sm-6">
 			<form:input path="${applicant}.parentsName" id="txt-parentsName"
 				type="text" class="form-control low-width is_valid_alphabet"
-				maxlength="70" placeholder="" autocomplete="off" required="required" />
+				maxlength="110" placeholder="" autocomplete="off" required="required" />
 			<form:errors path="${applicant}.parentsName"
 				cssClass="add-margin error-msg" />
 		</div>
