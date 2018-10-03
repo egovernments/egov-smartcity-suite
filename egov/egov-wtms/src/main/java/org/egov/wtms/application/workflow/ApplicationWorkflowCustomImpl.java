@@ -410,7 +410,8 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         WorkFlowMatrix wfmatrix = getWorkFlowMatrix(workFlowAction, loggedInUserDesignation, waterConnectionDetails, additionalRule);
         String connectionStatus = waterConnectionDetails.getStatus().getCode();
         if (wfmatrix == null
-                && APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)
+                && (APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction) 
+                        || FORWARDWORKFLOWACTION.equalsIgnoreCase(workFlowAction))
                 && (connectionStatus.equals(APPLICATION_STATUS_CLOSERDIGSIGNPENDING)
                 || connectionStatus.equals(APPLICATION_STATUS_RECONNDIGSIGNPENDING))) {
             String currentState = connectionStatus.equals(APPLICATION_STATUS_CLOSERDIGSIGNPENDING)
@@ -418,8 +419,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
             wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
                     additionalRule, currentState, null, null, loggedInUserDesignation);
         }
-
-        if (wfmatrix == null && waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_VERIFIED)
+        else if (wfmatrix == null && waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_VERIFIED)
                 && (loggedInUserDesignation.equalsIgnoreCase(ASSISTANT_EXECUTIVE_ENGINEER_DESIGN)
                 || loggedInUserDesignation.equalsIgnoreCase(TAP_INSPPECTOR_DESIGN))) {
             wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
