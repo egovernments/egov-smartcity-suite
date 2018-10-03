@@ -1842,7 +1842,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                         addFieldError(CHEQUE_ASSIGNMENT_PREFIX + index + CHEQUE_NUMBER_SUFFIX,
                                 getMessage(PAYMENT_CHEQUENUMBER_INVALID));
                     if (null == assignment.getChequeDate()) {
-                        addFieldError(CHEQUE_ASSIGNMENT_PREFIX + index + CHEQUE_NUMBER_SUFFIX, getMessage("payment.chequedate.invalid"));
+                        addFieldError(CHEQUE_ASSIGNMENT_PREFIX + index + CHEQUE_NUMBER_SUFFIX, getMessage(PAYMENT_CHEQUENO_EMPTY));
                         break;
                     }
                     if (assignment.getChequeDate().compareTo(assignment.getVoucherDate()) < 0) {
