@@ -227,9 +227,9 @@ public class WaterTaxSearchService {
         } else if (NEWCONNECTION.equals(connection.getApplicationCode())) {
             addNewConnectionActions(connection, collectionOperatorRole, cscUser, ulbOperator, connectionActions);
         } else if (CHANGEOFUSE.equals(connection.getApplicationCode()) && ACTIVE.equals(connection.getStatus())) {
-            addChangeOfUseActions(connection, collectionOperatorRole, cscUser, ulbOperator, adminRole, connectionActions);
+            addChangeOfUseActions(connection, collectionOperatorRole, ulbOperator, connectionActions);
         } else if (RECONNECTION.equals(connection.getApplicationCode()) && ACTIVE.equals(connection.getStatus())) {
-            addReconnectionActions(connection, collectionOperatorRole, cscUser, ulbOperator, adminRole, connectionActions);
+            addReconnectionActions(connection, collectionOperatorRole, ulbOperator, connectionActions);
         } else if (CLOSINGCONNECTION.equals(connection.getApplicationCode())) {
             addClosingConnectionActions(connection, cscUser, ulbOperator, collectionOperatorRole, connectionActions);
         } else if (REGULARIZE_CONNECTION.equals(connection.getApplicationCode()) && ACTIVE.equals(connection.getStatus())) {
@@ -296,18 +296,19 @@ public class WaterTaxSearchService {
     }
 
     private void addChangeOfUseActions(WaterChargeDocument connection, boolean collectionOperatorRole,
-                                       boolean cscUser, boolean ulbOperator, boolean adminRole, List<String> connectionActions) {
+            boolean ulbOperator, List<String> connectionActions) {
         if (collectionOperatorRole && connection.getWaterTaxDue() > 0) {
-            connectionActions.add(connection.getWaterTaxDue() > 0 ? COLLECT_CHARGES : VIEW_DCB_SCREEN);
-        } else if (cscUser || (connection.getLegacy() && adminRole)) {
-            connectionActions.add(VIEW_DCB_SCREEN);
-            connectionActions.add(VIEW_WATER_CONNECTION);
+            connectionActions.add(connection.getWaterTaxDue() > 0 ? COLLECT_CHARGES : VIEW_DCB_SCREEN);       
         } else if (CONNECTIONTYPE_METERED.equals(connection.getConnectionType()) && ulbOperator) {
             connectionActions.add(ENTER_METER_READING);
             addActionsForChangeOFUse(connection, collectionOperatorRole, connectionActions);
         } else if (!CONNECTIONTYPE_METERED.equals(connection.getConnectionType()) && ulbOperator) {
             addActionsForChangeOFUse(connection, collectionOperatorRole, connectionActions);
         }
+        else {
+            connectionActions.add(VIEW_DCB_SCREEN);
+            connectionActions.add(VIEW_WATER_CONNECTION);
+        } 
     }
 
     private void addActionsForChangeOFUse(WaterChargeDocument connection, boolean collectionOperatorRole, List<String> connectionActions) {
@@ -331,9 +332,7 @@ public class WaterTaxSearchService {
     }
 
     private void addReconnectionActions(WaterChargeDocument connection, boolean collectionOperatorRole,
-                                        boolean cscUser, boolean ulbOperator, boolean adminRole,
-                                        List<String> connectionActions) {
-
+            boolean ulbOperator, List<String> connectionActions) {
         if (ulbOperator && CONNECTIONTYPE_METERED.equals(connection.getConnectionType())) {
             connectionActions.add(VIEW_DCB_SCREEN);
             connectionActions.add(VIEW_WATER_CONNECTION);
@@ -350,7 +349,7 @@ public class WaterTaxSearchService {
             }
         } else if (collectionOperatorRole && connection.getWaterTaxDue() > 0) {
             connectionActions.add(COLLECT_CHARGES);
-        } else if (cscUser || ulbOperator || adminRole) {
+        } else {
             connectionActions.add(VIEW_DCB_SCREEN);
             connectionActions.add(VIEW_WATER_CONNECTION);
             connectionActions.add(DOWNLOAD_RECONNEC_PROCEEDING);
@@ -367,6 +366,9 @@ public class WaterTaxSearchService {
             if (collectionOperatorRole && connection.getWaterTaxDue() >= 0) {
                 connectionActions.add(COLLECT_CHARGES);
                 connectionActions.add(VIEW_DCB_SCREEN);
+            } else {
+                connectionActions.add(VIEW_DCB_SCREEN);
+                connectionActions.add(VIEW_WATER_CONNECTION);
             }
         }
     }
@@ -380,6 +382,10 @@ public class WaterTaxSearchService {
             }
             if (collectionOperatorRole && connection.getWaterTaxDue() >= 0)
                 connectionActions.add(COLLECT_CHARGES);
+            else {
+                connectionActions.add(VIEW_DCB_SCREEN);
+                connectionActions.add(VIEW_WATER_CONNECTION);
+            }
         }
     }
 
