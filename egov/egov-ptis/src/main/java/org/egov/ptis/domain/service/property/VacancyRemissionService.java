@@ -473,11 +473,11 @@ public class VacancyRemissionService {
             assignment = assignmentService.getPrimaryAssignmentForUser(vacancyRemission.getCreatedBy().getId());
         else {
             if (vacancyRemission.getState().getInitiatorPosition() == null)
-                assignment = assignmentService.getPrimaryAssignmentForPositon(
-                        vacancyRemission.getStateHistory().get(0).getOwnerPosition().getId());
+                assignment = assignmentService.getAssignmentsForPosition(
+                        vacancyRemission.getStateHistory().get(0).getOwnerPosition().getId()).get(0);
             else
-                assignment = assignmentService.getPrimaryAssignmentForPositon(
-                        vacancyRemission.getState().getInitiatorPosition().getId());
+                assignment = assignmentService.getAssignmentsForPosition(
+                        vacancyRemission.getState().getInitiatorPosition().getId()).get(0);
         }
         initiatorName = assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
         return initiatorName;
