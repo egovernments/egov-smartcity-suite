@@ -48,10 +48,8 @@
 package org.egov.restapi.web.controller.marriage;
 
 import static org.egov.mrs.application.MarriageConstants.MAX_SIZE;
-import static org.egov.mrs.application.MarriageConstants.REGISTER_NO_OF_DAYS;
 import static org.egov.mrs.application.MarriageConstants.getMarriageVenues;
 
-import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -64,7 +62,6 @@ import org.egov.infra.utils.StringUtils;
 import org.egov.mrs.masters.service.ReligionService;
 import org.egov.restapi.web.contracts.marriageregistration.MarriageDocumentUpload;
 import org.egov.restapi.web.contracts.marriageregistration.MarriageRegistrationRequest;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -97,7 +94,6 @@ public class MarriageAPIValidator implements Validator {
         final MarriageRegistrationRequest marriageRegistrationRequest = (MarriageRegistrationRequest) target;     
         validateBrideGroomInformation(marriageRegistrationRequest,errors);
         validateBrideInformation(marriageRegistrationRequest,errors);
-        validateDateOfMarriage(marriageRegistrationRequest,errors);
 
         if (marriageRegistrationRequest.getLocality() != null) {
             BoundaryType locality = boundaryTypeRepository.findByNameAndHierarchyTypeName("Locality", "LOCATION");
@@ -203,14 +199,6 @@ public class MarriageAPIValidator implements Validator {
             if (!matcher.matches() || marriageRegistrationRequest.getWifeContactInfo().getMobileNo().length() != 10)
                 errors.rejectValue("husbandContactInfo.mobileNo", "Invalid MobileNo. for BrideGroom",
                         "Invalid MobileNo. for BrideGroom");
-        }
-    }
-
-    private void validateDateOfMarriage(final MarriageRegistrationRequest marriageRegistrationRequest, final Errors errors) {
-        if (!new DateTime(new Date()).isBefore(new DateTime(marriageRegistrationRequest.getDateOfMarriage()).plusDays(Integer
-                .parseInt(REGISTER_NO_OF_DAYS) + 1))) {
-            errors.rejectValue("dateOfMarriage", "Invalid marriage date",
-                    "Application will not be accepted beyond 90 days from the date of marriage");
         }
     }
 
