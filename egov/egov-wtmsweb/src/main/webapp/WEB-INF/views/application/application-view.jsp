@@ -76,6 +76,14 @@
 				<jsp:include page="commonappdetails-view.jsp"></jsp:include>
 		</div>
 	<jsp:include page="connectiondetails-view.jsp"></jsp:include>
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<div class="panel-title">
+				<spring:message code="lbl.apphistory"/>
+			</div>
+		</div>
+	<jsp:include page="applicationhistory-view.jsp"></jsp:include>
+	</div>
 </div>	
 		
 <div class="row text-center">
