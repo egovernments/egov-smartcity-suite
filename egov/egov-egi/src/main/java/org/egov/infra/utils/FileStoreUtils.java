@@ -142,8 +142,8 @@ public class FileStoreUtils {
                 OutputStream out = response.getOutputStream();
                 IOUtils.write(FileUtils.readFileToByteArray(file), out);
             }
-        } catch (IOException e) {
-            LOGGER.error("Error occurred while writing file to response stream", e);
+        } catch (IOException ioe) {
+            LOGGER.error("Error occurred while writing file to response stream", ioe);
         }
     }
 
@@ -205,8 +205,9 @@ public class FileStoreUtils {
                     .contentLength(fileBytes.length)
                     .header(CONTENT_DISPOSITION, format(CONTENT_DISPOSITION_INLINE, fileName + ".pdf"))
                     .body(new InputStreamResource(new ByteArrayInputStream(fileBytes)));
-        } catch (IOException e) {
-            throw new ApplicationRuntimeException("Error while reading file", e);
+        } catch (IOException ioe) {
+            LOGGER.warn("Error occurred while getting file", ioe);
+            return ResponseEntity.notFound().build();
         }
     }
 }
