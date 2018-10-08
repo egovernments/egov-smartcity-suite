@@ -71,6 +71,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.egov.infra.utils.ApplicationConstant.NA;
 import static org.egov.infra.utils.ApplicationConstant.SYSTEM_USERNAME;
@@ -85,6 +86,8 @@ public class ComplaintHistoryService {
     private static final String DATE = "date";
     private static final String COMMENT = "comments";
     private static final String UPDATEDBY = "updatedBy";
+    private static final String UPDATEDUSERTYPE = "updatedUserType";
+    private static final String USERTYPE = "usertype";
     private static final String USER = "user";
     private static final String STATUS = "status";
     private static final String DEPT = "department";
@@ -118,7 +121,7 @@ public class ComplaintHistoryService {
                 COMPLAINT_ESCALATED : state.getValue());
         String[] senderName = state.getSenderName().split(DELIMITER_COLON);
         history.put(UPDATEDBY, senderName.length > 1 ? senderName[1] : senderName[0]);
-
+        history.put(UPDATEDUSERTYPE, state.getLastModifiedBy().getType());
         Position ownerPosition = state.getOwnerPosition();
         User user = state.getOwnerUser();
         if (user == null && ownerPosition != null) {
@@ -130,10 +133,12 @@ public class ComplaintHistoryService {
                 history.put(USER, employee.isPresent()
                         ? format(CURRENT_ASSIGNEE, employee.get().getName(), ownerPosition.getDeptDesig().getDesignation().getName())
                         : format(CURRENT_ASSIGNEE, NOASSIGNMENT, ownerPosition.getName()));
+                history.put(USERTYPE, employee.isPresent() ? employee.get().getType() : EMPTY);
                 history.put(DEPT, ownerPosition.getDeptDesig().getDepartment().getName());
             }
         } else {
             history.put(USER, user.getName());
+            history.put(USERTYPE, user.getType());
             Department department = eisCommonService.getDepartmentForUser(user.getId());
             history.put(DEPT, department == null ? NA : department.getName());
         }
