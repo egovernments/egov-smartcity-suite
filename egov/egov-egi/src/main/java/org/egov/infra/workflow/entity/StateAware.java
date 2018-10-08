@@ -334,6 +334,12 @@ public abstract class StateAware<T extends OwnerGroup> extends AbstractAuditable
             return this;
         }
 
+        public final Transition withSLA(Date slaDate) {
+            checkTransitionStatus();
+            state.setSla(slaDate);
+            return this;
+        }
+
         private void resetState() {
             state.setComments(EMPTY);
             state.setDateInfo(null);
@@ -346,6 +352,7 @@ public abstract class StateAware<T extends OwnerGroup> extends AbstractAuditable
             state.setOwnerUser(null);
             state.setOwnerPosition(null);
             state.setInitiatorPosition(null);
+            state.setSla(null);
         }
 
     }

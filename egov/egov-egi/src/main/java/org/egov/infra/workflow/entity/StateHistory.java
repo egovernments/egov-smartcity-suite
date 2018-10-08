@@ -136,6 +136,10 @@ public class StateHistory<T extends OwnerGroup> implements Serializable {
     @JoinColumn(name = "INITIATOR_POS", updatable = false)
     private T initiatorPosition;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(updatable = false)
+    private Date sla;
+
     StateHistory() {
         //Default constructor for jpa
     }
@@ -157,6 +161,7 @@ public class StateHistory<T extends OwnerGroup> implements Serializable {
         extraDateInfo = state.getExtraDateInfo();
         natureOfTask = state.getNatureOfTask();
         initiatorPosition = state.getInitiatorPosition();
+        sla = state.getSla();
     }
 
     public State getState() {
@@ -295,6 +300,14 @@ public class StateHistory<T extends OwnerGroup> implements Serializable {
         this.initiatorPosition = initiatorPosition;
     }
 
+    public Date getSla() {
+        return sla;
+    }
+
+    public void setSla(Date sla) {
+        this.sla = sla;
+    }
+
     public State<T> asState() {
         State<T> historyState = new State();
         historyState.setCreatedBy(createdBy);
@@ -312,6 +325,7 @@ public class StateHistory<T extends OwnerGroup> implements Serializable {
         historyState.setExtraDateInfo(extraDateInfo);
         historyState.setNatureOfTask(natureOfTask);
         historyState.setInitiatorPosition(initiatorPosition);
+        historyState.setSla(sla);
         return historyState;
     }
 }
