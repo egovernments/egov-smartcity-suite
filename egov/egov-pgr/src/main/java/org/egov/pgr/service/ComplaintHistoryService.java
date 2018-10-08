@@ -115,7 +115,7 @@ public class ComplaintHistoryService {
 
     private HashMap<String, Object> buildComplaintHistory(State<Position> state) {
         HashMap<String, Object> history = new HashMap<>();
-        history.put(DATE, state.getDateInfo());
+        history.put(DATE, state.getLastModifiedDate());
         history.put(COMMENT, defaultString(state.getComments()));
         history.put(STATUS, state.getLastModifiedBy().getUsername().equals(SYSTEM_USERNAME) ?
                 COMPLAINT_ESCALATED : state.getValue());
