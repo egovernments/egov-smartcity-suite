@@ -129,9 +129,9 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
                     vacancyRemission.getCurrentState()));
             model.addAttribute("ownersName", vacancyRemission.getBasicProperty().getFullOwnerName());
             model.addAttribute("applicationNo", vacancyRemission.getApplicationNumber());
-            if (propertyTaxUtil.enableVRApproval(vacancyRemission)) {
+            if (propertyTaxUtil.enableVRApproval(vacancyRemission.getBasicProperty().getUpicNo())) {
                 return "redirect:/vacancyremissionapproval/create/" + vacancyRemission.getBasicProperty().getUpicNo();
-            } else if (propertyTaxUtil.enableMonthlyUpdate(vacancyRemission)) {
+            } else if (propertyTaxUtil.enableMonthlyUpdate(vacancyRemission.getBasicProperty().getUpicNo())) {
                 return "redirect:/vacancyremission/monthlyupdate/" + vacancyRemission.getBasicProperty().getUpicNo();
             }
             final BasicProperty basicProperty = vacancyRemission.getBasicProperty();
