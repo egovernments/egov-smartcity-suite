@@ -67,7 +67,7 @@ public class ComplaintRouterValidator implements Validator {
         final ComplaintRouter complaintRouter = (ComplaintRouter) target;
 
         if (complaintRouter.getBoundary() != null && "City".equalsIgnoreCase(complaintRouter.getBoundary().getBoundaryType().getName()))
-            errors.rejectValue("boundary", "Invalid Boundary");
+            errors.rejectValue("boundary", "invalid.boundary");
     }
 
 }
