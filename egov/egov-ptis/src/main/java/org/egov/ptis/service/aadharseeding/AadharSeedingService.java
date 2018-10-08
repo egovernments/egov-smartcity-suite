@@ -51,6 +51,8 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.CIVILCOURTDECREE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -111,8 +113,6 @@ public class AadharSeedingService extends GenericWorkFlowController {
     private static final String PARTISION = "PARTISION";
 
     private static final String DECREE_BY_CIVIL_COURT = "Decree by Civil Court";
-
-    private static final String CIVILCOURTDECREE = "CIVILCOURTDECREE";
 
     private static final String UPDATED = "UPDATED";
 
@@ -330,7 +330,11 @@ public class AadharSeedingService extends GenericWorkFlowController {
             if (mutation.getMutationReason().getCode().equals(CIVILCOURTDECREE)) {
                 setDocNoDateAndType(formData, mutation.getDecreeNumber(), mutation.getDecreeDate(), DECREE_BY_CIVIL_COURT);
             } else if (Arrays.asList(PARTISION, SALEDEED, TITLEDEED).contains(mutation.getMutationReason().getCode())) {
-                setDocNoDateAndType(formData, mutation.getDeedNo(), mutation.getDeedDate(), REGISTERED_DOCUMENT);
+                if (mutation.getType().equals(ADDTIONAL_RULE_FULL_TRANSFER)) {
+                    setDocNoDateAndType(formData, mutation.getMutationRegistrationDetails().getDocumentNo(),
+                            mutation.getMutationRegistrationDetails().getDocumentDate(), REGISTERED_DOCUMENT);
+                } else
+                    setDocNoDateAndType(formData, mutation.getDeedNo(), mutation.getDeedDate(), REGISTERED_DOCUMENT);
             } else if (mutation.getMutationReason().getCode().equals(REGISTERED)) {
                 setDocNoDateAndType(formData, mutation.getDeedNo(), mutation.getDeedDate(), REGISTERED_WILL_DOCUMENT);
             }
