@@ -181,7 +181,7 @@ public class VacancyRemissionService {
     private PTBillServiceImpl ptBillServiceImpl;
 
     public VacancyRemission getApprovedVacancyRemissionForProperty(final String upicNo) {
-        return vacancyRemissionRepository.findByUpicNo(upicNo);
+        return vacancyRemissionRepository.findByUpicNo(upicNo).get(0);
     }
 
     public VacancyRemission getLatestRejectAckGeneratedVacancyRemissionForProperty(final String upicNo) {

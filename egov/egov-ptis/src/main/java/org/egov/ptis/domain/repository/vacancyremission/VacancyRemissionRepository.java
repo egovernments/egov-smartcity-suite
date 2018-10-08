@@ -60,8 +60,8 @@ import java.util.List;
 @Repository
 public interface VacancyRemissionRepository extends JpaRepository<VacancyRemission, Long> {
 
-    @Query("select vr from VacancyRemission vr where vr.basicProperty.upicNo=:upicNo and vr.status = 'APPROVED'")
-    VacancyRemission findByUpicNo(@Param("upicNo") String name);
+    @Query("select vr from VacancyRemission vr where vr.basicProperty.upicNo=:upicNo and vr.status = 'APPROVED' order by createdDate desc")
+    List<VacancyRemission> findByUpicNo(@Param("upicNo") String name);
 
     @Query("select vr from VacancyRemission vr where vr.basicProperty.upicNo=:upicNo and vr.status = 'Rejection Acknowledgement Generated' order by id desc ")
     List<VacancyRemission> findAllRejectionAckGeneratedForUpicNo(@Param("upicNo") String name);
