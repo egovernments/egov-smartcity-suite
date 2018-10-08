@@ -1255,11 +1255,8 @@ public class PropertyTaxUtil {
         return vrFlag;
     }
 
-    public boolean enableMonthlyUpdate(final String upicNo) {
+    public boolean enableMonthlyUpdate(final VacancyRemission vacancyRemission) {
         boolean monthlyUpdateFlag = false;
-        final VacancyRemission vacancyRemission = (VacancyRemission) persistenceService
-                .find("select vr from VacancyRemission vr where vr.basicProperty.upicNo=? and vr.status = 'APPROVED'",
-                        upicNo);
         if (vacancyRemission != null)
             if (vacancyRemission.getVacancyRemissionDetails().isEmpty()
                     && DateUtils.noOfMonthsBetween(vacancyRemission.getVacancyFromDate(), new Date()) == 1)
@@ -1277,11 +1274,8 @@ public class PropertyTaxUtil {
         return monthlyUpdateFlag;
     }
 
-    public boolean enableVRApproval(final String upicNo) {
+    public boolean enableVRApproval(final VacancyRemission vacancyRemission) {
         boolean vrApprovalFlag = false;
-        final VacancyRemission vacancyRemission = (VacancyRemission) persistenceService
-                .find("select vr from VacancyRemission vr where vr.basicProperty.upicNo=? and vr.status = 'APPROVED'",
-                        upicNo);
         if (vacancyRemission != null && !vacancyRemission.getVacancyRemissionDetails().isEmpty()){
                 final int detailsSize = vacancyRemission.getVacancyRemissionDetails().size();
                 if (detailsSize % 6 == 0)
