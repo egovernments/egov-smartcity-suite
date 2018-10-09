@@ -66,6 +66,9 @@ import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
 import static org.egov.infra.utils.StringUtils.escapeSpecialChars;
 
 public class Inbox implements Serializable {
+
+    private static final long serialVersionUID = -6153234400275233899L;
+
     private String id;
     private String sender;
     private String date;
