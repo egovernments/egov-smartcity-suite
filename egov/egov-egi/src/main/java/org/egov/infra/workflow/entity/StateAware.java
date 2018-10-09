@@ -342,9 +342,11 @@ public abstract class StateAware<T extends OwnerGroup> extends AbstractAuditable
         }
 
         public final Transition withSLA(int slaDays) {
-            checkTransitionStatus();
-            state.setSla(new LocalDateTime().plusDays(slaDays).toDate());
-            return this;
+            return withSLA(new LocalDateTime().plusDays(slaDays).toDate());
+        }
+
+        public final Transition withSLAHours(int slaHours) {
+            return withSLA(new LocalDateTime().plusHours(slaHours).toDate());
         }
 
         private void resetState() {
