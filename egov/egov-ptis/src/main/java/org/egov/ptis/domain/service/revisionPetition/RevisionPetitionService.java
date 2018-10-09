@@ -205,6 +205,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     public static final String REJECT_INSPECTION = "objection.inspection.rejection";
     private static final String APPROVE = "Approve";
     private static final String REJECTED = "Rejected";
+    private static final String NON_HISTORY = "N";
     
     @Autowired
     protected AssignmentService assignmentService;
@@ -1132,12 +1133,12 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
 	public Property modifyRPDemand(final PropertyImpl propertyModel, final PropertyImpl oldProperty)
 			throws TaxCalculatorExeption {
 		Date propCompletionDate;
-		if (!propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode()
+		if (propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode()
 				.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
-			propCompletionDate = propertyService
-					.getLowestDtOfCompFloorWise(propertyModel.getPropertyDetail().getFloorDetails());
-		else
 			propCompletionDate = propertyModel.getPropertyDetail().getDateOfCompletion();
+		else
+			propCompletionDate = propertyService
+			.getLowestDtOfCompFloorWise(propertyModel.getPropertyDetail().getFloorDetails());
 		final PropertyImpl newProperty = (PropertyImpl) propertyService.createDemand(propertyModel, propCompletionDate);
 		Property modProperty = null;
 		if (oldProperty == null)
@@ -1202,7 +1203,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
 		final Installment currInstall = propertyTaxCommonUtils.getCurrentInstallment();
 		Ptdemand currPtDmd = null;
 		for (final Ptdemand demand : modProperty.getPtDemandSet())
-			if ("N".equalsIgnoreCase(demand.getIsHistory()) && demand.getEgInstallmentMaster().equals(currInstall)) {
+			if (NON_HISTORY.equalsIgnoreCase(demand.getIsHistory()) && demand.getEgInstallmentMaster().equals(currInstall)) {
 				currPtDmd = demand;
 				break;
 			}
