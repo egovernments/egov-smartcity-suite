@@ -194,6 +194,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
  * @author malathi
  */
 public class PropertyTaxUtil {
+    private static final String UPIC_NO = "upicNo";
     private static final String DD_MM_YYYY = "dd/MM/yyyy";
     private static final String INSTALLMENT = "installment";
     private static final String PROPERTY = "property";
@@ -745,7 +746,7 @@ public class PropertyTaxUtil {
                                 + "where p.basicProperty.active = true " + "and p.basicProperty.upicNo = :upicNo "
                                 + "and (p.remarks is null or p.remarks <> :propertyMigrationRemarks) "
                                 + "and pd.effective_date is not null")
-                .setString("upicNo", propertyId)
+                .setString(UPIC_NO, propertyId)
                 .setString("propertyMigrationRemarks", PropertyTaxConstants.STR_MIGRATED_REMARKS).list();
 
         Date earliestModificationDate = null;
@@ -830,7 +831,7 @@ public class PropertyTaxUtil {
     @SuppressWarnings("unchecked")
     public Map<String, Map<String, BigDecimal>> prepareDemandDetForView(final Property property,
             final Installment currentInstallment) {
-        final Map<String, Map<String, BigDecimal>> DCBDetails = new TreeMap<>();
+        final Map<String, Map<String, BigDecimal>> dCBDetails = new TreeMap<>();
         final Map<String, BigDecimal> firstHalfReasonDemandDetails = new HashMap<>();
         final Map<String, BigDecimal> secondHalfReasonDemandDetails = new HashMap<>();
         final Map<String, BigDecimal> arrearDemandDetails = new HashMap<>();
@@ -884,10 +885,10 @@ public class PropertyTaxUtil {
         firstHalfReasonDemandDetails.put(CURR_FIRSTHALF_COLL_STR, totalCurrentCollection);
         secondHalfReasonDemandDetails.put(CURR_SECONDHALF_DMD_STR, totalNextInstDemand);
         secondHalfReasonDemandDetails.put(CURR_SECONDHALF_COLL_STR, totalNextInstCollection);
-        DCBDetails.put(CURRENTYEAR_FIRST_HALF, firstHalfReasonDemandDetails);
-        DCBDetails.put(CURRENTYEAR_SECOND_HALF, secondHalfReasonDemandDetails);
-        DCBDetails.put(ARREARS, arrearDemandDetails);
-        return DCBDetails;
+        dCBDetails.put(CURRENTYEAR_FIRST_HALF, firstHalfReasonDemandDetails);
+        dCBDetails.put(CURRENTYEAR_SECOND_HALF, secondHalfReasonDemandDetails);
+        dCBDetails.put(ARREARS, arrearDemandDetails);
+        return dCBDetails;
     }
 
     @SuppressWarnings("unchecked")
@@ -896,7 +897,7 @@ public class PropertyTaxUtil {
                 + "where bp.upicNo = :upicNo and bp.active = true " + "and (p.remarks = null or p.remarks <> :remarks) "
                 + "order by p.createdDate";
         final List<Property> allProperties = entityManager.unwrap(Session.class).createQuery(query)
-                .setString("upicNo", basicProperty.getUpicNo()).setString("remarks", PropertyTaxConstants.STR_MIGRATED_REMARKS)
+                .setString(UPIC_NO, basicProperty.getUpicNo()).setString("remarks", PropertyTaxConstants.STR_MIGRATED_REMARKS)
                 .list();
         new ArrayList<Property>();
         final List<String> mutationsCodes = Arrays.asList("NEW", "MODIFY");
@@ -1200,8 +1201,7 @@ public class PropertyTaxUtil {
                 + "where bp.active = true " + "and (p.status = 'W' or p.status = 'I' or p.status = 'A') "
                 + "and p = :property " + "and ptd.egInstallmentMaster = :installment";
 
-        List<Ptdemand> ptDemandList = new ArrayList<>();
-        ptDemandList = entityManager.unwrap(Session.class).createQuery(query).setEntity("property", property)
+        List<Ptdemand> ptDemandList = entityManager.unwrap(Session.class).createQuery(query).setEntity("property", property)
                 .setEntity("installment", dmdInstallment).list();
         Ptdemand ptDemand = new Ptdemand();
         if (!ptDemandList.isEmpty()) {
@@ -1277,14 +1277,10 @@ public class PropertyTaxUtil {
     }
 
     private VacancyRemission getLatestApprovedVR(final String upicNo) {
-        final List<VacancyRemission> vacancyRemissions = (List<VacancyRemission>) persistenceService
-                .find("select vr from VacancyRemission vr where vr.basicProperty.upicNo=? and vr.status = 'APPROVED' order by createdDate desc",
-                        upicNo);
-        if (vacancyRemissions != null && !vacancyRemissions.isEmpty()) {
-            return vacancyRemissions.get(0);
-        }
-        else 
-            return null;
+        final String query = "from VacancyRemission vr where vr.basicProperty.upicNo= :upicNo and vr.status = 'APPROVED' order by createdDate desc";
+        final List<VacancyRemission> vacancyRemissions = entityManager.unwrap(Session.class).createQuery(query)
+                .setParameter(UPIC_NO, upicNo).list();
+        return (vacancyRemissions != null && !vacancyRemissions.isEmpty()) ? vacancyRemissions.get(0) : null;
     }
 
     public boolean enableVRApproval(final String upicNo) {
