@@ -158,7 +158,7 @@ public class State<T extends OwnerGroup> extends AbstractAuditable {
     private State<T> previousStateRef;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(updatable = false)
+    @Column
     private Date sla;
 
     protected State() {
