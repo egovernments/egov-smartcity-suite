@@ -463,21 +463,21 @@ public class SewerageApplicationDetailsService {
 
     public String checkConnectionPresentForProperty(final String propertyID) {
         String validationMessage = "";
-        final List<SewerageApplicationDetails> sewerageApplicationDetails = getSewerageConnectionDetailsByPropertyIDentifier(
-                propertyID);
-        if (sewerageApplicationDetails != null && !sewerageApplicationDetails.isEmpty())
-            if (sewerageApplicationDetails.get(0).getConnection().getStatus().toString()
+        SewerageApplicationDetails sewerageApplicationDetails = getWorkflowApplicationDetailByPropertyId(propertyID,
+                Arrays.asList("CANCELLED", "CLOSERSANCTIONED"));
+        if (sewerageApplicationDetails != null)
+            if (sewerageApplicationDetails.getConnection().getStatus().toString()
                     .equalsIgnoreCase(SewerageConnectionStatus.ACTIVE.toString()))
-                validationMessage = stmsMessageSource.getMessage("err.validate.seweragenewconnection.active", new String[]{
-                        sewerageApplicationDetails.get(0).getConnection().getShscNumber(), propertyID}, null);
-            else if (sewerageApplicationDetails.get(0).getConnection().getStatus().toString()
+                validationMessage = stmsMessageSource.getMessage("err.validate.seweragenewconnection.active", new String[] {
+                        sewerageApplicationDetails.getConnection().getShscNumber(), propertyID }, null);
+            else if (sewerageApplicationDetails.getConnection().getStatus().toString()
                     .equalsIgnoreCase(SewerageConnectionStatus.INPROGRESS.toString()))
                 validationMessage = stmsMessageSource.getMessage("err.validate.seweragenewconnection.application.inprocess",
-                        new String[]{propertyID, sewerageApplicationDetails.get(0).getApplicationNumber()}, null);
-            else if (sewerageApplicationDetails.get(0).getConnection().getStatus().toString()
+                        new String[] { propertyID, sewerageApplicationDetails.getApplicationNumber() }, null);
+            else if (sewerageApplicationDetails.getConnection().getStatus().toString()
                     .equalsIgnoreCase(SewerageConnectionStatus.INACTIVE.toString()))
-                validationMessage = stmsMessageSource.getMessage("err.validate.seweragenewconnection.inactive", new String[]{
-                        sewerageApplicationDetails.get(0).getConnection().getShscNumber(), propertyID}, null);
+                validationMessage = stmsMessageSource.getMessage("err.validate.seweragenewconnection.inactive", new String[] {
+                        sewerageApplicationDetails.getConnection().getShscNumber(), propertyID }, null);
         return validationMessage;
     }
 
@@ -1248,6 +1248,13 @@ public class SewerageApplicationDetailsService {
                 sewerageConnection.getShscNumber(),
                 String.format(url, sewerageApplicationDetails.getApplicationNumber(),
                         sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier()));
+    }
+
+    public SewerageApplicationDetails getWorkflowApplicationDetailByPropertyId(final String propertyId,
+            List<String> connectionStatus) {
+        return sewerageApplicationDetailsRepository
+                .findFirstByConnectionDetailPropertyIdentifierAndStatusCodeNotInOrderByLastModifiedDateDesc(propertyId,
+                        connectionStatus);
     }
 
 }

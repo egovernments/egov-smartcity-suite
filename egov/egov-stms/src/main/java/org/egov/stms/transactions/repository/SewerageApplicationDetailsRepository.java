@@ -96,5 +96,6 @@ public interface SewerageApplicationDetailsRepository extends JpaRepository<Sewe
     
     @Query("select scd from SewerageApplicationDetails scd where scd.connection.shscNumber =:shscNumber and scd.isActive='f' and upper(scd.status.code) not in ('CANCELLED','SANCTIONED')")
     SewerageApplicationDetails getSewerageApplicationInWorkFlow(@Param("shscNumber") String shscNumber);
-
+    
+    SewerageApplicationDetails findFirstByConnectionDetailPropertyIdentifierAndStatusCodeNotInOrderByLastModifiedDateDesc(String propertyIdentifier, List<String> statusCodes);
 }
