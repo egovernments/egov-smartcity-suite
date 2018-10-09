@@ -463,7 +463,7 @@ public class SewerageApplicationDetailsService {
 
     public String checkConnectionPresentForProperty(final String propertyID) {
         String validationMessage = "";
-        SewerageApplicationDetails sewerageApplicationDetails = getWorkflowApplicationDetailByPropertyId(propertyID,
+        SewerageApplicationDetails sewerageApplicationDetails = getApplicationDetailByPropertyIdAndStatusExcluded(propertyID,
                 Arrays.asList("CANCELLED", "CLOSERSANCTIONED"));
         if (sewerageApplicationDetails != null)
             if (sewerageApplicationDetails.getConnection().getStatus().toString()
@@ -1250,7 +1250,7 @@ public class SewerageApplicationDetailsService {
                         sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier()));
     }
 
-    public SewerageApplicationDetails getWorkflowApplicationDetailByPropertyId(final String propertyId,
+    public SewerageApplicationDetails getApplicationDetailByPropertyIdAndStatusExcluded(final String propertyId,
             List<String> connectionStatus) {
         return sewerageApplicationDetailsRepository
                 .findFirstByConnectionDetailPropertyIdentifierAndStatusCodeNotInOrderByLastModifiedDateDesc(propertyId,
