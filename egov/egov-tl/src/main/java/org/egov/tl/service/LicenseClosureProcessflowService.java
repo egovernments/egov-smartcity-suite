@@ -60,6 +60,7 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.contracts.LicenseStateInfo;
+import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -100,6 +101,9 @@ public class LicenseClosureProcessflowService {
     private SimpleWorkflowService<TradeLicense> licenseWorkflowService;
 
     @Autowired
+    private LicenseUtils licenseUtils;
+
+    @Autowired
     private LicenseAppTypeService licenseAppTypeService;
 
     public void startClosureProcessflow(TradeLicense license) {
@@ -123,9 +127,11 @@ public class LicenseClosureProcessflowService {
             licenseStateInfo.setRejectionPosition(processOwner.getId());
 
         if (!license.hasState())
-            license.transition().start();
+            license.transition().start()
+                    .withSLA(licenseUtils.getSlaForAppType(licenseAppTypeService.getClosureLicenseApplicationType()));
         else
-            license.transition().startNext();
+            license.transition().startNext()
+                    .withSLA(licenseUtils.getSlaForAppType(licenseAppTypeService.getClosureLicenseApplicationType()));
 
         license.transition()
                 .withSenderName(currentUser.getName())
@@ -150,9 +156,11 @@ public class LicenseClosureProcessflowService {
             licenseStateInfo.setRejectionPosition(processOwner.getId());
 
         if (!license.hasState())
-            license.transition().start();
+            license.transition().start()
+                    .withSLA(licenseUtils.getSlaForAppType(licenseAppTypeService.getClosureLicenseApplicationType()));
         else
-            license.transition().startNext();
+            license.transition().startNext()
+                    .withSLA(licenseUtils.getSlaForAppType(licenseAppTypeService.getClosureLicenseApplicationType()));
 
         license.transition()
                 .withSenderName(securityUtils.getCurrentUser().getName())

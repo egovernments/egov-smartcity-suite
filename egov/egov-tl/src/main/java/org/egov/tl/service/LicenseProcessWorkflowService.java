@@ -293,9 +293,11 @@ public class LicenseProcessWorkflowService {
 
     private void initiateWfTransition(TradeLicense tradeLicense) {
         if (tradeLicense.hasState()) {
-            tradeLicense.transition().startNext();
+            tradeLicense.transition().startNext()
+                    .withSLA(licenseUtils.getSlaForAppType(tradeLicense.getLicenseAppType()));
         } else {
-            tradeLicense.transition().start();
+            tradeLicense.transition().start()
+                    .withSLA(licenseUtils.getSlaForAppType(tradeLicense.getLicenseAppType()));
         }
     }
 

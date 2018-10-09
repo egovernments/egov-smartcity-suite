@@ -516,7 +516,9 @@ public class TradeLicenseService {
                 }
                 final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                         null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
-                license.transition().start().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
+                license.transition().start()
+                        .withSLA(licenseUtils.getSlaForAppType(license.getLicenseAppType()))
+                        .withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
                         .withComments(workflowBean.getApproverComments())
                         .withNatureOfTask(license.getLicenseAppType().getName())
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(wfInitiator)
