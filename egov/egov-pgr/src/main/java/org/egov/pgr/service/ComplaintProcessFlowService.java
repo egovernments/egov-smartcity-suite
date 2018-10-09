@@ -98,11 +98,12 @@ public class ComplaintProcessFlowService {
     public void onRegistration(Complaint complaint) {
         Position assignee = complaintRouterService.getComplaintAssignee(complaint);
         complaint.transition()
-                .start().withSLAHours(complaint.getComplaintType().getSlaHours())
+                .start()
+                .withSLAHours(complaint.getComplaintType().getSlaHours())
                 .withSenderName(complaint.getComplainant().getName())
                 .withComments(String.format(GRIEVANCE_REG_COMMENT, complaint.getCrn()))
                 .withStateValue(complaint.getStatus().getName())
-                .withOwner(assignee).withDateInfo(new Date());
+                .withOwner(assignee);
         complaint.setAssignee(assignee);
         complaint.setEscalationDate(escalationService.getExpiryDate(complaint));
         assignCurrentOwner(complaint);

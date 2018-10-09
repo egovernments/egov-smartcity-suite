@@ -145,7 +145,9 @@ public class LicenseProcessWorkflowService {
             LicenseStateInfo licenseStateInfo = getLicenseStateInfo(workflowBean, wfInitiator,
                     workFlowMatrix, new LicenseStateInfo(), wfInitiator);
             initiateWfTransition(tradeLicense);
-            tradeLicense.transition().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
+            tradeLicense.transition()
+                    .withSLA(licenseUtils.getSlaForAppType(tradeLicense.getLicenseAppType()))
+                    .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                     .withComments(workflowBean.getApproverComments())
                     .withNatureOfTask(tradeLicense.getLicenseAppType().getName())
                     .withStateValue(workFlowMatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(wfInitiator)
@@ -237,8 +239,10 @@ public class LicenseProcessWorkflowService {
             if (nextWorkFlowMatrix != null)
                 licenseStateInfo.setWfMatrixRef(nextWorkFlowMatrix.getId());
             initiateWfTransition(license);
-            license.transition().withSenderName(licenseUtils.getApplicationSenderName(currentUser.getType()
-                    , currentUser.getName(), license.getLicensee().getApplicantName()))
+            license.transition()
+                    .withSLA(licenseUtils.getSlaForAppType(license.getLicenseAppType()))
+                    .withSenderName(licenseUtils.getApplicationSenderName(currentUser.getType(), currentUser.getName(),
+                            license.getLicensee().getApplicantName()))
                     .withComments(workflowBean.getApproverComments())
                     .withNatureOfTask(license.getLicenseAppType().getName())
                     .withStateValue(workFlowMatrix.getNextState()).withDateInfo(new Date())
@@ -293,11 +297,9 @@ public class LicenseProcessWorkflowService {
 
     private void initiateWfTransition(TradeLicense tradeLicense) {
         if (tradeLicense.hasState()) {
-            tradeLicense.transition().startNext()
-                    .withSLA(licenseUtils.getSlaForAppType(tradeLicense.getLicenseAppType()));
+            tradeLicense.transition().startNext();
         } else {
-            tradeLicense.transition().start()
-                    .withSLA(licenseUtils.getSlaForAppType(tradeLicense.getLicenseAppType()));
+            tradeLicense.transition().start();
         }
     }
 

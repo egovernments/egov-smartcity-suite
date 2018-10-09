@@ -127,13 +127,12 @@ public class LicenseClosureProcessflowService {
             licenseStateInfo.setRejectionPosition(processOwner.getId());
 
         if (!license.hasState())
-            license.transition().start()
-                    .withSLA(licenseUtils.getSlaForAppType(licenseAppTypeService.getClosureLicenseApplicationType()));
+            license.transition().start();
         else
-            license.transition().startNext()
-                    .withSLA(licenseUtils.getSlaForAppType(licenseAppTypeService.getClosureLicenseApplicationType()));
+            license.transition().startNext();
 
         license.transition()
+                .withSLA(licenseUtils.getSlaForAppType(licenseAppTypeService.getClosureLicenseApplicationType()))
                 .withSenderName(currentUser.getName())
                 .withComments(license.getWorkflowContainer().getApproverComments())
                 .withStateValue(workflowMatrix.getNextState())
@@ -156,13 +155,13 @@ public class LicenseClosureProcessflowService {
             licenseStateInfo.setRejectionPosition(processOwner.getId());
 
         if (!license.hasState())
-            license.transition().start()
-                    .withSLA(licenseUtils.getSlaForAppType(licenseAppTypeService.getClosureLicenseApplicationType()));
+            license.transition().start();
+
         else
-            license.transition().startNext()
-                    .withSLA(licenseUtils.getSlaForAppType(licenseAppTypeService.getClosureLicenseApplicationType()));
+            license.transition().startNext();
 
         license.transition()
+                .withSLA(licenseUtils.getSlaForAppType(licenseAppTypeService.getClosureLicenseApplicationType()))
                 .withSenderName(securityUtils.getCurrentUser().getName())
                 .withComments(license.getWorkflowContainer().getApproverComments())
                 .withStateValue(workflowMatrix.getNextState())
