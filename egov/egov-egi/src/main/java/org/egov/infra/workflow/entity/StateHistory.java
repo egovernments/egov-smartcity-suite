@@ -310,22 +310,22 @@ public class StateHistory<T extends OwnerGroup> implements Serializable {
 
     public State<T> asState() {
         State<T> historyState = new State();
-        historyState.setCreatedBy(createdBy);
-        historyState.setCreatedDate(createdDate);
-        historyState.setLastModifiedBy(lastModifiedBy);
-        historyState.setLastModifiedDate(lastModifiedDate);
-        historyState.setValue(value);
-        historyState.setOwnerPosition(ownerPosition);
-        historyState.setOwnerUser(ownerUser);
-        historyState.setSenderName(senderName);
-        historyState.setNextAction(nextAction);
-        historyState.setComments(comments);
-        historyState.setExtraInfo(extraInfo);
-        historyState.setDateInfo(dateInfo);
-        historyState.setExtraDateInfo(extraDateInfo);
-        historyState.setNatureOfTask(natureOfTask);
-        historyState.setInitiatorPosition(initiatorPosition);
-        historyState.setSla(sla);
+        historyState.setCreatedBy(getCreatedBy());
+        historyState.setCreatedDate(getCreatedDate());
+        historyState.setLastModifiedBy(getLastModifiedBy());
+        historyState.setLastModifiedDate(getLastModifiedDate());
+        historyState.setValue(getValue());
+        historyState.setOwnerPosition(getOwnerPosition());
+        historyState.setOwnerUser(getOwnerUser());
+        historyState.setSenderName(getSenderName());
+        historyState.setNextAction(getNextAction());
+        historyState.setComments(getComments());
+        historyState.setExtraInfo(getExtraInfo());
+        historyState.setDateInfo(getDateInfo());
+        historyState.setExtraDateInfo(getExtraDateInfo());
+        historyState.setNatureOfTask(getNatureOfTask());
+        historyState.setInitiatorPosition(getInitiatorPosition());
+        historyState.setSla(getSla());
         return historyState;
     }
 }
