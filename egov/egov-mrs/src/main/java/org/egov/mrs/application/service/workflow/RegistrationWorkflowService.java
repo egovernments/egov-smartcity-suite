@@ -95,6 +95,7 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
+import org.egov.mrs.domain.service.MarriageRegistrationService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,6 +141,8 @@ public class RegistrationWorkflowService {
     private DepartmentService departmentService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private MarriageRegistrationService marriageRegistrationService;
 
     private enum WorkflowType {
         MarriageRegistration, ReIssue
@@ -372,6 +375,9 @@ public class RegistrationWorkflowService {
             final Position nextStateOwner, final String nextState, final String nextAction, final Assignment assignment) {
         if (itemInWorkflow.getState() == null)
             itemInWorkflow.transition().start()
+                    .withSLA(MarriageConstants.STATETYPE_REGISTRATION.equalsIgnoreCase(itemInWorkflow.getStateType())
+                            ? marriageRegistrationService.calculateDueDateForMrgReg()
+                            : marriageRegistrationService.calculateDueDateForMrgReIssue())
                     .withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvalComent)
                     .withStateValue(nextState)
@@ -608,7 +614,7 @@ public class RegistrationWorkflowService {
                 throw new ApplicationRuntimeException("No position defined for Marriage Registrar role");
         }
         marriageRegistration.transition()
-                .start()
+                .start().withSLA(marriageRegistrationService.calculateDueDateForMrgReg())
                 .withStateValue(MarriageConstants.WFSTATE_CLRK_APPROVED)
                 .withOwner(assignee).withNextAction(wfmatrix.getNextAction()).withDateInfo(new Date())
                 .withNatureOfTask("Marriage Registration :: New Registration").withInitiator(assignee);

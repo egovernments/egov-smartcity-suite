@@ -125,6 +125,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -922,26 +923,17 @@ public class MarriageRegistrationService {
     }
 
     public Date calculateDueDateForMrgReg() {
-        Date dueDate;
-        final Date currentDate = new Date();
         final AppConfigValues marriageSla = getSlaAppConfigValuesForMarriageReg(
                 MarriageConstants.MODULE_NAME, MarriageConstants.SLAFORMARRIAGEREGISTRATION);
-        dueDate = org.apache.commons.lang3.time.DateUtils.addDays(currentDate,
-                marriageSla != null && marriageSla.getValue() != null
-                        ? Integer.valueOf(marriageSla.getValue()) : 0);
-        return dueDate;
-
+        return new LocalDateTime().plusDays(marriageSla != null && marriageSla.getValue() != null
+                ? Integer.valueOf(marriageSla.getValue()) : 0).toDate();
     }
 
     public Date calculateDueDateForMrgReIssue() {
-        Date dueDate;
-        final Date currentDate = new Date();
         final AppConfigValues reissuemarriageSla = getSlaAppConfigValuesForMarriageReg(
                 MarriageConstants.MODULE_NAME, MarriageConstants.SLAFORMARRIAGEREISSUE);
-        dueDate = org.apache.commons.lang3.time.DateUtils.addDays(currentDate,
-                reissuemarriageSla != null && reissuemarriageSla.getValue() != null
-                        ? Integer.valueOf(reissuemarriageSla.getValue()) : 0);
-        return dueDate;
+        return new LocalDateTime().plusDays(reissuemarriageSla != null && reissuemarriageSla.getValue() != null
+                ? Integer.valueOf(reissuemarriageSla.getValue()) : 0).toDate();
 
     }
 
