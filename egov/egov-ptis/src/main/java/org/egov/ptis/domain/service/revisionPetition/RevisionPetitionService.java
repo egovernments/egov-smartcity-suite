@@ -50,25 +50,89 @@ package org.egov.ptis.domain.service.revisionPetition;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.CITY_GRADE_CORPORATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_DDMMYYY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEPUTY_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.GENERAL_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.GRP_APP_STATUS_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.GRP_CREATED;
+import static org.egov.ptis.constants.PropertyTaxConstants.GRP_HEARINGCOMPLETED;
+import static org.egov.ptis.constants.PropertyTaxConstants.GRP_INSPECTIONVERIFIED;
+import static org.egov.ptis.constants.PropertyTaxConstants.GRP_INSPECTION_COMPLETE;
+import static org.egov.ptis.constants.PropertyTaxConstants.GRP_WF_REGISTERED;
+import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_GENERAL_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_GRP;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_RP;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NON_VACANT_TAX_DEMAND_CODES;
+import static org.egov.ptis.constants.PropertyTaxConstants.OBJECTION_CREATED;
+import static org.egov.ptis.constants.PropertyTaxConstants.OBJECTION_HEARING_COMPLETED;
+import static org.egov.ptis.constants.PropertyTaxConstants.OBJECTION_HEARING_FIXED;
+import static org.egov.ptis.constants.PropertyTaxConstants.OBJECTION_MODULE;
+import static org.egov.ptis.constants.PropertyTaxConstants.OBJECTION_PRINT_ENDORSEMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.OBJECTION_RECORD_INSPECTIONDETAILS;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_REVISIONPETITION_ENDORSEMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_REVISIONPETITION_HEARINGNOTICE;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_CLERK_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVISIONPETITION_CREATED;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.RP_APP_STATUS_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.RP_CREATED;
+import static org.egov.ptis.constants.PropertyTaxConstants.RP_HEARINGCOMPLETED;
+import static org.egov.ptis.constants.PropertyTaxConstants.RP_INSPECTIONVERIFIED;
+import static org.egov.ptis.constants.PropertyTaxConstants.RP_INSPECTION_COMPLETE;
+import static org.egov.ptis.constants.PropertyTaxConstants.RP_WF_REGISTERED;
+import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_MEESEVA;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_OBJECTED_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITAL_SIGNATURE_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.domain.service.property.PropertyService.APPLICATION_VIEW_URL;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.commons.dao.InstallmentDao;
 import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
@@ -76,8 +140,10 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
@@ -107,11 +173,13 @@ import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
+import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.SMSEmailService;
+import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Criteria;
@@ -122,7 +190,22 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 public class RevisionPetitionService extends PersistenceService<RevisionPetition, Long> {
+	
     private static final String REVISION_PETITION_CREATED = "CREATED";
+    private static final Logger LOGGER = Logger.getLogger(RevisionPetitionService.class);
+    private static final String CURRENT = "current";
+    private static final String HISTORY = "history";
+    private static final String REJECT_INSPECTION_STR = "Reject Inspection";
+    private static final String FORWARD_TO_APPROVER = "forward to approver";
+    private static final String CANCEL_UNCONSIDERED = "cancel unconsidered";
+    private static final String PRINT_ENDORESEMENT = "Print Endoresement";
+    private static final String REJECT = "reject";
+    private static final String CHOOSE = "----Choose----";
+    public static final String OBJECTION_FORWARD = "objection.forward";
+    public static final String REJECT_INSPECTION = "objection.inspection.rejection";
+    private static final String APPROVE = "Approve";
+    private static final String REJECTED = "Rejected";
+    
     @Autowired
     protected AssignmentService assignmentService;
     @Autowired
@@ -142,20 +225,6 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     private EisCommonService eisCommonService;
     @Autowired
     private ApplicationIndexService applicationIndexService;
-
-    private static final String CURRENT = "current";
-    private static final String HISTORY = "history";
-    private static final String REJECT_INSPECTION_STR = "Reject Inspection";
-    private static final String FORWARD_TO_APPROVER = "forward to approver";
-    private static final String CANCEL_UNCONSIDERED = "cancel unconsidered";
-    private static final String PRINT_ENDORESEMENT = "Print Endoresement";
-    private static final String REJECT = "reject";
-    private static final String CHOOSE = "----Choose----";
-    public static final String OBJECTION_FORWARD = "objection.forward";
-    public static final String REJECT_INSPECTION = "objection.inspection.rejection";
-    private static final String APPROVE = "Approve";
-    private static final String REJECTED = "Rejected";
-
     @Autowired
     private NotificationService notificationService;
     private SMSEmailService sMSEmailService;
@@ -183,6 +252,12 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
 
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
+    
+    @Autowired
+    private InstallmentDao installmentDao;
+    
+    @Autowired
+    private ModuleService moduleDao;
 
     public RevisionPetitionService() {
         super(RevisionPetition.class);
@@ -1053,5 +1128,91 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
             addittionalRule = REVISION_PETITION;
         return addittionalRule;
     }
+    
+	public Property modifyRPDemand(final PropertyImpl propertyModel, final PropertyImpl oldProperty)
+			throws TaxCalculatorExeption {
+		Date propCompletionDate;
+		if (!propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode()
+				.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
+			propCompletionDate = propertyService
+					.getLowestDtOfCompFloorWise(propertyModel.getPropertyDetail().getFloorDetails());
+		else
+			propCompletionDate = propertyModel.getPropertyDetail().getDateOfCompletion();
+		final PropertyImpl newProperty = (PropertyImpl) propertyService.createDemand(propertyModel, propCompletionDate);
+		Property modProperty = null;
+		if (oldProperty == null)
+			LOGGER.info("modifyBasicProp, Could not get the previous property. DCB for arrears will be incorrect");
+		else {
+			modProperty = propertyService.createDemandForModify(oldProperty, newProperty, propCompletionDate);
+			modProperty = createArrearsDemand(oldProperty, propCompletionDate, newProperty);
+		}
+
+		Map<Installment, Set<EgDemandDetails>> demandDetailsSetByInstallment;
+		List<Installment> installments;
+
+		final Set<EgDemandDetails> oldEgDemandDetailsSet = propertyService.getOldDemandDetails(oldProperty,
+				newProperty);
+		demandDetailsSetByInstallment = propertyService.getEgDemandDetailsSetByInstallment(oldEgDemandDetailsSet);
+		installments = new ArrayList<>(demandDetailsSetByInstallment.keySet());
+		Collections.sort(installments);
+		for (final Installment inst : installments) {
+			final Map<String, BigDecimal> dmdRsnAmt = new LinkedHashMap<>();
+			for (final String rsn : DEMAND_RSNS_LIST) {
+				final EgDemandDetails newDmndDtls = propertyService
+						.getEgDemandDetailsForReason(demandDetailsSetByInstallment.get(inst), rsn);
+				if (newDmndDtls != null && newDmndDtls.getAmtCollected() != null
+						&& newDmndDtls.getAmtCollected().compareTo(BigDecimal.ZERO) > 0)
+					dmdRsnAmt.put(newDmndDtls.getEgDemandReason().getEgDemandReasonMaster().getCode(),
+							newDmndDtls.getAmtCollected());
+			}
+			propertyService.getExcessCollAmtMap().put(inst, dmdRsnAmt);
+		}
+		final Ptdemand currentDemand = propertyService.getCurrrentDemand(modProperty);
+		demandDetailsSetByInstallment = propertyService
+				.getEgDemandDetailsSetByInstallment(currentDemand.getEgDemandDetails());
+		installments = new ArrayList<>(demandDetailsSetByInstallment.keySet());
+		Collections.sort(installments);
+		for (final Installment inst : installments) {
+			final Map<String, BigDecimal> dmdRsnAmt = new LinkedHashMap<>();
+			for (final String rsn : DEMAND_RSNS_LIST) {
+				final EgDemandDetails newDmndDtls = propertyService
+						.getEgDemandDetailsForReason(demandDetailsSetByInstallment.get(inst), rsn);
+				if (newDmndDtls != null && newDmndDtls.getAmtCollected() != null) {
+					final BigDecimal extraCollAmt = newDmndDtls.getAmtCollected().subtract(newDmndDtls.getAmount());
+					// If there is extraColl then add to map
+					if (extraCollAmt.compareTo(BigDecimal.ZERO) > 0) {
+						dmdRsnAmt.put(newDmndDtls.getEgDemandReason().getEgDemandReasonMaster().getCode(),
+								extraCollAmt);
+						newDmndDtls.setAmtCollected(newDmndDtls.getAmtCollected().subtract(extraCollAmt));
+						newDmndDtls.setModifiedDate(new Date());
+					}
+				}
+			}
+			propertyService.getExcessCollAmtMap().put(inst, dmdRsnAmt);
+		}
+
+		LOGGER.info("Excess Collection - " + propertyService.getExcessCollAmtMap());
+
+		propertyService.adjustExcessCollectionAmount(installments, demandDetailsSetByInstallment, currentDemand);
+		return modProperty;
+	}
+
+	public Property createArrearsDemand(final Property property, final Date dateOfCompletion,
+			final PropertyImpl modProperty) {
+		final Installment currInstall = propertyTaxCommonUtils.getCurrentInstallment();
+		Ptdemand currPtDmd = null;
+		for (final Ptdemand demand : modProperty.getPtDemandSet())
+			if ("N".equalsIgnoreCase(demand.getIsHistory()) && demand.getEgInstallmentMaster().equals(currInstall)) {
+				currPtDmd = demand;
+				break;
+			}
+		Ptdemand latestHistoryDemand = propertyService
+				.getLatestDemandforHistoryProp(propertyService.getHistoryPropertyByUpinNo(property.getBasicProperty()));
+		Installment effectiveInstall;
+		final Module module = moduleDao.getModuleByName(PTMODULENAME);
+		effectiveInstall = installmentDao.getInsatllmentByModuleForGivenDate(module, dateOfCompletion);
+		propertyService.addArrDmdDetToCurrentDmd(latestHistoryDemand, currPtDmd, effectiveInstall, false);
+		return modProperty;
+	}
 
 }

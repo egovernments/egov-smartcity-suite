@@ -1295,23 +1295,12 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             else
                 propService.changePropertyDetail(objection.getProperty(), new BuiltUpProperty(),
                         objection.getProperty().getPropertyDetail().getFloorDetails().size());
-        final Property modProperty = propService.modifyDemand(objection.getProperty(), (PropertyImpl) objection.getBasicProperty().getProperty());
         if(objection.getProperty().getPropertyModifyReason().equalsIgnoreCase(PROPERTY_MODIFY_REASON_REVISION_PETITION) &&
                 objection.getBasicProperty().getProperty().getPropertyModifyReason().equalsIgnoreCase(PROPERTY_MODIFY_REASON_ADD_OR_ALTER)) {
-            final Installment currInstall = propertyTaxCommonUtils.getCurrentInstallment();
-            Ptdemand currPtDmd = null;
-            for (final Ptdemand demand : modProperty.getPtDemandSet())
-                if ("N".equalsIgnoreCase(demand.getIsHistory()) && demand.getEgInstallmentMaster().equals(currInstall)){
-                    currPtDmd = demand;
-                    break;
-                }
-            Ptdemand latestHistoryDemand = propService
-                    .getLatestDemandforHistoryProp(propService.getHistoryPropertyByUpinNo(objection.getBasicProperty()));
-            Installment effectiveInstall;
-            final Module module = moduleDao.getModuleByName(PTMODULENAME);
-            effectiveInstall = installmentDao.getInsatllmentByModuleForGivenDate(module, propCompletionDate);
-            propService.addArrDmdDetToCurrentDmd(latestHistoryDemand, currPtDmd, effectiveInstall, false);
+          revisionPetitionService.modifyRPDemand(objection.getProperty(), (PropertyImpl) objection.getBasicProperty().getProperty());
         }
+        else
+        	propService.modifyDemand(objection.getProperty(), (PropertyImpl) objection.getBasicProperty().getProperty());
 
         if (objection.getProperty().getPropertyDetail().getLayoutApprovalAuthority() != null && "No Approval"
                 .equals(objection.getProperty().getPropertyDetail().getLayoutApprovalAuthority().getName())) {

@@ -863,7 +863,7 @@ public class PropertyService {
     }
 
     /**
-     * Modifies property active demand and creates arrears demand and performs the excss colletion adjustment
+     * Modifies property active demand and creates arrears demand and performs the excess collection adjustment
      *
      * @param propertyModel
      * @param oldProperty
@@ -945,7 +945,7 @@ public class PropertyService {
      * @param newProperty
      * @return set of old demand details
      */
-    private Set<EgDemandDetails> getOldDemandDetails(final Property oldProperty, final Property newProperty) {
+    public Set<EgDemandDetails> getOldDemandDetails(final Property oldProperty, final Property newProperty) {
         final Set<EgDemandDetails> oldDemandDetails = new HashSet<>();
         for (final EgDemandDetails dd : getCurrrentDemand(oldProperty).getEgDemandDetails())
             if (dd.getEgDemandReason().getEgInstallmentMaster().getFromDate().before(newProperty.getEffectiveDate()))
@@ -984,7 +984,7 @@ public class PropertyService {
      * @param property
      * @return
      */
-    private Ptdemand getCurrrentDemand(final Property property) {
+    public Ptdemand getCurrrentDemand(final Property property) {
         Ptdemand currentDemand = null;
 
         for (final Ptdemand ptdemand : property.getPtDemandSet())
