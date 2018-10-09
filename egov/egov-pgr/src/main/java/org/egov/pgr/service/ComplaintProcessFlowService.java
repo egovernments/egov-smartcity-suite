@@ -98,7 +98,7 @@ public class ComplaintProcessFlowService {
     public void onRegistration(Complaint complaint) {
         Position assignee = complaintRouterService.getComplaintAssignee(complaint);
         complaint.transition()
-                .start()
+                .start().withSLAHours(complaint.getComplaintType().getSlaHours())
                 .withSenderName(complaint.getComplainant().getName())
                 .withComments(String.format(GRIEVANCE_REG_COMMENT, complaint.getCrn()))
                 .withStateValue(complaint.getStatus().getName())

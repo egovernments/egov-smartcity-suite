@@ -1,0 +1,3 @@
+update eg_wf_states state set sla = (createddate + interval '1h' * comp.sla) from (select c.state_id as stateid, ct.slahours as sla from egpgr_complaint c, egpgr_complainttype ct where c.complainttype = ct.id) as comp where state.id = comp.stateid;
+
+update eg_wf_state_history statehistory set sla = (createddate + interval '1h' * comp.sla) from (select c.state_id as stateid, ct.slahours as sla from egpgr_complaint c, egpgr_complainttype ct where c.complainttype = ct.id) as comp where statehistory.state_id = comp.stateid;
