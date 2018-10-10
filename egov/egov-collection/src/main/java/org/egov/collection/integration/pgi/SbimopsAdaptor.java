@@ -288,9 +288,9 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
             LOGGER.info("Sbimops reconciliation response is null");
             throw new ApplicationRuntimeException("SBIMOPS reconciliation response is null.");
         } else {
-            if (LOGGER.isInfoEnabled())
-                LOGGER.info("Sbimops reconciliation transaction response : " + response);
             final Map<String, String> responseParameterMap = prepareResponseMap(response);
+            if (LOGGER.isInfoEnabled())
+                LOGGER.info("Sbimops reconciliation transaction response : " + responseParameterMap.toString());
             sbimopsResponse.setAdditionalInfo6(onlinePayment.getReceiptHeader().getConsumerCode().replace("-", "")
                     .replace("/", ""));
             sbimopsResponse.setReceiptId(onlinePayment.getReceiptHeader().getId().toString());
@@ -301,7 +301,7 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
             if (isNotBlank(sbimopsResponse.getAuthStatus()) &&
                     sbimopsResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_FAILED)
                     && (!responseParameterMap.get(SBIMOPS_STATUS.toUpperCase()).equals("F")))
-                LOGGER.error("CFMSFAILED TRANSACTION RESPONSE: " + response);
+                LOGGER.error("CFMSFAILED TRANSACTION RESPONSE: " + responseParameterMap.toString());
 
             if (sbimopsResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS)) {
                 sbimopsResponse
