@@ -178,9 +178,9 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
 
     @RequestMapping(value = "/closeSewerageConnection-update/{applicationNumber}", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
-            final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request, final HttpSession session, final Model model, @RequestParam String workFlowAction,
-            @RequestParam("files") final MultipartFile[] files, final HttpServletResponse response) {
+                         final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
+                         final HttpServletRequest request, final HttpSession session, final Model model, @RequestParam String workFlowAction,
+                         @RequestParam("files") final MultipartFile[] files, final HttpServletResponse response) {
         Long approvalPosition = 0l;
         String approvalComment = "";
 
@@ -222,7 +222,7 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
             if (workFlowAction != null && !workFlowAction.isEmpty()
                     && workFlowAction.equalsIgnoreCase(SewerageTaxConstants.APPROVEWORKFLOWACTION)) {
                 final SewerageApplicationDetails parentSewerageAppDtls = sewerageApplicationDetailsService
-                        .findByConnection_ShscNumberAndIsActive(sewerageApplicationDetails.getConnection().getShscNumber());
+                        .findByShscNumberAndIsActive(sewerageApplicationDetails.getConnection().getShscNumber());
                 if (parentSewerageAppDtls != null) {
                     parentSewerageAppDtls.setActive(false);
                     sewerageApplicationDetails.setParent(parentSewerageAppDtls);

@@ -163,7 +163,7 @@ public class SewerageConnectionController extends GenericWorkFlowController {
 
     @Autowired
     public SewerageConnectionController(final SewerageTaxUtils sewerageTaxUtils,
-            final SewerageApplicationDetailsService sewerageApplicationDetailsService) {
+                                        final SewerageApplicationDetailsService sewerageApplicationDetailsService) {
         this.sewerageTaxUtils = sewerageTaxUtils;
         this.sewerageApplicationDetailsService = sewerageApplicationDetailsService;
     }
@@ -190,7 +190,7 @@ public class SewerageConnectionController extends GenericWorkFlowController {
 
     @RequestMapping(value = "/newConnection-newform", method = RequestMethod.GET)
     public String showNewApplicationForm(@ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
-            final Model model, final HttpServletRequest request) {
+                                         final Model model, final HttpServletRequest request) {
         LOG.debug("Inside showNewApplicationForm method");
         final SewerageConnection connection = new SewerageConnection();
         sewerageApplicationDetails.setApplicationDate(new Date());
@@ -219,10 +219,10 @@ public class SewerageConnectionController extends GenericWorkFlowController {
 
     @RequestMapping(value = "/newConnection-create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
-            final BindingResult resultBinder,
-            final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request, final Model model, @RequestParam String workFlowAction,
-            @RequestParam("files") final MultipartFile[] files) {
+                         final BindingResult resultBinder,
+                         final RedirectAttributes redirectAttributes,
+                         final HttpServletRequest request, final Model model, @RequestParam String workFlowAction,
+                         @RequestParam("files") final MultipartFile[] files) {
         sewerageApplicationValidator.validateSewerageNewApplication(sewerageApplicationDetails, resultBinder, request);
         final Boolean isEmployee = sewerageWorkflowService.isEmployee(securityUtils.getCurrentUser());
         final boolean citizenPortalUser = sewerageWorkflowService.isCitizenPortalUser(securityUtils.getCurrentUser());
@@ -327,8 +327,8 @@ public class SewerageConnectionController extends GenericWorkFlowController {
                 + (nextDesign != null ? nextDesign : "");
 
         final String message = messageSource.getMessage("msg.success.forward",
-                new String[] { approverName.concat("~").concat(nextDesignation),
-                        newSewerageApplicationDetails.getApplicationNumber() },
+                new String[]{approverName.concat("~").concat(nextDesignation),
+                        newSewerageApplicationDetails.getApplicationNumber()},
                 null);
         model.addAttribute("message", message);
         if (!isEmployee && !citizenPortalUser) {
@@ -350,7 +350,7 @@ public class SewerageConnectionController extends GenericWorkFlowController {
 
     @RequestMapping(value = "/application-success", method = RequestMethod.GET)
     public ModelAndView successView(@ModelAttribute SewerageApplicationDetails sewerageApplicationDetails,
-            final HttpServletRequest request, final Model model, final ModelMap modelMap) {
+                                    final HttpServletRequest request, final Model model, final ModelMap modelMap) {
 
         final String[] keyNameArray = request.getParameter("pathVars").split(",");
         String applicationNumber = "";
@@ -390,7 +390,7 @@ public class SewerageConnectionController extends GenericWorkFlowController {
     }
 
     private void setCommonDetails(final SewerageApplicationDetails sewerageApplicationDetails, final ModelMap modelMap,
-            final HttpServletRequest request) {
+                                  final HttpServletRequest request) {
         final String assessmentNumber = sewerageApplicationDetails.getConnectionDetail()
                 .getPropertyIdentifier();
 
@@ -411,7 +411,7 @@ public class SewerageConnectionController extends GenericWorkFlowController {
     @RequestMapping(value = "/printacknowledgement", method = GET)
     @ResponseBody
     public ResponseEntity<byte[]> printAck(@RequestParam("appNo") final String appNo, final Model model,
-            final HttpServletRequest request) {
+                                           final HttpServletRequest request) {
         byte[] reportOutput;
         final String cityMunicipalityName = (String) request.getSession()
                 .getAttribute("citymunicipalityname");
@@ -421,7 +421,7 @@ public class SewerageConnectionController extends GenericWorkFlowController {
 
         if (sewerageApplicationDetails != null) {
             reportOutput = sewerageApplicationDetailsService
-                    .getReportParamsForSewerageAcknowdgement(sewerageApplicationDetails, cityMunicipalityName, cityName)
+                    .getReportParamsForSewerageAcknowledgement(sewerageApplicationDetails, cityMunicipalityName, cityName)
                     .getReportOutputData();
             if (reportOutput != null) {
                 final HttpHeaders headers = new HttpHeaders();
@@ -437,7 +437,7 @@ public class SewerageConnectionController extends GenericWorkFlowController {
     }
 
     public void prepareNewForm(final SewerageApplicationDetails sewerageApplicationDetails,
-            final Model model) {
+                               final Model model) {
         final Boolean isEmployee = sewerageWorkflowService.isEmployee(securityUtils.getCurrentUser());
         final Boolean isCitizenPortalUser = sewerageWorkflowService.isCitizenPortalUser(securityUtils.getCurrentUser());
         final SewerageApplicationType applicationType = sewerageApplicationTypeService

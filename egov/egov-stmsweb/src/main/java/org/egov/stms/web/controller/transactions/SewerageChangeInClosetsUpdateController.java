@@ -236,7 +236,7 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
     }
 
     private void setCommonDetails(final SewerageApplicationDetails sewerageApplicationDetails, final Model model,
-            final HttpServletRequest request) {
+                                  final HttpServletRequest request) {
         final String assessmentNumber = sewerageApplicationDetails.getConnectionDetail()
                 .getPropertyIdentifier();
 
@@ -249,7 +249,7 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
     }
 
     private String loadViewData(final Model model, final HttpServletRequest request,
-            final SewerageApplicationDetails sewerageApplicationDetails) {
+                                final SewerageApplicationDetails sewerageApplicationDetails) {
         String inspectionDate = StringUtils.EMPTY;
         String additionalRule = sewerageApplicationDetails.getApplicationType().getCode();
         model.addAttribute("stateType", sewerageApplicationDetails.getClass().getSimpleName());
@@ -306,7 +306,7 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
                 (sewerageApplicationDetails.getStatus().getCode()
                         .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_INITIALAPPROVED)
                         || sewerageApplicationDetails.getStatus().getCode()
-                                .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_INSPECTIONFEEPAID)))
+                        .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_INSPECTIONFEEPAID)))
             populateDonationSewerageTax(sewerageApplicationDetails);
 
         // After modification if demand reduced, sewerage tax collection shold not be done. Hence directly fwd application from
@@ -324,7 +324,7 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
                 sewerageApplicationDetails.getStatus().getCode()
                         .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_DEEAPPROVED)
                 && !sewerageDemandService
-                        .checkAnyTaxIsPendingToCollectExcludingAdvance(sewerageApplicationDetails.getCurrentDemand()))
+                .checkAnyTaxIsPendingToCollectExcludingAdvance(sewerageApplicationDetails.getCurrentDemand()))
             additionalRule = SewerageTaxConstants.CHANGEINCLOSETS_NOCOLLECTION;
         model.addAttribute(ADDITIONAL_RULE, additionalRule);
         model.addAttribute("currentUser", sewerageTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
@@ -342,7 +342,7 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
 
     private Boolean checkAnyTaxIsPendingToCollect(final SewerageApplicationDetails sewerageApplicationDetails) {
         final SewerageApplicationDetails oldSewerageAppDtls = sewerageApplicationDetailsService
-                .findByConnection_ShscNumberAndIsActive(sewerageApplicationDetails.getConnection().getShscNumber());
+                .findByShscNumberAndIsActive(sewerageApplicationDetails.getConnection().getShscNumber());
 
         BigDecimal oldDonationCharge = BigDecimal.ZERO;
         BigDecimal oldSewerageTax = BigDecimal.ZERO;
@@ -396,10 +396,10 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
 
     @RequestMapping(value = "/modifyConnection-update/{applicationNumber}", method = RequestMethod.POST)
     public String update(@ModelAttribute SewerageApplicationDetails sewerageApplicationDetails,
-            final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request, final HttpSession session, final Model model,
-            @RequestParam("files") final MultipartFile[] files,
-            @RequestParam final String removedInspectRowId, @RequestParam final String removedEstimationDtlRowId) {
+                         final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
+                         final HttpServletRequest request, final HttpSession session, final Model model,
+                         @RequestParam("files") final MultipartFile[] files,
+                         @RequestParam final String removedInspectRowId, @RequestParam final String removedEstimationDtlRowId) {
         String mode = StringUtils.EMPTY;
         String workFlowAction = StringUtils.EMPTY;
 
@@ -423,11 +423,11 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
         if ((sewerageApplicationDetails.getStatus().getCode()
                 .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_CREATED)
                 || sewerageApplicationDetails.getStatus().getCode()
-                        .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_INSPECTIONFEEPAID)
+                .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_INSPECTIONFEEPAID)
                 || sewerageApplicationDetails.getStatus().getCode()
-                        .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_FEECOLLECTIONPENDING)
+                .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_FEECOLLECTIONPENDING)
                 || sewerageApplicationDetails.getStatus().getCode()
-                        .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_INITIALAPPROVED)
+                .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_INITIALAPPROVED)
                 ||
                 sewerageApplicationDetails.getStatus().getCode()
                         .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_DEEAPPROVED))
@@ -486,13 +486,13 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
                 if (null != workFlowAction && workFlowAction.equalsIgnoreCase(SewerageTaxConstants.PREVIEWWORKFLOWACTION)
                         && sewerageApplicationDetails.getApplicationType().getCode()
                         .equals(SewerageTaxConstants.NEWSEWERAGECONNECTION))
-                        return "redirect:/transactions/workorder?pathVar="
-                                + sewerageApplicationDetails.getApplicationNumber();
+                    return "redirect:/transactions/workorder?pathVar="
+                            + sewerageApplicationDetails.getApplicationNumber();
 
                 if (workFlowAction != null && !workFlowAction.isEmpty()
                         && workFlowAction.equalsIgnoreCase(SewerageTaxConstants.WF_STATE_CONNECTION_EXECUTION_BUTTON)) {
                     final SewerageApplicationDetails parentSewerageAppDtls = sewerageApplicationDetailsService
-                            .findByConnection_ShscNumberAndIsActive(sewerageApplicationDetails.getConnection().getShscNumber());
+                            .findByShscNumberAndIsActive(sewerageApplicationDetails.getConnection().getShscNumber());
                     if (parentSewerageAppDtls != null) {
                         parentSewerageAppDtls.setActive(false);
                         sewerageApplicationDetails.setParent(parentSewerageAppDtls);
@@ -680,7 +680,7 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
             final SewerageFieldInspectionDetails sewerageFieldInspectionDetails) {
         return sewerageFieldInspectionDetails != null
                 && sewerageFieldInspectionDetails.getNoOfPipes() != null && sewerageFieldInspectionDetails.getNoOfPipes() != 0
-                        ? true : false;
+                ? true : false;
     }
 
     private boolean validSewerageConnectioEstimationDetail(

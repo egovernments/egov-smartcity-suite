@@ -77,6 +77,7 @@ import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_WORK_ORD
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_ESTIMATIONNOTICE_GENERATED;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_DESC_CTZN_FEE_PENDING;
 import static java.lang.Math.toIntExact;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -141,6 +142,7 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
@@ -195,7 +197,7 @@ public class SewerageIndexService {
     private SewerageTaxUtils sewerageTaxUtils;
 
     public SewerageIndex createSewarageIndex(final SewerageApplicationDetails sewerageApplicationDetails,
-            final AssessmentDetails assessmentDetails) {
+                                             final AssessmentDetails assessmentDetails) {
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
 
         final SewerageIndex sewarageIndex = new SewerageIndex();
@@ -393,7 +395,7 @@ public class SewerageIndexService {
     }
 
     public Page<SewerageIndex> getSearchResultByBoolQuery(final BoolQueryBuilder boolQuery, final FieldSortBuilder sort,
-            final SewerageConnSearchRequest searchRequest) {
+                                                          final SewerageConnSearchRequest searchRequest) {
         Page<SewerageIndex> resultList;
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(SEWERAGE).withQuery(boolQuery)
                 .withPageable(new PageRequest(searchRequest.pageNumber(), searchRequest.pageSize(), searchRequest.orderDir(),
@@ -445,7 +447,7 @@ public class SewerageIndexService {
     }
 
     public Page<SewerageIndex> getCollectSearchResult(final BoolQueryBuilder boolQuery, final FieldSortBuilder sort,
-            final SewerageConnSearchRequest searchRequest) {
+                                                      final SewerageConnSearchRequest searchRequest) {
         Page<SewerageIndex> resultList;
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(SEWERAGE).withQuery(boolQuery)
                 .withPageable(new PageRequest(searchRequest.pageNumber(), searchRequest.pageSize(),
@@ -457,7 +459,7 @@ public class SewerageIndexService {
     }
 
     public List<SewerageIndex> getSearchResultForExecuteConnection(final BoolQueryBuilder boolQuery,
-            final FieldSortBuilder sort) {
+                                                                   final FieldSortBuilder sort) {
         SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(SEWERAGE).withQuery(boolQuery).withSort(sort)
                 .build();
         if (searchQuery != null)
@@ -492,7 +494,7 @@ public class SewerageIndexService {
     }
 
     public List<DailySTCollectionReportSearch> getDCRSewerageReportResult(final DailySTCollectionReportSearch searchRequest,
-            final BoolQueryBuilder boolQuery) {
+                                                                          final BoolQueryBuilder boolQuery) {
         final List<CollectionDocument> collectionResultList = new ArrayList<>();
         final List<DailySTCollectionReportSearch> dcrCollectionList = new ArrayList<>();
         final List<DailySTCollectionReportSearch> resultList = new ArrayList<>();
@@ -591,7 +593,7 @@ public class SewerageIndexService {
     }
 
     public Page<SewerageIndex> getPagedNoticeSearchResultByBoolQuery(final BoolQueryBuilder boolQuery,
-            final SewerageNoticeSearchRequest searchRequest) {
+                                                                     final SewerageNoticeSearchRequest searchRequest) {
         Page<SewerageIndex> resultList;
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(SEWERAGE).withQuery(boolQuery)
                 .withPageable(new PageRequest(searchRequest.pageNumber(), searchRequest.pageSize(), searchRequest.orderDir(),
@@ -603,7 +605,7 @@ public class SewerageIndexService {
 
     public Map<String, List<SewerageApplicationDetails>> wardWiseBoolQueryFilter(final List<String> wardList, final List<String> propertyTypeList) {
         final Map<String, List<SewerageApplicationDetails>> dcbMap = new HashMap<>();
-         
+
         BoolQueryBuilder boolQuery = boolQuery().must(matchQuery(ULB_NAME, ApplicationThreadLocals.getCityName()))
                 .filter(termsQuery(PROPERTY_TYPE, propertyTypeList))
                 .filter(termsQuery(WARD, wardList))
@@ -612,13 +614,13 @@ public class SewerageIndexService {
         final SearchQuery pagedSearchQuery = preparePagedSearchRequest(boolQuery);
 
         final Iterable<SewerageIndex> searchResultList = sewerageIndexRepository.search(pagedSearchQuery);
-       
+
         for (final SewerageIndex indexObj : searchResultList) {
-            List<SewerageApplicationDetails> appList=new ArrayList<>();
+            List<SewerageApplicationDetails> appList = new ArrayList<>();
             final SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
                     .findByApplicationNumber(indexObj.getApplicationNumber());
 
-            if (sewerageApplicationDetails != null){
+            if (sewerageApplicationDetails != null) {
                 if (dcbMap.get(indexObj.getWard()) != null)
                     dcbMap.get(indexObj.getWard()).add(sewerageApplicationDetails);
                 else {
@@ -647,7 +649,7 @@ public class SewerageIndexService {
     }
 
     public Map<String, List<SewerageApplicationDetails>> wardWiseConnectionQueryFilter(final List<String> propertyTypeList,
-            final String ward) {
+                                                                                       final String ward) {
         final Map<String, List<SewerageApplicationDetails>> resultMap = new HashMap<>();
         final List<SewerageApplicationDetails> resultList = new ArrayList<>();
         BoolQueryBuilder boolQuery = boolQuery()
@@ -656,7 +658,7 @@ public class SewerageIndexService {
         if (isNotBlank(ward))
             boolQuery = boolQuery.filter(matchQuery(WARD, ward));
         boolQuery = boolQuery.filter(matchQuery(ACTIVE, true));
-        final SearchQuery searchQuery =preparePagedSearchRequest(boolQuery);
+        final SearchQuery searchQuery = preparePagedSearchRequest(boolQuery);
         final Iterable<SewerageIndex> indexList = sewerageIndexRepository.search(searchQuery);
         for (final SewerageIndex index : indexList) {
             final List<SewerageApplicationDetails> appList = new ArrayList<>();
@@ -721,7 +723,7 @@ public class SewerageIndexService {
     }
 
     public static AggregationBuilder getCountWithGroupingWardAndOrder(final String aggregationName, final String fieldName,
-            final String sortField, final String sortOrder) {
+                                                                      final String sortField, final String sortOrder) {
 
         final TermsBuilder aggregation = AggregationBuilders.terms(aggregationName).field(fieldName).size(75);
         if (isNotBlank(sortField) && WARD.equalsIgnoreCase(sortField)) {
@@ -734,7 +736,7 @@ public class SewerageIndexService {
     }
 
     public Page<SewerageIndex> wardwiseBaseRegisterQueryFilter(final String ulbName,
-            final List<String> wardList, final SewerageBaseRegisterResult sewerageBaseRegisterResult) {
+                                                               final List<String> wardList, final SewerageBaseRegisterResult sewerageBaseRegisterResult) {
 
         BoolQueryBuilder boolQuery = boolQuery().filter(matchQuery(ULB_NAME, ulbName))
                 .filter(termsQuery(WARD, wardList))
@@ -750,7 +752,7 @@ public class SewerageIndexService {
     }
 
     public List<SewerageIndex> getAllwardwiseBaseRegisterOrderByShscNumberAsc(final String ulbName,
-            final List<String> wardList) {
+                                                                              final List<String> wardList) {
         BoolQueryBuilder boolQuery = boolQuery().filter(matchQuery(ULB_NAME, ulbName))
                 .filter(termsQuery(WARD, wardList))
                 .filter(matchQuery(ACTIVE, true))
@@ -766,7 +768,7 @@ public class SewerageIndexService {
     }
 
     public List<BigDecimal> getGrandTotal(final String ulbName,
-            final List<String> wardList) {
+                                          final List<String> wardList) {
         BoolQueryBuilder boolQuery = boolQuery().filter(matchQuery(ULB_NAME, ulbName));
         boolQuery = boolQuery.filter(termsQuery(WARD, wardList));
         final List<BigDecimal> totalValues = new ArrayList<>();
@@ -805,7 +807,7 @@ public class SewerageIndexService {
     }
 
     public Page<SewerageIndex> getOnlinePaymentSearchResult(final BoolQueryBuilder boolQuery, final FieldSortBuilder sort,
-            final SewerageConnSearchRequest searchRequest) {
+                                                            final SewerageConnSearchRequest searchRequest) {
         Page<SewerageIndex> resultList;
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(SEWERAGE).withQuery(boolQuery)
                 .withPageable(new PageRequest(searchRequest.pageNumber(), searchRequest.pageSize(),
@@ -845,7 +847,7 @@ public class SewerageIndexService {
     }
 
     public String validateDate(SewerageBulkExecutionResponse sewerageBulkExecutionResponse,
-            List<SewerageApplicationDetails> sewerageApplicationDetailsList) {
+                               List<SewerageApplicationDetails> sewerageApplicationDetailsList) {
         final JSONObject obj = new JSONObject(sewerageBulkExecutionResponse);
         final JSONArray jsonArray = obj.getJSONArray("sewerageExecutionResult");
         String status = EMPTY;
@@ -879,7 +881,7 @@ public class SewerageIndexService {
                 sewerageObj.getConnection().setStatus(SewerageConnectionStatus.ACTIVE);
                 sewerageObj.setActive(true);
                 final SewerageApplicationDetails parentSewerageAppDtls = sewerageApplicationDetailsService
-                        .findByConnection_ShscNumberAndIsActive(sewerageObj.getConnection().getShscNumber());
+                        .findByShscNumberAndIsActive(sewerageObj.getConnection().getShscNumber());
                 if (parentSewerageAppDtls != null) {
                     parentSewerageAppDtls.setActive(false);
                     sewerageObj.setParent(parentSewerageAppDtls);

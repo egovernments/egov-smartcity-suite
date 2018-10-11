@@ -176,7 +176,7 @@ public class SewerageThirdPartyServices {
     }
 
     public HashMap<String, Object> getWaterTaxDueAndCurrentTax(final String assessmentNo,
-            final HttpServletRequest request) {
+                                                               final HttpServletRequest request) {
 
         final HashMap<String, Object> result = new HashMap<>();
         result.put("WATERTAXDUE", BigDecimal.ZERO);
@@ -218,7 +218,7 @@ public class SewerageThirdPartyServices {
                     .findByApplicationNumber(paySewerageTaxDetails.getApplicaionNumber());
         else if (paySewerageTaxDetails.getConsumerNo() != null)
             sewerageApplicationDetails = sewerageApplicationDetailsService
-                    .findByConnection_ShscNumberAndIsActive(paySewerageTaxDetails.getConsumerNo());
+                    .findByShscNumberAndIsActive(paySewerageTaxDetails.getConsumerNo());
 
         final SewerageBillable sewerageBillable = buildSewerageBillableObject(paySewerageTaxDetails, request,
                 sewerageApplicationDetails);
@@ -240,7 +240,7 @@ public class SewerageThirdPartyServices {
     }
 
     private SewerageReceiptDetails buildSewerageReceiptDetailObject(PaySewerageTaxDetails paySewerageTaxDetails,
-            BigDecimal totalAmountToBePaid, final BillReceiptInfo billReceiptInfo) {
+                                                                    BigDecimal totalAmountToBePaid, final BillReceiptInfo billReceiptInfo) {
         SewerageReceiptDetails sewerageReceiptDetails;
         ErrorDetails errorDetails;
         sewerageReceiptDetails = new SewerageReceiptDetails();
@@ -265,7 +265,7 @@ public class SewerageThirdPartyServices {
             Collections.sort(receiptAccountsList, (rcptAcctInfo1, rcptAcctInfo2) -> {
                 if (rcptAcctInfo1.getOrderNumber() != null && rcptAcctInfo2.getOrderNumber() != null)
                     return rcptAcctInfo1.getOrderNumber().compareTo(rcptAcctInfo2.getOrderNumber());
-                return 0; 
+                return 0;
             });
             for (final ReceiptAccountInfo rcptAcctInfo : receiptAccountsList) {
                 if (rcptAcctInfo.getCrAmount().compareTo(BigDecimal.ZERO) > 0
@@ -294,7 +294,7 @@ public class SewerageThirdPartyServices {
             sewerageReceiptDetails.setPaymentPeriod(
                     ((fromInstallment != null) ? DateUtils.getDefaultFormattedDate(fromInstallment.getFromDate()) : "")
                             .concat(" to ").concat((toInstallment != null)
-                                    ? DateUtils.getDefaultFormattedDate(toInstallment.getToDate()) : ""));
+                            ? DateUtils.getDefaultFormattedDate(toInstallment.getToDate()) : ""));
         }
         if (paySewerageTaxDetails.getPaymentAmount().compareTo(totalAmountToBePaid) > 0)
             sewerageReceiptDetails.setPaymentType(SewerageTaxConstants.FEES_ADVANCE_CODE);
@@ -310,7 +310,7 @@ public class SewerageThirdPartyServices {
     }
 
     private SewerageBillable buildSewerageBillableObject(PaySewerageTaxDetails paySewerageTaxDetails,
-            final HttpServletRequest request, SewerageApplicationDetails sewerageApplicationDetails) {
+                                                         final HttpServletRequest request, SewerageApplicationDetails sewerageApplicationDetails) {
         final SewerageBillable sewerageBillable = (SewerageBillable) context
                 .getBean("sewerageBillable");
         final AssessmentDetails assessmentDetails = propertyIntegrationService.getAssessmentDetailsForFlag(
@@ -333,7 +333,7 @@ public class SewerageThirdPartyServices {
     public EgBill generateBillForConnection(final Billable billObj) {
         final EgBill bill = new EgBill();
         bill.setBillNo(billObj.getReferenceNumber());
-        bill.setBoundaryNum(billObj.getBoundaryNum()!=null?billObj.getBoundaryNum().intValue():null);
+        bill.setBoundaryNum(billObj.getBoundaryNum() != null ? billObj.getBoundaryNum().intValue() : null);
         bill.setTransanctionReferenceNumber(billObj.getTransanctionReferenceNumber());
         bill.setBoundaryType(billObj.getBoundaryType());
         bill.setCitizenAddress(billObj.getBillAddress());
@@ -388,7 +388,7 @@ public class SewerageThirdPartyServices {
     }
 
     public BillReceiptInfo getBillReceiptInforForSewerageTax(final PaySewerageTaxDetails paySewerageTaxDetails,
-            final EgBill egBill) {
+                                                             final EgBill egBill) {
 
         final Map<String, String> paymentDetailsMap = new HashMap<>(0);
         paymentDetailsMap.put(PropertyTaxConstants.TOTAL_AMOUNT, paySewerageTaxDetails.getPaymentAmount().toString());
@@ -396,7 +396,7 @@ public class SewerageThirdPartyServices {
         if (PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_CHEQUE
                 .equalsIgnoreCase(paySewerageTaxDetails.getPaymentMode().toLowerCase())
                 || PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_DD
-                        .equalsIgnoreCase(paySewerageTaxDetails.getPaymentMode().toLowerCase())) {
+                .equalsIgnoreCase(paySewerageTaxDetails.getPaymentMode().toLowerCase())) {
             paymentDetailsMap.put(ChequePayment.INSTRUMENTNUMBER, paySewerageTaxDetails.getChqddNo());
             paymentDetailsMap.put(ChequePayment.INSTRUMENTDATE, paySewerageTaxDetails.getChqddDate());
             paymentDetailsMap.put(ChequePayment.BRANCHNAME, paySewerageTaxDetails.getBranchName());
@@ -457,7 +457,7 @@ public class SewerageThirdPartyServices {
     }
 
     private PaymentInfoCard prepareCardPaymentInfo(final CreditCardPayment cardPayment,
-            final PaymentInfoCard paymentInfoCard) {
+                                                   final PaymentInfoCard paymentInfoCard) {
         paymentInfoCard.setInstrumentNumber(cardPayment.getCreditCardNo());
         paymentInfoCard.setInstrumentAmount(cardPayment.getAmount());
         paymentInfoCard.setExpMonth(cardPayment.getExpMonth());
@@ -477,7 +477,7 @@ public class SewerageThirdPartyServices {
      * @return
      */
     public BillInfoImpl prepareBillInfo(final BigDecimal amountPaid, final COLLECTIONTYPE collType, final EgBill bill,
-            final String source) {
+                                        final String source) {
         final BillInfoImpl billInfoImpl = initialiseFromBill(amountPaid, collType, bill);
 
         final ArrayList<ReceiptDetail> receiptDetails = new ArrayList<>(0);
@@ -525,14 +525,14 @@ public class SewerageThirdPartyServices {
         else if (billDet.getEgDemandReason() != null && billDet.getEgDemandReason().getEgInstallmentMaster().getFromDate()
                 .compareTo(finYear.getStartingDate()) >= 0
                 && billDet.getEgDemandReason().getEgInstallmentMaster().getFromDate()
-                        .compareTo(finYear.getEndingDate()) < 0)
+                .compareTo(finYear.getEndingDate()) < 0)
             return PURPOSE.CURRENT_AMOUNT;
         else
             return PURPOSE.OTHERS;
     }
 
     private BillInfoImpl initialiseFromBill(final BigDecimal amountPaid, final COLLECTIONTYPE collType,
-            final EgBill bill) {
+                                            final EgBill bill) {
         BillInfoImpl billInfoImpl;
         BillPayeeDetails billPayeeDet;
         final List<BillPayeeDetails> billPayeeDetList = new ArrayList<>(0);
@@ -558,7 +558,7 @@ public class SewerageThirdPartyServices {
     }
 
     private ReceiptDetail initReceiptDetail(final String glCode, final BigDecimal crAmount,
-            final BigDecimal crAmountToBePaid, final BigDecimal drAmount, final String description) {
+                                            final BigDecimal crAmountToBePaid, final BigDecimal drAmount, final String description) {
         final ReceiptDetail receiptDetail = new ReceiptDetail();
         final CChartOfAccounts accountHead = new CChartOfAccounts();
         accountHead.setGlcode(glCode);

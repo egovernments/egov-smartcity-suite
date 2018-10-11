@@ -124,11 +124,11 @@ public class SewerageCloseConnectionController extends GenericWorkFlowController
 
     @RequestMapping(value = "/closeConnection/{shscNumber}", method = RequestMethod.GET)
     public String view(@ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails, final Model model,
-            @PathVariable final String shscNumber, final HttpServletRequest request) {
+                       @PathVariable final String shscNumber, final HttpServletRequest request) {
         BigDecimal taxDue = BigDecimal.ZERO;
         final SewerageConnection sewerageConnection = sewerageConnectionService.findByShscNumber(shscNumber);
         final SewerageApplicationDetails sewerageApplicationDetailsFromDB = sewerageApplicationDetailsService
-                .findByConnection_ShscNumberAndIsActive(shscNumber);
+                .findByShscNumberAndIsActive(shscNumber);
         sewerageApplicationDetails.setConnection(sewerageConnection);
 
         if (StringUtils.isNotBlank(shscNumber)) {
@@ -176,13 +176,13 @@ public class SewerageCloseConnectionController extends GenericWorkFlowController
 
     @RequestMapping(value = "/closeConnection/{shscNumber}", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
-            @PathVariable final String shscNumber,
-            final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request, final Model model, @RequestParam String workFlowAction,
-            @RequestParam("files") final MultipartFile[] files) {
+                         @PathVariable final String shscNumber,
+                         final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
+                         final HttpServletRequest request, final Model model, @RequestParam String workFlowAction,
+                         @RequestParam("files") final MultipartFile[] files) {
 
         final SewerageApplicationDetails sewerageApplicationDetailsFromDB = sewerageApplicationDetailsService
-                .findByConnection_ShscNumberAndIsActive(shscNumber);
+                .findByShscNumberAndIsActive(shscNumber);
         if (sewerageApplicationDetailsFromDB != null
                 && StringUtils.isNotEmpty(sewerageApplicationDetailsFromDB.getConnectionDetail().toString()))
             sewerageApplicationDetails.setConnectionDetail(sewerageApplicationDetailsFromDB.getConnectionDetail());
@@ -249,7 +249,7 @@ public class SewerageCloseConnectionController extends GenericWorkFlowController
 
     @RequestMapping(value = "/closeConnection-success", method = RequestMethod.GET)
     public ModelAndView successView(@ModelAttribute SewerageApplicationDetails sewerageApplicationDetails,
-            final HttpServletRequest request, final Model model, final ModelMap modelMap) {
+                                    final HttpServletRequest request, final Model model, final ModelMap modelMap) {
         final String[] keyNameArray = request.getParameter("pathVars").split(",");
         String applicationNumber = "";
         String approverName = "";

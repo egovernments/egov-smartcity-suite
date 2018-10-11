@@ -64,7 +64,6 @@ import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
@@ -81,6 +80,7 @@ import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.ptis.wtms.PropertyIntegrationService;
+import org.egov.stms.masters.entity.SewerageApplicationType;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,12 +91,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.util.Collections.emptySet;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.*;
 
 @Service
 public class SewerageTaxUtils {
@@ -127,9 +126,6 @@ public class SewerageTaxUtils {
     private PositionMasterService positionMasterService;
 
     @Autowired
-    private CityService cityService;
-
-    @Autowired
     private SecurityUtils securityUtils;
 
     @Autowired
@@ -151,7 +147,7 @@ public class SewerageTaxUtils {
     public Boolean isNewConnectionAllowedIfPTDuePresent() {
 
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
-                SewerageTaxConstants.MODULE_NAME, SewerageTaxConstants.NEWCONNECTIONALLOWEDIFPTDUE);
+                MODULE_NAME, SewerageTaxConstants.NEWCONNECTIONALLOWEDIFPTDUE);
 
         if (appConfigValue != null && !appConfigValue.isEmpty())
             return "YES".equalsIgnoreCase(appConfigValue.get(0).getValue());
@@ -207,7 +203,7 @@ public class SewerageTaxUtils {
      * appconfig values and Values should be 'Senior Assistant,Junior Assistant' for designation and
      * 'Revenue,Accounts,Administration' for department
      *
-     * @param asessmentNumber ,
+     * @param asessmentNumber   ,
      * @param assessmentDetails
      * @param boundaryObj
      * @return Assignment
@@ -236,7 +232,7 @@ public class SewerageTaxUtils {
     public String getDesignationForThirdPartyUser() {
         String designation = "";
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
-                SewerageTaxConstants.MODULE_NAME, SewerageTaxConstants.CLERKDESIGNATIONFORCSCOPERATOR);
+                MODULE_NAME, SewerageTaxConstants.CLERKDESIGNATIONFORCSCOPERATOR);
         if (null != appConfigValue && !appConfigValue.isEmpty())
             designation = appConfigValue.get(0).getValue();
         return designation;
@@ -245,7 +241,7 @@ public class SewerageTaxUtils {
     public String getDepartmentForWorkFlow() {
         String department = "";
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
-                SewerageTaxConstants.MODULE_NAME, SewerageTaxConstants.SEWERAGETAXWORKFLOWDEPARTEMENT);
+                MODULE_NAME, SewerageTaxConstants.SEWERAGETAXWORKFLOWDEPARTEMENT);
         if (null != appConfigValue && !appConfigValue.isEmpty())
             department = appConfigValue.get(0).getValue();
         return department;
@@ -405,7 +401,7 @@ public class SewerageTaxUtils {
 
     public boolean isInspectionFeeCollectionRequired() {
         final AppConfigValues inspectionFeeCollectionRqd = appConfigValuesService.getConfigValuesByModuleAndKey(
-                SewerageTaxConstants.MODULE_NAME, SewerageTaxConstants.APPCONFIG_COLLECT_INSPECTIONFEE).get(0);
+                MODULE_NAME, SewerageTaxConstants.APPCONFIG_COLLECT_INSPECTIONFEE).get(0);
         return inspectionFeeCollectionRqd != null && inspectionFeeCollectionRqd.getValue() != null
                 && inspectionFeeCollectionRqd.getValue().equals("YES");
     }
@@ -439,14 +435,14 @@ public class SewerageTaxUtils {
      * @description returns list of installments from the given date to till date
      */
     public List<Installment> getInstallmentsForCurrYear(final Date currDate) {
-        final Module module = moduleService.getModuleByName(SewerageTaxConstants.MODULE_NAME);
+        final Module module = moduleService.getModuleByName(MODULE_NAME);
         return installmentDao.getAllInstallmentsByModuleAndStartDate(module, currDate);
     }
 
-    public List<Installment> getInstallmentsByModuledescendingorder(final Module module, final int year) {
+    public List<Installment> getInstallmentsByModuleDesc(final int year) {
         return installmentDao
                 .getInstallmentsByModuleAndInstallmentYearOrderByInstallmentYearDescending(
-                        moduleService.getModuleByName(SewerageTaxConstants.MODULE_NAME), year);
+                        moduleService.getModuleByName(MODULE_NAME), year);
     }
 
     public Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
@@ -464,13 +460,32 @@ public class SewerageTaxUtils {
                         }
                     }).collect(Collectors.toSet());
         else
-            return null;
+            return emptySet();
     }
 
     public boolean isDonationChargeCollectionRequiredForLegacy() {
         final AppConfigValues donationChargeConfig = appConfigValuesService.getConfigValuesByModuleAndKey(
-                SewerageTaxConstants.MODULE_NAME, SewerageTaxConstants.APPCONFIG_COLLECT_LEGACY_DONATIONCHARGE).get(0);
+                MODULE_NAME, SewerageTaxConstants.APPCONFIG_COLLECT_LEGACY_DONATIONCHARGE).get(0);
         return donationChargeConfig != null && donationChargeConfig.getValue() != null
                 && "YES".equals(donationChargeConfig.getValue());
+    }
+
+    public Integer getSlaAppConfigValues(SewerageApplicationType applicationType) {
+        String keyName;
+        if (applicationType.getCode() == NEWSEWERAGECONNECTION)
+            keyName = SLAFORNEWSEWERAGECONNECTION;
+        else
+            keyName = applicationType.getCode() == CHANGEINCLOSETS ? SLAFORCHANGEINCLOSET : SLAFORCLOSURECONNECTION;
+        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME, keyName);
+        return !appConfigValues.isEmpty() ? Integer.valueOf(appConfigValues.get(0).getValue()) : 0;
+    }
+
+    public AppConfigValues getAppConfigValues(final String keyName) {
+        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME, keyName);
+        return !appConfigValues.isEmpty() ? appConfigValues.get(0) : null;
+    }
+
+    public Module getModule() {
+        return moduleService.getModuleByName(SewerageTaxConstants.MODULE_NAME);
     }
 }

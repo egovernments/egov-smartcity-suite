@@ -72,7 +72,7 @@ public class SewerageTaxConstants {
 
 
     // application status constants - start
-    public static final String STATUS ="status";
+    public static final String STATUS = "status";
     public static final String APPLICATION_STATUS_CREATED = "CREATED";
     public static final String APPLICATION_STATUS_FINALAPPROVED = "FINALAPPROVED";
     public static final String APPLICATION_STATUS_ESTIMATENOTICEGEN = "ESTIMATIONNOTICEGENERATED";
@@ -197,6 +197,7 @@ public class SewerageTaxConstants {
     public static final String CLAUSES_CC_NOTICE_DATE = "clauses.closurenoticedate";
 
     private static final Map<Integer, Integer> PIPE_SCREW_SIZE = new LinkedHashMap<>();
+
     static {
         PIPE_SCREW_SIZE.put(1, 1);
         PIPE_SCREW_SIZE.put(2, 2);
@@ -317,28 +318,29 @@ public class SewerageTaxConstants {
     public static final String APPLICATION_TYPE_NAME_CHANGEINCLOSETS = "Change In Closets";
     public static final String APPLICATION_TYPE_NAME_CLOSECONNECTION = "Close Sewerage Connection";
     public static final String GROUPBYFIELD = "groupByField";
-    
+
     public static final String TOTALRESULTTOBEFETCH = "Number of Records used in next year demand generation";
-    
+
     public static final String SLAFORNEWSEWERAGECONNECTION = "SLAFORNEWSEWERAGECONNECTION";
     public static final String SLAFORCHANGEINCLOSET = "SLAFORCHANGEINCLOSET";
-    public static final String SEWERAGE_MONTHLY_RATES ="SEWERAGE MONTHLY RATES BY MULTIPLE CLOSETS";
-    public static final String EDIT_DONATION_CHARGE ="EDIT_DONATION_CHARGE";
-    public static final String MODIFYLEGACYCONNECTIONACTIONDROPDOWN="MODIFYLEGACYCONNECTION";
-    
+    public static final String SLAFORCLOSURECONNECTION = "SLAFORCLOSURE";
+    public static final String SEWERAGE_MONTHLY_RATES = "SEWERAGE MONTHLY RATES BY MULTIPLE CLOSETS";
+    public static final String EDIT_DONATION_CHARGE = "EDIT_DONATION_CHARGE";
+    public static final String MODIFYLEGACYCONNECTIONACTIONDROPDOWN = "MODIFYLEGACYCONNECTION";
+
     //CSC operator related constants
     public static final String CSC_OPERATOR_ROLE = "CSC Operator";
     public static final String SEWERAGE_WORKFLOWDESIGNATION_FOR_CSCOPERATOR = "SEWERAGEDESIGNATIONFORCSCOPERATORWORKFLOW";
     public static final String SEWERAGE_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR = "SEWERAGEDEPARTMENTFORCSCOPERATORWORKFLOW";
-    public static final String SEWERAGEROLEFORNONEMPLOYEE="SEWERAGEROLEFORNONEMPLOYEE";
+    public static final String SEWERAGEROLEFORNONEMPLOYEE = "SEWERAGEROLEFORNONEMPLOYEE";
     public static final String APPLICATION_PDF = "application/pdf";
     public static final String APPLICATION_STATUS_CSCCREATED = "CSCCREATED";
-        
-   //Online 
+
+    //Online
     public static final String ONLINE = "Online";
     public static final String ANONYMOUS_USER = "Anonymous";
     public static final String APPLICATION_STATUS_ANONYMOUSCREATED = "ANONYMOUSCREATED";
-    
+
     //Citizen
     public static final String APPLICATION_STATUS_CITIZENCREATED = "CITIZENCREATED";
     public static final String APPLICATION_STATUS_FEECOLLECTIONPENDING = "FEECOLLECTIONPENDING";
@@ -354,14 +356,15 @@ public class SewerageTaxConstants {
     public static final String PAYMENT_TYPE_FULLY = "Fully";
     //reassignment
     public static final String APPCONFKEY_REASSIGN_BUTTONENABLED = "REASSIGN_BUTTONENABLED_SEWERAGE";
-    public static final String SEWERAGE_DEPARTEMENT_FOR_REASSIGNMENT = "SEWERAGEDEPARTMENTFORREASSIGNMENT";  
+    public static final String SEWERAGE_DEPARTEMENT_FOR_REASSIGNMENT = "SEWERAGEDEPARTMENTFORREASSIGNMENT";
     //Rest Api
     public static final String CURR_DMD_STR = "CURR_DMD";
     public static final String ARR_DMD_STR = "ARR_DMD";
     public static final String CURR_COLL_STR = "CURR_COLL";
     public static final String ARR_COLL_STR = "ARR_COLL";
     public static final String STAXDETAILS_PROPERTYID_NOT_EXIST_ERR_MSG_PREFIX = "Sewerage Connection details with Assessment Number ";
-    
+    public static final String NA = "NA";
+
     private SewerageTaxConstants() {
         // only invariants
     }
@@ -369,5 +372,5 @@ public class SewerageTaxConstants {
     public static Map<Integer, Integer> getPipeScrewSizes() {
         return Collections.unmodifiableMap(PIPE_SCREW_SIZE);
     }
-    
+
 }
