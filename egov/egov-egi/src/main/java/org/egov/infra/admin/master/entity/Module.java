@@ -62,6 +62,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.egov.infra.admin.master.entity.Module.SEQ_MODULE;
@@ -161,34 +162,17 @@ public class Module implements Serializable {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (id == null ? 0 : id.hashCode());
-        result = prime * result + (name == null ? 0 : name.hashCode());
-        return result;
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof Module))
+            return false;
+        Module module = (Module) other;
+        return Objects.equals(getName(), module.getName());
     }
 
-
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final Module other = (Module) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        return true;
+    public int hashCode() {
+        return Objects.hash(getName());
     }
 }

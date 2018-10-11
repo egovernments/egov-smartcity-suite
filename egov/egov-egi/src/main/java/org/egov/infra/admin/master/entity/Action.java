@@ -49,6 +49,7 @@
 package org.egov.infra.admin.master.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -67,25 +68,30 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.egov.infra.admin.master.entity.Action.SEQ_ACTION;
 
 @Entity
 @Table(name = "eg_action")
+@Unique(fields = "name", enableDfltMsg = true)
 @SequenceGenerator(name = SEQ_ACTION, sequenceName = SEQ_ACTION, allocationSize = 1)
 @Cacheable
 public class Action extends AbstractAuditable {
 
     public static final String SEQ_ACTION = "SEQ_EG_ACTION";
     private static final long serialVersionUID = -5459067787684736822L;
+
     @Id
     @GeneratedValue(generator = SEQ_ACTION, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(unique = true)
     private String name;
+
     private String url;
+
     private String queryParams;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -96,9 +102,13 @@ public class Action extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parentModule")
     private Module parentModule;
+
     private Integer orderNumber;
+
     private String displayName;
+
     private boolean enabled;
+
     private String contextRoot;
 
     @Override
@@ -195,5 +205,20 @@ public class Action extends AbstractAuditable {
 
     public boolean hasRole(Role role) {
         return this.getRoles().contains(role);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof Action))
+            return false;
+        Action action = (Action) other;
+        return Objects.equals(getName(), action.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName());
     }
 }

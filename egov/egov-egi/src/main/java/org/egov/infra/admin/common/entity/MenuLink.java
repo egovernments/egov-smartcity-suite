@@ -48,6 +48,8 @@
 
 package org.egov.infra.admin.common.entity;
 
+import java.util.Objects;
+
 public class MenuLink {
     private Long id;
     private String name;
@@ -103,35 +105,20 @@ public class MenuLink {
     public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
     }
-    
+
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        return result;
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof MenuLink))
+            return false;
+        MenuLink menuLink = (MenuLink) other;
+        return Objects.equals(getId(), menuLink.getId()) &&
+                Objects.equals(getName(), menuLink.getName());
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        MenuLink other = (MenuLink) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        return true;
+    public int hashCode() {
+        return Objects.hash(getId(), getName());
     }
 }

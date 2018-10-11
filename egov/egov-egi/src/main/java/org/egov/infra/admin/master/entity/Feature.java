@@ -68,6 +68,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.egov.infra.admin.master.entity.Feature.SEQ_FEATURE;
@@ -183,5 +184,20 @@ public class Feature extends AbstractPersistable<Long> {
     public void removeRole(Role role) {
         if (hasRole(role))
             this.getRoles().remove(role);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof Feature))
+            return false;
+        Feature feature = (Feature) other;
+        return Objects.equals(getName(), feature.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName());
     }
 }

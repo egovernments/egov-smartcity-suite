@@ -192,18 +192,18 @@ public class BoundaryType extends AbstractAuditable {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
+    public boolean equals(Object other) {
+        if (this == other)
             return true;
-        if (!(o instanceof BoundaryType))
+        if (!(other instanceof BoundaryType))
             return false;
-        BoundaryType that = (BoundaryType) o;
-        return Objects.equal(name, that.name) &&
-                Objects.equal(hierarchyType, that.hierarchyType);
+        BoundaryType boundaryType = (BoundaryType) other;
+        return Objects.equal(getName(), boundaryType.getName()) &&
+                Objects.equal(getHierarchyType(), boundaryType.getHierarchyType());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(name, hierarchyType);
+        return Objects.hashCode(getName(), getHierarchyType());
     }
 }

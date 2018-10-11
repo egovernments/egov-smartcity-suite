@@ -293,13 +293,13 @@ public class Boundary extends AbstractAuditable {
         if (!(other instanceof Boundary))
             return false;
         Boundary boundary = (Boundary) other;
-        return Objects.equal(boundaryNum, boundary.boundaryNum) &&
-                Objects.equal(boundaryType, boundary.boundaryType);
+        return Objects.equal(getBoundaryNum(), boundary.getBoundaryNum()) &&
+                Objects.equal(getBoundaryType(), boundary.getBoundaryType());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(boundaryNum, boundaryType);
+        return Objects.hashCode(getBoundaryNum(), getBoundaryType());
     }
 
 }

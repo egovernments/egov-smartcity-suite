@@ -162,18 +162,18 @@ public class AppConfig extends AbstractAuditable {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o)
+    public boolean equals(Object other) {
+        if (this == other)
             return true;
-        if (!(o instanceof AppConfig))
+        if (!(other instanceof AppConfig))
             return false;
-        final AppConfig appConfig = (AppConfig) o;
-        return Objects.equals(keyName, appConfig.keyName) &&
-                Objects.equals(module, appConfig.module);
+        AppConfig appConfig = (AppConfig) other;
+        return Objects.equals(getKeyName(), appConfig.getKeyName()) &&
+                Objects.equals(getModule(), appConfig.getModule());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(keyName, module);
+        return Objects.hash(getKeyName(), getModule());
     }
 }

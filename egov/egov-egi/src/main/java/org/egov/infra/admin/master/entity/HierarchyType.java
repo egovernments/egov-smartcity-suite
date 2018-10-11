@@ -127,18 +127,18 @@ public class HierarchyType extends AbstractAuditable {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
+    public boolean equals(Object other) {
+        if (this == other)
             return true;
-        if (!(o instanceof HierarchyType))
+        if (!(other instanceof HierarchyType))
             return false;
-        HierarchyType that = (HierarchyType) o;
-        return Objects.equal(name, that.name) &&
-                Objects.equal(code, that.code);
+        HierarchyType that = (HierarchyType) other;
+        return Objects.equal(getName(), that.getName()) &&
+                Objects.equal(getCode(), that.getCode());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(name, code);
+        return Objects.hashCode(getName(), getCode());
     }
 }

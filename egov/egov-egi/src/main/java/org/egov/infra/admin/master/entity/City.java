@@ -72,6 +72,7 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.egov.infra.admin.master.entity.City.QUERY_CITY_BY_URL;
@@ -81,7 +82,7 @@ import static org.egov.infra.security.utils.captcha.CaptchaUtils.CITY_CAPTCHA_PU
 import static org.egov.infra.utils.ApplicationConstant.*;
 
 @Entity
-@Unique(fields = "domainURL", enableDfltMsg = true)
+@Unique(fields = {"code", "domainURL"}, enableDfltMsg = true)
 @Table(name = "eg_city")
 @NamedQuery(name = QUERY_CITY_BY_URL, query = "Select cw FROM City cw WHERE cw.domainURL=:domainURL")
 @SequenceGenerator(name = SEQ_CITY, sequenceName = SEQ_CITY, allocationSize = 1)
@@ -301,33 +302,18 @@ public class City extends AbstractAuditable {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (domainURL == null ? 0 : domainURL.hashCode());
-        result = prime * result + (id == null ? 0 : id.hashCode());
-        return result;
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof City))
+            return false;
+        City city = (City) other;
+        return Objects.equals(getDomainURL(), city.getDomainURL()) &&
+                Objects.equals(getCode(), city.getCode());
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final City other = (City) obj;
-        if (domainURL == null) {
-            if (other.domainURL != null)
-                return false;
-        } else if (!domainURL.equals(other.domainURL))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        return true;
+    public int hashCode() {
+        return Objects.hash(getDomainURL(), getCode());
     }
 }

@@ -61,6 +61,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import java.util.Objects;
+
 import static org.egov.infra.admin.master.entity.Location.SEQ_LOCATION;
 
 @Entity
@@ -117,5 +119,20 @@ public class Location extends AbstractPersistable<Long> {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof Location))
+            return false;
+        Location location = (Location) other;
+        return Objects.equals(getName(), location.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName());
     }
 }
