@@ -1144,14 +1144,15 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
 		if (oldProperty == null)
 			LOGGER.info("modifyBasicProp, Could not get the previous property. DCB for arrears will be incorrect");
 		else {
-			modProperty = propertyService.createDemandForModify(oldProperty, newProperty, propCompletionDate);
+			final PropertyImpl historyProperty = (PropertyImpl) propertyService.getHistoryPropertyByUpinNo(oldProperty.getBasicProperty());
+			modProperty = propertyService.createDemandForModify(historyProperty, newProperty, propCompletionDate);
 			modProperty = createArrearsDemand(oldProperty, propCompletionDate, newProperty);
 		}
 
 		Map<Installment, Set<EgDemandDetails>> demandDetailsSetByInstallment;
 		List<Installment> installments;
 
-		final Set<EgDemandDetails> oldEgDemandDetailsSet = propertyService.getOldDemandDetails(oldProperty,
+		final Set<EgDemandDetails> oldEgDemandDetailsSet = propertyService.getOldDemandDetails(propertyService.getHistoryPropertyByUpinNo(oldProperty.getBasicProperty()),
 				newProperty);
 		demandDetailsSetByInstallment = propertyService.getEgDemandDetailsSetByInstallment(oldEgDemandDetailsSet);
 		installments = new ArrayList<>(demandDetailsSetByInstallment.keySet());
