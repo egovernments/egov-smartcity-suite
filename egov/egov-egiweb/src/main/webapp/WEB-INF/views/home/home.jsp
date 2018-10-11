@@ -377,7 +377,7 @@
                     <div class="form-group">
                         <div class="col-md-12 add-margin">
                             <textarea class="form-control" rows="5" id="comment" placeholder="Message"></textarea>
-                            <spring:message code="lbl.feedback.mail.footer" arguments="${sessionScope.corpContactEmail}"/>
+                            <spring:message code="lbl.feedback.mail.footer" arguments="${empty sessionScope.corpContactEmail ? 'none' : sessionScope.corpContactEmail}"/>
                         </div>
                     </div>
                     <div class="form-group text-right">

@@ -174,13 +174,13 @@ public class HomeController {
     }
 
     @ResponseBody
-    @GetMapping("favourite/remove")
+    @PostMapping("favourite/remove")
     public boolean removeFavourite(@RequestParam Integer actionId) {
         return favouritesService.removeFromCurrentUserFavourite(actionId);
     }
 
     @ResponseBody
-    @GetMapping("password/update")
+    @PostMapping("password/update")
     public String changePassword(@RequestParam String currentPwd, @RequestParam String newPwd, @RequestParam String retypeNewPwd) {
         User user = userService.getCurrentUser();
         if (passwordEncoder.matches(currentPwd, user.getPassword())) {
@@ -196,7 +196,7 @@ public class HomeController {
     }
 
     @ResponseBody
-    @GetMapping("feedback/sent")
+    @PostMapping("feedback/sent")
     public boolean sendFeedback(@RequestParam String subject, @RequestParam String message) {
         cityService.sentFeedBackMail(cityService.getContactEmail(), subject,
                 format(FEEDBACK_MSG_FORMAT, message, "Regards", user().getName()));

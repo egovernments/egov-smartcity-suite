@@ -68,7 +68,7 @@ $(document).ready(function () {
         e.preventDefault();
         $.ajax({
             url: 'home/feedback/sent',
-            type: 'GET',
+            type: 'POST',
             data: {'subject': $("#subject").val(), 'message': $("#comment").val()},
             success: function (data) {
                 bootbox.alert("Your feedback successfully submitted.");
@@ -86,7 +86,7 @@ $(document).ready(function () {
         e.preventDefault();
         $.ajax({
             url: 'home/password/update',
-            type: 'GET',
+            type: 'POST',
             data: {
                 'currentPwd': $("#old-pass").val(),
                 'newPwd': $("#new-pass").val(),

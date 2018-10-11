@@ -65,7 +65,7 @@ $(document).ready(function () {
 
     $("#otprecoverybtn").click(function () {
             if ($("#token").val() != "") {
-                window.location = '/egi/login/password/reset?token=' + $("#token").val();
+                $('#otpForm').attr('action', '/egi/login/password/reset').trigger('submit');
             }
         }
     );
@@ -86,7 +86,9 @@ $(document).ready(function () {
         $('#locationId').empty();
         if ($.trim($(this).val())) {
             $.ajax({
-                url: "requiredlocations?username=" + this.value,
+                url: "requiredlocations",
+                type: 'POST',
+                data: {"username": this.value},
                 dataType: "json",
                 success: function (data) {
                     checklocation = true;
