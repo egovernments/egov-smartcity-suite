@@ -798,12 +798,12 @@ public class TradeLicense extends StateAware<Position> {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj)
             return true;
         if (!(obj instanceof TradeLicense))
             return false;
-        final TradeLicense that = (TradeLicense) obj;
+        TradeLicense that = (TradeLicense) obj;
         return Objects.equals(getUid(), that.getUid());
     }
 

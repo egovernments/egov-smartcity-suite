@@ -57,6 +57,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.util.Objects;
 
 import static org.egov.tl.entity.LicenseConfiguration.SEQ_CONFIGURATION;
 
@@ -108,5 +109,20 @@ public class LicenseConfiguration extends AbstractAuditable {
 
     public void setDescription(final String description) {
         this.description = description;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof LicenseConfiguration))
+            return false;
+        LicenseConfiguration that = (LicenseConfiguration) other;
+        return Objects.equals(getKey(), that.getKey());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getKey());
     }
 }

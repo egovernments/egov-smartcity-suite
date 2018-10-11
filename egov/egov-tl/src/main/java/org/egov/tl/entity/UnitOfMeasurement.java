@@ -61,6 +61,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.util.Objects;
 
 @Entity
 @Table(name = "EGTL_MSTR_UNITOFMEASURE")
@@ -122,4 +123,18 @@ public class UnitOfMeasurement extends AbstractAuditable {
         this.active = active;
     }
 
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof UnitOfMeasurement))
+            return false;
+        UnitOfMeasurement that = (UnitOfMeasurement) other;
+        return Objects.equals(getCode(), that.getCode());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getCode());
+    }
 }

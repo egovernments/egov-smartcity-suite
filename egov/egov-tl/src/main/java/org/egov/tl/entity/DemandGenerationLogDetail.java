@@ -150,12 +150,12 @@ public class DemandGenerationLogDetail extends AbstractPersistable<Long> {
         if (!(other instanceof DemandGenerationLogDetail))
             return false;
         DemandGenerationLogDetail that = (DemandGenerationLogDetail) other;
-        return Objects.equals(licenseId, that.licenseId) &&
-                Objects.equals(demandGenerationLog, that.demandGenerationLog);
+        return Objects.equals(getLicenseId(), that.getLicenseId()) &&
+                Objects.equals(getDemandGenerationLog(), that.getDemandGenerationLog());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(licenseId, demandGenerationLog);
+        return Objects.hash(getLicenseId(), getDemandGenerationLog());
     }
 }
