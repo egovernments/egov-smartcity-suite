@@ -55,26 +55,26 @@
 <jsp:include page="view-complaint.jsp"></jsp:include>
 
 <c:if test="${complaintStatus != 'WITHDRAWN'}">
-    <div class="panel panel-primary" data-collapsed="0">
-        <div class="panel-heading">
-            <div class="panel-title">
-                <strong><spring:message code="lbl.actions"/></strong>
+    <form:form id="complaintUpdate" modelAttribute="complaint" method="post" role="form"
+               class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
+        <div class="panel panel-primary" data-collapsed="0">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <strong><spring:message code="lbl.actions"/></strong>
+                </div>
             </div>
-        </div>
-        <div class="panel-body">
+            <div class="panel-body">
 
-            <form:form id="complaintUpdate" modelAttribute="complaint" method="post" role="form"
-                       class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
                 <div class="form-group">
                     <div class="col-md-3 add-margin">
                         <spring:message code="lbl.include.message"/><span class="mandatory"></span>
                     </div>
                     <div class="col-md-9 add-margin">
 					    <textarea class="form-control" id="inc_messge" placeholder="" required="required"
-                              maxlength="400" name="approvalComent"></textarea>
+                                  maxlength="400" name="approvalComent"></textarea>
                         <input type="hidden" id="currentstatus" value="${complaint.status.id}">
+                        <form:errors path="" cssClass="error-msg text-center"/>
                         <form:hidden path="statusUpdate" id="statusUpdate" value="true"/>
-                        <form:errors path="" cssClass="error-msg"/>
                     </div>
                 </div>
                 <c:if test="${complaintStatus == 'COMPLETED'}">
@@ -93,7 +93,7 @@
                         <c:forEach items="${status}" var="validStatus">
                             <spring:message code="btn.status.${validStatus.name}" var="btnname"/>
                             <button type="submit" class="btn btn-primary" title="<spring:message code='btn.status.title'  arguments="${btnname}"/>">
-                                ${btnname}
+                                    ${btnname}
                                 <form:hidden path="status" id="status" value="${validStatus.id}"/>
                             </button>
                         </c:forEach>
@@ -106,9 +106,9 @@
                         <button type="button" class="btn btn-default" onclick="window.close();"><spring:message code="lbl.close"/></button>
                     </div>
                 </div>
-            </form:form>
+            </div>
         </div>
-    </div>
+    </form:form>
 </c:if>
 <c:if test="${complaintStatus == 'WITHDRAWN'}">
     <div class="form-group">

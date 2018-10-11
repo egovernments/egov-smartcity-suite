@@ -48,7 +48,9 @@
 
 package org.egov.pgr.web.validator;
 
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pgr.entity.Complaint;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -61,6 +63,9 @@ import static org.egov.pgr.utils.constants.PGRConstants.LOCATION_ATTRIB;
 
 @Component
 public class ComplaintValidator implements Validator {
+
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -75,6 +80,10 @@ public class ComplaintValidator implements Validator {
     public void validate(Object target, Errors errors, HttpServletRequest request) {
 
         Complaint complaint = (Complaint) target;
+
+        if (!(securityUtils.currentUserIsEmployee() || securityUtils.getCurrentUser().equals(complaint.getCreatedBy()))) {
+            errors.reject("update.not.allowed");
+        }
 
         if (complaint.getStatus() == null)
             errors.rejectValue("status", "status.requried");
