@@ -47,6 +47,9 @@
  */
 package org.egov.adtax.web.controller.common;
 
+import java.util.Date;
+import java.util.List;
+
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.HoardingCategory;
@@ -80,10 +83,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Date;
-import java.util.List;
-
 public class HoardingControllerSupport extends GenericWorkFlowController {
+    private static final String HOARDING_DOC_NOT_ENCLOSED = "hoarding.doc.not.enclosed";
+    private static final String HOARDING_DOC_MANDATORY = "hoarding.doc.mandatory";
+    private static final String STR_ATTACHMENTS = "].attachments";
+    private static final String STR_ADVERTISEMENT_DOCUMENTS = "advertisement.documents[";
     protected @Autowired AdvertisementPermitDetailService advertisementPermitDetailService;
     protected @Autowired AdvertisementService advertisementService;
     protected @Autowired SubCategoryService subCategoryService;
@@ -167,7 +171,7 @@ public class HoardingControllerSupport extends GenericWorkFlowController {
 
     protected void updateHoardingDocuments(final AdvertisementPermitDetail advertisementPermitDetail) {
         advertisementPermitDetail.getAdvertisement().getDocuments().forEach(document -> {
-            if(document.getAttachments() != null)
+            if (document.getAttachments() != null)
                 document.addFiles(fileStoreUtils.addToFileStore(document.getAttachments(), "ADTAX"));
         });
     }
@@ -177,9 +181,9 @@ public class HoardingControllerSupport extends GenericWorkFlowController {
         int index = 0;
         for (final HoardingDocument document : advertisementPermitDetail.getAdvertisement().getDocuments()) {
             if (document.getDoctype().isMandatory() && document.getAttachments()[0].getSize() == 0)
-                resultBinder.rejectValue("advertisement.documents[" + index + "].attachments", "hoarding.doc.mandatory");
+                resultBinder.rejectValue(STR_ADVERTISEMENT_DOCUMENTS + index + STR_ATTACHMENTS, HOARDING_DOC_MANDATORY);
             else if (document.isEnclosed() && document.getAttachments()[0].getSize() == 0)
-                resultBinder.rejectValue("advertisement.documents[" + index + "].attachments", "hoarding.doc.not.enclosed");
+                resultBinder.rejectValue(STR_ADVERTISEMENT_DOCUMENTS + index + STR_ATTACHMENTS, HOARDING_DOC_NOT_ENCLOSED);
             index++;
         }
     }
@@ -188,13 +192,13 @@ public class HoardingControllerSupport extends GenericWorkFlowController {
             final BindingResult resultBinder, final RedirectAttributes redirAttrib) {
         int index = 0;
         for (final HoardingDocument document : advertisementPermitDetail.getAdvertisement().getDocuments()) {
-            if (document.getDoctype().isMandatory() && document.getFiles().size() == 0
+            if (document.getDoctype().isMandatory() && document.getFiles().isEmpty()
                     && document.getAttachments()[0].getSize() == 0) {
-                resultBinder.rejectValue("advertisement.documents[" + index + "].attachments", "hoarding.doc.mandatory");
-                redirAttrib.addFlashAttribute("message", "hoarding.doc.not.enclosed");
-            } else if (document.isEnclosed() && document.getFiles().size() == 0 && document.getAttachments()[0].getSize() == 0) {
-                resultBinder.rejectValue("advertisement.documents[" + index + "].attachments", "hoarding.doc.not.enclosed");
-                redirAttrib.addFlashAttribute("message", "hoarding.doc.not.enclosed");
+                resultBinder.rejectValue(STR_ADVERTISEMENT_DOCUMENTS + index + STR_ATTACHMENTS, HOARDING_DOC_MANDATORY);
+                redirAttrib.addFlashAttribute("message", HOARDING_DOC_NOT_ENCLOSED);
+            } else if (document.isEnclosed() && document.getFiles().isEmpty() && document.getAttachments()[0].getSize() == 0) {
+                resultBinder.rejectValue(STR_ADVERTISEMENT_DOCUMENTS + index + STR_ATTACHMENTS, HOARDING_DOC_NOT_ENCLOSED);
+                redirAttrib.addFlashAttribute("message", HOARDING_DOC_NOT_ENCLOSED);
             }
             index++;
         }
@@ -226,11 +230,11 @@ public class HoardingControllerSupport extends GenericWorkFlowController {
                 && advertisementPermitDetail.getAdvertisement().getCategory().isPropertyMandatory())
             resultBinder.rejectValue("advertisement.propertyNumber", "invalid.propertyIdIsMandatoryForCategory");
         // TODO: SAVE AUTOCALCULATED AMOUNT IN BACKEND.
-        
+
         if (advertisementPermitDetail.getPermissionstartdate() != null
                 && advertisementPermitDetail.getPermissionenddate() != null
-                && (advertisementPermitDetail.getPermissionstartdate()
-                        .compareTo(advertisementPermitDetail.getPermissionenddate()) > -1))
+                && advertisementPermitDetail.getPermissionstartdate()
+                        .compareTo(advertisementPermitDetail.getPermissionenddate()) > -1)
             resultBinder.rejectValue("permissionstartdate", "invalid.permissionFromDateAndToDateCompare");
-    }   
+    }
 }
