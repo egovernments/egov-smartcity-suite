@@ -67,14 +67,14 @@
 							<span class="mandatory"></span>
 						</label>
 						<div class="col-sm-3 add-margin">
-							<form:textarea cssClass="form-control patternvalidation" path="deactivation_remarks"  id="deactivation_remarks" data-pattern="alphanumericwithspace" maxlength="100" required="required"/>
+							<form:textarea cssClass="form-control patternvalidation" path="deactivationRemarks"  id="deactivation_remarks" data-pattern="alphanumericwithspace" maxlength="100" required="required"/>
 				 		</div>
 						<form:hidden path="applicationNumber" id="applicationNumber" value="${advertisementPermitDetailStatus.applicationNumber}" />
 						<form:hidden path="id" id="id" value="${advertisementPermitDetailStatus.id}" />
 						<form:hidden path="applicationDate" id="applicationDate" value="${applicationDate}" />
 						<label class="col-sm-2 control-label"><spring:message code="lbl.demarcation.date"/><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input type="text" class="form-control datepicker" id="deactiveDate" data-date-end-date="0d"  path="deactivation_date" required="required"/>
+							<form:input type="text" class="form-control datepicker" id="deactiveDate" data-date-end-date="0d"  path="deactivationDate" required="required"/>
 						</div> 
 					</div>
 				</div>
