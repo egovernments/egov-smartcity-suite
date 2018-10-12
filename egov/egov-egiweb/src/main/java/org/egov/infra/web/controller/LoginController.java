@@ -68,6 +68,9 @@ import java.util.List;
 @RequestMapping(value = "/login")
 public class LoginController {
 
+    private static final String PASSWORD_RESET_PATH = "password/reset";
+    private static final String TOKEN = "token";
+
     @Autowired
     private IdentityRecoveryService identityRecoveryService;
 
@@ -91,27 +94,27 @@ public class LoginController {
         return "redirect:/login/secure";
     }
 
-    @PostMapping(value = "password/reset", params = "token")
+    @PostMapping(value = PASSWORD_RESET_PATH, params = TOKEN)
     public String viewPasswordReset(@RequestParam String token, Model model) {
         model.addAttribute("valid", identityRecoveryService.tokenValid(token));
-        return "password/reset";
+        return PASSWORD_RESET_PATH;
     }
 
-    @PostMapping(value = "password/reset", params = {"token", "newPassword", "confirmPwd"})
+    @PostMapping(value = PASSWORD_RESET_PATH, params = {TOKEN, "newPassword", "confirmPwd"})
     public String validateAndSendNewPassword(@RequestParam String token, @RequestParam String newPassword,
                                              @RequestParam String confirmPwd, Model model) {
         if (!newPassword.equals(confirmPwd)) {
             model.addAttribute("error", "err.login.pwd.mismatch");
-            model.addAttribute("token", token);
+            model.addAttribute(TOKEN, token);
             model.addAttribute("valid", identityRecoveryService.tokenValid(token));
-            return "password/reset";
+            return PASSWORD_RESET_PATH;
         }
 
         if (!validatorUtils.isValidPassword(newPassword)) {
             model.addAttribute("error", "usr.pwd.strength.msg." + passwordStrength);
-            model.addAttribute("token", token);
+            model.addAttribute(TOKEN, token);
             model.addAttribute("valid", identityRecoveryService.tokenValid(token));
-            return "password/reset";
+            return PASSWORD_RESET_PATH;
         }
 
         return "redirect:/login/secure?reset=" + identityRecoveryService.validateAndResetPassword(token, newPassword);
