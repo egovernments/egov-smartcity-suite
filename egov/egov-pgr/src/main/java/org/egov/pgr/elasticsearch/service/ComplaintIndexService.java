@@ -621,17 +621,7 @@ public class ComplaintIndexService {
         Range satisfactionAverage = consolidatedResponse.getAggregations().get(EXCLUDE_ZERO);
         final Avg averageSatisfaction = satisfactionAverage.getBuckets().get(0).getAggregations().get("satisfactionAverage");
         result.put("AvgCustomeSatisfactionIndex", Double.isNaN(averageSatisfaction.getValue()) ? 0 : averageSatisfaction.getValue());
-
-        if (isNotBlank(complaintDashBoardRequest.getUlbCode())) {
-            final CityIndex city = cityIndexService.findOne(complaintDashBoardRequest.getUlbCode());
-            result.put(REGION_NAME, city.getRegionname());
-            result.put(DISTRICT_NAME, city.getDistrictname());
-            result.put(ULB_CODE, city.getCitycode());
-            result.put(ULB_GRADE, city.getCitygrade());
-            result.put(ULB_NAME, city.getName());
-            result.put(DOMAIN_URL, city.getDomainurl());
-        }
-
+        result.putAll(getCityDetails(complaintDashBoardRequest));
         // To get the count of closed and open complaints
         Terms terms = consolidatedResponse.getAggregations().get("closedCount");
         for (final Bucket bucket : terms.getBuckets())
@@ -965,17 +955,8 @@ public class ComplaintIndexService {
                 getFilterQuery(complaintDashBoardRequest),
                 groupByField);
 
-        final HashMap<String, Object> result = new HashMap<>();
-        if (isNotBlank(complaintDashBoardRequest.getUlbCode())) {
-            final CityIndex city = cityIndexService.findOne(complaintDashBoardRequest.getUlbCode());
-            result.put(REGION_NAME, city.getRegionname());
-            result.put(DISTRICT_NAME, city.getDistrictname());
-            result.put(ULB_CODE, city.getCitycode());
-            result.put(ULB_GRADE, city.getCitygrade());
-            result.put(ULB_NAME, city.getName());
-            result.put(DOMAIN_URL, city.getDomainurl());
-        }
-        final List<ComplaintDashBoardResponse> responseDetailsList = new ArrayList<>();
+        HashMap<String, Object> result = getCityDetails(complaintDashBoardRequest);
+        List<ComplaintDashBoardResponse> responseDetailsList = new ArrayList<>();
 
         // For Dynamic results based on grouping fields
         final Terms terms = complaintTypeResponse.get("tableResponse").getAggregations().get(GROUP_BY_FIELD);
@@ -1211,18 +1192,8 @@ public class ComplaintIndexService {
         final SearchResponse sourceWiseResponse = complaintIndexRepository.findAllGrievanceBySource(complaintDashBoardRequest,
                 getFilterQuery(complaintDashBoardRequest), groupByField);
 
-        final HashMap<String, Object> result = new HashMap<>();
+        HashMap<String, Object> result = getCityDetails(complaintDashBoardRequest);
         List<ComplaintSourceResponse> responseDetailsList = new ArrayList<>();
-
-        if (isNotBlank(complaintDashBoardRequest.getUlbCode())) {
-            final CityIndex city = cityIndexService.findOne(complaintDashBoardRequest.getUlbCode());
-            result.put(REGION_NAME, city.getRegionname());
-            result.put(DISTRICT_NAME, city.getDistrictname());
-            result.put(ULB_CODE, city.getCitycode());
-            result.put(ULB_GRADE, city.getCitygrade());
-            result.put(ULB_NAME, city.getName());
-            result.put(DOMAIN_URL, city.getDomainurl());
-        }
         if (complaintDashBoardRequest.getType().equals(DASHBOARD_GROUPING_ALL_WARDS)) {
             final Terms ulbTerms = sourceWiseResponse.getAggregations().get(ULBWISE);
             for (final Bucket ulbBucket : ulbTerms.getBuckets()) {
@@ -1555,19 +1526,8 @@ public class ComplaintIndexService {
         final String groupByField = ComplaintIndexAggregationBuilder.getAggregationGroupingField(complaintDashBoardRequest);
         final SearchResponse functionaryWiseResponse = complaintIndexRepository.findRatingByGroupByField(complaintDashBoardRequest,
                 getFilterQuery(complaintDashBoardRequest), groupByField);
-
-        final HashMap<String, Object> result = new HashMap<>();
         List<ComplaintDashBoardResponse> responseDetailsList = new ArrayList<>();
-
-        if (isNotBlank(complaintDashBoardRequest.getUlbCode())) {
-            final CityIndex city = cityIndexService.findOne(complaintDashBoardRequest.getUlbCode());
-            result.put(REGION_NAME, city.getRegionname());
-            result.put(DISTRICT_NAME, city.getDistrictname());
-            result.put(ULB_CODE, city.getCitycode());
-            result.put(ULB_GRADE, city.getCitygrade());
-            result.put(ULB_NAME, city.getName());
-            result.put(DOMAIN_URL, city.getDomainurl());
-        }
+        HashMap<String, Object> details = getCityDetails(complaintDashBoardRequest);
         if (complaintDashBoardRequest.getType().equals(DASHBOARD_GROUPING_ALL_WARDS)) {
             final Terms ulbTerms = functionaryWiseResponse.getAggregations().get(ULBWISE);
             for (final Bucket ulbBucket : ulbTerms.getBuckets()) {
@@ -1602,10 +1562,26 @@ public class ComplaintIndexService {
             responseDetailsList = getResponseList(groupByField, terms, responseDetailsList, complaintDashBoardRequest);
         }
 
-        result.put(RESPONSE_DETAILS, responseDetailsList);
+        details.put(RESPONSE_DETAILS, responseDetailsList);
 
-        return result;
+        return details;
 
+    }
+
+    private HashMap<String, Object> getCityDetails(final ComplaintDashBoardRequest complaintDashBoardRequest) {
+        HashMap<String, Object> cityDetails = new HashMap<>();
+        if (isNotBlank(complaintDashBoardRequest.getUlbCode())) {
+            CityIndex city = cityIndexService.findOne(complaintDashBoardRequest.getUlbCode());
+            if (city != null) {
+                cityDetails.put(REGION_NAME, city.getRegionname());
+                cityDetails.put(DISTRICT_NAME, city.getDistrictname());
+                cityDetails.put(ULB_CODE, city.getCitycode());
+                cityDetails.put(ULB_GRADE, city.getCitygrade());
+                cityDetails.put(ULB_NAME, city.getName());
+                cityDetails.put(DOMAIN_URL, city.getDomainurl());
+            }
+        }
+        return cityDetails;
     }
 
     private List<ComplaintDashBoardResponse> getResponseList(final String groupByField, final Terms terms,
