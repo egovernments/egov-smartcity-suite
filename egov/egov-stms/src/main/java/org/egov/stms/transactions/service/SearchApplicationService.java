@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,76 +45,32 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.stms.masters.service;
 
-import org.egov.stms.masters.entity.SewerageApplicationType;
-import org.egov.stms.masters.repository.SewerageApplicationTypeRepository;
+package org.egov.stms.transactions.service;
+
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.stms.entity.ApplicationSearchRequest;
+import org.egov.stms.entity.ApplicationSearchSpec;
+import org.egov.stms.entity.view.SewerageApplicationView;
+import org.egov.stms.transactions.repository.SewerageViewApplicationsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-
 @Service
 @Transactional(readOnly = true)
-public class SewerageApplicationTypeService {
-
-    private final SewerageApplicationTypeRepository sewerageApplicationTypeRepository;
-
+public class SearchApplicationService {
     @Autowired
-    public SewerageApplicationTypeService(final SewerageApplicationTypeRepository sewerageApplicationTypeRepository) {
-        this.sewerageApplicationTypeRepository = sewerageApplicationTypeRepository;
-    }
+    private SewerageViewApplicationsRepository sewerageViewApplicationsRepository;
 
-    public SewerageApplicationType findBy(final Long applicationTypeId) {
-        return sewerageApplicationTypeRepository.findOne(applicationTypeId);
-    }
-
-    @Transactional
-    public SewerageApplicationType createApplicationType(final SewerageApplicationType sewerageApplicationType) {
-        return sewerageApplicationTypeRepository.save(sewerageApplicationType);
-    }
-
-    @Transactional
-    public void updateApplicationType(final SewerageApplicationType sewerageApplicationType) {
-        sewerageApplicationTypeRepository.save(sewerageApplicationType);
-    }
-
-    public List<SewerageApplicationType> findAll() {
-        return sewerageApplicationTypeRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
-    }
-
-    public List<SewerageApplicationType> findAllByNameLike(final String name) {
-        return sewerageApplicationTypeRepository.findByNameContainingIgnoreCase(name);
-    }
-
-    public SewerageApplicationType findByName(final String name) {
-        return sewerageApplicationTypeRepository.findByName(name);
-    }
-
-    public SewerageApplicationType load(final Long id) {
-        return sewerageApplicationTypeRepository.getOne(id);
-    }
-
-    public Page<SewerageApplicationType> getListOfApplicationTypes(final Integer pageNumber, final Integer pageSize) {
-        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "name");
-        return sewerageApplicationTypeRepository.findAll(pageable);
-    }
-
-    public SewerageApplicationType findByCode(final String code) {
-        return sewerageApplicationTypeRepository.findByCode(code);
-    }
-
-    public List<String> getApplicationTypes() {
-        return sewerageApplicationTypeRepository.findAll()
-                .stream().map(SewerageApplicationType::getName).collect(Collectors.toList());
+    @ReadOnly
+    public Page<SewerageApplicationView> getPagedSearchResults(ApplicationSearchRequest applicationSearchRequest) {
+        return sewerageViewApplicationsRepository.findAll(
+                ApplicationSearchSpec.searchApplicationSpecification(applicationSearchRequest),
+                new PageRequest(applicationSearchRequest.pageNumber(), applicationSearchRequest.pageSize(),
+                        applicationSearchRequest.orderDir(), applicationSearchRequest.orderBy()));
     }
 
 }
