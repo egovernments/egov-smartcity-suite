@@ -78,5 +78,7 @@
 		<property name="sroName" column="SRONAME"></property>
 		<property name="documentValue" column="DOCUMENTVALUE"></property>
 		<property name="documentLink" column="DOCUMENTLINK"></property>
+		<property name="remarks" column="remarks"></property>
+		
 	</class>
 </hibernate-mapping>
