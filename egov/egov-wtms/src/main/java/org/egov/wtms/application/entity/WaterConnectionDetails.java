@@ -235,6 +235,8 @@ public class WaterConnectionDetails extends StateAware<Position> {
     private ChairPerson chairPerson;
     private Boolean isHistory = false;
 
+    private Boolean ulbMaterial;
+
     @Valid
     @OneToOne(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private FieldInspectionDetails fieldInspectionDetails;
@@ -794,4 +796,13 @@ public class WaterConnectionDetails extends StateAware<Position> {
     public void setSewerageApplicationDetails(SewerageApplicationDetails sewerageApplicationDetails) {
         this.sewerageApplicationDetails = sewerageApplicationDetails;
     }
+
+    public Boolean getUlbMaterial() {
+        return ulbMaterial;
+    }
+
+    public void setUlbMaterial(Boolean ulbMaterial) {
+        this.ulbMaterial = ulbMaterial;
+    }
+
 }

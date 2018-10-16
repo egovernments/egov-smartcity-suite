@@ -261,6 +261,7 @@ public class WaterTaxConstants {
 
     public static final String WATERTAXREASONCODE = "WTAXCHARGES";
     public static final String METERED_CHARGES_REASON_CODE = "METERCHARGES";
+    public static final String WATER_MATERIAL_CHARGES_REASON_CODE="MATERIALCHARGES";
     public static final String WF_CLOSERACKNOWLDGEENT_BUTTON = "Generate Acknowledgement";
     public static final Character DMD_STATUS_CHEQUE_BOUNCED = 'B';
     public static final String WF_RECONNECTIONACKNOWLDGEENT_BUTTON = "Generate Reconnection Ack";
@@ -453,4 +454,7 @@ public class WaterTaxConstants {
     public static final String MESSAGE = "message";
     public static final String ERROR = "error";
     public static final String BPL_CATEGORY_DONATION_AMOUNT="BPL_CATEGORY_DONATION_AMOUNT";
+    public static final String SAVE="Save";
+    public static final String CREATE="Create";
+    public static final String DELETE="Delete";
 }

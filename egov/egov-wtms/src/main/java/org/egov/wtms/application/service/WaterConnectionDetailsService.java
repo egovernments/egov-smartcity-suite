@@ -108,6 +108,7 @@ import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
 import org.egov.wtms.entity.es.WaterChargeDocument;
 import org.egov.wtms.masters.entity.ApplicationType;
+import org.egov.wtms.masters.entity.ConnectionAddress;
 import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.DonationDetails;
 import org.egov.wtms.masters.entity.WaterRatesDetails;
@@ -121,8 +122,11 @@ import org.egov.wtms.service.es.WaterChargeDocumentService;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxNumberGenerator;
 import org.egov.wtms.utils.WaterTaxUtils;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -248,6 +252,11 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_SE_APPROV
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_SE_FORWARD_PENDING;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_TAP_EXECUTION_DATE_BUTTON;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED;
+import static org.egov.wtms.masters.entity.enums.ConnectionStatus.INPROGRESS;
+import static org.egov.wtms.masters.entity.enums.ConnectionStatus.ACTIVE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CATEGORY_BPL;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.END;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATIONSTATUSCLOSED;
 
 
 @Service
@@ -1448,6 +1457,26 @@ public class WaterConnectionDetailsService {
         }
         return resultList;
     }
+    
+    public List<WaterConnExecutionDetails> getApplicationObjectList(List<ConnectionAddress> detailList) {
+        List<WaterConnExecutionDetails> resultList = new ArrayList<>();
+      for (ConnectionAddress resultObject : detailList) {
+            WaterConnExecutionDetails details = new WaterConnExecutionDetails();
+            if (resultObject.getWaterConnectionDetails() != null) {
+                details.setApplicationNumber(resultObject.getWaterConnectionDetails().getApplicationNumber());
+                details.setConsumerNumber(resultObject.getWaterConnectionDetails().getConnection().getConsumerCode());
+                details.setApplicationType(resultObject.getWaterConnectionDetails().getApplicationType().getName());
+                details.setApplicationStatus(resultObject.getWaterConnectionDetails().getStatus().getDescription());
+                details.setApprovalDate(resultObject.getWaterConnectionDetails().getApplicationDate().toString());
+                details.setId(resultObject.getWaterConnectionDetails().getId());
+            }
+            details.setOwnerName(resultObject.getOwnerName());
+            details.setRevenueWard(resultObject.getRevenueWard().getName());
+            details.setAddress(resultObject.getAddress());
+            resultList.add(details);
+        }
+        return resultList;
+    }
 
     public String getResultStatus(WaterConnectionExecutionResponse waterApplicationDetails, String validationStatus,
                                   Boolean updateStatus) {
@@ -1638,5 +1667,56 @@ public class WaterConnectionDetailsService {
                 }
             }
         }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<ConnectionAddress> getSearchResultList(final WaterConnExecutionDetails waterConnExecutionDetails) {
+        Criteria connectionAddressCriteria = getCurrentSession().createCriteria(ConnectionAddress.class, "connectionAddress")
+                .createAlias("connectionAddress.waterConnectionDetails", "connectionDetails")
+                .createAlias("connectionAddress.revenueWard", "revenueWard")
+                .createAlias("connectionDetails.applicationType", "applicationType")
+                .createAlias("connectionDetails.waterDemandConnection", "demandConnection")
+                .createAlias("demandConnection.demand", "demand")
+                .createAlias("connectionDetails.state", "state")
+                .createAlias("connectionDetails.connection", "connection")
+                .createAlias("connectionDetails.category", "category");
+
+        Disjunction disjunction = Restrictions.disjunction();
+        disjunction.add(Restrictions.eq("connectionDetails.connectionStatus", INPROGRESS));
+        disjunction.add(Restrictions.eq("connectionDetails.connectionStatus", ACTIVE));
+        connectionAddressCriteria.add(disjunction);
+        connectionAddressCriteria.add(Restrictions.eq("connectionDetails.legacy", false));
+        connectionAddressCriteria.add(Restrictions.eq("connectionDetails.isHistory", false));
+        connectionAddressCriteria.add(Restrictions.ne("category.name", CATEGORY_BPL));
+        connectionAddressCriteria.add(Restrictions.eq("demand.isHistory", "N"));
+        Disjunction stateDisjunction = Restrictions.disjunction();
+        stateDisjunction.add(Restrictions.eq("state.value", END));
+        stateDisjunction.add(Restrictions.eq("state.value", APPLICATIONSTATUSCLOSED));
+        connectionAddressCriteria.add(stateDisjunction);
+
+        if (waterConnExecutionDetails.getApplicationNumber() != null) {
+            connectionAddressCriteria.add(
+                    Restrictions.eq("connectionDetails.applicationNumber", waterConnExecutionDetails.getApplicationNumber()));
+        }
+        if (waterConnExecutionDetails.getConsumerNumber() != null) {
+            connectionAddressCriteria
+                    .add(Restrictions.eq("connection.consumerCode", waterConnExecutionDetails.getConsumerNumber()));
+        }
+        if (waterConnExecutionDetails.getApplicationType() != null) {
+            connectionAddressCriteria
+                    .add(Restrictions.eq("applicationType.name", waterConnExecutionDetails.getApplicationType()));
+        }
+        if (waterConnExecutionDetails.getRevenueWard() != null) {
+            connectionAddressCriteria.add(Restrictions.eq("revenueWard.name", waterConnExecutionDetails.getRevenueWard()));
+        }
+        if (waterConnExecutionDetails.getFromDate() != null) {
+            connectionAddressCriteria
+                    .add(Restrictions.ge("connectionDetails.applicationDate", waterConnExecutionDetails.getFromDate()));
+        }
+        if (waterConnExecutionDetails.getToDate() != null) {
+            connectionAddressCriteria
+                    .add(Restrictions.le("connectionDetails.applicationDate", waterConnExecutionDetails.getToDate()));
+        }
+        return connectionAddressCriteria.list();
     }
 }

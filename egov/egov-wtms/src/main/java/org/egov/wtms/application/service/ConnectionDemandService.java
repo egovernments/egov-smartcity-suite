@@ -61,12 +61,15 @@ import static org.egov.wtms.masters.entity.enums.ConnectionType.NON_METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CREATED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.BPL_CATEGORY_DONATION_AMOUNT;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CATEGORY_BPL;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CREATE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.DELETE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED_CHARGES_REASON_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MONTHLY;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PENALTYCHARGES;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SAVE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_CHARGES_SERVICE_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_DONATION_CHARGE;
@@ -74,6 +77,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_FIELDINSP
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_ROADCUTTING_CHARGE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_SECURITY_CHARGE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_SUPERVISION_CHARGE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATER_MATERIAL_CHARGES_REASON_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.YEARLY;
 
 import java.math.BigDecimal;
@@ -154,6 +158,9 @@ public class ConnectionDemandService {
     private static final String TO_INSTALLMENT = "toInstallment";
     private static final String WATER_CHARGES = "Water Charges";
     private static final String DEMAND_ISHISTORY_Y = "Y";
+    private static final String SAVE_MATERIAL_DETAILS = "msg.ulb.material.detail.save";
+    private static final String CREATE_MATERIAL_DEMAND = "msg.material.demand.generated";
+    private static final String REMOVE_MATERIAL_DEMAND = "msg.material.demand.removal.success";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -972,4 +979,92 @@ public class ConnectionDemandService {
 
     }
 
+    @Transactional
+    public String updateUlbMaterial(String applicationNumber, WaterConnectionDetails waterConnectionDetails) {
+        WaterConnectionDetails connectionDetails = null;
+        String message;
+        if (applicationNumber != null)
+            connectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
+        if (waterConnectionDetails.getUlbMaterial() && !containsMaterialDemand(connectionDetails)) {
+            generateMaterialDemand(connectionDetails);
+            message = CREATE;
+        } else
+            message = SAVE;
+
+        if (!waterConnectionDetails.getUlbMaterial() && containsMaterialDemand(connectionDetails)) {
+            deleteMaterialDemand(connectionDetails);
+            message = DELETE;
+        }
+        if (connectionDetails != null)
+            connectionDetails.setUlbMaterial(waterConnectionDetails.getUlbMaterial());
+        waterConnectionDetailsService.save(connectionDetails);
+        return getSuccessMessage(message);
+    }
+
+    @Transactional
+    public void generateMaterialDemand(WaterConnectionDetails waterConnectionDetails) {
+        EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        EgDemandDetails demandDetails;
+        if (currentDemand != null) {
+            BigDecimal amount = ZERO;
+            Boolean createMaterialDemand = true;
+            for (ConnectionEstimationDetails details : waterConnectionDetails.getEstimationDetails())
+                amount = amount.add(BigDecimal.valueOf(details.getUnitRate() * details.getQuantity()));
+            Installment installment = null;
+            for (EgDemandDetails demandDetail : currentDemand.getEgDemandDetails())
+                if (WATER_MATERIAL_CHARGES_REASON_CODE
+                        .equalsIgnoreCase(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                    createMaterialDemand = false;
+                else if (WATERTAX_SUPERVISION_CHARGE.equals(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                    installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
+                else if (WATERTAXREASONCODE.equals(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                    installment = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
+                            moduleService.getModuleByName(MODULE_NAME),
+                            demandDetail.getInstallmentStartDate(), YEARLY);
+            if (createMaterialDemand) {
+                demandDetails = createDemandDetails(amount.doubleValue(), WATER_MATERIAL_CHARGES_REASON_CODE, installment);
+                currentDemand.setBaseDemand(currentDemand.getBaseDemand().add(demandDetails.getAmount()));
+                currentDemand.getEgDemandDetails().add(demandDetails);
+            }
+        }
+
+    }
+
+    public boolean containsMaterialDemand(WaterConnectionDetails waterConnectionDetails) {
+        boolean isMaterialDemandPresent = false;
+        EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        if (currentDemand != null)
+            for (EgDemandDetails demandDetails : currentDemand.getEgDemandDetails())
+                if (WATER_MATERIAL_CHARGES_REASON_CODE
+                        .equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                    isMaterialDemandPresent = true;
+        return isMaterialDemandPresent;
+    }
+
+    public String getSuccessMessage(String message) {
+        if (SAVE.equalsIgnoreCase(message))
+            return SAVE_MATERIAL_DETAILS;
+        else if (CREATE.equalsIgnoreCase(message))
+            return CREATE_MATERIAL_DEMAND;
+        else if (DELETE.equalsIgnoreCase(message))
+            return REMOVE_MATERIAL_DEMAND;
+        return StringUtils.EMPTY;
+    }
+
+    @Transactional
+    public void deleteMaterialDemand(WaterConnectionDetails waterConnectionDetails) {
+        EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        List<EgDemandDetails> detailsList = new ArrayList<>();
+        if (currentDemand != null) {
+            for (EgDemandDetails demandDetails : currentDemand.getEgDemandDetails())
+                if (WATER_MATERIAL_CHARGES_REASON_CODE
+                        .equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()) &&
+                        demandDetails.getAmtCollected() == ZERO)
+                    detailsList.add(demandDetails);
+            if (!detailsList.isEmpty()) {
+                currentDemand.getEgDemandDetails().removeAll(detailsList);
+                currentDemand.setBaseDemand(currentDemand.getBaseDemand().subtract(detailsList.get(0).getAmount()));
+            }
+        }
+    }
 }
