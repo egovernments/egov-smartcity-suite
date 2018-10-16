@@ -52,18 +52,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(value = Include.NON_EMPTY)
-public class ComplaintDashBoardResponse {
-    private String regionName;
-    private String districtName;
-    private String ulbCode;
-    private String ulbName;
-    private String ulbGrade;
-    private String wardName;
-    private String domainURL;
+public class ComplaintDashBoardResponse extends ComplaintResponse {
     private String functionaryName;
     private String functionaryMobileNumber;
-    private String localityName;
-    private String departmentName;
     private String ComplaintTypeName;
     private long TotalComplaintCount;
     private long OpenComplaintCount;
@@ -84,53 +75,6 @@ public class ComplaintDashBoardResponse {
     private long reOpenedComplaintCount;
     private long functionaryCount;
 
-    public String getDistrictName() {
-        return districtName;
-    }
-
-    public void setDistrictName(final String districtName) {
-        this.districtName = districtName;
-    }
-
-    public String getUlbCode() {
-        return ulbCode;
-    }
-
-    public void setUlbCode(final String ulbCode) {
-        this.ulbCode = ulbCode;
-    }
-
-    public String getUlbName() {
-        return ulbName;
-    }
-
-    public void setUlbName(final String ulbName) {
-        this.ulbName = ulbName;
-    }
-
-    public String getUlbGrade() {
-        return ulbGrade;
-    }
-
-    public void setUlbGrade(final String ulbGrade) {
-        this.ulbGrade = ulbGrade;
-    }
-
-    public String getWardName() {
-        return wardName;
-    }
-
-    public void setWardName(final String wardName) {
-        this.wardName = wardName;
-    }
-
-    public String getDomainURL() {
-        return domainURL;
-    }
-
-    public void setDomainURL(final String domainURL) {
-        this.domainURL = domainURL;
-    }
 
     public String getFunctionaryName() {
         return functionaryName;
@@ -138,14 +82,6 @@ public class ComplaintDashBoardResponse {
 
     public void setFunctionaryName(final String functionaryName) {
         this.functionaryName = functionaryName;
-    }
-
-    public String getDepartmentName() {
-        return departmentName;
-    }
-
-    public void setDepartmentName(final String departmentName) {
-        this.departmentName = departmentName;
     }
 
     public String getComplaintTypeName() {
@@ -252,28 +188,12 @@ public class ComplaintDashBoardResponse {
         AgeingGroup4 = ageingGroup4;
     }
 
-    public String getLocalityName() {
-        return localityName;
-    }
-
-    public void setLocalityName(final String localityName) {
-        this.localityName = localityName;
-    }
-
     public String getFunctionaryMobileNumber() {
         return functionaryMobileNumber;
     }
 
     public void setFunctionaryMobileNumber(final String functionaryMobileNumber) {
         this.functionaryMobileNumber = functionaryMobileNumber;
-    }
-
-    public String getRegionName() {
-        return regionName;
-    }
-
-    public void setRegionName(final String regionName) {
-        this.regionName = regionName;
     }
 
     public long getReOpenedComplaintCount() {

@@ -59,6 +59,7 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.mapper.BeanMapperConfiguration;
 import org.egov.infra.utils.DateUtils;
 import org.egov.pgr.elasticsearch.entity.ComplaintIndex;
+import org.egov.pgr.elasticsearch.entity.contract.ComplaintResponse;
 import org.egov.pgr.elasticsearch.entity.contract.ComplaintDashBoardRequest;
 import org.egov.pgr.elasticsearch.entity.contract.ComplaintDashBoardResponse;
 import org.egov.pgr.elasticsearch.entity.contract.ComplaintSearchRequest;
@@ -178,6 +179,8 @@ public class ComplaintIndexService {
     private static final String DEPARTMENT_CODE = "departmentCode";
     private static final String FUNCTIONARYWISE = "functionarywise";
     private static final String CREATED_DATE = "createdDate";
+    private static final String COMPLAINT_TYPE_CODE = "complaintTypeCode";
+    private static final String CATEGORY_ID = "categoryId";
     private static final int GOOD_RATING = 1;
     private static final int BAD_RATING = 2;
     private static final int AVG_RATING = 3;
@@ -1199,33 +1202,16 @@ public class ComplaintIndexService {
             for (final Bucket ulbBucket : ulbTerms.getBuckets()) {
                 final Terms terms = ulbBucket.getAggregations().get(GROUP_BY_FIELD);
 
-                responseDetailsList = getResponseDetailsList(groupByField, terms, responseDetailsList, complaintDashBoardRequest);
+                responseDetailsList = getResponseDetailsList(groupByField, terms, complaintDashBoardRequest);
             }
 
         } else if (complaintDashBoardRequest.getType().equals(DASHBOARD_GROUPING_ALL_LOCALITIES)) {
-            final Terms ulbTerms = sourceWiseResponse.getAggregations().get(ULBWISE);
-            for (final Bucket ulbBucket : ulbTerms.getBuckets()) {
-                final Terms wardTerms = ulbBucket.getAggregations().get(WARDWISE);
-                for (final Bucket wardBucket : wardTerms.getBuckets()) {
-                    final Terms terms = wardBucket.getAggregations().get(GROUP_BY_FIELD);
-                    responseDetailsList = getResponseDetailsList(groupByField, terms, responseDetailsList,
-                            complaintDashBoardRequest);
-                }
-
-            }
+            responseDetailsList = getComplaintSourceResponses(complaintDashBoardRequest, groupByField, sourceWiseResponse, WARDWISE);
         } else if (complaintDashBoardRequest.getType().equals(DASHBOARD_GROUPING_ALL_FUNCTIONARY)) {
-            final Terms ulbTerms = sourceWiseResponse.getAggregations().get(ULBWISE);
-            for (final Bucket ulbBucket : ulbTerms.getBuckets()) {
-                final Terms deptTerms = ulbBucket.getAggregations().get(DEPARTMENTWISE);
-                for (final Bucket deptBucket : deptTerms.getBuckets()) {
-                    final Terms terms = deptBucket.getAggregations().get(GROUP_BY_FIELD);
-                    responseDetailsList = getResponseDetailsList(groupByField, terms, responseDetailsList,
-                            complaintDashBoardRequest);
-                }
-            }
+            responseDetailsList = getComplaintSourceResponses(complaintDashBoardRequest, groupByField, sourceWiseResponse, DEPARTMENTWISE);
         } else {
             final Terms terms = sourceWiseResponse.getAggregations().get(GROUP_BY_FIELD);
-            responseDetailsList = getResponseDetailsList(groupByField, terms, responseDetailsList, complaintDashBoardRequest);
+            responseDetailsList = getResponseDetailsList(groupByField, terms, complaintDashBoardRequest);
         }
 
         result.put(RESPONSE_DETAILS, responseDetailsList);
@@ -1252,50 +1238,31 @@ public class ComplaintIndexService {
 
     }
 
+    private List<ComplaintSourceResponse> getComplaintSourceResponses(ComplaintDashBoardRequest complaintDashBoardRequest, String groupByField, SearchResponse sourceWiseResponse, String wardwise) {
+        List<ComplaintSourceResponse> responseDetailsList = new ArrayList<>();
+        final Terms ulbTerms = sourceWiseResponse.getAggregations().get(ULBWISE);
+        for (final Bucket ulbBucket : ulbTerms.getBuckets()) {
+            final Terms wardTerms = ulbBucket.getAggregations().get(wardwise);
+            for (final Bucket wardBucket : wardTerms.getBuckets()) {
+                final Terms terms = wardBucket.getAggregations().get(GROUP_BY_FIELD);
+                responseDetailsList = getResponseDetailsList(groupByField, terms, complaintDashBoardRequest);
+            }
+
+        }
+        return responseDetailsList;
+    }
+
     private List<ComplaintSourceResponse> getResponseDetailsList(final String groupByField, final Terms terms,
-                                                                 final List<ComplaintSourceResponse> responseDetailsList, final ComplaintDashBoardRequest complaintDashBoardRequest) {
+                                                                 final ComplaintDashBoardRequest complaintDashBoardRequest) {
+        List<ComplaintSourceResponse> responseDetailsList = new ArrayList<>();
         for (final Bucket bucket : terms.getBuckets()) {
-            final ComplaintSourceResponse complaintSouce = new ComplaintSourceResponse();
-            final TopHits topHits = bucket.getAggregations().get(COMPLAINTRECORD);
-            final SearchHit[] hit = topHits.getHits().getHits();
-            complaintSouce.setUlbName(hit[0].field(CITY_NAME).getValue());
-            complaintSouce.setDistrictName(hit[0].field(CITY_DISTRICT_NAME).getValue());
-            complaintSouce.setWardName(hit[0].field(WARD_NAME).getValue());
-            if (hit[0].field(DEPARTMENT_NAME) != null) {
-                complaintSouce.setDepartmentName(hit[0].field(DEPARTMENT_NAME).getValue());
-            }
-            if (hit[0].field(INITIAL_FUNCTIONARY_NAME) != null)
-                complaintSouce.setFunctionaryName(hit[0].field(INITIAL_FUNCTIONARY_NAME).getValue());
-            if (hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER) != null)
-                complaintSouce.setFunctionaryMobileNumber(hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER).getValue());
-            CityIndex city;
-            if (CITY_REGION_NAME.equals(groupByField))
-                complaintSouce.setRegionName(bucket.getKeyAsString());
-            if (CITY_GRADE.equals(groupByField))
-                complaintSouce.setUlbGrade(bucket.getKeyAsString());
-            if (CITY_DISTRICT_CODE.equals(groupByField)) {
-                city = cityIndexService.findByDistrictCode(bucket.getKeyAsString());
-                complaintSouce.setDistrictName(city.getDistrictname());
-            }
-            if (CITY_CODE.equals(groupByField)) {
-                city = cityIndexService.findByCitycode(bucket.getKeyAsString());
-                complaintSouce.setDistrictName(city.getDistrictname());
-                complaintSouce.setUlbName(city.getName());
-                complaintSouce.setUlbGrade(city.getCitygrade());
-                complaintSouce.setUlbCode(city.getCitycode());
-                complaintSouce.setDomainURL(city.getDomainurl());
-            }
-            if (DEPARTMENT_NAME.equals(groupByField))
-                complaintSouce.setDepartmentName(bucket.getKeyAsString());
-            if (WARD_NAME.equals(groupByField))
-                complaintSouce.setWardName(bucket.getKeyAsString());
-            if (LOCALITY_NAME.equals(groupByField))
-                complaintSouce.setLocalityName(bucket.getKeyAsString());
+            final ComplaintSourceResponse complaintSource = new ComplaintSourceResponse();
+            setGenericResponse(groupByField, bucket, complaintSource);
             if (INITIAL_FUNCTIONARY_NAME.equals(groupByField)
                     && !complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_FUNCTIONARY)) {
-                complaintSouce.setFunctionaryName(bucket.getKeyAsString());
+                complaintSource.setFunctionaryName(bucket.getKeyAsString());
                 final String mobileNumber = complaintIndexRepository.getFunctionryMobileNumber(bucket.getKeyAsString());
-                complaintSouce.setFunctionaryMobileNumber(defaultString(mobileNumber, NA));
+                complaintSource.setFunctionaryMobileNumber(defaultString(mobileNumber, NA));
             }
             final List<HashMap<String, Long>> list = new ArrayList<>();
             final Terms sourceTerms = bucket.getAggregations().get("groupByFieldSource");
@@ -1304,10 +1271,36 @@ public class ComplaintIndexService {
                 sourceMap.put(sourceBucket.getKeyAsString(), sourceBucket.getDocCount());
                 list.add(sourceMap);
             }
-            complaintSouce.setSourceList(list);
-            responseDetailsList.add(complaintSouce);
+            complaintSource.setSourceList(list);
+            responseDetailsList.add(complaintSource);
         }
         return responseDetailsList;
+    }
+
+    private void setGenericResponse(String groupByField, Bucket bucket, ComplaintResponse complaintResponse) {
+        CityIndex city;
+        if (CITY_REGION_NAME.equals(groupByField))
+            complaintResponse.setRegionName(bucket.getKeyAsString());
+        if (CITY_GRADE.equals(groupByField))
+            complaintResponse.setUlbGrade(bucket.getKeyAsString());
+        if (CITY_DISTRICT_CODE.equals(groupByField)) {
+            city = cityIndexService.findByDistrictCode(bucket.getKeyAsString());
+            complaintResponse.setDistrictName(city.getDistrictname());
+        }
+        if (CITY_CODE.equals(groupByField)) {
+            city = cityIndexService.findByCitycode(bucket.getKeyAsString());
+            complaintResponse.setDistrictName(city.getDistrictname());
+            complaintResponse.setUlbName(city.getName());
+            complaintResponse.setUlbGrade(city.getCitygrade());
+            complaintResponse.setUlbCode(city.getCitycode());
+            complaintResponse.setDomainURL(city.getDomainurl());
+        }
+        if (DEPARTMENT_NAME.equals(groupByField))
+            complaintResponse.setDepartmentName(bucket.getKeyAsString());
+        if (WARD_NAME.equals(groupByField))
+            complaintResponse.setWardName(bucket.getKeyAsString());
+        if (LOCALITY_NAME.equals(groupByField))
+            complaintResponse.setLocalityName(bucket.getKeyAsString());
     }
 
     public Page<ComplaintIndex> searchComplaintIndex(ComplaintSearchRequest searchRequest) {
@@ -1345,7 +1338,7 @@ public class ComplaintIndexService {
         if (isNotBlank(complaintDashBoardRequest.getUlbGrade()))
             boolQuery = boolQuery.filter(matchQuery(CITY_GRADE, complaintDashBoardRequest.getUlbGrade()));
         if (isNotBlank(complaintDashBoardRequest.getCategoryId()))
-            boolQuery = boolQuery.filter(matchQuery("categoryId", complaintDashBoardRequest.getCategoryId()));
+            boolQuery = boolQuery.filter(matchQuery(CATEGORY_ID, complaintDashBoardRequest.getCategoryId()));
         if (isNotBlank(complaintDashBoardRequest.getDistrictName()))
             boolQuery = boolQuery
                     .filter(matchQuery(CITY_DISTRICT_NAME, complaintDashBoardRequest.getDistrictName()));
@@ -1357,7 +1350,7 @@ public class ComplaintIndexService {
             boolQuery = boolQuery
                     .filter(matchQuery(DEPARTMENT_CODE, complaintDashBoardRequest.getDepartmentCode()));
         if (isNotBlank(complaintDashBoardRequest.getComplaintTypeCode()))
-            boolQuery = boolQuery.filter(matchQuery("complaintTypeCode",
+            boolQuery = boolQuery.filter(matchQuery(COMPLAINT_TYPE_CODE,
                     complaintDashBoardRequest.getComplaintTypeCode()));
         if (isNotBlank(complaintDashBoardRequest.getLocalityName()))
             boolQuery = boolQuery.filter(matchQuery(LOCALITY_NAME,
@@ -1532,40 +1525,37 @@ public class ComplaintIndexService {
             final Terms ulbTerms = functionaryWiseResponse.getAggregations().get(ULBWISE);
             for (final Bucket ulbBucket : ulbTerms.getBuckets()) {
                 final Terms terms = ulbBucket.getAggregations().get(GROUP_BY_FIELD);
-
-                responseDetailsList = getResponseList(groupByField, terms, responseDetailsList, complaintDashBoardRequest);
+                responseDetailsList = getResponseList(groupByField, terms, complaintDashBoardRequest);
             }
-
         } else if (complaintDashBoardRequest.getType().equals(DASHBOARD_GROUPING_ALL_LOCALITIES)) {
-            final Terms ulbTerms = functionaryWiseResponse.getAggregations().get(ULBWISE);
-            for (final Bucket ulbBucket : ulbTerms.getBuckets()) {
-                final Terms wardTerms = ulbBucket.getAggregations().get(WARDWISE);
-                for (final Bucket wardBucket : wardTerms.getBuckets()) {
-                    final Terms terms = wardBucket.getAggregations().get(GROUP_BY_FIELD);
-                    responseDetailsList = getResponseList(groupByField, terms, responseDetailsList,
-                            complaintDashBoardRequest);
-                }
-
-            }
+            responseDetailsList = getComplaintDashBoardResponses(complaintDashBoardRequest, groupByField,
+                    functionaryWiseResponse, WARDWISE);
         } else if (complaintDashBoardRequest.getType().equals(DASHBOARD_GROUPING_ALL_FUNCTIONARY)) {
-            final Terms ulbTerms = functionaryWiseResponse.getAggregations().get(ULBWISE);
-            for (final Bucket ulbBucket : ulbTerms.getBuckets()) {
-                final Terms deptTerms = ulbBucket.getAggregations().get(DEPARTMENTWISE);
-                for (final Bucket deptBucket : deptTerms.getBuckets()) {
-                    final Terms terms = deptBucket.getAggregations().get(GROUP_BY_FIELD);
-                    responseDetailsList = getResponseList(groupByField, terms, responseDetailsList,
-                            complaintDashBoardRequest);
-                }
-            }
+            responseDetailsList = getComplaintDashBoardResponses(complaintDashBoardRequest, groupByField,
+                    functionaryWiseResponse, DEPARTMENTWISE);
         } else {
             final Terms terms = functionaryWiseResponse.getAggregations().get(GROUP_BY_FIELD);
-            responseDetailsList = getResponseList(groupByField, terms, responseDetailsList, complaintDashBoardRequest);
+            responseDetailsList = getResponseList(groupByField, terms, complaintDashBoardRequest);
         }
-
         details.put(RESPONSE_DETAILS, responseDetailsList);
-
         return details;
+    }
 
+    private List<ComplaintDashBoardResponse> getComplaintDashBoardResponses(ComplaintDashBoardRequest complaintDashBoardRequest,
+                                                                            String groupByField,
+                                                                            SearchResponse functionaryWiseResponse,
+                                                                            String aggregation) {
+        List<ComplaintDashBoardResponse> responseDetailsList = new ArrayList<>();
+        final Terms ulbTerms = functionaryWiseResponse.getAggregations().get(ULBWISE);
+        for (final Bucket ulbBucket : ulbTerms.getBuckets()) {
+            final Terms terms = ulbBucket.getAggregations().get(aggregation);
+            for (final Bucket bucket : terms.getBuckets()) {
+                final Terms aggTerms = bucket.getAggregations().get(GROUP_BY_FIELD);
+                responseDetailsList = getResponseList(groupByField, aggTerms,
+                        complaintDashBoardRequest);
+            }
+        }
+        return responseDetailsList;
     }
 
     private HashMap<String, Object> getCityDetails(final ComplaintDashBoardRequest complaintDashBoardRequest) {
@@ -1585,55 +1575,27 @@ public class ComplaintIndexService {
     }
 
     private List<ComplaintDashBoardResponse> getResponseList(final String groupByField, final Terms terms,
-                                                             final List<ComplaintDashBoardResponse> responseDetailsList, final ComplaintDashBoardRequest complaintDashBoardRequest) {
+                                                             final ComplaintDashBoardRequest complaintDashBoardRequest) {
+        List<ComplaintDashBoardResponse> responseDetailsList = new ArrayList<>();
         for (final Bucket bucket : terms.getBuckets()) {
             final ComplaintDashBoardResponse complaintDashBoardResponse = new ComplaintDashBoardResponse();
-            final TopHits topHits = bucket.getAggregations().get(COMPLAINTRECORD);
-            final SearchHit[] hit = topHits.getHits().getHits();
-            complaintDashBoardResponse.setUlbName(hit[0].field(CITY_NAME).getValue());
-            complaintDashBoardResponse.setDistrictName(hit[0].field(CITY_DISTRICT_NAME).getValue());
-            complaintDashBoardResponse.setWardName(hit[0].field(WARD_NAME).getValue());
-            if (hit[0].field(DEPARTMENT_NAME) != null) {
-                complaintDashBoardResponse.setDepartmentName(hit[0].field(DEPARTMENT_NAME).getValue());
-            }
-            if (hit[0].field(INITIAL_FUNCTIONARY_NAME) != null)
-                complaintDashBoardResponse.setFunctionaryName(hit[0].field(INITIAL_FUNCTIONARY_NAME).getValue());
-            if (hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER) != null)
-                complaintDashBoardResponse.setFunctionaryMobileNumber(hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER).getValue());
-            CityIndex city;
-            if (CITY_REGION_NAME.equals(groupByField))
-                complaintDashBoardResponse.setRegionName(bucket.getKeyAsString());
-            if (CITY_GRADE.equals(groupByField))
-                complaintDashBoardResponse.setUlbGrade(bucket.getKeyAsString());
-            if (CITY_DISTRICT_CODE.equals(groupByField)) {
-                city = cityIndexService.findByDistrictCode(bucket.getKeyAsString());
-                complaintDashBoardResponse.setDistrictName(city.getDistrictname());
-            }
-            if (CITY_CODE.equals(groupByField)) {
-                city = cityIndexService.findByCitycode(bucket.getKeyAsString());
-                complaintDashBoardResponse.setDistrictName(city.getDistrictname());
-                complaintDashBoardResponse.setUlbName(city.getName());
-                complaintDashBoardResponse.setUlbGrade(city.getCitygrade());
-                complaintDashBoardResponse.setUlbCode(city.getCitycode());
-                complaintDashBoardResponse.setDomainURL(city.getDomainurl());
-            }
-            if (DEPARTMENT_NAME.equals(groupByField))
-                complaintDashBoardResponse.setDepartmentName(bucket.getKeyAsString());
-            if (WARD_NAME.equals(groupByField))
-                complaintDashBoardResponse.setWardName(bucket.getKeyAsString());
-            if (LOCALITY_NAME.equals(groupByField))
-                complaintDashBoardResponse.setLocalityName(bucket.getKeyAsString());
+            setGenericResponse(groupByField, bucket, complaintDashBoardResponse);
             if (INITIAL_FUNCTIONARY_NAME.equals(groupByField)
                     && !complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_FUNCTIONARY)) {
                 complaintDashBoardResponse.setFunctionaryName(bucket.getKeyAsString());
                 final String mobileNumber = complaintIndexRepository.getFunctionryMobileNumber(bucket.getKeyAsString());
                 complaintDashBoardResponse.setFunctionaryMobileNumber(defaultString(mobileNumber, NA));
             }
-            final Terms functionaryTerms = bucket.getAggregations().get("groupByInitialFunctionary");
-            List<String> functionaryNames = new ArrayList<>();
-            for (final Bucket fnBucket : functionaryTerms.getBuckets())
-                functionaryNames.add(fnBucket.getKeyAsString());
-            complaintDashBoardResponse.setFunctionaryCount(functionaryNames.size());
+            BigDecimal functionCount = ZERO;
+            Terms ulbTerms = bucket.getAggregations().get(CITY_CODE);
+            for (Bucket ulbBucket : ulbTerms.getBuckets()) {
+                Terms deptTerms = ulbBucket.getAggregations().get("groupByDepartment");
+                for (Bucket deptBucket : deptTerms.getBuckets()) {
+                    Terms funcTerms = deptBucket.getAggregations().get("groupByInitialFunctionary");
+                    functionCount = functionCount.add(BigDecimal.valueOf(funcTerms.getBuckets().size()));
+                }
+            }
+            complaintDashBoardResponse.setFunctionaryCount(functionCount.longValue());
             updateClosedAndAvgSatisfactionIndex(bucket, complaintDashBoardResponse);
             responseDetailsList.add(complaintDashBoardResponse);
         }
@@ -1858,9 +1820,9 @@ public class ComplaintIndexService {
         if (isNotBlank(ivrsRequest.getComplaintTypeName()))
             boolQuery = boolQuery.filter(matchQuery("complaintTypeName", ivrsRequest.getComplaintTypeName()));
         if (isNotBlank(ivrsRequest.getCategoryId()))
-            boolQuery = boolQuery.filter(matchQuery("categoryId", ivrsRequest.getCategoryId()));
+            boolQuery = boolQuery.filter(matchQuery(CATEGORY_ID, ivrsRequest.getCategoryId()));
         if (isNotBlank(ivrsRequest.getComplaintTypeCode()))
-            boolQuery = boolQuery.filter(matchQuery("complaintTypeCode", ivrsRequest.getComplaintTypeCode()));
+            boolQuery = boolQuery.filter(matchQuery(COMPLAINT_TYPE_CODE, ivrsRequest.getComplaintTypeCode()));
         return boolQuery;
     }
 
@@ -1917,7 +1879,7 @@ public class ComplaintIndexService {
         if (isNotBlank(complaintDashBoardRequest.getUlbGrade()))
             boolQuery = boolQuery.filter(matchQuery(CITY_GRADE, complaintDashBoardRequest.getUlbGrade()));
         if (isNotBlank(complaintDashBoardRequest.getCategoryId()))
-            boolQuery = boolQuery.filter(matchQuery("categoryId", complaintDashBoardRequest.getCategoryId()));
+            boolQuery = boolQuery.filter(matchQuery(CATEGORY_ID, complaintDashBoardRequest.getCategoryId()));
         if (isNotBlank(complaintDashBoardRequest.getDistrictName()))
             boolQuery = boolQuery
                     .filter(matchQuery(CITY_DISTRICT_NAME, complaintDashBoardRequest.getDistrictName()));
@@ -1929,7 +1891,7 @@ public class ComplaintIndexService {
             boolQuery = boolQuery
                     .filter(matchQuery(DEPARTMENT_CODE, complaintDashBoardRequest.getDepartmentCode()));
         if (isNotBlank(complaintDashBoardRequest.getComplaintTypeCode()))
-            boolQuery = boolQuery.filter(matchQuery("complaintTypeCode",
+            boolQuery = boolQuery.filter(matchQuery(COMPLAINT_TYPE_CODE,
                     complaintDashBoardRequest.getComplaintTypeCode()));
         if (isNotBlank(complaintDashBoardRequest.getLocalityName()))
             boolQuery = boolQuery.filter(matchQuery(LOCALITY_NAME,
