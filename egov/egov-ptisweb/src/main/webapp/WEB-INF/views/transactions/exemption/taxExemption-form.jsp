@@ -106,7 +106,7 @@ body
 									code="lbl.exemption.effective.date" /> <span class="mandatory"></span>
 							</label>
 							<c:choose>
-							<c:when test="${userDesignation == 'Junior Assistant' || userDesignation == 'UD Revenue Inspector'}">
+							<c:when test="${userDesignation.endsWith('Assistant') || userDesignation == 'UD Revenue Inspector'}">
 								<div class="col-sm-2 add-margin">
 									<form:input path="effectiveDate" type="text"
 										class="form-control datepicker" data-date-end-date="0d" 
