@@ -89,6 +89,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.*;
 @RequestMapping(value = "/exemption/update/{id}")
 public class UpdateTaxExemptionController extends GenericWorkFlowController {
 
+    private static final String UPDATE = "UPDATE";
     private static final String EXEMPTION_REASON = "exemptionReason";
     private static final String APPROVAL_POSITION = "approvalPosition";
     protected static final String TAX_EXEMPTION_FORM = "taxExemption-form";
@@ -104,6 +105,9 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     private static final String NGO_DOC = "ngoDocs";
     private static final String WORSHIP_DOC = "worshipDocs";
     private static final String EXSERVICE_DOC = "exserviceDocs";
+    private static final String ERROR_MSG = "errorMsg";
+    private static final String NO_DEMAND = "noDemand";
+    private static final String DUE = "due";
     
     private final TaxExemptionService taxExemptionService;
 
@@ -256,14 +260,24 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     public String update(@Valid @ModelAttribute final PropertyImpl property, final BindingResult errors,
             final RedirectAttributes redirectAttributes, final HttpServletRequest request, final Model model,
             @RequestParam final String workFlowAction) {
-
         final Character status = STATUS_WORKFLOW;
         Long approvalPosition = 0l;
         String approvalComent = "";
         String workFlowAct = workFlowAction;
         String exemptionReason="";
         final Property oldProperty = property.getBasicProperty().getActiveProperty();
-
+        if (!oldProperty.getIsExemptedFromTax()) {
+            if (taxExemptionService.getTaxDues(request, model, property.getBasicProperty(),
+                    taxExemptionService.getExemptionEffectivedDate(property.getEffectiveDate(), UPDATE))
+                    .equals(DUE))
+                return TARGET_TAX_DUES;
+            else if (taxExemptionService.getTaxDues(request, model, property.getBasicProperty(),
+                    taxExemptionService.getExemptionEffectivedDate(property.getEffectiveDate(), UPDATE))
+                    .equals(NO_DEMAND)) {
+                model.addAttribute(ERROR_MSG, "error.nodemand.before.effectivedate");
+                return PROPERTY_VALIDATION_FOR_SPRING;
+            }
+        }
         if (request.getParameter("approvalComent") != null)
             approvalComent = request.getParameter("approvalComent");
         if (request.getParameter("workFlowAction") != null)
@@ -310,7 +324,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
                     taxExemptionService.processAndStoreApplicationDocuments((PropertyImpl) property, taxExemptedReason,
                             previousExemptionReason);
                 taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAct,
-                        approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION);
+                        approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION, UPDATE);
             }
         String successMessage;
         if (property.getCreatedBy() != null)
@@ -357,7 +371,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
                     taxExemptionService.processAndStoreApplicationDocuments((PropertyImpl) property, taxExemptedReason,
                             exemptionReason);
             taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAct,
-                    approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION);
+                    approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION, UPDATE);
             }
 
             successMessage = "Property Exemption rejected successfully and forwarded to "
