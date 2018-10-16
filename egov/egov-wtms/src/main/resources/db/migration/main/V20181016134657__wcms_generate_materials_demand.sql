@@ -1,4 +1,17 @@
 
+Insert into eg_installment_master (ID,INSTALLMENT_NUM,INSTALLMENT_YEAR,START_DATE,END_DATE,ID_MODULE,LASTUPDATEDTIMESTAMP,DESCRIPTION,INSTALLMENT_TYPE) SELECT nextval('SEQ_EG_INSTALLMENT_MASTER'),2018,to_date('01-04-18','DD-MM-YY'),to_date('01-04-18','DD-MM-YY'),to_date('31-03-19','DD-MM-YY'),(select id from eg_module where name = 'Water Tax Management'),current_timestamp,'2018-19','Yearly'
+WHERE NOT EXISTS
+(select 1 from eg_installment_master where description ='2018-19' and id_module=(select id from eg_module where name = 'Water Tax Management') and installment_type='Yearly');
+
+Insert into eg_installment_master (ID,INSTALLMENT_NUM,INSTALLMENT_YEAR,START_DATE,END_DATE,ID_MODULE,LASTUPDATEDTIMESTAMP,DESCRIPTION,INSTALLMENT_TYPE) SELECT nextval('SEQ_EG_INSTALLMENT_MASTER'),2019,to_date('01-04-19','DD-MM-YY'),to_date('01-04-19','DD-MM-YY'),to_date('31-03-20','DD-MM-YY'),(select id from eg_module where name = 'Water Tax Management'),current_timestamp,'2019-20','Yearly'
+WHERE NOT EXISTS
+(select 1 from eg_installment_master where description ='2019-20' and id_module=(select id from eg_module where name = 'Water Tax Management') and installment_type='Yearly');
+
+Insert into eg_installment_master (ID,INSTALLMENT_NUM,INSTALLMENT_YEAR,START_DATE,END_DATE,ID_MODULE,LASTUPDATEDTIMESTAMP,DESCRIPTION,INSTALLMENT_TYPE) SELECT nextval('SEQ_EG_INSTALLMENT_MASTER'),2020,to_date('01-04-20','DD-MM-YY'),to_date('01-04-20','DD-MM-YY'),to_date('31-03-21','DD-MM-YY'),(select id from eg_module where name = 'Water Tax Management'),current_timestamp,'2020-21','Yearly'
+WHERE NOT EXISTS
+(select 1 from eg_installment_master where description ='2020-21' and id_module=(select id from eg_module where name = 'Water Tax Management') and installment_type='Yearly');
+
+
 INSERT INTO eg_demand_reason_master(id, reasonmaster, category, isdebit, module,code,"order", create_date, modified_date,isdemand) VALUES (nextval('seq_eg_demand_reason_master'), 'Water Conection Material charges', (select id from eg_reason_category where code='TAX'),'N',(select id from eg_module where name = 'Water Tax Management'),'MATERIALCHARGES', 6, now(), now(),true);
 
 insert into eg_demand_reason(id,id_demand_reason_master,id_installment,percentage_basis,
