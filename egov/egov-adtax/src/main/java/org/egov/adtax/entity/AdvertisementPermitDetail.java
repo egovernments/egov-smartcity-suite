@@ -162,8 +162,10 @@ public class AdvertisementPermitDetail extends StateAware<Position> {
     
     private Double totalHeight;
 
+    @Column(name = "deactivation_remarks")
     private String deactivationRemarks;
 
+    @Column(name = "deactivation_date")
     private Date deactivationDate;
 
     private String source;
