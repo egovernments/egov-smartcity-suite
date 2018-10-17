@@ -75,11 +75,12 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static java.math.BigDecimal.ZERO;
+import static org.egov.tl.utils.Constants.DOCUMENT_STORE_PATH;
 import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACTIVE;
 
 @Service
@@ -224,7 +225,7 @@ public class LegacyLicenseService extends LicenseService {
                                 .add(fileStoreService.store(
                                         file.getInputStream(),
                                         file.getOriginalFilename(),
-                                        file.getContentType(), "EGTL"));
+                                        file.getContentType(), DOCUMENT_STORE_PATH));
                         document.setEnclosed(true);
                         document.setDocDate(license.getApplicationDate());
                     } else if (document.getType().isMandatory() && file.isEmpty() && documents.isEmpty()) {

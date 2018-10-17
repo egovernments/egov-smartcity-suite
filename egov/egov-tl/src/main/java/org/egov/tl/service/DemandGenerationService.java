@@ -161,7 +161,7 @@ public class DemandGenerationService {
                         createOrGetDemandGenerationLogDetail(demandGenerationLog, license);
                 try {
                     if (!installment.equals(license.getCurrentDemand().getEgInstallmentMaster())) {
-                        licenseService.raiseDemand(license, module, installment);
+                        licenseService.raiseDemand(license.getId(), module, installment);
                         demandGenerationLogDetail.setDetail(SUCCESSFUL);
                         renewalNotificationService.notifyLicenseRenewal(license, installment);
                     }
@@ -185,7 +185,7 @@ public class DemandGenerationService {
             TradeLicense license = licenseService.getLicenseById(licenseId);
             Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(licenseUtils.getModule(),
                     new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate());
-            licenseService.raiseDemand(license, licenseUtils.getModule(), installment);
+            licenseService.raiseDemand(license.getId(), licenseUtils.getModule(), installment);
             renewalNotificationService.notifyLicenseRenewal(license, installment);
         } catch (ValidationException e) {
             LOGGER.warn(ERROR_MSG, e);

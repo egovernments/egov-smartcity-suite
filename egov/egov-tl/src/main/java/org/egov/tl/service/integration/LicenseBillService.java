@@ -217,7 +217,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         Module module = licenseUtils.getModule();
         getCurrentInstallment(module);
         final List<EgDemandDetails> orderedDetailsList = new ArrayList<>();
-        licenseApplicationService.calcPenaltyDemandDetails(license, demand);
+        licenseApplicationService.applyPenalty(license, demand);
         license.recalculateBaseDemand();
         for (final EgDemandDetails demandDetail : demand.getEgDemandDetails()) {
             final Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();

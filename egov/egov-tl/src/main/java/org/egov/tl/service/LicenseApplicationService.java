@@ -124,12 +124,12 @@ public class LicenseApplicationService extends TradeLicenseService {
     }
 
     @Transactional
-    public TradeLicense renew(final TradeLicense license, final WorkflowBean workflowBean) {
+    public TradeLicense renew(TradeLicense license, WorkflowBean workflowBean) {
         license.setApplicationDate(new Date());
         license.setLicenseAppType(licenseAppTypeService.getRenewLicenseApplicationType());
         if (!currentUserIsMeeseva())
             license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
-        updateDemandForChangeTradeArea(license);
+        updateDemandForTradeAreaChange(license);
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
         processAndStoreDocument(license);
         if (license.isPaid())
@@ -151,7 +151,7 @@ public class LicenseApplicationService extends TradeLicenseService {
     @Transactional
     public void updateTradeLicense(TradeLicense license, WorkflowBean workflowBean) {
         processAndStoreDocument(license);
-        updateDemandForChangeTradeArea(license);
+        updateDemandForTradeAreaChange(license);
         license.setCollectionPending(!license.isPaid());
         if (BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             licenseProcessWorkflowService.getRejectTransition(license, workflowBean);

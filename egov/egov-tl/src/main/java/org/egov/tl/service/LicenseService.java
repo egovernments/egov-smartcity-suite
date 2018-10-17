@@ -75,6 +75,7 @@ import static org.egov.infra.config.core.ApplicationThreadLocals.getCityName;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getMunicipalityName;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
+import static org.egov.tl.utils.Constants.DOCUMENT_STORE_PATH;
 
 @Service
 @Transactional(readOnly = true)
@@ -150,7 +151,7 @@ public class LicenseService {
                                 .add(fileStoreService.store(
                                         file.getInputStream(),
                                         file.getOriginalFilename(),
-                                        file.getContentType(), "EGTL"));
+                                        file.getContentType(), DOCUMENT_STORE_PATH));
                         document.setEnclosed(true);
                         document.setDocDate(license.getApplicationDate());
                     }
