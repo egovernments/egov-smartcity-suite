@@ -784,7 +784,7 @@ public class TradeLicenseService {
         reportParams.put("applicationdate", getDefaultFormattedDate(license.getApplicationDate()));
         reportParams.put("demandUpdateDate", getDefaultFormattedDate(license.getCurrentDemand().getModifiedDate()));
         reportParams.put("demandTotalamt", demandDetails.getAmtCollected());
-        User approver = (isProvisional || license.getApprovedBy() == null)
+        User approver = isProvisional || license.getApprovedBy() == null
                 ? licenseUtils.getCommissionerAssignment().getEmployee() : license.getApprovedBy();
         ByteArrayInputStream commissionerSign = new ByteArrayInputStream(
                 approver == null || approver.getSignature() == null ? new byte[0] : approver.getSignature());
@@ -792,9 +792,8 @@ public class TradeLicenseService {
 
         if (isProvisional)
             reportParams.put("certificateType", "provisional");
-        else {
+        else
             reportParams.put("qrCode", license.qrCode(installmentYear, demandDetails.getAmtCollected()));
-        }
 
         return reportParams;
     }
@@ -1042,7 +1041,7 @@ public class TradeLicenseService {
             reportOutput = reportService.createReport(
                     new ReportRequest("tl_closure_notice", licenses, reportParams));
         }
-        if (reportFormat.equalsIgnoreCase("zip"))
+        if ("zip".equalsIgnoreCase(reportFormat))
             reportOutput.setReportOutputData(toByteArray(addFilesToZip(byteArrayToFile(reportOutput.getReportOutputData(),
                     "tl_closure_notice_", ".pdf").toFile())));
         return reportOutput;
