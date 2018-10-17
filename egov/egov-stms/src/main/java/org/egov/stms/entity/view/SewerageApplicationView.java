@@ -91,6 +91,7 @@ public class SewerageApplicationView implements Serializable {
     private String electionWard;
     private String mobileNo;
     private String connectionStatus;
+    private BigInteger connectionId;
 
     public BigInteger getApplicationId() {
         return applicationId;
@@ -252,4 +253,11 @@ public class SewerageApplicationView implements Serializable {
         this.connectionStatus = connectionStatus;
     }
 
+    public BigInteger getConnectionId() {
+        return connectionId;
+    }
+
+    public void setConnectionId(BigInteger connectionId) {
+        this.connectionId = connectionId;
+    }
 }
