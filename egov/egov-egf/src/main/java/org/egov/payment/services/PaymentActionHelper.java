@@ -93,15 +93,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 @Transactional(readOnly = true)
 @Service
@@ -259,8 +252,8 @@ public class PaymentActionHelper {
                 BigDecimal sumPerDetailKey = BigDecimal.ZERO;
                 // int lastIndexOf = tempRemitBean.lastIndexOf(detailKey);
                 for (final RemittanceBean remittanceBean2 : tempRemitBean)
-                    if (remittanceBean2.getDetailKeyid() != null && remittanceBean2.getDetailKeyid().equals(detailKey))
-                        sumPerDetailKey = sumPerDetailKey.add(remittanceBean2.getPartialAmount());
+                  if (remittanceBean2.getDetailKeyid() != null && remittanceBean2.getDetailKeyid().equals(detailKey) && remittanceBean2.getDetailTypeId().equals(o.getKey()))
+                      sumPerDetailKey = sumPerDetailKey.add(remittanceBean2.getPartialAmount());
                 subledgertDetailMap = new HashMap<String, Object>();
                 subledgertDetailMap.put(VoucherConstant.DEBITAMOUNT, sumPerDetailKey);
                 subledgertDetailMap.put(VoucherConstant.CREDITAMOUNT, BigDecimal.ZERO);
