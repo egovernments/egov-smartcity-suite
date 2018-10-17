@@ -120,7 +120,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.*;
 @Service
 public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> {
 
-    private static final String CREATE = "CREATE";
     private static final String NO_DUE = "noDue";
     private static final String DUE = "due";
     private static final String NO_DEMAND = "noDemand";
@@ -193,7 +192,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
     @Transactional
     public BasicProperty saveProperty(final Property newProperty, final Property oldProperty, final Character status,
             final String approvalComment, final String workFlowAction, final Long approvalPosition,
-            final String taxExemptedReason, final Boolean propertyByEmployee, final String additionalRule, String mode) {
+            final String taxExemptedReason, final Boolean propertyByEmployee, final String additionalRule) {
         TaxExemptionReason taxExemptionReason = null;
         final BasicProperty basicProperty = oldProperty.getBasicProperty();
         final PropertyDetail propertyDetail = oldProperty.getPropertyDetail();
@@ -213,7 +212,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         if (StringUtils.isBlank(taxExemptedReason))
             effectiveDate = getEffectiveInst(new Date()).getFromDate();
         else
-           effectiveDate = getExemptionEffectivedDate(newProperty.getEffectiveDate(), mode);
+            effectiveDate = getExemptionEffectivedDate(newProperty.getExemptionDate());
          
         if (!propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode()
                 .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
@@ -465,7 +464,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             final String taxExemptedReason, final Boolean propertyByEmployee, final String additionalRule,
             final HashMap<String, String> meesevaParams) {
         return saveProperty(newProperty, oldProperty, status, approvalComment, workFlowAction, approvalPosition,
-                taxExemptedReason, propertyByEmployee, EXEMPTION, CREATE);
+                taxExemptedReason, propertyByEmployee, EXEMPTION);
 
     }
 
@@ -619,8 +618,8 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         for (final Object object : dmdCollList) {
             final Object[] listObj = (Object[]) object;
             instId = Integer.valueOf(listObj[0].toString());
-            demand = listObj[1] != null ? new BigDecimal((Double) listObj[1]) : BigDecimal.ZERO;
-            collection = listObj[2] != null ? new BigDecimal((Double) listObj[2]) : BigDecimal.ZERO;
+            demand = listObj[1] == null ? BigDecimal.ZERO : new BigDecimal((Double) listObj[1]);
+            collection = listObj[2] == null ? BigDecimal.ZERO : new BigDecimal((Double) listObj[2]);
 
             installment = installmentDao.findById(instId, false);
             if (installment.getFromDate().before(effectiveInst.getFromDate())) {
@@ -654,15 +653,11 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
     }
 
     private Installment getEffectiveInst(Date effectiveDate) {
-        final Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+        final Module module = moduleDao.getModuleByName(PTMODULENAME);
         return installmentDao.getInsatllmentByModuleForGivenDate(module, effectiveDate);
     }
 
-    public Date getExemptionEffectivedDate(final Date effectiveDate, String mode) {
-        if (mode.equals(CREATE))
-            return new DateTime(getEffectiveInst(effectiveDate).getToDate()).plusDays(1).toDate();
-        else
-            return new DateTime(getEffectiveInst(new DateTime(effectiveDate).minusDays(1).toDate()).getToDate())
-                    .plusDays(1).toDate();
+    public Date getExemptionEffectivedDate(final Date effectiveDate) {
+        return new DateTime(getEffectiveInst(effectiveDate).getToDate()).plusDays(1).toDate();
     }
 }

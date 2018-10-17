@@ -111,6 +111,8 @@ public class PropertyImpl extends StateAware<Position> implements Property {
     private String remarks;
 
     private Date effectiveDate;
+    
+    private Date exemptionDate;
 
     private transient PropertyDetail propertyDetail;
     private String propertyModifyReason;
@@ -231,7 +233,17 @@ public class PropertyImpl extends StateAware<Position> implements Property {
     public void setEffectiveDate(final Date effectiveDate) {
         this.effectiveDate = effectiveDate;
     }
-
+    
+    @Override
+    public Date getExemptionDate() {
+        return exemptionDate;
+    }
+    
+    @Override
+    public void setExemptionDate(final Date exemptionDate) {
+        this.exemptionDate = exemptionDate;
+    }
+    
     @Override
     public Character getIsDefaultProperty() {
         return isDefaultProperty;
@@ -403,6 +415,7 @@ public class PropertyImpl extends StateAware<Position> implements Property {
         newProp.setId(null);
         newProp.setApplicationNo(null);
         newProp.setEffectiveDate(getEffectiveDate());
+        newProp.setExemptionDate(getExemptionDate());
         newProp.setInstallment(getInstallment());
         newProp.setIsChecked(getIsChecked());
         newProp.setIsDefaultProperty(getIsDefaultProperty());

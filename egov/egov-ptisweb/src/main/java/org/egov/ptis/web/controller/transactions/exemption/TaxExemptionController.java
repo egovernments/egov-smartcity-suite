@@ -103,7 +103,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.*;
 @RequestMapping(value = { "/exemption" })
 public class TaxExemptionController extends GenericWorkFlowController {
 
-    private static final String CREATE = "CREATE";
     private static final String NO_DEMAND = "noDemand";
     private static final String DUE = "due";
     private static final String APPROVAL_POSITION = "approvalPosition";
@@ -293,11 +292,11 @@ public class TaxExemptionController extends GenericWorkFlowController {
             }
             if (!property.getBasicProperty().getActiveProperty().getIsExemptedFromTax()) {
                 if (taxExemptionService.getTaxDues(request, model, property.getBasicProperty(),
-                        taxExemptionService.getExemptionEffectivedDate(property.getEffectiveDate(), CREATE))
+                        taxExemptionService.getExemptionEffectivedDate(property.getExemptionDate()))
                         .equals(DUE))
                     return TARGET_TAX_DUES;
                 else if (taxExemptionService.getTaxDues(request, model, property.getBasicProperty(),
-                        taxExemptionService.getExemptionEffectivedDate(property.getEffectiveDate(), CREATE))
+                        taxExemptionService.getExemptionEffectivedDate(property.getExemptionDate()))
                         .equals(NO_DEMAND)) {
                     model.addAttribute(ERROR_MSG, "error.nodemand.before.effectivedate");
                     return PROPERTY_VALIDATION_FOR_SPRING;
@@ -317,7 +316,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
                         approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION, meesevaParams);
             } else
                 taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAction,
-                        approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION, CREATE);
+                        approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION);
             model.addAttribute("showAckBtn", Boolean.TRUE);
             model.addAttribute("isOnlineApplication", ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName()));
             model.addAttribute("propertyId", property.getBasicProperty().getUpicNo());

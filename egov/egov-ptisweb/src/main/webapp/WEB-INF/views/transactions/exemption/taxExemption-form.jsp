@@ -108,19 +108,19 @@ body
 							<c:choose>
 							<c:when test="${userDesignation.endsWith('Assistant') || userDesignation == 'UD Revenue Inspector'}">
 								<div class="col-sm-2 add-margin">
-									<form:input path="effectiveDate" type="text"
+									<form:input path="exemptionDate" type="text"
 										class="form-control datepicker" data-date-end-date="0d" 
 										required="required" />
-									<form:errors path="effectiveDate"
+									<form:errors path="exemptionDate"
 										cssClass="add-margin error-msg" />
 								</div>
 							</c:when>
 							<c:otherwise>
 								<div class="col-sm-2 add-margin">
-								<form:input path="effectiveDate" type="text"
+								<form:input path="exemptionDate" type="text"
 									class="form-control datepicker today" data-date-end-date="0d" 
 									required="required" />
-								<form:errors path="effectiveDate"
+								<form:errors path="exemptionDate"
 									cssClass="add-margin error-msg" />
 							</div>
 							</c:otherwise>
