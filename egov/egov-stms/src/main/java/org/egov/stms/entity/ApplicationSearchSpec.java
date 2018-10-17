@@ -58,7 +58,7 @@ import javax.persistence.criteria.Predicate;
 import org.egov.stms.entity.view.SewerageApplicationView;
 import org.springframework.data.jpa.domain.Specification;
 
-public class ApplicationSearchSpec {
+public final class ApplicationSearchSpec {
     private ApplicationSearchSpec() {
     }
 
