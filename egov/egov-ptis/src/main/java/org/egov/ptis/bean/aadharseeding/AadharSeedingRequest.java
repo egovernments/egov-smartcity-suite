@@ -263,13 +263,4 @@ public class AadharSeedingRequest {
     public void setSuccessMessage(String successMessage) {
         this.successMessage = successMessage;
     }
-
-	public String getDocType() {
-		return docType;
-	}
-
-	public void setDocType(String docType) {
-		this.docType = docType;
-	}
-    
 }

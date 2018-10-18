@@ -64,7 +64,6 @@ import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_
 import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION;
 
 import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -198,6 +197,11 @@ public interface PropertyTaxConstants {
     public static final String MUTATION_REASON_CODE_GIFT = "GIFTDEED";
     public static final String MUTATION_REASON_CODE_WILL = "WILLDEED";
     public static final String MUTATION_REASON_CODE_SALE = "SALEDEED";
+    public static final String MUTATION_REASON_CODE_RENT = "RENTDEED";
+    public static final String MUTATION_REASON_CODE_UNREGISTEREDWILL = "UNREGWILLDEED";
+    public static final String MUTATION_REASON_CODE_REGISTERED = "REGISTERED";
+    public static final String MUTATION_REASON_CODE_TITLEDEED = "TITLEDEED";
+    public static final String MUTATION_REASON_CODE_PARTISION = "PARTISION";
     public static final String MUTATION_REASON_CODE_RELINQUISH = "RELINQUISH";
     public static final String MUTATION_REASON_CODE_PARTITION = "PARTITIOND";
     
@@ -1682,6 +1686,8 @@ public interface PropertyTaxConstants {
     public static final String DOCUMENT_TYPE_PHOTO_PROPERTY_HOLDER  = "Photo of Property With Holder";
     public static final String DOCUMENT_NAME_REGD_DOCUMENT = "Registered Document";
     public static final String DOCUMENT_NAME_PATTA_CERTIFICATE = "Patta Certificate (Issued by Revenue Department)";
+    public static final String DOCUMENT_NAME_SUCCESSION_DOCUMENT = "Succession Document";
+    public static final String DOCUMENT_NAME_LEASE_DOCUMENT = "Registered Lease Deed";
     public static final String DOCUMENT_NAME_REGD_WILL_DOCUMENT = "Registered Will Document";
     public static final String DOCUMENT_NAME_UNREGD_WILL_DOCUMENT = "Un-registered Will Document";
     public static final String DOCUMENT_NAME_DECREE_BY_CIVILCOURT = "Decree by Civil Court";
@@ -1754,4 +1760,18 @@ public interface PropertyTaxConstants {
     public static final String APPCONFIG_PT_DEMAND_VOUCHER_GLCODES = "PT_DEMAND_VOUCHER_GLCODES";
     
     public static final String DOCUMENT_TYPE_PHOTO_OF_ASSESSMENT = "Photo Of Assessment";
+    
+    
+    public static final HashMap<String, String> DOCTYPEBYMUTATIONREASON = new HashMap<String, String>() {
+        {
+            put(CIVILCOURTDECREE, MUTATIONRS_DECREE_BY_CIVIL_COURT);
+            put(MUTATION_REASON_CODE_PARTISION, DOCUMENT_TYPE_REGD_DOCUMENT);
+            put(MUTATION_REASON_CODE_SALE, DOCUMENT_TYPE_REGD_DOCUMENT);
+            put(MUTATION_REASON_CODE_TITLEDEED, DOCUMENT_TYPE_REGD_DOCUMENT);
+            put(MUTATION_REASON_CODE_REGISTERED, DOCUMENT_NAME_REGD_WILL_DOCUMENT);
+            put(MUTATIONRS_SUCCESSION, DOCUMENT_NAME_SUCCESSION_DOCUMENT);
+            put(MUTATION_REASON_CODE_RENT, DOCUMENT_NAME_LEASE_DOCUMENT);
+            put(MUTATION_REASON_CODE_UNREGISTEREDWILL, MUTATIONRS_UNREG_WILL);
+        }
+    };
 }
