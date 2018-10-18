@@ -344,7 +344,7 @@ public class TradeLicenseService {
     public void applyPenalty(TradeLicense license, EgDemand demand) {
         Map<Installment, EgDemandDetails> penaltyDemandDetails = getInstallmentWiseDemandDetails(demand, DEMAND_REASON_CATEGORY_PENALTY);
         Map<Installment, EgDemandDetails> licenseDemandDetails = getInstallmentWiseDemandDetails(demand, DEMAND_REASON_CATEGORY_FEE);
-        for (Map.Entry<Installment, BigDecimal> penalty : calculatePenalty(license).entrySet()) {
+        for (Map.Entry<Installment, BigDecimal> penalty : calculatePenalty(license, demand).entrySet()) {
             EgDemandDetails penaltyDemandDetail = penaltyDemandDetails.get(penalty.getKey());
             EgDemandDetails licenseDemandDetail = licenseDemandDetails.get(penalty.getKey());
             if (penaltyDemandDetail != null && penalty.getValue().compareTo(penaltyDemandDetail.getAmtCollected()) >= 0) {
@@ -367,12 +367,12 @@ public class TradeLicenseService {
         return installmentwiseDemandDetails;
     }
 
-    private Map<Installment, BigDecimal> calculatePenalty(TradeLicense license) {
+    private Map<Installment, BigDecimal> calculatePenalty(TradeLicense license, EgDemand demand) {
         Date licenseDate = license.isNewApplication() ? license.getCommencementDate()
                 : license.getDemand().getEgInstallmentMaster().getFromDate();
         Date currentDate = new Date();
         Map<Installment, BigDecimal> installmentPenalty = new HashMap<>();
-        for (EgDemandDetails demandDetails : license.getCurrentDemand().getEgDemandDetails()) {
+        for (EgDemandDetails demandDetails : demand.getEgDemandDetails()) {
             if (!DEMAND_REASON_CATEGORY_PENALTY.equals(demandDetails.getReasonCategory())) {
                 installmentPenalty.put(demandDetails.getEgDemandReason().getEgInstallmentMaster(),
                         penaltyRatesService.calculatePenalty(license, licenseDate, currentDate, demandDetails.getAmount()));
