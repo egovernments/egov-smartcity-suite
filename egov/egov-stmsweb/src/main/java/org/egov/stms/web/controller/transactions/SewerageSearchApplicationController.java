@@ -52,13 +52,15 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYP
 import static org.egov.stms.utils.constants.SewerageTaxConstants.REVENUE_WARD;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
+import java.util.List;
+
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.stms.entity.ApplicationSearchRequest;
-import org.egov.stms.entity.SearchResponseAdaptor;
+import org.egov.stms.entity.contracts.ApplicationSearchRequest;
 import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
 import org.egov.stms.masters.service.SewerageApplicationTypeService;
 import org.egov.stms.transactions.service.SearchApplicationService;
+import org.egov.stms.web.adapter.SearchResponseAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -66,20 +68,21 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping(value = "/search/applications")
+@RequestMapping(value = "/search")
 public class SewerageSearchApplicationController {
     @Autowired
-    private SearchApplicationService sewerageApplicationDetailsService;
+    private SearchApplicationService searchApplicationService;
 
     @Autowired
     private SewerageApplicationTypeService sewerageApplicationTypeService;
     @Autowired
     private BoundaryService boundaryService;
 
-    @GetMapping
+    @GetMapping(value = "/applications")
     public String newSearchForm(final Model model) {
         model.addAttribute("applicationSearch", new ApplicationSearchRequest());
         model.addAttribute("applicationTypes", sewerageApplicationTypeService.getApplicationTypes());
@@ -89,11 +92,17 @@ public class SewerageSearchApplicationController {
         return "search-application";
     }
 
-    @PostMapping(produces = TEXT_PLAIN_VALUE)
+    @PostMapping(value = "/applications", produces = TEXT_PLAIN_VALUE)
     @ResponseBody
     public String getPagedSewerageApplications(final ApplicationSearchRequest searchRequest, final BindingResult resultBinder) {
-        return new DataTable<>(sewerageApplicationDetailsService.getPagedSearchResults(searchRequest), searchRequest.draw())
+        return new DataTable<>(searchApplicationService.getPagedSearchResults(searchRequest), searchRequest.draw())
                 .toJson(SearchResponseAdaptor.class);
+    }
+
+    @GetMapping(value = "/autocomplete")
+    @ResponseBody
+    public List<String> autocompleteSuggestion(@RequestParam String searchParamType, @RequestParam String searchParamValue) {
+        return searchApplicationService.prepareSuggestionForGivenParam(searchParamType, searchParamValue);
     }
 
 }

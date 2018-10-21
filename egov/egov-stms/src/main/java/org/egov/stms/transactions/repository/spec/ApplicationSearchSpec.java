@@ -46,7 +46,7 @@
  *
  */
 
-package org.egov.stms.entity;
+package org.egov.stms.transactions.repository.spec;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -55,6 +55,7 @@ import java.util.List;
 
 import javax.persistence.criteria.Predicate;
 
+import org.egov.stms.entity.contracts.ApplicationSearchRequest;
 import org.egov.stms.entity.view.SewerageApplicationView;
 import org.springframework.data.jpa.domain.Specification;
 

@@ -48,11 +48,17 @@
 
 package org.egov.stms.transactions.service;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
-import org.egov.stms.entity.ApplicationSearchRequest;
-import org.egov.stms.entity.ApplicationSearchSpec;
+import org.egov.stms.entity.contracts.ApplicationSearchRequest;
 import org.egov.stms.entity.view.SewerageApplicationView;
 import org.egov.stms.transactions.repository.SewerageViewApplicationsRepository;
+import org.egov.stms.transactions.repository.spec.ApplicationSearchSpec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -66,11 +72,43 @@ public class SearchApplicationService {
     private SewerageViewApplicationsRepository sewerageViewApplicationsRepository;
 
     @ReadOnly
-    public Page<SewerageApplicationView> getPagedSearchResults(ApplicationSearchRequest applicationSearchRequest) {
+    public Page<SewerageApplicationView> getPagedSearchResults(
+            ApplicationSearchRequest applicationSearchRequest) {
         return sewerageViewApplicationsRepository.findAll(
                 ApplicationSearchSpec.searchApplicationSpecification(applicationSearchRequest),
                 new PageRequest(applicationSearchRequest.pageNumber(), applicationSearchRequest.pageSize(),
                         applicationSearchRequest.orderDir(), applicationSearchRequest.orderBy()));
     }
 
+    @ReadOnly
+    public List<String> prepareSuggestionForGivenParam(final String paramType, final String paramValue) {
+        List<String> searchList = new ArrayList<>();
+        if (isNotBlank(paramType) && isNotBlank(paramValue)) {
+            if ("applicationNumber".equals(paramType))
+                searchList = sewerageViewApplicationsRepository
+                        .findAllByApplicationNoContainingIgnoreCase(paramValue)
+                        .stream()
+                        .map(SewerageApplicationView::getApplicationNo)
+                        .collect(Collectors.toList());
+            else if ("propertyId".equals(paramType))
+                searchList = sewerageViewApplicationsRepository
+                        .findByPropertyIdContaining(paramValue)
+                        .stream()
+                        .map(SewerageApplicationView::getPropertyId)
+                        .collect(Collectors.toList());
+            else if ("shscNo".equals(paramType))
+                searchList = sewerageViewApplicationsRepository
+                        .findByShscNoContaining(paramValue)
+                        .stream()
+                        .map(SewerageApplicationView::getShscNo)
+                        .collect(Collectors.toList());
+            else if ("applicantName".equals(paramType))
+                searchList = sewerageViewApplicationsRepository
+                        .findByPropertyOwnerContainingIgnoreCase(paramValue)
+                        .stream()
+                        .map(SewerageApplicationView::getPropertyOwner)
+                        .collect(Collectors.toList());
+        }
+        return searchList;
+    }
 }

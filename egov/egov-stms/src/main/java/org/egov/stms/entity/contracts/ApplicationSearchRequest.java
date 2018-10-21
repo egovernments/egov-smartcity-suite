@@ -46,44 +46,102 @@
  *
  */
 
-package org.egov.stms.entity;
+package org.egov.stms.entity.contracts;
 
-import java.lang.reflect.Type;
-import java.util.List;
+import java.util.Date;
 
-import org.egov.infra.utils.StringUtils;
-import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
-import org.egov.infra.web.support.ui.DataTable;
-import org.egov.stms.entity.view.SewerageApplicationView;
+import org.egov.infra.web.support.search.DataTableSearchRequest;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
+public class ApplicationSearchRequest extends DataTableSearchRequest {
+    private String applicationNumber;
+    private String shscNumber;
+    private String mobileNo;
+    private String revenueWard;
+    private Date fromDate;
+    private Date toDate;
+    private String applicantName;
+    private String connectionStatus;
+    private String applicationType;
+    private String propertyId;
 
-public class SearchResponseAdaptor implements DataTableJsonAdapter<SewerageApplicationView> {
-
-    @Override
-    public JsonElement serialize(DataTable<SewerageApplicationView> res, Type typeOfSrc, JsonSerializationContext context) {
-
-        final List<SewerageApplicationView> searchResult = res.getData();
-        final JsonArray searchResultData = new JsonArray();
-        searchResult.forEach(elt -> {
-            final JsonObject searchAppJson = new JsonObject();
-            searchAppJson.addProperty("applicationId", elt.getApplicationId());
-            searchAppJson.addProperty("applicationNumber", elt.getApplicationNo());
-            searchAppJson.addProperty("propertyId", elt.getPropertyId());
-            searchAppJson.addProperty("shscNumber", StringUtils.defaultIfBlank(elt.getShscNo()));
-            searchAppJson.addProperty("applicationType", elt.getApplicationType());
-            searchAppJson.addProperty("applicationDate", elt.getApplicationDate().toString());
-            searchAppJson.addProperty("applicationStatus", elt.getApplicationStatus());
-            searchAppJson.addProperty("connectionStatus", elt.getConnectionStatus());
-            searchAppJson.addProperty("propertyType", elt.getPropertyType());
-            searchAppJson.addProperty("ownerName", elt.getPropertyOwner());
-            searchAppJson.addProperty("processOwner", elt.getProcessOwner());
-            searchAppJson.addProperty("revenueWard", elt.getRevenueWard());
-            searchResultData.add(searchAppJson);
-        });
-        return enhance(searchResultData, res);
+    public String getApplicationNumber() {
+        return applicationNumber;
     }
+
+    public void setApplicationNumber(String applicationNumber) {
+        this.applicationNumber = applicationNumber;
+    }
+
+    public String getShscNumber() {
+        return shscNumber;
+    }
+
+    public void setShscNumber(String shscNumber) {
+        this.shscNumber = shscNumber;
+    }
+
+    public String getMobileNo() {
+        return mobileNo;
+    }
+
+    public void setMobileNo(String mobileNo) {
+        this.mobileNo = mobileNo;
+    }
+
+    public String getRevenueWard() {
+        return revenueWard;
+    }
+
+    public void setRevenueWard(String revenueWard) {
+        this.revenueWard = revenueWard;
+    }
+
+    public Date getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public Date getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public String getApplicantName() {
+        return applicantName;
+    }
+
+    public void setApplicantName(String applicantName) {
+        this.applicantName = applicantName;
+    }
+
+    public String getConnectionStatus() {
+        return connectionStatus;
+    }
+
+    public void setConnectionStatus(String connectionStatus) {
+        this.connectionStatus = connectionStatus;
+    }
+
+    public String getApplicationType() {
+        return applicationType;
+    }
+
+    public void setApplicationType(String applicationType) {
+        this.applicationType = applicationType;
+    }
+
+    public String getPropertyId() {
+        return propertyId;
+    }
+
+    public void setPropertyId(String propertyId) {
+        this.propertyId = propertyId;
+    }
+
 }

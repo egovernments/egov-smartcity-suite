@@ -48,6 +48,8 @@
 
 package org.egov.stms.transactions.repository;
 
+import java.util.List;
+
 import org.egov.stms.entity.view.SewerageApplicationView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -57,4 +59,13 @@ import org.springframework.stereotype.Repository;
 public interface SewerageViewApplicationsRepository
         extends JpaRepository<SewerageApplicationView, Long>,
         JpaSpecificationExecutor<SewerageApplicationView> {
+
+    List<SewerageApplicationView> findAllByApplicationNoContainingIgnoreCase(String applicationNo);
+
+    List<SewerageApplicationView> findByPropertyIdContaining(String propertyId);
+
+    List<SewerageApplicationView> findByShscNoContaining(String shscNo);
+
+    List<SewerageApplicationView> findByPropertyOwnerContainingIgnoreCase(String propertyOwner);
+
 }

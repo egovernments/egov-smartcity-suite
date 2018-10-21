@@ -63,22 +63,23 @@
 								code="lbl.application.number" /></label>
 						<div class="col-sm-3 col-md-3 add-margin">
 							<form:input path="" type="text" name="applicationNumber" id="applicationNumber"
-								class="form-control" autocomplete="on" maxlength="13" 
-								data-pattern="alphanumericwithspace" min="10" />
+								class="form-control typeahead" autocomplete="off" maxlength="13" 
+								data-pattern="alphanumeric" min="10" />
+							<%-- <form:hidden path="applicationNumber" id="applicationNo"/> --%>
 						</div>
 						<label class="col-sm-2 col-md-2 control-label"> <spring:message
 								code="lbl.shsc.number" /></label>
 						<div class="col-sm-3 col-md-3 add-margin">
 							<form:input path="" type="text" name="shscNumber" id="shscNumber"
-								class="form-control is_valid_number" autocomplete="on" maxlength="11"/>
+								class="form-control typeahead" autocomplete="off" maxlength="11"/>
 						</div>
 					</div>
 					<div class="form-group ">
 						<label class="col-sm-2 col-md-2 control-label "> <spring:message
 								code="lbl.propertyid" /></label>
 						<div class="col-sm-3 col-md-3 add-margin">
-							<form:input path="" type="text" name="propertyId" id="propertyId" autocomplete="on"
-								class="form-control" maxlength="13"
+							<form:input path="" type="text" name="propertyId" id="propertyId" autocomplete="off"
+								class="form-control typeahead" maxlength="13"
 								data-pattern="form-control is_valid_number"  />
 						</div>
 						<label class="col-sm-2 col-md-2 control-label"> <spring:message
@@ -103,8 +104,7 @@
 						</label>
 					    <div class="col-sm-3 col-md-3 add-margin">
 							<form:input path="" type="text" name="applicantName" id="applicantName"
-								class="form-control patternvalidationclass"
-								maxlength="100"  />
+								class="form-control typeahead" maxlength="100"  />
 					   </div> 
 					   <label for="field-1" class="col-md-2 col-sm-2 control-label"><spring:message
 								code="lbl.revenue.ward" /></label>
@@ -195,6 +195,10 @@
 		</table>
 	</div>
 </div>
+<link rel="stylesheet"
+      href="<cdn:url  value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+<script type="text/javascript"
+        src="<cdn:url  value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <link rel="stylesheet"
 	href="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
 <link rel="stylesheet"
