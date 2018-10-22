@@ -48,21 +48,23 @@
 
 package org.egov.stms.service.es;
 
+import static java.lang.Math.toIntExact;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityName;
 import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
 import static org.egov.infra.utils.DateUtils.endOfGivenDate;
 import static org.egov.infra.utils.DateUtils.startOfGivenDate;
 import static org.egov.infra.utils.DateUtils.toDateTimeUsingDefaultPattern;
 import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_DESC_CTZN_FEE_PENDING;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_FINAL_APPROVED;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_SANCTIONED;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_TYPE_NAME_CHANGEINCLOSETS;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_TYPE_NAME_CLOSECONNECTION;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_TYPE_NAME_NEWCONNECTION;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSESEWERAGECONNECTION;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_DONATIONCHARGE_CODE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_SEWERAGETAX_CODE;
@@ -75,8 +77,11 @@ import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_ESTIMATI
 import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_REJECTION;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_WORK_ORDER;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_ESTIMATIONNOTICE_GENERATED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_DESC_CTZN_FEE_PENDING;
-import static java.lang.Math.toIntExact;
+import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
+import static org.elasticsearch.search.aggregations.AggregationBuilders.sum;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -142,12 +147,6 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
-import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
-import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
-import static org.elasticsearch.search.aggregations.AggregationBuilders.sum;
 
 @Service
 @Transactional(readOnly = true)
@@ -606,7 +605,7 @@ public class SewerageIndexService {
     public Map<String, List<SewerageApplicationDetails>> wardWiseBoolQueryFilter(final List<String> wardList, final List<String> propertyTypeList) {
         final Map<String, List<SewerageApplicationDetails>> dcbMap = new HashMap<>();
 
-        BoolQueryBuilder boolQuery = boolQuery().must(matchQuery(ULB_NAME, ApplicationThreadLocals.getCityName()))
+        BoolQueryBuilder boolQuery = boolQuery().must(matchQuery(ULB_NAME, getCityName()))
                 .filter(termsQuery(PROPERTY_TYPE, propertyTypeList))
                 .filter(termsQuery(WARD, wardList))
                 .filter(matchQuery(ACTIVE, true))
@@ -653,7 +652,7 @@ public class SewerageIndexService {
         final Map<String, List<SewerageApplicationDetails>> resultMap = new HashMap<>();
         final List<SewerageApplicationDetails> resultList = new ArrayList<>();
         BoolQueryBuilder boolQuery = boolQuery()
-                .must(matchQuery(ULB_NAME, ApplicationThreadLocals.getCityName()));
+                .must(matchQuery(ULB_NAME, getCityName()));
         boolQuery = boolQuery.filter(termsQuery(PROPERTY_TYPE, propertyTypeList));
         if (isNotBlank(ward))
             boolQuery = boolQuery.filter(matchQuery(WARD, ward));
@@ -686,7 +685,7 @@ public class SewerageIndexService {
     public List<SewerageNoOfConnReportResult> searchNoOfApplnQuery(final String ward, final String block, final String locality) {
         final List<SewerageNoOfConnReportResult> resultList = new ArrayList<>();
         BoolQueryBuilder boolQuery = boolQuery()
-                .filter(matchQuery(ULB_NAME, ApplicationThreadLocals.getCityName()));
+                .filter(matchQuery(ULB_NAME, getCityName()));
         boolQuery = boolQuery.filter(matchQuery(ACTIVE, true));
         if (isNotBlank(ward))
             boolQuery = boolQuery.filter(matchQuery(WARD, ward));
@@ -735,14 +734,8 @@ public class SewerageIndexService {
         return aggregation;
     }
 
-    public Page<SewerageIndex> wardwiseBaseRegisterQueryFilter(final String ulbName,
-                                                               final List<String> wardList, final SewerageBaseRegisterResult sewerageBaseRegisterResult) {
-
-        BoolQueryBuilder boolQuery = boolQuery().filter(matchQuery(ULB_NAME, ulbName))
-                .filter(termsQuery(WARD, wardList))
-                .filter(matchQuery(ACTIVE, true))
-                .mustNot(matchQuery(APPLICATION_TYPE, "Close Sewerage Connection"));
-
+    public Page<SewerageIndex> wardwiseBaseRegisterQueryFilter(final List<String> wardList, final SewerageBaseRegisterResult sewerageBaseRegisterResult) {
+        BoolQueryBuilder boolQuery = prepareBoolQuery(wardList);
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(SEWERAGE).withQuery(boolQuery)
                 .withPageable(new PageRequest(sewerageBaseRegisterResult.pageNumber(), sewerageBaseRegisterResult.pageSize(),
                         sewerageBaseRegisterResult.orderDir(), sewerageBaseRegisterResult.orderBy()))
@@ -751,12 +744,8 @@ public class SewerageIndexService {
 
     }
 
-    public List<SewerageIndex> getAllwardwiseBaseRegisterOrderByShscNumberAsc(final String ulbName,
-                                                                              final List<String> wardList) {
-        BoolQueryBuilder boolQuery = boolQuery().filter(matchQuery(ULB_NAME, ulbName))
-                .filter(termsQuery(WARD, wardList))
-                .filter(matchQuery(ACTIVE, true))
-                .mustNot(matchQuery(APPLICATION_TYPE, "Close Sewerage Connection"));
+    public List<SewerageIndex> getAllwardwiseBaseRegisterOrderByShscNumberAsc(final List<String> wardList) {
+        BoolQueryBuilder boolQuery = prepareBoolQuery(wardList);
         final FieldSortBuilder sort = new FieldSortBuilder(SHSC_NUMBER).order(SortOrder.ASC);
 
         final SearchQuery countQuery = new NativeSearchQueryBuilder().withIndices(SEWERAGE).withQuery(boolQuery).build();
@@ -767,10 +756,20 @@ public class SewerageIndexService {
 
     }
 
-    public List<BigDecimal> getGrandTotal(final String ulbName,
-                                          final List<String> wardList) {
-        BoolQueryBuilder boolQuery = boolQuery().filter(matchQuery(ULB_NAME, ulbName));
-        boolQuery = boolQuery.filter(termsQuery(WARD, wardList));
+    private BoolQueryBuilder prepareBoolQuery(final List<String> wardList) {
+        BoolQueryBuilder boolQuery = boolQuery()
+                .filter(matchQuery(ULB_NAME, getCityName()))
+                .filter(matchQuery(ACTIVE, true))
+                .mustNot(matchQuery(APPLICATION_TYPE, "Close Sewerage Connection"));
+        if (wardList.size() > 0)
+            boolQuery = boolQuery.filter(termsQuery(WARD, wardList));
+
+        return boolQuery;
+    }
+
+    
+    public List<BigDecimal> getGrandTotal(final List<String> wardList) {
+        BoolQueryBuilder boolQuery = prepareBoolQuery(wardList);
         final List<BigDecimal> totalValues = new ArrayList<>();
 
         final SearchRequestBuilder searchRequestBuilder = elasticsearchTemplate.getClient()
@@ -820,7 +819,7 @@ public class SewerageIndexService {
 
     public List<SewerageExecutionResult> getConnectionExecutionList(SewerageExecutionResult sewerageExecutionResult) {
 
-        sewerageExecutionResult.setUlbName(cityService.getCityByURL(ApplicationThreadLocals.getDomainName()).getName());
+        sewerageExecutionResult.setUlbName(getCityName());
         final BoolQueryBuilder boolQuery = getSearchQueryForExecuteConnection(sewerageExecutionResult);
         final FieldSortBuilder sort = new FieldSortBuilder(SHSC_NUMBER).order(SortOrder.DESC);
         List<SewerageIndex> searchResultList = getSearchResultForExecuteConnection(boolQuery, sort);

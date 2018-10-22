@@ -54,10 +54,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.stms.entity.es.SewerageIndex;
 import org.egov.stms.reports.entity.SewerageBaseRegisterResult;
@@ -71,9 +68,6 @@ import org.springframework.ui.Model;
 public class SewerageBaseRegisterReportService {
 
     @Autowired
-    private CityService cityService;
-
-    @Autowired
     private SewerageIndexService sewerageIndexService;
 
     @Autowired
@@ -83,10 +77,8 @@ public class SewerageBaseRegisterReportService {
     public Page<SewerageIndex> getBaseRegisterDetails(
             final SewerageBaseRegisterResult sewerageBaseRegisterResult, final Model model) {
         Page<SewerageIndex> searchResult = null;
-        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
-        if (cityWebsite != null)
-            searchResult = sewerageIndexService.wardwiseBaseRegisterQueryFilter(cityWebsite.getName(),
-                    getWardNames(sewerageBaseRegisterResult, model), sewerageBaseRegisterResult);
+        searchResult = sewerageIndexService.wardwiseBaseRegisterQueryFilter(getWardNames(sewerageBaseRegisterResult, model),
+                sewerageBaseRegisterResult);
         return searchResult;
 
     }
@@ -96,11 +88,8 @@ public class SewerageBaseRegisterReportService {
 
         List<SewerageIndex> resultList = null;
         final List<SewerageBaseRegisterResult> baseRegisterResultList = new ArrayList<>();
-
-        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
-        if (cityWebsite != null)
-            resultList = sewerageIndexService.getAllwardwiseBaseRegisterOrderByShscNumberAsc(cityWebsite.getName(),
-                    getWardNames(sewerageBaseRegisterResult, model));
+        resultList = sewerageIndexService
+                .getAllwardwiseBaseRegisterOrderByShscNumberAsc(getWardNames(sewerageBaseRegisterResult, model));
         for (final SewerageIndex sewerageIndex : resultList) {
             final SewerageBaseRegisterResult searchResult = new SewerageBaseRegisterResult();
             searchResult.setShscNumber(sewerageIndex.getShscNumber());
@@ -171,8 +160,7 @@ public class SewerageBaseRegisterReportService {
 
     public List<BigDecimal> baseRegisterGrandTotal(final SewerageBaseRegisterResult sewerageBaseRegisterResult,
             final Model model) {
-        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
-        return sewerageIndexService.getGrandTotal(cityWebsite.getName(), getWardNames(sewerageBaseRegisterResult, model));
+        return sewerageIndexService.getGrandTotal(getWardNames(sewerageBaseRegisterResult, model));
     }
 
 }
