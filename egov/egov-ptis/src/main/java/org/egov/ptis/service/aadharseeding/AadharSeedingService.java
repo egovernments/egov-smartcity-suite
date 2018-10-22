@@ -175,7 +175,7 @@ public class AadharSeedingService extends GenericWorkFlowController {
         baseQry = baseQry.append("select mv.propertyId, mv.ownerName, mv.houseNo, mv.propertyAddress from PropertyMaterlizeView mv ")
                 .append("where mv.basicPropertyID in(select p.basicProperty from PropertyImpl p where ")
                 .append("p.propertyDetail.structure=false and p.status in('A','I') and p.id not in(select m.property from PropertyMutation m ")
-                .append("where m.state.status <> 2) and p.basicProperty not in(select referenceBasicProperty from PropertyStatusValues psv ")
+                .append("where m.state.status <> 2) and p.basicProperty not in(select psv.referenceBasicProperty from PropertyStatusValues psv ")
                 .append("where psv.referenceBasicProperty is not null and psv.referenceBasicProperty.underWorkflow = true)) and ")
                 .append("mv.basicPropertyID not in(select basicProperty from AadharSeeding)");
         final StringBuilder wherClause = new StringBuilder();
@@ -325,18 +325,17 @@ public class AadharSeedingService extends GenericWorkFlowController {
         if (mutation != null) {
             if (mutation.getMutationReason().getCode().equals(CIVILCOURTDECREE)) {
                 formData.setDocNo(StringUtils.isBlank(mutation.getDecreeNumber()) ? "N/A" : mutation.getDecreeNumber());
-                formData.setDocDate(mutation.getDecreeDate() == null ? null : mutation.getDecreeDate());
+                formData.setDocDate(mutation.getDecreeDate());
                 formData.setDocumentType(DOCTYPEBYMUTATIONREASON.get(mutation.getMutationReason().getCode()));
             } else if (mutation.getType().equals(ADDTIONAL_RULE_FULL_TRANSFER)) {
                 formData.setDocNo(mutation.getMutationRegistrationDetails().getDocumentNo());
-                formData.setDocDate(mutation.getMutationRegistrationDetails().getDocumentDate() == null ? null
-                        : mutation.getMutationRegistrationDetails().getDocumentDate());
+                formData.setDocDate(mutation.getMutationRegistrationDetails().getDocumentDate());
                 formData.setDocumentType(DOCTYPEBYMUTATIONREASON.get(mutation.getMutationReason().getCode()));
             } else if (Arrays.asList(MUTATION_REASON_CODE_PARTISION, MUTATION_REASON_CODE_SALE, MUTATION_REASON_CODE_TITLEDEED,
                     MUTATION_REASON_CODE_REGISTERED, MUTATIONRS_SUCCESSION, MUTATION_REASON_CODE_RENT,
                     MUTATION_REASON_CODE_UNREGISTEREDWILL).contains(mutation.getMutationReason().getCode())) {
                 formData.setDocNo(mutation.getDeedNo());
-                formData.setDocDate(mutation.getDeedDate() == null ? null : mutation.getDeedDate());
+                formData.setDocDate(mutation.getDeedDate());
                 formData.setDocumentType(DOCTYPEBYMUTATIONREASON.get(mutation.getMutationReason().getCode()));
             }
         } else if (!documentTypeDetails.isEmpty()) {
@@ -350,7 +349,7 @@ public class AadharSeedingService extends GenericWorkFlowController {
             formData.setDocNo(StringUtils.isBlank(basicProperty.getRegdDocNo()) ? "N/A"
                     : basicProperty.getRegdDocNo());
             formData.setDocDate(
-                    basicProperty.getRegdDocDate() == null ? null : basicProperty.getRegdDocDate());
+                    basicProperty.getRegdDocDate());
             formData.setDocumentType("N/A");
         }
     }
