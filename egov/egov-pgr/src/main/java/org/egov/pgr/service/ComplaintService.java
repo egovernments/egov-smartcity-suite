@@ -182,18 +182,18 @@ public class ComplaintService {
 
     @Transactional
     public Complaint updateComplaint(Complaint complaint) {
-        if (complaint.inprogress() || complaint.reopened()) {
+        if (complaint.inprogress() || complaint.reopened())
             complaintProcessFlowService.onUpdation(complaint);
-            if (complaint.getComplaintType().getDepartment() != null)
-                complaint.setDepartment(complaint.getComplaintType().getDepartment());
-            else
-                complaint.setDepartment(complaint.getAssignee().getDeptDesig().getDepartment());
-            complaintRepository.saveAndFlush(complaint);
-            applicationEventPublisher.publishEvent(new ComplaintUpdateEvent(complaint));
-            citizenComplaintDataPublisher.onUpdation(complaint);
-            complaintNotificationService.sendUpdateMessage(complaint);
-            complaintIndexService.updateComplaintIndex(complaint);
-        }
+        if (complaint.getComplaintType().getDepartment() == null)
+            complaint.setDepartment(complaint.getAssignee().getDeptDesig().getDepartment());
+        else
+            complaint.setDepartment(complaint.getComplaintType().getDepartment());
+
+        complaintRepository.saveAndFlush(complaint);
+        applicationEventPublisher.publishEvent(new ComplaintUpdateEvent(complaint));
+        citizenComplaintDataPublisher.onUpdation(complaint);
+        complaintNotificationService.sendUpdateMessage(complaint);
+        complaintIndexService.updateComplaintIndex(complaint);
         return complaint;
     }
 
