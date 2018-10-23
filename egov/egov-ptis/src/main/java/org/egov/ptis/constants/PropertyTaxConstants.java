@@ -62,6 +62,22 @@ import static java.util.Calendar.SEPTEMBER;
 import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_COUNTER;
 import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_FIELDCOLLECTION;
 import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.AMALGAMATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_ALTERATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_BIFURCATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_NEW_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TAX_EXEMPTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NEW_ASSESSMENT;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -1775,4 +1791,27 @@ public interface PropertyTaxConstants {
             put(MUTATION_REASON_CODE_UNREGISTEREDWILL, MUTATIONRS_UNREG_WILL);
         }
     };
+    
+    public static final HashMap<String, String> APPLICATIONTYPEBYNATUREOFTASK = new HashMap<String, String>(){
+        {
+            put(NATURE_NEW_ASSESSMENT, APPLICATION_TYPE_NEW_ASSESSENT);
+            put(NATURE_ALTERATION, APPLICATION_TYPE_ALTER_ASSESSENT);
+            put(NATURE_BIFURCATION, APPLICATION_TYPE_BIFURCATE_ASSESSENT);
+            put(APPLICATION_TYPE_DEMOLITION, APPLICATION_TYPE_DEMOLITION);
+            put(NATURE_TAX_EXEMPTION, APPLICATION_TYPE_TAX_EXEMTION);
+            put(APPLICATION_TYPE_AMALGAMATION, APPLICATION_TYPE_AMALGAMATION);
+        }
+    };
+    
+    public static final HashMap<String, String> NATUREOFTASKBYADDITIONALRULE = new HashMap<String, String>(){
+        {
+            put(NEW_ASSESSMENT, NATURE_NEW_ASSESSMENT);
+            put(ADDTIONAL_RULE_ALTER_ASSESSMENT, NATURE_ALTERATION);
+            put(ADDTIONAL_RULE_BIFURCATE_ASSESSMENT, NATURE_BIFURCATION);
+            put(DEMOLITION, APPLICATION_TYPE_DEMOLITION);
+            put(EXEMPTION, NATURE_TAX_EXEMPTION);
+            put(AMALGAMATION, APPLICATION_TYPE_AMALGAMATION);
+        }
+    };
+    
 }

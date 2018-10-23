@@ -117,6 +117,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
 @RequestMapping(value = { "/vacancyremission" })
 public class VacanyRemissionController extends GenericWorkFlowController {
 
+    private static final String APPROVAL_POSITION = "approvalPosition";
     private static final String STATE_TYPE = "stateType";
     private static final String VACANCY_REMISSION = "VACANCY_REMISSION";
     private static final String VACANCYREMISSION_FORM = "vacancyRemission-form";
@@ -357,8 +358,8 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                 approvalComent = request.getParameter("approvalComent");
             if (request.getParameter("workFlowAction") != null)
                 workFlowAction = request.getParameter("workFlowAction");
-            if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
-                approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+            if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
+                approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
             
             if(!vacancyRemission.getDocuments().isEmpty()){
                 documents.addAll(vacancyRemission.getDocuments());

@@ -914,7 +914,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                         .withComments(approverComments).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(getNatureOfTask())
-                        .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
+                        .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
+                        .withSLA(propertyService.getSlaValue(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP));
             } else if (propertyMutation.getCurrentState().getNextAction().equalsIgnoreCase("END"))
                 propertyMutation.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withDateInfo(currentDate.toDate()).withNextAction(null)

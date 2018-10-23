@@ -827,7 +827,9 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                     .withComments(approverComments).withNextAction(wfmatrix.getNextAction())
                     .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
                     .withNatureOfTask(NATURE_OF_WORK_RP.equalsIgnoreCase(objection.getType()) ? NATURE_REVISION_PETITION
-                            : NATURE_GENERAL_REVISION_PETITION);
+                            : NATURE_GENERAL_REVISION_PETITION)
+                    .withSLA(propertyService.getSlaValue(NATURE_OF_WORK_RP.equalsIgnoreCase(objection.getType())
+                            ? APPLICATION_TYPE_REVISION_PETITION : APPLICATION_TYPE_GRP));
 
             if (loggedUserIsEmployee && user != null)
                 actionMessages.put(OBJECTION_FORWARD,

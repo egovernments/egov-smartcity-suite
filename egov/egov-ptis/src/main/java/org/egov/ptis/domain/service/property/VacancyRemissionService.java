@@ -315,7 +315,8 @@ public class VacancyRemissionService {
                 vacancyRemission.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
                         .withOwner(pos).withNextAction(nextAction).withNatureOfTask(NATURE_VACANCY_REMISSION)
-                        .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
+                        .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
+                        .withSLA(propertyService.getSlaValue(APPLICATION_TYPE_VACANCY_REMISSION));
                 vacancyRemission.getBasicProperty().setUnderWorkflow(true);
             } else {
                 wfmatrix = vacancyRemissionWorkflowService.getWfMatrix(vacancyRemission.getStateType(), null, null,

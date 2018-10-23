@@ -57,7 +57,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_REASON_CODE_
 import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_REASON_CODE_SALE;
 import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_REASON_CODE_TITLEDEED;
 import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_REASON_CODE_REGISTERED;
-import static org.egov.ptis.constants.PropertyTaxConstants.MUTATIONRS_SUCCESSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_REASON_CODE_SUCCESSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_REASON_CODE_RENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_REASON_CODE_UNREGISTEREDWILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCTYPEBYMUTATIONREASON;
@@ -332,7 +332,7 @@ public class AadharSeedingService extends GenericWorkFlowController {
                 formData.setDocDate(mutation.getMutationRegistrationDetails().getDocumentDate());
                 formData.setDocumentType(DOCTYPEBYMUTATIONREASON.get(mutation.getMutationReason().getCode()));
             } else if (Arrays.asList(MUTATION_REASON_CODE_PARTISION, MUTATION_REASON_CODE_SALE, MUTATION_REASON_CODE_TITLEDEED,
-                    MUTATION_REASON_CODE_REGISTERED, MUTATIONRS_SUCCESSION, MUTATION_REASON_CODE_RENT,
+                    MUTATION_REASON_CODE_REGISTERED, MUTATION_REASON_CODE_SUCCESSION, MUTATION_REASON_CODE_RENT,
                     MUTATION_REASON_CODE_UNREGISTEREDWILL).contains(mutation.getMutationReason().getCode())) {
                 formData.setDocNo(mutation.getDeedNo());
                 formData.setDocDate(mutation.getDeedDate());
