@@ -46,25 +46,24 @@
  *
  */
 $(document).ready(function(){
-	//sewerage validation 
-	$('.sewerageDetails').hide();
-		$('#propertyIdentifier').val($('#ptAssessmentNo').val());
-
-		$('#addSewerageAppln').change(function(){
-				if ($('#addSewerageAppln').is(":checked")) {
-			$('.sewerageDetails').show();
-				}
-				else
-					$('.sewerageDetails').hide();
-
-			
-	$('#propertyIdentifier').blur(function(){
-		validateSewerageConnection();
-	});
-				
-		});
 	loadPropertyDetails();
-	
+
+	//sewerage validation
+	$('.sewerageDetails').hide();
+	$('#propertyIdentifier').val($('#ptAssessmentNo').val());
+
+	$('#addSewerageAppln').change(function(){
+			if ($('#addSewerageAppln').is(":checked")) {
+				$('.sewerageDetails').show();
+			}
+			else {
+				$('.sewerageDetails').hide();
+			}
+			$('#propertyIdentifier').blur(function(){
+				validateSewerageConnection();
+			});
+	});
+
 	if($("#connectionType").val()=="METERED"){
 		$(".showfields").show();
 	}
