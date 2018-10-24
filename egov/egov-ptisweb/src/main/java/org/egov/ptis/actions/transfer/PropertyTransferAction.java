@@ -75,6 +75,7 @@ import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
@@ -915,7 +916,9 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(getNatureOfTask())
                         .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
-                        .withSLA(propertyService.getSlaValue(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP));
+                        .withSLA(propertyService.getSlaValue(propertyMutation.getType()
+                                .equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_REGISTERED_TRANSFER)
+                                        ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER));
             } else if (propertyMutation.getCurrentState().getNextAction().equalsIgnoreCase("END"))
                 propertyMutation.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withDateInfo(currentDate.toDate()).withNextAction(null)
