@@ -601,6 +601,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
     public String getTaxDues(final HttpServletRequest request, final Model model,
             BasicProperty basicProperty, Date effectiveDate) {
         BigDecimal currentPropertyTax = BigDecimal.ZERO;
+        BigDecimal currentCollection = BigDecimal.ZERO;
         BigDecimal currentPropertyTaxDue = BigDecimal.ZERO;
         BigDecimal arrearPropertyTaxDue = BigDecimal.ZERO;
         boolean isDemandExist = false;
@@ -626,7 +627,8 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
                 if (installmentMap.get(CURRENTYEAR_FIRST_HALF).equals(installment)
                         || installmentMap.get(CURRENTYEAR_SECOND_HALF).equals(installment)) {
                     currentPropertyTax = currentPropertyTax.add(demand);
-                    currentPropertyTaxDue = currentPropertyTax.subtract(collection);
+                    currentCollection = currentCollection.add(collection);
+                    currentPropertyTaxDue = currentPropertyTax.subtract(currentCollection);
                 } else {
                     arrearPropertyTaxDue = arrearPropertyTaxDue.add(demand).subtract(collection);
                 }
