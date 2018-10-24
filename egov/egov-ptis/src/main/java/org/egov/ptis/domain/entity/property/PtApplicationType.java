@@ -73,7 +73,7 @@ import java.util.Set;
 @Entity
 @Table(name = "EGPT_APPLICATION_TYPE")
 @SequenceGenerator(name = PtApplicationType.SEQ_APPLICATION_TYPE, sequenceName = PtApplicationType.SEQ_APPLICATION_TYPE, allocationSize = 1)
-@NamedQuery(name=PtApplicationType.BY_CODE, query="Select apt from PtApplicationType apt where apt.code=?")
+@NamedQuery(name=PtApplicationType.BY_CODE, query="Select apt from PtApplicationType apt where apt.code=?1")
 public class PtApplicationType extends AbstractAuditable {
 
 	protected static final String SEQ_APPLICATION_TYPE = "SEQ_EGPT_APPLICATION_TYPE";

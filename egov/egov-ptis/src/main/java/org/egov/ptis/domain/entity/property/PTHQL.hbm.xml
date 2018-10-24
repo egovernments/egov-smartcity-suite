@@ -51,38 +51,38 @@
 	
 <hibernate-mapping>
 	<query name="getPropertyByUpicNo">
-    <![CDATA[from PropertyImpl p where p.basicProperty.upicNo=? and p.basicProperty.active='Y' and p.state.value!='END' and p.isDefaultProperty='Y']]></query>
+    <![CDATA[from PropertyImpl p where p.basicProperty.upicNo=?1 and p.basicProperty.active='Y' and p.state.value!='END' and p.isDefaultProperty='Y']]></query>
     <query name="getBasicPropertyByUpicNo">
-    <![CDATA[from BasicPropertyImpl bp where bp.upicNo=? and bp.active='Y']]></query>
+    <![CDATA[from BasicPropertyImpl bp where bp.upicNo=?1 and bp.active='Y']]></query>
     <query name="getPropertyTypes" >
     <![CDATA[from PropertyTypeMaster]]></query>
     <query name="getPropertyByUpicNoAndStatus">
-    <![CDATA[from PropertyImpl p where p.basicProperty.upicNo=? and p.basicProperty.active='Y' and p.status=? and p.isDefaultProperty='Y']]></query>
+    <![CDATA[from PropertyImpl p where p.basicProperty.upicNo=?1 and p.basicProperty.active='Y' and p.status=?2 and p.isDefaultProperty='Y']]></query>
     <query name="getAllBasicPropertyByPropertyID">
-    <![CDATA[from BasicPropertyImpl BP where BP.upicNo =?]]></query>
+    <![CDATA[from BasicPropertyImpl BP where BP.upicNo =?1]]></query>
     <query name="getPropertyInWorkflowByPropertyId">
-    <![CDATA[from PropertyImpl p where p.basicProperty.upicNo =? and p.status = 'W']]></query>
+    <![CDATA[from PropertyImpl p where p.basicProperty.upicNo =?1 and p.status = 'W']]></query>
      <query name="getLatestBillsForProperty">
-    <![CDATA[from EgBill bill where bill.consumerId =? and bill.egBillType.code=? and bill.is_Cancelled='N' order by createTimeStamp desc]]></query>
+    <![CDATA[from EgBill bill where bill.consumerId =?1 and bill.egBillType.code=?2 and bill.is_Cancelled='N' order by createTimeStamp desc]]></query>
     <query name="getPropertySatusForMemo"><!-- tatus code is PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER -->
-    <![CDATA[from PropertyStatusValues PSV where PSV.basicProperty.upicNo = ? and PSV.isActive = 'Y' and PSV.propertyStatus.statusCode=? and PSV.createdDate >= ?]]></query>
+    <![CDATA[from PropertyStatusValues PSV where PSV.basicProperty.upicNo = ?1 and PSV.isActive = 'Y' and PSV.propertyStatus.statusCode=?2 and PSV.createdDate >= ?3]]></query>
     <query name="getPropStatValByUpicNoAndStatCodeAndISActive">
-    <![CDATA[from PropertyStatusValues PSV where PSV.basicProperty.upicNo = ? and PSV.isActive = ? and PSV.propertyStatus.statusCode=?]]></query>
+    <![CDATA[from PropertyStatusValues PSV where PSV.basicProperty.upicNo = ?1 and PSV.isActive = ?2 and PSV.propertyStatus.statusCode=?3]]></query>
     <query name="getBillRcptGForBill">
-    <![CDATA[from BillReceipt brcpt where brcpt.billId =?]]></query>
+    <![CDATA[from BillReceipt brcpt where brcpt.billId =?1]]></query>
     
     <query name="getStatusByModuleAndCode">
-	<![CDATA[select status from EgwStatus status where status.moduletype=? and status.code=?]]></query>
+	<![CDATA[select status from EgwStatus status where status.moduletype=?1 and status.code=?2]]></query>
     
     <query name="getPropStatusByStatusCode">
-	<![CDATA[select status from PropertyStatus status where status.statusCode=?]]></query>
+	<![CDATA[select status from PropertyStatus status where status.statusCode=?1]]></query>
 	
 	<query name="getBillDetailsforBillANDInstAndRsn">
-	<![CDATA[from EgBillDetails billDtl where billDtl.egBill=? and billDtl.egInstallmentMaster=? and billDtl.glcode=?]]></query>
+	<![CDATA[from EgBillDetails billDtl where billDtl.egBill=?1 and billDtl.egInstallmentMaster=?2 and billDtl.glcode=?3]]></query>
 	
 	<query name="getBasicPropertyByBasicPropId">
-    <![CDATA[from BasicPropertyImpl bp where bp.id=? and bp.active='Y']]></query>
+    <![CDATA[from BasicPropertyImpl bp where bp.id=?1 and bp.active='Y']]></query>
     
      <query name="getPropStatValByBasicPropIdAndStatCodeAndISActive">
-    <![CDATA[from PropertyStatusValues PSV where PSV.basicProperty.id = ? and PSV.isActive = ? and PSV.propertyStatus.statusCode=?]]></query>
+    <![CDATA[from PropertyStatusValues PSV where PSV.basicProperty.id = ?1 and PSV.isActive = ?2 and PSV.propertyStatus.statusCode=?3]]></query>
 </hibernate-mapping>

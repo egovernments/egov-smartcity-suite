@@ -97,6 +97,6 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 	</class>
 	
 	<query name="DEPRECIATION_BY_YEAR">
-        <![CDATA[select dp from org.egov.demand.model.DepreciationMaster dp where dp.year=?]]></query>
+        <![CDATA[select dp from org.egov.demand.model.DepreciationMaster dp where dp.year=?1]]></query>
 	
 </hibernate-mapping>

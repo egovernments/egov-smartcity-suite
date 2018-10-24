@@ -111,6 +111,6 @@
 	</class>
 	
 	<query name="TOBEEXPIREDCHALLANLIST">
-    <![CDATA[select challan from org.egov.collection.entity.Challan as challan where challan.status.code not in('CANCELLED','EXPIRED') and challan.validUpto = trunc(?) and challan.receiptHeader.status.code in('CANCELLED','PENDING')]]></query>
+    <![CDATA[select challan from org.egov.collection.entity.Challan as challan where challan.status.code not in('CANCELLED','EXPIRED') and challan.validUpto = trunc(?1) and challan.receiptHeader.status.code in('CANCELLED','PENDING')]]></query>
 	    
 </hibernate-mapping>

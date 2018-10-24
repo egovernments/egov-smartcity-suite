@@ -81,23 +81,23 @@
 	<query name="getallWorkOrderActivityWithMB">
 		<![CDATA[
      	Select mbDetails.workOrderActivity.id,sum(mbDetails.quantity) from MBDetails mbDetails 
-     	 where mbDetails.mbHeader.workOrderEstimate.id=?
-     	  and mbDetails.mbHeader.egwStatus.code = ? group by mbDetails.workOrderActivity
+     	 where mbDetails.mbHeader.workOrderEstimate.id=?1
+     	  and mbDetails.mbHeader.egwStatus.code = ?2 group by mbDetails.workOrderActivity
     	]]>
 	</query>
 	<query name="getallWorkOrderActivityWithoutMB">
 		<![CDATA[
-     from WorkOrderActivity woe where woe.workOrderEstimate.id=? and woe.workOrderEstimate.workOrder.egwStatus.code!=? 
+     from WorkOrderActivity woe where woe.workOrderEstimate.id=?1 and woe.workOrderEstimate.workOrder.egwStatus.code!=?2
 	and woe.id not in  (Select distinct(mbDetails.workOrderActivity.id) from MBDetails mbDetails 
-	 where mbDetails.mbHeader.workOrderEstimate.id=?  and mbDetails.mbHeader.egwStatus.code = ?) ]]>
+	 where mbDetails.mbHeader.workOrderEstimate.id=?3  and mbDetails.mbHeader.egwStatus.code = ?4) ]]>
 	</query>
 	
 	<query name="getAssignedQuantityForActivity">
 		<![CDATA[
      	Select sum(woa.approvedQuantity) from WorkOrderActivity woa where
-     	 woa.workOrderEstimate.workOrder.negotiationNumber=? AND 
-     	 woa.workOrderEstimate.workOrder.egwStatus.code !=?
-     	  group by woa.activity having woa.activity.id = ?  
+     	 woa.workOrderEstimate.workOrder.negotiationNumber=?1 AND
+     	 woa.workOrderEstimate.workOrder.egwStatus.code !=?2
+     	  group by woa.activity having woa.activity.id = ?3
      	  
     	]]>
 	</query>
@@ -114,8 +114,8 @@
 	<query name="getTotalQuantityForWO">
 		<![CDATA[
      	Select sum(woa.approvedQuantity) from WorkOrderActivity woa where
-     	 woa.workOrderEstimate.workOrder.negotiationNumber=? AND 
-     	 woa.workOrderEstimate.workOrder.egwStatus.code !=?
+     	 woa.workOrderEstimate.workOrder.negotiationNumber=?1 AND
+     	 woa.workOrderEstimate.workOrder.egwStatus.code !=?2
      	  
     	]]>
 	</query>
@@ -123,7 +123,7 @@
 	<query name="getTotalQuantityForNewWO">
 		<![CDATA[
      	Select sum(woa.approvedQuantity) from WorkOrderActivity woa where
-     	 woa.workOrderEstimate.workOrder.negotiationNumber=? AND woa.workOrderEstimate.workOrder.egwStatus.code =? 
+     	 woa.workOrderEstimate.workOrder.negotiationNumber=?1 AND woa.workOrderEstimate.workOrder.egwStatus.code =?2
      	  
     	]]>
 	</query>

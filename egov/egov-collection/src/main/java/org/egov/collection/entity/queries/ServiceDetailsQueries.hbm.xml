@@ -55,22 +55,22 @@
 <hibernate-mapping>
 
 	<query name="getInstrumentTypeByType">
-    <![CDATA[select i from InstrumentType  i where i.type=?]]></query>
+    <![CDATA[select i from InstrumentType  i where i.type=?1]]></query>
 
 	<query name="getChartofAccountByInstrumentType">
-    <![CDATA[select c from CChartOfAccounts c,InstrumentAccountCodes iac,InstrumentType it where iac.accountCode.id=c.id and iac.instrumentType.id=it.id and it.type=?]]></query>
+    <![CDATA[select c from CChartOfAccounts c,InstrumentAccountCodes iac,InstrumentType it where iac.accountCode.id=c.id and iac.instrumentType.id=it.id and it.type=?1]]></query>
 
 	<!-- query name="getLocationByUser"-->
     <!-- [CDATA[select l from Location l,UserCounterMap ucm,User uim where uim.id=ucm.userId.id and ucm.counterId.id=l.id and uim.username=?]]></query-->
 
 	<query name="getReceiptHeaderById">
-	<![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh where rh.id=?]]></query>
+	<![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh where rh.id=?1]]></query>
 
 	<query name="getDepartmentByCode">
-	<![CDATA[select d from Department d where d.code=?]]></query>
+	<![CDATA[select d from Department d where d.code=?1]]></query>
 
 	<query name="getFunctionaryByCode">
-	<![CDATA[select f from Functionary f where f.code=?]]></query>
+	<![CDATA[select f from Functionary f where f.code=?1]]></query>
 
 	<query name="getAllActiveCounters">
 	<![CDATA[from org.egov.infra.admin.master.entity.Location loc where loc.active = true order by loc.name]]></query>
@@ -79,19 +79,19 @@
 	<![CDATA[from org.egov.infra.admin.master.entity.Location loc order by loc.name]]></query>
 
 	<query name="getSchemeByCode">
-	<![CDATA[select s from Scheme s where s.code=?]]></query>
+	<![CDATA[select s from Scheme s where s.code=?1]]></query>
 	
 	<query name="getSubSchemeByCode">
-	<![CDATA[select ss from SubScheme ss where ss.code=?]]></query>
+	<![CDATA[select ss from SubScheme ss where ss.code=?1]]></query>
 	
 	<query name="getDepartmentById">
-	<![CDATA[select d from Department d where d.id=?]]></query>
+	<![CDATA[select d from Department d where d.id=?1]]></query>
 	
 	<query name="getAccountDetailtypeById">
-	<![CDATA[select a from Accountdetailtype a where a.id=?]]></query>
+	<![CDATA[select a from Accountdetailtype a where a.id=?1]]></query>
 	
 	<query name="getAccountDetailkeyByDetailKey">
-	<![CDATA[select a from Accountdetailkey a where a.detailkey=? and a.accountdetailtype.id=?]]></query>
+	<![CDATA[select a from Accountdetailkey a where a.detailkey=?1 and a.accountdetailtype.id=?2]]></query>
 	
 	<query name="getAllDepartment">
 	<![CDATA[select d from  Department d order by name]]></query>
@@ -112,16 +112,16 @@
 	<![CDATA[select b  from Boundary b where lower(b.boundaryType.name)='zone']]></query>
 	
 	<query name="SERVICE_BY_ID">
-    <![CDATA[select s from ServiceDetails s where s.id = ?]]></query>
+    <![CDATA[select s from ServiceDetails s where s.id = ?1]]></query>
 
 	<query name="getAllSchemeByFundId">
-    <![CDATA[from Scheme where fund.id=? and isActive=true order by name]]></query>
+    <![CDATA[from Scheme where fund.id=?1 and isActive=true order by name]]></query>
     
     <query name="getAllSubSchemeBySchemeId">
-    <![CDATA[from SubScheme where scheme.id=? and isActive=true order by name]]></query>
+    <![CDATA[from SubScheme where scheme.id=?1 and isActive=true order by name]]></query>
     
     <query name="getServicesforChallan">
-    <![CDATA[from ServiceDetails s where s.serviceType=? order by name]]></query>
+    <![CDATA[from ServiceDetails s where s.serviceType=?1 order by name]]></query>
     
     <query name="getActiveFinancialYear">
     <![CDATA[from CFinancialYear f where f.isActive=true order by finYearRange]]></query>
@@ -132,34 +132,34 @@
     (to_date(ap.toDate,'dd-MM-YY') >= trunc(current_date) or ap.toDate is null) and a.deptId.id=?]]--><!-- /query-->
         
     <query name="getVoucherHeaderByVoucherNumber">
-    <![CDATA[from CVoucherHeader cv where cv.voucherNumber=?]]></query>
+    <![CDATA[from CVoucherHeader cv where cv.voucherNumber=?1]]></query>
     
      <query name="getFinancialYearByDate">
-    <![CDATA[from CFinancialYear cfinancialyear where ? between date(cfinancialyear.startingDate) and date(cfinancialyear.endingDate)]]></query>
+    <![CDATA[from CFinancialYear cfinancialyear where ?1 between date(cfinancialyear.startingDate) and date(cfinancialyear.endingDate)]]></query>
     
     <query name="getAllStatusesForModule">
-	<![CDATA[from EgwStatus s where moduletype=? order by orderId]]></query>
+	<![CDATA[from EgwStatus s where moduletype=?1 order by orderId]]></query>
 	
 	<query name="getStatusesForModuleAndCodes">
-		<![CDATA[from EgwStatus s where s.moduletype= ? and s.code in (:param_1)]]>
+		<![CDATA[from EgwStatus s where s.moduletype= ?1 and s.code in (:param_1)]]>
 	</query>
     
     <query name="getLocationById">
-    <![CDATA[select l from Location l where l.id=?]]></query>
+    <![CDATA[select l from Location l where l.id=?1]]></query>
     
     <query name="getRecoveryByGlCode">
-    	<![CDATA[select t from Recovery t where t.chartofaccounts.glcode=?]]>
+    	<![CDATA[select t from Recovery t where t.chartofaccounts.glcode=?1]]>
     </query>
 
     <query name="getContraVoucherbyVoucherHeaderId">
-    <![CDATA[from ContraJournalVoucher cjv where cjv.voucherHeaderId.id=? and cjv.instrumentHeaderId.id=?]]></query>
+    <![CDATA[from ContraJournalVoucher cjv where cjv.voucherHeaderId.id=?1 and cjv.instrumentHeaderId.id=?2]]></query>
     
     <query name="getActiveServiceByType">
-	<![CDATA[select s from ServiceDetails s where s.isEnabled = true and s.serviceType = ? order by s.orderNumber]]>
+	<![CDATA[select s from ServiceDetails s where s.isEnabled = true and s.serviceType = ?1 order by s.orderNumber]]>
 	</query>
 	
     <query name="getActiveServiceByCodes">
-	<![CDATA[select s from ServiceDetails s where s.isEnabled = true and s.serviceType = ? and s.code in(:param_1) order by s.orderNumber]]>
+	<![CDATA[select s from ServiceDetails s where s.isEnabled = true and s.serviceType = ?1 and s.code in(:param_1) order by s.orderNumber]]>
 	</query>
 
 	<query name="getAllLocations">
@@ -167,13 +167,13 @@
 
     <query name="getServiceCategoryForType">
 	<![CDATA[
-	select distinct c from org.egov.infstr.models.ServiceDetails s join s.serviceCategory c where s.serviceType=? and s.isEnabled=?
+	select distinct c from org.egov.infstr.models.ServiceDetails s join s.serviceCategory c where s.serviceType=?1 and s.isEnabled=?2
 	]]>
 	</query>
 	
     <query name="getServiceDetailsByCategory">
 	<![CDATA[
-	select s from org.egov.infstr.models.ServiceDetails s where s.serviceCategory.id=? and s.isEnabled=?
+	select s from org.egov.infstr.models.ServiceDetails s where s.serviceCategory.id=?1 and s.isEnabled=?2
 	]]>
 	</query>
 	
@@ -184,8 +184,8 @@
     <![CDATA[select distinct(ba.bankAccountId) from BankAccountServiceMap ba]]></query>
     
     <query name="getCOAByInstrumentTypeAndService">
-    <![CDATA[select c from CChartOfAccounts c,ServiceInstrumentAccounts sia,InstrumentType it where sia.chartOfAccounts.id=c.id and sia.instrumentType.id=it.id and it.type=? and sia.serviceDetails.id=?]]></query>
+    <![CDATA[select c from CChartOfAccounts c,ServiceInstrumentAccounts sia,InstrumentType it where sia.chartOfAccounts.id=c.id and sia.instrumentType.id=it.id and it.type=?1 and sia.serviceDetails.id=?2]]></query>
     
      <query name="getCOAByInstrumentTypeAndServiceAndBillservice">
-    <![CDATA[select c from CChartOfAccounts c,ServiceInstrumentAccounts sia,InstrumentType it where sia.chartOfAccounts.id=c.id and sia.instrumentType.id=it.id and it.type=? and sia.serviceDetails.id=? and sia.billServiceDetails.id=?]]></query>
+    <![CDATA[select c from CChartOfAccounts c,ServiceInstrumentAccounts sia,InstrumentType it where sia.chartOfAccounts.id=c.id and sia.instrumentType.id=it.id and it.type=?1 and sia.serviceDetails.id=?2 and sia.billServiceDetails.id=?3]]></query>
 </hibernate-mapping>

@@ -122,4 +122,4 @@
 		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />	
 	</class>
 	<query name="EGW_getActiveDepositCodes">select dc from DepositCode dc where dc.isActive = 1</query>
-	<query name="EGW_getActiveDepositCodesByCodeOrDescription">select dc from DepositCode dc where dc.isActive = 1 and (upper(dc.code) like ? OR upper(dc.description) like ?)</query></hibernate-mapping>
+	<query name="EGW_getActiveDepositCodesByCodeOrDescription">select dc from DepositCode dc where dc.isActive = 1 and (upper(dc.code) like ?1 OR upper(dc.description) like ?2)</query></hibernate-mapping>

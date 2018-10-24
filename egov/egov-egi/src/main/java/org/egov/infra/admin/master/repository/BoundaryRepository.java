@@ -153,7 +153,7 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
             @Param("boundaryTypeName") String boundaryTypeName, @Param("hierarchyTypeName") String hierarchyTypeName,
             @Param("name") String name);
 
-    @Query("from Boundary BND where BND.active=true AND BND.parent.id=:parentId)")
+    @Query("from Boundary BND where BND.active=true AND BND.parent.id=:parentId")
     List<Boundary> findActiveImmediateChildrenWithOutParent(@Param("parentId") Long parentId);
 
     @Query("from Boundary BND where BND.parent is null")

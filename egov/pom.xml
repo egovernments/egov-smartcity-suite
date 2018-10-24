@@ -121,7 +121,7 @@
         </repository>
         <repository>
             <id>JBoss Repository</id>
-            <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+            <url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/</url>
         </repository>
         <repository>
             <id>JSPRESSO</id>
@@ -156,24 +156,24 @@
         <db.password/>
         <disable.drop.db>true</disable.drop.db>
         <!-- Application server provided dependency versions -->
-        <hibernate-version>5.1.10.Final</hibernate-version>
-        <hibernate-search-version>5.5.8.Final</hibernate-search-version>
-        <hibernate-validator-version>5.3.5.Final</hibernate-validator-version>
-        <javax-validation-version>1.1.0.Final</javax-validation-version>
+        <hibernate-version>5.3.6.Final</hibernate-version>
+        <hibernate-search-version>5.10.3.Final</hibernate-search-version>
+        <hibernate-validator-version>6.0.13.Final</hibernate-validator-version>
+        <javax-validation-version>2.0.1.Final</javax-validation-version>
         <javax-servlet-api-version>1.0.0.Final</javax-servlet-api-version>
         <javax-servlet-jstl-version>1.2.6-RC1</javax-servlet-jstl-version>
-        <javax-servlet-jsp-version>1.0.1.Final</javax-servlet-jsp-version>
-        <javax-jms-version>1.0.1.Final</javax-jms-version>
-        <javax-mail-version>1.5.6</javax-mail-version>
-        <javax-el-version>3.0.1-b08</javax-el-version>
-        <xerces-version>2.11.0.SP5</xerces-version>
-        <postgres-version>42.1.4</postgres-version>
+        <javax-servlet-jsp-version>1.0.3.Final</javax-servlet-jsp-version>
+        <javax-jms-version>1.0.2.Final</javax-jms-version>
+        <javax-mail-version>1.6.1</javax-mail-version>
+        <javax-el-version>1.0.12.Final</javax-el-version>
+        <xerces-version>2.12.0.SP02</xerces-version>
+        <postgres-version>42.2.5</postgres-version>
 
         <!-- Other application dependency versions -->
-        <struts2-version>2.5.14.1</struts2-version>
-        <struts2-jquery-version>4.0.2</struts2-jquery-version>
-        <xstream-version>1.4.10</xstream-version>
-        <spring-version>4.3.11.RELEASE</spring-version>
+        <struts2-version>2.5.18</struts2-version>
+        <struts2-jquery-version>4.0.3</struts2-jquery-version>
+        <xstream-version>1.4.11-java7</xstream-version>
+        <spring-version>4.3.20.RELEASE</spring-version>
         <spring-session-version>1.3.2.RELEASE</spring-session-version>
         <spring-data-jpa-version>1.10.6.RELEASE</spring-data-jpa-version>
         <spring-data-jpa-envers-version>1.0.6.RELEASE</spring-data-jpa-envers-version>
@@ -361,7 +361,7 @@
             <!-- SERVLET SPEC JBOSS DEPENDENCIES START -->
             <dependency>
                 <groupId>org.jboss.spec.javax.servlet</groupId>
-                <artifactId>jboss-servlet-api_3.1_spec</artifactId>
+                <artifactId>jboss-servlet-api_4.0_spec</artifactId>
                 <version>${javax-servlet-api-version}</version>
                 <scope>provided</scope>
             </dependency>
@@ -396,8 +396,8 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>org.glassfish</groupId>
-                <artifactId>javax.el</artifactId>
+                <groupId>org.jboss.spec.javax.el</groupId>
+                <artifactId>jboss-el-api_3.0_spec</artifactId>
                 <version>${javax-el-version}</version>
                 <scope>provided</scope>
             </dependency>
@@ -624,7 +624,7 @@
             </dependency>
             <dependency>
                 <groupId>org.jasypt</groupId>
-                <artifactId>jasypt-hibernate4</artifactId>
+                <artifactId>jasypt-hibernate5</artifactId>
                 <version>${jasypt-version}</version>
                 <scope>compile</scope>
             </dependency>
@@ -1121,7 +1121,7 @@
         <!-- SERVLET SPEC JBOSS DEPENDENCIES START -->
         <dependency>
             <groupId>org.jboss.spec.javax.servlet</groupId>
-            <artifactId>jboss-servlet-api_3.1_spec</artifactId>
+            <artifactId>jboss-servlet-api_4.0_spec</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.taglibs</groupId>
@@ -1144,8 +1144,8 @@
             <artifactId>jboss-jms-api_2.0_spec</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>javax.el</artifactId>
+            <groupId>org.jboss.spec.javax.el</groupId>
+            <artifactId>jboss-el-api_3.0_spec</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.mail</groupId>
@@ -1310,7 +1310,7 @@
         </dependency>
         <dependency>
             <groupId>org.jasypt</groupId>
-            <artifactId>jasypt-hibernate4</artifactId>
+            <artifactId>jasypt-hibernate5</artifactId>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>

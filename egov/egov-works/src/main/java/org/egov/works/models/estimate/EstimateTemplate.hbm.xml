@@ -99,7 +99,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 
 	<query name="EstimateTemplateCodeUniqueCheck">
 		<![CDATA[
-     	select et.id from EstimateTemplate et where upper(et.code)=? 
+     	select et.id from EstimateTemplate et where upper(et.code)=?1
     	]]>
 	</query>
 </hibernate-mapping>

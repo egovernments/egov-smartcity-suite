@@ -112,83 +112,83 @@
 	</class>
 	<query name="getApprovedMBList">
 		<![CDATA[
-     	select distinct mbh from MBHeader mbh where mbh.egwStatus.code = ? and trunc(mbh.state.createdDate) <= ? and mbh.isLegacyMB!=1  
-     	and mbh.workOrder.id = ? and mbh.workOrderEstimate.id = ?
+     	select distinct mbh from MBHeader mbh where mbh.egwStatus.code = ?1 and trunc(mbh.state.createdDate) <= ?2 and mbh.isLegacyMB!=1
+     	and mbh.workOrder.id = ?3 and mbh.workOrderEstimate.id = ?4
     	]]>
 	</query>
 	<query name="getPartBillList">
 		<![CDATA[
      	select distinct mbh from MBHeader mbh left join mbh.egBillregister as reg where 
-     	mbh.egwStatus.code = ? 
-     	and mbh.workOrder.id = ? and (reg is not null or reg.status.code != ?) and reg.billtype=?
+     	mbh.egwStatus.code = ?1
+     	and mbh.workOrder.id = ?2 and (reg is not null or reg.status.code != ?3) and reg.billtype=?4
     	]]>
 	</query>
 	<query name="getAllBilledMBs">
 		<![CDATA[
-     	select eb1.billdate from EgBillregister eb1 where exists(select mbh.egBillregister.id from MBHeader mbh left join mbh.egBillregister as reg where mbh.egwStatus.code = ? and 
-     	mbh.workOrder.id = ? and reg is not null  and  upper(reg.status.code)!='CANCELLED' and eb1.id=mbh.egBillregister.id order by reg.billdate desc) and rownum=1
+     	select eb1.billdate from EgBillregister eb1 where exists(select mbh.egBillregister.id from MBHeader mbh left join mbh.egBillregister as reg where mbh.egwStatus.code = ?1 and
+     	mbh.workOrder.id = ?2 and reg is not null  and  upper(reg.status.code)!='CANCELLED' and eb1.id=mbh.egBillregister.id order by reg.billdate desc) and rownum=1
     	]]>
 	</query>
 	<query name="getAllBilledMBsForWOEstimate">
 		<![CDATA[
-     	select eb1.billdate from EgBillregister eb1 where exists(select mbh.egBillregister.id from MBHeader mbh left join mbh.egBillregister as reg where mbh.egwStatus.code = ? and 
-     	mbh.workOrderEstimate.id = ? and reg is not null and  upper(reg.status.code)!='CANCELLED' and eb1.id=mbh.egBillregister.id order by reg.billdate desc) and rownum=1
+     	select eb1.billdate from EgBillregister eb1 where exists(select mbh.egBillregister.id from MBHeader mbh left join mbh.egBillregister as reg where mbh.egwStatus.code = ?1 and
+     	mbh.workOrderEstimate.id = ?2 and reg is not null and  upper(reg.status.code)!='CANCELLED' and eb1.id=mbh.egBillregister.id order by reg.billdate desc) and rownum=1
     	]]>
 	</query>
 	<query name="getAllMBsForBillId">
 		<![CDATA[
-     	from MBHeader mbh where mbh.egwStatus.code = ? and 
-     	mbh.egBillregister is not null and mbh.egBillregister.id = ?
+     	from MBHeader mbh where mbh.egwStatus.code = ?1 and
+     	mbh.egBillregister is not null and mbh.egBillregister.id = ?2
     	]]>
 	</query>
 	<query name="getMBbyWorkOrderEstID">
 		<![CDATA[
-		from MBHeader mbh where mbh.workOrderEstimate.id=? and mbh.egwStatus.code!=? and 
-     	mbh.workOrderEstimate.id not in (select mb.workOrderEstimate.id from MBHeader mb where mb.egBillregister.billtype=?
-     	and mb.egBillregister.status.code!=?) 
+		from MBHeader mbh where mbh.workOrderEstimate.id=?1 and mbh.egwStatus.code!=?2 and
+     	mbh.workOrderEstimate.id not in (select mb.workOrderEstimate.id from MBHeader mb where mb.egBillregister.billtype=?3
+     	and mb.egBillregister.status.code!=?4)
     	]]>
 	</query>
 	<query name="getMBWithoutLegacyByWOEstID">
 		<![CDATA[
-		from MBHeader mbh where mbh.workOrderEstimate.id=? and mbh.egwStatus.code!=? and mbh.isLegacyMB!=1 and 
-     	mbh.workOrderEstimate.id not in (select mb.workOrderEstimate.id from MBHeader mb where mb.egBillregister.billtype=?
-     	and mb.egBillregister.status.code!=?) 
+		from MBHeader mbh where mbh.workOrderEstimate.id=?1 and mbh.egwStatus.code!=?2 and mbh.isLegacyMB!=1 and
+     	mbh.workOrderEstimate.id not in (select mb.workOrderEstimate.id from MBHeader mb where mb.egBillregister.billtype=?3
+     	and mb.egBillregister.status.code!=?4)
     	]]>
 	</query>
 	
 	<query name="getAllMBHeadersbyBillId">
 		<![CDATA[
-     	Select distinct mbHeader from MBHeader mbHeader where mbHeader.egBillregister.id=? 
+     	Select distinct mbHeader from MBHeader mbHeader where mbHeader.egBillregister.id=?1
     	]]>
 	</query>
 	
 	<query name="getAllMBNosbyWorkEstimate">
 		<![CDATA[
-     	Select distinct mbHeader.mbRefNo from MBHeader mbHeader where mbHeader.egwStatus.code = ?  
-     	and mbHeader.workOrderEstimate.id=? 
+     	Select distinct mbHeader.mbRefNo from MBHeader mbHeader where mbHeader.egwStatus.code = ?1
+     	and mbHeader.workOrderEstimate.id=?2
      	
     	]]>
 	</query>
 	<query name="totalMBAmountOfMBs">
 		<![CDATA[
-     	select sum(mbAmount) from MBHeader where egwStatus.code != 'CANCELLED' and  workOrderEstimate.workOrder.id=?   
-     	and  workOrderEstimate.estimate.id= ?  
+     	select sum(mbAmount) from MBHeader where egwStatus.code != 'CANCELLED' and  workOrderEstimate.workOrder.id=?1
+     	and  workOrderEstimate.estimate.id= ?2
     ]]>
     </query>
 	<query name="totalMBAmountOfMBsForRevisionWO">
 		<![CDATA[
-     	select sum(mbAmount) from MBHeader where egwStatus.code != 'CANCELLED' and  workOrderEstimate.workOrder.parent.id=?   
-     	and  workOrderEstimate.estimate.parent.id= ?  
+     	select sum(mbAmount) from MBHeader where egwStatus.code != 'CANCELLED' and  workOrderEstimate.workOrder.parent.id=?1
+     	and  workOrderEstimate.estimate.parent.id= ?2
     ]]>
 	</query>
 	<query name="getAmountForApprovedRevisionWO">
 		<![CDATA[
-     	select sum(wo.workOrderAmount) from WorkOrder wo where wo.parent is not null and wo.egwStatus.code='APPROVED' and wo.parent.id=? 
+     	select sum(wo.workOrderAmount) from WorkOrder wo where wo.parent is not null and wo.egwStatus.code='APPROVED' and wo.parent.id=?1
     ]]>
 	</query>
 	<query name="getAllApprovedMBHeaders">
 		<![CDATA[
-     		select distinct mbh from MBHeader mbh where mbh.egwStatus.code = ? and mbh.workOrder.id = ? and mbh.workOrderEstimate.estimate.id = ?
+     		select distinct mbh from MBHeader mbh where mbh.egwStatus.code = ?1 and mbh.workOrder.id = ?2 and mbh.workOrderEstimate.estimate.id = ?3
    		 ]]>
 	</query>
 </hibernate-mapping>

@@ -95,17 +95,17 @@
 	</class>
 	<query name="getWorkOrderEstimateByWorkOrderId">
 		<![CDATA[
-     	   from WorkOrderEstimate woe where woe.workOrder.id = ?
+     	   from WorkOrderEstimate woe where woe.workOrder.id = ?1
     ]]>
 	</query>
 	<query name="getWorkOrderEstimateById">
 		<![CDATA[
-     	   from WorkOrderEstimate woe where woe.estimate.id = ?
+     	   from WorkOrderEstimate woe where woe.estimate.id = ?1
     ]]>
 	</query>
 	<query name="getWorkOrderEstimateByEstAndWO">
 		<![CDATA[
-     	   from WorkOrderEstimate woe where woe.estimate.id = ? and woe.workOrder.id = ?
+     	   from WorkOrderEstimate woe where woe.estimate.id = ?1 and woe.workOrder.id = ?2
     ]]>
 	</query>
 </hibernate-mapping>

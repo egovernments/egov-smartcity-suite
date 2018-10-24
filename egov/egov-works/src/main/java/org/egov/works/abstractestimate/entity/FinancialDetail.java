@@ -79,7 +79,7 @@ import java.util.List;
 @Entity
 @Table(name = "EGW_ESTIMATE_FINANCIALDETAIL")
 @NamedQueries({
-        @NamedQuery(name = FinancialDetail.FINANCIALDETAILS_BY_ESTIMATEID, query = "from FinancialDetail fd where fd.abstractEstimate.id = ?") })
+        @NamedQuery(name = FinancialDetail.FINANCIALDETAILS_BY_ESTIMATEID, query = "from FinancialDetail fd where fd.abstractEstimate.id = ?1") })
 @SequenceGenerator(name = FinancialDetail.SEQ_EGW_ESTIMATEFINANCIALDETAIL, sequenceName = FinancialDetail.SEQ_EGW_ESTIMATEFINANCIALDETAIL, allocationSize = 1)
 public class FinancialDetail extends AbstractAuditable {
 

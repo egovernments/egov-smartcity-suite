@@ -84,8 +84,8 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @NamedQueries({
         @NamedQuery(name = AbstractEstimate.ABSTRACTESTIMATELIST_BY_ID, query = "from AbstractEstimate ab where ab.id in(:param_0)"),
-        @NamedQuery(name = AbstractEstimate.REVISION_ESTIMATES_BY_ESTID, query = "from AbstractEstimate ae where ae.parent.id=? and ae.egwStatus.code='APPROVED' order by ae.id"),
-        @NamedQuery(name = AbstractEstimate.REVISION_ESTIMATES_BY_ESTID_WOID, query = "from AbstractEstimate ae where ae.parent.id=? and ae.egwStatus.code='APPROVED' order by ae.id")})
+        @NamedQuery(name = AbstractEstimate.REVISION_ESTIMATES_BY_ESTID, query = "from AbstractEstimate ae where ae.parent.id=?1 and ae.egwStatus.code='APPROVED' order by ae.id"),
+        @NamedQuery(name = AbstractEstimate.REVISION_ESTIMATES_BY_ESTID_WOID, query = "from AbstractEstimate ae where ae.parent.id=?1 and ae.egwStatus.code='APPROVED' order by ae.id")})
 @SequenceGenerator(name = AbstractEstimate.SEQ_EGW_ABSTRACTESTIMATE, sequenceName = AbstractEstimate.SEQ_EGW_ABSTRACTESTIMATE, allocationSize = 1)
 public class AbstractEstimate extends StateAware<Position> implements Auditable {
 

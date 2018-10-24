@@ -51,9 +51,9 @@
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 	 <query name="validateFinancialYear">
-   		 <![CDATA[from CFinancialYear f where f.id=? AND ((f.startingDate<=? AND f.endingDate>=?) OR (f.endingDate>=?))]]>
+   		 <![CDATA[from CFinancialYear f where f.id=?1 AND ((f.startingDate<=?2 AND f.endingDate>=?3) OR (f.endingDate>=?4))]]>
    	 </query>
    	 <query name="getReAppropriationAmt">
-   		 <![CDATA[select sum(br.additionAmount)-sum(br.deductionAmount) from BudgetReAppropriation br where  br.state in (from org.egov.infra.workflow.entity.State where type='BudgetReAppropriation' and value=?) and br.budgetDetail in (:param_1)]]>
+   		 <![CDATA[select sum(br.additionAmount)-sum(br.deductionAmount) from BudgetReAppropriation br where  br.state in (from org.egov.infra.workflow.entity.State where type='BudgetReAppropriation' and value=?1) and br.budgetDetail in (?2)]]>
    	 </query>
 </hibernate-mapping>

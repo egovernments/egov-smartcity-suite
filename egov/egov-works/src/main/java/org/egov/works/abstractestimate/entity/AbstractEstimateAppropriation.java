@@ -69,10 +69,10 @@ import org.egov.works.models.estimate.DepositWorksUsage;
 @Entity
 @Table(name = "EGW_ESTIMATE_APPROPRIATION")
 @NamedQueries({
-        @NamedQuery(name = AbstractEstimateAppropriation.BUDGETUSAGE_BY_ESTIMATE_AND_FINANCIALYEAR, query = "from AbstractEstimateAppropriation aep where aep.budgetUsage.id=(select max(budgetUsage.id) from AbstractEstimateAppropriation aep1 where aep1.abstractEstimate.id=? and aep1.budgetUsage.financialYearId=?)"),
-        @NamedQuery(name = AbstractEstimateAppropriation.BUDGETUSAGE_BY_ESTIMATE, query = "from AbstractEstimateAppropriation aep where aep.budgetUsage.id=(select max(budgetUsage.id) from AbstractEstimateAppropriation aep where aep.abstractEstimate.id=?)"),
-        @NamedQuery(name = AbstractEstimateAppropriation.DEPOSITWORKSUSAGE_BY_ESTIMATE_AND_FINANCIALYEAR, query = "from AbstractEstimateAppropriation aep where aep.abstractEstimate.id=? and aep.depositWorksUsage.financialYear.id=?"),
-        @NamedQuery(name = AbstractEstimateAppropriation.DEPOSITWORKSUSAGE_BY_ESTIMATE, query = "from AbstractEstimateAppropriation aep where aep.depositWorksUsage.id=(select max(depositWorksUsage.id) from AbstractEstimateAppropriation aep where aep.abstractEstimate.id=?)") })
+        @NamedQuery(name = AbstractEstimateAppropriation.BUDGETUSAGE_BY_ESTIMATE_AND_FINANCIALYEAR, query = "from AbstractEstimateAppropriation aep where aep.budgetUsage.id=(select max(budgetUsage.id) from AbstractEstimateAppropriation aep1 where aep1.abstractEstimate.id=?1 and aep1.budgetUsage.financialYearId=?2)"),
+        @NamedQuery(name = AbstractEstimateAppropriation.BUDGETUSAGE_BY_ESTIMATE, query = "from AbstractEstimateAppropriation aep where aep.budgetUsage.id=(select max(budgetUsage.id) from AbstractEstimateAppropriation aep where aep.abstractEstimate.id=?1)"),
+        @NamedQuery(name = AbstractEstimateAppropriation.DEPOSITWORKSUSAGE_BY_ESTIMATE_AND_FINANCIALYEAR, query = "from AbstractEstimateAppropriation aep where aep.abstractEstimate.id=?1 and aep.depositWorksUsage.financialYear.id=?2"),
+        @NamedQuery(name = AbstractEstimateAppropriation.DEPOSITWORKSUSAGE_BY_ESTIMATE, query = "from AbstractEstimateAppropriation aep where aep.depositWorksUsage.id=(select max(depositWorksUsage.id) from AbstractEstimateAppropriation aep where aep.abstractEstimate.id=?2)") })
 @SequenceGenerator(name = AbstractEstimateAppropriation.SEQ_EGW_ESTIMATEAPPROPRIATION, sequenceName = AbstractEstimateAppropriation.SEQ_EGW_ESTIMATEAPPROPRIATION, allocationSize = 1)
 public class AbstractEstimateAppropriation extends AbstractAuditable {
 

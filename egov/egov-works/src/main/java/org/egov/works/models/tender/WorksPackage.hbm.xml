@@ -127,19 +127,19 @@
 	</class>
 	<query name="TenderFileNumberUniqueCheck">
     	<![CDATA[
-    	 	select worksPackage.id from WorksPackage worksPackage where worksPackage.tenderFileNumber=?
+    	 	select worksPackage.id from WorksPackage worksPackage where worksPackage.tenderFileNumber=?1
     		]]>
    		</query>
    		 
    		 <query  name="TenderFileNumberUniqueCheckForEdit">
      		<![CDATA[
-     			select worksPackage.id from WorksPackage worksPackage where worksPackage.tenderFileNumber=? and worksPackage.id!=?
+     			select worksPackage.id from WorksPackage worksPackage where worksPackage.tenderFileNumber=?1 and worksPackage.id!=?2
     		]]>
     	</query>
     	
     	<query name="GET_WORKSPACKAGE_PACKAGENUMBER">
     	<![CDATA[
-    	 	from WorksPackage worksPackage where worksPackage.wpNumber=?
+    	 	from WorksPackage worksPackage where worksPackage.wpNumber=?1
     		]]>
    		</query>
 	

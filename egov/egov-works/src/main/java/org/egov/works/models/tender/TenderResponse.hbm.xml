@@ -115,12 +115,12 @@
 	</class>
 	<query name="MY_NONCANCELLED_NEGOTIATIONSTATEMENTS">
 		<![CDATA[
-     	from TenderResponse tr where tr.tenderEstimate.abstractEstimate.id = ? and tr.egwStatus.code !='CANCELLED'
+     	from TenderResponse tr where tr.tenderEstimate.abstractEstimate.id = ?1 and tr.egwStatus.code !='CANCELLED'
     ]]>	
     </query>
      <query name="TenderNumberUniqueCheck">
      <![CDATA[
-     select tenderResponse from TenderResponse  tenderResponse where tenderResponse.tenderEstimate.tenderHeader.tenderNo=? and tenderResponse.egwStatus.code != 'CANCELLED' order by tenderResponse.tenderEstimate.tenderHeader.id desc
+     select tenderResponse from TenderResponse  tenderResponse where tenderResponse.tenderEstimate.tenderHeader.tenderNo=?1 and tenderResponse.egwStatus.code != 'CANCELLED' order by tenderResponse.tenderEstimate.tenderHeader.id desc
     ]]>
     </query>
     <query name="getApprovedNegotiationContractors">
@@ -130,32 +130,32 @@
     </query>
     <query name="getTenderFortenderId">
 		<![CDATA[
-     	select tr from TenderResponse tr where tr.tenderEstimate.tenderHeader.tenderNo =? and tr.egwStatus.code != 'CANCELLED'
+     	select tr from TenderResponse tr where tr.tenderEstimate.tenderHeader.tenderNo =?1 and tr.egwStatus.code != 'CANCELLED'
     ]]>	
     </query>
       
     <query name="getTenderFortenderIdCanceledWO">
 	<![CDATA[
-		select distinct tr from TenderResponse tr where tr.negotiationNumber = ? and tr.id in (select trc.tenderResponse.id from TenderResponseContractors trc where trc.contractor.id in 
-		(select wo.contractor.id from WorkOrder wo where wo.id = ? and wo.tenderNumber = ? and wo.contractor.id = ? and wo.packageNumber = ? ))
+		select distinct tr from TenderResponse tr where tr.negotiationNumber = ?1 and tr.id in (select trc.tenderResponse.id from TenderResponseContractors trc where trc.contractor.id in
+		(select wo.contractor.id from WorkOrder wo where wo.id = ?2 and wo.tenderNumber = ?3 and wo.contractor.id = ?4 and wo.packageNumber = ?5 ))
 	]]>	
     </query>
     	
     <sql-query name="TenderNumberUniqueCheckForEdit">
      <![CDATA[
      select tenderResponse.id from egw_tender_response  tenderResponse,egw_tender_estimate   tenderestimate,egw_tender_header   tenderheader where tenderResponse.TENDER_ESTIMATE_ID=tenderestimate.id and 
-     tenderestimate.TENDER_HEADER_ID=tenderheader.id and tenderheader.TENDER_NO=? and tenderResponse.id!=? and
+     tenderestimate.TENDER_HEADER_ID=tenderheader.id and tenderheader.TENDER_NO=?1 and tenderResponse.id!=?2 and
      tenderResponse.status_id not in(select id from egw_status where moduletype='TenderResponse' and code='CANCELLED')
     ]]>
     </sql-query>  
     <query name="getTenderForWorksPackageNum">
 		<![CDATA[
-     	from TenderResponse tr where tr.tenderEstimate.worksPackage.wpNumber = ? and tr.egwStatus.code !='CANCELLED'
+     	from TenderResponse tr where tr.tenderEstimate.worksPackage.wpNumber = ?1 and tr.egwStatus.code !='CANCELLED'
     ]]>	
     </query>
     <query name="getApprovedTenderForNegotiationNum">
 		<![CDATA[
-     	from TenderResponse tr where tr.negotiationNumber = ? and tr.egwStatus.code ='APPROVED'
+     	from TenderResponse tr where tr.negotiationNumber = ?1 and tr.egwStatus.code ='APPROVED'
     ]]>	
     </query>
 </hibernate-mapping>

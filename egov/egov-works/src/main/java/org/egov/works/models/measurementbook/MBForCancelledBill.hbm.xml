@@ -67,7 +67,7 @@
 		<![CDATA[
      	 select mbcb.mbHeader from MBForCancelledBill mbcb
      	 where  mbcb.mbHeader.isLegacyMB!=1 and  
-     	 mbcb.egBillregister.id = ? and mbcb.egBillregister.status.code = ?
+     	 mbcb.egBillregister.id = ?1 and mbcb.egBillregister.status.code = ?2
     ]]>
     </query>
 	

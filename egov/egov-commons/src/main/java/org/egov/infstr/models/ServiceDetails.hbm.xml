@@ -121,20 +121,20 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 	</class>
 	
 	<query name="SERVICE_BY_CATEGORY_FOR_TYPE">
-		<![CDATA[select sd from org.egov.infstr.models.ServiceDetails sd where sd.serviceCategory.id=? and sd.serviceType=? and sd.isEnabled=?]]>
+		<![CDATA[select sd from org.egov.infstr.models.ServiceDetails sd where sd.serviceCategory.id=?1 and sd.serviceType=?2 and sd.isEnabled=?3]]>
 	</query>
 	
 	<query name="getServicesByType">
-    <![CDATA[select s from ServiceDetails s where s.serviceType = ?]]></query>
+    <![CDATA[select s from ServiceDetails s where s.serviceType = ?1]]></query>
 
 	<query name="getCollectionServices">
     <![CDATA[select s from ServiceDetails s where s.serviceType in ('B', 'C')]]></query>
 
 	<query name="getServiceByCode">
-    <![CDATA[select s from ServiceDetails s where s.code=?]]></query>
+    <![CDATA[select s from ServiceDetails s where s.code=?1]]></query>
     
     <query name="getServicesByName">
-    <![CDATA[select s from ServiceDetails s where s.name = ?]]></query>
+    <![CDATA[select s from ServiceDetails s where s.name = ?1]]></query>
 	
 	
 </hibernate-mapping>

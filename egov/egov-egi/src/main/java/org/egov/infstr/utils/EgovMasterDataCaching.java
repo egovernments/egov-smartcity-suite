@@ -91,8 +91,8 @@ public class EgovMasterDataCaching {
 
     static {
         try {
-            final Context context = new InitialContext();
-            CACHE_MANAGER = (EmbeddedCacheManager) context.lookup("java:jboss/infinispan/container/master-data");
+            Context context = new InitialContext();
+            CACHE_MANAGER = (EmbeddedCacheManager) context.lookup("java:jboss/infinispan/container/master");
         } catch (final NamingException e) {
             throw new ApplicationRuntimeException("Error occurred while getting Cache Manager", e);
         }
@@ -110,10 +110,8 @@ public class EgovMasterDataCaching {
         final String domainName = ApplicationThreadLocals.getDomainName();
         final String applName = temp[0];
         List<Object> dataList = null;
-        HashMap<String, Object> cacheValuesHashMap = new HashMap<String, Object>();
-
         try {
-            cacheValuesHashMap = (HashMap<String, Object>) CACHE_MANAGER.getCache()
+            HashMap<String, Object> cacheValuesHashMap = (HashMap<String, Object>) CACHE_MANAGER.getCache()
                     .get(applName + PATH_DELIM + domainName + PATH_DELIM + sqlTagName);
             if (cacheValuesHashMap != null)
                 dataList = (List<Object>) cacheValuesHashMap.get(sqlTagName);

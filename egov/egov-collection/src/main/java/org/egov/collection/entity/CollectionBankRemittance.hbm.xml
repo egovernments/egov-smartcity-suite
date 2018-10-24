@@ -85,6 +85,6 @@
 	</class>
 
 	    <query name="COLLECTION_BANKACCOUNT_BY_SERVICE_AND_BANK">
-    <![CDATA[select cb.bankAccounttoRemit from org.egov.collection.entity.CollectionBankRemittance cb where cb.depositedInBank.code=? and cb.service.id=?]]></query>
+    <![CDATA[select cb.bankAccounttoRemit from org.egov.collection.entity.CollectionBankRemittance cb where cb.depositedInBank.code=?1 and cb.service.id=?2]]></query>
     
 </hibernate-mapping>

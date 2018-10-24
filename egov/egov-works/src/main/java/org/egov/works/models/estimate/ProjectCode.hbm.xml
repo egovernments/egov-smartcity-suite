@@ -100,7 +100,7 @@
     
     <query name="GET_ACTIVEPROJECTCODE_BY_CODE">
     <![CDATA[
-        select distinct pc from ProjectCode as pc left join pc.estimates as e where e.egwStatus.code not in('CANCELLED') and pc.code = ?
+        select distinct pc from ProjectCode as pc left join pc.estimates as e where e.egwStatus.code not in('CANCELLED') and pc.code = ?1
     ]]>
     </query>
     

@@ -99,12 +99,12 @@
          </property>
     </class>
 	<query name="DEMANDREASONDETAILS_BY_DEMANDREASONID_DATE">
-    	<![CDATA[select drd from EgDemandReasonDetails drd where drd.egDemandReasonMaster.code = ? and ? between drd.lowLimit and drd.highLimit and ? between drd.fromDate and drd.toDate]]>
+    	<![CDATA[select drd from EgDemandReasonDetails drd where drd.egDemandReasonMaster.code = ?1 and ?2 between drd.lowLimit and drd.highLimit and ?3 between drd.fromDate and drd.toDate]]>
 	</query>
 	<query name="DEMANDREASONDETAILS_BY_MOUDULEID">
-    	<![CDATA[select drd from EgDemandReasonDetails drd where drd.egDemandReasonMaster.egModule = ? order by drd.egDemandReasonMaster.orderId]]>
+    	<![CDATA[select drd from EgDemandReasonDetails drd where drd.egDemandReasonMaster.egModule = ?1 order by drd.egDemandReasonMaster.orderId]]>
 	</query>
 	<query name="DEMANDREASONDETAILS_BY_ID">
-    	<![CDATA[select drd from EgDemandReasonDetails drd where drd.id = ?]]>
+    	<![CDATA[select drd from EgDemandReasonDetails drd where drd.id = ?1]]>
 	</query>
 </hibernate-mapping>

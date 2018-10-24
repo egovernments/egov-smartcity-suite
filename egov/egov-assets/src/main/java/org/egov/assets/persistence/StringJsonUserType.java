@@ -49,7 +49,7 @@ package org.egov.assets.persistence;
 
 
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.usertype.UserType;
 
 import java.io.Serializable;
@@ -58,9 +58,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-/**
- * @author timfulmer
- */
 public class StringJsonUserType implements UserType {
 
     /**
@@ -72,7 +69,7 @@ public class StringJsonUserType implements UserType {
      */
     @Override
     public int[] sqlTypes() {
-        return new int[] { Types.JAVA_OBJECT};
+        return new int[]{Types.JAVA_OBJECT};
     }
 
     /**
@@ -96,12 +93,12 @@ public class StringJsonUserType implements UserType {
     @Override
     public boolean equals(Object x, Object y) throws HibernateException {
 
-        if( x== null){
+        if (x == null) {
 
-            return y== null;
+            return y == null;
         }
 
-        return x.equals( y);
+        return x.equals(y);
     }
 
     /**
@@ -113,47 +110,24 @@ public class StringJsonUserType implements UserType {
         return x.hashCode();
     }
 
-    /**
-     * Retrieve an instance of the mapped class from a JDBC resultset. Implementors
-     * should handle possibility of null values.
-     *
-     * @param rs      a JDBC result set
-     * @param names   the column names
-     * @param session
-     * @param owner   the containing entity  @return Object
-     * @throws org.hibernate.HibernateException
-     *
-     * @throws java.sql.SQLException
-     */
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner) throws HibernateException, SQLException {
-        if(rs.getString(names[0]) == null){
+    public Object nullSafeGet(ResultSet resultSet, String[] names, SharedSessionContractImplementor sharedSessionContractImplementor,
+                              Object o) throws HibernateException, SQLException {
+        if (resultSet.getString(names[0]) == null) {
             return null;
         }
-        return rs.getString(names[0]);
+        return resultSet.getString(names[0]);
     }
 
-    /**
-     * Write an instance of the mapped class to a prepared statement. Implementors
-     * should handle possibility of null values. A multi-column type should be written
-     * to parameters starting from <tt>index</tt>.
-     *
-     * @param st      a JDBC prepared statement
-     * @param value   the object to write
-     * @param index   statement parameter index
-     * @param session
-     * @throws org.hibernate.HibernateException
-     *
-     * @throws java.sql.SQLException
-     */
     @Override
-    public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session) throws HibernateException, SQLException {
+    public void nullSafeSet(PreparedStatement preparedStatement, Object value, int index,
+                            SharedSessionContractImplementor sharedSessionContractImplementor) throws HibernateException, SQLException {
         if (value == null) {
-            st.setNull(index, Types.OTHER);
+            preparedStatement.setNull(index, Types.OTHER);
             return;
         }
 
-        st.setObject(index, value, Types.OTHER);
+        preparedStatement.setObject(index, value, Types.OTHER);
     }
 
     /**
@@ -189,11 +163,10 @@ public class StringJsonUserType implements UserType {
      * @param value the object to be cached
      * @return a cachable representation of the object
      * @throws org.hibernate.HibernateException
-     *
      */
     @Override
     public Serializable disassemble(Object value) throws HibernateException {
-        return (String)this.deepCopy( value);
+        return (String) this.deepCopy(value);
     }
 
     /**
@@ -204,11 +177,10 @@ public class StringJsonUserType implements UserType {
      * @param owner  the owner of the cached object
      * @return a reconstructed object from the cachable representation
      * @throws org.hibernate.HibernateException
-     *
      */
     @Override
     public Object assemble(Serializable cached, Object owner) throws HibernateException {
-        return this.deepCopy( cached);
+        return this.deepCopy(cached);
     }
 
     /**

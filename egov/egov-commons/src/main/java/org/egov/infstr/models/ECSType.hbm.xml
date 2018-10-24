@@ -73,8 +73,7 @@
     <![CDATA[from org.egov.infstr.models.ECSType]]></query>
     
     <query name="getECSTypeById">
-    <![CDATA[from org.egov.infstr.models.ECSType where id = ?]]></query>
-    
-    
+    <![CDATA[from org.egov.infstr.models.ECSType where id = ?1]]></query>
+
 </hibernate-mapping>
 

@@ -91,27 +91,27 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 
 <query name="SCHEDULEOFRATES_SEARCH">
 		<![CDATA[
-     	from ScheduleOfRate as sch inner join fetch sch.sorRates as rates where (sch.code like concat ('%', ?, '%')
-     	 or sch.description like concat ('%', ?, '%')) and sch.scheduleCategory.id=?  and  ((? between rates.validity.startDate and rates.validity.endDate ) 
-         or (rates.validity.startDate<=? and rates.validity.endDate is null))   
+     	from ScheduleOfRate as sch inner join fetch sch.sorRates as rates where (sch.code like concat ('%', ?1, '%')
+     	 or sch.description like concat ('%', ?2, '%')) and sch.scheduleCategory.id=?3  and  ((?4 between rates.validity.startDate and rates.validity.endDate )
+         or (rates.validity.startDate<=?5 and rates.validity.endDate is null))
     ]]>
 </query>
 
 <query name="SCHEDULEOFRATES_SEARCH_ESTIMATETEMPLATE">
 		<![CDATA[
-     	from ScheduleOfRate as sch where (sch.code like concat ('%', ?, '%')
-     	 or sch.description like concat ('%', ?, '%')) and sch.scheduleCategory.id=?    
+     	from ScheduleOfRate as sch where (sch.code like concat ('%', ?1, '%')
+     	 or sch.description like concat ('%', ?2, '%')) and sch.scheduleCategory.id=?3
     ]]>
 </query>
 
 <query name="SCHEDULEOFRATES_SEARCH_REVISIONESTIMATE">
 		<![CDATA[
-     	from ScheduleOfRate as sch inner join fetch sch.sorRates as rates where (sch.code like concat ('%', ?, '%')
-     	 or sch.description like concat ('%', ?, '%')) and sch.scheduleCategory.id=?  and  ((? between rates.validity.startDate and rates.validity.endDate ) 
-         or (rates.validity.startDate<=? and rates.validity.endDate is null)) and sch.id not in(select act.schedule.id from Activity act
-         where (act.abstractEstimate.id=? and act.schedule is not null)) 
+     	from ScheduleOfRate as sch inner join fetch sch.sorRates as rates where (sch.code like concat ('%', ?1, '%')
+     	 or sch.description like concat ('%', ?2, '%')) and sch.scheduleCategory.id=?3  and  ((?4 between rates.validity.startDate and rates.validity.endDate )
+         or (rates.validity.startDate<=?5 and rates.validity.endDate is null)) and sch.id not in(select act.schedule.id from Activity act
+         where (act.abstractEstimate.id=?6 and act.schedule is not null))
          and sch.id not in(select act2.schedule.id from Activity act2
-         where ((act2.abstractEstimate.parent is not null and act2.abstractEstimate.parent.id=? and act2.abstractEstimate.parent.egwStatus is not null and act2.abstractEstimate.parent.egwStatus.code!='CANCELLED' 
+         where ((act2.abstractEstimate.parent is not null and act2.abstractEstimate.parent.id=?7 and act2.abstractEstimate.parent.egwStatus is not null and act2.abstractEstimate.parent.egwStatus.code!='CANCELLED'
          and act2.abstractEstimate.egwStatus.code not in ('CANCELLED','REJECTED'))) and act2.schedule is not null)  
     ]]>
 </query>

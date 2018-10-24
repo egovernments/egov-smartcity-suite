@@ -293,9 +293,4 @@
         </cookie-config>
         <tracking-mode>COOKIE</tracking-mode>
     </session-config>
-
-    <resource-ref>
-        <res-ref-name>infinispan/container/master-data</res-ref-name>
-        <lookup-name>java:jboss/infinispan/container/master-data</lookup-name>
-    </resource-ref>
 </web-app>

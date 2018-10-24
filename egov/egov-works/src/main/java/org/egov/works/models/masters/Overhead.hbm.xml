@@ -79,7 +79,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 		<![CDATA[
      		select o from org.egov.works.models.masters.Overhead as o
                   inner join fetch o.overheadRates as rates                  
-                 where ((? between rates.validity.startDate and rates.validity.endDate ) or (rates.validity.startDate<=? and rates.validity.endDate is null)) and o.expenditureType.value=?
+                 where ((?1 between rates.validity.startDate and rates.validity.endDate ) or (rates.validity.startDate<=?2 and rates.validity.endDate is null)) and o.expenditureType.value=?3
     	]]>
 
 	</query>
@@ -88,7 +88,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 		<![CDATA[
      		select o from org.egov.works.models.masters.Overhead as o
                   inner join fetch o.overheadRates as rates                  
-                 where ((? between rates.validity.startDate and rates.validity.endDate ) or (rates.validity.startDate<=? and rates.validity.endDate is null))
+                 where ((?1 between rates.validity.startDate and rates.validity.endDate ) or (rates.validity.startDate<=?2 and rates.validity.endDate is null))
     	]]>
 
 	</query>

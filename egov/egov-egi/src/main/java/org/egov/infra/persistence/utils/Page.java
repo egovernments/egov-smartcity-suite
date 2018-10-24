@@ -61,11 +61,6 @@ public class Page<T> {
     private final int pageNumber;
     private int recordTotal;
 
-    public Page(Query query, int pageNumber, int pageSize, int recordTotal) {
-        this(query, ++pageNumber, pageSize);
-        this.recordTotal = recordTotal;
-    }
-
     public Page(Query query, int pageNumber, int pageSize) {
         int currentPageNo = pageNumber;
         if (pageNumber < 1) {

@@ -103,6 +103,6 @@
          </class>
          
         <query name="DEMANDREASONBY_CODE_AND_INSTALLMENTID">
-           <![CDATA[select dr from org.egov.demand.model.EgDemandReason dr where dr.egDemandReasonMaster.code = ? and dr.egInstallmentMaster.id = ?]]></query>
+           <![CDATA[select dr from org.egov.demand.model.EgDemandReason dr where dr.egDemandReasonMaster.code = ?1 and dr.egInstallmentMaster.id = ?2]]></query>
          
 </hibernate-mapping>

@@ -67,8 +67,8 @@ import java.io.Serializable;
 @Entity
 @Table(name = "EG_CHECKLISTS")
 @NamedQueries({
-        @NamedQuery(name = "checklist.by.appconfigid.and.objectid", query = "from org.egov.infstr.models.EgChecklists as checkList where checkList.objectid =? and checkList.appconfigvalue.config.id in(?)"),
-        @NamedQuery(name = "checklist.by.objectid", query = "from org.egov.infstr.models.EgChecklists as checkList where checkList.objectid =?") })
+        @NamedQuery(name = "checklist.by.appconfigid.and.objectid", query = "from org.egov.infstr.models.EgChecklists as checkList where checkList.objectid =?1 and checkList.appconfigvalue.config.id in(?2)"),
+        @NamedQuery(name = "checklist.by.objectid", query = "from org.egov.infstr.models.EgChecklists as checkList where checkList.objectid =?1") })
 @SequenceGenerator(name = EgChecklists.SEQ_EG_CHECKLISTS, sequenceName = EgChecklists.SEQ_EG_CHECKLISTS, allocationSize = 1)
 public class EgChecklists extends AbstractAuditable implements Serializable {
 

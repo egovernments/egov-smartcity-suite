@@ -175,8 +175,8 @@ public class PersistenceService<T, ID extends Serializable> {
 
     private Query getQueryWithParams(final String query, final Object... params) {
         final Query q = getSession().createQuery(query);
-        int index = 0;
-        for (final Object param : params) {
+        int index = 1;
+        for (Object param : params) {
             q.setParameter(index, param);
             index++;
         }
@@ -204,7 +204,7 @@ public class PersistenceService<T, ID extends Serializable> {
 
     private Query getNamedQueryWithParams(final String namedQuery, final Object... params) {
         final Query q = getSession().getNamedQuery(namedQuery);
-        int index = 0;
+        int index = 1;
         for (final Object param : params) {
             if (param instanceof Collection)
                 q.setParameterList(String.valueOf("param_" + index), (Collection) param);

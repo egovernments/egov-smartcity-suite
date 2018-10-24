@@ -68,6 +68,6 @@
     </class>
     <query name="RECEIPT_VOUCHER_BY_RECEIPTID">
 	<![CDATA[
-	select rv from org.egov.collection.entity.ReceiptVoucher rv where rv.receiptHeader.id = ?]]>
+	select rv from org.egov.collection.entity.ReceiptVoucher rv where rv.receiptHeader.id = ?1]]>
 	</query>
 </hibernate-mapping>

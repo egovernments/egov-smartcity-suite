@@ -53,7 +53,7 @@ import org.egov.infra.security.utils.captcha.DefaultCaptchaService;
 import org.egov.infra.security.utils.captcha.DefaultCaptchaStore;
 import org.jasypt.encryption.pbe.PBEStringEncryptor;
 import org.jasypt.encryption.pbe.PooledPBEStringEncryptor;
-import org.jasypt.hibernate4.encryptor.HibernatePBEStringEncryptor;
+import org.jasypt.hibernate5.encryptor.HibernatePBEStringEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

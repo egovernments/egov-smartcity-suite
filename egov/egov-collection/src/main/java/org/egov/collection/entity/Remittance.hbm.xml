@@ -127,6 +127,6 @@
 	</class>
 
 	<query name="getRemitanceByVoucherNumber">
-    <![CDATA[select r from Remittance r where r.voucherHeader.voucherNumber= ?]]></query>
+    <![CDATA[select r from Remittance r where r.voucherHeader.voucherNumber= ?1]]></query>
 
 </hibernate-mapping>

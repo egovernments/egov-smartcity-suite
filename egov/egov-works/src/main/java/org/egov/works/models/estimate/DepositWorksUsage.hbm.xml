@@ -90,19 +90,19 @@
 	</class>
 	<query name="getDepositWorksUsageListForDepositFolio">
 		<![CDATA[
-     	select dwu from DepositWorksUsage dwu inner join dwu.abstractEstimate.financialDetails fd where dwu.abstractEstimate.depositCode.id=? and fd.fund.id=? and fd.coa.id=? and dwu.appropriationDate<=? and dwu.financialYear=? order by dwu.appropriationDate,dwu.id asc
+     	select dwu from DepositWorksUsage dwu inner join dwu.abstractEstimate.financialDetails fd where dwu.abstractEstimate.depositCode.id=?1 and fd.fund.id=?2 and fd.coa.id=?3 and dwu.appropriationDate<=?4 and dwu.financialYear=?5 order by dwu.appropriationDate,dwu.id asc
     	]]>
 	</query>
 	<query name="getDepositWorksUsageAmount">
 		<![CDATA[
-     	select sum(dwu.consumedAmount-dwu.releasedAmount) from DepositWorksUsage dwu inner join dwu.abstractEstimate.financialDetails fd where dwu.abstractEstimate.depositCode.id=? and 
-     	fd.fund.id=? and fd.coa.id=?
+     	select sum(dwu.consumedAmount-dwu.releasedAmount) from DepositWorksUsage dwu inner join dwu.abstractEstimate.financialDetails fd where dwu.abstractEstimate.depositCode.id=?1 and
+     	fd.fund.id=?2 and fd.coa.id=?3
     	]]>
 	</query>
 	
  	<query name="getDepositWorksUsageAmountUptoDate">
 		<![CDATA[
-     	select sum(dwu.consumedAmount-dwu.releasedAmount) from DepositWorksUsage dwu where  dwu.financialYear=? and to_date(dwu.appropriationDate,'DD-MM-YYYY') <=to_Date(?,'DD-MM-YYYY') and dwu.abstractEstimate.id in (select fd.abstractEstimate.id from FinancialDetail fd where fd.fund.id=? and fd.abstractEstimate.depositCode.id=? and fd.coa.id=?)
+     	select sum(dwu.consumedAmount-dwu.releasedAmount) from DepositWorksUsage dwu where  dwu.financialYear=?1 and to_date(dwu.appropriationDate,'DD-MM-YYYY') <=to_Date(?2,'DD-MM-YYYY') and dwu.abstractEstimate.id in (select fd.abstractEstimate.id from FinancialDetail fd where fd.fund.id=?3 and fd.abstractEstimate.depositCode.id=?4 and fd.coa.id=?5)
     	]]>
 	</query>
 	

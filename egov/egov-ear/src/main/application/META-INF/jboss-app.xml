@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -46,30 +46,15 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   -->
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
-<hibernate-mapping>
-	<class name="org.egov.assets.model.AssetActivities" table="egasset_asset_activities">
-        <id name="id" type="java.lang.Long">
-            <column name="ID" precision="22" scale="0" />
-            <generator class="sequence">
-            	<param name="sequence">seq_egasset_asset_activities</param>
-            </generator>
-        </id>
-        <many-to-one name="asset" class="org.egov.assets.model.Asset" column="ASSET_ID"/>
-        <property name="additionAmount" type="big_decimal" column="ADDITIONAMOUNT"/>
-        <property name="deductionAmount" type="big_decimal" column="DEDUCTIONAMOUNT"/>
-        <property name="activityDate" type="java.util.Date" column="ACTIVITYDATE"/>
-        <property name="identifier" column="IDENTIFIER">
-            <type name="org.hibernate.type.EnumType">
-                <param name="enumClass">org.egov.assets.util.AssetIdentifier</param>
-			</type>   
-		</property>
-		<property column="CREATED_DATE" name="createdDate" type="timestamp" not-null="true"/>		
-        <property column="MODIFIED_DATE" name="modifiedDate" type="timestamp"/>
-		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" not-null="true"/>
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY"/>
-		<property name="description" type="string" column="DESCRIPTION"/>
-    </class>
-</hibernate-mapping>
+<jboss:jboss-app
+        xmlns:jboss="http://www.jboss.com/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+        xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/application_7.xsd"
+        version="7">
+    <resource-ref>
+        <res-ref-name>infinispan/master</res-ref-name>
+        <lookup-name>java:jboss/infinispan/container/master</lookup-name>
+    </resource-ref>
+</jboss:jboss-app>

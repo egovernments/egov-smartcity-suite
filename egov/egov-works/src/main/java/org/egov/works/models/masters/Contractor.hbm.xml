@@ -120,7 +120,7 @@
 	</class>
     <query name="GET_CONTRACTORS_BY_STATUS">
     <![CDATA[
-        select distinct cont from Contractor cont inner join cont.contractorDetails as cd where cd.status.description = ? 
+        select distinct cont from Contractor cont inner join cont.contractorDetails as cd where cd.status.description = ?1
     ]]>
     </query>
 </hibernate-mapping>

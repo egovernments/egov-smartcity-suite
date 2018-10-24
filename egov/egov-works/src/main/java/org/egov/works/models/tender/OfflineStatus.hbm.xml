@@ -78,23 +78,23 @@
 	</class>
 	<query name="getStatusByObjectId">
 		<![CDATA[
-     	from OfflineStatus st where st.objectId=? and st.objectType=? order by id
+     	from OfflineStatus st where st.objectId=1 and st.objectType=?2 order by id
     ]]>	
     </query>
     
     <query name="getStatusDateByObjectId_Type_Desc">
 		<![CDATA[
-     	from OfflineStatus st where st.objectId=? and st.objectType=? and st.egwStatus.description=? order by id
+     	from OfflineStatus st where st.objectId=?1 and st.objectType=?2 and st.egwStatus.description=?3 order by id
     ]]>	
     </query>
     <query name="getmaxStatusByObjectId">
 		<![CDATA[
-     from OfflineStatus st where st.objectId=? and st.id=(select max(id) from OfflineStatus where objectId=?) and st.objectType=?
+     from OfflineStatus st where st.objectId=?1 and st.id=(select max(id) from OfflineStatus where objectId=?2) and st.objectType=?3
     ]]>	
     </query>
     <query name="getmaxStatusByObjectId_Type"> 
 		<![CDATA[
-     from OfflineStatus st where st.objectId=? and st.id=(select max(id) from OfflineStatus where objectId=? and objectType=?) and st.objectType=?
+     from OfflineStatus st where st.objectId=?1 and st.id=(select max(id) from OfflineStatus where objectId=?2 and objectType=?3) and st.objectType=?4
     ]]>	
     </query>
 </hibernate-mapping> 

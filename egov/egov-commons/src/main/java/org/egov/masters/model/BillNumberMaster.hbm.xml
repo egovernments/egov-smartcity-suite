@@ -61,9 +61,9 @@
 		<many-to-one name="position" class="org.egov.pims.commons.Position" column="ID_POSITION" not-null="true" />
 	</class>
 	<query name="BILLNUMBER_BY_ID">
-    	<![CDATA[from BillNumberMaster where id = ?]]>
+    	<![CDATA[from BillNumberMaster where id = ?1]]>
 	</query>
 	<query comment="getting bill number list" name="BILL-NUMBER-LIST">
-		<![CDATA[from BillNumberMaster where lower(billNumber) like ?]]>
+		<![CDATA[from BillNumberMaster where lower(billNumber) like ?1]]>
 	</query>
 </hibernate-mapping>

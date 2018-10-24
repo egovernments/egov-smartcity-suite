@@ -202,7 +202,7 @@
  </class>
  <query name="ACTIVE_EMPLOYEES">from org.egov.pims.model.PersonalInformation as emp where emp.StatusMaster.moduletype = 'Employee' and emp.StatusMaster.description='Employed' order by employeeName</query>
  <query name="ACTIVE_EMPLOYEES_STARTSWITH">from PersonalInformation  where StatusMaster.id =(select id from EgwStatus where moduletype='Employee' and description='Employed')
-				and (upper(employeeName) like ? or upper(code) like ? ) order by employeeName</query>
- <query name="PERSONALINFO-BYIDS">from PersonalInformation where idPersonalInformation in(:param_0)</query>
- <query name="PERSONALINFO-EMPCODE-STARTSWITH">from PersonalInformation  where employeeCode like ? || '%'</query>
+				and (upper(employeeName) like ?1 or upper(code) like ?2 ) order by employeeName</query>
+ <query name="PERSONALINFO-BYIDS">from PersonalInformation where idPersonalInformation in(?1)</query>
+ <query name="PERSONALINFO-EMPCODE-STARTSWITH">from PersonalInformation  where employeeCode like ?1 || '%'</query>
 </hibernate-mapping>

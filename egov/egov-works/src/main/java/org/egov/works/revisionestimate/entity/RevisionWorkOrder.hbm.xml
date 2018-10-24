@@ -58,7 +58,7 @@
 	
    <query name="GET_REVISION_WORKORDER"> 
                <![CDATA[
-            from RevisionWorkOrder rwo where rwo.parent.id=? and rwo.egwStatus.code='APPROVED' order by rwo.id
+            from RevisionWorkOrder rwo where rwo.parent.id=?1 and rwo.egwStatus.code='APPROVED' order by rwo.id
    ]]>
    </query>
 </hibernate-mapping>   

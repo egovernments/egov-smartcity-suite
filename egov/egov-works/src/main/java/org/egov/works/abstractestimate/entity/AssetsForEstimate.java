@@ -69,7 +69,7 @@ import java.util.List;
 @Entity
 @Table(name = "EGW_ESTIMATE_ASSETS")
 @NamedQueries({
-        @NamedQuery(name = AssetsForEstimate.ASSETS_FOR_PROJECTCODE, query = "from AssetsForEstimate as ae where ae.abstractEstimate.projectCode.id=? order by ae.asset.code") })
+        @NamedQuery(name = AssetsForEstimate.ASSETS_FOR_PROJECTCODE, query = "from AssetsForEstimate as ae where ae.abstractEstimate.projectCode.id=?1 order by ae.asset.code") })
 @SequenceGenerator(name = AssetsForEstimate.SEQ_EGW_ESTIMATEASSETS, sequenceName = AssetsForEstimate.SEQ_EGW_ESTIMATEASSETS, allocationSize = 1)
 public class AssetsForEstimate extends AbstractAuditable {
 

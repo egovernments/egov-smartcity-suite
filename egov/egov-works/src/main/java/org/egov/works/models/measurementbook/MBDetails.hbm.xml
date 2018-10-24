@@ -92,47 +92,47 @@
 	<query name="prevCumulativeQuantity">
 		<![CDATA[
      	select sum(mbd.quantity) from MBDetails mbd where (mbd.mbHeader.createdDate 
-     	< (select createdDate from MBHeader where id = ?) or (select count(*) from MBHeader where id = ?) = 0 )
-     	and mbd.mbHeader.egwStatus.code != ? 
-     	group by mbd.workOrderActivity having mbd.workOrderActivity.id = ?  
+     	< (select createdDate from MBHeader where id = ?1) or (select count(*) from MBHeader where id = ?2) = 0 )
+     	and mbd.mbHeader.egwStatus.code != ?3
+     	group by mbd.workOrderActivity having mbd.workOrderActivity.id = ?4
     ]]>
 	</query>
 		<query name="prevCumulativeQuantityForCQ">
 		<![CDATA[
      	select sum(mbd.quantity) from MBDetails mbd where (mbd.mbHeader.createdDate 
-     	< (select createdDate from MBHeader where id = ?) or (select count(*) from MBHeader where id = ?) = 0 )
-     	and mbd.mbHeader.egwStatus.code != ? and (mbd.workOrderActivity.workOrderEstimate.workOrder = ? or mbd.workOrderActivity.workOrderEstimate.workOrder.parent = ?)
-     	group by mbd.workOrderActivity,mbd.workOrderActivity.activity having (mbd.workOrderActivity.id = ? or mbd.workOrderActivity.activity.id = ? ) 
+     	< (select createdDate from MBHeader where id = ?1) or (select count(*) from MBHeader where id = ?2) = 0 )
+     	and mbd.mbHeader.egwStatus.code != ?3 and (mbd.workOrderActivity.workOrderEstimate.workOrder = ?4 or mbd.workOrderActivity.workOrderEstimate.workOrder.parent = ?5)
+     	group by mbd.workOrderActivity,mbd.workOrderActivity.activity having (mbd.workOrderActivity.id = ?6 or mbd.workOrderActivity.activity.id = ?7 )
     ]]>
 	</query>
 	
 	<query name="prevCumulativeQuantityForREs">
 		<![CDATA[
      	select sum(mbd.quantity) from MBDetails mbd where (mbd.mbHeader.createdDate 
-     	< (select createdDate from MBHeader where id = ?) or (select count(*) from MBHeader where id = ?) = 0 )
-     	and mbd.mbHeader.egwStatus.code != ?  
-     	group by mbd.workOrderActivity.activity.parent having ((mbd.workOrderActivity.activity.parent is not null and mbd.workOrderActivity.activity.parent.id = ?)) 
+     	< (select createdDate from MBHeader where id = ?1) or (select count(*) from MBHeader where id = ?2) = 0 )
+     	and mbd.mbHeader.egwStatus.code != ?3
+     	group by mbd.workOrderActivity.activity.parent having ((mbd.workOrderActivity.activity.parent is not null and mbd.workOrderActivity.activity.parent.id = ?4))
     ]]>
 	</query>
 	<query name="totalApprovedMBAmount">
 		<![CDATA[
      	select sum(mbd.quantity*mbd.workOrderActivity.approvedRate) from MBDetails mbd
-     	 where mbd.mbHeader.egwStatus.code = ? 
-     	and mbd.mbHeader.workOrderEstimate.workOrder.id = ? and mbd.mbHeader.workOrderEstimate.id = ? and trunc(mbd.mbHeader.state.createdDate) <= ? and mbd.mbHeader.egBillregister is null
+     	 where mbd.mbHeader.egwStatus.code = ?1
+     	and mbd.mbHeader.workOrderEstimate.workOrder.id = ?2 and mbd.mbHeader.workOrderEstimate.id = ?3 and trunc(mbd.mbHeader.state.createdDate) <= ?4 and mbd.mbHeader.egBillregister is null
     ]]>
 	</query>
 	<query name="totalApprovedMBAmountForCancelledBill">
 		<![CDATA[
      	select sum(mbd.quantity*mbd.workOrderActivity.approvedRate) from MBDetails mbd
-     	 where mbd.mbHeader.egwStatus.code = ? 
-     	and mbd.mbHeader.workOrderEstimate.workOrder.id = ? and mbd.mbHeader.workOrderEstimate.id = ? and trunc(mbd.mbHeader.state.createdDate) <= ? 
-     	and mbd.mbHeader.egBillregister is not null and mbd.mbHeader.egBillregister.status.code = ?
+     	 where mbd.mbHeader.egwStatus.code = ?1
+     	and mbd.mbHeader.workOrderEstimate.workOrder.id = ?2 and mbd.mbHeader.workOrderEstimate.id = ?3 and trunc(mbd.mbHeader.state.createdDate) <= ?4
+     	and mbd.mbHeader.egBillregister is not null and mbd.mbHeader.egBillregister.status.code = ?5
     ]]>
 	</query>
 	<query name="getUtlizedAmountForUnArrovedBill">
 		<![CDATA[
      	select sum(reg.passedamount) from MBHeader mbh join mbh.egBillregister as reg where 
-     	reg.status.code not in (?) and mbh.workOrder.id = ? and trunc(reg.billdate) <= ?
+     	reg.status.code not in (?1) and mbh.workOrder.id = ?2 and trunc(reg.billdate) <= ?3
      	and reg.egBillregistermis.voucherHeader is null
     ]]>
 	</query>
@@ -140,31 +140,31 @@
 	<query name="gettotalApprovedMBs">
 		<![CDATA[
      	select mbd.workOrderActivity.id,mbd.quantity  from MBDetails mbd
-     	 where mbd.mbHeader.egwStatus.code = ? and mbd.mbHeader.isLegacyMB!=1 
-     	and mbd.mbHeader.workOrderEstimate.workOrder.id = ? and mbd.mbHeader.workOrderEstimate.id = ? and trunc(mbd.mbHeader.state.createdDate) <= ? and mbd.mbHeader.egBillregister is null
+     	 where mbd.mbHeader.egwStatus.code = ?1 and mbd.mbHeader.isLegacyMB!=1
+     	and mbd.mbHeader.workOrderEstimate.workOrder.id = ?2 and mbd.mbHeader.workOrderEstimate.id = ?3 and trunc(mbd.mbHeader.state.createdDate) <= ?4 and mbd.mbHeader.egBillregister is null
      	group by mbd.workOrderActivity.id,mbd.quantity, mbd.mbHeader.id
     ]]>
 	</query>
 	<query name="gettotalApprovedMBsForCancelledBill">
 		<![CDATA[
      	 select mbd.workOrderActivity.id,mbd.quantity from MBDetails mbd
-     	 where mbd.mbHeader.egwStatus.code = ? and mbd.mbHeader.isLegacyMB!=1 
-     	and mbd.mbHeader.workOrderEstimate.workOrder.id = ? and mbd.mbHeader.workOrderEstimate.id = ? and trunc(mbd.mbHeader.state.createdDate) <= ? 
-     	and mbd.mbHeader.egBillregister is not null and mbd.mbHeader.egBillregister.status.code = ? group by mbd.workOrderActivity.id,mbd.quantity, mbd.mbHeader.id
+     	 where mbd.mbHeader.egwStatus.code = ?1 and mbd.mbHeader.isLegacyMB!=1
+     	and mbd.mbHeader.workOrderEstimate.workOrder.id = ?2 and mbd.mbHeader.workOrderEstimate.id = ?3 and trunc(mbd.mbHeader.state.createdDate) <= ?4
+     	and mbd.mbHeader.egBillregister is not null and mbd.mbHeader.egBillregister.status.code = ?5 group by mbd.workOrderActivity.id,mbd.quantity, mbd.mbHeader.id
     ]]>
 	</query>
 	<query name="getMBAmountForBill">
 		<![CDATA[
      	 select mbd.workOrderActivity.id,mbd.quantity  from MBDetails mbd
-     	 where mbd.mbHeader.egwStatus.code = ?  and mbd.mbHeader.isLegacyMB!=1 
-     	and mbd.mbHeader.egBillregister.id = ? group by mbd.workOrderActivity.id,mbd.quantity, mbd.mbHeader.id
+     	 where mbd.mbHeader.egwStatus.code = ?1  and mbd.mbHeader.isLegacyMB!=1
+     	and mbd.mbHeader.egBillregister.id = ?2 group by mbd.workOrderActivity.id,mbd.quantity, mbd.mbHeader.id
     ]]>
 	</query>
 	<query name="totalEstimatedQuantity">
 		<![CDATA[
            select sum(woa.approvedQuantity) from WorkOrderActivity woa where woa.workOrderEstimate.workOrder.egwStatus.code<>'CANCELLED' 
-           and woa.workOrderEstimate.workOrder = ? 
-            group by woa,woa.activity having (id = ? or activity.id = ?)
+           and woa.workOrderEstimate.workOrder = ?1
+            group by woa,woa.activity having (id = ?2 or activity.id = ?3)
    		]]>  
 	</query>
 	<query name="totalEstimatedQuantityForRE"> 
@@ -172,17 +172,17 @@
 	     	select sum(woa.approvedQuantity*coalesce((CASE WHEN woa.activity.revisionType = 'REDUCED_QUANTITY' THEN -1 
 	     	WHEN woa.activity.revisionType = 'ADDITIONAL_QUANTITY' THEN 1 WHEN woa.activity.revisionType = 'NON_TENDERED_ITEM' THEN 1 
 	     	WHEN woa.activity.revisionType = 'LUMP_SUM_ITEM' THEN 1 END),1)) from WorkOrderActivity woa where woa.activity.abstractEstimate.egwStatus.code = 'APPROVED' 
-	     	and woa.activity.createdDate < ? and woa.workOrderEstimate.workOrder.egwStatus.code<>'CANCELLED' 
-	     	and ((woa.activity.parent is null and woa.workOrderEstimate.workOrder = ?) or (woa.workOrderEstimate.workOrder.parent is not null and woa.workOrderEstimate.workOrder.parent = ?)) 
-	     	group by woa.activity.parent having (woa.activity.parent is not null and woa.activity.parent.id = ? ) 
+	     	and woa.activity.createdDate < ?1 and woa.workOrderEstimate.workOrder.egwStatus.code<>'CANCELLED'
+	     	and ((woa.activity.parent is null and woa.workOrderEstimate.workOrder = ?2) or (woa.workOrderEstimate.workOrder.parent is not null and woa.workOrderEstimate.workOrder.parent = ?3))
+	     	group by woa.activity.parent having (woa.activity.parent is not null and woa.activity.parent.id = ?4 )
     	]]>
 	</query>
 	<query name="totalEstimatedQuantityInRE">
 		<![CDATA[            
             select sum(woa.approvedQuantity) from WorkOrderActivity woa where woa.activity.abstractEstimate.egwStatus.code != 'CANCELLED' and 
-            woa.activity.abstractEstimate.id != ? and woa.workOrderEstimate.workOrder.egwStatus.code<>'CANCELLED' and 
-            (woa.workOrderEstimate.workOrder = ? or (woa.activity.parent is null and woa.workOrderEstimate.workOrder.parent is not null and woa.workOrderEstimate.workOrder.parent = ?))
-            group by woa,woa.activity having (id = ? or activity.id = ?)
+            woa.activity.abstractEstimate.id != ?1 and woa.workOrderEstimate.workOrder.egwStatus.code<>'CANCELLED' and
+            (woa.workOrderEstimate.workOrder = ?2 or (woa.activity.parent is null and woa.workOrderEstimate.workOrder.parent is not null and woa.workOrderEstimate.workOrder.parent = ?3))
+            group by woa,woa.activity having (id = ?3 or activity.id = ?4)
    		]]>  
 	</query>
 	<query name="totalEstimatedQuantityForREinRE">
@@ -190,9 +190,9 @@
      	select sum(woa.approvedQuantity*coalesce((CASE WHEN woa.activity.revisionType = 'REDUCED_QUANTITY' THEN -1 
 	     	WHEN woa.activity.revisionType = 'ADDITIONAL_QUANTITY' THEN 1 WHEN woa.activity.revisionType = 'NON_TENDERED_ITEM' THEN 1 
 	     	WHEN woa.activity.revisionType = 'LUMP_SUM_ITEM' THEN 1 END),1)) from WorkOrderActivity woa where woa.activity.abstractEstimate.egwStatus.code != 'CANCELLED' 
-     	and woa.activity.abstractEstimate.id != ? and woa.workOrderEstimate.workOrder.egwStatus.code<>'CANCELLED' and (woa.workOrderEstimate.workOrder = ? or 
-     	(woa.workOrderEstimate.workOrder.parent is not null and woa.workOrderEstimate.workOrder.parent = ?))
-     	group by woa.activity.parent having (woa.activity.parent is not null and woa.activity.parent.id = ? ) 
+     	and woa.activity.abstractEstimate.id != ?1 and woa.workOrderEstimate.workOrder.egwStatus.code<>'CANCELLED' and (woa.workOrderEstimate.workOrder = ?2 or
+     	(woa.workOrderEstimate.workOrder.parent is not null and woa.workOrderEstimate.workOrder.parent = ?3))
+     	group by woa.activity.parent having (woa.activity.parent is not null and woa.activity.parent.id = ?4 )
     ]]> 
 	</query>
 	
@@ -201,10 +201,10 @@
      	select sum(woa.approvedQuantity*coalesce((CASE WHEN woa.activity.revisionType = 'REDUCED_QUANTITY' THEN -1 
 	     	WHEN woa.activity.revisionType = 'ADDITIONAL_QUANTITY' THEN 1 WHEN woa.activity.revisionType = 'NON_TENDERED_ITEM' THEN 1 
 	     	WHEN woa.activity.revisionType = 'LUMP_SUM_ITEM' THEN 1 END),1)) from WorkOrderActivity woa where woa.activity.abstractEstimate.egwStatus.code != 'CANCELLED' 
-     	and woa.activity.abstractEstimate.createdDate < (select est.createdDate from AbstractEstimate est where est.id = ?) 
-     	and woa.workOrderEstimate.workOrder.egwStatus.code<>'CANCELLED' and (woa.workOrderEstimate.workOrder = ? 
-     	or (woa.workOrderEstimate.workOrder.parent is not null and woa.workOrderEstimate.workOrder.parent = ?))
-     	group by woa.activity.parent having (woa.activity.parent is not null and woa.activity.parent.id = ? ) 
+     	and woa.activity.abstractEstimate.createdDate < (select est.createdDate from AbstractEstimate est where est.id = ?1)
+     	and woa.workOrderEstimate.workOrder.egwStatus.code<>'CANCELLED' and (woa.workOrderEstimate.workOrder = ?2
+     	or (woa.workOrderEstimate.workOrder.parent is not null and woa.workOrderEstimate.workOrder.parent = ?3))
+     	group by woa.activity.parent having (woa.activity.parent is not null and woa.activity.parent.id = ?4 )
     ]]> 
 	</query>
 	</hibernate-mapping>

@@ -68,7 +68,7 @@
 	</class>
 	<query name="authRulesByAction">
     <![CDATA[
-     	select authRule from AuthorizationRule authRule where authRule.action=?
+     	select authRule from AuthorizationRule authRule where authRule.action=?1
     ]]>
 	</query>
 </hibernate-mapping>
