@@ -65,7 +65,4 @@
             <password>${nexus.password}</password>
         </server>
     </servers>
-    <pluginGroups>
-        <pluginGroup>com.versioneye</pluginGroup>
-    </pluginGroups>
 </settings>
