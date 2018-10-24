@@ -455,13 +455,13 @@ public class WaterTaxCollection extends TaxCollection {
         WaterConnectionDetails waterconndet = null;
         EgDemand demand = null;
         if (egBill.getEgDemand() != null && egBill.getEgDemand().getIsHistory() != null
-                && egBill.getEgDemand().getIsHistory().equals(WaterTaxConstants.DEMANDISHISTORY))
+                && egBill.getEgDemand().getIsHistory().equals(WaterTaxConstants.DEMAND_ISHISTORY_N))
             demand = egBill.getEgDemand();
         else {
             waterconndet = waterConnectionDetailsService.getWaterConnectionDetailsByDemand(egBill.getEgDemand());
             for (final WaterDemandConnection waterDemand : waterconndet.getWaterDemandConnection())
                 if (waterDemand != null && waterDemand.getDemand() != null
-                        && waterDemand.getDemand().getIsHistory().equals(WaterTaxConstants.DEMANDISHISTORY))
+                        && waterDemand.getDemand().getIsHistory().equals(WaterTaxConstants.DEMAND_ISHISTORY_N))
                     demand = waterDemand.getDemand();
         }
         return demand;

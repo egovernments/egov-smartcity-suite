@@ -605,7 +605,7 @@ public class WaterTaxUtils {
         List<WaterDemandConnection> waterDemandConnectionList = waterDemandConnectionService
                 .findByWaterConnectionDetails(waterConnectionDetails);
         for (WaterDemandConnection waterDemandConnection : waterDemandConnectionList)
-            if (waterDemandConnection.getDemand().getIsHistory().equalsIgnoreCase(WaterTaxConstants.DEMANDISHISTORY)) {
+            if (waterDemandConnection.getDemand().getIsHistory().equalsIgnoreCase(WaterTaxConstants.DEMAND_ISHISTORY_N)) {
                 waterdemandConnection = waterDemandConnection;
                 break;
             }

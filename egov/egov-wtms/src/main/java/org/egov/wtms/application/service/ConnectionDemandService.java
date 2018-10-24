@@ -61,15 +61,13 @@ import static org.egov.wtms.masters.entity.enums.ConnectionType.NON_METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CREATED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.BPL_CATEGORY_DONATION_AMOUNT;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CATEGORY_BPL;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CREATE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.DELETE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.DEMAND_ISHISTORY_N;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED_CHARGES_REASON_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MONTHLY;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PENALTYCHARGES;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.SAVE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_CHARGES_SERVICE_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_DONATION_CHARGE;
@@ -158,9 +156,7 @@ public class ConnectionDemandService {
     private static final String TO_INSTALLMENT = "toInstallment";
     private static final String WATER_CHARGES = "Water Charges";
     private static final String DEMAND_ISHISTORY_Y = "Y";
-    private static final String SAVE_MATERIAL_DETAILS = "msg.ulb.material.detail.save";
-    private static final String CREATE_MATERIAL_DEMAND = "msg.material.demand.generated";
-    private static final String REMOVE_MATERIAL_DEMAND = "msg.material.demand.removal.success";
+    private static final String UPDATE_MATERIAL_DETAILS = "msg.ulb.material.detail.update";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -242,7 +238,7 @@ public class ConnectionDemandService {
         if (NON_METERED.equals(waterConnectionDetails.getConnectionType()) &&
                 !WaterTaxConstants.CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
             donationDetails = getDonationDetails(waterConnectionDetails);
-        if (METERED.equals(waterConnectionDetails.getConnectionType()) && waterConnectionDetails.getDonationCharges() > 0.0)
+        if (METERED.equals(waterConnectionDetails.getConnectionType()) && BigDecimal.valueOf(waterConnectionDetails.getDonationCharges()).compareTo(ZERO) > 0)
             feeDetails.put(WATERTAX_DONATION_CHARGE, waterConnectionDetails.getDonationCharges());
 
         if (CATEGORY_BPL.equalsIgnoreCase(waterConnectionDetails.getCategory().getName())) {
@@ -293,7 +289,7 @@ public class ConnectionDemandService {
         egDemand.addRebateAmt(rebateAmount);
         egDemand.setEgInstallmentMaster(installment);
         egDemand.getEgDemandDetails().addAll(newDemandDetailSet);
-        egDemand.setIsHistory("N");
+        egDemand.setIsHistory(DEMAND_ISHISTORY_N);
         egDemand.setCreateDate(new Date());
         egDemand.setModifiedDate(new Date());
         return egDemand;
@@ -521,7 +517,7 @@ public class ConnectionDemandService {
         if (demandObj == null && waterConnectionDetails.getLegacy()) {
             EgDemand demand = new EgDemand();
             demand.setEgInstallmentMaster(installment);
-            demand.setIsHistory("N");
+            demand.setIsHistory(DEMAND_ISHISTORY_N);
             demand.setCreateDate(date);
             demand.setModifiedDate(date);
             demandObj = demand;
@@ -621,7 +617,7 @@ public class ConnectionDemandService {
         demandObj.setEgInstallmentMaster(installObj);
         demandObj.setModifiedDate(new Date());
         if (StringUtils.isBlank(demandObj.getIsHistory()))
-            demandObj.setIsHistory("N");
+            demandObj.setIsHistory(DEMAND_ISHISTORY_N);
         if (demandObj.getCreateDate() == null)
             demandObj.setCreateDate(new Date());
         if (demandObj.getId() == null) {
@@ -982,23 +978,18 @@ public class ConnectionDemandService {
     @Transactional
     public String updateUlbMaterial(String applicationNumber, WaterConnectionDetails waterConnectionDetails) {
         WaterConnectionDetails connectionDetails = null;
-        String message;
         if (applicationNumber != null)
             connectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
-        if (waterConnectionDetails.getUlbMaterial() && !containsMaterialDemand(connectionDetails)) {
+        if (waterConnectionDetails.getUlbMaterial() && !containsMaterialDemand(connectionDetails))
             generateMaterialDemand(connectionDetails);
-            message = CREATE;
-        } else
-            message = SAVE;
 
-        if (!waterConnectionDetails.getUlbMaterial() && containsMaterialDemand(connectionDetails)) {
+        if (!waterConnectionDetails.getUlbMaterial() && containsMaterialDemand(connectionDetails))
             deleteMaterialDemand(connectionDetails);
-            message = DELETE;
-        }
+        
         if (connectionDetails != null)
             connectionDetails.setUlbMaterial(waterConnectionDetails.getUlbMaterial());
         waterConnectionDetailsService.save(connectionDetails);
-        return getSuccessMessage(message);
+        return UPDATE_MATERIAL_DETAILS;
     }
 
     @Transactional
@@ -1039,16 +1030,6 @@ public class ConnectionDemandService {
                         .equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
                     isMaterialDemandPresent = true;
         return isMaterialDemandPresent;
-    }
-
-    public String getSuccessMessage(String message) {
-        if (SAVE.equalsIgnoreCase(message))
-            return SAVE_MATERIAL_DETAILS;
-        else if (CREATE.equalsIgnoreCase(message))
-            return CREATE_MATERIAL_DEMAND;
-        else if (DELETE.equalsIgnoreCase(message))
-            return REMOVE_MATERIAL_DEMAND;
-        return StringUtils.EMPTY;
     }
 
     @Transactional

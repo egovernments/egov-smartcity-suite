@@ -148,7 +148,7 @@ public class WaterTaxConstants {
     public static final String TEMPERARYCLOSE = "Temporary";
     public static final String PERMENENTCLOSECODE = "P";
     public static final String TEMPERARYCLOSECODE = "T";
-    public static final String DEMANDISHISTORY = "N";
+    public static final String DEMAND_ISHISTORY_N = "N";
 
     public static final String WF_STATE_REJECTED = "Rejected";
     public static final String WFLOW_ACTION_STEP_REJECT = "Reject";
@@ -454,7 +454,4 @@ public class WaterTaxConstants {
     public static final String MESSAGE = "message";
     public static final String ERROR = "error";
     public static final String BPL_CATEGORY_DONATION_AMOUNT="BPL_CATEGORY_DONATION_AMOUNT";
-    public static final String SAVE="Save";
-    public static final String CREATE="Create";
-    public static final String DELETE="Delete";
 }

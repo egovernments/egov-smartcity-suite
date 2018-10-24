@@ -95,7 +95,7 @@
   						<label class="col-sm-2 control-label text-right"><spring:message code="lbl1.consumer.number"/></label>
   						<div class="col-sm-3 add-margin">
   							<form:input path="consumerNumber" id="consumerNumber"  
-  							cssClass="form-control patternvalidation" data-pattern="alphanumericwithhyphen"/>
+  							cssClass="form-control patternvalidation" data-pattern="number"/>
   							<form:errors path="consumerNumber" cssClass="add-margin error-msg"/>
   						</div>
   					</div>
