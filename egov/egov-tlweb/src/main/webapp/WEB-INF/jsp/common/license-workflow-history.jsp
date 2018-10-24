@@ -68,7 +68,7 @@
             <tr>
                 <td class="blueborderfortd" style="text-align: left"><s:date
                         name="#history.date" var="updatedDate"
-                        format="dd/MM/yyyy hh:mm a"/> <s:property
+                        format="dd/MM/yyyy HH:mm a"/> <s:property
                         value="#updatedDate"/></td>
                 <td class="blueborderfortd" style="text-align: left"><s:property
                         value="%{#history.updatedBy}"/></td>
