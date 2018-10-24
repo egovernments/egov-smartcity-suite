@@ -54,7 +54,7 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
 <form:form role="form"
-	action='/stms/transactions//modifyConnection-update/${sewerageApplicationDetails.applicationNumber}'
+	action='/stms/transactions/modifyConnection-update/${sewerageApplicationDetails.applicationNumber}'
 	method="post" modelAttribute="sewerageApplicationDetails"
 	id="editSewerageChangeInClosetsForm"
 	cssClass="form-horizontal form-groups-bordered"
