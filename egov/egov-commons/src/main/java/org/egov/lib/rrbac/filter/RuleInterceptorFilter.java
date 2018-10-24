@@ -173,7 +173,7 @@ public class RuleInterceptorFilter implements Filter {
 	 */
 	private Object getEntity(final HttpServletRequest httpRequest, final AuthorizationRule authRule) {
 		final Long objectId = Long.valueOf(httpRequest.getParameter("AUTHRULE_OBJECT_ID"));
-		final List objects = this.daoService.findAllBy("from " + authRule.getObjectType() + " where id=?", objectId);
+		final List objects = this.daoService.findAllBy("from " + authRule.getObjectType() + " where id=?1", objectId);
 		if (objects.isEmpty()) {
 			throw new ApplicationRuntimeException("Object id is null to get AuthorizationRule");
 		}

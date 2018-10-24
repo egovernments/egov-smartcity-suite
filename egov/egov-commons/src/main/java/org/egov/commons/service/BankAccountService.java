@@ -156,31 +156,31 @@ public class BankAccountService extends PersistenceService<Bankaccount, Long> {
                 final String[] strArray = typeOfAccount.split(",");
                 if (fundId != null) {
                     bankaccounts = findAllBy(
-                            "from Bankaccount ba where ba.bankbranch.id=? and ba.fund.id=? and ba.bankbranch.bank.id=? and isactive=true and type in (?, ?) order by ba.chartofaccounts.glcode",
+                            "from Bankaccount ba where ba.bankbranch.id=?1 and ba.fund.id=?2 and ba.bankbranch.bank.id=?3 and isactive=true and type in (?4, ?5) order by ba.chartofaccounts.glcode",
                             branchId, fundId, bankId, BankAccountType.valueOf(strArray[0].toUpperCase()),
                             BankAccountType.valueOf(strArray[1].toUpperCase()));
                 } else {
                     bankaccounts = findAllBy(
-                            "from Bankaccount ba where ba.bankbranch.id=? and  ba.bankbranch.bank.id=? and isactive=true and type in (?, ?) order by ba.chartofaccounts.glcode",
+                            "from Bankaccount ba where ba.bankbranch.id=?1 and  ba.bankbranch.bank.id=?2 and isactive=true and type in (?3, ?4) order by ba.chartofaccounts.glcode",
                             branchId, bankId, BankAccountType.valueOf(strArray[0]),
                             BankAccountType.valueOf(strArray[1]));
                 }
             } else if (fundId != null) {
                 bankaccounts = findAllBy(
-                        "from Bankaccount ba where ba.bankbranch.id=? and ba.fund.id=? and ba.bankbranch.bank.id=? and isactive=true and type in (?) order by ba.chartofaccounts.glcode",
+                        "from Bankaccount ba where ba.bankbranch.id=?1 and ba.fund.id=?2 and ba.bankbranch.bank.id=?3 and isactive=true and type in (?4) order by ba.chartofaccounts.glcode",
                         branchId, fundId, bankId, typeOfAccount);
             } else {
                 bankaccounts = findAllBy(
-                        "from Bankaccount ba where ba.bankbranch.id=?  and ba.bankbranch.bank.id=? and isactive=true and type in (?) order by ba.chartofaccounts.glcode",
+                        "from Bankaccount ba where ba.bankbranch.id=?1  and ba.bankbranch.bank.id=?2 and isactive=true and type in (?3) order by ba.chartofaccounts.glcode",
                         branchId, bankId, typeOfAccount);
             }
         } else if (fundId != null) {
             bankaccounts = findAllBy(
-                    "from Bankaccount ba where ba.bankbranch.id=? and ba.fund.id=? and ba.bankbranch.bank.id=? and isactive=true order by ba.chartofaccounts.glcode",
+                    "from Bankaccount ba where ba.bankbranch.id=?1 and ba.fund.id=?2 and ba.bankbranch.bank.id=?3 and isactive=true order by ba.chartofaccounts.glcode",
                     branchId, fundId, bankId);
         } else {
             bankaccounts = findAllBy(
-                    "from Bankaccount ba where ba.bankbranch.id=?  and ba.bankbranch.bank.id=? and isactive=true order by ba.chartofaccounts.glcode",
+                    "from Bankaccount ba where ba.bankbranch.id=?1  and ba.bankbranch.bank.id=?2 and isactive=true order by ba.chartofaccounts.glcode",
                     branchId, bankId);
         }
         return bankaccounts;
