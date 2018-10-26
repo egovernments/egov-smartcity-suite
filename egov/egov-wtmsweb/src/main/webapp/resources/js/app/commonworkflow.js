@@ -46,13 +46,13 @@
  *
  */
 $(document).ready(function()
-{	
+{
 	var currentstate=$('#currentState').val();
 	if(currentstate != 'Rejected')
 		{
 		$('#approvalDepartment').change(function(){
 			$.ajax({
-				url: "/eis/ajaxWorkFlow-getDesignationsByObjectTypeAndDesignation",     
+				url: "/eis/ajaxWorkFlow-getDesignationsByObjectTypeAndDesignationAndDate",     
 				type: "GET",
 				data: {
 					approvalDepartment : $('#approvalDepartment').val(),
@@ -62,7 +62,8 @@ $(document).ready(function()
 					amountRule : $('#amountRule').val(),
 					additionalRule : $('#additionalRule').val(),
 					pendingAction : $('#pendingActions').val(),
-					currentDesignation : $('#currentDesignation').val()
+					currentDesignation : $('#currentDesignation').val(),
+					date : $('#date').val()
 				},
 				dataType: "json",
 				success: function (response) {

@@ -332,7 +332,9 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         isDesignationOfClerk())
                     currState = "NEW";
                 wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
-                        additionalRule, currState, null);
+                        additionalRule, currState, null,
+                        REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+                                ? waterConnectionDetails.getApplicationDate() : null);
                 waterConnectionDetails.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withSLA(new LocalDateTime().plusDays(
                                 applicationProcessTimeService.getApplicationProcessTime(
@@ -376,15 +378,13 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null,
                                 null, additionalRule, waterConnectionDetails.getCurrentState().getValue(),
                                 waterConnectionDetailsService.getReglnConnectionPendingAction(waterConnectionDetails,
-                                        null, workFlowAction),
-                                null);
+                                        null, workFlowAction),waterConnectionDetails.getApplicationDate());
                     else
                         wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null,
                                 null, additionalRule, waterConnectionDetails.getCurrentState().getValue(),
                                 waterConnectionDetailsService.getReglnConnectionPendingAction(waterConnectionDetails,
-                                        loggedInUserDesignation, workFlowAction),
-                                null);
-                } else if (isCurrentUserApprover(loggedInUserDesignation))
+                                        loggedInUserDesignation, workFlowAction), waterConnectionDetails.getApplicationDate());
+                } else if (isCurrentUserApprover(loggedInUserDesignation)) 
                     wfmatrix = getMatrixbyStatusAndLoggedInUser(waterConnectionDetails, additionalRule, workFlowAction,
                             loggedInUserDesignation);
                 else if (APPLICATION_STATUS_FEEPAID.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) &&

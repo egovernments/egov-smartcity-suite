@@ -673,7 +673,8 @@ public class UpdateConnectionController extends GenericConnectionController {
                     } else if (workFlowAction.equalsIgnoreCase(WF_PREVIEW_BUTTON)
                             && (waterConnectionDetails.getApplicationType().getCode().equals(NEWCONNECTION)
                             || waterConnectionDetails.getApplicationType().getCode().equals(ADDNLCONNECTION)
-                            || waterConnectionDetails.getApplicationType().getCode().equals(CHANGEOFUSE)))
+                            || waterConnectionDetails.getApplicationType().getCode().equals(CHANGEOFUSE)
+                            || waterConnectionDetails.getApplicationType().getCode().equals(REGULARIZE_CONNECTION)))
                         return "redirect:/application/workorder?pathVar=" + waterConnectionDetails.getApplicationNumber();
                     else if (workFlowAction.equalsIgnoreCase(WF_PREVIEW_BUTTON)
                             && waterConnectionDetails.getApplicationType().getCode().equals(CLOSINGCONNECTION))

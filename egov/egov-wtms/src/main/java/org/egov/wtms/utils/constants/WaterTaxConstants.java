@@ -182,6 +182,15 @@ public class WaterTaxConstants {
     public static final String PENDING_DIGI_SIGN = "Pending Digital Signature";
     public static final String COMM_APPROVAL_PENDING = "Commissioner Approval Pending";
     public static final String AE_APPROVAL_PENDING = "Asst.engineer approval pending";
+    public static final String WF_STATE_PENDING_FORWARD_BY_EE="Pending forward by Executive Engineer";
+    public static final String WF_STATE_PENDING_FORWARD_BY_SE="Pending forward by Superintending Engineer";
+    public static final String WF_STATE_PENDING_FORWARD_BY_ME="Pending forward by Municipal Engineer";
+    public static final String PENDING_DIGI_SIGN_BY_COMM="Commissioner digisign pending";
+    public static final String PENDING_DIGI_SIGN_BY_DEE="Pending Digital Sign by DEE";
+    public static final String PENDING_DIGI_SIGN_BY_EE="Pending Digital Sign by EE";
+    public static final String PENDING_DIGI_SIGN_BY_SE="Pending Digital Sign by SE";
+    public static final String PENDING_DIGI_SIGN_BY_ME="Pending Digital Sign by ME";
+    public static final String PENDING_APPROVAL_BY_COMM ="Pending approval by Commissioner";  
 
     public static final String APPROVEWORKFLOWACTION = "Approve";
     public static final String FORWARDWORKFLOWACTION = "Forward";
@@ -454,4 +463,7 @@ public class WaterTaxConstants {
     public static final String MESSAGE = "message";
     public static final String ERROR = "error";
     public static final String BPL_CATEGORY_DONATION_AMOUNT="BPL_CATEGORY_DONATION_AMOUNT";
+    public static final String SAVE="Save";
+    public static final String CREATE="Create";
+    public static final String DELETE="Delete";
 }
