@@ -59,6 +59,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 import org.apache.commons.lang3.StringUtils;
@@ -313,7 +314,7 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
                         .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_INITIALAPPROVED) ||
                         sewerageApplicationDetails.getStatus().getCode()
                                 .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_INSPECTIONFEEPAID)))
-            populateDonationSewerageTax(sewerageApplicationDetails);
+            populateDonationSewerageTax(sewerageApplicationDetailsService.findBy(sewerageApplicationDetails.getId()));
 
         if (sewerageApplicationDetails != null && sewerageApplicationDetails.getFieldInspections() != null &&
                 !sewerageApplicationDetails.getFieldInspections().isEmpty()) {
@@ -374,7 +375,7 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
     }
 
     @RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.POST)
-    public String update(@ModelAttribute SewerageApplicationDetails sewerageApplicationDetails,
+    public String update(@Valid @ModelAttribute SewerageApplicationDetails sewerageApplicationDetails,
                          final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
                          final HttpServletRequest request, final HttpSession session, final Model model,
                          @RequestParam("files") final MultipartFile[] files,
