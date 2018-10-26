@@ -238,9 +238,10 @@ public class SewerageApplicationDetailsService {
                 status);
     }
 
+
     public SewerageApplicationDetails findByConnectionShscNumberAndConnectionStatus(final String shscNumber,
                                                                                     final SewerageConnectionStatus status) {
-        return sewerageApplicationDetailsRepository.findByConnection_ShscNumberAndConnection_Status(shscNumber,
+        return sewerageApplicationDetailsRepository.findByConnectionShscNumberAndConnectionStatus(shscNumber,
                 status);
     }
 

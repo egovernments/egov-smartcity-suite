@@ -47,15 +47,17 @@
  */
 package org.egov.stms.transactions.repository;
 
+import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
 import org.egov.stms.transactions.entity.SewerageConnection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface SewerageConnectionRepository extends JpaRepository<SewerageConnection, Long> {
 
     SewerageConnection findByShscNumber(String shscNumber);
-    // TODO : commented as part of design change. propertyIdentifier moved to connectiondetail
-    //List<SewerageConnection> findByPropertyIdentifier(String propertyIdentifier);
 
+    SewerageConnection findByShscNumberAndStatusIn(String shscNumber, List<SewerageConnectionStatus> connectionStatusList);
 }
