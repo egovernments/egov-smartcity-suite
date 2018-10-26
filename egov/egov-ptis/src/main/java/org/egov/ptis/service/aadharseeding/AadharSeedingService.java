@@ -174,10 +174,10 @@ public class AadharSeedingService extends GenericWorkFlowController {
         StringBuilder orderBy = new StringBuilder();
         baseQry = baseQry
                 .append("select mv.propertyId, mv.ownerName, mv.houseNo, mv.propertyAddress from PropertyMaterlizeView mv ")
-                .append("where mv.latitude is not null and mv.longitude is not null and (mv.basicPropertyID in(select mv.basicPropertyID ")
-                .append("from PropertyMaterlizeView mv where mv.usage ='VACANTLAND' and mv.sitalArea is not null) or mv.basicPropertyID in ")
-                .append("(select mv.basicPropertyID from PropertyMaterlizeView mv where mv.usage <>'VACANTLAND' and ")
-                .append("mv.totalBuiltUpArea is not null)) and mv.basicPropertyID in(select p.basicProperty from PropertyImpl p where ")
+                .append("where mv.latitude is not null and mv.longitude is not null and (exists(select basicPropertyID ")
+                .append("from PropertyMaterlizeView where usage ='VACANTLAND' and sitalArea is not null) or exists ")
+                .append("(select basicPropertyID from PropertyMaterlizeView where usage <>'VACANTLAND' and ")
+                .append("totalBuiltUpArea is not null)) and mv.basicPropertyID in(select p.basicProperty from PropertyImpl p where ")
                 .append("p.propertyDetail.structure=false and p.status in('A','I') and p.id not in(select m.property from PropertyMutation m ")
                 .append("where m.state.status <> 2) and p.basicProperty not in(select psv.referenceBasicProperty from PropertyStatusValues psv ")
                 .append("where psv.referenceBasicProperty is not null and psv.referenceBasicProperty.underWorkflow = true)) and ")
