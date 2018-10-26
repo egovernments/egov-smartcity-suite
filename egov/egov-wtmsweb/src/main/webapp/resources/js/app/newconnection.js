@@ -55,13 +55,12 @@ $(document).ready(function(){
 	$('#addSewerageAppln').change(function(){
 			if ($('#addSewerageAppln').is(":checked")) {
 				$('.sewerageDetails').show();
+				if($('#propertyIdentifier').val() != '')
+                    validateSewerageConnection();
 			}
 			else {
 				$('.sewerageDetails').hide();
 			}
-			$('#propertyIdentifier').blur(function(){
-				validateSewerageConnection();
-			});
 	});
 
 	if($("#connectionType").val()=="METERED"){
@@ -161,7 +160,10 @@ $(document).ready(function(){
 	});
 	
 	$('#propertyIdentifier').blur(function(){
-		validatePrimaryConnection();		
+		validatePrimaryConnection();
+        if ($('#addSewerageAppln').is(":checked")) {
+            validateSewerageConnection();
+        }
 	});
 	
 	function changecategory(){
@@ -204,12 +206,12 @@ $(document).ready(function(){
 	}
 	
 	function validatePrimaryConnection() {
-		propertyID=$('#propertyIdentifier').val()
+		propertyID=$('#propertyIdentifier').val();
 		if(propertyID != '') {
 			$.ajax({
-				url: "/wtms//ajaxconnection/check-primaryconnection-exists",      
+				url: "/wtms/ajaxconnection/check-primaryconnection-exists",
 				type: "GET",
-				data: {
+                data: {
 					propertyID : propertyID  
 				},
 				dataType: "json",
@@ -359,8 +361,8 @@ $('#consumerCodeData').blur(function(){
 
 
 function loadPropertyDetails() {
-	propertyID=$('#propertyIdentifier').val()
-	allowIfPTDueExists = $('#allowIfPTDueExists').val() 
+	propertyID=$('#propertyIdentifier').val();
+	allowIfPTDueExists = $('#allowIfPTDueExists').val();
 	
 	if(propertyID != '') {
 		$.ajax({
