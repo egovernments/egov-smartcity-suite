@@ -937,7 +937,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         else
             propCompletionDate = propertyModel.getPropertyDetail().getDateOfCompletion();
 
-        final String[] amalgPropIds = new String[10];
+        final String[] amalgPropIds = new String[50];
         int i = 0;
         for (final Amalgamation amalProp : basicProp.getAmalgamations()) {
             amalgPropIds[i] = amalProp.getAmalgamatedProperty().getUpicNo();
