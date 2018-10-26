@@ -193,17 +193,16 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                     if (sewerageApplicationDetails.getCurrentDemand() != null
                             && !sewerageDemandService
                             .checkAnyTaxIsPendingToCollect(sewerageApplicationDetails.getCurrentDemand()))
-                        sewerageApplicationDetails.transition().start().withOwner(pos);
+                        sewerageApplicationDetails.transition().start().withOwner(pos).withInitiator(pos);
 
                     else
-                        sewerageApplicationDetails.transition().start().withOwner(user);
+                        sewerageApplicationDetails.transition().start().withOwner(pos).withInitiator(pos);
                 } else
-                    sewerageApplicationDetails.transition().start().withOwner(pos);
+                    sewerageApplicationDetails.transition().start().withOwner(pos).withInitiator(pos);
                 sewerageApplicationDetails.transition()
                         .withSLA(sewerageTaxUtils.getSlaAppConfigValues(sewerageApplicationDetails.getApplicationType()))
                         .withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent)
-                        .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
                         .withStateValue(wfmatrix.getNextState())
                         .withDateInfo(new Date())
                         .withNextAction(wfmatrix.getNextAction())
@@ -223,7 +222,9 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         .withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent)
                         .withStateValue(wfmatrix.getNextState())
-                        .withDateInfo(new Date()).withOwner(pos)
+                        .withDateInfo(new Date())
+                        .withOwner(pos)
+                        .withInitiator(sewerageWorkflowService.getWorkFlowInitiator(sewerageApplicationDetails).getPosition())
                         .withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(natureOfwork);
             } else if (sewerageApplicationDetails.getState() != null
@@ -380,7 +381,9 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         .withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent)
                         .withStateValue(wfmatrix.getNextState())
-                        .withDateInfo(new Date()).withOwner(pos)
+                        .withDateInfo(new Date())
+                        .withOwner(pos)
+                        .withInitiator(sewerageWorkflowService.getWorkFlowInitiator(sewerageApplicationDetails).getPosition())
                         .withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(natureOfwork);
             }
