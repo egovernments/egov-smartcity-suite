@@ -67,6 +67,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>${sessionScope.citymunicipalityname} Smart City Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
 
     <link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
     <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
@@ -78,18 +80,19 @@
     <script src="<cdn:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
     <script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
     <script src="<cdn:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
-    <script type="text/javascript" src="<cdn:url  value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-    <script src="<cdn:url  value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+    <script src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+    <script src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
     <script src="<cdn:url value='/resources/global/js/egov/custom.js?rnd=${app_release_no}' context='/egi'/>"></script>
-
+    <script src="<cdn:url value='/resources/global/js/egov/csrf.js?rnd=${app_release_no}' context='/egi'/>"></script>
     <script>
         $(window).load(function () {
             $("#cover").delay(1000).slideUp(300);
             $("#preloader-container").delay(1000).slideUp(300);
         });
-        var googleapikey = '${sessionScope.googleApiKey}';
-        var citylat = ${sessionScope.citylat};
-        var citylng = ${sessionScope.citylng};
+        const citylat = ${empty sessionScope.citylat ? 0 : sessionScope.citylat};
+        const citylng = ${empty sessionScope.citylng ? 0 : sessionScope.citylng};
+        const tokenVal = '${_csrf.token}';
+        const tokenName = '${_csrf.parameterName}';
     </script>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->

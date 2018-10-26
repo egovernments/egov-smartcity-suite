@@ -51,128 +51,134 @@
 <%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn" %>
 <html>
 <head>
-	<spring:eval expression="@environment.getProperty('analytics.enabled')" scope="application" var="analyticsEnabled"/>
-	<c:if test="${analyticsEnabled}">
-		<spring:eval expression="@environment.getProperty('analytics.config')" scope="application"/>
-	</c:if>
- <%@ include file="/includes/meta.jsp" %>    
-		<title>eGov Financials <decorator:title/></title>
-		<link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
-		<link href="<cdn:url value='/resources/css/budget.css?rnd=${app_release_no}'/>" rel="stylesheet" type="text/css" />
-		<link href="<cdn:url value='/resources/css/commonegovnew.css?rnd=${app_release_no}'/>" rel="stylesheet" type="text/css" />
-		<link href="${pageContext.request.contextPath}/resources/css/error.css?rnd=${app_release_no}" rel="stylesheet" type="text/css"></link>
-		<link rel="stylesheet" type="text/css" href="/EGF/resources/commonyui/yui2.8/fonts/fonts-min.css"/>
-		<link rel="stylesheet" type="text/css" href="/EGF/resources/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css"/>	
-		<link rel="stylesheet" type="text/css" href="/EGF/resources/commonyui/yui2.8/assets/skins/sam/autocomplete.css" />	
-		<!-- <script type="text/javascript" src="/EGF/resources/commonyui/yui2.8/animation/animation-min.js"></script> -->
-		<script type="text/javascript" src="/EGF/resources/commonyui/yui2.8/yuiloader/yuiloader-min.js"></script>
-		<script type="text/javascript" src="/EGF/resources/commonyui/yui2.8/yahoo-dom-event/yahoo-dom-event.js"></script>
-		<script type="text/javascript" src="/EGF/resources/commonyui/yui2.8/element/element-min.js"></script>
-		<script type="text/javascript" src="/EGF/resources/commonyui/yui2.8/connection/connection-min.js"></script>
-		<script type="text/javascript" src="/EGF/resources/commonyui/yui2.8/datasource/datasource-min.js"></script>
-		<script type="text/javascript" src="/EGF/resources/commonyui/yui2.8/datatable/datatable-min.js"></script>
-		<script type="text/javascript" src="/EGF/resources/javascript/autocomplete.js"></script>
-		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/jsCommonMethods.js?rnd=${app_release_no}"></script>
-		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/calenderNew.js?rnd=${app_release_no}"></script>
-		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/helper.js?rnd=${app_release_no}"></script>
-		<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"> </script>
-		<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery-ui/jquery-ui.js' context='/egi'/>"> </script>
-		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/ajax-script.js?rnd=${app_release_no}"></script>
-		<link rel="stylesheet" type="text/css" href="<cdn:url value='/resources/global/js/jquery-ui/jquery-ui.css' context='/egi'/>" />
-		
-		<link href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+    <spring:eval expression="@environment.getProperty('analytics.enabled')" scope="application" var="analyticsEnabled"/>
+    <c:if test="${analyticsEnabled}">
+        <spring:eval expression="@environment.getProperty('analytics.config')" scope="application"/>
+    </c:if>
+    <%@ include file="/includes/meta.jsp" %>
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
+    <title>eGov Financials <decorator:title/></title>
+    <link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
+    <link href="<cdn:url value='/resources/css/budget.css?rnd=${app_release_no}'/>" rel="stylesheet" type="text/css"/>
+    <link href="<cdn:url value='/resources/css/commonegovnew.css?rnd=${app_release_no}'/>" rel="stylesheet" type="text/css"/>
+    <link href="${pageContext.request.contextPath}/resources/css/error.css?rnd=${app_release_no}" rel="stylesheet" type="text/css"></link>
+    <link rel="stylesheet" type="text/css" href="/EGF/resources/commonyui/yui2.8/fonts/fonts-min.css"/>
+    <link rel="stylesheet" type="text/css" href="/EGF/resources/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css"/>
+    <link rel="stylesheet" type="text/css" href="/EGF/resources/commonyui/yui2.8/assets/skins/sam/autocomplete.css"/>
+    <script type="text/javascript" src="/EGF/resources/commonyui/yui2.8/yuiloader/yuiloader-min.js"></script>
+    <script type="text/javascript" src="/EGF/resources/commonyui/yui2.8/yahoo-dom-event/yahoo-dom-event.js"></script>
+    <script type="text/javascript" src="/EGF/resources/commonyui/yui2.8/element/element-min.js"></script>
+    <script type="text/javascript" src="/EGF/resources/commonyui/yui2.8/connection/connection-min.js"></script>
+    <script type="text/javascript" src="/EGF/resources/commonyui/yui2.8/datasource/datasource-min.js"></script>
+    <script type="text/javascript" src="/EGF/resources/commonyui/yui2.8/datatable/datatable-min.js"></script>
+    <script type="text/javascript" src="/EGF/resources/javascript/autocomplete.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/jsCommonMethods.js?rnd=${app_release_no}"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/calenderNew.js?rnd=${app_release_no}"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/helper.js?rnd=${app_release_no}"></script>
+    <script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
+    <script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery-ui/jquery-ui.js' context='/egi'/>"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/ajax-script.js?rnd=${app_release_no}"></script>
+    <link rel="stylesheet" type="text/css" href="<cdn:url value='/resources/global/js/jquery-ui/jquery-ui.css' context='/egi'/>"/>
+
+    <link href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css"/>
     <link href="<cdn:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>"
           rel="stylesheet" type="text/css"/>
-		<script type="text/javascript" src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-		<script src="<cdn:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
-		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
-		<script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>" ></script>
-		<decorator:head/>
-	</head>
-	
-<script type="text/javascript" >
-window.document.onkeydown = function(event) { 
-   	 switch (event.keyCode) { 
-        case 116 : //F5 button
-            event.returnValue = false;
-            event.keyCode = 0;
-            return false; 
-        case 82 : //R button
-            if (event.ctrlKey) { //Ctrl button
-                event.returnValue = false; 
-                event.keyCode = 0;  
-                return false; 
-            } 
+    <script type="text/javascript" src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+    <script src="<cdn:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
+    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
+    <script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+    <script src="<cdn:url value='/resources/global/js/egov/csrf.js?rnd=${app_release_no}' context='/egi'/>"></script>
+
+    <script>
+        const tokenVal = '${_csrf.token}';
+        const tokenName = '${_csrf.parameterName}';
+    </script>
+    <decorator:head/>
+</head>
+
+<script type="text/javascript">
+    window.document.onkeydown = function (event) {
+        switch (event.keyCode) {
+            case 116 : //F5 button
+                event.returnValue = false;
+                event.keyCode = 0;
+                return false;
+            case 82 : //R button
+                if (event.ctrlKey) { //Ctrl button
+                    event.returnValue = false;
+                    event.keyCode = 0;
+                    return false;
+                }
+        }
     }
-}
 
-</script>	
+</script>
 <body <decorator:getProperty property="body.id" writeEntireProperty="yes"/><decorator:getProperty property="body.class" writeEntireProperty="true"/> <decorator:getProperty property="body.onload" writeEntireProperty="true"/>  >
-	
-		<div class="page-container">
-		    <!-- header -->
-		    <egovtags:breadcrumb/> 
-		    
-		    <!-- pagecontent -->
-		    <div class="main-content">
-		       <decorator:body/>
-		    </div>
-		    
-		    <!-- footer -->
-		    <footer class="main">
-			    Powered by <a href="http://egovernments.org/" target="_blank">eGovernments Foundation</a>
-			</footer>
-	   </div>
-	   
-	   <!-- loading indicator --> 
-	 <div class="modal fade loader-class" data-backdrop="static">
-			<div class="modal-dialog">
-					<div class="modal-body">
-						<div class="row spinner-margin text-center">
-							<div class="col-md-12 ">
-								<div class="spinner">
-									<div class="rect1"></div>
-									<div class="rect2"></div>
-									<div class="rect3"></div>
-									<div class="rect4"></div>
-									<div class="rect5"></div>
-								</div>
-							</div>
-							
-							<div class="col-md-12 spinner-text">
-								Processing your request. Please wait..
-							</div>
-						</div>
-					</div>
-			</div>
-	 </div>
-	  
-	  <script>
 
-		jQuery("form").submit(function( event ) {
-			jQuery('.loader-class').modal('show', {backdrop: 'static'});
-		});
+<div class="page-container">
+    <!-- header -->
+    <egovtags:breadcrumb/>
 
-		jQuery('form').submit(function() {
-		    if(typeof jQuery.data(this, "disabledOnSubmit") == 'undefined') {
-		      jQuery.data(this, "disabledOnSubmit", { submited: true });
-		      jQuery('input[type=submit], input[type=button]', this).each(function() {
-		    	  jQuery(this).attr("disabled", "disabled");
-		      });
-		      return true;
-		    }
-		    else
-		    {
-		      return false;
-		    }
-		  });
-		
-		jQuery(".datepicker").datepicker({
-			format: "dd/mm/yyyy",
-			autoclose:true
-		}); 
-	  
-	  </script>
-	  
-	</body>
+    <!-- pagecontent -->
+    <div class="main-content">
+        <decorator:body/>
+    </div>
+
+    <!-- footer -->
+    <footer class="main">
+        Powered by <a href="http://egovernments.org/" target="_blank">eGovernments Foundation</a>
+    </footer>
+</div>
+
+<!-- loading indicator -->
+<div class="modal fade loader-class" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-body">
+            <div class="row spinner-margin text-center">
+                <div class="col-md-12 ">
+                    <div class="spinner">
+                        <div class="rect1"></div>
+                        <div class="rect2"></div>
+                        <div class="rect3"></div>
+                        <div class="rect4"></div>
+                        <div class="rect5"></div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 spinner-text">
+                    Processing your request. Please wait..
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    jQuery("form").submit(function (event) {
+        jQuery('.loader-class').modal('show', {backdrop: 'static'});
+    });
+
+    jQuery('form').submit(function () {
+        if (typeof jQuery.data(this, "disabledOnSubmit") == 'undefined') {
+            jQuery.data(this, "disabledOnSubmit", {submited: true});
+            jQuery('input[type=submit], input[type=button]', this).each(function () {
+                jQuery(this).attr("disabled", "disabled");
+            });
+            return true;
+        }
+        else {
+            return false;
+        }
+    });
+
+    jQuery(".datepicker").datepicker({
+        format: "dd/mm/yyyy",
+        autoclose: true
+    });
+
+</script>
+
+</body>
 </html>

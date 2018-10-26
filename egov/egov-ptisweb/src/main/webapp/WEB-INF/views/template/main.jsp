@@ -46,7 +46,7 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
@@ -63,6 +63,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="description" content="eGov System"/>
     <meta name="author" content="eGovernments Foundation"/>
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
 
     <title><tiles:insertAttribute name="title"/></title>
     <link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
@@ -71,6 +73,8 @@
     <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
     <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
     <link rel="stylesheet" href="<cdn:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>">
+    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
+    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 
     <script src="<cdn:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
     <script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
@@ -81,9 +85,7 @@
     <script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
     <script src="<cdn:url value='/resources/global/js/egov/custom.js?rnd=${app_release_no}' context='/egi'/>"></script>
     <script type="text/javascript" src="<cdn:url value='/resources/javascript/SASvalidation.js'/>"></script>
-
-    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+    <script src="<cdn:url  value='/resources/global/js/egov/csrf.js?rnd=${app_release_no}' context='/egi'/>"></script>
     <script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
     <script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
     <script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
@@ -95,16 +97,17 @@
     <script src="/egi/resources/global/js/ie8/respond.min.js"></script>
     <![endif]-->
     <script>
-        var googleapikey = '${sessionScope.googleApiKey}';
-        var citylat = ${sessionScope.citylat};
-        var citylng = ${sessionScope.citylng};
+        const citylat = ${empty sessionScope.citylat ? 0 : sessionScope.citylat};
+        const citylng = ${empty sessionScope.citylng ? 0 : sessionScope.citylng};
+        const tokenVal = '${_csrf.token}';
+        const tokenName = '${_csrf.parameterName}';
     </script>
 </head>
 <body class="page-body" oncontextmenu="return false;">
 <div class="page-container">
     <tiles:insertAttribute name="header"/>
     <div class="main-content">
-        <spring:htmlEscape defaultHtmlEscape="true" />
+        <spring:htmlEscape defaultHtmlEscape="true"/>
         <tiles:insertAttribute name="body"/>
     </div>
     <tiles:insertAttribute name="footer"/>

@@ -46,254 +46,252 @@
  *
  */
 var openedWindows = [];
-$(document).ready(function()
-{
-	// jQuery plugin to prevent double submission of forms
-	jQuery.fn.preventDoubleSubmission = function() {
-	  $(this).on('submit',function(e){
-	    var $form = $(this);
-	 
-	    if ($form.data('submitted') === true) {
-	      // Previously submitted - don't submit again
-	      e.preventDefault();
-	    } else {
-	      // Mark it so that the next submit can be ignored
-	      $form.data('submitted', true);
-	    }
-	  });
-	 
-	  // Keep chainability
-	  return this;
-	};
-	
-	$('form').preventDoubleSubmission();
-	
-	$(".is_valid_number").on("input", function(){
+$(document).ready(function () {
+    // jQuery plugin to prevent double submission of forms
+    jQuery.fn.preventDoubleSubmission = function () {
+        $(this).on('submit', function (e) {
+            var $form = $(this);
+
+            if ($form.data('submitted') === true) {
+                // Previously submitted - don't submit again
+                e.preventDefault();
+            } else {
+                // Mark it so that the next submit can be ignored
+                $form.data('submitted', true);
+            }
+        });
+        // Keep chainability
+        return this;
+    };
+
+    $('form').preventDoubleSubmission();
+
+    $(".is_valid_number").on("input", function () {
         var regexp = /[^0-9]/g;
-		if($(this).val().match(regexp)){
-			$(this).val( $(this).val().replace(regexp,'') );
-		}
-	});
-	$(".is_valid_alphabetWithsplchar").on("input", function(){
-		var regexp = /[^A-Z_-]*$/g;
-		if($(this).val().match(regexp)){
-			$(this).val( $(this).val().replace(regexp,'') );
-		}
-	});
-	$(".is_valid_alphabet").on("input", function(){
-		var regexp = /[^a-zA-Z ]/g;
-		if($(this).val().match(regexp)){
-			$(this).val( $(this).val().replace(regexp,'') );
-		}
-	});
-	
-	$(".is_valid_alphaNumWithsplchar").on("input", function(){
-		var regexp =  /[^a-zA-Z0-9_@./#&+-]*$/;
-		if($(this).val().match(regexp)){
-			$(this).val( $(this).val().replace(regexp,'') );
-		}
-	});
-	
-	$(".is_valid_alphanumeric").on("input", function(){
-		var regexp = /[^a-zA-Z _0-9]/g;
-		if($(this).val().match(regexp)){
-			$(this).val( $(this).val().replace(regexp,'') );
-		}
-	});
-	$(".is_valid_letters_space_hyphen_underscore").on("input", function(){
+        if ($(this).val().match(regexp)) {
+            $(this).val($(this).val().replace(regexp, ''));
+        }
+    });
+    $(".is_valid_alphabetWithsplchar").on("input", function () {
+        var regexp = /[^A-Z_-]*$/g;
+        if ($(this).val().match(regexp)) {
+            $(this).val($(this).val().replace(regexp, ''));
+        }
+    });
+    $(".is_valid_alphabet").on("input", function () {
+        var regexp = /[^a-zA-Z ]/g;
+        if ($(this).val().match(regexp)) {
+            $(this).val($(this).val().replace(regexp, ''));
+        }
+    });
+
+    $(".is_valid_alphaNumWithsplchar").on("input", function () {
+        var regexp = /[^a-zA-Z0-9_@./#&+-]*$/;
+        if ($(this).val().match(regexp)) {
+            $(this).val($(this).val().replace(regexp, ''));
+        }
+    });
+
+    $(".is_valid_alphanumeric").on("input", function () {
+        var regexp = /[^a-zA-Z _0-9]/g;
+        if ($(this).val().match(regexp)) {
+            $(this).val($(this).val().replace(regexp, ''));
+        }
+    });
+    $(".is_valid_letters_space_hyphen_underscore").on("input", function () {
         var regexp = /[^a-zA-Z _0-9_-]/g;
-		if($(this).val().match(regexp)){
-			$(this).val( $(this).val().replace(regexp,'') );
-		}
-	});
-	try { $('.twitter-typeahead').css('display','block'); } catch(e){}
-	
-	try { $(":input").inputmask(); }catch(e){}
-	
-	try { 
-		$(".datepicker").datepicker({
-			format: "dd/mm/yyyy",
-			autoclose: true 
-		}); 
+        if ($(this).val().match(regexp)) {
+            $(this).val($(this).val().replace(regexp, ''));
+        }
+    });
+    try {
+        $('.twitter-typeahead').css('display', 'block');
+    } catch (e) {
+    }
 
-		var d = new Date();
-		var currDate = d.getDate();
-		var currMonth = d.getMonth();
-		var currYear = d.getFullYear();
-		var startDate = new Date(currYear,currMonth,currDate);
-		$('.today').datepicker('setDate',startDate);
+    try {
+        $(":input").inputmask();
+    } catch (e) {
+    }
 
-		}catch(e){
-		//console.warn("No Date Picker");
-	}
-	
-	try { 
-		$('[data-toggle="tooltip"]').tooltip({
-			'placement': 'bottom'
-		});
-		}catch(e){
-		//console.warn("No tooltip");
-	}
-		
-	try{
-		
-		$('.select2').select2({
-			placeholder: "Select",
-			minimumResultsForSearch: 1,
-			width:'100%'
-		});
-		
-		$('select').on('select2:close', function (evt) {
-		  	$(this).focus();
-		});
-		
-	}catch(e){
-		//console.log('No select2');
-	}
-	
-	$("a.open-popup").click(function(e) {
-		window.open(this.href, ''+$(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=260,scrollbars=yes'); 
-		return false;
-	});
-	
-	$(document).on('click', 'a.open-popup', function(e) {
-		window.open(this.href, ''+$(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=260,scrollbars=yes'); 
-		return false;
-	});
-	
-	$("form.form-horizontal[data-ajaxsubmit!='true']").submit(function( event ) {
-		$('.loader-class').modal('show', {backdrop: 'static'});
-	});
-	
-	//fade out success message
-	$(".alert-success").fadeTo(5000, 500).slideUp(500, function(){
-   		$(".alert-success").alert('close');
-	});
+    try {
+        $(".datepicker").datepicker({
+            format: "dd/mm/yyyy",
+            autoclose: true
+        });
 
-	var elements = document.querySelectorAll('input,select,textarea');
+        var d = new Date();
+        var currDate = d.getDate();
+        var currMonth = d.getMonth();
+        var currYear = d.getFullYear();
+        var startDate = new Date(currYear, currMonth, currDate);
+        $('.today').datepicker('setDate', startDate);
 
-	for(var i = 0; i<elements.length; i++){
-		 if(elements[i].addEventListener){
-			 elements[i].addEventListener('invalid', function () {
-				 offsettoinvalid();
-			 });
-		 }else if(elements[i].attachEvent){
-			 elements[i].attachEvent('invalid', function () {
-				 offsettoinvalid();
-			 });
-		 }
-	}
-	
-	function offsettoinvalid(){
-		off = (elements[0].offsetTop + 50);
-		$('html, body').animate({scrollTop: off }, 0);
-	}
-	
-	try{
-		jQuery.extend(jQuery.validator.messages, {
-			required: "Required"
-		});
-	}catch(e){
-		//console.warn("No validation involved");
-	}
+    } catch (e) {
+    }
 
-	$('form[data-ajaxsubmit="true"]').submit(function(e){
-		
-		var formData = new FormData($(this)[0]);
-		var formAction = $(this).attr('action');
+    try {
+        $('[data-toggle="tooltip"]').tooltip({
+            'placement': 'bottom'
+        });
+    } catch (e) {
+    }
 
-	    $.ajax({
-	        url: 'https://api.github.com/users/mralexgray/repos',//formAction,
-	        type: 'POST',
-	        data: formData,
-	        beforeSend: function() {
-	        	//remove all existing alert messages
-	        	$('.alert').remove();
-	            //show loader
-	        	$('.loader-class').modal('show', {backdrop: 'static'});
-	        },
-	        complete: function(){
-	        	//callback function calling
-	        	window["callBackAjax"]();
-	        	//hide loader
-	        	$('.loader-class').modal('hide');
-	        	//scroll page to top
-	        	pageScrollTop();
-	        },
-	        success: function (data) {
-	            //append server response html text to current page
-	        	$('.main-content').prepend(data);
-	        },
-	        error: function (xhr, ajaxOptions, thrownError) {
-	        	//generic error message with error code
-	            var errormsg = 'Error '+xhr.status+' '+ thrownError +'. please, try again!';
-	            //add error alert in current page  
-	            $('.main-content').prepend('<div id="notifyerror" class="alert alert-danger" role="alert"> <div> <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> <span class="sr-only">Error:</span> '+ errormsg +' </div> ');	            
-	        },
-	        cache: false,
-	        contentType: false,
-	        processData: false
-	    });
+    try {
 
-	    return false;
-		
-	});
-	
-	$('.signout').click(function(){
-		$.each( openedWindows, function( i, val ) {
-			var window = val;
-			window.close();
-		});
-	});
-	
+        $('.select2').select2({
+            placeholder: "Select",
+            minimumResultsForSearch: 1,
+            width: '100%'
+        });
+
+        $('select').on('select2:close', function (evt) {
+            $(this).focus();
+        });
+
+    } catch (e) {
+    }
+
+    $("a.open-popup").click(function (e) {
+        window.open(this.href, '' + $(this).attr('data-strwindname') + '', 'width=900, height=700, top=300, left=260,scrollbars=yes');
+        return false;
+    });
+
+    $(document).on('click', 'a.open-popup', function (e) {
+        window.open(this.href, '' + $(this).attr('data-strwindname') + '', 'width=900, height=700, top=300, left=260,scrollbars=yes');
+        return false;
+    });
+
+    $("form.form-horizontal[data-ajaxsubmit!='true']").submit(function (event) {
+        $('.loader-class').modal('show', {backdrop: 'static'});
+    });
+
+    //fade out success message
+    $(".alert-success").fadeTo(5000, 500).slideUp(500, function () {
+        $(".alert-success").alert('close');
+    });
+
+    var elements = document.querySelectorAll('input,select,textarea');
+
+    for (var i = 0; i < elements.length; i++) {
+        if (elements[i].addEventListener) {
+            elements[i].addEventListener('invalid', function () {
+                offsettoinvalid();
+            });
+        } else if (elements[i].attachEvent) {
+            elements[i].attachEvent('invalid', function () {
+                offsettoinvalid();
+            });
+        }
+    }
+
+    function offsettoinvalid() {
+        off = (elements[0].offsetTop + 50);
+        $('html, body').animate({scrollTop: off}, 0);
+    }
+
+    try {
+        jQuery.extend(jQuery.validator.messages, {
+            required: "Required"
+        });
+    } catch (e) {
+    }
+
+    $('form[data-ajaxsubmit="true"]').submit(function (e) {
+
+        var formData = new FormData($(this)[0]);
+        var formAction = $(this).attr('action');
+
+        $.ajax({
+            url: 'https://api.github.com/users/mralexgray/repos',//formAction,
+            type: 'POST',
+            data: formData,
+            beforeSend: function () {
+                //remove all existing alert messages
+                $('.alert').remove();
+                //show loader
+                $('.loader-class').modal('show', {backdrop: 'static'});
+            },
+            complete: function () {
+                //callback function calling
+                window["callBackAjax"]();
+                //hide loader
+                $('.loader-class').modal('hide');
+                //scroll page to top
+                pageScrollTop();
+            },
+            success: function (data) {
+                //append server response html text to current page
+                $('.main-content').prepend(data);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                //generic error message with error code
+                var errormsg = 'Error ' + xhr.status + ' ' + thrownError + '. please, try again!';
+                //add error alert in current page
+                $('.main-content').prepend('<div id="notifyerror" class="alert alert-danger" role="alert"> <div> <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> <span class="sr-only">Error:</span> ' + errormsg + ' </div> ');
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+
+        return false;
+
+    });
+
+    $('.signout').click(function () {
+        $.each(openedWindows, function (i, val) {
+            var window = val;
+            window.close();
+        });
+    });
 });
 
-function pageScrollTop()
-{
+function pageScrollTop() {
     var body = $("html, body");
-    body.stop().animate({scrollTop:0}, '500', 'swing', function() { 
-       //bootbox.alert("Finished animating");
+    body.stop().animate({scrollTop: 0}, '500', 'swing', function () {
+        //bootbox.alert("Finished animating");
     });
 }
 
-function DateValidation(start , end){
+function DateValidation(start, end) {
     if (start != "" && end != "") {
-		var stsplit = start.split("/");
-		var ensplit = end.split("/");
-		
-		start = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
-		end = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
-		
-		return ValidRange(start, end);
-	}else{
-		return true;
-	}
+        var stsplit = start.split("/");
+        var ensplit = end.split("/");
+
+        start = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
+        end = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
+
+        return ValidRange(start, end);
+    } else {
+        return true;
+    }
 }
 
 function ValidRange(start, end) {
-	var retvalue = false;
+    var retvalue = false;
     var startDate = Date.parse(start);
     var endDate = Date.parse(end);
-	
+
     // Check the date range, 86400000 is the number of milliseconds in one day
     var difference = (endDate - startDate) / (86400000 * 7);
     if (difference < 0) {
-		bootbox.alert("Start date must come before the end date.");
-		} else {
-		retvalue = true;
-	}
+        bootbox.alert("Start date must come before the end date.");
+    } else {
+        retvalue = true;
+    }
     return retvalue;
 }
 
 //Typeahead event handling
-$.fn.getCursorPosition = function() {
+$.fn.getCursorPosition = function () {
     var el = $(this).get(0);
     var pos = 0;
     var posEnd = 0;
-    if('selectionStart' in el) {
+    if ('selectionStart' in el) {
         pos = el.selectionStart;
         posEnd = el.selectionEnd;
-    } else if('selection' in document) {
+    } else if ('selection' in document) {
         el.focus();
         var Sel = document.selection.createRange();
         var SelLength = document.selection.createRange().text.length;
@@ -304,114 +302,112 @@ $.fn.getCursorPosition = function() {
     return [pos, posEnd];
 };
 
-function typeaheadWithEventsHandling(typeaheadobj, hiddeneleid, dependentfield)
-{
-	  typeaheadobj.on('typeahead:selected', function(event, data){
-		//setting hidden value
-		$(hiddeneleid).val(data.value);    
-	    }).on('keydown', this, function (event) {
-	    	var e = event;
-	    	
-	    	var position = $(this).getCursorPosition();
-	        var deleted = '';
-	        var val = $(this).val();
-	        if (e.which == 8) {
-	            if (position[0] == position[1]) {
-	                if (position[0] == 0)
-	                    deleted = '';
-	                else
-	                    deleted = val.substr(position[0] - 1, 1);
-	            }
-	            else {
-	                deleted = val.substring(position[0], position[1]);
-	            }
-	        }
-	        else if (e.which == 46) {
-	            var val = $(this).val();
-	            if (position[0] == position[1]) {
-	                
-	                if (position[0] === val.length)
-	                    deleted = '';
-	                else
-	                    deleted = val.substr(position[0], 1);
-	            }
-	            else {
-	                deleted = val.substring(position[0], position[1]);
-	            }
-	        }
-	        
-	        if(deleted){ 
-	        	$(hiddeneleid).val(''); 
-	        	cleardependentfield(dependentfield);
-        	}
+function typeaheadWithEventsHandling(typeaheadobj, hiddeneleid, dependentfield) {
+    typeaheadobj.on('typeahead:selected', function (event, data) {
+        //setting hidden value
+        $(hiddeneleid).val(data.value);
+    }).on('keydown', this, function (event) {
+        var e = event;
 
-        }).on('keypress', this, function (event) {
-        	//getting charcode by independent browser
-        	var evt = (evt) ? evt : event;
-        	var charCode = (evt.which) ? evt.which : 
-                ((evt.charCode) ? evt.charCode : 
-                  ((evt.keyCode) ? evt.keyCode : 0));
-        	//only characters keys condition
-	    	if((charCode >= 32 && charCode <= 127)){
-	    		//clearing input hidden value on keyup
-	    	    $(hiddeneleid).val('');
-	    	    cleardependentfield(dependentfield);
-	    	}
-        }).on('focusout', this, function (event) { 
-    	    //focus out clear textbox, when no values selected from suggestion list
-    	    if(!$(hiddeneleid).val())
-    	    {	
-    	    	$(this).typeahead('val', '');
-        		cleardependentfield(dependentfield);
-    	    }
-       });
+        var position = $(this).getCursorPosition();
+        var deleted = '';
+        var val = $(this).val();
+        if (e.which == 8) {
+            if (position[0] == position[1]) {
+                if (position[0] == 0)
+                    deleted = '';
+                else
+                    deleted = val.substr(position[0] - 1, 1);
+            }
+            else {
+                deleted = val.substring(position[0], position[1]);
+            }
+        }
+        else if (e.which == 46) {
+            var val = $(this).val();
+            if (position[0] == position[1]) {
+
+                if (position[0] === val.length)
+                    deleted = '';
+                else
+                    deleted = val.substr(position[0], 1);
+            }
+            else {
+                deleted = val.substring(position[0], position[1]);
+            }
+        }
+
+        if (deleted) {
+            $(hiddeneleid).val('');
+            cleardependentfield(dependentfield);
+        }
+
+    }).on('keypress', this, function (event) {
+        //getting charcode by independent browser
+        var evt = (evt) ? evt : event;
+        var charCode = (evt.which) ? evt.which :
+            ((evt.charCode) ? evt.charCode :
+                ((evt.keyCode) ? evt.keyCode : 0));
+        //only characters keys condition
+        if ((charCode >= 32 && charCode <= 127)) {
+            //clearing input hidden value on keyup
+            $(hiddeneleid).val('');
+            cleardependentfield(dependentfield);
+        }
+    }).on('focusout', this, function (event) {
+        //focus out clear textbox, when no values selected from suggestion list
+        if (!$(hiddeneleid).val()) {
+            $(this).typeahead('val', '');
+            cleardependentfield(dependentfield);
+        }
+    });
 }
 
-function cleardependentfield(dependentfield){
-	if(!dependentfield){
-		return;
-	}
-	console.log($(dependentfield).prop("type"));
-	if($(dependentfield).prop("type") == 'select-one' || $(dependentfield).prop("type") == 'select-multiple'){
-		$(dependentfield).empty();
-	}else if($(dependentfield).prop("type") == 'text' || $(dependentfield).prop("type") == 'textarea'){
-		$(dependentfield).val('');
-	}
+function cleardependentfield(dependentfield) {
+    if (!dependentfield) {
+        return;
+    }
+    console.log($(dependentfield).prop("type"));
+    if ($(dependentfield).prop("type") == 'select-one' || $(dependentfield).prop("type") == 'select-multiple') {
+        $(dependentfield).empty();
+    } else if ($(dependentfield).prop("type") == 'text' || $(dependentfield).prop("type") == 'textarea') {
+        $(dependentfield).val('');
+    }
 }
 
 function disableRefresh(e) {
-	var key = (e.which || e.keyCode);
-	if (e.ctrlKey){
-		if (key == 82 || key == 116)
-			e.preventDefault();
-	}
-	else if(key == 116){
-		e.preventDefault();
-	}
-			
+    var key = (e.which || e.keyCode);
+    if (e.ctrlKey) {
+        if (key == 82 || key == 116)
+            e.preventDefault();
+    }
+    else if (key == 116) {
+        e.preventDefault();
+    }
+
 }
 
-function preventBack(){
-	history.pushState(null, null, document.URL);
+function preventBack() {
+    history.pushState(null, null, document.URL);
     window.addEventListener('popstate', function () {
         history.pushState(null, null, document.URL);
     });
 }
 
-function select2initialize(obj,data,multiple){
-	
-	obj.empty();
-	
-	if(!multiple)
-		obj.append("<option value=''>Select</option>");
-	
-	$('.select2').select2({
-		allowClear: true,
+function select2initialize(obj, data, multiple) {
+
+    obj.empty();
+
+    if (!multiple)
+        obj.append("<option value=''>Select</option>");
+
+    $('.select2').select2({
+        allowClear: true,
         placeholder: "Select",
         minimumResultsForSearch: 1,
-		data : data,
-		multiple : multiple,
-		width:'100%'
-	});
-	
+        data: data,
+        multiple: multiple,
+        width: '100%'
+    });
+
 }

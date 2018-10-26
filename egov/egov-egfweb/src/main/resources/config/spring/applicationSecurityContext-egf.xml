@@ -47,55 +47,58 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-	   xmlns:security="http://www.springframework.org/schema/security"
-	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+<beans xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
 	   http://www.springframework.org/schema/beans/spring-beans.xsd
 	   http://www.springframework.org/schema/security
 	   http://www.springframework.org/schema/security/spring-security.xsd" default-lazy-init="true">
 
-	<bean id="securityFilterChain" name="securityFilterChain" class="org.springframework.security.web.FilterChainProxy">
-		<constructor-arg>
-			<list>
-				<security:filter-chain pattern="/commons/**" filters="none" />
-				<security:filter-chain pattern="/images/**" filters="none" />
-				<security:filter-chain pattern="/resources/**" filters="none" />
-				<security:filter-chain pattern="/index.jsp" filters="none" />
-				<security:filter-chain pattern="/error/**" filters="none" />
-				<security:filter-chain pattern="/struts/**" filters="none" /> 
-				<security:filter-chain pattern="/commonyui/build/**" filters="none" />
-				<security:filter-chain pattern="/commonyui/yui2.7/**" filters="none" />
-				<security:filter-chain pattern="/script/**" filters="none" />
-				<security:filter-chain pattern="/javascript/**" filters="none" /> 
-				<security:filter-chain pattern="/report/dayBookReport*.action" filters="none" />
-				<security:filter-chain pattern="/report/trialBalance*.action" filters="none" />
-				<security:filter-chain pattern="/report/bankBookReport*.action" filters="none" />
-				<security:filter-chain pattern="/report/subLedgerScheduleReport*.action" filters="none" />
-				<security:filter-chain pattern="/report/subLedgerReport*.action" filters="none" />
-				<security:filter-chain pattern="/report/generalLedgerReport*.action" filters="none" />
-				<security:filter-chain pattern="/report/openingBalanceReport*.action" filters="none" />
-				<security:filter-chain pattern="/report/incomeExpenditureReport*.action" filters="none" />
-				<security:filter-chain pattern="/report/balanceSheetReport*.action" filters="none" />
-				<security:filter-chain pattern="/voucher/preApprovedVoucher-loadvoucherview.action" filters="none" />
-				<security:filter-chain pattern="/payment/payment-view.action" filters="none" />
-				<security:filter-chain pattern="/report/billPaymentVoucherPrint*.action" filters="none" />
-				<security:filter-chain pattern="/deduction/remitRecovery-beforeView.action" filters="none" />
-				<security:filter-chain pattern="/bill/contingentBill-beforeView.action" filters="none" />
-				<security:filter-chain pattern="/voucher/common-ajaxLoadAccountNumbers.action" filters="none" />
-				<security:filter-chain pattern="/voucher/common-ajaxLoadSLreportCodes.action" filters="none" />
-				<security:filter-chain pattern="/voucher/common-ajaxLoadSubLedgerTypesByGlCode.action" filters="none" />
-				<security:filter-chain pattern="/bill/expenseBillPrint*.action" filters="none" />
-				<security:filter-chain pattern="/voucher/common-ajaxLoadSLreportCodes.action" filters="none" />
-				<security:filter-chain pattern="/voucher/common-ajaxLoadSubLedgerTypesByGlCode.action" filters="none" />
-				<security:filter-chain pattern="/voucher/common-ajaxLoadEntitesBy20.action" filters="none" />
-				<security:filter-chain pattern="/voucher/common-ajaxLoadGLreportCodes.action" filters="none" />
-				<security:filter-chain pattern="/contra/contraBTB-beforeView.action" filters="none" />
-				<security:filter-chain pattern="/voucher/common-ajaxLoadAllBanks.action" filters="none" />
-				<security:filter-chain pattern="/payment/directBankPayment-beforeView.action" filters="none" />
-				<security:filter-chain pattern="/findashboard/*" filters="none" />
-				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
-			</list> 
-		</constructor-arg>
-	</bean>	
+    <bean id="securityFilterChain" name="securityFilterChain" class="org.springframework.security.web.FilterChainProxy">
+        <constructor-arg>
+            <list>
+                <security:filter-chain pattern="/commons/**" filters="none"/>
+                <security:filter-chain pattern="/images/**" filters="none"/>
+                <security:filter-chain pattern="/resources/**" filters="none"/>
+                <security:filter-chain pattern="/index.jsp" filters="none"/>
+                <security:filter-chain pattern="/error/**" filters="none"/>
+                <security:filter-chain pattern="/struts/**" filters="none"/>
+                <security:filter-chain pattern="/commonyui/build/**" filters="none"/>
+                <security:filter-chain pattern="/commonyui/yui2.7/**" filters="none"/>
+                <security:filter-chain pattern="/script/**" filters="none"/>
+                <security:filter-chain pattern="/javascript/**" filters="none"/>
+                <security:filter-chain pattern="/report/dayBookReport*.action" filters="none"/>
+                <security:filter-chain pattern="/report/trialBalance*.action" filters="none"/>
+                <security:filter-chain pattern="/report/bankBookReport*.action" filters="none"/>
+                <security:filter-chain pattern="/report/subLedgerScheduleReport*.action" filters="none"/>
+                <security:filter-chain pattern="/report/subLedgerReport*.action" filters="none"/>
+                <security:filter-chain pattern="/report/generalLedgerReport*.action" filters="none"/>
+                <security:filter-chain pattern="/report/openingBalanceReport*.action" filters="none"/>
+                <security:filter-chain pattern="/report/incomeExpenditureReport*.action" filters="none"/>
+                <security:filter-chain pattern="/report/balanceSheetReport*.action" filters="none"/>
+                <security:filter-chain pattern="/voucher/preApprovedVoucher-loadvoucherview.action" filters="none"/>
+                <security:filter-chain pattern="/payment/payment-view.action" filters="none"/>
+                <security:filter-chain pattern="/report/billPaymentVoucherPrint*.action" filters="none"/>
+                <security:filter-chain pattern="/deduction/remitRecovery-beforeView.action" filters="none"/>
+                <security:filter-chain pattern="/bill/contingentBill-beforeView.action" filters="none"/>
+                <security:filter-chain pattern="/voucher/common-ajaxLoadAccountNumbers.action" filters="none"/>
+                <security:filter-chain pattern="/voucher/common-ajaxLoadSLreportCodes.action" filters="none"/>
+                <security:filter-chain pattern="/voucher/common-ajaxLoadSubLedgerTypesByGlCode.action" filters="none"/>
+                <security:filter-chain pattern="/bill/expenseBillPrint*.action" filters="none"/>
+                <security:filter-chain pattern="/voucher/common-ajaxLoadSLreportCodes.action" filters="none"/>
+                <security:filter-chain pattern="/voucher/common-ajaxLoadSubLedgerTypesByGlCode.action" filters="none"/>
+                <security:filter-chain pattern="/voucher/common-ajaxLoadEntitesBy20.action" filters="none"/>
+                <security:filter-chain pattern="/voucher/common-ajaxLoadGLreportCodes.action" filters="none"/>
+                <security:filter-chain pattern="/contra/contraBTB-beforeView.action" filters="none"/>
+                <security:filter-chain pattern="/voucher/common-ajaxLoadAllBanks.action" filters="none"/>
+                <security:filter-chain pattern="/payment/directBankPayment-beforeView.action" filters="none"/>
+                <security:filter-chain pattern="/findashboard/*" filters="none"/>
+                <security:filter-chain pattern="/**" filters="concurrentSessionFilter,securityContextPersistenceFilter,
+                                       logoutFilter,authenticationProcessingFilter,headerWriterFilter,csrfFilter,
+                                       securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,
+                                       anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor"/>
+            </list>
+        </constructor-arg>
+    </bean>
 </beans>

@@ -57,6 +57,8 @@
         <spring:eval expression="@environment.getProperty('analytics.config')" scope="application"/>
     </c:if>
     <%@ include file="/includes/meta.jsp" %>
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
     <title>eGov - <decorator:title/></title>
 
     <link rel="icon" href="<cdn:url  value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
@@ -78,12 +80,18 @@
     <script src="<cdn:url  value='/resources/global/js/jquery/plugins/select2/4.0.3/select2.min.js' context='/egi'/>"></script>
     <script src="<cdn:url  value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
     <script src="<cdn:url  value='/resources/global/js/egov/custom.js?rnd=${app_release_no}' context='/egi'/>"></script>
+    <script src="<cdn:url value='/resources/global/js/egov/csrf.js?rnd=${app_release_no}' context='/egi'/>"></script>
 
+    <script>
+        const tokenVal = '${_csrf.token}';
+        const tokenName = '${_csrf.parameterName}';
+    </script>
     <decorator:head/>
     <style>
         table tbody tr td {
             font-size: 14px;
         }
+
         table thead tr th {
             font-size: 14px;
         }

@@ -63,6 +63,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="description" content="eGov Urban Portal"/>
     <meta name="author" content="eGovernments Foundation"/>
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
     <spring:eval expression="@environment.getProperty('user.pwd.strength')" var="pwdstrengthmsg"/>
     <spring:message code="usr.pwd.strength.msg.${pwdstrengthmsg}" var="pwdmsg" htmlEscape="true"/>
     <title><spring:message code="lbl.egov.header"/></title>
@@ -531,6 +533,8 @@
 <script>
     var menuItems = ${menu};
     var focussedmenu = "worklist";
+    const tokenVal = '${_csrf.token}';
+    const tokenName = '${_csrf.parameterName}';
     var now;
 </script>
 <script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js'/>"></script>
@@ -541,6 +545,7 @@
 <script src="<cdn:url value='/resources/global/js/egov/custom.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url value='/resources/js/app/custom-menu.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url value='/resources/js/app/homepageofficial.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/global/js/egov/csrf.js?rnd=${app_release_no}'/>"></script>
 <script type="text/javascript">
     $(window).load(function () {
         $("#loading").hide();

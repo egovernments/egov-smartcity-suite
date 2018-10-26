@@ -195,7 +195,9 @@
                                 <div class="input-group-addon style-label">
                                     <i class="fa fa-map-marker theme-color style-color"></i>
                                 </div>
-                                <select class="form-control style-form" name="locationId" id="locationId"></select>
+                                <select class="form-control style-form" name="locationId" id="locationId">
+                                    <option value=""><spring:message code="lbl.select.location"/></option>
+                                </select>
                                 <label id="locationId-error" class="error pull-right" for="locationId"></label>
                             </div>
                         </div>

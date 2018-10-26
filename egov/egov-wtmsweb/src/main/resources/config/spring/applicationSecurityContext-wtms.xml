@@ -46,51 +46,55 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-	   xmlns:security="http://www.springframework.org/schema/security"
-	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+<beans xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
 	   http://www.springframework.org/schema/beans/spring-beans.xsd
 	   http://www.springframework.org/schema/security
 	   http://www.springframework.org/schema/security/spring-security.xsd" default-lazy-init="true">
 
-	<bean id="securityFilterChain" name="securityFilterChain" class="org.springframework.security.web.FilterChainProxy">
-		<constructor-arg>
-			<list>
-				<security:filter-chain pattern="/resources/**" filters="none" />
-				<security:filter-chain pattern="/error/**" filters="none" />
-				<security:filter-chain pattern="/index.jsp" filters="none" />
-				<security:filter-chain pattern="/application/application-success**" filters="none"/>
-				<security:filter-chain pattern="/application/collecttax-view**" filters="none"/> 
-				<security:filter-chain pattern="/application/estimationNotice/view/*" filters="none"/>
-				<security:filter-chain pattern="/search/waterSearch/" filters="none" /> 
-				<security:filter-chain pattern="/elastic/appSearch/" filters="anonymousAuthenticationFilter" />
-				<security:filter-chain pattern="/elastic/appSearch/ajax-moduleTypepopulate" filters="anonymousAuthenticationFilter" />
-				<security:filter-chain pattern="/application/generatebill/**" filters="none" />
-				<security:filter-chain pattern="/application/generatebillOnline/**" filters="none" />
-				
-				<security:filter-chain pattern="/reports/dCBReport/localityWise" filters="none" /> 
-				<security:filter-chain pattern="/reports/dCBReport/zoneWise" filters="none" /> 
-				<security:filter-chain pattern="/reports/dCBReport/wardWise" filters="none" /> 
-				<security:filter-chain pattern="/reports/dCBReport/blockWise" filters="none" /> 
-				<security:filter-chain pattern="/reports/dCBReportList" filters="none" /> 
-				<security:filter-chain pattern="/report/dailyWTCollectionReport/search/" filters="none" /> 
-				<security:filter-chain pattern="/reports/coonectionReport/wardWise" filters="none" /> 
-				<security:filter-chain pattern="/reports/connectionReportList" filters="none" /> 
-				
-				<security:filter-chain pattern="/report/baseRegister" filters="none" /> 
-				<security:filter-chain pattern="/report/baseRegister/result" filters="none" /> 
-				<security:filter-chain pattern="/report/defaultersWTReport/search" filters="none" /> 
-				<security:filter-chain pattern="/report/defaultersWTReport/search/result" filters="none" /> 
-				
-				<security:filter-chain pattern="/application/view/**" filters="none" /> 
-				<security:filter-chain pattern="/viewDcb/consumerCodeWis/**" filters="none" /> 
-				<security:filter-chain pattern="/public/**" filters="none"/>
-				<security:filter-chain pattern="/collection/citizen/**" filters="none" />
-				<security:filter-chain pattern="/scheme/**" filters="none" />
-				<security:filter-chain pattern="/rest/**" filters="anonymousAuthenticationFilter"/>
-				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
-			</list>
-		</constructor-arg>
-	</bean>	
+    <bean id="securityFilterChain" name="securityFilterChain" class="org.springframework.security.web.FilterChainProxy">
+        <constructor-arg>
+            <list>
+                <security:filter-chain pattern="/resources/**" filters="none"/>
+                <security:filter-chain pattern="/error/**" filters="none"/>
+                <security:filter-chain pattern="/index.jsp" filters="none"/>
+                <security:filter-chain pattern="/application/application-success**" filters="none"/>
+                <security:filter-chain pattern="/application/collecttax-view**" filters="none"/>
+                <security:filter-chain pattern="/application/estimationNotice/view/*" filters="none"/>
+                <security:filter-chain pattern="/search/waterSearch/" filters="none"/>
+                <security:filter-chain pattern="/elastic/appSearch/" filters="anonymousAuthenticationFilter"/>
+                <security:filter-chain pattern="/elastic/appSearch/ajax-moduleTypepopulate"
+                                       filters="anonymousAuthenticationFilter"/>
+                <security:filter-chain pattern="/application/generatebill/**" filters="none"/>
+                <security:filter-chain pattern="/application/generatebillOnline/**" filters="none"/>
+
+                <security:filter-chain pattern="/reports/dCBReport/localityWise" filters="none"/>
+                <security:filter-chain pattern="/reports/dCBReport/zoneWise" filters="none"/>
+                <security:filter-chain pattern="/reports/dCBReport/wardWise" filters="none"/>
+                <security:filter-chain pattern="/reports/dCBReport/blockWise" filters="none"/>
+                <security:filter-chain pattern="/reports/dCBReportList" filters="none"/>
+                <security:filter-chain pattern="/report/dailyWTCollectionReport/search/" filters="none"/>
+                <security:filter-chain pattern="/reports/coonectionReport/wardWise" filters="none"/>
+                <security:filter-chain pattern="/reports/connectionReportList" filters="none"/>
+
+                <security:filter-chain pattern="/report/baseRegister" filters="none"/>
+                <security:filter-chain pattern="/report/baseRegister/result" filters="none"/>
+                <security:filter-chain pattern="/report/defaultersWTReport/search" filters="none"/>
+                <security:filter-chain pattern="/report/defaultersWTReport/search/result" filters="none"/>
+
+                <security:filter-chain pattern="/application/view/**" filters="none"/>
+                <security:filter-chain pattern="/viewDcb/consumerCodeWis/**" filters="none"/>
+                <security:filter-chain pattern="/public/**" filters="none"/>
+                <security:filter-chain pattern="/collection/citizen/**" filters="none"/>
+                <security:filter-chain pattern="/scheme/**" filters="none"/>
+                <security:filter-chain pattern="/rest/**" filters="anonymousAuthenticationFilter"/>
+                <security:filter-chain pattern="/**" filters="concurrentSessionFilter,securityContextPersistenceFilter,
+                                       logoutFilter,authenticationProcessingFilter,headerWriterFilter,csrfFilter,
+                                       securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,
+                                       anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor"/>
+            </list>
+        </constructor-arg>
+    </bean>
 </beans>

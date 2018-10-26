@@ -46,39 +46,42 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-	   xmlns:security="http://www.springframework.org/schema/security"
-	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+<beans xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
 	   http://www.springframework.org/schema/beans/spring-beans.xsd
 	   http://www.springframework.org/schema/security
 	   http://www.springframework.org/schema/security/spring-security.xsd" default-lazy-init="true">
 
-	<bean id="securityFilterChain" name="securityFilterChain" class="org.springframework.security.web.FilterChainProxy">
-		<constructor-arg>
-			<list>
-				<security:filter-chain pattern="/commonjs/**" filters="none" />
-				<security:filter-chain pattern="/commonyui/**" filters="none" />
-				<security:filter-chain pattern="/css/**" filters="none" />
-				<security:filter-chain pattern="/images/**" filters="none" />
-				<security:filter-chain pattern="/image/**" filters="none" />
-				<security:filter-chain pattern="/javascript/**" filters="none" />
-				<security:filter-chain pattern="/resources/**" filters="none" />
-				<security:filter-chain pattern="/citizen/search/search-searchForm.action" filters="none" />
-				<security:filter-chain pattern="/citizen/search/search-srchByAssessmentAndOwnerDetail.action" filters="none" />
-				<security:filter-chain pattern="/citizen/register" filters="anonymousAuthenticationFilter"/>
-				<security:filter-chain pattern="/citizen/activation/**" filters="anonymousAuthenticationFilter"/>
-				<security:filter-chain pattern="/reportviewer**" filters="anonymousAuthenticationFilter" />
-				<security:filter-chain pattern="/dashboard/**" filters="anonymousAuthenticationFilter"/>
-				<security:filter-chain pattern="/public/mobile/paytax/**" filters="none"/>
-				<security:filter-chain pattern="/error/**" filters="none" />
-				<security:filter-chain pattern="/index.jsp" filters="none" />
-				<security:filter-chain pattern="/image/**" filters="none" />
-				<security:filter-chain pattern="/rest/**" filters="none" />
-				<security:filter-chain pattern="/citizen/collection/**" filters="none" />
-				<security:filter-chain pattern="/common/ajaxCommon-calculateMutationFee.action" filters="none" />
-				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
-			</list>
-		</constructor-arg>
-	</bean>	
+    <bean id="securityFilterChain" name="securityFilterChain" class="org.springframework.security.web.FilterChainProxy">
+        <constructor-arg>
+            <list>
+                <security:filter-chain pattern="/commonjs/**" filters="none"/>
+                <security:filter-chain pattern="/commonyui/**" filters="none"/>
+                <security:filter-chain pattern="/css/**" filters="none"/>
+                <security:filter-chain pattern="/images/**" filters="none"/>
+                <security:filter-chain pattern="/image/**" filters="none"/>
+                <security:filter-chain pattern="/javascript/**" filters="none"/>
+                <security:filter-chain pattern="/resources/**" filters="none"/>
+                <security:filter-chain pattern="/citizen/search/search-searchForm.action" filters="none"/>
+                <security:filter-chain pattern="/citizen/search/search-srchByAssessmentAndOwnerDetail.action" filters="none"/>
+                <security:filter-chain pattern="/citizen/register" filters="anonymousAuthenticationFilter"/>
+                <security:filter-chain pattern="/citizen/activation/**" filters="anonymousAuthenticationFilter"/>
+                <security:filter-chain pattern="/reportviewer**" filters="anonymousAuthenticationFilter"/>
+                <security:filter-chain pattern="/dashboard/**" filters="anonymousAuthenticationFilter"/>
+                <security:filter-chain pattern="/public/mobile/paytax/**" filters="none"/>
+                <security:filter-chain pattern="/error/**" filters="none"/>
+                <security:filter-chain pattern="/index.jsp" filters="none"/>
+                <security:filter-chain pattern="/image/**" filters="none"/>
+                <security:filter-chain pattern="/rest/**" filters="none"/>
+                <security:filter-chain pattern="/citizen/collection/**" filters="none"/>
+                <security:filter-chain pattern="/common/ajaxCommon-calculateMutationFee.action" filters="none"/>
+                <security:filter-chain pattern="/**" filters="concurrentSessionFilter,securityContextPersistenceFilter,
+                                       logoutFilter,authenticationProcessingFilter,headerWriterFilter,csrfFilter,
+                                       securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,
+                                       anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor"/>
+            </list>
+        </constructor-arg>
+    </bean>
 </beans>

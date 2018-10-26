@@ -61,6 +61,26 @@
         <constructor-arg name="sessionRegistry" ref="springSessionBackedSessionRegistry"/>
     </bean>
 
+    <bean id="csrfFilter" class="org.springframework.security.web.csrf.CsrfFilter">
+        <constructor-arg name="csrfTokenRepository">
+            <bean class="org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository"/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="headerWriterFilter" class="org.springframework.security.web.header.HeaderWriterFilter">
+        <constructor-arg name="headerWriters">
+            <list>
+                <bean class="org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter"/>
+                <bean class="org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter"/>
+                <bean class="org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter"/>
+                <bean class="org.springframework.security.web.header.writers.HstsHeaderWriter"/>
+                <bean class="org.springframework.security.web.header.writers.XContentTypeOptionsHeaderWriter"/>
+                <bean class="org.springframework.security.web.header.writers.XXssProtectionHeaderWriter"/>
+                <bean class="org.springframework.security.web.header.writers.HpkpHeaderWriter"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
     <bean id="concurrentSessionControlStrategy"
           class="org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy">
         <constructor-arg index="0" ref="springSessionBackedSessionRegistry"/>

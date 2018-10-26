@@ -72,7 +72,7 @@
                                 <form:option value="Miss"><spring:message code="lbl.miss"/></form:option>
                             </form:select>
                         </div>
-                        <div class="col-sm-4 col-md-5 add-margin">
+                        <div class="col-sm-5 col-md-5 add-margin">
                             <form:input path="name" cssClass="form-control" placeholder="Name" maxlength="100" required="required"/>
                         </div>
                     </div>
@@ -95,7 +95,7 @@
                             <form:errors path="mobileNumber" cssClass="add-margin error-msg"/>
                         </div>
 
-                        <label class="col-sm-1 control-label">
+                        <label class="col-sm-2 control-label">
                             <spring:message code="lbl.email"/>
                         </label>
 
@@ -112,7 +112,7 @@
                             <form:input path="altContactNumber" cssClass="form-control" data-inputmask="'mask': '9999999999'" id="altContactNumber" placeholder="8080808080" maxlength="10"/>
                         </div>
 
-                        <label class="col-sm-1 control-label">
+                        <label class="col-sm-2 control-label">
                             <spring:message code="lbl.dob"/>
                         </label>
 
@@ -130,7 +130,7 @@
                             <form:errors path="pan" cssClass="add-margin error-msg"/>
                         </div>
 
-                        <label class="col-sm-1 control-label"><spring:message code="lbl.preferred.lang"/></label>
+                        <label class="col-sm-2 control-label"><spring:message code="lbl.preferred.lang"/></label>
                         <div class="col-sm-3 add-margin">
                             <form:select class="form-control" id="locale" path="locale">
                                 <form:option value=""></form:option>

@@ -83,7 +83,7 @@ $(document).ready(function () {
     var checklocation = false;
 
     $('#j_username').blur(function () {
-        $('#locationId').empty();
+        $('#locationId').find('option:gt(0)').remove();
         if ($.trim($(this).val())) {
             $.ajax({
                 url: "requiredlocations",
@@ -93,7 +93,6 @@ $(document).ready(function () {
                 success: function (data) {
                     checklocation = true;
                     if (data.length > 0) {
-                        $('#locationId').append('<option value="">select location</option>');
                         $.each(data, function (key, value) {
                             var opt = "<option value=" + value.id + ">" + value.name + "</option>";
                             $('#locationId').append(opt);
@@ -102,7 +101,6 @@ $(document).ready(function () {
                         $('#counter-section').removeClass('display-hide');
                         loaddpdown_value();
                     } else {
-                        $('#locationId').empty();
                         $('#locationId').attr('required', false);
                         $('#counter-section').addClass('display-hide');
                     }
