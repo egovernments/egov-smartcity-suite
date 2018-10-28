@@ -56,7 +56,7 @@ $(document).ready(function()
 				type: "GET",
 				data: {
 					approvalDepartment : $('#approvalDepartment').val(),
-					departmentRule : $('#approvalDepartment').find("option:selected").text(),
+					departmentRule : null,
 					type : $('#stateType').val(),
 					currentState : $('#currentState').val(),
 					amountRule : $('#amountRule').val(),
