@@ -54,14 +54,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AdvertisementApplicationNumberGeneratorImpl implements  AdvertisementApplicationNumberGenerator{
-    
+public class AdvertisementApplicationNumberGeneratorImpl implements AdvertisementApplicationNumberGenerator {
+
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
-    
+
     @Override
     public String getNextAdvertisementApplicationNumber(Advertisement advertisement) {
         return applicationNumberGenerator.generate();
-        }
-    
+    }
+
 }

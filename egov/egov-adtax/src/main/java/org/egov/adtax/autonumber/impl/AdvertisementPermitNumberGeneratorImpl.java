@@ -56,6 +56,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AdvertisementPermitNumberGeneratorImpl implements AdvertisementPermitNumberGenerator {
+
     private static final String PERMIT_NUMBER_SEQ_PREFIX = "SEQ_PERMIT_NUMBER";
 
     @Autowired

@@ -49,7 +49,9 @@
 package org.egov.adtax.entity;
 
 public class AgencyWiseResult {
+
     private Agency agency;
+
     private Long count;
 
     public Agency getAgency() {

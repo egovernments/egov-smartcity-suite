@@ -67,7 +67,6 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -78,65 +77,66 @@ import org.springframework.transaction.annotation.Transactional;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Transactional(readOnly = true)
 public class AdvertisementBillable extends AbstractBillable implements Billable {
+
     private String referenceNumber;
+
     private String transanctionReferenceNumber;
 
     @Autowired
     private ModuleService moduleService;
 
     private Advertisement advertisement;
+
     private String collectionType;
+
     @Autowired
     private EgBillDao egBillDAO;
+
     @Autowired
     private SecurityUtils securityUtils;
+
     @Override
     public String getBillPayee() {
-        AdvertisementPermitDetail advPermit=advertisement.getActiveAdvertisementPermit();
-        if (advertisement != null)
-        { 
-            if (collectionType != null && advPermit != null
-                    && AdvertisementTaxConstants.ADVERTISEMENT_COLLECTION_TYPE.equalsIgnoreCase(collectionType)) {
-                
-                return (advPermit.getAgency() != null && advPermit.getAgency().getName()!=null? advPermit.getAgency().getName():(advPermit.getOwnerDetail()!=null ? advPermit.getOwnerDetail(): " ") );
-            } else
-            {
-                return advPermit != null
-                        && advPermit.getAgency() != null && advPermit.getAgency().getName()!=null ? advPermit.getAgency().getName() : " ";
-            }
-        }
-        return null;
+        AdvertisementPermitDetail advPermit = advertisement.getActiveAdvertisementPermit();
+        if (collectionType != null && advPermit != null
+                && AdvertisementTaxConstants.ADVERTISEMENT_COLLECTION_TYPE.equalsIgnoreCase(collectionType)) {
+            if (advPermit.getAgency() != null && advPermit.getAgency().getName() != null)
+                return advPermit.getAgency().getName();
+            return advPermit.getOwnerDetail() != null ? advPermit.getOwnerDetail() : " ";
+        } else
+            return advPermit != null
+                    && advPermit.getAgency() != null && advPermit.getAgency().getName() != null
+                            ? advPermit.getAgency().getName()
+                            : " ";
     }
 
     @Override
     public String getBillAddress() {
-        AdvertisementPermitDetail advPermit=advertisement.getActiveAdvertisementPermit();
-        if (advertisement != null){
-            if (collectionType != null && AdvertisementTaxConstants.ADVERTISEMENT_COLLECTION_TYPE.equalsIgnoreCase(collectionType))
-                return (advPermit!=null && advPermit.getAgency() != null && advPermit.getAgency().getAddress()!=null) ? advPermit.getAgency().getAddress() : ( advPermit != null && advPermit.getOwnerDetail()!=null?advPermit.getOwnerDetail():" ");
-            else
-            {
-            //     advPermit=  advertisement.getActiveAdvertisementPermit();
-                return advPermit!=null && advPermit.getAgency() != null && advPermit.getAgency().getAddress()!=null ? advPermit.getAgency().getAddress() : " ";
-            }
-        }
-        return null;
+        AdvertisementPermitDetail advPermit = advertisement.getActiveAdvertisementPermit();
+        if (collectionType != null
+                && AdvertisementTaxConstants.ADVERTISEMENT_COLLECTION_TYPE.equalsIgnoreCase(collectionType)) {
+            if (advPermit != null && advPermit.getAgency() != null && advPermit.getAgency().getAddress() != null)
+                return advPermit.getAgency().getAddress();
+            return advPermit != null && advPermit.getOwnerDetail() != null ? advPermit.getOwnerDetail() : " ";
+        } else
+            return advPermit != null && advPermit.getAgency() != null && advPermit.getAgency().getAddress() != null
+                    ? advPermit.getAgency().getAddress()
+                    : " ";
     }
 
     @Override
     public EgDemand getCurrentDemand() {
         return advertisement != null ? advertisement.getDemandId() : null;
     }
-   
+
     @Override
     public String getEmailId() {
         return "";
     }
 
-
     @Override
     public List<EgDemand> getAllDemands() {
-        final List<EgDemand> demands = new ArrayList<EgDemand>();
+        final List<EgDemand> demands = new ArrayList<>();
         if (getCurrentDemand() != null)
             demands.add(getCurrentDemand());
         return demands;
@@ -147,11 +147,11 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
         return egBillDAO.getBillTypeByCode(AdvertisementTaxConstants.BILL_TYPE_AUTO);
 
     }
-    
+
     public EgBillType getBillTypeByCode(final String typeCode) {
         return egBillDAO.getBillTypeByCode(typeCode);
     }
-    
+
     @Override
     public Date getBillLastDueDate() {
         return DateUtils.today();
@@ -167,7 +167,7 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
     @Override
     public String getBoundaryType() {
 
-        if (advertisement != null  &&  advertisement.getWard() != null && advertisement.getWard().getBoundaryType()!=null)
+        if (advertisement != null && advertisement.getWard() != null && advertisement.getWard().getBoundaryType() != null)
             return advertisement.getWard().getBoundaryType().getName();
         return null;
     }
@@ -199,7 +199,7 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
 
     @Override
     public Date getLastDate() {
-        return advertisement!=null && 
+        return advertisement != null &&
                 advertisement.getPenaltyCalculationDate() != null ? advertisement.getPenaltyCalculationDate() : null;
     }
 
@@ -238,15 +238,15 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
 
     @Override
     public Long getUserId() {
-        return ApplicationThreadLocals.getUserId() == null ? securityUtils.getCurrentUser().getId() : Long.valueOf(ApplicationThreadLocals.getUserId());
+        return ApplicationThreadLocals.getUserId() == null ? securityUtils.getCurrentUser().getId()
+                : ApplicationThreadLocals.getUserId();
     }
-    
-    
+
     @Override
     public String getDescription() {
-        final StringBuffer description = new StringBuffer();
+        final StringBuilder description = new StringBuilder();
 
-        if (advertisement != null ) {
+        if (advertisement != null) {
             description.append(AdvertisementTaxConstants.FEECOLLECTIONMESSAGE);
             description.append(advertisement.getAdvertisementNumber() != null ? advertisement.getAdvertisementNumber() : "");
         }
@@ -260,7 +260,7 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
 
     @Override
     public String getCollModesNotAllowed() {
-        return StringUtils.EMPTY;
+        return org.apache.commons.lang.StringUtils.EMPTY;
     }
 
     @Override
@@ -280,7 +280,6 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
         throw new IllegalArgumentException("Apportioning is always TRUE and shouldn't be changed");
 
     }
-  
 
     public Advertisement getAdvertisement() {
         return advertisement;
@@ -311,6 +310,7 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
     public String getConsumerType() {
         return "";
     }
+
     @Override
     public String getTransanctionReferenceNumber() {
         return transanctionReferenceNumber;
@@ -319,5 +319,5 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
     public void setTransanctionReferenceNumber(String transanctionReferenceNumber) {
         this.transanctionReferenceNumber = transanctionReferenceNumber;
     }
-    
+
 }

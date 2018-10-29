@@ -48,6 +48,13 @@
 
 package org.egov.adtax.config;
 
+import static org.quartz.CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.sql.DataSource;
+
 import org.egov.adtax.service.scheduler.jobs.GenerateDemandForAdvertisementTaxJob;
 import org.egov.infra.config.scheduling.QuartzSchedulerConfiguration;
 import org.egov.infra.config.scheduling.SchedulerConfigCondition;
@@ -57,12 +64,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
-
-import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.quartz.CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING;
 
 @Configuration
 @Conditional(SchedulerConfigCondition.class)

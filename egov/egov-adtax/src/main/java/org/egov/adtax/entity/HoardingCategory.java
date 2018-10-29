@@ -48,11 +48,6 @@
 
 package org.egov.adtax.entity;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -62,11 +57,16 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
+
 @Entity
 @Table(name = "EGADTAX_CATEGORY")
 @SequenceGenerator(name = HoardingCategory.SEQ_CATEGORY, sequenceName = HoardingCategory.SEQ_CATEGORY, allocationSize = 1)
-@Unique(id = "id", tableName = "EGADTAX_CATEGORY", columnName = { "code","name" }, fields = { "code",
-"name" }, enableDfltMsg = true)
+@Unique(id = "id", tableName = "EGADTAX_CATEGORY", columnName = { "code", "name" }, fields = { "code",
+        "name" }, enableDfltMsg = true)
 public class HoardingCategory extends AbstractAuditable {
 
     private static final long serialVersionUID = 3539719034190449335L;
@@ -90,6 +90,7 @@ public class HoardingCategory extends AbstractAuditable {
     private String name;
 
     private boolean active;
+
     private boolean propertyMandatory;
 
     @Override
@@ -126,13 +127,12 @@ public class HoardingCategory extends AbstractAuditable {
         this.active = active;
     }
 
-	public boolean isPropertyMandatory() {
-		return propertyMandatory;
-	}
+    public boolean isPropertyMandatory() {
+        return propertyMandatory;
+    }
 
-	public void setPropertyMandatory(final boolean propertyMandatory) {
-		this.propertyMandatory = propertyMandatory;
-	}
-
+    public void setPropertyMandatory(final boolean propertyMandatory) {
+        this.propertyMandatory = propertyMandatory;
+    }
 
 }

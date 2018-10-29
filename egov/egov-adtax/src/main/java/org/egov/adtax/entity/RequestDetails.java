@@ -49,47 +49,57 @@ package org.egov.adtax.entity;
 
 public class RequestDetails {
 
-    
     private Long approvalPosition = 0l;
     private String approvalComment;
-    private String approverName ;
-    private String nextDesignation ;
+    private String approverName;
+    private String nextDesignation;
     private String workflowaction;
     private Boolean isEmployee;
-    
+
     public Long getApprovalPosition() {
         return approvalPosition;
     }
+
     public void setApprovalPosition(Long approvalPosition) {
         this.approvalPosition = approvalPosition;
     }
+
     public String getApprovalComment() {
         return approvalComment;
     }
+
     public void setApprovalComment(String approvalComment) {
         this.approvalComment = approvalComment;
     }
+
     public String getApproverName() {
         return approverName;
     }
+
     public void setApproverName(String approverName) {
         this.approverName = approverName;
     }
+
     public String getNextDesignation() {
         return nextDesignation;
     }
+
     public void setNextDesignation(String nextDesignation) {
         this.nextDesignation = nextDesignation;
     }
+
     public Boolean getIsEmployee() {
         return isEmployee;
     }
+
     public void setIsEmployee(Boolean isEmployee) {
         this.isEmployee = isEmployee;
     }
+
     public String getWorkflowaction() {
         return workflowaction;
     }
+
     public void setWorkflowaction(String workflowaction) {
         this.workflowaction = workflowaction;
     }

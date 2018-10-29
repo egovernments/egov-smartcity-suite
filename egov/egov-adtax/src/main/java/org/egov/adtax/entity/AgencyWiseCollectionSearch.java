@@ -62,7 +62,7 @@ public class AgencyWiseCollectionSearch {
     private String advertisementNumber;
     private String applicationNumber;
     private Long advertisementPermitId;
-    private List<AgencyWiseCollectionSearch> agencyWiseCollectionList = new ArrayList<AgencyWiseCollectionSearch>();
+    private List<AgencyWiseCollectionSearch> agencyWiseCollectionList = new ArrayList<>();
     private boolean selectedForCollection = false;
 
     public String getOwnerDetail() {

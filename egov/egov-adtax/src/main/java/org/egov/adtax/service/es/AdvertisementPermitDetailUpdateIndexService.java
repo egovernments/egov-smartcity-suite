@@ -75,13 +75,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AdvertisementPermitDetailUpdateIndexService {
+
     private static final Logger LOGGER = Logger.getLogger(AdvertisementPermitDetailUpdateIndexService.class);
 
     private static final String ADTAX_APPLICATION_VIEW = "/adtax/hoarding/view/%s";
-    
+
     @PersistenceContext
     private EntityManager entityManager;
-
     @Autowired
     private ApplicationIndexService applicationIndexService;
     @Autowired
@@ -101,24 +101,13 @@ public class AdvertisementPermitDetailUpdateIndexService {
      * @param advertisementPermitDetail
      */
     public void updateAdvertisementPermitDetailIndexes(final AdvertisementPermitDetail advertisementPermitDetail) {
-  
-        User user=advertisementWorkFlowService.getApproverByStatePosition(advertisementPermitDetail); 
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("Get user from asignList ....");
-            LOGGER.info(user != null ? user : "user is null");
-        }
-        if(user==null){
-            user = securityUtils.getCurrentUser();
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Get curent  user....");
-                LOGGER.info(user != null ? user : "user is null");
-            }
-        }
+
+        User user = advertisementWorkFlowService.getApproverByStatePosition(advertisementPermitDetail);
+
+        user = logUserInfo(user);
+
         // For legacy application - create only advertisementIndex
-        if (advertisementPermitDetail.getAdvertisement().getLegacy()
-                && (null == advertisementPermitDetail.getId() || (null != advertisementPermitDetail.getId()
-                        && advertisementPermitDetail.getStatus().getCode()
-                                .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED)))) {
+        if (isLegacyOrPermitGenerated(advertisementPermitDetail)) {
             advertisementIndexService.createAdvertisementIndex(advertisementPermitDetail);
             return;
         }
@@ -126,7 +115,9 @@ public class AdvertisementPermitDetailUpdateIndexService {
         ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(advertisementPermitDetail
                 .getApplicationNumber());
         // update existing application index
-        if (applicationIndex != null && null != advertisementPermitDetail.getId() && advertisementPermitDetail.getStatus() != null) {
+
+        if (applicationIndex != null && null != advertisementPermitDetail.getId()
+                && advertisementPermitDetail.getStatus() != null) {
             if (advertisementPermitDetail.getStatus() != null &&
                     (advertisementPermitDetail.getStatus().getCode()
                             .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED)
@@ -139,39 +130,16 @@ public class AdvertisementPermitDetailUpdateIndexService {
                             || advertisementPermitDetail.getStatus().getCode()
                                     .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_CANCELLED))) {
                 applicationIndex.setStatus(advertisementPermitDetail.getStatus().getDescription());
-                applicationIndex.setOwnerName(user != null ? user.getUsername() + "::" + user.getName() : "");
+                applicationIndex.setOwnerName(getOwnerName(user));
 
                 // Set application index status to approved on advertisement approval and close
-                if (advertisementPermitDetail.getStatus().getCode()
-                        .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED)) {
-                    String applicantName = advertisementPermitDetail.getAgency() != null
-                            ? advertisementPermitDetail.getAgency().getName() : advertisementPermitDetail.getOwnerDetail();
-                    String address = advertisementPermitDetail.getAgency() != null
-                            ? advertisementPermitDetail.getAgency().getAddress() : advertisementPermitDetail.getOwnerDetail();
-                    applicationIndex.setApplicantName(applicantName);
-                    applicationIndex.setApplicantAddress(address);
-                    applicationIndex.setMobileNumber(advertisementPermitDetail.getAgency() != null
-                            ? advertisementPermitDetail.getAgency().getMobileNumber() : "");
-                    applicationIndex.setApproved(ApprovalStatus.APPROVED);
-                    applicationIndex.setClosed(ClosureStatus.YES);
-                    
-                }
+                approveAndCloseOnApproval(advertisementPermitDetail, applicationIndex);
                 // mark application index as closed on generate permit order
-                if (advertisementPermitDetail.getStatus().getCode()
-                        .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED)) {
-                    applicationIndex.setApproved(ApprovalStatus.APPROVED);
-                    applicationIndex.setClosed(ClosureStatus.YES);
-                }
+                approveAndCloseOnPermitGeneration(advertisementPermitDetail, applicationIndex);
                 // mark application index as rejected and closed on advertisement cancellation / Deactivation
-                if (advertisementPermitDetail.getStatus().getCode()
-                        .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_CANCELLED) ||
-                        advertisementPermitDetail.getAdvertisement().getStatus().name().equalsIgnoreCase("INACTIVE")) {
-                    applicationIndex.setApproved(ApprovalStatus.REJECTED);
-                    applicationIndex.setClosed(ClosureStatus.YES);
-                }
+                rejectAndCloseOnDeactivationOrCancellation(advertisementPermitDetail, applicationIndex);
 
-                if (advertisementPermitDetail.getPermissionNumber() != null)
-                    applicationIndex.setConsumerCode(advertisementPermitDetail.getPermissionNumber());
+                setConsumerCode(advertisementPermitDetail, applicationIndex);
 
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
@@ -179,47 +147,158 @@ public class AdvertisementPermitDetailUpdateIndexService {
             advertisementIndexService.createAdvertisementIndex(advertisementPermitDetail);
 
         } else {
-            AppConfigValues slaForAdvertisement = null;
+            setApplicationDateAndNumber(advertisementPermitDetail);
+            createApplicationIndex(advertisementPermitDetail, user, applicationIndex);
+        }
 
-            if (advertisementPermitDetail != null && advertisementPermitDetail.getApplicationtype() != null
-                    && AdvertisementTaxConstants.RENEW.equals(advertisementPermitDetail.getApplicationtype().toString())) {
-                slaForAdvertisement = getSlaAppConfigValuesForAdvertisement(
-                        AdvertisementTaxConstants.MODULE_NAME, AdvertisementTaxConstants.SLAFORRENEWADVERTISEMENT);
-            } else if (advertisementPermitDetail != null && advertisementPermitDetail.getApplicationtype() != null
-                    && AdvertisementTaxConstants.NEW.equals(advertisementPermitDetail.getApplicationtype().toString())) {
-                slaForAdvertisement = getSlaAppConfigValuesForAdvertisement(
-                        AdvertisementTaxConstants.MODULE_NAME, AdvertisementTaxConstants.SLAFORNEWADVERTISEMENT);
-            }
+    }
 
-            if (advertisementPermitDetail.getApplicationDate() == null)
-                advertisementPermitDetail.setApplicationDate(new Date());
-            if (advertisementPermitDetail.getApplicationNumber() == null)
-                advertisementPermitDetail.setApplicationNumber(advertisementPermitDetail.getApplicationNumber());
-            if (applicationIndex == null) {
-                String applicantName = advertisementPermitDetail.getAgency() != null
-                        ? advertisementPermitDetail.getAgency().getName() : advertisementPermitDetail.getOwnerDetail();
-                String address = advertisementPermitDetail.getAgency() != null
-                        ? advertisementPermitDetail.getAgency().getAddress() : advertisementPermitDetail.getOwnerDetail();
-                applicationIndex = ApplicationIndex.builder().withModuleName(AdvertisementTaxConstants.MODULE_NAME)
-                        .withApplicationNumber(advertisementPermitDetail.getApplicationNumber())
-                        .withApplicationDate(advertisementPermitDetail.getApplicationDate())
-                        .withApplicationType(advertisementPermitDetail.getState().getNatureOfTask())
-                        .withApplicantName(applicantName)
-                        .withStatus(advertisementPermitDetail.getStatus().getDescription()).withUrl(
-                                String.format(ADTAX_APPLICATION_VIEW, advertisementPermitDetail.getId()))
-                        .withApplicantAddress(address)
-                        .withOwnername(user != null ? user.getUsername() + "::" + user.getName() : "")
-                        .withChannel(advertisementPermitDetail.getSource() == null ? Source.SYSTEM.toString()
-                                : advertisementPermitDetail.getSource())
-                        .withMobileNumber(advertisementPermitDetail.getAgency() != null
-                                ? advertisementPermitDetail.getAgency().getMobileNumber() : EMPTY)
-                        .withClosed(ClosureStatus.NO)
-                        .withSla(slaForAdvertisement != null && slaForAdvertisement.getValue()!=null? Integer.valueOf(slaForAdvertisement.getValue()) : 0) 
-                        .withApproved(ApprovalStatus.INPROGRESS).build();
-                applicationIndexService.createApplicationIndex(applicationIndex);
+    private User logUserInfo(User user) {
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Get user from asignList ....");
+            LOGGER.info(user != null ? user : "user is null");
+        }
+        if (user == null) {
+            user = securityUtils.getCurrentUser();
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Get curent  user....");
+                LOGGER.info(user != null ? user : "user is null");
             }
         }
+        return user;
     }
+
+    private void createApplicationIndex(final AdvertisementPermitDetail advertisementPermitDetail, User user,
+            ApplicationIndex applicationIndex) {
+        if (applicationIndex == null) {
+            applicationIndex = ApplicationIndex.builder().withModuleName(AdvertisementTaxConstants.MODULE_NAME)
+                    .withApplicationNumber(advertisementPermitDetail.getApplicationNumber())
+                    .withApplicationDate(advertisementPermitDetail.getApplicationDate())
+                    .withApplicationType(advertisementPermitDetail.getState().getNatureOfTask())
+                    .withApplicantName(getApplicantName(advertisementPermitDetail))
+                    .withStatus(advertisementPermitDetail.getStatus().getDescription()).withUrl(
+                            String.format(ADTAX_APPLICATION_VIEW, advertisementPermitDetail.getId()))
+                    .withApplicantAddress(getAddress(advertisementPermitDetail))
+                    .withOwnername(getOwnerName(user))
+                    .withChannel(getChannel(advertisementPermitDetail))
+                    .withMobileNumber(getMobileNumber(advertisementPermitDetail))
+                    .withClosed(ClosureStatus.NO)
+                    .withSla(getSla(getSlaForAdvertisement(advertisementPermitDetail)))
+                    .withApproved(ApprovalStatus.INPROGRESS).build();
+            applicationIndexService.createApplicationIndex(applicationIndex);
+        }
+    }
+
+    private void setApplicationDateAndNumber(final AdvertisementPermitDetail advertisementPermitDetail) {
+        if (advertisementPermitDetail.getApplicationDate() == null)
+            advertisementPermitDetail.setApplicationDate(new Date());
+        if (advertisementPermitDetail.getApplicationNumber() == null)
+            advertisementPermitDetail.setApplicationNumber(advertisementPermitDetail.getApplicationNumber());
+    }
+
+    private AppConfigValues getSlaForAdvertisement(final AdvertisementPermitDetail advertisementPermitDetail) {
+        AppConfigValues slaForAdvertisement = null;
+
+        if (isApplicationTypeRenew(advertisementPermitDetail))
+            slaForAdvertisement = getSlaAppConfigValuesForAdvertisement(
+                    AdvertisementTaxConstants.MODULE_NAME, AdvertisementTaxConstants.SLAFORRENEWADVERTISEMENT);
+        else if (isApplicationTypeNew(advertisementPermitDetail))
+            slaForAdvertisement = getSlaAppConfigValuesForAdvertisement(
+                    AdvertisementTaxConstants.MODULE_NAME, AdvertisementTaxConstants.SLAFORNEWADVERTISEMENT);
+        return slaForAdvertisement;
+    }
+
+    private boolean isLegacyOrPermitGenerated(final AdvertisementPermitDetail advertisementPermitDetail) {
+        return advertisementPermitDetail.getAdvertisement().getLegacy()
+                && (null == advertisementPermitDetail.getId() || null != advertisementPermitDetail.getId()
+                        && advertisementPermitDetail.getStatus().getCode()
+                                .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED));
+    }
+
+    private boolean isApplicationTypeNew(final AdvertisementPermitDetail advertisementPermitDetail) {
+        return advertisementPermitDetail != null && advertisementPermitDetail.getApplicationtype() != null
+                && AdvertisementTaxConstants.NEW.equals(advertisementPermitDetail.getApplicationtype().toString());
+    }
+
+    private boolean isApplicationTypeRenew(final AdvertisementPermitDetail advertisementPermitDetail) {
+        return advertisementPermitDetail != null && advertisementPermitDetail.getApplicationtype() != null
+                && AdvertisementTaxConstants.RENEW.equals(advertisementPermitDetail.getApplicationtype().toString());
+    }
+
+    private String getChannel(final AdvertisementPermitDetail advertisementPermitDetail) {
+        return advertisementPermitDetail.getSource() == null ? Source.SYSTEM.toString()
+                : advertisementPermitDetail.getSource();
+    }
+
+    private int getSla(AppConfigValues slaForAdvertisement) {
+        return slaForAdvertisement != null && slaForAdvertisement.getValue() != null
+                ? Integer.valueOf(slaForAdvertisement.getValue())
+                : 0;
+    }
+
+    private String getMobileNumber(final AdvertisementPermitDetail advertisementPermitDetail) {
+        return advertisementPermitDetail.getAgency() != null
+                ? advertisementPermitDetail.getAgency().getMobileNumber()
+                : EMPTY;
+    }
+
+    private String getAddress(final AdvertisementPermitDetail advertisementPermitDetail) {
+        return advertisementPermitDetail.getAgency() != null
+                ? advertisementPermitDetail.getAgency().getAddress()
+                : advertisementPermitDetail.getOwnerDetail();
+    }
+
+    private String getApplicantName(final AdvertisementPermitDetail advertisementPermitDetail) {
+        return advertisementPermitDetail.getAgency() != null
+                ? advertisementPermitDetail.getAgency().getName()
+                : advertisementPermitDetail.getOwnerDetail();
+    }
+
+    private void setConsumerCode(final AdvertisementPermitDetail advertisementPermitDetail, ApplicationIndex applicationIndex) {
+        if (advertisementPermitDetail.getPermissionNumber() != null)
+            applicationIndex.setConsumerCode(advertisementPermitDetail.getPermissionNumber());
+    }
+
+    private String getOwnerName(User user) {
+        return user != null ? user.getUsername() + "::" + user.getName() : "";
+    }
+
+    private void rejectAndCloseOnDeactivationOrCancellation(final AdvertisementPermitDetail advertisementPermitDetail,
+            ApplicationIndex applicationIndex) {
+        if (advertisementPermitDetail.getStatus().getCode()
+                .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_CANCELLED) ||
+                advertisementPermitDetail.getAdvertisement().getStatus().name().equalsIgnoreCase("INACTIVE")) {
+            applicationIndex.setApproved(ApprovalStatus.REJECTED);
+            applicationIndex.setClosed(ClosureStatus.YES);
+        }
+    }
+
+    private void approveAndCloseOnPermitGeneration(final AdvertisementPermitDetail advertisementPermitDetail,
+            ApplicationIndex applicationIndex) {
+        if (advertisementPermitDetail.getStatus().getCode()
+                .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED)) {
+            applicationIndex.setApproved(ApprovalStatus.APPROVED);
+            applicationIndex.setClosed(ClosureStatus.YES);
+        }
+    }
+
+    private void approveAndCloseOnApproval(final AdvertisementPermitDetail advertisementPermitDetail,
+            ApplicationIndex applicationIndex) {
+        if (advertisementPermitDetail.getStatus().getCode()
+                .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED)) {
+            String applicantName = getApplicantName(advertisementPermitDetail);
+            String address = getAddress(advertisementPermitDetail);
+            applicationIndex.setApplicantName(applicantName);
+            applicationIndex.setApplicantAddress(address);
+            applicationIndex.setMobileNumber(advertisementPermitDetail.getAgency() != null
+                    ? advertisementPermitDetail.getAgency().getMobileNumber()
+                    : "");
+            applicationIndex.setApproved(ApprovalStatus.APPROVED);
+            applicationIndex.setClosed(ClosureStatus.YES);
+
+        }
+    }
+
     public AppConfigValues getSlaAppConfigValuesForAdvertisement(final String moduleName, final String keyName) {
         final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, keyName);
         return !appConfigValues.isEmpty() ? appConfigValues.get(0) : null;

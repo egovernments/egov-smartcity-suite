@@ -48,17 +48,16 @@
 
 package org.egov.adtax.search.contract;
 
-import org.egov.adtax.entity.AdvertisementPenaltyRates;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.adtax.entity.AdvertisementPenaltyRates;
+
 public class HoardingPenaltyRates {
-    
+
     private Long id;
-    
-    
-    List<AdvertisementPenaltyRates> advtPenaltyRatesList = new ArrayList<AdvertisementPenaltyRates>();
+
+    List<AdvertisementPenaltyRates> advtPenaltyRatesList = new ArrayList<>();
 
     public List<AdvertisementPenaltyRates> getAdvtPenaltyRatesList() {
         return advtPenaltyRatesList;

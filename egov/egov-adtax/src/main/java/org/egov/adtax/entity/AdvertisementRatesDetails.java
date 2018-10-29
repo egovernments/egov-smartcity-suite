@@ -48,8 +48,6 @@
 
 package org.egov.adtax.entity;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -60,18 +58,23 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.egov.infra.persistence.entity.AbstractPersistable;
+
 @Entity
 @Table(name = "EGADTAX_RATES_DETAILS")
 @SequenceGenerator(name = AdvertisementRatesDetails.SEQ_RATESDETAILS, sequenceName = AdvertisementRatesDetails.SEQ_RATESDETAILS, allocationSize = 1)
 public class AdvertisementRatesDetails extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 8947498263482063238L;
+
     public static final String SEQ_RATESDETAILS = "SEQ_EGADTAX_RATESDETAILS";
+
     @Id
     @GeneratedValue(generator = SEQ_RATESDETAILS, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     private Double unitFrom;
+
     private Double unitTo;
 
     @NotNull

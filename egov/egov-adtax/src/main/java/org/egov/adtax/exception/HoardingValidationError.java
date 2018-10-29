@@ -55,6 +55,7 @@ public class HoardingValidationError extends ApplicationRuntimeException {
     private static final long serialVersionUID = 8490487386156937904L;
 
     private final String fieldName;
+    
     private final String errorCode;
 
     public HoardingValidationError(final String fieldName, final String errorCode) {

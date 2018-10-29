@@ -48,9 +48,6 @@
 
 package org.egov.adtax.entity;
 
-import org.egov.commons.Installment;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -62,12 +59,18 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.egov.commons.Installment;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+
 @Entity
 @Table(name = "EGADTAX_BATCHDEMANDGENERATE")
 @SequenceGenerator(name = AdvertisementBatchDemandGenerate.SEQ_BATCHDEMANDGENERATE, sequenceName = AdvertisementBatchDemandGenerate.SEQ_BATCHDEMANDGENERATE, allocationSize = 1)
 public class AdvertisementBatchDemandGenerate extends AbstractAuditable {
+
     private static final long serialVersionUID = -2136324833943230304L;
+
     public static final String SEQ_BATCHDEMANDGENERATE = "SEQ_BATCHDEMANDGENERATE";
+
     @Id
     @GeneratedValue(generator = SEQ_BATCHDEMANDGENERATE, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -80,20 +83,21 @@ public class AdvertisementBatchDemandGenerate extends AbstractAuditable {
     @NotNull
     private Boolean active;
 
-    private Integer totalRecords=0;
+    private Integer totalRecords = 0;
 
     @NotNull
     private String jobName;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    
     public Installment getInstallment() {
         return installment;
     }

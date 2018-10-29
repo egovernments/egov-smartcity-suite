@@ -46,8 +46,6 @@
  *
  */
 
-
-
 package org.egov.adtax.search.contract;
 
 import java.util.Date;

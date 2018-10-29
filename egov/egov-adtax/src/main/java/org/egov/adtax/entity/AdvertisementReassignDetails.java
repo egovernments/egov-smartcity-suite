@@ -51,6 +51,7 @@ package org.egov.adtax.entity;
 public class AdvertisementReassignDetails {
 
     private Long applicationId;
+    
     private String stateType;
 
     public Long getApplicationId() {

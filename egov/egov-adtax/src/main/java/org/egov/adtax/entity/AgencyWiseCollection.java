@@ -48,10 +48,9 @@
 
 package org.egov.adtax.entity;
 
-import org.egov.demand.model.EgDemand;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -65,9 +64,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Set;
+
+import org.egov.demand.model.EgDemand;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGADTAX_AGENCYWISECOLLECTION")
@@ -93,20 +94,24 @@ public class AgencyWiseCollection extends AbstractAuditable {
     private String billNumber;
 
     private Boolean demandUpdated = false;
-    private Boolean amountCollected=false;
+
+    private Boolean amountCollected = false;
+
     private BigDecimal totalAmount;
 
     @OneToMany(mappedBy = "agencyWiseCollection", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<AgencyWiseCollectionDetail> agencyWiseCollectionDetails = new HashSet<AgencyWiseCollectionDetail>(0);
+    private Set<AgencyWiseCollectionDetail> agencyWiseCollectionDetails = new HashSet<>(0);
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "agencyWiseDemand", nullable = false)
     private EgDemand agencyWiseDemand;
-    
+
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }

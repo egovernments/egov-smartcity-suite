@@ -48,7 +48,11 @@
 
 package org.egov.adtax.service.collection;
 
-import org.apache.log4j.Logger;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.egov.adtax.entity.AgencyWiseCollection;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.demand.dao.EgBillDao;
@@ -72,33 +76,24 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Transactional(readOnly = true)
 public class AgencyWiseBillable extends AbstractBillable implements Billable {
-    private static final Logger LOGGER = Logger.getLogger(AgencyWiseBillable.class);
+    
     public static final String FEECOLLECTIONMESSAGE = "Fee Collection : Agency Name-";
     private static final String CITY_BOUNDARY_TYPE = "City";
     private String referenceNumber;
     private String transanctionReferenceNumber;
-
     @Autowired
     private ModuleService moduleService;
-
     private AgencyWiseCollection agencyWiseCollection;
-
     @Autowired
     private HierarchyTypeService hierarchyTypeService;
     @Autowired
     private BoundaryTypeService boundaryTypeService;
     @Autowired
     private BoundaryService boundaryService;
-
     @Autowired
     private EgBillDao egBillDAO;
 
@@ -111,7 +106,8 @@ public class AgencyWiseBillable extends AbstractBillable implements Billable {
 
     @Override
     public String getBillAddress() {
-        if (agencyWiseCollection != null && agencyWiseCollection.getAgency() != null && agencyWiseCollection.getAgency().getAddress()!=null)
+        if (agencyWiseCollection != null && agencyWiseCollection.getAgency() != null
+                && agencyWiseCollection.getAgency().getAddress() != null)
             return agencyWiseCollection.getAgency().getAddress();
 
         return "";
@@ -131,10 +127,9 @@ public class AgencyWiseBillable extends AbstractBillable implements Billable {
         return "";
     }
 
-
     @Override
     public List<EgDemand> getAllDemands() {
-        final List<EgDemand> demands = new ArrayList<EgDemand>();
+        final List<EgDemand> demands = new ArrayList<>();
         if (getCurrentDemand() != null)
             demands.add(getCurrentDemand());
         return demands;
@@ -160,18 +155,17 @@ public class AgencyWiseBillable extends AbstractBillable implements Billable {
     }
 
     private Boundary getBoundaryAsCity() {
-        HierarchyType hType = null;
-        hType = hierarchyTypeService.getHierarchyTypeByName(AdvertisementTaxConstants.ELECTION_HIERARCHY_TYPE);
+        HierarchyType hType = hierarchyTypeService.getHierarchyTypeByName(AdvertisementTaxConstants.ELECTION_HIERARCHY_TYPE);
 
-        List<Boundary> locationList = null;
+        List<Boundary> locations = new ArrayList<>();
         if (hType != null) {
             final BoundaryType bType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(CITY_BOUNDARY_TYPE,
                     hType);
             if (bType != null)
-                locationList = boundaryService.getActiveBoundariesByBoundaryTypeId(bType.getId());
+                locations = boundaryService.getActiveBoundariesByBoundaryTypeId(bType.getId());
 
-            if (locationList != null && locationList.size() > 0)
-                return locationList.get(0);
+            if (!locations.isEmpty())
+                return locations.get(0);
 
         }
         return null;
@@ -197,7 +191,7 @@ public class AgencyWiseBillable extends AbstractBillable implements Billable {
 
     @Override
     public String getFundCode() {
-        return AdvertisementTaxConstants.DEFAULT_FUND_CODE; 
+        return AdvertisementTaxConstants.DEFAULT_FUND_CODE;
     }
 
     @Override
@@ -246,12 +240,12 @@ public class AgencyWiseBillable extends AbstractBillable implements Billable {
 
     @Override
     public Long getUserId() {
-        return ApplicationThreadLocals.getUserId() == null ? null : Long.valueOf(ApplicationThreadLocals.getUserId());
+        return ApplicationThreadLocals.getUserId() == null ? null : ApplicationThreadLocals.getUserId();
     }
 
     @Override
     public String getDescription() {
-        final StringBuffer description = new StringBuffer();
+        final StringBuilder description = new StringBuilder();
 
         if (agencyWiseCollection != null && agencyWiseCollection.getAgency() != null) {
             description.append(FEECOLLECTIONMESSAGE);
@@ -278,10 +272,12 @@ public class AgencyWiseBillable extends AbstractBillable implements Billable {
             return AdvertisementTaxConstants.AGENCY_PREFIX_CONSUMERCODE.concat(agencyWiseCollection.getId().toString());
         return null;
     }
+
     @Override
     public String getConsumerType() {
         return "";
     }
+
     @Override
     public Boolean isCallbackForApportion() {
         return Boolean.FALSE;
@@ -318,5 +314,5 @@ public class AgencyWiseBillable extends AbstractBillable implements Billable {
     public void setTransanctionReferenceNumber(String transanctionReferenceNumber) {
         this.transanctionReferenceNumber = transanctionReferenceNumber;
     }
-    
+
 }

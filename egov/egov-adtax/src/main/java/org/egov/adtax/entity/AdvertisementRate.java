@@ -48,8 +48,9 @@
 
 package org.egov.adtax.entity;
 
-import org.egov.commons.CFinancialYear;
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -66,9 +67,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+
+import org.egov.commons.CFinancialYear;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
 @Table(name = "EGADTAX_RATES")
@@ -76,7 +77,9 @@ import java.util.List;
 public class AdvertisementRate extends AbstractAuditable {
 
     private static final long serialVersionUID = -3661778599272146492L;
+
     public static final String SEQ_RATES = "SEQ_EGADTAX_RATES";
+
     @Id
     @GeneratedValue(generator = SEQ_RATES, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -119,7 +122,7 @@ public class AdvertisementRate extends AbstractAuditable {
 
     @OrderBy("id")
     @OneToMany(mappedBy = "advertisementRate", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<AdvertisementRatesDetails> advertisementRatesDetails = new ArrayList<AdvertisementRatesDetails>(0);
+    private List<AdvertisementRatesDetails> advertisementRatesDetails = new ArrayList<>(0);
 
     @Override
     public Long getId() {

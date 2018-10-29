@@ -51,7 +51,8 @@ import org.apache.commons.lang3.StringUtils;
 
 public enum AdvertisementApplicationType {
 
-    NEW,RENEW;
+    NEW, RENEW;
+
     @Override
     public String toString() {
         return StringUtils.capitalize(name());

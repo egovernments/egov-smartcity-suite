@@ -48,8 +48,6 @@
 
 package org.egov.adtax.entity;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -57,17 +55,23 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.egov.infra.persistence.entity.AbstractPersistable;
+
 @Entity
 @Table(name = "egadtax_HOARDINGdocument_type")
 @SequenceGenerator(name = HoardingDocumentType.SEQ_HOARDINGDOCUMENT_TYPE, sequenceName = HoardingDocumentType.SEQ_HOARDINGDOCUMENT_TYPE, allocationSize = 1)
 public class HoardingDocumentType extends AbstractPersistable<Long> {
 
     public static final String SEQ_HOARDINGDOCUMENT_TYPE = "SEQ_EGADTAX_DOCUMENT_TYPE";
+
     private static final long serialVersionUID = -6885857888257785672L;
+
     @Id
     @GeneratedValue(generator = SEQ_HOARDINGDOCUMENT_TYPE, strategy = GenerationType.SEQUENCE)
     private Long id;
+
     private String name;
+
     private boolean mandatory;
 
     @Override

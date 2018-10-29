@@ -48,13 +48,8 @@
 
 package org.egov.adtax.entity;
 
-import org.egov.adtax.entity.enums.AgencyStatus;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infra.validation.regex.Constants;
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -69,43 +64,60 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.util.HashSet;
-import java.util.Set;
+
+import org.egov.adtax.entity.enums.AgencyStatus;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.infra.validation.regex.Constants;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGADTAX_AGENCY")
 @SequenceGenerator(name = Agency.SEQ_AGENCY, sequenceName = Agency.SEQ_AGENCY, allocationSize = 1)
 @Unique(id = "id", tableName = "EGADTAX_AGENCY", columnName = { "code", "name" }, fields = {
-        "code", "name"}, enableDfltMsg = true, message = "Already Exist.Value should be unique.")
+        "code", "name" }, enableDfltMsg = true, message = "Already Exist.Value should be unique.")
 public class Agency extends AbstractAuditable {
+
     private static final long serialVersionUID = 4958014584254475596L;
+
     public static final String SEQ_AGENCY = "SEQ_EGADTAX_AGENCY";
+
     @Id
     @GeneratedValue(generator = SEQ_AGENCY, strategy = GenerationType.SEQUENCE)
     private Long id;
+
     @NotNull
     @Column(name = "code", unique = true, updatable = false)
     @SafeHtml
     private String code;
+
     @NotNull
     @Column(name = "name", unique = true)
     @SafeHtml
     private String name;
+
     @SafeHtml
     private String ssId;
+
     @Email(regexp = Constants.EMAIL)
     @Length(max = 128)
     @SafeHtml
     private String emailId;
+
     @NotNull
     @Pattern(regexp = Constants.MOBILE_NUM)
     @Length(max = 15)
     @SafeHtml
     private String mobileNumber;
+
     @SafeHtml
+    @Length(max = 256)
     private String address;
+
     @NotNull
     @Enumerated(EnumType.STRING)
     private AgencyStatus status;
@@ -115,7 +127,7 @@ public class Agency extends AbstractAuditable {
 
     @OrderBy("ID DESC")
     @OneToMany(mappedBy = "agency", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<AdvertisementPermitDetail> advertisementPermits = new HashSet<AdvertisementPermitDetail>(0);
+    private Set<AdvertisementPermitDetail> advertisementPermits = new HashSet<>(0);
 
     public Set<AdvertisementPermitDetail> getAdvertisementPermits() {
         return advertisementPermits;
@@ -200,15 +212,13 @@ public class Agency extends AbstractAuditable {
         this.depositAmount = depositAmount;
     }
 
-   
-
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((code == null) ? 0 : code.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + (code == null ? 0 : code.hashCode());
+        result = prime * result + (id == null ? 0 : id.hashCode());
+        result = prime * result + (name == null ? 0 : name.hashCode());
         return result;
     }
 

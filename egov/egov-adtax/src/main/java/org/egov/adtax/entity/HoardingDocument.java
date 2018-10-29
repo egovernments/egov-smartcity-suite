@@ -63,7 +63,9 @@ import java.util.Set;
 public class HoardingDocument extends AbstractAuditable {
 
     public static final String SEQ_HOARDING_DOCUMENT = "SEQ_EGADTAX_DOCUMENT";
+    
     private static final long serialVersionUID = 1938612090916339332L;
+    
     @Id
     @GeneratedValue(generator = SEQ_HOARDING_DOCUMENT, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -84,7 +86,7 @@ public class HoardingDocument extends AbstractAuditable {
     private Set<FileStoreMapper> files = new HashSet<>();
 
     @Transient
-    private MultipartFile[] attachments;
+    private transient MultipartFile[] attachments;
 
     @Override
     public Long getId() {

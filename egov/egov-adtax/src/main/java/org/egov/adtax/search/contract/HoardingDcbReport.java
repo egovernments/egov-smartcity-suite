@@ -48,8 +48,6 @@
 
 package org.egov.adtax.search.contract;
 
-import org.egov.dcb.bean.Receipt;
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -57,7 +55,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.egov.dcb.bean.Receipt;
+
 public class HoardingDcbReport {
+
     private String installmentYearDescription;
     private String demandReason;
     private BigDecimal demandAmount = BigDecimal.ZERO;
@@ -79,12 +80,11 @@ public class HoardingDcbReport {
     private BigDecimal collectedArrearAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
     private BigDecimal collectedDemandAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
     private BigDecimal collectedPenaltyAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
-    private Map<Date, String> collectReceiptMap = new HashMap<Date, String>();
+    private Map<Date, String> collectReceiptMap = new HashMap<>();
     private Set<Receipt> receipts = new HashSet<>();
     private BigDecimal additionalTaxAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
     private BigDecimal collectedAdditionalTaxAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
 
-    
     public String getOwnerDetail() {
         return ownerDetail;
     }
@@ -285,7 +285,7 @@ public class HoardingDcbReport {
         this.receipts = receipts;
     }
 
-    public void addReceipts(Receipt receipt){
-        this.receipts.add(receipt);
+    public void addReceipts(Receipt receipt) {
+        receipts.add(receipt);
     }
 }

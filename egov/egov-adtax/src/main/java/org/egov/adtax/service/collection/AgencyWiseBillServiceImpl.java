@@ -48,6 +48,16 @@
 
 package org.egov.adtax.service.collection;
 
+import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.adtax.entity.AdvertisementAdditionalTaxRate;
 import org.egov.adtax.service.AdvertisementAdditinalTaxRateService;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
@@ -63,21 +73,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.math.BigDecimal;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 @Service
 @Transactional(readOnly = true)
 public class AgencyWiseBillServiceImpl extends BillServiceInterface {
+    
     @PersistenceContext
     private EntityManager entityManager;
-    
+
     @Autowired
     private AdvertisementAdditinalTaxRateService advertisementAdditinalTaxRateService;
 
@@ -87,11 +89,11 @@ public class AgencyWiseBillServiceImpl extends BillServiceInterface {
 
     @Override
     public List<EgBillDetails> getBilldetails(final Billable billObj) {
-        final List<EgBillDetails> billDetailList = new ArrayList<EgBillDetails>();
+        final List<EgBillDetails> billDetailList = new ArrayList<>();
         int orderNo = 1;
         final AgencyWiseBillable agencyWiseBillable = (AgencyWiseBillable) billObj;
         final EgDemand dmd = agencyWiseBillable.getCurrentDemand();
-        final List<EgDemandDetails> details = new ArrayList<EgDemandDetails>(dmd.getEgDemandDetails());
+        final List<EgDemandDetails> details = new ArrayList<>(dmd.getEgDemandDetails());
 
         if (!details.isEmpty())
             Collections.sort(details, (c1, c2) -> c1.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
@@ -99,8 +101,7 @@ public class AgencyWiseBillServiceImpl extends BillServiceInterface {
 
         for (final EgDemandDetails demandDetail : details)
             if (demandDetail.getAmount().compareTo(BigDecimal.ZERO) > 0) {
-                BigDecimal creaditAmt = BigDecimal.ZERO;
-                creaditAmt = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
+                BigDecimal creaditAmt = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
 
                 // If Amount- collected amount greather than zero, then send
                 // these demand details to collection.
@@ -111,7 +112,7 @@ public class AgencyWiseBillServiceImpl extends BillServiceInterface {
                             getReceiptDetailDescription(
                                     demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(),
                                     demandDetail.getEgDemandReason().getEgInstallmentMaster()));
-                            
+
                     orderNo++;
                     billDetailList.add(billdetail);
                 }
@@ -120,24 +121,22 @@ public class AgencyWiseBillServiceImpl extends BillServiceInterface {
         // TODO: IF LIST SIZE IS ZERO THEN RETURN NULL OR THROW EXCEPTION.
         return billDetailList;
     }
-    
+
     private String getReceiptDetailDescription(final String reasonType, final Installment instlment) {
         List<AdvertisementAdditionalTaxRate> additionalTaxRates = advertisementAdditinalTaxRateService
                 .getAllActiveAdditinalTaxRates();
         List<String> taxTypeList = new ArrayList<>();
-        for (AdvertisementAdditionalTaxRate advertisementAdditionalTaxRate : additionalTaxRates) {
-            if (advertisementAdditionalTaxRate != null) {
+        for (AdvertisementAdditionalTaxRate advertisementAdditionalTaxRate : additionalTaxRates)
+            if (advertisementAdditionalTaxRate != null)
                 taxTypeList.add(advertisementAdditionalTaxRate.getTaxType());
-            }
-        }
-        if (taxTypeList.contains(reasonType)) {
+        if (taxTypeList.contains(reasonType))
             return reasonType + " " + AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX;
-        } else {
+        else
             return reasonType + " " + AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX
                     + (instlment != null ? " " + instlment.getDescription() : "");
-        }
 
     }
+
     private EgBillDetails createBillDetailObject(final int orderNo, final BigDecimal debitAmount,
             final BigDecimal creditAmount, final String glCodeForDemandDetail, final String description) {
 
@@ -157,7 +156,6 @@ public class AgencyWiseBillServiceImpl extends BillServiceInterface {
 
     @Override
     public void cancelBill() {
-
 
     }
 

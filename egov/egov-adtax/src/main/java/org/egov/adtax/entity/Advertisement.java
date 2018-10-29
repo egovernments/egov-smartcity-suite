@@ -48,6 +48,31 @@
 
 package org.egov.adtax.entity;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+
 import org.egov.adtax.entity.enums.AdvertisementPropertyType;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
 import org.egov.adtax.entity.enums.AdvertisementStructureType;
@@ -57,15 +82,6 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "EGADTAX_ADVERTISEMENT")
@@ -116,12 +132,15 @@ public class Advertisement extends AbstractAuditable {
     @ManyToOne
     @JoinColumn(name = "subcategory", nullable = false)
     private SubCategory subCategory;
+
     private Boolean legacy = false;
+
     private BigDecimal pendingTax;
+
     /*
-     * This field will be used to save penalty calculation date. For legacy entries current financial year start date
-     * will be saved in this field. For new advertisement entries, application date will be consider as penalty calculation date.
-     * If record in workflow, we can consider approval date to calculate penalty.
+     * This field will be used to save penalty calculation date. For legacy entries current financial year start date will be
+     * saved in this field. For new advertisement entries, application date will be consider as penalty calculation date. If
+     * record in workflow, we can consider approval date to calculate penalty.
      */
     private Date penaltyCalculationDate;
 
@@ -161,7 +180,7 @@ public class Advertisement extends AbstractAuditable {
     private String address;
 
     @OneToMany(mappedBy = "advertisement", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<AdvertisementPermitDetail> advertisementPermitDetail = new HashSet<AdvertisementPermitDetail>(0);
+    private Set<AdvertisementPermitDetail> advertisementPermitDetail = new HashSet<>(0);
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "demandid")
@@ -172,7 +191,7 @@ public class Advertisement extends AbstractAuditable {
     private double latitude;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinTable(name = "egadtax_advertisement_docs", joinColumns = @JoinColumn(name = "advertisement") , inverseJoinColumns = @JoinColumn(name = "document") )
+    @JoinTable(name = "egadtax_advertisement_docs", joinColumns = @JoinColumn(name = "advertisement"), inverseJoinColumns = @JoinColumn(name = "document"))
     private List<HoardingDocument> documents = new ArrayList<>();
 
     @Transient
@@ -180,14 +199,12 @@ public class Advertisement extends AbstractAuditable {
 
     public AdvertisementPermitDetail getActiveAdvertisementPermit() {
         AdvertisementPermitDetail advPermitDtl = null;
-        for (final AdvertisementPermitDetail advPermitDetail : getAdvertisementPermitDetail()){
+        for (final AdvertisementPermitDetail advPermitDetail : getAdvertisementPermitDetail())
             if (advPermitDetail.getIsActive())
                 advPermitDtl = advPermitDetail;
-        }
         return advPermitDtl;
     }
-    
-    
+
     @Override
     public Long getId() {
         return id;

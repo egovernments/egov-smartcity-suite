@@ -48,6 +48,6 @@
 
 package org.egov.adtax.entity.es;
 
-public class AdvertisementCustomMapper {
+public interface AdvertisementCustomMapper {
 
 }

@@ -56,6 +56,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AdvertisementNumberGeneratorImpl implements AdvertisementNumberGenerator {
+    
     private static final String ADVERTISEMENT_NUMBER_SEQ_PREFIX = "SEQ_ADVERTISEMENT_NUMBER";
 
     @Autowired

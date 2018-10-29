@@ -81,6 +81,7 @@ import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +91,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class AdvertisementBillServiceImpl extends BillServiceInterface {
+
     private static final String ADVERTISEMENT_BILLNUMBER = "SEQ_advertisementbill_NUMBER";
 
     @PersistenceContext
@@ -159,7 +161,17 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
         final Map<Installment, BigDecimal> penaltyReasons = advertisementPenaltyCalculator
                 .getPenaltyOnAdditionalTaxByInstallment(advBillable.getAdvertisement().getActiveAdvertisementPermit());
 
-        if (penaltyReasons != null && penaltyReasons.size() > 0) {
+        orderNo = preparePenaltyBillDetails(billDetailList, orderNo, dmd, penaltyReasons);
+
+        calculateServiceTaxAndCess(billDetailList, orderNo, dmd, totalTaxableAmount, additionalTaxRates);
+
+        // TODO: IF LIST SIZE IS ZERO THEN RETURN NULL OR THROW EXCEPTION.
+        return billDetailList;
+    }
+
+    private int preparePenaltyBillDetails(final List<EgBillDetails> billDetailList, int orderNo, final EgDemand dmd,
+            final Map<Installment, BigDecimal> penaltyReasons) {
+        if (penaltyReasons != null && penaltyReasons.size() > 0)
             for (final Map.Entry<Installment, BigDecimal> penaltyReason : penaltyReasons.entrySet()) {
                 BigDecimal penaltyAmount = penaltyReason.getValue();
 
@@ -167,8 +179,11 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
                     orderNo = prepareBillDetails(billDetailList, orderNo, dmd, penaltyAmount, penaltyReason.getKey(),
                             AdvertisementTaxConstants.DEMANDREASON_PENALTY);
             }
-        }
+        return orderNo;
+    }
 
+    private void calculateServiceTaxAndCess(final List<EgBillDetails> billDetailList, int orderNo, final EgDemand dmd,
+            BigDecimal totalTaxableAmount, final List<AdvertisementAdditionalTaxRate> additionalTaxRates) {
         // TODO: GET TOTAL AMOUNT FOR WHICH TAX AND CESS APPLICABLE. IF AMOUNT GREATER THAN ZERO, THEN ONLY CALL BELOW ONE.
         if (serviceTaxAndCessCalculationRequired()) {
             final Installment currentInstallment = advertisementDemandService.getCurrentInstallment();
@@ -182,9 +197,6 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
                                     .divide(BigDecimal.valueOf(100)).setScale(0, BigDecimal.ROUND_HALF_UP),
                             currentInstallment, taxRates.getReasonCode());
         }
-
-        // TODO: IF LIST SIZE IS ZERO THEN RETURN NULL OR THROW EXCEPTION.
-        return billDetailList;
     }
 
     private int prepareBillDetails(final List<EgBillDetails> billDetailList, int orderNo, final EgDemand dmd,
@@ -233,16 +245,14 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
         List<AdvertisementAdditionalTaxRate> additionalTaxRates = advertisementAdditinalTaxRateService
                 .getAllActiveAdditinalTaxRates();
         List<String> taxTypeList = new ArrayList<>();
-        for (AdvertisementAdditionalTaxRate advertisementAdditionalTaxRate : additionalTaxRates) {
+        for (AdvertisementAdditionalTaxRate advertisementAdditionalTaxRate : additionalTaxRates)
             if (advertisementAdditionalTaxRate != null)
                 taxTypeList.add(advertisementAdditionalTaxRate.getTaxType());
-        }
-        if (!taxTypeList.isEmpty() && taxTypeList.contains(reasonType)) {
+        if (!taxTypeList.isEmpty() && taxTypeList.contains(reasonType))
             return reasonType + " " + AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX;
-        } else {
+        else
             return reasonType + " " + AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX
                     + (instlment != null ? " " + instlment.getDescription() : "");
-        }
 
     }
 
@@ -276,7 +286,7 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
             collectXML = URLEncoder.encode(super.getBillXML(billObj), "UTF-8");
         } catch (final UnsupportedEncodingException e) {
 
-            throw new RuntimeException(e.getMessage());
+            throw new ApplicationRuntimeException(e.getMessage());
         }
         return collectXML;
     }
@@ -285,7 +295,7 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
         final AppConfigValues isServiceTaxAndCessCollectionRequired = appConfigValuesService.getConfigValuesByModuleAndKey(
                 AdvertisementTaxConstants.MODULE_NAME, AdvertisementTaxConstants.SERVICETAXANDCESSCOLLECTIONREQUIRED).get(0);
         return isServiceTaxAndCessCollectionRequired != null
-                && "YES".equalsIgnoreCase(isServiceTaxAndCessCollectionRequired.getValue()) ? true : false;
+                && "YES".equalsIgnoreCase(isServiceTaxAndCessCollectionRequired.getValue());
     }
 
     /**

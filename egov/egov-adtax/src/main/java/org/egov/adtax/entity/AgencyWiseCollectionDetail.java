@@ -48,10 +48,7 @@
 
 package org.egov.adtax.entity;
 
-import org.egov.demand.model.EgDemand;
-import org.egov.demand.model.EgDemandDetails;
-import org.egov.demand.model.EgDemandReason;
-import org.egov.infra.persistence.entity.AbstractPersistable;
+import java.math.BigDecimal;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -64,7 +61,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
+
+import org.egov.demand.model.EgDemand;
+import org.egov.demand.model.EgDemandDetails;
+import org.egov.demand.model.EgDemandReason;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 
 @Entity
 @Table(name = "EGADTAX_AGENCYWISECOLLECTION_DETAIL")
@@ -98,10 +99,12 @@ public class AgencyWiseCollectionDetail extends AbstractPersistable<Long> {
     @JoinColumn(name = "demandreason", nullable = false)
     private EgDemandReason demandreason;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }

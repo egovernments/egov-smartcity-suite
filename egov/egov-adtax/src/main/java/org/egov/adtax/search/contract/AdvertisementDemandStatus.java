@@ -49,6 +49,7 @@
 package org.egov.adtax.search.contract;
 
 public class AdvertisementDemandStatus {
+
     private String financialYear;
     private String advertisementNumber;
     private String status;

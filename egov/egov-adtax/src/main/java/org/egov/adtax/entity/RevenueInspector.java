@@ -48,11 +48,6 @@
 
 package org.egov.adtax.entity;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -62,12 +57,17 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
+
 @Entity
 @Table(name = "egadtax_revenueinspectors")
 @SequenceGenerator(name = RevenueInspector.SEQ_REVENUE_INSPECTORS, sequenceName = RevenueInspector.SEQ_REVENUE_INSPECTORS, allocationSize = 1)
 @Unique(id = "id", tableName = "egadtax_revenueinspectors", columnName = { "code" }, fields = {
-"code" }, enableDfltMsg = true)
-public class RevenueInspector  extends AbstractPersistable<Long> { 
+        "code" }, enableDfltMsg = true)
+public class RevenueInspector extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = -8688346654911767440L;
 
@@ -84,7 +84,7 @@ public class RevenueInspector  extends AbstractPersistable<Long> {
     private String name;
 
     private boolean active;
-    
+
     @NotNull
     @SafeHtml
     @Length(max = 50)

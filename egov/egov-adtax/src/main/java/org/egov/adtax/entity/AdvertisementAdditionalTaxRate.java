@@ -68,7 +68,9 @@ import org.hibernate.validator.constraints.SafeHtml;
 public class AdvertisementAdditionalTaxRate extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 8225515655555903827L;
+
     public static final String SEQ_ADDITIONALTAXRATES = "SEQ_EGADTAX_AdditionalTaxRates";
+
     @Id
     @GeneratedValue(generator = SEQ_ADDITIONALTAXRATES, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -84,12 +86,15 @@ public class AdvertisementAdditionalTaxRate extends AbstractPersistable<Long> {
     private String reasonCode;
 
     private Boolean isActive = true;
+
     private BigDecimal percentage;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }

@@ -97,7 +97,7 @@ public class AdtaxExternalService {
             for (final ReceiptDetail rd : receiptDetails)
                 if (billDet.getGlcode().equals(rd.getAccounthead().getGlcode())
                         && billDet.getDescription().equals(rd.getDescription())) {
-                    isActualDemand = billDet.getAdditionalFlag() == 1 ? true : false;
+                    isActualDemand = billDet.getAdditionalFlag() == 1;
                     BillAccountDetails billAccDetails;
                     billAccDetails = new BillAccountDetails(billDet.getGlcode(), billDet.getOrderNo(), rd.getCramount(),
                             rd.getDramount(), billDet.getFunctionCode(), billDet.getDescription(), isActualDemand,
@@ -112,7 +112,7 @@ public class AdtaxExternalService {
 
     /**
      * Populates a BillInfo object from the bill -- the GL codes, descripion and dr/cr amounts.
-     * 
+     *
      * @param bill
      * @return
      */

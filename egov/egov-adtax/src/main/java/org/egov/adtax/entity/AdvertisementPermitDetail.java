@@ -80,13 +80,13 @@ import static org.egov.adtax.entity.AdvertisementPermitDetail.SEQ_ADTAX_APPLICAT
 @Entity
 @Table(name = "EGADTAX_PERMITDETAILS")
 @SequenceGenerator(name = SEQ_ADTAX_APPLICATION, sequenceName = SEQ_ADTAX_APPLICATION, allocationSize = 1)
-@Unique(fields = {"applicationNumber", "permissionNumber"}, enableDfltMsg = true)
+@Unique(fields = { "applicationNumber", "permissionNumber" }, enableDfltMsg = true)
 public class AdvertisementPermitDetail extends StateAware<Position> {
 
     public static final String SEQ_ADTAX_APPLICATION = "SEQ_EGADTAX_PERMITDETAILS";
-    
+
     private static final long serialVersionUID = 845357231248646624L;
-    
+
     @Id
     @GeneratedValue(generator = SEQ_ADTAX_APPLICATION, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -153,16 +153,18 @@ public class AdvertisementPermitDetail extends StateAware<Position> {
     private UnitOfMeasure unitOfMeasure;
 
     private Double measurement;
-    
+
     private Double length;
-    
+
     private Double width;
-    
+
     private Double breadth;
-    
+
     private Double totalHeight;
 
     @Column(name = "deactivation_remarks")
+    @SafeHtml
+    @Length(max = 512)
     private String deactivationRemarks;
 
     @Column(name = "deactivation_date")
