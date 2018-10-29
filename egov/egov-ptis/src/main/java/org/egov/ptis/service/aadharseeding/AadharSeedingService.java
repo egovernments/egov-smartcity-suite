@@ -194,7 +194,7 @@ public class AadharSeedingService extends GenericWorkFlowController {
         if (aadharSeedingRequest.getWardId() != null)
             wherClause.append(" and mv.ward.id=" + aadharSeedingRequest.getWardId());
         StringBuilder searchQry = baseQry.append(wherClause).append(orderBy);
-        return entityManager.unwrap(Session.class).createQuery(searchQry.toString()).list();
+        return entityManager.unwrap(Session.class).createQuery(searchQry.toString()).setMaxResults(500).list();
     }
 
     public void addPropertyDetailstoModel(final Model model, final String assessmentNo, final String status) {
