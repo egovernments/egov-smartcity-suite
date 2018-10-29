@@ -974,7 +974,7 @@ public class ConnectionDemandService {
         else {
             BigDecimal amountDue = ZERO;
             for (EgDemandDetails details : demand.getEgDemandDetails())
-                amountDue = amountDue.add(details.getAmount().subtract(details.getAmtCollected()));
+                amountDue = amountDue.add(details.getAmount().subtract(details.getAmtCollected().add(details.getAmtRebate())));
             return amountDue;
         }
 

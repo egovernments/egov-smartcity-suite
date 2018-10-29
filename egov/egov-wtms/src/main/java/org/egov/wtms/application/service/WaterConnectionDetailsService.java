@@ -90,6 +90,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.CHANGEOFUSE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSECONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.COMMISSIONER_DESGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.COMM_APPROVAL_PENDING;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTIONTYPE_METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.DEMANDRSN_CODE_ADVANCE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.DEPUTY_ENGINEER_DESIGN;
@@ -108,7 +109,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.MUNICIPAL_ENGINEER
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NON_METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NON_METERED_CODE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.PENDING_APPROVAL_BY_COMM;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PENDING_DIGI_SIGN_BY_COMM;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PENDING_DIGI_SIGN_BY_DEE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PENDING_DIGI_SIGN_BY_EE;
@@ -1118,7 +1118,8 @@ public class WaterConnectionDetailsService {
         if (currentDemand != null)
             for (EgDemandDetails demandDetails : currentDemand.getEgDemandDetails()) {
                 if (demandCodes.contains(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
-                    waterTaxAmount = waterTaxAmount.add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()));
+                    waterTaxAmount = waterTaxAmount.add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()
+                            .add(demandDetails.getAmtRebate())));
                 }
             }
         return waterTaxAmount;
@@ -1651,7 +1652,7 @@ public class WaterConnectionDetailsService {
         else if (COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation)) {
             if(APPLICATION_STATUS_DIGITALSIGNPENDING.equalsIgnoreCase(connectionStatusCode) && !APPROVEWORKFLOWACTION.equals(workflowAction))
                 return PENDING_DIGI_SIGN_BY_COMM;
-            return APPROVEWORKFLOWACTION.equals(workflowAction) ?PENDING_APPROVAL_BY_COMM:PENDING_DIGI_SIGN_BY_COMM;
+            return APPROVEWORKFLOWACTION.equals(workflowAction) ?COMM_APPROVAL_PENDING:PENDING_DIGI_SIGN_BY_COMM;
         }
         else
             return EMPTY;

@@ -190,7 +190,6 @@ public class WaterTaxConstants {
     public static final String PENDING_DIGI_SIGN_BY_EE="Pending Digital Sign by EE";
     public static final String PENDING_DIGI_SIGN_BY_SE="Pending Digital Sign by SE";
     public static final String PENDING_DIGI_SIGN_BY_ME="Pending Digital Sign by ME";
-    public static final String PENDING_APPROVAL_BY_COMM ="Pending approval by Commissioner";  
 
     public static final String APPROVEWORKFLOWACTION = "Approve";
     public static final String FORWARDWORKFLOWACTION = "Forward";

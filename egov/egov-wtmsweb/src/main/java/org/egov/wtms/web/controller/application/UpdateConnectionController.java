@@ -582,12 +582,12 @@ public class UpdateConnectionController extends GenericConnectionController {
                 waterConnectionDetailsService.save(waterConnectionDetails);
                 waterConnectionDetailsService.getCurrentSession().flush();
 
-            } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
+            } else if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
                 waterConnectionDetailsService.getCurrentSession().evict(waterConnectionDetails);
                 waterConnectionDetails = waterConnectionDetailsService.findBy(waterConnectionDetails.getId());
             }
 
-        if (workFlowAction.equals(APPROVEWORKFLOWACTION)
+        if (APPROVEWORKFLOWACTION.equals(workFlowAction)
                 && waterConnectionDetails.getStatus() != null && waterConnectionDetails.getStatus().getCode() != null
                 && waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_FEEPAID))
             updateWaterConnectionValidator.validate(waterConnectionDetails, resultBinder);
