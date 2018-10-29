@@ -346,7 +346,7 @@
 					return false;
 				}
 				
-					result= validateChequeDateForNonChequeMode();  
+					result= validateChequeDateForNonChequeMode();
 				</s:if> 
 				<s:if test="%{paymentMode=='cheque'}">
 					 result=validateChequeDateForChequeMode();
@@ -360,10 +360,12 @@
 						disableforCash();
 						
 						}
-				dom.get('departmentid').disabled=false;  
-				document.forms[0].action='${pageContext.request.contextPath}/payment/chequeAssignment-create.action';
-		    	document.forms[0].submit();
-				
+
+				if(result){
+                    dom.get('departmentid').disabled=false;
+                    document.forms[0].action='${pageContext.request.contextPath}/payment/chequeAssignment-create.action';
+                    document.forms[0].submit();
+				}
 				return result;   
 			}
 		function validateForRtgsMode(){
@@ -428,12 +430,13 @@
 						chkCount++;
 						//bootbox.alert(document.getElementById('isSelected'+index).checked);
 						if( compareDate(paymentDate,chequeDate) == -1){     
-						  //  bootbox.alert(paymentDate+"----"+chequeDate);      
+						  //  bootbox.alert(paymentDate+"----"+chequeDate);
 							bootbox.alert('Cheque Date cannot be less than payment Date', function() {
-								document.getElementById('chequeDt').value='';
-								document.getElementById('chequeDt').focus();
-								flag =  false;
+
 							});
+                            document.getElementById('chequeDt').value='';
+                            document.getElementById('chequeDt').focus();
+                            flag =  false;
 						 }
 						if(chkCount==noOfSelectedRows){ break;}
 					}
