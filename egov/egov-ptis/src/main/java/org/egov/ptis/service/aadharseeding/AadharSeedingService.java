@@ -181,7 +181,8 @@ public class AadharSeedingService extends GenericWorkFlowController {
                 .append("p.propertyDetail.structure=false and p.status in('A','I') and p.id not in(select m.property from PropertyMutation m ")
                 .append("where m.state.status <> 2) and p.basicProperty not in(select psv.referenceBasicProperty from PropertyStatusValues psv ")
                 .append("where psv.referenceBasicProperty is not null and psv.referenceBasicProperty.underWorkflow = true)) and ")
-                .append("mv.basicPropertyID not in(select basicProperty from AadharSeeding)");
+                .append("mv.basicPropertyID not in(select basicProperty from AadharSeeding) and mv.locality not in(select id from")
+                .append(" Boundary b where b.boundaryNum in(select boundaryNum from BhudharExemptedLocalities))");
         final StringBuilder wherClause = new StringBuilder();
         orderBy = orderBy.append(" order by mv.propertyId");
         if (isNotBlank(aadharSeedingRequest.getAssessmentNo()))
@@ -193,7 +194,7 @@ public class AadharSeedingService extends GenericWorkFlowController {
         if (aadharSeedingRequest.getWardId() != null)
             wherClause.append(" and mv.ward.id=" + aadharSeedingRequest.getWardId());
         StringBuilder searchQry = baseQry.append(wherClause).append(orderBy);
-        return entityManager.unwrap(Session.class).createQuery(searchQry.toString()).setMaxResults(500).list();
+        return entityManager.unwrap(Session.class).createQuery(searchQry.toString()).list();
     }
 
     public void addPropertyDetailstoModel(final Model model, final String assessmentNo, final String status) {
