@@ -110,7 +110,7 @@ $(document).ready(function()
 							$('#approvalComent').focus();
 							return true; 
 					  }
-					  else {
+					  else if ($('form').valid()){
 						  validateWorkFlowApprover(action);
 						  document.forms[0].submit();
 					  }
