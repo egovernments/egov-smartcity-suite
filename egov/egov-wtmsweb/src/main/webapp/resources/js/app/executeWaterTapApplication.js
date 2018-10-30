@@ -136,7 +136,7 @@ $('#search').on('click', function() {
 	        	{  
 	        	  "class" : "text-center",
 	        	  "data" : "id",
-	        	  "title" : '<input type="checkbox" id="global_checkbox" class="check_box" onclick="checkbox_change(this);"/>',
+	        	  "title" : '<input type="checkbox" id="global_checkbox" class="checkbox" onclick="checkbox_change(this);"/>',
 	        	  "render" : function(data, type, full, meta) {
 	        		  return '<input type="checkbox"  class="check_box" name="id" value="'
 						+ $('<div/>').text(data).html()
@@ -216,6 +216,11 @@ $('#update').on('click', function(){
 	
 	$('.check_box:checked').each(function() {
 		var $tr = jQuery(this).closest('tr');
+		if($tr.find('.execDate').val()=="" || $tr.find('.execDate').val()==undefined) {
+			bootbox.alert("Execution date is not entered. Please check once.");
+			isError =true;
+			return false;
+		}
 		var currentDate = formatCurrentDate();
 		    var validDate = compareDate($tr.find('.execDate').val(), currentDate);
 		    if(validDate==-1) {
@@ -225,7 +230,7 @@ $('#update').on('click', function(){
 		    }
 			myObj = { "id" : ""+$tr.find('.check_box').val(),
 					"executionDate" : "" + $tr.find('.execDate').val(),
-					"applicationNumber" : "" + $tr.find('applicationNumber').val()
+					"applicationNumber" : "" +$tr.find("td:eq(1)")[0].innerText
 			}
 			
 			jsonObj.push(myObj);
