@@ -135,6 +135,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkflowCustom {
 
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationWorkflowCustomImpl.class);
+    private static final String APPLICATION_REJECTED = "Application Rejected";
 
     @Autowired
     private WaterConnectionDetailsRepository waterConnectionDetailsRepository;
@@ -316,13 +317,13 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 waterConnectionSmsAndEmailService.sendSmsAndEmailOnRejection(waterConnectionDetails, approvalComent);
                 waterConnectionDetailsService.updateIndexes(waterConnectionDetails);
             } else {
-                String stateValue = WF_STATE_REJECTED;
+                if (ownerPosition == null && wfInitiator != null)
+                    ownerPosition = wfInitiator.getPosition();
                 waterConnectionDetails.transition().progressWithStateCopy()
                         .withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator != null && wfInitiator.getPosition() != null ? wfInitiator.getPosition()
-                                : ownerPosition)
-                        .withNextAction("Application Rejected")
+                        .withComments(approvalComent).withStateValue(WF_STATE_REJECTED).withDateInfo(currentDate.toDate())
+                        .withOwner(ownerPosition)
+                        .withNextAction(APPLICATION_REJECTED)
                         .withNatureOfTask(natureOfwork);
             }
         } else {
@@ -378,13 +379,15 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null,
                                 null, additionalRule, waterConnectionDetails.getCurrentState().getValue(),
                                 waterConnectionDetailsService.getReglnConnectionPendingAction(waterConnectionDetails,
-                                        null, workFlowAction),waterConnectionDetails.getApplicationDate());
+                                        null, workFlowAction),
+                                waterConnectionDetails.getApplicationDate());
                     else
                         wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null,
                                 null, additionalRule, waterConnectionDetails.getCurrentState().getValue(),
                                 waterConnectionDetailsService.getReglnConnectionPendingAction(waterConnectionDetails,
-                                        loggedInUserDesignation, workFlowAction), waterConnectionDetails.getApplicationDate());
-                } else if (isCurrentUserApprover(loggedInUserDesignation)) 
+                                        loggedInUserDesignation, workFlowAction),
+                                waterConnectionDetails.getApplicationDate());
+                } else if (isCurrentUserApprover(loggedInUserDesignation))
                     wfmatrix = getMatrixbyStatusAndLoggedInUser(waterConnectionDetails, additionalRule, workFlowAction,
                             loggedInUserDesignation);
                 else if (APPLICATION_STATUS_FEEPAID.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) &&
