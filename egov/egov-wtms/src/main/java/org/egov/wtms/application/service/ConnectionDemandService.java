@@ -48,6 +48,7 @@
 package org.egov.wtms.application.service;
 
 import static java.math.BigDecimal.ZERO;
+import static java.math.BigDecimal.ROUND_HALF_UP;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
@@ -893,7 +894,7 @@ public class ConnectionDemandService {
                 moduleService.getModuleByName(MODULE_NAME), new Date(), YEARLY);
 
         waterConnectionDetails.getWaterDemandConnection().get(0).getDemand().addEgDemandDetails(createDemandDetailsrForDataEntry(
-                BigDecimal.valueOf(waterConnectionDetails.getDonationCharges()).divide(new BigDecimal(2)),
+                BigDecimal.valueOf(waterConnectionDetails.getDonationCharges()).divide(new BigDecimal(2)).setScale(0, ROUND_HALF_UP),
                 ZERO, PENALTYCHARGES, installment == null ? null : installment.getDescription(), new DemandDetail(),
                 waterConnectionDetails, FIELD_INSPECTION));
     }
