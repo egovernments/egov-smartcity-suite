@@ -48,7 +48,20 @@
 
 package org.egov.adtax.web.controller.deactivate;
 
-import com.google.gson.GsonBuilder;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
 import org.apache.commons.io.IOUtils;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.Agency;
@@ -73,17 +86,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping("/deactivate")
@@ -191,7 +194,7 @@ public class DeactivateAdvertisementController extends GenericController {
     }
 
     @RequestMapping(value = "/deactive/{id}", method = RequestMethod.POST)
-    public String deactivate(@ModelAttribute AdvertisementPermitDetail advertisementPermitDetailStatus, final Model model,
+    public String deactivate(@Valid @ModelAttribute AdvertisementPermitDetail advertisementPermitDetailStatus, final Model model,
                              @PathVariable final Long id) {
 
         AdvertisementPermitDetail existingRateObject = advertisementPermitDetailService

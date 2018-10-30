@@ -61,6 +61,7 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.commons.Installment;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGADTAX_BATCHDEMANDGENERATE")
@@ -86,6 +87,7 @@ public class AdvertisementBatchDemandGenerate extends AbstractAuditable {
     private Integer totalRecords = 0;
 
     @NotNull
+    @SafeHtml
     private String jobName;
 
     @Override

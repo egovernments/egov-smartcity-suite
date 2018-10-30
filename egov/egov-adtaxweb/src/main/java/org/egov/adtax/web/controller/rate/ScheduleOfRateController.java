@@ -184,7 +184,7 @@ public class ScheduleOfRateController {
      * @return
      */
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String create(@ModelAttribute AdvertisementRate rate, final RedirectAttributes redirectAttrs,
+    public String create(@Valid @ModelAttribute AdvertisementRate rate, final RedirectAttributes redirectAttrs,
                          final Model model) {
 
         AdvertisementRate existingRateobject = null;

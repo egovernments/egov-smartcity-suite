@@ -47,6 +47,13 @@
  */
 package org.egov.adtax.web.controller.hoarding;
 
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ANONYMOUS_USER;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.exception.HoardingValidationError;
 import org.egov.adtax.service.ReassignAdvertisementService;
@@ -69,12 +76,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-
-import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ANONYMOUS_USER;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("/hoarding")
@@ -142,7 +143,7 @@ public class UpdateHoardingController extends HoardingControllerSupport {
     }
 
     @RequestMapping(value = "update/{id}", method = POST)
-    public String updateHoarding(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
+    public String updateHoarding(@Valid @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
             final BindingResult resultBinder, final RedirectAttributes redirAttrib, final HttpServletRequest request,
             final Model model,
             @RequestParam String workFlowAction) {

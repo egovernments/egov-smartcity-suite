@@ -52,6 +52,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.enums.AdvertisementApplicationType;
@@ -166,7 +167,7 @@ public class AdvertisementRenewalController extends HoardingControllerSupport {
     }
 
     @RequestMapping(value = "/renewal/{id}", method = POST)
-    public String renewSave(@ModelAttribute final AdvertisementPermitDetail renewalPermitDetail,
+    public String renewSave(@Valid @ModelAttribute final AdvertisementPermitDetail renewalPermitDetail,
             final BindingResult resultBinder, final RedirectAttributes redirAttrib, final HttpServletRequest request,
             final Model model,
             @RequestParam String workFlowAction, @PathVariable final String id) {
@@ -203,7 +204,6 @@ public class AdvertisementRenewalController extends HoardingControllerSupport {
                     approvalPosition = assignment.getPosition().getId();
                     approverName = assignment.getEmployee().getName();
                     nextDesignation = assignment.getDesignation().getName();
-
                 }
             }
 

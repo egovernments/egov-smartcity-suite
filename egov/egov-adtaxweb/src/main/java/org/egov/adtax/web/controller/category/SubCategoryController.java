@@ -138,9 +138,9 @@ public class SubCategoryController {
     @ResponseBody
     public void searchSubcategory(final Model model, @ModelAttribute final SubCategory subCategory, @RequestParam final String category,
                                   @RequestParam final String description, final HttpServletResponse response) throws IOException {
-        List<SubCategorySearch> SubCategoryJson = subCategoryService.getSubcategory(Long.valueOf(category), description != null ? Long.valueOf(description) : null);
+        List<SubCategorySearch> subCategoryJson = subCategoryService.getSubcategory(Long.valueOf(category), description != null ? Long.valueOf(description) : null);
         IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
-                .toJson(SubCategoryJson)
+                .toJson(subCategoryJson)
                 + "}", response.getWriter());
     }
 
