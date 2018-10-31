@@ -143,8 +143,8 @@ public class RegularisedConnectionController extends GenericConnectionController
 
     public String loadApplicationFormDetails(final WaterConnectionDetails waterConnectionDetails,
             final HttpServletRequest request, final Model model) {
-
-        waterConnectionDetails.setApplicationDate(new Date());
+        if (waterConnectionDetails.getApplicationDate() == null)
+            waterConnectionDetails.setApplicationDate(new Date());
         waterConnectionDetails.setApplicationType(applicationTypeService.findByCode(REGULARIZE_CONNECTION));
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.INPROGRESS);
         model.addAttribute("allowIfPTDueExists", waterTaxUtils.isConnectionAllowedIfPTDuePresent());
@@ -176,8 +176,10 @@ public class RegularisedConnectionController extends GenericConnectionController
         RegularisedConnection regularisedConnection = null;
         if (isNotBlank(id))
             regularisedConnection = regularisedConnectionService.findById(Long.valueOf(id));
-        if (regularisedConnection != null)
+        if (regularisedConnection != null) {
+            waterConnectionDetails.setApplicationDate(regularisedConnection.getApplicationDate());
             model.addAttribute("propertyId", regularisedConnection.getPropertyIdentifier());
+        }
         return loadApplicationFormDetails(waterConnectionDetails, request, model);
     }
 

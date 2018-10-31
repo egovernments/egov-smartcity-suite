@@ -47,6 +47,7 @@
  */
 package org.egov.stms.web.controller.transactions;
 
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_REJECTED;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.util.ArrayList;
@@ -64,6 +65,7 @@ import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -351,13 +353,13 @@ public class SewerageConnectionController extends GenericWorkFlowController {
     @RequestMapping(value = "/application-success", method = RequestMethod.GET)
     public ModelAndView successView(@ModelAttribute SewerageApplicationDetails sewerageApplicationDetails,
                                     final HttpServletRequest request, final Model model, final ModelMap modelMap) {
-
+        
         final String[] keyNameArray = request.getParameter("pathVars").split(",");
         String applicationNumber = "";
         String approverName = "";
         String currentUserDesgn = "";
         String nextDesign = "";
-        if (keyNameArray.length != 0 && keyNameArray.length > 0)
+       
             if (keyNameArray.length == 1)
                 applicationNumber = keyNameArray[0];
             else if (keyNameArray.length == 3) {
@@ -370,9 +372,17 @@ public class SewerageConnectionController extends GenericWorkFlowController {
                 currentUserDesgn = keyNameArray[2];
                 nextDesign = keyNameArray[3];
             }
-
+    
         if (applicationNumber != null)
             sewerageApplicationDetails = sewerageApplicationDetailsService.findByApplicationNumber(applicationNumber);
+        
+        if (WF_STATE_REJECTED.equalsIgnoreCase(sewerageApplicationDetails.getCurrentState().getValue())) {
+            Position initiatorPos = sewerageApplicationDetails.getCurrentState().getInitiatorPosition();
+            List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(
+                    initiatorPos.getId(), new Date());
+            approverName = assignmentList.stream().findAny().get().getEmployee().getName();
+            nextDesign = initiatorPos.getDeptDesig().getDesignation().getName();
+        }
         model.addAttribute(APPROVER_NAME, approverName);
         model.addAttribute("currentUserDesgn", currentUserDesgn);
         model.addAttribute("nextDesign", nextDesign);

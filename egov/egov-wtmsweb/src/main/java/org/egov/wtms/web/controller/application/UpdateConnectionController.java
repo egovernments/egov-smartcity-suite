@@ -582,12 +582,12 @@ public class UpdateConnectionController extends GenericConnectionController {
                 waterConnectionDetailsService.save(waterConnectionDetails);
                 waterConnectionDetailsService.getCurrentSession().flush();
 
-            } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
+            } else if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
                 waterConnectionDetailsService.getCurrentSession().evict(waterConnectionDetails);
                 waterConnectionDetails = waterConnectionDetailsService.findBy(waterConnectionDetails.getId());
             }
 
-        if (workFlowAction.equals(APPROVEWORKFLOWACTION)
+        if (APPROVEWORKFLOWACTION.equals(workFlowAction)
                 && waterConnectionDetails.getStatus() != null && waterConnectionDetails.getStatus().getCode() != null
                 && waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_FEEPAID))
             updateWaterConnectionValidator.validate(waterConnectionDetails, resultBinder);
@@ -673,7 +673,8 @@ public class UpdateConnectionController extends GenericConnectionController {
                     } else if (workFlowAction.equalsIgnoreCase(WF_PREVIEW_BUTTON)
                             && (waterConnectionDetails.getApplicationType().getCode().equals(NEWCONNECTION)
                             || waterConnectionDetails.getApplicationType().getCode().equals(ADDNLCONNECTION)
-                            || waterConnectionDetails.getApplicationType().getCode().equals(CHANGEOFUSE)))
+                            || waterConnectionDetails.getApplicationType().getCode().equals(CHANGEOFUSE)
+                            || waterConnectionDetails.getApplicationType().getCode().equals(REGULARIZE_CONNECTION)))
                         return "redirect:/application/workorder?pathVar=" + waterConnectionDetails.getApplicationNumber();
                     else if (workFlowAction.equalsIgnoreCase(WF_PREVIEW_BUTTON)
                             && waterConnectionDetails.getApplicationType().getCode().equals(CLOSINGCONNECTION))

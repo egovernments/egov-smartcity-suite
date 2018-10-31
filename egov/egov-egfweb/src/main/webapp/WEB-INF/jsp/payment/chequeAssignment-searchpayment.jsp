@@ -116,8 +116,8 @@
 								id="voucherHeaderId"
 								name="chequeAssignmentList[%{#s.index}].voucherHeaderId"
 								value="%{voucherHeaderId}" /> <s:checkbox
-								name="chequeAssignmentList[%{#s.index}].isSelected"
-								id="isSelected%{#s.index}" onclick="update(this)" /></td>
+								name="chequeAssignmentList[%{#s.index}].isSelected" class="case"
+								id="isSelected%{#s.index}" onclick="update(this);selectAllCheckboxMark();" /></td>
 						<td align="left" style="text-align: center"
 							class="blueborderfortdnew" />
 						<s:property value="#s.index+1" />
@@ -346,7 +346,7 @@
 					return false;
 				}
 				
-					result= validateChequeDateForNonChequeMode();  
+					result= validateChequeDateForNonChequeMode();
 				</s:if> 
 				<s:if test="%{paymentMode=='cheque'}">
 					 result=validateChequeDateForChequeMode();
@@ -360,12 +360,35 @@
 						disableforCash();
 						
 						}
-				dom.get('departmentid').disabled=false;  
-				document.forms[0].action='${pageContext.request.contextPath}/payment/chequeAssignment-create.action';
-		    	document.forms[0].submit();
-				
+
+				if(result){
+                    dom.get('departmentid').disabled=false;
+                    document.forms[0].action='${pageContext.request.contextPath}/payment/chequeAssignment-create.action';
+                    document.forms[0].submit();
+				}
 				return result;   
 			}
+    function selectAllCheckboxMark(){
+        var length = 0;
+        var count = 0;
+        <s:if test="%{chequeAssignmentList!=null}">
+        length = <s:property value ="%{chequeAssignmentList.size()}"/>;
+        </s:if>
+
+        var totalCount = document.getElementsByClassName('case').length;
+        var inputElems=document.getElementsByClassName("case");
+
+        for (var i = 0; i < inputElems.length; i++) {
+            if (inputElems[i].type === "checkbox" && inputElems[i].checked === true){
+                count++;
+            }
+        }
+        if(totalCount == count){
+            document.getElementById("selectall").checked = true;
+        }else{
+            document.getElementById("selectall").checked = false;
+        }
+    }
 		function validateForRtgsMode(){
 				var noOfSelectedRows=document.getElementById('selectedRows').value;
 				//bootbox.alert("sizseled"+noOfSelectedRows);
@@ -428,12 +451,13 @@
 						chkCount++;
 						//bootbox.alert(document.getElementById('isSelected'+index).checked);
 						if( compareDate(paymentDate,chequeDate) == -1){     
-						  //  bootbox.alert(paymentDate+"----"+chequeDate);      
+						  //  bootbox.alert(paymentDate+"----"+chequeDate);
 							bootbox.alert('Cheque Date cannot be less than payment Date', function() {
-								document.getElementById('chequeDt').value='';
-								document.getElementById('chequeDt').focus();
-								flag =  false;
+
 							});
+                            document.getElementById('chequeDt').value='';
+                            document.getElementById('chequeDt').focus();
+                            flag =  false;
 						 }
 						if(chkCount==noOfSelectedRows){ break;}
 					}

@@ -87,6 +87,7 @@
         <input type="hidden" id="pendingActions" value="${pendingActions}"/>
         <input type="hidden" id="workFlowAction" name="workFlowAction" value="${workFlowAction}"/>
         <input type="hidden" id="ownerPosition" name="ownerPosition" value="${ownerPosition}" />
+        <input type="hidden" id="date" name="date" value="${waterConnectionDetails.applicationDate}" />
         <c:choose>
             <c:when test="${not empty message}">
                 <div class="text-center">

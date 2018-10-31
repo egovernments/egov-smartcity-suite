@@ -48,6 +48,7 @@
 package org.egov.wtms.application.service;
 
 import static java.math.BigDecimal.ZERO;
+import static java.math.BigDecimal.ROUND_HALF_UP;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
@@ -238,10 +239,12 @@ public class ConnectionDemandService {
         if (NON_METERED.equals(waterConnectionDetails.getConnectionType()) &&
                 !WaterTaxConstants.CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
             donationDetails = getDonationDetails(waterConnectionDetails);
-        if (METERED.equals(waterConnectionDetails.getConnectionType()) && BigDecimal.valueOf(waterConnectionDetails.getDonationCharges()).compareTo(ZERO) > 0)
+        if (METERED.equals(waterConnectionDetails.getConnectionType())
+                && BigDecimal.valueOf(waterConnectionDetails.getDonationCharges()).compareTo(ZERO) > 0)
             feeDetails.put(WATERTAX_DONATION_CHARGE, waterConnectionDetails.getDonationCharges());
 
-        if (CATEGORY_BPL.equalsIgnoreCase(waterConnectionDetails.getCategory().getName())) {
+        if (!REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) &&
+                CATEGORY_BPL.equalsIgnoreCase(waterConnectionDetails.getCategory().getName())) {
             AppConfig appConfig = null;
             appConfig = appConfigService.getAppConfigByModuleNameAndKeyName(MODULE_NAME, BPL_CATEGORY_DONATION_AMOUNT);
             if (appConfig != null && !appConfig.getConfValues().isEmpty())
@@ -273,20 +276,23 @@ public class ConnectionDemandService {
         BigDecimal rebateAmount = ZERO;
         BigDecimal baseDemand = ZERO;
         Set<EgDemandDetails> newDemandDetailSet;
-        if (CATEGORY_BPL.equalsIgnoreCase(waterConnectionDetails.getCategory().getName()))
+        if (!REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) &&
+                CATEGORY_BPL.equalsIgnoreCase(waterConnectionDetails.getCategory().getName()))
             newDemandDetailSet = demandChangesForBplCategory(dmdDetailSet);
         else
             newDemandDetailSet = dmdDetailSet;
         for (EgDemandDetails demandDetails : newDemandDetailSet) {
             baseDemand = baseDemand.add(demandDetails.getAmount());
-            if (CATEGORY_BPL.equalsIgnoreCase(waterConnectionDetails.getCategory().getName())
+            if (!REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) &&
+                    CATEGORY_BPL.equalsIgnoreCase(waterConnectionDetails.getCategory().getName())
                     && !WATERTAX_DONATION_CHARGE
                             .equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
                 rebateAmount = rebateAmount.add(demandDetails.getAmtRebate());
         }
 
         egDemand.setBaseDemand(baseDemand);
-        egDemand.addRebateAmt(rebateAmount);
+        if (!REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
+            egDemand.addRebateAmt(rebateAmount);
         egDemand.setEgInstallmentMaster(installment);
         egDemand.getEgDemandDetails().addAll(newDemandDetailSet);
         egDemand.setIsHistory(DEMAND_ISHISTORY_N);
@@ -888,7 +894,7 @@ public class ConnectionDemandService {
                 moduleService.getModuleByName(MODULE_NAME), new Date(), YEARLY);
 
         waterConnectionDetails.getWaterDemandConnection().get(0).getDemand().addEgDemandDetails(createDemandDetailsrForDataEntry(
-                BigDecimal.valueOf(waterConnectionDetails.getDonationCharges()).divide(new BigDecimal(2)),
+                BigDecimal.valueOf(waterConnectionDetails.getDonationCharges()).divide(new BigDecimal(2)).setScale(0, ROUND_HALF_UP),
                 ZERO, PENALTYCHARGES, installment == null ? null : installment.getDescription(), new DemandDetail(),
                 waterConnectionDetails, FIELD_INSPECTION));
     }
@@ -969,7 +975,7 @@ public class ConnectionDemandService {
         else {
             BigDecimal amountDue = ZERO;
             for (EgDemandDetails details : demand.getEgDemandDetails())
-                amountDue = amountDue.add(details.getAmount().subtract(details.getAmtCollected()));
+                amountDue = amountDue.add(details.getAmount().subtract(details.getAmtCollected().add(details.getAmtRebate())));
             return amountDue;
         }
 
@@ -985,7 +991,7 @@ public class ConnectionDemandService {
 
         if (!waterConnectionDetails.getUlbMaterial() && containsMaterialDemand(connectionDetails))
             deleteMaterialDemand(connectionDetails);
-        
+
         if (connectionDetails != null)
             connectionDetails.setUlbMaterial(waterConnectionDetails.getUlbMaterial());
         waterConnectionDetailsService.save(connectionDetails);

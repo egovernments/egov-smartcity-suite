@@ -65,7 +65,7 @@ public interface SewerageApplicationDetailsRepository extends JpaRepository<Sewe
     SewerageApplicationDetails findByApplicationNumber(String applicationNumber);
 
     SewerageApplicationDetails findByApplicationNumberAndConnection_Status(String applicationNumber,
-            SewerageConnectionStatus connectionStatus);
+                                                                           SewerageConnectionStatus connectionStatus);
 
     List<SewerageApplicationDetails> findAllByApplicationDateOrderByApplicationNumberAsc(Date applicationDate);
 
@@ -77,25 +77,25 @@ public interface SewerageApplicationDetailsRepository extends JpaRepository<Sewe
     List<SewerageApplicationDetails> findAllByApplicationTypeAndConnection_StatusOrderByApplicationNumberAsc(
             SewerageApplicationType applicationType, SewerageConnectionStatus connectionStatus);
 
-    SewerageApplicationDetails findByConnection_ShscNumberAndConnection_Status(String shscNumber,
-            SewerageConnectionStatus connectionStatus);
+    SewerageApplicationDetails findByConnectionShscNumberAndConnectionStatus(String shscNumber,
+                                                                             SewerageConnectionStatus connectionStatus);
 
     List<SewerageApplicationDetails> findByConnection_ShscNumber(String shscNumber);
 
     SewerageApplicationDetails findByConnection(SewerageConnection sewerageConnection);
 
     SewerageApplicationDetails findByConnectionAndConnection_Status(SewerageConnection sewerageConnection,
-            SewerageConnectionStatus connectionStatus);
+                                                                    SewerageConnectionStatus connectionStatus);
 
     @Query("select scd from SewerageApplicationDetails scd where scd.isActive = true and scd.connectionDetail.propertyIdentifier =:propertyIdentifier order by scd.id desc")
     List<SewerageApplicationDetails> getSewerageConnectionDetailsByPropertyID(
-            @Param("propertyIdentifier") String propertyIdentifier); 
-    
+            @Param("propertyIdentifier") String propertyIdentifier);
+
     @Query("select scd from SewerageApplicationDetails scd where scd.isActive='t' and scd.connection.shscNumber =:shscNumber")
-    SewerageApplicationDetails getActiveSewerageApplicationByShscNumber(@Param("shscNumber") String shscNumber); 
-    
+    SewerageApplicationDetails getActiveSewerageApplicationByShscNumber(@Param("shscNumber") String shscNumber);
+
     @Query("select scd from SewerageApplicationDetails scd where scd.connection.shscNumber =:shscNumber and scd.isActive='f' and upper(scd.status.code) not in ('CANCELLED','SANCTIONED')")
     SewerageApplicationDetails getSewerageApplicationInWorkFlow(@Param("shscNumber") String shscNumber);
-    
+
     SewerageApplicationDetails findFirstByConnectionDetailPropertyIdentifierAndStatusCodeNotInOrderByLastModifiedDateDesc(String propertyIdentifier, List<String> statusCodes);
 }

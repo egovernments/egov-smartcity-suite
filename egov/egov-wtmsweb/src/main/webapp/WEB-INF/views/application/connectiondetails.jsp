@@ -292,9 +292,9 @@
 </c:if>
 
 <script>
-	$("#penaltyAmount").val($("#donationChargesInput").val() / 2);
+	$("#penaltyAmount").val(Math.round($("#donationChargesInput").val() / 2));
 	$("#donationChargesInput").on('change', function() {
-		$("#penaltyAmount").val($("#donationChargesInput").val() / 2);
+		$("#penaltyAmount").val(Math.round($("#donationChargesInput").val() / 2));
 	});
 
 	if ($("#connectionType").val() == 'METERED') {

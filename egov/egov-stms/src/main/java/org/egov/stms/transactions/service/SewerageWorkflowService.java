@@ -55,9 +55,11 @@ import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGE_WORKFL
 import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGE_WORKFLOWDESIGNATION_FOR_CSCOPERATOR;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -67,11 +69,14 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.exception.ApplicationValidationException;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
@@ -84,7 +89,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import static org.egov.infra.utils.StringUtils.upperCase;
 @Service
 @Transactional(readOnly = true)
 public class SewerageWorkflowService {
@@ -238,12 +243,26 @@ public class SewerageWorkflowService {
                             .equalsIgnoreCase(sewerageApplicationDetails.getCreatedBy().getUsername())
                     || isCitizenPortalUser(sewerageApplicationDetails.getCreatedBy()))
                 wfInitiator = getUserAssignment(sewerageApplicationDetails.getCreatedBy(), sewerageApplicationDetails);
-            else
-                wfInitiator = assignmentService.getPrimaryAssignmentForUser(sewerageApplicationDetails
-                        .getCreatedBy().getId());
+            else{
+                wfInitiator = getWfInitiator(sewerageApplicationDetails
+                        .getCreatedBy());
+            }
         return wfInitiator;
     }
 
+    private Assignment getWfInitiator(User connectionCreatedBy) {
+        List<String> designationNames=Arrays.asList(upperCase(getDesignationForCscOperatorWorkFlow()).split(","));
+        Department department = departmentService.getDepartmentByName(getDepartmentForCscOperatorWorkFlow());
+        List<Designation> designationList = designationService
+                .getDesignationsByNames(designationNames);
+        List<Assignment> assignmentList = assignmentService
+                .findByDepartmentDesignationsAndGivenDate(department.getId(),
+                        designationList.stream().map(Designation::getId).collect(Collectors.toList()),
+                        new Date());
+        return assignmentList.stream()
+                .filter(assignment -> connectionCreatedBy.equals(assignment.getEmployee())).findAny()
+                .orElseThrow(() -> new ApplicationValidationException("error.initiator.undefined"));
+    }
     private Assignment getUserAssignment(final User user, final SewerageApplicationDetails sewerageApplicationDetails) {
         Assignment assignment;
         if (isCscOperator(user) || user.getUsername().equalsIgnoreCase("anonymous") || isCitizenPortalUser(user))

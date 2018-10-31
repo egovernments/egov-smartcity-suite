@@ -89,6 +89,8 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.CATEGORY_BPL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CHANGEOFUSE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSECONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.COMMISSIONER_DESGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.COMM_APPROVAL_PENDING;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTIONTYPE_METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.DEMANDRSN_CODE_ADVANCE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.DEPUTY_ENGINEER_DESIGN;
@@ -107,6 +109,11 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.MUNICIPAL_ENGINEER
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NON_METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NON_METERED_CODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PENDING_DIGI_SIGN_BY_COMM;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PENDING_DIGI_SIGN_BY_DEE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PENDING_DIGI_SIGN_BY_EE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PENDING_DIGI_SIGN_BY_ME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PENDING_DIGI_SIGN_BY_SE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PTIS_DETAILS_URL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION;
@@ -132,12 +139,12 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_CLERK_APP
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_DEE_APPROVE_PENDING;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_DEE_FORWARD_PENDING;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_EE_APPROVE_PENDING;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_EE_FORWARD_PENDING;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_ME_APPROVE_PENDING;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_ME_FORWARD_PENDING;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_PENDING_FORWARD_BY_EE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_PENDING_FORWARD_BY_ME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_PENDING_FORWARD_BY_SE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_REJECTED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_SE_APPROVE_PENDING;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_SE_FORWARD_PENDING;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_TAP_EXECUTION_DATE_BUTTON;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED;
 
@@ -801,7 +808,9 @@ public class WaterConnectionDetailsService {
                     additionalRule, waterConnectionDetails.getCurrentState().getValue(), pendingAction, null, loggedInUserDesignation);
         } else
             wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
-                    additionalRule, waterConnectionDetails.getCurrentState().getValue(), null);
+                    additionalRule, waterConnectionDetails.getCurrentState().getValue(), pendingAction,
+                    REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+                            ? waterConnectionDetails.getApplicationDate() : null);
         if (APPLICATION_STATUS_ESTIMATENOTICEGEN.equals(connectionStatusCode))
             approverPosition = waterTaxUtils.getApproverPosition(JUNIOR_OR_SENIOR_ASSISTANT_DESIGN_REVENUE_CLERK, waterConnectionDetails);
         if (WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workFlowAction))
@@ -1109,7 +1118,8 @@ public class WaterConnectionDetailsService {
         if (currentDemand != null)
             for (EgDemandDetails demandDetails : currentDemand.getEgDemandDetails()) {
                 if (demandCodes.contains(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
-                    waterTaxAmount = waterTaxAmount.add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()));
+                    waterTaxAmount = waterTaxAmount.add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()
+                            .add(demandDetails.getAmtRebate())));
                 }
             }
         return waterTaxAmount;
@@ -1588,7 +1598,7 @@ public class WaterConnectionDetailsService {
             return WF_STATE_AE_APPROVAL_PENDING;
         else if ((APPLICATION_STATUS_FEEPAID.equals(connectionStatusCode) || APPLICATION_STATUS_DIGITALSIGNPENDING.equals(connectionStatusCode))
                 && (FORWARDWORKFLOWACTION.equals(workFlowAction) || APPROVEWORKFLOWACTION.equals(workFlowAction)))
-            return getReglnPendingAction(workFlowAction, loggedInUserDesignation);
+            return getReglnPendingAction(workFlowAction, loggedInUserDesignation,connectionStatusCode);
         else if (APPLICATION_STATUS_CREATED.equalsIgnoreCase(connectionStatusCode)
                 && WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction))
             return WF_STATE_AE_REJECTION_PENDING;
@@ -1603,21 +1613,47 @@ public class WaterConnectionDetailsService {
         else if (APPLICATION_STATUS_NEW.equalsIgnoreCase(waterConnectionDetails.getState().getValue())
                 && FORWARDWORKFLOWACTION.equalsIgnoreCase(workFlowAction))
             return waterConnectionDetails.getState().getNextAction();
+        else if ((APPLICATION_STATUS_FEEPAID.equalsIgnoreCase(connectionStatusCode))
+                && DEPUTY_ENGINEER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)){
+            return WF_STATE_DEE_FORWARD_PENDING;
+        }
+        else if (APPLICATION_STATUS_DIGITALSIGNPENDING.equalsIgnoreCase(connectionStatusCode)
+                && COMMISSIONER_DESGN.equals(loggedInUserDesignation) && isBlank(workFlowAction)) {
+                return PENDING_DIGI_SIGN_BY_COMM;
+            }
+        else if (APPLICATION_STATUS_DIGITALSIGNPENDING.equalsIgnoreCase(connectionStatusCode)
+                && DEPUTY_ENGINEER_DESIGN.equals(loggedInUserDesignation) && isBlank(workFlowAction))
+            return PENDING_DIGI_SIGN_BY_DEE;
+
 
         return null;
     }
 
-    public String getReglnPendingAction(String workflowAction, String loggedInUserDesignation) {
-        if (DEPUTY_ENGINEER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)) {
+    public String getReglnPendingAction(String workflowAction, String loggedInUserDesignation,String connectionStatusCode) {
+             
+         if (DEPUTY_ENGINEER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)) {
+             if(APPLICATION_STATUS_DIGITALSIGNPENDING.equalsIgnoreCase(connectionStatusCode)&& FORWARDWORKFLOWACTION.equals(workflowAction))
+                 return PENDING_DIGI_SIGN_BY_DEE;
             return FORWARDWORKFLOWACTION.equals(workflowAction) ? WF_STATE_DEE_FORWARD_PENDING : WF_STATE_DEE_APPROVE_PENDING;
         } else if (EXECUTIVE_ENGINEER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)) {
-            return FORWARDWORKFLOWACTION.equals(workflowAction) ? WF_STATE_EE_FORWARD_PENDING : WF_STATE_EE_APPROVE_PENDING;
+            if(APPLICATION_STATUS_DIGITALSIGNPENDING.equalsIgnoreCase(connectionStatusCode)&& FORWARDWORKFLOWACTION.equals(workflowAction))
+                return PENDING_DIGI_SIGN_BY_EE;
+            return FORWARDWORKFLOWACTION.equals(workflowAction) ? WF_STATE_PENDING_FORWARD_BY_EE : WF_STATE_EE_APPROVE_PENDING;
         } else if (SUPERINTENDING_ENGINEER_DESIGNATION.equalsIgnoreCase(loggedInUserDesignation)) {
-            return FORWARDWORKFLOWACTION.equals(workflowAction) ? WF_STATE_SE_FORWARD_PENDING : WF_STATE_SE_APPROVE_PENDING;
+                if(APPLICATION_STATUS_DIGITALSIGNPENDING.equalsIgnoreCase(connectionStatusCode)&& FORWARDWORKFLOWACTION.equals(workflowAction))
+                    return PENDING_DIGI_SIGN_BY_SE;
+            return FORWARDWORKFLOWACTION.equals(workflowAction) ? WF_STATE_PENDING_FORWARD_BY_SE : WF_STATE_SE_APPROVE_PENDING;
         } else if (MUNICIPAL_ENGINEER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)) {
-            return FORWARDWORKFLOWACTION.equals(workflowAction) ? WF_STATE_ME_FORWARD_PENDING : WF_STATE_ME_APPROVE_PENDING;
+            if(APPLICATION_STATUS_DIGITALSIGNPENDING.equalsIgnoreCase(connectionStatusCode)&& FORWARDWORKFLOWACTION.equals(workflowAction))
+                return PENDING_DIGI_SIGN_BY_ME;           
+            return FORWARDWORKFLOWACTION.equals(workflowAction) ? WF_STATE_PENDING_FORWARD_BY_ME : WF_STATE_ME_APPROVE_PENDING;
         } else if (ASSISTANT_ENGINEER_DESIGN.equalsIgnoreCase(loggedInUserDesignation))
             return FORWARDWORKFLOWACTION.equals(workflowAction) ? AE_APPROVAL_PENDING : EMPTY;
+        else if (COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation)) {
+            if(APPLICATION_STATUS_DIGITALSIGNPENDING.equalsIgnoreCase(connectionStatusCode) && !APPROVEWORKFLOWACTION.equals(workflowAction))
+                return PENDING_DIGI_SIGN_BY_COMM;
+            return APPROVEWORKFLOWACTION.equals(workflowAction) ?COMM_APPROVAL_PENDING:PENDING_DIGI_SIGN_BY_COMM;
+        }
         else
             return EMPTY;
     }

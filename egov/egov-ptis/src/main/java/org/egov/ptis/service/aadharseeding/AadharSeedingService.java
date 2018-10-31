@@ -172,12 +172,17 @@ public class AadharSeedingService extends GenericWorkFlowController {
     public List<String[]> getQueryResult(AadharSeedingRequest aadharSeedingRequest) {
         StringBuilder baseQry = new StringBuilder();
         StringBuilder orderBy = new StringBuilder();
-        baseQry = baseQry.append("select mv.propertyId, mv.ownerName, mv.houseNo, mv.propertyAddress from PropertyMaterlizeView mv ")
-                .append("where mv.basicPropertyID in(select p.basicProperty from PropertyImpl p where ")
+        baseQry = baseQry
+                .append("select mv.propertyId, mv.ownerName, mv.houseNo, mv.propertyAddress from PropertyMaterlizeView mv ")
+                .append("where mv.latitude is not null and mv.longitude is not null and (exists(select basicPropertyID ")
+                .append("from PropertyMaterlizeView where usage ='VACANTLAND' and sitalArea is not null) or exists ")
+                .append("(select basicPropertyID from PropertyMaterlizeView where usage <>'VACANTLAND' and ")
+                .append("totalBuiltUpArea is not null)) and mv.basicPropertyID in(select p.basicProperty from PropertyImpl p where ")
                 .append("p.propertyDetail.structure=false and p.status in('A','I') and p.id not in(select m.property from PropertyMutation m ")
                 .append("where m.state.status <> 2) and p.basicProperty not in(select psv.referenceBasicProperty from PropertyStatusValues psv ")
                 .append("where psv.referenceBasicProperty is not null and psv.referenceBasicProperty.underWorkflow = true)) and ")
-                .append("mv.basicPropertyID not in(select basicProperty from AadharSeeding)");
+                .append("mv.basicPropertyID not in(select basicProperty from AadharSeeding) and mv.locality not in(select id from")
+                .append(" Boundary b where b.boundaryNum in(select boundaryNum from BhudharExemptedLocalities))");
         final StringBuilder wherClause = new StringBuilder();
         orderBy = orderBy.append(" order by mv.propertyId");
         if (isNotBlank(aadharSeedingRequest.getAssessmentNo()))

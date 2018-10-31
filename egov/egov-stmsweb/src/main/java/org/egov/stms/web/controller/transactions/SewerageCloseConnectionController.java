@@ -48,6 +48,16 @@
 
 package org.egov.stms.web.controller.transactions;
 
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_REJECTED;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.apache.commons.lang.StringUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -56,6 +66,7 @@ import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.stms.masters.entity.SewerageApplicationType;
 import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
@@ -82,13 +93,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Controller
 @RequestMapping(value = "/transactions")
@@ -271,6 +275,14 @@ public class SewerageCloseConnectionController extends GenericWorkFlowController
 
         if (applicationNumber != null)
             sewerageApplicationDetails = sewerageApplicationDetailsService.findByApplicationNumber(applicationNumber);
+
+        if (WF_STATE_REJECTED.equalsIgnoreCase(sewerageApplicationDetails.getCurrentState().getValue())) {
+            Position initiatorPos = sewerageApplicationDetails.getCurrentState().getInitiatorPosition();
+            List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(
+                    initiatorPos.getId(), new Date());
+            approverName = assignmentList.stream().findAny().get().getEmployee().getName();
+            nextDesign = initiatorPos.getDeptDesig().getDesignation().getName();
+        }
         model.addAttribute("approverName", approverName);
         model.addAttribute("currentUserDesgn", currentUserDesgn);
         model.addAttribute("nextDesign", nextDesign);
