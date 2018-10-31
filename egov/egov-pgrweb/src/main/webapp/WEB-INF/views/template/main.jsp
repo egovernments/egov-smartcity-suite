@@ -54,14 +54,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <c:if test="${empty analyticsEnabled}">
-        <meta name="description" content="HUHA">
-        <spring:eval expression="@environment.getProperty('analytics.enabled')" scope="application" var="analyticsEnabled"/>
-    </c:if>
-    <c:if test="${empty pgrMaxUploadFileSizeLimit}">
-        <meta name="description" content="HUAASHA">
-        <spring:eval expression="@environment.getProperty('pgr.max.file.upload.size')" scope="application" var="pgrMaxUploadFileSizeLimit"/>
-    </c:if>
+    <spring:eval expression="@environment.getProperty('analytics.enabled')" scope="application" var="analyticsEnabled"/>
+    <spring:eval expression="@environment.getProperty('pgr.max.file.upload.size')" scope="application" var="pgrMaxUploadFileSizeLimit"/>
     <c:if test="${analyticsEnabled}">
         <spring:eval expression="@environment.getProperty('analytics.config')" scope="application"/>
     </c:if>
