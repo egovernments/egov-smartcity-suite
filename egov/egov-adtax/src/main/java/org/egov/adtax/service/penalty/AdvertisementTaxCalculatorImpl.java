@@ -92,8 +92,7 @@ public class AdvertisementTaxCalculatorImpl implements AdvertisementTaxCalculato
                             .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
                 } else if (calculateSorByUnit.get(0).getValue().equalsIgnoreCase("YES")) {
 
-                    final BigDecimal unitRate = rate.getAdvertisementRate().getUnitrate() != null ? BigDecimal
-                            .valueOf(rate.getAdvertisementRate().getUnitrate()) : BigDecimal.ZERO;
+                    final BigDecimal unitRate = getUnitRate(rate);
 
                     // MULTIPLY WITH MEASUREMENT TO GET TOTAL AMOUNT.
                     if (unitRate != BigDecimal.valueOf(0)) {
@@ -101,7 +100,8 @@ public class AdvertisementTaxCalculatorImpl implements AdvertisementTaxCalculato
                                 .valueOf(rate.getAmount())
                                 .multiply(
                                         BigDecimal.valueOf(measurement).divide(unitRate, 4, RoundingMode.HALF_UP)
-                                                .setScale(0, RoundingMode.UP)).setScale(4, BigDecimal.ROUND_HALF_UP)
+                                                .setScale(0, RoundingMode.UP))
+                                .setScale(4, BigDecimal.ROUND_HALF_UP)
                                 .doubleValue();
                     } else
                         return Double.valueOf(0);
@@ -111,6 +111,11 @@ public class AdvertisementTaxCalculatorImpl implements AdvertisementTaxCalculato
 
         return Double.valueOf(0);
 
+    }
+
+    private BigDecimal getUnitRate(AdvertisementRatesDetails rate) {
+        return rate.getAdvertisementRate().getUnitrate() != null ? BigDecimal
+                .valueOf(rate.getAdvertisementRate().getUnitrate()) : BigDecimal.ZERO;
     }
 
 }

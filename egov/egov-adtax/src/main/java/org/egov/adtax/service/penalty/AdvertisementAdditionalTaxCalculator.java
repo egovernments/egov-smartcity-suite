@@ -60,8 +60,11 @@ import org.egov.demand.model.EgDemandDetails;
 public interface AdvertisementAdditionalTaxCalculator {
 
     Map<String, BigDecimal> getAdditionalTaxes(AdvertisementPermitDetail advPermitDetail);
+
     BigDecimal getTotalAdditionalTaxesByPassingAdvertisementPermit(AdvertisementPermitDetail advPermitDetail);
-    BigDecimal getAdditionalTaxAmountByPassingDemandDetailAndAdditionalTaxes( EgDemandDetails demandDtl,
+
+    BigDecimal getAdditionalTaxAmountByPassingDemandDetailAndAdditionalTaxes(EgDemandDetails demandDtl,
             List<AdvertisementAdditionalTaxRate> additionalTaxRates);
+
     Map<Installment, BigDecimal> getAdditionalTaxesByInstallment(AdvertisementPermitDetail activeAdvertisementPermit);
 }

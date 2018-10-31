@@ -86,7 +86,7 @@ public class AdvertisementPenaltyCalculatorImpl implements AdvertisementPenaltyC
     public BigDecimal calculatePenalty(final AdvertisementPermitDetail advPermitDetail) throws HoardingValidationError {
 
         BigDecimal penaltyAmt = BigDecimal.ZERO;
-        BigDecimal additinalTax = BigDecimal.ZERO;
+        BigDecimal additionalTax;
         if (penaltyCalculationRequired()) {
             final List<AdvertisementAdditionalTaxRate> additionalTaxRates = advertisementAdditinalTaxRateService
                     .getAllActiveAdditinalTaxRates();
@@ -94,29 +94,20 @@ public class AdvertisementPenaltyCalculatorImpl implements AdvertisementPenaltyC
                     && advPermitDetail.getAdvertisement().getDemandId() != null)
                 for (final EgDemandDetails demandDtl : advPermitDetail.getAdvertisement().getDemandId()
                         .getEgDemandDetails()) {
-                    additinalTax = getAdditionalFeeAmountByPassingDemandDetail(demandDtl, additionalTaxRates);
-                    penaltyAmt = penaltyAmt.add(getPenaltyAmount(advPermitDetail, demandDtl, additinalTax)).setScale(0,
+                    additionalTax = getAdditionalFeeAmountByPassingDemandDetail(demandDtl, additionalTaxRates);
+                    penaltyAmt = penaltyAmt.add(getPenaltyAmount(advPermitDetail, demandDtl, additionalTax)).setScale(0,
                             BigDecimal.ROUND_HALF_UP);
                 }
         }
         return penaltyAmt.setScale(0, BigDecimal.ROUND_HALF_UP);
     }
 
-    /*
-     * private BigDecimal getPenaltyAmount(final AdvertisementPermitDetail advPermitDetail, final EgDemandDetails demandDtl) {
-     * double percentage = 0; int days = 0; BigDecimal penaltyAmt = BigDecimal.ZERO; if
-     * (demandDtl.getBalance().compareTo(BigDecimal.ZERO) > 0) { days =
-     * calculateNumberOfDaysForPenaltyCalculation(advPermitDetail, demandDtl); percentage = advertisementPenaltyRatesService
-     * .findPenaltyRatesByNumberOfDays(Long.valueOf(days)); if (percentage > 0) penaltyAmt = demandDtl.getBalance()
-     * .multiply(BigDecimal.valueOf(percentage)) .divide(BigDecimal.valueOf(100).setScale(0, BigDecimal.ROUND_HALF_UP)); } return
-     * penaltyAmt; }
-     */
-
     private BigDecimal getPenaltyAmount(final AdvertisementPermitDetail advPermitDetail,
             final EgDemandDetails demandDtl, final BigDecimal additionalTax) {
         double percentage = 0;
         int days = 0;
-        BigDecimal penaltyAmt = BigDecimal.ZERO, totalAmount = BigDecimal.ZERO;
+        BigDecimal penaltyAmt = BigDecimal.ZERO;
+        BigDecimal totalAmount;
 
         if (demandDtl.getBalance().compareTo(BigDecimal.ZERO) > 0) {
 
@@ -163,9 +154,9 @@ public class AdvertisementPenaltyCalculatorImpl implements AdvertisementPenaltyC
 
     @Override
     public Map<Installment, BigDecimal> getPenaltyByInstallment(final AdvertisementPermitDetail advPermitDetail) {
-        final Map<Installment, BigDecimal> penaltyReasons = new HashMap<Installment, BigDecimal>();
-        BigDecimal penaltyAmt = BigDecimal.ZERO;
-        BigDecimal additinalTax = BigDecimal.ZERO;
+        final Map<Installment, BigDecimal> penaltyReasons = new HashMap<>();
+        BigDecimal penaltyAmt;
+        BigDecimal additinalTax;
         if (penaltyCalculationRequired()) {
             final List<AdvertisementAdditionalTaxRate> additionalTaxRates = advertisementAdditinalTaxRateService
                     .getAllActiveAdditinalTaxRates();
@@ -183,7 +174,7 @@ public class AdvertisementPenaltyCalculatorImpl implements AdvertisementPenaltyC
                                 .get(demandDtl.getEgDemandReason().getEgInstallmentMaster()).add(penaltyAmt));
                 }
         }
-        if (penaltyReasons != null && penaltyReasons.size() > 0)
+        if (penaltyReasons.size() > 0)
             for (final Map.Entry<Installment, BigDecimal> penaltyReason : penaltyReasons.entrySet())
                 penaltyReason.setValue(penaltyReason.getValue().setScale(0, BigDecimal.ROUND_HALF_UP));
         return penaltyReasons;
@@ -191,9 +182,9 @@ public class AdvertisementPenaltyCalculatorImpl implements AdvertisementPenaltyC
 
     @Override
     public Map<Installment, BigDecimal> getPenaltyOnAdditionalTaxByInstallment(final AdvertisementPermitDetail advPermitDetail) {
-        final Map<Installment, BigDecimal> penaltyReasons = new HashMap<Installment, BigDecimal>();
-        BigDecimal penaltyAmt = BigDecimal.ZERO;
-        BigDecimal additinalTax = BigDecimal.ZERO;
+        final Map<Installment, BigDecimal> penaltyReasons = new HashMap<>();
+        BigDecimal penaltyAmt;
+        BigDecimal additinalTax;
         if (penaltyCalculationRequired()) {
             final List<AdvertisementAdditionalTaxRate> additionalTaxRates = advertisementAdditinalTaxRateService
                     .getAllActiveAdditinalTaxRates();
@@ -216,7 +207,7 @@ public class AdvertisementPenaltyCalculatorImpl implements AdvertisementPenaltyC
                 }
         }
 
-        if (penaltyReasons != null && penaltyReasons.size() > 0)
+        if (penaltyReasons.size() > 0)
             for (final Map.Entry<Installment, BigDecimal> penaltyReason : penaltyReasons.entrySet())
                 penaltyReason.setValue(penaltyReason.getValue().setScale(0, BigDecimal.ROUND_HALF_UP));
         return penaltyReasons;
@@ -233,7 +224,6 @@ public class AdvertisementPenaltyCalculatorImpl implements AdvertisementPenaltyC
         return additinalTax;
     }
 
-    // TODO: THROW VALIDATION EXCEPTION IN UI.
     private Boolean penaltyCalculationRequired() throws HoardingValidationError {
 
         final AppConfigValues ispenaltyCalculationRequired = appConfigValuesService.getConfigValuesByModuleAndKey(
@@ -241,9 +231,7 @@ public class AdvertisementPenaltyCalculatorImpl implements AdvertisementPenaltyC
         if (ispenaltyCalculationRequired == null)
             throw new HoardingValidationError("taxAmount", "ADTAX.004");
 
-        if (ispenaltyCalculationRequired != null && "YES".equalsIgnoreCase(ispenaltyCalculationRequired.getValue()))
-            return true;
-        return false;
+        return "YES".equalsIgnoreCase(ispenaltyCalculationRequired.getValue());
 
     }
 

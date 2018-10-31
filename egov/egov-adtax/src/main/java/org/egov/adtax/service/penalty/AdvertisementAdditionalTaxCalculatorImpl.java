@@ -78,11 +78,8 @@ public class AdvertisementAdditionalTaxCalculatorImpl implements AdvertisementAd
 
         final AppConfigValues isServiceTaxAndCessCollectionRequired = appConfigValuesService.getConfigValuesByModuleAndKey(
                 AdvertisementTaxConstants.MODULE_NAME, AdvertisementTaxConstants.SERVICETAXANDCESSCOLLECTIONREQUIRED).get(0);
-
-        if (isServiceTaxAndCessCollectionRequired != null
-                && "YES".equalsIgnoreCase(isServiceTaxAndCessCollectionRequired.getValue()))
-            return true;
-        return false;
+        return isServiceTaxAndCessCollectionRequired != null
+                && "YES".equalsIgnoreCase(isServiceTaxAndCessCollectionRequired.getValue());
 
     }
 
@@ -92,15 +89,7 @@ public class AdvertisementAdditionalTaxCalculatorImpl implements AdvertisementAd
     @Override
     public Map<String, BigDecimal> getAdditionalTaxes(final AdvertisementPermitDetail advPermitDetail) {
 
-        final Map<String, BigDecimal> additionalTaxes = new HashMap<String, BigDecimal>();
-        BigDecimal curntInsServiceTax = BigDecimal.ZERO;
-        BigDecimal curntInsSwachBharatCess = BigDecimal.ZERO;
-        BigDecimal curntInsKrishiKalyanCess = BigDecimal.ZERO;
-        BigDecimal curntInsTotalTaxableAmt = BigDecimal.ZERO;
-        BigDecimal arrInsServiceTax = BigDecimal.ZERO;
-        BigDecimal arrInsSwachBharatCess = BigDecimal.ZERO;
-        BigDecimal arrInsKrishiKalyanCess = BigDecimal.ZERO;
-        BigDecimal arrInsTotalTaxableAmt = BigDecimal.ZERO;
+        final Map<String, BigDecimal> additionalTaxes = new HashMap<>();
         final Installment currentInstallemnt = advPermitDetail.getAdvertisement().getDemandId().getEgInstallmentMaster();
         final List<AdvertisementAdditionalTaxRate> additionalTaxRates = advertisementAdditinalTaxRateService
                 .getAllActiveAdditinalTaxRates();
@@ -109,37 +98,56 @@ public class AdvertisementAdditionalTaxCalculatorImpl implements AdvertisementAd
             for (final AdvertisementAdditionalTaxRate taxRates : additionalTaxRates)
                 additionalTaxes.put(taxRates.getReasonCode(), taxRates.getPercentage());
 
-            for (final EgDemandDetails demandDtl : advPermitDetail.getAdvertisement().getDemandId().getEgDemandDetails())
-                if (demandDtl.getBalance().compareTo(BigDecimal.ZERO) > 0)
-                    if (currentInstallemnt != null && currentInstallemnt.getDescription()
-                            .equals(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription())) {
-                        if (demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                                .equalsIgnoreCase(AdvertisementTaxConstants.DEMANDREASON_ARREAR_ADVERTISEMENTTAX))
-                            arrInsTotalTaxableAmt = arrInsTotalTaxableAmt.add(demandDtl.getBalance());
-                        else
-                            curntInsTotalTaxableAmt = curntInsTotalTaxableAmt.add(demandDtl.getBalance());
-                    } else
-                        arrInsTotalTaxableAmt = arrInsTotalTaxableAmt.add(demandDtl.getBalance());
-
-            for (final Map.Entry<String, BigDecimal> entry : additionalTaxes.entrySet())
-                if ("Service_Tax".equalsIgnoreCase(entry.getKey())) {
-                    curntInsServiceTax = calculateAdditionalTaxes(curntInsTotalTaxableAmt, entry.getValue());
-                    arrInsServiceTax = calculateAdditionalTaxes(arrInsTotalTaxableAmt, entry.getValue());
-                } else if ("ADTAX_SB_CESS".equalsIgnoreCase(entry.getKey())) {
-                    curntInsSwachBharatCess = calculateAdditionalTaxes(curntInsTotalTaxableAmt, entry.getValue());
-                    arrInsSwachBharatCess = calculateAdditionalTaxes(arrInsTotalTaxableAmt, entry.getValue());
-                } else if ("ADTAX_KRISHI_CES".equalsIgnoreCase(entry.getKey())) {
-                    curntInsKrishiKalyanCess = calculateAdditionalTaxes(curntInsTotalTaxableAmt, entry.getValue());
-                    arrInsKrishiKalyanCess = calculateAdditionalTaxes(arrInsTotalTaxableAmt, entry.getValue());
-                }
-            additionalTaxes.put("Service_Tax", curntInsServiceTax.add(arrInsServiceTax));
-            additionalTaxes.put("ADTAX_SB_CESS", curntInsSwachBharatCess.add(arrInsSwachBharatCess));
-            additionalTaxes.put("ADTAX_KRISHI_CES", curntInsKrishiKalyanCess.add(arrInsKrishiKalyanCess));
+            prepareAdditionalTaxes(advPermitDetail, additionalTaxes, currentInstallemnt);
 
         }
 
         return additionalTaxes;
 
+    }
+
+    private void prepareAdditionalTaxes(final AdvertisementPermitDetail advPermitDetail,
+            final Map<String, BigDecimal> additionalTaxes, final Installment currentInstallemnt) {
+        BigDecimal curntInsTotalTaxableAmt = BigDecimal.ZERO;
+        BigDecimal arrInsTotalTaxableAmt = BigDecimal.ZERO;
+
+        for (final EgDemandDetails demandDtl : advPermitDetail.getAdvertisement().getDemandId().getEgDemandDetails())
+            if (demandDtl.getBalance().compareTo(BigDecimal.ZERO) > 0)
+                if (currentInstallemnt != null && currentInstallemnt.getDescription()
+                        .equals(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription())) {
+                    if (demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                            .equalsIgnoreCase(AdvertisementTaxConstants.DEMANDREASON_ARREAR_ADVERTISEMENTTAX))
+                        arrInsTotalTaxableAmt = arrInsTotalTaxableAmt.add(demandDtl.getBalance());
+                    else
+                        curntInsTotalTaxableAmt = curntInsTotalTaxableAmt.add(demandDtl.getBalance());
+                } else
+                    arrInsTotalTaxableAmt = arrInsTotalTaxableAmt.add(demandDtl.getBalance());
+
+        populateAdditionalTaxes(additionalTaxes, curntInsTotalTaxableAmt, arrInsTotalTaxableAmt);
+    }
+
+    private void populateAdditionalTaxes(final Map<String, BigDecimal> additionalTaxes, BigDecimal curntInsTotalTaxableAmt,
+            BigDecimal arrInsTotalTaxableAmt) {
+        BigDecimal curntInsServiceTax = BigDecimal.ZERO;
+        BigDecimal arrInsServiceTax = BigDecimal.ZERO;
+        BigDecimal curntInsSwachBharatCess = BigDecimal.ZERO;
+        BigDecimal arrInsSwachBharatCess = BigDecimal.ZERO;
+        BigDecimal curntInsKrishiKalyanCess = BigDecimal.ZERO;
+        BigDecimal arrInsKrishiKalyanCess = BigDecimal.ZERO;
+        for (final Map.Entry<String, BigDecimal> entry : additionalTaxes.entrySet())
+            if ("Service_Tax".equalsIgnoreCase(entry.getKey())) {
+                curntInsServiceTax = calculateAdditionalTaxes(curntInsTotalTaxableAmt, entry.getValue());
+                arrInsServiceTax = calculateAdditionalTaxes(arrInsTotalTaxableAmt, entry.getValue());
+            } else if ("ADTAX_SB_CESS".equalsIgnoreCase(entry.getKey())) {
+                curntInsSwachBharatCess = calculateAdditionalTaxes(curntInsTotalTaxableAmt, entry.getValue());
+                arrInsSwachBharatCess = calculateAdditionalTaxes(arrInsTotalTaxableAmt, entry.getValue());
+            } else if ("ADTAX_KRISHI_CES".equalsIgnoreCase(entry.getKey())) {
+                curntInsKrishiKalyanCess = calculateAdditionalTaxes(curntInsTotalTaxableAmt, entry.getValue());
+                arrInsKrishiKalyanCess = calculateAdditionalTaxes(arrInsTotalTaxableAmt, entry.getValue());
+            }
+        additionalTaxes.put("Service_Tax", curntInsServiceTax.add(arrInsServiceTax));
+        additionalTaxes.put("ADTAX_SB_CESS", curntInsSwachBharatCess.add(arrInsSwachBharatCess));
+        additionalTaxes.put("ADTAX_KRISHI_CES", curntInsKrishiKalyanCess.add(arrInsKrishiKalyanCess));
     }
 
     private BigDecimal calculateAdditionalTaxes(final BigDecimal curntInsTotalTaxableAmt,
@@ -149,7 +157,7 @@ public class AdvertisementAdditionalTaxCalculatorImpl implements AdvertisementAd
     }
 
     private Map<String, BigDecimal> getAdditionalTaxRates() {
-        final Map<String, BigDecimal> additionalTaxes = new HashMap<String, BigDecimal>();
+        final Map<String, BigDecimal> additionalTaxes = new HashMap<>();
 
         final List<AdvertisementAdditionalTaxRate> additionalTaxRates = advertisementAdditinalTaxRateService
                 .getAllActiveAdditinalTaxRates();
@@ -162,7 +170,7 @@ public class AdvertisementAdditionalTaxCalculatorImpl implements AdvertisementAd
     private Map<Installment, BigDecimal> getTotalTaxAmountByInstallmentForAdditionalTaxCalculation(
             final AdvertisementPermitDetail advPermitDetail,
             final Map<String, BigDecimal> additionalTaxes) {
-        final Map<Installment, BigDecimal> totalTaxableAmount = new HashMap<Installment, BigDecimal>();
+        final Map<Installment, BigDecimal> totalTaxableAmount = new HashMap<>();
 
         if (advPermitDetail != null && advPermitDetail.getAdvertisement() != null
                 && advPermitDetail.getAdvertisement().getDemandId() != null)
@@ -188,7 +196,7 @@ public class AdvertisementAdditionalTaxCalculatorImpl implements AdvertisementAd
     public BigDecimal getAdditionalTaxAmountByPassingDemandDetailAndAdditionalTaxes(final EgDemandDetails demandDtl,
             final List<AdvertisementAdditionalTaxRate> additionalTaxRates) {
         BigDecimal totalTaxableAmount = BigDecimal.ZERO;
-        final Map<String, BigDecimal> additionalTaxes = new HashMap<String, BigDecimal>();
+        final Map<String, BigDecimal> additionalTaxes = new HashMap<>();
 
         if (serviceTaxAndCessCalculationRequired()) {
             for (final AdvertisementAdditionalTaxRate taxRates : additionalTaxRates)
@@ -211,34 +219,17 @@ public class AdvertisementAdditionalTaxCalculatorImpl implements AdvertisementAd
     public BigDecimal getTotalAdditionalTaxesByPassingAdvertisementPermit(final AdvertisementPermitDetail advPermitDetail) {
 
         BigDecimal totalAdditionalTax = BigDecimal.ZERO;
-        BigDecimal curntInsAdditionalTax = BigDecimal.ZERO;
-        BigDecimal curntInsTotalTaxableAmt = BigDecimal.ZERO;
-        BigDecimal arrInsAdditionalTax = BigDecimal.ZERO;
-        BigDecimal arrInsTotalTaxableAmt = BigDecimal.ZERO;
-
-        Map<String, BigDecimal> additionalTaxesMasterList = new HashMap<String, BigDecimal>();
 
         if (serviceTaxAndCessCalculationRequired()) {
 
-            additionalTaxesMasterList = getAdditionalTaxRates();
-
-            final Installment currentInstallemnt = advPermitDetail.getAdvertisement().getDemandId().getEgInstallmentMaster();
-            for (final EgDemandDetails demandDtl : advPermitDetail.getAdvertisement().getDemandId().getEgDemandDetails())
-                if (currentInstallemnt != null && demandDtl.getBalance().compareTo(BigDecimal.ZERO) > 0)
-                    if (currentInstallemnt.getDescription()
-                            .equals(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription())) {
-                        if (demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                                .equalsIgnoreCase(AdvertisementTaxConstants.DEMANDREASON_ARREAR_ADVERTISEMENTTAX))
-                            arrInsTotalTaxableAmt = arrInsTotalTaxableAmt.add(demandDtl.getBalance());
-                        else
-                            curntInsTotalTaxableAmt = curntInsTotalTaxableAmt.add(demandDtl.getBalance());
-                    } else
-                        arrInsTotalTaxableAmt = arrInsTotalTaxableAmt.add(demandDtl.getBalance());
+            Map<String, BigDecimal> additionalTaxesMasterList = getAdditionalTaxRates();
+            Map<String, BigDecimal> taxableAmounts = prepareTotalTaxableAmounts(advPermitDetail);
 
             for (final Map.Entry<String, BigDecimal> entry : additionalTaxesMasterList.entrySet()) {
-                curntInsAdditionalTax = calculateAdditionalTaxes(curntInsTotalTaxableAmt, entry.getValue());
+                BigDecimal curntInsAdditionalTax = calculateAdditionalTaxes(taxableAmounts.get("curntInsTotalTaxableAmt"),
+                        entry.getValue());
                 totalAdditionalTax = totalAdditionalTax.add(curntInsAdditionalTax);
-                arrInsAdditionalTax = calculateAdditionalTaxes(arrInsTotalTaxableAmt, entry.getValue());
+                BigDecimal arrInsAdditionalTax = calculateAdditionalTaxes(taxableAmounts.get("arrInsTotalTaxableAmt"), entry.getValue());
                 totalAdditionalTax = totalAdditionalTax.add(arrInsAdditionalTax);
 
             }
@@ -246,32 +237,50 @@ public class AdvertisementAdditionalTaxCalculatorImpl implements AdvertisementAd
         return totalAdditionalTax;
     }
 
+    private Map<String, BigDecimal> prepareTotalTaxableAmounts(final AdvertisementPermitDetail advPermitDetail) {
+        Map<String, BigDecimal> taxableAmounts = new HashMap<>();
+
+        BigDecimal curntInsTotalTaxableAmt = BigDecimal.ZERO;
+        BigDecimal arrInsTotalTaxableAmt = BigDecimal.ZERO;
+
+        final Installment currentInstallemnt = advPermitDetail.getAdvertisement().getDemandId().getEgInstallmentMaster();
+        for (final EgDemandDetails demandDtl : advPermitDetail.getAdvertisement().getDemandId().getEgDemandDetails())
+            if (currentInstallemnt != null && demandDtl.getBalance().compareTo(BigDecimal.ZERO) > 0)
+                if (currentInstallemnt.getDescription()
+                        .equals(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription())) {
+                    if (demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                            .equalsIgnoreCase(AdvertisementTaxConstants.DEMANDREASON_ARREAR_ADVERTISEMENTTAX))
+                        arrInsTotalTaxableAmt = arrInsTotalTaxableAmt.add(demandDtl.getBalance());
+                    else
+                        curntInsTotalTaxableAmt = curntInsTotalTaxableAmt.add(demandDtl.getBalance());
+                } else
+                    arrInsTotalTaxableAmt = arrInsTotalTaxableAmt.add(demandDtl.getBalance());
+        taxableAmounts.put("curntInsTotalTaxableAmt", curntInsTotalTaxableAmt);
+        taxableAmounts.put("arrInsTotalTaxableAmt", arrInsTotalTaxableAmt);
+        return taxableAmounts;
+    }
+
     @Override
     public Map<Installment, BigDecimal> getAdditionalTaxesByInstallment(
             final AdvertisementPermitDetail activeAdvertisementPermit) {
 
-        Map<String, BigDecimal> additionalTaxesMasterList = new HashMap<String, BigDecimal>();
-
-        final Map<Installment, BigDecimal> additionalTaxes = new HashMap<Installment, BigDecimal>();
-        Map<Installment, BigDecimal> installmentWiseTaxableAmtMap = new HashMap<Installment, BigDecimal>();
+        final Map<Installment, BigDecimal> additionalTaxes = new HashMap<>();
         if (serviceTaxAndCessCalculationRequired()) {
-
-            additionalTaxesMasterList = getAdditionalTaxRates();
-            installmentWiseTaxableAmtMap = getTotalTaxAmountByInstallmentForAdditionalTaxCalculation(activeAdvertisementPermit,
+            Map<String, BigDecimal> additionalTaxesMasterList = getAdditionalTaxRates();
+            Map<Installment, BigDecimal> installmentWiseTaxableAmtMap = getTotalTaxAmountByInstallmentForAdditionalTaxCalculation(
+                    activeAdvertisementPermit,
                     additionalTaxesMasterList);
-            if (installmentWiseTaxableAmtMap != null) {
-                for (final Map.Entry<Installment, BigDecimal> taxableAmtObj : installmentWiseTaxableAmtMap.entrySet()) {
-                    BigDecimal tax = BigDecimal.ZERO;
-                    for (final Map.Entry<String, BigDecimal> entry : additionalTaxesMasterList.entrySet())
-                        tax = tax.add(entry.getValue().multiply(taxableAmtObj.getValue()).divide(BigDecimal.valueOf(100))
-                                .setScale(0, BigDecimal.ROUND_HALF_UP));
-                    additionalTaxes.put(taxableAmtObj.getKey(), tax); // For each installment calculate total amount
-                }
-
-                if (additionalTaxes != null && additionalTaxes.size() > 0)
-                    for (final Map.Entry<Installment, BigDecimal> additionalTax : additionalTaxes.entrySet())
-                        additionalTax.setValue(additionalTax.getValue().setScale(0, BigDecimal.ROUND_HALF_UP));
+            for (final Map.Entry<Installment, BigDecimal> taxableAmtObj : installmentWiseTaxableAmtMap.entrySet()) {
+                BigDecimal tax = BigDecimal.ZERO;
+                for (final Map.Entry<String, BigDecimal> entry : additionalTaxesMasterList.entrySet())
+                    tax = tax.add(entry.getValue().multiply(taxableAmtObj.getValue()).divide(BigDecimal.valueOf(100))
+                            .setScale(0, BigDecimal.ROUND_HALF_UP));
+                additionalTaxes.put(taxableAmtObj.getKey(), tax); // For each installment calculate total amount
             }
+
+            if (additionalTaxes.size() > 0)
+                for (final Map.Entry<Installment, BigDecimal> additionalTax : additionalTaxes.entrySet())
+                    additionalTax.setValue(additionalTax.getValue().setScale(0, BigDecimal.ROUND_HALF_UP));
         }
 
         return additionalTaxes;

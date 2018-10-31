@@ -48,7 +48,6 @@
 
 package org.egov.adtax.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -124,7 +123,6 @@ public class AdvertisementBatchDemandGenService {
 
         final List<AdvertisementBatchDemandGenerate> advBatchDmdGenResult = findActiveBatchDemands();
 
-        List<Advertisement> advertisements = new ArrayList<>();
         if (advBatchDmdGenResult != null && !advBatchDmdGenResult.isEmpty()) {
             LOGGER.info("advBatchDmdGenResult " + advBatchDmdGenResult.size());
             final AppConfigValues totalRecordToFeatch = appConfigValuesService.getConfigValuesByModuleAndKey(
@@ -150,7 +148,7 @@ public class AdvertisementBatchDemandGenService {
                  * Assumption : selected installment data not present in advertisement demand.
                  */
                 if (advDmdGenerationInstallment != null && previousInstallment != null && !previousInstallment.isEmpty()) {
-                    advertisements = advertisementService
+                    List<Advertisement> advertisements = advertisementService
                             .findActivePermanentAdvertisementsByCurrentInstallmentAndNumberOfResultToFetch(
                                     previousInstallment.get(0), Integer.valueOf(totalRecordToFeatch.getValue()));
 
@@ -172,12 +170,6 @@ public class AdvertisementBatchDemandGenService {
                 return Boolean.TRUE;
             });
 
-            // commented: Update advertisement index not required at this point. There is no demand updation happening in permit
-            // index update.
-            /*
-             * for (final Advertisement advertisement : advertisements) advertisementPermitDetailUpdateIndexService
-             * .updateAdvertisementPermitDetailIndexes(advertisement.getActiveAdvertisementPermit());
-             */
         }
         return totalRecordsProcessed;
     }
