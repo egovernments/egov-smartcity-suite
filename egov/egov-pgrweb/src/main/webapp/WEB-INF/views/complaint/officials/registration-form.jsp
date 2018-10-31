@@ -46,13 +46,13 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<link rel="stylesheet"
-      href="<cdn:url  value='/resources/global/css/egov/map-autocomplete.css?rnd=${app_release_no}' context='/egi'/>">
+<link rel="stylesheet" href="<cdn:url  value='/resources/global/css/egov/map-autocomplete.css?rnd=${app_release_no}' context='/egi'/>">
+<link rel="stylesheet" href="<cdn:url  value='/resources/css/or-divider.css?rnd=${app_release_no}'/>">
 <div class="row">
     <div class="col-md-12">
         <form:form role="form" action="register" modelAttribute="complaint" id="complaintform"
@@ -297,63 +297,13 @@
         </div>
     </div>
 </div>
-<script src="<cdn:url  value='/resources/js/app/fileuploadndmaps.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/fileuploadndmaps.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url  value='/resources/js/app/complaint.js?rnd=${app_release_no}'/>"></script>
 <script>
-    var rcRequired= ${complaint.receivingMode.rcRequired};
+    var rcRequired = ${complaint.receivingMode.rcRequired};
     if (rcRequired) {
         enableRC();
         enabledCRN();
     }
 </script>
-<style>
-    .or-spacer {
-        margin: 17px auto 12px auto;
-        width: 75%;
-        position: relative;
-    }
-
-    .or-spacer .mask {
-        overflow: hidden;
-        height: 20px;
-    }
-
-    .or-spacer .mask:after {
-        content: '';
-        display: block;
-        margin: -20px auto 0;
-        width: 100%;
-        height: 21px;
-        background: -moz-linear-gradient(left, rgba(255, 0, 0, 0) 0%, rgba(255, 0, 0, 0) 15%, rgba(60, 60, 60, 0.65) 50%, rgba(255, 0, 0, 0) 85%, rgba(255, 0, 0, 0) 100%); /* FF3.6+ */
-        background: -webkit-gradient(linear, left top, right top, color-stop(0%, rgba(255, 0, 0, 0)), color-stop(15%, rgba(255, 0, 0, 0)), color-stop(50%, rgba(60, 60, 60, 0.65)), color-stop(85%, rgba(255, 0, 0, 0)), color-stop(100%, rgba(255, 0, 0, 0))); /* Chrome,Safari4+ */
-        background: -webkit-linear-gradient(left, rgba(255, 0, 0, 0) 0%, rgba(255, 0, 0, 0) 15%, rgba(60, 60, 60, 0.65) 50%, rgba(255, 0, 0, 0) 85%, rgba(255, 0, 0, 0) 100%); /* Chrome10+,Safari5.1+ */
-        background: -o-linear-gradient(left, rgba(255, 0, 0, 0) 0%, rgba(255, 0, 0, 0) 15%, rgba(60, 60, 60, 0.65) 50%, rgba(255, 0, 0, 0) 85%, rgba(255, 0, 0, 0) 100%);
-    }
-
-    .or-spacer span {
-        width: 40px;
-        height: 40px;
-        position: absolute;
-        bottom: 100%;
-        margin-bottom: -21px;
-        left: 50%;
-        margin-left: -25px;
-        border-radius: 100%;
-        border: 1px solid #999;
-        background: white;
-    }
-
-    .or-spacer span i {
-        position: absolute;
-        top: 4px;
-        bottom: 4px;
-        left: 4px;
-        right: 4px;
-        border-radius: 100%;
-        text-align: center;
-        line-height: 31px;
-        font-style: normal;
-        color: #999;
-    }
-</style>

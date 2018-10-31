@@ -75,23 +75,23 @@ public class FileDownloadController {
     @Autowired
     private CityService cityService;
 
-    @GetMapping
+    @GetMapping(produces = "*/*")
     @ResponseBody
     public ResponseEntity download(@RequestParam String fileStoreId, @RequestParam String moduleName,
                                    @RequestParam(defaultValue = "false") boolean toSave) {
         return fileStoreUtils.fileAsResponseEntity(fileStoreId, moduleName, toSave);
     }
 
-    @GetMapping("/logo")
+    @GetMapping(value = "/logo", produces = "*/*")
     public void getLogo(HttpServletResponse response) throws IOException {
         IOUtils.write(cityService.getCityLogoAsBytes(), response.getOutputStream());
     }
 
-    @GetMapping("/gis")
+    @GetMapping(value = "/gis", produces = "*/*")
     public void getKML(HttpServletResponse response) throws IOException {
-        try (final InputStream in = Thread.currentThread().getContextClassLoader()
+        try (InputStream in = Thread.currentThread().getContextClassLoader()
                 .getResourceAsStream("gis/" + ApplicationThreadLocals.getTenantID() + "/wards.kml");
-             final OutputStream out = response.getOutputStream()) {
+             OutputStream out = response.getOutputStream()) {
             if (in != null) {
                 response.setHeader("Content-Disposition", "inline;filename=wards.kml");
                 response.setContentType("application/vnd.google-earth.kml+xml");

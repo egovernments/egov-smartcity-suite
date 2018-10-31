@@ -46,17 +46,17 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <div class="row" id="page-content">
     <div class="col-md-12">
         <c:if test="${not empty message}">
             <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
         </c:if>
-        <form:form action="update" method="post"
-                   class="form-horizontal form-groups-bordered" modelAttribute="city"
+        <form:form method="post" class="form-horizontal form-groups-bordered" modelAttribute="city"
                    id="cityForm" enctype="multipart/form-data">
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">
@@ -255,10 +255,10 @@
                                          src="/egi/downloadfile?fileStoreId=${city.preferences.municipalityLogo.fileStoreId}&moduleName=${sessionScope.cityCode}">
 
                                     <input type="file" name="logo" id="logo"
-                                           data-accept="jpg,jpeg,png,gif,PNG,JPG,JPEG"
+                                           data-accept="jpg,jpeg,png,PNG,JPG,JPEG"
                                            data-errormsg="Please select valid image file!"
-                                           class="form-control" placeholder="" autocomplete="off" data-toggle="popover" data-trigger="focus" data-placement="right"
-                                           data-content="${helptext}"/>
+                                           class="form-control" placeholder="" autocomplete="off" data-toggle="popover"
+                                           data-trigger="focus" data-placement="right" data-content="${helptext}"/>
                                     <form:errors path="preferences.municipalityLogo" cssClass="add-margin error-msg"/>
                                 </div>
                             </div>
@@ -499,4 +499,4 @@
         min-width: 200px;
     }
 </style>
-<script src="../../resources/js/app/citysetup.js?rnd=${app_release_no}"></script>
+<script src="<cdn:url value='/resources/js/app/citysetup.js?rnd=${app_release_no}'/>" type="text/javascript"></script>

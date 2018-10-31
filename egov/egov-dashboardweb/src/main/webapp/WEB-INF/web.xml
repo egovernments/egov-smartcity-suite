@@ -221,21 +221,7 @@
     </welcome-file-list>
 
     <error-page>
-        <location>/error/500</location>
+        <location>/error</location>
     </error-page>
-
-    <error-page>
-        <error-code>404</error-code>
-        <location>/error/404</location>
-    </error-page>
-
-    <session-config>
-        <cookie-config>
-            <path>/</path>
-            <http-only>true</http-only>
-            <secure>false</secure>
-        </cookie-config>
-        <tracking-mode>COOKIE</tracking-mode>
-    </session-config>
 
 </web-app>

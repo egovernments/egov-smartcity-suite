@@ -54,7 +54,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <spring:eval expression="@environment.getProperty('analytics.enabled')" scope="application" var="analyticsEnabled"/>
+    <c:if test="${empty analyticsEnabled}">
+        <meta name="description" content="HUHA">
+        <spring:eval expression="@environment.getProperty('analytics.enabled')" scope="application" var="analyticsEnabled"/>
+    </c:if>
+    <c:if test="${empty pgrMaxUploadFileSizeLimit}">
+        <meta name="description" content="HUAASHA">
+        <spring:eval expression="@environment.getProperty('pgr.max.file.upload.size')" scope="application" var="pgrMaxUploadFileSizeLimit"/>
+    </c:if>
     <c:if test="${analyticsEnabled}">
         <spring:eval expression="@environment.getProperty('analytics.config')" scope="application"/>
     </c:if>
@@ -91,8 +98,8 @@
     <script src="<cdn:url  value='/resources/global/js/ie8/respond.min.js' context='/egi'/>"></script>
     <![endif]-->
     <script>
-        const citylat = ${empty sessionScope.citylat ? 0 : sessionScope.citylat};
-        const citylng = ${empty sessionScope.citylng ? 0 : sessionScope.citylng};
+        let citylat = ${empty sessionScope.citylat ? 0 : sessionScope.citylat};
+        let citylng = ${empty sessionScope.citylng ? 0 : sessionScope.citylng};
         const tokenVal = '${_csrf.token}';
         const tokenName = '${_csrf.parameterName}';
     </script>

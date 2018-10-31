@@ -232,14 +232,7 @@
         <servlet-name>reportViewer</servlet-name>
         <url-pattern>/reportViewer</url-pattern>
     </servlet-mapping>
-    <session-config>
-        <cookie-config>
-            <path>/</path>
-            <http-only>true</http-only>
-            <secure>false</secure>
-        </cookie-config>
-        <tracking-mode>COOKIE</tracking-mode>
-    </session-config>
+
     <welcome-file-list>
         <welcome-file>/index.jsp</welcome-file>
     </welcome-file-list>
@@ -266,13 +259,7 @@
         </jsp-property-group>
     </jsp-config>
     <error-page>
-        <location>/error/500</location>
+        <location>/error</location>
     </error-page>
-
-    <error-page>
-        <error-code>404</error-code>
-        <location>/error/404</location>
-    </error-page>
-
 
 </web-app>

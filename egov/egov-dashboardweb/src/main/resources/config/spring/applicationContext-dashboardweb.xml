@@ -46,16 +46,16 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<import resource="applicationSecurityContext-dashboard.xml"/>
+    <import resource="applicationSecurityContext-dashboard.xml"/>
 
-    <context:property-placeholder />
+    <context:property-placeholder/>
 
     <context:component-scan base-package="org.egov.dashboard">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>

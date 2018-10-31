@@ -46,15 +46,26 @@
  *
  */
 
+var map, geocoder, marker;
+var lat, lng, address;
+var fileinputid = ['file1', 'file2', 'file3'];
+var filefilled = {};
+var removedarray = [];
+var fileid;
+const fileformats = ['jpg', 'jpeg', 'gif', 'png', '3g2', '3gp', '3gp2', '3gpp', 'avi', 'divx', 'flv', 'mov', 'mp4',
+    'mpeg4', 'mpg4', 'mpeg', 'mpg', 'm4v', 'wmv', 'x-msvideo'];
+
+function extractCoordinate(latorlong) {
+    var loc_arry = latorlong.split(",");
+    var degree = parseFloat(loc_arry[0]);
+    var minutes = parseFloat(loc_arry[1]);
+    var seconds = parseFloat(loc_arry[2]);
+    var formatted = degree + ((minutes * 60) + seconds) / 3600;
+    return formatted;
+}
+
+
 $(document).ready(function () {
-
-    var fileformats = ['jpg', 'jpeg', 'gif', 'png', '3g2', '3gp', '3gp2', '3gpp', 'avi', 'divx', 'flv', 'mov', 'mp4', 'mpeg4', 'mpg4', 'mpeg', 'mpg', 'm4v', 'wmv', 'x-msvideo'];
-    var myCenter;
-
-    var fileinputid = ['file1', 'file2', 'file3'];//assigning file id
-    var filefilled = {};//image fullfilled array
-    var removedarray = [];
-    var fileid;
 
     $('#triggerFile').click(function () {
         if (removedarray.length == 0 || removedarray.length == 3) {
@@ -63,15 +74,12 @@ $(document).ready(function () {
         } else {
             fileid = removedarray[0];
         }
-
-
         $('#' + fileid).trigger("click");
     });
 
     $('.remove-img').click(function () {
         delete filefilled[$(this).attr('data-file-id')];
-        if ($.inArray($(this).attr('data-file-id'), removedarray) !== -1)//check removed file id already exists, if exists leave as such or push it
-        {
+        if ($.inArray($(this).attr('data-file-id'), removedarray) !== -1) {
 
         } else {
             removedarray.push($(this).attr('data-file-id'));
@@ -97,12 +105,9 @@ $(document).ready(function () {
     });
 
     $('#file1, #file2, #file3').on('change.bs.fileinput', function (e) {
-        /*validation for file upload*/
         myfile = $(this).val();
         var ext = myfile.split('.').pop();
-        if ($.inArray(ext, fileformats) > -1) {
-            //do something
-        } else {
+        if ($.inArray(ext, fileformats) < 0) {
             bootbox.alert(ext + " file format is not allowed");
             return;
         }
@@ -118,50 +123,49 @@ $(document).ready(function () {
             }
         }
 
-        //bootbox.alert('ext'+ext);
-
         if (e.target.files.length > 0) {
             filefilled[$(this).attr('id')] = this.files[0].name;
-            readURL(this, this.files[0].name);
+            previewImage(this, this.files[0].name);
             var index = removedarray.indexOf(fileid);
             if (index > -1) {
                 removedarray.splice(index, 1);
             }
             if (fileid == 'file1') {
                 EXIF.getData(e.target.files[0], function () {
-                    var imagelat = EXIF.getTag(this, "GPSLatitude"),
-                        imagelongt = EXIF.getTag(this, "GPSLongitude");
-                    var formatted_lat = format_lat_long(imagelat.toString());
-                    var formatted_lng = format_lat_long(imagelongt.toString());
-                    var geocoder = new google.maps.Geocoder;
-                    geocoder.geocode({
-                        'location': {
-                            lat: formatted_lat,
-                            lng: formatted_lng
-                        }
-                    }, function (results, status) {
-                        if (status === 'OK') {
-                            if (results[0]) {
-                                $('#location').typeahead('val', results[0].formatted_address);
-                                myCenter = new google.maps.LatLng(formatted_lat, formatted_lng);
-                                $('#lat').val(formatted_lat);
-                                $('#lng').val(formatted_lng);
-                                lat = formatted_lat;
-                                lng = formatted_lng;
-                                map.setCenter(myCenter);
+                    var rawImgLat = EXIF.getTag(this, "GPSLatitude");
+                    var rawImgLng = EXIF.getTag(this, "GPSLongitude");
+                    if (rawImgLat && rawImgLng) {
+                        var imgLat = extractCoordinate(rawImgLat.toString());
+                        var imgLng = extractCoordinate(rawImgLng.toString());
+                        var geocoder = new google.maps.Geocoder;
+                        geocoder.geocode({
+                            'location': {
+                                lat: imgLat,
+                                lng: imgLng
                             }
-                        }
-                    });
+                        }, function (results, status) {
+                            if (status === 'OK') {
+                                if (results[0]) {
+                                    $('#location').typeahead('val', results[0].formatted_address);
+                                    var location = new google.maps.LatLng(imgLat, imgLng);
+                                    $('#lat').val(imgLat);
+                                    $('#lng').val(imgLng);
+                                    lat = imgLat;
+                                    lng = imgLng;
+                                    map.setCenter(location);
+                                }
+                            }
+                        });
+                    }
                 });
             }
-
             if (Object.keys(filefilled).length == 3) {
                 $('#triggerFile').attr('disabled', 'disabled');
             }
         }
     });
 
-    function readURL(input, filename) {
+    function previewImage(input, filename) {
         filename = ((filename.length > 15) ? filename.substring(0, 13) + ".." : filename);
         if (input.files && input.files[0]) {
             var reader = new FileReader();
@@ -188,28 +192,7 @@ $(document).ready(function () {
         }
     }
 
-    function format_lat_long(latorlong) {
-        var loc_arry = latorlong.split(",");
-        var degree = parseFloat(loc_arry[0]);
-        var minutes = parseFloat(loc_arry[1]);
-        var seconds = parseFloat(loc_arry[2]);
-
-        //formula is degree+((minutes*60)+seconds/3600)
-        var formatted = degree + ((minutes * 60) + seconds) / 3600;
-
-        return formatted;
-    }
-
-
-    var map, geocoder, geolocate, marker, mapProp;
-    var lat, lng, address;
-    myCenter = new google.maps.LatLng(13.081604, 80.275183);
-
     function initialize() {
-
-        //marker=new google.maps.Marker();
-
-        //mapprop();
         var latLng, mapOptions = {
             zoom: 10,
             timeout: 500,
@@ -222,34 +205,28 @@ $(document).ready(function () {
                 lat: position.coords.latitude,
                 lng: position.coords.longitude
             };
-            //Set current locaion to map
             var userLatLng = new google.maps.LatLng(latLng.lat, latLng.lng);
             lat = latLng.lat;
             lng = latLng.lng;
 
             getAddress(lat, lng);
-
             map.setCenter(userLatLng);
-
             mapcenterchangeevent();
-
         }
 
         var userLocationNotFound = function () {
 
-            //Assign static point to map
             if (!citylat || !citylng) {
                 citylat = 20.5937;
                 citylng = 78.9629;
             }
 
             latLng = {
-                lat: citylat, // fallback lat
-                lng: citylng  // fallback lng
+                lat: citylat,
+                lng: citylng
             };
             setlatlong(citylat, citylng);
             mapcenterchangeevent();
-
         }
 
 
@@ -265,14 +242,13 @@ $(document).ready(function () {
             if (!latLng) {
                 userLocationNotFound();
             }
-        }, mapOptions.timeout + 500); // Wait extra second
+        }, mapOptions.timeout + 500);
 
         searchBar(map);
 
     };
 
     function searchBar(map) {
-
         var input = (
             document.getElementById('pac-input'));
 
@@ -340,8 +316,6 @@ $(document).ready(function () {
     google.maps.event.addDomListener(window, "resize", resizingMap());
 
     $('#modal-6').on('show.bs.modal', function () {
-        //Must wait until the render of the modal appear, thats why we use the resizeMap and NOT resizingMap!! ;-)
-        //complaint registration map
         resizeMap();
     });
 

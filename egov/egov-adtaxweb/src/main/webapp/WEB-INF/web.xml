@@ -113,9 +113,12 @@
 
     <filter>
         <filter-name>openEntityManagerInViewFilter</filter-name>
-        <filter-class>
-            org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter
-        </filter-class>
+        <filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>multipartFilter</filter-name>
+        <filter-class>org.springframework.web.multipart.support.MultipartFilter</filter-class>
     </filter>
 
     <filter>
@@ -169,6 +172,11 @@
     </filter-mapping>
 
     <filter-mapping>
+        <filter-name>multipartFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
         <filter-name>securityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
@@ -193,6 +201,11 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
         <async-supported>true</async-supported>
+        <multipart-config>
+            <location>/tmp</location>
+            <max-file-size>20848820</max-file-size>
+            <file-size-threshold>1048576</file-size-threshold>
+        </multipart-config>
     </servlet>
 
     <servlet-mapping>
@@ -232,21 +245,7 @@
     </welcome-file-list>
 
     <error-page>
-        <location>/error/500</location>
+        <location>/error</location>
     </error-page>
-
-    <error-page>
-        <error-code>404</error-code>
-        <location>/error/404</location>
-    </error-page>
-
-    <session-config>
-        <cookie-config>
-            <path>/</path>
-            <http-only>true</http-only>
-            <secure>false</secure>
-        </cookie-config>
-        <tracking-mode>COOKIE</tracking-mode>
-    </session-config>
 
 </web-app>

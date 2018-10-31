@@ -59,9 +59,9 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.mapper.BeanMapperConfiguration;
 import org.egov.infra.utils.DateUtils;
 import org.egov.pgr.elasticsearch.entity.ComplaintIndex;
-import org.egov.pgr.elasticsearch.entity.contract.ComplaintResponse;
 import org.egov.pgr.elasticsearch.entity.contract.ComplaintDashBoardRequest;
 import org.egov.pgr.elasticsearch.entity.contract.ComplaintDashBoardResponse;
+import org.egov.pgr.elasticsearch.entity.contract.ComplaintResponse;
 import org.egov.pgr.elasticsearch.entity.contract.ComplaintSearchRequest;
 import org.egov.pgr.elasticsearch.entity.contract.ComplaintSourceResponse;
 import org.egov.pgr.elasticsearch.entity.contract.IVRSFeedBackResponse;
@@ -112,6 +112,7 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
+import static org.egov.infra.elasticsearch.utils.ElasticSearchUtils.fixEmptyPage;
 import static org.egov.infra.utils.ApplicationConstant.NA;
 import static org.egov.infra.utils.DateUtils.startOfToday;
 import static org.egov.pgr.utils.constants.PGRConstants.*;
@@ -1304,7 +1305,7 @@ public class ComplaintIndexService {
     }
 
     public Page<ComplaintIndex> searchComplaintIndex(ComplaintSearchRequest searchRequest) {
-        return complaintIndexRepository.search(searchRequest.query(), searchRequest.getPageRequest());
+        return fixEmptyPage(complaintIndexRepository.search(searchRequest.query(), searchRequest.getPageRequest()));
     }
 
     public Page<ComplaintIndex> searchComplaintIndex(BoolQueryBuilder searchQuery) {

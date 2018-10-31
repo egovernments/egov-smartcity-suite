@@ -65,6 +65,7 @@
         <constructor-arg name="csrfTokenRepository">
             <bean class="org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository"/>
         </constructor-arg>
+        <property name="accessDeniedHandler" ref="accessDeniedHandler"/>
     </bean>
 
     <bean id="headerWriterFilter" class="org.springframework.security.web.header.HeaderWriterFilter">
@@ -176,11 +177,11 @@
 
     <bean id="exceptionTranslationFilter" class="org.springframework.security.web.access.ExceptionTranslationFilter">
         <constructor-arg index="0" ref="authenticationEntryPoint"/>
-        <property name="accessDeniedHandler">
-            <bean class="org.springframework.security.web.access.AccessDeniedHandlerImpl">
-                <property name="errorPage" value="/error/403"/>
-            </bean>
-        </property>
+        <property name="accessDeniedHandler" ref="accessDeniedHandler"/>
+    </bean>
+
+    <bean id="accessDeniedHandler" class="org.springframework.security.web.access.AccessDeniedHandlerImpl">
+        <property name="errorPage" value="/error/403"/>
     </bean>
 
     <bean id="authenticationEntryPoint"

@@ -59,7 +59,7 @@
 		scope="prototype" />
 
 	<bean id="waterTaxExternalService"
-		class="org.egov.wtms.application.service.collection.WaterTaxExternalService" />
+		class="org.egov.wtms.application.service.collection.WaterTaxExternalService" scope="prototype"/>
 
 	<bean id="WaterConnectionDetailsPersistenceService" parent="abstractPersistenceService">
 		<constructor-arg name="type"

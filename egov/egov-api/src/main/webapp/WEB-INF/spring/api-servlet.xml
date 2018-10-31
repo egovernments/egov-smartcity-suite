@@ -47,80 +47,78 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<mvc:annotation-driven enable-matrix-variables="true"
-		conversion-service="conversionService" validator="validator">
-		<mvc:message-converters register-defaults="true">
-			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
-				<constructor-arg index="0" name="defaultCharset"
-					value="UTF-8" />
-			</bean>
-		</mvc:message-converters>
-	</mvc:annotation-driven>
+    <mvc:annotation-driven enable-matrix-variables="true"
+                           conversion-service="conversionService" validator="validator">
+        <mvc:message-converters register-defaults="true">
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <constructor-arg index="0" name="defaultCharset"
+                                 value="UTF-8"/>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
 
-	<!-- Configure to plugin JSON as request and response in method handler -->
-	<bean
-		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
-		<property name="messageConverters">
-			<list>
-				<ref bean="jsonMessageConverter" />
-			</list>
-		</property>
-	</bean>
+    <!-- Configure to plugin JSON as request and response in method handler -->
+    <bean
+            class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <ref bean="jsonMessageConverter"/>
+            </list>
+        </property>
+    </bean>
 
-	<!-- Configure bean to convert JSON to POJO and vice versa -->
-	<bean id="jsonMessageConverter"
-		class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
-	</bean>
+    <!-- Configure bean to convert JSON to POJO and vice versa -->
+    <bean id="jsonMessageConverter"
+          class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+    </bean>
 
-	<bean id="conversionService"
-		class="org.springframework.core.convert.support.DefaultConversionService" />
+    <bean id="conversionService"
+          class="org.springframework.core.convert.support.DefaultConversionService"/>
 
-	<bean
-		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="targetClass"
-			value="org.springframework.core.convert.support.ConversionServiceFactory" />
-		<property name="targetMethod" value="registerConverters" />
-		<property name="arguments">
-			<list>
-				<set>
-					<bean
-						class="org.springframework.data.repository.support.DomainClassConverter">
-						<constructor-arg ref="conversionService" />
-					</bean>
-				</set>
-				<ref bean="conversionService" />
-			</list>
-		</property>
-	</bean>
+    <bean
+            class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass"
+                  value="org.springframework.core.convert.support.ConversionServiceFactory"/>
+        <property name="targetMethod" value="registerConverters"/>
+        <property name="arguments">
+            <list>
+                <set>
+                    <bean
+                            class="org.springframework.data.repository.support.DomainClassConverter">
+                        <constructor-arg ref="conversionService"/>
+                    </bean>
+                </set>
+                <ref bean="conversionService"/>
+            </list>
+        </property>
+    </bean>
 
+    <bean id="validator"
+          class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+        <property name="validationMessageSource" ref="messageSource"/>
+    </bean>
 
-	<bean id="validator"
-		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
-		<property name="validationMessageSource" ref="messageSource" />
-	</bean>
+    <bean id="messageSource"
+          class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="parentMessageSource" ref="parentMessageSource"/>
+        <property name="basenames">
+            <list>
+                <value>messages/errors</value>
+                <value>messages/message</value>
+            </list>
+        </property>
+        <property name="cacheSeconds" value="#{environment['dev.mode'] ? 0 : -1}"/>
+    </bean>
 
-	<bean id="messageSource"
-		class="org.springframework.context.support.ResourceBundleMessageSource">
-		<property name="parentMessageSource" ref="parentMessageSource" />
-		<property name="basenames">
-			<list>
-				<value>messages/errors</value>
-				<value>messages/message</value>
-			</list>
-		</property>
-		<!-- Disabling caching since on development -->
-		<property name="cacheSeconds" value="0" />
-	</bean>
-
-	<!-- Imports user-defined @Controller beans that process client requests -->
-	<context:component-scan base-package="org.egov.api" />
+    <!-- Imports user-defined @Controller beans that process client requests -->
+    <context:component-scan base-package="org.egov.api"/>
 
 </beans>

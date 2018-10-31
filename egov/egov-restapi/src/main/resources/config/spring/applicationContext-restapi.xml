@@ -62,9 +62,4 @@
         <property name="maxInMemorySize" value="1048576"/>
     </bean>
 
-    <bean id="propertyExternalService" class="org.egov.ptis.domain.service.property.PropertyExternalService"
-          scope="prototype"/>
-    <bean id="waterTaxExternalService" class="org.egov.wtms.application.service.collection.WaterTaxExternalService"
-          scope="prototype"/>
-
 </beans>

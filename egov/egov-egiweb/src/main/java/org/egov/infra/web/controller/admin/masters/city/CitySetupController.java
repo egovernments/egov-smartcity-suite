@@ -51,15 +51,15 @@ package org.egov.infra.web.controller.admin.masters.city;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.CityPreferences;
 import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -67,41 +67,43 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
 import java.io.IOException;
 
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
+
 @Controller
 @RequestMapping("/city/setup")
 public class CitySetupController {
 
     @Autowired
-    private CityService cityService;
+    @Qualifier("fileStoreService")
+    private FileStoreService fileStoreService;
 
     @Autowired
-    @Qualifier("fileStoreService")
-    protected FileStoreService fileStoreService;
+    private CityService cityService;
 
     @ModelAttribute
     public City city() {
-        final City city = cityService.getCityByCode(ApplicationThreadLocals.getCityCode());
+        City city = cityService.getCityByCode(getCityCode());
         if (city.getPreferences() == null)
             city.setPreferences(new CityPreferences());
         return city;
     }
 
-    @RequestMapping("/view")
+    @GetMapping
     public String showCitySetup() {
         return "city-setup";
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String updateCitySetup(@Valid @ModelAttribute final City city, final BindingResult bindResult,
-            @RequestParam(required = false) final MultipartFile logo, final RedirectAttributes redirectAttrs) throws IOException {
+    @PostMapping
+    public String updateCitySetup(@Valid @ModelAttribute City city, BindingResult bindResult,
+                                  @RequestParam(required = false) MultipartFile logo, RedirectAttributes redirectAttrs) throws IOException {
         if (bindResult.hasErrors())
             return "city-setup";
         if (!logo.isEmpty())
             city.getPreferences().setMunicipalityLogo(fileStoreService.store(logo.getInputStream(), logo.getOriginalFilename(),
-                    logo.getContentType(), ApplicationThreadLocals.getCityCode()));
+                    logo.getContentType(), getCityCode()));
         cityService.updateCity(city);
         redirectAttrs.addFlashAttribute("message", "msg.city.update.success");
-        return "redirect:/city/setup/view";
+        return "redirect:/city/setup";
     }
 
 }

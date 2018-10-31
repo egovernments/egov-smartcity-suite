@@ -68,6 +68,7 @@
         <filter-name>CacheControlFilter</filter-name>
         <filter-class>org.egov.infra.web.filter.CacheControlFilter</filter-class>
     </filter>
+
     <filter>
         <filter-name>CharacterEncodingFilter</filter-name>
         <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -80,50 +81,67 @@
             <param-value>true</param-value>
         </init-param>
     </filter>
+
     <filter>
         <filter-name>gzipFilter</filter-name>
         <filter-class>net.sf.ehcache.constructs.web.filter.GzipFilter</filter-class>
     </filter>
+
     <filter>
         <filter-name>applicationCoreFilter</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
+
     <filter>
         <filter-name>mdcLoggingFilter</filter-name>
         <filter-class>org.egov.infra.web.filter.MDCLoggingFilter</filter-class>
     </filter>
+
     <filter>
         <filter-name>applicationTenantResolverFilter</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
+
     <filter>
         <filter-name>openEntityManagerInViewFilter</filter-name>
         <filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
     </filter>
+
+    <filter>
+        <filter-name>multipartFilter</filter-name>
+        <filter-class>org.springframework.web.multipart.support.MultipartFilter</filter-class>
+    </filter>
+
     <filter>
         <filter-name>securityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
+
     <filter>
         <filter-name>springSessionRepositoryFilter</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
+
     <filter>
         <filter-name>ResponseOverrideFilter</filter-name>
         <filter-class>org.displaytag.filter.ResponseOverrideFilter</filter-class>
     </filter>
+
     <filter>
         <filter-name>struts2Prepare</filter-name>
         <filter-class>org.apache.struts2.dispatcher.filter.StrutsPrepareFilter</filter-class>
     </filter>
+
     <filter>
         <filter-name>struts2Execute</filter-name>
         <filter-class>org.apache.struts2.dispatcher.filter.StrutsExecuteFilter</filter-class>
     </filter>
+
     <filter>
         <filter-name>sitemesh</filter-name>
         <filter-class>com.opensymphony.sitemesh.webapp.SiteMeshFilter</filter-class>
     </filter>
+
     <!-- Filter Declaration Ends Filter Mapping Starts -->
     <filter-mapping>
         <filter-name>springSessionRepositoryFilter</filter-name>
@@ -131,6 +149,7 @@
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
+
     <filter-mapping>
         <filter-name>CacheControlFilter</filter-name>
         <url-pattern>*.js</url-pattern>
@@ -140,26 +159,37 @@
         <url-pattern>*.gif</url-pattern>
         <url-pattern>*.ico</url-pattern>
     </filter-mapping>
+
     <filter-mapping>
         <filter-name>CharacterEncodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
     <filter-mapping>
         <filter-name>gzipFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
     <filter-mapping>
         <filter-name>applicationTenantResolverFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
     <filter-mapping>
         <filter-name>openEntityManagerInViewFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>multipartFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <filter-mapping>
         <filter-name>securityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
     <filter-mapping>
         <filter-name>applicationCoreFilter</filter-name>
         <url-pattern>/*</url-pattern>
@@ -174,10 +204,12 @@
         <filter-name>ResponseOverrideFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
     <filter-mapping>
         <filter-name>struts2Prepare</filter-name>
         <url-pattern>*.action</url-pattern>
     </filter-mapping>
+
     <filter-mapping>
         <filter-name>sitemesh</filter-name>
         <url-pattern>*.action</url-pattern>
@@ -185,6 +217,7 @@
         <dispatcher>FORWARD</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
     </filter-mapping>
+
     <filter-mapping>
         <filter-name>struts2Execute</filter-name>
         <url-pattern>*.action</url-pattern>
@@ -205,15 +238,6 @@
         <load-on-startup>0</load-on-startup>
     </servlet>
 
-    <servlet-mapping>
-        <servlet-name>reportViewer</servlet-name>
-        <url-pattern>/reportViewer</url-pattern>
-    </servlet-mapping>
-    <welcome-file-list>
-        <welcome-file>/index.jsp</welcome-file>
-    </welcome-file-list>
-
-    <!-- Processes application requests -->
     <servlet>
         <servlet-name>worksweb</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -223,12 +247,24 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
         <async-supported>true</async-supported>
+        <multipart-config>
+            <location>/tmp</location>
+            <max-file-size>20848820</max-file-size>
+            <file-size-threshold>1048576</file-size-threshold>
+        </multipart-config>
     </servlet>
 
     <servlet-mapping>
         <servlet-name>worksweb</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>reportViewer</servlet-name>
+        <url-pattern>/reportViewer</url-pattern>
+    </servlet-mapping>
+
+    <!-- Processes application requests -->
 
     <jsp-config>
         <taglib>
@@ -264,8 +300,12 @@
             <page-encoding>UTF-8</page-encoding>
         </jsp-property-group>
     </jsp-config>
+
+    <welcome-file-list>
+        <welcome-file>/index.jsp</welcome-file>
+    </welcome-file-list>
+
     <error-page>
-        <error-code>500</error-code>
-        <location>/error/error.jsp</location>
+        <location>/error</location>
     </error-page>
 </web-app>
