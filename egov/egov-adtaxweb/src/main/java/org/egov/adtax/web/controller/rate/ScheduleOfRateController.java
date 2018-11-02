@@ -48,7 +48,16 @@
 
 package org.egov.adtax.web.controller.rate;
 
-import com.google.gson.GsonBuilder;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
 import org.egov.adtax.entity.AdvertisementRate;
 import org.egov.adtax.entity.AdvertisementRatesDetails;
 import org.egov.adtax.entity.HoardingCategory;
@@ -75,18 +84,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping(value = "/rates")
 public class ScheduleOfRateController {
+
+    private static final String STR_AGENCY = "agency";
+
+    private static final String STR_MESSAGE = "message";
+
     private static final Logger LOG = LoggerFactory.getLogger(ScheduleOfRateController.class);
 
     @Autowired
@@ -149,7 +156,7 @@ public class ScheduleOfRateController {
      */
     @RequestMapping(value = "/search", method = POST)
     public String searchForm(@Valid @ModelAttribute AdvertisementRate rate, final BindingResult errors,
-                             final RedirectAttributes redirectAttrs, final Model model) {
+            final RedirectAttributes redirectAttrs, final Model model) {
         List<AdvertisementRatesDetails> advertisementRatesDetails;
 
         if (validateScheduleOfRateSearch(rate, model))
@@ -159,7 +166,7 @@ public class ScheduleOfRateController {
                 .findScheduleOfRateDetailsByCategorySubcategoryUomAndClass(rate.getCategory(), rate.getSubCategory(),
                         rate.getUnitofmeasure(), rate.getClasstype(), rate.getFinancialyear());
 
-        if (advertisementRatesDetails.size() == 0) {
+        if (advertisementRatesDetails.isEmpty()) {
             advertisementRatesDetails.add(new AdvertisementRatesDetails());
             rate.setAdvertisementRatesDetails(advertisementRatesDetails);
             model.addAttribute("mode", "noDataFound");
@@ -185,12 +192,10 @@ public class ScheduleOfRateController {
      */
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute AdvertisementRate rate, final RedirectAttributes redirectAttrs,
-                         final Model model) {
+            final Model model) {
 
         AdvertisementRate existingRateobject = null;
-        final List<AdvertisementRatesDetails> rateDetails = new ArrayList<AdvertisementRatesDetails>();
-
-        // TODO: validate, whether details are correct
+        final List<AdvertisementRatesDetails> rateDetails = new ArrayList<>();
 
         existingRateobject = advertisementRateService.findScheduleOfRateByCategorySubcategoryUomAndClass(rate.getCategory(),
                 rate.getSubCategory(), rate.getUnitofmeasure(), rate.getClasstype(), rate.getFinancialyear());
@@ -213,8 +218,8 @@ public class ScheduleOfRateController {
             rate.setAdvertisementRatesDetails(rateDetails);
             rate = advertisementRateService.createScheduleOfRate(rate);
         }
-        redirectAttrs.addFlashAttribute("agency", rate);
-        redirectAttrs.addFlashAttribute("message", "message.scheduleofrate.create");
+        redirectAttrs.addFlashAttribute(STR_AGENCY, rate);
+        redirectAttrs.addFlashAttribute(STR_MESSAGE, "message.scheduleofrate.create");
         return "redirect:/rates/success/" + rate.getId();
 
     }
@@ -227,7 +232,6 @@ public class ScheduleOfRateController {
     @RequestMapping(value = "/success/{id}", method = GET)
     public ModelAndView successView(@PathVariable("id") final Long id, @ModelAttribute final AdvertisementRate rate) {
         return new ModelAndView("scheduleOfRate-success", "rate", advertisementRateService.getScheduleOfRateById(id));
-
     }
 
     /**
@@ -239,15 +243,15 @@ public class ScheduleOfRateController {
         Boolean validate = false;
         if (rate != null) {
             if (rate.getCategory() == null || rate.getCategory().getId() == null) {
-                model.addAttribute("message", "message.category.ismandatory");
+                model.addAttribute(STR_MESSAGE, "message.category.ismandatory");
                 validate = true;
             }
             if (rate.getSubCategory() == null || rate.getSubCategory().getId() == null) {
-                model.addAttribute("message", "message.subcategory.ismandatory");
+                model.addAttribute(STR_MESSAGE, "message.subcategory.ismandatory");
                 validate = true;
             }
             if (rate.getUnitofmeasure() == null || rate.getUnitofmeasure().getId() == null) {
-                model.addAttribute("message", "message.uom.ismandatory");
+                model.addAttribute(STR_MESSAGE, "message.uom.ismandatory");
                 validate = true;
             }
         }
@@ -262,15 +266,19 @@ public class ScheduleOfRateController {
     @RequestMapping(value = "/searchscheduleofrate", method = POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchScheduleOfRate(final HttpServletRequest request,
-                                       final HttpServletResponse response) {
+            final HttpServletResponse response) {
 
         final String category = request.getParameter("category");
         final String subCategory = request.getParameter("subCategory");
         final String unitOfMeasure = request.getParameter("uom");
         final String classtype = request.getParameter("rateClass");
         final String finyear = request.getParameter("finyear");
-        return "{ \"data\":" + new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
-                .toJson(advertisementRateService.getScheduleOfRateSearchResult(category, subCategory, unitOfMeasure, classtype, finyear)) + "}";
+        return new StringBuilder("{ \"data\":")
+                .append(new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
+                        .toJson(advertisementRateService.getScheduleOfRateSearchResult(category, subCategory, unitOfMeasure,
+                                classtype,
+                                finyear)))
+                .append("}").toString();
 
     }
 

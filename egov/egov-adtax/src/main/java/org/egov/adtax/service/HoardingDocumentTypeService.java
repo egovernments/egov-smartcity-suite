@@ -48,6 +48,8 @@
 
 package org.egov.adtax.service;
 
+import java.util.List;
+
 import org.egov.adtax.entity.HoardingDocumentType;
 import org.egov.adtax.repository.HoardingDocumentTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,11 +57,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @Transactional(readOnly = true)
 public class HoardingDocumentTypeService {
+    
     private final HoardingDocumentTypeRepository hoardingDocumentTypeRepository;
 
     @Autowired

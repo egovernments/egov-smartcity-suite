@@ -48,6 +48,15 @@
 
 package org.egov.adtax.service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.AgencyWiseCollection;
 import org.egov.adtax.entity.AgencyWiseCollectionDetail;
@@ -64,24 +73,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 @Service
 @Transactional(readOnly = true)
 public class AgencyWiseCollectionService {
+
     private final AgencyWiseCollectionRepository agencyWiseCollectionRepository;
     private @Autowired AdvertisementPermitDetailService advertisementPermitDetailService;
-
     private @Autowired AdvertisementDemandService advertisementDemandService;
-    @Autowired
-    private AdvertisementPenaltyCalculator advertisementPenaltyCalculator;
+    private @Autowired AdvertisementPenaltyCalculator advertisementPenaltyCalculator;
     private @Autowired AdvertisementAdditionalTaxCalculator advertisementAdditionalTaxCalculator;
 
     @Autowired
@@ -113,7 +112,7 @@ public class AgencyWiseCollectionService {
      */
     public AgencyWiseCollection buildAgencyWiseObjectByHoardings(final String[] hoardingList) {
 
-        final Set<AgencyWiseCollectionDetail> agencyWiseCollectionDetails = new HashSet<AgencyWiseCollectionDetail>(0);
+        final Set<AgencyWiseCollectionDetail> agencyWiseCollectionDetails = new HashSet<>(0);
         BigDecimal totalAmount = BigDecimal.ZERO;
 
         final AgencyWiseCollection agencyWiseCollection = new AgencyWiseCollection();
@@ -125,11 +124,8 @@ public class AgencyWiseCollectionService {
         for (final String hoardingId : hoardingList) {
             final AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.findBy(Long
                     .valueOf(hoardingId.trim()));
-            penaltyReasons = new HashMap<Installment, BigDecimal>();
 
-            if (advertisementPermitDetail != null && advertisementPermitDetail.getAdvertisement() != null) {
-                // BigDecimal penaltyAmount = BigDecimal.ZERO;
-                // BigDecimal penaltyAmt = BigDecimal.ZERO;
+            if (isAdvertisementPresent(advertisementPermitDetail)) {
 
                 for (final EgDemandDetails demandDtl : advertisementPermitDetail.getAdvertisement().getDemandId()
                         .getEgDemandDetails())
@@ -145,17 +141,14 @@ public class AgencyWiseCollectionService {
                 // GET PENALTY AMOUNT FOR ADVERTISEMENT PERMITS
                 penaltyReasons = advertisementPenaltyCalculator.getPenaltyOnAdditionalTaxByInstallment(advertisementPermitDetail);
 
-                // Add or update penalty
-                if (penaltyReasons != null && penaltyReasons.size() > 0)
-                    totalAmount = addPenaltyDetailsForCollection(agencyWiseCollectionDetails, totalAmount, agencyWiseCollection,
-                            penaltyReasons, advertisementPermitDetail);
+                totalAmount = populatePenaltyDetails(agencyWiseCollectionDetails, totalAmount, agencyWiseCollection,
+                        penaltyReasons, advertisementPermitDetail);
                 // Check Additional tax calculation required
                 final Map<String, BigDecimal> additionalTaxDetails = advertisementAdditionalTaxCalculator
                         .getAdditionalTaxes(advertisementPermitDetail);
 
-                if (additionalTaxDetails != null && !additionalTaxDetails.isEmpty())
-                    totalAmount = addAdditinalTaxDetailsForCollection(agencyWiseCollectionDetails, totalAmount,
-                            agencyWiseCollection, advertisementPermitDetail, additionalTaxDetails);
+                totalAmount = populateAdditionalTaxDetails(agencyWiseCollectionDetails, totalAmount, agencyWiseCollection,
+                        advertisementPermitDetail, additionalTaxDetails);
             }
         }
 
@@ -165,6 +158,37 @@ public class AgencyWiseCollectionService {
             agencyWiseCollection.setTotalAmount(totalAmount);
         }
         return agencyWiseCollection;
+    }
+
+    private BigDecimal populateAdditionalTaxDetails(final Set<AgencyWiseCollectionDetail> agencyWiseCollectionDetails,
+            BigDecimal totalAmount, final AgencyWiseCollection agencyWiseCollection,
+            final AdvertisementPermitDetail advertisementPermitDetail, final Map<String, BigDecimal> additionalTaxDetails) {
+        if (additionalTaxDetailsPresent(additionalTaxDetails))
+            totalAmount = addAdditinalTaxDetailsForCollection(agencyWiseCollectionDetails, totalAmount,
+                    agencyWiseCollection, advertisementPermitDetail, additionalTaxDetails);
+        return totalAmount;
+    }
+
+    private BigDecimal populatePenaltyDetails(final Set<AgencyWiseCollectionDetail> agencyWiseCollectionDetails,
+            BigDecimal totalAmount, final AgencyWiseCollection agencyWiseCollection, Map<Installment, BigDecimal> penaltyReasons,
+            final AdvertisementPermitDetail advertisementPermitDetail) {
+        // Add or update penalty
+        if (penaltyReasonsPresent(penaltyReasons))
+            totalAmount = addPenaltyDetailsForCollection(agencyWiseCollectionDetails, totalAmount, agencyWiseCollection,
+                    penaltyReasons, advertisementPermitDetail);
+        return totalAmount;
+    }
+
+    private boolean additionalTaxDetailsPresent(final Map<String, BigDecimal> additionalTaxDetails) {
+        return additionalTaxDetails != null && !additionalTaxDetails.isEmpty();
+    }
+
+    private boolean penaltyReasonsPresent(Map<Installment, BigDecimal> penaltyReasons) {
+        return penaltyReasons != null && penaltyReasons.size() > 0;
+    }
+
+    private boolean isAdvertisementPresent(final AdvertisementPermitDetail advertisementPermitDetail) {
+        return advertisementPermitDetail != null && advertisementPermitDetail.getAdvertisement() != null;
     }
 
     /**
@@ -198,7 +222,7 @@ public class AgencyWiseCollectionService {
                     agencyWiseDt.setAmount(additionalTax.getValue());
                     agencyWiseDt.setAgencyWiseCollection(agencyWiseCollection);
 
-                    if (additionalDmtDtails != null && additionalDmtDtails.size() > 0)
+                    if (additionalDmtDtails != null && !additionalDmtDtails.isEmpty())
                         agencyWiseDt.setDemandDetail(additionalDmtDtails.get(0));
                     else
                         agencyWiseDt.setDemandDetail(null);
@@ -213,7 +237,7 @@ public class AgencyWiseCollectionService {
             final Map<Installment, BigDecimal> penaltyReasons,
             final AdvertisementPermitDetail advertisementPermitDetail) {
         // check any demand reason already present
-        BigDecimal penaltyAmount = BigDecimal.ZERO;
+        BigDecimal penaltyAmount;
 
         for (final Map.Entry<Installment, BigDecimal> penaltyReason : penaltyReasons.entrySet()) {
             penaltyAmount = penaltyReason.getValue();
@@ -236,7 +260,7 @@ public class AgencyWiseCollectionService {
                 agencyWiseDt.setAmount(penaltyAmount);
                 agencyWiseDt.setAgencyWiseCollection(agencyWiseCollection);
 
-                if (penaltyDmtDtails != null && penaltyDmtDtails.size() > 0)
+                if (penaltyDmtDtails != null && !penaltyDmtDtails.isEmpty())
                     agencyWiseDt.setDemandDetail(penaltyDmtDtails.get(0));
                 else
                     agencyWiseDt.setDemandDetail(null);
@@ -263,9 +287,8 @@ public class AgencyWiseCollectionService {
                 agencyWiseCollectionDetails);
 
         if (demandReasonWiseList.size() > 0)
-            demandReasonWiseList.forEach((key, value) -> {
-                agencyWiseDemand.addEgDemandDetails(EgDemandDetails.fromReasonAndAmounts(value, key, BigDecimal.ZERO));
-            });
+            demandReasonWiseList.forEach((key, value) -> agencyWiseDemand
+                    .addEgDemandDetails(EgDemandDetails.fromReasonAndAmounts(value, key, BigDecimal.ZERO)));
 
         agencyWiseDemand.setEgInstallmentMaster(installment);
         agencyWiseDemand.setIsHistory("Y");
@@ -277,14 +300,14 @@ public class AgencyWiseCollectionService {
 
     private HashMap<EgDemandReason, BigDecimal> getAmountGroupingDemandReason(
             final Set<AgencyWiseCollectionDetail> agencyWiseCollectionDetails) {
-        final HashMap<EgDemandReason, BigDecimal> demandReasonWiseList = new HashMap<EgDemandReason, BigDecimal>();
+        final HashMap<EgDemandReason, BigDecimal> demandReasonWiseList = new HashMap<>();
 
         for (final AgencyWiseCollectionDetail agencyWiseDtl : agencyWiseCollectionDetails)
             if (demandReasonWiseList.get(agencyWiseDtl.getDemandreason()) == null)
                 demandReasonWiseList.put(agencyWiseDtl.getDemandreason(), agencyWiseDtl.getAmount());
             else
                 demandReasonWiseList.put(agencyWiseDtl.getDemandreason(),
-                        demandReasonWiseList.get(agencyWiseDtl.getDemandreason()).add(agencyWiseDtl.getAmount()));// TODO:CHECK
+                        demandReasonWiseList.get(agencyWiseDtl.getDemandreason()).add(agencyWiseDtl.getAmount()));
         return demandReasonWiseList;
     }
 
@@ -301,19 +324,15 @@ public class AgencyWiseCollectionService {
 
     public List<AgencyWiseCollectionSearch> buildAgencyWiseCollectionSearch(final String[] hoardingList) {
 
-        final List<AgencyWiseCollectionSearch> permitDetails = new ArrayList<AgencyWiseCollectionSearch>();
+        final List<AgencyWiseCollectionSearch> permitDetails = new ArrayList<>();
         AgencyWiseCollectionSearch agencyWiseCollectionSearchResult = null;
 
         for (final String hoardingId : hoardingList) {
             final AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.findBy(Long
                     .valueOf(hoardingId.trim()));
 
-            if (!permitDetails.contains(advertisementPermitDetail))
-                agencyWiseCollectionSearchResult = new AgencyWiseCollectionSearch();
-            else
-                for (final AgencyWiseCollectionSearch result : permitDetails)
-                    if (result.getAdvertisementPermitId().equals(advertisementPermitDetail.getId()))
-                        agencyWiseCollectionSearchResult = result;
+            agencyWiseCollectionSearchResult = getAgencyWiseCollectionSearch(permitDetails, agencyWiseCollectionSearchResult,
+                    advertisementPermitDetail);
 
             final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService
                     .checkPedingAmountByDemand(advertisementPermitDetail);
@@ -342,6 +361,18 @@ public class AgencyWiseCollectionService {
 
         return permitDetails;
 
+    }
+
+    private AgencyWiseCollectionSearch getAgencyWiseCollectionSearch(final List<AgencyWiseCollectionSearch> permitDetails,
+            AgencyWiseCollectionSearch agencyWiseCollectionSearchResult,
+            final AdvertisementPermitDetail advertisementPermitDetail) {
+        if (!permitDetails.contains(agencyWiseCollectionSearchResult))
+            agencyWiseCollectionSearchResult = new AgencyWiseCollectionSearch();
+        else
+            for (final AgencyWiseCollectionSearch result : permitDetails)
+                if (result.getAdvertisementPermitId().equals(advertisementPermitDetail.getId()))
+                    agencyWiseCollectionSearchResult = result;
+        return agencyWiseCollectionSearchResult;
     }
 
 }

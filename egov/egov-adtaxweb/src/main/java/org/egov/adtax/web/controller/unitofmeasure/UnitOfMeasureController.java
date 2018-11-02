@@ -45,7 +45,14 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.adtax.web.controller.unitOfMeasure;
+package org.egov.adtax.web.controller.unitofmeasure;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.util.List;
+
+import javax.validation.Valid;
 
 import org.egov.adtax.entity.UnitOfMeasure;
 import org.egov.adtax.service.UnitOfMeasureService;
@@ -58,12 +65,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.validation.Valid;
-import java.util.List;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("/unitOfMeasure")
@@ -85,16 +86,17 @@ public class UnitOfMeasureController {
     public List<UnitOfMeasure> getAllUnitOfMeasures() {
         return unitOfMeasureService.getAllUnitOfMeasure();
     }
-    
+
     @RequestMapping(value = "create", method = GET)
     public String create() {
         return "unitOfMeasure-form";
     }
-    
+
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public String search() {
         return "unitOfMeasure-search";
     }
+
     @RequestMapping(value = "create", method = POST)
     public String create(@Valid @ModelAttribute final UnitOfMeasure unitOfMeasure,
             final BindingResult errors, final RedirectAttributes redirectAttrs) {
@@ -103,12 +105,14 @@ public class UnitOfMeasureController {
         unitOfMeasureService.createUnitOfMeasure(unitOfMeasure);
         redirectAttrs.addFlashAttribute("unitOfMeasure", unitOfMeasure);
         redirectAttrs.addFlashAttribute("message", "message.uom.create");
-        return "redirect:/unitOfMeasure/success/" + unitOfMeasure.getId();
+        return new StringBuilder("redirect:/unitOfMeasure/success/").append(unitOfMeasure.getId()).toString();
     }
 
     @RequestMapping(value = "/success/{description}", method = GET)
-    public ModelAndView successView(@PathVariable("description") final Long description, @ModelAttribute final UnitOfMeasure unitOfMeasure) {
-        return new ModelAndView("unitOfMeasure/unitOfMeasure-success", "unitOfMeasure", unitOfMeasureService.getUnitOfMeasureById(description));
+    public ModelAndView successView(@PathVariable("description") final Long description,
+            @ModelAttribute final UnitOfMeasure unitOfMeasure) {
+        return new ModelAndView("unitOfMeasure/unitOfMeasure-success", "unitOfMeasure",
+                unitOfMeasureService.getUnitOfMeasureById(description));
 
     }
 

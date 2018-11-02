@@ -47,6 +47,8 @@
  */
 package org.egov.adtax.web.controller.tpbo;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
 import org.egov.adtax.entity.RevenueInspector;
 import org.egov.adtax.service.RevenueInspectorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,11 +61,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
 @Controller
 @RequestMapping(value = "/tpbo")
 public class UpdateTpboController {
+
     @Autowired
     private RevenueInspectorService revenueInspectorService;
 
@@ -77,7 +78,6 @@ public class UpdateTpboController {
             @ModelAttribute final RevenueInspector revenueInspector) {
         return new ModelAndView("tpbo-update", "revenueInspector",
                 revenueInspectorService.findById(id));
-         
     }
 
     @RequestMapping(value = "update", method = GET)
@@ -88,20 +88,19 @@ public class UpdateTpboController {
             redirectAttrs.addFlashAttribute("name", "msg.tpbo.name");
             return "tpbo-update";
         }
-        RevenueInspector existingTpboObject = new RevenueInspector();
-        existingTpboObject = revenueInspectorService.findById(id);
+        RevenueInspector existingTpboObject = revenueInspectorService.findById(id);
         existingTpboObject.setActive(revenueInspector.isActive());
         revenueInspectorService.update(existingTpboObject);
 
         redirectAttrs.addFlashAttribute("existingTpboObject", existingTpboObject);
         redirectAttrs.addFlashAttribute("message", "msg.tpbo.update");
 
-        return "redirect:/tpbo/success/" + id;
+        return new StringBuilder("redirect:/tpbo/success/").append(id).toString();
     }
 
     @RequestMapping(value = "/tpbo-update/{id}", method = GET)
-    public String Search(@PathVariable("id") final Long id, @ModelAttribute final RevenueInspector revenueInspector) {
-        return "redirect:/tpbo/success/" + id;
+    public String search(@PathVariable("id") final Long id, @ModelAttribute final RevenueInspector revenueInspector) {
+        return new StringBuilder("redirect:/tpbo/success/").append(id).toString();
     }
 
     @RequestMapping(value = "/success/{id}", method = GET)
@@ -109,7 +108,6 @@ public class UpdateTpboController {
             @ModelAttribute final RevenueInspector revenueInspector) {
         return new ModelAndView("tpbo/tpbo-searchSuccess", "revenueInspector",
                 revenueInspectorService.findById(id));
-
     }
 
 }

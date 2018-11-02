@@ -48,6 +48,15 @@
 
 package org.egov.adtax.web.controller.demand;
 
+import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.adtax.entity.AdvertisementBatchDemandGenerate;
 import org.egov.adtax.entity.AdvertisementDemandGenerationLog;
 import org.egov.adtax.entity.AdvertisementDemandGenerationLogDetail;
@@ -71,18 +80,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
 @Controller
 @RequestMapping("/advertisement")
 public class ViewAdTaxDemandGenerationStatusController {
-    
+
     private static final String DATA = "{\"data\":";
     private static final String DEMAND_STATUS_FORM = "demand-status-form";
 
@@ -94,9 +95,9 @@ public class ViewAdTaxDemandGenerationStatusController {
 
     @Autowired
     private AdTaxDemandGenerationLogService adTaxDemandGenerationLogService;
-    
+
     @Autowired
-    private AdvertisementBatchDemandGenService advertisementBatchDemandGenService ;
+    private AdvertisementBatchDemandGenService advertisementBatchDemandGenService;
 
     @ModelAttribute("financialYears")
     public List<Installment> financialyear() {
@@ -114,7 +115,7 @@ public class ViewAdTaxDemandGenerationStatusController {
     public String getDemandGenerationStatus(@ModelAttribute final AdvertisementDemandStatus advertisementDemandStatus,
             @RequestParam final String financialYear, final HttpServletRequest request) {
         final List<AdvertisementDemandStatus> resultList = new ArrayList<>();
-       
+
         if (financialYear != null) {
             final List<AdvertisementDemandGenerationLog> generationLogList = adTaxDemandGenerationLogService
                     .getDemandGenerationLogByInstallmentYear(financialYear);
@@ -140,7 +141,7 @@ public class ViewAdTaxDemandGenerationStatusController {
         return "adtax-demand-status-view";
     }
 
-    @RequestMapping(value = "/demand-status-records-view/",  produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/demand-status-records-view/", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String viewDemandStatus(@RequestParam("financialyear") final String financialyear, final Model model) {
         List<AdvertisementDemandStatus> resultList;
@@ -169,14 +170,13 @@ public class ViewAdTaxDemandGenerationStatusController {
                 .toString();
     }
 
-    
     @RequestMapping(value = "/demand-batch", method = POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String getDemandGeneration(@ModelAttribute final AdvertisementBatchStatusResponse advertisementBatchStatus,
             final HttpServletRequest request, @RequestParam final String financialYear, Model model) {
         final List<AdvertisementBatchStatusResponse> batchresultList = new ArrayList<>();
         final List<AdvertisementBatchDemandGenerate> batchList = advertisementBatchDemandGenService.findActiveBatchDemands();
-        if (batchList != null) {
+        if (batchList != null)
             for (final AdvertisementBatchDemandGenerate batch : batchList) {
 
                 AdvertisementBatchStatusResponse batchobj = new AdvertisementBatchStatusResponse();
@@ -186,15 +186,10 @@ public class ViewAdTaxDemandGenerationStatusController {
                 batchobj.setStatus("Demand Generation is scheduled and waiting for completion");
                 batchresultList.add(batchobj);
             }
-        }
         return new StringBuilder(DATA)
                 .append(toJSON(batchresultList, AdvertisementBatchStatusResponse.class, AdvertisementBatchStatusAdapter.class))
                 .append("}")
                 .toString();
     }
-
-
-  
-
 
 }

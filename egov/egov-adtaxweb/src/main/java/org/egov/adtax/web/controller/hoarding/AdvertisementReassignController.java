@@ -84,6 +84,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = "/reassignadvertisement/{applicationId}/{applicationType}")
 public class AdvertisementReassignController {
 
+    private static final String SUCCESSMESSAGE = "successMessage";
+
     @Autowired
     private AssignmentService assignmentService;
 
@@ -102,8 +104,6 @@ public class AdvertisementReassignController {
     @Autowired
     private PositionMasterService positionMasterService;
 
-    private static final String SUCCESSMESSAGE = "successMessage";
-
     @Autowired
     protected ResourceBundleMessageSource messageSource;
 
@@ -115,72 +115,78 @@ public class AdvertisementReassignController {
     public Long getLoggedInPositiontionId() {
         Position position = null;
         Long userId = ApplicationThreadLocals.getUserId();
-        if (userId != null && userId.intValue() != 0) {
+        if (userId != null && userId.intValue() != 0)
             position = positionMasterService.getPositionByUserId(userId);
-        }
-        return position.getId();
+        return position != null ? position.getId() : null;
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public String getReassign(@ModelAttribute("reassign") final AdvertisementReassignDetails reassignInfo, final Model model,
-            @PathVariable final String applicationType, @PathVariable final Long applicationId, final HttpServletRequest request) {
-
+            @PathVariable final String applicationType, @PathVariable final Long applicationId,
+            final HttpServletRequest request) {
         final String designationStr = advertisementWorkFlowService.getDesignationForCscOperatorWorkFlow();
         final String departmentStr = advertisementWorkFlowService.getDepartmentForCscOperatorWorkFlow();
         final String[] departments = departmentStr.split(",");
         final String[] designations = designationStr.split(",");
-        Department dept = null;
         Map<Long, String> employeeWithPosition = new HashMap<>();
 
-        for (String department : departments) {
-            dept = departmentService.getDepartmentByName(department);
-            for (String designationName : Arrays.asList(designations)) {
-                List<Designation> desig = designationService.getDesignationsByName(designationName);
-                for (Designation designation : desig) {
-                    List<Assignment> assignments = assignmentService.findAllAssignmentsByDeptDesigAndDates(dept.getId(),
-                            designation.getId(), new Date());
-                    if (!assignments.isEmpty()) {
-                        for (Assignment assignment : assignments) {
-                            if (assignment != null && assignment.getPosition() != null && !getLoggedInPositiontionId().equals(assignment.getPosition().getId())) 
-                                {
-                                    employeeWithPosition.put(assignment.getPosition().getId(),
-                                            assignment.getEmployee().getName().concat("/")
-                                                    .concat(assignment.getPosition().getName()));
-                                    model.addAttribute("assignments", employeeWithPosition);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        
-        if (employeeWithPosition.isEmpty()) {
+        populateAssignments(model, departments, designations, employeeWithPosition);
+
+        if (employeeWithPosition.isEmpty())
             model.addAttribute("message", messageSource.getMessage("notexists.position",
                     new String[] {}, null));
-        }
 
         reassignInfo.setApplicationId(applicationId);
         reassignInfo.setStateType(applicationType);
         return "advertisement-reassign";
     }
 
+    private void populateAssignments(final Model model, final String[] departments, final String[] designations,
+            Map<Long, String> employeeWithPosition) {
+        Department dept;
+        for (String department : departments) {
+            dept = departmentService.getDepartmentByName(department);
+            for (String designationName : Arrays.asList(designations)) {
+                List<Designation> desig = designationService.getDesignationsByName(designationName);
+                for (Designation designation : desig)
+                    getAssignments(model, employeeWithPosition, dept, designation);
+            }
+        }
+    }
+
+    private void getAssignments(final Model model, Map<Long, String> employeeWithPosition, Department dept,
+            Designation designation) {
+        List<Assignment> assignments = assignmentService.findAllAssignmentsByDeptDesigAndDates(dept.getId(),
+                designation.getId(), new Date());
+        if (!assignments.isEmpty())
+            for (Assignment assignment : assignments)
+                if (assignment != null && assignment.getPosition() != null
+                        && !getLoggedInPositiontionId().equals(assignment.getPosition().getId())) {
+                    employeeWithPosition.put(assignment.getPosition().getId(),
+                            assignment.getEmployee().getName().concat("/")
+                                    .concat(assignment.getPosition().getName()));
+                    model.addAttribute("assignments", employeeWithPosition);
+                }
+    }
+
     @RequestMapping(method = RequestMethod.POST)
     public String update(@ModelAttribute("reassign") final AdvertisementReassignDetails reassignInfo, final Model model,
             @Valid final BindingResult errors, final HttpServletRequest request) {
-        String successMessage;
+        StringBuilder successMessage = new StringBuilder();
         Long positionId = Long.valueOf(request.getParameter("approvalPosition"));
         Position position = positionMasterService.getPositionById(positionId);
         Assignment assignment = assignmentService.getAssignmentsForPosition(positionId).get(0);
         String appNo = reassignAdvertisementService.getStateObject(reassignInfo, position);
 
         if (StringUtils.isNotEmpty(appNo)) {
-            successMessage = "Avertisement Tax application with application number : " + appNo + " successfully re-assigned to "
-                    + assignment.getEmployee().getName() + "~" + assignment.getDesignation().getName() + ":"
-                    + assignment.getDepartment().getCode();
+            successMessage.append("Avertisement Tax application with application number : ").append(appNo)
+                    .append(" successfully re-assigned to ")
+                    .append(assignment.getEmployee().getName()).append("~").append(assignment.getDesignation().getName())
+                    .append(":")
+                    .append(assignment.getDepartment().getCode());
             model.addAttribute(SUCCESSMESSAGE, successMessage);
-        } else {
+        } else
             model.addAttribute(SUCCESSMESSAGE, "Reassign Failed!");
-        }
         return "reassign-success";
     }
 

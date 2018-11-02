@@ -80,15 +80,16 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/advertisement")
 public class AdvertisementRenewalController extends HoardingControllerSupport {
-	
+
     private static final String APPROVAL_POSITION = "approvalPosition";
     private static final String RENEWAL_NEWFORM = "renewal-newform";
     private static final String MESSAGE = "message";
     private static final String RENEWAL_ERROR = "renewal-error";
+
     @Autowired
     @Qualifier("messageSource")
     private MessageSource messageSource;
-    
+
     @Autowired
     private SecurityUtils securityUtils;
 
@@ -99,7 +100,7 @@ public class AdvertisementRenewalController extends HoardingControllerSupport {
     public String renewForm(@PathVariable final String id, final Model model,
             @ModelAttribute final AdvertisementPermitDetail renewalPermitDetail) {
         final AdvertisementPermitDetail parentPermitDetail = advertisementPermitDetailService.findBy(Long.valueOf(id));
-        
+
         if (parentPermitDetail != null && parentPermitDetail.getAdvertisement() != null
                 && parentPermitDetail.getAdvertisement().getDemandId() != null
                 && !advertisementDemandService.checkAnyTaxPendingForSelectedFinancialYear(parentPermitDetail.getAdvertisement(),
@@ -107,15 +108,19 @@ public class AdvertisementRenewalController extends HoardingControllerSupport {
             model.addAttribute(MESSAGE, "msg.renewal.taxNotPending");
             return RENEWAL_ERROR;
         }
-        if (parentPermitDetail!=null && parentPermitDetail.getAdvertisement() != null && parentPermitDetail.getAdvertisement().getStatus()!=null && parentPermitDetail.getAdvertisement().getStatus().equals(AdvertisementStatus.WORKFLOW_IN_PROGRESS)) {
-             model.addAttribute(MESSAGE, "msg.renewal.alreadyInWorkFlow");
-                return RENEWAL_ERROR;
-           
+        if (parentPermitDetail != null && parentPermitDetail.getAdvertisement() != null
+                && parentPermitDetail.getAdvertisement().getStatus() != null
+                && parentPermitDetail.getAdvertisement().getStatus().equals(AdvertisementStatus.WORKFLOW_IN_PROGRESS)) {
+            model.addAttribute(MESSAGE, "msg.renewal.alreadyInWorkFlow");
+            return RENEWAL_ERROR;
+
         }
-        //If curernt status of permit is approved, then payment is pending for the selected record.
-        if(parentPermitDetail!=null && parentPermitDetail.getAdvertisement() != null && parentPermitDetail.getAdvertisement().getStatus()!=null && parentPermitDetail.getAdvertisement().getStatus().equals(AdvertisementStatus.ACTIVE)  &&
-                parentPermitDetail.getStatus()!=null && parentPermitDetail.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED))
-        {
+        // If curernt status of permit is approved, then payment is pending for the selected record.
+        if (parentPermitDetail != null && parentPermitDetail.getAdvertisement() != null
+                && parentPermitDetail.getAdvertisement().getStatus() != null
+                && parentPermitDetail.getAdvertisement().getStatus().equals(AdvertisementStatus.ACTIVE) &&
+                parentPermitDetail.getStatus() != null && parentPermitDetail.getStatus().getCode()
+                        .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED)) {
             model.addAttribute(MESSAGE, "msg.renewal.paymentPending");
             return RENEWAL_ERROR;
         }
@@ -171,10 +176,11 @@ public class AdvertisementRenewalController extends HoardingControllerSupport {
             final BindingResult resultBinder, final RedirectAttributes redirAttrib, final HttpServletRequest request,
             final Model model,
             @RequestParam String workFlowAction, @PathVariable final String id) {
-        
-        Boolean isEmployee =  !ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()) &&  advertisementWorkFlowService.isEmployee(securityUtils.getCurrentUser());
+
+        Boolean isEmployee = !ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())
+                && advertisementWorkFlowService.isEmployee(securityUtils.getCurrentUser());
         validateAssignmentForCscUser(renewalPermitDetail, isEmployee, resultBinder);
-        
+
         validateHoardingDocsOnUpdate(renewalPermitDetail, resultBinder, redirAttrib);
         if (renewalPermitDetail.getState() == null)
             renewalPermitDetail.setStatus(advertisementPermitDetailService
@@ -195,14 +201,14 @@ public class AdvertisementRenewalController extends HoardingControllerSupport {
             updateHoardingDocuments(renewalPermitDetail);
             Long approvalPosition = 0l;
             String approvalComment = "";
-            String approverName = "";
+            StringBuilder approverName = new StringBuilder();
             String nextDesignation = "";
 
             if (!isEmployee) {
                 Assignment assignment = advertisementWorkFlowService.getMappedAssignmentForCscOperator(renewalPermitDetail);
                 if (assignment != null) {
                     approvalPosition = assignment.getPosition().getId();
-                    approverName = assignment.getEmployee().getName();
+                    approverName = new StringBuilder(assignment.getEmployee().getName());
                     nextDesignation = assignment.getDesignation().getName();
                 }
             }
@@ -210,7 +216,7 @@ public class AdvertisementRenewalController extends HoardingControllerSupport {
             if (request.getParameter("approvalComent") != null)
                 approvalComment = request.getParameter("approvalComent");
             if (request.getParameter("approverName") != null)
-                approverName = request.getParameter("approverName");
+                approverName = new StringBuilder(request.getParameter("approverName"));
             if (request.getParameter("nextDesignation") != null)
                 nextDesignation = request.getParameter("nextDesignation");
             if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
@@ -219,7 +225,9 @@ public class AdvertisementRenewalController extends HoardingControllerSupport {
                     approvalComment, AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE, workFlowAction);
             redirAttrib.addFlashAttribute("advertisementPermitDetail", renewalPermitDetail);
             String message = messageSource.getMessage("msg.success.forward",
-                    new String[] { approverName.concat("~").concat(nextDesignation), renewalPermitDetail.getApplicationNumber() }, null);
+                    new String[] { approverName.append("~").append(nextDesignation).toString(),
+                            renewalPermitDetail.getApplicationNumber() },
+                    null);
             redirAttrib.addFlashAttribute(MESSAGE, message);
             return "redirect:/hoarding/success/" + renewalPermitDetail.getId();
         } catch (final HoardingValidationError e) {
@@ -227,14 +235,14 @@ public class AdvertisementRenewalController extends HoardingControllerSupport {
             return RENEWAL_NEWFORM;
         }
     }
-    
+
     public void validateAssignmentForCscUser(final AdvertisementPermitDetail renewalPermitDetail, Boolean isEmployee,
             final BindingResult errors) {
         if (!isEmployee && renewalPermitDetail != null) {
             final Assignment assignment = advertisementWorkFlowService.isCscOperator(securityUtils.getCurrentUser())
                     ? advertisementWorkFlowService.getAssignmentByDeptDesigElecWard(renewalPermitDetail)
                     : null;
-            if (assignment == null && advertisementWorkFlowService.getUserPositionByZone(renewalPermitDetail) == null)
+            if (assignment == null && advertisementWorkFlowService.getUserPositionByZone() == null)
                 errors.reject("notexists.position", "notexists.position");
         }
     }

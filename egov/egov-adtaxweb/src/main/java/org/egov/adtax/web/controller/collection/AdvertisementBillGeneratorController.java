@@ -48,6 +48,13 @@
 
 package org.egov.adtax.web.controller.collection;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.List;
+
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.AgencyWiseCollection;
@@ -70,16 +77,25 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.List;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
 @Controller
 @RequestMapping(value = "/hoarding")
 public class AdvertisementBillGeneratorController {
+
+    private static final String STR_COLLECT_ADVTAX_REDIRECTION = "collectAdvtax-redirection";
+
+    private static final String STR_COLLECTXML = "collectxml";
+
+    private static final String STR_S_06D = "%s%06d";
+
+    private static final String STR_AGENCY_WISE_COLLECTION_SEARCH = "agencyWiseCollectionSearch";
+
+    private static final String STR_AGENCY_WISE_TAX_COLLECT = "agencyWiseTaxCollect";
+
+    private static final String STR_COLLECT_ADVTAX_ERROR = "collectAdvtax-error";
+
+    private static final String STR_MSG_COLLECTION_NO_PENDING_TAX = "msg.collection.noPendingTax";
+
+    private static final String STR_MESSAGE = "message";
 
     private static final String ADVERTISEMENT_BILLNUMBER = "SEQ_advertisementbill_NUMBER";
 
@@ -110,96 +126,50 @@ public class AdvertisementBillGeneratorController {
     @Autowired
     private AdvertisementPermitDetailService advertisementPermitDetailService;
 
-
- /*
-    @RequestMapping(value = "/collectTaxByAgency/{agencyName}/{hoardingIds}/{total}", method = GET)
-    public String collectFeeByAgency(final Model model, @PathVariable final String hoardingIds,
-            @PathVariable final String agencyName, @PathVariable final BigDecimal total) {
-
-        if (hoardingIds != null && agencyName != null && total != null && total.compareTo(BigDecimal.ZERO) > 0) {
-
-            final String hoardingList[] = hoardingIds.split("~");
-            if (hoardingList != null && hoardingList.length > 0 && hoardingList[0] != null && hoardingList[0] != "") {
-
-                // From List of Hoardings, Saved demand details in Agencywise
-                // collection table and send billable object.
-                // Iterate hordingids, get demand pending,penalty amount and
-                // build agencywisecollection detail object.
-                final Serializable referenceNumber = sequenceNumberGenerator.getNextSequence(ADVERTISEMENT_BILLNUMBER);
-
-                final AgencyWiseCollection agencyWiseCollection = agencyWiseCollectionService
-                        .buildAgencyWiseObjectByHoardings(hoardingList);
-
-                agencyWiseCollection.setAgency(agencyService.findByName(agencyName));
-                agencyWiseCollection.setBillNumber(AdvertisementTaxConstants.SERVICE_CODE.concat(String.format(
-                        "%s%06d", "", referenceNumber)));
-                agencyWiseCollectionService.createAgencyWiseCollection(agencyWiseCollection);
-
-                agencyWiseBillable.setReferenceNumber(AdvertisementTaxConstants.SERVICE_CODE.concat(String.format(
-                        "%s%06d", "", referenceNumber)));
-                agencyWiseBillable.setAgencyWiseCollection(agencyWiseCollection);
-                model.addAttribute("collectxml", agencyWiseBillServiceImpl.getBillXML(agencyWiseBillable));
-
-                return "collectAdvtax-redirection";
-            } else {
-
-                model.addAttribute("message", "msg.collection.noPendingTax");
-                return "collectAdvtax-error";
-            }
-        } else {
-            model.addAttribute("message", "msg.collection.noPendingTax");
-            return "collectAdvtax-error";
-        }
-        // return "collectAdvtax-error";
-    }*/
-    
     @RequestMapping(value = "/collectTaxByAgency", method = POST)
-    public String collectFeeByAgencytest(final Model model,  final String hoardingIds,final String agencyName, final BigDecimal total) {
+    public String collectFeeByAgencytest(final Model model, final String hoardingIds, final String agencyName,
+            final BigDecimal total) {
 
         if (hoardingIds != null && agencyName != null) {
-            final String hoardingList[] = hoardingIds.split("~");
+            final String[] hoardingList = hoardingIds.split("~");
             if (hoardingList != null && hoardingList.length > 0 && hoardingList[0] != null && hoardingList[0] != "") {
-         
-              List<AgencyWiseCollectionSearch> agencyWiseCollectionList= agencyWiseCollectionService.buildAgencyWiseCollectionSearch(hoardingList);
-             
-                if (agencyWiseCollectionList != null && agencyWiseCollectionList.size() > 0) {
 
+                List<AgencyWiseCollectionSearch> agencyWiseCollectionList = agencyWiseCollectionService
+                        .buildAgencyWiseCollectionSearch(hoardingList);
+
+                if (agencyWiseCollectionList != null && !agencyWiseCollectionList.isEmpty()) {
                     AgencyWiseCollectionSearch agencyWiseCollectionSearch = new AgencyWiseCollectionSearch();
                     agencyWiseCollectionSearch.setAgencyName(agencyName);
                     agencyWiseCollectionSearch.setAgencyWiseCollectionList(agencyWiseCollectionList);
-                    model.addAttribute("agencyWiseCollectionSearch", agencyWiseCollectionSearch);
-                    return "agencyWiseTaxCollect";
-                }else
-                {
-                    model.addAttribute("message", "msg.collection.noPendingTax");
-                    return "collectAdvtax-error";
+                    model.addAttribute(STR_AGENCY_WISE_COLLECTION_SEARCH, agencyWiseCollectionSearch);
+                    return STR_AGENCY_WISE_TAX_COLLECT;
+                } else {
+                    model.addAttribute(STR_MESSAGE, STR_MSG_COLLECTION_NO_PENDING_TAX);
+                    return STR_COLLECT_ADVTAX_ERROR;
                 }
-                
+
             } else {
 
-                model.addAttribute("message", "msg.collection.noPendingTax");
-                return "collectAdvtax-error";
+                model.addAttribute(STR_MESSAGE, STR_MSG_COLLECTION_NO_PENDING_TAX);
+                return STR_COLLECT_ADVTAX_ERROR;
             }
         } else {
-            model.addAttribute("message", "msg.collection.noPendingTax");
-            return "collectAdvtax-error";
+            model.addAttribute(STR_MESSAGE, STR_MSG_COLLECTION_NO_PENDING_TAX);
+            return STR_COLLECT_ADVTAX_ERROR;
         }
-        // return "collectAdvtax-error";
     }
 
-
-    @RequestMapping(value = "/collectTaxByAgency/{agencyName}", method = POST) 
+    @RequestMapping(value = "/collectTaxByAgency/{agencyName}", method = POST)
     public String successView(@PathVariable("agencyName") final String agencyName,
-            final Model model,  @ModelAttribute  AgencyWiseCollectionSearch agencyWiseCollectionSearch) {
-        StringBuffer hoardings = new StringBuffer();
-     
+            final Model model, @ModelAttribute AgencyWiseCollectionSearch agencyWiseCollectionSearch) {
+        StringBuilder hoardings = new StringBuilder();
+
         if (agencyWiseCollectionSearch != null && agencyWiseCollectionSearch.getAgencyWiseCollectionList() != null
-                && agencyWiseCollectionSearch.getAgencyWiseCollectionList().size() > 0) {
-            for (AgencyWiseCollectionSearch searchResult : agencyWiseCollectionSearch.getAgencyWiseCollectionList()) {
-                if(searchResult.isSelectedForCollection())
-                hoardings.append(searchResult.getAdvertisementPermitId()).append("~");
-            }
-            final String hoardingList[] = hoardings.toString().split("~");
+                && !agencyWiseCollectionSearch.getAgencyWiseCollectionList().isEmpty()) {
+            for (AgencyWiseCollectionSearch searchResult : agencyWiseCollectionSearch.getAgencyWiseCollectionList())
+                if (searchResult.isSelectedForCollection())
+                    hoardings.append(searchResult.getAdvertisementPermitId()).append("~");
+            final String[] hoardingList = hoardings.toString().split("~");
             if (hoardingList != null && hoardingList.length > 0 && hoardingList[0] != null && hoardingList[0] != "") {
 
                 // From List of Hoardings, Saved demand details in Agencywise
@@ -213,34 +183,34 @@ public class AdvertisementBillGeneratorController {
 
                 agencyWiseCollection.setAgency(agencyService.findByName(agencyName));
                 agencyWiseCollection.setBillNumber(AdvertisementTaxConstants.SERVICE_CODE.concat(String.format(
-                        "%s%06d", "", referenceNumber)));
+                        STR_S_06D, "", referenceNumber)));
                 agencyWiseCollectionService.createAgencyWiseCollection(agencyWiseCollection);
 
                 agencyWiseBillable.setReferenceNumber(AdvertisementTaxConstants.SERVICE_CODE.concat(String.format(
-                        "%s%06d", "", referenceNumber)));
+                        STR_S_06D, "", referenceNumber)));
                 agencyWiseBillable.setAgencyWiseCollection(agencyWiseCollection);
-                model.addAttribute("collectxml", agencyWiseBillServiceImpl.getBillXML(agencyWiseBillable));
+                model.addAttribute(STR_COLLECTXML, agencyWiseBillServiceImpl.getBillXML(agencyWiseBillable));
 
-                return "collectAdvtax-redirection";
+                return STR_COLLECT_ADVTAX_REDIRECTION;
             }
         } else {
-            model.addAttribute("message", "msg.collection.noPendingTax");
-            return "collectAdvtax-error";
+            model.addAttribute(STR_MESSAGE, STR_MSG_COLLECTION_NO_PENDING_TAX);
+            return STR_COLLECT_ADVTAX_ERROR;
         }
-        return "collectAdvtax-redirection";
+        return STR_COLLECT_ADVTAX_REDIRECTION;
     }
-    
+
     @RequestMapping(value = "/getPendingTaxByAgency/{agencyName}", method = GET)
-    public String getAgencyWiseDetail(final Model model, 
+    public String getAgencyWiseDetail(final Model model,
             @PathVariable final String agencyName) {
 
-        if (agencyName != null) {
+        if (agencyName != null)
             model.addAttribute("agency", agencyService.findByName(agencyName));
-        }
-        
+
         return null;
-        
+
     }
+
     @RequestMapping(value = "/generatebill/{collectionType}/{id}", method = GET)
     public String showCollectFeeForm(final Model model, @PathVariable final String collectionType,
             @PathVariable final String id) {
@@ -249,36 +219,38 @@ public class AdvertisementBillGeneratorController {
         if (advertisementPermitDetail != null) {
             Advertisement advertisement = advertisementPermitDetail.getAdvertisement();
 
-            // final Advertisement advertisement = advertisementService.findBy(Long.valueOf(hoardingCode));
             if (advertisement != null && advertisement.getDemandId() != null) {
                 // CHECK ANY DEMAND PENDING OR NOT
                 if (!advertisementDemandService.checkAnyTaxIsPendingToCollect(advertisement)) {
-                    model.addAttribute("message", "msg.collection.noPendingTax");
-                    return "collectAdvtax-error";
+                    model.addAttribute(STR_MESSAGE, STR_MSG_COLLECTION_NO_PENDING_TAX);
+                    return STR_COLLECT_ADVTAX_ERROR;
                 }
 
-                advertisementBillable.setCollectionType(AdvertisementTaxConstants.ADVERTISEMENT_COLLECTION_TYPE);
+                setCollectionType(collectionType);
 
-                if (collectionType != null && !"".equals(collectionType)) {
-                    if (collectionType.equalsIgnoreCase("hoarding"))
-                        advertisementBillable.setCollectionType(AdvertisementTaxConstants.ADVERTISEMENT_COLLECTION_TYPE);
-                    else
-                        advertisementBillable.setCollectionType(collectionType);
-
-                }
                 advertisementBillable.setAdvertisement(advertisement);
 
                 advertisementBillable.setReferenceNumber(AdvertisementTaxConstants.SERVICE_CODE.concat(String.format(
-                        "%s%06d", "", databaseSequenceProvider.getNextSequence(ADVERTISEMENT_BILLNUMBER))));
-                model.addAttribute("collectxml", advertisementBillServiceImpl.getBillXML(advertisementBillable));
-                return "collectAdvtax-redirection";
+                        STR_S_06D, "", databaseSequenceProvider.getNextSequence(ADVERTISEMENT_BILLNUMBER))));
+                model.addAttribute(STR_COLLECTXML, advertisementBillServiceImpl.getBillXML(advertisementBillable));
+                return STR_COLLECT_ADVTAX_REDIRECTION;
             } else {
-                model.addAttribute("message", "msg.collection.noPendingTax");
-                return "collectAdvtax-error";
+                model.addAttribute(STR_MESSAGE, STR_MSG_COLLECTION_NO_PENDING_TAX);
+                return STR_COLLECT_ADVTAX_ERROR;
             }
         }
-        model.addAttribute("message", "msg.invalied.request");
-         return "collectAdvtax-error";
+        model.addAttribute(STR_MESSAGE, "msg.invalied.request");
+        return STR_COLLECT_ADVTAX_ERROR;
+    }
+
+    private void setCollectionType(final String collectionType) {
+        advertisementBillable.setCollectionType(AdvertisementTaxConstants.ADVERTISEMENT_COLLECTION_TYPE);
+
+        if (collectionType != null && !"".equals(collectionType))
+            if (collectionType.equalsIgnoreCase("hoarding"))
+                advertisementBillable.setCollectionType(AdvertisementTaxConstants.ADVERTISEMENT_COLLECTION_TYPE);
+            else
+                advertisementBillable.setCollectionType(collectionType);
     }
 
     @RequestMapping(value = "/generatebill/{id}", method = POST)
@@ -286,17 +258,15 @@ public class AdvertisementBillGeneratorController {
             final RedirectAttributes redirectAttributes, @PathVariable final String id, final Model model) {
 
         AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.findById(Long.valueOf(id));
-        if(advertisementPermitDetail!=null)
-              advertisement = advertisementPermitDetail.getAdvertisement();
-        //advertisement = advertisementService.findByAdvertisementNumber(hoardingCode);
-        
-        
+        if (advertisementPermitDetail != null)
+            advertisement = advertisementPermitDetail.getAdvertisement();
+
         advertisementBillable.setCollectionType(AdvertisementTaxConstants.ADVERTISEMENT_COLLECTION_TYPE);
-        if (advertisementBillable != null && collectionType!=null)
+        if (collectionType != null)
             advertisementBillable.setCollectionType(collectionType);
-            
+
         advertisementBillable.setAdvertisement(advertisement);
-        model.addAttribute("collectxml", advertisementBillServiceImpl.getBillXML(advertisementBillable));
+        model.addAttribute(STR_COLLECTXML, advertisementBillServiceImpl.getBillXML(advertisementBillable));
 
         return "collecttax-redirection";
     }

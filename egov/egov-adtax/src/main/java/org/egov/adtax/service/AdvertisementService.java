@@ -68,7 +68,6 @@ import org.egov.demand.model.EgDemand;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.utils.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -78,7 +77,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
 
 @Service
 @Transactional(readOnly = true)
@@ -111,7 +109,6 @@ public class AdvertisementService {
     public Advertisement createAdvertisement(final Advertisement hoarding) {
         if (hoarding != null && hoarding.getId() == null)
             hoarding.setDemandId(advertisementDemandService.createDemand(hoarding));
-        roundOfAllTaxAmount(hoarding);
         return advertisementRepository.save(hoarding);
     }
 
@@ -119,15 +116,6 @@ public class AdvertisementService {
 
         return advertisementRepository.saveAndFlush(advertisement);
     }
-
-    private void roundOfAllTaxAmount(final Advertisement hoarding) {
-        /*
-         * if(hoarding.getCurrentEncroachmentFee()!=null)
-         * hoarding.setCurrentEncroachmentFee(hoarding.getCurrentEncroachmentFee().setScale(2, BigDecimal.ROUND_HALF_UP));
-         * if(hoarding.getCurrentTaxAmount()!=null) hoarding.setCurrentTaxAmount( hoarding.getCurrentTaxAmount().setScale(2,
-         * BigDecimal.ROUND_HALF_UP)); if(hoarding.getPendingTax()!=null) hoarding.setPendingTax(
-         * hoarding.getPendingTax().setScale(2, BigDecimal.ROUND_HALF_UP));
-         */ }
 
     public List<Object[]> searchBySearchType(final Advertisement hoarding, final String searchType) {
         return advertisementRepository.fetchAdvertisementBySearchType(hoarding, searchType);
@@ -169,13 +157,12 @@ public class AdvertisementService {
         reportParams.put("cityname", cityName);
         reportParams.put("wardName", permitDetail.getAdvertisement().getElectionWard().getName());
         if (permitDetail.getAgency() != null && permitDetail.getAgency().getName() != null
-                && permitDetail.getAdvertiser() != null) {
+                && permitDetail.getAdvertiser() != null)
             applicantName = permitDetail.getAgency().getName().concat(" / ").concat(permitDetail.getOwnerDetail());
-        } else if (permitDetail.getOwnerDetail() == null) {
+        else if (permitDetail.getOwnerDetail() == null)
             applicantName = permitDetail.getAgency().getName();
-        } else {
+        else
             applicantName = permitDetail.getOwnerDetail();
-        }
         reportParams.put("applicantName", applicantName);
         reportParams.put("acknowledgementNo", permitDetail.getApplicationNumber());
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -203,9 +190,9 @@ public class AdvertisementService {
         String slaRenewAdvertisement = advertisementMessageSource.getMessage("msg.renewAdvertisement.sla",
                 new String[] {}, Locale.getDefault());
         if (permitDetail.getPreviousapplicationid() == null)
-            dueDate = DateUtils.addDays(currentDate, Integer.parseInt(slaNewAdvertisement));
+            dueDate = org.apache.commons.lang3.time.DateUtils.addDays(currentDate, Integer.parseInt(slaNewAdvertisement));
         else
-            dueDate = DateUtils.addDays(currentDate, Integer.parseInt(slaRenewAdvertisement));
+            dueDate = org.apache.commons.lang3.time.DateUtils.addDays(currentDate, Integer.parseInt(slaRenewAdvertisement));
         return dueDate;
 
     }

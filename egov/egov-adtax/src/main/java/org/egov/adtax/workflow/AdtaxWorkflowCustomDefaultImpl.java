@@ -56,10 +56,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public class AdtaxWorkflowCustomDefaultImpl extends AdtaxWorkflowCustomImpl {
 
-    public AdtaxWorkflowCustomDefaultImpl() {
-
-    }
-
     @Override
     @Transactional
     public void createCommonWorkflowTransition(AdvertisementPermitDetail advertisementPermitDetail,

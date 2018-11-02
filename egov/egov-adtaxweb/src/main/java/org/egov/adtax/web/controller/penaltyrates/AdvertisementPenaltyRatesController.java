@@ -45,70 +45,53 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.adtax.web.controller.ratesClass;
 
-import org.egov.adtax.entity.RatesClass;
-import org.egov.adtax.service.RatesClassService;
+package org.egov.adtax.web.controller.penaltyrates;
+
+import java.util.List;
+
+import org.egov.adtax.entity.AdvertisementPenaltyRates;
+import org.egov.adtax.search.contract.HoardingPenaltyRates;
+import org.egov.adtax.service.AdvertisementPenaltyRatesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
 @Controller
-@RequestMapping("/ratesclass")
-public class UpdateRateClassController {
-
-
-    private final RatesClassService rateClassService;
+@RequestMapping(value = "penalty")
+public class AdvertisementPenaltyRatesController {
 
     @Autowired
-    public UpdateRateClassController(final RatesClassService rateClassService) {
-        this.rateClassService = rateClassService;
+    private AdvertisementPenaltyRatesService penaltyRatesService;
+
+    @RequestMapping(value = "/change")
+    public String changePenaltyRates(@ModelAttribute HoardingPenaltyRates hoardingPenaltyRates, final Model model) {
+        hoardingPenaltyRates.setAdvtPenaltyRatesList(penaltyRatesService.findPenaltyRatesInAscendingOrder());
+        return "penaltyRates-change";
     }
 
-    @ModelAttribute
-    public RatesClass ratesClassModel(@PathVariable final Long id, final Model model) {
-        return rateClassService.getRateClassById(id);
-    }
-    
-    @RequestMapping(value = "/update/{id}", method = POST) 
-    public String update(@Valid @ModelAttribute final RatesClass rateClass, final BindingResult errors,
-            final RedirectAttributes redirectAttrs) {
-        if (errors.hasErrors())
-            return "ratesClass-form";
-        rateClassService.updateRateClass(rateClass);
-        redirectAttrs.addFlashAttribute("rateClass", rateClass);
-        redirectAttrs.addFlashAttribute("message", "message.ratesClass.update"); 
-        return "redirect:/ratesclass/success/" + rateClass.getId();
-    }
-    
-    
-    @RequestMapping(value = "/updateRatesClass/{id}", method = GET)
-    public String update(@PathVariable final Long id) {
-        return "redirect:/ratesclass/update/" + id;
-    }
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    public String createPenaltyRates(@ModelAttribute HoardingPenaltyRates hoardingPenaltyRates,
+            final RedirectAttributes redirectAttributes, @RequestParam final Long id) {
+        List<AdvertisementPenaltyRates> rateList = penaltyRatesService.findPenaltyRatesInAscendingOrder();
 
-    
-    @RequestMapping(value = "/update/{id}", method = GET)
-    public ModelAndView updateView(@PathVariable("id") final Long id, @ModelAttribute final RatesClass ratesclass) {
-         return new ModelAndView("ratesClass/ratesClass-form", "ratesClass", rateClassService.getRateClassById(id));
+        if (hoardingPenaltyRates != null) {
 
-    }
+            for (AdvertisementPenaltyRates advtPenaltyRates : hoardingPenaltyRates.getAdvtPenaltyRatesList()) {
+                penaltyRatesService.createPenaltyRates(advtPenaltyRates);
+            }
 
-    @RequestMapping(value = "/view/{id}", method = GET)
-    public String view(@ModelAttribute final RatesClass rateClass, final BindingResult errors) {
-        if (errors.hasErrors())
-            return "ratesClass-search";
-        return "redirect:/ratesclass/success/" + rateClass.getId();
+            for (AdvertisementPenaltyRates rate : rateList) {
+                if (!hoardingPenaltyRates.getAdvtPenaltyRatesList().contains(rate)) {
+                    penaltyRatesService.delete(rate);
+                }
+            }
+        }
+        return "penaltyRate-success";
     }
 }

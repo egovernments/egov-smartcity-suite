@@ -45,10 +45,10 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.adtax.web.controller.unitOfMeasure;
+package org.egov.adtax.web.controller.ratesclass;
 
-import org.egov.adtax.entity.UnitOfMeasure;
-import org.egov.adtax.service.UnitOfMeasureService;
+import org.egov.adtax.entity.RatesClass;
+import org.egov.adtax.service.RatesClassService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -65,50 +65,47 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
-@RequestMapping("/unitOfMeasure")
-public class UpdateUnitOfMeasureController {
+@RequestMapping("/ratesclass")
+public class UpdateRateClassController {
 
-
-    private final UnitOfMeasureService unitOfMeasureService;
+    private final RatesClassService rateClassService;
 
     @Autowired
-    public UpdateUnitOfMeasureController(final UnitOfMeasureService unitOfMeasureService) {
-        this.unitOfMeasureService = unitOfMeasureService;
+    public UpdateRateClassController(final RatesClassService rateClassService) {
+        this.rateClassService = rateClassService;
     }
 
     @ModelAttribute
-    public UnitOfMeasure unitOfMeasureModel(@PathVariable final Long id, final Model model) {
-        return unitOfMeasureService.getUnitOfMeasureById(id);
-    }
-    
-    @RequestMapping(value = "/update/{id}", method = POST) 
-    public String update(@Valid @ModelAttribute final UnitOfMeasure unitOfMeasure, final BindingResult errors,
-            final RedirectAttributes redirectAttrs) {
-        if (errors.hasErrors())
-            return "unitOfMeasure-form";
-        unitOfMeasureService.updateUnitOfMeasure(unitOfMeasure);
-        redirectAttrs.addFlashAttribute("unitOfMeasure", unitOfMeasure);
-        redirectAttrs.addFlashAttribute("message", "message.uom.update"); 
-        return "redirect:/unitOfMeasure/success/" + unitOfMeasure.getId();
-    }
-    
-    
-    @RequestMapping(value = "/updateUnitOfMeasure/{id}", method = GET)
-    public String update(@PathVariable final Long id) {
-        return "redirect:/unitOfMeasure/update/" + id;
+    public RatesClass ratesClassModel(@PathVariable final Long id, final Model model) {
+        return rateClassService.getRateClassById(id);
     }
 
-    
+    @RequestMapping(value = "/update/{id}", method = POST)
+    public String update(@Valid @ModelAttribute final RatesClass rateClass, final BindingResult errors,
+            final RedirectAttributes redirectAttrs) {
+        if (errors.hasErrors())
+            return "ratesClass-form";
+        rateClassService.updateRateClass(rateClass);
+        redirectAttrs.addFlashAttribute("rateClass", rateClass);
+        redirectAttrs.addFlashAttribute("message", "message.ratesClass.update");
+        return new StringBuilder("redirect:/ratesclass/success/").append(rateClass.getId()).toString();
+    }
+
+    @RequestMapping(value = "/updateRatesClass/{id}", method = GET)
+    public String update(@PathVariable final Long id) {
+        return new StringBuilder("redirect:/ratesclass/update/").append(id).toString();
+    }
+
     @RequestMapping(value = "/update/{id}", method = GET)
-    public ModelAndView updateView(@PathVariable("id") final Long id, @ModelAttribute final UnitOfMeasure unitOfMeasure) {
-         return new ModelAndView("unitOfMeasure/unitOfMeasure-form", "unitOfMeasure", unitOfMeasureService.getUnitOfMeasureById(id));
+    public ModelAndView updateView(@PathVariable("id") final Long id, @ModelAttribute final RatesClass ratesclass) {
+        return new ModelAndView("ratesClass/ratesClass-form", "ratesClass", rateClassService.getRateClassById(id));
 
     }
 
     @RequestMapping(value = "/view/{id}", method = GET)
-    public String view(@ModelAttribute final UnitOfMeasure unitOfMeasure, final BindingResult errors) {
+    public String view(@ModelAttribute final RatesClass rateClass, final BindingResult errors) {
         if (errors.hasErrors())
-            return "unitOfMeasure-search";
-        return "redirect:/unitOfMeasure/success/" + unitOfMeasure.getId();
+            return "ratesClass-search";
+        return new StringBuilder("redirect:/ratesclass/success/").append(rateClass.getId()).toString();
     }
 }

@@ -47,19 +47,6 @@
  */
 package org.egov.adtax.web.controller.agency;
 
-import org.egov.adtax.entity.Agency;
-import org.egov.adtax.entity.enums.AgencyStatus;
-import org.egov.adtax.service.AgencyService;
-import org.egov.adtax.web.controller.AbstractContextControllerTest;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.security.utils.SecurityUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.springframework.test.web.servlet.MockMvc;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -74,6 +61,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import org.egov.adtax.entity.Agency;
+import org.egov.adtax.entity.enums.AgencyStatus;
+import org.egov.adtax.service.AgencyService;
+import org.egov.adtax.web.controller.AbstractContextControllerTest;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.test.web.servlet.MockMvc;
+
 public class AgencyControllerTest extends AbstractContextControllerTest<AgencyController> {
 
     @Mock
@@ -81,6 +81,7 @@ public class AgencyControllerTest extends AbstractContextControllerTest<AgencyCo
 
     @Mock
     private SecurityUtils securityUtils;
+
     @InjectMocks
     private AgencyController controller;
 
@@ -112,11 +113,11 @@ public class AgencyControllerTest extends AbstractContextControllerTest<AgencyCo
         verify(agencyService).createAgency(argumentCaptor.capture());
         final Agency createdAgency = argumentCaptor.getValue();
         assertTrue(createdAgency.isNew());
-        assertEquals(createdAgency.getName(), "testing");
-        assertEquals(createdAgency.getCode(), "testing");
-        assertEquals(createdAgency.getMobileNumber(), "9999999999");
-        assertEquals(createdAgency.getDepositAmount(), depositAmount);
-        assertEquals(createdAgency.getStatus(), AgencyStatus.ACTIVE);
+        assertEquals("testing", createdAgency.getName());
+        assertEquals("testing", createdAgency.getCode());
+        assertEquals("9999999999", createdAgency.getMobileNumber());
+        assertEquals(depositAmount, createdAgency.getDepositAmount());
+        assertEquals(AgencyStatus.ACTIVE, createdAgency.getStatus());
     }
 
     @Test

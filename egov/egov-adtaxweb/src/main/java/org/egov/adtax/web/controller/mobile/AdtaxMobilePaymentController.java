@@ -70,16 +70,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = { "/mobile" })
 public class AdtaxMobilePaymentController {
 
+    private static final String PAYTAX_FORM = "mobilePayment-form";
+    private static final String COLLECT_ADVTAX_ERROR = "collectAdvtax-error";
     private static final String MESSAGE = "message";
+
     @Autowired
     private AdvertisementBillServiceImpl advertisementBillServiceImpl;
     @Autowired
     private AdvertisementDemandService advertisementDemandService;
     @Autowired
     private AdvertisementService advertisementService;
-
-    private static final String PAYTAX_FORM = "mobilePayment-form";
-    private static final String COLLECT_ADVTAX_ERROR = "collectAdvtax-error";
 
     /**
      * API to process payments from Mobile App

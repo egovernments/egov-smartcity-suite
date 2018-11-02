@@ -99,8 +99,7 @@ public class HoardingControllerSupport extends GenericWorkFlowController {
     protected @Autowired RevenueInspectorService revenueInspectorService;
     protected @Autowired RatesClassService ratesClassService;
     protected @Autowired HoardingDocumentTypeService hoardingDocumentTypeService;
-    @Autowired
-    protected EnvironmentSettings environmentSettings;
+    protected @Autowired EnvironmentSettings environmentSettings;
     protected @Autowired AdvertisementDemandService advertisementDemandService;
     protected @Autowired FinancialYearDAO financialYearDAO;
 
@@ -164,9 +163,8 @@ public class HoardingControllerSupport extends GenericWorkFlowController {
     }
 
     protected void storeHoardingDocuments(final AdvertisementPermitDetail advertisementPermitDetail) {
-        advertisementPermitDetail.getAdvertisement().getDocuments().forEach(document -> {
-            document.setFiles(fileStoreUtils.addToFileStore(document.getAttachments(), "ADTAX"));
-        });
+        advertisementPermitDetail.getAdvertisement().getDocuments()
+                .forEach(document -> document.setFiles(fileStoreUtils.addToFileStore(document.getAttachments(), "ADTAX")));
     }
 
     protected void updateHoardingDocuments(final AdvertisementPermitDetail advertisementPermitDetail) {
@@ -229,7 +227,6 @@ public class HoardingControllerSupport extends GenericWorkFlowController {
                 && advertisementPermitDetail.getAdvertisement().getCategory() != null
                 && advertisementPermitDetail.getAdvertisement().getCategory().isPropertyMandatory())
             resultBinder.rejectValue("advertisement.propertyNumber", "invalid.propertyIdIsMandatoryForCategory");
-        // TODO: SAVE AUTOCALCULATED AMOUNT IN BACKEND.
 
         if (advertisementPermitDetail.getPermissionstartdate() != null
                 && advertisementPermitDetail.getPermissionenddate() != null

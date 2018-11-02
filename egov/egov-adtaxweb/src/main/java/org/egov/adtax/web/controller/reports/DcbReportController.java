@@ -47,7 +47,9 @@
  */
 package org.egov.adtax.web.controller.reports;
 
-import com.google.gson.GsonBuilder;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.search.contract.HoardingSearch;
@@ -64,8 +66,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping(value = "/reports")
@@ -85,9 +86,10 @@ public class DcbReportController extends GenericController {
     @RequestMapping(value = "search-for-dcbreport", method = POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchHoarding(@ModelAttribute final HoardingSearch hoardingSearch) {
-        return "{ \"data\":" + new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
-                .toJson(advertisementPermitDetailService.getAdvertisementSearchResult(hoardingSearch, null))
-                + "}";
+        return new StringBuilder("{ \"data\":")
+                .append(new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
+                        .toJson(advertisementPermitDetailService.getAdvertisementSearchResult(hoardingSearch, null)))
+                .append("}").toString();
     }
 
     @RequestMapping(value = "getHoardingDcb/{id}")

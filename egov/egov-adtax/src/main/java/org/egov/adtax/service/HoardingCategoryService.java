@@ -48,13 +48,13 @@
 
 package org.egov.adtax.service;
 
+import java.util.List;
+
 import org.egov.adtax.entity.HoardingCategory;
 import org.egov.adtax.repository.HoardingCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -70,9 +70,11 @@ public class HoardingCategoryService {
     public List<HoardingCategory> getAllActiveHoardingCategory() {
         return hoardingCategoryRepository.getAllActiveHoardingCategory();
     }
+
     public List<HoardingCategory> getAllHoardingCategory() {
         return hoardingCategoryRepository.getAllHoardingCategory();
     }
+
     @Transactional
     public HoardingCategory createHoardingCategory(HoardingCategory category) {
         return hoardingCategoryRepository.save(category);
@@ -81,9 +83,10 @@ public class HoardingCategoryService {
     public HoardingCategory getCategoryById(Long id) {
         return hoardingCategoryRepository.findOne(id);
     }
+
     @Transactional
     public HoardingCategory updateHoardingCategory(HoardingCategory category) {
         return hoardingCategoryRepository.save(category);
-      }
+    }
 
 }

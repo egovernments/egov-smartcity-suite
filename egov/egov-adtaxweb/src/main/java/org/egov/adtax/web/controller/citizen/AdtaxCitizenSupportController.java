@@ -79,14 +79,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/citizen")
 public class AdtaxCitizenSupportController {
+    
     private static final String COLLECT_ADVTAX_ERROR = "collectAdvtax-error";
-
     private static final String MESSAGE = "message";
-
     private static final String ONLINEPAYMENT_REDIRECTION = "onlinepayment-redirection";
-
     private static final String CITIZEN_CITIZEN_ONLINE_DCBVIEW = "citizen/citizen-online-dcbview";
-
     private static final String SEARCH_ADTAX_ONLINE_PAYMENT = "search-adtax-online-payment";
     private static final String ADVERTISEMENT_BILLNUMBER = "SEQ_advertisementbill_NUMBER";
 

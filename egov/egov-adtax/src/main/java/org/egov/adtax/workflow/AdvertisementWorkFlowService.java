@@ -91,6 +91,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class AdvertisementWorkFlowService {
+
     @Autowired
     private AppConfigValueService appConfigValuesService;
     @Autowired
@@ -103,7 +104,6 @@ public class AdvertisementWorkFlowService {
     private EisCommonService eisCommonService;
     @Autowired
     private UserService userService;
-
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -141,13 +141,10 @@ public class AdvertisementWorkFlowService {
      * @return
      */
     public Boolean isEmployee(final User user) {
-        for (final Role role : user.getRoles()) {
-            for (final AppConfigValues appconfig : getThirdPartyUserRoles()) {
-                if (role != null && appconfig != null && role.getName().equals(appconfig.getValue())) {
+        for (final Role role : user.getRoles())
+            for (final AppConfigValues appconfig : getThirdPartyUserRoles())
+                if (role != null && appconfig != null && role.getName().equals(appconfig.getValue()))
                     return false;
-                }
-            }
-        }
         return true;
     }
 
@@ -172,11 +169,9 @@ public class AdvertisementWorkFlowService {
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
                 ADTAX_ROLEFORNONEMPLOYEE);
         String rolesForNonEmployee = !appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : null;
-        for (final Role role : user.getRoles()) {
-            if (role != null && rolesForNonEmployee != null && role.getName().equalsIgnoreCase(rolesForNonEmployee)) {
+        for (final Role role : user.getRoles())
+            if (role != null && rolesForNonEmployee != null && role.getName().equalsIgnoreCase(rolesForNonEmployee))
                 return true;
-            }
-        }
         return false;
     }
 
@@ -210,27 +205,32 @@ public class AdvertisementWorkFlowService {
         List<Assignment> assignment = new ArrayList<>();
         for (final String dept : department) {
             for (final String desg : designation) {
-                Long deptId = departmentService.getDepartmentByName(dept).getId();
-                Long desgId = designationService.getDesignationByName(desg).getId();
-                Long boundaryId = advertisementPermitDetail.getAdvertisement() != null
-                        && advertisementPermitDetail.getAdvertisement().getElectionWard() != null
-                                ? advertisementPermitDetail.getAdvertisement().getElectionWard().getId() : null;
-
-                if (boundaryId != null){
-                    assignment = assignmentService.findAssignmentByDepartmentDesignationAndBoundary(deptId, desgId,
-                            boundaryId);
-                } else {
-                    assignment = assignmentService.findByDepartmentAndDesignation(deptId, desgId);
-                }
-                if (!assignment.isEmpty()) {
+                assignment = getAssignment(advertisementPermitDetail, dept, desg);
+                if (!assignment.isEmpty())
                     break;
-                }
             }
-            if (!assignment.isEmpty()) {
+            if (!assignment.isEmpty())
                 break;
-            }
         }
         return !assignment.isEmpty() ? assignment.get(0) : null;
+    }
+
+    private List<Assignment> getAssignment(final AdvertisementPermitDetail advertisementPermitDetail, final String dept,
+            final String desg) {
+        List<Assignment> assignment;
+        Long deptId = departmentService.getDepartmentByName(dept).getId();
+        Long desgId = designationService.getDesignationByName(desg).getId();
+        Long boundaryId = advertisementPermitDetail.getAdvertisement() != null
+                && advertisementPermitDetail.getAdvertisement().getElectionWard() != null
+                        ? advertisementPermitDetail.getAdvertisement().getElectionWard().getId()
+                        : null;
+
+        if (boundaryId != null)
+            assignment = assignmentService.findAssignmentByDepartmentDesignationAndBoundary(deptId, desgId,
+                    boundaryId);
+        else
+            assignment = assignmentService.findByDepartmentAndDesignation(deptId, desgId);
+        return assignment;
     }
 
     /**
@@ -241,7 +241,7 @@ public class AdvertisementWorkFlowService {
      * @param basicProperty
      * @return
      */
-    public Assignment getUserPositionByZone(final AdvertisementPermitDetail advertisementPermitDetail) {
+    public Assignment getUserPositionByZone() {
         final String designationStr = getDesignationForThirdPartyUser();
         final String departmentStr = getDepartmentForWorkFlow();
         final String[] department = departmentStr.split(",");
@@ -251,13 +251,11 @@ public class AdvertisementWorkFlowService {
             for (final String desg : designation) {
                 assignment = assignmentService.findByDepartmentAndDesignation(departmentService
                         .getDepartmentByName(dept).getId(), designationService.getDesignationByName(desg).getId());
-                if (!assignment.isEmpty()) {
+                if (!assignment.isEmpty())
                     break;
-                }
             }
-            if (!assignment.isEmpty()) {
+            if (!assignment.isEmpty())
                 break;
-            }
         }
         return !assignment.isEmpty() ? assignment.get(0) : null;
     }
@@ -266,16 +264,15 @@ public class AdvertisementWorkFlowService {
         Assignment assignment;
         assignment = getAssignmentByDeptDesigElecWard(advertisementPermitDetail);
 
-        if (assignment == null) {
-            assignment = getUserPositionByZone(advertisementPermitDetail);
-        }
+        if (assignment == null)
+            assignment = getUserPositionByZone();
         return assignment;
     }
 
-    public Assignment getWorkFlowInitiator(final AdvertisementPermitDetail advertisementPermitDetail){
+    public Assignment getWorkFlowInitiator(final AdvertisementPermitDetail advertisementPermitDetail) {
         Assignment wfInitiator = null;
         List<Assignment> assignment;
-        if (advertisementPermitDetail != null) {
+        if (advertisementPermitDetail != null)
             if (advertisementPermitDetail.getState() != null
                     && advertisementPermitDetail.getState().getInitiatorPosition() != null) {
                 wfInitiator = getUserAssignmentByPassingPositionAndUser(advertisementPermitDetail
@@ -287,15 +284,17 @@ public class AdvertisementWorkFlowService {
                                     new Date());
                     wfInitiator = getActiveAssignment(assignment);
                 }
-            } else if (!isEmployee(advertisementPermitDetail.getCreatedBy())|| "anonymous".equalsIgnoreCase(advertisementPermitDetail.getCreatedBy().getName()) ) {
+            } else if (!isEmployee(advertisementPermitDetail.getCreatedBy())
+                    || "anonymous".equalsIgnoreCase(advertisementPermitDetail.getCreatedBy().getName()))
                 wfInitiator = getUserAssignment(advertisementPermitDetail.getCreatedBy(), advertisementPermitDetail);
-            } else {
+            else {
                 wfInitiator = assignmentService.getPrimaryAssignmentForUser(advertisementPermitDetail.getCreatedBy().getId());
-               if(wfInitiator==null)
-                   throw new ApplicationRuntimeException("Current User with id:"+advertisementPermitDetail.getCreatedBy().getId()+" does not have primary position or is inactive");
+                if (wfInitiator == null)
+                    throw new ApplicationRuntimeException(
+                            "Current User with id:" + advertisementPermitDetail.getCreatedBy().getId()
+                                    + " does not have primary position or is inactive");
 
             }
-        }
         return wfInitiator;
     }
 
@@ -304,11 +303,9 @@ public class AdvertisementWorkFlowService {
 
         if (user != null && position != null) {
             List<Assignment> assignmentList = assignmentService.findByEmployeeAndGivenDate(user.getId(), new Date());
-            for (final Assignment assignment : assignmentList) {
-                if (position.getId() == assignment.getPosition().getId()) {
+            for (final Assignment assignment : assignmentList)
+                if (position.getId() == assignment.getPosition().getId())
                     wfInitiatorAssignment = assignment;
-                }
-            }
         }
 
         return wfInitiatorAssignment;
@@ -319,115 +316,130 @@ public class AdvertisementWorkFlowService {
 
         if (userId != null && position != null) {
             List<Assignment> assignmentList = assignmentService.findByEmployeeAndGivenDate(userId, new Date());
-            for (final Assignment assignment : assignmentList) {
-                if (position.getId() == assignment.getPosition().getId()) {
+            for (final Assignment assignment : assignmentList)
+                if (position.getId() == assignment.getPosition().getId())
                     userHasSamePosition = true;
-                }
-            }
         }
         return userHasSamePosition;
     }
 
     public Assignment getUserAssignment(User user, AdvertisementPermitDetail advertisementPermitDetail) {
         Assignment assignment;
-        if (isCscOperator(user)|| "anonymous".equalsIgnoreCase(user.getUsername())) {
+        if (isCscOperator(user) || "anonymous".equalsIgnoreCase(user.getUsername()))
             assignment = getMappedAssignmentForCscOperator(advertisementPermitDetail);
-        } else {
+        else
             assignment = getWorkFlowInitiator(advertisementPermitDetail);
-        }
         return assignment;
     }
 
     private Assignment getActiveAssignment(List<Assignment> assignment) {
         Assignment wfInitiator = null;
-        for (final Assignment assign : assignment) {
+        for (final Assignment assign : assignment)
             if (assign.getEmployee().isActive()) {
                 wfInitiator = assign;
                 break;
             }
-        }
         return wfInitiator;
     }
-    
+
     public String getApproverName(final Long approvalPosition) {
         Assignment assignment = null;
         List<Assignment> asignList = null;
-        if (approvalPosition != null) {
+        if (approvalPosition != null)
             assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
-        }
         if (assignment != null) {
             asignList = new ArrayList<>();
             asignList.add(assignment);
-        } else {
+        } else
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
-        }
         return !asignList.isEmpty() ? asignList.get(0).getEmployee().getName() : "";
     }
-    
+
     public List<Map<String, Object>> getHistory(final AdvertisementPermitDetail advertisementPermitDetail) {
-        User user;
-        Department userDepartment;
         final List<Map<String, Object>> historyTable = new ArrayList<>();
         final State<Position> state = advertisementPermitDetail.getState();
         final Map<String, Object> map = new HashMap<>(0);
-        String username;
         if (null != state) {
-            if (!advertisementPermitDetail.getStateHistory().isEmpty()
-                    && advertisementPermitDetail.getStateHistory() != null) {
-                Collections.reverse(advertisementPermitDetail.getStateHistory());
-            }
-            Map<String, Object> historyMap;
-            for (final StateHistory<Position> stateHistory : advertisementPermitDetail.getStateHistory()) {
-                historyMap = new HashMap<>(0);
-                historyMap.put("date", stateHistory.getDateInfo());
-                historyMap.put("comments", stateHistory.getComments() != null ? stateHistory.getComments() : "");
-                historyMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
-                        + stateHistory.getLastModifiedBy().getName());
-                historyMap.put(STATUS, stateHistory.getValue());
-                final Position owner = stateHistory.getOwnerPosition();
-                user = stateHistory.getOwnerUser();
-                if (user!=null) {
-                    userDepartment=eisCommonService.getDepartmentForUser(user.getId());
-                    historyMap.put(USER, user.getUsername() + "::" + user.getName());
-                    historyMap.put(DEPARTMENT,
-                             userDepartment!=null ? userDepartment.getName() : "");
-                } else if (owner!=null &&  owner.getDeptDesig()!=null) {
-                    user=eisCommonService.getUserForPosition(owner.getId(), new Date());
-                    if (user != null) 
-                        username = user.getUsername() + "::" + user.getName();
-                    else
-                        username = NA;
-                    historyMap
-                            .put(USER, username);
-                    historyMap.put(DEPARTMENT, owner.getDeptDesig() == null && owner.getDeptDesig().getDepartment() == null ? NA
-                            : owner.getDeptDesig().getDepartment().getName());
-                }
-                historyTable.add(historyMap);
-            }
-            map.put("date", state.getDateInfo());
-            map.put("comments", state.getComments() != null ? state.getComments() : "");
-            map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
-            map.put(STATUS, state.getValue());
-            final Position ownerPosition = state.getOwnerPosition();
-            user = state.getOwnerUser();
-            if (user != null) {
-                userDepartment = eisCommonService.getDepartmentForUser(user.getId());
-                map.put(USER, user.getUsername() + "::" + user.getName());
-                map.put(DEPARTMENT, userDepartment != null ? userDepartment.getName() : "");
-            } else if (ownerPosition != null && ownerPosition.getDeptDesig() != null) {
-                user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
-                if (user != null)
-                    username = user.getUsername() + "::" + user.getName();
-                else 
-                    username = NA;
-
-                map.put(USER, username);
-                map.put(DEPARTMENT, ownerPosition.getDeptDesig().getDepartment() != null ? ownerPosition
-                        .getDeptDesig().getDepartment().getName() : "");
-            }
-            historyTable.add(map);
+            reverseStateHistory(advertisementPermitDetail);
+            for (final StateHistory<Position> stateHistory : advertisementPermitDetail.getStateHistory())
+                populateHistoryTable(historyTable, stateHistory);
+            populateHistoryTable(historyTable, state, map);
         }
         return historyTable;
+    }
+
+    private void populateHistoryTable(final List<Map<String, Object>> historyTable, final State<Position> state,
+            final Map<String, Object> map) {
+        Department userDepartment;
+        String username;
+        map.put("date", state.getDateInfo());
+        map.put("comments", state.getComments() != null ? state.getComments() : "");
+        map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
+        map.put(STATUS, state.getValue());
+        final Position ownerPosition = state.getOwnerPosition();
+        User user = state.getOwnerUser();
+        if (user != null) {
+            userDepartment = eisCommonService.getDepartmentForUser(user.getId());
+            map.put(USER, user.getUsername() + "::" + user.getName());
+            map.put(DEPARTMENT, userDepartment != null ? userDepartment.getName() : "");
+        } else if (ownerPosition != null && ownerPosition.getDeptDesig() != null) {
+            user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
+            if (user != null)
+                username = user.getUsername() + "::" + user.getName();
+            else
+                username = NA;
+
+            map.put(USER, username);
+            map.put(DEPARTMENT, ownerPosition.getDeptDesig().getDepartment() != null ? ownerPosition
+                    .getDeptDesig().getDepartment().getName() : "");
+        }
+        historyTable.add(map);
+    }
+
+    private void populateHistoryTable(final List<Map<String, Object>> historyTable, final StateHistory<Position> stateHistory) {
+        User user;
+        Department userDepartment;
+        String username;
+        Map<String, Object> historyMap;
+        historyMap = new HashMap<>(0);
+        historyMap.put("date", stateHistory.getDateInfo());
+        historyMap.put("comments", getComments(stateHistory));
+        historyMap.put("updatedBy", getUpdatedBy(stateHistory));
+        historyMap.put(STATUS, stateHistory.getValue());
+        final Position owner = stateHistory.getOwnerPosition();
+        user = stateHistory.getOwnerUser();
+        if (user != null) {
+            userDepartment = eisCommonService.getDepartmentForUser(user.getId());
+            historyMap.put(USER, user.getUsername() + "::" + user.getName());
+            historyMap.put(DEPARTMENT,
+                    userDepartment != null ? userDepartment.getName() : "");
+        } else if (owner != null && owner.getDeptDesig() != null) {
+            user = eisCommonService.getUserForPosition(owner.getId(), new Date());
+            if (user != null)
+                username = user.getUsername() + "::" + user.getName();
+            else
+                username = NA;
+            historyMap
+                    .put(USER, username);
+            historyMap.put(DEPARTMENT, owner.getDeptDesig() == null && owner.getDeptDesig().getDepartment() == null ? NA
+                    : owner.getDeptDesig().getDepartment().getName());
+        }
+        historyTable.add(historyMap);
+    }
+
+    private String getUpdatedBy(final StateHistory<Position> stateHistory) {
+        return new StringBuilder(stateHistory.getLastModifiedBy().getUsername()).append("::")
+                .append(stateHistory.getLastModifiedBy().getName()).toString();
+    }
+
+    private Object getComments(final StateHistory<Position> stateHistory) {
+        return stateHistory.getComments() != null ? stateHistory.getComments() : "";
+    }
+
+    private void reverseStateHistory(final AdvertisementPermitDetail advertisementPermitDetail) {
+        if (!advertisementPermitDetail.getStateHistory().isEmpty()
+                && advertisementPermitDetail.getStateHistory() != null)
+            Collections.reverse(advertisementPermitDetail.getStateHistory());
     }
 
     public User getApproverByStatePosition(AdvertisementPermitDetail advertisementPermitDetail) {
@@ -446,9 +458,8 @@ public class AdvertisementWorkFlowService {
                 asignList = assignmentService.getAssignmentsForPosition(
                         advertisementPermitDetail.getState().getOwnerPosition().getId(),
                         new Date());
-            if (!asignList.isEmpty()) {
+            if (!asignList.isEmpty())
                 user = userService.getUserById(asignList.get(0).getEmployee().getId());
-            }
 
         }
         return user;

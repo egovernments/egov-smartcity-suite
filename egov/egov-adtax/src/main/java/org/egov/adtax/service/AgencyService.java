@@ -48,6 +48,8 @@
 
 package org.egov.adtax.service;
 
+import java.util.List;
+
 import org.egov.adtax.entity.Agency;
 import org.egov.adtax.entity.enums.AgencyStatus;
 import org.egov.adtax.repository.AgencyRepository;
@@ -55,11 +57,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @Transactional(readOnly = true)
 public class AgencyService {
+
     private final AgencyRepository agencyRepository;
 
     @Autowired
@@ -80,9 +81,11 @@ public class AgencyService {
     public Agency findByCode(final String code) {
         return agencyRepository.findByCode(code);
     }
+
     public Agency findByName(final String name) {
         return agencyRepository.findByName(name.trim());
     }
+
     public List<Agency> findAll() {
         return agencyRepository.findAll();
     }
@@ -90,9 +93,9 @@ public class AgencyService {
     public List<Agency> findAllByNameLike(final String name) {
         return agencyRepository.findByNameContainingIgnoreCase(name);
     }
-    
-    public List<Agency> findAllActiveByName(final String name, final AgencyStatus  status){
-    return agencyRepository.findByNameContainingIgnoreCaseAndStatus(name,status);
+
+    public List<Agency> findAllActiveByName(final String name, final AgencyStatus status) {
+        return agencyRepository.findByNameContainingIgnoreCaseAndStatus(name, status);
     }
-    
+
 }

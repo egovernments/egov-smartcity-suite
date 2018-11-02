@@ -47,10 +47,15 @@
  */
 package org.egov.adtax.web.controller.hoarding;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.util.Date;
+import java.util.List;
+
 import org.egov.adtax.entity.AdvertisementBatchDemandGenerate;
 import org.egov.adtax.search.contract.HoardingSearch;
 import org.egov.adtax.service.AdvertisementBatchDemandGenService;
-import org.egov.adtax.service.AdvertisementRateService;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.web.controller.GenericController;
 import org.egov.commons.Installment;
@@ -63,18 +68,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Date;
-import java.util.List;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
 @Controller
 @RequestMapping("/hoarding")
 public class GenerateDemandHoardingController extends GenericController {
-
-    @Autowired
-    private AdvertisementRateService advertisementRateService;
 
     @Autowired
     private InstallmentDao installmentDao;
@@ -99,9 +95,11 @@ public class GenerateDemandHoardingController extends GenericController {
 
         Installment installment = null;
 
-        if (hoardingSearch.getFinancialYear() != null) {
-            installment = installmentDao.fetchInstallmentByModuleAndInstallmentNumber(moduleService.getModuleByName(AdvertisementTaxConstants.MODULE_NAME), Integer.valueOf(hoardingSearch.getFinancialYear()));//   cFinancialYearRepository.getOne(Long.valueOf(hoardingSearch.getFinancialYear()));
-        } else {
+        if (hoardingSearch.getFinancialYear() != null)
+            installment = installmentDao.fetchInstallmentByModuleAndInstallmentNumber(
+                    moduleService.getModuleByName(AdvertisementTaxConstants.MODULE_NAME),
+                    Integer.valueOf(hoardingSearch.getFinancialYear()));
+        else {
             resultBinder.rejectValue("financialYear", "*");
             return "hoarding-generate";
         }

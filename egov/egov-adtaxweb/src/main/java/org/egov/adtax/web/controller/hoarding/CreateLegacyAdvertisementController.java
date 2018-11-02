@@ -100,10 +100,9 @@ public class CreateLegacyAdvertisementController extends HoardingControllerSuppo
 
         if (advertisementPermitDetail != null && advertisementPermitDetail.getApplicationDate() != null) {
             final Installment installmentObj = advertisementDemandService.getCurrentInstallment();
-            if (installmentObj != null && installmentObj.getToDate() != null)
-                if (advertisementPermitDetail.getApplicationDate()
-                        .after(DateUtils.endOfDay(installmentObj.getToDate())))
-                    resultBinder.rejectValue("applicationDate", "invalid.applicationDateForLegacy");
+            if (installmentObj != null && installmentObj.getToDate() != null && advertisementPermitDetail.getApplicationDate()
+                    .after(DateUtils.endOfDay(installmentObj.getToDate())))
+                resultBinder.rejectValue("applicationDate", "invalid.applicationDateForLegacy");
         }
     }
 
@@ -118,10 +117,10 @@ public class CreateLegacyAdvertisementController extends HoardingControllerSuppo
             return "hoarding-createLegacy";
         storeHoardingDocuments(advertisementPermitDetail);
         if (advertisementPermitDetail != null) {
-        advertisementPermitDetail.setIsActive(Boolean.TRUE);
-        advertisementPermitDetail.setStatus(advertisementPermitDetailService
-                .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED));
-        final Installment installmentObj = advertisementDemandService.getCurrentInstallment();
+            advertisementPermitDetail.setIsActive(Boolean.TRUE);
+            advertisementPermitDetail.setStatus(advertisementPermitDetailService
+                    .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED));
+            final Installment installmentObj = advertisementDemandService.getCurrentInstallment();
             if (installmentObj != null && installmentObj.getFromDate() != null)
                 advertisementPermitDetail.getAdvertisement()
                         .setPenaltyCalculationDate(installmentObj.getFromDate());
@@ -136,11 +135,11 @@ public class CreateLegacyAdvertisementController extends HoardingControllerSuppo
         redirAttrib.addFlashAttribute("message", message);
         return "redirect:/hoarding/success/" + advertisementPermitDetailObj.getId();
     }
-    
+
     @RequestMapping(value = "/checkUnique-advertisementNo", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public boolean uniqueAgendaNumber(@RequestParam final String hoardingNumber) {
-        return advertisementService.findByAdvertisementNumber(hoardingNumber) != null ? false : true;
+        return advertisementService.findByAdvertisementNumber(hoardingNumber) == null;
     }
 
 }

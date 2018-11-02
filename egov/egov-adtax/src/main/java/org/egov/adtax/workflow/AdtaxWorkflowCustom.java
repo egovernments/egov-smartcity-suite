@@ -54,8 +54,7 @@ import org.egov.adtax.entity.AdvertisementPermitDetail;
  * The Interface ApplicationCommonWorkflow.
  */
 public interface AdtaxWorkflowCustom {
-	
-    
+
     /**
      * Creates the matrix workflow transition.
      *
@@ -66,8 +65,7 @@ public interface AdtaxWorkflowCustom {
      * @param workFlowAction the work flow action
      */
     public void createCommonWorkflowTransition(AdvertisementPermitDetail advertisementPermitDetail,
-             Long approvalPosition,  String approvalComent,  String additionalRule,
-             String workFlowAction);
+            Long approvalPosition, String approvalComent, String additionalRule,
+            String workFlowAction);
 
-	
 }

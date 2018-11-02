@@ -48,6 +48,8 @@
 
 package org.egov.adtax.service;
 
+import java.util.List;
+
 import org.egov.adtax.entity.RatesClass;
 import org.egov.adtax.repository.RatesClassRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,11 +57,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @Transactional(readOnly = true)
 public class RatesClassService {
+
     private final RatesClassRepository ratesClassRepository;
 
     @Autowired
@@ -78,10 +79,11 @@ public class RatesClassService {
     public RatesClass getRateClassById(final Long id) {
         return ratesClassRepository.findOne(id);
     }
-    
-    public RatesClass getRatesClassByDescription(final String description){
+
+    public RatesClass getRatesClassByDescription(final String description) {
         return ratesClassRepository.findByDescription(description);
     }
+
     @Transactional
     public RatesClass createRatesClass(final RatesClass ratesClass) {
         return ratesClassRepository.save(ratesClass);
@@ -90,10 +92,11 @@ public class RatesClassService {
     public List<RatesClass> findAll() {
         return ratesClassRepository.findAll();
     }
+
     @Transactional
     public RatesClass updateRateClass(RatesClass rateClass) {
         return ratesClassRepository.save(rateClass);
-             
+
     }
 
 }

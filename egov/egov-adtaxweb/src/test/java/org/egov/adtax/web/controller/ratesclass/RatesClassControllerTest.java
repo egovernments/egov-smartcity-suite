@@ -45,10 +45,11 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.adtax.web.controller.ratesClass;
+package org.egov.adtax.web.controller.ratesclass;
 
 import org.egov.adtax.service.RatesClassService;
 import org.egov.adtax.web.controller.AbstractContextControllerTest;
+import org.egov.adtax.web.controller.ratesclass.RatesClassController;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.junit.Before;
@@ -70,6 +71,7 @@ public class RatesClassControllerTest extends AbstractContextControllerTest<Rate
 
     @Mock
     private SecurityUtils securityUtils;
+    
     @InjectMocks
     private RatesClassController controller;
 
@@ -90,26 +92,6 @@ public class RatesClassControllerTest extends AbstractContextControllerTest<Rate
                 .andExpect(view().name("ratesClass-form"))
                 .andExpect(status().isOk());
     }
-
-/*    @Test
-    public void postCreateRatesClass() throws Exception {
-        mockMvc.perform(post("/ratesclass/create").param("description", "1")).andExpect(model().hasNoErrors())
-                .andExpect(redirectedUrl("/ratesclass/success/1"));
-        final ArgumentCaptor<RatesClass> argumentCaptor = ArgumentCaptor.forClass(RatesClass.class);
-        verify(ratesClassService).createRatesClass(argumentCaptor.capture());
-        final RatesClass createdClass = argumentCaptor.getValue();
-        assertTrue(createdClass.isNew());
-        assertEquals(createdClass.getId(), "1");
-    }*/
-
-   /* @Test
-    public void validateRatesClass() throws Exception {
-        mockMvc.perform(post("/ratesclass/create")).andExpect(model().hasErrors())
-                .andExpect(model().attributeHasFieldErrors("ratesClass", "description"))
-                .andExpect(view().name("ratesClass-form"));
-        verify(ratesClassService, never()).createRatesClass(any(RatesClass.class));
-    }*/
-
 
     @Override
     protected RatesClassController initController() {

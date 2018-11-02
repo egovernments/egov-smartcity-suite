@@ -47,13 +47,14 @@
  */
 package org.egov.adtax.web.adaptor;
 
+import java.lang.reflect.Type;
+
+import org.egov.adtax.entity.Advertisement;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.adtax.entity.Advertisement;
-
-import java.lang.reflect.Type;
 
 public class HoardingAdaptor implements JsonSerializer<Advertisement> {
 
@@ -61,8 +62,8 @@ public class HoardingAdaptor implements JsonSerializer<Advertisement> {
     public JsonElement serialize(final Advertisement hoarding, final Type type,
             final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("advertisementNumber", null != hoarding.getAdvertisementNumber() ? hoarding.getAdvertisementNumber() : "NA");
- //       jsonObject.addProperty("agency", null != hoarding.getAgency() ? hoarding.getAgency().getName() : "NA");
+        jsonObject.addProperty("advertisementNumber",
+                null != hoarding.getAdvertisementNumber() ? hoarding.getAdvertisementNumber() : "NA");
         jsonObject.addProperty("amount",
                 null != hoarding.getDemandId() ? hoarding.getDemandId().getBaseDemand().toString() : "NA");
         jsonObject.addProperty("hoardingId", hoarding.getId());

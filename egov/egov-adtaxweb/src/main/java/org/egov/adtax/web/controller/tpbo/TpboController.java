@@ -47,6 +47,12 @@
  */
 package org.egov.adtax.web.controller.tpbo;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.egov.adtax.entity.RevenueInspector;
 import org.egov.adtax.service.RevenueInspectorService;
 import org.egov.adtax.web.controller.GenericController;
@@ -58,11 +64,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
-import java.util.List;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
 @Controller
 @RequestMapping(value = "/tpbo")
 public class TpboController extends GenericController {
@@ -71,13 +72,13 @@ public class TpboController extends GenericController {
     private RevenueInspectorService revenueInspectorService;
 
     @RequestMapping(value = "create-tpbo", method = GET)
-    public String CreateTpbo(Model model) {
+    public String createTpbo(Model model) {
         model.addAttribute("revenueInspectorRecord", new RevenueInspector());
         return "tpbo-create";
     }
 
     @ModelAttribute("revenueInspector")
-    public RevenueInspector RevenueInspector() {
+    public RevenueInspector revenueInspector() {
         return new RevenueInspector();
     }
 
@@ -93,11 +94,11 @@ public class TpboController extends GenericController {
 
         redirectAttrs.addFlashAttribute("existingTpboObject", revenueInspector);
         redirectAttrs.addFlashAttribute("message", "msg.tpbo.create");
-        return "redirect:/tpbo/success/" + revenueInspector.getId();
+        return new StringBuilder("redirect:/tpbo/success/").append(revenueInspector.getId()).toString();
     }
 
     @RequestMapping(value = "/search-tpbo", method = GET)
-    public String SearchTpbo() {
+    public String searchTpbo() {
         return "tpbo-search";
     }
 

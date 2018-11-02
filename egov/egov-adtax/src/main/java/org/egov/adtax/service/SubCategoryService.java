@@ -48,6 +48,9 @@
 
 package org.egov.adtax.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.entity.SubCategorySearch;
 import org.egov.adtax.repository.SubCategoryRepository;
@@ -55,15 +58,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Service
 @Transactional(readOnly = true)
 public class SubCategoryService {
 
     private final SubCategoryRepository subCategoryRepository;
-    
+
     @Autowired
     public SubCategoryService(final SubCategoryRepository subCategoryRepository) {
         this.subCategoryRepository = subCategoryRepository;
@@ -76,15 +76,17 @@ public class SubCategoryService {
     public List<SubCategory> getAllSubCategory() {
         return subCategoryRepository.getAllSubCategory();
     }
+
     @Transactional
-    public SubCategory  createSubCategory( SubCategory subCategory) {
-       return subCategoryRepository.save(subCategory);
-        
+    public SubCategory createSubCategory(SubCategory subCategory) {
+        return subCategoryRepository.save(subCategory);
+
     }
+
     @Transactional
-    public SubCategory  updateSubCategory( SubCategory subCategory) {
-       return subCategoryRepository.save(subCategory);
-        
+    public SubCategory updateSubCategory(SubCategory subCategory) {
+        return subCategoryRepository.save(subCategory);
+
     }
 
     public SubCategory getSubCategoryById(Long id) {
@@ -94,11 +96,10 @@ public class SubCategoryService {
     public List<SubCategorySearch> getSubcategory(final Long category, final Long subcategory) {
         final List<SubCategory> subcategoryList;
 
-        if (category != null && subcategory != null) {
+        if (category != null && subcategory != null)
             subcategoryList = subCategoryRepository.searchSubcategoryByCategoryIdAndSubCategoryId(category, subcategory);
-        } else {
+        else
             subcategoryList = subCategoryRepository.getAllSubCategoryByCategoryId(category);
-        }
         final List<SubCategorySearch> subCategorySearchList = new ArrayList<>();
         subcategoryList.forEach(result -> {
             final SubCategorySearch subCategorySearch = new SubCategorySearch();

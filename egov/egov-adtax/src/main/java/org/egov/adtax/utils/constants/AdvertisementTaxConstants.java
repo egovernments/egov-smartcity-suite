@@ -49,6 +49,7 @@
 package org.egov.adtax.utils.constants;
 
 public class AdvertisementTaxConstants {
+    
     public static final String MODULE_NAME = "Advertisement Tax";
     public static final String MODULETYPE = "adtax";
     public static final String YEARLY = "Yearly";

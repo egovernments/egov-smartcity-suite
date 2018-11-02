@@ -48,6 +48,8 @@
 
 package org.egov.adtax.service;
 
+import java.util.List;
+
 import org.egov.adtax.entity.UnitOfMeasure;
 import org.egov.adtax.repository.UnitOfMeasureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,11 +57,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @Transactional(readOnly = true)
 public class UnitOfMeasureService {
+
     private final UnitOfMeasureRepository unitOfMeasureRepository;
 
     @Autowired
@@ -74,10 +75,11 @@ public class UnitOfMeasureService {
     public List<UnitOfMeasure> getAllActiveUnitOfMeasure() {
         return unitOfMeasureRepository.getAllActiveUnitOfMeasures();
     }
-   
+
     public UnitOfMeasure getUnitOfMeasureById(final Long id) {
         return unitOfMeasureRepository.findOne(id);
     }
+
     @Transactional
     public UnitOfMeasure updateUnitOfMeasure(UnitOfMeasure unitOfMeasure) {
         return unitOfMeasureRepository.save(unitOfMeasure);
@@ -88,5 +90,4 @@ public class UnitOfMeasureService {
         return unitOfMeasureRepository.save(unitOfMeasure);
     }
 
-   
 }

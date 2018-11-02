@@ -119,173 +119,241 @@ public abstract class AdtaxWorkflowCustomImpl implements AdtaxWorkflowCustom {
             final String workFlowAction) {
         if (LOG.isDebugEnabled())
             LOG.debug(" Create WorkFlow Transition Started  ...");
+
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
-        Position pos = null;
-        String currentState = "";
-       
         Assignment wfInitiator = advertisementWorkFlowService.getWorkFlowInitiator(advertisementPermitDetail);
-        if (approvalPosition != null && approvalPosition > 0)
-            pos = positionMasterService.getPositionById(approvalPosition);
+        Position pos = getApprovalPosition(approvalPosition);
         Boolean cscOperatorLoggedIn = advertisementWorkFlowService.isCscOperator(user);
-        WorkFlowMatrix wfmatrix = null;
-        if ((cscOperatorLoggedIn || ANONYMOUS_USER.equalsIgnoreCase(user.getName())) && advertisementPermitDetail.getState()==null) {
-            currentState = "Third Party operator created";
-            wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
-                    null, additionalRule, currentState, null);
-            advertisementPermitDetail.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
-            if (cscOperatorLoggedIn)
-                advertisementPermitDetail.setSource(AdvertisementTaxConstants.CSC_SOURCE);
-            else if(ANONYMOUS_USER.equalsIgnoreCase(user.getName()))
-                advertisementPermitDetail.setSource(AdvertisementTaxConstants.ONLINE_SOURCE);
-            
-            advertisementPermitDetail.transition().start()
-                    .withSLA(advertisementService.calculateDueDate(advertisementPermitDetail))
-                    .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
-                    .withComments(approvalComent).withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
-                    .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
-                    .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
-
-        } else if (null == advertisementPermitDetail.getState()) { // go by status
-            wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
-                    null, additionalRule, AdvertisementTaxConstants.WF_NEW_STATE, null);
-            advertisementPermitDetail.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
-            advertisementPermitDetail.transition().start()
-                    .withSLA(advertisementService.calculateDueDate(advertisementPermitDetail))
-                    .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
-                    .withComments(approvalComent).withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
-                    .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
-                    .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
-
-        } else if (AdvertisementTaxConstants.WF_APPROVE_BUTTON.equalsIgnoreCase(workFlowAction)) {
-
-            wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
-                    null, additionalRule, advertisementPermitDetail.getCurrentState().getValue(), advertisementPermitDetail.getState().getNextAction());
-            advertisementPermitDetail.setStatus(egwStatusHibernateDAO
-                    .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_MODULE_TYPE,
-                            AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED));
-            advertisementPermitDetail.setIsActive(true);
-            advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.ACTIVE);
-
-            // Adding previous record status as inactive.
-            if (additionalRule != null && advertisementPermitDetail.getPreviousapplicationid() != null
-                    && additionalRule.equalsIgnoreCase(AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE)) {
-                advertisementPermitDetail.getPreviousapplicationid().setIsActive(false);
-                // UPDATE DEMAND BASED ON LATEST RENEWAL DATA.
-                advertisementPermitDetail.getAdvertisement().setDemandId(
-                        advertisementDemandService.updateDemandOnRenewal(advertisementPermitDetail,
-                                advertisementPermitDetail.getAdvertisement().getDemandId()));
-            }
-
-            advertisementPermitDetail
-                    .setPermissionNumber((beanResolver.getAutoNumberServiceFor(AdvertisementPermitNumberGenerator.class))
-                            .getNextAdvertisementPermitNumber(advertisementPermitDetail.getAdvertisement()));
-            advertisementPermitDetail.transition().progressWithStateCopy()
-                    .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
-                    .withComments(approvalComent)
-                    .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
-                    .withOwner(wfInitiator.getPosition())
-                    .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
-        } else if (AdvertisementTaxConstants.WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction) ||
+        if ((cscOperatorLoggedIn || ANONYMOUS_USER.equalsIgnoreCase(user.getName()))
+                && advertisementPermitDetail.getState() == null)
+            createByThirdParty(advertisementPermitDetail, approvalComent, additionalRule, user, wfInitiator, pos,
+                    cscOperatorLoggedIn);
+        else if (null == advertisementPermitDetail.getState())
+            create(advertisementPermitDetail, approvalComent, additionalRule, user, wfInitiator, pos);
+        else if (AdvertisementTaxConstants.WF_APPROVE_BUTTON.equalsIgnoreCase(workFlowAction))
+            approve(advertisementPermitDetail, approvalComent, additionalRule, user, currentDate, wfInitiator);
+        else if (AdvertisementTaxConstants.WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction) ||
                 AdvertisementTaxConstants.WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(workFlowAction) ||
-                AdvertisementTaxConstants.WF_CANCELRENEWAL_BUTTON.equalsIgnoreCase(workFlowAction)) {
-
-            // In case of rejection of renewal record, do not change status of advertisement . We need to change previous record
-            // as active.
-            // if (ApplicationThreadLocals.getUserId().equals(wfInitiator!=null && wfInitiator.getEmployee()!=null
-            // ?wfInitiator.getEmployee().getId():0 )) {
-            if (advertisementWorkFlowService.validateUserHasSamePositionAsInitiator(ApplicationThreadLocals.getUserId(),
-                    (wfInitiator != null ? wfInitiator.getPosition() : null))) {
-
-                advertisementPermitDetail.setStatus(
-                        egwStatusHibernateDAO.getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_MODULE_TYPE,
-                                AdvertisementTaxConstants.APPLICATION_STATUS_CANCELLED));
-                advertisementPermitDetail.transition().end()
-                        .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
-                        .withComments(approvalComent).withDateInfo(currentDate.toDate())
-                        .withNextAction(AdvertisementTaxConstants.WF_END_STATE)
-                        .withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
-
-                if (additionalRule != null && additionalRule.equalsIgnoreCase(AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE))
-                    advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.CANCELLED);
-                else {
-                    advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.ACTIVE); // for renewal
-
-                    /*
-                     * Activate previous agreement. Update demand as per previous agreement.
-                     */
-                    if (AdvertisementTaxConstants.WF_CANCELRENEWAL_BUTTON.equalsIgnoreCase(workFlowAction) &&
-                            additionalRule != null && advertisementPermitDetail.getPreviousapplicationid() != null
-                            && additionalRule.equalsIgnoreCase(AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE)) {
-
-                        advertisementPermitDetail.getPreviousapplicationid().setIsActive(true);
-                        advertisementPermitDetail.getPreviousapplicationid().setStatus(
-                                egwStatusHibernateDAO.getStatusByModuleAndCode(
-                                        AdvertisementTaxConstants.APPLICATION_MODULE_TYPE,
-                                        AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED));
-
-                        advertisementPermitDetail.setIsActive(false);
-                        // UPDATE DEMAND BASED ON LATEST RENEWAL DATA.
-                        advertisementPermitDetail.getAdvertisement().setDemandId(
-                                advertisementDemandService.updateDemandOnRenewal(advertisementPermitDetail
-                                        .getPreviousapplicationid(), advertisementPermitDetail.getAdvertisement()
-                                                .getDemandId()));
-                    }
-
-                }
-            } else {
-                wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
-                        null, additionalRule, AdvertisementTaxConstants.WF_REJECT_STATE, null);
-                advertisementPermitDetail.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
-                advertisementPermitDetail.transition().progressWithStateCopy()
-                        .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
-                        .withComments(approvalComent)
-                        .withStateValue(AdvertisementTaxConstants.WF_REJECT_STATE).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator != null ? wfInitiator.getPosition() : null)
-                        .withNextAction(wfmatrix.getNextAction())
-                        .withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);// Pending: WORK FLOW INITIATOR IS NULL THEN
-                                                                                    // RECORD WILL NOT SHOW IN ANY USER INBOX.
-            }
-
-        } else if (AdvertisementTaxConstants.WF_DEMANDNOTICE_BUTTON.equalsIgnoreCase(workFlowAction)) {
-            wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
-                    null, additionalRule, advertisementPermitDetail.getCurrentState().getValue(), null);
-            advertisementPermitDetail.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
-            advertisementPermitDetail.transition().progressWithStateCopy()
-                    .withSenderName((wfInitiator != null && wfInitiator.getEmployee() != null
-                            ? wfInitiator.getEmployee().getUsername() : "") + AdvertisementTaxConstants.COLON_CONCATE
-                            + (wfInitiator != null && wfInitiator.getEmployee() != null ? wfInitiator.getEmployee().getName()
-                                    : ""))
-                    .withComments(approvalComent)
-                    .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
-                    .withOwner(wfInitiator != null ? wfInitiator.getPosition() : null)
-                    .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
-        } else if (AdvertisementTaxConstants.WF_PERMITORDER_BUTTON.equalsIgnoreCase(workFlowAction)) {
-            wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
-                    null, additionalRule, advertisementPermitDetail.getCurrentState().getValue(), null);
-            advertisementPermitDetail.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
-            advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.ACTIVE);
-            if (wfmatrix.getNextAction().equalsIgnoreCase(AdvertisementTaxConstants.WF_END_STATE))
-                advertisementPermitDetail.transition().end()
-                        .withSenderName((wfInitiator != null && wfInitiator.getEmployee() != null
-                                ? wfInitiator.getEmployee().getUsername() : "") + AdvertisementTaxConstants.COLON_CONCATE
-                                + (wfInitiator != null && wfInitiator.getEmployee() != null ? wfInitiator.getEmployee().getName()
-                                        : ""))
-                        .withComments(approvalComent).withDateInfo(currentDate.toDate())
-                        .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
-        } else {
-            wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
-                    null, additionalRule, advertisementPermitDetail.getCurrentState().getValue(), null);
-            advertisementPermitDetail.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
-            advertisementPermitDetail.transition().progressWithStateCopy()
-                    .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
-                    .withComments(approvalComent)
-                    .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                    .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
-
-        }
+                AdvertisementTaxConstants.WF_CANCELRENEWAL_BUTTON.equalsIgnoreCase(workFlowAction))
+            rejectOrCancel(advertisementPermitDetail, approvalComent, additionalRule, workFlowAction, user,
+                    currentDate, wfInitiator);
+        else if (AdvertisementTaxConstants.WF_DEMANDNOTICE_BUTTON.equalsIgnoreCase(workFlowAction))
+            updateOnDemandGeneration(advertisementPermitDetail, approvalComent, additionalRule, currentDate, wfInitiator);
+        else if (AdvertisementTaxConstants.WF_PERMITORDER_BUTTON.equalsIgnoreCase(workFlowAction))
+            updateOnPermitOrderGeneration(advertisementPermitDetail, approvalComent, additionalRule, currentDate, wfInitiator);
+        else
+            update(advertisementPermitDetail, approvalComent, additionalRule, user, currentDate, pos);
         if (LOG.isDebugEnabled())
             LOG.debug(" WorkFlow Transition Completed ");
+    }
+
+    private void update(final AdvertisementPermitDetail advertisementPermitDetail, final String approvalComent,
+            final String additionalRule, final User user, final DateTime currentDate, Position pos) {
+        WorkFlowMatrix wfmatrix;
+        wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
+                null, additionalRule, advertisementPermitDetail.getCurrentState().getValue(), null);
+        advertisementPermitDetail.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
+        advertisementPermitDetail.transition().progressWithStateCopy()
+                .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
+                .withComments(approvalComent)
+                .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
+    }
+
+    private void createByThirdParty(final AdvertisementPermitDetail advertisementPermitDetail,
+            final String approvalComent, final String additionalRule, final User user, Assignment wfInitiator, Position pos,
+            Boolean cscOperatorLoggedIn) {
+        String currentState = "Third Party operator created";
+        WorkFlowMatrix wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(),
+                null,
+                null, additionalRule, currentState, null);
+        advertisementPermitDetail.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
+        setSource(advertisementPermitDetail, user, cscOperatorLoggedIn);
+
+        advertisementPermitDetail.transition().start()
+                .withSLA(advertisementService.calculateDueDate(advertisementPermitDetail))
+                .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
+                .withComments(approvalComent).withInitiator(getWfInitiatorPosition(wfInitiator))
+                .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
+                .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
+    }
+
+    private void create(final AdvertisementPermitDetail advertisementPermitDetail, final String approvalComent,
+            final String additionalRule, final User user, Assignment wfInitiator, Position pos) {
+        // go by status
+        WorkFlowMatrix wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(),
+                null,
+                null, additionalRule, AdvertisementTaxConstants.WF_NEW_STATE, null);
+        advertisementPermitDetail.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
+        advertisementPermitDetail.transition().start()
+                .withSLA(advertisementService.calculateDueDate(advertisementPermitDetail))
+                .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
+                .withComments(approvalComent).withInitiator(getWfInitiatorPosition(wfInitiator))
+                .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
+                .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
+    }
+
+    private void updateOnPermitOrderGeneration(final AdvertisementPermitDetail advertisementPermitDetail,
+            final String approvalComent, final String additionalRule, final DateTime currentDate, Assignment wfInitiator) {
+        WorkFlowMatrix wfmatrix;
+        wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
+                null, additionalRule, advertisementPermitDetail.getCurrentState().getValue(), null);
+        advertisementPermitDetail.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
+        advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.ACTIVE);
+        if (wfmatrix.getNextAction().equalsIgnoreCase(AdvertisementTaxConstants.WF_END_STATE))
+            advertisementPermitDetail.transition().end()
+                    .withSenderName(getSenderName(wfInitiator))
+                    .withComments(approvalComent).withDateInfo(currentDate.toDate())
+                    .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
+    }
+
+    private void updateOnDemandGeneration(final AdvertisementPermitDetail advertisementPermitDetail, final String approvalComent,
+            final String additionalRule, final DateTime currentDate, Assignment wfInitiator) {
+        WorkFlowMatrix wfmatrix;
+        wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
+                null, additionalRule, advertisementPermitDetail.getCurrentState().getValue(), null);
+        advertisementPermitDetail.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
+        advertisementPermitDetail.transition().progressWithStateCopy()
+                .withSenderName(getSenderName(wfInitiator))
+                .withComments(approvalComent)
+                .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
+                .withOwner(getWfInitiatorPosition(wfInitiator))
+                .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
+    }
+
+    private void approve(final AdvertisementPermitDetail advertisementPermitDetail, final String approvalComent,
+            final String additionalRule, final User user, final DateTime currentDate, Assignment wfInitiator) {
+        WorkFlowMatrix wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(),
+                null,
+                null, additionalRule, advertisementPermitDetail.getCurrentState().getValue(),
+                advertisementPermitDetail.getState().getNextAction());
+        advertisementPermitDetail.setStatus(egwStatusHibernateDAO
+                .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_MODULE_TYPE,
+                        AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED));
+        advertisementPermitDetail.setIsActive(true);
+        advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.ACTIVE);
+
+        // Adding previous record status as inactive.
+        makePreviousApplicationInactive(advertisementPermitDetail, additionalRule);
+
+        advertisementPermitDetail
+                .setPermissionNumber(beanResolver.getAutoNumberServiceFor(AdvertisementPermitNumberGenerator.class)
+                        .getNextAdvertisementPermitNumber(advertisementPermitDetail.getAdvertisement()));
+        advertisementPermitDetail.transition().progressWithStateCopy()
+                .withSenderName(new StringBuilder(user.getUsername()).append(AdvertisementTaxConstants.COLON_CONCATE)
+                        .append(user.getName()).toString())
+                .withComments(approvalComent)
+                .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
+                .withOwner(getWfInitiatorPosition(wfInitiator))
+                .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
+    }
+
+    private void rejectOrCancel(final AdvertisementPermitDetail advertisementPermitDetail, final String approvalComent,
+            final String additionalRule, final String workFlowAction, final User user, final DateTime currentDate,
+            Assignment wfInitiator) {
+        WorkFlowMatrix wfmatrix;
+        if (advertisementWorkFlowService.validateUserHasSamePositionAsInitiator(ApplicationThreadLocals.getUserId(),
+                getWfInitiatorPosition(wfInitiator))) {
+
+            advertisementPermitDetail.setStatus(
+                    egwStatusHibernateDAO.getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_MODULE_TYPE,
+                            AdvertisementTaxConstants.APPLICATION_STATUS_CANCELLED));
+            advertisementPermitDetail.transition().end()
+                    .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
+                    .withComments(approvalComent).withDateInfo(currentDate.toDate())
+                    .withNextAction(AdvertisementTaxConstants.WF_END_STATE)
+                    .withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
+
+            if (isAdditionalRuleCreateAdvertisement(additionalRule))
+                advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.CANCELLED);
+            else {
+                advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.ACTIVE); // for renewal
+
+                /*
+                 * Activate previous agreement. Update demand as per previous agreement.
+                 */
+                activatePreviousAgreementOnRenewalCancel(advertisementPermitDetail, additionalRule, workFlowAction);
+
+            }
+        } else {
+            wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
+                    null, additionalRule, AdvertisementTaxConstants.WF_REJECT_STATE, null);
+            advertisementPermitDetail.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
+            advertisementPermitDetail.transition().progressWithStateCopy()
+                    .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
+                    .withComments(approvalComent)
+                    .withStateValue(AdvertisementTaxConstants.WF_REJECT_STATE).withDateInfo(currentDate.toDate())
+                    .withOwner(getWfInitiatorPosition(wfInitiator))
+                    .withNextAction(wfmatrix.getNextAction())
+                    .withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);// Pending: WORK FLOW INITIATOR IS NULL THEN
+                                                                                // RECORD WILL NOT SHOW IN ANY USER INBOX.
+        }
+    }
+
+    private void activatePreviousAgreementOnRenewalCancel(final AdvertisementPermitDetail advertisementPermitDetail,
+            final String additionalRule, final String workFlowAction) {
+        if (AdvertisementTaxConstants.WF_CANCELRENEWAL_BUTTON.equalsIgnoreCase(workFlowAction) &&
+                advertisementPermitDetail.getPreviousapplicationid() != null && additionalRule != null
+                && additionalRule.equalsIgnoreCase(AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE)) {
+
+            advertisementPermitDetail.getPreviousapplicationid().setIsActive(true);
+            advertisementPermitDetail.getPreviousapplicationid().setStatus(
+                    egwStatusHibernateDAO.getStatusByModuleAndCode(
+                            AdvertisementTaxConstants.APPLICATION_MODULE_TYPE,
+                            AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED));
+
+            advertisementPermitDetail.setIsActive(false);
+            // UPDATE DEMAND BASED ON LATEST RENEWAL DATA.
+            advertisementPermitDetail.getAdvertisement().setDemandId(
+                    advertisementDemandService.updateDemandOnRenewal(advertisementPermitDetail
+                            .getPreviousapplicationid(),
+                            advertisementPermitDetail.getAdvertisement()
+                                    .getDemandId()));
+        }
+    }
+
+    private boolean isAdditionalRuleCreateAdvertisement(final String additionalRule) {
+        return additionalRule != null && additionalRule.equalsIgnoreCase(AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
+    }
+
+    private Position getWfInitiatorPosition(Assignment wfInitiator) {
+        return wfInitiator != null ? wfInitiator.getPosition() : null;
+    }
+
+    private String getSenderName(Assignment wfInitiator) {
+        return new StringBuilder(wfInitiator != null && wfInitiator.getEmployee() != null
+                ? wfInitiator.getEmployee().getUsername()
+                : "").append(AdvertisementTaxConstants.COLON_CONCATE)
+                        .append(wfInitiator != null && wfInitiator.getEmployee() != null ? wfInitiator.getEmployee().getName()
+                                : "")
+                        .toString();
+    }
+
+    private void makePreviousApplicationInactive(final AdvertisementPermitDetail advertisementPermitDetail,
+            final String additionalRule) {
+        if (additionalRule != null && advertisementPermitDetail.getPreviousapplicationid() != null
+                && additionalRule.equalsIgnoreCase(AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE)) {
+            advertisementPermitDetail.getPreviousapplicationid().setIsActive(false);
+            // UPDATE DEMAND BASED ON LATEST RENEWAL DATA.
+            advertisementPermitDetail.getAdvertisement().setDemandId(
+                    advertisementDemandService.updateDemandOnRenewal(advertisementPermitDetail,
+                            advertisementPermitDetail.getAdvertisement().getDemandId()));
+        }
+    }
+
+    private void setSource(final AdvertisementPermitDetail advertisementPermitDetail, final User user,
+            Boolean cscOperatorLoggedIn) {
+        if (cscOperatorLoggedIn)
+            advertisementPermitDetail.setSource(AdvertisementTaxConstants.CSC_SOURCE);
+        else if (ANONYMOUS_USER.equalsIgnoreCase(user.getName()))
+            advertisementPermitDetail.setSource(AdvertisementTaxConstants.ONLINE_SOURCE);
+    }
+
+    private Position getApprovalPosition(final Long approvalPosition) {
+        if (approvalPosition != null && approvalPosition > 0)
+            return positionMasterService.getPositionById(approvalPosition);
+        return null;
     }
 
     private EgwStatus getStatusByPassingModuleAndCode(WorkFlowMatrix wfmatrix) {

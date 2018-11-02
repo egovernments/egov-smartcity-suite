@@ -104,7 +104,7 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
     private static final String APPROVAL_POSITION = "approvalPosition";
     private static final String APPLICATION_PDF = "application/pdf";
     protected String reportId;
-    
+
     @Autowired
     @Qualifier("messageSource")
     private MessageSource messageSource;
@@ -232,8 +232,8 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
             redirAttrib.addFlashAttribute("advertisementPermitDetail", advertisementPermitDetail);
             String message = messageSource.getMessage("msg.success.forward",
                     new String[] {
-                            StringUtils.defaultString(requestDtls.getApproverName(), "").concat("~")
-                                    .concat(StringUtils.defaultString(requestDtls.getNextDesignation(), "")),
+                            new StringBuilder(StringUtils.defaultString(requestDtls.getApproverName(), "")).append("~")
+                                    .append(StringUtils.defaultString(requestDtls.getNextDesignation(), "")).toString(),
                             advertisementPermitDetail.getApplicationNumber() },
                     null);
             redirAttrib.addFlashAttribute("message", message);
@@ -300,7 +300,7 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
             final Assignment assignment = advertisementWorkFlowService.isCscOperator(securityUtils.getCurrentUser())
                     ? advertisementWorkFlowService.getAssignmentByDeptDesigElecWard(advertisementPermitDetail)
                     : null;
-            if (assignment == null && advertisementWorkFlowService.getUserPositionByZone(advertisementPermitDetail) == null)
+            if (assignment == null && advertisementWorkFlowService.getUserPositionByZone() == null)
                 errors.reject(NOTEXISTS_POSITION, NOTEXISTS_POSITION);
         }
     }

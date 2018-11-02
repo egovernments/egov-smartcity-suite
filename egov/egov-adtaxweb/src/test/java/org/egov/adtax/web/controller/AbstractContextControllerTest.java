@@ -63,14 +63,16 @@ import org.springframework.web.servlet.view.tiles3.TilesViewResolver;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
-@ContextConfiguration(locations={"classpath:config/spring/test-applicationContext-hibernate.xml"})
+@ContextConfiguration(locations = { "classpath:config/spring/test-applicationContext-hibernate.xml" })
 @ActiveProfiles("test")
 public abstract class AbstractContextControllerTest<T> {
+
     protected StandaloneMockMvcBuilder mvcBuilder;
     protected T controller;
 
     @Autowired
     private LocalValidatorFactoryBean validator;
+
     @Before
     public void setUpBase() throws Exception {
         this.controller = initController();

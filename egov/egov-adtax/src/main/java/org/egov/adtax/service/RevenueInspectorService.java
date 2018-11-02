@@ -48,17 +48,18 @@
 
 package org.egov.adtax.service;
 
+import java.util.List;
+
 import org.egov.adtax.entity.RevenueInspector;
 import org.egov.adtax.repository.RevenueInspectorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @Transactional(readOnly = true)
 public class RevenueInspectorService {
+
     private final RevenueInspectorRepository revenueInspectorRepository;
 
     @Autowired
@@ -69,10 +70,11 @@ public class RevenueInspectorService {
     public RevenueInspector findByCode(final String name) {
         return revenueInspectorRepository.findByName(name);
     }
-  
+
     public RevenueInspector findById(final Long id) {
         return revenueInspectorRepository.findOne(id);
     }
+
     public List<RevenueInspector> findAllActiveRevenueInspectors() {
         return revenueInspectorRepository.findByActiveTrueOrderByNameAsc();
     }
@@ -82,14 +84,14 @@ public class RevenueInspectorService {
 
         return revenueInspectorRepository.save(revenueInspectorRecord);
     }
-    
+
     @Transactional
     public RevenueInspector update(RevenueInspector revenueInspectorRecord) {
         return revenueInspectorRepository.save(revenueInspectorRecord);
-             
+
     }
 
-    public List<RevenueInspector> findAll(){
+    public List<RevenueInspector> findAll() {
         return revenueInspectorRepository.findAll();
     }
 }

@@ -98,10 +98,9 @@ public class UpdateHoardingController extends HoardingControllerSupport {
 
     @Autowired
     private AdvertisementWorkFlowService advertisementWorkFlowService;
-    
+
     @Autowired
     private ReassignAdvertisementService reassignAdvertisementService;
-    
 
     @ModelAttribute("advertisementPermitDetail")
     public AdvertisementPermitDetail advertisementPermitDetail(@PathVariable final String id) {
@@ -110,8 +109,8 @@ public class UpdateHoardingController extends HoardingControllerSupport {
 
     @RequestMapping(value = "/update/{id}", method = GET)
     public String updateHoarding(@PathVariable final String id, final Model model) {
-        User currentUser = securityUtils.getCurrentUser();
 
+        User currentUser = securityUtils.getCurrentUser();
         final WorkflowContainer workFlowContainer = new WorkflowContainer();
         final AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.findBy(Long.valueOf(id));
         model.addAttribute("dcPending", advertisementDemandService.anyDemandPendingForCollection(advertisementPermitDetail));
@@ -125,8 +124,8 @@ public class UpdateHoardingController extends HoardingControllerSupport {
         } else {
             model.addAttribute(ADDITIONAL_RULE, AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
             workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
-            workFlowContainer.setPendingActions(advertisementPermitDetail.getState().getNextAction());
-
+            if (advertisementPermitDetail != null)
+                workFlowContainer.setPendingActions(advertisementPermitDetail.getState().getNextAction());
         }
 
         if (advertisementPermitDetail != null) {
@@ -151,44 +150,16 @@ public class UpdateHoardingController extends HoardingControllerSupport {
         validateHoardingDocsOnUpdate(advertisementPermitDetail, resultBinder, redirAttrib);
         validateAdvertisementDetails(advertisementPermitDetail, resultBinder);
         if (resultBinder.hasErrors()) {
-            final WorkflowContainer workFlowContainer = new WorkflowContainer();
-
-            if (advertisementPermitDetail != null && advertisementPermitDetail.getPreviousapplicationid() != null) {
-                model.addAttribute(ADDITIONAL_RULE, AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
-                workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
-                workFlowContainer.setPendingActions(advertisementPermitDetail.getState().getNextAction());
-
-            } else {
-                model.addAttribute(ADDITIONAL_RULE, AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
-                workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
-                workFlowContainer.setPendingActions(advertisementPermitDetail.getState().getNextAction());
-
-            }
-            if (advertisementPermitDetail != null) {
-                prepareWorkflow(model, advertisementPermitDetail, workFlowContainer);
-                model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
-                model.addAttribute("currentState", advertisementPermitDetail.getCurrentState().getValue());
-                model.addAttribute("isReassignEnabled", reassignAdvertisementService.isReassignEnabled());
-                model.addAttribute("applicationType", advertisementPermitDetail.getApplicationtype().name());
-            }
+            populateModelOnErrors(advertisementPermitDetail, model);
             return HOARDING_UPDATE;
         }
         try {
-            Long approvalPosition = 0l;
-            String approvalComment = "";
-            String approverName = "";
-            String nextDesignation = "";
-            String message;
-            if (request.getParameter("approverName") != null)
-                approverName = request.getParameter("approverName");
-            if (request.getParameter("nextDesignation") != null)
-                nextDesignation = request.getParameter("nextDesignation");
-            if (request.getParameter("approvalComent") != null)
-                approvalComment = request.getParameter("approvalComent");
+            StringBuilder approverName = getApproverName(request);
+            String nextDesignation = getNextDesignation(request);
+            String approvalComment = getApprovalComment(request);
+            Long approvalPosition = getApprovalPosition(request);
             if (request.getParameter("workFlowAction") != null)
                 workFlowAction = request.getParameter("workFlowAction");
-            if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
-                approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
 
             if (AdvertisementTaxConstants.WF_DEMANDNOTICE_BUTTON.equalsIgnoreCase(workFlowAction))
                 return "redirect:/advertisement/demandNotice?pathVar=" + advertisementPermitDetail.getId();
@@ -201,53 +172,148 @@ public class UpdateHoardingController extends HoardingControllerSupport {
                                 ? AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE
                                 : AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE,
                         workFlowAction);
-                redirAttrib.addFlashAttribute("advertisementNumber",
-                        advertisementPermitDetail.getAdvertisement().getAdvertisementNumber());
+                populateAdvertisementNumber(advertisementPermitDetail, redirAttrib);
 
-                if (AdvertisementTaxConstants.WF_APPROVE_BUTTON.equals(workFlowAction)) {
-                    if (advertisementPermitDetail.getPreviousapplicationid() != null)
-                        message = messageSource.getMessage("msg.renewal.success.approved",
-                                new String[] { advertisementPermitDetail.getAdvertisement().getAdvertisementNumber(),
-                                        advertisementPermitDetail.getPermissionNumber() },
-                                null);
-                    else
-                        message = messageSource.getMessage("msg.success.approved",
-                                new String[] { advertisementPermitDetail.getAdvertisement().getAdvertisementNumber(),
-                                        advertisementPermitDetail.getPermissionNumber() },
-                                null);
-                    redirAttrib.addFlashAttribute(MESSAGE, message);
-                } else if (AdvertisementTaxConstants.WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction) ||
+                if (AdvertisementTaxConstants.WF_APPROVE_BUTTON.equals(workFlowAction))
+                    populateMessageOnApprove(advertisementPermitDetail, redirAttrib);
+                else if (AdvertisementTaxConstants.WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction) ||
                         AdvertisementTaxConstants.WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(workFlowAction) ||
-                        AdvertisementTaxConstants.WF_CANCELRENEWAL_BUTTON.equalsIgnoreCase(workFlowAction)) {
-                    final Assignment wfInitiator = advertisementWorkFlowService.getWorkFlowInitiator(advertisementPermitDetail);
-                    if (ApplicationThreadLocals.getUserId().equals(wfInitiator.getEmployee().getId())) {
-                        message = messageSource.getMessage("msg.success.cancelled",
-                                new String[] { advertisementPermitDetail.getApplicationNumber() }, null);
-                        redirAttrib.addFlashAttribute(MESSAGE, message);
-                    } else {
-                        approverName = wfInitiator.getEmployee().getName();
-                        nextDesignation = wfInitiator.getDesignation().getName();
-                        message = messageSource.getMessage("msg.success.reject",
-                                new String[] { advertisementPermitDetail.getApplicationNumber(),
-                                        approverName.concat("~").concat(nextDesignation) },
-                                null);
-                        redirAttrib.addFlashAttribute(MESSAGE, message);
-                    }
-                } else if (AdvertisementTaxConstants.WF_PERMITORDER_BUTTON.equalsIgnoreCase(workFlowAction))
-                    return "redirect:/advertisement/permitOrder?pathVar=" + advertisementPermitDetail.getId();
-                else {
-                    message = messageSource.getMessage("msg.success.forward.on.reject",
-                            new String[] { approverName.concat("~").concat(nextDesignation),
-                                    advertisementPermitDetail.getApplicationNumber() },
-                            null);
-                    redirAttrib.addFlashAttribute(MESSAGE, message);
-                }
+                        AdvertisementTaxConstants.WF_CANCELRENEWAL_BUTTON.equalsIgnoreCase(workFlowAction))
+                    populateMessageOnRejectOrCancel(advertisementPermitDetail, redirAttrib);
+                else if (AdvertisementTaxConstants.WF_PERMITORDER_BUTTON.equalsIgnoreCase(workFlowAction))
+                    return redirectToPermitOrder(advertisementPermitDetail);
+                else
+                    populateMessage(advertisementPermitDetail, redirAttrib, approverName, nextDesignation);
 
-                return "redirect:/hoarding/success/" + advertisementPermitDetail.getId();
+                return redirectToSuccess(advertisementPermitDetail);
             }
         } catch (final HoardingValidationError e) {
             resultBinder.rejectValue(e.fieldName(), e.errorCode());
             return HOARDING_UPDATE;
+        }
+    }
+
+    private String redirectToSuccess(final AdvertisementPermitDetail advertisementPermitDetail) {
+        return new StringBuilder("redirect:/hoarding/success/")
+                .append(advertisementPermitDetail != null ? advertisementPermitDetail.getId() : null).toString();
+    }
+
+    private String redirectToPermitOrder(final AdvertisementPermitDetail advertisementPermitDetail) {
+        return new StringBuilder("redirect:/advertisement/permitOrder?pathVar=")
+                .append(advertisementPermitDetail != null
+                        ? advertisementPermitDetail.getId()
+                        : null)
+                .toString();
+    }
+
+    private void populateAdvertisementNumber(final AdvertisementPermitDetail advertisementPermitDetail,
+            final RedirectAttributes redirAttrib) {
+        if (advertisementPermitDetail != null)
+            redirAttrib.addFlashAttribute("advertisementNumber",
+                    advertisementPermitDetail.getAdvertisement().getAdvertisementNumber());
+    }
+
+    private Long getApprovalPosition(final HttpServletRequest request) {
+        Long approvalPosition = 0l;
+        if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
+            approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
+        return approvalPosition;
+    }
+
+    private String getApprovalComment(final HttpServletRequest request) {
+        String approvalComment = "";
+        if (request.getParameter("approvalComent") != null)
+            approvalComment = request.getParameter("approvalComent");
+        return approvalComment;
+    }
+
+    private StringBuilder getApproverName(final HttpServletRequest request) {
+        StringBuilder approverName = new StringBuilder();
+        if (request.getParameter("approverName") != null)
+            approverName = new StringBuilder(request.getParameter("approverName"));
+        return approverName;
+    }
+
+    private String getNextDesignation(final HttpServletRequest request) {
+        String nextDesignation = "";
+        if (request.getParameter("nextDesignation") != null)
+            nextDesignation = request.getParameter("nextDesignation");
+        return nextDesignation;
+    }
+
+    private void populateMessage(final AdvertisementPermitDetail advertisementPermitDetail, final RedirectAttributes redirAttrib,
+            StringBuilder approverName, String nextDesignation) {
+        if (advertisementPermitDetail != null) {
+            String message;
+            message = messageSource.getMessage("msg.success.forward.on.reject",
+                    new String[] { approverName.append("~").append(nextDesignation).toString(),
+                            advertisementPermitDetail.getApplicationNumber() },
+                    null);
+            redirAttrib.addFlashAttribute(MESSAGE, message);
+        }
+    }
+
+    private void populateMessageOnRejectOrCancel(final AdvertisementPermitDetail advertisementPermitDetail,
+            final RedirectAttributes redirAttrib) {
+        if (advertisementPermitDetail != null) {
+            StringBuilder approverName = new StringBuilder();
+            String nextDesignation;
+            String message;
+            final Assignment wfInitiator = advertisementWorkFlowService.getWorkFlowInitiator(advertisementPermitDetail);
+            if (ApplicationThreadLocals.getUserId().equals(wfInitiator.getEmployee().getId())) {
+                message = messageSource.getMessage("msg.success.cancelled",
+                        new String[] { advertisementPermitDetail.getApplicationNumber() }, null);
+                redirAttrib.addFlashAttribute(MESSAGE, message);
+            } else {
+                approverName.append(wfInitiator.getEmployee().getName());
+                nextDesignation = wfInitiator.getDesignation().getName();
+                message = messageSource.getMessage("msg.success.reject",
+                        new String[] { advertisementPermitDetail.getApplicationNumber(),
+                                approverName.append("~").append(nextDesignation).toString() },
+                        null);
+                redirAttrib.addFlashAttribute(MESSAGE, message);
+            }
+        }
+    }
+
+    private void populateMessageOnApprove(final AdvertisementPermitDetail advertisementPermitDetail,
+            final RedirectAttributes redirAttrib) {
+        String message;
+        if (advertisementPermitDetail != null) {
+            if (advertisementPermitDetail.getPreviousapplicationid() != null)
+                message = messageSource.getMessage("msg.renewal.success.approved",
+                        new String[] { advertisementPermitDetail.getAdvertisement().getAdvertisementNumber(),
+                                advertisementPermitDetail.getPermissionNumber() },
+                        null);
+            else
+                message = messageSource.getMessage("msg.success.approved",
+                        new String[] { advertisementPermitDetail.getAdvertisement().getAdvertisementNumber(),
+                                advertisementPermitDetail.getPermissionNumber() },
+                        null);
+            redirAttrib.addFlashAttribute(MESSAGE, message);
+        }
+    }
+
+    private void populateModelOnErrors(final AdvertisementPermitDetail advertisementPermitDetail, final Model model) {
+        final WorkflowContainer workFlowContainer = new WorkflowContainer();
+
+        if (advertisementPermitDetail != null && advertisementPermitDetail.getPreviousapplicationid() != null) {
+            model.addAttribute(ADDITIONAL_RULE, AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
+            workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
+            workFlowContainer.setPendingActions(advertisementPermitDetail.getState().getNextAction());
+
+        } else {
+            model.addAttribute(ADDITIONAL_RULE, AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
+            workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
+            if (advertisementPermitDetail != null)
+                workFlowContainer.setPendingActions(advertisementPermitDetail.getState().getNextAction());
+        }
+        if (advertisementPermitDetail != null) {
+            prepareWorkflow(model, advertisementPermitDetail, workFlowContainer);
+            model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
+            model.addAttribute("currentState", advertisementPermitDetail.getCurrentState().getValue());
+            model.addAttribute("isReassignEnabled", reassignAdvertisementService.isReassignEnabled());
+            model.addAttribute("applicationType", advertisementPermitDetail.getApplicationtype().name());
         }
     }
 }

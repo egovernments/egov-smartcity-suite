@@ -133,8 +133,8 @@ public class DeactivateAdvertisementController extends GenericController {
     @RequestMapping(value = "/activerecord-list-search", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public void searchResult(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetailRecord,
-                             final HttpServletRequest request,
-                             final HttpServletResponse response) throws IOException {
+            final HttpServletRequest request,
+            final HttpServletResponse response) throws IOException {
         final String searchType = request.getParameter("searchType");
         IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
                 .toJson(advertisementPermitDetailService.getActiveAdvertisementSearchResult(advertisementPermitDetailRecord,
@@ -169,15 +169,16 @@ public class DeactivateAdvertisementController extends GenericController {
                 && advertisementPermitDetail.getAdvertisement().getStatus() != null
                 && advertisementPermitDetail.getAdvertisement().getStatus().equals(AdvertisementStatus.ACTIVE) &&
                 advertisementPermitDetail.getStatus() != null && advertisementPermitDetail.getStatus().getCode()
-                .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED)) {
+                        .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED)) {
             model.addAttribute("message", "msg.deactivate.paymentPending");
             return "deactive-error";
         }
-        Set<EgDemandDetails> demandDetails = new HashSet<EgDemandDetails>();
-        demandDetails = advertisementPermitDetail.getAdvertisement().getDemandId().getEgDemandDetails();
+        Set<EgDemandDetails> demandDetails = advertisementPermitDetail != null
+                ? advertisementPermitDetail.getAdvertisement().getDemandId().getEgDemandDetails()
+                : new HashSet<>();
         BigDecimal totalAmount = BigDecimal.ZERO;
         BigDecimal totalCollectedAmount = BigDecimal.ZERO;
-        BigDecimal pendingTax = BigDecimal.ZERO;
+        BigDecimal pendingTax;
 
         for (EgDemandDetails demandObject : demandDetails) {
             totalAmount = totalAmount.add(demandObject.getAmount());
@@ -185,17 +186,19 @@ public class DeactivateAdvertisementController extends GenericController {
 
         }
         pendingTax = totalAmount.subtract(totalCollectedAmount);
-        advertisementPermitDetail.getAdvertisement().setPendingTax(pendingTax);
+        if (advertisementPermitDetail != null)
+            advertisementPermitDetail.getAdvertisement().setPendingTax(pendingTax);
 
         model.addAttribute("advertisementPermitDetailStatus", advertisementPermitDetail);
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        model.addAttribute("applicationDate", sdf.format(advertisementPermitDetail.getApplicationDate()));
+        if (advertisementPermitDetail != null)
+            model.addAttribute("applicationDate", sdf.format(advertisementPermitDetail.getApplicationDate()));
         return "statusChange-deactivate";
     }
 
     @RequestMapping(value = "/deactive/{id}", method = RequestMethod.POST)
     public String deactivate(@Valid @ModelAttribute AdvertisementPermitDetail advertisementPermitDetailStatus, final Model model,
-                             @PathVariable final Long id) {
+            @PathVariable final Long id) {
 
         AdvertisementPermitDetail existingRateObject = advertisementPermitDetailService
                 .findById(id);

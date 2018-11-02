@@ -45,71 +45,68 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.adtax.web.controller.ratesClass;
-
-import org.egov.adtax.entity.RatesClass;
-import org.egov.adtax.service.RatesClassService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.validation.Valid;
-import java.util.List;
+package org.egov.adtax.web.controller.unitofmeasure;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-@Controller
-@RequestMapping("/ratesclass")
-public class RatesClassController {
+import javax.validation.Valid;
 
-    private final RatesClassService rateClassService;
+import org.egov.adtax.entity.UnitOfMeasure;
+import org.egov.adtax.service.UnitOfMeasureService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+@Controller
+@RequestMapping("/unitOfMeasure")
+public class UpdateUnitOfMeasureController {
+
+    private final UnitOfMeasureService unitOfMeasureService;
 
     @Autowired
-    public RatesClassController(final RatesClassService rateClassService) {
-        this.rateClassService = rateClassService;
+    public UpdateUnitOfMeasureController(final UnitOfMeasureService unitOfMeasureService) {
+        this.unitOfMeasureService = unitOfMeasureService;
     }
 
     @ModelAttribute
-    public RatesClass ratesClass() {
-        return new RatesClass();
+    public UnitOfMeasure unitOfMeasureModel(@PathVariable final Long id, final Model model) {
+        return unitOfMeasureService.getUnitOfMeasureById(id);
     }
 
-    @ModelAttribute(value = "rateClasses")
-    public List<RatesClass> getAllRatesClasses() {
-        return rateClassService.findAll();
-    }
-    
-    @RequestMapping(value = "create", method = GET)
-    public String create() {
-        return "ratesClass-form";
-    }
-    
-    @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public String search() {
-        return "ratesClass-search";
-    }
-    @RequestMapping(value = "create", method = POST)
-    public String create(@Valid @ModelAttribute final RatesClass ratesClass,
-            final BindingResult errors, final RedirectAttributes redirectAttrs) {
+    @RequestMapping(value = "/update/{id}", method = POST)
+    public String update(@Valid @ModelAttribute final UnitOfMeasure unitOfMeasure, final BindingResult errors,
+            final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors())
-            return "ratesClass-form";
-        rateClassService.createRatesClass(ratesClass);
-        redirectAttrs.addFlashAttribute("ratesClass", ratesClass);
-        redirectAttrs.addFlashAttribute("message", "message.ratesClass.create");
-        return "redirect:/ratesclass/success/" + ratesClass.getId();
+            return "unitOfMeasure-form";
+        unitOfMeasureService.updateUnitOfMeasure(unitOfMeasure);
+        redirectAttrs.addFlashAttribute("unitOfMeasure", unitOfMeasure);
+        redirectAttrs.addFlashAttribute("message", "message.uom.update");
+        return new StringBuilder("redirect:/unitOfMeasure/success/").append(unitOfMeasure.getId()).toString();
     }
 
-    @RequestMapping(value = "/success/{description}", method = GET)
-    public ModelAndView successView(@PathVariable("description") final Long description, @ModelAttribute final RatesClass ratesClass) {
-        return new ModelAndView("ratesClass/ratesClass-success", "ratesClass", rateClassService.getRateClassById(description));
+    @RequestMapping(value = "/updateUnitOfMeasure/{id}", method = GET)
+    public String update(@PathVariable final Long id) {
+        return new StringBuilder("redirect:/unitOfMeasure/update/").append(id).toString();
+    }
+
+    @RequestMapping(value = "/update/{id}", method = GET)
+    public ModelAndView updateView(@PathVariable("id") final Long id, @ModelAttribute final UnitOfMeasure unitOfMeasure) {
+        return new ModelAndView("unitOfMeasure/unitOfMeasure-form", "unitOfMeasure",
+                unitOfMeasureService.getUnitOfMeasureById(id));
 
     }
 
+    @RequestMapping(value = "/view/{id}", method = GET)
+    public String view(@ModelAttribute final UnitOfMeasure unitOfMeasure, final BindingResult errors) {
+        if (errors.hasErrors())
+            return "unitOfMeasure-search";
+        return new StringBuilder("redirect:/unitOfMeasure/success/").append(unitOfMeasure.getId()).toString();
+    }
 }

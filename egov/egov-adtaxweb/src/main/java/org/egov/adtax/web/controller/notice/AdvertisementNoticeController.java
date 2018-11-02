@@ -47,6 +47,18 @@
  */
 package org.egov.adtax.web.controller.notice;
 
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED;
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE;
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.WF_PERMITORDER_BUTTON;
+import static org.egov.infra.reporting.engine.ReportDisposition.INLINE;
+import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
+import static org.egov.infra.utils.StringUtils.append;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.service.AdvertisementPermitDetailService;
 import org.egov.adtax.service.notice.AdvertisementNoticeService;
@@ -61,23 +73,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED;
-import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE;
-import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.WF_PERMITORDER_BUTTON;
-import static org.egov.infra.reporting.engine.ReportDisposition.INLINE;
-import static org.egov.infra.utils.StringUtils.append;
-import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
-
 @Controller
 @RequestMapping(value = "/advertisement")
 public class AdvertisementNoticeController {
 
     private static final String DEMAND_NOTICE = "demand_notice_";
     private static final String PERMIT_ORDER = "permit_order_";
+
     @Autowired
     private AdvertisementPermitDetailService advertisementPermitDetailService;
     @Autowired
