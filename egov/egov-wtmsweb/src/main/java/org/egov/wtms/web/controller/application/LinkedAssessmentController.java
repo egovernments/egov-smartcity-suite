@@ -48,28 +48,14 @@
 
 package org.egov.wtms.web.controller.application;
 
-import org.egov.ptis.domain.model.AssessmentDetails;
-import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
-import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.LinkedAssessment;
-import org.egov.wtms.application.entity.WaterConnection;
-import org.egov.wtms.application.entity.WaterConnectionDetails;
-import org.egov.wtms.application.service.WaterConnectionDetailsService;
-import org.egov.wtms.masters.entity.enums.ConnectionStatus;
-import org.egov.wtms.masters.service.ApplicationTypeService;
-import org.egov.wtms.utils.PropertyExtnUtils;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.egov.wtms.application.service.LinkAssessmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.validation.ValidationException;
-import java.util.List;
 
 @Controller
 @RequestMapping(value = "/application")
@@ -78,13 +64,7 @@ public class LinkedAssessmentController {
     public static final String LINKED_ASSESSMENT = "linked-assessment";
 
     @Autowired
-    private WaterConnectionDetailsService waterConnectionDetailsService;
-
-    @Autowired
-    private ApplicationTypeService applicationTypeService;
-
-    @Autowired
-    private PropertyExtnUtils propertyExtnUtils;
+    private LinkAssessmentService linkAssessmentService;
 
     @RequestMapping(value = "/linkedAssessment", method = RequestMethod.GET)
     public String viewForm(final Model model) {
@@ -93,50 +73,12 @@ public class LinkedAssessmentController {
     }
 
     @RequestMapping(value = "/linkedAssessment", method = RequestMethod.POST)
-    public String linkActiveAssessments(@ModelAttribute final LinkedAssessment linkedAssessment,
-            final BindingResult resultBinder, final RedirectAttributes redirectAttrs, final Model model) {
-        if (linkedAssessment.getPropertyAssessmentDetails().getStatus()
-                .equalsIgnoreCase(WaterTaxConstants.ACTIVE))
-            throw new ValidationException("err.assessment.no.active");
-        if (linkedAssessment.getActiveAssessmentDetails().getStatus()
-                .equalsIgnoreCase(WaterTaxConstants.ACTIVE))
-            throw new ValidationException("err.assessment.no.inactive");
-        final List<WaterConnectionDetails> waterconnectiondetailslist = waterConnectionDetailsService
-                .getAllConnectionDetailsByPropertyID(
-                        linkedAssessment.getPropertyAssessmentDetails().getAssessmentNumber());
-        final List<WaterConnectionDetails> activeWaterConnectionDetailsList = waterConnectionDetailsService
-                .getAllConnectionDetailsByPropertyID(
-                        linkedAssessment.getActiveAssessmentDetails().getAssessmentNumber());
-        WaterConnection parentConnection = null;
-        if (!activeWaterConnectionDetailsList.isEmpty())
-            for (final WaterConnectionDetails connectionDetails : activeWaterConnectionDetailsList)
-                if (connectionDetails.getConnection().getParentConnection() == null)
-                    parentConnection = connectionDetails.getConnection();
-        if (!waterconnectiondetailslist.isEmpty()) {
-            for (final WaterConnectionDetails connectionDetails : waterconnectiondetailslist) {
-                final WaterConnectionDetails waterconnectionDetails = waterConnectionDetailsService
-                        .findByConsumerCodeAndConnectionStatus(connectionDetails.getConnection().getConsumerCode(),
-                                ConnectionStatus.ACTIVE);
-                waterconnectionDetails.getConnection()
-                        .setPropertyIdentifier(linkedAssessment.getActiveAssessmentDetails().getAssessmentNumber());
-                if (!activeWaterConnectionDetailsList.isEmpty()) {
-                    waterconnectionDetails.getConnection().setParentConnection(parentConnection);
-                    waterconnectionDetails
-                            .setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.ADDNLCONNECTION));
-                }
-                waterConnectionDetailsService.save(waterconnectionDetails);
-                final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
-                        waterconnectionDetails.getConnection().getPropertyIdentifier(),
-                        PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
-                waterConnectionDetailsService.createWaterChargeIndex(waterconnectionDetails, assessmentDetails,
-                        waterConnectionDetailsService.getTotalAmount(waterconnectionDetails));
+    public String linkActiveAssessments(@ModelAttribute final LinkedAssessment linkedAssessment, final Model model) {
+        linkAssessmentService.linkActiveAssessmentToConnection(linkedAssessment);
+        model.addAttribute("propertyIdentifier",
+                linkedAssessment.getActiveAssessmentDetails().getAssessmentNumber());
+        return "linkedassessment-success";
 
-            }
-            model.addAttribute("propertyIdentifier",
-                    linkedAssessment.getActiveAssessmentDetails().getAssessmentNumber());
-            return "linkedassessment-success";
-        } else
-            throw new ValidationException("err.no.active.connections");
     }
 
 }
