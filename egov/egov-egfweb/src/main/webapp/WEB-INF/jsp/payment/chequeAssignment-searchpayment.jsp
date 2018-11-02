@@ -445,6 +445,11 @@
 						flag =  false;
 					});
 				}
+                var inFavourEntered = document.getElementById('inFavourOf').value;
+                if(inFavourEntered.trim() == ""){
+                    bootbox.alert('Invalid In Favour Of');
+                    flag =  false;
+                }
 				for(var index=0;index<chequeSize;index++){
 					var paymentDate= document.getElementsByName("chequeAssignmentList["+index+"].tempPaymentDate")[0].value; 
 					if(document.getElementById('isSelected'+index).checked){
@@ -750,12 +755,6 @@
 				var inFavourEntered = document.getElementById('inFavourOf').value;
 				var replacedInFavour = inFavourEntered.replace(/[`~!@#$%^&*()_|+\-=��?;:><'",.<>\{\}\[\]\\\/]/gi, '');
 				document.getElementById('inFavourOf').value = replacedInFavour;
-				if(inFavourEntered.trim() == ""){
-                    bootbox.alert('Invalid In Favour Of');
-                    document.getElementById('assignChequeBtn').disabled = true;
-                }else{
-                    document.getElementById('assignChequeBtn').disabled = false;
-                }
 			}
 		</script>
 	<%-- 	<s:if test="%{isFieldMandatory('department')}">
