@@ -83,6 +83,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
 import org.egov.eis.entity.Assignment;
@@ -241,7 +242,7 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String updateReIssue(@RequestParam final Long id, @ModelAttribute final ReIssue reIssue,
+    public String updateReIssue(@RequestParam final Long id, @Valid @ModelAttribute final ReIssue reIssue,
             @ModelAttribute final WorkflowContainer workflowContainer,
             final Model model,
             final HttpServletRequest request,

@@ -87,11 +87,13 @@ public class MarriageRegistration extends StateAware<Position> {
     private Long id;
 
     @NotNull
+    @SafeHtml
     private String applicationNo;
 
     @NotNull
     private Date applicationDate;
 
+    @SafeHtml
     private String registrationNo;
 
     @NotNull
@@ -111,6 +113,7 @@ public class MarriageRegistration extends StateAware<Position> {
     private String venue;
 
     @NotNull
+    @SafeHtml
     @Length(max = 100)
     private String street;
 
@@ -120,6 +123,7 @@ public class MarriageRegistration extends StateAware<Position> {
     private Boundary locality;
 
     @NotNull
+    @SafeHtml
     @Length(max = 30)
     private String city;
 
@@ -177,9 +181,11 @@ public class MarriageRegistration extends StateAware<Position> {
     @JoinColumn(name = "status", nullable = false)
     private EgwStatus status;
 
+    @SafeHtml
     @Length(max = 256)
     private String rejectionReason;
 
+    @SafeHtml
     @Length(max = 256)
     private String remarks;
 
@@ -230,9 +236,12 @@ public class MarriageRegistration extends StateAware<Position> {
     private FileStoreMapper datasheetFileStore;
 
     @NotNull
+    @SafeHtml
     @Column(name = "serialno", unique = true)
     private String serialNo;
+    
     @NotNull
+    @SafeHtml
     private String pageNo;
 
     @SafeHtml

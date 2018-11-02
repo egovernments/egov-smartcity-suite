@@ -56,6 +56,7 @@ import java.io.IOException;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -161,7 +162,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public String register(final WorkflowContainer workflowContainer,
-            @ModelAttribute(MARRIAGE_REGISTRATION) final MarriageRegistration marriageRegistration,
+    		@Valid @ModelAttribute(MARRIAGE_REGISTRATION) final MarriageRegistration marriageRegistration,
             final Model model,
             final HttpServletRequest request,
             final BindingResult errors, final RedirectAttributes redirectAttributes) {
@@ -248,7 +249,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
 
     @RequestMapping(value = "/workflow", method = RequestMethod.POST)
     public String handleWorkflowAction(@RequestParam final Long id,
-            @ModelAttribute final MarriageRegistration marriageRegistration,
+    		@Valid @ModelAttribute final MarriageRegistration marriageRegistration,
             @ModelAttribute final WorkflowContainer workflowContainer,
             final Model model,
             final HttpServletRequest request,

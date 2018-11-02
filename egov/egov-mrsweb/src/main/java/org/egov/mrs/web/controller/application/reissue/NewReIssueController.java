@@ -85,6 +85,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -185,7 +187,7 @@ public class NewReIssueController extends GenericWorkFlowController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String createReIssue(@ModelAttribute final WorkflowContainer workflowContainer,
-            @ModelAttribute final ReIssue reIssue,
+    		@Valid @ModelAttribute final ReIssue reIssue,
             final Model model,
             final HttpServletRequest request,
             final BindingResult errors,
@@ -250,7 +252,7 @@ public class NewReIssueController extends GenericWorkFlowController {
     }
 
     @RequestMapping(value = "/workflow", method = RequestMethod.POST)
-    public String handleWorkflowAction(@ModelAttribute final ReIssue reIssue,
+    public String handleWorkflowAction(@Valid @ModelAttribute final ReIssue reIssue,
             @ModelAttribute final WorkflowContainer workflowContainer,
             final Model model,
             final HttpServletRequest request,

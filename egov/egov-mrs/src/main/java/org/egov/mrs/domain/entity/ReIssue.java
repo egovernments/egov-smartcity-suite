@@ -89,6 +89,7 @@ public class ReIssue extends StateAware<Position> {
     private Long id;
 
     @NotNull
+    @SafeHtml
     private String applicationNo;
 
     @NotNull
@@ -135,9 +136,11 @@ public class ReIssue extends StateAware<Position> {
 
     private boolean isActive;
 
+    @SafeHtml
     @Length(max = 256)
     private String rejectionReason;
 
+    @SafeHtml
     @Length(max = 256)
     private String remarks;
 

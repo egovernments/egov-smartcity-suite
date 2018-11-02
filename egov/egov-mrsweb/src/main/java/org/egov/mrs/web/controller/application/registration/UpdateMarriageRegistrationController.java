@@ -91,6 +91,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.entity.Source;
@@ -279,7 +280,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
 
     @RequestMapping(value = "/update", method = POST)
     public String updateRegistration(final WorkflowContainer workflowContainer,
-            @ModelAttribute final MarriageRegistration marriageRegistration, final Model model,
+    		@Valid @ModelAttribute final MarriageRegistration marriageRegistration, final Model model,
             final HttpServletRequest request, final BindingResult errors) throws IOException {
 
         String workFlowAction = EMPTY;
@@ -479,7 +480,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
      */
     @RequestMapping(value = "/modify-approved", method = POST)
     public String modifyRegisteredApplication(@RequestParam final Long id,
-            @ModelAttribute final MarriageRegistration registration, final Model model,
+    		@Valid @ModelAttribute final MarriageRegistration registration, final Model model,
             final HttpServletRequest request, final BindingResult errors) {
         if (registration.getSource().equals(Source.CHPK.toString())) {
             registration.getWitnesses().clear();

@@ -120,7 +120,7 @@ public class MarriageReassignController extends GenericWorkFlowController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String update(@ModelAttribute("reassign") final MarriageReassignInfo marriageReassignInfo, final Model model,
+    public String update(@Valid @ModelAttribute("reassign") final MarriageReassignInfo marriageReassignInfo, final Model model,
             @Valid final BindingResult errors, final HttpServletRequest request) {
         String successMessage;
         Long positionId = Long.valueOf(request.getParameter("approvalPosition"));

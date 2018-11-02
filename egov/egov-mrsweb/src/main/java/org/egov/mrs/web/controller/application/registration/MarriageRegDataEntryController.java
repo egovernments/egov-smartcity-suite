@@ -61,6 +61,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import java.util.Date;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -88,7 +90,7 @@ public class MarriageRegDataEntryController extends MarriageRegistrationControll
     }
 
     @RequestMapping(value = "/createdataentry", method = RequestMethod.POST)
-    public String register(@ModelAttribute final MarriageRegistration marriageRegistration,
+    public String register(@Valid @ModelAttribute final MarriageRegistration marriageRegistration,
             final Model model,
             final HttpServletRequest request,
             final BindingResult errors) {

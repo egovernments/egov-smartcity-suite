@@ -57,6 +57,7 @@ import org.egov.mrs.domain.entity.Contact;
 import org.egov.mrs.domain.entity.Name;
 import org.egov.mrs.domain.enums.MaritalStatus;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 public class MarriageRegistrationRequest {
 
@@ -64,15 +65,19 @@ public class MarriageRegistrationRequest {
     private Date dateOfMarriage;
 
     @NotNull(message = "provide place of marriage")
+    @SafeHtml
     private String placeOfMarriage;
 
     @NotNull(message = "Provide venue")
+    @SafeHtml
     private String venue;
 
     @NotNull(message = "Provide street")
+    @SafeHtml
     private String street;
 
     @NotNull(message = "Provide city")
+    @SafeHtml
     private String city;
 
     @NotNull(message = "Provide locality")
@@ -85,6 +90,7 @@ public class MarriageRegistrationRequest {
     private Name husbandName;
 
     @NotNull(message = "Provide bridegroom's religion")
+    @SafeHtml
     private String husbandreligion;
 
     @NotNull(message = "Provide bridegroom's Age in Years")
@@ -96,25 +102,32 @@ public class MarriageRegistrationRequest {
     @NotNull(message = "Provide marital status of bridegroom")
     private MaritalStatus husbandMaritalStatus;
 
+    @SafeHtml
     private String husbandOccupation;
 
     @NotNull(message = "Provide Aadhaar No. of bridegroom")
+    @SafeHtml
     private String husbandAadhaarNo;
 
     @NotNull(message = "Provide bridegroom's parents name")
+    @SafeHtml
     @Length(max = 110,message="Parents name should be less than 110 character")
     private String husbandparentsName;
 
     @NotNull(message = "Provide bridegroom's eduaction qualification")
+    @SafeHtml
     private String husbandQualification;
 
     @NotNull(message = "Provide bridegroom's Street")
+    @SafeHtml
     private String husbandStreet;
 
     @NotNull(message = "Provide bridegroom's Locality")
+    @SafeHtml
     private String husbandLocality;
 
     @NotNull(message = "Provide bridegroom's city")
+    @SafeHtml
     private String husbandCity;
 
     @NotNull(message = "Provide bridegroom's contact information(mobileNo,email,residenceAddress)")
@@ -129,6 +142,7 @@ public class MarriageRegistrationRequest {
     private Name wifeName;
 
     @NotNull(message = "Provide bride's religion")
+    @SafeHtml
     private String wifereligion;
 
     @NotNull(message = "Provide bride's Age in years")
@@ -140,25 +154,32 @@ public class MarriageRegistrationRequest {
     @NotNull(message = "Provide bride's Marital status")
     private MaritalStatus wifeMaritalStatus;
 
+    @SafeHtml
     private String wifeOccupation;
 
     @NotNull(message = "Provide bride's Locality")
+    @SafeHtml
     private String wifeAadhaarNo;
 
     @NotNull(message = "Provide bride's parents name")
+    @SafeHtml
     @Length(max = 110,message="Parents name should be less than 110 character")
     private String wifeparentsName;
 
     @NotNull(message = "Provide bride's education qualification")
+    @SafeHtml
     private String wifeQualification;
 
     @NotNull(message = "Provide bride's street")
+    @SafeHtml
     private String wifeStreet;
 
     @NotNull(message = "Provide bride's Locality")
+    @SafeHtml
     private String wifeLocality;
 
     @NotNull(message = "Provide bride's city")
+    @SafeHtml
     private String wifeCity;
 
     private boolean wifeHandicapped;

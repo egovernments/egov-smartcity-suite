@@ -73,6 +73,7 @@ public class Name {
     @Length(max = 20,message="Husband/wife lastName  should be less than 20 character")
     private String lastName;
 
+    @SafeHtml
     @Formula("concat(firstName,' ',middleName,' ',lastName)")
     private String fullname;
 

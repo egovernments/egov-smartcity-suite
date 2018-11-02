@@ -48,9 +48,12 @@
 
 package org.egov.mrs.domain.entity;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 public class MarriageReassignInfo {
     
     private Long applicationId;
+    @SafeHtml
     private String stateType;
     public Long getApplicationId() {
         return applicationId;

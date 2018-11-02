@@ -52,6 +52,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -82,16 +83,18 @@ public class MarriageRegistrationUnit extends AbstractAuditable {
     private Long id;
 
     @NotNull
-
+    @SafeHtml
     @Length(max = 100)
     private String name;
 
     @NotNull
+    @SafeHtml
     @Length(max = 20)
     @Column(name = "code", updatable = false)
     private String code;
 
     @NotNull
+    @SafeHtml
     private String address;
 
     @NotNull
