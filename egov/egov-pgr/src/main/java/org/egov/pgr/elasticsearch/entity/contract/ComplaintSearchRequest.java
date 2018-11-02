@@ -50,6 +50,7 @@ package org.egov.pgr.elasticsearch.entity.contract;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.joda.time.DateTime;
 import org.springframework.data.domain.PageRequest;
 
@@ -65,55 +66,53 @@ import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 public class ComplaintSearchRequest {
     private static final int MAX_RESULT_SIZE = 10000;
     private static final int MIN_PAGE_SIZE = 0;
-    private String fromDate;
-    private String toDate;
     private boolean singleULB = true;
     private int page = MIN_PAGE_SIZE;
     private int size = MAX_RESULT_SIZE;
     private BoolQueryBuilder searchQueryBuilder;
+    private String complaintNumber;
+    private String complaintStatus;
+    private String fromDate;
+    private String toDate;
+    private String location;
+    private String complainantPhoneNumber;
+    private String complainantName;
+    private String complainantEmail;
+    private String receivingMode;
+    private String complaintType;
+    private String complaintDepartment;
 
     public ComplaintSearchRequest() {
         searchQueryBuilder = QueryBuilders.boolQuery().filter(QueryBuilders.matchAllQuery());
     }
 
+    @SafeHtml
+    public String getComplaintNumber() {
+        return this.complaintNumber;
+    }
+
     public void setComplaintNumber(String complaintNumber) {
-        if (isNotBlank(complaintNumber))
-            searchQueryBuilder.filter(matchQuery("crn", complaintNumber));
+        if (isNotBlank(complaintNumber)) {
+            this.complaintNumber = complaintNumber;
+            searchQueryBuilder.filter(matchQuery("crn", this.complaintNumber));
+        }
+    }
+
+    @SafeHtml
+    public String getComplaintStatus() {
+        return complaintStatus;
     }
 
     public void setComplaintStatus(String complaintStatus) {
-        if (isNotBlank(complaintStatus))
-            searchQueryBuilder.filter(matchQuery("complaintStatusName", complaintStatus));
+        if (isNotBlank(complaintStatus)) {
+            this.complaintStatus = complaintStatus;
+            searchQueryBuilder.filter(matchQuery("complaintStatusName", this.complaintStatus));
+        }
     }
 
-    public void setComplainantName(String complainantName) {
-        if (isNotBlank(complainantName))
-            searchQueryBuilder.filter(matchQuery("complainantName", complainantName));
-    }
-
-    public void setLocation(String location) {
-        if (isNotBlank(location))
-            searchQueryBuilder.filter(matchQuery("wardName", location));
-    }
-
-    public void setComplainantPhoneNumber(String phoneNumber) {
-        if (isNotBlank(phoneNumber))
-            searchQueryBuilder.filter(matchQuery("complainantMobile", phoneNumber));
-    }
-
-    public void setComplainantEmail(String email) {
-        if (isNotBlank(email))
-            searchQueryBuilder.filter(matchQuery("complainantEmail", email));
-    }
-
-    public void setReceivingMode(String receivingMode) {
-        if (isNotBlank(receivingMode))
-            searchQueryBuilder.filter(matchQuery("receivingMode", receivingMode));
-    }
-
-    public void setComplaintType(String complaintType) {
-        if (isNotBlank(complaintType))
-            searchQueryBuilder.filter(matchQuery("complaintTypeName", complaintType));
+    @SafeHtml
+    public String getFromDate() {
+        return fromDate;
     }
 
     public void setFromDate(String fromDate) {
@@ -121,14 +120,98 @@ public class ComplaintSearchRequest {
             this.fromDate = startOfGivenDate(toDateTimeUsingDefaultPattern(fromDate)).toString(ES_DATE_FORMAT);
     }
 
+    @SafeHtml
+    public String getToDate() {
+        return toDate;
+    }
+
     public void setToDate(String toDate) {
         if (toDate != null)
             this.toDate = endOfGivenDate(toDateTimeUsingDefaultPattern(toDate)).toString(ES_DATE_FORMAT);
     }
 
+    @SafeHtml
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        if (isNotBlank(location)) {
+            this.location = location;
+            searchQueryBuilder.filter(matchQuery("wardName", this.location));
+        }
+    }
+
+    @SafeHtml
+    public String getComplainantPhoneNumber() {
+        return complainantPhoneNumber;
+    }
+
+    public void setComplainantPhoneNumber(String phoneNumber) {
+        if (isNotBlank(phoneNumber)) {
+            this.complainantPhoneNumber = phoneNumber;
+            searchQueryBuilder.filter(matchQuery("complainantMobile", this.complainantPhoneNumber));
+        }
+    }
+
+    @SafeHtml
+    public String getComplainantName() {
+        return complainantName;
+    }
+
+    public void setComplainantName(String complainantName) {
+        if (isNotBlank(complainantName)) {
+            this.complainantName = complainantName;
+            searchQueryBuilder.filter(matchQuery("complainantName", this.complainantName));
+        }
+    }
+
+    @SafeHtml
+    public String getComplainantEmail() {
+        return complainantEmail;
+    }
+
+    public void setComplainantEmail(String email) {
+        if (isNotBlank(email)) {
+            this.complainantEmail = email;
+            searchQueryBuilder.filter(matchQuery("complainantEmail", this.complainantEmail));
+        }
+    }
+
+    @SafeHtml
+    public String getReceivingMode() {
+        return receivingMode;
+    }
+
+    public void setReceivingMode(String receivingMode) {
+        if (isNotBlank(receivingMode)) {
+            this.receivingMode = receivingMode;
+            searchQueryBuilder.filter(matchQuery("receivingMode", this.receivingMode));
+        }
+    }
+
+    @SafeHtml
+    public String getComplaintType() {
+        return complaintType;
+    }
+
+    public void setComplaintType(String complaintType) {
+        if (isNotBlank(complaintType)) {
+            this.complaintType = complaintType;
+            searchQueryBuilder.filter(matchQuery("complaintTypeName", this.complaintType));
+        }
+    }
+
+    @SafeHtml
+    public String getComplaintDepartment() {
+        return complaintDepartment;
+    }
+
     public void setComplaintDepartment(String complaintDepartment) {
-        if (isNotBlank(complaintDepartment))
-            searchQueryBuilder.filter(matchQuery("departmentName", complaintDepartment));
+        if (isNotBlank(complaintDepartment)) {
+            this.complaintDepartment = complaintDepartment;
+            searchQueryBuilder.filter(matchQuery("departmentName", this.complaintDepartment));
+        }
     }
 
     public void setSingleULB(boolean singleULB) {

@@ -185,7 +185,7 @@
 <script src="<cdn:url  value='/resources/js/app/search-complaint.js?rnd=${app_release_no}'/>" type="text/javascript"></script>
 <c:if test="${not empty param.crn}">
 <script>
-$("#ct-ctno").val('${param.crn}');
+$("#ct-ctno").val('<c:out value="${param.crn}" escapeXml="true"/>');
 $( "#searchComplaints").trigger("click");
 </script>
 </c:if>

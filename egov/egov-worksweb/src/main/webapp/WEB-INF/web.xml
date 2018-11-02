@@ -50,20 +50,30 @@
          xmlns="http://xmlns.jcp.org/xml/ns/javaee"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
     <display-name>eGov Works</display-name>
+
     <!-- Context Params Starts -->
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>classpath*:config/spring/applicationContext-worksweb.xml</param-value>
     </context-param>
+
     <context-param>
         <param-name>locatorFactorySelector</param-name>
         <param-value>classpath*:config/spring/applicationContext-erp.xml</param-value>
     </context-param>
+
     <context-param>
         <param-name>parentContextKey</param-name>
         <param-value>erpApplicationContext</param-value>
     </context-param>
+
+    <context-param>
+        <param-name>defaultHtmlEscape</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
     <!-- Context Params Ends Filter Declaration Starts -->
+
     <filter>
         <filter-name>CacheControlFilter</filter-name>
         <filter-class>org.egov.infra.web.filter.CacheControlFilter</filter-class>
