@@ -131,7 +131,8 @@ public class ChangeOfUseService {
                                 parentWaterConnectionDetail.getConnection().getPropertyIdentifier(),
                                 "changeOfUsage" },
                         null);
-            validateChangeOfApplicationDue(parentWaterConnectionDetail);
+            else
+                validationMessage = validateChangeOfApplicationDue(parentWaterConnectionDetail);
         } else
             validationMessage = wcmsMessageSource.getMessage("err.validate.changeofUse.application.inprocess",
                     new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(),
