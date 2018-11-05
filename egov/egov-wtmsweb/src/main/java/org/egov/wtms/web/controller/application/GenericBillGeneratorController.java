@@ -120,6 +120,8 @@ public class GenericBillGeneratorController {
         model.addAttribute("mode", "waterTaxCollection");
         model.addAttribute("checkOperator", waterTaxUtils.checkCollectionOperatorRole());
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
+        model.addAttribute("applicationDocList",
+                waterConnectionDetailsService.getApplicationDocForExceptClosureAndReConnection(waterConnectionDetails));
         BigDecimal waterTaxDueAmount = waterConnectionDetailsService.getWaterTaxDueAmount(waterConnectionDetails);
         model.addAttribute("waterTaxDueforParent", waterTaxDueAmount.signum() >= 0 ? waterTaxDueAmount : ZERO);
         return new ModelAndView("application/collecttax-view", "waterConnectionDetails", waterConnectionDetails);
