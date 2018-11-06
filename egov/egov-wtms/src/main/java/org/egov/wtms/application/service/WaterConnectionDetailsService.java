@@ -504,13 +504,13 @@ public class WaterConnectionDetailsService {
     }
 
     public List<WaterConnectionDetails> getPrimaryConnectionDetailsByPropertyIdentifier(String propertyIdentifier) {
-        return waterConnectionDetailsRepository.getPrimaryConnectionDetailsByPropertyID(propertyIdentifier);
+        return waterConnectionDetailsRepository.getAllPrimaryConnectionDetailsByPropertyID(propertyIdentifier);
     }
 
     public WaterConnectionDetails getPrimaryConnectionDetailsByPropertyAssessmentNumbers(List<String> propertyIdentifier) {
         WaterConnectionDetails waterConnectionDetails = null;
         for (String assessmentNumber : propertyIdentifier) {
-            waterConnectionDetails = waterConnectionDetailsRepository.getPrimaryConnectionDetailsByPropertyAssessmentNumber(assessmentNumber);
+            waterConnectionDetails = waterConnectionDetailsRepository.getActivePrimaryConnectionDetailsByPropertyID(assessmentNumber);
             if (waterConnectionDetails != null)
                 break;
         }

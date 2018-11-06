@@ -214,7 +214,9 @@ function calculateTotalAmount() {
     	var quantity = $('#estimationDetails'+currentIndex+'quantity').val();
     	var unitRate = $('#estimationDetails'+currentIndex+'unitRate').val();
     	var total = 0;
-    	if(quantity!='' && unitRate!='') {
+    	var quantityValid = isInputQuantityValid(quantity, currentIndex);
+    	var rateValid = isInputRateValid(unitRate,currentIndex);
+    	if(quantity!='' && unitRate!='' && quantityValid && rateValid) {
     		total = quantity*unitRate;
     		$('#estimationDetails'+currentIndex+'amount').val(total);
     		grandTotal = grandTotal + total;
@@ -224,3 +226,27 @@ function calculateTotalAmount() {
     $('#supervisionCharges').val(Math.round(0.15*grandTotal).toFixed(2));
     $('#estimationCharges').val(0.0);
 }
+
+
+function isInputQuantityValid(quantity, currentIndex) {
+	var pattern = /^[0-9]+\.?[0-9]*$/;
+	if(quantity!="" && pattern.test(quantity)==false){
+		bootbox.alert("Invalid number. Please enter valid quantity.");
+		$("#estimationDetails"+currentIndex+"quantity").val("");
+		return false;
+	}
+	else 
+		return true;
+}
+
+function isInputRateValid(unitRate, currentIndex) {
+	var pattern = /^[0-9]+\.?[0-9]*$/;
+	if(unitRate!="" && pattern.test(unitRate)==false){
+		bootbox.alert("Invalid number. Please enter valid rate amount.");
+		$("#estimationDetails"+currentIndex+"unitRate").val("");
+		return false;
+	}
+	else 
+		return true;
+}
+

@@ -144,9 +144,7 @@ public class MicroserviceUtils {
             try {
                 restTemplate.postForObject(userServiceUrl, createUserRequest, UserDetailResponse.class);
             } catch (final Exception e) {
-                final String errMsg = "Exception while creating User in microservice ";                
-                //throw new ApplicationRuntimeException(errMsg, e);
-                LOGGER.fatal(errMsg, e);
+                LOGGER.warn("Exception while creating User in microservice ", e);
             }
         }
     }
@@ -164,9 +162,7 @@ public class MicroserviceUtils {
                 tresp = restTemplate.postForObject(workflowServiceUrl, requestInfo, TaskResponse.class);
                 tasks = tresp.getTasks();
             } catch (final Exception e) {
-                final String errMsg = "Exception while getting inbox items from microservice ";
-               // throw new ApplicationRuntimeException(errMsg, e);
-                LOGGER.fatal(errMsg,e);
+                LOGGER.warn("Exception while getting inbox items from microservice ",e);
             }
         }
         return tasks;
