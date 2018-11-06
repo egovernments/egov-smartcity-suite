@@ -131,6 +131,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import static org.egov.infra.security.utils.SecurityConstants.LOCATION_FIELD;
+
 @Service
 public class CollectionsUtil {
     private static final Logger LOGGER = Logger.getLogger(CollectionsUtil.class);
@@ -292,7 +294,7 @@ public class CollectionsUtil {
      */
     public Location getLocationOfUser(final Map<String, Object> sessionMap) {
         Location location = null;
-        final String locationId = (String) sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_LOCATIONID);
+        final String locationId = (String) sessionMap.get(LOCATION_FIELD);
         if (locationId != null && !locationId.isEmpty())
             location = getLocationById(Long.valueOf(locationId));
         if (location == null)

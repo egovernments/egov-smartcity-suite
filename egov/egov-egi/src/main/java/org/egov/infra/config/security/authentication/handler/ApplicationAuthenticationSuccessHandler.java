@@ -48,6 +48,11 @@
 
 package org.egov.infra.config.security.authentication.handler;
 
+import org.egov.infra.config.security.authentication.ApplicationAuthenticationDetails;
+import org.egov.infra.config.security.authentication.userdetail.CurrentUser;
+import org.egov.infra.security.audit.entity.LoginAudit;
+import org.egov.infra.security.audit.service.LoginAuditService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
@@ -62,10 +67,18 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.regex.Pattern;
 
-import static org.egov.infra.security.utils.SecurityConstants.LOGIN_TIME;
+import static org.egov.infra.security.utils.SecurityConstants.LOCATION_FIELD;
+import static org.egov.infra.security.utils.SecurityConstants.LOGIN_AUDIT_ID;
+import static org.egov.infra.utils.ApplicationConstant.USERID_KEY;
+import static org.egov.infra.utils.ApplicationConstant.USERNAME_KEY;
+import static org.egov.infra.web.utils.WebUtils.extractOriginIPAddress;
+import static org.egov.infra.web.utils.WebUtils.extractUserAgent;
 import static org.springframework.util.StringUtils.hasText;
 
 public class ApplicationAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+
+    @Autowired
+    private LoginAuditService loginAuditService;
 
     private RequestCache requestCache = new HttpSessionRequestCache();
 
@@ -82,8 +95,13 @@ public class ApplicationAuthenticationSuccessHandler extends SimpleUrlAuthentica
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws ServletException, IOException {
+        LoginAudit loginAudit = auditUserLogin(request);
         HttpSession session = request.getSession(false);
-        session.setAttribute(LOGIN_TIME, new Date());
+        CurrentUser currentUser = (CurrentUser) authentication.getPrincipal();
+        session.setAttribute(LOGIN_AUDIT_ID, loginAudit.getId());
+        session.setAttribute(USERID_KEY, currentUser.getUserId());
+        session.setAttribute(USERNAME_KEY, currentUser.getUsername());
+        session.setAttribute(LOCATION_FIELD, ((ApplicationAuthenticationDetails) authentication.getDetails()).getLocationId());
         redirectToSuccessPage(request, response, authentication);
     }
 
@@ -95,8 +113,7 @@ public class ApplicationAuthenticationSuccessHandler extends SimpleUrlAuthentica
             return;
         }
         String targetUrlParameter = getTargetUrlParameter();
-        if (isAlwaysUseDefaultTargetUrl()
-                || (targetUrlParameter != null && hasText(request.getParameter(targetUrlParameter)))) {
+        if (isAlwaysUseDefaultTargetUrl() || (targetUrlParameter != null && hasText(request.getParameter(targetUrlParameter)))) {
             requestCache.removeRequest(request, response);
             super.onAuthenticationSuccess(request, response, authentication);
             return;
@@ -107,5 +124,13 @@ public class ApplicationAuthenticationSuccessHandler extends SimpleUrlAuthentica
         if (excludedUrls.matcher(targetUrl).find())
             targetUrl = getDefaultTargetUrl();
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
+    }
+
+    private LoginAudit auditUserLogin(HttpServletRequest request) {
+        LoginAudit loginAudit = new LoginAudit();
+        loginAudit.setLoginTime(new Date());
+        loginAudit.setIpAddress(extractOriginIPAddress(request));
+        loginAudit.setUserAgent(extractUserAgent(request));
+        return loginAuditService.auditLogin(loginAudit);
     }
 }

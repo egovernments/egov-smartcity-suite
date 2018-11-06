@@ -74,9 +74,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_PTADMINISTRATOR;
-import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
 @SuppressWarnings("serial")
@@ -123,7 +123,7 @@ public class UnitRateAction extends BaseFormAction {
     @SkipValidation
     public void prepare() {
         populateDropdowns();
-        final Long userId = (Long) session().get(SESSIONLOGINID);
+        final Long userId = getUserId();
         if (userId != null)
             setRoleName(propertyTaxUtil.getRolesForUserId(userId));
     }

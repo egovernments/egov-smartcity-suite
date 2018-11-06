@@ -140,6 +140,14 @@
                         </div>
 
                     </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label"><spring:message code="lbl.mutli.auth"/></label>
+                        <div class="col-sm-6 col-xs-12 add-margin">
+                            <spring:message code="lbl.mutli.auth.help" var="helptext"/>
+                            <form:checkbox path="useMultiFA" data-toggle="popover" data-trigger="focus" data-placement="right"
+                                           data-content="${helptext}"/>
+                        </div>
+                    </div>
                     <br/>
                     <div class="form-group">
                         <div class="text-center">
@@ -153,3 +161,8 @@
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        $('[data-toggle="popover"]').popover({html: true});
+    });
+</script>

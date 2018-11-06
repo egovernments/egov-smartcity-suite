@@ -47,6 +47,7 @@
  */
 package org.egov.ptis.actions.search;
 
+import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
 import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
@@ -759,7 +760,7 @@ public class SearchPropertyAction extends SearchFormAction {
         addDropdownData("Location", locationList);
         addDropdownData("PropTypeMaster",
                 getPersistenceService().findAllByNamedQuery(PropertyTaxConstants.GET_PROPERTY_TYPES));
-        final Long userId = (Long) session().get(SESSIONLOGINID);
+        final Long userId = getUserId();
         if (userId != null)
             setRoleName(propertyTaxUtil.getRolesForUserId(userId));
 

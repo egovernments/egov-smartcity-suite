@@ -49,17 +49,16 @@
 package org.egov.infra.admin.master.service;
 
 import org.egov.infra.admin.master.entity.Location;
-import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.LocationRepository;
-import org.egov.infra.config.core.EnvironmentSettings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+
+import static java.util.Collections.emptyList;
 
 @Service
 @Transactional(readOnly = true)
@@ -67,11 +66,8 @@ public class LocationService {
 
     private final LocationRepository locationRepository;
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private EnvironmentSettings environmentSettings;
+    @Value("#{'${location.user.role}'.split(',')}")
+    private String[] configuredUserRoles;
 
     @Autowired
     public LocationService(LocationRepository locationRepository) {
@@ -86,18 +82,7 @@ public class LocationService {
         return locationRepository.getOne(id);
     }
 
-    public List<Location> getLocationRequiredByUserName(String username) {
-        User user = this.userService.getUserByUsername(username);
-        boolean userRequiredLocation = false;
-        if (user != null) {
-            List<String> configuredUserRoles = Arrays.asList(this.environmentSettings.getProperty("location.user.role").split(","));
-            for (Role role : user.getRoles()) {
-                if (configuredUserRoles.contains(role.getName())) {
-                    userRequiredLocation = true;
-                    break;
-                }
-            }
-        }
-        return userRequiredLocation ? this.getActiveLocations() : Collections.emptyList();
+    public List<Location> getUserLocations(User user) {
+        return (user != null && user.hasAnyRole(configuredUserRoles)) ? this.getActiveLocations() : emptyList();
     }
 }

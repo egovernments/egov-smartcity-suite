@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,22 +46,33 @@
  *
  */
 
-package org.egov.infra.security.utils;
+package org.egov.infra.config.security.authentication;
 
-public final class SecurityConstants {
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
-    public static final String LOCATION_FIELD = "location";
-    public static final String OTP_FIELD = "otp";
-    public static final String SESSION_COOKIE_PATH = "/";
-    public static final String SESSION_COOKIE_NAME = "SESSIONID";
-    public static final String LOGIN_AUDIT_ID = "login_audit_id";
-    public static final String LOGIN_IP_ADDRESS = "login_ip";
-    public static final String USER_AGENT_HEADER = "User-Agent";
-    public static final String X_FORWARDED_FOR_HEADER = "X-Forwarded-For";
+import javax.servlet.http.HttpServletRequest;
 
-    public static final int MAX_LOGIN_ATTEMPT_ALLOWED = 5;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.security.utils.SecurityConstants.LOCATION_FIELD;
+import static org.egov.infra.security.utils.SecurityConstants.OTP_FIELD;
 
-    private SecurityConstants() {
-        //not be initialized
+public class ApplicationAuthenticationDetails extends WebAuthenticationDetails {
+
+    private String otp;
+    private Long locationId;
+
+    public ApplicationAuthenticationDetails(HttpServletRequest request) {
+        super(request);
+        this.otp = request.getParameter(OTP_FIELD);
+        if (isNotBlank(request.getParameter(LOCATION_FIELD)))
+            this.locationId = Long.valueOf(request.getParameter(LOCATION_FIELD));
+    }
+
+    public String getOtp() {
+        return this.otp;
+    }
+
+    public Long getLocationId() {
+        return this.locationId;
     }
 }

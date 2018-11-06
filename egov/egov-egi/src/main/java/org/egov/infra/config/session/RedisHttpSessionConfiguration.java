@@ -48,7 +48,7 @@
 
 package org.egov.infra.config.session;
 
-import org.egov.infra.config.security.authentication.listener.UserSessionDestroyListener;
+import org.egov.infra.config.security.authentication.listener.UserSessionListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.session.FindByIndexNameSessionRepository;
@@ -86,7 +86,7 @@ public class RedisHttpSessionConfiguration {
     }
 
     @Bean
-    public UserSessionDestroyListener httpSessionEventPublisher() {
-        return new UserSessionDestroyListener();
+    public UserSessionListener httpSessionEventPublisher() {
+        return new UserSessionListener();
     }
 }

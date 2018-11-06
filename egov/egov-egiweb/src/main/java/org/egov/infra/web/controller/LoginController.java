@@ -49,9 +49,12 @@
 package org.egov.infra.web.controller;
 
 import org.egov.infra.admin.common.service.IdentityRecoveryService;
-import org.egov.infra.admin.master.entity.Location;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.LocationService;
+import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.security.auth.PreAuthService;
 import org.egov.infra.validation.ValidatorUtils;
+import org.egov.infra.web.contract.response.PreAuthCheckResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -62,14 +65,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-
 @Controller
 @RequestMapping(value = "/login")
 public class LoginController {
 
-    private static final String PASSWORD_RESET_PATH = "password/reset";
+    private static final String RESET_PASS_URL_PATH = "password/reset";
     private static final String TOKEN = "token";
+    private static final String VALID = "valid";
 
     @Autowired
     private IdentityRecoveryService identityRecoveryService;
@@ -80,49 +82,54 @@ public class LoginController {
     @Autowired
     private ValidatorUtils validatorUtils;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private PreAuthService preAuthService;
+
     @Value("${user.pwd.strength}")
     private String passwordStrength;
 
     @PostMapping("password/recover")
-    public String sendPasswordRecoveryURL(@RequestParam String identity,
-                                          @RequestParam String originURL,
-                                          @RequestParam boolean byOTP,
-                                          RedirectAttributes redirectAttrib) {
+    public String sendPasswordRecoveryURL(@RequestParam String identity, @RequestParam String originURL,
+                                          @RequestParam boolean byOTP, RedirectAttributes redirectAttrib) {
         redirectAttrib.addAttribute("recovered", identityRecoveryService
                 .generateAndSendUserPasswordRecovery(identity, originURL + "/egi/login/password/reset?token=", byOTP));
         redirectAttrib.addAttribute("byOTP", true);
         return "redirect:/login/secure";
     }
 
-    @PostMapping(value = PASSWORD_RESET_PATH, params = TOKEN)
+    @PostMapping(value = RESET_PASS_URL_PATH, params = TOKEN)
     public String viewPasswordReset(@RequestParam String token, Model model) {
-        model.addAttribute("valid", identityRecoveryService.tokenValid(token));
-        return PASSWORD_RESET_PATH;
+        model.addAttribute(VALID, identityRecoveryService.tokenValid(token));
+        return RESET_PASS_URL_PATH;
     }
 
-    @PostMapping(value = PASSWORD_RESET_PATH, params = {TOKEN, "newPassword", "confirmPwd"})
+    @PostMapping(value = RESET_PASS_URL_PATH, params = {TOKEN, "newPassword", "confirmPwd"})
     public String validateAndSendNewPassword(@RequestParam String token, @RequestParam String newPassword,
                                              @RequestParam String confirmPwd, Model model) {
         if (!newPassword.equals(confirmPwd)) {
             model.addAttribute("error", "err.login.pwd.mismatch");
             model.addAttribute(TOKEN, token);
-            model.addAttribute("valid", identityRecoveryService.tokenValid(token));
-            return PASSWORD_RESET_PATH;
+            model.addAttribute(VALID, identityRecoveryService.tokenValid(token));
+            return RESET_PASS_URL_PATH;
         }
 
         if (!validatorUtils.isValidPassword(newPassword)) {
             model.addAttribute("error", "usr.pwd.strength.msg." + passwordStrength);
             model.addAttribute(TOKEN, token);
-            model.addAttribute("valid", identityRecoveryService.tokenValid(token));
-            return PASSWORD_RESET_PATH;
+            model.addAttribute(VALID, identityRecoveryService.tokenValid(token));
+            return RESET_PASS_URL_PATH;
         }
 
         return "redirect:/login/secure?reset=" + identityRecoveryService.validateAndResetPassword(token, newPassword);
     }
 
-    @PostMapping("requiredlocations")
+    @PostMapping("preauth-check")
     @ResponseBody
-    public List<Location> requiredLocations(@RequestParam String username) {
-        return locationService.getLocationRequiredByUserName(username);
+    public PreAuthCheckResponse preAuthCheck(@RequestParam String username) {
+        User user = this.userService.getUserByUsername(username);
+        return new PreAuthCheckResponse(locationService.getUserLocations(user), preAuthService.sendOtpIfRequired(user));
     }
 }

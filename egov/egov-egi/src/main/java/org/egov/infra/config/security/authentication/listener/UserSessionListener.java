@@ -46,25 +46,55 @@
  *
  */
 
-package org.egov.infra.config.persistence.auditing.listener;
+package org.egov.infra.config.security.authentication.listener;
 
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.config.persistence.auditing.BaseRevisionEntity;
-import org.hibernate.envers.RevisionListener;
+import org.egov.infra.security.audit.service.LoginAuditService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
-import static org.egov.infra.utils.ApplicationConstant.UNKNOWN;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpSessionListener;
 
-public class AuditableEntityListener implements RevisionListener {
+import static org.egov.infra.security.utils.SecurityConstants.LOGIN_AUDIT_ID;
+import static org.egov.infra.utils.ApplicationConstant.APP_RELEASE_ATTRIB_NAME;
+import static org.egov.infra.utils.ApplicationConstant.CDN_ATTRIB_NAME;
+import static org.egov.infra.utils.ApplicationConstant.TENANTID_KEY;
+
+public class UserSessionListener implements HttpSessionListener {
+
+    @Value("${app.version}_${app.build.no}")
+    private String applicationRelease;
+
+    @Value("${cdn.domain.url}")
+    private String cdnURL;
+
+    @Value("${master.server}")
+    private boolean masterServer;
+
+    @Autowired
+    private LoginAuditService loginAuditService;
 
     @Override
-    public void newRevision(Object revisionEntity) {
-        BaseRevisionEntity revision = (BaseRevisionEntity) revisionEntity;
-        revision.setUserId(ApplicationThreadLocals.getUserId());
-        if (ApplicationThreadLocals.getIPAddress() == null)
-            revision.setIpAddress(UNKNOWN);
-        else
-            revision.setIpAddress(ApplicationThreadLocals.getIPAddress());
-
+    public void sessionCreated(HttpSessionEvent event) {
+        HttpSession session = event.getSession();
+        if (session.getAttribute(APP_RELEASE_ATTRIB_NAME) == null)
+            session.setAttribute(APP_RELEASE_ATTRIB_NAME, applicationRelease);
+        if (session.getAttribute(CDN_ATTRIB_NAME) == null)
+            session.setAttribute(CDN_ATTRIB_NAME, cdnURL);
     }
 
+    @Override
+    public void sessionDestroyed(HttpSessionEvent event) {
+        HttpSession session = event.getSession();
+        if (masterServer && session != null && session.getAttribute(LOGIN_AUDIT_ID) != null) {
+            try {
+                ApplicationThreadLocals.setTenantID((String) session.getAttribute(TENANTID_KEY));
+                loginAuditService.auditLogout((Long) session.getAttribute(LOGIN_AUDIT_ID));
+            } finally {
+                ApplicationThreadLocals.clearValues();
+            }
+        }
+    }
 }

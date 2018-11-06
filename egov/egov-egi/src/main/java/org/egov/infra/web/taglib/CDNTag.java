@@ -60,7 +60,7 @@ public class CDNTag extends UrlTag {
 
     @Override
     public int doEndTag() throws JspException {
-        String cdnURI = (String) pageContext.getServletContext().getAttribute(CDN_ATTRIB_NAME);
+        String cdnURI = (String) pageContext.getSession().getAttribute(CDN_ATTRIB_NAME);
         if (isNotBlank(cdnURI))
             this.value = new StringBuilder(cdnURI).
                     append(context == null ? ((HttpServletRequest) pageContext.getRequest()).getContextPath() : context).

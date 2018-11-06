@@ -46,22 +46,24 @@
  *
  */
 
-package org.egov.infra.security.utils;
+package org.egov.infra.config.persistence.auditing.listener;
 
-public final class SecurityConstants {
+import org.egov.infra.config.persistence.auditing.BaseRevisionEntity;
+import org.hibernate.envers.RevisionListener;
 
-    public static final String LOCATION_FIELD = "location";
-    public static final String OTP_FIELD = "otp";
-    public static final String SESSION_COOKIE_PATH = "/";
-    public static final String SESSION_COOKIE_NAME = "SESSIONID";
-    public static final String LOGIN_AUDIT_ID = "login_audit_id";
-    public static final String LOGIN_IP_ADDRESS = "login_ip";
-    public static final String USER_AGENT_HEADER = "User-Agent";
-    public static final String X_FORWARDED_FOR_HEADER = "X-Forwarded-For";
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getIPAddress;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
+import static org.egov.infra.utils.ApplicationConstant.UNKNOWN;
 
-    public static final int MAX_LOGIN_ATTEMPT_ALLOWED = 5;
+public class EntityAuditListener implements RevisionListener {
 
-    private SecurityConstants() {
-        //not be initialized
+    @Override
+    public void newRevision(Object revisionEntity) {
+        BaseRevisionEntity revision = (BaseRevisionEntity) revisionEntity;
+        revision.setUserId(getUserId());
+        revision.setIpAddress(defaultIfBlank(getIPAddress(), UNKNOWN));
+
     }
+
 }

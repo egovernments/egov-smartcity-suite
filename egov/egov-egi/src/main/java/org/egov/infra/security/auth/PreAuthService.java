@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,69 +46,56 @@
  *
  */
 
-package org.egov.infra.config.security.authentication.listener;
+package org.egov.infra.security.auth;
 
-import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.security.audit.entity.LoginAudit;
-import org.egov.infra.security.audit.service.LoginAuditService;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.notification.service.NotificationService;
+import org.egov.infra.security.token.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.context.MessageSource;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
-import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
-import static org.egov.infra.security.utils.SecurityConstants.IP_ADDRESS;
-import static org.egov.infra.security.utils.SecurityConstants.LOGIN_TIME;
-import static org.egov.infra.security.utils.SecurityConstants.USER_AGENT;
-import static org.egov.infra.utils.ApplicationConstant.TENANTID_KEY;
-import static org.egov.infra.utils.ApplicationConstant.USERID_KEY;
+import static java.util.Locale.getDefault;
+import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.notification.entity.NotificationPriority.HIGH;
 
-public class UserSessionDestroyListener implements HttpSessionListener {
+@Service
+@Transactional(readOnly = true)
+public class PreAuthService {
 
-    @Autowired
-    private LoginAuditService loginAuditService;
-
-    @Autowired
-    private UserService userService;
+    private static final String PRE_AUTH_SERVICE = "Pre Auth Service";
+    private static final String OTP_MSG_KEY = "msg.preauth.otp";
+    private static final String OTP_MSG_SUBJECT = "Portal Login OTP";
 
     @Autowired
-    @Qualifier("entityValidator")
-    private LocalValidatorFactoryBean entityValidator;
+    private NotificationService notificationService;
 
-    @Value("${master.server}")
-    private boolean masterServer;
+    @Autowired
+    @Qualifier("parentMessageSource")
+    private MessageSource messageSource;
 
-    @Override
-    public void sessionCreated(HttpSessionEvent se) {
-        //do nothing
-    }
+    @Autowired
+    private TokenService tokenService;
 
-    @Override
-    public void sessionDestroyed(HttpSessionEvent event) {
-        if (masterServer)
-            auditUserLogin(event.getSession());
-    }
-
-    private void auditUserLogin(final HttpSession session) {
-        if (session != null && session.getAttribute(LOGIN_TIME) != null) {
-            try {
-                ApplicationThreadLocals.setTenantID((String) session.getAttribute(TENANTID_KEY));
-                LoginAudit loginAudit = new LoginAudit();
-                loginAudit.setLoginTime((Date) session.getAttribute(LOGIN_TIME));
-                loginAudit.setUser(userService.getUserById((Long) session.getAttribute(USERID_KEY)));
-                loginAudit.setIpAddress((String) session.getAttribute(IP_ADDRESS));
-                loginAudit.setUserAgent((String) session.getAttribute(USER_AGENT));
-                loginAudit.setLogoutTime(new Date());
-                if (entityValidator.validate(loginAudit).isEmpty())
-                    loginAuditService.auditLogin(loginAudit);
-            } finally {
-                ApplicationThreadLocals.clearValues();
-            }
+    @Transactional
+    public boolean sendOtpIfRequired(User user) {
+        boolean useMultiFA = user != null && user.isUseMultiFA();
+        if (useMultiFA) {
+            String otp = randomNumeric(6);
+            tokenService.createToken(TimeUnit.MINUTES.toSeconds(1), otp, user.getMobileNumber(), PRE_AUTH_SERVICE);
+            String message = messageSource.getMessage(OTP_MSG_KEY, new String[]{otp}, getDefault());
+            notificationService.sendSMS(user.getMobileNumber(), message, HIGH);
+            notificationService.sendEmail(user.getEmailId(), OTP_MSG_SUBJECT, message);
         }
+        return useMultiFA;
+    }
+
+    public boolean validOtpAuth(User user, String otp) {
+        return isNotBlank(otp) && tokenService.redeemToken(otp, user.getMobileNumber(), PRE_AUTH_SERVICE);
     }
 }

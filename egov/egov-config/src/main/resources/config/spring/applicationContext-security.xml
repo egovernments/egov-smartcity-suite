@@ -109,16 +109,14 @@
     </bean>
 
     <bean id="authenticationProcessingFilter"
-          class="org.egov.infra.config.security.authentication.filter.ApplicationAuthenticationFilter">
+          class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="filterProcessesUrl" value="/j_security_check"/>
         <property name="rememberMeServices" ref="rememberMeServices"/>
         <property name="sessionAuthenticationStrategy" ref="sessionAuthenticationStrategy"/>
-        <property name="credentialFields">
-            <list>
-                <value>j_password</value>
-                <value>locationId</value>
-            </list>
+        <property name="allowSessionCreation" value="true"/>
+        <property name="authenticationDetailsSource">
+            <bean class="org.egov.infra.config.security.authentication.ApplicationAuthenticationDetailsSource"/>
         </property>
         <property name="authenticationSuccessHandler" ref="authenticationSuccessHandler"/>
         <property name="authenticationFailureHandler" ref="authenticationFailureHandler"/>
@@ -135,7 +133,7 @@
         <property name="alwaysUseDefaultTargetUrl" value="false"/>
         <property name="defaultTargetUrl" value="/home"/>
         <property name="excludedUrlRegex">
-            <value>^https?://[^/]+/egi/(home/(.*)|inbox(.*))</value>
+            <value>^https?://[^/]+/egi/(home/(.*)|inbox(.*)|(login/preauth-check))</value>
         </property>
     </bean>
 
@@ -230,7 +228,8 @@
     <bean id="applicationAuthenticationProvider"
           class="org.egov.infra.config.security.authentication.provider.ApplicationAuthenticationProvider">
         <property name="userDetailsService" ref="userDetailsService"/>
-        <property name="preAuthenticationChecks" ref="userActivationChecker"></property>
+        <property name="preAuthenticationChecks" ref="userActivationChecker"/>
+        <property name="passwordEncoder" ref="passwordEncoder"/>
     </bean>
 
     <bean id="anonymousAuthenticationProvider"

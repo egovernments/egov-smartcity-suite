@@ -52,12 +52,17 @@ import org.egov.infra.security.audit.contract.LoginAuditReportRequest;
 import org.egov.infra.security.audit.entity.LoginAudit;
 import org.egov.infra.security.audit.repository.LoginAuditRepository;
 import org.egov.infra.security.audit.repository.specs.LoginAuditSpec;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+
+import java.util.Date;
 
 @Service
 @Transactional(readOnly = true)
@@ -66,9 +71,28 @@ public class LoginAuditService {
     @Autowired
     private LoginAuditRepository loginAuditRepository;
 
+    @Autowired
+    @Qualifier("entityValidator")
+    private LocalValidatorFactoryBean entityValidator;
+
+    @Autowired
+    private SecurityUtils securityUtils;
+
     @Transactional
     public LoginAudit auditLogin(LoginAudit loginAudit) {
-        return loginAuditRepository.saveAndFlush(loginAudit);
+        loginAudit.setUser(securityUtils.getCurrentUser());
+        if (entityValidator.validate(loginAudit).isEmpty())
+            loginAudit = loginAuditRepository.saveAndFlush(loginAudit);
+        return loginAudit;
+    }
+
+    @Transactional
+    public void auditLogout(Long loginAuditId) {
+        LoginAudit loginAudit = loginAuditRepository.findOne(loginAuditId);
+        if (loginAudit != null) {
+            loginAudit.setLogoutTime(new Date());
+            loginAuditRepository.saveAndFlush(loginAudit);
+        }
     }
 
     public Page<LoginAudit> getLoginAudits(LoginAuditReportRequest loginAuditReportRequest) {

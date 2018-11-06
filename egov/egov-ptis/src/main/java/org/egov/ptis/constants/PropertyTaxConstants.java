@@ -89,8 +89,6 @@ public interface PropertyTaxConstants {
     public static final String PTMODULENAME = "Property Tax";
     public static final String DEACTIVATION = "DEACTIVATION";
     public static final String DATE_FORMAT_DDMMYYY = "dd/MM/yyyy";
-    public static final String SESSIONLOGINID = "userid";
-    public static final String SESSION_VAR_LOGIN_USER_NAME = "username";
     public static final String PROP_ADDR_TYPE = "PROPERTY";
 
     // Workflow statuses

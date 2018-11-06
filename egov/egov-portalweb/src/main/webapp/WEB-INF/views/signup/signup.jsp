@@ -111,8 +111,8 @@
                 </div>
                 <script>
                     setTimeout(function () {
-                        if (window.opener && window.opener.document.getElementById("j_username")) {
-                            window.opener.document.getElementById("j_username").value = '${mobileNo}';
+                        if (window.opener && window.opener.document.getElementById("username")) {
+                            window.opener.document.getElementById("username").value = '${mobileNo}';
                         }
                         window.close();
                     }, 5000)

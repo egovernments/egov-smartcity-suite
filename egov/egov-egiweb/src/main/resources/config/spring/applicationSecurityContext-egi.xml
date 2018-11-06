@@ -66,14 +66,14 @@
                 <security:filter-chain pattern="/login/secure**" filters="none"/>
                 <security:filter-chain pattern="/login/password/recover**" filters="none"/>
                 <security:filter-chain pattern="/login/password/reset**" filters="none"/>
-                <security:filter-chain pattern="/login/requiredlocations*" filters="none"/>
+                <security:filter-chain pattern="/login/preauth-check*" filters="none"/>
                 <security:filter-chain pattern="/downloadfile/logo**" filters="none"/>
                 <security:filter-chain pattern="/downloadfile/gis**" filters="none"/>
                 <security:filter-chain pattern="/error/**" filters="none"/>
                 <security:filter-chain pattern="/city/details" filters="none"/>
                 <security:filter-chain pattern="/public/**" filters="anonymousAuthenticationFilter"/>
                 <security:filter-chain pattern="/**"
-                                       filters="concurrentSessionFilter,securityContextPersistenceFilter,
+                                       filters="securityContextPersistenceFilter, concurrentSessionFilter,
                                        logoutFilter,authenticationProcessingFilter,headerWriterFilter,csrfFilter,
                                        securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,
                                        anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor"/>

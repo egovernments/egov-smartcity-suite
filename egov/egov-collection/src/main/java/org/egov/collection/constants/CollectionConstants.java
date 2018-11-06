@@ -297,7 +297,6 @@ public final class CollectionConstants {
     public static final String FINANCIAL_CONTRATVOUCHER_VOUCHERNAME = FinancialConstants.CONTRAVOUCHER_NAME_PAYIN;
 
     public static final String SESSION_VAR_RECEIPT_IDS = "EGOV_RECEIPT_IDS";
-    public static final String SESSION_VAR_LOGIN_USER_LOCATIONID = "locationId";
 
     // Separators
     public static final String SEPARATOR_HYPHEN = "-";

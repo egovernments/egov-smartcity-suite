@@ -48,13 +48,8 @@
 
 package org.egov.infra.web.utils;
 
-import org.egov.infra.admin.master.entity.User;
-import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.support.RequestContextUtils;
-
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
@@ -121,11 +116,6 @@ public final class WebUtils {
 
     public static String currentContextPath(ServletRequest request) {
         return request.getServletContext().getContextPath().replace(SLASH, EMPTY);
-    }
-
-    public static void setUserLocale(User user, HttpServletRequest request, HttpServletResponse response) {
-        LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
-        localeResolver.setLocale(request, response, user.locale());
     }
 
     public static String extractOriginIPAddress(HttpServletRequest request) {

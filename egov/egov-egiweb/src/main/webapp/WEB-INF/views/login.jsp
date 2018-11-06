@@ -169,10 +169,10 @@
                                     <i class="fa fa-user theme-color style-color"></i>
                                 </div>
                                 <input type="text" class="form-control style-form"
-                                       name="j_username" id="j_username"
+                                       name="username" id="username"
                                        placeholder="Username" autocomplete="off"
                                        required="required" autofocus="autofocus"/>
-                                <label id="j_username-error" class="error pull-right" for="j_username"></label>
+                                <label id="username-error" class="error pull-right" for="username"></label>
                             </div>
                         </div>
                         <div class="form-group overflow">
@@ -181,24 +181,36 @@
                                     <i class="fa fa-key theme-color style-color"></i>
                                 </div>
                                 <input type="password" class="form-control style-form"
-                                       name="j_password" id="j_password" placeholder="Password"
+                                       name="password" id="password" placeholder="Password"
                                        autocomplete="new-password" required="required"/>
                                 <div class="input-group-addon font-12" data-toggle="modal"
                                      data-target="#fpassword" data-backdrop="static">
                                     Forgot?
                                 </div>
                             </div>
-                            <label id="j_password-error" class="error align-top pull-right" for="j_password"></label>
+                            <label id="password-error" class="error align-top pull-right" for="password"></label>
+                        </div>
+                        <div class="form-group display-hide" id="otp-section">
+                            <div class="input-group">
+                                <div class="input-group-addon style-label">
+                                    <i class="fa fa-lock theme-color style-color" aria-hidden="true"></i>
+                                </div>
+                                <input type="password" class="form-control style-form" name="otp" id="otp" placeholder="OTP"
+                                       autocomplete="new-password"/>
+                                <label id="otp-msg" class="success-msg pull-right" for="otp">
+                                    <spring:message code="otp.send.success"/>
+                                </label>
+                            </div>
                         </div>
                         <div class="form-group display-hide" id="counter-section">
                             <div class="input-group">
                                 <div class="input-group-addon style-label">
                                     <i class="fa fa-map-marker theme-color style-color"></i>
                                 </div>
-                                <select class="form-control style-form" name="locationId" id="locationId">
+                                <select class="form-control style-form" name="location" id="location">
                                     <option value=""><spring:message code="lbl.select.location"/></option>
                                 </select>
-                                <label id="locationId-error" class="error pull-right" for="locationId"></label>
+                                <label id="location-error" class="error pull-right" for="location"></label>
                             </div>
                         </div>
                         <c:if test="${param.error}">
@@ -218,13 +230,16 @@
                                     <c:when test="${fn:contains(security_message, 'User account is locked')}">
                                         <spring:message code="msg.acc.locked"/>
                                         <egov:captcha/>
-                                        <c:if test="${fn:contains(security_message, 'Recaptcha Invalid')}">
+                                        <c:if test="${fn:contains(security_message, 'Captcha Invalid')}">
                                             <spring:message code="err.recaptcha.invalid"/>
                                         </c:if>
                                     </c:when>
                                     <c:when test="${fn:contains(security_message, 'Too many attempts')}">
                                         <c:set var="attempts" value="${fn:substringAfter(security_message, 'Too many attempts')}"/>
                                         <spring:message code="msg.acc.toomany.attempt" arguments="${attempts}"/>
+                                    </c:when>
+                                    <c:when test="${fn:contains(security_message, 'Invalid OTP')}">
+                                        <spring:message code="msg.cred.otp.invalid"/>
                                     </c:when>
                                     <c:otherwise>
                                         <div class="form-group">
@@ -366,7 +381,7 @@
                                             <input type="password" class="form-control style-form" name="token" id="token" placeholder="Enter your OTP" autocomplete="new-password" required="required"/>
                                             <span class="mandatory set-mandatory"></span>
                                         </div>
-                                        <div class="text-right font-12">OTP sent to your registered mobile / email</div>
+                                        <div class="text-right font-12"><spring:message code="otp.send.success"/></div>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
@@ -380,7 +395,7 @@
                                     <div class="text-center font-12"><spring:message code="msg.success.pwd.recov.otp.${param.byOTP}"/></div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-default text-right" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-default text-right" data-dismiss="modal"><spring:message code="lbl.close"/></button>
                                 </div>
                             </c:if>
                         </c:when>

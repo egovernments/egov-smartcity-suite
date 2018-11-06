@@ -47,6 +47,7 @@
  */
 package org.egov.ptis.actions.view;
 
+import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
 import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 import java.math.BigDecimal;
@@ -141,11 +142,11 @@ public class ViewPropertyAction extends BaseFormAction {
     private transient EntityManager entityManager;
 
     private transient Map<String, Map<String, BigDecimal>> demandCollMap = new TreeMap<>();
-    
+
     private transient List<HashMap<String, Object>> historyMap = new ArrayList<>();
-    
+
     private transient List<Document> documents = new ArrayList<>();
-       
+
     @Override
     public StateAware getModel() {
         return property;
@@ -248,8 +249,8 @@ public class ViewPropertyAction extends BaseFormAction {
             PropertyStatusValues statusValues = propertyTaxCommonUtils.getPropStatusValues(basicProperty);
             if (null != statusValues && null != statusValues.getReferenceBasicProperty())
                 viewMap.put("parentProps", statusValues.getReferenceBasicProperty().getUpicNo());
-            
-            final Long userId = (Long) session().get(SESSIONLOGINID);
+
+            final Long userId = getUserId();
             if (userId != null) {
                 setRoleName(getRolesForUserId(userId));
                 citizenPortalUser = propService.isCitizenPortalUser(userService.getUserById(userId));
@@ -349,7 +350,7 @@ public class ViewPropertyAction extends BaseFormAction {
             }
         endorsementNotices = propertyTaxCommonUtils.getEndorsementNotices(appNo);
     }
-    
+
    public void getDocumentDetails() {
         setDocDetails();
         if (property.getStatus().equals('W'))

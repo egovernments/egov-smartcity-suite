@@ -72,8 +72,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -85,7 +87,6 @@ import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.egov.infra.persistence.entity.enums.UserType.EMPLOYEE;
 import static org.egov.infra.persistence.entity.enums.UserType.SYSTEM;
 import static org.egov.infra.persistence.utils.PersistenceUtils.unproxy;
-import static org.egov.infra.web.utils.WebUtils.setUserLocale;
 
 @Controller
 @RequestMapping(value = "/home")
@@ -144,7 +145,7 @@ public class HomeController {
     public ModelAndView showHome(HttpServletRequest request, HttpServletResponse response, ModelMap modelData) {
         User user = userService.getCurrentUser();
         setUserLocale(user, request, response);
-        if (user.getType().equals(EMPLOYEE) || user.getType().equals(SYSTEM) || user.hasRole(portalAccessibleRole)) {
+        if (user.hasAnyType(EMPLOYEE, SYSTEM) || user.hasRole(portalAccessibleRole)) {
             String menuJson = new StringBuilder(100)
                     .append("[")
                     .append(new GsonBuilder().create().toJson(applicationMenuRenderingService.getApplicationMenuForUser(user)))
@@ -225,5 +226,10 @@ public class HomeController {
 
     private int daysToExpirePassword(User user) {
         return Days.daysBetween(new LocalDate(), user.getPwdExpiryDate().toLocalDate()).getDays();
+    }
+
+    private void setUserLocale(User user, HttpServletRequest request, HttpServletResponse response) {
+        LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
+        localeResolver.setLocale(request, response, user.locale());
     }
 }

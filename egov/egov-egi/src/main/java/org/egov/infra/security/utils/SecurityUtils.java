@@ -53,6 +53,7 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.security.authentication.userdetail.CurrentUser;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -68,7 +69,7 @@ public class SecurityUtils {
     private UserService userService;
 
     public static boolean userAnonymouslyAuthenticated(Optional<Authentication> authentication) {
-        return authentication.isPresent() && authentication.get().getPrincipal() instanceof String;
+        return authentication.isPresent() && authentication.get() instanceof AnonymousAuthenticationToken;
     }
 
     public static boolean userAnonymouslyAuthenticated() {
@@ -78,6 +79,10 @@ public class SecurityUtils {
 
     public static Optional<Authentication> getCurrentAuthentication() {
         return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication());
+    }
+
+    public static boolean currentUserIsAnonymous() {
+        return userAnonymouslyAuthenticated();
     }
 
     public User getCurrentUser() {
@@ -99,10 +104,6 @@ public class SecurityUtils {
 
     public boolean currentUserIsEmployee() {
         return currentUserType().equals(UserType.EMPLOYEE);
-    }
-
-    public static boolean currentUserIsAnonymous() {
-        return userAnonymouslyAuthenticated();
     }
 
 }

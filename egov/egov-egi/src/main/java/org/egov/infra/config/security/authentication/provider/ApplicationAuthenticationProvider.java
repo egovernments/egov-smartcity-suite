@@ -48,8 +48,12 @@
 
 package org.egov.infra.config.security.authentication.provider;
 
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.config.security.authentication.ApplicationAuthenticationDetails;
+import org.egov.infra.config.security.authentication.userdetail.CurrentUser;
 import org.egov.infra.security.audit.entity.LoginAttempt;
 import org.egov.infra.security.audit.service.LoginAttemptService;
+import org.egov.infra.security.auth.PreAuthService;
 import org.egov.infra.security.utils.captcha.CaptchaUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -58,39 +62,34 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.Optional;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.infra.security.utils.SecurityConstants.LOGIN_PASS_FIELD;
 import static org.egov.infra.security.utils.SecurityConstants.MAX_LOGIN_ATTEMPT_ALLOWED;
 import static org.egov.infra.security.utils.captcha.CaptchaUtils.J_CAPTCHA_RESPONSE;
 import static org.egov.infra.security.utils.captcha.CaptchaUtils.RECAPTCHA_RESPONSE;
 
 public class ApplicationAuthenticationProvider extends DaoAuthenticationProvider {
 
-    private static final String BAD_CRED_MSG_KEY = "AbstractUserDetailsAuthenticationProvider.badCredentials";
-    private static final String BAD_CRED_DEFAULT_MSG = "Bad credentials";
+    private static final String INVALID_OTP = "Invalid OTP";
     private static final String ACCOUNT_LOCKED_MSG_KEY = "AbstractUserDetailsAuthenticationProvider.locked";
     private static final String ACCOUNT_LOCKED_DEFAULT_MSG = "User account is locked";
     private static final String TOO_MANY_ATTEMPTS_MSG_FORMAT = "Too many attempts [%d]";
-    private static final String INVALID_CAPTCHA_MSG_FORMAT = "%s - Recaptcha Invalid";
-
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private static final String INVALID_CAPTCHA_MSG_FORMAT = "%s - Captcha Invalid";
 
     @Autowired
     private LoginAttemptService loginAttemptService;
 
     @Autowired
     private CaptchaUtils recaptchaUtils;
+
+    @Autowired
+    private PreAuthService preAuthService;
 
     @Override
     public Authentication authenticate(Authentication authentication) {
@@ -132,10 +131,11 @@ public class ApplicationAuthenticationProvider extends DaoAuthenticationProvider
 
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) {
-        HashMap<String, String> authenticationCredentials = (HashMap<String, String>) authentication.getCredentials();
-        if (authenticationCredentials == null ||
-                !passwordEncoder.matches(authenticationCredentials.get(LOGIN_PASS_FIELD), userDetails.getPassword())) {
-            throw new BadCredentialsException(messages.getMessage(BAD_CRED_MSG_KEY, BAD_CRED_DEFAULT_MSG));
+        super.additionalAuthenticationChecks(userDetails, authentication);
+        ApplicationAuthenticationDetails authDetails = (ApplicationAuthenticationDetails) authentication.getDetails();
+        User user = ((CurrentUser) userDetails).getUser();
+        if (user.isUseMultiFA() && !preAuthService.validOtpAuth(user, authDetails.getOtp())) {
+            throw new BadCredentialsException(INVALID_OTP);
         }
     }
 }

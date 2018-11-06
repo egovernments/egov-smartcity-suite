@@ -82,48 +82,57 @@ $(document).ready(function () {
 
     var checklocation = false;
 
-    $('#j_username').blur(function () {
-        $('#locationId').find('option:gt(0)').remove();
+    $('#username').blur(function () {
+        $('#location').find('option:gt(0)').remove();
         if ($.trim($(this).val())) {
             $.ajax({
-                url: "requiredlocations",
+                url: "preauth-check",
                 type: 'POST',
                 data: {"username": this.value},
                 dataType: "json",
-                success: function (data) {
-                    checklocation = true;
-                    if (data.length > 0) {
-                        $.each(data, function (key, value) {
-                            var opt = "<option value=" + value.id + ">" + value.name + "</option>";
-                            $('#locationId').append(opt);
-                            $("#locationId").attr('required', true);
-                        });
+                success: function (preAuthCheckResponse) {
+                    preAuthCheck = true;
+                    if (preAuthCheckResponse.locationRequired) {
+                        $("#location").attr('required', true);
                         $('#counter-section').removeClass('display-hide');
-                        loaddpdown_value();
+                        $.each(preAuthCheckResponse.locations, function (key, value) {
+                            var opt = "<option value=" + value.id + ">" + value.name + "</option>";
+                            $('#location').append(opt);
+                        });
+                        if ($('#location > option').length = 2)
+                            $("#location").prop('selectedIndex', 1);
                     } else {
-                        $('#locationId').attr('required', false);
+                        $('#location').attr('required', false);
                         $('#counter-section').addClass('display-hide');
+                    }
+
+                    if (preAuthCheckResponse.otpAuthRequired) {
+                        $('#otp').attr('required', true);
+                        $('#otp-section').removeClass('display-hide');
+                        $('#otp-msg').show();
+                    } else {
+                        $('#otp').attr('required', false);
+                        $('#otp-section').addClass('display-hide');
+                        $('#otp-msg').hide();
                     }
                 },
                 error: function () {
                     console.log('Error while loading locations');
                 }
             });
+        } else {
+            $('#password').val('');
+            $('#location').attr('required', false);
+            $('#counter-section').addClass('display-hide');
+            $('#otp').attr('required', false);
+            $('#otp-section').addClass('display-hide');
         }
     });
 
-    function loaddpdown_value() {
-        $("#locationId").each(function () {
-            if ($(this).children('option').length == 2) {
-                $(this).find('option').eq(1).prop('selected', true);
-            }
-        });
-    }
-
     $("#signin-action").click(function (e) {
         if ($('#signform').valid()) {
-            if (!checklocation) {
-                $('#j_username').trigger('blur');
+            if (!preAuthCheck) {
+                $('#username').trigger('blur');
                 e.preventDefault();
             }
         } else {
@@ -133,12 +142,12 @@ $(document).ready(function () {
 
     $("#signform").validate({
         rules: {
-            j_username: "required",
-            j_password: "required"
+            username: "required",
+            password: "required"
         },
         messages: {
-            j_username: "Please enter your Username",
-            j_password: "Please enter your password"
+            username: "Please enter your Username",
+            password: "Please enter your Password"
         }
     });
 
