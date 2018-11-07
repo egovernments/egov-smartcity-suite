@@ -196,7 +196,7 @@
        		        				Trade License
        		        			</div>
 								<div class="panel-body">
-									<li class="report-li"><a href="/tl/public/report/dcbreport/licensenumberwise#no-back" class="open-popup">DCB Report by Trade</a></li>
+									<li class="report-li"><a href="/tl/report/dcbreport/licensenumberwise#no-back" class="open-popup">DCB Report by Trade</a></li>
 								</div>
        						</div>
 				        </div>

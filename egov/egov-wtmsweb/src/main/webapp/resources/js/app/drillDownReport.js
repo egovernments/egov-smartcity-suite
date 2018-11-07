@@ -152,7 +152,7 @@ function callajaxdatatableForDrilDownReport() {
 $('#ward').change(function(){
 	console.log("came on change of ward"+$('#ward').val());
 	jQuery.ajax({
-		url: "/egi/public/boundary/ajaxBoundary-blockByWard.action",
+		url: "/egi/boundary/ajaxBoundary-blockByWard.action",
 		type: "GET",
 		data: {
 			wardId : jQuery('#ward').val()

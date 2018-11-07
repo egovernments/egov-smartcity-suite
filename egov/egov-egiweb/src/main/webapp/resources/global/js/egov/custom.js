@@ -197,48 +197,6 @@ $(document).ready(function () {
     } catch (e) {
     }
 
-    $('form[data-ajaxsubmit="true"]').submit(function (e) {
-
-        var formData = new FormData($(this)[0]);
-        var formAction = $(this).attr('action');
-
-        $.ajax({
-            url: 'https://api.github.com/users/mralexgray/repos',//formAction,
-            type: 'POST',
-            data: formData,
-            beforeSend: function () {
-                //remove all existing alert messages
-                $('.alert').remove();
-                //show loader
-                $('.loader-class').modal('show', {backdrop: 'static'});
-            },
-            complete: function () {
-                //callback function calling
-                window["callBackAjax"]();
-                //hide loader
-                $('.loader-class').modal('hide');
-                //scroll page to top
-                pageScrollTop();
-            },
-            success: function (data) {
-                //append server response html text to current page
-                $('.main-content').prepend(data);
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                //generic error message with error code
-                var errormsg = 'Error ' + xhr.status + ' ' + thrownError + '. please, try again!';
-                //add error alert in current page
-                $('.main-content').prepend('<div id="notifyerror" class="alert alert-danger" role="alert"> <div> <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> <span class="sr-only">Error:</span> ' + errormsg + ' </div> ');
-            },
-            cache: false,
-            contentType: false,
-            processData: false
-        });
-
-        return false;
-
-    });
-
     $('.signout').click(function () {
         $.each(openedWindows, function (i, val) {
             var window = val;

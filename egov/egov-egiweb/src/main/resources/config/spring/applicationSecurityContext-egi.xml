@@ -63,15 +63,14 @@
                 <security:filter-chain pattern="/help*" filters="none"/>
                 <security:filter-chain pattern="/jcaptcha*" filters="none"/>
                 <security:filter-chain pattern="/index.jsp" filters="none"/>
-                <security:filter-chain pattern="/login/secure**" filters="none"/>
-                <security:filter-chain pattern="/login/password/recover**" filters="none"/>
-                <security:filter-chain pattern="/login/password/reset**" filters="none"/>
-                <security:filter-chain pattern="/login/preauth-check*" filters="none"/>
+                <security:filter-chain pattern="/login/secure**" filters="headerWriterFilter"/>
+                <security:filter-chain pattern="/login/password/recover**" filters="headerWriterFilter"/>
+                <security:filter-chain pattern="/login/password/reset**" filters="headerWriterFilter"/>
+                <security:filter-chain pattern="/login/preauth-check*" filters="headerWriterFilter"/>
                 <security:filter-chain pattern="/downloadfile/logo**" filters="none"/>
                 <security:filter-chain pattern="/downloadfile/gis**" filters="none"/>
                 <security:filter-chain pattern="/error/**" filters="none"/>
                 <security:filter-chain pattern="/city/details" filters="none"/>
-                <security:filter-chain pattern="/public/**" filters="anonymousAuthenticationFilter"/>
                 <security:filter-chain pattern="/**"
                                        filters="securityContextPersistenceFilter, concurrentSessionFilter,
                                        logoutFilter,authenticationProcessingFilter,headerWriterFilter,csrfFilter,

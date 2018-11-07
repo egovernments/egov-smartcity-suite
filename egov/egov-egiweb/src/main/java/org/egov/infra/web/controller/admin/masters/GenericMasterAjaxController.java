@@ -193,7 +193,7 @@ public class GenericMasterAjaxController {
         return jsonArray.toString();
     }
 
-    @GetMapping({"/boundary/ajaxBoundary-blockByLocality", "/public/boundary/ajaxBoundary-blockByLocality"})
+    @GetMapping("/boundary/ajaxBoundary-blockByLocality")
     public void blockByLocality(@RequestParam Long locality, HttpServletResponse response) throws IOException {
         BoundaryType blockType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(BLOCK, REVENUE_HIERARCHY_TYPE);
         List<Boundary> blocks = crossHierarchyService.getParentBoundaryByChildBoundaryAndParentBoundaryType(locality, blockType.getId());
@@ -228,7 +228,7 @@ public class GenericMasterAjaxController {
         IOUtils.write(bj.toString(), response.getWriter());
     }
 
-    @GetMapping({"/boundary/ajaxBoundary-blockByWard", "/public/boundary/ajaxBoundary-blockByWard"})
+    @GetMapping("/boundary/ajaxBoundary-blockByWard")
     public void blockByWard(@RequestParam Long wardId, HttpServletResponse response) throws IOException {
         List<Boundary> blocks = boundaryService.getActiveChildBoundariesByBoundaryId(wardId);
         final List<JsonObject> jsonObjects = new ArrayList<>();

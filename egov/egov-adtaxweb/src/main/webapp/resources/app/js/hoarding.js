@@ -119,24 +119,11 @@ $(document).ready(function () {
     });
 
     $('#locality').change(function () {
-        //	 alert('HI');
-
-        var url;
-        if (applicationSource == "online")
-            url = "/egi/public/boundary/ajaxBoundary-blockByLocality";
-        else
-            url = "/egi/boundary/ajaxBoundary-blockByLocality";
+        var url = "/egi/boundary/ajaxBoundary-blockByLocality";
         populateBoundaries(url);
     });
     $('#ward').change(function () {
-
-        var url;
-        if (applicationSource == "online")
-            url = "/egi/public/boundary/ajaxBoundary-blockByWard.action";
-        else
-            url = "/egi/boundary/ajaxBoundary-blockByWard.action";
-
-
+        var url = "/egi/boundary/ajaxBoundary-blockByWard.action";
         populateBlock(url);
     });
 
