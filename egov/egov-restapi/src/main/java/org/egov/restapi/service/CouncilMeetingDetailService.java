@@ -60,7 +60,7 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.StringUtils;
 import org.egov.restapi.model.CouncilAgendaItems;
 import org.egov.restapi.model.CouncilMeetingDetails;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

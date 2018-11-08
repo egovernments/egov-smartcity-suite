@@ -67,7 +67,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;

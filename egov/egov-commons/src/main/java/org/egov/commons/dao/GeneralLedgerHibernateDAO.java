@@ -49,7 +49,7 @@ package org.egov.commons.dao;
 
 import org.egov.commons.CGeneralLedger;
 import org.egov.infra.exception.ApplicationException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

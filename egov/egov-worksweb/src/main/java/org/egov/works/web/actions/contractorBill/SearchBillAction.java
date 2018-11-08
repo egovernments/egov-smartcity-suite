@@ -71,7 +71,7 @@ import org.egov.works.services.WorksService;
 import org.egov.works.services.impl.ContractorBillServiceImpl;
 import org.egov.works.services.impl.MeasurementBookServiceImpl;
 import org.egov.works.utils.WorksConstants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;

@@ -47,7 +47,7 @@
  */
 package org.egov.commons.dao;
 
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 

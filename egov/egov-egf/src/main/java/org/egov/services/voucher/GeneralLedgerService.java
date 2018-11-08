@@ -50,7 +50,7 @@ package org.egov.services.voucher;
 
 import org.egov.commons.CGeneralLedger;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;

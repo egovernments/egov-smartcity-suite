@@ -49,7 +49,7 @@
 package org.egov.infra.persistence.utils;
 
 import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 
 import javax.persistence.TypedQuery;
 import java.util.List;

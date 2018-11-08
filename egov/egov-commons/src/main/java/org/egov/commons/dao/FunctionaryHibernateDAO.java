@@ -48,7 +48,7 @@
 package org.egov.commons.dao;
 
 import org.egov.commons.Functionary;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;

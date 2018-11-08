@@ -57,7 +57,7 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;

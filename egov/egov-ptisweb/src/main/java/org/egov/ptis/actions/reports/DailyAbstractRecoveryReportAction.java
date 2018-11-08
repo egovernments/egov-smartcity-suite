@@ -53,7 +53,7 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.ptis.bean.RecoveryInfo;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 

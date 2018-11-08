@@ -71,7 +71,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.voucher.VoucherDetails;
 import org.egov.pims.service.EisUtilService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.script.ScriptContext;

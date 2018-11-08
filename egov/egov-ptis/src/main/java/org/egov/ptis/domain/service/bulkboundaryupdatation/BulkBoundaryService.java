@@ -57,7 +57,7 @@ import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.repository.bulkboundaryupdation.BulkBoundaryUpdationRepository;
 import org.egov.ptis.repository.spec.BulkBoundarySpec;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;

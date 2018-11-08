@@ -49,7 +49,7 @@ package org.egov.ptis.domain.dao.property;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;

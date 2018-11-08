@@ -66,7 +66,7 @@ import org.egov.model.instrument.InstrumentType;
 import org.egov.model.instrument.InstrumentVoucher;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

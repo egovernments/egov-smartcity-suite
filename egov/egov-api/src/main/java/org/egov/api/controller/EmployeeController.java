@@ -72,7 +72,7 @@ import org.egov.pims.commons.Position;
 import org.egov.pims.service.EisUtilService;
 import org.hibernate.FetchMode;
 import org.hibernate.FlushMode;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;

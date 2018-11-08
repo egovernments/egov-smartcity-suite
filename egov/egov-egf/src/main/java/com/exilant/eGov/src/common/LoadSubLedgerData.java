@@ -58,7 +58,7 @@ import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.TaskFailedException;
 import org.apache.log4j.Logger;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;

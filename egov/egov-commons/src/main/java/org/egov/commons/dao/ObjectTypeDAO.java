@@ -49,7 +49,7 @@ package org.egov.commons.dao;
 
 import org.egov.commons.ObjectType;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 
 import javax.persistence.EntityManager;

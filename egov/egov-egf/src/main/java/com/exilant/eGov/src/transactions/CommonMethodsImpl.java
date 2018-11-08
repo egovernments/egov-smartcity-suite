@@ -62,7 +62,7 @@ import org.egov.commons.CFiscalPeriod;
 import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.VoucherHelper;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 

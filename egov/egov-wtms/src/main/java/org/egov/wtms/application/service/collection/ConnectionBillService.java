@@ -69,7 +69,7 @@ import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;

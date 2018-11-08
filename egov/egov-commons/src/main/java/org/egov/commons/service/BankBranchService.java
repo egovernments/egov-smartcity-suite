@@ -49,7 +49,7 @@ package org.egov.commons.service;
 
 import org.egov.commons.Bankbranch;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 
 import javax.persistence.EntityManager;

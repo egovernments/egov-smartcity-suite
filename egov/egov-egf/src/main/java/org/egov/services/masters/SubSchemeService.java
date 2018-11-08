@@ -49,7 +49,7 @@ package org.egov.services.masters;
 
 import org.egov.commons.SubScheme;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 
 import java.util.List;
 

@@ -181,7 +181,7 @@ import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthority
 import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;

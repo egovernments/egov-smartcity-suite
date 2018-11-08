@@ -74,7 +74,7 @@ import org.egov.model.recoveries.Recovery;
 import org.egov.services.deduction.RemitRecoveryService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;

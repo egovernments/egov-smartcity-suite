@@ -109,7 +109,7 @@ import org.egov.ptis.domain.service.property.SMSEmailService;
 import org.egov.ptis.master.service.PropertyUsageService;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

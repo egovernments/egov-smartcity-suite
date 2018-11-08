@@ -243,7 +243,7 @@ import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxNumberGenerator;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;

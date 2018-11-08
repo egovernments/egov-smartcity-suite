@@ -54,7 +54,7 @@ import javax.persistence.PersistenceContext;
 
 import org.egov.restapi.model.CouncilMeetingRequest;
 import org.egov.restapi.model.CouncilResolutionsResponse;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Service;

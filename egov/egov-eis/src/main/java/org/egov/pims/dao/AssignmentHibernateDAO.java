@@ -53,7 +53,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.transaction.annotation.Transactional;
 

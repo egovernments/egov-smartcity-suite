@@ -87,7 +87,7 @@ import org.egov.model.instrument.InstrumentVoucher;
 import org.egov.model.payment.Paymentheader;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.FlushMode;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

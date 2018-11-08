@@ -76,7 +76,7 @@ import org.egov.model.bills.EgBillregistermis;
 import org.egov.services.payment.PaymentService;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

@@ -65,7 +65,7 @@ import org.egov.works.models.masters.ExemptionForm;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;

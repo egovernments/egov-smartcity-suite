@@ -66,7 +66,7 @@ import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.services.ContractorBillService;
 import org.egov.works.utils.WorksConstants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.ByteArrayInputStream;

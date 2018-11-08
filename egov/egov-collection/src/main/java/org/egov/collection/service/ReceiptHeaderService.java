@@ -104,7 +104,7 @@ import org.egov.model.instrument.InstrumentType;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;

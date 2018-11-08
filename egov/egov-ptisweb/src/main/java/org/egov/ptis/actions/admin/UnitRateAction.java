@@ -65,7 +65,7 @@ import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.egov.ptis.domain.entity.property.UnitRateAudit;
 import org.egov.ptis.domain.service.property.UnitRateAuditService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Calendar;

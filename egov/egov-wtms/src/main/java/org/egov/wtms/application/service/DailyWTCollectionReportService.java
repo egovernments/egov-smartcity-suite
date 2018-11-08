@@ -65,7 +65,7 @@ import org.egov.wtms.application.entity.DefaultersReport;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;

@@ -57,7 +57,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.Constants;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;

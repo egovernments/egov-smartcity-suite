@@ -66,7 +66,7 @@ import org.egov.model.payment.ChequeAssignment;
 import org.egov.model.payment.Paymentheader;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
 import org.hibernate.type.LongType;

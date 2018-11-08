@@ -61,7 +61,7 @@ import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.dao.PersonalInformationDAO;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;

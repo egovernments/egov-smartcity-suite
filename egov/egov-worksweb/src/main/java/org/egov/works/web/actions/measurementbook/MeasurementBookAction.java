@@ -88,7 +88,7 @@ import org.egov.works.services.impl.MeasurementBookServiceImpl;
 import org.egov.works.services.impl.WorkOrderServiceImpl;
 import org.egov.works.utils.DateConversionUtil;
 import org.egov.works.utils.WorksConstants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;

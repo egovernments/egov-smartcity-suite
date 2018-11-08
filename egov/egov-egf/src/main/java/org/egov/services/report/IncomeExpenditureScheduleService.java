@@ -55,7 +55,7 @@ import org.egov.egf.model.Statement;
 import org.egov.egf.model.StatementEntry;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.Constants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 

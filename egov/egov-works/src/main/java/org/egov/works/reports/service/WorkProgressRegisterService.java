@@ -54,7 +54,7 @@ import org.egov.works.reports.entity.EstimateAbstractReport;
 import org.egov.works.reports.entity.WorkProgressRegister;
 import org.egov.works.reports.entity.WorkProgressRegisterSearchRequest;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.MatchMode;

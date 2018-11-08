@@ -65,7 +65,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.FlushMode;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;

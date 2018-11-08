@@ -52,7 +52,7 @@ package org.egov.payment.dao;
 
 import org.egov.commons.CVoucherHeader;
 import org.egov.model.payment.Paymentheader;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.transaction.annotation.Transactional;
 

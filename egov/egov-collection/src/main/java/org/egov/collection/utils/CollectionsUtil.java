@@ -123,7 +123,7 @@ import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
 import org.egov.pims.service.SearchPositionService;
 import org.egov.pims.utils.EisManagersUtill;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

@@ -77,7 +77,7 @@ import org.egov.infra.workflow.service.StateHistoryService;
 import org.egov.infra.workflow.service.StateService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;

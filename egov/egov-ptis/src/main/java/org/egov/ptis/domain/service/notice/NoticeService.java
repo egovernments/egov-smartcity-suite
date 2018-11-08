@@ -66,7 +66,7 @@ import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.model.FloorDetails;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.notice.PtNotice;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;

@@ -79,7 +79,7 @@ import org.egov.stms.transactions.entity.SewerageDemandDetail;
 import org.egov.stms.transactions.repository.SewerageDemandGenerationLogRepository;
 import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;

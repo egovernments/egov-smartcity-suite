@@ -49,7 +49,7 @@ package org.egov.demand.dao;
 
 import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgBillDetails;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;

@@ -59,7 +59,7 @@ import javax.persistence.PersistenceContext;
 import org.egov.commons.Installment;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.wtms.application.entity.WaterChargeMaterlizeView;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

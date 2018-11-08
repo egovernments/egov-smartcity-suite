@@ -50,7 +50,7 @@ package org.egov.commons.service;
 import org.egov.commons.CFinancialYear;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 
 import java.util.ArrayList;
 import java.util.Date;

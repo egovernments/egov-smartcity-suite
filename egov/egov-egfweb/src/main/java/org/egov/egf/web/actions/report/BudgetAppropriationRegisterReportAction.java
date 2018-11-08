@@ -75,7 +75,7 @@ import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.BudgetingType;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
 import org.hibernate.type.StandardBasicTypes;

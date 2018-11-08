@@ -60,7 +60,7 @@ import org.egov.pims.dao.PersonalInformationHibernateDAO;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.utils.EisManagersUtill;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.type.IntegerType;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -60,7 +60,7 @@ import org.egov.demand.model.EgdmCollectedReceipt;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Order;

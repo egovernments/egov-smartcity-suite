@@ -80,7 +80,7 @@ import org.egov.pims.model.ServiceHistory;
 import org.egov.pims.utils.EisManagersUtill;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.IntegerType;

@@ -56,7 +56,7 @@ import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.ptis.bean.ReportInfo;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;

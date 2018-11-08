@@ -59,7 +59,7 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -59,7 +59,7 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 

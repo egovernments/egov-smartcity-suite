@@ -87,7 +87,7 @@ import org.egov.services.budget.BudgetService;
 import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.BudgetDetailHelper;
 import org.egov.utils.Constants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 

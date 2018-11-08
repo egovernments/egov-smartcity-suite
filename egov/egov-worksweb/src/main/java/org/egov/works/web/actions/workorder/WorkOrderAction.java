@@ -107,7 +107,7 @@ import org.egov.works.services.impl.WorkOrderServiceImpl;
 import org.egov.works.utils.DateConversionUtil;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.ByteArrayInputStream;

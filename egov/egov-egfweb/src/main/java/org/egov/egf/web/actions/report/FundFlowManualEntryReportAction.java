@@ -68,7 +68,7 @@ import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;

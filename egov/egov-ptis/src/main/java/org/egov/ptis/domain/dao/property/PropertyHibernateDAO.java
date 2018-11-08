@@ -63,7 +63,7 @@ import org.egov.ptis.domain.entity.property.PropertySource;
 import org.egov.ptis.exceptions.PropertyNotFoundException;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;

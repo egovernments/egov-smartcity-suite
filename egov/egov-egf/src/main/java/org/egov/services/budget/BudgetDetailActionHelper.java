@@ -62,7 +62,7 @@ import org.egov.model.service.BudgetDefinitionService;
 import org.egov.model.voucher.WorkflowBean;
 import org.egov.pims.commons.Position;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;

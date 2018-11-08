@@ -88,7 +88,7 @@ import org.egov.infstr.models.ServiceCategory;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.models.ServiceSubledgerInfo;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 

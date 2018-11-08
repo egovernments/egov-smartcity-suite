@@ -183,7 +183,7 @@ import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.domain.service.property.RebateService;
 import org.egov.ptis.master.service.TaxRatesService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.Days;

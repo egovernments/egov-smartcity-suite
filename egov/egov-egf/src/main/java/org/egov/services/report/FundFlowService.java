@@ -59,7 +59,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.report.FundFlowBean;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BooleanType;
 import org.springframework.beans.factory.annotation.Autowired;

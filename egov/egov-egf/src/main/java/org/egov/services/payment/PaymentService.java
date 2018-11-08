@@ -107,7 +107,7 @@ import org.egov.services.report.FundFlowService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;

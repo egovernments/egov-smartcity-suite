@@ -70,7 +70,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.FlushMode;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -50,7 +50,7 @@ package org.egov.assets.service;
 
 import org.egov.assets.model.CategoryPropertyType;
 import org.egov.assets.repository.CategoryPropertyTypeRepository;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;

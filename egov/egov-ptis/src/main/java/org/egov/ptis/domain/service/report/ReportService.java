@@ -93,7 +93,7 @@ import org.egov.ptis.master.service.PropertyUsageService;
 import org.egov.ptis.report.bean.ApartmentDCBReportResult;
 import org.egov.ptis.report.bean.NatureOfUsageResult;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.transform.AliasToBeanResultTransformer;

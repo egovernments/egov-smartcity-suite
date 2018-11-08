@@ -71,7 +71,7 @@ import org.egov.wtms.application.entity.SearchNoticeDetails;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.PropertyExtnUtils;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;

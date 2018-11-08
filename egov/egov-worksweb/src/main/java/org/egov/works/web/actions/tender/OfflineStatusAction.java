@@ -64,7 +64,7 @@ import org.egov.works.models.tender.Retender;
 import org.egov.works.models.tender.RetenderHistory;
 import org.egov.works.models.tender.WorksPackage;
 import org.egov.works.services.WorksService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;

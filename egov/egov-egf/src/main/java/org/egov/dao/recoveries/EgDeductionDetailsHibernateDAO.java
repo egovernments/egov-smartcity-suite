@@ -54,7 +54,7 @@ import org.egov.commons.EgPartytype;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.model.recoveries.EgDeductionDetails;
 import org.egov.model.recoveries.Recovery;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -49,7 +49,7 @@ package org.egov.commons.dao;
 
 import org.egov.commons.Accountdetailtype;
 import org.egov.infra.exception.ApplicationException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

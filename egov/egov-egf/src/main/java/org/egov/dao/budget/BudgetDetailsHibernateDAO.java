@@ -101,7 +101,7 @@ import org.egov.services.budget.BudgetService;
 import org.egov.services.budget.BudgetUsageService;
 import org.egov.utils.BudgetAccountType;
 import org.egov.utils.Constants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

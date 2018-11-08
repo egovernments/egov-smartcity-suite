@@ -50,7 +50,7 @@ package org.egov.ptis.domain.dao.property;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.ptis.domain.entity.property.Category;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Criterion;

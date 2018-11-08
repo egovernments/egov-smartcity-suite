@@ -49,7 +49,7 @@ package org.egov.demand.model;
 
 import org.egov.demand.interfaces.Billable;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 
 import javax.persistence.EntityManager;

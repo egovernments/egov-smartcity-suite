@@ -61,7 +61,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.deduction.RemittanceBean;
 import org.egov.utils.Constants;
 import org.egov.utils.VoucherHelper;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 

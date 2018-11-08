@@ -51,7 +51,7 @@ package org.egov.council.service;
 import org.apache.commons.lang.StringUtils;
 import org.egov.council.entity.CouncilSequenceNumber;
 import org.egov.council.repository.CouncilSequenceNumberRepository;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

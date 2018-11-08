@@ -61,7 +61,7 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FunctionDAO;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.budget.BudgetGroup;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;

@@ -75,7 +75,7 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.egov.ptis.wtms.WaterChargesIntegrationService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

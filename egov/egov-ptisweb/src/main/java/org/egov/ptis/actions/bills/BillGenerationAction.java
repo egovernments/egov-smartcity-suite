@@ -89,7 +89,7 @@ import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.service.DemandBill.DemandBillService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;

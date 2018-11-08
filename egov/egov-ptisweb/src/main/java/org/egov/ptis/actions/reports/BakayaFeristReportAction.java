@@ -64,7 +64,7 @@ import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;

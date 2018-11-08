@@ -49,7 +49,7 @@ package org.egov.commons.service;
 
 import org.egov.commons.Fundsource;
 import org.egov.commons.repository.FundsourceRepository;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;

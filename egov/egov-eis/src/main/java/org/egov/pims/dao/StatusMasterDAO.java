@@ -49,7 +49,7 @@ package org.egov.pims.dao;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.pims.model.StatusMaster;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 
 import javax.persistence.EntityManager;

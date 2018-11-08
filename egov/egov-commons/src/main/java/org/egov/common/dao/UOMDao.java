@@ -51,7 +51,7 @@ package org.egov.common.dao;
 import org.egov.common.entity.UOM;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.transaction.annotation.Transactional;
 

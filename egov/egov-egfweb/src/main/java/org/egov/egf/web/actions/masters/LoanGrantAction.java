@@ -70,7 +70,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.services.masters.BankService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.LongType;
 import org.springframework.beans.factory.annotation.Autowired;

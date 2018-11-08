@@ -70,7 +70,7 @@ import org.egov.services.report.DEReportService;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.FlushMode;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

@@ -59,7 +59,7 @@ import org.egov.model.cheque.AccountCheques;
 import org.egov.model.cheque.ChequeDeptMapping;
 import org.egov.model.masters.ChequeDetail;
 import org.egov.utils.Constants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

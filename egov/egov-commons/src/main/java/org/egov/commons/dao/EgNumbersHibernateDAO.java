@@ -48,7 +48,7 @@
 package org.egov.commons.dao;
 
 import org.egov.commons.EgNumbers;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 
 import javax.persistence.EntityManager;

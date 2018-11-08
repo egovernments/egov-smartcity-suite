@@ -59,7 +59,7 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 

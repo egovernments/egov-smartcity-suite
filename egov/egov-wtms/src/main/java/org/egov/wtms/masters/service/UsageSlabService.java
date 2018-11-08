@@ -52,7 +52,7 @@ import org.egov.infra.persistence.utils.Page;
 import org.egov.wtms.application.entity.UsageSlabSearchRequest;
 import org.egov.wtms.masters.entity.UsageSlab;
 import org.egov.wtms.masters.repository.UsageSlabRepository;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

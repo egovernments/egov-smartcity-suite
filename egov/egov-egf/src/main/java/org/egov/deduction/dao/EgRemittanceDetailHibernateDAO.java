@@ -53,7 +53,7 @@ package org.egov.deduction.dao;
 import org.egov.deduction.model.EgRemittance;
 import org.egov.deduction.model.EgRemittanceDetail;
 import org.egov.deduction.model.EgRemittanceGldtl;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -76,7 +76,7 @@ import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;

@@ -55,7 +55,7 @@ import org.egov.commons.utils.EntityType;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.masters.model.AccountEntity;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;

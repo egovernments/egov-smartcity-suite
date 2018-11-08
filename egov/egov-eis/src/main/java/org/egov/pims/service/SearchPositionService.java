@@ -54,7 +54,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.pims.dao.PersonalInformationDAO;
 import org.egov.pims.dao.PersonalInformationHibernateDAO;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 

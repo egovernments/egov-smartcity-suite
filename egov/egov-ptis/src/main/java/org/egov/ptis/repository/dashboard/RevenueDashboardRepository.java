@@ -48,7 +48,7 @@
 package org.egov.ptis.repository.dashboard;
 
 import org.egov.ptis.config.PTISApplicationProperties;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
@@ -174,7 +174,7 @@ public class RevenueDashboardRepository {
     }
 
     public List<Map<String, Object>> getWardwisePerformanceTab(final String zoneName) {
-        final SQLQuery overAllQry = getQuery("revenue.ptis.wardwise.overall.performance");
+        final Query overAllQry = getQuery("revenue.ptis.wardwise.overall.performance");
         overAllQry.setParameter("zoneName", zoneName);
         final List<Object[]> overAllData = overAllQry.list();
         final Map<String, Map<String, Object>> revenueDataHolder = new HashMap<String, Map<String, Object>>();
@@ -186,7 +186,7 @@ public class RevenueDashboardRepository {
             revenueDataHolder.put(String.valueOf(revenueObj[0]), revnData);
         }
 
-        final SQLQuery monthlyQry = getQuery("revenue.ptis.wardwise.monthly.performance");
+        final Query monthlyQry = getQuery("revenue.ptis.wardwise.monthly.performance");
         monthlyQry.setParameter("zoneName", zoneName);
         final List<Object[]> monthlyData = monthlyQry.list();
         for (final Object[] revenueObj : monthlyData) {
@@ -350,7 +350,7 @@ public class RevenueDashboardRepository {
     }
 
     public Map<String, Object> coverageEfficiencyWard(final String zoneName) {
-        final SQLQuery overAllQry = getQuery("revenue.ptis.coverage.efficiency.ward");
+        final Query overAllQry = getQuery("revenue.ptis.coverage.efficiency.ward");
         overAllQry.setParameter("zoneName", zoneName);
         final List<Object[]> overAllData = overAllQry.list();
         final Map<String, Map<String, Object>> coverageDataHolder = new HashMap<String, Map<String, Object>>();
@@ -414,7 +414,7 @@ public class RevenueDashboardRepository {
             map.put(key, counter++);
     }
 
-    private SQLQuery getQuery(final String sqlKey) {
+    private Query getQuery(final String sqlKey) {
         return entityManager.unwrap(Session.class)
                 .createSQLQuery(ptisApplicationProperties.getValue(sqlKey));
     }

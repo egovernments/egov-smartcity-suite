@@ -61,7 +61,7 @@ import org.egov.lcms.reports.entity.LegalCaseSearchResult;
 import org.egov.lcms.transactions.entity.ReportStatus;
 import org.egov.lcms.transactions.repository.ReportStatusRepository;
 import org.egov.lcms.utils.constants.LcmsConstants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;

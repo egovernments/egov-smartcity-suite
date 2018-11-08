@@ -55,7 +55,7 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.Fund;
 import org.egov.deduction.model.EgRemittance;
 import org.egov.model.recoveries.Recovery;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -52,7 +52,7 @@ import org.egov.commons.CFinancialYear;
 import org.egov.egf.model.Statement;
 import org.egov.egf.model.StatementResultObject;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

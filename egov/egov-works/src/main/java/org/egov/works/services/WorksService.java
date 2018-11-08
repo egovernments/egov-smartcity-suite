@@ -76,7 +76,7 @@ import org.egov.pims.commons.Position;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.works.utils.WorksConstants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;

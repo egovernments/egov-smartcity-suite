@@ -84,7 +84,7 @@ import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;

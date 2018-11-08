@@ -74,7 +74,7 @@ import org.egov.ptis.bean.TaxCollectionInfo;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 

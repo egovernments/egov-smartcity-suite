@@ -60,7 +60,7 @@ import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.egov.works.services.MeasurementBookService;
 import org.egov.works.services.WorksService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

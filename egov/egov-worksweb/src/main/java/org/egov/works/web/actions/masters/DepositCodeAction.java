@@ -71,7 +71,7 @@ import org.egov.works.services.ContractorBillService;
 import org.egov.works.services.WorksService;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.egov.works.web.actions.estimate.AjaxFinancialDetailAction;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;

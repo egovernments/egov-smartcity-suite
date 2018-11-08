@@ -181,7 +181,7 @@ public class TaxRatesService {
     }
     
     public BigDecimal getTaxRateByDemandReasonCode(final String demandCode) {
-        final org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(
+        final org.hibernate.query.Query query = entityManager.unwrap(Session.class).createQuery(
                 "from EgDemandReasonDetails drd where drd.egDemandReasonMaster.egModule.name= 'Property Tax' and drd.egDemandReasonMaster.code= :demandCode order by drd.egDemandReasonMaster.orderId ");
         query.setParameter("demandCode", demandCode);
         return ((EgDemandReasonDetails) query.list().get(0)).getPercentage();

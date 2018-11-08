@@ -50,7 +50,7 @@ package org.egov.infstr.search;
 
 import org.egov.infra.persistence.utils.Page;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 
 import java.math.BigInteger;
 import java.util.List;
