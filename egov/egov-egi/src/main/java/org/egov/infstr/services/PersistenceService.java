@@ -56,12 +56,10 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,11 +77,11 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
  * Old persistence service
+ *
  * @deprecated use Repositories
  **/
 @Transactional(readOnly = true)
@@ -265,11 +263,6 @@ public class PersistenceService<T, ID extends Serializable> {
         return findById(id);
     }
 
-    public T findByIdWithJoinFetch(final ID id, final String joinFetchPropertyName) {
-        return (T) getSession().createCriteria(type).setFetchMode(joinFetchPropertyName, FetchMode.JOIN)
-                .add(Restrictions.idEq(id)).uniqueResult();
-    }
-
     @Transactional
     public T update(final T entity) {
         validate(entity);
@@ -282,28 +275,6 @@ public class PersistenceService<T, ID extends Serializable> {
         for (final String orderBy : orderByFields)
             c.addOrder(Order.asc(orderBy).ignoreCase());
         return c.list();
-    }
-
-    public String getNamedQuery(final String namedQuery) {
-        return getSession().getNamedQuery(namedQuery).getQueryString();
-    }
-
-    public void addIndexparams(final Map<String, List> indexparams, final String key, final Object... values) {
-        final List objparams = new ArrayList();
-        for (final Object value : values)
-            objparams.add(value);
-        indexparams.put(key, objparams);
-    }
-
-    public void addFilterCriteriaForObject(final Map<String, List> params, final Criteria c,
-                                           final String... orderbyFields) {
-        for (final Map.Entry<String, List> entry : params.entrySet())
-            if (entry.getKey().contains("date") || entry.getKey().contains("Date"))
-                c.add(Restrictions.between(entry.getKey(), entry.getValue().get(0), entry.getValue().get(1)));
-            else
-                c.add(Restrictions.eq(entry.getKey(), entry.getValue().get(0)));
-        for (final String orderBy : orderbyFields)
-            c.addOrder(Order.asc(orderBy).ignoreCase());
     }
 
     /**
