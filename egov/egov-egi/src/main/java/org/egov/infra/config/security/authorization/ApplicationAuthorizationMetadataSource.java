@@ -86,7 +86,7 @@ public class ApplicationAuthorizationMetadataSource implements FilterInvocationS
         List<ConfigAttribute> configAttributes = new ArrayList<>();
         if (!urlExcluded(url)) {
             actionService.getActionByUrlAndContextRoot(url, queryString, contextRoot)
-                    .ifPresent(actions -> actions.getRoles()
+                    .ifPresent(action -> action.getRoles()
                             .forEach(role -> configAttributes.add(new SecurityConfig(role.getName()))));
         }
         if (configAttributes.isEmpty())
