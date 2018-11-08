@@ -373,5 +373,9 @@
         <put-attribute name="page-title" value="mobilePayment.title" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/mobile/mobilePayment-form.jsp"/>
     </definition>
+    <definition name="notAuthorised" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.notAuthorized" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/workflow/notAuthorized.jsp"/>
+    </definition>
 
 </tiles-definitions>

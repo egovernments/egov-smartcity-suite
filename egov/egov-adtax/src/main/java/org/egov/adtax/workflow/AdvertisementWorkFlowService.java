@@ -72,6 +72,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
+import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Role;
@@ -81,6 +82,7 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
 import org.hibernate.Session;
@@ -106,6 +108,8 @@ public class AdvertisementWorkFlowService {
     private UserService userService;
     @PersistenceContext
     private EntityManager entityManager;
+    @Autowired
+    private PositionMasterService positionMasterService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -463,6 +467,11 @@ public class AdvertisementWorkFlowService {
 
         }
         return user;
+    }
+
+    public Boolean isApplicationOwner(User currentUser, StateAware state) {
+        return positionMasterService.getPositionsForEmployee(currentUser.getId())
+                .contains(state.getCurrentState().getOwnerPosition());
     }
 
 }

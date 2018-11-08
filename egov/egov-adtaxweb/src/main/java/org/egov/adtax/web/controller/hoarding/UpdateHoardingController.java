@@ -85,6 +85,8 @@ public class UpdateHoardingController extends HoardingControllerSupport {
 
     private static final String HOARDING_UPDATE = "hoarding-update";
 
+    private static final String NOT_AUTHORIZED = "notAuthorized";
+
     private static final String MESSAGE = "message";
 
     private static final String APPROVAL_POSITION = "approvalPosition";
@@ -111,22 +113,17 @@ public class UpdateHoardingController extends HoardingControllerSupport {
     public String updateHoarding(@PathVariable final String id, final Model model) {
 
         User currentUser = securityUtils.getCurrentUser();
-        final WorkflowContainer workFlowContainer = new WorkflowContainer();
         final AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.findBy(Long.valueOf(id));
+
+        if (!advertisementWorkFlowService.isApplicationOwner(currentUser, advertisementPermitDetail))
+            return NOT_AUTHORIZED;
+
+        final WorkflowContainer workFlowContainer = new WorkflowContainer();
         model.addAttribute("dcPending", advertisementDemandService.anyDemandPendingForCollection(advertisementPermitDetail));
         model.addAttribute("advertisementPermitDetail", advertisementPermitDetail);
         model.addAttribute("isEmployee",
                 advertisementWorkFlowService.isEmployee(currentUser) && !ANONYMOUS_USER.equalsIgnoreCase(currentUser.getName()));
-        if (advertisementPermitDetail != null && advertisementPermitDetail.getPreviousapplicationid() != null) {
-            model.addAttribute(ADDITIONAL_RULE, AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
-            workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
-            workFlowContainer.setPendingActions(advertisementPermitDetail.getState().getNextAction());
-        } else {
-            model.addAttribute(ADDITIONAL_RULE, AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
-            workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
-            if (advertisementPermitDetail != null)
-                workFlowContainer.setPendingActions(advertisementPermitDetail.getState().getNextAction());
-        }
+        populateAdditionalRuleAndPendingActions(model, workFlowContainer, advertisementPermitDetail);
 
         if (advertisementPermitDetail != null) {
             model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
@@ -139,6 +136,19 @@ public class UpdateHoardingController extends HoardingControllerSupport {
             prepareWorkflow(model, advertisementPermitDetail, workFlowContainer);
         }
         return HOARDING_UPDATE;
+    }
+
+    private void populateAdditionalRuleAndPendingActions(Model model, WorkflowContainer workFlowContainer, AdvertisementPermitDetail advertisementPermitDetail) {
+        if (advertisementPermitDetail != null && advertisementPermitDetail.getPreviousapplicationid() != null) {
+            model.addAttribute(ADDITIONAL_RULE, AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
+            workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
+            workFlowContainer.setPendingActions(advertisementPermitDetail.getState().getNextAction());
+        } else {
+            model.addAttribute(ADDITIONAL_RULE, AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
+            workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
+            if (advertisementPermitDetail != null)
+                workFlowContainer.setPendingActions(advertisementPermitDetail.getState().getNextAction());
+        }
     }
 
     @RequestMapping(value = "update/{id}", method = POST)
@@ -297,17 +307,8 @@ public class UpdateHoardingController extends HoardingControllerSupport {
     private void populateModelOnErrors(final AdvertisementPermitDetail advertisementPermitDetail, final Model model) {
         final WorkflowContainer workFlowContainer = new WorkflowContainer();
 
-        if (advertisementPermitDetail != null && advertisementPermitDetail.getPreviousapplicationid() != null) {
-            model.addAttribute(ADDITIONAL_RULE, AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
-            workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
-            workFlowContainer.setPendingActions(advertisementPermitDetail.getState().getNextAction());
+        populateAdditionalRuleAndPendingActions(model, workFlowContainer, advertisementPermitDetail);
 
-        } else {
-            model.addAttribute(ADDITIONAL_RULE, AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
-            workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
-            if (advertisementPermitDetail != null)
-                workFlowContainer.setPendingActions(advertisementPermitDetail.getState().getNextAction());
-        }
         if (advertisementPermitDetail != null) {
             prepareWorkflow(model, advertisementPermitDetail, workFlowContainer);
             model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());

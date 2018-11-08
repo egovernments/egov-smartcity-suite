@@ -148,8 +148,8 @@ public class AdvertisementDemandService {
     @SuppressWarnings("rawtypes")
     public EgDemandReason getDemandReasonByCodeAndInstallment(final String demandReason, final Installment installment) {
         final Query demandQuery = getCurrentSession().getNamedQuery("DEMANDREASONBY_CODE_AND_INSTALLMENTID");
-        demandQuery.setParameter(0, demandReason);
-        demandQuery.setParameter(1, installment.getId());
+        demandQuery.setParameter(1, demandReason);
+        demandQuery.setParameter(2, installment.getId());
         return (EgDemandReason) demandQuery.uniqueResult();
     }
 
