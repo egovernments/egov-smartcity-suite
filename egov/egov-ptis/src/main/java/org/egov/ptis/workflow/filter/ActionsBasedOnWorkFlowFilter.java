@@ -68,6 +68,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.egov.infra.utils.ApplicationConstant.SLASH;
+
 /*
  This Filter is used to put rules on actions based workflow.
  The request parameters expected here are:
@@ -75,69 +78,70 @@ import java.util.List;
  2. action id with parameter name : actionid
  */
 public class ActionsBasedOnWorkFlowFilter implements Filter {
-	private static final Logger LOGGER = Logger.getLogger(ActionsBasedOnWorkFlowFilter.class);
-	@Autowired
-	private ScriptService scriptService;
-	private PersistenceService workFlowPerService;
-	
-	@Autowired
-	private ActionService actionService;
+    private static final Logger LOGGER = Logger.getLogger(ActionsBasedOnWorkFlowFilter.class);
 
-	@Override
-	public void init(FilterConfig config) {
-	}
+    @Autowired
+    private ScriptService scriptService;
 
-	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-			throws IOException, ServletException {
-		Action action = null;
-		boolean authorized = true;
-		// from action, for which actions restricted for properties under work
-		// flow should be applied expecting parameter with name ENTITY_ID and
-		// value is bill no of property
-		if (request.getParameter("ENTITY_ID") != null) {
-			HttpServletRequest httpRequest = (HttpServletRequest) request;
-			List authResList = new ArrayList();
-			String billNo = httpRequest.getParameter("ENTITY_ID");
-			action = getAction(httpRequest);
-			authResList = getWorkFlowActionAuth(action.getUrl(), billNo);
-			authorized = Boolean.valueOf(authResList.get(0).toString());
-			if (!authorized) { // if authorization fails throwing
-								// AuthorizationException
-				request.setAttribute("AuthRuleErrMsgKey", authResList.get(1).toString());
-				throw new AuthorizationException(authResList.get(1).toString());
-			}
-		}
-		chain.doFilter(request, response);
-	}
+    private PersistenceService workFlowPerService;
 
-	private List getWorkFlowActionAuth(String actionUrl, String properrtyId) {
-		ScriptContext scriptContext = ScriptService.createContext("ActionName", actionUrl,
-				"properrtyId", properrtyId, "persistService", workFlowPerService);
-		return (List) scriptService.executeScript("WorkFlowBasedActions", scriptContext);
-	}
+    @Autowired
+    private ActionService actionService;
 
-	@Override
-	public void destroy() {
-		LOGGER.info("destroying filter");
-	}
+    @Override
+    public void init(FilterConfig config) {
+    }
 
-	private Action getAction(HttpServletRequest request) {
-		Action action;
-		String actionId = request.getParameter("actionid");
-		if (actionId == null || actionId.length() == 0) {
-			String requestURI = request.getRequestURI();
-			String contextPath = request.getContextPath();
-			requestURI = StringUtils.remove(requestURI, contextPath);
-			action = actionService.getActionByUrlAndContextRoot(requestURI, StringUtils.remove(contextPath, '/'));
-		} else {
-			action = actionService.getActionById(Long.valueOf(actionId));
-		}
-		return action;
-	}
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+        Action action = null;
+        boolean authorized = true;
+        // from action, for which actions restricted for properties under work
+        // flow should be applied expecting parameter with name ENTITY_ID and
+        // value is bill no of property
+        if (request.getParameter("ENTITY_ID") != null) {
+            HttpServletRequest httpRequest = (HttpServletRequest) request;
+            List authResList = new ArrayList();
+            String billNo = httpRequest.getParameter("ENTITY_ID");
+            action = getAction(httpRequest);
+            authResList = getWorkFlowActionAuth(action.getUrl(), billNo);
+            authorized = Boolean.valueOf(authResList.get(0).toString());
+            if (!authorized) { // if authorization fails throwing
+                // AuthorizationException
+                request.setAttribute("AuthRuleErrMsgKey", authResList.get(1).toString());
+                throw new AuthorizationException(authResList.get(1).toString());
+            }
+        }
+        chain.doFilter(request, response);
+    }
 
-	public void setWorkFlowPerService(PersistenceService authRuleService) {
-		this.workFlowPerService = authRuleService;
-	}
+    private List getWorkFlowActionAuth(String actionUrl, String properrtyId) {
+        ScriptContext scriptContext = ScriptService.createContext("ActionName", actionUrl,
+                "properrtyId", properrtyId, "persistService", workFlowPerService);
+        return (List) scriptService.executeScript("WorkFlowBasedActions", scriptContext);
+    }
+
+    @Override
+    public void destroy() {
+        LOGGER.info("destroying filter");
+    }
+
+    private Action getAction(HttpServletRequest request) {
+        String actionId = request.getParameter("actionid");
+        if (isBlank(actionId)) {
+            String requestURI = request.getRequestURI();
+            String contextPath = request.getContextPath();
+            requestURI = StringUtils.remove(requestURI, contextPath);
+            return actionService.getActionByUrlAndContextRoot(requestURI, request.getQueryString(),
+                    StringUtils.remove(contextPath, SLASH)).get();
+        } else {
+            return actionService.getActionById(Long.valueOf(actionId));
+        }
+    }
+
+    public void setWorkFlowPerService(PersistenceService authRuleService) {
+        this.workFlowPerService = authRuleService;
+    }
 
 }

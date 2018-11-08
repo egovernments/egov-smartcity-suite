@@ -72,127 +72,133 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.egov.infra.utils.ApplicationConstant.SLASH;
+
 /**
- * This Filter is used to put rules on actions based on Authentication. 
- * The request parameters expected here are: 
- * 1. object id with parameter name : AUTHRULE_OBJECT_ID 
+ * This Filter is used to put rules on actions based on Authentication.
+ * The request parameters expected here are:
+ * 1. object id with parameter name : AUTHRULE_OBJECT_ID
  * 2. action id with parameter name : actionid
  */
 public class RuleInterceptorFilter implements Filter {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(RuleInterceptorFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RuleInterceptorFilter.class);
 
-	private PersistenceService daoService;
-	private PersistenceService<AuthorizationRule, Long> authRuleService;
-	@Autowired
-	private ActionService actionService;
-	@Autowired
-	private ScriptService scriptExecuter;
+    private PersistenceService daoService;
+    private PersistenceService<AuthorizationRule, Long> authRuleService;
+    @Autowired
+    private ActionService actionService;
+    @Autowired
+    private ScriptService scriptExecuter;
     @Autowired
     private SecurityUtils securityUtils;
 
-	@Override
-	public void init(final FilterConfig config) {
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.info("In RuleInterceptorFilter init");
-		}
-	}
+    @Override
+    public void init(final FilterConfig config) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.info("In RuleInterceptorFilter init");
+        }
+    }
 
-	@Override
-	public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
-		// from action, for which actions rule should be applied expecting parameter with name
-		// AUTHRULE_OBJECT_ID and value is id of the
-		// product entity. Eg : In case of PTIS BasicPoperty primary key
-		if (request.getParameter("AUTHRULE_OBJECT_ID") != null) {
-			final HttpServletRequest httpRequest = (HttpServletRequest) request;
-			final Action action = this.getAction(httpRequest);
-			final List<AuthorizationRule> authRuleList = this.authRuleService.findAllByNamedQuery("authRulesByAction", action);
-			for (final AuthorizationRule authRule : authRuleList) {
-				final Object object = this.getEntity(httpRequest, authRule);
-				final List authResList = this.getRuleAuthentication(securityUtils.getCurrentUser(), authRule, object);
-				final boolean authorized = Boolean.valueOf(authResList.get(0).toString());
-				if (!authorized) {
-					// if authorization fails throwing AuthorizationException
-					// setting message key to request, from script when authorization failed
-					request.setAttribute("AuthRuleErrMsgKey", authResList.get(1).toString());
-					throw new AuthorizationException(authResList.get(1).toString());
-				}
-			}
-		}
-		chain.doFilter(request, response);
-	}
+    @Override
+    public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
+        // from action, for which actions rule should be applied expecting parameter with name
+        // AUTHRULE_OBJECT_ID and value is id of the
+        // product entity. Eg : In case of PTIS BasicPoperty primary key
+        if (request.getParameter("AUTHRULE_OBJECT_ID") != null) {
+            final HttpServletRequest httpRequest = (HttpServletRequest) request;
+            final Action action = this.getAction(httpRequest);
+            final List<AuthorizationRule> authRuleList = this.authRuleService.findAllByNamedQuery("authRulesByAction", action);
+            for (final AuthorizationRule authRule : authRuleList) {
+                final Object object = this.getEntity(httpRequest, authRule);
+                final List authResList = this.getRuleAuthentication(securityUtils.getCurrentUser(), authRule, object);
+                final boolean authorized = Boolean.valueOf(authResList.get(0).toString());
+                if (!authorized) {
+                    // if authorization fails throwing AuthorizationException
+                    // setting message key to request, from script when authorization failed
+                    request.setAttribute("AuthRuleErrMsgKey", authResList.get(1).toString());
+                    throw new AuthorizationException(authResList.get(1).toString());
+                }
+            }
+        }
+        chain.doFilter(request, response);
+    }
 
-	/**
-	 * Gets the rule authentication.
-	 * @param currUser the curr user
-	 * @param ruleDef the rule def
-	 * @param authRule the auth rule
-	 * @param object the object
-	 * @return the rule authentication
-	 */
-	private List getRuleAuthentication(final User currUser, final AuthorizationRule authRule, final Object object) {
-		return (List) this.scriptExecuter.executeScript(authRule.getScript().getName(), ScriptService.createContext("object", object, "user", currUser));
-	}
+    /**
+     * Gets the rule authentication.
+     *
+     * @param currUser the curr user
+     * @param ruleDef  the rule def
+     * @param authRule the auth rule
+     * @param object   the object
+     * @return the rule authentication
+     */
+    private List getRuleAuthentication(final User currUser, final AuthorizationRule authRule, final Object object) {
+        return (List) this.scriptExecuter.executeScript(authRule.getScript().getName(), ScriptService.createContext("object", object, "user", currUser));
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see javax.servlet.Filter#destroy()
-	 */
-	@Override
-	public void destroy() {
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.info("In RuleInterceptorFilter Destroy");
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * @see javax.servlet.Filter#destroy()
+     */
+    @Override
+    public void destroy() {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.info("In RuleInterceptorFilter Destroy");
+        }
+    }
 
 
+    /**
+     * Gets the action.
+     *
+     * @param request the request
+     * @return the action
+     */
+    private Action getAction(final HttpServletRequest request) {
+        final String actionId = request.getParameter("actionid");
+        if (isBlank(actionId)) {
+            final String contextPath = request.getContextPath();
+            final String requestURI = StringUtils.remove(request.getRequestURI(), contextPath);
+            return this.actionService.getActionByUrlAndContextRoot(requestURI, request.getQueryString(),
+                    StringUtils.remove(contextPath, SLASH)).get();
+        } else {
+            return this.actionService.getActionById(Long.valueOf(actionId));
+        }
+    }
 
-	/**
-	 * Gets the action.
-	 * @param request the request
-	 * @return the action
-	 */
-	private Action getAction(final HttpServletRequest request) {
-		Action action;
-		final String actionId = request.getParameter("actionid");
-		if ((actionId == null) || (actionId.length() == 0)) {
-			final String contextPath = request.getContextPath();
-			final String requestURI = StringUtils.remove(request.getRequestURI(), contextPath);
-			action = this.actionService.getActionByUrlAndContextRoot(requestURI, StringUtils.remove(contextPath, '/'));
-		} else {
-			action = (Action) this.actionService.getActionById(Long.valueOf(actionId));
-		}
-		return action;
-	}
+    /**
+     * Gets the entity.
+     *
+     * @param httpRequest the http request
+     * @param authRule    the auth rule
+     * @return the entity
+     */
+    private Object getEntity(final HttpServletRequest httpRequest, final AuthorizationRule authRule) {
+        final Long objectId = Long.valueOf(httpRequest.getParameter("AUTHRULE_OBJECT_ID"));
+        final List objects = this.daoService.findAllBy("from " + authRule.getObjectType() + " where id=?1", objectId);
+        if (objects.isEmpty()) {
+            throw new ApplicationRuntimeException("Object id is null to get AuthorizationRule");
+        }
+        return objects.get(0);
+    }
 
-	/**
-	 * Gets the entity.
-	 * @param httpRequest the http request
-	 * @param authRule the auth rule
-	 * @return the entity
-	 */
-	private Object getEntity(final HttpServletRequest httpRequest, final AuthorizationRule authRule) {
-		final Long objectId = Long.valueOf(httpRequest.getParameter("AUTHRULE_OBJECT_ID"));
-		final List objects = this.daoService.findAllBy("from " + authRule.getObjectType() + " where id=?1", objectId);
-		if (objects.isEmpty()) {
-			throw new ApplicationRuntimeException("Object id is null to get AuthorizationRule");
-		}
-		return objects.get(0);
-	}
+    /**
+     * Sets the script service.
+     *
+     * @param scriptService the persistence service
+     */
+    public void setDaoService(final PersistenceService<Script, Long> daoService) {
+        this.daoService = daoService;
+    }
 
-	/**
-	 * Sets the script service.
-	 * @param scriptService the persistence service
-	 */
-	public void setDaoService(final PersistenceService<Script, Long> daoService) {
-		this.daoService = daoService;
-	}
-
-	/**
-	 * Sets the auth rule service.
-	 * @param authRuleService the auth rule service
-	 */
-	public void setAuthRuleService(final PersistenceService<AuthorizationRule, Long> authRuleService) {
-		this.authRuleService = authRuleService;
-	}
+    /**
+     * Sets the auth rule service.
+     *
+     * @param authRuleService the auth rule service
+     */
+    public void setAuthRuleService(final PersistenceService<AuthorizationRule, Long> authRuleService) {
+        this.authRuleService = authRuleService;
+    }
 }

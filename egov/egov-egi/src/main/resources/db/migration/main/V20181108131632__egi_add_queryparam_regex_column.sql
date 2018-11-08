@@ -1,0 +1,1 @@
+ALTER TABLE eg_action ADD COLUMN queryparamregex VARCHAR(50);

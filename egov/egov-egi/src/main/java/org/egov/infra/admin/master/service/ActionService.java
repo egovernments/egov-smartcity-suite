@@ -48,19 +48,25 @@
 
 package org.egov.infra.admin.master.service;
 
-import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.egov.infra.admin.master.entity.Action;
 import org.egov.infra.admin.master.repository.ActionRepository;
-import org.egov.infra.web.utils.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.text.similarity.LevenshteinDistance.getDefaultInstance;
 
 @Service
 @Transactional(readOnly = true)
 public class ActionService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ActionService.class);
 
     @Autowired
     private ActionRepository actionRepository;
@@ -78,28 +84,29 @@ public class ActionService {
         return actionRepository.save(action);
     }
 
-    public Action getActionByUrlAndContextRoot(String url, String contextRoot) {
+    public Optional<Action> getActionByUrlAndContextRoot(String url, String queryString, String contextRoot) {
         Action action;
-        if (url.contains("?")) {
-            String queryParams = WebUtils.extractQueryParamsFromUrl(url);
-            String urlPart = WebUtils.extractURLWithoutQueryParams(url);
-            action = actionRepository.findByUrlAndContextRootAndQueryParams(urlPart, contextRoot, queryParams);
-            if (action == null)
-                action = findNearestMatchingAction(urlPart,
-                        actionRepository.findByMatchingUrlAndContextRootAndQueryParams(urlPart, contextRoot, queryParams));
+        if (isBlank(queryString)) {
+            action = Optional.ofNullable(actionRepository.findByUrlAndContextRootAndQueryParamsIsNull(url, contextRoot))
+                    .orElse(findNearestMatchingAction(url, actionRepository.findByMatchingUrlAndContextRoot(url, contextRoot)));
+
         } else {
-            action = actionRepository.findByUrlAndContextRootAndQueryParamsIsNull(url, contextRoot);
-            if (action == null)
-                action = findNearestMatchingAction(url, actionRepository.findByMatchingUrlAndContextRoot(url, contextRoot));
+            action = Optional.ofNullable(actionRepository.findByUrlAndContextRootAndQueryParams(url, contextRoot, queryString))
+                    .orElse(findNearestMatchingAction(url,
+                            actionRepository.findByMatchingUrlAndContextRootAndQueryParams(url, contextRoot, queryString)));
+            if (action != null && !action.queryParamMatches(queryString)) {
+                LOGGER.warn("Query params passed doesn't match with the regex specified for this action URL");
+                return Optional.empty();
+            }
         }
-        return action;
+
+        return Optional.ofNullable(action);
     }
 
     private Action findNearestMatchingAction(String url, List<Action> actions) {
-        return actions.isEmpty()
-                ? null : actions
-                .parallelStream()
-                .filter(action -> LevenshteinDistance.getDefaultInstance().apply(url, action.getUrl()) < 1)
+        return actions.isEmpty() ? null : actions
+                .stream()
+                .filter(action -> getDefaultInstance().apply(url, action.getUrl()) < 1)
                 .findFirst()
                 .orElse(actions.get(0));
     }

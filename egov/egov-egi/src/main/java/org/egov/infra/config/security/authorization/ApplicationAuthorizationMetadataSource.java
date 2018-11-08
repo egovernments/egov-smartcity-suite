@@ -48,7 +48,6 @@
 
 package org.egov.infra.config.security.authorization;
 
-import org.egov.infra.admin.master.entity.Action;
 import org.egov.infra.admin.master.service.ActionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;
@@ -56,6 +55,7 @@ import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -79,8 +79,19 @@ public class ApplicationAuthorizationMetadataSource implements FilterInvocationS
     @Override
     public Collection<ConfigAttribute> getAttributes(Object object) {
         FilterInvocation invocation = (FilterInvocation) object;
-        String contextRoot = invocation.getHttpRequest().getContextPath().replace(SLASH, EMPTY);
-        return lookupAttributes(contextRoot, invocation.getRequestUrl());
+        HttpServletRequest request = invocation.getHttpRequest();
+        String contextRoot = request.getContextPath().replace(SLASH, EMPTY);
+        String url = invocation.getRequestUrl();
+        String queryString = request.getQueryString();
+        List<ConfigAttribute> configAttributes = new ArrayList<>();
+        if (!urlExcluded(url)) {
+            actionService.getActionByUrlAndContextRoot(url, queryString, contextRoot)
+                    .ifPresent(actions -> actions.getRoles()
+                            .forEach(role -> configAttributes.add(new SecurityConfig(role.getName()))));
+        }
+        if (configAttributes.isEmpty())
+            configAttributes.add(new SecurityConfig(NO_ROLE_NAME));
+        return configAttributes;
     }
 
     @Override
@@ -93,18 +104,7 @@ public class ApplicationAuthorizationMetadataSource implements FilterInvocationS
         return FilterInvocation.class.isAssignableFrom(clazz);
     }
 
-    private Collection<ConfigAttribute> lookupAttributes(String contextRoot, String url) {
-        List<ConfigAttribute> configAttributes = new ArrayList<>();
-        if (!urlExcluded(url)) {
-            Action action = actionService.getActionByUrlAndContextRoot(url, contextRoot);
-            if (action != null) {
-                action.getRoles().forEach(role -> configAttributes.add(new SecurityConfig(role.getName())));
-            }
-        }
-        if (configAttributes.isEmpty())
-            configAttributes.add(new SecurityConfig(NO_ROLE_NAME));
-        return configAttributes;
-    }
+
 
     private Boolean urlExcluded(String url) {
         return excludePatterns
