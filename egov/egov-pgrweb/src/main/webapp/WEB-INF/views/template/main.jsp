@@ -55,7 +55,10 @@
 <html>
 <head>
     <spring:eval expression="@environment.getProperty('analytics.enabled')" scope="application" var="analyticsEnabled"/>
-    <spring:eval expression="@environment.getProperty('pgr.max.file.upload.size')" scope="application" var="pgrMaxUploadFileSizeLimit"/>
+    <c:if test="${empty maxFileSize}">
+        <spring:eval expression="@environment.getProperty('pgr.max.file.size')" scope="application" var="maxFileSize"/>
+        <spring:eval expression="@environment.getProperty('pgr.allowed.file.ext')" scope="application" var="allowedFileExt"/>
+    </c:if>
     <c:if test="${analyticsEnabled}">
         <spring:eval expression="@environment.getProperty('analytics.config')" scope="application"/>
     </c:if>

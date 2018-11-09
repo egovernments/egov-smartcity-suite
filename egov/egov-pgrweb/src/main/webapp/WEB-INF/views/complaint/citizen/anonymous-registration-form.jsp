@@ -195,9 +195,12 @@
                     <div class="form-group">
                         <div class="col-sm-3 col-xs-12 text-center" id="upload-section">
                             <a href="#" id="triggerFile" class="btn btn-secondary"><spring:message code="lbl.uploadPhotoVid"/></a>
-							<input type="file" id="file1" name="files" data-id="1" class="filechange inline btn" style="display:none;"/>
-                            <input type="file" id="file2" name="files" data-id="2" class="filechange inline btn" style="display:none;"/>
-                            <input type="file" id="file3" name="files" data-id="3" class="filechange inline btn" style="display:none;"/>
+                            <input type="file" id="file1" name="files" data-id="1" class="filechange inline btn" style="display:none;"
+                                   accept="audio/*,video/*,image/*" data-accepts="${allowedFileExt}" data-size="${maxFileSize}"/>
+                            <input type="file" id="file2" name="files" data-id="2" class="filechange inline btn" style="display:none;"
+                                   accept="audio/*,video/*,image/*" data-accepts="${allowedFileExt}" data-size="${maxFileSize}"/>
+                            <input type="file" id="file3" name="files" data-id="3" class="filechange inline btn" style="display:none;"
+                                   accept="audio/*,video/*,image/*" data-accepts="${allowedFileExt}" data-size="${maxFileSize}"/>
                         </div>
                         <div class="col-sm-6 col-xs-12">
                             <div id="file1block" class="add-margin col-sm-4 col-xs-4">

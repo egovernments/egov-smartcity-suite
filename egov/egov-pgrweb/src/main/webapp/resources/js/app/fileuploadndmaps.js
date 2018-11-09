@@ -52,8 +52,6 @@ var fileinputid = ['file1', 'file2', 'file3'];
 var filefilled = {};
 var removedarray = [];
 var fileid;
-const fileformats = ['jpg', 'jpeg', 'gif', 'png', '3g2', '3gp', '3gp2', '3gpp', 'avi', 'divx', 'flv', 'mov', 'mp4',
-    'mpeg4', 'mpg4', 'mpeg', 'mpg', 'm4v', 'wmv', 'x-msvideo'];
 
 function extractCoordinate(latorlong) {
     var loc_arry = latorlong.split(",");
@@ -105,24 +103,6 @@ $(document).ready(function () {
     });
 
     $('#file1, #file2, #file3').on('change.bs.fileinput', function (e) {
-        myfile = $(this).val();
-        var ext = myfile.split('.').pop();
-        if ($.inArray(ext, fileformats) < 0) {
-            bootbox.alert(ext + " file format is not allowed");
-            return;
-        }
-
-        var fileInput = $(this);
-        var maxSize = 10485760; //file size  in bytes(4MB)
-        if (fileInput.get(0).files.length) {
-            var fileSize = this.files[0].size; // in bytes
-            if (fileSize > maxSize) {
-                bootbox.alert('File size should not exceed 10 MB!');
-                fileInput.replaceWith(fileInput.val('').clone(true));
-                return false;
-            }
-        }
-
         if (e.target.files.length > 0) {
             filefilled[$(this).attr('id')] = this.files[0].name;
             previewImage(this, this.files[0].name);
