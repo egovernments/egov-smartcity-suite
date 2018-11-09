@@ -54,8 +54,11 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
 @Configuration
-@PropertySource(value = "classpath:config/tl-application-config.properties", ignoreResourceNotFound = true)
-public class TlApplicationProperties {
+@PropertySource(name = "licenseApplicationSettings", value = {
+        "classpath:config/tl-application-config.properties",
+        "classpath:config/application-config-${client.id}.properties",
+        "classpath:config/tl-override-${env}.properties"}, ignoreResourceNotFound = true)
+public class LicenseApplicationSettings {
 
     @Autowired
     private Environment environment;
