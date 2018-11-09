@@ -219,12 +219,19 @@ $(document).ready(function () {
         }
     });
 
-    //check file size
+    //check file size and file name length
     $('input:file').change(function () {
         if ($(this).data("size")) {
             var file = $(this);
             var maxFileSize = parseInt($(this).data("size"));
             if (file.get(0).files.length) {
+                var fileNameLength = (file.val().split('/').pop().split('\\').pop()).length;
+                if(fileNameLength > 50){
+                    bootbox.alert('File name should not exceed 50 characters.');
+                    file.replaceWith(file.val('').clone(true));
+                    return false;
+                }
+
                 var fileSize = (this.files[0].size / 1024 / 1024).toFixed(0);
                 if (fileSize > maxFileSize) {
                     bootbox.alert('File size should not exceed ' + maxFileSize + ' MB.');
