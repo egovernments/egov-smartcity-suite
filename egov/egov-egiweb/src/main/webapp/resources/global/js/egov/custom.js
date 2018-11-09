@@ -210,7 +210,7 @@ $(document).ready(function () {
             var file = $(this);
             var fileName = file.val();
             var extensions = $(this).data("accepts").split(',');
-            var extension = fileName.split('.').pop();
+            var extension = fileName.split('.').pop().toLowerCase();
             if ($.inArray(extension, extensions) < 0) {
                 file.replaceWith(file.val('').clone(true))
                 bootbox.alert(extension + " file format is not allowed.");
