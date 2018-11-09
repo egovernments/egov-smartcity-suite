@@ -203,6 +203,37 @@ $(document).ready(function () {
             window.close();
         });
     });
+
+    //check file format allowed
+    $('input:file').change(function () {
+        if ($(this).data("accepts")) {
+            var file = $(this);
+            var fileName = file.val();
+            var extensions = $(this).data("accepts").split(',');
+            var extension = fileName.split('.').pop();
+            if ($.inArray(extension, extensions) < 0) {
+                file.replaceWith(file.val('').clone(true))
+                bootbox.alert(extension + " file format is not allowed.");
+                return false;
+            }
+        }
+    });
+
+    //check file size
+    $('input:file').change(function () {
+        if ($(this).data("size")) {
+            var file = $(this);
+            var maxFileSize = parseInt($(this).data("size"));
+            if (file.get(0).files.length) {
+                var fileSize = (this.files[0].size / 1024 / 1024).toFixed(0);
+                if (fileSize > maxFileSize) {
+                    bootbox.alert('File size should not exceed ' + maxFileSize + ' MB.');
+                    file.replaceWith(file.val('').clone(true));
+                    return false;
+                }
+            }
+        }
+    });
 });
 
 function pageScrollTop() {
