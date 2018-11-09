@@ -226,7 +226,7 @@ $(document).ready(function () {
             var maxFileSize = parseInt($(this).data("size"));
             if (file.get(0).files.length) {
                 var fileNameLength = (file.val().split('/').pop().split('\\').pop()).length;
-                if(fileNameLength > 50){
+                if (fileNameLength > 50) {
                     bootbox.alert('File name should not exceed 50 characters.');
                     file.replaceWith(file.val('').clone(true));
                     return false;
@@ -239,6 +239,15 @@ $(document).ready(function () {
                     return false;
                 }
             }
+        }
+    });
+
+    //Add tooltip about the file size and the file extension allowed
+    $('input:file').hover(function () {
+        if ($(this).data("accepts") && $(this).data("size")) {
+            $(this).attr('title', 'Accepts only file with extension [' + $(this).data("accepts")
+                + '] of size upto [' + $(this).data("size") + 'MB]');
+            $(this).tooltip();
         }
     });
 });
