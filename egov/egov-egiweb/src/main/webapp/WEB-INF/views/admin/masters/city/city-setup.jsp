@@ -254,9 +254,8 @@
                                     <img id="imglogo" height="60" width="60"
                                          src="/egi/downloadfile?fileStoreId=${city.preferences.municipalityLogo.fileStoreId}&moduleName=${sessionScope.cityCode}">
 
-                                    <input type="file" name="logo" id="logo"
-                                           data-accept="jpg,jpeg,png,PNG,JPG,JPEG"
-                                           data-errormsg="Please select valid image file!"
+                                    <input type="file" name="logo" id="logo" accept="image/*" data-accepts="${allowedFileExt}"
+                                           data-size="${maxFileSize}"
                                            class="form-control" placeholder="" autocomplete="off" data-toggle="popover"
                                            data-trigger="focus" data-placement="right" data-content="${helptext}"/>
                                     <form:errors path="preferences.municipalityLogo" cssClass="add-margin error-msg"/>

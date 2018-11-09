@@ -83,16 +83,8 @@ $(document).ready(function () {
         function (e) {
             var fileName = $(this).val();
             if (fileName) {
-                var fileext = fileName.split(".");
-                var acceptedext = $(this).data('accept');
-                if (acceptedext.split(',').indexOf(
-                    fileext[fileext.length - 1]) < 0) {
-                    bootbox.alert($(this).data('errormsg'));
-                    $(this).val('');
-                }
-                else if ($(this).attr('id') == 'logo') {
+                if ($(this).attr('id') == 'logo') {
                     var reader = new FileReader();
-
                     reader.onload = function (e) {
                         $('#imglogo').attr('src', e.target.result);
                     };
