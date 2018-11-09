@@ -88,7 +88,7 @@
             </div>
             <div class="col-sm-4">
                 <input type="file" name="licenseDocuments[${stat.index}].multipartFiles" id="uploadFile${stat.index}"
-                       class="file-ellipsis upload-file"/>
+                       class="file-ellipsis upload-file" data-accepts="${allowedFileExt}" data-size="${maxFileSize}"/>
                 <form:errors path="licenseDocuments[${stat.index}].multipartFiles" class="add-margin error-msg"/>
             </div>
             <div class="col-sm-3 add-margin">

@@ -52,6 +52,10 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <html>
 <head>
+    <c:if test="${empty maxFileSize}">
+        <spring:eval expression="@environment.getProperty('tl.max.file.size')" scope="application" var="maxFileSize"/>
+        <spring:eval expression="@environment.getProperty('tl.allowed.file.ext')" scope="application" var="allowedFileExt"/>
+    </c:if>
     <spring:eval expression="@environment.getProperty('analytics.enabled')" scope="application" var="analyticsEnabled"/>
     <c:if test="${analyticsEnabled}">
         <spring:eval expression="@environment.getProperty('analytics.config')" scope="application"/>

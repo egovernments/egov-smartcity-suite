@@ -71,7 +71,8 @@
             </div>
             <div class="col-sm-4">
                 <input type="file" name="licenseDocument[${stat.index}].uploads" id="uploadFile${stat.index}"
-                       value="${licenseDocument[stat.index].uploads}" class="file-ellipsis upload-file"/>
+                       value="${licenseDocument[stat.index].uploads}" class="file-ellipsis upload-file"
+                       data-accepts="${allowedFileExt}" data-size="${maxFileSize}"/>
                 <form:errors path="licenseDocument[%{#stat.index}].files" cssClass="add-margin error-msg"/>
             </div>
             <div class="col-sm-3">

@@ -44,46 +44,9 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
- */
-$(document).ready(function(){
-	
-    var fileformatsinclude = ['doc','docx','xls','xlsx','rtf','pdf','jpeg','jpg','png','txt','zip','rar'];
-	
-	$('.upload-file').change(function(e){
-		/*validation for file upload*/
-		myfile= $( this ).val();
-		var ext = myfile.split('.').pop();
-        validate_file(fileformatsinclude, ext, $(this));
-
-		var fileInput = $(this);
-   		var maxSize = 4194304; //file size  in bytes(4MB)
-		if(fileInput.get(0).files.length){
-			var fileSize = this.files[0].size; // in bytes
-			var charlen = (this.value.split('/').pop().split('\\').pop()).length;
-			if(charlen > 50){
-				bootbox.alert('Document name should not exceed 50 characters!');
-				fileInput.replaceWith(fileInput.val('').clone(true));
-				return false;			
-			} 
-			else if(fileSize > maxSize){
-				bootbox.alert('File size should not exceed 4 MB!');
-				fileInput.replaceWith(fileInput.val('').clone(true));
-				return false;
-			}			
-		}
-	});
-	
-	function validate_file(fileformat, ext, obj){
-		if($.inArray(ext.toLowerCase(), fileformat) == -1){
-            bootbox.alert("Please upload "+fileformat+" format documents only");
-            obj.val('');
-            return false;
-		}
-	}
-	
-});
+*/
 
 function viewDocument(fileStoreId) {
-	var sUrl = "/egi/downloadfile?fileStoreId="+fileStoreId+"&moduleName=EGTL";
-	window.open(sUrl,"_self",'scrollbars=yes,resizable=no,height=400,width=400,status=yes');
+    var sUrl = "/egi/downloadfile?fileStoreId=" + fileStoreId + "&moduleName=EGTL";
+    window.open(sUrl, "_self", 'scrollbars=yes,resizable=no,height=400,width=400,status=yes');
 }
