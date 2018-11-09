@@ -65,6 +65,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DOCTYPEBYMUTATIONREAS
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -181,7 +182,7 @@ public class AadharSeedingService extends GenericWorkFlowController {
                 .append("p.propertyDetail.structure=false and p.status in('A','I') and p.id not in(select m.property from PropertyMutation m ")
                 .append("where m.state.status <> 2) and p.basicProperty not in(select psv.referenceBasicProperty from PropertyStatusValues psv ")
                 .append("where psv.referenceBasicProperty is not null and psv.referenceBasicProperty.underWorkflow = true)) and ")
-                .append("mv.basicPropertyID not in(select basicProperty from AadharSeeding) and mv.locality not in(select id from")
+                .append("mv.basicPropertyID not in(select basicProperty from AadharSeeding where status <> 'CANCELED') and mv.locality not in(select id from")
                 .append(" Boundary b where b.boundaryNum in(select boundaryNum from BhudharExemptedLocalities))");
         final StringBuilder wherClause = new StringBuilder();
         orderBy = orderBy.append(" order by mv.propertyId");
@@ -224,7 +225,7 @@ public class AadharSeedingService extends GenericWorkFlowController {
         formData.setPropertyOwnerInfo(basicProperty.getPropertyOwnerInfo());
         if (status.equals(UPDATED)) {
             AadharSeeding aadharSeeding = aadharSeedingRepository
-                    .getAadharSeedingByBasicProperty((BasicPropertyImpl) basicProperty);
+                    .getNonCanceledAadharSeeding((BasicPropertyImpl) basicProperty);
             List<PropertyOwnerInfo> ownerList = new ArrayList<>();
             PropertyOwnerInfo propertyOwnerInfo;
             for (AadharSeedingDetails aadharSeedingDetails : aadharSeeding.getAadharSeedingDetails()) {
@@ -246,7 +247,7 @@ public class AadharSeedingService extends GenericWorkFlowController {
         WorkFlowMatrix wfmatrix;
         BasicPropertyImpl basicProperty = (BasicPropertyImpl) basicPropertyDAO
                 .getBasicPropertyByPropertyID(aadharSeedingRequest.getAssessmentNo());
-        if (aadharSeedingRepository.getAadharSeedingByBasicProperty(basicProperty) == null) {
+        if (aadharSeedingRepository.getNonCanceledAadharSeeding(basicProperty) == null) {
             AadharSeeding aadharSeeding = new AadharSeeding();
             List<AadharSeedingDetails> detailsList = new ArrayList<>();
             aadharSeeding.setBasicProperty(
@@ -278,18 +279,21 @@ public class AadharSeedingService extends GenericWorkFlowController {
     }
 
     @Transactional
-    public void approveAadharSeeding(String assessmentList) {
+    public void approveAadharSeeding(final String assessmentList) {
         JSONObject obj = new JSONObject(assessmentList.trim());
         JSONArray jsonArr = new JSONArray(obj.get("info").toString());
-        List<String> assessments = new ArrayList<>();
+        Map<String, String> assessments = new HashMap<>();
         for (int i = 0; i < jsonArr.length(); i++) {
             final org.json.JSONObject jsonObj = jsonArr.getJSONObject(i);
-            assessments.add(jsonObj.get("propertyId").toString());
+            assessments.put(jsonObj.get("propertyId").toString(), jsonObj.get("mode").toString());
         }
-        for (String assessmentNo : assessments) {
-            BasicPropertyImpl basicProperty = (BasicPropertyImpl) basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-            AadharSeeding aadharSeeding = aadharSeedingRepository.getAadharSeedingByBasicProperty(basicProperty);
-            aadharSeeding.setStatus("APPROVED");
+        for (Map.Entry<String, String> entry : assessments.entrySet()) {
+            BasicPropertyImpl basicProperty = (BasicPropertyImpl) basicPropertyDAO.getBasicPropertyByPropertyID(entry.getKey());
+            AadharSeeding aadharSeeding = aadharSeedingRepository.getNonCanceledAadharSeeding(basicProperty);
+            if (entry.getValue().equals("reject"))
+                aadharSeeding.setStatus("CANCELED");
+            else
+                aadharSeeding.setStatus("APPROVED");
             WorkFlowMatrix wfmatrix;
             wfmatrix = propertyWorkflowService.getWfMatrix("AadharSeeding", null,
                     null, "AADHAR SEEDING", "AadharSeeding:Updated", null);
