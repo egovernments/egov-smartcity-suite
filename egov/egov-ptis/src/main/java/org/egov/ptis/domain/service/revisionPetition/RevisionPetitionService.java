@@ -1129,8 +1129,8 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
         Map<Installment, Set<EgDemandDetails>> demandDetailsSetByInstallment;
         List<Installment> installments;
 
-        final Set<EgDemandDetails> oldEgDemandDetailsSet = propertyService.getOldDemandDetails(
-                propertyService.getHistoryPropertyByUpinNo(oldProperty.getBasicProperty()), newProperty);
+        final Set<EgDemandDetails> oldEgDemandDetailsSet = propertyService.getLatestDemandforHistoryProp(oldProperty)
+                .getEgDemandDetails();
         demandDetailsSetByInstallment = propertyService.getEgDemandDetailsSetByInstallment(oldEgDemandDetailsSet);
         installments = new ArrayList<>(demandDetailsSetByInstallment.keySet());
         Collections.sort(installments);
