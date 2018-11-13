@@ -61,7 +61,24 @@ import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
@@ -195,6 +212,9 @@ public class Complaint extends StateAware<Position> {
 
     @Transient
     private boolean statusUpdate;
+
+    @Transient
+    private boolean resolvedNow;
 
     @Override
     public Long getId() {
@@ -457,6 +477,14 @@ public class Complaint extends StateAware<Position> {
 
     public boolean hasGeoCoordinates() {
         return getLat() > 0 && getLng() > 0;
+    }
+
+    public boolean resolvedNow() {
+        return this.resolvedNow;
+    }
+
+    public void resolvedNow(boolean resolvedNow) {
+        this.resolvedNow = resolvedNow;
     }
 
     @Override

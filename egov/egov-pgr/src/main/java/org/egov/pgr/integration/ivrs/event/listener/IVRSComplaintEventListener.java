@@ -87,7 +87,7 @@ public class IVRSComplaintEventListener {
     public void onComplaintUpdate(ComplaintUpdateEvent complaintUpdateEvent) {
         try {
             Complaint complaint = complaintUpdateEvent.initializeAndGetSource();
-            if (ivrEnabled && isNotBlank(complaint.getComplainant().getMobile())
+            if (ivrEnabled && complaint.resolvedNow() && isNotBlank(complaint.getComplainant().getMobile())
                     && COMPLETED.toString().equalsIgnoreCase(complaint.getStatus().getName())) {
                 String ivrRequestURL = String
                         .format(ivrURL, complaint.getCrn(), getCityCode(), MODULE_NAME,
