@@ -124,15 +124,8 @@
 	    return ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8 || k == 32 || (k >= 48 && k <= 57));
 	}
     function isSpecialChar(){
-        $('#enteredCode').keyup(function(){
-            var codeEntered = $(this).val();
-            re = /[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi;
-            var isSplChar = re.test(codeEntered);
-            if(isSplChar)
-            {
-                var replacedCode = codeEntered.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
-                $(this).val(replacedCode);
-            }
-        });
+        var codeEntered = document.getElementById('enteredCode').value;
+        var replacedCode = codeEntered.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '')
+        document.getElementById('enteredCode').value = replacedCode;
     }
 </script>
