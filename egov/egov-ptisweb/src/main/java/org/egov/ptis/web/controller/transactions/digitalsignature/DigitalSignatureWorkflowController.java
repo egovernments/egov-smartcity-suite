@@ -242,7 +242,9 @@ public class DigitalSignatureWorkflowController {
                 .equalsIgnoreCase(ADDTIONAL_RULE_REGISTERED_TRANSFER)
                         ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER);
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(propertyMutation.getSource()))
-            propertyService.updatePortal(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
+            propertyService.updatePortal(propertyMutation, propertyMutation.getType()
+                    .equalsIgnoreCase(ADDTIONAL_RULE_REGISTERED_TRANSFER)
+                    ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER);
         basicPropertyService.persist(basicProperty);
         propertyTaxCommonUtils.buildMailAndSMS(propertyMutation);
     }
