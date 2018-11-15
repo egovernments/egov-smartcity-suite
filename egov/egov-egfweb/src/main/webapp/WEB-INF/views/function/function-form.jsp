@@ -67,8 +67,8 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.code" /> <span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="code" onkeypress="return replaceSpecialChar(event)"
-								class="form-control text-left patternvalidation"
+							<form:input path="code" onkeypress="return replaceSpecialChar(event)" onkeyup="isSpecialChar()" onblur="isSpecialChar()"
+								class="form-control text-left patternvalidation" id="enteredCode"
 								data-pattern="alphanumeric" maxlength="50" required="required" />
 							<form:errors path="code" cssClass="error-msg" />
 						</div>
@@ -123,4 +123,9 @@
 	    document.all ? k = e.keyCode : k = e.which;
 	    return ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8 || k == 32 || (k >= 48 && k <= 57));
 	}
+    function isSpecialChar(){
+        var codeEntered = document.getElementById('enteredCode').value;
+        var replacedCode = codeEntered.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '')
+        document.getElementById('enteredCode').value = replacedCode;
+    }
 </script>

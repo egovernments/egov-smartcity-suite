@@ -719,6 +719,9 @@ public class PropertyService {
         final Installment installmentSecondHalf = yearwiseInstMap.get(CURRENTYEAR_SECOND_HALF);
         final Map<String, Ptdemand> oldPtdemandMap = getPtdemandsAsInstMap(oldProperty.getPtDemandSet());
         ptDemandOld = oldPtdemandMap.get(installmentFirstHalf.getDescription());
+        if(ptDemandOld == null){
+            ptDemandOld = getLatestDemandforHistoryProp(oldProperty);
+        }
         final PropertyTypeMaster oldPropTypeMaster = oldProperty.getPropertyDetail().getPropertyTypeMaster();
         final PropertyTypeMaster newPropTypeMaster = newProperty.getPropertyDetail().getPropertyTypeMaster();
 
@@ -2075,24 +2078,24 @@ public class PropertyService {
      * Creates or Updates Application index
      *
      * @param stateAwareObject
-     * @param applictionType
+     * @param applicationType
      */
-    public void updateIndexes(final StateAware stateAwareObject, final String applictionType) {
+    public void updateIndexes(final StateAware stateAwareObject, final String applicationType) {
         final User stateOwner = getOwnerName(stateAwareObject);
-        final int sla = getSlaValue(applictionType);
-        if (!applictionType.isEmpty() && propertyApplicationTypes().contains(applictionType))
-            updatePropertyIndex(stateAwareObject, applictionType, stateOwner, sla);
-        else if (!applictionType.isEmpty() && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
-                || applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP)))
-            updateRevisionPetitionIndex(stateAwareObject, applictionType, stateOwner, sla);
-        else if (!applictionType.isEmpty()
-                && Arrays.asList(NATURE_REGISTERED_TRANSFER, NATURE_FULL_TRANSFER).contains(applictionType))
+        final int sla = getSlaValue(applicationType);
+        if (!applicationType.isEmpty() && propertyApplicationTypes().contains(applicationType))
+            updatePropertyIndex(stateAwareObject, applicationType, stateOwner, sla);
+        else if (!applicationType.isEmpty() && (applicationType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
+                || applicationType.equalsIgnoreCase(APPLICATION_TYPE_GRP)))
+            updateRevisionPetitionIndex(stateAwareObject, applicationType, stateOwner, sla);
+        else if (!applicationType.isEmpty()
+                && Arrays.asList(NATURE_REGISTERED_TRANSFER, NATURE_FULL_TRANSFER).contains(applicationType))
             updatePropertyMutationIndex(stateAwareObject, stateOwner, sla);
-        else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION))
-            updateVacancyRemissionIndex(stateAwareObject, applictionType, stateOwner, sla);
-        else if (!applictionType.isEmpty()
-                && applictionType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL))
-            updateVacancyRemissionApprovalIndex(stateAwareObject, applictionType, stateOwner, sla);
+        else if (!applicationType.isEmpty() && applicationType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION))
+            updateVacancyRemissionIndex(stateAwareObject, applicationType, stateOwner, sla);
+        else if (!applicationType.isEmpty()
+                && applicationType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL))
+            updateVacancyRemissionApprovalIndex(stateAwareObject, applicationType, stateOwner, sla);
 
     }
 
@@ -4046,9 +4049,9 @@ public class PropertyService {
                 format(APPLICATION_VIEW_URL, property.getApplicationNo(), applictionType));
     }
 
-    private Date getSlaEndDate(final String applictionType) {
+    private Date getSlaEndDate(final String applicationType) {
         final DateTime dt = new DateTime(new Date());
-        return dt.plusDays(getSlaValue(applictionType)).toDate();
+        return dt.plusDays(getSlaValue(applicationType)).toDate();
     }
 
     private String getDetailedMessage(final StateAware stateAware, final String applictionType) {
@@ -4094,19 +4097,19 @@ public class PropertyService {
      * Updates Portal
      *
      * @param stateAware
-     * @param applictionType
+     * @param applicationType
      */
     @Transactional
-    public void updatePortal(final StateAware stateAware, final String applictionType) {
-        if (!applictionType.isEmpty() && propertyApplicationTypes().contains(applictionType))
-            updatePortalMessage(stateAware, applictionType);
-        else if (!applictionType.isEmpty() && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
-                || applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP)))
-            updateRevisionPetitionPortalmessage(stateAware, applictionType);
-        else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP))
-            updatePropertyMutationPortalmessage(stateAware, applictionType);
-        else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION))
-            updateVacancyRemissionPortalmessage(stateAware, applictionType);
+    public void updatePortal(final StateAware stateAware, final String applicationType) {
+        if (!applicationType.isEmpty() && propertyApplicationTypes().contains(applicationType))
+            updatePortalMessage(stateAware, applicationType);
+        else if (!applicationType.isEmpty() && (applicationType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
+                || applicationType.equalsIgnoreCase(APPLICATION_TYPE_GRP)))
+            updateRevisionPetitionPortalmessage(stateAware, applicationType);
+        else if (!applicationType.isEmpty() && Arrays.asList(NATURE_REGISTERED_TRANSFER, NATURE_FULL_TRANSFER).contains(applicationType))
+            updatePropertyMutationPortalmessage(stateAware, applicationType);
+        else if (!applicationType.isEmpty() && applicationType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION))
+            updateVacancyRemissionPortalmessage(stateAware, applicationType);
 
     }
 

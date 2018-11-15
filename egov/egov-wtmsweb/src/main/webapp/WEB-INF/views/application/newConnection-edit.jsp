@@ -126,9 +126,7 @@
                             <jsp:include page="connectiondetails.jsp"></jsp:include>
                         </div>
                     </div>
-                    <div class="panel panel-primary" data-collapsed="0">
-                        <jsp:include page="documentdetails-view.jsp"></jsp:include>
-                    </div>
+                      	  <jsp:include page="documentdetails-view.jsp"></jsp:include>
                     <c:choose>
                         <c:when
                                 test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && waterConnectionDetails.fieldInspectionDetails.id!=null}">

@@ -102,16 +102,16 @@
 	    <td class="greybox"><s:text name="latitude"/> : </td>
 	    <td class="greybox"><span class="bold"><s:property default="N/A" value="%{basicProperty.latitude}" /> </span></td>
 	</tr>
-	<s:if test="%{basicProperty.latitude != null && basicProperty.longitude != null}">
 	<tr>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td class="greybox"><s:text name="parcelid"/> : </td>
+	    <td class="greybox"><span class="bold"><s:property default="N/A" value="%{basicProperty.parcelId}" /> </span></td>
+	    <s:if test="%{basicProperty.latitude != null && basicProperty.longitude != null}">
 			<td>&nbsp;</td>
 			<td><input type="button" name="showMap" id="show-map"
-						value="View On Map" class="buttonsubmit" data-toggle="modal" data-target="#myModal" /></td>
+				value="View On Map" class="buttonsubmit" data-toggle="modal" data-target="#myModal" /></td>
+		</s:if>
 	</tr>
-	</s:if>
 </div>
 <div id="myModal" class="modal fade" role="dialog">
   <div class="modal-dialog modal-lg">

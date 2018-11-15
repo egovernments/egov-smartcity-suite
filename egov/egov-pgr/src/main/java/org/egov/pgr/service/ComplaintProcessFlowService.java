@@ -115,6 +115,7 @@ public class ComplaintProcessFlowService {
                 currentUser.getName() : currentUser.getUsername() + DELIMITER_COLON + currentUser.getName();
         if (!complaint.transitionCompleted() && complaint.completed()) {
             complaint.setCompletionDate(new Date());
+            complaint.resolvedNow(true);
             if (securityUtils.currentUserIsEmployee())
                 complaint.setCurrentOwner(currentUser);
             if (!currentUser.hasRole(GO_ROLE_NAME)) {

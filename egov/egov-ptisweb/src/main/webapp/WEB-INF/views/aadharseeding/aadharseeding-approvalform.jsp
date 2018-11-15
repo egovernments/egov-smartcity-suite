@@ -116,6 +116,10 @@
 						id="updateBtn">
 						<spring:message code="lbl.aadhar.approve" />
 					</button>
+					<button type="button" class="btn btn-primary add-margin"
+						id="rejectBtn">
+						<spring:message code="lbl.aadhar.reject" />
+					</button>
 					<button type="button" id="btnClose" class="btn btn-default" onClick=window.close()>Close</button>
 				</div class="text-center">
 			</div>

@@ -176,9 +176,6 @@ $('#search').on('click', function() {
 	        	
 	        ],
 	        columnDefs:[{orderable:false,targets:[0]}],
-	        "initComplete": function(settings, json) {
-	            reinitialiseDatePicker();
-	          }
 		});
 		
 		$('.updation').show();
@@ -188,13 +185,14 @@ else
 	return false;
 });
 
-function reinitialiseDatePicker() {
+$('#search-result-table').on('draw.dt', function () {
 	jQuery(".datepicker").datepicker({
 		format : "dd/mm/yyyy",
 		autoclose : true
 	});
-}
+});
 
+ 
 function checkbox_change(obj){
 	if($(obj).is(':checked')) {
 		$('#search-result-table')

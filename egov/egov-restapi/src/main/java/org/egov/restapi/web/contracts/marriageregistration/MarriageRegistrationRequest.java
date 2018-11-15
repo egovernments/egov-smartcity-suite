@@ -107,6 +107,7 @@ public class MarriageRegistrationRequest {
 
     @NotNull(message = "Provide Aadhaar No. of bridegroom")
     @SafeHtml
+    @Length(min=12,max=12,message="BrideGroom AadhaarNo should be 12 digit")
     private String husbandAadhaarNo;
 
     @NotNull(message = "Provide bridegroom's parents name")
@@ -159,6 +160,7 @@ public class MarriageRegistrationRequest {
 
     @NotNull(message = "Provide bride's Locality")
     @SafeHtml
+    @Length(min=12,max=12,message="Bride AadhaarNo should be 12 digit")
     private String wifeAadhaarNo;
 
     @NotNull(message = "Provide bride's parents name")
