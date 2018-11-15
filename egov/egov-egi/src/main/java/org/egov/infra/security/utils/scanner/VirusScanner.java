@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,69 +46,19 @@
  *
  */
 
-package org.egov.infra.config.core;
+package org.egov.infra.security.utils.scanner;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
+import java.io.InputStream;
+import java.nio.channels.FileChannel;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
+public interface VirusScanner {
 
-@Component
-public class EnvironmentSettings {
+    String FOUND = "FOUND";
+    String NOT_FOUND = "NOT FOUND";
 
-    private static final String DEV_MODE = "dev.mode";
-    private static final String MAIL_ENABLED = "mail.enabled";
-    private static final String SMS_ENABLED = "sms.enabled";
-    private static final String USER_PASWRD_EXPIRY_DAYS = "user.pwd.expiry.days";
-    private static final String HIBERNATE_JDBC_BATCH_SIZE = "hibernate.jdbc.batch_size";
-    private static final String STATE_WIDE_SCHEMA_NAME = "statewide.schema.name";
-    private static final String DEFAULT_SCHEMA_NAME = "default.schema.name";
+    String scan(InputStream fileStream);
 
-    @Autowired
-    private Environment environment;
+    String scan(FileChannel fileChannel);
 
-    public String getProperty(String propKey) {
-        return this.environment.getProperty(propKey, EMPTY);
-    }
-
-    public <T> T getProperty(String propKey, Class<T> type) {
-        return this.environment.getProperty(propKey, type);
-    }
-
-    public boolean devMode() {
-        return this.environment.getProperty(DEV_MODE, Boolean.class);
-    }
-
-    public boolean emailEnabled() {
-        return this.environment.getProperty(MAIL_ENABLED, Boolean.class);
-    }
-
-    public boolean smsEnabled() {
-        return this.environment.getProperty(SMS_ENABLED, Boolean.class);
-    }
-
-    public Integer userPasswordExpiryInDays() {
-        return this.environment.getProperty(USER_PASWRD_EXPIRY_DAYS, Integer.class);
-    }
-
-    public Integer getBatchUpdateSize() {
-        return this.environment.getProperty(HIBERNATE_JDBC_BATCH_SIZE, Integer.class);
-    }
-
-    public String statewideSchemaName() {
-        return environment.getProperty(STATE_WIDE_SCHEMA_NAME);
-    }
-
-    public String defaultSchemaName() {
-        return environment.getProperty(DEFAULT_SCHEMA_NAME);
-    }
-
-    public String schemaName(String domainName) {
-        return environment.getProperty("tenant." + domainName, defaultSchemaName());
-    }
-
-    public String getProperty(String keyPrefix, String keySuffix) {
-        return environment.getProperty(keyPrefix.toLowerCase() + keySuffix.toLowerCase());
-    }
+    boolean enabled();
 }

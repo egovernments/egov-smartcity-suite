@@ -117,7 +117,7 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
         }
 
         try {
-            complaint.setSupportDocs(fileStoreUtils.addToFileStore(files, MODULE_NAME, true));
+            complaint.setSupportDocs(fileStoreUtils.addToFileStoreWithImageCompression(MODULE_NAME, files));
             complaintService.createComplaint(complaint);
         } catch (ValidationException e) {
             resultBinder.rejectValue(LOCATION, e.getMessage());
@@ -159,7 +159,7 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
         }
 
         try {
-            complaint.setSupportDocs(fileStoreUtils.addToFileStore(files, MODULE_NAME, true));
+            complaint.setSupportDocs(fileStoreUtils.addToFileStoreWithImageCompression(MODULE_NAME, files));
             complaintService.createComplaint(complaint);
         } catch (ValidationException e) {
             resultBinder.rejectValue(LOCATION, e.getMessage());

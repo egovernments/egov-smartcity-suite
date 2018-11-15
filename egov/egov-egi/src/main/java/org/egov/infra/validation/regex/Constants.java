@@ -67,6 +67,7 @@ public class Constants {
     public static final String ALPHANUMERIC_WITHSLASHES = "[0-9a-zA-Z/]+";
     public static final String NUMERIC_WITHMIXEDCHAR = "[0-9-,]+";
     public static final String DATEFORMAT = "(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)[0-9]{2}";
+    public static final String FILE_NAME = "^[\\w\\[\\]()\\-\\s]{1,245}.(%s){1,9}$";
     /**
      * Matches any unsigned floating point number/NUMERIC. Also matches empty
      * strings.
@@ -82,5 +83,5 @@ public class Constants {
     public static final String ALPHABETS_WITHMIXEDCHAR = "[A-Z-_ ]+";
     public static final String ALLTYPESOFALPHABETS_WITHMIXEDCHAR = "[A-Za-z-_ ]+";
     public static final String ALPHANUMERICWITHSPECIALCHAR = "[0-9a-zA-Z-& :,/.()@]+";
-    
+
 }

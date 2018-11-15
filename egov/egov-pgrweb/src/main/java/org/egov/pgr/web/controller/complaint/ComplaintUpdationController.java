@@ -172,7 +172,7 @@ public class ComplaintUpdationController {
         if (isNotBlank(request.getParameter(CITIZEN_RATING_ATTRIB)))
             complaint.setCitizenFeedback(CitizenFeedback.values()[Integer.valueOf(request.getParameter(CITIZEN_RATING_ATTRIB))]);
         if (!securityUtils.currentUserIsCitizen() && files != null)
-            complaint.getSupportDocs().addAll(fileStoreUtils.addToFileStore(files, MODULE_NAME, false));
+            complaint.getSupportDocs().addAll(fileStoreUtils.addToFileStore(MODULE_NAME, files));
         complaint.sendToPreviousOwner(false);
         complaint.approverComment(approvalComment);
         complaint.nextOwnerId(approvalPosition);

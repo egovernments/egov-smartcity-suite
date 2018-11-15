@@ -147,28 +147,35 @@ public class FileStoreUtils {
         }
     }
 
-    public Set<FileStoreMapper> addToFileStore(MultipartFile[] files, String moduleName) {
-        return this.addToFileStore(files, moduleName, false);
+    public Set<FileStoreMapper> addToFileStore(String moduleName, MultipartFile... files) {
+        return this.addToFileStore(moduleName, false, files);
     }
 
-    public Set<FileStoreMapper> addToFileStore(MultipartFile[] files, String moduleName, boolean compressImage) {
+    public Set<FileStoreMapper> addToFileStoreWithImageCompression(String moduleName, MultipartFile... files) {
+        return this.addToFileStore(moduleName, true, files);
+    }
+
+    private Set<FileStoreMapper> addToFileStore(String moduleName, boolean compressImage, MultipartFile... files) {
         if (ArrayUtils.isNotEmpty(files))
             return Arrays.stream(files)
                     .filter(file -> !file.isEmpty())
-                    .map(file -> {
-                        try {
-                            if (compressImage && file.getContentType().contains("image"))
-                                return this.fileStoreService.store(compressImage(file),
-                                        file.getOriginalFilename(), JPG_MIME_TYPE, moduleName);
-                            else
-                                return this.fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
-                                        file.getContentType(), moduleName);
-                        } catch (Exception e) {
-                            throw new ApplicationRuntimeException("err.input.stream", e);
-                        }
-                    }).collect(Collectors.toSet());
+                    .map(file -> addToFileStore(file, moduleName, compressImage))
+                    .collect(Collectors.toSet());
         else
             return Collections.emptySet();
+    }
+
+    public FileStoreMapper addToFileStore(MultipartFile file, String moduleName, boolean compressImage) {
+        try {
+            if (compressImage && file.getContentType().contains("image"))
+                return this.fileStoreService.store(compressImage(file),
+                        file.getOriginalFilename(), JPG_MIME_TYPE, moduleName);
+            else
+                return this.fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
+                        file.getContentType(), moduleName);
+        } catch (IOException ioe) {
+            throw new ApplicationRuntimeException("error.input.stream", ioe);
+        }
     }
 
     public void copyFileToPath(Path newFilePath, String fileStoreId, String moduleName) throws IOException {

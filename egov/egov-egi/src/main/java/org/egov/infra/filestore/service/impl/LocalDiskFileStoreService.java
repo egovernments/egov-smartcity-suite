@@ -48,9 +48,12 @@
 
 package org.egov.infra.filestore.service.impl;
 
+import org.apache.commons.io.IOUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.ApplicationValidationException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.validation.FileValidator;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -68,6 +71,7 @@ import java.util.stream.Collectors;
 import static java.io.File.separator;
 import static java.util.UUID.randomUUID;
 import static org.apache.commons.io.FileUtils.getUserDirectoryPath;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -77,15 +81,16 @@ public class LocalDiskFileStoreService implements FileStoreService {
 
     private static final Logger LOG = getLogger(LocalDiskFileStoreService.class);
     private static final String FILE_STORE_ERROR = "Error occurred while storing files at %s/%s/%s";
+    private static final String DEFAULT_FILE_STORE_DIR = getUserDirectoryPath() + separator + "egovfilestore";
+    private static final String INVALID_FILE_UPLOAD_MSG_KEY = "error.invalid.file.upload";
 
-    private String fileStoreBaseDir;
+    private final String fileStoreBaseDir;
+    private final FileValidator fileValidator;
 
     @Autowired
-    public LocalDiskFileStoreService(@Value("${filestore.base.dir}") String fileStoreBaseDir) {
-        if (fileStoreBaseDir.isEmpty())
-            this.fileStoreBaseDir = getUserDirectoryPath() + separator + "egovfilestore";
-        else
-            this.fileStoreBaseDir = fileStoreBaseDir;
+    public LocalDiskFileStoreService(@Value("${filestore.base.dir}") String fileStoreBaseDir, FileValidator fileValidator) {
+        this.fileStoreBaseDir = defaultIfBlank(fileStoreBaseDir, DEFAULT_FILE_STORE_DIR);
+        this.fileValidator = fileValidator;
     }
 
     @Override
@@ -101,11 +106,15 @@ public class LocalDiskFileStoreService implements FileStoreService {
     @Override
     public FileStoreMapper store(byte[] fileBytes, String fileName, String mimeType, String moduleName) {
         try {
-            FileStoreMapper fileMapper = new FileStoreMapper(randomUUID().toString(), fileName);
-            fileMapper.setContentType(mimeType);
-            Path newFilePath = this.createNewFilePath(fileMapper, moduleName);
-            Files.write(newFilePath, fileBytes);
-            return fileMapper;
+            if (fileValidator.fileValid(fileBytes, fileName, moduleName)) {
+                FileStoreMapper fileMapper = new FileStoreMapper(randomUUID().toString(), fileName);
+                fileMapper.setContentType(mimeType);
+                Path newFilePath = this.createNewFilePath(fileMapper, moduleName);
+                Files.write(newFilePath, fileBytes);
+                return fileMapper;
+            } else {
+                throw new ApplicationValidationException(INVALID_FILE_UPLOAD_MSG_KEY);
+            }
         } catch (IOException e) {
             throw new ApplicationRuntimeException(String.format(FILE_STORE_ERROR, fileStoreBaseDir, getCityCode(), moduleName), e);
         }
@@ -114,14 +123,18 @@ public class LocalDiskFileStoreService implements FileStoreService {
     @Override
     public FileStoreMapper store(File file, String fileName, String mimeType, String moduleName, boolean deleteFile) {
         try {
-            FileStoreMapper fileMapper = new FileStoreMapper(randomUUID().toString(),
-                    defaultString(fileName, file.getName()));
-            Path newFilePath = this.createNewFilePath(fileMapper, moduleName);
-            Files.copy(file.toPath(), newFilePath);
-            fileMapper.setContentType(mimeType);
-            if (deleteFile && Files.deleteIfExists(file.toPath()))
-                LOG.info("File store source file deleted");
-            return fileMapper;
+            if (fileValidator.fileValid(file, fileName, moduleName)) {
+                FileStoreMapper fileMapper = new FileStoreMapper(randomUUID().toString(),
+                        defaultString(fileName, file.getName()));
+                Path newFilePath = this.createNewFilePath(fileMapper, moduleName);
+                Files.copy(file.toPath(), newFilePath);
+                fileMapper.setContentType(mimeType);
+                if (deleteFile && Files.deleteIfExists(file.toPath()))
+                    LOG.info("File store source file deleted");
+                return fileMapper;
+            } else {
+                throw new ApplicationValidationException(INVALID_FILE_UPLOAD_MSG_KEY);
+            }
         } catch (IOException e) {
             throw new ApplicationRuntimeException(String.format(FILE_STORE_ERROR,
                     this.fileStoreBaseDir, getCityCode(), moduleName), e);
@@ -131,16 +144,21 @@ public class LocalDiskFileStoreService implements FileStoreService {
     @Override
     public FileStoreMapper store(InputStream fileStream, String fileName, String mimeType, String moduleName, boolean closeStream) {
         try {
-            FileStoreMapper fileMapper = new FileStoreMapper(randomUUID().toString(), fileName);
-            Path newFilePath = this.createNewFilePath(fileMapper, moduleName);
-            Files.copy(fileStream, newFilePath);
-            fileMapper.setContentType(mimeType);
-            if (closeStream)
-                fileStream.close();
-            return fileMapper;
+            if (fileValidator.fileValid(fileStream, fileName, moduleName)) {
+                FileStoreMapper fileMapper = new FileStoreMapper(randomUUID().toString(), fileName);
+                Path newFilePath = this.createNewFilePath(fileMapper, moduleName);
+                Files.copy(fileStream, newFilePath);
+                fileMapper.setContentType(mimeType);
+                return fileMapper;
+            } else {
+                throw new ApplicationValidationException(INVALID_FILE_UPLOAD_MSG_KEY);
+            }
         } catch (IOException e) {
             throw new ApplicationRuntimeException(String.format(FILE_STORE_ERROR,
                     this.fileStoreBaseDir, getCityCode(), moduleName), e);
+        } finally {
+            if (closeStream)
+                IOUtils.closeQuietly(fileStream);
         }
     }
 

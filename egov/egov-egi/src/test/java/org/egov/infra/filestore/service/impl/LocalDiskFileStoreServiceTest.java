@@ -50,9 +50,11 @@ package org.egov.infra.filestore.service.impl;
 import org.apache.commons.io.FileUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.validation.FileValidator;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -71,10 +73,13 @@ import java.util.UUID;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
 public class LocalDiskFileStoreServiceTest {
     private static Path tempFilePath = Paths.get(System.getProperty("user.home") + File.separator + "testtmpr");
     private LocalDiskFileStoreService diskFileService;
+    private FileValidator fileValidator = Mockito.mock(FileValidator.class);
 
     @AfterClass
     public static void afterTest() throws IOException {
@@ -108,7 +113,7 @@ public class LocalDiskFileStoreServiceTest {
     private void deleteTempFiles(final File newFile, final FileStoreMapper map) throws IOException {
         Files.deleteIfExists(newFile.toPath());
         Path storePath = Paths.get(System.getProperty("user.home") + File.separator + "testfilestore");
-        Files.deleteIfExists(Paths.get(storePath.toString(), map.getFileStoreId().toString()));
+        Files.deleteIfExists(Paths.get(storePath.toString(), map.getFileStoreId()));
     }
 
     private File createTempFileWithContent() throws IOException {
@@ -121,7 +126,11 @@ public class LocalDiskFileStoreServiceTest {
     public void beforeTest() throws IOException {
         if (!Files.exists(tempFilePath))
             Files.createDirectories(tempFilePath);
-        diskFileService = new LocalDiskFileStoreService(System.getProperty("user.home") + File.separator + "testfilestore");
+        when(fileValidator.fileValid(any(InputStream.class), any(), any())).thenReturn(true);
+        when(fileValidator.fileValid(any(File.class), any(), any())).thenReturn(true);
+        when(fileValidator.fileValid(any(byte[].class), any(), any())).thenReturn(true);
+        diskFileService = new LocalDiskFileStoreService(System
+                .getProperty("user.home") + File.separator + "testfilestore", fileValidator);
     }
 
     @Test
@@ -133,7 +142,7 @@ public class LocalDiskFileStoreServiceTest {
     }
 
     @Test(expected = ApplicationRuntimeException.class)
-    public final void testUploadFileFail() throws IOException {
+    public final void testUploadFileFail() {
         final File newFile = new File("file.txt");
         diskFileService.store(newFile, "fileName", "testmodule", "text/plain");
     }
@@ -177,12 +186,12 @@ public class LocalDiskFileStoreServiceTest {
         final FileStoreMapper map = diskFileService.store(newFile, "fileName", "text/plain", "test");
         final File file = diskFileService.fetch(map, "testmodule");
         assertNotNull(file);
-        assertTrue(file.getName().equals(map.getFileStoreId().toString()));
+        assertTrue(file.getName().equals(map.getFileStoreId()));
         deleteTempFiles(newFile, map);
     }
 
     @Test(expected = ApplicationRuntimeException.class)
-    public final void testFetchFailNonExisting() throws IOException {
+    public final void testFetchFailNonExisting() {
         final FileStoreMapper map = new FileStoreMapper(UUID.randomUUID().toString(), "fileName");
         diskFileService.fetch(map, "testmoduleNo");
     }

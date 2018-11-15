@@ -204,37 +204,41 @@ $(document).ready(function () {
         });
     });
 
-    //check file format allowed
+
+    //check file name and format is valid
+    var fileNamePattern = "^[\\w\\[\\]\\(\\)\\-\\s]{1,245}\\.(0){1,9}";
     $('input:file').change(function () {
-        if ($(this).data("accepts")) {
+        var acceptableExtensions = $(this).data("accepts");
+        if (acceptableExtensions) {
             var file = $(this);
-            var fileName = file.val();
-            var extensions = $(this).data("accepts").split(',');
-            var extension = fileName.split('.').pop().toLowerCase();
-            if ($.inArray(extension, extensions) < 0) {
+            var fileName = file.val().split(/[\\/]/g).pop();
+            var acceptableFileNamePattern = new RegExp(fileNamePattern.replace("0", acceptableExtensions), "ig");
+            if (!fileName.match(acceptableFileNamePattern)) {
                 file.replaceWith(file.val('').clone(true))
-                bootbox.alert(extension + " file format is not allowed.");
+                bootbox.alert({
+                    title: "Invalid file, ensure the file name and format is valid.",
+                    message: "File name must be less than <i style='font-weight: bold'>256</i> character long.<br/>" +
+                        "Should not contain any special characters except <i style='font-weight: bold'>- _ ] [ ) ( and space</i>.<br/>" +
+                        "Accepts only <i style='font-weight: bold'>" + acceptableExtensions + "</i> formats."
+                });
                 return false;
             }
         }
     });
 
-    //check file size and file name length
+    //check file size is valid
     $('input:file').change(function () {
         if ($(this).data("size")) {
             var file = $(this);
             var maxFileSize = parseInt($(this).data("size"));
             if (file.get(0).files.length) {
-                var fileNameLength = (file.val().split('/').pop().split('\\').pop()).length;
-                if (fileNameLength > 50) {
-                    bootbox.alert('File name should not exceed 50 characters.');
-                    file.replaceWith(file.val('').clone(true));
-                    return false;
-                }
-
                 var fileSize = (this.files[0].size / 1024 / 1024).toFixed(0);
                 if (fileSize > maxFileSize) {
-                    bootbox.alert('File size should not exceed ' + maxFileSize + ' MB.');
+                    bootbox.alert({
+                        title: "Invalid file, size exceeded.",
+                        message: "File could not be uploaded, it is larger than the maximum allowed file size.<br/>" +
+                            "(<i style=\'font-weight: bold\'>Uploaded : " + fileSize + " MB, Allowed : " + maxFileSize + " MB</i>)"
+                    });
                     file.replaceWith(file.val('').clone(true));
                     return false;
                 }
@@ -246,7 +250,7 @@ $(document).ready(function () {
     $('input:file').hover(function () {
         if ($(this).data("accepts") && $(this).data("size")) {
             $(this).attr('title', 'Accepts only file with extension [' + $(this).data("accepts")
-                + '] of size upto [' + $(this).data("size") + 'MB]');
+                + '], file size upto [' + $(this).data("size") + 'MB] and file name length upto [255]');
             $(this).tooltip();
         }
     });

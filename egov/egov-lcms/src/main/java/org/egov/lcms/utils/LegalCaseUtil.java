@@ -175,7 +175,7 @@ public class LegalCaseUtil {
 
     @Transactional
     public Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
-        return fileStoreUtils.addToFileStore(files, LcmsConstants.MODULE_NAME);
+        return fileStoreUtils.addToFileStore(LcmsConstants.MODULE_NAME, files);
     }
 
     public List<PwrDocuments> getPwrDocumentList(final LegalCase legalcase) {

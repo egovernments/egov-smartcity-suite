@@ -52,7 +52,6 @@ import org.egov.infra.admin.master.entity.CrossHierarchy;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ReceivingCenter;
 import org.egov.pgr.entity.ReceivingMode;
-import org.egov.pgr.utils.constants.PGRConstants;
 import org.egov.pgr.web.controller.complaint.GenericComplaintController;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -68,6 +67,7 @@ import javax.validation.ValidationException;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.egov.pgr.utils.constants.PGRConstants.MODULE_NAME;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -115,7 +115,7 @@ public class OfficialsComplaintRegistrationController extends GenericComplaintCo
         }
 
         try {
-            complaint.setSupportDocs(fileStoreUtils.addToFileStore(files, PGRConstants.MODULE_NAME, true));
+            complaint.setSupportDocs(fileStoreUtils.addToFileStoreWithImageCompression(MODULE_NAME, files));
             complaintService.createComplaint(complaint);
         } catch (final ValidationException e) {
             resultBinder.rejectValue("location", e.getMessage());
