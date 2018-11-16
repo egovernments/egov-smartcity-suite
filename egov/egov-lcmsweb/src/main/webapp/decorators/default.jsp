@@ -50,9 +50,12 @@
 <%@ include file="/includes/taglibs.jsp" %>
 <html>
 <head>
-    <spring:eval expression="@environment.getProperty('analytics.enabled')" scope="application" var="analyticsEnabled"/>
+    <c:if test="${empty analyticsEnabled}">
+        <spring:eval expression="@environment.getProperty('analytics.enabled')" scope="application" var="analyticsEnabled"/>
+        <spring:eval expression="@environment.getProperty('analytics.config')" scope="application" var="analyticsConfig"/>
+    </c:if>
     <c:if test="${analyticsEnabled}">
-        <spring:eval expression="@environment.getProperty('analytics.config')" scope="application"/>
+        <c:out value="${analyticsConfig}"/>
     </c:if>
     <%@ include file="/includes/meta.jsp" %>
     <meta name="_csrf" content="${_csrf.token}"/>

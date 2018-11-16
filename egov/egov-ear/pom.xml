@@ -369,137 +369,116 @@
                 <version>${mvn.ear.plugin.version}</version>
                 <configuration>
                     <version>6</version>
+                    <outputFileNameMapping>@{artifactId}@-@{version}@.@{extension}@</outputFileNameMapping>
                     <modules>
                         <webModule>
                             <groupId>org.egov</groupId>
                             <artifactId>egov-egiweb</artifactId>
-                            <uri>egov-egiweb-${project.parent.version}.war</uri>
                             <contextRoot>/egi</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.egov</groupId>
                             <artifactId>egov-commonsweb</artifactId>
-                            <uri>egov-commonsweb-${project.parent.version}.war</uri>
                             <contextRoot>/common</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.egov</groupId>
                             <artifactId>egov-dashboardweb</artifactId>
-                            <uri>egov-dashboardweb-${project.parent.version}.war</uri>
                             <contextRoot>/dashboard</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.egov</groupId>
                             <artifactId>egov-eisweb</artifactId>
-                            <uri>egov-eisweb-${project.parent.version}.war</uri>
                             <contextRoot>/eis</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.egov</groupId>
                             <artifactId>egov-egfweb</artifactId>
-                            <uri>egov-egfweb-${project.parent.version}.war</uri>
                             <contextRoot>/EGF</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.egov</groupId>
                             <artifactId>egov-lcmsweb</artifactId>
-                            <uri>egov-lcmsweb-${project.parent.version}.war</uri>
                             <contextRoot>/lcms</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.egov</groupId>
                             <artifactId>egov-assetsweb</artifactId>
-                            <uri>egov-assetsweb-${project.parent.version}.war</uri>
                             <contextRoot>/egassets</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.egov</groupId>
                             <artifactId>egov-worksweb</artifactId>
-                            <uri>egov-worksweb-${project.parent.version}.war</uri>
                             <contextRoot>/egworks</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.egov</groupId>
                             <artifactId>egov-collectionweb</artifactId>
-                            <uri>egov-collectionweb-${project.parent.version}.war</uri>
                             <contextRoot>/collection</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.egov</groupId>
                             <artifactId>egov-ptisweb</artifactId>
-                            <uri>egov-ptisweb-${project.parent.version}.war</uri>
                             <contextRoot>/ptis</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.egov</groupId>
                             <artifactId>egov-wtmsweb</artifactId>
-                            <uri>egov-wtmsweb-${project.parent.version}.war</uri>
                             <contextRoot>/wtms</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.egov</groupId>
                             <artifactId>egov-pgrweb</artifactId>
-                            <uri>egov-pgrweb-${project.parent.version}.war</uri>
                             <contextRoot>/pgr</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.egov</groupId>
                             <artifactId>egov-api</artifactId>
-                            <uri>egov-api-${project.parent.version}.war</uri>
                             <contextRoot>/api</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.egov</groupId>
                             <artifactId>egov-portalweb</artifactId>
-                            <uri>egov-portalweb-${project.parent.version}.war</uri>
                             <contextRoot>/portal</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.egov</groupId>
                             <artifactId>egov-adtaxweb</artifactId>
-                            <uri>egov-adtaxweb-${project.parent.version}.war</uri>
                             <contextRoot>/adtax</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.egov</groupId>
                             <artifactId>egov-tlweb</artifactId>
-                            <uri>egov-tlweb-${project.parent.version}.war</uri>
                             <contextRoot>/tl</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.egov</groupId>
                             <artifactId>egov-councilweb</artifactId>
-                            <uri>egov-councilweb-${project.parent.version}.war</uri>
                             <contextRoot>/council</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.egov</groupId>
                             <artifactId>egov-restapi</artifactId>
-                            <uri>egov-restapi-${project.parent.version}.war</uri>
                             <contextRoot>/restapi</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.egov</groupId>
                             <artifactId>egov-stmsweb</artifactId>
-                            <uri>egov-stmsweb-${project.parent.version}.war</uri>
                             <contextRoot>/stms</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.egov</groupId>
                             <artifactId>egov-mrsweb</artifactId>
-                            <uri>egov-mrsweb-${project.parent.version}.war</uri>
                             <contextRoot>/mrs</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.egov</groupId>
                             <artifactId>egov-services</artifactId>
-                            <uri>egov-services-${project.parent.version}.war</uri>
                             <contextRoot>/services</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.egov</groupId>
                             <artifactId>egov-eventnotificationweb</artifactId>
-                            <uri>egov-eventnotificationweb-${project.parent.version}.war</uri>
                             <contextRoot>/eventnotification</contextRoot>
                         </webModule>
                     </modules>

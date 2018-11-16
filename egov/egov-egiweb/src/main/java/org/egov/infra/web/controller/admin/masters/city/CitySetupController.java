@@ -68,6 +68,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 
 import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
+import static org.egov.infra.utils.ApplicationConstant.ADMIN_MODULE;
 
 @Controller
 @RequestMapping("/city/setup")
@@ -100,7 +101,7 @@ public class CitySetupController {
             return "city-setup";
         if (!logo.isEmpty())
             city.getPreferences().setMunicipalityLogo(fileStoreService.store(logo.getInputStream(), logo.getOriginalFilename(),
-                    logo.getContentType(), getCityCode()));
+                    logo.getContentType(), ADMIN_MODULE));
         cityService.updateCity(city);
         redirectAttrs.addFlashAttribute("message", "msg.city.update.success");
         return "redirect:/city/setup";

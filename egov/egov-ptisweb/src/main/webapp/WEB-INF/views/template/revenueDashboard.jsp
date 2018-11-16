@@ -60,10 +60,13 @@
 <html lang="en" class="no-js" id="page-top" > 
 <!--<![endif]-->
 	<head>
-		<spring:eval expression="@environment.getProperty('analytics.enabled')" scope="application" var="analyticsEnabled"/>
-		<c:if test="${analyticsEnabled}">
-			<spring:eval expression="@environment.getProperty('analytics.config')" scope="application"/>
-		</c:if>
+        <c:if test="${empty analyticsEnabled}">
+            <spring:eval expression="@environment.getProperty('analytics.enabled')" scope="application" var="analyticsEnabled"/>
+            <spring:eval expression="@environment.getProperty('analytics.config')" scope="application" var="analyticsConfig"/>
+        </c:if>
+        <c:if test="${analyticsEnabled}">
+            <c:out value="${analyticsConfig}"/>
+        </c:if>
 		<meta charset="UTF-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<title><tiles:insertAttribute name="title"/></title>
