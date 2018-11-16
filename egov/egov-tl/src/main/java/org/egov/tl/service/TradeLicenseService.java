@@ -564,7 +564,7 @@ public class TradeLicenseService {
                 for (File file : document.getUploads()) {
                     FileStoreMapper fileStore = this.fileStoreService.store(file,
                             document.getUploadsFileName().get(fileCount),
-                            document.getUploadsContentType().get(fileCount++), DOCUMENT_STORE_PATH);
+                            document.getUploadsContentType().get(fileCount++), TL_FILE_STORE_DIR);
                     document.getFiles().add(fileStore);
                 }
                 document.setEnclosed(true);

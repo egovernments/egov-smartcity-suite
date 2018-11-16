@@ -84,6 +84,6 @@ $(document).ready(function(){
 });
 
 function viewDocument(fileStoreId) {
-	var sUrl = "/egi/downloadfile?fileStoreId="+fileStoreId+"&moduleName=EGTL";
+	var sUrl = "/egi/downloadfile?fileStoreId="+fileStoreId+"&moduleName=TL";
 	window.open(sUrl,"_self",'scrollbars=yes,resizable=no,height=400,width=400,status=yes');
 }
