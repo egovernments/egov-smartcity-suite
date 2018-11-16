@@ -150,15 +150,21 @@ public class MeterReadingController {
                 .findPreviousMeterReading(waterConnectionDetails.getId());
         if (meterReadingPreviousObjList == null || meterReadingPreviousObjList.isEmpty()) {
             meterReadingPreviousObj = new MeterReadingConnectionDetails();
-            meterReadingPreviousObj.setCurrentReadingDate(waterConnectionDetails.getExistingConnection().getReadingDate());
-            if (waterConnectionDetails.getConnection().getInitialReading() != null)
+            
+            if (waterConnectionDetails.getConnection().getInitialReading() != null) {
                 meterReadingPreviousObj.setCurrentReading(waterConnectionDetails.getConnection().getInitialReading());
-            else if (waterConnectionDetails.getExistingConnection() == null)
+            }
+            else if (waterConnectionDetails.getExistingConnection() == null) {
                 meterReadingPreviousObj.setCurrentReading(0l);
-            else
+                meterReadingPreviousObj.setCurrentReadingDate(waterConnectionDetails.getExecutionDate());
+            }
+            else {
+                meterReadingPreviousObj.setCurrentReadingDate(waterConnectionDetails.getExistingConnection().getReadingDate());
                 meterReadingPreviousObj.setCurrentReading(waterConnectionDetails.getExistingConnection().getCurrentReading());
-        } else
+            }
+        } else {
             meterReadingPreviousObj = meterReadingPreviousObjList.get(0);
+        }
 
         model.addAttribute("meterReadingpriviousObj", meterReadingPreviousObj);
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);
