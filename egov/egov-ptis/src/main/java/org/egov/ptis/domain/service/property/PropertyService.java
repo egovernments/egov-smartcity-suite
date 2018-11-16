@@ -4125,7 +4125,7 @@ public class PropertyService {
         final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,
                 propertyMutation.getType() + " " + module.getDisplayName(), propertyMutation.getApplicationNo(),
                 basicProperty.getUpicNo(), basicProperty.getId(), propertyMutation.getType(),
-                getDetailedMessage(stateAware, applictionType),
+                getDetailedMessage(stateAware, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP),
                 format(APPLICATION_VIEW_URL, propertyMutation.getApplicationNo(), APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP),
                 isResolved(propertyMutation), basicProperty.getStatus().getName(), getSlaEndDate(applictionType),
                 propertyMutation.getState(), Arrays.asList(securityUtils.getCurrentUser()));
