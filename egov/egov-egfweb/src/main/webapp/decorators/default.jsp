@@ -56,7 +56,7 @@
         <spring:eval expression="@environment.getProperty('analytics.config')" scope="application" var="analyticsConfig"/>
     </c:if>
     <c:if test="${analyticsEnabled}">
-        <c:out value="${analyticsConfig}"/>
+        <c:out value="${analyticsConfig}" escapeXml="false"/>
     </c:if>
     <%@ include file="/includes/meta.jsp" %>
     <meta name="_csrf" content="${_csrf.token}"/>

@@ -59,7 +59,7 @@
         <spring:eval expression="@environment.getProperty('analytics.config')" scope="application" var="analyticsConfig"/>
     </c:if>
     <c:if test="${analyticsEnabled}">
-        <c:out value="${analyticsConfig}"/>
+        <c:out value="${analyticsConfig}" escapeXml="false"/>
     </c:if>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
