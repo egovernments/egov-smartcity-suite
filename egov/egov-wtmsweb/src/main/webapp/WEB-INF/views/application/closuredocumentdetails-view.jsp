@@ -71,7 +71,7 @@
 					<div class="col-sm-3 add-margin view-content">
 						<c:choose>
 							<c:when test="${waterConnectionDetails.fileStore != null}">
-								<a href="/egi/downloadfile?fileStoreId=${waterConnectionDetails.fileStore.fileStoreId}&moduleName=WTMS" target="_blank"> 
+								<a href="/egi/downloadfile?fileStoreId=${waterConnectionDetails.fileStore.fileStoreId}&moduleName=WTMS" target="_blank">
 								<c:out value="${waterConnectionDetails.fileStore.fileName}"/></a>
 							</c:when>
 							<c:otherwise>

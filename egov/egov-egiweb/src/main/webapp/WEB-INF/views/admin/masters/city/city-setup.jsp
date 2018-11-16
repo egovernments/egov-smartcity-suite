@@ -252,7 +252,7 @@
                                 </c:set>
                                 <div class="col-sm-6" style="padding-top: 7px">
                                     <img id="imglogo" height="60" width="60"
-                                         src="/egi/downloadfile?fileStoreId=${city.preferences.municipalityLogo.fileStoreId}&moduleName=${sessionScope.cityCode}">
+                                         src="/egi/downloadfile?fileStoreId=${city.preferences.municipalityLogo.fileStoreId}&moduleName=ADMIN">
 
                                     <input type="file" name="logo" id="logo" accept="image/*" data-accepts="${allowedFileExt}"
                                            data-size="${maxFileSize}"

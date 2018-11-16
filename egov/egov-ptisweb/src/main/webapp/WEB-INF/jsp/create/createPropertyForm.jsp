@@ -285,10 +285,10 @@
 			var docNum = document.getElementById("docNumber").value;
 			var url;
 			if (docNum == null || docNum == '' || docNum == 'To be assigned') {
-				url = "/egi/docmgmt/basicDocumentManager.action?moduleName=ptis";
+				url = "/egi/docmgmt/basicDocumentManager.action?moduleName=PTIS";
 			} else {
 				url = "/egi/docmgmt/basicDocumentManager!editDocument.action?docNumber="
-						+ docNum + "&moduleName=ptis";
+						+ docNum + "&moduleName=PTIS";
 			}
 			window.open(url, 'docupload', 'width=1000,height=400');
 		}

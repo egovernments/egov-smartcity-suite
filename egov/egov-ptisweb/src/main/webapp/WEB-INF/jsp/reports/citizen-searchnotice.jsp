@@ -76,7 +76,7 @@
 	function displayNotice(noticeNumber, isBlob) {
 		var sUrl;
 		if (isBlob == 'N') {
-			sUrl = "/egi/docmgmt/ajaxFileDownload.action?moduleName=PT&docNumber="
+			sUrl = "/egi/docmgmt/ajaxFileDownload.action?moduleName=PTIS&docNumber="
 					+ noticeNumber + "&fileName=" + noticeNumber + ".pdf";
 		} else {
 			sUrl = "/ptis/reports/searchNotices-showNotice.action?noticeNumber="

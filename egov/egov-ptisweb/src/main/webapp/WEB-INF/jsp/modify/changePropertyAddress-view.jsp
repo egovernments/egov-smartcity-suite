@@ -354,7 +354,7 @@
 								<a
 									href='#'
 									target="_parent" 
-									onclick="window.open('/egi/docmgmt/basicDocumentManager!viewDocument.action?moduleName=ptis&docNumber=${docNumber}'
+									onclick="window.open('/egi/docmgmt/basicDocumentManager!viewDocument.action?moduleName=PTIS&docNumber=${docNumber}'
 									,'ViewDocuments','resizable=yes,scrollbars=yes,height=650,width=700,status=yes');">View Document</a>
         </span>
         </td>

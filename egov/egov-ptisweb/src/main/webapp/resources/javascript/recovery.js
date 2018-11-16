@@ -188,7 +188,7 @@ function validateCeaseNotice(obj){
 		} 
 }
 function displayNotice(noticeNumber) {
-		var sUrl = "/egi/docmgmt/ajaxFileDownload.action?moduleName=PT&docNumber="+noticeNumber+"&fileName="+noticeNumber+".pdf";
+		var sUrl = "/egi/docmgmt/ajaxFileDownload.action?moduleName=PTIS&docNumber="+noticeNumber+"&fileName="+noticeNumber+".pdf";
 		window.open(sUrl,"window",'scrollbars=yes,resizable=no,height=200,width=400,status=yes');
 }
 
