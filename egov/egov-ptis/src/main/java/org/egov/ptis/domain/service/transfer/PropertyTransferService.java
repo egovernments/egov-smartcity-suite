@@ -245,7 +245,9 @@ public class PropertyTransferService {
                         ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER);
         mutationRegistrationService.persist(propertyMutation.getMutationRegistrationDetails());
         if (propertyService.isCitizenPortalUser(getLoggedInUser()))
-            propertyService.pushPropertyMutationPortalMessage(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
+            propertyService.pushPropertyMutationPortalMessage(propertyMutation, propertyMutation.getType()
+                    .equalsIgnoreCase(ADDTIONAL_RULE_REGISTERED_TRANSFER)
+                    ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER);
         basicPropertyService.persist(basicProperty);
     }
 
