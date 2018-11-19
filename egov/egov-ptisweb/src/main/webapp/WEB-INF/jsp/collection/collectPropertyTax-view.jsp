@@ -53,25 +53,26 @@
 		<title><s:text name="property.tax.collection" /></title>
 		<script type="text/javascript">
 
-	 	jQuery(document).ready( function() {
-
-			var collectXML = '<s:property value="%{collectXML}" />';
-			var infoMessage = '<s:property value="%{infoMessage}" />';
-			if(infoMessage !=null && infoMessage.length>0) 
-				alert(infoMessage);
-			jQuery('<form>.').attr({
-				method: 'post',
-				action: '/collection/receipts/receipt-newform.action',
-				target: '_self'
-			}).append(jQuery('<input>').attr({
-			    type: 'hidden',
-			    id: 'collectXML',
-			    name: 'collectXML',
-			    value: collectXML
-			})).appendTo( document.body ).submit();
-			
-		});
-		
+            jQuery(document).ready(function () {
+                var collectXML = '<s:property value="%{collectXML}" />';
+                var infoMessage = '<s:property value="%{infoMessage}" />';
+                if(infoMessage !=null && infoMessage.length>0)
+                    alert(infoMessage);
+                jQuery('<form>.').attr({
+                    method: 'post',
+                    action: '/collection/receipts/receipt-newform.action',
+                    target: '_self'
+                }).append(jQuery('<input>').attr({
+                    type: 'hidden',
+                    id: 'collectXML',
+                    name: 'collectXML',
+                    value: collectXML
+                })).append(jQuery('<input >').attr({
+                    type: 'hidden',
+                    name: '${_csrf.parameterName}',
+                    value: '${_csrf.token}'
+                })).appendTo(document.body).submit();
+            });
 		</script>
 	</head>
 	<body>

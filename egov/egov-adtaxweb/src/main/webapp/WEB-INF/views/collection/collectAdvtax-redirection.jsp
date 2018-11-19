@@ -52,31 +52,31 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<%@ page language="java" pageEncoding="UTF-8"%>
+<%@ page language="java" pageEncoding="UTF-8" %>
 <html>
-	<head>
-		<title><spring:message code="title.collect.Advtax.view" /></title>
-		<script type="text/javascript">
+<head>
+    <title><spring:message code="title.collect.Advtax.view"/></title>
+    <script type="text/javascript">
 
-	 	jQuery(document).ready( function() {
+        jQuery(document).ready(function () {
+            jQuery('<form>.').attr({
+                method: 'post',
+                action: '/collection/receipts/receipt-newform.action',
+                target: '_self'
+            }).append(jQuery('<input>').attr({
+                type: 'hidden',
+                id: 'collectXML',
+                name: 'collectXML',
+                value: '${collectxml}'
+            })).append(jQuery('<input >').attr({
+                type: 'hidden',
+                name: '${_csrf.parameterName}',
+                value: '${_csrf.token}'
+            })).appendTo(document.body).submit();
+        });
 
-			var collectXML = '${collectxml}';
-			
-			jQuery('<form>.').attr({
-				method: 'post',
-				action: '/collection/receipts/receipt-newform.action',
-				target: '_self'
-			}).append(jQuery('<input>').attr({
-			    type: 'hidden',
-			    id: 'collectXML',
-			    name: 'collectXML',
-			    value: collectXML
-			})).appendTo( document.body ).submit();
-			
-		});
-		
-		</script>
-	</head>
-	<body>
-	</body>
+    </script>
+</head>
+<body>
+</body>
 </html>

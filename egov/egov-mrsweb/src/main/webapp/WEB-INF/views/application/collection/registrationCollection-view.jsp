@@ -53,23 +53,23 @@
 <html>
 	<head>
 		<script type="text/javascript">
-
-	 	jQuery(document).ready( function() {
-			var billXml = '<c:out value="${billXml}" />';
-			
-			jQuery('<form>.').attr({
-				method: 'post',
-				action: '/collection/receipts/receipt-newform.action',
-				target: '_self'
-			}).append(jQuery('<input>').attr({
-			    type: 'hidden',
-			    id: 'collectXML',
-			    name: 'collectXML',
-			    value: billXml
-			})).appendTo( document.body ).submit();
-			
-		});
-		
+            var billXml = '<c:out value="${billXml}" />';
+            jQuery(document).ready(function () {
+                jQuery('<form>.').attr({
+                    method: 'post',
+                    action: '/collection/receipts/receipt-newform.action',
+                    target: '_self'
+                }).append(jQuery('<input>').attr({
+                    type: 'hidden',
+                    id: 'collectXML',
+                    name: 'collectXML',
+                    value: billXml
+                })).append(jQuery('<input >').attr({
+                    type: 'hidden',
+                    name: '${_csrf.parameterName}',
+                    value: '${_csrf.token}'
+                })).appendTo(document.body).submit();
+            });
 		</script>
 	</head>
 	<body>
