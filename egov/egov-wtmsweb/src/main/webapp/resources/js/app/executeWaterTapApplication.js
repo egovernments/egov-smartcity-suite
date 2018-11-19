@@ -280,7 +280,14 @@ $('#update').on('click', function(){
 					bootbox.alert(" Execution date can not be greater than current date");
 					return false;
 				}
-				
+				else if(response.includes("Application Process Time not defined")) {
+					bootbox.alert(" Application process time is not defined for this application type and category. Please define using create application process time master and then update execution date.")
+					return false;
+				}
+				else {
+					bootbox.alert("water connection update failed");
+					return false;
+				}
 			},
 			error : function(response) {
 				bootbox.alert("water connection update failed");
