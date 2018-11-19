@@ -119,7 +119,7 @@
             </div>
             <div class="panel-footer">
                 <div class="alert alert-warning">
-                    <spring:message code="msg.demand.gen.footer" />
+                    <spring:message code="msg.demand.gen.footer" htmlEscape="false"/>
                 </div>
             </div>
         </div>

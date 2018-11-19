@@ -52,7 +52,9 @@
 <div class="row">
     <div class="col-md-12">
         <c:if test="${not empty message}">
-            <div class="alert alert-success" role="alert"><spring:message code="${message}" arguments="${name}"/></div>
+            <div class="alert alert-success" role="alert">
+                <spring:message code="${message}" arguments="${name}" htmlEscape="false"/>
+            </div>
         </c:if>
         <div class="panel panel-primary" data-collapsed="0">
             <div class="panel-heading">
@@ -86,7 +88,7 @@
                         </div>
                     </div>
                 </form:form>
-                <span class="mandatory"></span> <spring:message code="lbl.user.reset.pwd.info"/>
+                <span class="mandatory"></span> <spring:message code="lbl.user.reset.pwd.info" htmlEscape="false"/>
             </div>
         </div>
     </div>

@@ -56,7 +56,9 @@
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">
                     <div class="panel-title text-center no-float">
-                        <strong><spring:message code="msg.complaint.update.success" arguments="${complaint.crn}"/></strong>
+                        <strong>
+                            <spring:message code="msg.complaint.update.success" arguments="${complaint.crn}" htmlEscape="false"/>
+                        </strong>
                     </div>
                 </div>
                 <div class="panel-body">

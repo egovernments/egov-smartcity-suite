@@ -256,13 +256,6 @@ $(document).ready(function () {
     });
 });
 
-function pageScrollTop() {
-    var body = $("html, body");
-    body.stop().animate({scrollTop: 0}, '500', 'swing', function () {
-        //bootbox.alert("Finished animating");
-    });
-}
-
 function DateValidation(start, end) {
     if (start != "" && end != "") {
         var stsplit = start.split("/");
@@ -376,7 +369,6 @@ function cleardependentfield(dependentfield) {
     if (!dependentfield) {
         return;
     }
-    console.log($(dependentfield).prop("type"));
     if ($(dependentfield).prop("type") == 'select-one' || $(dependentfield).prop("type") == 'select-multiple') {
         $(dependentfield).empty();
     } else if ($(dependentfield).prop("type") == 'text' || $(dependentfield).prop("type") == 'textarea') {
@@ -408,15 +400,14 @@ function select2initialize(obj, data, multiple) {
     obj.empty();
 
     if (!multiple)
-        obj.append("<option value=''>Select</option>");
+        obj.append("<option value=''>---- Select ----</option>");
 
     $('.select2').select2({
         allowClear: true,
-        placeholder: "Select",
+        placeholder: "---- Select ----",
         minimumResultsForSearch: 1,
         data: data,
         multiple: multiple,
         width: '100%'
     });
-
 }

@@ -147,7 +147,7 @@
                 <div id="dailyCollectionReport-header" class="panel-body">
                     <br/>
                     <span class="table-header">
-                    <spring:message code="lbl.dailyCollection.report.details" arguments="${fromDate},${toDate}"/>
+                    <spring:message code="lbl.dailyCollection.report.details" arguments="${fromDate},${toDate}" htmlEscape="false"/>
                 </span>
                     <table class="table table-bordered table-hover multiheadertbl" id="dailyCollReport-table"
                            style="overflow-x: auto;max-width: 100%;min-width: 100%">
