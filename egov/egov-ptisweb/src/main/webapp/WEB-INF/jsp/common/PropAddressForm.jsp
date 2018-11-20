@@ -199,7 +199,12 @@ function populateBlock() {
 	<tr>
 		<td>&nbsp;</td>	
 		<td class="greybox"><s:text name="parcelid"/> : </td>
-	    <td class="greybox"><span class="bold"><s:property default="N/A" value="%{basicProperty.parcelId}" /> </span></td>
+		<s:if test="%{basicProperty.parcelId != null && !basicProperty.parcelId.isEmpty()">
+	    	<td class="greybox"><span class="bold"><s:property value="%{basicProperty.parcelId}" /> </span></td>
+	    </s:if>
+	    <s:else>
+	    	<td class="greybox"><span class="bold">NA</span></td>
+	    </s:else>
 		<s:if test="%{basicProperty.latitude != null && basicProperty.longitude != null}">
 			<td>&nbsp;</td>
 			<td><input type="button" name="showMap" id="show-map"
