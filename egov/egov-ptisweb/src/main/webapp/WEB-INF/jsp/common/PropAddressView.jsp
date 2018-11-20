@@ -105,7 +105,7 @@
 	<tr>
 		<td>&nbsp;</td>
 		<td class="greybox"><s:text name="parcelid"/> : </td>
-	    <s:if test="%{basicProperty.parcelId != null && !basicProperty.parcelId.isEmpty()">
+	    <s:if test="%{basicProperty.parcelId != null && !basicProperty.parcelId.isEmpty()}">
 	    	<td class="greybox"><span class="bold"><s:property value="%{basicProperty.parcelId}" /> </span></td>
 	    </s:if>
 	    <s:else>
