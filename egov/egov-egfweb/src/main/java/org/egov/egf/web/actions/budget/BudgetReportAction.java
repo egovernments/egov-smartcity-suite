@@ -57,11 +57,13 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.repository.FunctionRepository;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -70,7 +72,6 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
@@ -182,9 +183,11 @@ public class BudgetReportAction extends BaseFormAction {
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
-    
+
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
+    @Autowired
+    private FunctionRepository functionRepository;
 
     public boolean isDepartmentBudget() {
         return departmentBudget;
@@ -242,8 +245,8 @@ public class BudgetReportAction extends BaseFormAction {
     @Override
     public void prepare() {
         super.prepare();
-        addDropdownData("departmentList", masterDataCache.get("egi-department"));
-        addDropdownData("functionList", masterDataCache.get("egi-function"));
+        addDropdownData("departmentList", departmentService.getAllDepartments());
+        addDropdownData("functionList", functionRepository.findByIsActiveAndIsNotLeaf(true,false));
         addDropdownData("financialYearList", getPersistenceService().findAllBy(
                 "from CFinancialYear where isActive=true  order by finYearRange desc "));
         setRelatedEntitesOn();

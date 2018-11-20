@@ -62,6 +62,8 @@ import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.commons.dao.FunctionaryDAO;
+import org.egov.commons.repository.FunctionRepository;
 import org.egov.egf.model.BudgetAmountView;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -69,15 +71,16 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
+import org.egov.model.service.BudgetingGroupService;
 import org.egov.pims.commons.Position;
 import org.egov.services.budget.BudgetDetailService;
 import org.egov.services.budget.BudgetService;
@@ -153,9 +156,15 @@ public class BudgetSearchAction extends BaseFormAction {
     protected BudgetService budgetService;
     @Autowired
     private AppConfigValueService appConfigValuesService;
+
     @Autowired
-    @Qualifier("masterDataCache")
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
+    @Autowired
+    private FunctionaryDAO functionaryDAO;
+    @Autowired
+    private FunctionRepository functionRepository;
+    @Autowired
+    private BudgetingGroupService budgetingGroupService;
 
     public String getMessage() {
         return message;
@@ -267,7 +276,7 @@ public class BudgetSearchAction extends BaseFormAction {
             headerFields = budgetDetailConfig.getHeaderFields();
             gridFields = budgetDetailConfig.getGridFields();
             // setupDropdownDataExcluding(Constants.SUB_SCHEME);
-            dropdownData.put("budgetGroupList", masterDataCache.get("egf-budgetGroup"));
+            dropdownData.put("budgetGroupList", budgetingGroupService.getActiveBudgetGroups());
             dropdownData.put("budgetList", budgetDetailService.findApprovedBudgetsForFY(getFinancialYear()));
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("done findApprovedBudgetsForFY");
@@ -276,13 +285,13 @@ public class BudgetSearchAction extends BaseFormAction {
             if (shouldShowField(Constants.SUB_SCHEME))
                 dropdownData.put("subSchemeList", Collections.EMPTY_LIST);
             if (shouldShowField(Constants.FUNCTIONARY))
-                dropdownData.put("functionaryList", masterDataCache.get("egi-functionary"));
+                dropdownData.put("functionaryList", functionaryDAO.findAllActiveFunctionary());
             if (shouldShowField(Constants.FUNCTION))
-                dropdownData.put("functionList", masterDataCache.get("egi-function"));
+                dropdownData.put("functionList", functionRepository.findByIsActiveAndIsNotLeaf(true,false));
             if (shouldShowField(Constants.SCHEME))
                 dropdownData.put("schemeList", persistenceService.findAllBy("from Scheme where isActive=true order by name"));
             if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
-                dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
+                dropdownData.put("executingDepartmentList", departmentService.getAllDepartments());
             if (shouldShowField(Constants.BOUNDARY))
                 dropdownData.put("boundaryList", persistenceService.findAllBy("from Boundary order by name"));
             if (shouldShowField(Constants.FUND))
@@ -698,17 +707,9 @@ public class BudgetSearchAction extends BaseFormAction {
         return appConfigValuesService;
     }
 
-    public EgovMasterDataCaching getMasterDataCache() {
-        return masterDataCache;
-    }
-
     public void setAppConfigValuesService(
             AppConfigValueService appConfigValuesService) {
         this.appConfigValuesService = appConfigValuesService;
-    }
-
-    public void setMasterDataCache(EgovMasterDataCaching masterDataCache) {
-        this.masterDataCache = masterDataCache;
     }
 
     public BudgetDetail getBudgetDetail() {

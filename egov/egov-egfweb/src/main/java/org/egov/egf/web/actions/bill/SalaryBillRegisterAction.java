@@ -53,15 +53,18 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
+import org.egov.commons.dao.FunctionaryDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.repository.BoundaryRepository;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
@@ -108,8 +111,13 @@ public class SalaryBillRegisterAction extends BaseFormAction {
     private List<EgSalaryCodes> deductionsCodes = new ArrayList<EgSalaryCodes>();
     private @Autowired AppConfigValueService appConfigValuesService;
     private CChartOfAccounts defaultNetPayCode;
+
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
+    @Autowired
+    private BoundaryService boundaryService;
+    @Autowired
+    private FunctionaryDAO functionaryDAO;
     
     public SalaryBillRegisterAction() {
         addRelatedEntity("fieldList", Boundary.class);
@@ -126,9 +134,9 @@ public class SalaryBillRegisterAction extends BaseFormAction {
     @Override
     public void prepare() {
         super.prepare();
-        addDropdownData("fieldList", masterDataCache.get("egi-ward"));
-        addDropdownData("departmentList", masterDataCache.get("egi-department"));
-        addDropdownData("functionaryList", masterDataCache.get("egi-functionary"));
+        addDropdownData("fieldList", boundaryService.getBoundaryByBoundaryTypeName("WARD"));
+        addDropdownData("departmentList", departmentService.getAllDepartments());
+        addDropdownData("functionaryList", functionaryDAO.findAllActiveFunctionary());
         addDropdownData("financialYearList",
                 persistenceService.findAllBy("from CFinancialYear where isActive=true order by finYearRange desc "));
         addDropdownData("detailTypeList", Collections.EMPTY_LIST);

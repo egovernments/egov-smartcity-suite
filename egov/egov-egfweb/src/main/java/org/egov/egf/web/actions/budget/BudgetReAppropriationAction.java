@@ -62,19 +62,21 @@ import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.commons.dao.FunctionaryDAO;
+import org.egov.commons.repository.FunctionRepository;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.egf.model.BudgetReAppropriationView;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
@@ -149,7 +151,11 @@ public class BudgetReAppropriationAction extends BaseFormAction {
     private AppConfigValueService appConfigValuesService;
 
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
+    @Autowired
+    private FunctionaryDAO functionaryDAO;
+    @Autowired
+    private FunctionRepository functionRepository;
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
@@ -243,13 +249,13 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         if (shouldShowField(Constants.SUB_SCHEME))
             dropdownData.put("subSchemeList", Collections.EMPTY_LIST);
         if (shouldShowField(Constants.FUNCTIONARY))
-            dropdownData.put("functionaryList", masterDataCache.get("egi-functionary"));
+            dropdownData.put("functionaryList", functionaryDAO.findAllActiveFunctionary());
         if (shouldShowField(Constants.FUNCTION))
-            dropdownData.put("functionList", masterDataCache.get("egi-function"));
+            dropdownData.put("functionList", functionRepository.findByIsActiveAndIsNotLeaf(true,false));
         if (shouldShowField(Constants.SCHEME))
             dropdownData.put("schemeList", persistenceService.findAllBy("from Scheme where isActive=true order by name"));
         if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
-            dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
+            dropdownData.put("executingDepartmentList", departmentService.getAllDepartments());
         if (shouldShowField(Constants.FUND))
             dropdownData
                     .put("fundList",
@@ -306,7 +312,7 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         if (financialYear != null && financialYear.getId() != 0L && budgetService.hasApprovedReForYear(financialYear.getId()))
             beRe = Constants.RE;
         setupDropdownsInHeader();
-        dropdownData.put("departmentList", masterDataCache.get("egi-department"));
+        dropdownData.put("departmentList", departmentService.getAllDepartments());
         dropdownData.put("designationList", Collections.EMPTY_LIST);
         dropdownData.put("userList", Collections.EMPTY_LIST);
     }

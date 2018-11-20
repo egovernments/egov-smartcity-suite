@@ -50,12 +50,17 @@ package org.egov.egf.web.controller.voucher;
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 import org.egov.commons.CGeneralLedger;
 import org.egov.commons.CVoucherHeader;
+import org.egov.commons.dao.FunctionaryDAO;
+import org.egov.commons.dao.FundSourceHibernateDAO;
+import org.egov.commons.repository.FunctionRepository;
+import org.egov.commons.repository.FundRepository;
 import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.utils.FinancialConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,7 +96,17 @@ public abstract class BaseVoucherController extends GenericWorkFlowController {
     private ChartOfAccountsService chartOfAccountsService;
 
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
+    @Autowired
+    private FunctionRepository functionRepository;
+    @Autowired
+    private FundRepository fundRepository;
+    @Autowired
+    private FundSourceHibernateDAO fundSourceHibernateDAO;
+    @Autowired
+    private BoundaryService boundaryService;
+    @Autowired
+    private FunctionaryDAO functionaryDAO;
 
     @Autowired
     private VoucherTypeForULB voucherTypeForULB;
@@ -120,17 +135,17 @@ public abstract class BaseVoucherController extends GenericWorkFlowController {
         }
         mandatoryFields.add("voucherdate");
         if (headerFields.contains("department"))
-            model.addAttribute("departments", masterDataCache.get("egi-department"));
+            model.addAttribute("departments", departmentService.getAllDepartments());
         if (headerFields.contains("functionary"))
-            model.addAttribute("functionarys", masterDataCache.get("egi-functionary"));
+            model.addAttribute("functionarys", functionaryDAO.findAllActiveFunctionary());
         if (headerFields.contains("function"))
-            model.addAttribute("functions", masterDataCache.get("egi-function"));
+            model.addAttribute("functions", functionRepository.findByIsActiveAndIsNotLeaf(true,false));
         if (headerFields.contains("fund"))
-            model.addAttribute("funds", masterDataCache.get("egi-fund"));
+            model.addAttribute("funds", fundRepository.findByIsactiveAndIsnotleaf(true,false));
         if (headerFields.contains("fundsource"))
-            model.addAttribute("fundsources", masterDataCache.get("egi-fundSource"));
+            model.addAttribute("fundsources", fundSourceHibernateDAO.findAllActiveIsLeafFundSources());
         if (headerFields.contains("field"))
-            model.addAttribute("fields", masterDataCache.get("egi-ward"));
+            model.addAttribute("fields", boundaryService.getBoundaryByBoundaryTypeName("WARD"));
         if (headerFields.contains("scheme"))
             model.addAttribute("schemes", Collections.emptyList());
         if (headerFields.contains("subscheme"))

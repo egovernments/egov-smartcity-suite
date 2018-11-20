@@ -63,8 +63,8 @@ import org.egov.commons.repository.FunctionRepository;
 import org.egov.commons.repository.FundRepository;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.City;
-import org.egov.infra.admin.master.repository.BoundaryRepository;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
@@ -168,7 +168,7 @@ public class TrialBalanceAction extends BaseFormAction {
     @Autowired
     private FundRepository fundRepository;
     @Autowired
-    private BoundaryRepository boundaryRepository;
+    private BoundaryService boundaryService;
     @Autowired
     private FunctionaryDAO functionaryDAO;
 
@@ -187,7 +187,7 @@ public class TrialBalanceAction extends BaseFormAction {
         addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
         addDropdownData("departmentList", departmentService.getAllDepartments());
         addDropdownData("functionaryList", functionaryDAO.findAllActiveFunctionary());
-        addDropdownData("fieldList", boundaryRepository.findBoundariesByBndryTypeName("WARD"));
+        addDropdownData("fieldList", boundaryService.getBoundaryByBoundaryTypeName("WARD"));
         addDropdownData("functionList", functionRepository.findByIsActiveAndIsNotLeaf(true,false));
 
     }

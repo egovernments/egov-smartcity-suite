@@ -55,13 +55,13 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Bankaccount;
+import org.egov.commons.repository.FundRepository;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.payment.Paymentheader;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
@@ -116,8 +116,9 @@ public class OutstandingPaymentAction extends BaseFormAction {
     private String selectedVhs;
     private Long[] selectdVhs;
     private BigDecimal rBalance = BigDecimal.ZERO;
+
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private FundRepository fundRepository;
     
     @Override
     public String execute() throws Exception {
@@ -138,7 +139,7 @@ public class OutstandingPaymentAction extends BaseFormAction {
         if (!parameters.containsKey("skipPrepare")) {
             addDropdownData("bankList", Collections.EMPTY_LIST);
             addDropdownData("accNumList", Collections.EMPTY_LIST);
-            addDropdownData("fundList", masterDataCache.get("egi-fund"));
+            addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
         }
     }
 

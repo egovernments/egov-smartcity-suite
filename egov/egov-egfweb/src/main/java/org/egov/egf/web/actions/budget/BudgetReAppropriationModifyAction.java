@@ -60,11 +60,14 @@ import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
+import org.egov.commons.dao.FunctionaryDAO;
+import org.egov.commons.repository.FunctionRepository;
 import org.egov.egf.model.BudgetReAppropriationView;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.entity.Script;
@@ -72,12 +75,12 @@ import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.model.budget.BudgetReAppropriation;
 import org.egov.model.budget.BudgetReAppropriationMisc;
+import org.egov.model.service.BudgetingGroupService;
 import org.egov.pims.commons.Position;
 import org.egov.pims.service.EisUtilService;
 import org.egov.services.budget.BudgetDetailService;
@@ -136,7 +139,13 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
     private ScriptService scriptService;
 
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
+    @Autowired
+    private FunctionaryDAO functionaryDAO;
+    @Autowired
+    private BudgetingGroupService  budgetingGroupService;
+    @Autowired
+    private FunctionRepository functionRepository;
 
     public void setMiscWorkflowService(final WorkflowService<BudgetReAppropriationMisc> miscWorkflowService) {
         this.miscWorkflowService = miscWorkflowService;
@@ -234,17 +243,17 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
         setupDropdownDataExcluding(Constants.SUB_SCHEME);
         dropdownData.put("finYearList",
                 getPersistenceService().findAllBy("from CFinancialYear where isActive=true order by finYearRange desc "));
-        dropdownData.put("budgetGroupList", masterDataCache.get("egf-budgetGroup"));
+        dropdownData.put("budgetGroupList", budgetingGroupService.getActiveBudgetGroups());
         if (shouldShowField(Constants.SUB_SCHEME))
             dropdownData.put("subSchemeList", Collections.EMPTY_LIST);
         if (shouldShowField(Constants.FUNCTIONARY))
-            dropdownData.put("functionaryList", masterDataCache.get("egi-functionary"));
+            dropdownData.put("functionaryList", functionaryDAO.findAllActiveFunctionary());
         if (shouldShowField(Constants.FUNCTION))
-            dropdownData.put("functionList", masterDataCache.get("egi-function"));
+            dropdownData.put("functionList", functionRepository.findByIsActiveAndIsNotLeaf(true,false));
         if (shouldShowField(Constants.SCHEME))
             dropdownData.put("schemeList", persistenceService.findAllBy("from Scheme where isActive=true order by name"));
         if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
-            dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
+            dropdownData.put("executingDepartmentList", departmentService.getAllDepartments());
         if (shouldShowField(Constants.FUND))
             dropdownData
                     .put("fundList", persistenceService.findAllBy("from Fund where isNotLeaf=0 and isActive=true order by name"));
@@ -294,7 +303,7 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
         if (shouldShowField(Constants.BOUNDARY))
             addRelatedEntity(Constants.BOUNDARY, Boundary.class);
         setupDropdownsInHeader();
-        addDropdownData("departmentList", masterDataCache.get("egi-department"));
+        addDropdownData("departmentList", departmentService.getAllDepartments());
         addDropdownData("designationList", Collections.EMPTY_LIST);
         addDropdownData("userList", Collections.EMPTY_LIST);
     }

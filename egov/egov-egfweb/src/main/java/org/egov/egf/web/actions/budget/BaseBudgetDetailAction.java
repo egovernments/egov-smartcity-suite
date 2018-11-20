@@ -60,6 +60,8 @@ import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.commons.dao.FunctionaryDAO;
+import org.egov.commons.repository.FunctionRepository;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.egf.model.BudgetAmountView;
 import org.egov.eis.entity.Assignment;
@@ -71,6 +73,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -78,10 +81,10 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
+import org.egov.model.service.BudgetingGroupService;
 import org.egov.model.voucher.WorkflowBean;
 import org.egov.pims.commons.Position;
 import org.egov.services.budget.BudgetDetailActionHelper;
@@ -173,7 +176,13 @@ public abstract class BaseBudgetDetailAction extends GenericWorkFlowAction {
     private AssignmentService assignmentService;
 
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
+    @Autowired
+    private FunctionaryDAO functionaryDAO;
+    @Autowired
+    private BudgetingGroupService budgetingGroupService;
+    @Autowired
+    private FunctionRepository functionRepository;
 
     protected boolean re = false;
     private boolean showMessage = false;
@@ -373,18 +382,18 @@ public abstract class BaseBudgetDetailAction extends GenericWorkFlowAction {
     private void setupDropdownsInHeader() {
         setupDropdownDataExcluding(Constants.SUB_SCHEME);
         setBudgetDropDown();
-        dropdownData.put("budgetGroupList", masterDataCache.get(EGF_BUDGET_GROUP));
+        dropdownData.put("budgetGroupList", budgetingGroupService.getActiveBudgetGroups());
         if (shouldShowField(Constants.SUB_SCHEME))
             dropdownData.put("subSchemeList", Collections.EMPTY_LIST);
         if (shouldShowField(Constants.FUNCTIONARY))
-            dropdownData.put("functionaryList", masterDataCache.get(EGI_FUNCTIONARY));
+            dropdownData.put("functionaryList", functionaryDAO.findAllActiveFunctionary());
         if (shouldShowField(Constants.FUNCTION))
-            dropdownData.put("functionList", masterDataCache.get(EGI_FUNCTION));
+            dropdownData.put("functionList", functionRepository.findByIsActiveAndIsNotLeaf(true,false));
         if (shouldShowField(Constants.SCHEME))
             dropdownData.put("schemeList",
                     persistenceService.findAllBy("from Scheme where isActive=true order by name"));
         if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
-            dropdownData.put("executingDepartmentList", masterDataCache.get(EGI_DEPARTMENT));
+            dropdownData.put("executingDepartmentList", departmentService.getAllDepartments());
         if (shouldShowField(Constants.FUND))
             dropdownData.put("fundList",
                     persistenceService.findAllBy("from Fund where isNotLeaf=false and isActive=true order by name"));
@@ -392,7 +401,7 @@ public abstract class BaseBudgetDetailAction extends GenericWorkFlowAction {
             dropdownData.put("boundaryList", persistenceService.findAllBy("from Boundary order by name"));
         addDropdownData("financialYearList", getPersistenceService()
                 .findAllBy("from CFinancialYear where isActive=true order by " + "finYearRange desc "));
-        dropdownData.put("departmentList", masterDataCache.get(EGI_DEPARTMENT));
+        dropdownData.put("departmentList", departmentService.getAllDepartments());
         dropdownData.put("designationList", Collections.emptyList());
         dropdownData.put("userList", Collections.emptyList());
     }

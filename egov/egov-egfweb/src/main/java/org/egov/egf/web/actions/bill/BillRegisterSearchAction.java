@@ -68,8 +68,8 @@ import org.egov.commons.repository.FundRepository;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.repository.BoundaryRepository;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
@@ -121,7 +121,7 @@ public class BillRegisterSearchAction extends BaseFormAction {
     @Autowired
     private FundRepository fundRepository;
     @Autowired
-    private BoundaryRepository boundaryRepository;
+    private BoundaryService boundaryService;
 
     public BillRegisterSearchAction() {
         billregister = new EgBillregister();
@@ -165,7 +165,7 @@ public class BillRegisterSearchAction extends BaseFormAction {
         if (headerFields.contains("fundsource"))
             addDropdownData("fundsourceList", fundSourceHibernateDAO.findAllActiveIsLeafFundSources());
         if (headerFields.contains("field"))
-            addDropdownData("fieldList", boundaryRepository.findBoundariesByBndryTypeName("WARD"));
+            addDropdownData("fieldList", boundaryService.getBoundaryByBoundaryTypeName("WARD"));
         if (headerFields.contains("scheme"))
             addDropdownData("schemeList", Collections.EMPTY_LIST);
         if (headerFields.contains("subscheme"))

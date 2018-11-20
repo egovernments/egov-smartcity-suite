@@ -77,6 +77,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigService;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -90,7 +91,6 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.masters.model.AccountEntity;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
@@ -216,8 +216,9 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
     private String mode = "";
     protected Long voucherId;
     private EgBillregister billRegister;
+
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
     private String cutOffDate;
     protected DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
@@ -482,7 +483,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
             if (mandatoryFields.contains("department"))
                 addDropdownData("departmentList", voucherHelper.getAllAssgnDeptforUser());
             else
-                addDropdownData("departmentList", masterDataCache.get("egi-department"));
+                addDropdownData("departmentList", departmentService.getAllDepartments());
             addDropdownData("designationList", (List<Designation>) map.get("designationList"));
             wfitemstate = "";
         } else

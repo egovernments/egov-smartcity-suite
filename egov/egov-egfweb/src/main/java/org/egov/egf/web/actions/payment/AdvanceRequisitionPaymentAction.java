@@ -56,10 +56,12 @@ import org.egov.commons.Fund;
 import org.egov.commons.Fundsource;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
+import org.egov.commons.repository.FundRepository;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.egf.web.actions.voucher.BaseVoucherAction;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
@@ -67,7 +69,6 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.advance.EgAdvanceReqPayeeDetails;
 import org.egov.model.advance.EgAdvanceRequisition;
 import org.egov.model.advance.EgAdvanceRequisitionDetails;
@@ -110,7 +111,9 @@ public class AdvanceRequisitionPaymentAction extends BaseVoucherAction {
     private Fund fund;
 
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private FundRepository fundRepository;
+    @Autowired
+    private DepartmentService departmentService;
     
     @Override
     public void prepare() {
@@ -122,7 +125,7 @@ public class AdvanceRequisitionPaymentAction extends BaseVoucherAction {
         addDropdownData("userList", Collections.EMPTY_LIST);
         addDropdownData("bankList", egovCommon.getActiveBankBranchForActiveBanks());
         addDropdownData("accNumList", Collections.EMPTY_LIST);
-        addDropdownData("fundList", masterDataCache.get("egi-fund"));
+        addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
         loadApproverUser();
     }
 
@@ -237,7 +240,7 @@ public class AdvanceRequisitionPaymentAction extends BaseVoucherAction {
                     .getVoucherDate(), paymentheader);
         else
             map = voucherService.getDesgByDeptAndTypeAndVoucherDate(type, scriptName, new Date(), paymentheader);
-        addDropdownData("departmentList", masterDataCache.get("egi-department"));
+        addDropdownData("departmentList", departmentService.getAllDepartments());
         final List<Map<String, Object>> desgList = (List<Map<String, Object>>) map.get("designationList");
         String strDesgId = "", dName = "";
         final List<Map<String, Object>> designationList = new ArrayList<Map<String, Object>>();

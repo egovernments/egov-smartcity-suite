@@ -71,6 +71,7 @@ import org.egov.commons.Vouchermis;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -83,7 +84,6 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.advance.EgAdvanceReqPayeeDetails;
 import org.egov.model.advance.EgAdvanceRequisition;
 import org.egov.model.advance.EgAdvanceRequisitionDetails;
@@ -141,7 +141,7 @@ public class AdvancePaymentAction extends BasePaymentAction {
     private ScriptService scriptService;
 
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
 
     @Override
     public void prepare() {
@@ -528,7 +528,7 @@ public class AdvancePaymentAction extends BasePaymentAction {
                     .getVoucherDate(), paymentheader);
         else
             map = voucherService.getDesgByDeptAndTypeAndVoucherDate(atype, scriptName, new Date(), paymentheader);
-        addDropdownData("departmentList", masterDataCache.get("egi-department"));
+        addDropdownData("departmentList", departmentService.getAllDepartments());
 
         final List<Map<String, Object>> desgList = (List<Map<String, Object>>) map.get("designationList");
         String strDesgId = "", dName = "";

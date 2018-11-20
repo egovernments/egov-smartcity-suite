@@ -57,6 +57,8 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.commons.repository.FunctionRepository;
+import org.egov.commons.repository.FundRepository;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
@@ -64,6 +66,7 @@ import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportService;
@@ -77,6 +80,7 @@ import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.model.budget.BudgetProposalBean;
+import org.egov.model.service.BudgetingGroupService;
 import org.egov.model.voucher.WorkflowBean;
 import org.egov.pims.commons.Position;
 import org.egov.pims.service.EisUtilService;
@@ -211,7 +215,13 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
     private final BigDecimal bigThousand = new BigDecimal(1000);
 
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
+    @Autowired
+    private BudgetingGroupService budgetingGroupService;
+    @Autowired
+    private FundRepository fundRepository;
+    @Autowired
+    private FunctionRepository functionRepository;
 
     public void setReportService(final ReportService reportService) {
     }
@@ -325,20 +335,20 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
     private void loadToMasterDataMap() {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Starting loadToMasterDataMap...... ");
-        final List<BudgetGroup> bgList = masterDataCache.get("egf-budgetGroup");
+        final List<BudgetGroup> bgList = budgetingGroupService.getActiveBudgetGroups();
         budgetGroupMap = new HashMap<Long, BudgetGroup>();
         for (final BudgetGroup bg : bgList)
             budgetGroupMap.put(bg.getId(), bg);
-        final List<CFunction> fnList = masterDataCache.get("egi-function");
+        final List<CFunction> fnList = functionRepository.findByIsActiveAndIsNotLeaf(true,false);
         functionMap = new HashMap<Long, CFunction>();
         for (final CFunction fn : fnList)
             functionMap.put(fn.getId(), fn);
 
-        final List<Fund> fundList = masterDataCache.get("egi-fund");
+        final List<Fund> fundList = fundRepository.findByIsactiveAndIsnotleaf(true,false);
         fundMap = new HashMap<Integer, Fund>();
         for (final Fund f : fundList)
             fundMap.put(f.getId(), f);
-        final List<Department> deptList = masterDataCache.get("egi-department");
+        final List<Department> deptList = departmentService.getAllDepartments();
         deptMap = new HashMap<Long, Department>();
         for (final Department d : deptList)
             deptMap.put(d.getId().longValue(), d);

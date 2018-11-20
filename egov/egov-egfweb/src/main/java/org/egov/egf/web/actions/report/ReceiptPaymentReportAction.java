@@ -57,12 +57,12 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.commons.repository.FundRepository;
 import org.egov.egf.model.Statement;
 import org.egov.egf.model.StatementEntry;
 import org.egov.egf.model.StatementResultObject;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.services.report.RPService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
@@ -116,8 +116,9 @@ public class ReceiptPaymentReportAction extends BaseFormAction {
  @Autowired
  @Qualifier("persistenceService")
  private PersistenceService persistenceService;
+
  @Autowired
-    private EgovMasterDataCaching masterDataCache;
+ private FundRepository fundRepository;
     
     @Override
     public Object getModel() {
@@ -162,7 +163,7 @@ public class ReceiptPaymentReportAction extends BaseFormAction {
     }
 
     private void loadDropDownData() {
-        addDropdownData("fundList", masterDataCache.get("egi-fund"));
+        addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
         addDropdownData("financialYearList",
                 getPersistenceService().findAllBy("from CFinancialYear where isActive=true order by finYearRange desc "));
     }

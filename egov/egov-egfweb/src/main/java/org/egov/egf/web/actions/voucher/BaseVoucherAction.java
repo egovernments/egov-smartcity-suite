@@ -87,8 +87,8 @@ import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.repository.BoundaryRepository;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -149,7 +149,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     @Autowired
     private FundSourceHibernateDAO fundSourceHibernateDAO;
     @Autowired
-    private BoundaryRepository boundaryRepository;
+    private BoundaryService boundaryService;
     @Autowired
     private FunctionaryDAO functionaryDAO;
 
@@ -196,7 +196,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
         if (headerFields.contains("fundsource"))
             addDropdownData("fundsourceList", fundSourceHibernateDAO.findAllActiveIsLeafFundSources());
         if (headerFields.contains("field"))
-            addDropdownData("fieldList", boundaryRepository.findBoundariesByBndryTypeName("WARD"));
+            addDropdownData("fieldList", boundaryService.getBoundaryByBoundaryTypeName("WARD"));
         if (headerFields.contains("scheme"))
             addDropdownData("schemeList", Collections.emptyList());
         if (headerFields.contains("subscheme"))

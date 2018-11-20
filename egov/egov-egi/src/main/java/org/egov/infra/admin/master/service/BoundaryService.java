@@ -214,6 +214,10 @@ public class BoundaryService {
                 hierarchyTypeName, name);
     }
 
+    public List<Boundary> getBoundaryByBoundaryTypeName(String boundaryTypeName) {
+        return boundaryRepository.findByBoundaryTypeNameIgnoreCaseOrderByName(boundaryTypeName);
+    }
+
     public List<Map<String, Object>> getBoundaryDataByNameLike(final String name) {
         final List<Map<String, Object>> list = new ArrayList<>();
 

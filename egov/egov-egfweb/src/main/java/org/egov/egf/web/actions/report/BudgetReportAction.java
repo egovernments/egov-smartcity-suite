@@ -59,13 +59,14 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.egf.model.BudgetReportView;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
+import org.egov.model.service.BudgetingGroupService;
 import org.egov.services.budget.BudgetDetailService;
 import org.egov.services.budget.BudgetService;
 import org.egov.utils.BudgetDetailHelper;
@@ -116,8 +117,11 @@ public class BudgetReportAction extends BaseFormAction {
  @Autowired
  @Qualifier("persistenceService")
  private PersistenceService persistenceService;
+
  @Autowired
-    private EgovMasterDataCaching masterDataCache;
+ private DepartmentService departmentService;
+ @Autowired
+ private BudgetingGroupService budgetingGroupService;
     
     public void setFinancialYearDAO(final FinancialYearDAO financialYearDAO) {
         this.financialYearDAO = financialYearDAO;
@@ -173,8 +177,8 @@ public class BudgetReportAction extends BaseFormAction {
 
     private void setupDropdownsInHeader() {
         setupDropdownDataExcluding(Constants.SUB_SCHEME);
-        dropdownData.put("budgetGroupList", masterDataCache.get("egf-budgetGroup"));
-        dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
+        dropdownData.put("budgetGroupList", budgetingGroupService.getActiveBudgetGroups());
+        dropdownData.put("executingDepartmentList", departmentService.getAllDepartments());
         addDropdownData("financialYearList", budgetService.getFYForNonApprovedBudgets());
         final List<String> isbereList = new ArrayList<String>();
         isbereList.add("BE");

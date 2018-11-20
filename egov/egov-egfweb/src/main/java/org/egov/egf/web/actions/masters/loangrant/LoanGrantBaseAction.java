@@ -47,10 +47,10 @@
  */
 package org.egov.egf.web.actions.masters.loangrant;
 
+import org.egov.commons.repository.FundRepository;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -70,7 +70,7 @@ public class LoanGrantBaseAction extends BaseFormAction {
     protected @Autowired AppConfigValueService appConfigValuesService;
     private Integer defaultFundId;
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private FundRepository fundRepository;
 
     @Override
     public void prepare()
@@ -82,7 +82,7 @@ public class LoanGrantBaseAction extends BaseFormAction {
         final String fundId = appList.get(0).getValue();
         if (fundId != null && !fundId.isEmpty())
             defaultFundId = Integer.parseInt(fundId);
-        addDropdownData("fundList", masterDataCache.get("egi-fund"));
+        addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
 
     }
 

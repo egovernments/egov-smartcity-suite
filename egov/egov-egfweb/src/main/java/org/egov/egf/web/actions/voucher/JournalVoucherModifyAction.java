@@ -61,6 +61,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.eis.service.EisCommonService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
@@ -70,7 +71,6 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.model.voucher.VoucherDetails;
@@ -145,7 +145,7 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
     private JournalVoucherActionHelper journalVoucherActionHelper;
 
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -425,7 +425,7 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
             if (mandatoryFields.contains("department"))
                 addDropdownData("approvaldepartmentList", voucherHelper.getAllAssgnDeptforUser());
             else
-                addDropdownData("approvaldepartmentList", masterDataCache.get("egi-department"));
+                addDropdownData("approvaldepartmentList", departmentService.getAllDepartments());
             addDropdownData("designationList", (List<Designation>) map.get("designationList"));
             wfitemstate = "";
         } else

@@ -53,6 +53,7 @@ import org.egov.commons.CFinancialYear;
 import org.egov.egf.model.BudgetAmountView;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
@@ -61,7 +62,6 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.pims.commons.Designation;
@@ -93,8 +93,9 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
     private boolean showDetails = false;
     private boolean isDetailByFunction;
     private ScriptService scriptService;
+
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
 
     public ScriptService getScriptService() {
         return scriptService;
@@ -213,7 +214,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
             dropdownData.put("budgetList", budgetDetailService.findBudgetsForFY(getFinancialYear()));
         else
             dropdownData.put("budgetList", budgetDetailService.findBudgetsForFYWithNewState(getFinancialYear()));
-        addDropdownData("departmentList", masterDataCache.get("egi-department"));
+        addDropdownData("departmentList", departmentService.getAllDepartments());
         addDropdownData("designationList", Collections.EMPTY_LIST);
         addDropdownData("userList", Collections.EMPTY_LIST);
     }
@@ -686,7 +687,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
         final Map<String, Object> map = voucherService.getDesgBYPassingWfItem("BudgetDetail.nextDesg", null, budgetDetailList
                 .get(0)
                 .getExecutingDepartment().getId().intValue());
-        addDropdownData("departmentList", masterDataCache.get("egi-department"));
+        addDropdownData("departmentList", departmentService.getAllDepartments());
 
         final List<Map<String, Object>> desgList = (List<Map<String, Object>>) map.get("designationList");
         String strDesgId = "", dName = "";
@@ -790,14 +791,6 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
 
     public void setConsolidatedScreen(final boolean consolidatedScreen) {
         this.consolidatedScreen = consolidatedScreen;
-    }
-
-    public EgovMasterDataCaching getMasterDataCache() {
-        return masterDataCache;
-    }
-
-    public void setMasterDataCache(EgovMasterDataCaching masterDataCache) {
-        this.masterDataCache = masterDataCache;
     }
 
 }

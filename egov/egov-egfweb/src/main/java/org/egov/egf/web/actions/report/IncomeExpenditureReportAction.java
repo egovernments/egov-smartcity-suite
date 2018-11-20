@@ -64,7 +64,7 @@ import org.egov.commons.repository.FundRepository;
 import org.egov.egf.model.Statement;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.repository.BoundaryRepository;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.reporting.util.ReportUtil;
@@ -139,7 +139,7 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
  @Autowired
  private FundRepository fundRepository;
  @Autowired
- private BoundaryRepository boundaryRepository;
+ private BoundaryService boundaryService;
     
     public void setIncomeExpenditureService(final IncomeExpenditureService incomeExpenditureService) {
         this.incomeExpenditureService = incomeExpenditureService;
@@ -180,7 +180,7 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
             addDropdownData("functionList", functionRepository.findByIsActiveAndIsNotLeaf(true,false));
             addDropdownData("functionaryList", functionaryDAO.findAllActiveFunctionary());
             addDropdownData("fundDropDownList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
-            addDropdownData("fieldList", boundaryRepository.findBoundariesByBndryTypeName("WARD"));
+            addDropdownData("fieldList", boundaryService.getBoundaryByBoundaryTypeName("WARD"));
             addDropdownData("financialYearList",
                     getPersistenceService().findAllBy("from CFinancialYear where isActive=true  order by finYearRange desc "));
         }

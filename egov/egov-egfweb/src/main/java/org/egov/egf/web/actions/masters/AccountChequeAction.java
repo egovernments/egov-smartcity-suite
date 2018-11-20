@@ -60,12 +60,13 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.repository.FundRepository;
 import org.egov.commons.service.BankAccountService;
 import org.egov.egf.commons.EgovCommon;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.cheque.AccountCheques;
 import org.egov.model.cheque.ChequeDeptMapping;
 import org.egov.model.masters.ChequeDetail;
@@ -100,7 +101,9 @@ public class AccountChequeAction extends BaseFormAction {
     private AccountChequesService accountChequesService;
 
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
+    @Autowired
+    private FundRepository fundRepository;
 
     @Autowired
     private FinancialYearDAO financialYearDAO;
@@ -122,7 +125,7 @@ public class AccountChequeAction extends BaseFormAction {
     @Override
     public void prepare() {
         super.prepare();
-        addDropdownData("departmentList", masterDataCache.get("egi-department"));
+        addDropdownData("departmentList", departmentService.getAllDepartments());
         addDropdownData("financialYearList", financialYearDAO.getAllActiveFinancialYearList());
     }
 
@@ -130,7 +133,7 @@ public class AccountChequeAction extends BaseFormAction {
     public String newform() {
         addDropdownData("bankList", Collections.EMPTY_LIST);
         addDropdownData("accNumList", Collections.EMPTY_LIST);
-        addDropdownData("fundList", masterDataCache.get("egi-fund"));
+        addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
         return "new";
 
     }
@@ -139,7 +142,7 @@ public class AccountChequeAction extends BaseFormAction {
     public String view() {
         addDropdownData("bankList", Collections.EMPTY_LIST);
         addDropdownData("accNumList", Collections.EMPTY_LIST);
-        addDropdownData("fundList", masterDataCache.get("egi-fund"));
+        addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
         return "view";
 
     }
