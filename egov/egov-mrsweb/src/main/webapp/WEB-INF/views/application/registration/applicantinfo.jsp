@@ -294,7 +294,7 @@
 
 <div class="form-group">
 
-	<label class="col-sm-3 control-label"> <spring:message
+	<label class="col-sm-3 control-label val-mandatory"> <spring:message
 			code="lbl.office.address" /><span class="mandatory"></span>
 	</label>
 	<div class="col-sm-3">

@@ -83,7 +83,7 @@
 		<input id="applicationDate" type="hidden"
 			class="form-control datepicker" value="${applicationDate}" />
 	</c:if>
-	<label class="col-sm-3 control-label"> <spring:message
+	<label class="col-sm-3 control-label val-mandatory"> <spring:message
 			code="lbl.registrationunit" /><span class="mandatory"></span>
 	</label>
 	<div class="col-sm-3">
@@ -100,7 +100,7 @@
 		<form:errors path="marriageRegistrationUnit"
 			cssClass="add-margin error-msg" />
 	</div>
-	<label class="col-sm-2 control-label"> <spring:message
+	<label class="col-sm-2 control-label val-mandatory"> <spring:message
 			code="lbl.Boundary" /><span class="mandatory"></span>
 	</label>
 	<div class="col-sm-3">
