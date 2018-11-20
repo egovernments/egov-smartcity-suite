@@ -296,6 +296,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private transient List<DocumentType> assessmentDocumentTypesRP = new ArrayList<>();
     private transient List<String> assessmentDocumentNames;
     private transient DocumentTypeDetails documentTypeDetails = new DocumentTypeDetails();
+    private boolean editOwnerDetails = false;
 
     @Autowired
     private transient PropertyStatusValuesDAO propertyStatusValuesDAO;
@@ -688,7 +689,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     @Action(value = "/revPetition-recordInspectionDetails")
     public String recordInspectionDetails() {
         vaidatePropertyDetails();
-        if (superStructureRP(objection)) {
+        if (superStructureRP(objection) && isEditOwnerDetails()) {
             validateOwnerDetails(objection.getProperty());
             validateDocumentDetails(getDocumentTypeDetails());
             basicPropertyService.createOwners(objection.getProperty(), objection.getBasicProperty(),
@@ -715,7 +716,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 objection.getCurrentState().getOwnerPosition().getId(), securityUtils.getCurrentUser().getId());
         if (REVENUE_INSPECTOR_DESGN.equals(designation)) {
             propService.processAndStoreDocument(objection.getDocuments());
-            if (getDocumentTypeDetails() != null) {
+            if (getDocumentTypeDetails() != null && isEditOwnerDetails()) {
                 propService.processAndStoreDocument(objection.getProperty().getAssessmentDocuments());
                 propService.saveDocumentTypeDetails(objection.getBasicProperty(), getDocumentTypeDetails());
             }
@@ -727,7 +728,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         }
         addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
                 approverComments, approverName));
-        if (superStructureRP(objection))
+        if (superStructureRP(objection) && isEditOwnerDetails())
             basicPropertyService.update(objection.getBasicProperty());
         propertyImplService.merge(objection.getProperty());
         revisionPetitionService.updateRevisionPetition(objection);
@@ -1158,8 +1159,16 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     @Action(value = "/revPetition-view")
     public String view() {
         getPropertyView(objection.getBasicProperty().getUpicNo());
-        if (superStructureRP(objection))
+        if (superStructureRP(objection)){
             objection.getBasicProperty().setPropertyOwnerInfoProxy(objection.getBasicProperty().getPropertyOwnerInfo());
+            try {
+                final Query query = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
+                query.setParameter("basicProperty", objection.getBasicProperty().getId());
+                setDocumentTypeDetails((DocumentTypeDetails) query.getSingleResult());
+            } catch (final Exception e) {
+                logger.error("No Document type details present for Basicproperty " + e);
+            }
+        }
         isReassignEnabled = reassignmentservice.isReassignEnabled();
         stateAwareId = objection.getId();
         if (objection.getBasicProperty() != null
@@ -1198,14 +1207,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         setOwnerName(objection.getBasicProperty().getProperty());
         setPropertyAddress(objection.getBasicProperty().getAddress());
         setWfType(objection.getType());
-        if(objection.getType().equals(NATURE_OF_WORK_RP) && objection.getBasicProperty().getProperty().getPropertyDetail().isStructure())
-        try {
-            final Query query = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
-            query.setParameter("basicProperty", objection.getBasicProperty().getId());
-            setDocumentTypeDetails((DocumentTypeDetails) query.getSingleResult());
-        } catch (final Exception e) {
-            logger.error("No Document type details present for Basicproperty " + e);
-        }
         return "view";
     }
 
@@ -1906,5 +1907,13 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
     public void setDocumentTypeDetails(final DocumentTypeDetails documentTypeDetails) {
         this.documentTypeDetails = documentTypeDetails;
+    }
+
+    public boolean isEditOwnerDetails() {
+        return editOwnerDetails;
+    }
+
+    public void setEditOwnerDetails(boolean editOwnerDetails) {
+        this.editOwnerDetails = editOwnerDetails;
     }
 }
