@@ -49,7 +49,7 @@ $(document).ready(function()
 {	
 	$('#approvalDepartment').change(function(){
 		$.ajax({
-			url: "/eis/ajaxWorkFlow-getDesignationsByObjectType",     
+			url: "/eis/ajaxWorkFlow-findDesignationsByObjectType",     
 			type: "GET",
 			data: {
 				approvalDepartment : $('#approvalDepartment').val(),

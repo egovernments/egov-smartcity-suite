@@ -190,5 +190,84 @@ public class AjaxWorkFlowController {
         }
         return "[]";
     }
+    
+    @RequestMapping(value = "/ajaxWorkFlow-findDesignationsByObjectType", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<Designation> findDesignationsByObjectType(
+            @ModelAttribute("designations") @RequestParam final String departmentRule, @RequestParam final String currentState,
+            @RequestParam final String type,
+            @RequestParam final String amountRule, @RequestParam final String additionalRule,
+            @RequestParam final String pendingAction, @RequestParam final Long approvalDepartment) {
+
+        return designationService.getDesignationsByNames(
+                customizedWorkFlowService.getNextDesignations(type,
+                        departmentRule, null, additionalRule, currentState,
+                        pendingAction, new Date()));
+
+    }
+
+    @RequestMapping(value = "/ajaxWorkFlow-findDesignationsForActiveAssignmentsByObjectType", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<Designation> findDesignationsForActiveAssignmentsByObjectType(
+            @ModelAttribute("designations") @RequestParam final String departmentRule, @RequestParam final String currentState,
+            @RequestParam final String type,
+            @RequestParam final String amountRule, @RequestParam final String additionalRule,
+            @RequestParam final String pendingAction, @RequestParam final Long approvalDepartment) {
+
+        return assignmentService
+                .getDesignationsByActiveAssignmentAndDesignationNames(
+                        customizedWorkFlowService.getNextDesignationsForActiveAssignments(type,
+                                departmentRule, null, additionalRule, currentState,
+                                pendingAction, new Date()));
+
+    }
+
+    @RequestMapping(value = "/ajaxWorkFlow-findDesignationsForActiveAssignmentsByObjectTypeAndDesignation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<Designation> findDesignationsForActiveAssignmentsByObjectTypeAndDesignation(
+            @ModelAttribute("designations") @RequestParam final String departmentRule, @RequestParam final String currentState,
+            @RequestParam final String type,
+            @RequestParam final String amountRule, @RequestParam final String additionalRule,
+            @RequestParam final String pendingAction, @RequestParam final Long approvalDepartment,
+            @RequestParam final String currentDesignation) {
+
+        return assignmentService
+                .getDesignationsByActiveAssignmentAndDesignationNames(
+                        customizedWorkFlowService.getNextDesignationsForActiveAssignments(type,
+                                departmentRule, null, additionalRule, currentState,
+                                pendingAction, new Date(), currentDesignation));
+
+    }
+
+    @RequestMapping(value = "/ajaxWorkFlow-findDesignationsByObjectTypeAndDesignation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<Designation> findDesignationsByObjectTypeAndDesignation(
+            @ModelAttribute("designations") @RequestParam final String departmentRule, @RequestParam final String currentState,
+            @RequestParam final String type,
+            @RequestParam final String amountRule, @RequestParam final String additionalRule,
+            @RequestParam final String pendingAction, @RequestParam final Long approvalDepartment,
+            @RequestParam final String currentDesignation) {
+
+        return designationService.getDesignationsByNames(customizedWorkFlowService.getNextDesignations(type,
+                departmentRule, null, additionalRule, currentState,
+                pendingAction, new Date(), currentDesignation));
+
+    }
+
+    @RequestMapping(value = "/ajaxWorkFlow-findDesignationsByObjectTypeAndDesignationAndDate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<Designation> findDesignationsByObjectTypeAndDesignationAndDate(
+            @ModelAttribute("designations") @RequestParam final String departmentRule, @RequestParam final String currentState,
+            @RequestParam final String type,
+            @RequestParam final String amountRule, @RequestParam final String additionalRule,
+            @RequestParam final String pendingAction, @RequestParam final Long approvalDepartment,
+            @RequestParam final String currentDesignation, @RequestParam final String date) {
+
+        return designationService
+                .getDesignationsByNames(customizedWorkFlowService.getNextDesignations(type,
+                        departmentRule, null, additionalRule, currentState,
+                        pendingAction, DateUtils.getDate(date, "yyyy-MM-dd"), currentDesignation));
+
+    }
 
 }

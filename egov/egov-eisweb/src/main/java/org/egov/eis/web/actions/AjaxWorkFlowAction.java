@@ -142,6 +142,21 @@ public class AjaxWorkFlowAction extends BaseFormAction {
             designationList = persistenceService.findAllBy("from Designation");
         return WF_DESIGNATIONS;
     }
+    
+    @Action(value = "/workflow/ajaxWorkFlow-findDesignationsByObjectType")
+    public String findDesignationsByObjectType() {
+        if ("END".equals(currentState))
+            currentState = "";
+        if (StringUtils.isNotBlank(designation))
+            designationList = designationService.getDesignationsByNames(customizedWorkFlowService.getNextDesignations(type,
+                    departmentRule, amountRule, additionalRule, currentState,
+                    pendingAction, new Date(), designation));
+        else
+            designationList = designationService.getDesignationsByNames(customizedWorkFlowService.getNextDesignations(type,
+                    departmentRule, amountRule, additionalRule, currentState,
+                    pendingAction, new Date()));
+        return WF_DESIGNATIONS;
+    }
 
     public void getAjaxValidButtonsAndNextAction() throws IOException {
         final StringBuilder actionString = new StringBuilder();
