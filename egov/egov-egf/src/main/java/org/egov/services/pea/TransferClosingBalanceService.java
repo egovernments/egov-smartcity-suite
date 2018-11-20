@@ -95,7 +95,7 @@ public class TransferClosingBalanceService extends PersistenceService {
          * is been inserted into the opening balance Note- COA code for Excess IE is been excluded for processing as this will be
          * taken care separately.
          */
-        query = getSession().createSQLQuery(
+        query = getSession().createNativeQuery(
                 getQueryForNonControlCodesAndMisMatchsInControlCodes(financialYear, fyStartingDate, fyEndingDate,
                         nextFinancialYear));
         query.executeUpdate();
@@ -105,7 +105,7 @@ public class TransferClosingBalanceService extends PersistenceService {
          * balance.
          */
         query = null;
-        query = getSession().createSQLQuery(
+        query = getSession().createNativeQuery(
                 getQueryForControlCodes(financialYear, fyStartingDate, fyEndingDate, nextFinancialYear));
         query.executeUpdate();
 
@@ -114,7 +114,7 @@ public class TransferClosingBalanceService extends PersistenceService {
          * year.
          */
         query = null;
-        query = getSession().createSQLQuery(
+        query = getSession().createNativeQuery(
                 getQueryForIncomeOverExpense(financialYear, fyStartingDate, fyEndingDate, nextFinancialYear));
         query.executeUpdate();
 
@@ -124,7 +124,7 @@ public class TransferClosingBalanceService extends PersistenceService {
     @Transactional
     public void deleteNextFYTransactionSummary(CFinancialYear nextFinancialYear) {
         Query query = null;
-        query = getSession().createSQLQuery(
+        query = getSession().createNativeQuery(
                 "delete from TransactionSummary where financialyearid = "
                         + nextFinancialYear.getId() + "");
         query.executeUpdate();

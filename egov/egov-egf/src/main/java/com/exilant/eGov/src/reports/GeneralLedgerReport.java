@@ -237,7 +237,7 @@ public class GeneralLedgerReport {
         try {
 
             try {
-                pstmt = persistenceService.getSession().createSQLQuery(query);
+                pstmt = persistenceService.getSession().createNativeQuery(query);
             } catch (final Exception e) {
                 LOGGER.error("Exception in creating statement:" + pstmt, e);
                 throw taskExc;
@@ -282,7 +282,7 @@ public class GeneralLedgerReport {
                     LOGGER.info("openingBalance--------------->" + openingBalance);
 
                 final String sqlString = "select name as \"glname\" from chartofaccounts where glcode=?";
-                pstmt = persistenceService.getSession().createSQLQuery(sqlString);
+                pstmt = persistenceService.getSession().createNativeQuery(sqlString);
                 pstmt.setString(0, glCode1);
                 final List res = pstmt.list();
                 String aName = "";
@@ -370,7 +370,7 @@ public class GeneralLedgerReport {
                         if (element[13].toString() != null)
                             fundName = element[13].toString();
                         final String sqlString1 = "select name as \"glname\" from chartofaccounts where glcode=?";
-                        pstmt = persistenceService.getSession().createSQLQuery(sqlString1);
+                        pstmt = persistenceService.getSession().createNativeQuery(sqlString1);
                         pstmt.setString(0, code);
                         final List res = pstmt.list();
                         String aName = "";
@@ -969,7 +969,7 @@ public class GeneralLedgerReport {
             LOGGER.info("**********************: OPBAL: " + queryYearOpBal);
         try {
             int i = 0;
-            pstmt = persistenceService.getSession().createSQLQuery(queryYearOpBal);
+            pstmt = persistenceService.getSession().createNativeQuery(queryYearOpBal);
             if (!fundId.equalsIgnoreCase(""))
                 pstmt.setLong(i++, Long.valueOf(fundId));
             if (!fundSourceId.equalsIgnoreCase(""))
@@ -1064,7 +1064,7 @@ public class GeneralLedgerReport {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("***********: OPBAL: " + queryTillDateOpBal);
         try {
-            pstmt = persistenceService.getSession().createSQLQuery(queryTillDateOpBal);
+            pstmt = persistenceService.getSession().createNativeQuery(queryTillDateOpBal);
             int i = 0;
             if (!accEntityId.equalsIgnoreCase("") && !accEntityKey.equalsIgnoreCase("")) {
                 if (!fundId.equalsIgnoreCase(""))
@@ -1143,7 +1143,7 @@ public class GeneralLedgerReport {
         Query pst = null;
         try {
             final String query = "select name as \"name\" from  CHARTOFACCOUNTS where GLCODE=?";
-            pst = persistenceService.getSession().createSQLQuery(query);
+            pst = persistenceService.getSession().createNativeQuery(query);
             pst.setString(0, glCode);
             final List list = pst.list();
             final Object[] objects = list.toArray();
@@ -1162,7 +1162,7 @@ public class GeneralLedgerReport {
         Query pst = null;
         try {
             final String query = "select name  as \"name\" from fund where id=?";
-            pst = persistenceService.getSession().createSQLQuery(query);
+            pst = persistenceService.getSession().createNativeQuery(query);
             if (fundId.isEmpty())
                 pst.setInteger(0, 0);
             else

@@ -172,7 +172,7 @@ public class CancelVoucherAction extends BaseFormAction {
     }
 
     private boolean isSuperUser() {
-        final Query queryFnd = persistenceService.getSession().createSQLQuery(
+        final Query queryFnd = persistenceService.getSession().createNativeQuery(
                 " SELECT usrr.USERID FROM EG_USERROLE usrr,  EG_ROLE r WHERE " +
                         " usrr.ROLEID=r.ID and " +
                         " usrr.userid     =" + loggedInUser + " AND  lower(r.NAME)='" + FinancialConstants.SUPERUSER + "'");
@@ -269,7 +269,7 @@ public class CancelVoucherAction extends BaseFormAction {
 
             // Query for cancelling BPVs for which cheque is assigned and cancelled
             final Query query1 = persistenceService.getSession()
-                    .createSQLQuery(
+                    .createNativeQuery(
                             "SELECT distinct vh.id FROM egw_status status"
                                     + misTab
                                     + ", voucherheader vh 	"
@@ -450,7 +450,7 @@ public class CancelVoucherAction extends BaseFormAction {
                     moduleType = FinancialConstants.PENSIONBILL;
                 }
 
-            final Query billQry = persistenceService.getSession().createSQLQuery(cancelQuery.toString());
+            final Query billQry = persistenceService.getSession().createNativeQuery(cancelQuery.toString());
             billQry.setString("module", moduleType);
             billQry.setString("description", description);
             billQry.setString("billstatus", billstatus);

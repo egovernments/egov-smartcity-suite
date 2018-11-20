@@ -137,7 +137,7 @@ public class GeneralLedger {
 
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(insertQuery);
-            pst = persistenceService.getSession().createSQLQuery(insertQuery);
+            pst = persistenceService.getSession().createNativeQuery(insertQuery);
             pst.setBigInteger(0, BigInteger.valueOf(Long.valueOf(id)));
             pst.setBigInteger(1,voucherLineId == null ?BigInteger.ZERO:BigInteger.valueOf(Long.valueOf(voucherLineId)));
             pst.setTimestamp(2, dt);
@@ -206,7 +206,7 @@ public class GeneralLedger {
         query.append(" where id=?");
         try {
             int i = 1;
-            pstmt = persistenceService.getSession().createSQLQuery(query.toString());
+            pstmt = persistenceService.getSession().createNativeQuery(query.toString());
             if (voucherLineId != null)
                 pstmt.setString(i++, voucherLineId);
             if (effectiveDate != null)
@@ -264,7 +264,7 @@ public class GeneralLedger {
                     + " AND VH.ID=GL.VOUCHERHEADERID AND GL.ID=GLD.GENERALLEDGERID AND VH.VOUCHERDATE<= ? GROUP BY GL.GLCODE";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("query (CreditAmount)--> " + selQuery);
-            pst = persistenceService.getSession().createSQLQuery(selQuery);
+            pst = persistenceService.getSession().createNativeQuery(selQuery);
             pst.setInteger(0, FUND);
             pst.setInteger(1, ACCOUNTDETAILTYPE);
             pst.setInteger(2, ACCOUNTDETAILKEY);
@@ -282,7 +282,7 @@ public class GeneralLedger {
                     + " VH.ID=GL.VOUCHERHEADERID AND GL.ID=GLD.GENERALLEDGERID AND VH.VOUCHERDATE<= ? GROUP BY GL.GLCODE";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("query (DebitAmount)--> " + selQuery);
-            pst = persistenceService.getSession().createSQLQuery(selQuery);
+            pst = persistenceService.getSession().createNativeQuery(selQuery);
             pst.setInteger(0, FUND);
             pst.setInteger(1, ACCOUNTDETAILTYPE);
             pst.setInteger(2, ACCOUNTDETAILKEY);
@@ -359,7 +359,7 @@ public class GeneralLedger {
                     + " AND VH.ID=GL.VOUCHERHEADERID AND GL.ID=GLD.GENERALLEDGERID AND VH.VOUCHERDATE<= ? GROUP BY GL.GLCODE";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("query (CreditAmount)--> " + selQuery);
-            pst = persistenceService.getSession().createSQLQuery(selQuery);
+            pst = persistenceService.getSession().createNativeQuery(selQuery);
             pst.setInteger(0, FUND);
             pst.setInteger(1, ACCOUNTDETAILTYPE);
             pst.setInteger(2, ACCOUNTDETAILKEY);
@@ -377,7 +377,7 @@ public class GeneralLedger {
                     + "VH.ID=GL.VOUCHERHEADERID AND GL.ID=GLD.GENERALLEDGERID AND VH.VOUCHERDATE<= ? GROUP BY GL.GLCODE";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("query (DebitAmount)--> " + selQuery);
-            pst = persistenceService.getSession().createSQLQuery(selQuery);
+            pst = persistenceService.getSession().createNativeQuery(selQuery);
             pst.setInteger(0, FUND);
             pst.setInteger(1, ACCOUNTDETAILTYPE);
             pst.setInteger(2, ACCOUNTDETAILKEY);

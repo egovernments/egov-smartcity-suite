@@ -113,7 +113,7 @@ public class RequiredValidator {
         final String sql = "select detailKey as \"detailKey\" ,detailName as \"detailName\"," +
                 "groupID as \"groupID\",ID as \"ID\" from accountdetailkey where detailTypeId="
                 + String.valueOf(detailId) + " and detailKey = " + String.valueOf(keyToValidate);
-        final List list = persistenceService.getSession().createSQLQuery(sql).list();
+        final List list = persistenceService.getSession().createNativeQuery(sql).list();
         if (list != null && list.size() > 0)
             return true;
         else

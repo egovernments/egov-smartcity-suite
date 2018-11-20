@@ -157,7 +157,7 @@ public class RemittanceServiceImpl extends RemittanceService {
         } else
             depositedBranchCondition = "and receiptMisc.depositedBranch is null";
 
-        final Query cashInHand = persistenceService.getSession().createSQLQuery(cashInHandQueryString);
+        final Query cashInHand = persistenceService.getSession().createNativeQuery(cashInHandQueryString);
 
         String cashInHandGLCode = null;
 
@@ -469,7 +469,7 @@ public class RemittanceServiceImpl extends RemittanceService {
         queryStringForCash.append(groupByClause);
 
         final Query query = receiptHeaderService.getSession()
-                .createSQLQuery(queryStringForCash.toString() + orderBy);
+                .createNativeQuery(queryStringForCash.toString() + orderBy);
 
         final List<Object[]> queryResults = query.list();
 
@@ -556,7 +556,7 @@ public class RemittanceServiceImpl extends RemittanceService {
                     .append(boundaryIdList).append("))");
         chequeRemittanceListQuery.append(" order by RECEIPTDATE,bankname ");
         final Query query = receiptHeaderService.getSession()
-                .createSQLQuery(chequeRemittanceListQuery.toString());
+                .createNativeQuery(chequeRemittanceListQuery.toString());
 
         final List<Object[]> queryResults = query.list();
         final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -655,7 +655,7 @@ public class RemittanceServiceImpl extends RemittanceService {
                         .append("WHERE IT.ID=IAC.TYPEID AND IAC.GLCODEID=COA.ID AND IT.TYPE='")
                         .append(CollectionConstants.INSTRUMENTTYPE_CHEQUE).append("'");
         final Query chequeInHand = persistenceService.getSession()
-                .createSQLQuery(chequeInHandQuery.toString());
+                .createNativeQuery(chequeInHandQuery.toString());
         String chequeInHandGlcode = null;
         if (!chequeInHand.list().isEmpty())
             chequeInHandGlcode = chequeInHand.list().get(0).toString();

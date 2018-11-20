@@ -63,7 +63,7 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -163,9 +163,9 @@ public class CollectPropertyTaxAction extends BaseFormAction {
         BigDecimal actualAdvanceToBeCollected = secondHalfTax.multiply(new BigDecimal(MAX_ADVANCES_ALLOWED));
         BigDecimal advanceBalance = actualAdvanceToBeCollected.subtract(advanceCollected);
         //finding if there are any alter additions from eSuvidha.
-		final SQLQuery qry = entityQueryService
+		final NativeQuery qry = entityQueryService
 				.getSession()
-				.createSQLQuery(
+				.createNativeQuery(
 						"select i_asmtno, ts_dttm, (coalesce(d_crnpt,0) + coalesce(d_crned,0) + coalesce(d_crnlcs,0) + coalesce(d_crnuauthcnstplty,0)) from pt_extnasmtbal_tbl where (coalesce(d_crnpt,0)>0 or coalesce(d_crned,0)>0 or coalesce(d_crnlcs,0)>0 or coalesce(d_crnuauthcnstplty,0)>0) and cast(i_asmtno as text) =:propertyid");
         qry.setParameter("propertyid", propertyId);
         final List<Object[]> list = (List<Object[]>) qry.list();

@@ -60,7 +60,7 @@ import org.egov.model.instrument.InstrumentHeader;
 import org.egov.services.instrument.InstrumentHeaderService;
 import org.egov.services.instrument.InstrumentOtherDetailsService;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
 import org.hibernate.type.LongType;
@@ -149,12 +149,12 @@ public class ManualReconcileHelper {
 		
 		try
 		{
-			SQLQuery totalSQLQuery = persistenceService.getSession().createSQLQuery(totalQuery);
-			totalSQLQuery.setLong("bankAccountId",bankAccId);
-			totalSQLQuery.setDate("fromDate",fromDate);
-			totalSQLQuery.setDate("toDate",toDate);
+			NativeQuery totalNativeQuery = persistenceService.getSession().createNativeQuery(totalQuery);
+			totalNativeQuery.setLong("bankAccountId",bankAccId);
+			totalNativeQuery.setDate("fromDate",fromDate);
+			totalNativeQuery.setDate("toDate",toDate);
 			
-			List list = totalSQLQuery.list();
+			List list = totalNativeQuery.list();
 			if (list.size()>0)
 			{
 				if(LOGGER.isDebugEnabled())     LOGGER.debug(list.get(0));
@@ -164,11 +164,11 @@ public class ManualReconcileHelper {
 			}
 
 			if(LOGGER.isInfoEnabled())     LOGGER.info("  query  for other than cheque/DD: "+otherTotalQuery);
-			totalSQLQuery = persistenceService.getSession().createSQLQuery(otherTotalQuery);
-			totalSQLQuery.setLong("bankAccountId",bankAccId);
-			totalSQLQuery.setDate("fromDate",fromDate);
-			totalSQLQuery.setDate("toDate",toDate);
-			list = totalSQLQuery.list();
+			totalNativeQuery = persistenceService.getSession().createNativeQuery(otherTotalQuery);
+			totalNativeQuery.setLong("bankAccountId",bankAccId);
+			totalNativeQuery.setDate("fromDate",fromDate);
+			totalNativeQuery.setDate("toDate",toDate);
+			list = totalNativeQuery.list();
 			if (list.size()>0)
 			{
 				if(LOGGER.isDebugEnabled())     LOGGER.debug(list.get(0));
@@ -178,11 +178,11 @@ public class ManualReconcileHelper {
 			}
 			if(LOGGER.isInfoEnabled())     LOGGER.info("  query  for bankEntries: "+brsEntryQuery);
 
-			totalSQLQuery = persistenceService.getSession().createSQLQuery(brsEntryQuery);
-			totalSQLQuery.setLong("bankAccountId",bankAccId);
-			totalSQLQuery.setDate("fromDate",fromDate);
-			totalSQLQuery.setDate("toDate",toDate);
-			list = totalSQLQuery.list();
+			totalNativeQuery = persistenceService.getSession().createNativeQuery(brsEntryQuery);
+			totalNativeQuery.setLong("bankAccountId",bankAccId);
+			totalNativeQuery.setDate("fromDate",fromDate);
+			totalNativeQuery.setDate("toDate",toDate);
+			list = totalNativeQuery.list();
 			if (list.size()>0)
 			{
 				if(LOGGER.isDebugEnabled())     LOGGER.debug(list.get(0));
@@ -278,18 +278,18 @@ public class ManualReconcileHelper {
 */
         
         
-		SQLQuery createSQLQuery = persistenceService.getSession().createSQLQuery(query.toString());
-		createSQLQuery.setLong("bankAccId", reconBean.getAccountId());
-		createSQLQuery.setDate("toDate", reconBean.getReconciliationDate());
-		createSQLQuery.addScalar("voucherNumber",StringType.INSTANCE);
-		createSQLQuery.addScalar("ihId",LongType.INSTANCE);
-		createSQLQuery.addScalar("chequeDate",StringType.INSTANCE);
-		createSQLQuery.addScalar("chequeNumber",StringType.INSTANCE);
-		createSQLQuery.addScalar("chequeAmount",BigDecimalType.INSTANCE);
-		createSQLQuery.addScalar("txnType",StringType.INSTANCE);
-		createSQLQuery.addScalar("type",StringType.INSTANCE);
-		createSQLQuery.setResultTransformer(Transformers.aliasToBean(ReconcileBean.class));
-	    list = (List<ReconcileBean>)createSQLQuery.list();
+		NativeQuery createNativeQuery = persistenceService.getSession().createNativeQuery(query.toString());
+		createNativeQuery.setLong("bankAccId", reconBean.getAccountId());
+		createNativeQuery.setDate("toDate", reconBean.getReconciliationDate());
+		createNativeQuery.addScalar("voucherNumber",StringType.INSTANCE);
+		createNativeQuery.addScalar("ihId",LongType.INSTANCE);
+		createNativeQuery.addScalar("chequeDate",StringType.INSTANCE);
+		createNativeQuery.addScalar("chequeNumber",StringType.INSTANCE);
+		createNativeQuery.addScalar("chequeAmount",BigDecimalType.INSTANCE);
+		createNativeQuery.addScalar("txnType",StringType.INSTANCE);
+		createNativeQuery.addScalar("type",StringType.INSTANCE);
+		createNativeQuery.setResultTransformer(Transformers.aliasToBean(ReconcileBean.class));
+	    list = (List<ReconcileBean>)createNativeQuery.list();
          
 		}
 		catch(Exception e)

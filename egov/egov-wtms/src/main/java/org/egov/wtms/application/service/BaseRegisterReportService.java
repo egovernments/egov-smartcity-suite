@@ -51,7 +51,7 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.wtms.application.entity.BaseRegisterResult;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Service;
@@ -127,7 +127,7 @@ public class BaseRegisterReportService {
                         + ConnectionStatus.ACTIVE.toString() + "')");
         if (StringUtils.isNotBlank(ward))
             queryStr.append(" and wardboundary.id = :ward");
-        final SQLQuery query = getCurrentSession().createSQLQuery(queryStr.toString());
+        final NativeQuery query = getCurrentSession().createNativeQuery(queryStr.toString());
         if (StringUtils.isNotBlank(ward))
             query.setLong("ward", Long.valueOf(ward));
         query.setResultTransformer(new AliasToBeanResultTransformer(BaseRegisterResult.class));

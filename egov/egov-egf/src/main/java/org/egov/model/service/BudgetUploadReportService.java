@@ -107,7 +107,7 @@ public class BudgetUploadReportService {
         List<BudgetUploadReport> budgetUploadReportList = new ArrayList<BudgetUploadReport>();
         Query query = null;
         query = persistenceService.getSession()
-                .createSQLQuery(getQuery(reMaterializedPath, beMaterializedPath, fundId, functionId, deptId))
+                .createNativeQuery(getQuery(reMaterializedPath, beMaterializedPath, fundId, functionId, deptId))
                 .addScalar("fundCode", StringType.INSTANCE)
                 .addScalar("functionCode", StringType.INSTANCE)
                 .addScalar("glCode", StringType.INSTANCE)

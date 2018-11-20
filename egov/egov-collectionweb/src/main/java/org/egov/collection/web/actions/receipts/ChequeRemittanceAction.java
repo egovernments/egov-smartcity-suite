@@ -191,7 +191,7 @@ public class ChequeRemittanceAction extends BaseFormAction {
         isListData = true;
         remitAccountNumber = "";
         if (accountNumberId != null) {
-            final Query bankAccountQry = persistenceService.getSession().createSQLQuery(BANK_ACCOUNT_NUMBER_QUERY);
+            final Query bankAccountQry = persistenceService.getSession().createNativeQuery(BANK_ACCOUNT_NUMBER_QUERY);
             bankAccountQry.setLong("accountNumberId", accountNumberId);
             final Object bankAccountResult = bankAccountQry.uniqueResult();
             remitAccountNumber = (String) bankAccountResult;
@@ -202,11 +202,11 @@ public class ChequeRemittanceAction extends BaseFormAction {
             addActionError(getText("bankremittance.before.fromdate"));
         if (!hasErrors() && accountNumberId != null) {
 
-            final Query serviceQuery = persistenceService.getSession().createSQLQuery(SERVICE_QUERY);
+            final Query serviceQuery = persistenceService.getSession().createNativeQuery(SERVICE_QUERY);
             serviceQuery.setLong("accountNumberId", accountNumberId);
             final List<String> serviceCodeList = serviceQuery.list();
 
-            final Query fundQuery = persistenceService.getSession().createSQLQuery(FUND_QUERY);
+            final Query fundQuery = persistenceService.getSession().createNativeQuery(FUND_QUERY);
             fundQuery.setLong("accountNumberId", accountNumberId);
             final String fundCode = fundQuery.list().get(0).toString();
 

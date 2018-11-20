@@ -176,7 +176,7 @@ public class DayBookReportAction extends BaseFormAction {
     private void prepareResultList() {
         String voucherDate = "", voucherNumber = "", voucherType = "", narration = "", status = "";
         Query query = null;
-        query = persistenceService.getSession().createSQLQuery(getQuery())
+        query = persistenceService.getSession().createNativeQuery(getQuery())
                 .addScalar("voucherdate", StringType.INSTANCE)
                 .addScalar("vouchernumber", StringType.INSTANCE)
                 .addScalar("glcode", StringType.INSTANCE)

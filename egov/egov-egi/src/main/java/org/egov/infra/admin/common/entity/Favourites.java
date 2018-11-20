@@ -49,7 +49,7 @@
 package org.egov.infra.admin.common.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;

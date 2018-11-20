@@ -510,7 +510,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
                         + " where receipt_date>=:fromDate and receipt_date<=:toDate and service=:serviceCode "
                         + " and source=:source and ulb=:ulbCode  group by ulb,service  ");
 
-        final Query query = getSession().createSQLQuery(queryBuilder.toString());
+        final Query query = getSession().createNativeQuery(queryBuilder.toString());
         query.setDate("fromDate", aggrReq.getFromdate());
         query.setDate("toDate", aggrReq.getTodate());
         query.setString("serviceCode", aggrReq.getServicecode());

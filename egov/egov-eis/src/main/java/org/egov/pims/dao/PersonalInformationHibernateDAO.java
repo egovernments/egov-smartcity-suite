@@ -129,7 +129,7 @@ public class PersonalInformationHibernateDAO implements PersonalInformationDAO
 	
 	public void deleteLangKnownForEmp(PersonalInformation personalInformation)
 	{
-		Query qry = getCurrentSession().createSQLQuery("delete  from EGEIS_LANG_KNOWN B where B.id = :id ");
+		Query qry = getCurrentSession().createNativeQuery("delete  from EGEIS_LANG_KNOWN B where B.id = :id ");
 		qry.setInteger("id", personalInformation.getIdPersonalInformation());
 		
 	}

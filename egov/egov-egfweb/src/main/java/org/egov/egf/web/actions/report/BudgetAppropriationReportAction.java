@@ -225,7 +225,7 @@ public class BudgetAppropriationReportAction extends BaseFormAction {
 
 	private Query generateQuery() {
 		final Query query = persistenceService.getSession()
-				.createSQLQuery(getQueryString().toString())
+				.createNativeQuery(getQueryString().toString())
 				.addScalar("department").addScalar("function")
 				.addScalar("fund").addScalar("budgetHead")
 				.addScalar("budgetAppropriationNo")
@@ -259,7 +259,7 @@ public class BudgetAppropriationReportAction extends BaseFormAction {
 	 */
 	@SuppressWarnings("unchecked")
 	public String getUlbName() {
-		final Query query = persistenceService.getSession().createSQLQuery(
+		final Query query = persistenceService.getSession().createNativeQuery(
 				"select name from companydetail");
 		final List<String> result = query.list();
 		if (result != null)

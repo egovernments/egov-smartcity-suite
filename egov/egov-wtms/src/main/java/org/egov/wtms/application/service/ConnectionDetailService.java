@@ -507,7 +507,7 @@ public class ConnectionDetailService {
                 .append(" AND bill.id_bill_type=(select id from eg_bill_type where code=:billType)")
                 .append(" AND bill.issue_date>=:startDate AND bill.issue_date<=:endDate")
                 .append(" AND bill.module_id =(select id from eg_module where name =:moduleName) order By bill.consumer_id ");
-        final Query query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
+        final Query query = entityManager.unwrap(Session.class).createNativeQuery(queryStr.toString());
         query.setParameter("userType", ROLE_CITIZEN);
         query.setParameter("moduleName", MODULE_NAME);
         query.setParameter("billType", BILLTYPE_MANUAL);

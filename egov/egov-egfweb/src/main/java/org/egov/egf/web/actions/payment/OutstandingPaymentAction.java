@@ -224,7 +224,7 @@ public class OutstandingPaymentAction extends BaseFormAction {
                 " where empinfo.functionary_id=func.id and empinfo.DESIGNATIONID=desg.DESIGNATIONID " +
                 " and empinfo.isactive=true   " +
                 " and desg.DESIGNATION_NAME like '" + designationName + "' and func.NAME like '" + functionaryName + "' ";
-        final Query query = persistenceService.getSession().createSQLQuery(qrySQL);
+        final Query query = persistenceService.getSession().createNativeQuery(qrySQL);
         final List<BigDecimal> result = query.list();
         if (result == null || result.isEmpty())
             throw new ValidationException("", "No employee with functionary -" + functionaryName + " and designation - "
@@ -240,7 +240,7 @@ public class OutstandingPaymentAction extends BaseFormAction {
     }
 
     public String getUlbName() {
-        final Query query = persistenceService.getSession().createSQLQuery("select name from companydetail");
+        final Query query = persistenceService.getSession().createNativeQuery("select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);

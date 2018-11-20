@@ -69,7 +69,7 @@ public class DatabaseSequenceProvider {
     @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW, noRollbackFor = SQLGrammarException.class)
     public Serializable getNextSequence(String sequenceName) throws SQLGrammarException {
         return (Serializable) entityManager.unwrap(Session.class)
-                .createSQLQuery(NEXT_SEQ_QUERY)
+                .createNativeQuery(NEXT_SEQ_QUERY)
                 .setParameter("sequenceName", sequenceName)
                 .uniqueResult();
     }

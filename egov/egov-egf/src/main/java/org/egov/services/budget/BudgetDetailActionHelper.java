@@ -193,7 +193,7 @@ public class BudgetDetailActionHelper {
         if (searchbudgetGroupid != null && searchbudgetGroupid != 0)
             addlCondtion.append("and budgetGroup.id=:budgetGroupid");
         new ArrayList<BudgetDetail>();
-        final Query qry = persistenceService.getSession().createSQLQuery(addlCondtion.toString());
+        final Query qry = persistenceService.getSession().createNativeQuery(addlCondtion.toString());
         qry.setLong("budgetid", budget.getId());
         if (referenceBudgetFor != null)
             qry.setLong("referenceBudget", referenceBudgetFor.getId());

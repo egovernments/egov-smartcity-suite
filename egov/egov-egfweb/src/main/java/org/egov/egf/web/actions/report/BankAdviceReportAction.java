@@ -237,11 +237,11 @@ public class BankAdviceReportAction extends BaseFormAction {
                 " AND gl.voucherheaderid =m.billvhid AND gl.id=gld.generalledgerid AND gl.debitamount!=0 " +
                 " group by gld.detailtypeid ,gld.detailkeyid  ";
 
-        final Query WithNetPayableSubledgerQuery = persistenceService.getSession().createSQLQuery(query);
+        final Query WithNetPayableSubledgerQuery = persistenceService.getSession().createNativeQuery(query);
         WithNetPayableSubledgerQuery.setParameter(0, instrumentHeader.getId());
 
         // Get without subledger one
-        final Query getDebitsideSubledgerQuery = persistenceService.getSession().createSQLQuery(withNoSubledgerQry);
+        final Query getDebitsideSubledgerQuery = persistenceService.getSession().createNativeQuery(withNoSubledgerQry);
         getDebitsideSubledgerQuery.setParameter(0, instrumentHeader.getId());
         getDebitsideSubledgerQuery.setParameter(1, instrumentHeader.getId());
 

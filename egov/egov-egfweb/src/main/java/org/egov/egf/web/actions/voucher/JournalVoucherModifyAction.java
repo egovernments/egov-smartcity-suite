@@ -376,7 +376,7 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
                 moduleType = FinancialConstants.CONTRACTORBILL;
             }
 
-            final Query billQry = persistenceService.getSession().createSQLQuery(cancelQuery.toString());
+            final Query billQry = persistenceService.getSession().createNativeQuery(cancelQuery.toString());
             billQry.setString("module", moduleType);
             billQry.setString("description", description);
             billQry.setString("billstatus", billstatus);

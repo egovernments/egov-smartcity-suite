@@ -58,7 +58,7 @@ import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.repository.bulkboundaryupdation.BulkBoundaryUpdationRepository;
 import org.egov.ptis.repository.spec.BulkBoundarySpec;
 import org.hibernate.query.Query;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -125,7 +125,7 @@ public class BulkBoundaryService {
 	public void updatePropertyMvInfo(BasicProperty basicProperty) {
 		String query = String.format("update egpt_mv_propertyinfo set localityid = :localityid, " + " blockid=:blockid, "
 				+ " wardid=:wardid, " + " electionwardid=:electionwardid" + " where upicno = :assessmentno");
-		SQLQuery sqlQuery = entityManager.unwrap(Session.class).createSQLQuery(query);
+		NativeQuery sqlQuery = entityManager.unwrap(Session.class).createNativeQuery(query);
 		sqlQuery.setParameter("localityid", basicProperty.getPropertyID().getLocality().getId());
 		sqlQuery.setParameter("blockid", basicProperty.getPropertyID().getArea().getId());
 		sqlQuery.setParameter("wardid", basicProperty.getPropertyID().getWard().getId());
@@ -138,7 +138,7 @@ public class BulkBoundaryService {
 	@Transactional
 	public void refreshViewPropertyInfo() {
 		String sqlqry = "REFRESH MATERIALIZED VIEW CONCURRENTLY egpt_view_propertyinfo ";
-		entityManager.unwrap(Session.class).createSQLQuery(sqlqry).executeUpdate();
+		entityManager.unwrap(Session.class).createNativeQuery(sqlqry).executeUpdate();
 	}
 
 	@ReadOnly

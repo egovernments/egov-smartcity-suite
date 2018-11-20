@@ -61,7 +61,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import com.google.firebase.database.annotations.NotNull;

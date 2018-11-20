@@ -239,7 +239,7 @@ public class ConcurrenceReportAction extends BaseFormAction {
     }
 
     private Query generateQuery() {
-        final Query query = persistenceService.getSession().createSQLQuery(
+        final Query query = persistenceService.getSession().createNativeQuery(
                 getQueryString().toString()).addScalar("bankName").addScalar(
                         "bankAccountNumber").addScalar("fundId").addScalar(
                                 "departmentName").addScalar("billNumber").addScalar("billDate")
@@ -340,7 +340,7 @@ public class ConcurrenceReportAction extends BaseFormAction {
     }
 
     public String getUlbName() {
-        final Query query = persistenceService.getSession().createSQLQuery(
+        final Query query = persistenceService.getSession().createNativeQuery(
                 "select name from companydetail");
         final List<String> result = query.list();
         if (result != null)

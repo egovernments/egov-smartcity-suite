@@ -411,7 +411,7 @@ public class ConnectionDemandService {
                 .append("eg_installment_master inst,eg_demand_reason_master dmdresmas where dmdDet.id_demand_reason=dmdRes.id ")
                 .append("and dmdDet.id_demand =:dmdId and dmdRes.id_installment = inst.id and dmdresmas.id = dmdres.id_demand_reason_master ")
                 .append("group by dmdRes.id,dmdRes.id_installment, inst.start_date order by inst.start_date ");
-        return getCurrentSession().createSQLQuery(queryBuilder.toString()).setLong("dmdId", egDemand.getId())
+        return getCurrentSession().createNativeQuery(queryBuilder.toString()).setLong("dmdId", egDemand.getId())
                 .list();
     }
 
@@ -430,7 +430,7 @@ public class ConnectionDemandService {
                 .append("eg_installment_master inst,eg_demand_reason_master dmdresmas where dmdDet.id_demand_reason=dmdRes.id ")
                 .append("and dmdDet.id_demand =:dmdId and inst.start_date<=:currInstallmentDate and dmdRes.id_installment = inst.id and dmdresmas.id = dmdres.id_demand_reason_master ")
                 .append("group by dmdRes.id,dmdRes.id_installment, inst.start_date order by inst.start_date ");
-        Query query = getCurrentSession().createSQLQuery(queryBuilder.toString())
+        Query query = getCurrentSession().createNativeQuery(queryBuilder.toString())
                 .setParameter("dmdId", egDemand.getId())
                 .setParameter("currInstallmentDate", currInstallment.getToDate());
         return query.list();
@@ -447,7 +447,7 @@ public class ConnectionDemandService {
                 .append("eg_installment_master inst,eg_demand_reason_master dmdresmas where dmdDet.id_demand_reason=dmdRes.id ")
                 .append("and dmdDet.id_demand =:dmdId and inst.start_date<=:currFinEndDate and dmdRes.id_installment = inst.id and dmdresmas.id = dmdres.id_demand_reason_master ")
                 .append("group by dmdRes.id,dmdRes.id_installment, inst.start_date order by inst.start_date ");
-        Query query = getCurrentSession().createSQLQuery(queryBuilder.toString())
+        Query query = getCurrentSession().createNativeQuery(queryBuilder.toString())
                 .setParameter("dmdId", egDemand.getId()).setParameter("currFinEndDate", financialyear.getEndingDate());
         return query.list();
     }
@@ -816,7 +816,7 @@ public class ConnectionDemandService {
                 .append(" AND dmdDet.id_demand =:dmdId AND dmdRes.id_installment = inst.id AND dmdresmas.id = dmdres.id_demand_reason_master ")
                 .append(" AND dmdresmas.isdemand=TRUE AND wcd.demand = dmdDet.id_demand GROUP BY dmdRes.id, dmdRes.id_installment, ")
                 .append(" inst.start_date,wcd.id ORDER BY inst.start_date) AS dcb");
-        return getCurrentSession().createSQLQuery(stringBuilder.toString()).setLong("dmdId", egDemand.getId()).list();
+        return getCurrentSession().createNativeQuery(stringBuilder.toString()).setLong("dmdId", egDemand.getId()).list();
     }
 
     /**
@@ -847,7 +847,7 @@ public class ConnectionDemandService {
                 .append(" eg_installment_master inst,eg_demand_reason_master dmdresmas where dmdDet.id_demand_reason=dmdRes.id ")
                 .append(" and dmdDet.id_demand =:dmdId and inst.start_date<:currFinStartDate and dmdRes.id_installment = inst.id and dmdresmas.id = dmdres.id_demand_reason_master ")
                 .append(" group by dmdRes.id,dmdRes.id_installment, inst.start_date order by inst.start_date ");
-        Query query = getCurrentSession().createSQLQuery(stringBuilder.toString())
+        Query query = getCurrentSession().createNativeQuery(stringBuilder.toString())
                 .setParameter("dmdId", egDemand.getId())
                 .setParameter("currFinStartDate", financialyear.getStartingDate());
         return query.list();

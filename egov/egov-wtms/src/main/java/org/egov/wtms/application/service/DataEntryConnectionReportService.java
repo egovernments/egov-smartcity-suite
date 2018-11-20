@@ -49,7 +49,7 @@ package org.egov.wtms.application.service;
 
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.wtms.application.entity.DataEntryConnectionReport;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Service;
@@ -89,7 +89,7 @@ public class DataEntryConnectionReportService {
                 " where dcbinfo.connectionstatus = 'ACTIVE' and dcbinfo.legacy = true and dcbinfo.approvalnumber IS NULL  and dcbinfo.connectiontype = 'NON_METERED' ");
         if (ward != null && !ward.isEmpty())
             queryStr.append(" and wardboundary.name = " + "'" + ward + "'");
-        final SQLQuery query = getCurrentSession().createSQLQuery(queryStr.toString());
+        final NativeQuery query = getCurrentSession().createNativeQuery(queryStr.toString());
         query.setResultTransformer(new AliasToBeanResultTransformer(DataEntryConnectionReport.class));
         return query.list();
 

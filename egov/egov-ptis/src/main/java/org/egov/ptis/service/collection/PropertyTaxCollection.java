@@ -856,7 +856,7 @@ public class PropertyTaxCollection extends TaxCollection {
                 reciptDetailList.get(0).getReceiptHeader().getConsumerCode());
 
         String courtCaseQuery = "select (case when exists (select assessmentno from egpt_courtcases where assessmentno=:assessmentNo) then 1 else 0 end)";
-        final Query query = persistenceService.getSession().createSQLQuery(courtCaseQuery);
+        final Query query = persistenceService.getSession().createNativeQuery(courtCaseQuery);
         query.setString("assessmentNo", reciptDetailList.get(0).getReceiptHeader().getConsumerCode());
         int courtcase = (int) query.uniqueResult();
 

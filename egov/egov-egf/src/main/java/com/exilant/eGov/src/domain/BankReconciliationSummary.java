@@ -51,7 +51,7 @@ package com.exilant.eGov.src.domain;
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -128,12 +128,12 @@ public class BankReconciliationSummary {
 		
 		try
 		{
-			SQLQuery totalSQLQuery =  persistenceService.getSession().createSQLQuery(totalQuery);
-			totalSQLQuery.setInteger("bankAccountId",bankAccId);
-			totalSQLQuery.setDate("fromDate",fromDate);
-			totalSQLQuery.setDate("toDate",toDate);
+			NativeQuery totalNativeQuery =  persistenceService.getSession().createNativeQuery(totalQuery);
+			totalNativeQuery.setInteger("bankAccountId",bankAccId);
+			totalNativeQuery.setDate("fromDate",fromDate);
+			totalNativeQuery.setDate("toDate",toDate);
 			
-			List list = totalSQLQuery.list();
+			List list = totalNativeQuery.list();
 			if (list.size()>0)
 			{
 				if(LOGGER.isDebugEnabled())     LOGGER.debug(list.get(0));
@@ -142,11 +142,11 @@ public class BankReconciliationSummary {
 				debitTotal=my[1]!=null?my[1].toString():null;
 			}
 
-			totalSQLQuery = persistenceService.getSession().createSQLQuery(otherTotalQuery);
-			totalSQLQuery.setInteger("bankAccountId",bankAccId);
-			totalSQLQuery.setDate("fromDate",fromDate);
-			totalSQLQuery.setDate("toDate",toDate);
-			list = totalSQLQuery.list();
+			totalNativeQuery = persistenceService.getSession().createNativeQuery(otherTotalQuery);
+			totalNativeQuery.setInteger("bankAccountId",bankAccId);
+			totalNativeQuery.setDate("fromDate",fromDate);
+			totalNativeQuery.setDate("toDate",toDate);
+			list = totalNativeQuery.list();
 			if (list.size()>0)
 			{
 				if(LOGGER.isDebugEnabled())     LOGGER.debug(list.get(0));
@@ -155,11 +155,11 @@ public class BankReconciliationSummary {
 				debitOtherTotal=my[1]!=null?my[1].toString():null;
 			}
 
-			totalSQLQuery = persistenceService.getSession().createSQLQuery(brsEntryQuery);
-			totalSQLQuery.setInteger("bankAccountId",bankAccId);
-			totalSQLQuery.setDate("fromDate",fromDate);
-			totalSQLQuery.setDate("toDate",toDate);
-			list = totalSQLQuery.list();
+			totalNativeQuery = persistenceService.getSession().createNativeQuery(brsEntryQuery);
+			totalNativeQuery.setInteger("bankAccountId",bankAccId);
+			totalNativeQuery.setDate("fromDate",fromDate);
+			totalNativeQuery.setDate("toDate",toDate);
+			list = totalNativeQuery.list();
 			if (list.size()>0)
 			{
 				if(LOGGER.isDebugEnabled())     LOGGER.debug(list.get(0));

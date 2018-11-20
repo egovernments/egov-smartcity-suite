@@ -1618,7 +1618,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
                 + "AND ((mis.VOUCHERHEADERID   IS NULL) OR (mis.VOUCHERHEADERID IS NOT NULL AND EXISTS (SELECT id FROM voucherheader WHERE id=mis.VOUCHERHEADERID AND status="
                 + FinancialConstants.CANCELLEDVOUCHERSTATUS + ")))";
 
-        final Query query = persistenceService.getSession().createSQLQuery(payQuery);
+        final Query query = persistenceService.getSession().createNativeQuery(payQuery);
         query.setParameterList("projCodeIds", projectCodeIdsList);
         query.setDate("date", asOnDate);
         billAmountResult = query.list();

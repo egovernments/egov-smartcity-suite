@@ -171,7 +171,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
         setStatusValues();
 
         query = getSession()
-                .createSQLQuery(
+                .createNativeQuery(
                         "select vh.id as voucherid ,vh.voucherNumber as voucherNumber ,vh.voucherDate as voucherDate,sum(misbill.paidamount) as paidAmount,current_date as chequeDate from Paymentheader ph,voucherheader vh,vouchermis vmis, Miscbilldetail misbill "
                                 +
                                 " where ph.voucherheaderid=misbill.payvhid and ph.voucherheaderid=vh.id and vmis.voucherheaderid= vh.id and vh.status ="
@@ -280,7 +280,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 " ON (pvh.id=iv.VOUCHERHEADERID)  LEFT OUTER JOIN egf_instrumentheader ih  ON (ih.ID=iv.INSTRUMENTHEADERID)  WHERE pvh.id=vh.id AND ih.ID_STATUS IN ("
                 + statusId + ")) " +
                 " group by vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto order by paidto,voucherNumber ";
-        query = getSession().createSQLQuery(supplierBillPaymentQuery)
+        query = getSession().createNativeQuery(supplierBillPaymentQuery)
                 .addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
                 .addScalar("detailtypeid", LongType.INSTANCE)
                 .addScalar("detailkeyid", LongType.INSTANCE).addScalar("paidTo")
@@ -346,7 +346,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 " ON (pvh.id=iv.VOUCHERHEADERID)  LEFT OUTER JOIN egf_instrumentheader ih  ON (ih.ID=iv.INSTRUMENTHEADERID)  WHERE pvh.id=vh.id AND ih.ID_STATUS IN ("
                 + statusId + "))  group by vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto  " +
                 " order by paidto,voucherNumber ";
-        query = getSession().createSQLQuery(bankPaymentQuery)
+        query = getSession().createNativeQuery(bankPaymentQuery)
                 .addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber")
                 .addScalar("detailtypeid", LongType.INSTANCE).addScalar("detailkeyid", LongType.INSTANCE)
                 .addScalar("voucherDate").addScalar("paidTo").addScalar("paidAmount", BigDecimalType.INSTANCE)
@@ -386,7 +386,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 " and gl.voucherheaderid =vh.id and gl.creditamount>0 and misbill.billvhid=billvh.id  and br.id=billmis.billid and billmis.voucherheaderid=billvh.id and br.expendituretype='"
                 + FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT + "' and iv.id is null  " +
                 " group by  misbill.billvhid,vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto ";
-        query = getSession().createSQLQuery(strQuery)
+        query = getSession().createNativeQuery(strQuery)
                 .addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
                 .addScalar("paidAmount", BigDecimalType.INSTANCE)
                 .addScalar("chequeDate").addScalar("paidTo").addScalar("billVHId", LongType.INSTANCE)
@@ -517,7 +517,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
     }
 
     private BigDecimal getNonSubledgerDeductions(final Long billVHId) {
-        final Query query = getSession().createSQLQuery("SELECT SUM(gl.creditamount) " +
+        final Query query = getSession().createNativeQuery("SELECT SUM(gl.creditamount) " +
                 "FROM generalledger gl " +
                 "WHERE gl.creditamount>0 " +
                 "AND gl.glcodeid NOT IN (:glcodeIdList) " +
@@ -565,7 +565,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 + ") )   "
                 +
                 " and exists (select 1 from egf_instrumentvoucher iv where  iv.voucherheaderid=vh.id) group by misbill.billvhid,vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto ";
-        final Query query = getSession().createSQLQuery(strQuery)
+        final Query query = getSession().createNativeQuery(strQuery)
                 .addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
                 .addScalar("paidAmount", BigDecimalType.INSTANCE)
                 .addScalar("chequeDate").addScalar("paidTo").addScalar("billVHId", LongType.INSTANCE)
@@ -628,7 +628,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("ALREADY ASSIGNED: queryString" + queryString);
 
-                    final List<Object> payTo = getSession().createSQLQuery(queryString)
+                    final List<Object> payTo = getSession().createNativeQuery(queryString)
                             .setString("payTo", chqAssgn.getPaidTo()).list();
 
                     if (payTo == null || payTo.size() == 0) {
@@ -658,7 +658,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                                 "and ih.id_status in (" + statusId + ")  ";
                         if (LOGGER.isDebugEnabled())
                             LOGGER.debug("queryString" + queryString);
-                        List<Object> payTo = getSession().createSQLQuery(queryString).list();
+                        List<Object> payTo = getSession().createNativeQuery(queryString).list();
                         if (payTo == null || payTo.size() == 0) {
                             // this check will avoid already assigned by single subledger take subleger logic as it should be
                             // single subledger take payto
@@ -669,7 +669,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                                     + " and ih.payTo=:payTo and ih.id_status in (" + statusId + ")  ";
                             if (LOGGER.isDebugEnabled())
                                 LOGGER.debug("ALREADY ASSIGNED: queryString" + queryString);
-                            payTo = getSession().createSQLQuery(queryString)
+                            payTo = getSession().createNativeQuery(queryString)
                                     .setString("payTo", chqAssgn.getPaidTo()).list();
                             if (payTo != null)
                                 continue;
@@ -705,7 +705,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                             + chqAssgn.getVoucherid() + " and ih.payTo =:payTo and ih.id_status in (" + statusId + ")  ";
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("ALREADY ASSIGNED: queryString" + queryString);
-                    final List<Object> payTo = getSession().createSQLQuery(queryString)
+                    final List<Object> payTo = getSession().createNativeQuery(queryString)
                             .setString("payTo", chqAssgn.getPaidTo()).list();
                     if (payTo == null || payTo.size() == 0) {
                         if (LOGGER.isDebugEnabled())
@@ -726,7 +726,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                                 + " and ih.id_status in (" + statusId + ")  ";
                         if (LOGGER.isDebugEnabled())
                             LOGGER.debug("ALREADY ASSIGNED: Querying for " + queryString);
-                        List<Object> payTo = getSession().createSQLQuery(queryString).list();
+                        List<Object> payTo = getSession().createNativeQuery(queryString).list();
                         if (payTo == null || payTo.size() == 0) {
 
                             // this check will avoid already assigned by single subledger take subleger logic as it should be
@@ -738,7 +738,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                                     + " and ih.payTo=:payTo and ih.id_status in (" + statusId + ")  ";
                             if (LOGGER.isDebugEnabled())
                                 LOGGER.debug("ALREADY ASSIGNED: queryString" + queryString);
-                            payTo = getSession().createSQLQuery(queryString)
+                            payTo = getSession().createNativeQuery(queryString)
                                     .setString("payTo", chqAssgn.getPaidTo()).list();
                             if (payTo != null)
                                 continue;
@@ -799,7 +799,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 " and exists(select 1 from egf_instrumentvoucher iv, egf_instrumentheader ih where ih.id= iv.instrumentheaderid and iv.voucherheaderid=vh.id and ih.id_status not in ("
                 + statusId + ") ) " +
                 " group by misbill.billvhid,vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto ";
-        final Query query = getSession().createSQLQuery(strQuery)
+        final Query query = getSession().createNativeQuery(strQuery)
                 .addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
                 .addScalar("paidAmount", BigDecimalType.INSTANCE)
                 .addScalar("chequeDate").addScalar("paidTo").addScalar("billVHId", LongType.INSTANCE)
@@ -854,7 +854,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("instrumentStatus- " + queryString);
                     final List<Object[]> instrumentStatus = getSession()
-                            .createSQLQuery(queryString).setString("payTo", chqAssgn.getPaidTo()).list();
+                            .createNativeQuery(queryString).setString("payTo", chqAssgn.getPaidTo()).list();
                     if (instrumentStatus == null
                             || instrumentStatus.size() == 0
                             || !instrumentStatus.get(0)[1].toString().equalsIgnoreCase(instrumentNewStatus) && !instrumentStatus
@@ -877,7 +877,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                         if (LOGGER.isDebugEnabled())
                             LOGGER.debug("ASSIGNED BUT SURRENDARD: Inside detailTypeKeyAmtList loop- " + queryString);
                         final List<Object[]> instrumentStatus = getSession()
-                                .createSQLQuery(queryString).list();
+                                .createNativeQuery(queryString).list();
                         if (instrumentStatus == null
                                 || instrumentStatus.size() == 0
                                 || !instrumentStatus.get(0)[1].toString().equalsIgnoreCase(instrumentNewStatus)
@@ -913,7 +913,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("ASSIGNED BUT SURRENDARD: getDetailTypeKeyAmtForDebtitSideCC " + queryString);
                     final List<Object[]> instrumentStatus = getSession()
-                            .createSQLQuery(queryString).setString("payTo", chqAssgn.getPaidTo()).list();
+                            .createNativeQuery(queryString).setString("payTo", chqAssgn.getPaidTo()).list();
 
                     if (instrumentStatus == null
                             || instrumentStatus.size() == 0
@@ -930,7 +930,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("ASSIGNED BUT SURRENDARD: detailTypeKeyAmtList size=1" + queryString);
                     final List<Object[]> instrumentStatus = getSession()
-                            .createSQLQuery(queryString).setString("payTo", chqAssgn.getPaidTo()).list();
+                            .createNativeQuery(queryString).setString("payTo", chqAssgn.getPaidTo()).list();
                     if (instrumentStatus == null
                             || instrumentStatus.size() == 0
                             || !instrumentStatus.get(0)[1].toString().equalsIgnoreCase(instrumentNewStatus) && !instrumentStatus
@@ -942,7 +942,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                         if (LOGGER.isDebugEnabled())
                             LOGGER.debug("ASSIGNED BUT SURRENDARD: detailTypeKeyAmtList  again checking " + queryString2);
                         final List<Object[]> instrumentStatusWithsubledgerPaidto = getSession()
-                                .createSQLQuery(queryString2)
+                                .createNativeQuery(queryString2)
                                 .setString(
                                         "payTo",
                                         getEntity(Integer.parseInt(detailTypeKeyAmtList.get(0)[0].toString()),
@@ -971,7 +971,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                         if (LOGGER.isDebugEnabled())
                             LOGGER.debug("ASSIGNED BUT SURRENDARD: detailTypeKeyAmtList  checking " + queryString);
                         final List<Object[]> instrumentStatus = getSession()
-                                .createSQLQuery(queryString).list();
+                                .createNativeQuery(queryString).list();
                         if (instrumentStatus == null
                                 || instrumentStatus.size() == 0
                                 || !instrumentStatus.get(0)[1].toString().equalsIgnoreCase(instrumentNewStatus)
@@ -1198,7 +1198,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting getSubledgerAmtForDeduction...");
         final Map<String, BigDecimal> map = new HashMap<String, BigDecimal>();
-        final Query query = getSession().createSQLQuery(
+        final Query query = getSession().createNativeQuery(
                 "SELECT gld.detailtypeid, gld.detailkeyid, SUM(gld.amount) FROM generalledgerdetail gld, generalledger gl" +
                         " WHERE gl.voucherheaderid=" + billVHId + " AND gl.id =gld.generalledgerid AND gl.creditamount  >0" +
                         " AND gl.glcodeid NOT IN (:glcodeIdList) GROUP BY gld.detailtypeid, gld.detailkeyid");

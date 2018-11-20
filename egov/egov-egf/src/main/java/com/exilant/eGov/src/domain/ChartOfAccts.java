@@ -277,7 +277,7 @@ public class ChartOfAccts {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(insertQuery);
 
-            persistenceService.getSession().createSQLQuery(insertQuery)
+            persistenceService.getSession().createNativeQuery(insertQuery)
             .setInteger(0, Integer.parseInt(id))
             .setString(1, removeSingleQuotes(glCode))
             .setString(2, removeSingleQuotes(name))
@@ -399,7 +399,7 @@ public class ChartOfAccts {
 
         try {
             int i = 1;
-            pstmt = persistenceService.getSession().createSQLQuery(query.toString());
+            pstmt = persistenceService.getSession().createNativeQuery(query.toString());
 
             if (glCode != null)
                 pstmt.setString(i++, glCode);

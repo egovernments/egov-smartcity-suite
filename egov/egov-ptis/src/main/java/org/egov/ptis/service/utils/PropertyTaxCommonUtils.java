@@ -840,7 +840,7 @@ public class PropertyTaxCommonUtils {
     public BigInteger getModuleIdByName(){
     	BigInteger id = BigInteger.ZERO ;
     	String selectQuery = " select id from eg_modules where name =:name ";
-        final Query qry = getSession().createSQLQuery(selectQuery).setString("name", PropertyTaxConstants.FILESTORE_MODULE_NAME);
+        final Query qry = getSession().createNativeQuery(selectQuery).setString("name", PropertyTaxConstants.FILESTORE_MODULE_NAME);
         List<Object> list = qry.list();
         	if(!list.isEmpty())
         		id = (BigInteger) list.get(0);

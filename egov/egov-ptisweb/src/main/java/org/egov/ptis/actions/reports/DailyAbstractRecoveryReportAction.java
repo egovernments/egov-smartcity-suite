@@ -246,7 +246,7 @@ public class DailyAbstractRecoveryReportAction extends BaseFormAction {
 	private RecoveryInfo prepareReportData(StringBuffer qry, Calendar fDate, Calendar tDate) {
 		RecoveryInfo recInfo = new RecoveryInfo();
 
-		Query sqlQry = persistenceService.getSession().createSQLQuery(qry.toString());
+		Query sqlQry = persistenceService.getSession().createNativeQuery(qry.toString());
 		if (fDate != null) {
 			recInfo.setFromDate(fDate.getTime());
 			sqlQry.setDate("fromDate", fDate.getTime());

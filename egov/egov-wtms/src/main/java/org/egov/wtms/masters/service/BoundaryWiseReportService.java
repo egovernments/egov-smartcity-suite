@@ -51,7 +51,7 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.wtms.reports.entity.WaterConnectionReportResult;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -100,8 +100,8 @@ public class BoundaryWiseReportService {
 
     }
 
-    private SQLQuery setParameterForDrillDownReportQuery(final String querykey, final String ward, final String block) {
-        final SQLQuery query = entityQueryService.getSession().createSQLQuery(querykey);
+    private NativeQuery setParameterForDrillDownReportQuery(final String querykey, final String ward, final String block) {
+        final NativeQuery query = entityQueryService.getSession().createNativeQuery(querykey);
         if (StringUtils.isNotBlank(ward))
             query.setLong("ward", Long.valueOf(ward));
         if (StringUtils.isNotBlank(block))

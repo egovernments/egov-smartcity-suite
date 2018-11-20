@@ -50,7 +50,7 @@ package org.egov.wtms.application.service;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.wtms.application.entity.DefaultersReport;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Service;
@@ -96,7 +96,7 @@ public class DefaultersWTReportService {
         queryStr.append(" and dcbinfo.demand IS NOT NULL");
         if (!topDefaulters.isEmpty())
             queryStr.append(" order by dcbinfo.arr_balance+dcbinfo.curr_balance desc ");
-        final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
+        final NativeQuery finalQuery = getCurrentSession().createNativeQuery(queryStr.toString());
         finalQuery.setFirstResult(startsFrom);
         finalQuery.setMaxResults(maxResults);
         finalQuery.setResultTransformer(new AliasToBeanResultTransformer(DefaultersReport.class));
@@ -117,7 +117,7 @@ public class DefaultersWTReportService {
         queryStr.append(" and dcbinfo.connectionstatus = '" + ConnectionStatus.ACTIVE.toString() + "'");
         if (ward != null && !ward.isEmpty())
             queryStr.append(" and wardboundary.id = '" + ward + "'");
-        final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
+        final NativeQuery finalQuery = getCurrentSession().createNativeQuery(queryStr.toString());
         final Long count = ((BigInteger) finalQuery.uniqueResult()).longValue();
         return count;
     }
@@ -140,7 +140,7 @@ public class DefaultersWTReportService {
         if (!topDefaulters.isEmpty())
             queryStr.append(" limit " + topDefaulters);
         queryStr.append(") as count");
-        final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
+        final NativeQuery finalQuery = getCurrentSession().createNativeQuery(queryStr.toString());
         final Long count = ((BigInteger) finalQuery.uniqueResult()).longValue();
         return count;
     }

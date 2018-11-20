@@ -50,8 +50,11 @@ package org.egov.infra.admin.auditing.contract;
 
 import org.egov.infra.web.support.search.DataTableSearchRequest;
 
+import javax.validation.constraints.Positive;
+
 public class UserPasswordChangeAuditReportRequest extends DataTableSearchRequest {
 
+    @Positive
     private Long userId;
 
     public Long getUserId() {

@@ -311,7 +311,7 @@ public class EgovMasterDataCaching {
         List resultlist = null;
         List returnList = null;
         try {
-            resultlist = getCurrentSession().createSQLQuery(query).list();
+            resultlist = getCurrentSession().createNativeQuery(query).list();
             if (resultlist != null)
                 returnList = resultSetToArrayList(resultlist);
         } catch (final Exception e) {

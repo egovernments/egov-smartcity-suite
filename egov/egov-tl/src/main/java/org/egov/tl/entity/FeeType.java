@@ -50,7 +50,7 @@ package org.egov.tl.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

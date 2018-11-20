@@ -49,7 +49,7 @@ package org.egov.ptis.repository.dashboard;
 
 import org.egov.ptis.config.PTISApplicationProperties;
 import org.hibernate.query.Query;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -416,7 +416,7 @@ public class RevenueDashboardRepository {
 
     private Query getQuery(final String sqlKey) {
         return entityManager.unwrap(Session.class)
-                .createSQLQuery(ptisApplicationProperties.getValue(sqlKey));
+                .createNativeQuery(ptisApplicationProperties.getValue(sqlKey));
     }
 
     public static Map<String, Double> constructDatePlaceHolderForDouble(final DateTime startDate, final DateTime endDate,
@@ -446,7 +446,7 @@ public class RevenueDashboardRepository {
         return dataHolder;
     }
 
-    protected SQLQuery getCurrentFinYear() {
-        return getSession().createSQLQuery(ptisApplicationProperties.getValue("revenue.ptis.finyear"));
+    protected NativeQuery getCurrentFinYear() {
+        return getSession().createNativeQuery(ptisApplicationProperties.getValue("revenue.ptis.finyear"));
     }
 }

@@ -65,7 +65,7 @@ import org.egov.model.bills.EgBillregister;
 import org.egov.services.bills.BillsService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -416,11 +416,11 @@ public class CancelBillAction extends BaseFormAction {
             cancelQuery.append(" where id in (" + idString + ")");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(" Cancel Query - " + cancelQuery.toString());
-            final SQLQuery totalSQLQuery = persistenceService.getSession()
-                    .createSQLQuery(cancelQuery.toString());
-            totalSQLQuery.setLong("statusId", status.getId());
+            final NativeQuery totalNativeQuery = persistenceService.getSession()
+                    .createNativeQuery(cancelQuery.toString());
+            totalNativeQuery.setLong("statusId", status.getId());
             if (isNotBlank(idString))
-                totalSQLQuery.executeUpdate();
+                totalNativeQuery.executeUpdate();
         }
 
         if (isNotBlank(idString))

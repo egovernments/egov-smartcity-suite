@@ -362,7 +362,7 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(query);
 
-            final Query updateQuery = persistenceService.getSession().createSQLQuery(query)
+            final Query updateQuery = persistenceService.getSession().createNativeQuery(query)
                     .setBigDecimal("amount", amount).setLong("detailId", detailId)
                     .setDate("modifiedate", new java.sql.Date(new Date().getTime()))
                     .setInteger("modifiedby", ApplicationThreadLocals.getUserId().intValue());
@@ -381,7 +381,7 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
     public String ajaxDeleteBudgetDetail() {
         try {
             if (bpBean.getId() != null && bpBean.getNextYrId() != null) {
-                persistenceService.getSession().createSQLQuery("delete from egf_budgetdetail where id in ("
+                persistenceService.getSession().createNativeQuery("delete from egf_budgetdetail where id in ("
                         + bpBean.getId() + "," + bpBean.getNextYrId() + ")").executeUpdate();
                 persistenceService.getSession().flush();
             }
@@ -991,7 +991,7 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
                 + " select distinct(f.name) as functionid from egf_budgetdetail bd,eg_wf_states s,function f where bd.budget="
                 + topBudget.getId() + " and bd.state_id=s.id and s.owner_pos=" + position.getId()
                 + " and bd.function=f.id order by functionid";
-        final Query functionsNotUsed = persistenceService.getSession().createSQLQuery(Query);
+        final Query functionsNotUsed = persistenceService.getSession().createNativeQuery(Query);
         final List<String> notUsedList = functionsNotUsed.list();
 
         if (notUsedList.size() > 0) {
@@ -1012,7 +1012,7 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
 
     @SuppressWarnings("unchecked")
     public String getUlbName() {
-        final Query query = persistenceService.getSession().createSQLQuery("select name from companydetail");
+        final Query query = persistenceService.getSession().createNativeQuery("select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);

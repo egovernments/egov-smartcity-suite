@@ -131,7 +131,7 @@ public class ApplicationBpaBillService extends BillServiceInterface {
                         + "eg_installment_master inst,eg_demand_reason_master dmdresmas where dmdDet.id_demand_reason=dmdRes.id "
                         + "and dmdDet.id_demand =:dmdId and dmdRes.id_installment = inst.id and dmdresmas.id = dmdres.id_demand_reason_master "
                         + "group by dmdRes.id,dmdRes.id_installment, inst.start_date order by inst.start_date ");
-        return getCurrentSession().createSQLQuery(queryStringBuilder.toString()).setLong("dmdId", egDemand.getId())
+        return getCurrentSession().createNativeQuery(queryStringBuilder.toString()).setLong("dmdId", egDemand.getId())
                 .list();
     }
 

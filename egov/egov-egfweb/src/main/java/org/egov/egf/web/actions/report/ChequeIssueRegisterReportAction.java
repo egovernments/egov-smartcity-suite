@@ -182,7 +182,7 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
 
         final Query query = persistenceService
                 .getSession()
-                .createSQLQuery(
+                .createNativeQuery(
                         "select ih.instrumentnumber as chequeNumber,ih.instrumentdate as chequeDate,"
                                 + "ih.instrumentamount as chequeAmount,vh.vouchernumber as voucherNumber,vh.id as vhId,ih.serialno as serialNo,vh.voucherdate as voucherDate,vh.name as voucherName,ih.payto as payTo,mbd.billnumber as billNumber,"
                                 + "mbd.billDate as billDate,vh.type as type,es.DESCRIPTION as chequeStatus,ih.id as instrumentheaderid from egf_instrumentHeader ih,egf_instrumentvoucher iv,EGW_STATUS es,"

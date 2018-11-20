@@ -79,7 +79,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.masters.AccountCodePurpose;
 import org.egov.services.voucher.GeneralLedgerService;
 import org.egov.utils.Constants;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -323,7 +323,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     }
 
     boolean hasReference(final Integer id, final String glCode) {
-        final SQLQuery query = persistenceService.getSession().createSQLQuery(
+        final NativeQuery query = persistenceService.getSession().createNativeQuery(
                 "select * from chartofaccounts c,generalledger gl,generalledgerdetail gd " +
                         "where c.glcode='" + glCode + "' and gl.glcodeid=c.id and gd.generalledgerid=gl.id and gd.DETAILTYPEID="
                         + id);
@@ -341,7 +341,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
         strQuery.append(" intersect SELECT br.id FROM eg_billregister br, eg_billdetails bd, chartofaccounts coa,egw_status  sts WHERE coa.glcode = '"
                 + glCode + "' AND bd.glcodeid = coa.id AND br.id= bd.billid AND br.statusid=sts.id ");
         strQuery.append(" and sts.id not in (select id from egw_status where upper(moduletype) like '%BILL%' and upper(description) like '%CANCELLED%') ");
-        final SQLQuery query = persistenceService.getSession().createSQLQuery(strQuery.toString());
+        final NativeQuery query = persistenceService.getSession().createNativeQuery(strQuery.toString());
         final List list = query.list();
         if (!list.isEmpty())
             flag = false;

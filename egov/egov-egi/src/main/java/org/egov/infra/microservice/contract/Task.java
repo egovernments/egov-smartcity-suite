@@ -50,7 +50,7 @@ package org.egov.infra.microservice.contract;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;

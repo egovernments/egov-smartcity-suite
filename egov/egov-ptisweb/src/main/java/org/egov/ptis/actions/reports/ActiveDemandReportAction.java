@@ -53,7 +53,7 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.ptis.bean.ActiveDemandInfo;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 
 import java.math.BigDecimal;
@@ -120,7 +120,7 @@ public class ActiveDemandReportAction extends BaseFormAction {
 		return NEW;
 	}
 
-	public SQLQuery prepareQuery() {
+	public NativeQuery prepareQuery() {
 		StringBuffer queryStr = new StringBuffer("");
 		String groupBy = null;
 		String orderBy = null;
@@ -146,7 +146,7 @@ public class ActiveDemandReportAction extends BaseFormAction {
 		whereClause = prepareSearchCriteria(whereClause);
 		whereClause.append(" GROUP BY UPICNO) M where ACTDMD.UPICNO = M.UPICNO AND ACTDMD.DMD_ACTIVATION_DATE = M.MXDATE ");
 		queryStr.append(fromClause).append(whereClause).append(groupBy).append(orderBy);
-		SQLQuery query = persistenceService.getSession().createSQLQuery(queryStr.toString());
+		NativeQuery query = persistenceService.getSession().createNativeQuery(queryStr.toString());
 		query.setResultTransformer(new AliasToBeanResultTransformer(ActiveDemandInfo.class));
 		return query;
 	}
@@ -176,7 +176,7 @@ public class ActiveDemandReportAction extends BaseFormAction {
 	@ValidationErrorPage(value = NEW)
 	public String search() {
 		resultPage = Boolean.TRUE;
-		SQLQuery query = prepareQuery();
+		NativeQuery query = prepareQuery();
 		for (String key : params.keySet()) {
 			Object value = params.get(key);
 			if (value instanceof Collection) {

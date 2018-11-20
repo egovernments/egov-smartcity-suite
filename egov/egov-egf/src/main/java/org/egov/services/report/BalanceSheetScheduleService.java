@@ -122,7 +122,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("addCurrentOpeningBalancePerFund");
         final Query query = persistenceService.getSession()
-                .createSQLQuery(
+                .createNativeQuery(
                         "select sum(openingdebitbalance)- sum(openingcreditbalance),ts.fundid,coa.glcode,coa.type FROM transactionsummary ts,chartofaccounts coa  WHERE ts.glcodeid = coa.ID  AND ts.financialyearid="
                                 + balanceSheet.getFinancialYear().getId()
                                 + transactionQuery
@@ -166,7 +166,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
         final CFinancialYear prevFinanciaYr = financialYearDAO.getPreviousFinancialYearByDate(fromDate);
         final String prevFinancialYrId = prevFinanciaYr.getId().toString();
         final Query query = persistenceService.getSession()
-                .createSQLQuery(
+                .createNativeQuery(
                         "select sum(openingdebitbalance)- sum(openingcreditbalance),coa.glcode,coa.type FROM transactionsummary ts,chartofaccounts coa  WHERE ts.glcodeid = coa.ID  AND ts.financialyearid="
                                 + prevFinancialYrId + transactionQuery + " GROUP BY coa.glcode,coa.type");
         final List<Object[]> openingBalanceAmountList = query.list();
@@ -188,7 +188,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
             }
     }
     private String getGlcodeForPurposeCode7() {
-        final Query query = persistenceService.getSession().createSQLQuery(
+        final Query query = persistenceService.getSession().createNativeQuery(
                 "select glcode from chartofaccounts where purposeid=7");
         final List list = query.list();
         String glCode = "";
@@ -198,7 +198,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
     }
 
     private String getGlcodeForPurposeCode7MinorCode() {
-        final Query query = persistenceService.getSession().createSQLQuery(
+        final Query query = persistenceService.getSession().createNativeQuery(
                 "select substr(glcode,1," + minorCodeLength + ") from chartofaccounts where purposeid=7");
         final List list = query.list();
         String glCode = "";
@@ -209,7 +209,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
 
     /* For Detailed */
     private String getGlcodeForPurposeCode7DetailedCode() {
-        final Query query = persistenceService.getSession().createSQLQuery(
+        final Query query = persistenceService.getSession().createNativeQuery(
                 "select substr(glcode,1," + detailCodeLength + ") from chartofaccounts where purposeid=7");
         final List list = query.list();
         String glCode = "";
@@ -245,7 +245,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                 " and coa2.glcode=SUBSTR(coad.glcode,1," + minorCodeLength + ") and coad.classification=4 and coad.majorcode='"
                 + majorCode + "')  and c.majorcode='" + majorCode + "' and c.classification=4 " + filterQuery
                 + " group by c.glcode");
-        final Query query = persistenceService.getSession().createSQLQuery(qry.toString());
+        final Query query = persistenceService.getSession().createNativeQuery(qry.toString());
         final List<Object[]> result = query.list();
         for (final Object[] row : result)
             for (int index = 0; index < balanceSheet.size(); index++)

@@ -51,7 +51,7 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

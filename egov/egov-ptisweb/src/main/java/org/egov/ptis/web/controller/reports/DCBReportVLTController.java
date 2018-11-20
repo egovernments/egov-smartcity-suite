@@ -58,7 +58,7 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterHibernateDAO;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.service.report.ReportService;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -120,7 +120,7 @@ public class DCBReportVLTController {
                 .getPropertyTypeMasterByCode(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND);
         final List<String> propertyType = new ArrayList<>();
         propertyType.add(propertyTypeMaster.getId().toString());
-        final SQLQuery query = reportService.prepareQueryForDCBReport(Long.valueOf(boundaryId), mode, Boolean.valueOf(courtCase),
+        final NativeQuery query = reportService.prepareQueryForDCBReport(Long.valueOf(boundaryId), mode, Boolean.valueOf(courtCase),
                 propertyType);
         query.setResultTransformer(new AliasToBeanResultTransformer(DCBReportResult.class));
         final List<DCBReportResult> resultList = query.list();

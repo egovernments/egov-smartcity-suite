@@ -370,7 +370,7 @@ public class EisUtilService implements OwnerGroupService<Position> {
             qry.append(" and do.id=:doId ");
         }
         qry.append(" order by eee.name ");
-        Query query = persistenceService.getSession().createSQLQuery(qry.toString());
+        Query query = persistenceService.getSession().createNativeQuery(qry.toString());
         query.setDate("enteredDate", assignDate);
         if (null != desigList && !desigList.isEmpty()) {
             query.setParameterList("desList", desigList);

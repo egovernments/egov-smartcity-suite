@@ -57,7 +57,7 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.query.Query;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -196,9 +196,9 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
 
     @Deprecated
     public int getDetailTypeIdByName(final String glCode, final Connection connection, final String name) {
-        final SQLQuery query = persistenceService
+        final NativeQuery query = persistenceService
                 .getSession()
-                .createSQLQuery(
+                .createNativeQuery(
                         "SELECT a.ID FROM accountdetailtype a,chartofaccountdetail coad  WHERE coad.DETAILTYPEID =a.ID  AND coad.glcodeid=(SELECT ID FROM chartofaccounts WHERE glcode=:glCode) AND a.NAME=:name");
         query.setString("glCode", glCode);
         query.setString("name", name);

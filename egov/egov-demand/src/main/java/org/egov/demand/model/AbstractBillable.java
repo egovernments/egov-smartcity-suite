@@ -71,7 +71,7 @@ public abstract class AbstractBillable implements Billable {
     @Override
     public String getReferenceNumber() {
         try {
-            Query q = entityManager.unwrap(Session.class).createSQLQuery(NEXT_BILL_NUM_FROM_SEQ);
+            Query q = entityManager.unwrap(Session.class).createNativeQuery(NEXT_BILL_NUM_FROM_SEQ);
             return q.uniqueResult().toString();
         } catch (Exception e) {
             throw new ApplicationRuntimeException("Could not generate new bill no", e);

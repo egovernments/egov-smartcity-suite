@@ -95,7 +95,7 @@ public class CollectionsNumberGeneratorTest { /*extends AbstractPersistenceServi
 		CFinancialYear financialYear = collectionsUtil.getFinancialYearforDate(new Date());
 		ReceiptHeader receiptHeader = objectFactory.createUnsavedReceiptHeader();
 		String receiptSequence = "SQ_RECEIPTHEADER_"+financialYear.getFinYearRange().substring(0, 4);
-		List numbers = session.createSQLQuery("SELECT "+receiptSequence+".NEXTVAL FROM DUAL").list();
+		List numbers = session.createNativeQuery("SELECT "+receiptSequence+".NEXTVAL FROM DUAL").list();
 		BigDecimal result;
 		if(numbers!=null && !numbers.isEmpty())
 			result=(BigDecimal)numbers.get(0);
@@ -153,7 +153,7 @@ public class CollectionsNumberGeneratorTest { /*extends AbstractPersistenceServi
 				receiptHeader.getCreatedDate());
 		
 		String chequeReferenceSequence = "SQ_RECEIPTREF"+financialYear.getFinYearRange();
-		List numbers = session.createSQLQuery("SELECT "+chequeReferenceSequence+".NEXTVAL FROM DUAL").list();
+		List numbers = session.createNativeQuery("SELECT "+chequeReferenceSequence+".NEXTVAL FROM DUAL").list();
 		
 		List actualInternalRefNos = collNumberGenerator.generateInternalReferenceNumber(
 				receiptHeader, financialYear,currentFinancialYear);
@@ -192,7 +192,7 @@ public class CollectionsNumberGeneratorTest { /*extends AbstractPersistenceServi
 		CFinancialYear currentFinancialYear = objectFactory.getFinancialYearForDate(new Date());
 		
 		String chequeReferenceSequence = "SQ_RECEIPTREF"+financialYear.getFinYearRange();
-		List numbers = session.createSQLQuery("SELECT "+chequeReferenceSequence+".NEXTVAL FROM DUAL").list();
+		List numbers = session.createNativeQuery("SELECT "+chequeReferenceSequence+".NEXTVAL FROM DUAL").list();
 		
 		List<String> actualInternalRefNos = collNumberGenerator.generateInternalReferenceNumber(
 				receiptHeader, financialYear,currentFinancialYear);
@@ -225,7 +225,7 @@ public class CollectionsNumberGeneratorTest { /*extends AbstractPersistenceServi
 		CFinancialYear currentFinancialYear = objectFactory.getFinancialYearForDate(
 				receiptHeader.getCreatedDate());
 		String cashReferenceSequence = "SQ_RECEIPTREF"+financialYear.getFinYearRange();
-		List numbers = session.createSQLQuery("SELECT "+cashReferenceSequence+".NEXTVAL FROM DUAL").list();
+		List numbers = session.createNativeQuery("SELECT "+cashReferenceSequence+".NEXTVAL FROM DUAL").list();
 		
 		List actualInternalRefNos = collNumberGenerator.generateInternalReferenceNumber(
 				receiptHeader, financialYear,currentFinancialYear);
@@ -259,7 +259,7 @@ public class CollectionsNumberGeneratorTest { /*extends AbstractPersistenceServi
 		CFinancialYear currentFinancialYear = objectFactory.getFinancialYearForDate(
 				receiptHeader.getCreatedDate());
 		String cashReferenceSequence = "SQ_RECEIPTREF"+financialYear.getFinYearRange();
-		List numbers = session.createSQLQuery("SELECT "+cashReferenceSequence+".NEXTVAL FROM DUAL").list();
+		List numbers = session.createNativeQuery("SELECT "+cashReferenceSequence+".NEXTVAL FROM DUAL").list();
 		
 		List actualInternalRefNos = collNumberGenerator.generateInternalReferenceNumber(
 				receiptHeader, financialYear,currentFinancialYear);
@@ -290,7 +290,7 @@ public class CollectionsNumberGeneratorTest { /*extends AbstractPersistenceServi
 		challan.setCreatedBy(user);
 		
 		String challanSequence = "SQ_CHALLAN_"+financialYear.getFinYearRange().substring(0, 4);
-		List numbers = session.createSQLQuery("SELECT "+challanSequence+".NEXTVAL FROM DUAL").list();
+		List numbers = session.createNativeQuery("SELECT "+challanSequence+".NEXTVAL FROM DUAL").list();
 		BigDecimal result;
 		if(numbers!=null && !numbers.isEmpty())
 			result=(BigDecimal)numbers.get(0);

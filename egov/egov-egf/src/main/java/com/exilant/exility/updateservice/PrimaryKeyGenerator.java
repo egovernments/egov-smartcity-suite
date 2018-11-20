@@ -88,7 +88,7 @@ public class PrimaryKeyGenerator
         try
         {
             final Query pst = null;
-                    //persistenceService.getSession().createSQLQuery(sql);
+                    //persistenceService.getSession().createNativeQuery(sql);
             final List<BigInteger> rs = pst.list();
             key = rs != null ? rs.get(0).longValue() : 0l;
             if (rs == null || rs.size() == 0)

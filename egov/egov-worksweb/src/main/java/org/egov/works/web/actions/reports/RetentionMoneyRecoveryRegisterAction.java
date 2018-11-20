@@ -511,7 +511,7 @@ public class RetentionMoneyRecoveryRegisterAction extends SearchFormAction {
     private List getReportData() {
         final String orderByClause = " ORDER BY \"Bill Date\"";
         final String reportQuery = getSelectQuery() + getSearchQuery() + orderByClause;
-        final Query sqlQuery = getPersistenceService().getSession().createSQLQuery(String.valueOf(reportQuery));
+        final Query sqlQuery = getPersistenceService().getSession().createNativeQuery(String.valueOf(reportQuery));
         int count = 0;
         for (final Object param : paramList) {
             sqlQuery.setParameter(count, param);

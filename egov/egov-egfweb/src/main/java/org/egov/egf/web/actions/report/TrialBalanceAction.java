@@ -73,7 +73,7 @@ import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.FlushMode;
 import org.hibernate.query.Query;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
 import org.hibernate.type.StringType;
@@ -450,28 +450,28 @@ public class TrialBalanceAction extends BaseFormAction {
         try
         {
             new Double(0);
-            final SQLQuery SQLQuery = persistenceService.getSession().createSQLQuery(query);
-            SQLQuery.addScalar("accCode")
+            final NativeQuery NativeQuery = persistenceService.getSession().createNativeQuery(query);
+            NativeQuery.addScalar("accCode")
                     .addScalar("accName")
                     .addScalar("fundId", StringType.INSTANCE)
                     .addScalar("amount", BigDecimalType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(TrialBalanceBean.class));
             if (null != rb.getFundId())
-                SQLQuery.setInteger("fundId", rb.getFundId());
+                NativeQuery.setInteger("fundId", rb.getFundId());
             if (null != rb.getDepartmentId())
-                SQLQuery.setInteger("departmentId", rb.getDepartmentId());
+                NativeQuery.setInteger("departmentId", rb.getDepartmentId());
             if (null != rb.getFunctionaryId())
-                SQLQuery.setInteger("functionaryId", rb.getFunctionaryId());
+                NativeQuery.setInteger("functionaryId", rb.getFunctionaryId());
             if (null != rb.getFunctionId())
-                SQLQuery.setInteger("functionId", rb.getFunctionId());
+                NativeQuery.setInteger("functionId", rb.getFunctionId());
             if (null != rb.getDivisionId())
-                SQLQuery.setInteger("divisionId", rb.getDivisionId());
+                NativeQuery.setInteger("divisionId", rb.getDivisionId());
             if (null != rb.getFromDate())
-                SQLQuery.setDate("fromDate", rb.getFromDate());
-            SQLQuery.setDate("toDate", rb.getToDate());
+                NativeQuery.setDate("fromDate", rb.getFromDate());
+            NativeQuery.setDate("toDate", rb.getToDate());
             if (LOGGER.isInfoEnabled())
-                LOGGER.info("query ---->" + SQLQuery);
-            forAllFunds = SQLQuery.list();
+                LOGGER.info("query ---->" + NativeQuery);
+            forAllFunds = NativeQuery.list();
 
         } catch (final Exception e)
         {
@@ -661,7 +661,7 @@ public class TrialBalanceAction extends BaseFormAction {
                 " GROUP BY ts.glcodeid,coa.glcode,coa.name ORDER BY coa.glcode ASC";
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Query Str" + openingBalanceStr);
-        final Query openingBalanceQry = persistenceService.getSession().createSQLQuery(openingBalanceStr)
+        final Query openingBalanceQry = persistenceService.getSession().createNativeQuery(openingBalanceStr)
                 .addScalar("accCode")
                 .addScalar("accName")
                 .addScalar("creditOPB", BigDecimalType.INSTANCE)
@@ -703,7 +703,7 @@ public class TrialBalanceAction extends BaseFormAction {
                 " AND fy.startingdate<=:fromDate AND fy.endingdate>=:toDate" +
                 " AND vh.status not in (" + defaultStatusExclude + ")" +
                 " GROUP BY gl.glcodeid,coa.glcode,coa.name ORDER BY coa.glcode ASC";
-        final Query tillDateOPBQry = persistenceService.getSession().createSQLQuery(tillDateOPBStr)
+        final Query tillDateOPBQry = persistenceService.getSession().createNativeQuery(tillDateOPBStr)
                 .addScalar("accCode")
                 .addScalar("accName")
                 .addScalar("tillDateCreditOPB", BigDecimalType.INSTANCE)
@@ -746,7 +746,7 @@ public class TrialBalanceAction extends BaseFormAction {
                 " AND fy.startingdate<=:fromDate AND fy.endingdate>=:toDate" +
                 " AND vh.status not in (" + defaultStatusExclude + ") " +
                 " GROUP BY gl.glcodeid,coa.glcode,coa.name ORDER BY coa.glcode ASC";
-        final Query currentDebitCreditQry = persistenceService.getSession().createSQLQuery(currentDebitCreditStr)
+        final Query currentDebitCreditQry = persistenceService.getSession().createNativeQuery(currentDebitCreditStr)
                 .addScalar("accCode")
                 .addScalar("accName")
                 .addScalar("creditAmount", BigDecimalType.INSTANCE)

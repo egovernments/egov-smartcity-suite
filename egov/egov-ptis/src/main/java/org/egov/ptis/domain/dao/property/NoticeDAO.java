@@ -83,7 +83,7 @@ public class NoticeDAO {
 		boolean isNoticeSaved = false;
 		try {
 			Query query = getCurrentSession()
-					.createSQLQuery(
+					.createNativeQuery(
 							"insert into EGPT_NOTICE (ID,ID_MODULE,NOTICETYPE,NOTICENO,NOTICEDATE,ID_USER) "
 									+ "values (SEQ_EGPT_NOTICE.nextval,:moduleId,:noticeType,:noticeNo,sysdate,?")
 					.setParameter("moduleId", notice.getModuleId()).setParameter("noticeType", notice.getNoticeType())
@@ -108,7 +108,7 @@ public class NoticeDAO {
 		String isBlob = null;
 		try {
 			List results = getCurrentSession()
-					.createSQLQuery(
+					.createNativeQuery(
 							"select DOCUMENT,IS_BLOB,DOCUMENT1 from notice where NOTICENO = :noticeNo and OBJECTNO = :objectNo")
 					.setParameter("noticeNo", noticeNo).setParameter("objectNo", objectNo).list();
 			for (Object result : results) {
@@ -152,7 +152,7 @@ public class NoticeDAO {
 					params.add(sdf.format(toDate));
 				}
 				queryStr.append(" order by NOTICEDATE desc ");
-				Query query = getCurrentSession().createSQLQuery(queryStr.toString());
+				Query query = getCurrentSession().createNativeQuery(queryStr.toString());
 				int i = 0;
 				for (Object param : params) {
 					query.setParameter(i, param);

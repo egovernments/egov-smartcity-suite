@@ -68,7 +68,7 @@ public class DatabaseSequenceCreator {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void createSequence(String sequenceName) {
         entityManager.unwrap(Session.class)
-                .createSQLQuery(format(CREATE_SEQ_QUERY, sequenceName))
+                .createNativeQuery(format(CREATE_SEQ_QUERY, sequenceName))
                 .executeUpdate();
     }
 }

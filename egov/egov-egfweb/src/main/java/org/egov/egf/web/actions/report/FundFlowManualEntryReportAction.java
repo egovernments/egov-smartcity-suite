@@ -249,7 +249,7 @@ public class FundFlowManualEntryReportAction extends BaseFormAction {
 
     @SuppressWarnings("unchecked")
     public String getUlbName() {
-        final Query query = persistenceService.getSession().createSQLQuery("select name from companydetail");
+        final Query query = persistenceService.getSession().createNativeQuery("select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);

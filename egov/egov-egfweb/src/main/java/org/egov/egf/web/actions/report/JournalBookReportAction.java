@@ -160,7 +160,7 @@ public class JournalBookReportAction extends BaseFormAction {
     private void prepareResultList() {
         String voucherDate = "", voucherNumber = "", voucherName = "", narration = "";
         Query query = null;
-        query = persistenceService.getSession().createSQLQuery(getQuery())
+        query = persistenceService.getSession().createNativeQuery(getQuery())
                 .addScalar("voucherdate", StringType.INSTANCE)
                 .addScalar("vouchernumber", StringType.INSTANCE)
                 .addScalar("code", StringType.INSTANCE)

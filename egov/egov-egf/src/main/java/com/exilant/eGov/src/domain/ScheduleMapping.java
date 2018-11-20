@@ -128,7 +128,7 @@ public class ScheduleMapping {
                     + "values(?,?,?,?,?,?,?,?,?,?)";
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(insertQuery);
-            pstmt = persistenceService.getSession().createSQLQuery(insertQuery);
+            pstmt = persistenceService.getSession().createNativeQuery(insertQuery);
             pstmt.setString(0, id);
             pstmt.setString(1, reportType);
             pstmt.setString(2, schedule);
@@ -191,7 +191,7 @@ public class ScheduleMapping {
         query.append(" where id=?");
         try {
             int i = 1;
-            pstmt = persistenceService.getSession().createSQLQuery(query.toString());
+            pstmt = persistenceService.getSession().createNativeQuery(query.toString());
             if (reportType != null)
                 pstmt.setString(i++, reportType);
             if (schedule != null)

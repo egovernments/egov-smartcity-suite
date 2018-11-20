@@ -268,7 +268,7 @@ public class VoucherHelper {
     {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" In EGovernCommon :getEg_Voucher method ");
-        final Query query = persistenceService.getSession().createSQLQuery(
+        final Query query = persistenceService.getSession().createNativeQuery(
                 "select name from fiscalperiod where id=" + Integer.parseInt(fiscalPeriodIdStr) + "");
         final List<String> fc = query.list();
         // Sequence name will be SQ_U_DBP_CGVN_FP7 for vouType U/DBP/CGVN and fiscalPeriodIdStr 7

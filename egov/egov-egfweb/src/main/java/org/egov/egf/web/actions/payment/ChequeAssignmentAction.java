@@ -543,7 +543,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     public String getReceiptDetails() {
         Query query = null;
         query = persistenceService.getSession()
-                .createSQLQuery(
+                .createNativeQuery(
                         "select  vh.id as voucherid ,vh.voucherNumber as voucherNumber ," +
                                 " redtl.remittedamt as receiptAmount,redtl.remittedamt as deductedAmount" +
                                 " FROM voucherheader vh,eg_remittance re,eg_remittance_detail redtl,generalledger gl" +

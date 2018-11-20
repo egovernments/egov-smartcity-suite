@@ -198,7 +198,7 @@ public class ReceiptHeaderServiceTest { /* extends
 		String actualSeqNo = actualinternalRefNo.get(0).substring(0,
 				actualinternalRefNo.get(0).lastIndexOf('/'));
 
-		List numbers = session.createSQLQuery(
+		List numbers = session.createNativeQuery(
 				"SELECT VALUE FROM EG_NUMBER_GENERIC WHERE OBJECTTYPE=?")
 				.setString(0, "RECEIPTREF").list();
 		BigDecimal result;
@@ -238,7 +238,7 @@ public class ReceiptHeaderServiceTest { /* extends
 		String actualSeqNo = actualinternalRefNo.get(1).substring(0,
 				actualinternalRefNo.get(1).lastIndexOf('/'));
 
-		List numbers = session.createSQLQuery(
+		List numbers = session.createNativeQuery(
 				"SELECT VALUE FROM EG_NUMBER_GENERIC WHERE OBJECTTYPE=?")
 				.setString(0, "RECEIPTREF").list();
 		BigDecimal result;

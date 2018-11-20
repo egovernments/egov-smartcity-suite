@@ -67,7 +67,7 @@ import org.egov.collection.entity.OnlinePaymentResult;
 import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
@@ -94,7 +94,7 @@ public class CollectionReportService {
         return entityManager.unwrap(Session.class);
     }
 
-    public SQLQuery getOnlinePaymentReportData(final String districtName, final String ulbName, final String fromDate,
+    public NativeQuery getOnlinePaymentReportData(final String districtName, final String ulbName, final String fromDate,
             final String toDate, final String transactionId) throws ApplicationException {
         final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
         final StringBuilder queryStr = new StringBuilder(500);
@@ -113,7 +113,7 @@ public class CollectionReportService {
             queryStr.append(" and opv.transactionnumber like :transactionnumber ");
         queryStr.append(" order by receiptdate desc ");
 
-        final SQLQuery query = getCurrentSession().createSQLQuery(queryStr.toString());
+        final NativeQuery query = getCurrentSession().createNativeQuery(queryStr.toString());
 
         if (StringUtils.isNotBlank(districtName))
             query.setString("districtName", districtName);
@@ -140,7 +140,7 @@ public class CollectionReportService {
                 environmentSettings.statewideSchemaName()).append(".onlinepayment_view opv where 1=1");
         if (StringUtils.isNotBlank(districtName))
             queryStr.append(" and opv.districtName=:districtName ");
-        final SQLQuery query = getCurrentSession().createSQLQuery(queryStr.toString());
+        final NativeQuery query = getCurrentSession().createNativeQuery(queryStr.toString());
         if (StringUtils.isNotBlank(districtName))
             query.setString("districtName", districtName);
         return query.list();
@@ -149,7 +149,7 @@ public class CollectionReportService {
     public List<Object[]> getDistrictNames() {
         final StringBuilder queryStr = new StringBuilder("select distinct districtname from ").append(
                 environmentSettings.statewideSchemaName()).append(".onlinepayment_view");
-        final SQLQuery query = getCurrentSession().createSQLQuery(queryStr.toString());
+        final NativeQuery query = getCurrentSession().createNativeQuery(queryStr.toString());
         return query.list();
     }
 
@@ -222,8 +222,8 @@ public class CollectionReportService {
         finalUserwiseQuery.append(finalSelectQuery).append(userwiseQuery).append(finalGroupQuery);
         finalAggregateQuery.append(finalSelectQuery).append(aggregateQuery).append(finalGroupQuery);
 
-        final SQLQuery userwiseSqluery = createSQLQuery(finalUserwiseQuery.toString());
-        final SQLQuery aggregateSqlQuery = createSQLQuery(finalAggregateQuery.toString());
+        final NativeQuery userwiseSqluery = createNativeQuery(finalUserwiseQuery.toString());
+        final NativeQuery aggregateSqlQuery = createNativeQuery(finalAggregateQuery.toString());
 
         if (!source.isEmpty() && !source.equals(CollectionConstants.ALL)) {
             userwiseSqluery.setString("source", source);
@@ -289,8 +289,8 @@ public class CollectionReportService {
         return queryString;
     }
 
-    public SQLQuery createSQLQuery(String query) {
-        return (SQLQuery) getCurrentSession().createSQLQuery(query)
+    public NativeQuery createNativeQuery(String query) {
+        return (NativeQuery) getCurrentSession().createNativeQuery(query)
                 .addScalar("cashCount", org.hibernate.type.StringType.INSTANCE)
                 .addScalar("cashAmount", BigDecimalType.INSTANCE)
                 .addScalar("chequeddCount", org.hibernate.type.StringType.INSTANCE)

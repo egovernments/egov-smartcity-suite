@@ -292,7 +292,7 @@ public class MarriageRegistrationReportsService {
         aggregateQueryStr.append(UNION);
         aggregateQueryStr.append(queryStrForReissue.toString());
 
-        final org.hibernate.query.Query query = getCurrentSession().createSQLQuery(aggregateQueryStr.toString());
+        final org.hibernate.query.Query query = getCurrentSession().createNativeQuery(aggregateQueryStr.toString());
         for (final Map.Entry<String, String> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         return query.list();
@@ -323,7 +323,7 @@ public class MarriageRegistrationReportsService {
         }
         queryForHusband.append("group by ap.ageinyears order by ap.ageinyears )");
 
-        final org.hibernate.query.Query query = getCurrentSession().createSQLQuery(queryForHusband.toString());
+        final org.hibernate.query.Query query = getCurrentSession().createNativeQuery(queryForHusband.toString());
         for (final Map.Entry<String, Integer> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         return query.list();
@@ -357,7 +357,7 @@ public class MarriageRegistrationReportsService {
         }
         queryForWife.append("group by ap.ageinyears order by ap.ageinyears )");
 
-        final org.hibernate.query.Query query = getCurrentSession().createSQLQuery(queryForWife.toString());
+        final org.hibernate.query.Query query = getCurrentSession().createNativeQuery(queryForWife.toString());
         for (final Map.Entry<String, Integer> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         return query.list();
@@ -389,7 +389,7 @@ public class MarriageRegistrationReportsService {
         }
         queryForAct.append("group by Month)");
 
-        final org.hibernate.query.Query query = getCurrentSession().createSQLQuery(queryForAct.toString());
+        final org.hibernate.query.Query query = getCurrentSession().createNativeQuery(queryForAct.toString());
         for (final Map.Entry<String, Integer> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         return query.list();
@@ -493,7 +493,7 @@ public class MarriageRegistrationReportsService {
 
         queryStrForHusbandCount.append(
                 " group by app.relationstatus, to_char(app.createddate,'Mon') order by to_char(app.createddate,'Mon') desc");
-        final org.hibernate.query.Query query = getCurrentSession().createSQLQuery(queryStrForHusbandCount.toString());
+        final org.hibernate.query.Query query = getCurrentSession().createNativeQuery(queryStrForHusbandCount.toString());
         for (final Map.Entry<String, String> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         return query.list();
@@ -537,7 +537,7 @@ public class MarriageRegistrationReportsService {
         }
         queryStrForWifeCount.append(
                 " group by app.relationstatus, to_char(app.createddate,'Mon') order by to_char(app.createddate,'Mon') desc");
-        final org.hibernate.query.Query query = getCurrentSession().createSQLQuery(queryStrForWifeCount.toString());
+        final org.hibernate.query.Query query = getCurrentSession().createNativeQuery(queryStrForWifeCount.toString());
         for (final Map.Entry<String, String> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         return query.list();
@@ -667,7 +667,7 @@ public class MarriageRegistrationReportsService {
         queryStr.append(aggregateQueryStr.toString());
         queryStr.append(") as x GROUP BY MONTH,Monthname");
 
-        final org.hibernate.query.Query query = getCurrentSession().createSQLQuery(queryStr.toString());
+        final org.hibernate.query.Query query = getCurrentSession().createNativeQuery(queryStr.toString());
         for (final Map.Entry<String, String> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         for (final Map.Entry<String, Integer> intparam : intparams.entrySet())
@@ -730,7 +730,7 @@ public class MarriageRegistrationReportsService {
         aggregateQueryStr.append(UNION);
         aggregateQueryStr.append(queryStrForReissueCount.toString());
 
-        final org.hibernate.query.Query query = getCurrentSession().createSQLQuery(aggregateQueryStr.toString());
+        final org.hibernate.query.Query query = getCurrentSession().createNativeQuery(aggregateQueryStr.toString());
         for (final Map.Entry<String, String> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         return query.list();
@@ -885,7 +885,7 @@ public class MarriageRegistrationReportsService {
 
         }
         queryForAct.append("group by act.name)");
-        final org.hibernate.query.Query query = getCurrentSession().createSQLQuery(queryForAct.toString());
+        final org.hibernate.query.Query query = getCurrentSession().createNativeQuery(queryForAct.toString());
         for (final Map.Entry<String, Integer> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         return query.list();
@@ -966,7 +966,7 @@ public class MarriageRegistrationReportsService {
         aggregateQueryStr.append(UNION);
         aggregateQueryStr.append(queryStrForReissue.toString());
 
-        final org.hibernate.query.Query query = getCurrentSession().createSQLQuery(aggregateQueryStr.toString());
+        final org.hibernate.query.Query query = getCurrentSession().createNativeQuery(aggregateQueryStr.toString());
         for (final Map.Entry<String, Double> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         return query.list();
@@ -1029,7 +1029,7 @@ public class MarriageRegistrationReportsService {
         aggregateQueryStr.append(UNION);
         aggregateQueryStr.append(queryStrForReIssueAgeingDetails.toString());
 
-        final org.hibernate.query.Query query = getCurrentSession().createSQLQuery(aggregateQueryStr.toString());
+        final org.hibernate.query.Query query = getCurrentSession().createNativeQuery(aggregateQueryStr.toString());
         for (final Map.Entry<String, Integer> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         return query.list();
@@ -1076,7 +1076,7 @@ public class MarriageRegistrationReportsService {
 
         queryStrForRegCount.append(" group by regunit.name,st.code order by regunit.name desc");
 
-        final org.hibernate.query.Query query = getCurrentSession().createSQLQuery(queryStrForRegCount.toString());
+        final org.hibernate.query.Query query = getCurrentSession().createNativeQuery(queryStrForRegCount.toString());
         for (final Map.Entry<String, String> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         return query.list();

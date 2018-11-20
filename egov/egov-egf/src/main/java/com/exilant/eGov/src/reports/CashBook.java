@@ -239,7 +239,7 @@ public class CashBook {
             // try{
 
             try {
-                pstmt = persistenceService.getSession().createSQLQuery(query);
+                pstmt = persistenceService.getSession().createNativeQuery(query);
             } catch (final Exception e) {
                 LOGGER.error("Exception in creating statement:", e);
                 throw taskExc;
@@ -747,7 +747,7 @@ public class CashBook {
 
         int j = 1;
         pstmt = persistenceService.getSession()
-                .createSQLQuery(queryYearOpBal);
+                .createNativeQuery(queryYearOpBal);
         if (!fundId.equalsIgnoreCase(""))
             pstmt.setString(j++, fundId);
         if (!fundSourceId.equalsIgnoreCase(""))
@@ -787,7 +787,7 @@ public class CashBook {
                         + glCode + " is-->: " + queryTillDateOpBal);
 
             int i = 1;
-            pstmt = persistenceService.getSession().createSQLQuery(
+            pstmt = persistenceService.getSession().createNativeQuery(
                     queryTillDateOpBal);
             pstmt.setString(i++, glCode);
             if (!fundId.equalsIgnoreCase(""))
@@ -831,7 +831,7 @@ public class CashBook {
         String minCode = "";
         try {
             final String query = "select glcode from chartofaccounts where glcode like ?|| '%' and classification = 4 order by glcode asc";
-            pstmt = persistenceService.getSession().createSQLQuery(query);
+            pstmt = persistenceService.getSession().createNativeQuery(query);
             pstmt.setString(0, minGlCode);
             final List<Object[]> rset = pstmt.list();
             for (final Object[] element : rset)
@@ -849,7 +849,7 @@ public class CashBook {
         String maxCode = "";
         try {
             final String query = "  select glcode from chartofaccounts where glcode like ?|| '%' and classification = 4 order by glcode desc";
-            pstmt = persistenceService.getSession().createSQLQuery(query);
+            pstmt = persistenceService.getSession().createNativeQuery(query);
             pstmt.setString(0, maxGlCode);
             final List<Object[]> rset = pstmt.list();
             for (final Object[] element : rset)
@@ -870,7 +870,7 @@ public class CashBook {
         if (!id.equals(""))
             try {
                 final String queryCgn = "select CGN from VOUCHERHEADER where id=?";
-                pstmt = persistenceService.getSession().createSQLQuery(
+                pstmt = persistenceService.getSession().createNativeQuery(
                         queryCgn);
                 pstmt.setString(0, id);
                 rsCgn = pstmt.list();
@@ -923,13 +923,13 @@ public class CashBook {
             final String query = "select glcode as \"glcode\" from chartofaccounts where id in (select cashinhand from codemapping where eg_boundaryid=?)";
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(query);
-            pstmt = persistenceService.getSession().createSQLQuery(query);
+            pstmt = persistenceService.getSession().createNativeQuery(query);
             pstmt.setString(0, bId);
             rs = pstmt.list();
             for (final Object[] element : rs)
                 glcode[0] = element[0].toString();
             final String str = "select glcode from chartofaccounts where id in (select chequeinHand from codemapping where eg_boundaryid=?)";
-            pstmt = persistenceService.getSession().createSQLQuery(str);
+            pstmt = persistenceService.getSession().createNativeQuery(str);
             pstmt.setString(0, bId);
             rs = pstmt.list();
             for (final Object[] element : rs)
@@ -949,7 +949,7 @@ public class CashBook {
         try {
 
             final String query = "select name as \"name\" from companydetail";
-            pstmt = persistenceService.getSession().createSQLQuery(query);
+            pstmt = persistenceService.getSession().createNativeQuery(query);
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(query);
             rs = pstmt.list();

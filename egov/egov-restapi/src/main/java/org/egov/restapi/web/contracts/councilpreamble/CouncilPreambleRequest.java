@@ -58,7 +58,7 @@ import org.egov.council.entity.CouncilPreambleBidderDetails;
 import org.egov.council.enums.PreambleTypeEnum;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 
 public class CouncilPreambleRequest {
     

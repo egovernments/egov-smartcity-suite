@@ -66,7 +66,7 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.query.Query;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.joda.time.DateTime;
@@ -173,7 +173,7 @@ public class DailyWTCollectionReportService {
                     .append("select wardboundary.name as \"wardName\",dcbinfo.houseno as \"houseNo\" from egwtr_mv_dcb_view dcbinfo"
                             + " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id  where dcbinfo.hscno = '"
                             + receiptHeader.getConsumerCode() + "'");
-            final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryString.toString());
+            final NativeQuery finalQuery = getCurrentSession().createNativeQuery(queryString.toString());
             finalQuery.setResultTransformer(new AliasToBeanResultTransformer(DefaultersReport.class));
             List<DefaultersReport> listforWardAndHsc = new ArrayList<DefaultersReport>();
             listforWardAndHsc = finalQuery.list();

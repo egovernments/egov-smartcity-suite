@@ -49,7 +49,7 @@
 package org.egov.pgr.dashboard.repository;
 
 import org.egov.pgr.config.properties.GrievanceApplicationSettings;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,7 +89,7 @@ public class DashboardRepository {
     }
 
     public List<Object[]> fetchWardwisePerformanceTill(final DateTime toDate) {
-        final SQLQuery qry = getQuery("pgr.wardwiseperformance");
+        final NativeQuery qry = getQuery("pgr.wardwiseperformance");
         qry.setParameter("thirteenDaysBefore", endOfGivenDate(toDate.minusDays(13)).toDate());
         qry.setParameter("fourteenDaysBefore", startOfGivenDate(toDate.minusDays(14)).toDate());
         qry.setParameter("currentDate", endOfGivenDate(toDate).toDate());
@@ -97,7 +97,7 @@ public class DashboardRepository {
     }
 
     public Object[] fetchComplaintAgeing(final String querykey, final String wardName) {
-        final SQLQuery qry = getQuery(querykey);
+        final NativeQuery qry = getQuery(querykey);
         final DateTime currentDate = new DateTime();
         qry.setParameter("grtthn90", endOfGivenDate(currentDate.minusDays(90)).toDate());
         qry.setParameter("lsthn90", endOfGivenDate(currentDate.minusDays(90)).toDate());
@@ -117,7 +117,7 @@ public class DashboardRepository {
 
     public List<Object[]> fetchComplaintsByComplaintTypeGroupByWard(final Long complaintTypeId, final DateTime fromDate,
                                                                     final DateTime toDate) {
-        final SQLQuery qry = getQuery("pgr.bndry.wise.perc");
+        final NativeQuery qry = getQuery("pgr.bndry.wise.perc");
         qry.setParameter("fromDate", fromDate.toDate());
         qry.setParameter("toDate", toDate.toDate());
         qry.setParameter("compTypeId", complaintTypeId);
@@ -129,30 +129,30 @@ public class DashboardRepository {
     }
 
     private List<Object[]> fetchDateRangeData(final String query, final Date fromDate, final Date toDate) {
-        final SQLQuery qry = getQuery(query);
+        final NativeQuery qry = getQuery(query);
         qry.setParameter("fromDate", fromDate);
         qry.setParameter("toDate", toDate);
         return qry.list();
     }
 
     public List<Object[]> fetchGISCompPerPropertyWardWise() {
-        final SQLQuery qry = getQuery("pgr.comp.per.property.six.month.wardwise");
+        final NativeQuery qry = getQuery("pgr.comp.per.property.six.month.wardwise");
         return qry.list();
     }
 
     public List<Object[]> fetchGISCompRedressedWardWise() {
-        final SQLQuery qry = getQuery("pgr.comp.redressed.six.month.wardwise");
+        final NativeQuery qry = getQuery("pgr.comp.redressed.six.month.wardwise");
         return qry.list();
     }
 
     public List<Object[]> fetchGISRegCompWardWise() {
-        final SQLQuery qry = getQuery("pgr.comp.reg.six.month.wardwise");
+        final NativeQuery qry = getQuery("pgr.comp.reg.six.month.wardwise");
         return qry.list();
     }
 
-    private SQLQuery getQuery(final String sqlKey) {
+    private NativeQuery getQuery(final String sqlKey) {
         return entityManager.unwrap(Session.class)
-                .createSQLQuery(grievanceApplicationSettings.getValue(sqlKey));
+                .createNativeQuery(grievanceApplicationSettings.getValue(sqlKey));
     }
 
     public List<Object[]> fetchTopComplaintsForCurrentMonthBetween(final Date fromDate, final Date toDate) {

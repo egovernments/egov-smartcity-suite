@@ -568,7 +568,7 @@ public class ChartOfAccounts {
 			final DataCollection dc) throws Exception {
 
 		final String sql = "select FUNCTIONREQD from chartofaccounts where glcode = ?";
-		final Query pst = persistenceService.getSession().createSQLQuery(sql);
+		final Query pst = persistenceService.getSession().createNativeQuery(sql);
 		pst.setString(0, glcode);
 		List<Object[]> rs = null;
 		rs = pst.list();
@@ -948,7 +948,7 @@ public class ChartOfAccounts {
 		if (LOGGER.isInfoEnabled())
 			LOGGER.info("VoucherHeaderId----" + VoucherHeaderId);
 		final String query = "select id from generalledger where voucherheaderid= ? order by id";
-		Query pst = persistenceService.getSession().createSQLQuery(query);
+		Query pst = persistenceService.getSession().createNativeQuery(query);
 		pst.setInteger(0, VoucherHeaderId);
 		if (LOGGER.isInfoEnabled())
 			LOGGER.info("select id from generalledger where voucherheaderid="
@@ -969,7 +969,7 @@ public class ChartOfAccounts {
 			try {
 				final String delremitsql = "delete from eg_remittance_gldtl where gldtlid in (select id from generalledgerdetail where generalledgerid='"
 						+ glHeaderId.get(k).toString() + "')";
-				pst = persistenceService.getSession().createSQLQuery(
+				pst = persistenceService.getSession().createNativeQuery(
 						delremitsql);
 				pst.setString(0, glHeaderId.get(k).toString());
 				if (LOGGER.isInfoEnabled())
@@ -979,7 +979,7 @@ public class ChartOfAccounts {
 					LOGGER.info("delete from generalledgerdetail where generalledgerid='"
 							+ glHeaderId.get(k).toString() + "'");
 				final String delGenLedDet = "delete from generalledgerdetail where generalledgerid= ?";
-				pst = persistenceService.getSession().createSQLQuery(
+				pst = persistenceService.getSession().createNativeQuery(
 						delGenLedDet);
 				pst.setString(0, glHeaderId.get(k).toString());
 				final int del = pst.executeUpdate();
@@ -996,7 +996,7 @@ public class ChartOfAccounts {
 			try {
 
 				final String genLed = "DELETE FROM generalledger WHERE voucherheaderid= ?";
-				pst = persistenceService.getSession().createSQLQuery(genLed);
+				pst = persistenceService.getSession().createNativeQuery(genLed);
 				pst.setInteger(0, VoucherHeaderId);
 				final int del = pst.executeUpdate();
 				if (del > 0)
@@ -1312,7 +1312,7 @@ public class ChartOfAccounts {
 						+ date + "' AND endingDate>='" + date + "'";
 				if (LOGGER.isDebugEnabled())
 					LOGGER.debug(qry);
-				psmt1 = persistenceService.getSession().createSQLQuery(qry);
+				psmt1 = persistenceService.getSession().createNativeQuery(qry);
 				rs = psmt1.list();
 
 				if (!(rs != null && rs.size() > 0))

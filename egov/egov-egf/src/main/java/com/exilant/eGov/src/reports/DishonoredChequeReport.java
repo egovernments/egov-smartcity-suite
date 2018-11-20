@@ -176,7 +176,7 @@ public class DishonoredChequeReport
             final String query = new StringBuffer().append(basicquery1).append(wherequery1).append(orderbyquery).toString();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("  getDishonoredChequeDetails Query is  " + query);
-            rs = persistenceService.getSession().createSQLQuery(query).list();
+            rs = persistenceService.getSession().createNativeQuery(query).list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("After Execute Query----getDishonoredChequeDetails");
             int i = 1;
@@ -336,7 +336,7 @@ public class DishonoredChequeReport
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("  getBankEntryDetails Query is  " + query);
 
-            rs = persistenceService.getSession().createSQLQuery(query).list();
+            rs = persistenceService.getSession().createNativeQuery(query).list();
 
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("After Execute Query----getBankEntryDetails");

@@ -62,7 +62,7 @@ import org.egov.model.deduction.RemittanceBean;
 import org.egov.utils.Constants;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.query.Query;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.transform.Transformers;
 
 import java.math.BigDecimal;
@@ -336,8 +336,8 @@ public class RemitRecoveryService {
     private void populateDetailsBySQL(final CVoucherHeader voucherHeader, final List<RemittanceBean> listRemitBean,
             final StringBuilder query ) {
         RemittanceBean remitBean;
-        final SQLQuery searchSQLQuery = persistenceService.getSession().createSQLQuery(query.toString());
-        final List<Object[]> list = searchSQLQuery.list();
+        final NativeQuery searchNativeQuery = persistenceService.getSession().createNativeQuery(query.toString());
+        final List<Object[]> list = searchNativeQuery.list();
         for (final Object[] element : list) {
             remitBean = new RemittanceBean();
             remitBean.setVoucherName(element[0].toString());
@@ -455,7 +455,7 @@ public class RemitRecoveryService {
                             + inquery.toString()
                             +
                             " GROUP BY  vh.vouchernumber, miscbilldtl.billnumber , remgldtl.remittedamt, remdtl.ID,  gldtl.detailtypeid , gldtl.detailkeyid,vh.id,gld.voucherheaderid,billmis.BILLID");
-                    final Query sqlVoucherQuery = persistenceService.getSession().createSQLQuery(voucherQueryTwo.toString())
+                    final Query sqlVoucherQuery = persistenceService.getSession().createNativeQuery(voucherQueryTwo.toString())
                             .addScalar("remittedAmount").addScalar("billAmount").addScalar("voucherNumber")
                             .addScalar("billNumber").addScalar("remittanceDTId")
                             .addScalar("detailKeyTypeId").addScalar("detailKeyId").addScalar("voucherId").addScalar("billId")
@@ -479,7 +479,7 @@ public class RemitRecoveryService {
                     " GROUP BY  vh.vouchernumber, miscbilldtl.billnumber , remgldtl.remittedamt,    gldtl.detailtypeid , gldtl.detailkeyid,"
                     +
                     " remdtl.ID,vh.id,gld.voucherheaderid,billmis.BILLID");
-            final Query sqlVoucherQuery = persistenceService.getSession().createSQLQuery(voucherQueryTwo.toString())
+            final Query sqlVoucherQuery = persistenceService.getSession().createNativeQuery(voucherQueryTwo.toString())
                     .addScalar("remittedAmount").addScalar("billAmount").addScalar("voucherNumber")
                     .addScalar("billNumber").addScalar("remittanceDTId")
                     .addScalar("detailKeyTypeId").addScalar("detailKeyId").addScalar("voucherId").addScalar("billId")

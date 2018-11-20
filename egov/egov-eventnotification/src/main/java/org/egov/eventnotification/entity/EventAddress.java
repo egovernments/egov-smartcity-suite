@@ -52,7 +52,7 @@ import java.io.Serializable;
 import javax.persistence.Embeddable;
 
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Embeddable

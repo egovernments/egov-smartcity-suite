@@ -476,7 +476,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
                         + "','"
                         + PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES
                         + "') " + "group by dmdRes.id_installment, inst.start_date " + "order by inst.start_date ");
-        final Query qry = getCurrentSession().createSQLQuery(strBuf.toString()).setLong("dmdId", egDemand.getId());
+        final Query qry = getCurrentSession().createNativeQuery(strBuf.toString()).setLong("dmdId", egDemand.getId());
         return qry.list();
     }
 
@@ -493,7 +493,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
                         + "and dmdresmas.id = dmdres.id_demand_reason_master "
                         + "and dmdresmas.code = :dmdRsnCode "
                         + "group by dmdRes.id_installment, inst.start_date " + "order by inst.start_date ");
-        final Query qry = getCurrentSession().createSQLQuery(strBuf.toString()).setLong("dmdId", egDemand.getId())
+        final Query qry = getCurrentSession().createNativeQuery(strBuf.toString()).setLong("dmdId", egDemand.getId())
                 .setString("dmdRsnCode", PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES);
         return qry.list();
     }
@@ -505,7 +505,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
             final StringBuffer strBuf = new StringBuffer(2000);
             strBuf.append(
                     " select dmdet.id from eg_demand_details dmdet, eg_demand_reason res where dmdet.id_demand_reason= res.id and dmdet.id_demand =:dmdId and res.id_installment =:instlId ");
-            final Query qry = getCurrentSession().createSQLQuery(strBuf.toString());
+            final Query qry = getCurrentSession().createNativeQuery(strBuf.toString());
             qry.setLong("dmdId", egDemand.getId());
             qry.setInteger("instlId", installment.getId());
             dmdIdList = qry.list();
@@ -530,7 +530,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
                     .append("egpt_ptdemand ptdem, eg_demand dmd, eg_bill bill ")
                     .append("where bill.id_demand = dmd.id and dmd.id = ptdem.id_demand ")
                     .append("and dmd.is_history = 'N' and bill.id = :billId ");
-            final Query qry = getCurrentSession().createSQLQuery(strBuf.toString());
+            final Query qry = getCurrentSession().createNativeQuery(strBuf.toString());
             qry.setLong("billId", billId).setMaxResults(1);
             propertyId = (BigDecimal) qry.uniqueResult();
         }
@@ -553,7 +553,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
                     + "  egpt_ptdemand ptdem " + "WHERE bas.ID = prop.ID_BASIC_PROPERTY "
                     + "AND prop.id = ptdem.ID_PROPERTY " + "AND bas.propertyid = :PropId ";
 
-            final Query qry = getCurrentSession().createSQLQuery(qryStr);
+            final Query qry = getCurrentSession().createNativeQuery(qryStr);
             qry.setString("PropId", basicProperty.getUpicNo());
             demandIds = qry.list();
         }
@@ -579,7 +579,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
             strBuf.append(" SELECT dmdet.id FROM eg_demand_details dmdet, eg_demand_reason res , eg_demand_reason_master mast ");
             strBuf.append(" WHERE dmdet.id_demand_reason= res.id AND dmdet.id_demand =:dmdId AND res.id_installment =:instlId ");
             strBuf.append(" AND mast.id = res.id_demand_reason_master AND mast.code =:masterCode ");
-            final Query qry = getCurrentSession().createSQLQuery(strBuf.toString());
+            final Query qry = getCurrentSession().createNativeQuery(strBuf.toString());
             qry.setLong("dmdId", egDemand.getId());
             qry.setInteger("instlId", installment.getId());
             qry.setString("masterCode", demandReasonMasterCode);
@@ -606,7 +606,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
                         + "and dmdRes.id_installment = inst.id "
                         + "and dmdresmas.id = dmdres.id_demand_reason_master "
                         + "group by dmdRes.id_installment, inst.start_date, dmdresmas.code " + "order by inst.start_date ");
-        final Query qry = getCurrentSession().createSQLQuery(strBuf.toString()).setLong("dmdId", egDemand.getId());
+        final Query qry = getCurrentSession().createNativeQuery(strBuf.toString()).setLong("dmdId", egDemand.getId());
         return qry.list();
     }
 
@@ -623,7 +623,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
                         + "and dmdresmas.id = dmdres.id_demand_reason_master "
                         + "group by dmdRes.id_installment, dmdresmas.code, dmdDet.amount,dmdDet.amt_collected, inst.start_date "
                         + "order by inst.start_date ");
-        final Query qry = getCurrentSession().createSQLQuery(strBuf.toString()).setLong("dmdId", egDemand.getId());
+        final Query qry = getCurrentSession().createNativeQuery(strBuf.toString()).setLong("dmdId", egDemand.getId());
         return qry.list();
     }
 
@@ -638,7 +638,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
                 + "and dmdresmas.id = dmdres.id_demand_reason_master "
                 + "group by dmdRes.id_installment,dmdresmas.code, dmdDet.amount , dmdDet.amt_collected, inst.start_date "
                 + "order by inst.start_date ");
-        final Query qry = getCurrentSession().createSQLQuery(strBul.toString()).setLong("dmdId", egDemand.getId());
+        final Query qry = getCurrentSession().createNativeQuery(strBul.toString()).setLong("dmdId", egDemand.getId());
         return qry.list();
     }
 

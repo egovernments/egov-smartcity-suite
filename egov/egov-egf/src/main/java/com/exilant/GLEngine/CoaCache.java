@@ -54,7 +54,7 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.service.ChartOfAccountDetailService;
 import org.egov.infra.cache.impl.ApplicationCacheManager;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BooleanType;
@@ -111,8 +111,8 @@ public class CoaCache implements Serializable {
                 ",nbrOfLevels as  \"nbrOfLevels\" from AccountDetailType";
 
         final Session currentSession = persistenceService.getSession();
-        SQLQuery createSQLQuery = currentSession.createSQLQuery(sql);
-        createSQLQuery
+        NativeQuery createNativeQuery = currentSession.createNativeQuery(sql);
+        createNativeQuery
                 .addScalar("id", IntegerType.INSTANCE)
                 .addScalar("name")
                 .addScalar("tableName")
@@ -124,13 +124,13 @@ public class CoaCache implements Serializable {
         List<GLAccount> glAccountCodesList = new ArrayList<GLAccount>();
         new ArrayList<GLAccount>();
 
-        accountDetailTypeList = createSQLQuery.list();
+        accountDetailTypeList = createNativeQuery.list();
         for (final AccountDetailType type : accountDetailTypeList)
             accountDetailType.put(type.getAttributeName(), type);
         sql = "select ID as \"ID\", glCode as \"glCode\" ,name as \"name\" ," +
                 "isActiveForPosting as \"isActiveForPosting\" ,classification as \"classification\", functionReqd as \"functionRequired\" from chartofaccounts ";
-        createSQLQuery = currentSession.createSQLQuery(sql);
-        createSQLQuery
+        createNativeQuery = currentSession.createNativeQuery(sql);
+        createNativeQuery
                 .addScalar("ID", IntegerType.INSTANCE)
                 .addScalar("glCode")
                 .addScalar("name")
@@ -139,7 +139,7 @@ public class CoaCache implements Serializable {
                 .addScalar("functionRequired", BooleanType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(GLAccount.class));
 
-        glAccountCodesList = createSQLQuery.list();
+        glAccountCodesList = createNativeQuery.list();
         for (final GLAccount type : glAccountCodesList)
             glAccountCodes.put(type.getCode(), type);
         for (final GLAccount type : glAccountCodesList)

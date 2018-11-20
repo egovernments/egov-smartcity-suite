@@ -569,14 +569,14 @@ public class AutoRemittanceReportAction extends BaseFormAction {
         final Session session = persistenceService.getSession();
         Query sqlQuery = null;
         if (level.equals("atcoc"))
-            sqlQuery = session.createSQLQuery(query.toString())
+            sqlQuery = session.createNativeQuery(query.toString())
                     .addScalar("remittanceCOA").addScalar("department").addScalar("drawingOfficer")
                     .addScalar("bankbranchAccount")
                     .addScalar("remittancePaymentNo").addScalar("rtgsNoDate")
                     .addScalar("rtgsAmount").addScalar("remittanceDTId").addScalar("paymentVoucherId")
                     .setResultTransformer(Transformers.aliasToBean(AutoRemittanceBeanReport.class));
         else
-            sqlQuery = session.createSQLQuery(query.toString())
+            sqlQuery = session.createNativeQuery(query.toString())
                     .addScalar("remittanceCOA").addScalar("fundName").addScalar("bankbranchAccount")
                     .addScalar("remittancePaymentNo").addScalar("rtgsNoDate")
                     .addScalar("rtgsAmount").addScalar("remittanceDTId").addScalar("paymentVoucherId")
@@ -636,7 +636,7 @@ public class AutoRemittanceReportAction extends BaseFormAction {
 
         queryString1.append(" )) ");
         final Session session = persistenceService.getSession();
-        final Query sqlQuery = session.createSQLQuery(queryString1.toString())
+        final Query sqlQuery = session.createNativeQuery(queryString1.toString())
                 .addScalar("incomeTaxRemittedAmt").addScalar("salesTaxRemittedAmt").addScalar("mwgwfRemittedAmt")
                 .addScalar("serviceTaxRemittedAmt").addScalar("grandTotal")
                 .setResultTransformer(Transformers.aliasToBean(AutoRemittanceCOCLevelBeanReport.class));
@@ -689,7 +689,7 @@ public class AutoRemittanceReportAction extends BaseFormAction {
                     + "'");
         queryString2.append(" ))GROUP BY departmentcode  ORDER BY departmentcode ");
 
-        final Query sqlQuery2 = session.createSQLQuery(queryString2.toString())
+        final Query sqlQuery2 = session.createNativeQuery(queryString2.toString())
                 .addScalar("departmentCode")
                 .addScalar("incomeTaxRemittedAmt").addScalar("salesTaxRemittedAmt").addScalar("mwgwfRemittedAmt")
                 .addScalar("serviceTaxRemittedAmt").addScalar("departmentTotal")

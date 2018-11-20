@@ -66,7 +66,7 @@ import org.egov.model.instrument.InstrumentType;
 import org.egov.model.instrument.InstrumentVoucher;
 import org.egov.services.contra.ContraService;
 import org.egov.services.instrument.InstrumentService;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
@@ -257,7 +257,7 @@ public class FinancialsUtil {
             return true;
         if (purposeId != null)
             try {
-                final SQLQuery query = persistenceService.getSession().createSQLQuery(
+                final NativeQuery query = persistenceService.getSession().createNativeQuery(
                         "SELECT NAME FROM EGF_ACCOUNTCODE_PURPOSE WHERE ID = " + purposeId);
                 final List<String> purposeNames = query.list();
                 if (purposeNames != null && purposeNames.size() == 1) {

@@ -104,7 +104,7 @@ public class CentralFCAction extends BaseRevenueAction {
     }
 
     public String getUlbName() {
-        final Query query = persistenceService.getSession().createSQLQuery(
+        final Query query = persistenceService.getSession().createNativeQuery(
                 "select name from companydetail");
         final List<String> result = query.list();
         if (result != null)

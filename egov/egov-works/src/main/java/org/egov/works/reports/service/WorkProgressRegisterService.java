@@ -140,7 +140,7 @@ public class WorkProgressRegisterService {
             final EstimateAbstractReport estimateAbstractReport) {
 
         Query query = null;
-        query = entityManager.unwrap(Session.class).createSQLQuery(getQueryForDepartmentWiseReport(estimateAbstractReport))
+        query = entityManager.unwrap(Session.class).createNativeQuery(getQueryForDepartmentWiseReport(estimateAbstractReport))
                 .addScalar("departmentName", StringType.INSTANCE)
                 .addScalar("lineEstimates", LongType.INSTANCE)
                 .addScalar("adminSanctionedEstimates", LongType.INSTANCE)
@@ -263,7 +263,7 @@ public class WorkProgressRegisterService {
         Query query = null;
         if (estimateAbstractReport.getDepartments() != null
                 && !estimateAbstractReport.getDepartments().toString().equalsIgnoreCase("[null]")) {
-            query = entityManager.unwrap(Session.class).createSQLQuery(getQueryForTypeOfWorkWiseReport(estimateAbstractReport))
+            query = entityManager.unwrap(Session.class).createNativeQuery(getQueryForTypeOfWorkWiseReport(estimateAbstractReport))
                     .addScalar("typeOfWorkName", StringType.INSTANCE)
                     .addScalar("subTypeOfWorkName", StringType.INSTANCE)
                     .addScalar("departmentName", StringType.INSTANCE)
@@ -280,7 +280,7 @@ public class WorkProgressRegisterService {
                     .setResultTransformer(Transformers.aliasToBean(EstimateAbstractReport.class));
             query = setParameterForTypeOfWorkWiseReport(estimateAbstractReport, query);
         } else {
-            query = entityManager.unwrap(Session.class).createSQLQuery(getQueryForTypeOfWorkWiseReport(estimateAbstractReport))
+            query = entityManager.unwrap(Session.class).createNativeQuery(getQueryForTypeOfWorkWiseReport(estimateAbstractReport))
                     .addScalar("typeOfWorkName", StringType.INSTANCE)
                     .addScalar("subTypeOfWorkName", StringType.INSTANCE)
                     .addScalar("lineEstimates", LongType.INSTANCE)

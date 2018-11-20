@@ -105,7 +105,7 @@ public class BalanceSheetService extends ReportService {
             final String transactionQuery) {
         final BigDecimal divisor = balanceSheet.getDivisor();
         final Query query = persistenceService.getSession()
-                .createSQLQuery(
+                .createNativeQuery(
                         "select sum(openingdebitbalance)- sum(openingcreditbalance),ts.fundid,coa.majorcode,coa.type FROM transactionsummary ts,chartofaccounts coa  WHERE ts.glcodeid = coa.ID  AND ts.financialyearid="
                                 + balanceSheet.getFinancialYear().getId()
                        
@@ -143,7 +143,7 @@ public class BalanceSheetService extends ReportService {
            final CFinancialYear prevFinancialYr = financialYearDAO.getPreviousFinancialYearByDate(fromDate);
             final String prevFinancialYearId = prevFinancialYr.getId().toString();
             final Query query = persistenceService.getSession()
-                    .createSQLQuery(
+                    .createNativeQuery(
                             "select sum(openingdebitbalance)- sum(openingcreditbalance),coa.majorcode,coa.type FROM transactionsummary ts,chartofaccounts coa  WHERE ts.glcodeid = coa.ID  AND ts.financialyearid="
                                     + prevFinancialYearId + transactionQuery + " GROUP BY coa.majorcode,coa.type");
             final List<Object[]> openingBalanceAmountList = query.list();
@@ -181,7 +181,7 @@ public class BalanceSheetService extends ReportService {
         if (balanceSheet.getDepartment() != null && balanceSheet.getDepartment().getId() != -1)
             qry.append(" and v.id= mis.voucherheaderid  and mis.departmentid= " + balanceSheet.getDepartment().getId());
         qry.append(" and coa.ID=g.glcodeid and coa.type in ('I','E') " + filterQuery + " group by v.fundid");
-        final Query query = persistenceService.getSession().createSQLQuery(qry.toString());
+        final Query query = persistenceService.getSession().createNativeQuery(qry.toString());
         final List<Object[]> excessieAmountList = query.list();
         
         for (final StatementEntry entry : balanceSheet.getEntries())
@@ -228,7 +228,7 @@ public class BalanceSheetService extends ReportService {
             qry.append(" and v.id= mis.voucherheaderid");
 
         qry.append(" and coa.type in ('I','E') " + filterQuery + " group by v.fundid,g.functionid");
-        final Query query = persistenceService.getSession().createSQLQuery(qry.toString());
+        final Query query = persistenceService.getSession().createNativeQuery(qry.toString());
         final List<Object[]> excessieAmountList = query.list();
         for (final Object[] obj : excessieAmountList)
             sum = sum.add((BigDecimal) obj[0]);

@@ -111,7 +111,7 @@ public class CommnFunctions
             final String query = " select id,name from fund where isactive=true and isnotleaf!=true " + fundCondition + " order by id";
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("getFundList: " + query);
-            pstmt = persistenceService.getSession().createSQLQuery(query);
+            pstmt = persistenceService.getSession().createNativeQuery(query);
             if (!fundId.equalsIgnoreCase(""))
                 pstmt.setString(0, fundId);
             resultset = pstmt.list();
@@ -172,7 +172,7 @@ public class CommnFunctions
         {
             int j = 1;
             getFundList(fundId, startDate, endDate);
-            pstmt = persistenceService.getSession().createSQLQuery(query);
+            pstmt = persistenceService.getSession().createNativeQuery(query);
             pstmt.setString(j++, type2);
             pstmt.setString(j++, type1);
             pstmt.setString(j++, type2);
@@ -242,7 +242,7 @@ public class CommnFunctions
         try
         {
             int j = 1;
-            pstmt = persistenceService.getSession().createSQLQuery(query1);
+            pstmt = persistenceService.getSession().createNativeQuery(query1);
             pstmt.setString(j++, type1);
             pstmt.setString(j++, startDate);
             pstmt.setString(j++, endDate);
@@ -317,7 +317,7 @@ public class CommnFunctions
         try
         {
             int j = 1;
-            pstmt = persistenceService.getSession().createSQLQuery(query);
+            pstmt = persistenceService.getSession().createNativeQuery(query);
             if (type1 == null || type1.trim().equals("")) {
                 pstmt.setString(j++, type1);
                 pstmt.setString(j++, type2);
@@ -389,7 +389,7 @@ public class CommnFunctions
         try
         {
             int j = 1;
-            pstmt = persistenceService.getSession().createSQLQuery(query);
+            pstmt = persistenceService.getSession().createNativeQuery(query);
             pstmt.setString(j++, type1);
             pstmt.setString(j++, type2);
             pstmt.setString(j++, startDate);
@@ -466,7 +466,7 @@ public class CommnFunctions
         final String query = "SELECT TO_CHAR(startingdate,'DD/MM/YYYY') FROM FINANCIALYEAR WHERE id= ?";
         try
         {
-            pstmt = persistenceService.getSession().createSQLQuery(query);
+            pstmt = persistenceService.getSession().createNativeQuery(query);
             pstmt.setInteger(0, finYearId);
 
             List list = pstmt.list();
@@ -494,7 +494,7 @@ public class CommnFunctions
         final String query = "SELECT TO_CHAR(endingdate,'DD/MM/YYYY') FROM FINANCIALYEAR WHERE id= ?";
         try
         {
-            pstmt = persistenceService.getSession().createSQLQuery(query);
+            pstmt = persistenceService.getSession().createNativeQuery(query);
             pstmt.setInteger(0, finYearId);
             resultset = pstmt.list();
             for (final Object[] element : resultset)

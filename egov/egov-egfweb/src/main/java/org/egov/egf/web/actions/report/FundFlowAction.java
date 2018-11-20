@@ -67,7 +67,7 @@ import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.report.FundFlowBean;
 import org.egov.services.report.FundFlowService;
 import org.hibernate.query.Query;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.LongType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -162,7 +162,7 @@ public class FundFlowAction extends BaseFormAction {
         if (fund != null && fund != -1)
             alreadyExistsQryStr.append(" and ba.fundId=" + fund + " ");
         final Query alreadyExistsQry = persistenceService.getSession()
-                .createSQLQuery(alreadyExistsQryStr.toString());
+                .createNativeQuery(alreadyExistsQryStr.toString());
         final List existsList = alreadyExistsQry.list();
         if (existsList.size() > 0) {
             paymentList = null;
@@ -441,7 +441,7 @@ public class FundFlowAction extends BaseFormAction {
         if (fund != null && fund != -1)
             alreadyExistsQryStr.append("and ba.fundId=" + fund + " ");
         final Query alreadyExistsQry = persistenceService.getSession()
-                .createSQLQuery(alreadyExistsQryStr.toString());
+                .createNativeQuery(alreadyExistsQryStr.toString());
         final List existsList = alreadyExistsQry.list();
         if (existsList.size() > 0)
             throw new ValidationException(
@@ -617,7 +617,7 @@ public class FundFlowAction extends BaseFormAction {
                 LOGGER.debug(" Opening Balance Qry "
                         + openingBalanceQryStr.toString());
             final Query openingBalanceQry = persistenceService.getSession()
-                    .createSQLQuery(openingBalanceQryStr.toString()).addScalar(
+                    .createNativeQuery(openingBalanceQryStr.toString()).addScalar(
                             "bankAccountId").addScalar("accountNumber")
                             .addScalar("openingBalance").setResultTransformer(
                                     Transformers.aliasToBean(FundFlowBean.class));
@@ -664,7 +664,7 @@ public class FundFlowAction extends BaseFormAction {
             currentOpbAndRcptQryStr.append(" and ba.fundId=" + fund2 + " ");
 
         final Query currentOpbAndRcptQry = persistenceService.getSession()
-                .createSQLQuery(currentOpbAndRcptQryStr.toString()).addScalar(
+                .createNativeQuery(currentOpbAndRcptQryStr.toString()).addScalar(
                         "openingBalance").addScalar("currentReceipt")
                         .addScalar("id", LongType.INSTANCE).addScalar("accountNumber")
                         .addScalar("bankAccountId").setResultTransformer(
@@ -925,7 +925,7 @@ public class FundFlowAction extends BaseFormAction {
 
     @SuppressWarnings("unchecked")
     private String getUlbName() {
-        final SQLQuery query = persistenceService.getSession().createSQLQuery(
+        final NativeQuery query = persistenceService.getSession().createNativeQuery(
                 "select name from companydetail");
         final List<String> result = query.list();
         if (result != null)

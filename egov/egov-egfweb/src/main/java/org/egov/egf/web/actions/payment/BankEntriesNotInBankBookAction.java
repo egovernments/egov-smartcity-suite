@@ -158,7 +158,7 @@ public class BankEntriesNotInBankBookAction extends BasePaymentAction {
     @Action(value = "/payment/bankEntriesNotInBankBook-search")
     public String search() {
         Query query = null;
-        query = persistenceService.getSession().createSQLQuery(getQuery())
+        query = persistenceService.getSession().createNativeQuery(getQuery())
                 .addScalar("refNum", StringType.INSTANCE)
                 .addScalar("type", StringType.INSTANCE)
                 .addScalar("date", DateType.INSTANCE)

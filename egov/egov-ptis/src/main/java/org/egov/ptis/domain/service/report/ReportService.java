@@ -94,7 +94,7 @@ import org.egov.ptis.report.bean.ApartmentDCBReportResult;
 import org.egov.ptis.report.bean.NatureOfUsageResult;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.query.Query;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
@@ -156,7 +156,7 @@ public class ReportService {
             queryStr.append(" and pi.wardid=:ward ");
 
         queryStr.append("group by ward.name order by ward.name ");
-        final Query query = propPerServ.getSession().createSQLQuery(queryStr.toString());
+        final Query query = propPerServ.getSession().createNativeQuery(queryStr.toString());
         if (StringUtils.isNotBlank(ward))
             query.setLong("ward", Long.valueOf(ward));
 
@@ -225,7 +225,7 @@ public class ReportService {
         }
         queryBuilder
                 .append(" group by district,ulbname ,ulbcode  ,collectorname,mobilenumber  order by district,ulbname,collectorname ");
-        final Query query = propPerServ.getSession().createSQLQuery(queryBuilder.toString());
+        final Query query = propPerServ.getSession().createNativeQuery(queryBuilder.toString());
         if (bcDailyCollectionReportResult != null) {
             if (bcDailyCollectionReportResult.getCity() != null && !bcDailyCollectionReportResult.getCity().equals("")
                     && !bcDailyCollectionReportResult.getCity().equalsIgnoreCase(value_ALL))
@@ -293,7 +293,7 @@ public class ReportService {
                         + "cummulative_arrears_collection,cummulative_currentyear_collection,lastyear_collection,lastyear_cummulative_collection  "
                         + "from " + environmentSettings.statewideSchemaName()
                         + ".ulbWise_DialyCollection_view  order by district,ulbname ");
-        final Query query = propPerServ.getSession().createSQLQuery(queryBuilder.toString());
+        final Query query = propPerServ.getSession().createNativeQuery(queryBuilder.toString());
         query.setResultTransformer(new AliasToBeanResultTransformer(BillCollectorDailyCollectionReportResult.class));
 
         listBcPayment = query.list();
@@ -445,7 +445,7 @@ public class ReportService {
         }
         queryBuilder
                 .append(" group by district,ulbname ,ulbcode  ,collectorname,mobilenumber  order by district,ulbname,collectorname ");
-        final Query query = propPerServ.getSession().createSQLQuery(queryBuilder.toString());
+        final Query query = propPerServ.getSession().createNativeQuery(queryBuilder.toString());
         if (bcDailyCollectionReportResult != null) {
             if (bcDailyCollectionReportResult.getCity() != null && !bcDailyCollectionReportResult.getCity().equals("")
                     && !bcDailyCollectionReportResult.getCity().equalsIgnoreCase(valueAll))
@@ -608,7 +608,7 @@ public class ReportService {
      * @return @ Description - Returns query that retrieves zone/ward/block/propertywise Arrear, Current Demand and Collection
      * Details
      */
-    public SQLQuery prepareQueryForDCBReport(final Long boundaryId, final String mode, final Boolean courtCase,
+    public NativeQuery prepareQueryForDCBReport(final Long boundaryId, final String mode, final Boolean courtCase,
             final List<String> propertyTypes) {
 
         final String WARDWISE = "ward";
@@ -679,7 +679,7 @@ public class ReportService {
         queryStr.append(finalSelectQry).append(finalCommonQry).append(commonFromQry).append(whereQry)
                 .append(boundaryQry).append(finalGrpQry);
 
-        return propPerServ.getSession().createSQLQuery(queryStr.toString());
+        return propPerServ.getSession().createNativeQuery(queryStr.toString());
     }
 
     /**
@@ -880,7 +880,7 @@ public class ReportService {
             whereQuery.append(" and pi.blockid = :block");
             params.put(BLOCK, Long.valueOf(block));
         }
-        final SQLQuery sqlQuery = propertyTaxCommonUtils.getSession().createSQLQuery(
+        final NativeQuery sqlQuery = propertyTaxCommonUtils.getSession().createNativeQuery(
                 query.append(whereQuery).toString());
         for (final String key : params.keySet())
             sqlQuery.setParameter(key, params.get(key));
@@ -1000,7 +1000,7 @@ public class ReportService {
         }
         queryStr.append(finalSelectQry).append(finalCommonQry).append(commonFromQry).append(whereQry)
                 .append(boundaryQry).append(finalGrpQry);
-        final SQLQuery sqlQuery = propertyTaxCommonUtils.getSession().createSQLQuery(queryStr.toString());
+        final NativeQuery sqlQuery = propertyTaxCommonUtils.getSession().createNativeQuery(queryStr.toString());
         sqlQuery.setResultTransformer(new AliasToBeanResultTransformer(ApartmentDCBReportResult.class));
         return sqlQuery.list();
     }

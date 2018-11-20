@@ -1063,7 +1063,7 @@ public class CollectionsUtil {
         StringBuilder queryString = new StringBuilder(
                 "select distinct(bb.id) as branchid,b.NAME||'-'||bb.BRANCHNAME as branchname from BANK b,BANKBRANCH bb,"
                         + " EGCL_COLLECTIONMIS cmis where bb.BANKID=b.ID  and bb.id=cmis.depositedBranch ");
-        final Query query = persistenceService.getSession().createSQLQuery(queryString.toString());
+        final Query query = persistenceService.getSession().createNativeQuery(queryString.toString());
         List<Object[]> queryResult = query.list();
         for (int i = 0; i < queryResult.size(); i++) {
             final Object[] arrayObjectInitialIndex = queryResult.get(i);

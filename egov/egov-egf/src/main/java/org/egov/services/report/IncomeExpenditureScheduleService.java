@@ -120,7 +120,7 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
         else
             formattedToDate = incomeExpenditureService.getFormattedDate(incomeExpenditureService.getPreviousYearFor(toDate));
         final Query query = persistenceService.getSession()
-                .createSQLQuery(
+                .createNativeQuery(
                         "select c.glcode,c.name ,sum(g.debitamount)-sum(g.creditamount),v.fundid ,c.type ,c.majorcode  from "
                                 +
                                 "generalledger g,chartofaccounts c,voucherheader v ,vouchermis mis where v.id=mis.voucherheaderid and  v.fundid in"
@@ -351,7 +351,7 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Getting All ledger codes ..");
         final List<Object[]> AllLedger = persistenceService.getSession()
-                .createSQLQuery(
+                .createNativeQuery(
                         "select coa.glcode,coa.name from chartofaccounts coa where coa.majorcode='" + majorCode
                         + "' and coa.classification=4 and coa.type='" + type + "'  order by coa.glcode").list();
         final List<Object[]> previousLedgerBalance = populatePreviousYearTotals(statement, toDate, fromDate, majorCode,

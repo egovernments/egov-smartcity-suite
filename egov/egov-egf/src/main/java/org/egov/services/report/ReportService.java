@@ -121,7 +121,7 @@ public abstract class ReportService {
 
     //TODO- find the api for this in COA hibernate dao
     public String getGlcodeForPurposeCode(final Integer purposeId) {
-        final Query query = persistenceService.getSession().createSQLQuery(
+        final Query query = persistenceService.getSession().createNativeQuery(
                 "select majorcode from chartofaccounts where purposeid="
                         + purposeId);
         final List list = query.list();
@@ -276,7 +276,7 @@ public abstract class ReportService {
     protected List<StatementResultObject> getAllGlCodesFor(
             final String scheduleReportType) {
         final Query query = persistenceService.getSession()
-                .createSQLQuery(
+                .createNativeQuery(
                         "select distinct coa.majorcode as glCode,s.schedule as scheduleNumber,"
                                 + "s.schedulename as scheduleName,coa.type as type from chartofaccounts coa, schedulemapping s "
                                 + "where s.id=coa.scheduleid and coa.classification=2 and s.reporttype = '"
@@ -294,7 +294,7 @@ public abstract class ReportService {
                 "statusexcludeReport");
         
         final Query query = persistenceService.getSession()
-                .createSQLQuery(
+                .createNativeQuery(
                         "select c.majorcode as glCode,v.fundid as fundId,c.type as type,sum(debitamount)-sum(creditamount) as amount"
                                 + " from generalledger g,chartofaccounts c,voucherheader v ,vouchermis mis where v.id=mis.voucherheaderid and "
                                 + "v.id=g.voucherheaderid and c.type in("
@@ -323,7 +323,7 @@ public abstract class ReportService {
     protected Map<String, String> getSubSchedule(final String subReportType) {
         final Map<String, String> scheduleNumberToName = new HashMap<String, String>();
         final List<Object[]> rows = persistenceService.getSession()
-                .createSQLQuery(
+                .createNativeQuery(
                         "select s.schedule,sub.subschedulename from egf_subschedule sub,schedulemapping s "
                                 + "where sub.reporttype='"
                                 + subReportType
@@ -425,7 +425,7 @@ public abstract class ReportService {
     protected void populateSchedule(final Statement statement, final String reportSubType) {
         //TODO change the query parameter
         final Query query = persistenceService.getSession()
-                .createSQLQuery(
+                .createNativeQuery(
                         "select c.majorcode,s.schedulename,s.schedule from chartofaccounts c,schedulemapping s "
                                 + "where s.id=c.scheduleid and s.reporttype = '"
                                 + reportSubType

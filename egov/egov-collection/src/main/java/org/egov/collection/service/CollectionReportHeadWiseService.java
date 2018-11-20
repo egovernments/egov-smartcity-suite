@@ -51,7 +51,7 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.CollectionSummaryHeadWiseReport;
 import org.egov.collection.entity.CollectionSummaryHeadWiseReportResult;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.DoubleType;
@@ -184,7 +184,7 @@ public class CollectionReportHeadWiseService {
         final StringBuilder finalRebateQueryStr = new StringBuilder(finalSelectQueryStr).append(rebateQueryStr)
                 .append(finalGroupQuery);
 
-        final SQLQuery aggrQuery = (SQLQuery) getCurrentSession().createSQLQuery(finalRevQueryStr.toString())
+        final NativeQuery aggrQuery = (NativeQuery) getCurrentSession().createNativeQuery(finalRevQueryStr.toString())
                 .addScalar("cashCount", org.hibernate.type.StringType.INSTANCE).addScalar("cashAmount", DoubleType.INSTANCE)
                 .addScalar("chequeddCount", org.hibernate.type.StringType.INSTANCE)
                 .addScalar("chequeddAmount", DoubleType.INSTANCE)
@@ -195,7 +195,7 @@ public class CollectionReportHeadWiseService {
                 .addScalar("totalReceiptCount", org.hibernate.type.StringType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(CollectionSummaryHeadWiseReport.class));
 
-        final SQLQuery rebateQuery = (SQLQuery) getCurrentSession().createSQLQuery(finalRebateQueryStr.toString())
+        final NativeQuery rebateQuery = (NativeQuery) getCurrentSession().createNativeQuery(finalRebateQueryStr.toString())
                 .addScalar("cashCount", org.hibernate.type.StringType.INSTANCE).addScalar("cashAmount", DoubleType.INSTANCE)
                 .addScalar("chequeddCount", org.hibernate.type.StringType.INSTANCE)
                 .addScalar("chequeddAmount", DoubleType.INSTANCE)

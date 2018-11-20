@@ -1338,7 +1338,7 @@ public class WaterConnectionDetailsService {
                 .append(" and conndetails.connectiontype=:connectionType");
 
         queryString = setQueryParameters(executionDetails, queryString);
-        Query query = getCurrentSession().createSQLQuery(queryString.toString());
+        Query query = getCurrentSession().createNativeQuery(queryString.toString());
         query.setParameter("connectionType", NON_METERED_CODE);
         return setParameterDetails(executionDetails, query);
     }
@@ -1374,7 +1374,7 @@ public class WaterConnectionDetailsService {
                 .append(" and conndetails.connectiontype=:connectionType ");
 
         queryString = setQueryParameters(executionDetails, queryString);
-        Query query = getCurrentSession().createSQLQuery(queryString.toString());
+        Query query = getCurrentSession().createNativeQuery(queryString.toString());
         query.setParameter("connectionType", CONNECTIONTYPE_METERED);
         return setParameterDetails(executionDetails, query);
     }

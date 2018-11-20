@@ -88,7 +88,7 @@ public class SearchQuerySQL implements SearchQuery {
      */
     @Override
     public int getCount(final PersistenceService persistenceService) {
-        final Query q = getSQLQueryWithParams(persistenceService, this.countQuery);
+        final Query q = getNativeQueryWithParams(persistenceService, this.countQuery);
         return ((BigInteger) q.uniqueResult()).intValue();
     }
 
@@ -98,7 +98,7 @@ public class SearchQuerySQL implements SearchQuery {
      */
     @Override
     public Page getPage(final PersistenceService persistenceService, final int pageNum, final int pageSize) {
-        final Query q = getSQLQueryWithParams(persistenceService, this.searchQuery);
+        final Query q = getNativeQueryWithParams(persistenceService, this.searchQuery);
         return new Page(q, pageNum, pageSize);
     }
 
@@ -109,8 +109,8 @@ public class SearchQuerySQL implements SearchQuery {
      * @param query              The SQL query string
      * @return The created Query object
      */
-    private Query getSQLQueryWithParams(final PersistenceService persistenceService, final String query) {
-        final Query q = persistenceService.getSession().createSQLQuery(query);
+    private Query getNativeQueryWithParams(final PersistenceService persistenceService, final String query) {
+        final Query q = persistenceService.getSession().createNativeQuery(query);
 
         if (this.params != null && this.params.length > 0) {
             for (int index = 0; index < this.params.length; index++) {

@@ -183,7 +183,7 @@ public class FundFlowService extends PersistenceService {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Out Standing Payment Query " + outstandingPaymentQryStr.toString());
-        final Query outstandingQry = getSession().createSQLQuery(outstandingPaymentQryStr.toString())
+        final Query outstandingQry = getSession().createNativeQuery(outstandingPaymentQryStr.toString())
                 .addScalar("accountNumber")
                 .addScalar("outStandingBPV")
                 .setResultTransformer(Transformers.aliasToBean(FundFlowBean.class));
@@ -232,7 +232,7 @@ public class FundFlowService extends PersistenceService {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Concurrancey payment " + conCurrancePaymentQryStr.toString());
-        final Query conCurranceQry = getSession().createSQLQuery(conCurrancePaymentQryStr.toString())
+        final Query conCurranceQry = getSession().createNativeQuery(conCurrancePaymentQryStr.toString())
                 .addScalar("accountNumber")
                 .addScalar("concurranceBPV")
                 .setResultTransformer(Transformers.aliasToBean(FundFlowBean.class));
@@ -255,7 +255,7 @@ public class FundFlowService extends PersistenceService {
         else
             allPaymentAccounts.append(" order by fd.code,b.code,coa.glcode,ba.accountnumber");
 
-        final Query allPaymentAccountsQry = getSession().createSQLQuery(allPaymentAccounts.toString())
+        final Query allPaymentAccountsQry = getSession().createNativeQuery(allPaymentAccounts.toString())
                 .addScalar("bankAccountId")
                 .addScalar("accountNumber")
                 .addScalar("glcode")
@@ -285,7 +285,7 @@ public class FundFlowService extends PersistenceService {
             allAccounts.append(" and ba.fundid=" + fundId);
         else
             allAccounts.append(" order by fd.code, walkinPaymentAccount, b.code,coa.glcode,ba.accountnumber");
-        final Query allAccountsQry = getSession().createSQLQuery(allAccounts.toString())
+        final Query allAccountsQry = getSession().createNativeQuery(allAccounts.toString())
                 .addScalar("bankAccountId")
                 .addScalar("accountNumber")
                 .addScalar("glcode")
@@ -317,7 +317,7 @@ public class FundFlowService extends PersistenceService {
                 "  and bb.bankid= b.id and ba.branchid=bb.id GROUP BY GL.GLCODEID,ba.accountnumber,b.name");
 
         List<FundFlowBean> tempPayList;
-        final Query tempQry = getSession().createSQLQuery(temp.toString())
+        final Query tempQry = getSession().createNativeQuery(temp.toString())
                 .addScalar("accountNumber")
                 .addScalar("bankName")
                 .addScalar("btbReceipt")
@@ -354,7 +354,7 @@ public class FundFlowService extends PersistenceService {
                 +
                 "  and bb.bankid= b.id and ba.branchid=bb.id GROUP BY gl.glcodeId,ba.accountnumber,b.name ");
         List<FundFlowBean> tempList;
-        final Query q = getSession().createSQLQuery(qry.toString())
+        final Query q = getSession().createNativeQuery(qry.toString())
                 .addScalar("accountNumber")
                 .addScalar("bankName")
                 .addScalar("btbPayment")
@@ -396,7 +396,7 @@ public class FundFlowService extends PersistenceService {
                         +
                         "  and bb.bankid= b.id and ba.branchid=bb.id GROUP BY gl.glcodeId,ba.accountnumber,b.name");
         List<FundFlowBean> tempList;
-        final Query q = getSession().createSQLQuery(qry.toString())
+        final Query q = getSession().createNativeQuery(qry.toString())
                 .addScalar("accountNumber")
                 .addScalar("bankName")
                 .addScalar("btbPayment")
@@ -497,7 +497,7 @@ public class FundFlowService extends PersistenceService {
                     + "'  and acc.id="
                     + bankaccountId
                     + " and vh.status =0");
-        final List list = getSession().createSQLQuery(qry.toString()).list();
+        final List list = getSession().createNativeQuery(qry.toString()).list();
         final BigDecimal contraPayment = (BigDecimal) list.get(0);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Contra Payments For BankId " + accountGlcodeId + " And Date " + sqlformat.format(asPerDate) + " is : "
@@ -544,7 +544,7 @@ public class FundFlowService extends PersistenceService {
                     + "'  and acc.id="
                     + bankaccountId
                     + " and vh.status =0");
-        final List list = getSession().createSQLQuery(qry.toString()).list();
+        final List list = getSession().createNativeQuery(qry.toString()).list();
         final BigDecimal contraReceipt = (BigDecimal) list.get(0);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Contra Receipt For BankId " + accountGlcodeId + " And Date " + sqlformat.format(asPerDate) + " is : "
@@ -600,7 +600,7 @@ public class FundFlowService extends PersistenceService {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Executing outstandingPaymentQryStr query----------------------------------------------"
                     + outstandingPaymentQryStr);
-        final List list = getSession().createSQLQuery(outstandingPaymentQryStr.toString()).list();
+        final List list = getSession().createNativeQuery(outstandingPaymentQryStr.toString()).list();
         if (!list.isEmpty())
             outStandingPayment = (BigDecimal) list.get(0);
         if (LOGGER.isDebugEnabled())

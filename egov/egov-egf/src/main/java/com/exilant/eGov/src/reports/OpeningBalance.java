@@ -141,7 +141,7 @@ public class OpeningBalance
 
         try {
             OpeningBalanceBean ob = null;
-            pstmt = persistenceService.getSession().createSQLQuery(query);
+            pstmt = persistenceService.getSession().createNativeQuery(query);
             int i = 0;
             pstmt.setLong(i++, Long.valueOf(finYear));
             if (!fundId.equalsIgnoreCase(""))

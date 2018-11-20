@@ -124,7 +124,7 @@ public class GeneralLedgerDetail {
         final String insertQuery = "INSERT INTO GeneralLedgerDetail (id, generalLedgerId, detailKeyId, detailTypeId,amount) " +
                 "VALUES ( ?, ?, ?, ?, ?)";
 
-        final Query pst = persistenceService.getSession().createSQLQuery(insertQuery);
+        final Query pst = persistenceService.getSession().createNativeQuery(insertQuery);
         pst.setLong(0, Long.valueOf(id));
         pst.setLong(1, Long.valueOf(glId));
         pst.setLong(2, Long.valueOf(detailKeyId));

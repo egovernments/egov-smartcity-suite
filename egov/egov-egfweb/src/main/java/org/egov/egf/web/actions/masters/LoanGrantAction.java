@@ -167,7 +167,7 @@ public class LoanGrantAction extends LoanGrantBaseAction {
         projectCodeList = new ArrayList<LoanGrantBean>();
         final String strQuery = "select pc.id as id , pc.code as code, pc.name as name from egw_projectcode pc," +
                 " egf_subscheme_project sp where pc.id= sp.projectcodeid and sp.subschemeid=" + subSchemeId;
-        query = persistenceService.getSession().createSQLQuery(strQuery)
+        query = persistenceService.getSession().createNativeQuery(strQuery)
                 .addScalar("id", LongType.INSTANCE).addScalar("code").addScalar("name")
                 .setResultTransformer(Transformers.aliasToBean(LoanGrantBean.class));
         projectCodeList = query.list();
@@ -403,7 +403,7 @@ public class LoanGrantAction extends LoanGrantBaseAction {
                     lgRecptDetail.setCreatedDate(currDate);
                     lgRecptDetail.setModifiedDate(currDate);
                 }
-            query = persistenceService.getSession().createSQLQuery(
+            query = persistenceService.getSession().createNativeQuery(
                     "delete from egf_subscheme_project where subschemeid= " + getSubSchemeId());
             query.executeUpdate();
             SubSchemeProject subSchemeProject;

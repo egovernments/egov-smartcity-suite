@@ -254,7 +254,7 @@ public class RtgsIssueRegisterReportAction extends ReportAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" Seraching RTGS result for given criteria ");
 
-        final Query query = persistenceService.getSession().createSQLQuery(getQueryString().toString())
+        final Query query = persistenceService.getSession().createNativeQuery(getQueryString().toString())
                 .addScalar("ihId", BigDecimalType.INSTANCE)
                 .addScalar("rtgsNumber")
                 .addScalar("rtgsDate")

@@ -63,7 +63,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.services.report.LoanGrantService;
 import org.egov.utils.ReportHelper;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -340,7 +340,7 @@ public class SchemeUtilizationReportAction extends LoanGrantBaseAction {
     }
 
     private String getUlbName() {
-        final SQLQuery query = persistenceService.getSession().createSQLQuery("select name from companydetail");
+        final NativeQuery query = persistenceService.getSession().createNativeQuery("select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);

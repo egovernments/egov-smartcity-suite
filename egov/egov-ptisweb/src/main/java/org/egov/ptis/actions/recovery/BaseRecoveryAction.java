@@ -207,7 +207,7 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 						+ DDMMYYYYFORMATS.format(finYear.getFromDate()) + "','dd/MM/yyyy')")
 				.append("  order by issue_date desc)  group by rownum,issue_date having rownum <=1)");
 		LOGGER.debug("BaseRecoveryAction | getBilAmount | query >> " + query.toString());
-		List list = persistenceService.getSession().createSQLQuery(query.toString()).list();
+		List list = persistenceService.getSession().createNativeQuery(query.toString()).list();
 		if (list != null && list.size() > 0) {
 			EgBill bill = (EgBill) persistenceService.find(" from EgBill where id=" + list.get(0));
 			return bill;

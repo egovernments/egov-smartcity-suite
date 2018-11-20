@@ -540,7 +540,7 @@ public class BankBookReportAction extends BaseFormAction {
                 " AND ih2.id_status = es2.id AND vh2.id in (select vh.id as vhId" + queryFrom + ")";
         mainQuery = mainQuery + getInstrumentsByVoucherIdsQuery;
 
-        final List<Object[]> objs = persistenceService.getSession().createSQLQuery(mainQuery).list();
+        final List<Object[]> objs = persistenceService.getSession().createNativeQuery(mainQuery).list();
 
         for (final Object[] obj : objs)
             if (voucherIdAndInstrumentMap.containsKey(getLongValue(obj[0])))
@@ -556,7 +556,7 @@ public class BankBookReportAction extends BaseFormAction {
 
         final List<Object[]> objs = persistenceService
                 .getSession()
-                .createSQLQuery(
+                .createNativeQuery(
                         "SELECT ih.id,vh1.id as voucherHeaderId"
                                 +
                                 " FROM VOUCHERHEADER vh1,egf_instrumentvoucher iv ,egf_instrumentheader ih,egw_status es1 WHERE vh1.id = iv.voucherheaderid AND iv.instrumentheaderid=ih.id"
@@ -666,7 +666,7 @@ public class BankBookReportAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Main query :" + query1 + queryFrom + OrderBy);
 
-        final Query query = persistenceService.getSession().createSQLQuery(query1 + queryFrom + OrderBy)
+        final Query query = persistenceService.getSession().createNativeQuery(query1 + queryFrom + OrderBy)
                 .addScalar("voucherId", new BigDecimalType())
                 .addScalar("voucherDate")
                 .addScalar("voucherNumber")
@@ -730,7 +730,7 @@ public class BankBookReportAction extends BaseFormAction {
 
     /*
      * public String getUlbName() { final Query query =
-     * persistenceService.getSession().createSQLQuery("select name from companydetail"); final List<String> result = query.list();
+     * persistenceService.getSession().createNativeQuery("select name from companydetail"); final List<String> result = query.list();
      * if (result != null) return result.get(0); return EMPTY_STRING; }
      */
 

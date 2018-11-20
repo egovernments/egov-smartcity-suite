@@ -68,7 +68,7 @@ import org.egov.wtms.application.entity.DonationChargesDCBReportSearch;
 import org.egov.wtms.application.entity.WaterChargesReceiptInfo;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.reports.entity.DCBReportResult;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Service;
@@ -113,7 +113,7 @@ public class CurrentDcbService {
                 .append("dt_ctrrcptdt as \"receiptDate\",dt_paidfrmprddt as \"fromDate\",dt_paidtoprddt as \"toDate\", ")
                 .append("d_crr+d_arr as \"receiptAmount\" from wt_wtchrgrcpt_tbl where i_csmrno =:consumerNumber ")
                 .append("order by dt_ctrrcptdt desc");
-        return getCurrentSession().createSQLQuery(queryStr.toString())
+        return getCurrentSession().createNativeQuery(queryStr.toString())
                 .setLong("consumerNumber", Long.parseLong(consumerNumber))
                 .setResultTransformer(new AliasToBeanResultTransformer(WaterChargesReceiptInfo.class))
                 .list();
@@ -126,7 +126,7 @@ public class CurrentDcbService {
                 .append("as \"receiptDate\",fromdate as \"fromDate\",todate as \"toDate\", cast(amount as numeric(18,2)) ")
                 .append("as \"receiptAmount\" from egwtr_legacy_receipts where connectiondetails =:connectiondetails");
         return getCurrentSession()
-                .createSQLQuery(queryStr.toString())
+                .createNativeQuery(queryStr.toString())
                 .setLong("connectiondetails", connectiondetails)
                 .setResultTransformer(new AliasToBeanResultTransformer(WaterChargesReceiptInfo.class))
                 .list();
@@ -192,7 +192,7 @@ public class CurrentDcbService {
             whereQry.append(" and dcbinfo.connectiontype =:connectionType");
         whereQry.append(" and dcbinfo.connectionstatus = 'ACTIVE'");
         query = selectQry1.append(selectQry2).append(fromQry).append(whereQry).append(groupByQry);
-        final SQLQuery sqlQuery = entityManager.unwrap(Session.class).createSQLQuery(query.toString());
+        final NativeQuery sqlQuery = entityManager.unwrap(Session.class).createNativeQuery(query.toString());
         if (isNotBlank(paramList)) {
             final List<Integer> locationList = new ArrayList<>();
             for (final String location : paramList.split(","))
@@ -229,7 +229,7 @@ public class CurrentDcbService {
         else
             whereQuery.append(" and (donation_demand-donation_coll) >=0 ");
         selectQuery = selectQuery.append(fromQuery).append(whereQuery);
-        final SQLQuery sqlQuery = entityManager.unwrap(Session.class).createSQLQuery(selectQuery.toString());
+        final NativeQuery sqlQuery = entityManager.unwrap(Session.class).createNativeQuery(selectQuery.toString());
         if (chargesDCBReportSearch.getFromDate() != null)
             sqlQuery.setParameter("fromDate", chargesDCBReportSearch.getFromDate());
         if (chargesDCBReportSearch.getToDate() != null)

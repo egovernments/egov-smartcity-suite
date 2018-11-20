@@ -192,7 +192,7 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
         Integer regNum = null;
         ResultSet resultSet = null;
         try {
-            Query query = getCurrentSession().createSQLQuery("SELECT REG_NUM.NEXTVAL from dual");
+            Query query = getCurrentSession().createNativeQuery("SELECT REG_NUM.NEXTVAL from dual");
 
             resultSet = (ResultSet) query.list();
             if (resultSet.next()) {
@@ -221,7 +221,7 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
     public Integer getVoucherNum() {
         Integer voucherNum = null;
         try {
-            Query query = getCurrentSession().createSQLQuery(
+            Query query = getCurrentSession().createNativeQuery(
                     "SELECT SEQ_VOUCHER_NUM.NEXTVAL from dual");
 
             ResultSet resultSet = (ResultSet) query.list();
@@ -326,7 +326,7 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
                 + "and prop_det.b_name like '%" + (blockName != null ? blockName.trim() : "") + "%' "
                 + "and prop_det.d_no like '%" + (doorNo != null ? doorNo.trim() : "") + "%'");
 
-        Query query = getCurrentSession().createSQLQuery(sb.toString());
+        Query query = getCurrentSession().createNativeQuery(sb.toString());
 
         List list = query.list();
         if (null != list && !list.isEmpty()) {
@@ -471,7 +471,7 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
             sb.append(" and u.mobileNumber like :MobileNumber ");
             params.put("MobileNumber", mobileNumber);
         }
-        final Query query = getCurrentSession().createSQLQuery(sb.toString());
+        final Query query = getCurrentSession().createNativeQuery(sb.toString());
         for (String param : params.keySet()) {
             query.setParameter(param, params.get(param));
         }

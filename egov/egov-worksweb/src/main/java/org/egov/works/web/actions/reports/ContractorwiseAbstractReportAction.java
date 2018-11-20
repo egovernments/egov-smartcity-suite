@@ -253,7 +253,7 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
 
     private void formReportMessage() {
         final String dateStr = (String) persistenceService.getSession()
-                .createSQLQuery(" select min(VIEW_TIMESTAMP) from EGW_WPREPORT_EST_WO_MVIEW ").list().get(0);
+                .createNativeQuery(" select min(VIEW_TIMESTAMP) from EGW_WPREPORT_EST_WO_MVIEW ").list().get(0);
         reportMessage = getText("contractorwiseAbstractReport.data.message", new String[] { dateStr });
     }
 
@@ -283,7 +283,7 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
             }
         } else if (searchType.equalsIgnoreCase("report")) {
             List<Object[]> wholeQueryList = null;
-            final Query qry = getPersistenceService().getSession().createSQLQuery(query);
+            final Query qry = getPersistenceService().getSession().createNativeQuery(query);
             for (int i = 0; i < listWithRepeatedPramsForUnion.size(); i++)
                 qry.setParameter(i, listWithRepeatedPramsForUnion.get(i));
             wholeQueryList = qry.list();
@@ -578,7 +578,7 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
             contractorIdList.add(bean.getContractorId());
         final String contractorClassQry = " select cd.contractor_id,cg.grade from egw_contractor_detail cd, "
                 + "  egw_contractor_grade cg where cg.id= cd.contractor_grade_id and cd.contractor_id in (:contractorIdList) group by cd.contractor_id,cg.grade ";
-        final Query sqlQuery = getPersistenceService().getSession().createSQLQuery(contractorClassQry);
+        final Query sqlQuery = getPersistenceService().getSession().createNativeQuery(contractorClassQry);
         sqlQuery.setParameterList("contractorIdList", contractorIdList);
         final List<Object[]> resultObjList = sqlQuery.list();
         if (resultObjList != null) {
@@ -683,7 +683,7 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
             }
         } else if (searchType.equalsIgnoreCase("report")) {
             List<Object[]> wholeQueryList = null;
-            final Query qry = getPersistenceService().getSession().createSQLQuery(query);
+            final Query qry = getPersistenceService().getSession().createNativeQuery(query);
             for (int i = 0; i < paramList.size(); i++)
                 qry.setParameter(i, paramList.get(i));
             wholeQueryList = qry.list();

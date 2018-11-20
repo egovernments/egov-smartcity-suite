@@ -308,7 +308,7 @@ public class WorksService {
                 + " WHERE name ='PROJECTCODE' AND description='PROJECTCODE' ) and (bp.ACCOUNTDETAILKEYID in(SELECT PC_ID FROM EGW_WORKPROGRESS_PROJECT_CODE WHERE UUID like '"
                 + uuid + "')) group by dept.dept_name ";
 
-        objForExpense = persistenceService.getSession().createSQLQuery(payQuery).list();
+        objForExpense = persistenceService.getSession().createNativeQuery(payQuery).list();
         if (objForExpense != null && objForExpense.size() != 0) {
             for (Integer i = 0; i < objForExpense.size(); i++) {
                 result = new HashMap<String, Object>();
@@ -347,7 +347,7 @@ public class WorksService {
                 + "WHERE name ='PROJECTCODE' AND description='PROJECTCODE' ) and bp.ACCOUNTDETAILKEYID in(SELECT PC_ID FROM EGW_WORKPROGRESS_PROJECT_CODE WHERE UUID like '"
                 + uuid + "')  group by dept.dept_name ";
 
-        queryResult = persistenceService.getSession().createSQLQuery(countQry).list();
+        queryResult = persistenceService.getSession().createNativeQuery(countQry).list();
         if (queryResult != null && queryResult.size() != 0) {
             for (Integer i = 0; i < queryResult.size(); i++) {
                 resultMap = new HashMap<String, Object>();
@@ -413,8 +413,8 @@ public class WorksService {
                 + " WHERE name ='PROJECTCODE' AND description='PROJECTCODE' ) and (bp.ACCOUNTDETAILKEYID in(SELECT PC_ID FROM EGW_WORKPROGRESS_PROJECT_CODE WHERE UUID like '"
                 + uuid + "'))  group by dept.dept_name order by dept.dept_name ";
 
-        payQueryResult = persistenceService.getSession().createSQLQuery(payQuery).list();
-        countQueryResult = persistenceService.getSession().createSQLQuery(countQuery).list();
+        payQueryResult = persistenceService.getSession().createNativeQuery(payQuery).list();
+        countQueryResult = persistenceService.getSession().createNativeQuery(countQuery).list();
         final List<String> deptNameList = new ArrayList<String>();
         if (payQueryResult != null && payQueryResult.size() > 0)
             for (Integer i = 0; i < payQueryResult.size(); i++)
@@ -487,7 +487,7 @@ public class WorksService {
                 + " WHERE name ='PROJECTCODE' AND description='PROJECTCODE' ) and (bp.ACCOUNTDETAILKEYID in(SELECT PC_ID FROM EGW_WORKPROGRESS_PROJECT_CODE WHERE UUID like '"
                 + uuid + "')) group by dept.dept_name ";
 
-        objForExpense = persistenceService.getSession().createSQLQuery(payQuery).list();
+        objForExpense = persistenceService.getSession().createNativeQuery(payQuery).list();
         if (objForExpense != null && objForExpense.size() != 0) {
             for (Integer i = 0; i < objForExpense.size(); i++) {
                 result = new HashMap<String, Object>();
@@ -561,7 +561,7 @@ public class WorksService {
 
         logger.debug("Payment query inside getWorkProgressAbstractReport2TotalPayments :" + payQuery);
 
-        objForExpense = persistenceService.getSession().createSQLQuery(payQuery).list();
+        objForExpense = persistenceService.getSession().createNativeQuery(payQuery).list();
         if (objForExpense != null && objForExpense.size() != 0) {
             for (Integer i = 0; i < objForExpense.size(); i++) {
                 result = new HashMap<String, Object>();
@@ -602,7 +602,7 @@ public class WorksService {
 
         logger.debug("Payment query inside getTotalPaymentForProjectCode :" + payQuery);
 
-        objForExpense = persistenceService.getSession().createSQLQuery(payQuery).list();
+        objForExpense = persistenceService.getSession().createNativeQuery(payQuery).list();
         if (objForExpense != null && objForExpense.size() != 0 && objForExpense.get(0) != null
                 && !objForExpense.get(0).toString().equalsIgnoreCase("0")) {
             final BigDecimal result = new BigDecimal(objForExpense.get(0).toString());
@@ -642,7 +642,7 @@ public class WorksService {
                 + "WHERE name ='PROJECTCODE' AND description='PROJECTCODE' ) and bp.ACCOUNTDETAILKEYID in(SELECT PC_ID FROM EGW_WORKPROGRESS_PROJECT_CODE WHERE UUID like '"
                 + uuid + "')  group by dept.dept_name ";
 
-        queryResult = persistenceService.getSession().createSQLQuery(countQry).list();
+        queryResult = persistenceService.getSession().createNativeQuery(countQry).list();
         if (queryResult != null && queryResult.size() != 0) {
             for (Integer i = 0; i < queryResult.size(); i++) {
                 resultMap = new HashMap<String, Object>();
@@ -726,7 +726,7 @@ public class WorksService {
                 + uuid + "')) " + "group by dept.dept_name " + " )group by \"Dept\"";
 
         logger.debug("Payment query inside getWorkProgSpillOverTotalPayments :" + payQuery);
-        objForExpense = persistenceService.getSession().createSQLQuery(payQuery).list();
+        objForExpense = persistenceService.getSession().createNativeQuery(payQuery).list();
         if (objForExpense != null && objForExpense.size() != 0) {
             for (Integer i = 0; i < objForExpense.size(); i++) {
                 result = new HashMap<String, Object>();
@@ -771,7 +771,7 @@ public class WorksService {
                 + " and bp.ACCOUNTDETAILKEYID in(SELECT PC_ID FROM EGW_WRKPROG_PROJCODE_SPILLOVER WHERE UUID like '"
                 + uuid + "')  " + "group by dept.dept_name ";
 
-        queryResult = persistenceService.getSession().createSQLQuery(countQry).list();
+        queryResult = persistenceService.getSession().createNativeQuery(countQry).list();
         if (queryResult != null && queryResult.size() != 0) {
             for (Integer i = 0; i < queryResult.size(); i++) {
                 resultMap = new HashMap<String, Object>();
@@ -817,7 +817,7 @@ public class WorksService {
                 + " and bp.ACCOUNTDETAILKEYID in(SELECT PC_ID FROM EGW_WRKPROG_PROJCODE_SPILLOVER WHERE UUID like '"
                 + uuid + "')  " + "group by dp.DEPT_NAME order by dp.DEPT_NAME";
 
-        queryResult = persistenceService.getSession().createSQLQuery(query).list();
+        queryResult = persistenceService.getSession().createNativeQuery(query).list();
         if (queryResult != null && queryResult.size() != 0) {
             for (Integer i = 0; i < queryResult.size(); i++) {
                 resultMap = new HashMap<String, Object>();
@@ -889,8 +889,8 @@ public class WorksService {
                 + "'"
                 + " group by dp.dept_name order by dp.dept_name ";
 
-        queryResult1 = persistenceService.getSession().createSQLQuery(query1).list();
-        queryResult2 = persistenceService.getSession().createSQLQuery(query2).list();
+        queryResult1 = persistenceService.getSession().createNativeQuery(query1).list();
+        queryResult2 = persistenceService.getSession().createNativeQuery(query2).list();
 
         if (queryResult1 != null && queryResult1.size() != 0) {
             for (Integer i = 0; i < queryResult1.size(); i++) {
@@ -980,7 +980,7 @@ public class WorksService {
                 + " AND pvh.id                =ph1.voucherheaderid "
                 + " AND pvh.status            =0 "
                 + " AND pvh.VOUCHERDATE       < '" + strAsOnDate + "' ";
-        final List<BigDecimal> paymtAmtArray = persistenceService.getSession().createSQLQuery(query).list();
+        final List<BigDecimal> paymtAmtArray = persistenceService.getSession().createNativeQuery(query).list();
         return paymtAmtArray == null ? null : paymtAmtArray.get(0);
     }
 
@@ -1051,7 +1051,7 @@ public class WorksService {
                 + " AND pvh.id                =ph1.voucherheaderid "
                 + " AND pvh.status            =0 "
                 + " AND pvh.VOUCHERDATE       < '" + strAsOnDate + "' ";
-        final List<BigDecimal> paymtAmtArray = persistenceService.getSession().createSQLQuery(query).list();
+        final List<BigDecimal> paymtAmtArray = persistenceService.getSession().createNativeQuery(query).list();
         return paymtAmtArray == null ? null : paymtAmtArray.get(0);
     }
 
@@ -1189,8 +1189,8 @@ public class WorksService {
                 + " WHERE name ='PROJECTCODE' AND description='PROJECTCODE' ) and (bp.ACCOUNTDETAILKEYID in(SELECT PC_ID FROM EGW_WRKPROG_PROJCODE_SPILLOVER WHERE UUID like '"
                 + uuid + "'))  group by dept.dept_name order by dept.dept_name ";
 
-        payQueryResult = persistenceService.getSession().createSQLQuery(payQuery).list();
-        countQueryResult = persistenceService.getSession().createSQLQuery(countQuery).list();
+        payQueryResult = persistenceService.getSession().createNativeQuery(payQuery).list();
+        countQueryResult = persistenceService.getSession().createNativeQuery(countQuery).list();
         final List<String> deptNameList = new ArrayList<String>();
         if (payQueryResult != null && payQueryResult.size() > 0)
             for (Integer i = 0; i < payQueryResult.size(); i++)

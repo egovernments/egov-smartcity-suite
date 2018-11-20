@@ -93,7 +93,7 @@ public abstract class ScheduleService extends PersistenceService {
 
     /* for detailed */
     Map<String, Schedules> getScheduleToGlCodeMapDetailed(final String reportType, final String coaType) {
-        final Query query = getSession().createSQLQuery(
+        final Query query = getSession().createNativeQuery(
                 "SELECT coa1.glcode, s.schedule, s.schedulename, coa1.type, coa1.name" +
                 		" FROM chartofaccounts coa1, chartofaccounts coa2, chartofaccounts coa3, schedulemapping s" +
                         " WHERE coa3.scheduleid  = s.id AND coa3.id = coa2.parentid AND coa2.id = coa1.parentid" +
@@ -113,7 +113,7 @@ public abstract class ScheduleService extends PersistenceService {
     }
 
     Map<String, Schedules> getScheduleToGlCodeMap(final String reportType, final String coaType) {
-        final Query query = getSession().createSQLQuery(
+        final Query query = getSession().createNativeQuery(
                 "select distinct coa.glcode,s.schedule,s.schedulename," +
                         "coa.type,coa.name from chartofaccounts coa, schedulemapping s where s.id=coa.scheduleid and " +
                         "coa.classification=2 and s.reporttype = '" + reportType + "' and coa.type in " + coaType + " " +
@@ -130,7 +130,7 @@ public abstract class ScheduleService extends PersistenceService {
     }
 
     List<Object[]> getAllGlCodesForAllSchedule(final String reportType, final String coaType) {
-        final Query query = getSession().createSQLQuery(
+        final Query query = getSession().createNativeQuery(
                 "select distinct coa.majorcode,s.schedule,s.schedulename," +
                         "coa.type from chartofaccounts coa, schedulemapping s where s.id=coa.scheduleid and " +
                         "coa.classification=2 and s.reporttype = '" + reportType + "' and coa.type in " + coaType + " " +
@@ -141,7 +141,7 @@ public abstract class ScheduleService extends PersistenceService {
     List<Object[]> amountPerFundQueryForAllSchedules(final String filterQuery, final Date toDate, final Date fromDate,
             final String reportType) {
         final String voucherStatusToExclude = getAppConfigValueFor("EGF", "statusexcludeReport");
-        final Query query = getSession().createSQLQuery(
+        final Query query = getSession().createNativeQuery(
                 "select sum(debitamount)-sum(creditamount),v.fundid,substr(c.glcode,1," + minorCodeLength + ")," +
                         "c.name from generalledger g,chartofaccounts c,voucherheader v ,vouchermis mis where  " +
                         " v.id=g.voucherheaderid and c.id=g.glcodeid and v.id=mis.voucherheaderid and v.status not in("
@@ -161,7 +161,7 @@ public abstract class ScheduleService extends PersistenceService {
     List<Object[]> amountPerFundQueryForAllSchedulesDetailed(final String filterQuery, final Date toDate, final Date fromDate,
             final String reportType) {
         final String voucherStatusToExclude = getAppConfigValueFor("EGF", "statusexcludeReport");
-        final Query query = getSession().createSQLQuery(
+        final Query query = getSession().createNativeQuery(
                 "select sum(debitamount)-sum(creditamount),v.fundid,substr(c.glcode,1," + detailCodeLength + ")," +
                         "c.name from generalledger g,chartofaccounts c,voucherheader v ,vouchermis mis where  " +
                         " v.id=g.voucherheaderid and c.id=g.glcodeid and v.id=mis.voucherheaderid and v.status not in("
@@ -205,7 +205,7 @@ public abstract class ScheduleService extends PersistenceService {
     protected List<Object[]> getAllGlCodesForSubSchedule(final String majorCode, final Character type, final String reportType) {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Getting schedule for " + majorCode);
-        final Query query = getSession().createSQLQuery(
+        final Query query = getSession().createNativeQuery(
                 "select distinct coa.glcode,coa.name,s.schedule,s.schedulename from chartofaccounts coa, " +
                         "schedulemapping s where s.id=coa.scheduleid and coa.classification=2 and s.reporttype = '" + reportType
                         + "' and coa.majorcode='" +
@@ -216,7 +216,7 @@ public abstract class ScheduleService extends PersistenceService {
     protected List<Object[]> getAllGlCodesForSchedule(final String reportType) {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Getting schedule for ");
-        final Query query = getSession().createSQLQuery(
+        final Query query = getSession().createNativeQuery(
                 "SELECT coa1.glcode, s.schedule, s.schedulename, coa1.type, coa1.name" +
                         " FROM chartofaccounts coa1, chartofaccounts coa2, chartofaccounts coa3, schedulemapping s" +
                         " WHERE coa3.scheduleid  = s.id AND coa3.id = coa2.parentid AND coa2.id = coa1.parentid" +
@@ -231,7 +231,7 @@ public abstract class ScheduleService extends PersistenceService {
             final String reportType) {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Getting detail codes for " + majorCode + "reporttype" + reportType);
-        final Query query = getSession().createSQLQuery(
+        final Query query = getSession().createNativeQuery(
                 "select distinct coad.glcode,coad.name from chartofaccounts coa,chartofaccounts coad," +
                         " schedulemapping s " +
                         " where    s.id=coa.scheduleid  AND coa.classification=2 AND s.reporttype='" + reportType
@@ -242,7 +242,7 @@ public abstract class ScheduleService extends PersistenceService {
     }
 
     protected List<Object[]> getSchedule(final String majorCode, final Character type, final String reportType) {
-        final Query query = getSession().createSQLQuery(
+        final Query query = getSession().createNativeQuery(
                 "select distinct coa.glcode,coa.name,s.schedule,s.schedulename from chartofaccounts coa, " +
                         "schedulemapping s where s.id=coa.scheduleid and coa.classification=2 and s.reporttype = '" + reportType
                         + "' and coa.majorcode='" +
@@ -261,7 +261,7 @@ public abstract class ScheduleService extends PersistenceService {
         }
 
         final Query query = getSession()
-                .createSQLQuery(
+                .createNativeQuery(
                         "select g.glcode,coa.name,sum(g.debitamount)-sum(g.creditamount),v.fundid,coa.type,coa.majorcode from generalledger g,chartofaccounts coa ,"
                                 +
                                 "voucherheader v,vouchermis mis where v.id=mis.voucherheaderid and g.voucherheaderid=v.id and g.glcodeid=coa.id and v.voucherdate BETWEEN '"
@@ -351,7 +351,7 @@ public abstract class ScheduleService extends PersistenceService {
 
     List<Object[]> currentYearAmountQuery(final String filterQuery, final Date toDate, final Date fromDate,
             final String majorCode, final String reportType) {
-        final Query query = getSession().createSQLQuery(
+        final Query query = getSession().createNativeQuery(
                 "select sum(debitamount)-sum(creditamount),v.fundid,c.glcode " +
                         "from generalledger g,chartofaccounts c,voucherheader v,vouchermis mis  where " +
                         " v.id=g.voucherheaderid and c.id=g.glcodeid and v.status not in(" + voucherStatusToExclude

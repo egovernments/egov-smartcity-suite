@@ -197,7 +197,7 @@ public class BankAccountService extends PersistenceService<Bankaccount, Long> {
                 append(" and bank.isactive=true  and bankBranch.isactive=true and bankaccount.isactive=true ").
                 append(" and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.branchid=:branchId").
                 append("  and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :asOnDate and ph.bankaccountnumberid=bankaccount.id  order by vh.voucherdate desc");
-        return getSession().createSQLQuery(queryString.toString()).
+        return getSession().createNativeQuery(queryString.toString()).
                 setDate("asOnDate", asOnDate).
                 setInteger(BRANCH_ID, branchId).
                 list();
@@ -215,7 +215,7 @@ public class BankAccountService extends PersistenceService<Bankaccount, Long> {
                 append(" and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.branchid=:branchId").
                 append("  and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :asOnDate").
                 append(" and ph.bankaccountnumberid=bankaccount.id  order by vh.voucherdate desc");
-        return getSession().createSQLQuery(queryString.toString()).
+        return getSession().createNativeQuery(queryString.toString()).
                 setDate("asOnDate", asOnDate).
                 setInteger(BRANCH_ID, branchId).
                 setString("type", isBlank(chequeType) ? "CHEQUE" : chequeType).
@@ -248,7 +248,7 @@ public class BankAccountService extends PersistenceService<Bankaccount, Long> {
         if (fundId != null && fundId > 0)
                 queryString.append(" and bankaccount.fundid=:fundId");
 
-        return getSession().createSQLQuery(queryString.toString()).
+        return getSession().createNativeQuery(queryString.toString()).
                 setInteger("fundId", fundId).
                 setInteger(BRANCH_ID, branchId).
                 list();

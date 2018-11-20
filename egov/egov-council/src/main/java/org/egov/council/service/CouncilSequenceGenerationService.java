@@ -85,7 +85,7 @@ public class CouncilSequenceGenerationService {
     public void update(String sequenceName, String seqnumber) throws SQLException {
         int seqnum = Integer.parseInt(seqnumber) + 1;
         final String sql = "alter sequence " + sequenceName + " restart " + seqnum;
-        Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
+        Query query = entityManager.unwrap(Session.class).createNativeQuery(sql);
         query.executeUpdate();
     }
 

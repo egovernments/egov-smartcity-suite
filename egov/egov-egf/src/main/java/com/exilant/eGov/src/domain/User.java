@@ -121,7 +121,7 @@ public class User {
         final String query = "select r.Role_name as role from EG_ROLES r, EG_USER u,EG_USERROLE ur where u.user_name=? and ur.id_role=r.id_role and u.id_user=ur.id_user ";
         String role = "";
         try {
-            final Query ps = persistenceService.getSession().createSQLQuery(query);
+            final Query ps = persistenceService.getSession().createNativeQuery(query);
             ps.setString(0, userName);
             final List<Object[]> rs = ps.list();
             for (final Object[] element : rs)
@@ -137,7 +137,7 @@ public class User {
         final String query = "select id_user from EG_USER where user_name=? ";
         int userId = 0;
         try {
-            final Query ps = persistenceService.getSession().createSQLQuery(query);
+            final Query ps = persistenceService.getSession().createNativeQuery(query);
             ps.setString(0, userName);
             final List<Object[]> rs = ps.list();
             for (final Object[] element : rs)

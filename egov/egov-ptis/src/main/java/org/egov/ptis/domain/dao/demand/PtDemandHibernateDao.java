@@ -322,7 +322,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
                 .append("    reasm.id_category = reascat.id_type AND").append("    reascat.code = 'TAX' AND")
                 .append("    inst.start_date <= SYSDATE AND").append("    inst.end_date   >= SYSDATE AND")
                 .append("    inst.id_module = module.id_module AND").append("    module.module_name = 'Property Tax'");
-        final Query query = getCurrentSession().createSQLQuery(sb.toString());
+        final Query query = getCurrentSession().createNativeQuery(sb.toString());
         query.setLong(BILLID_PARAM, billId);
         final Object[] results = (Object[]) query.uniqueResult();
         final List<BigDecimal> amounts = new ArrayList<>();
@@ -593,7 +593,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
                 + " where start_date <= :fromYear and end_date >=:toYear and id_module=(select id from eg_module where name='Property Tax' ))  ";
         selectQuery = selectQuery + " order by inst.description desc ";
 
-        final Query qry = getCurrentSession().createSQLQuery(selectQuery).setString("assessmentNo", assessmentNo)
+        final Query qry = getCurrentSession().createNativeQuery(selectQuery).setString("assessmentNo", assessmentNo)
                 .setDate("fromYear", currentFinancialYear.getStartingDate())
                 .setDate("toYear", currentFinancialYear.getStartingDate());
         list = qry.list();
@@ -627,7 +627,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
                     + DEMAND_COMPARISION;
         selectQuery = selectQuery + " order by inst.description desc ";
 
-        final Query qry = getCurrentSession().createSQLQuery(selectQuery).setString("consumerNo", consumerNo);
+        final Query qry = getCurrentSession().createNativeQuery(selectQuery).setString("consumerNo", consumerNo);
         list = qry.list();
         return list;
     }
@@ -644,7 +644,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
                 + DEMAND_REASON_QUERY
                 + " and dr.id_installment = inst.id and bp.propertyid =:assessmentNo "
                 + " and d.id_installment =(select id from eg_installment_master where now() between start_date and end_date and id_module=(select id from eg_module where name='Property Tax' )) order by inst.start_date ";
-        final Query qry = getCurrentSession().createSQLQuery(selectQuery).setString("assessmentNo", assessmentNo);
+        final Query qry = getCurrentSession().createNativeQuery(selectQuery).setString("assessmentNo", assessmentNo);
         for (final Object record : qry.list())
             demandYears.add((String) record);
         return demandYears;

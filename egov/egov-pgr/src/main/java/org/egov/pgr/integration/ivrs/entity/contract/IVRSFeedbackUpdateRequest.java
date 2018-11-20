@@ -48,7 +48,7 @@
 
 package org.egov.pgr.integration.ivrs.entity.contract;
 
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.validation.constraints.NotNull;

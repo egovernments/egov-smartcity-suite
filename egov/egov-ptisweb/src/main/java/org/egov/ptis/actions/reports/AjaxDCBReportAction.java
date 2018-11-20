@@ -57,7 +57,7 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.ptis.domain.service.report.ReportService;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -101,7 +101,7 @@ public class AjaxDCBReportAction extends BaseFormAction {
     @Action(value = "/ajaxDCBReport-getBoundaryWiseDCBList")
     public void getBoundaryWiseDCBList() throws IOException {
         List<DCBReportResult> resultList = new ArrayList<DCBReportResult>();
-        final SQLQuery query = prepareQuery();
+        final NativeQuery query = prepareQuery();
         resultList = query.list();
         // for converting resultList to JSON objects.
         // Write back the JSON Response.
@@ -116,11 +116,11 @@ public class AjaxDCBReportAction extends BaseFormAction {
      * @ Description - Returns query that retrieves zone/ward/block/propertywise Arrear, Current Demand and Collection Details
      * @return
      */
-    public SQLQuery prepareQuery() {
+    public NativeQuery prepareQuery() {
         //To conver multi selected propertyTypes values(json stringify) into list
         List<String> propertyType=new Gson().fromJson(propTypes, new TypeToken<ArrayList<String>>() { 
         }.getType());
-        final SQLQuery query = reportService.prepareQueryForDCBReport(boundaryId, mode,courtCase,propertyType);
+        final NativeQuery query = reportService.prepareQueryForDCBReport(boundaryId, mode,courtCase,propertyType);
         query.setResultTransformer(new AliasToBeanResultTransformer(DCBReportResult.class));
         return query; 
     }

@@ -171,7 +171,7 @@ public class BankService extends PersistenceService<Bank, Integer> {
         query.append("select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),bankBranch.branchname) as bankbranchname ").
                 append(" FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount  where  bank.isactive=true  and bankBranch.isactive=true and bankaccount.isactive=true ").
                 append("and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id and bankaccount.fund.id=:fundId order by 2");
-        return getSession().createSQLQuery(query.toString())
+        return getSession().createNativeQuery(query.toString())
                 .setInteger(FUND_ID, fundId)
                 .list();
     }
@@ -188,7 +188,7 @@ public class BankService extends PersistenceService<Bank, Integer> {
                 append(") and bank.isactive=true  and bankBranch.isactive=true ").
                 append(" and  bank.id = bankBranch.bankid and bankBranch.id = bankaccount.BRANCHID and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date").
                 append(" and ph.bankaccountnumberid=bankaccount.id  and bankaccount.isactive=true order by 2");
-        return getSession().createSQLQuery(queryString.toString())
+        return getSession().createNativeQuery(queryString.toString())
                 .setParameter("date", asOnDate)
                 .list();
     }
@@ -203,7 +203,7 @@ public class BankService extends PersistenceService<Bank, Integer> {
                 append(") and bank.isactive=true  and bankBranch.isactive=true ").
                 append(" and  bank.id = bankBranch.bankid and bankBranch.id = bankaccount.BRANCHID and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date").
                 append(" and ph.bankaccountnumberid=bankaccount.id  and bankaccount.isactive=true order by 2");
-        return getSession().createSQLQuery(queryString.toString())
+        return getSession().createNativeQuery(queryString.toString())
                 .setParameter("date", asOnDate)
                 .list();
     }
@@ -241,7 +241,7 @@ public class BankService extends PersistenceService<Bank, Integer> {
                 append("AND bankaccount.type IN ('RECEIPTS_PAYMENTS','PAYMENTS') AND bankBranch.id = bankaccount.branchid");
         if (fundId != null && fundId > 0)
             queryString.append(" and bankaccount.fundid=:fundId");
-        return getSession().createSQLQuery(queryString.toString())
+        return getSession().createNativeQuery(queryString.toString())
                 .setInteger(FUND_ID, fundId)
                 .setDate("asOnDate", asOnDate)
                 .list();

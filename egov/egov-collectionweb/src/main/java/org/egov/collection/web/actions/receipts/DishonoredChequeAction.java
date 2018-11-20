@@ -137,7 +137,7 @@ public class DishonoredChequeAction extends SearchFormAction {
         addDropdownData(CollectionConstants.DROPDOWN_DATA_BANKBRANCH_LIST, bankBranchHibernateDAO.getAllBankBranchs());
         addDropdownData(CollectionConstants.DROPDOWN_DATA_ACCOUNT_NO_LIST, Collections.EMPTY_LIST);
         addDropdownData(CollectionConstants.DROPDOWN_DATA_DISHONOR_REASONS_LIST, persistenceService.getSession()
-                .createSQLQuery("select * from egf_instrument_dishonor_reason").list());
+                .createNativeQuery("select * from egf_instrument_dishonor_reason").list());
         instrumentModesMap = CollectionConstants.INSTRUMENT_MODES_MAP;
     }
 
@@ -354,7 +354,7 @@ public class DishonoredChequeAction extends SearchFormAction {
                         .append(instHeaderIds).append(")");
         instrumentDetails = persistenceService
                 .getSession()
-                .createSQLQuery(instrumentDetailsQueryString.toString())
+                .createNativeQuery(instrumentDetailsQueryString.toString())
                 .list();
         dishonoredChequeDisplayList = populateDishonorChequeBean(instrumentDetails);
     }

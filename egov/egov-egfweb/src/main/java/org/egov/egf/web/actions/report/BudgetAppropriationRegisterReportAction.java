@@ -246,7 +246,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("BudgetAppropriationRegisterReportAction -- strQuery...." + strQuery);
 
-            query = persistenceService.getSession().createSQLQuery(strQuery.toString())
+            query = persistenceService.getSession().createNativeQuery(strQuery.toString())
                     .addScalar("bdgApprNumber")
                     .addScalar("voucherDate", StandardBasicTypes.DATE)
                     .addScalar("billDate", StandardBasicTypes.DATE)
@@ -282,7 +282,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("BudgetAppropriationRegisterReportAction -- strsubQuery...." + strsubQuery);
 
-            query = persistenceService.getSession().createSQLQuery(strsubQuery.toString())
+            query = persistenceService.getSession().createNativeQuery(strsubQuery.toString())
                     .addScalar("bdgApprNumber")
                     .addScalar("voucherDate", StandardBasicTypes.DATE)
                     .addScalar("billDate", StandardBasicTypes.DATE)

@@ -139,7 +139,7 @@ public class SearchNoticeService {
         if (isNotBlank(searchNoticeDetails.getPropertyType()))
             queryStr.append(" and dcbinfo.propertytype =:propertyType");
 
-        final Query query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
+        final Query query = entityManager.unwrap(Session.class).createNativeQuery(queryStr.toString());
         setSearchQueryParameters(searchNoticeDetails, null, null, query);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("GenerateConnectionBill -- Search Result " + queryStr.toString());
@@ -225,7 +225,7 @@ public class SearchNoticeService {
             whereQuery.append(" connection.propertyIdentifier=:assessmentNumber and ");
         whereQuery.append("conndetails.connectionstatus!=:connectionStatus");
         Query query = entityManager.unwrap(Session.class)
-                .createSQLQuery(selectQuery.append(fromQuery).append(whereQuery).toString());
+                .createNativeQuery(selectQuery.append(fromQuery).append(whereQuery).toString());
         setSearchQueryParameters(searchNoticeDetails, formattedFromDate, formattedToDate, query);
         query.setParameter("reglnApplicationType", REGULARIZE_CONNECTION);
         query.setParameter("connectionStatus", INACTIVE);
@@ -328,7 +328,7 @@ public class SearchNoticeService {
                 .append(" and docName.applicationtype in(select id from egwtr_application_type where name =:applicationType)")
                 .append(" order by appD.id desc ");
 
-        final Query query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
+        final Query query = entityManager.unwrap(Session.class).createNativeQuery(queryStr.toString());
         if (isNotBlank(consumerCode))
             query.setParameter(CONSUMERCODE, consumerCode);
         if (isNotBlank(applicationType))
@@ -363,7 +363,7 @@ public class SearchNoticeService {
             queryStr.append(" and dcbinfo.applicationtype =:applicationType");
         if (isNotBlank(searchNoticeDetails.getPropertyType()))
             queryStr.append(" and dcbinfo.propertytype =:propertyType");
-        Query query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
+        Query query = entityManager.unwrap(Session.class).createNativeQuery(queryStr.toString());
         setSearchQueryParameters(searchNoticeDetails, null, null, query);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("GenerateConnectionBill -- count Result " + queryStr.toString());

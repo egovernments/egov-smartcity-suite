@@ -50,8 +50,11 @@ package org.egov.infra.admin.auditing.contract;
 
 import org.egov.infra.web.support.search.DataTableSearchRequest;
 
+import javax.validation.constraints.Positive;
+
 public class FeatureRoleChangeAuditReportRequest extends DataTableSearchRequest {
 
+    @Positive
     private Long featureId;
 
     public Long getFeatureId() {
@@ -62,3 +65,4 @@ public class FeatureRoleChangeAuditReportRequest extends DataTableSearchRequest 
         this.featureId = featureId;
     }
 }
+    

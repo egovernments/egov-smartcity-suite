@@ -2623,7 +2623,7 @@ public class CreateVoucher {
 			final String delQrr = "delete from generalledgerdetail where generalledgerid=?";
 			final String delgl = " delete from generalledger where voucherheaderid=?";
 			final String delvh = " delete from voucherdetail where voucherheaderid=?";
-			pstmt1 = persistenceService.getSession().createSQLQuery(glQry);
+			pstmt1 = persistenceService.getSession().createNativeQuery(glQry);
 			pstmt1.setFloat(0, vh.getId());
 
 			final List<Object[]> rs = pstmt1.list();
@@ -2631,28 +2631,28 @@ public class CreateVoucher {
 			boolean delete = false;
 			while (rs != null && rs.size() > 0) {
 				pstmt2 = persistenceService.getSession()
-						.createSQLQuery(glidQry);
+						.createNativeQuery(glidQry);
 				pstmt2.setLong(0, Long.parseLong(rs.get(1).toString()));
 				rs1 = pstmt2.list();
 				while (rs1 != null && rs1.size() > 0) {
 					delete = true;
-					pstmt3 = persistenceService.getSession().createSQLQuery(
+					pstmt3 = persistenceService.getSession().createNativeQuery(
 							delQry);
 					pstmt3.setLong(0, Long.parseLong(rs1.get(1).toString()));
 					pstmt3.executeUpdate();
 				}
 				if (delete) {
-					pstmt4 = persistenceService.getSession().createSQLQuery(
+					pstmt4 = persistenceService.getSession().createNativeQuery(
 							delQrr);
 					pstmt4.setLong(0, Long.parseLong(rs1.get(1).toString()));
 					pstmt4.executeUpdate();
 				}
 			}
-			pstmt1 = persistenceService.getSession().createSQLQuery(delgl);
+			pstmt1 = persistenceService.getSession().createNativeQuery(delgl);
 			pstmt1.setLong(0, vh.getId());
 			pstmt1.executeUpdate();
 
-			pstmt1 = persistenceService.getSession().createSQLQuery(delvh);
+			pstmt1 = persistenceService.getSession().createNativeQuery(delvh);
 			pstmt1.setLong(0, vh.getId());
 			pstmt1.executeUpdate();
 
@@ -3057,7 +3057,7 @@ public class CreateVoucher {
 	       try {
 	           final String query1 = "SELECT to_char(startingDate, 'DD-Mon-YYYY') AS \"startingDate\", to_char(endingDate, 'DD-Mon-YYYY') AS \"endingDate\" FROM financialYear WHERE startingDate <= '"
 	                   + vcDate + "' AND endingDate >= '" + vcDate + "'";
-	           pst = persistenceService.getSession().createSQLQuery(query1);
+	           pst = persistenceService.getSession().createNativeQuery(query1);
 	           rs = pst.list();
 	           if (rs != null && rs.size() > 0)
 	               for (final Object[] element : rs) {
@@ -3067,7 +3067,7 @@ public class CreateVoucher {
 	           final String query2 = "SELECT id FROM voucherHeader WHERE voucherNumber = '" + vcNum + "' AND voucherDate>='"
 	                   + fyStartDate
 	                   + "' AND voucherDate<='" + fyEndDate + "' and status!=4";
-	           pst = persistenceService.getSession().createSQLQuery(query2);
+	           pst = persistenceService.getSession().createNativeQuery(query2);
 	           rs = pst.list();
 	           if (rs != null && rs.size() > 0) {
 	               if (LOGGER.isDebugEnabled())
@@ -3087,7 +3087,7 @@ public class CreateVoucher {
 		BigInteger fiscalPeriod = null;
 		final String sql = "select id from fiscalperiod  where '" + vDate + "' between startingdate and endingdate";
 		try {
-			final Query pst = persistenceService.getSession().createSQLQuery(sql);
+			final Query pst = persistenceService.getSession().createNativeQuery(sql);
 			final List<BigInteger> rset = pst.list();
 			fiscalPeriod = rset != null ? rset.get(0) : BigInteger.ZERO;
 		} catch (final Exception e) {

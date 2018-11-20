@@ -1177,7 +1177,7 @@ public class PropertyTaxUtil {
                 + " and dr.id_installment = inst.id and bp.id =:basicPropId " + " and inst.start_date between '"
                 + finyear.getStartingDate() + "' and '" + finyear.getEndingDate() + "'"
                 + " and drm.code in (:demandReasonList)) as genTaxDtls";
-        final Query qry = entityManager.unwrap(Session.class).createSQLQuery(selectQuery)
+        final Query qry = entityManager.unwrap(Session.class).createNativeQuery(selectQuery)
                 .setLong("basicPropId", basicPropId);
         qry.setParameterList("demandReasonList", PropertyTaxConstants.NON_VACANT_TAX_DEMAND_CODES);
         list = qry.list();
@@ -1600,7 +1600,7 @@ public class PropertyTaxUtil {
                 + " and dr.id_installment = inst.id and dd.id_demand =:currentDemandId and inst.start_date between "
                 + ":firstHlfFromdt and :firstHlfTodt and drm.code in (:codelist)";
 
-        final Query qry = persistenceService.getSession().createSQLQuery(selectQuery)
+        final Query qry = persistenceService.getSession().createNativeQuery(selectQuery)
                 .setLong("currentDemandId", currentDemand.getId())
                 .setDate("firstHlfFromdt", currentFirstHalf.getFromDate())
                 .setDate("firstHlfTodt", currentFirstHalf.getToDate())
@@ -1625,7 +1625,7 @@ public class PropertyTaxUtil {
 
         Object amount = 0;
         if (currentDemand != null) {
-            amount = persistenceService.getSession().createSQLQuery(selectQuery)
+            amount = persistenceService.getSession().createNativeQuery(selectQuery)
                     .setLong("currentDemandId", currentDemand.getId())
                     .setParameterList("installments", Arrays.asList(currentFirstHalf.getId(), currentSecondHalf.getId()))
                     .setParameterList("codes", DEMAND_REASONS_FOR_REBATE_CALCULATION).uniqueResult();

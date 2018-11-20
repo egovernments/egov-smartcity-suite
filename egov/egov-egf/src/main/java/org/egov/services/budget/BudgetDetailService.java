@@ -203,7 +203,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     public Long getCountByBudget(final Long budgetId) {
         return ((BigInteger) persistenceService.getSession()
-                .createSQLQuery("select count(*) from egf_budgetdetail where budget = " + budgetId).uniqueResult())
+                .createNativeQuery("select count(*) from egf_budgetdetail where budget = " + budgetId).uniqueResult())
                         .longValue();
     }
 
@@ -644,7 +644,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + voucherstatusExclude + ") and " + "vh.voucherDate>= to_date('" + fromDate
                         + "','dd/MM/yyyy') and vh.voucherDate <= to_date('" + toVoucherDate + "','dd/MM/yyyy') "
                         + miscQuery + " and (gl.glcode = bg.mincode or gl.glcode=bg.majorcode) group by bd.id");
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Finished fetchActualsForFY" + fromDate);
         return result;
@@ -721,7 +721,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 + " and vh.status not in (" + voucherstatusExclude + ")  " + miscQuery + " "
                 + " and gl.glcodeid=bg.mincode and gl.glcodeid=bg.maxcode and  bg.majorcode is null group by bd.uniqueno");
 
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchActualsForFY " + result.size() + "      " + query.toString());
         if (LOGGER.isInfoEnabled())
@@ -785,7 +785,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         // if(LOGGER.isDebugEnabled())
         // LOGGER.debug("Query for fetchActualsForFY
         // "+fy.getStartingDate().getYear()+"-"+fy.getEndingDate().getYear()+"------"+query.toString());
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchActualsForFY " + result.size() + "      " + query.toString());
 
@@ -830,7 +830,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 + " AND gl.glcodeid         =bg.mincode AND gl.glcodeid         =bg.maxcode AND bg.majorcode       IS NULL AND (wf.value='END' OR wf.owner_pos="
                 + pos.getId() + ") AND bd.state_id = wf.id GROUP BY substr(gl.glcode,1,3)");
 
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchMajorCodeAndActuals......." + query.toString());
 
@@ -857,7 +857,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + " and cao1.glcode = cao.majorcode AND (wf.value='END' OR wf.owner_pos=" + pos.getId()
                         + ") AND bd.state_id = wf.id GROUP BY cao.majorcode, cao1.glcode||'-'||cao1.name");
 
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchMajorCodeAndName..........." + query.toString());
 
@@ -889,7 +889,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + functionCondition1 + " AND bd1.uniqueno = bd2.uniqueno AND (wf.value='END' OR wf.owner_pos="
                         + pos.getId() + ") AND bd1.state_id = wf.id GROUP BY cao.majorcode");
 
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchMajorCodeAndBEAmount");
 
@@ -921,7 +921,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + functionCondition1 + " AND bd1.uniqueno = bd2.uniqueno AND (wf.value='END' OR wf.owner_pos="
                         + pos.getId() + ") AND bd1.state_id = wf.id GROUP BY bd2.uniqueno");
 
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchUniqueNoAndBEAmount");
 
@@ -963,7 +963,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + pos.getId()
                         + ") AND bd1.state_id             = wf.id and bd1.uniqueno = bd2.uniqueno GROUP BY cao.majorcode");
 
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchMajorCodeAndAppropriation");
 
@@ -997,7 +997,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + pos.getId()
                         + ") AND bd1.state_id             = wf.id and bd1.uniqueno = bd2.uniqueno GROUP BY bd2.uniqueno");
 
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchUniqueNoAndApprAmount");
 
@@ -1022,7 +1022,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + " AND (wf.value='END' OR wf.owner_pos=" + pos.getId()
                         + ") AND bd.state_id = wf.id GROUP BY cao.majorcode");
 
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchMajorCodeAndAnticipatory");
 
@@ -1048,7 +1048,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + " AND (wf.value='END' OR wf.owner_pos=" + pos.getId()
                         + ") AND bd.state_id = wf.id GROUP BY cao.majorcode");
 
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchMajorCodeAndOriginalAmount");
 
@@ -1079,7 +1079,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + " AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND (wf.value='END' OR wf.owner_pos="
                         + pos.getId() + ") AND bd1.state_id = wf.id GROUP BY cao.majorcode");
 
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchMajorCodeAndBENextYr");
 
@@ -1105,7 +1105,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + " AND (wf.value='END' OR wf.owner_pos=" + pos.getId()
                         + ") AND bd.state_id = wf.id GROUP BY cao.majorcode");
 
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchMajorCodeAndApprovedAmount");
 
@@ -1136,7 +1136,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + " AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND (wf.value='END' OR wf.owner_pos="
                         + pos.getId() + ") AND bd1.state_id = wf.id GROUP BY cao.majorcode");
 
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchMajorCodeAndBENextYrApproved");
 
@@ -1167,7 +1167,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + " AND bd.budgetgroup=bg.id AND bg.ACCOUNTTYPE ='" + budgetingType + "'" + excludeDept
                         + " AND cao.id=bg.mincode AND cao.id=bg.maxcode AND bg.majorcode IS NULL and cao1.glcode = cao.majorcode AND wf.code='Approved' AND bd.status = wf.id GROUP BY cao.majorcode, cao1.glcode||'-'||cao1.name");
 
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchMajorCodeAndName");
 
@@ -1215,7 +1215,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 + ") AND vh.fundId           =bd.fund AND gl.functionid = bd.function "
                 + " AND vmis.departmentid   =bd.executing_department AND gl.glcodeid         =bg.mincode AND gl.glcodeid =bg.maxcode AND bg.majorcode       IS NULL AND wf.code='Approved' AND bd.status = wf.id GROUP BY substr(gl.glcode,1,3)");
 
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchMajorCodeAndActuals");
 
@@ -1249,7 +1249,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + "  AND bd2.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='" + budgetingType + "'" + excludeDept
                         + " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd1.uniqueno = bd2.uniqueno AND wf.value='Approved' AND bd1.status = wf.id GROUP BY cao.majorcode");
 
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info(
                     "------------------------------------------------------------------------------------------------------");
@@ -1287,7 +1287,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + " AND bd.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='" + budgetingType + "'" + excludeDept
                         + " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND wf.code='Approved' AND bd.status = wf.id GROUP BY cao.majorcode");
 
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchMajorCodeAndApprovedAmount");
 
@@ -1319,7 +1319,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + "'" + excludeDept
                         + " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND wf.code='Approved' AND bd1.status = wf.id GROUP BY cao.majorcode");
 
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchMajorCodeAndBENextYrApproved");
 
@@ -1350,7 +1350,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + " AND bd.budgetgroup=bg.id AND bg.ACCOUNTTYPE ='" + budgetingType + "'" + excludeDept
                         + " AND cao.id=bg.mincode AND cao.id=bg.maxcode AND bg.majorcode IS NULL and cao1.glcode = cao.majorcode AND wf.code='Approved' AND bd.status = wf.id GROUP BY substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2), cao.glcode||'-'||cao.name");
 
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchGlCodeAndNameForReport");
 
@@ -1401,7 +1401,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + ") AND vh.fundId           =bd.fund AND gl.functionid = bd.function "
                         + " AND vmis.departmentid   =bd.executing_department AND gl.glcodeid  =bg.mincode AND gl.glcodeid =bg.maxcode AND bg.majorcode IS NULL AND wf.code='Approved' AND bd.status = wf.id GROUP BY substr(gl.glcode,0,3)||'-'||substr(gl.glcode,4,2)||'-'||substr(gl.glcode,6,2)||'-'||substr(gl.glcode,8,2)");
 
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchActualsForReport");
 
@@ -1435,7 +1435,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + "  AND bd2.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='" + budgetingType + "'" + excludeDept
                         + " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd1.uniqueno = bd2.uniqueno AND wf.code='Approved' AND bd1.status = wf.id GROUP BY substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2)");
 
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info(
                     "------------------------------------------------------------------------------------------------------");
@@ -1473,7 +1473,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + " AND bd.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='" + budgetingType + "'" + excludeDept
                         + " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND wf.code='Approved' AND bd.status = wf.id GROUP BY substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2)");
 
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchGlCodeAndApprovedAmountForReport");
 
@@ -1505,7 +1505,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + "'" + excludeDept
                         + " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND wf.code='Approved' AND bd1.status = wf.id GROUP BY substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2)");
 
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchGlCodeAndBENextYrApprovedForReport");
 
@@ -1533,7 +1533,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + "','dd/MM/yyyy') and br.billdate <= to_date('" + toVoucherDate + "','dd/MM/yyyy') "
                         + miscQuery + " and ((bdetail.glcodeid between bg.mincode "
                         + "and bg.maxcode) or bdetail.glcodeid=bg.majorcode) group by bd.id");
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
         return result;
     }
 
@@ -1569,7 +1569,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + "vh.voucherDate>= to_date('" + fromDate + "','dd/MM/yyyy') and vh.voucherDate <= to_date("
                         + toVoucherDate + ",'dd/MM/yyyy') " + miscQuery
                         + " and (gl.glcode = bg.mincode  or gl.glcode=bg.majorcode ) group by bd.id");
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
 
         return result;
     }
@@ -1611,7 +1611,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 + "and bg.maxcode) or bdetail.glcodeid=bg.majorcode) group by bd.id" + " ) group by bud ");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" Main Query :" + query);
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
         return result;
     }
 
@@ -1659,7 +1659,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" Main Query :" + query);
-        final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
+        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
         return result;
     }
 
@@ -1864,7 +1864,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         }
         stateId = Long.valueOf(sequenceNumber.toString());
 
-        persistenceService.getSession().createSQLQuery(BUDGETDETAIL_STATES_INSERT).setLong("stateId", stateId)
+        persistenceService.getSession().createNativeQuery(BUDGETDETAIL_STATES_INSERT).setLong("stateId", stateId)
                 .executeUpdate();
 
         budgetDetail.setWfState((State) persistenceService.find("from State where id = ?", stateId));
@@ -1994,7 +1994,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     private String getNewRootMaterializedPath() {
         String rootmaterial;
         final Query query = persistenceService.getSession()
-                .createSQLQuery("select count(*)+1 from egf_budget where parent is null");
+                .createNativeQuery("select count(*)+1 from egf_budget where parent is null");
 
         rootmaterial = query.uniqueResult().toString();
         return rootmaterial;
@@ -2011,7 +2011,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         } catch (final SQLGrammarException e) {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
         }
-        persistenceService.getSession().createSQLQuery(BUDGET_STATES_INSERT).setLong("stateId", stateId)
+        persistenceService.getSession().createNativeQuery(BUDGET_STATES_INSERT).setLong("stateId", stateId)
                 .executeUpdate();
         budgetState = (State) persistenceService.find("from State where id = ?", stateId);
         budget.setWfState(budgetState);
@@ -2086,7 +2086,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         String materialPath = rootmaterial;
         try {
             final Query query = persistenceService.getSession()
-                    .createSQLQuery(
+                    .createNativeQuery(
                             "select count(*)+1 from egf_budget c,egf_budget p where c.parent = p.id and p.name = :parentName")
                     .setString("parentName", parent.getName());
 
@@ -2192,7 +2192,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         final EgwStatus approvedStatus = egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL", "Approved");
         final EgwStatus createdStatus = egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL", "Created");
         persistenceService.getSession()
-                .createSQLQuery(
+                .createNativeQuery(
                         "update egf_budgetdetail  set status = :approvedStatus where status =:createdStatus and  materializedPath like'"
                                 + materializedPath + "%'")
                 .setLong("approvedStatus", approvedStatus.getId()).setLong("createdStatus", createdStatus.getId())

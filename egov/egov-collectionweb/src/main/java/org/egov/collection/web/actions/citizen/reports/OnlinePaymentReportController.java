@@ -51,7 +51,7 @@ import org.apache.commons.io.IOUtils;
 import org.egov.collection.entity.OnlinePaymentResult;
 import org.egov.collection.service.CollectionReportService;
 import org.egov.infra.exception.ApplicationException;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -105,7 +105,7 @@ public class OnlinePaymentReportController {
         final String fromdate = request.getParameter("fromdate");
         final String todate = request.getParameter("todate");
         final String transid = request.getParameter("transid");
-        final SQLQuery query = reportService.getOnlinePaymentReportData(districtname, ulbname, fromdate, todate,
+        final NativeQuery query = reportService.getOnlinePaymentReportData(districtname, ulbname, fromdate, todate,
                 transid);
         List<OnlinePaymentResult> onlinePaymentList = query.list();
         final String result = new StringBuilder("{ \"data\":")

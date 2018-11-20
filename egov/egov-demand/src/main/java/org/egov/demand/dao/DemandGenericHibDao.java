@@ -518,7 +518,7 @@ public class DemandGenericHibDao implements DemandGenericDao {
 					.append(" where dmdDet.id_demand_reason=dmdRes.id and dmdDet.id_demand =:dmdId and dmdres.id_installment =:installId ")
 					.append(" and  dmdresmas.id= dmdres.id_demand_reason_master and dmdresmas.code not in('PENALTY','ADVANCE') ")
 					.append(" group by dmdRes.id_installment	 ");
-			Query qry = getCurrentSession().createSQLQuery(strBuf.toString())
+			Query qry = getCurrentSession().createNativeQuery(strBuf.toString())
 					.setLong("dmdId", egDemand.getId())
 					.setInteger("installId", installment.getId());
 			list = qry.list();
@@ -598,7 +598,7 @@ public class DemandGenericHibDao implements DemandGenericDao {
 					+ "AND cate.id = master.category " 
 					+ "GROUP BY dmdres.ID_INSTALLMENT, master.id, master.category "
 					+ "ORDER BY dmdres.id_installment, master.category  ";
-			Query qry = getCurrentSession().createSQLQuery(query)
+			Query qry = getCurrentSession().createNativeQuery(query)
 					.setLong("dmdId", egDemand.getId()).setLong("moduleId", module.getId());
 			list = qry.list();
 		}
@@ -626,7 +626,7 @@ public class DemandGenericHibDao implements DemandGenericDao {
 				+ " AND dr.id_installment = i.id "
 				+ " AND dr.id_demand_reason_master = drm.id " + " AND dd.id_demand =:dmdId "
 				+ " AND drm.module  =:moduleId " + "ORDER BY i.start_date ";
-		Query qry = getCurrentSession().createSQLQuery(query).setLong("dmdId", egDemand.getId())
+		Query qry = getCurrentSession().createNativeQuery(query).setLong("dmdId", egDemand.getId())
 				.setLong("moduleId", module.getId());
 		list = qry.list();
 		return list;
@@ -652,7 +652,7 @@ public class DemandGenericHibDao implements DemandGenericDao {
 					+ "  WHERE id IN " + "    (SELECT id_demand_reason "
 					+ "    FROM eg_demand_details dmddet " + "    WHERE id_demand =:dmdId "
 					+ "    )) " + " ";
-			Query qry = getCurrentSession().createSQLQuery(query)
+			Query qry = getCurrentSession().createNativeQuery(query)
 					.setLong("dmdId", egDemand.getId());
 			list = qry.list();
 		}
@@ -822,7 +822,7 @@ public class DemandGenericHibDao implements DemandGenericDao {
                             + " AND dr.id_installment = i.id "
                             + " AND dr.id_demand_reason_master = drm.id " + " AND dd.id_demand =:dmdId "
                             + " AND drm.module  =:moduleId AND drm.code=:reasonCode " + "ORDER BY i.start_date ";
-            Query qry = getCurrentSession().createSQLQuery(query).setLong("dmdId", egDemand.getId())
+            Query qry = getCurrentSession().createNativeQuery(query).setLong("dmdId", egDemand.getId())
                             .setLong("moduleId", module.getId()).setString("reasonCode", reasonCode);
             list = qry.list();
             return list;

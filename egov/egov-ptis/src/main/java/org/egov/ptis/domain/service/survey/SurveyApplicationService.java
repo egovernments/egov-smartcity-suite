@@ -82,7 +82,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -259,7 +259,7 @@ public class SurveyApplicationService {
                 }
             }
             if (isRevAssistantExist) {
-                SQLQuery sqlQuery = entityManager.unwrap(Session.class).createSQLQuery(
+                NativeQuery sqlQuery = entityManager.unwrap(Session.class).createNativeQuery(
                         "update eg_wf_states set owner_pos =:ownerpos where id in(select state_id from egpt_property where applicationNo=:applicationNo)");
                 sqlQuery.setParameter(APP_NO, applicationNo);
                 sqlQuery.setParameter("ownerpos", assistPos);

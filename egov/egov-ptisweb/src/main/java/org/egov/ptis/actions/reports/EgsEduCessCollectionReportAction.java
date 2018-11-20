@@ -58,7 +58,7 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.ptis.bean.DemandCollInfo;
 import org.egov.ptis.bean.ReportInfo;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
@@ -208,7 +208,7 @@ public class EgsEduCessCollectionReportAction extends BaseFormAction {
 		}
 		
 		qryStr.append("group by ca.glcode");
-		SQLQuery qry = getPersistenceService().getSession().createSQLQuery(
+		NativeQuery qry = getPersistenceService().getSession().createNativeQuery(
 				qryStr.toString());
 		qry.setParameterList("glcodeList", EDU_EGS_CESS_GLCODE_LIST);
 		for (String srchParam : srchParams.keySet()) {
@@ -264,8 +264,8 @@ public class EgsEduCessCollectionReportAction extends BaseFormAction {
 						+ "where id_module = (select id_module from eg_module where module_name = 'Property Tax') "
 						+ "and start_date >= to_date('" + REPORT_START_DATE
 						+ "','dd/MM/yyyy') " + "and start_date <= sysdate");
-		SQLQuery qry = getPersistenceService().getSession()
-				.createSQLQuery(qryStr.toString()).addEntity(Installment.class);
+		NativeQuery qry = getPersistenceService().getSession()
+				.createNativeQuery(qryStr.toString()).addEntity(Installment.class);
 		return qry.list();
 	}
 
