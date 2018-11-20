@@ -1285,7 +1285,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         BankAdviceForm baf;
         EntityType entity;
         String voucherno = EMPTY;
-        final InstrumentHeader instrumentHdr = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?",
+        final InstrumentHeader instrumentHdr = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?1",
                 Long.valueOf(parameters.get("instHeaderId")[0]));
         for (final InstrumentVoucher instrumentVoucher : instrumentHdr.getInstrumentVouchers()) {
             final Object[] obj = (Object[]) persistenceService
@@ -1644,7 +1644,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                     if (surrender[indx] == null)
                         instrumentHdr = null;
                     else
-                        instrumentHdr = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?",
+                        instrumentHdr = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?1",
                                 Long.valueOf(surrender[indx]));
                     if (instrumentHdr != null && (surrendarReasons[indx] == null || surrendarReasons[indx].equalsIgnoreCase("-1"))) {
                         reasonMissingRows.append(indx + 1);

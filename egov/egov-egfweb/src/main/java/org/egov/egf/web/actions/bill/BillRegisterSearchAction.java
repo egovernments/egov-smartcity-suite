@@ -62,13 +62,17 @@ import org.egov.commons.Fund;
 import org.egov.commons.Fundsource;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
+import org.egov.commons.dao.FunctionaryDAO;
+import org.egov.commons.dao.FundSourceHibernateDAO;
+import org.egov.commons.repository.FundRepository;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.repository.BoundaryRepository;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.utils.FinancialConstants;
@@ -108,9 +112,17 @@ public class BillRegisterSearchAction extends BaseFormAction {
  @Autowired
  @Qualifier("persistenceService")
  private PersistenceService persistenceService;
- @Autowired
-    private EgovMasterDataCaching masterDataCache;
-    
+    @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private FundSourceHibernateDAO fundSourceHibernateDAO;
+    @Autowired
+    private FunctionaryDAO functionaryDAO;
+    @Autowired
+    private FundRepository fundRepository;
+    @Autowired
+    private BoundaryRepository boundaryRepository;
+
     public BillRegisterSearchAction() {
         billregister = new EgBillregister();
         billregister.setEgBillregistermis(new EgBillregistermis());
@@ -145,16 +157,15 @@ public class BillRegisterSearchAction extends BaseFormAction {
         addDropdownData("expType", expTypeList);
         getHeaderFields();
         if (headerFields.contains("department"))
-            addDropdownData("departmentList", masterDataCache.get("egi-department"));
+            addDropdownData("departmentList", departmentService.getAllDepartments());
         if (headerFields.contains("functionary"))
-            addDropdownData("functionaryList", masterDataCache
-                    .get("egi-functionary"));
+            addDropdownData("functionaryList", functionaryDAO.findAllActiveFunctionary());
         if (headerFields.contains("fund"))
-            addDropdownData("fundList", masterDataCache.get("egi-fund"));
+            addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
         if (headerFields.contains("fundsource"))
-            addDropdownData("fundsourceList", masterDataCache.get("egi-fundSource"));
+            addDropdownData("fundsourceList", fundSourceHibernateDAO.findAllActiveIsLeafFundSources());
         if (headerFields.contains("field"))
-            addDropdownData("fieldList", masterDataCache.get("egi-ward"));
+            addDropdownData("fieldList", boundaryRepository.findBoundariesByBndryTypeName("WARD"));
         if (headerFields.contains("scheme"))
             addDropdownData("schemeList", Collections.EMPTY_LIST);
         if (headerFields.contains("subscheme"))

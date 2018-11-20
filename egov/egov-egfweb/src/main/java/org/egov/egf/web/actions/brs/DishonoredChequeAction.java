@@ -168,7 +168,7 @@ public class DishonoredChequeAction extends SearchFormAction {
         final String installmentIdsStr[] = installmentIds.split(",");
         for (final String installmentIdStr : installmentIdsStr) {
             InstrumentHeader ih = new InstrumentHeader();
-            ih = (InstrumentHeader) getPersistenceService().find("from InstrumentHeader where id=?",
+            ih = (InstrumentHeader) getPersistenceService().find("from InstrumentHeader where id=?1",
                     Long.valueOf(installmentIdStr));
             instrumentService.cancelInstrument(ih);
         }

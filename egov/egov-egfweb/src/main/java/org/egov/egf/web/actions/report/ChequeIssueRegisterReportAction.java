@@ -61,12 +61,12 @@ import org.egov.egf.model.BankAdviceReportInfo;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.services.instrument.InstrumentHeaderService;
 import org.egov.utils.Constants;
@@ -123,8 +123,9 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
     private String ulbName = "";
     private String bank;
     private static final Logger LOGGER = Logger.getLogger(ChequeIssueRegisterReportAction.class);
+
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
     private boolean chequePrintingEnabled;
     private String chequePrintAvailableAt;
     private boolean chequeFormatExists;
@@ -144,7 +145,7 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
         if (!parameters.containsKey("showDropDown")) {
             addDropdownData("bankList", egovCommon.getBankBranchForActiveBanks());
             addDropdownData("bankAccountList", Collections.EMPTY_LIST);
-            dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
+            dropdownData.put("executingDepartmentList", departmentService.getAllDepartments());
         }
         populateUlbName();
     }
@@ -325,7 +326,7 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
     @Action(value = "/report/chequeIssueRegisterReport-bankAdviceExcel")
     public String bankAdviceExcel() throws JRException, IOException {
         BankAdviceReportInfo bankAdvice = new BankAdviceReportInfo();
-        final InstrumentHeader instrumentHeader = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?",
+        final InstrumentHeader instrumentHeader = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?1",
                 instrumentHeaderId);
         bankAdvice.setPartyName(instrumentHeader.getPayTo());
         bankAdvice.setAmount(instrumentHeader.getInstrumentAmount());

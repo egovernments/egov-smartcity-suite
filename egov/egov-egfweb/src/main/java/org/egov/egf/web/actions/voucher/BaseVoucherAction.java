@@ -78,19 +78,24 @@ import org.egov.commons.Fundsource;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.Vouchermis;
+import org.egov.commons.dao.FunctionaryDAO;
+import org.egov.commons.dao.FundSourceHibernateDAO;
+import org.egov.commons.repository.FunctionRepository;
+import org.egov.commons.repository.FundRepository;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.repository.BoundaryRepository;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.contra.ContraBean;
 import org.egov.model.voucher.VoucherDetails;
 import org.egov.model.voucher.WorkflowBean;
@@ -133,9 +138,20 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     Map<String, List<String>> voucherNames = VoucherHelper.VOUCHER_TYPE_NAMES;
 
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
-    @Autowired
     protected AppConfigValueService appConfigValuesService;
+
+    @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private FunctionRepository functionRepository;
+    @Autowired
+    private FundRepository fundRepository;
+    @Autowired
+    private FundSourceHibernateDAO fundSourceHibernateDAO;
+    @Autowired
+    private BoundaryRepository boundaryRepository;
+    @Autowired
+    private FunctionaryDAO functionaryDAO;
 
     public BaseVoucherAction()
     {
@@ -170,17 +186,17 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
             LOGGER.debug("Inside Prepare method");
         getHeaderMandateFields();
         if (headerFields.contains("department"))
-            addDropdownData("departmentList", masterDataCache.get("egi-department"));
+            addDropdownData("departmentList", departmentService.getAllDepartments());
         if (headerFields.contains("functionary"))
-            addDropdownData("functionaryList", masterDataCache.get("egi-functionary"));
+            addDropdownData("functionaryList", functionaryDAO.findAllActiveFunctionary());
         if (headerFields.contains("function"))
-            addDropdownData("functionList", masterDataCache.get("egi-function"));
+            addDropdownData("functionList", functionRepository.findByIsActiveAndIsNotLeaf(true,false));
         if (headerFields.contains("fund"))
-            addDropdownData("fundList", masterDataCache.get("egi-fund"));
+            addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
         if (headerFields.contains("fundsource"))
-            addDropdownData("fundsourceList", masterDataCache.get("egi-fundSource"));
+            addDropdownData("fundsourceList", fundSourceHibernateDAO.findAllActiveIsLeafFundSources());
         if (headerFields.contains("field"))
-            addDropdownData("fieldList", masterDataCache.get("egi-ward"));
+            addDropdownData("fieldList", boundaryRepository.findBoundariesByBndryTypeName("WARD"));
         if (headerFields.contains("scheme"))
             addDropdownData("schemeList", Collections.emptyList());
         if (headerFields.contains("subscheme"))
@@ -635,7 +651,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
                                     +
                                     " where  bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id"
                                     +
-                                    " and bankaccount.fund.id=?", voucherHeader.getFundId().getId());
+                                    " and bankaccount.fund.id=?1", voucherHeader.getFundId().getId());
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankBranch.size());

@@ -58,13 +58,13 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFunction;
+import org.egov.commons.repository.FunctionRepository;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.query.Query;
@@ -98,7 +98,7 @@ public class JournalBookReportAction extends BaseFormAction {
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private FunctionRepository functionRepository;
     String heading = "";
 
     public JournalBookReportAction() {
@@ -117,7 +117,7 @@ public class JournalBookReportAction extends BaseFormAction {
         addDropdownData("fundsourceList",
                 persistenceService.findAllBy(" from Fundsource where isactive=true order by name"));
         addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
-        addDropdownData("functionList", masterDataCache.get("egi-function"));
+        addDropdownData("functionList", functionRepository.findByIsActiveAndIsNotLeaf(true,false));
 
         addDropdownData("voucherNameList", VoucherHelper.VOUCHER_TYPE_NAMES.get(FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL));
         if (LOGGER.isDebugEnabled())

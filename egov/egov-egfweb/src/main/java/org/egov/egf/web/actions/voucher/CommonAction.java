@@ -159,7 +159,7 @@ public class CommonAction extends BaseFormAction {
     private static final Logger LOGGER = Logger.getLogger(CommonAction.class);
     private static final long serialVersionUID = 1L;
     private static final String RTGSNUMBERSQUERY = "SELECT ih.id, ih.transactionNumber FROM InstrumentHeader ih, InstrumentVoucher iv, "
-            + "Paymentheader ph WHERE ih.isPayCheque ='1' AND ih.bankAccountId.id = ? AND ih.statusId.description in ('New')" +
+            + "Paymentheader ph WHERE ih.isPayCheque ='1' AND ih.bankAccountId.id = ?1 AND ih.statusId.description in ('New')" +
             " AND ih.statusId.moduletype='Instrument' AND iv.instrumentHeaderId = ih.id and ih.bankAccountId is not null " +
             "AND iv.voucherHeaderId     = ph.voucherheader AND ph.bankaccount = ih.bankAccountId AND ph.type = '"
             + FinancialConstants.MODEOFPAYMENT_RTGS + "' " + "GROUP BY ih.transactionNumber,ih.id order by ih.id desc";
@@ -401,7 +401,7 @@ public class CommonAction extends BaseFormAction {
                                     +
                                     " where  bank.isactive=true  and bankBranch.isactive=true and bankaccount.isactive=true  and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id"
                                     +
-                                    " and bankaccount.fund.id=? order by 2",
+                                    " and bankaccount.fund.id=?1 order by 2",
                             fundId);
 
             if (LOGGER.isDebugEnabled())
@@ -585,7 +585,7 @@ public class CommonAction extends BaseFormAction {
 
             accNumList = getPersistenceService()
                     .findAllBy(
-                            "from Bankaccount ba where ba.bankbranch.id=? and ba.bankbranch.bank.id=? and isactive=true order by ba.chartofaccounts.glcode",
+                            "from Bankaccount ba where ba.bankbranch.id=?1 and ba.bankbranch.bank.id=?2 and isactive=true order by ba.chartofaccounts.glcode",
                             branchId, bankId);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank account Number list size =  " + accNumList.size());
@@ -639,12 +639,12 @@ public class CommonAction extends BaseFormAction {
             if (fundId != null)
                 branchList = getPersistenceService()
                         .findAllBy(
-                                "select distinct bb from Bankbranch bb , Bankaccount ba  where ba.bankbranch =bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bb.bank.id=? and bb.isactive=true and ba.fund.id=?",
+                                "select distinct bb from Bankbranch bb , Bankaccount ba  where ba.bankbranch =bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bb.bank.id=?1 and bb.isactive=true and ba.fund.id=?2",
                                 bankId, fundId);
             else
                 branchList = getPersistenceService()
                         .findAllBy(
-                                "select distinct bb from Bankbranch bb , Bankaccount ba  where ba.bankbranch =bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bb.bank.id=? and bb.isactive=true",
+                                "select distinct bb from Bankbranch bb , Bankaccount ba  where ba.bankbranch =bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bb.bank.id=?1 and bb.isactive=true",
                                 bankId);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank Branch Number list size =  " + branchList.size());
@@ -669,12 +669,12 @@ public class CommonAction extends BaseFormAction {
             if (fundId != null)
                 accNumList = getPersistenceService()
                         .findAllBy(
-                                "from Bankaccount ba where ba.bankbranch.id=? and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and ba.isactive=true and ba.fund.id=?",
+                                "from Bankaccount ba where ba.bankbranch.id=?1 and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and ba.isactive=true and ba.fund.id=?2",
                                 branchId, fundId);
             else
                 accNumList = getPersistenceService()
                         .findAllBy(
-                                "from Bankaccount ba where ba.bankbranch.id=? and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and ba.isactive=true",
+                                "from Bankaccount ba where ba.bankbranch.id=?1 and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and ba.isactive=true",
                                 branchId);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank Account Number list size =  " + accNumList.size());
@@ -733,7 +733,7 @@ public class CommonAction extends BaseFormAction {
                     .findAllBy(RTGSNUMBERSQUERY, bankaccountId);
             for (final Object[] obj : resultList) {
                 InstrumentHeader ih = new InstrumentHeader();
-                ih = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?", (Long) obj[0]);
+                ih = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?1", (Long) obj[0]);
 
                 instrumentHeaderList.add(ih);
             }
@@ -3372,7 +3372,7 @@ public class CommonAction extends BaseFormAction {
                                     " ca.glcode not in(select glcode from CChartOfAccounts where glcode like '47%' and glcode not like '471%' and glcode !='4741')"
                                     +
                                     " and ca.glcode not in (select glcode from CChartOfAccounts where glcode = '471%') " +
-                                    " and ca.isActiveForPosting=true and ca.classification=4  and ca.glcode like ?",
+                                    " and ca.isActiveForPosting=true and ca.classification=4  and ca.glcode like ?1",
                             glCode + "%");
 
         if (LOGGER.isDebugEnabled())
@@ -3390,7 +3390,7 @@ public class CommonAction extends BaseFormAction {
         else
             glCodesList = persistenceService.findAllBy(
                     "select DISTINCT coa from CChartOfAccounts coa,CChartOfAccountDetail cod  where " +
-                            " coa = cod.glCodeId and coa.classification=4 and coa.glcode like ?",
+                            " coa = cod.glCodeId and coa.classification=4 and coa.glcode like ?1",
                     glCode + "%");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadSLreportCodes.");
@@ -3407,7 +3407,7 @@ public class CommonAction extends BaseFormAction {
         else {
             String funCodeName = "%" + function.toLowerCase() + "%";
             functionCodesList = persistenceService.findAllBy("select f from CFunction f where" +
-                    " isActive = true and isNotLeaf = false and lower(name) like ? or lower(code) like ? ", funCodeName,
+                    " isActive = true and isNotLeaf = false and lower(name) like ?1 or lower(code) like ?2 ", funCodeName,
                     funCodeName);
         }
         if (LOGGER.isDebugEnabled())
@@ -3427,7 +3427,7 @@ public class CommonAction extends BaseFormAction {
             if (glCode != null)
                 subLedgerTypeList = getPersistenceService()
                         .findAllBy(
-                                "select distinct adt from Accountdetailtype adt, CChartOfAccountDetail cad where cad.glCodeId.glcode = ? and cad.detailTypeId = adt ",
+                                "select distinct adt from Accountdetailtype adt, CChartOfAccountDetail cad where cad.glCodeId.glcode = ?1 and cad.detailTypeId = adt ",
                                 glCode);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Sub Ledger Type list size =  " + subLedgerTypeList.size());

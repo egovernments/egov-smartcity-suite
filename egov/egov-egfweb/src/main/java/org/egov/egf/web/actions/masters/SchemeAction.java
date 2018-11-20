@@ -57,13 +57,13 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
+import org.egov.commons.repository.FundRepository;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.services.masters.SchemeService;
 import org.egov.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,7 +96,7 @@ public class SchemeAction extends BaseFormAction {
     @Qualifier("schemeService")
     private SchemeService schemeService;
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private FundRepository fundRepository;
     
     @Override
     public Object getModel() {
@@ -112,7 +112,7 @@ public class SchemeAction extends BaseFormAction {
     @Override
     public void prepare() {
         super.prepare();
-        addDropdownData("fundDropDownList", masterDataCache.get("egi-fund"));
+        addDropdownData("fundDropDownList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
 
     }
 

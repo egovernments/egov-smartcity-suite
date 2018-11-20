@@ -58,15 +58,19 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.dao.FunctionaryDAO;
+import org.egov.commons.repository.FunctionRepository;
+import org.egov.commons.repository.FundRepository;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.City;
+import org.egov.infra.admin.master.repository.BoundaryRepository;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.report.ReportBean;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
@@ -158,7 +162,15 @@ public class TrialBalanceAction extends BaseFormAction {
     private Date endDate = new Date();
     final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
+    @Autowired
+    private FunctionRepository functionRepository;
+    @Autowired
+    private FundRepository fundRepository;
+    @Autowired
+    private BoundaryRepository boundaryRepository;
+    @Autowired
+    private FunctionaryDAO functionaryDAO;
 
     @Override
     public Object getModel() {
@@ -172,11 +184,11 @@ public class TrialBalanceAction extends BaseFormAction {
         persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
 
-        addDropdownData("fundList", masterDataCache.get("egi-fund"));
-        addDropdownData("departmentList", masterDataCache.get("egi-department"));
-        addDropdownData("functionaryList", masterDataCache.get("egi-functionary"));
-        addDropdownData("fieldList", masterDataCache.get("egi-ward"));
-        addDropdownData("functionList", masterDataCache.get("egi-function"));
+        addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
+        addDropdownData("departmentList", departmentService.getAllDepartments());
+        addDropdownData("functionaryList", functionaryDAO.findAllActiveFunctionary());
+        addDropdownData("fieldList", boundaryRepository.findBoundariesByBndryTypeName("WARD"));
+        addDropdownData("functionList", functionRepository.findByIsActiveAndIsNotLeaf(true,false));
 
     }
 
@@ -273,11 +285,11 @@ public class TrialBalanceAction extends BaseFormAction {
         else
         {
             if (rb.getFundId() == null)
-                fundList = masterDataCache.get("egi-fund");
+                fundList = fundRepository.findByIsactiveAndIsnotleaf(true,false);
             else
             {
                 fundList = new ArrayList<Fund>();
-                fundList.add((Fund) persistenceService.find("from Fund where id=?", rb.getFundId()));
+                fundList.add((Fund) persistenceService.find("from Fund where id=?1", rb.getFundId()));
             }
             gererateReportForAsOnDate();
         }

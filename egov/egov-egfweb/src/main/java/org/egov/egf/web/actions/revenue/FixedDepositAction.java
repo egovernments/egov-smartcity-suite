@@ -203,23 +203,23 @@ public class FixedDepositAction extends BaseFormAction {
     @Action(value = "/revenue/fixedDeposit-update")
     public String saveOrupdate() {
         for (final FixedDeposit fd : fixedDepositList) {
-            fd.setBankBranch((Bankbranch) persistenceService.find("from Bankbranch where id=?", fd.getBankBranch().getId()));
-            fd.setBankAccount((Bankaccount) persistenceService.find("from Bankaccount where id=?", fd.getBankAccount().getId()));
-            fd.setOutFlowVoucher((CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?", fd
+            fd.setBankBranch((Bankbranch) persistenceService.find("from Bankbranch where id=?1", fd.getBankBranch().getId()));
+            fd.setBankAccount((Bankaccount) persistenceService.find("from Bankaccount where id=?1", fd.getBankAccount().getId()));
+            fd.setOutFlowVoucher((CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?1", fd
                     .getOutFlowVoucher().getId()));
             if (fd.getInFlowVoucher().getId() != null)
-                fd.setInFlowVoucher((CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?", fd
+                fd.setInFlowVoucher((CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?1", fd
                         .getInFlowVoucher().getId()));
             else
                 fd.setInFlowVoucher(null);
 
             if (fd.getChallanReceiptVoucher().getId() != null)
-                fd.setChallanReceiptVoucher((CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?", fd
+                fd.setChallanReceiptVoucher((CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?1", fd
                         .getChallanReceiptVoucher().getId()));
             else
                 fd.setChallanReceiptVoucher(null);
             if (fd.getInstrumentHeader().getId() != null)
-                fd.setInstrumentHeader((InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?", fd
+                fd.setInstrumentHeader((InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?1", fd
                         .getInstrumentHeader().getId()));
             else
                 fd.setInstrumentHeader(null);
@@ -236,26 +236,26 @@ public class FixedDepositAction extends BaseFormAction {
                 for (final FixedDeposit chld : childFDList)
                     if (fdd.getReferenceNumber().equals(chld.getReferenceNumber())) {
                         chld.setParentId(fdd);
-                        chld.setBankBranch((Bankbranch) persistenceService.find("from Bankbranch where id=?", chld
+                        chld.setBankBranch((Bankbranch) persistenceService.find("from Bankbranch where id=?1", chld
                                 .getBankBranch().getId()));
-                        chld.setBankAccount((Bankaccount) persistenceService.find("from Bankaccount where id=?", chld
+                        chld.setBankAccount((Bankaccount) persistenceService.find("from Bankaccount where id=?1", chld
                                 .getBankAccount().getId()));
-                        chld.setOutFlowVoucher((CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?", chld
+                        chld.setOutFlowVoucher((CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?1", chld
                                 .getOutFlowVoucher().getId()));
                         if (chld.getInstrumentHeader().getId() != null)
                             chld.setInstrumentHeader((InstrumentHeader) persistenceService.find(
-                                    "from InstrumentHeader where id=?", chld.getInstrumentHeader().getId()));
+                                    "from InstrumentHeader where id=?1", chld.getInstrumentHeader().getId()));
                         else
                             chld.setInstrumentHeader(null);
                         if (chld.getInFlowVoucher().getId() != null)
-                            chld.setInFlowVoucher((CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?", chld
+                            chld.setInFlowVoucher((CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?1", chld
                                     .getInFlowVoucher().getId()));
                         else
                             chld.setInFlowVoucher(null);
 
                         if (chld.getChallanReceiptVoucher().getId() != null)
                             chld.setChallanReceiptVoucher((CVoucherHeader) persistenceService.find(
-                                    "from CVoucherHeader where id=?", chld.getChallanReceiptVoucher().getId()));
+                                    "from CVoucherHeader where id=?1", chld.getChallanReceiptVoucher().getId()));
                         else
                             chld.setChallanReceiptVoucher(null);
 

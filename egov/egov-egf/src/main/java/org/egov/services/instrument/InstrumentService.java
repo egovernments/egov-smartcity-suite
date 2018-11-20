@@ -897,7 +897,7 @@ public class InstrumentService {
 
     public InstrumentHeader getInstrumentHeaderById(final Long id) {
         return instrumentHeaderService
-                .find(" from InstrumentHeader where id=?",id);
+                .find(" from InstrumentHeader where id=?1",id);
     }
     
     @Transactional

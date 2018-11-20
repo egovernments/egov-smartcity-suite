@@ -68,6 +68,7 @@ import org.egov.commons.utils.EntityType;
 import org.egov.egf.autonumber.ExpenseBillNumberGenerator;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
@@ -81,7 +82,6 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infstr.models.EgChecklists;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBillSubType;
 import org.egov.model.bills.EgBilldetails;
@@ -160,8 +160,9 @@ public class ContingentBillAction extends BaseBillAction {
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
+
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
 
     @Autowired
     private AutonumberServiceBeanResolver beanResolver;
@@ -190,7 +191,7 @@ public class ContingentBillAction extends BaseBillAction {
         // If the department is mandatory show the logged in users assigned department only.
         if (mandatoryFields.contains("department")) {
             List<Department> deptList;
-            deptList = masterDataCache.get("egi-department");
+            deptList = departmentService.getAllDepartments();
             addDropdownData("departmentList", deptList);
             addDropdownData("billDepartmentList", persistenceService.findAllBy("from Department order by name"));
         }
@@ -1214,7 +1215,7 @@ public class ContingentBillAction extends BaseBillAction {
     public String getDetailTypesForCoaId(final Long id) {
         final StringBuffer detailTypeIdandName1 = new StringBuffer(500);
         final List<CChartOfAccountDetail> coaDetails = persistenceService.findAllBy(
-                "from CChartOfAccountDetail where glCodeId.id=?", id);
+                "from CChartOfAccountDetail where glCodeId.id=?1", id);
         for (final CChartOfAccountDetail coad : coaDetails)
             detailTypeIdandName1.append(coad.getDetailTypeId().getId()).append("`-`");
         return detailTypeIdandName1.toString();

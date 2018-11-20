@@ -175,7 +175,7 @@ public class BankBookReportAction extends BaseFormAction {
         if (financialYearId == null || financialYearId.equals(""))
             startDate = new Date();
         else
-            startDate = (Date) persistenceService.find("select startingDate  from CFinancialYear where id=?",
+            startDate = (Date) persistenceService.find("select startingDate  from CFinancialYear where id=?1",
                     Long.parseLong(financialYearId));
         endDate = null;
 

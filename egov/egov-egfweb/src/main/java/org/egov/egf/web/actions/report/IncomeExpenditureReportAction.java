@@ -58,14 +58,18 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
+import org.egov.commons.dao.FunctionaryDAO;
+import org.egov.commons.repository.FunctionRepository;
+import org.egov.commons.repository.FundRepository;
 import org.egov.egf.model.Statement;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.repository.BoundaryRepository;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.services.report.IncomeExpenditureScheduleService;
 import org.egov.services.report.IncomeExpenditureService;
 import org.egov.utils.Constants;
@@ -127,7 +131,15 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
  @Qualifier("persistenceService")
  private PersistenceService persistenceService;
  @Autowired
-    private EgovMasterDataCaching masterDataCache;
+ private DepartmentService departmentService;
+ @Autowired
+ private FunctionRepository functionRepository;
+ @Autowired
+ private FunctionaryDAO functionaryDAO;
+ @Autowired
+ private FundRepository fundRepository;
+ @Autowired
+ private BoundaryRepository boundaryRepository;
     
     public void setIncomeExpenditureService(final IncomeExpenditureService incomeExpenditureService) {
         this.incomeExpenditureService = incomeExpenditureService;
@@ -164,11 +176,11 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
         persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
         if (!parameters.containsKey("showDropDown")) {
-            addDropdownData("departmentList", masterDataCache.get("egi-department"));
-            addDropdownData("functionList", masterDataCache.get("egi-function"));
-            addDropdownData("functionaryList", masterDataCache.get("egi-functionary"));
-            addDropdownData("fundDropDownList", masterDataCache.get("egi-fund"));
-            addDropdownData("fieldList", masterDataCache.get("egi-ward"));
+            addDropdownData("departmentList", departmentService.getAllDepartments());
+            addDropdownData("functionList", functionRepository.findByIsActiveAndIsNotLeaf(true,false));
+            addDropdownData("functionaryList", functionaryDAO.findAllActiveFunctionary());
+            addDropdownData("fundDropDownList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
+            addDropdownData("fieldList", boundaryRepository.findBoundariesByBndryTypeName("WARD"));
             addDropdownData("financialYearList",
                     getPersistenceService().findAllBy("from CFinancialYear where isActive=true  order by finYearRange desc "));
         }

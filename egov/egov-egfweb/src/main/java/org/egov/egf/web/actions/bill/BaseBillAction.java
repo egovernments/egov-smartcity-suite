@@ -305,7 +305,7 @@ public class BaseBillAction extends BaseVoucherAction {
     }
 
     public List getBillSubTypes() {
-        return persistenceService.findAllBy("from EgBillSubType where expenditureType=? order by name",
+        return persistenceService.findAllBy("from EgBillSubType where expenditureType=?1 order by name",
                 FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT);
     }
 

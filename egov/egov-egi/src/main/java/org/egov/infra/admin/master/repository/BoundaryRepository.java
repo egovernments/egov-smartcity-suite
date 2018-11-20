@@ -160,4 +160,8 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
     List<Boundary> findAllParents();
 
     List<Boundary> findByBoundaryTypeOrderByBoundaryNumAsc(BoundaryType boundaryType);
+
+    @Query("select b from Boundary b where upper(b.boundaryType.name) = UPPER(:boundaryTypeName) order by b.id")
+    List<Boundary> findBoundariesByBndryTypeName(@Param("boundaryTypeName") String boundaryTypeName);
+
 }

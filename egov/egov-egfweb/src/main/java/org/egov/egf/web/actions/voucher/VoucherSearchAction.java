@@ -342,7 +342,7 @@ public class VoucherSearchAction extends BaseFormAction {
         if (isBlank(financialYearId))
             fromDate = new Date();
         else
-            fromDate = (Date) persistenceService.find("select startingDate  from CFinancialYear where id=?",
+            fromDate = (Date) persistenceService.find("select startingDate  from CFinancialYear where id=?1",
                     Long.parseLong(financialYearId));
     }
 

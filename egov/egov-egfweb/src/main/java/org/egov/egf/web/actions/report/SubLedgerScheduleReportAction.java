@@ -117,7 +117,7 @@ public class SubLedgerScheduleReportAction extends BaseFormAction {
                     "subLedgerTypeList",
                     persistenceService
                     .findAllBy(
-                            "select distinct adt from Accountdetailtype adt, CChartOfAccountDetail cad where cad.glCodeId.glcode = ? and cad.detailTypeId = adt ",
+                            "select distinct adt from Accountdetailtype adt, CChartOfAccountDetail cad where cad.glCodeId.glcode = ?1 and cad.detailTypeId = adt ",
                             subLedgerScheduleReport.getGlcode()));
         else
             addDropdownData("subLedgerTypeList", Collections.EMPTY_LIST);

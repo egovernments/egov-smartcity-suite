@@ -188,7 +188,7 @@ public class BankAdviceReportAction extends BaseFormAction {
                                     "GROUP BY ih.instrumentNumber,ih.id", bankaccount.getId());
             for (final Object[] obj : resultList) {
                 InstrumentHeader ih = new InstrumentHeader();
-                ih = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?", (Long) obj[0]);
+                ih = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?1", (Long) obj[0]);
 
                 instrumentHeaderList.add(ih);
             }
@@ -450,13 +450,13 @@ public class BankAdviceReportAction extends BaseFormAction {
     }
 
     private String getInstrumentNumber(final Long instrumentHeaderId) {
-        final InstrumentHeader instrumentHeader = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?",
+        final InstrumentHeader instrumentHeader = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?1",
                 instrumentHeaderId);
         return instrumentHeader.getTransactionNumber();
     }
 
     private String getInstrumentDate(final Long instrumentHeaderId) {
-        final InstrumentHeader instrumentHeader = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?",
+        final InstrumentHeader instrumentHeader = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?1",
                 instrumentHeaderId);
         return Constants.DDMMYYYYFORMAT2.format(instrumentHeader.getTransactionDate());
     }

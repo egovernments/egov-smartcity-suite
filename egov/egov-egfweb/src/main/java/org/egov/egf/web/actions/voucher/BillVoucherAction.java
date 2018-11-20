@@ -61,6 +61,7 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
@@ -68,7 +69,6 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.WorkflowAction;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.voucher.VoucherTypeBean;
 import org.egov.pims.service.EisUtilService;
@@ -103,8 +103,9 @@ public class BillVoucherAction extends BaseVoucherAction {
     private EisUtilService eisUtilService;
     @Autowired
     private ScriptService scriptService;
+
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
     @Autowired
     private AppConfigValueService appConfigValueService;
     
@@ -121,7 +122,7 @@ public class BillVoucherAction extends BaseVoucherAction {
         super.prepare();
         // If the department is mandatory show the logged in users assigned department only.
         if (mandatoryFields.contains("department")) {
-            addDropdownData("departmentList", masterDataCache.get("egi-department"));
+            addDropdownData("departmentList", departmentService.getAllDepartments());
         }
     }
 

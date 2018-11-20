@@ -1341,7 +1341,7 @@ public class EgovCommon {
                         "select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),bankBranch.branchname) as bankbranchname "
                                 + " FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount "
                                 + " where  bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id"
-                                + " and bankaccount.isactive=? ", true);
+                                + " and bankaccount.isactive=?1 ", true);
         // Ordering Starts
         final List<String> bankBranchStrings = new ArrayList<String>();
         int i, j;

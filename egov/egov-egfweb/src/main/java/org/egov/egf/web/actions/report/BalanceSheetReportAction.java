@@ -59,13 +59,15 @@ import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.repository.FunctionRepository;
+import org.egov.commons.repository.FundRepository;
 import org.egov.egf.model.Statement;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.services.report.BalanceSheetScheduleService;
 import org.egov.services.report.BalanceSheetService;
 import org.egov.utils.Constants;
@@ -114,8 +116,13 @@ public class BalanceSheetReportAction extends BaseFormAction {
  @Autowired
  @Qualifier("persistenceService")
  private PersistenceService persistenceService;
- @Autowired
-    private EgovMasterDataCaching masterDataCache;
+
+    @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private FundRepository fundRepository;
+    @Autowired
+    private FunctionRepository functionRepository;
 
     private Date asOnDate;
     
@@ -211,9 +218,9 @@ public class BalanceSheetReportAction extends BaseFormAction {
         persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
         if (!parameters.containsKey("showDropDown")) {
-            addDropdownData("departmentList", masterDataCache.get("egi-department"));
-            addDropdownData("fundList", masterDataCache.get("egi-fund"));
-            addDropdownData("functionList", masterDataCache.get("egi-function"));
+            addDropdownData("departmentList", departmentService.getAllDepartments());
+            addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
+            addDropdownData("functionList", functionRepository.findByIsActiveAndIsNotLeaf(true,false));
         //    addDropdownData("functionaryList", masterCache.get("egi-functionary"));
           //  addDropdownData("fieldList", masterCache.get("egi-ward"));
             // addDropdownData("financialYearList",

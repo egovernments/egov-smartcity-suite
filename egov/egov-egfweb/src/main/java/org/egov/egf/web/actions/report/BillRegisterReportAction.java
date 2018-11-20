@@ -66,12 +66,17 @@ import org.egov.commons.Fundsource;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.Vouchermis;
+import org.egov.commons.dao.FunctionaryDAO;
+import org.egov.commons.dao.FundSourceHibernateDAO;
+import org.egov.commons.repository.FundRepository;
 import org.egov.deduction.model.EgRemittance;
 import org.egov.egf.model.BillRegisterReportBean;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.repository.BoundaryRepository;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -81,7 +86,6 @@ import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQuerySQL;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.bills.Miscbilldetail;
 import org.egov.model.instrument.InstrumentVoucher;
 import org.egov.model.payment.Paymentheader;
@@ -133,7 +137,17 @@ public class BillRegisterReportAction extends SearchFormAction {
  private PersistenceService persistenceService;
  @Autowired	
     private  AppConfigValueService appConfigValueService;
-    
+
+    @Autowired
+    private FundRepository fundRepository;
+    @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private FundSourceHibernateDAO fundSourceHibernateDAO;
+    @Autowired
+    private BoundaryRepository boundaryRepository;
+    @Autowired
+    private FunctionaryDAO functionaryDAO;
    
 
 	private Date toDate;
@@ -151,9 +165,6 @@ public class BillRegisterReportAction extends SearchFormAction {
 
     private static boolean errorState = false;
 
-    @Autowired
-    private EgovMasterDataCaching masterDataCache;
-    
     public BillRegisterReportAction() {
         voucherHeader.setVouchermis(new Vouchermis());
         addRelatedEntity("vouchermis.departmentid", Department.class);
@@ -171,9 +182,9 @@ public class BillRegisterReportAction extends SearchFormAction {
         
 
         getRemiitPaymentVoucherQry.append("select  distinct rm from EgRemittance rm join rm.egRemittanceDetail rdtl  " +
-                "where rdtl.egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherNumber =?" +
-                "and rdtl.egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.status!=?" +
-                " and rm.voucherheader.status!=?")
+                "where rdtl.egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherNumber =?1" +
+                "and rdtl.egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.status!=?2" +
+                " and rm.voucherheader.status!=?3")
                 .append(" order by rm.voucherheader.id");
 
     }
@@ -311,8 +322,8 @@ public class BillRegisterReportAction extends SearchFormAction {
                 billRegReport.setBillDate(DDMMYYYYFORMATS.format((Date) object[6]));
                 if (!StringUtils.isEmpty(billRegReport.getVoucherNumber())) {
                     final List<Miscbilldetail> miscBillList = persistenceService.findAllBy(
-                            " from Miscbilldetail mis where mis.billnumber=? " +
-                                    " and mis.billVoucherHeader.voucherNumber=?", billRegReport.getBillNumber(),
+                            " from Miscbilldetail mis where mis.billnumber=?1 " +
+                                    " and mis.billVoucherHeader.voucherNumber=?2", billRegReport.getBillNumber(),
                                     billRegReport.getVoucherNumber());
                     if (null != miscBillList && miscBillList.size() > 0) {
                         BigDecimal paidAmount = null;
@@ -787,15 +798,15 @@ public class BillRegisterReportAction extends SearchFormAction {
         cancelledChequeStatus = query.list();
         getHeaderFields();
         if (headerFields.contains("department"))
-            addDropdownData("departmentList", masterDataCache.get("egi-department"));
+            addDropdownData("departmentList", departmentService.getAllDepartments());
         if (headerFields.contains("functionary"))
-            addDropdownData("functionaryList", masterDataCache.get("egi-functionary"));
+            addDropdownData("functionaryList", functionaryDAO.findAllActiveFunctionary());
         if (headerFields.contains("fund"))
-            addDropdownData("fundList", masterDataCache.get("egi-fund"));
+            addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
         if (headerFields.contains("fundsource"))
-            addDropdownData("fundsourceList", masterDataCache.get("egi-fundSource"));
+            addDropdownData("fundsourceList", fundSourceHibernateDAO.findAllActiveIsLeafFundSources());
         if (headerFields.contains("field"))
-            addDropdownData("fieldList", masterDataCache.get("egi-ward"));
+            addDropdownData("fieldList", boundaryRepository.findBoundariesByBndryTypeName("WARD"));
         if (headerFields.contains("scheme"))
             addDropdownData("schemeList", Collections.EMPTY_LIST);
         if (headerFields.contains("subscheme"))

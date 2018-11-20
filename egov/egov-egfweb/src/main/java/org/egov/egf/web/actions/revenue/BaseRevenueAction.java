@@ -113,22 +113,22 @@ public class BaseRevenueAction extends BaseFormAction {
         // Grant gtr = grantsList.get(0);
         // //persistenceService.setType(Grant.class);
         for (final Grant gtr : grantsList) {
-            gtr.setDepartment((Department) persistenceService.find("from Department where id=?", gtr.getDepartment().getId()));
-            gtr.setFinancialYear((CFinancialYear) persistenceService.find("from CFinancialYear where id=?", gtr
+            gtr.setDepartment((Department) persistenceService.find("from Department where id=?1", gtr.getDepartment().getId()));
+            gtr.setFinancialYear((CFinancialYear) persistenceService.find("from CFinancialYear where id=?1", gtr
                     .getFinancialYear().getId()));
-            gtr.setAccrualVoucher((CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?", gtr
+            gtr.setAccrualVoucher((CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?1", gtr
                     .getAccrualVoucher().getId()));
             if (gtr.getIhID().getId() != null)
-                gtr.setIhID((InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?", gtr.getIhID().getId()));
+                gtr.setIhID((InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?1", gtr.getIhID().getId()));
             else
                 gtr.setIhID(null);
             if (gtr.getGeneralVoucher().getId() != null)
-                gtr.setGeneralVoucher((CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?", gtr
+                gtr.setGeneralVoucher((CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?1", gtr
                         .getGeneralVoucher().getId()));
             else
                 gtr.setGeneralVoucher(null);
             if (gtr.getReceiptVoucher().getId() != null)
-                gtr.setReceiptVoucher((CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?", gtr
+                gtr.setReceiptVoucher((CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?1", gtr
                         .getReceiptVoucher().getId()));
             else
                 gtr.setReceiptVoucher(null);

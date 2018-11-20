@@ -1482,7 +1482,7 @@ public class ContraBTBAction extends BaseVoucherAction {
                             "select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),bankBranch.branchname) as bankbranchname "
                                     + " FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount "
                                     + " where  bank.isactive=true  and bankBranch.isactive=true and bankaccount.isactive=true and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id"
-                                    + " and bankaccount.fund.id=?", fundId);
+                                    + " and bankaccount.fund.id=?1", fundId);
             for (final Object[] element : bankBranch)
                 bankBrmap.put(element[0].toString(), element[1].toString());
         }

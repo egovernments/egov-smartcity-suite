@@ -111,7 +111,7 @@ public class SubLedgerReportAction extends BaseFormAction {
                     "subLedgerTypeList",
                     persistenceService
                     .findAllBy(
-                            "select distinct adt from Accountdetailtype adt, CChartOfAccountDetail cad where cad.glCodeId.glcode = ? and cad.detailTypeId = adt ",
+                            "select distinct adt from Accountdetailtype adt, CChartOfAccountDetail cad where cad.glCodeId.glcode = ?1 and cad.detailTypeId = adt ",
                             subLedgerReport.getGlCode1()));
         else
             addDropdownData("subLedgerTypeList", Collections.EMPTY_LIST);

@@ -56,11 +56,11 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.bills.EgBillregister;
 import org.egov.services.bills.BillsService;
 import org.egov.utils.Constants;
@@ -99,8 +99,9 @@ public class CancelBillAction extends BaseFormAction {
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
+
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
     @Autowired
     private CancelBillAndVoucher cancelBillAndVoucher;
 
@@ -155,8 +156,7 @@ public class CancelBillAction extends BaseFormAction {
         super.prepare();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside Prepare method");
-        dropdownData.put("DepartmentList",
-                masterDataCache.get("egi-department"));
+        dropdownData.put("DepartmentList",departmentService.getAllDepartments());
         // get this from master data cache
         addDropdownData(
                 "fundList",

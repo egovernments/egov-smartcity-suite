@@ -48,8 +48,8 @@
 package org.egov.egf.web.actions.bill;
 
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.bills.EgBillregister;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -69,7 +69,7 @@ public class SalaryBillRegisterViewAction extends BaseFormAction {
     private Department department;
     private List<EgBillregister> billRegisterList = new ArrayList<EgBillregister>();
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
     
     public SalaryBillRegisterViewAction() {
         addRelatedEntity("departmentList", Department.class);
@@ -78,7 +78,7 @@ public class SalaryBillRegisterViewAction extends BaseFormAction {
     @Override
     public void prepare() {
         super.prepare();
-        addDropdownData("departmentList", masterDataCache.get("egi-department"));
+        addDropdownData("departmentList", departmentService.getAllDepartments());
     }
 
     @Override
