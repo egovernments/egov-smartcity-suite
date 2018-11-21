@@ -184,8 +184,8 @@ function clearChequeDDDetails() {
 		}
 	}
 
-	for (var z = 5; z < len; z++) {
-		table.deleteRow(5);
+	for (var z = 4; z < len; z++) {
+		table.deleteRow(4);
 	}
 }
 
@@ -554,7 +554,6 @@ function clearPaytModes() {
 	document.getElementById('carddetails').style.display = "none";
 
 	document.getElementById('chequeradiobuttonspan').style.display = "none";
-	//document.getElementById('ddradiobuttonspan').style.display = "none";  
 	document.getElementById('chequeDDdetails').style.display = "none";
 
 	document.getElementById('bankradiobuttonspan').style.display = "none";
