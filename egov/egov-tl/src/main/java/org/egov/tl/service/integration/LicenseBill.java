@@ -63,7 +63,6 @@ import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.egov.collection.constants.CollectionConstants.INSTRUMENTTYPE_CHEQUE;
 import static org.egov.infra.utils.StringUtils.defaultIfBlank;
 
 public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalculator {
@@ -80,6 +79,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
     private Module module;
     private EgBillType billType;
     private String transanctionReferenceNumber;
+    private String collModesNotAllowed;
 
     public TradeLicense getLicense() {
         return license;
@@ -243,7 +243,11 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public String getCollModesNotAllowed() {
-        return new StringBuilder(INSTRUMENTTYPE_CHEQUE).toString();
+        return collModesNotAllowed;
+    }
+
+    public void setCollModesNotAllowed(String collModesNotAllowed) {
+        this.collModesNotAllowed = collModesNotAllowed;
     }
 
     @Override
@@ -303,5 +307,4 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
     public void setTransanctionReferenceNumber(String transanctionReferenceNumber) {
         this.transanctionReferenceNumber = transanctionReferenceNumber;
     }
-
 }
