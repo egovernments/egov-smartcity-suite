@@ -720,6 +720,11 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 propService.processAndStoreDocument(objection.getProperty().getAssessmentDocuments());
                 propService.saveDocumentTypeDetails(objection.getBasicProperty(), getDocumentTypeDetails());
             }
+            else{
+                if(!objection.getProperty().getAssessmentDocuments().isEmpty())
+                    objection.getProperty().getAssessmentDocuments().clear();
+            }
+            
         }
         if (assignmentService.getAssignmentsForPosition(
                 objection.getStateHistory().get(0).getOwnerPosition().getId(), new Date()).isEmpty()) {
