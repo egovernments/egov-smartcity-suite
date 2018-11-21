@@ -167,6 +167,7 @@ import org.egov.pims.commons.Position;
 import org.egov.portal.entity.PortalInbox;
 import org.egov.ptis.bean.PropertyNoticeInfo;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
@@ -834,16 +835,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
             if (loggedUserIsEmployee && user != null)
                 actionMessages.put(OBJECTION_FORWARD,
                         new String[] { user.getName().concat("~").concat(position.getName()) });
-            if (objection.getType().equalsIgnoreCase(NATURE_OF_WORK_RP))
-                propertyService.updateIndexes(objection, APPLICATION_TYPE_REVISION_PETITION);
-            else
-                propertyService.updateIndexes(objection, APPLICATION_TYPE_GRP);
-            if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(objection.getSource())) {
-                final PortalInbox portalInbox = propertyService.getPortalInbox(objection.getObjectionNumber());
-                if (portalInbox != null)
-                    propertyService.updatePortal(objection, "RP".equalsIgnoreCase(objection.getType())
-                            ? APPLICATION_TYPE_REVISION_PETITION : APPLICATION_TYPE_GRP);
-            }
+            updateIndexAndPushToPortalInbox(objection);
 
         } else if (workFlowAction != null && !"".equals(workFlowAction)
                 && !WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workFlowAction)) {
@@ -873,16 +865,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                 actionMessages.putAll(workFlowTransition(objection, workFlowAction, approverComments, wfmatrix,
                         position, approverPositionId, approverName));
             // Update elastic search index on each workflow.
-            if (objection.getType().equalsIgnoreCase(NATURE_OF_WORK_RP))
-                propertyService.updateIndexes(objection, APPLICATION_TYPE_REVISION_PETITION);
-            else
-                propertyService.updateIndexes(objection, APPLICATION_TYPE_GRP);
-            if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(objection.getSource())) {
-                final PortalInbox portalInbox = propertyService.getPortalInbox(objection.getObjectionNumber());
-                if (portalInbox != null)
-                    propertyService.updatePortal(objection, "RP".equalsIgnoreCase(objection.getType())
-                            ? APPLICATION_TYPE_REVISION_PETITION : APPLICATION_TYPE_GRP);
-            }
+            updateIndexAndPushToPortalInbox(objection);
 
         } else if (!StringUtils.isBlank(workFlowAction) && WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workFlowAction))
             actionMessages.put("file.save", new String[] {});
@@ -1193,6 +1176,26 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
         effectiveInstall = installmentDao.getInsatllmentByModuleForGivenDate(module, dateOfCompletion);
         propertyService.addArrDmdDetToCurrentDmd(latestHistoryDemand, currPtDmd, effectiveInstall, false);
         return modProperty;
+    }
+    
+    public void cancelObjection(final RevisionPetition objection) {
+        objection.getBasicProperty().setUnderWorkflow(Boolean.FALSE);
+        objection.getProperty().setStatus(PropertyTaxConstants.STATUS_CANCELLED);
+        updateRevisionPetitionStatus(null, objection, PropertyTaxConstants.CANCELLED);
+        objection.transition().end().withOwner(objection.getCurrentState().getOwnerPosition()).withNextAction(null);
+    }
+
+    public void updateIndexAndPushToPortalInbox(final RevisionPetition objection) {
+        if (objection.getType().equalsIgnoreCase(NATURE_OF_WORK_RP))
+            propertyService.updateIndexes(objection, APPLICATION_TYPE_REVISION_PETITION);
+        else
+            propertyService.updateIndexes(objection, APPLICATION_TYPE_GRP);
+        if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(objection.getSource())) {
+            final PortalInbox portalInbox = propertyService.getPortalInbox(objection.getObjectionNumber());
+            if (portalInbox != null)
+                propertyService.updatePortal(objection, "RP".equalsIgnoreCase(objection.getType())
+                        ? APPLICATION_TYPE_REVISION_PETITION : APPLICATION_TYPE_GRP);
+        }
     }
 
 }

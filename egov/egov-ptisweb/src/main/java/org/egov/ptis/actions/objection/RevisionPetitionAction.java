@@ -1235,9 +1235,10 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     @Action(value = "/revPetition-reject")
     public String rejectRevisionPetition() {
 
-        addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
-                approverComments, approverName));
+        revisionPetitionService.cancelObjection(objection);
         revisionPetitionService.updateRevisionPetition(objection);
+        revisionPetitionService.updateIndexAndPushToPortalInbox(objection);
+        addActionMessage(getText("objection.cancelled"));
         return STRUTS_RESULT_MESSAGE;
     }
 
