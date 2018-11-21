@@ -53,6 +53,7 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.dao.recoveries.TdsHibernateDAO;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
@@ -60,7 +61,6 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.deduction.DepartmentDOMapping;
 import org.egov.model.recoveries.Recovery;
 import org.egov.model.recoveries.RemittanceSchedulerLog;
@@ -105,7 +105,7 @@ public class AutoRemittanceAction extends BaseFormAction {
  @Qualifier("persistenceService")
  private PersistenceService persistenceService;
  @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
     
     @Override
     public Object getModel() {
@@ -123,7 +123,7 @@ public class AutoRemittanceAction extends BaseFormAction {
                 coaMap.put(r.getChartofaccounts().getGlcode(), r.getChartofaccounts().getGlcode() + "-"
                         + r.getChartofaccounts().getName());
 
-            addDropdownData("departmentList", masterDataCache.get("egi-department"));
+            addDropdownData("departmentList", departmentService.getAllDepartments());
             deptDOList = persistenceService.findAllBy("from DepartmentDOMapping where department is not null  ");
 
             final List<Object[]> list = persistenceService.getSession()

@@ -58,11 +58,11 @@ import org.egov.commons.Bank;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
 import org.egov.commons.Fund;
+import org.egov.commons.repository.FundRepository;
 import org.egov.egf.model.ReportSearch;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.report.FundFlowBean;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
@@ -122,8 +122,9 @@ public class FundFlowManualEntryReportAction extends BaseFormAction {
  @Autowired
  @Qualifier("persistenceService")
  private PersistenceService persistenceService;
+
  @Autowired
-    private EgovMasterDataCaching masterDataCache;
+ private FundRepository fundRepository;
     
     @Override
     public Object getModel() {
@@ -136,7 +137,7 @@ public class FundFlowManualEntryReportAction extends BaseFormAction {
         persistenceService.getSession().setDefaultReadOnly(true);
         persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
-        addDropdownData("fundList", masterDataCache.get("egi-fund"));
+        addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
         addDropdownData("bankList", Collections.EMPTY_LIST);
         addDropdownData("accNumList", Collections.EMPTY_LIST);
     }

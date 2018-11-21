@@ -53,11 +53,13 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.egov.commons.repository.FunctionRepository;
+import org.egov.commons.repository.FundRepository;
 import org.egov.egf.model.BudgetReAppReportBean;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetReAppropriation;
 import org.egov.utils.Constants;
@@ -120,8 +122,11 @@ public class BudgetAppropriationReportAction extends BaseFormAction {
 	@Qualifier("persistenceService")
 	private PersistenceService persistenceService;
 	@Autowired
-	private EgovMasterDataCaching masterDataCache;
-
+	private DepartmentService departmentService;
+	@Autowired
+	private FunctionRepository functionRepository;
+	@Autowired
+	private FundRepository fundRepository;
 	@Override
 	public void prepare() {
 		persistenceService.getSession().setDefaultReadOnly(true);
@@ -129,9 +134,9 @@ public class BudgetAppropriationReportAction extends BaseFormAction {
 		super.prepare();
 		if (!parameters.containsKey("showDropDown")) {
 			addDropdownData("departmentList",
-					masterDataCache.get("egi-department"));
-			addDropdownData("functionList", masterDataCache.get("egi-function"));
-			addDropdownData("fundDropDownList", masterDataCache.get("egi-fund"));
+					departmentService.getAllDepartments());
+			addDropdownData("functionList", functionRepository.findByIsActiveAndIsNotLeaf(true,false));
+			addDropdownData("fundDropDownList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
 			budgetList = persistenceService
 					.findAllBy("from Budget bud where bud.isActiveBudget=true  and bud.parent is null  order by bud.financialYear.id  desc");
 			addDropdownData("budList", budgetList);

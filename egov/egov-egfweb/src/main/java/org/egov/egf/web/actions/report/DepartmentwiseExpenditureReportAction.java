@@ -57,6 +57,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Fund;
+import org.egov.commons.repository.FundRepository;
 import org.egov.egf.model.DepartmentwiseExpenditureReport;
 import org.egov.egf.model.DepartmentwiseExpenditureResult;
 import org.egov.infra.admin.master.entity.Department;
@@ -65,7 +66,6 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.services.report.DEReportService;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
@@ -122,15 +122,16 @@ public class DepartmentwiseExpenditureReportAction extends BaseFormAction {
  @Autowired
  @Qualifier("persistenceService")
  private PersistenceService persistenceService;
- @Autowired
-    private EgovMasterDataCaching masterDataCache;
+
+    @Autowired
+    private FundRepository fundRepository;
     
     @Override
     public void prepare() {
         persistenceService.getSession().setDefaultReadOnly(true);
         persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
-        addDropdownData("fundDropDownList", masterDataCache.get("egi-fund"));
+        addDropdownData("fundDropDownList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
         addDropdownData("financialYearList", getPersistenceService().findAllBy("from CFinancialYear where isActive=true " +
                 "  and startingDate >='01-Apr-2010' order by finYearRange desc  "));
     }

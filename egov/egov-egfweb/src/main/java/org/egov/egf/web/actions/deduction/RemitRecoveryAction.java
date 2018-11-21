@@ -95,7 +95,6 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.bills.Miscbilldetail;
 import org.egov.model.deduction.RemittanceBean;
 import org.egov.model.instrument.InstrumentHeader;
@@ -199,8 +198,6 @@ public class RemitRecoveryAction extends BasePaymentAction {
     @Autowired
     private PaymentActionHelper paymentActionHelper;
     private ChartOfAccounts chartOfAccounts;
-    @Autowired
-    private EgovMasterDataCaching masterDataCache;
 
     @Autowired
     @Qualifier("bankService")

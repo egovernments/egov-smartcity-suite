@@ -53,6 +53,7 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Fund;
+import org.egov.commons.repository.FundRepository;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -63,7 +64,6 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.report.FundFlowBean;
 import org.egov.services.report.FundFlowService;
 import org.hibernate.query.Query;
@@ -122,8 +122,8 @@ public class FundFlowAction extends BaseFormAction {
  @Autowired
  @Qualifier("persistenceService")
  private PersistenceService persistenceService;
- @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    @Autowired
+    private FundRepository fundRepository;
     
     @Override
     public Object getModel() {
@@ -132,7 +132,7 @@ public class FundFlowAction extends BaseFormAction {
 
     @Override
     public void prepare() {
-        addDropdownData("fundList", masterDataCache.get("egi-fund"));
+        addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
     }
 
     @Action(value = "/report/fundFlow-beforeSearch")

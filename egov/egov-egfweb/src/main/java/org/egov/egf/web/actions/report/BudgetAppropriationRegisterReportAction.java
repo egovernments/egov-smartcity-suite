@@ -58,6 +58,7 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.repository.FundRepository;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.egf.model.BudgetAppDisplay;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -67,7 +68,6 @@ import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.services.budget.BudgetService;
@@ -135,7 +135,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
     private AppConfigValueService appConfigValuesService;
     private Boolean shouldShowREAppropriations = false;
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private FundRepository fundRepository;
     @Autowired
     private BudgetDetailConfig budgetDetailConfig;
 
@@ -152,7 +152,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
         dropdownData.put("functionList",Collections.EMPTY_LIST);
         dropdownData.put("executingDepartmentList",Collections.EMPTY_LIST);
         dropdownData.put("budgetGroupList", Collections.EMPTY_LIST);
-        dropdownData.put("fundList", masterDataCache.get("egi-fund"));
+        dropdownData.put("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
         if (department.getId() != null && department.getId() != -1)
             department = (Department) persistenceService.find("from Department where id=?", department.getId());
         if (function.getId() != null && function.getId() != -1)

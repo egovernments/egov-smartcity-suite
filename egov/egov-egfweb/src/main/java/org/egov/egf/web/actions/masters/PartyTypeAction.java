@@ -217,8 +217,6 @@ public class PartyTypeAction extends BaseFormAction {
         if (partyType.getEgPartytype() != null && partyType.getEgPartytype().getId() != null)
             query.append(" and egPartytype =" + partyType.getEgPartytype());
         partySearchList = persistenceService.findAllBy(query.toString());
-
-        // this.partySearchList = masterDataCache.get(query.toString());
         return "search";
     }
 

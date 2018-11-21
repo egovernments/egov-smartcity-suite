@@ -57,14 +57,16 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.repository.FunctionRepository;
+import org.egov.commons.repository.FundRepository;
 import org.egov.egf.model.CommonReportBean;
 import org.egov.egf.model.FunctionwiseIE;
 import org.egov.egf.model.ReportSearch;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.services.report.FunctionwiseIEService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
@@ -110,7 +112,11 @@ public class FunctionwiseIEAction extends ReportAction
     private String heading = "";
     private Date todayDate;
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
+    @Autowired
+    private FunctionRepository functionRepository;
+    @Autowired
+    private FundRepository fundRepository;
     
     public FinancialYearDAO getFinancialYearDAO() {
         return financialYearDAO;
@@ -148,8 +154,8 @@ public class FunctionwiseIEAction extends ReportAction
 
     public void preparebeforesearchWithBudget()
     {
-        addDropdownData("fundList", masterDataCache.get("egi-fund"));
-        addDropdownData("functionList", masterDataCache.get("egi-function"));
+        addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
+        addDropdownData("functionList", functionRepository.findByIsActiveAndIsNotLeaf(true,false));
     }
 
     @Override
@@ -367,7 +373,7 @@ public class FunctionwiseIEAction extends ReportAction
         setDatasForBudgetWise();
         reportSearch.setByDepartment(true);
 
-        reportSearch.setDeptList(masterDataCache.get("egi-department"));
+        reportSearch.setDeptList(departmentService.getAllDepartments());
 
         populateDataSourceWithBudget(reportSearch);
         /*
@@ -387,7 +393,7 @@ public class FunctionwiseIEAction extends ReportAction
         reportSearch.setMinorCodeLen(minorCodeLen);
         reportSearch.setByDepartment(true);
         reportSearch.setByDetailCode(true);
-        reportSearch.setDeptList(masterDataCache.get("egi-department"));
+        reportSearch.setDeptList(departmentService.getAllDepartments());
 
         populateDataSourceWithBudget(reportSearch);
         /*
