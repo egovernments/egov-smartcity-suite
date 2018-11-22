@@ -54,6 +54,7 @@ import org.egov.eis.repository.HeadOfDepartmentsRepository;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
@@ -61,11 +62,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This service class provides API(s) which are required by modules depending on EIS
@@ -259,6 +256,20 @@ public class EisCommonService {
         for (final Assignment assign : assignments)
             users.add(assign.getEmployee());
         return new ArrayList<>(users);
+    }
+
+    /**
+     * Validates whether the position is valid as per the workflow matrix.
+     * 
+     * @param workFlowMatrix - Matrix for the current state
+     * @param position - Approver position
+     * @return
+     */
+    public Boolean isValidAppover(WorkFlowMatrix workFlowMatrix, Position position) {
+        if (workFlowMatrix.getNextDesignation() != null) {
+            return !Arrays.asList(workFlowMatrix.getNextDesignation().split(",")).contains(position.getDeptDesig().getDesignation().getName());
+        }
+        return Boolean.FALSE;
     }
 
 }

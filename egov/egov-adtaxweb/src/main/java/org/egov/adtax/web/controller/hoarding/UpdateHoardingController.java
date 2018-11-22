@@ -91,6 +91,8 @@ public class UpdateHoardingController extends HoardingControllerSupport {
 
     private static final String APPROVAL_POSITION = "approvalPosition";
 
+    private static final String INVALID_APPROVER = "invalid.approver";
+
     @Autowired
     @Qualifier("messageSource")
     private MessageSource messageSource;
@@ -182,6 +184,11 @@ public class UpdateHoardingController extends HoardingControllerSupport {
                                 ? AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE
                                 : AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE,
                         workFlowAction);
+                if (!advertisementPermitDetail.isValidApprover()) {
+                    model.addAttribute("message", INVALID_APPROVER);
+                    populateModelOnErrors(advertisementPermitDetail, model);
+                    return HOARDING_UPDATE;
+                }
                 populateAdvertisementNumber(advertisementPermitDetail, redirAttrib);
 
                 if (AdvertisementTaxConstants.WF_APPROVE_BUTTON.equals(workFlowAction))
@@ -311,10 +318,14 @@ public class UpdateHoardingController extends HoardingControllerSupport {
 
         if (advertisementPermitDetail != null) {
             prepareWorkflow(model, advertisementPermitDetail, workFlowContainer);
+            model.addAttribute("isEmployee",
+                    advertisementWorkFlowService.isEmployee(securityUtils.getCurrentUser())
+                            && !ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()));
             model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
             model.addAttribute("currentState", advertisementPermitDetail.getCurrentState().getValue());
             model.addAttribute("isReassignEnabled", reassignAdvertisementService.isReassignEnabled());
             model.addAttribute("applicationType", advertisementPermitDetail.getApplicationtype().name());
+
         }
     }
 }

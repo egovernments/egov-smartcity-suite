@@ -96,6 +96,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class CreateAdvertisementController extends HoardingControllerSupport {
 
     private static final String NOTEXISTS_POSITION = "notexists.position";
+    private static final String INVALID_APPROVER = "invalid.approver";
     private static final String CURRENT_STATE = "currentState";
     private static final String HOARDING_CREATE = "hoarding-create";
     private static final String ADDITIONAL_RULE = "additionalRule";
@@ -197,15 +198,15 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
             }
         }
 
+        String result;
         if (isEmployee && advertisementPermitDetail != null) {
-            createAdvertisementOnApproverCheck(advertisementPermitDetail, redirAttrib, currentuser,
-                    requestDetails);
-            return "redirect:/hoarding/success/" + advertisementPermitDetail.getId();
+            result = createAdvertisementOnApproverCheck(advertisementPermitDetail, redirAttrib, currentuser,
+                    requestDetails, model);
+            return result != null ? result : "redirect:/hoarding/success/" + advertisementPermitDetail.getId();
         } else if (isActiveApprover && advertisementPermitDetail != null) {
-            createAdvertisementOnApproverCheck(advertisementPermitDetail, redirAttrib,
-                    currentuser, requestDetails);
-            return "redirect:/hoarding/showack/" + advertisementPermitDetail.getId();
-
+            result = createAdvertisementOnApproverCheck(advertisementPermitDetail, redirAttrib,
+                    currentuser, requestDetails, model);
+            return result != null ? result : "redirect:/hoarding/showack/" + advertisementPermitDetail.getId();
         } else {
             model.addAttribute("message", NOTEXISTS_POSITION);
             buildCreateHoardingForm(advertisementPermitDetail, model);
@@ -218,9 +219,9 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
                 && advertisementWorkFlowService.isEmployee(securityUtils.getCurrentUser());
     }
 
-    private void createAdvertisementOnApproverCheck(final AdvertisementPermitDetail advertisementPermitDetail,
+    private String createAdvertisementOnApproverCheck(final AdvertisementPermitDetail advertisementPermitDetail,
             final RedirectAttributes redirAttrib, User currentuser,
-            RequestDetails requestDtls) {
+            RequestDetails requestDtls, Model model) {
         if (advertisementPermitDetail != null && advertisementPermitDetail.getAdvertisement() != null) {
             advertisementPermitDetail.getAdvertisement()
                     .setPenaltyCalculationDate(advertisementPermitDetail.getApplicationDate());
@@ -229,6 +230,11 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
                     requestDtls.getApprovalPosition(),
                     StringUtils.defaultString(requestDtls.getApprovalComment(), ""), "CREATEADVERTISEMENT",
                     StringUtils.defaultString(requestDtls.getWorkflowaction(), ""), currentuser);
+            if (!advertisementPermitDetail.isValidApprover()) {
+                model.addAttribute("message", INVALID_APPROVER);
+                buildCreateHoardingForm(advertisementPermitDetail, model);
+                return HOARDING_CREATE;
+            }
             redirAttrib.addFlashAttribute("advertisementPermitDetail", advertisementPermitDetail);
             String message = messageSource.getMessage("msg.success.forward",
                     new String[] {
@@ -238,7 +244,7 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
                     null);
             redirAttrib.addFlashAttribute("message", message);
         }
-
+        return null;
     }
 
     @RequestMapping(value = "/success/{id}", method = GET)

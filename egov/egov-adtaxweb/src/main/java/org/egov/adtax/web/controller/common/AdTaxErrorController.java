@@ -48,10 +48,9 @@
 
 package org.egov.adtax.web.controller.common;
 
-import org.egov.infra.web.spring.controller.AbstractErrorController;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class AdTaxErrorController extends AbstractErrorController {
+public class AdTaxErrorController {
 
 }

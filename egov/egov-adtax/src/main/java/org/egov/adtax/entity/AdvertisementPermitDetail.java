@@ -180,6 +180,9 @@ public class AdvertisementPermitDetail extends StateAware<Position> {
 
     @Transient
     private String approvalComent;
+    
+    @Transient
+    private Boolean validApprover = Boolean.TRUE;
 
     @Override
     public Long getId() {
@@ -421,4 +424,13 @@ public class AdvertisementPermitDetail extends StateAware<Position> {
     public void setApplicationtype(AdvertisementApplicationType applicationtype) {
         this.applicationtype = applicationtype;
     }
+
+    public Boolean isValidApprover() {
+        return validApprover;
+    }
+
+    public void setValidApprover(Boolean validApprover) {
+        this.validApprover = validApprover;
+    }
+    
 }

@@ -152,7 +152,8 @@ public class AdvertisementPermitDetailService {
             adtaxWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
                     approvalPosition, approvalComent, additionalRule, workFlowAction);
         // create or update index
-        advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail);
+        if (advertisementPermitDetail.isValidApprover())
+            advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail);
         return advertisementPermitDetail;
     }
 
@@ -208,7 +209,8 @@ public class AdvertisementPermitDetailService {
             adtaxWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
                     approvalPosition, approvalComent, additionalRule, workFlowAction);
         // update index on permit generation
-        advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail);
+        if (advertisementPermitDetail.isValidApprover())
+            advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail);
         return advertisementPermitDetail;
     }
 
