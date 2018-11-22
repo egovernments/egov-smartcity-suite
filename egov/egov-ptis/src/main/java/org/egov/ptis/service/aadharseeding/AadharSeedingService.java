@@ -175,7 +175,7 @@ public class AadharSeedingService extends GenericWorkFlowController {
         StringBuilder orderBy = new StringBuilder();
         baseQry = baseQry
                 .append("select mv.propertyId, mv.ownerName, mv.houseNo, mv.propertyAddress from PropertyMaterlizeView mv ")
-                .append("where mv.latitude is not null and mv.longitude is not null and mv.sitalArea > 0 and mv.basicPropertyID not in")
+                .append("where mv.latitude is not null and mv.longitude is not null and mv.sitalArea > 10 and mv.basicPropertyID not in")
                 .append("(select basicPropertyID from PropertyMaterlizeView where usage <>'VACANTLAND' and totalBuiltUpArea <= 0) ")
                 .append("and mv.basicPropertyID in(select p.basicProperty from PropertyImpl p where ")
                 .append("p.propertyDetail.structure=false and p.status in('A','I') and p.id not in(select m.property from PropertyMutation m ")
