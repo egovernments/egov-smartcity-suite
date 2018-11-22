@@ -63,7 +63,6 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -97,9 +96,7 @@ public class ContractTypeAction extends BaseFormAction {
  @Autowired
  @Qualifier("persistenceService")
  private PersistenceService persistenceService;
- @Autowired
-    private EgovMasterDataCaching masterDataCache;
-    
+
     @Override
     public Object getModel() {
         return typeOfWork;
@@ -146,17 +143,6 @@ public class ContractTypeAction extends BaseFormAction {
             typeOfWork.setCreatedby(getLoggedInUser());
             typeOfWork.setCreateddate(new Date());
 
-            masterDataCache.removeFromCache("egi-partyTypeMaster");
-            masterDataCache.removeFromCache("egi-partyTypeAllChild");
-            masterDataCache.removeFromCache("egi-typeOfWorkParent");
-            masterDataCache.removeFromCache("egi-coaCodesForLiability");
-
-            masterDataCache.removeFromCache("egi-tds");
-            masterDataCache.removeFromCache("egi-tdsType");
-            masterDataCache.removeFromCache("egi-recovery");
-            masterDataCache.removeFromCache("egi-egwTypeOfWork");
-            masterDataCache.removeFromCache("egi-egwSubTypeOfWork");
-
             //persistenceService.setType(EgwTypeOfWork.class);
             persistenceService.persist(typeOfWork);
             persistenceService.getSession().flush();
@@ -199,18 +185,6 @@ public class ContractTypeAction extends BaseFormAction {
             typeOfWkOld.setLastmodifiedby(getLoggedInUser());
 
             setTypeOfWork(typeOfWkOld);
-
-            masterDataCache.removeFromCache("egi-partyTypeMaster");
-            masterDataCache.removeFromCache("egi-partyTypeAllChild");
-            masterDataCache.removeFromCache("egi-typeOfWorkParent");
-            masterDataCache.removeFromCache("egi-coaCodesForLiability");
-
-            masterDataCache.removeFromCache("egi-tds");
-            masterDataCache.removeFromCache("egi-tdsType");
-            masterDataCache.removeFromCache("egi-recovery");
-            masterDataCache.removeFromCache("egi-egwTypeOfWork");
-            masterDataCache.removeFromCache("egi-egwSubTypeOfWork");
-
             //persistenceService.setType(EgwTypeOfWork.class);
             persistenceService.persist(typeOfWork);
             showMode = "view";

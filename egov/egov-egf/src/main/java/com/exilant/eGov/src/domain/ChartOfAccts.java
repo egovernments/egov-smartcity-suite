@@ -60,7 +60,6 @@ import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.hibernate.HibernateException;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,10 +107,7 @@ public class ChartOfAccts {
  private PersistenceService persistenceService;
  @Autowired
     private AppConfigValueService appConfigValuesService;
-    
-    @Autowired
-    private EgovMasterDataCaching masterDataCache;
-    
+
     private @Autowired EGovernCommon eGovernCommon;
     
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale
@@ -253,19 +249,7 @@ public class ChartOfAccts {
         created = new SimpleDateFormat("dd/mm/yyyy").format(new Date());
         try {
             created = formatter.format(sdf.parse(created));
-            masterDataCache.removeFromCache(
-                    "egi-activeCoaCodes");
-            masterDataCache.removeFromCache("egi-coaCodes");
-            masterDataCache.removeFromCache(
-                    "egi-chartOfAccounts");
-            masterDataCache.removeFromCache(
-                    "egi-coaPurposeId10");
-            masterDataCache.removeFromCache(
-                    "egi-accountCodes");
-            masterDataCache.removeFromCache(
-                    "egi-liabilityCOACodes");
-            masterDataCache.removeFromCache(
-                    "egi-coaCodesForLiability");
+
             setLastModified(created);
             setId(String.valueOf(PrimaryKeyGenerator
                     .getNextKey("ChartOfAccounts")));
