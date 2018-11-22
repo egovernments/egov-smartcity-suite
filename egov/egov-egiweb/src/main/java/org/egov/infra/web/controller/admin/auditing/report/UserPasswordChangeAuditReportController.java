@@ -53,13 +53,19 @@ import org.egov.infra.admin.auditing.service.UserAuditService;
 import org.egov.infra.web.contract.response.UserPasswordChangeAuditReportAdapter;
 import org.egov.infra.web.support.ui.DataTable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.validation.Valid;
+
+import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.egov.infra.web.utils.WebUtils.bindErrorToMap;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
@@ -79,10 +85,12 @@ public class UserPasswordChangeAuditReportController {
 
     @PostMapping(produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String userPasswordChangeAuditReportSearchResult(
-            @ModelAttribute UserPasswordChangeAuditReportRequest userPasswordChangeAuditReportRequest) {
-        return new DataTable<>(userAuditService
-                .getUserPasswordChangeAudit(userPasswordChangeAuditReportRequest), userPasswordChangeAuditReportRequest.draw())
-                .toJson(userPasswordChangeAuditReportAdapter);
+    public ResponseEntity userPasswordChangeAuditReportSearchResult(@Valid @ModelAttribute UserPasswordChangeAuditReportRequest
+                                                                            userPasswordChangeAuditReportRequest, BindingResult binder) {
+        return binder.hasErrors() ? ResponseEntity.badRequest().body(toJSON(bindErrorToMap(binder)))
+                : ResponseEntity
+                .ok(new DataTable<>(userAuditService
+                        .getUserPasswordChangeAudit(userPasswordChangeAuditReportRequest), userPasswordChangeAuditReportRequest.draw())
+                        .toJson(userPasswordChangeAuditReportAdapter));
     }
 }

@@ -50,20 +50,23 @@ package org.egov.infra.web.controller.admin.auditing.report;
 
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.audit.contract.LoginAuditReportRequest;
-import org.egov.infra.security.audit.entity.LoginAudit;
 import org.egov.infra.security.audit.service.LoginAuditService;
 import org.egov.infra.web.support.ui.DataTable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.egov.infra.web.utils.WebUtils.bindErrorToMap;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
 @Controller
@@ -90,8 +93,11 @@ public class LoginAuditReportController {
 
     @PostMapping(produces = APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    public DataTable<LoginAudit> loginAuditReport(@ModelAttribute LoginAuditReportRequest loginAuditReportRequest) {
-        return new DataTable<>(loginAuditService.getLoginAudits(loginAuditReportRequest),
-                loginAuditReportRequest.draw());
+    public ResponseEntity loginAuditReport(@Valid @ModelAttribute LoginAuditReportRequest loginAuditReportRequest,
+                                           BindingResult binder) {
+        return binder.hasErrors() ?
+                ResponseEntity.badRequest().body(bindErrorToMap(binder)) :
+                ResponseEntity.ok(new DataTable<>(loginAuditService.getLoginAudits(loginAuditReportRequest),
+                        loginAuditReportRequest.draw()));
     }
 }

@@ -50,16 +50,22 @@ package org.egov.infra.web.controller.admin.auditing.report;
 
 import org.egov.infra.admin.auditing.contract.UserRoleChangeAuditReportRequest;
 import org.egov.infra.admin.auditing.service.UserAuditService;
+import org.egov.infra.utils.JsonUtils;
 import org.egov.infra.web.contract.response.UserRoleChangeAuditReportAdapter;
 import org.egov.infra.web.support.ui.DataTable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.validation.Valid;
+
+import static org.egov.infra.web.utils.WebUtils.bindErrorToMap;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
@@ -79,9 +85,11 @@ public class UserRoleChangeAuditReportController {
 
     @PostMapping(produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String userRoleChangeAuditReportSearchResult(@ModelAttribute UserRoleChangeAuditReportRequest userRoleChangeAuditReportRequest) {
-        return new DataTable<>(userAuditService
-                .getUserRoleChangeAudit(userRoleChangeAuditReportRequest), userRoleChangeAuditReportRequest.draw())
-                .toJson(userRoleChangeAuditReportAdapter);
+    public ResponseEntity userRoleChangeAuditReportSearchResult(@Valid @ModelAttribute UserRoleChangeAuditReportRequest
+                                                                        userRoleChangeAuditReportRequest, BindingResult bindingResult) {
+        return bindingResult.hasErrors() ? ResponseEntity.badRequest().body(JsonUtils.toJSON(bindErrorToMap(bindingResult))) :
+                ResponseEntity.ok(new DataTable<>(userAuditService
+                        .getUserRoleChangeAudit(userRoleChangeAuditReportRequest), userRoleChangeAuditReportRequest.draw())
+                        .toJson(userRoleChangeAuditReportAdapter));
     }
 }

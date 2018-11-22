@@ -62,7 +62,7 @@
                 </div>
                 <div class="panel-body custom-form">
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">
+                        <label class="col-sm-2 control-label" for="userType">
                             <spring:message code="lbl.usertype"/>
                         </label>
                         <div class="col-sm-3 add-margin">
@@ -71,7 +71,7 @@
                                 <form:options items="${userTypes}"/>
                             </form:select>
                         </div>
-                        <label class="col-sm-2 control-label">
+                        <label class="col-sm-2 control-label" for="userName">
                             <spring:message code="lbl.username"/>
                         </label>
                         <div class="col-sm-3 add-margin">
@@ -81,13 +81,13 @@
                 </div>
                 <div class="panel-body custom-form">
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">
+                        <label class="col-sm-2 control-label" for="loginFrom">
                             <spring:message code="lbl.login.date.from"/>
                         </label>
                         <div class="col-sm-3 add-margin">
                             <input name="loginFrom" id="loginFrom" class="form-control low-width datepicker" data-inputmask="'mask': 'd/m/y'" placeholder="" autocomplete="off">
                         </div>
-                        <label class="col-sm-2 control-label">
+                        <label class="col-sm-2 control-label" for="loginTo">
                             <spring:message code="lbl.login.date.to"/>
                         </label>
                         <div class="col-sm-3 add-margin">
@@ -97,7 +97,7 @@
                 </div>
                 <div class="panel-body custom-form">
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">
+                        <label class="col-sm-2 control-label" for="ipAddress">
                             <spring:message code="lbl.ipaddress"/>
                         </label>
                         <div class="col-sm-3 add-margin">

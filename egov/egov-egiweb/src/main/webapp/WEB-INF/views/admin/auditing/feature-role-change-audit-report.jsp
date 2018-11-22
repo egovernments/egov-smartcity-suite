@@ -62,7 +62,7 @@
                 </div>
                 <div class="panel-body custom-form">
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">
+                        <label class="col-sm-3 control-label" for="module">
                             <spring:message code="lbl.module"/>
                         </label>
                         <div class="col-sm-6" style="padding-top: 7px">
@@ -75,7 +75,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">
+                        <label class="col-sm-3 control-label" for="feature">
                             <spring:message code="lbl.feature.name"/>
                             <span class="mandatory"></span>
                         </label>

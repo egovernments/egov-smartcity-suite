@@ -50,15 +50,28 @@ package org.egov.infra.security.audit.contract;
 
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.web.support.search.DataTableSearchRequest;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
+import javax.validation.constraints.PastOrPresent;
 import java.util.Date;
 
 public class LoginAuditReportRequest extends DataTableSearchRequest {
 
+    @Length(max = 64)
+    @SafeHtml
     private String userName;
+
     private UserType userType;
+
+    @Length(max = 15)
+    @SafeHtml
     private String ipAddress;
+
+    @PastOrPresent
     private Date loginFrom;
+
+    @PastOrPresent
     private Date loginTo;
 
     public String getUserName() {

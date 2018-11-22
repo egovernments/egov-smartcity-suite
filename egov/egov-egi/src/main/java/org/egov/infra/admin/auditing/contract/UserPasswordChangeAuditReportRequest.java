@@ -54,14 +54,14 @@ import javax.validation.constraints.Positive;
 
 public class UserPasswordChangeAuditReportRequest extends DataTableSearchRequest {
 
-    @Positive
-    private Long userId;
+    @Positive(message = "not valid")
+    private Long changedFor;
 
-    public Long getUserId() {
-        return userId;
+    public Long getChangedFor() {
+        return changedFor;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setChangedFor(Long changedFor) {
+        this.changedFor = changedFor;
     }
 }

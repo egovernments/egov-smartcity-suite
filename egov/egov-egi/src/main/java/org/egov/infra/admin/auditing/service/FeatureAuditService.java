@@ -68,6 +68,6 @@ public class FeatureAuditService {
         final Pageable pageable = new PageRequest(featureRoleChangeAuditReportRequest.pageNumber(),
                 featureRoleChangeAuditReportRequest.pageSize(),
                 featureRoleChangeAuditReportRequest.orderDir(), featureRoleChangeAuditReportRequest.orderBy());
-        return featureRepository.findRevisions(featureRoleChangeAuditReportRequest.getFeatureId(), pageable);
+        return featureRepository.findRevisions(featureRoleChangeAuditReportRequest.getFeature(), pageable);
     }
 }

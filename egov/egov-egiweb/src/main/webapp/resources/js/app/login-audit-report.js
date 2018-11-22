@@ -84,7 +84,7 @@ $(document).ready(function () {
             responsive: true,
             destroy: true,
             autoWidth: false,
-            order: [[1, 'asc']],
+            order: [[2, 'desc']],
             ajax: {
                 url: "",
                 type: "POST",
@@ -97,10 +97,17 @@ $(document).ready(function () {
                         "loginTo": $("#loginTo").val(),
                         "ipAddress": $("#ipAddress").val()
                     };
+                },
+                error: function (xhr) {
+                    try {
+                        showValidationMessage(xhr.responseJSON);
+                    } catch (e) {
+                        bootbox.alert("No data found! ");
+                    }
+                    $('#view-login-audit-tbl_wrapper').hide();
                 }
             },
-            aLengthMenu: [[10, 25, 50, -1],
-                [10, 25, 50, "All"]],
+            aLengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
             sDom: "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
             columns: [
                 {

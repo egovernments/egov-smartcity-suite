@@ -68,11 +68,11 @@ public class UserAuditService {
     private UserRepository userRepository;
 
     public Page<Revision<Integer, User>> getUserRoleChangeAudit(UserRoleChangeAuditReportRequest userRoleAuditReportRequest) {
-        return getPagedUserRevision(userRoleAuditReportRequest.getUserId(), userRoleAuditReportRequest);
+        return getPagedUserRevision(userRoleAuditReportRequest.getChangedFor(), userRoleAuditReportRequest);
     }
 
     public Page<Revision<Integer, User>> getUserPasswordChangeAudit(UserPasswordChangeAuditReportRequest userPasswordChangeAuditReportRequest) {
-        return getPagedUserRevision(userPasswordChangeAuditReportRequest.getUserId(), userPasswordChangeAuditReportRequest);
+        return getPagedUserRevision(userPasswordChangeAuditReportRequest.getChangedFor(), userPasswordChangeAuditReportRequest);
     }
 
     public Page<Revision<Integer, User>> getPagedUserRevision(Long userId, DataTableSearchRequest dataTableSearchRequest) {

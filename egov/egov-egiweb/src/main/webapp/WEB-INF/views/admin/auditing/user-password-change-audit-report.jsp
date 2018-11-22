@@ -62,7 +62,7 @@
                 </div>
                 <div class="panel-body custom-form">
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">
+                        <label class="col-sm-2 control-label" for="changedFor">
                             <spring:message code="lbl.changed.for"/>
                         </label>
                         <div class="col-sm-6 add-margin">

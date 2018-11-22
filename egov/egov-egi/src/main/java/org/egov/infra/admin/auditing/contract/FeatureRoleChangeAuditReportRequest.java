@@ -54,15 +54,15 @@ import javax.validation.constraints.Positive;
 
 public class FeatureRoleChangeAuditReportRequest extends DataTableSearchRequest {
 
-    @Positive
-    private Long featureId;
+    @Positive(message = "not valid")
+    private Long feature;
 
-    public Long getFeatureId() {
-        return featureId;
+    public Long getFeature() {
+        return feature;
     }
 
-    public void setFeatureId(Long featureId) {
-        this.featureId = featureId;
+    public void setFeature(Long feature) {
+        this.feature = feature;
     }
 }
     

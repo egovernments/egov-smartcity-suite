@@ -48,8 +48,14 @@
 
 package org.egov.infra.web.utils;
 
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
@@ -130,5 +136,12 @@ public final class WebUtils {
 
     public static String extractUserAgent(HttpServletRequest request) {
         return defaultIfBlank(request.getHeader(USER_AGENT_HEADER), UNKNOWN);
+    }
+
+    public static Map<String, String> bindErrorToMap(BindingResult bindingResult) {
+        return bindingResult.getFieldErrors()
+                .stream()
+                .collect(Collectors.toMap(FieldError::getField,
+                        FieldError::getDefaultMessage, (a, b) -> b, HashMap::new));
     }
 }

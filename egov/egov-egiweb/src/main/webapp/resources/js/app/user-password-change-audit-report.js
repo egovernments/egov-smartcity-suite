@@ -78,11 +78,11 @@ $(document).ready(function () {
     });
 
     $('#search-btn').on('click', function () {
-        if ($("#changedFor").val() === '') {
-            bootbox.alert("Please enter the user's name you want to check.");
+        if ($("#changedFor").val() === '' || $("#userId").val() === '') {
+            bootbox.alert("Please select a valid user's name.");
             return;
         }
-        $('#view-user-password-audit-tbl').empty();
+        var userId = $("#userId").val();
         $('#view-user-password-audit-tbl').DataTable({
             processing: true,
             serverSide: true,
@@ -97,8 +97,18 @@ $(document).ready(function () {
                 data: function (args) {
                     return {
                         "args": JSON.stringify(args),
-                        "userId": $("#userId").val()
+                        "changedFor": userId
                     };
+                },
+                error: function (xhr) {
+                    try {
+                        showValidationMessage(xhr.responseJSON);
+                    } catch (e) {
+                        bootbox.alert("No data found for " + $("#changedFor").val())
+                    }
+                    $("#changedFor").val('');
+                    $("#userId").val('');
+                    $('#view-user-password-audit-tbl_wrapper').hide();
                 }
             },
             aLengthMenu: [[10, 25, 50, -1],

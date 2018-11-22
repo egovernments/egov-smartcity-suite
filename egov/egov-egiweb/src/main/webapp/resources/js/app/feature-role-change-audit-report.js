@@ -69,10 +69,9 @@ $(document).ready(function () {
 
     $('#search-btn').on('click', function () {
         if ($("#feature").val() === '') {
-            bootbox.alert("Please choose a feature name.");
+            bootbox.alert("Please select a feature name.");
             return;
         }
-        $('#view-feature-role-audit-tbl').empty();
         $('#view-feature-role-audit-tbl').DataTable({
             processing: true,
             serverSide: true,
@@ -87,8 +86,17 @@ $(document).ready(function () {
                 data: function (args) {
                     return {
                         "args": JSON.stringify(args),
-                        "featureId": $("#feature").val()
+                        "feature": $("#feature").val()
                     };
+                },
+                error: function (xhr) {
+                    try {
+                        showValidationMessage(xhr.responseJSON);
+                    } catch (e) {
+                        bootbox.alert("No data found for " + $("#feature option:selected").text());
+                    }
+                    $("#feature").val('');
+                    $('#view-feature-role-audit-tbl_wrapper').hide();
                 }
             },
             aLengthMenu: [[10, 25, 50, -1],

@@ -256,6 +256,15 @@ $(document).ready(function () {
     });
 });
 
+function showValidationMessage(errorJson) {
+    let errorMsg = "";
+    $.each(errorJson, function (key, value) {
+        let label = $("label[for='" + key + "']").text();
+        errorMsg += label + " " + value + ".<br/>";
+    });
+    bootbox.alert({title: "Validation Error", message: errorMsg});
+}
+
 function DateValidation(start, end) {
     if (start != "" && end != "") {
         var stsplit = start.split("/");
