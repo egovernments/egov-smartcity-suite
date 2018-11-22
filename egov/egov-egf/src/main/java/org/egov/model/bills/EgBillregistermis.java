@@ -59,6 +59,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -106,19 +107,23 @@ public class EgBillregistermis extends AbstractPersistable<Integer> implements j
     @JoinColumn(name = "functionaryid")
     private Functionary functionaryid;
 
+    @SafeHtml
     @Length(max = 30)
     private String sanctionedby;
 
     private Date sanctiondate;
 
+    @SafeHtml
     @Length(max = 200)
     private String sanctiondetail;
 
+    @SafeHtml
     @Length(max = 1024)
     private String narration;
 
     private Date lastupdatedtime;
 
+    @SafeHtml
     @Length(max = 30)
     private String disbursementtype;
 
@@ -152,9 +157,12 @@ public class EgBillregistermis extends AbstractPersistable<Integer> implements j
     @JoinColumn(name = "billsubtype")
     private EgBillSubType egBillSubType;
 
+    @SafeHtml
     @Length(max = 350)
     private String payto;
 
+    @SafeHtml
+    @Length(max = 200)
     private String mbRefNo;
 
     @ManyToOne
@@ -173,17 +181,21 @@ public class EgBillregistermis extends AbstractPersistable<Integer> implements j
     @JoinColumn(name = "voucherheaderid")
     private CVoucherHeader voucherHeader;
 
+    @SafeHtml
     @Length(max = 150)
     private String sourcePath;
 
+    @SafeHtml
     @Length(max = 50)
     private String partyBillNumber;
 
     private Date partyBillDate;
 
+    @SafeHtml
     @Length(max = 50)
     private String inwardSerialNumber;
 
+    @SafeHtml
     @Length(max = 30)
     @Column(name = "budgetary_appnumber")
     private String budgetaryAppnumber;

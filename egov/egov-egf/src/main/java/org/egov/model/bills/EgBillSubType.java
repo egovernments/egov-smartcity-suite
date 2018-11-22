@@ -49,6 +49,7 @@ package org.egov.model.bills;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -57,6 +58,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "EG_BILL_SUBTYPE")
@@ -71,9 +73,13 @@ public class EgBillSubType extends AbstractPersistable<Long> implements java.io.
     @GeneratedValue(generator = SEQ_EG_BILL_SUBTYPE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @NotNull
+    @SafeHtml
     @Length(max = 120)
     private String name;
 
+    @NotNull
+    @SafeHtml
     @Length(max = 50)
     @Column(name = "expenditure_type")
     private String expenditureType;

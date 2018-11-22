@@ -53,6 +53,7 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.models.EgChecklists;
 import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -76,22 +77,40 @@ public class EgBillregister extends StateAware<Position> implements java.io.Seri
     private Long id;
     @NotNull
     @Length(min = 1)
+    @SafeHtml
+    @Length(max = 50)
     private String billnumber;
     @NotNull
     private Date billdate;
     @NotNull
     private BigDecimal billamount;
     private BigDecimal fieldid;
+    @SafeHtml
+    @Length(max = 50)
     private String billstatus;
+    @SafeHtml
+    @Length(max = 1024)
     private String narration;
     private BigDecimal passedamount;
+    @SafeHtml
+    @Length(max = 50)
     private String billtype;
     @NotNull
+    @SafeHtml
+    @Length(max = 20)
     private String expendituretype;
     private BigDecimal advanceadjusted;
+    @SafeHtml
+    @Length(max = 20)
     private String zone;
+    @SafeHtml
+    @Length(max = 50)
     private String division;
+    @SafeHtml
+    @Length(max = 50)
     private String workordernumber;
+    @SafeHtml
+    @Length(max = 50)
     private String billapprovalstatus;
     private Boolean isactive;
     private Date billpasseddate;
@@ -101,6 +120,8 @@ public class EgBillregister extends StateAware<Position> implements java.io.Seri
     private EgwStatus status;
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "egBillregister", targetEntity = EgBillregistermis.class)
     private EgBillregistermis egBillregistermis;
+    @SafeHtml
+    @Length(max = 50)
     private String worksdetailId;
     @Transient
     private User approver;
@@ -125,6 +146,7 @@ public class EgBillregister extends StateAware<Position> implements java.io.Seri
     private List<DocumentUpload> documentDetail = new ArrayList<>();
     @Transient
     private Long approvalDepartment;
+    @SafeHtml
     @Transient
     private String approvalComent;
 

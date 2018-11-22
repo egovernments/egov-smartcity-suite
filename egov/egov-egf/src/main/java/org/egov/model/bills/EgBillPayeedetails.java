@@ -50,6 +50,7 @@ package org.egov.model.bills;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.model.recoveries.Recovery;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -60,6 +61,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -76,12 +78,15 @@ public class EgBillPayeedetails extends AbstractPersistable<Integer> implements 
     @GeneratedValue(generator = SEQ_EG_BILLPAYEEDETAILS, strategy = GenerationType.SEQUENCE)
     private Integer id;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "billdetailid")
     private EgBilldetails egBilldetailsId;
 
+    @NotNull
     private Integer accountDetailTypeId;
 
+    @NotNull
     private Integer accountDetailKeyId;
 
     private BigDecimal debitAmount;
@@ -90,9 +95,11 @@ public class EgBillPayeedetails extends AbstractPersistable<Integer> implements 
 
     private Date lastUpdatedTime;
 
+    @SafeHtml
     @Transient
     private String detailTypeName;
 
+    @SafeHtml
     @Transient
     private String detailKeyName;
 
@@ -103,6 +110,7 @@ public class EgBillPayeedetails extends AbstractPersistable<Integer> implements 
     @JoinColumn(name = "tdsid")
     private Recovery recovery;
 
+    @SafeHtml
     @Length(max = 250)
     private String narration;
 

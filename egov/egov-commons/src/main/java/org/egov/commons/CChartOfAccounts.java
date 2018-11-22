@@ -54,6 +54,8 @@ import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -66,6 +68,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -87,13 +90,21 @@ public class CChartOfAccounts extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_CHARTOFACCOUNTS, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @NotNull
+    @SafeHtml
+    @Length(max = 50)
     private String glcode;
 
+    @NotNull
+    @SafeHtml
+    @Length(max = 150)
     private String name;
 
     private Long purposeId;
 
     @Column(name = "DESCRIPTION")
+    @SafeHtml
+    @Length(max = 250)
     private String desc;
 
     private Boolean isActiveForPosting;
@@ -105,6 +116,7 @@ public class CChartOfAccounts extends AbstractAuditable {
 
     private Character operation;
 
+    @NotNull
     private Character type;
 
     private Long classification;
@@ -113,6 +125,8 @@ public class CChartOfAccounts extends AbstractAuditable {
 
     private Boolean budgetCheckReq;
 
+    @SafeHtml
+    @Length(max = 250)
     private String majorCode;
 
     @Column(name = "CLASS")
