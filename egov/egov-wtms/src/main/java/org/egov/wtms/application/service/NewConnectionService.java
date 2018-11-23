@@ -169,7 +169,7 @@ public class NewConnectionService {
      * @param assessmentDetails
      * @return ErrorMessage If PropertyId is Not Valid
      */
-    private String validateProperty(final AssessmentDetails assessmentDetails) {
+    public String validateProperty(final AssessmentDetails assessmentDetails) {
         String errorMessage = "";
         if (assessmentDetails.getErrorDetails() != null && assessmentDetails.getErrorDetails().getErrorCode() != null)
             errorMessage = assessmentDetails.getErrorDetails().getErrorMessage();
