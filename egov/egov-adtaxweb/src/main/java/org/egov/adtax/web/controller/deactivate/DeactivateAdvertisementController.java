@@ -197,7 +197,7 @@ public class DeactivateAdvertisementController extends GenericController {
     }
 
     @RequestMapping(value = "/deactive/{id}", method = RequestMethod.POST)
-    public String deactivate(@Valid @ModelAttribute AdvertisementPermitDetail advertisementPermitDetailStatus, final Model model,
+    public String deactivate(@ModelAttribute AdvertisementPermitDetail advertisementPermitDetailStatus, final Model model,
             @PathVariable final Long id) {
 
         AdvertisementPermitDetail existingRateObject = advertisementPermitDetailService
