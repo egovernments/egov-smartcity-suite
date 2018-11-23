@@ -80,6 +80,7 @@
     <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
     <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
     <link rel="stylesheet" href="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css'/>">
+    <link rel="stylesheet" href="<cdn:url value='/resources/css/app/home.css'/>">
 
     <script src="<cdn:url value='/resources/global/js/jquery/jquery.js'/>"></script>
     <script src="<cdn:url value='/resources/global/js/bootstrap/bootbox.min.js'/>"></script>
@@ -90,66 +91,6 @@
     <script src="<cdn:url value='/resources/global/js/ie8/html5shiv.min.js'/>"></script>
     <script src="<cdn:url value='/resources/global/js/ie8/respond.min.js'/>"></script>
     <![endif]-->
-    <style>
-        body {
-            padding: 0;
-        }
-
-        footer {
-            background-color: #f3f4f5;
-            bottom: 0;
-            clear: both;
-            position: fixed;
-            width: 100%;
-            z-index: 999;
-        }
-
-        footer a {
-            color: rgb(116, 101, 101);
-            text-decoration: none;
-        }
-
-        footer span.copyright {
-            float: left;
-            font-size: 11px;
-            padding: 7px;
-        }
-
-        footer span.version {
-            float: right;
-            font-size: 11px;
-            padding: 7px;
-        }
-
-        footer span.copyright a {
-            color: rgb(116, 101, 101);
-        }
-
-        footer #legal {
-            clear: left;
-            display: block;
-        }
-
-        .constrain {
-            padding-left: 10px;
-            padding-right: 10px;
-            margin-bottom: 0px;
-        }
-
-        li[id^='fav-'], li[id^='id-'] {
-            text-align: left;
-            font-size: 1pt;
-            padding: 5px 0px 5px 0px;
-        }
-
-        table.dataTable tbody {
-            font-size: 12px;
-        }
-
-        table.dataTable thead {
-            font-size: 12px;
-        }
-    </style>
 </head>
 <body class="page-body">
 <div id="loadingMask"></div>
@@ -159,7 +100,8 @@
 <div class="page-container horizontal-menu">
     <div class="search">
         <spring:message code="lbl.quick.find" var="quickfind"/>
-        <input type="text" id="searchtree" autofocus="" placeholder="${quickfind}"><span class="fa fa-search searchicon tooltip-secondary" data-toggle="tooltip" data-original-title="Search menu item"></span>
+        <input type="text" id="searchtree" autofocus="" placeholder="${quickfind}">
+        <span class="fa fa-search searchicon tooltip-secondary" data-toggle="tooltip" data-original-title="Search menu item"></span>
         <span class="applyanimation"></span>
     </div>
     <div class="search_list">
@@ -197,7 +139,7 @@
                 </li>
                 <li class="hidden-xs menu-responsive">
                     <a href="javascript:void(0);" class="profile-name">
-                        <i class="fa fa-user img-circle"></i> ${userName}
+                        <i class="fa fa-user img-circle"></i> ${homePageResponse.userName}
                     </a>
                     <ul>
                         <li>
@@ -218,9 +160,9 @@
                                 <span class="title"><spring:message code="lbl.feedback"/></span>
                             </a>
                         </li>
-                        <c:if test="${not empty issue_report_url}">
+                        <c:if test="${not empty homePageResponse.issueReportingURL}">
                             <li>
-                                <a href="${issue_report_url}" data-strwindname="r&i" class="open-popup">
+                                <a href="${homePageResponse.issueReportingURL}" data-strwindname="r&i" class="open-popup">
                                     <i class="fa fa-bug"></i>
                                     <span class="title"><spring:message code="lbl.report.issue"/></span>
                                 </a>
@@ -357,8 +299,10 @@
             <div id="legal">
                 <c:set var="now" value="<%=new org.joda.time.DateTime()%>"/>
                 <span class="copyright">
-                    <spring:message code="lbl.copyright"/> <span><i class="fa fa-copyright"></i></span> <joda:format value="${now}" pattern="yyyy"/> <a href="http://www.egovernments.org" target="_blank"> <spring:message code="lbl.egov.foundation"/>.<sup>&reg;</sup></a></span>
-                <span class="version">eGov ERP - ${app_version}_${app_buildno}<c:if test="${not empty app_core_build_no}"> @ Core - ${app_core_build_no}</c:if></span>
+                    <spring:message code="lbl.copyright"/> <span><i class="fa fa-copyright"></i></span> <joda:format value="${now}" pattern="yyyy"/>
+                    <a href="http://www.egovernments.org" target="_blank"> <spring:message code="lbl.egov.foundation"/>.<sup>&reg;</sup></a></span>
+                <span class="version">eGov ERP - ${homePageResponse.appVersion}_${homePageResponse.appBuildNo}
+                    <c:if test="${not empty homePageResponse.appCoreBuildNo}"> @ Core - ${homePageResponse.appCoreBuildNo}</c:if></span>
             </div>
         </div>
     </footer>
@@ -382,7 +326,8 @@
                     <div class="form-group">
                         <div class="col-md-12 add-margin">
                             <textarea class="form-control" rows="5" id="comment" placeholder="Message"></textarea>
-                            <spring:message code="lbl.feedback.mail.footer" arguments="${empty sessionScope.corpContactEmail ? 'none' : sessionScope.corpContactEmail}"/>
+                            <spring:message code="lbl.feedback.mail.footer" arguments="${empty sessionScope.corpContactEmail ? 'none'
+                            : sessionScope.corpContactEmail}"/>
                         </div>
                     </div>
                     <div class="form-group text-right">
@@ -405,7 +350,7 @@
                 <h4 class="modal-title"><spring:message code="lbl.change.password"/></h4>
             </div>
             <div class="modal-body">
-                <c:if test="${dflt_pwd_reset_req}">
+                <c:if test="${homePageResponse.requiredPasswordReset}">
                     <div class="alert alert-warning" role="alert" id="pass-alert">
                         <i class="fa fa-exclamation-triangle"></i> <spring:message code="msg.default.pwd.warning"/>
                     </div>
@@ -449,14 +394,14 @@
         </div>
     </div>
 </div>
-<c:if test="${dflt_pwd_reset_req}">
+<c:if test="${homePageResponse.requiredPasswordReset}">
     <script>
         $('.change-password').modal('show');
         $('.pass-cancel').attr('disabled', 'disabled');
     </script>
 </c:if>
-<c:if test="${warn_pwd_expire}">
-    <spring:message code="msg.pwd.expiry.warning" arguments="${pwd_expire_in_days}" var="expiryWarn"/>
+<c:if test="${homePageResponse.warnPasswordExpiry}">
+    <spring:message code="msg.pwd.expiry.warning" arguments="${homePageResponse.daysToPasswordExpiry}" var="expiryWarn"/>
     <script>
         bootbox.confirm({
             message: ${expiryWarn},
@@ -534,7 +479,7 @@
     </div>
 </div>
 <script>
-    var menuItems = ${menu};
+    var menuItems = [${homePageResponse.menu}];
     var focussedmenu = "worklist";
     const tokenVal = '${_csrf.token}';
     const tokenName = '${_csrf.parameterName}';

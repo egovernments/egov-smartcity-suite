@@ -115,6 +115,7 @@ public final class ApplicationConstant {
     public static final String COMMA = ",";
     public static final String UNKNOWN = "Unknown";
     public static final String AUTO = "AUTO";
+    public static final String ANONYMOUS = "Anonymous";
 
     private ApplicationConstant() {
     }

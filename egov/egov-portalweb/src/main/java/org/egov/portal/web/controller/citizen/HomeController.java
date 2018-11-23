@@ -47,11 +47,6 @@
  */
 package org.egov.portal.web.controller.citizen;
 
-import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
-import static org.egov.infra.persistence.entity.enums.UserType.CITIZEN;
-
-import java.util.List;
-
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -69,6 +64,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
+import static org.egov.infra.persistence.entity.enums.UserType.CITIZEN;
+import static org.egov.infra.utils.ApplicationConstant.ANONYMOUS;
 
 @Controller
 @RequestMapping(value = "/home")
@@ -88,7 +90,7 @@ public class HomeController {
 
     @Autowired
     private CityService cityService;
-    
+
     @Autowired
     private PortalLinkService portalLinkService;
 
@@ -98,7 +100,8 @@ public class HomeController {
     }
 
     @RequestMapping(value = "/refreshInbox", method = RequestMethod.GET)
-    public @ResponseBody Integer refreshInbox(@RequestParam final Long citizenInboxId) {
+    public @ResponseBody
+    Integer refreshInbox(@RequestParam final Long citizenInboxId) {
         final CitizenInbox citizenInbox = citizenInboxService.getInboxMessageById(citizenInboxId);
         citizenInbox.setRead(true);
         citizenInboxService.updateMessage(citizenInbox);
@@ -114,7 +117,7 @@ public class HomeController {
         modelData.addAttribute("myAccountMessages", getMyAccountMessages());
         modelData.addAttribute("cityLogo", cityService.getCityLogoURL());
         modelData.addAttribute("cityName", cityService.getMunicipalityName());
-        modelData.addAttribute("userName", user.getName() == null ? "Anonymous" : user.getName());
+        modelData.addAttribute("userName", defaultIfBlank(user.getName(), ANONYMOUS));
 
         if (null != user) {
 
@@ -137,7 +140,7 @@ public class HomeController {
         List<PortalInboxUser> totalServicesCompleted = portalInboxUserService.getPortalInboxByResolved(user.getId(), true);
         List<PortalInboxUser> totalServicesPending = portalInboxUserService.getPortalInboxByResolved(user.getId(), false);
         List<PortalLink> totalServicesLinked = portalLinkService.findByUser(user);
-        modelData.addAttribute("totalServicesLinked",totalServicesLinked);
+        modelData.addAttribute("totalServicesLinked", totalServicesLinked);
         modelData.addAttribute("totalServicesPending", totalServicesPending);
         modelData.addAttribute("totalServicesApplied", totalServicesApplied);
         modelData.addAttribute("totalServicesCompleted", totalServicesCompleted);

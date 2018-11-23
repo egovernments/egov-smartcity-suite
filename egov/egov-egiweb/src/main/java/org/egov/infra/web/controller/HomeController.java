@@ -48,13 +48,13 @@
 
 package org.egov.infra.web.controller;
 
-import com.google.gson.GsonBuilder;
 import org.egov.infra.admin.common.entity.Favourites;
 import org.egov.infra.admin.common.service.FavouritesService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.validation.ValidatorUtils;
+import org.egov.infra.web.contract.response.HomePageResponse;
 import org.egov.infra.web.support.ui.menu.ApplicationMenuRenderingService;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
@@ -87,6 +87,8 @@ import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.egov.infra.persistence.entity.enums.UserType.EMPLOYEE;
 import static org.egov.infra.persistence.entity.enums.UserType.SYSTEM;
 import static org.egov.infra.persistence.utils.PersistenceUtils.unproxy;
+import static org.egov.infra.utils.ApplicationConstant.ANONYMOUS;
+import static org.egov.infra.utils.JsonUtils.toJSON;
 
 @Controller
 @RequestMapping(value = "/home")
@@ -94,6 +96,10 @@ public class HomeController {
 
     private static final String FEEDBACK_MSG_FORMAT = "%s\n\n%s\n%s";
     private static final String NON_EMPLOYE_PORTAL_HOME = "/portal/home";
+    private static final String PROFILE_EDIT = "profile/edit";
+    private static final String PROFILE_EDIT_VIEW = "profile-edit";
+    private static final String DEFAULT_EMP_PWD = "12345678";
+    private static final String DEFAULT_USER_PWD = "demo";
 
     @Autowired
     private ApplicationMenuRenderingService applicationMenuRenderingService;
@@ -146,22 +152,20 @@ public class HomeController {
         User user = userService.getCurrentUser();
         setUserLocale(user, request, response);
         if (user.hasAnyType(EMPLOYEE, SYSTEM) || user.hasRole(portalAccessibleRole)) {
-            String menuJson = new StringBuilder(100)
-                    .append("[")
-                    .append(new GsonBuilder().create().toJson(applicationMenuRenderingService.getApplicationMenuForUser(user)))
-                    .append("]").toString();
-            modelData.addAttribute("menu", menuJson);
-            modelData.addAttribute("userName", defaultIfBlank(user.getName(), "Anonymous"));
-            modelData.addAttribute("app_version", appVersion);
-            modelData.addAttribute("app_buildno", appBuild);
+            HomePageResponse homePageResponse = new HomePageResponse();
+            homePageResponse.setMenu(toJSON(applicationMenuRenderingService.getApplicationMenuForUser(user)));
+            homePageResponse.setUserName(defaultIfBlank(user.getName(), ANONYMOUS));
+            homePageResponse.setAppVersion(appVersion);
+            homePageResponse.setAppBuildNo(appBuild);
             if (!devMode) {
-                modelData.addAttribute("app_core_build_no", appCoreBuild);
-                modelData.addAttribute("dflt_pwd_reset_req", checkDefaultPasswordResetRequired(user));
+                homePageResponse.setAppCoreBuildNo(appCoreBuild);
+                homePageResponse.setRequiredPasswordReset(checkDefaultPasswordResetRequired(user));
                 int daysToExpirePwd = daysToExpirePassword(user);
-                modelData.addAttribute("pwd_expire_in_days", daysToExpirePwd);
-                modelData.addAttribute("warn_pwd_expire", daysToExpirePwd <= 5);
+                homePageResponse.setDaysToPasswordExpiry(daysToExpirePwd);
+                homePageResponse.setWarnPasswordExpiry(daysToExpirePwd <= 5);
             }
-            modelData.addAttribute("issue_report_url", issueReportingUrl);
+            homePageResponse.setIssueReportingURL(issueReportingUrl);
+            modelData.addAttribute("homePageResponse", homePageResponse);
             return new ModelAndView("home", modelData);
         } else {
             return new ModelAndView(new RedirectView(NON_EMPLOYE_PORTAL_HOME, false));
@@ -204,16 +208,16 @@ public class HomeController {
         return true;
     }
 
-    @GetMapping("profile/edit")
+    @GetMapping(PROFILE_EDIT)
     public String editProfile() {
-        return "profile-edit";
+        return PROFILE_EDIT_VIEW;
     }
 
-    @PostMapping("profile/edit")
+    @PostMapping(PROFILE_EDIT)
     public String saveProfile(@Valid @ModelAttribute User user, BindingResult binder, HttpServletRequest request,
                               HttpServletResponse response, RedirectAttributes redirAttrib) {
         if (binder.hasErrors())
-            return "profile-edit";
+            return PROFILE_EDIT_VIEW;
         userService.updateUser(user);
         setUserLocale(user, request, response);
         redirAttrib.addFlashAttribute("message", "msg.profile.update.success");
@@ -221,7 +225,8 @@ public class HomeController {
     }
 
     private boolean checkDefaultPasswordResetRequired(User user) {
-        return passwordEncoder.matches("12345678", user.getPassword()) || passwordEncoder.matches("demo", user.getPassword());
+        return passwordEncoder.matches(DEFAULT_EMP_PWD, user.getPassword())
+                || passwordEncoder.matches(DEFAULT_USER_PWD, user.getPassword());
     }
 
     private int daysToExpirePassword(User user) {
