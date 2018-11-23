@@ -52,7 +52,10 @@ package org.egov.model.bills;
 import org.egov.commons.CVoucherHeader;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.utils.NumberToWord;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -73,20 +76,28 @@ public class Miscbilldetail implements java.io.Serializable
 
     private CVoucherHeader payVoucherHeader;
 
+    @SafeHtml
+    @Length(max = 50)
     private String billnumber;
 
     private Date billdate;
 
+    @NotNull
     private BigDecimal billamount;
 
+    @NotNull
     private BigDecimal passedamount;
 
     private BigDecimal paidamount;
 
+    @SafeHtml
+    @NotNull
+    @Length(max = 250)
     private String paidto;
 
     private User paidby;
 
+    @SafeHtml
     private String amtInWords;
 
     public Miscbilldetail()

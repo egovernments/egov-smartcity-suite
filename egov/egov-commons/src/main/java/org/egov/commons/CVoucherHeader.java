@@ -49,6 +49,8 @@ package org.egov.commons;
 
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -63,6 +65,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -81,11 +84,20 @@ public class CVoucherHeader extends StateAware<Position> {
     @Id
     @GeneratedValue(generator = SEQ_VOUCHERHEADER, strategy = GenerationType.SEQUENCE)
     private Long id;
-
+    @SafeHtml
+    @NotNull
+    @Length(max = 50)
     private String name;
+    @SafeHtml
+    @NotNull
+    @Length(max = 100)
     private String type;
+    @SafeHtml
+    @Length(max = 1024)
     private String description;
     private Date effectiveDate;
+    @SafeHtml
+    @Length(max = 30)
     private String voucherNumber;
     private Date voucherDate;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -96,12 +108,16 @@ public class CVoucherHeader extends StateAware<Position> {
     private Long originalvcId;
     private Integer isConfirmed;
     private Long refvhId;
+    @SafeHtml
+    @Length(max = 50)
     private String cgvn;
     private Integer moduleId;
+    @SafeHtml
     @Transient
     private String voucherSubType;
     @Transient
     private Boolean isRestrictedtoOneFunctionCenter;
+    @SafeHtml
     @Transient
     private String voucherNumberPrefix;
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "voucherHeaderId", targetEntity = CGeneralLedger.class)
@@ -115,15 +131,18 @@ public class CVoucherHeader extends StateAware<Position> {
     @Transient
     private List<CGeneralLedgerDetail> subLedgerDetails = new ArrayList<>();
 
+    @SafeHtml
     @Transient
     private String partyName;
 
+    @SafeHtml
     @Transient
     private String partyBillNumber;
 
     @Transient
     private Date partyBillDate;
 
+    @SafeHtml
     @Transient
     private String billNumber;
 
@@ -133,9 +152,11 @@ public class CVoucherHeader extends StateAware<Position> {
     @Transient
     private Long approvalDepartment;
 
+    @SafeHtml
     @Transient
     private String approvalComent;
 
+    @SafeHtml
     @Transient
     private String voucherNumType;
 

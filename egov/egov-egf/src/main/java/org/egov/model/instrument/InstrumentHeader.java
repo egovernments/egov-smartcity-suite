@@ -54,7 +54,10 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
 import org.egov.infstr.models.BaseModel;
 import org.egov.infstr.models.ECSType;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
@@ -72,19 +75,34 @@ public class InstrumentHeader extends BaseModel {
 
     private Accountdetailtype detailTypeId;
     private Bankaccount bankAccountId;
+    @NotNull
     private EgwStatus statusId;
     private Bank bankId;
+    @SafeHtml
+    @Length(max = 20)
     private String instrumentNumber;
     private Date instrumentDate;
+    @NotNull
     private BigDecimal instrumentAmount;
+    @SafeHtml
+    @Length(max = 250)
     private String payTo;
+    @SafeHtml
     private String isPayCheque;
     private InstrumentType instrumentType;
     private Long detailKeyId;
+    @SafeHtml
+    @Length(max = 50)
     private String transactionNumber;
     private Date transactionDate;
+    @SafeHtml
+    @Length(max = 50)
     private String payee;
+    @SafeHtml
+    @Length(max = 50)
     private String bankBranchName;
+    @SafeHtml
+    @Length(max = 100)
     private String surrendarReason;
     private CFinancialYear serialNo;
     private ECSType ECSType;

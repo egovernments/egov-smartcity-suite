@@ -49,6 +49,7 @@ package org.egov.commons;
 
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -101,7 +102,9 @@ public class Vouchermis implements java.io.Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "functionid")
     private CFunction function;
+    @SafeHtml
     private String sourcePath;
+    @SafeHtml
     @Column(name = "budgetary_appnumber")
     private String budgetaryAppnumber;
     private Boolean budgetCheckReq = true;
