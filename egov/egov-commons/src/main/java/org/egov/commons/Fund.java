@@ -53,6 +53,7 @@ import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -78,10 +79,12 @@ public class Fund extends AbstractPersistable<Integer> {
     @GeneratedValue(generator = Fund.SEQ, strategy = GenerationType.SEQUENCE)
     private Integer id;
 
+    @SafeHtml
     @Length(max = 50, min = 2)
     @Required
     private String name;
 
+    @SafeHtml
     @Length(max = 50, min = 2)
     @Required
     private String code;
@@ -96,6 +99,7 @@ public class Fund extends AbstractPersistable<Integer> {
 
     private Boolean isnotleaf;
 
+    @Required
     private Boolean isactive;
 
     @ManyToOne(fetch = FetchType.LAZY)

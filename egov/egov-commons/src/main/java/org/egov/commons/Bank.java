@@ -53,6 +53,7 @@ import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -84,14 +85,17 @@ public class Bank extends AbstractPersistable<Integer> {
     @JsonIgnore
     private Integer id;
 
+    @SafeHtml
     @Required
     @Length(max = 50)
     private String code;
 
+    @SafeHtml
     @Required
     @Length(max = 100)
     private String name;
 
+    @SafeHtml
     @JsonIgnore
     @Length(max = 250)
     private String narration;
@@ -100,6 +104,7 @@ public class Bank extends AbstractPersistable<Integer> {
     @Required
     private Boolean isactive;
 
+    @SafeHtml
     @JsonIgnore
     @Length(max = 50)
     private String type;

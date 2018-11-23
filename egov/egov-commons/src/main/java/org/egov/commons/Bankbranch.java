@@ -53,6 +53,7 @@ import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -88,45 +89,57 @@ public class Bankbranch extends AbstractPersistable<Integer> {
     @JoinColumn(name = "bankid")
     private Bank bank;
 
+    @SafeHtml
     @Required
     @Length(max = 50)
     private String branchcode;
 
+    @SafeHtml
     @Required
     @Length(max = 50)
     private String branchname;
 
+    @SafeHtml
     @Required
     @Length(max = 50)
     private String branchaddress1;
 
+    @SafeHtml
     @Length(max = 50)
     private String branchaddress2;
 
+    @SafeHtml
     @Length(max = 50)
     private String branchcity;
 
+    @SafeHtml
     @Length(max = 50)
     private String branchstate;
 
+    @SafeHtml
     @Length(max = 50)
     private String branchpin;
 
+    @SafeHtml
     @Length(max = 15)
     private String branchphone;
 
+    @SafeHtml
     @Length(max = 15)
     private String branchfax;
 
+    @SafeHtml
     @Length(max = 50)
     private String contactperson;
 
     @Required
     private Boolean isactive;
 
+    @SafeHtml
     @Length(max = 250)
     private String narration;
 
+    @SafeHtml
     @Length(max = 50)
     @Column(name = "micr")
     private String branchMICR;

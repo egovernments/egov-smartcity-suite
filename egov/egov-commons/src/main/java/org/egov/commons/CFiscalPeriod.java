@@ -50,6 +50,7 @@ package org.egov.commons;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -78,7 +79,8 @@ public class CFiscalPeriod extends AbstractAuditable {
         private Long id;
         
         private Integer type = 0;
-        
+
+        @SafeHtml
         @Length(min = 1, max = 25)
         @NotNull
         private String name = "";

@@ -72,6 +72,7 @@ import org.egov.commons.utils.BankAccountType;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "BANKACCOUNT")
@@ -87,8 +88,9 @@ public class Bankaccount extends AbstractAuditable implements java.io.Serializab
     @GeneratedValue(generator = SEQ_BANKACCOUNT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "branchid", nullable = true)
+    @JoinColumn(name = "branchid")
     private Bankbranch bankbranch;
 
     @ManyToOne
@@ -99,17 +101,24 @@ public class Bankaccount extends AbstractAuditable implements java.io.Serializab
     @JoinColumn(name = "fundid")
     private Fund fund;
 
+    @SafeHtml
     @NotNull
     @Length(max = 21)
     private String accountnumber;
 
+    @SafeHtml
+    @Length(max = 150)
     private String accounttype;
 
+    @SafeHtml
+    @Length(max = 250)
     private String narration;
 
     @NotNull
     private Boolean isactive;
 
+    @SafeHtml
+    @Length(max = 100)
     private String payTo;
 
     @Enumerated(EnumType.STRING)

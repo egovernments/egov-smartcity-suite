@@ -52,6 +52,7 @@ import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -80,20 +81,25 @@ public class Accountdetailtype extends AbstractPersistable<Integer> {
     @GeneratedValue(generator = SEQ_ACCOUNTDETAILTYPE, strategy = GenerationType.SEQUENCE)
     private Integer id;
 
+    @SafeHtml
     @Column(nullable = false, unique = true)
     @Length(max = 50)
     private String name;
 
+    @SafeHtml
     @NotNull
     @Length(max = 50)
     private String description;
 
+    @SafeHtml
     @Length(max = 25)
     private String tablename;
 
+    @SafeHtml
     @Length(max = 25)
     private String columnname;
 
+    @SafeHtml
     @Column(nullable = false, unique = true)
     @Length(max = 50)
     private String attributename;
@@ -103,6 +109,7 @@ public class Accountdetailtype extends AbstractPersistable<Integer> {
 
     private Boolean isactive;
 
+    @SafeHtml
     @Column(name = "FULL_QUALIFIED_NAME")
     @Length(max = 250)
     private String fullQualifiedName;

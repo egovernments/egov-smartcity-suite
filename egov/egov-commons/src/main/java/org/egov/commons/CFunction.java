@@ -51,6 +51,7 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -61,6 +62,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "Function")
@@ -75,21 +77,26 @@ public class CFunction extends AbstractAuditable {
     @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @SafeHtml
     @Length(max = 100, min = 2)
     @Required
     private String name;
 
+    @SafeHtml
     @Length(max = 50, min = 2)
     @Required
     private String code;
 
+    @SafeHtml
     @Length(max = 50)
     private String type;
 
+    @NotNull
     private int llevel;
 
     private Boolean isActive;
 
+    @NotNull
     private Boolean isNotLeaf;
 
     @ManyToOne(fetch = FetchType.LAZY)

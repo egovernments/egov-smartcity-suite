@@ -62,6 +62,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import static org.egov.commons.CChartOfAccountDetail.SEQ_CHARTOFACCOUNTDETAIL;
 
@@ -81,11 +82,13 @@ public class CChartOfAccountDetail extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_CHARTOFACCOUNTDETAIL, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @NotNull
     @AuditJoinTable
     @ManyToOne
     @JoinColumn(name = "glcodeid")
     private CChartOfAccounts glCodeId;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "detailtypeid")
     @AuditJoinTable
