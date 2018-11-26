@@ -47,11 +47,14 @@
  */
 package org.egov.restapi.web.contracts.marriageregistration;
 
+import static org.egov.infra.validation.regex.Constants.ALPHABETS_WITHSPACE;
+
 import java.util.Date;
 
 import javax.persistence.Embedded;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 import org.egov.mrs.domain.entity.Contact;
 import org.egov.mrs.domain.entity.Name;
@@ -104,6 +107,7 @@ public class MarriageRegistrationRequest {
 
     @NotNull(message = "Provide bridegroom's parents name")
     @Length(max = 110,message="Parents name should be less than 110 character")
+    @Pattern(regexp = ALPHABETS_WITHSPACE, message = "Invalid BrideGroom's parents Name")
     private String husbandparentsName;
 
     @NotNull(message = "Provide bridegroom's eduaction qualification")
@@ -149,6 +153,7 @@ public class MarriageRegistrationRequest {
 
     @NotNull(message = "Provide bride's parents name")
     @Length(max = 110,message="Parents name should be less than 110 character")
+    @Pattern(regexp = ALPHABETS_WITHSPACE, message = "Invalid Bride's parents Name")
     private String wifeparentsName;
 
     @NotNull(message = "Provide bride's education qualification")
