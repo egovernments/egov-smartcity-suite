@@ -107,7 +107,7 @@ public class MarriageRegistrationRequest {
 
     @NotNull(message = "Provide bridegroom's parents name")
     @Length(max = 110,message="Parents name should be less than 110 character")
-    @Pattern(regexp = ALPHABETS_WITHSPACE, message = "Invalid BrideGroom's parents Name")
+    @Pattern(regexp = ALPHABETS_WITHSPACE, message = "Invalid bridegroom's parent's name")
     private String husbandparentsName;
 
     @NotNull(message = "Provide bridegroom's eduaction qualification")
@@ -153,7 +153,7 @@ public class MarriageRegistrationRequest {
 
     @NotNull(message = "Provide bride's parents name")
     @Length(max = 110,message="Parents name should be less than 110 character")
-    @Pattern(regexp = ALPHABETS_WITHSPACE, message = "Invalid Bride's parents Name")
+    @Pattern(regexp = ALPHABETS_WITHSPACE, message = "Invalid bride's parent's name")
     private String wifeparentsName;
 
     @NotNull(message = "Provide bride's education qualification")
