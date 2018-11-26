@@ -98,7 +98,7 @@ public final class NumberToWordConverter {
         return numberInWords.toString();
     }
 
-    private static String convertToWords(BigDecimal value) {
+    public static String convertToWords(BigDecimal value) {
         BigDecimal givenNumber = value;
         boolean negativeNumber = givenNumber.signum() == -1;
         if (negativeNumber) {

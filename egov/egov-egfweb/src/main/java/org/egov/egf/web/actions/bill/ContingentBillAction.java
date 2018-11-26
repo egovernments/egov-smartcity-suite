@@ -72,7 +72,7 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
-import org.egov.infra.utils.NumberToWord;
+import org.egov.infra.utils.NumberToWordConverter;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -809,7 +809,7 @@ public class ContingentBillAction extends BaseBillAction {
         if (billDetailsTableSubledger.size() == 0)
             billDetailsTableSubledger.add(new VoucherDetails());
         final BigDecimal amt = cbill.getPassedamount().setScale(2, BigDecimal.ROUND_HALF_EVEN);
-        final String amountInWords = NumberToWord.convertToWord(amt.toString());
+        final String amountInWords = NumberToWordConverter.amountInWordsWithCircumfix(amt);
         sanctionedMessge = getText("cbill.getsanctioned.message", new String[] { amountInWords,
                 cbill.getPassedamount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString() });
         sanctionedMessge = sanctionedMessge.substring(0, sanctionedMessge.length() - 15);
@@ -851,7 +851,7 @@ public class ContingentBillAction extends BaseBillAction {
             commonBean.setStateId(cbill.getState().getId());
         commonBean.setBudgetReappNo(cbill.getEgBillregistermis().getBudgetaryAppnumber());
 
-        final String amountInWords = NumberToWord.amountInWords(cbill.getPassedamount().doubleValue());
+        final String amountInWords = NumberToWordConverter.convertToWords(cbill.getPassedamount());
         sanctionedMessge = getText("cbill.getsanctioned.message", new String[] { amountInWords,
                 cbill.getPassedamount().toString() });
         sanctionedMessge = sanctionedMessge.substring(0, sanctionedMessge.length() - 15);

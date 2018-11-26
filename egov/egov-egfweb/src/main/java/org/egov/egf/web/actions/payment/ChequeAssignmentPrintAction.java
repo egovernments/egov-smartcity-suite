@@ -53,7 +53,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.ChequeFormat;
-import org.egov.infra.utils.NumberToWord;
+import org.egov.infra.utils.NumberToWordConverter;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.services.instrument.InstrumentService;
@@ -131,7 +131,7 @@ public class ChequeAssignmentPrintAction extends BaseFormAction {
         if(instrumentDetails!=null){
         paramMap.put("payee", instrumentDetails.getPayTo());
         String totalAmount = numberFormate(instrumentDetails.getInstrumentAmount().toString());
-        String amountInWords = NumberToWord.convertToWord(instrumentDetails.getInstrumentAmount().toString());
+        String amountInWords = NumberToWordConverter.amountInWordsWithCircumfix(instrumentDetails.getInstrumentAmount());
         final String chqDate = DDMMYYYFORMAT.format(instrumentDetails.getInstrumentDate());
         paramMap.put("totalAmount", totalAmount);
         paramMap.put("amountInWords", amountInWords);

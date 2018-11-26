@@ -51,7 +51,7 @@ package org.egov.model.bills;
 
 import org.egov.commons.CVoucherHeader;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.utils.NumberToWord;
+import org.egov.infra.utils.NumberToWordConverter;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -127,7 +127,7 @@ public class Miscbilldetail implements java.io.Serializable
         if (paidamount != null)
         {
             paidamount = paidamount.setScale(2, BigDecimal.ROUND_HALF_EVEN);
-            amtInWords = NumberToWord.convertToWord(paidamount.toString());
+            amtInWords = NumberToWordConverter.amountInWordsWithCircumfix(paidamount);
 
         } else
             amtInWords = "";
