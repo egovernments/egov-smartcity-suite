@@ -104,7 +104,7 @@
 
 						<input type="file"
 							name="advertisement.documents[${status1.index}].attachments"
-							class="form-control">
+							class="form-control" data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 						<form:errors
 							path="advertisement.documents[${status1.index}].attachments"
 							cssClass="add-margin error-msg" />

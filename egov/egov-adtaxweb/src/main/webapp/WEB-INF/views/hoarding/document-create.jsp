@@ -80,7 +80,7 @@
 										name="advertisement.documents[${status1.index}].enclosed" ${docs.mandatory ? "required='required'" : ""}>
 									</div>
 									<div class="col-sm-3 text-center">
-										<input type="file" name="advertisement.documents[${status1.index}].attachments" class="form-control" >
+										<input type="file" name="advertisement.documents[${status1.index}].attachments" class="form-control" data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 										<form:errors path="advertisement.documents[${status1.index}].attachments" cssClass="add-margin error-msg" />
 										<form:hidden path="advertisement.documents[${status1.index}].doctype" value="${docs.id}" /> 
 									</div>
