@@ -198,6 +198,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         licenseBill.setModule(licenseUtils.getModule());
         licenseBill.setBillType(egBillDao.getBillTypeByCode(BILL_TYPE_AUTO));
         licenseBill.setDepartmentCode(licenseConfigurationService.getDepartmentCodeForBillGenerate());
+        licenseBill.setCollModesNotAllowed(licenseConfigurationService.getValueByKey(DISABLED_PAYMENT_MODES));
         licenseBill.setUserId(ApplicationThreadLocals.getUserId() == null ?
                 securityUtils.getCurrentUser().getId() : ApplicationThreadLocals.getUserId());
         licenseBill.setReferenceNumber(licenseNumberUtils.generateBillNumber());

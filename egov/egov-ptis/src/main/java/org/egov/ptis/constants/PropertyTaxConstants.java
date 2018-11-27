@@ -144,6 +144,7 @@ public interface PropertyTaxConstants {
     public static final String OBJECTION_RECORD_GENERATEHEARINGNOTICE = "GENERATE HEARING NOTICE";
     public static final String OBJECTION_RECORD_INSPECTIONDETAILS = "Record inspection details";
     public static final String OBJECTION_PRINT_ENDORSEMENT = "Print Endoresement";
+    public static final String CANCELLED = "CANCELLED";
 
     public static final String NOTICE_TYPE_GRPPROCEEDINGS = "GRP Proceedings";
     public static final String GRP_RP_HEARING_DATE_FIXED = "fixed";

@@ -75,7 +75,7 @@ import static org.egov.infra.config.core.ApplicationThreadLocals.getCityName;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getMunicipalityName;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
-import static org.egov.tl.utils.Constants.DOCUMENT_STORE_PATH;
+import static org.egov.tl.utils.Constants.TL_FILE_STORE_DIR;
 
 @Service
 @Transactional(readOnly = true)
@@ -151,7 +151,7 @@ public class LicenseService {
                                 .add(fileStoreService.store(
                                         file.getInputStream(),
                                         file.getOriginalFilename(),
-                                        file.getContentType(), DOCUMENT_STORE_PATH));
+                                        file.getContentType(), TL_FILE_STORE_DIR));
                         document.setEnclosed(true);
                         document.setDocDate(license.getApplicationDate());
                     }

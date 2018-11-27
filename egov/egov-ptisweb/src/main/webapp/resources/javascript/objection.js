@@ -201,3 +201,9 @@ function showDocumentManager() {
 	}
 	window.open(url, 'docupload', 'width=1000,height=400');
 }
+
+jQuery( document ).ready(function() {
+	jQuery('#ownerdetails').hide();
+	jQuery('#docdetails').hide();
+	jQuery('#attachments').hide();
+});

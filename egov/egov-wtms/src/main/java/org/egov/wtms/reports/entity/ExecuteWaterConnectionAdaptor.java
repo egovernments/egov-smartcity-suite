@@ -74,6 +74,8 @@ public class ExecuteWaterConnectionAdaptor implements JsonSerializer<WaterConnEx
         jsonObject.addProperty("revenueWard", defaultIfBlank(applicationDetails.getRevenueWard()));
         jsonObject.addProperty("id", applicationDetails.getId() != null ? applicationDetails.getId() : null);
         jsonObject.addProperty("address", defaultIfBlank(applicationDetails.getAddress()));
+        jsonObject.addProperty("pipesizeid", applicationDetails.getPipeSizeId());
+
         return jsonObject;
     }
 }

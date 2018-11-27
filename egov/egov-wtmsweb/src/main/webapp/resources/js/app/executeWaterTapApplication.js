@@ -52,6 +52,8 @@ jQuery(document).ready(function() {
 
 $('#metered-search-result-table').on('click', 'td button', function() {
 	var row = jQuery(this).closest('tr');
+	var myObj = {};
+	var $tr = jQuery(this).closest('tr');
 	
 	var table = $("#metered-search-result-table").DataTable();
 	var rowData = table.row( $(this).parents('tr') ).data();
@@ -61,20 +63,24 @@ $('#metered-search-result-table').on('click', 'td button', function() {
 		$(".display-success-msg").hide();
 		var resultObject = {};
 		var jsonObject = [];
+
 		resultObject = {
-				"id" : ""+rowData['id'],
-				"applicationNumber" : "" + rowData['applicationNumber']
-		}
+				"applicationNumber" : "" +rowData['applicationNumber'], 
+				"pipeSizeId" : ""+rowData['pipesizeid']
+				}
+		
 		jsonObject.push(resultObject);
 		$(".applnNumber").html(rowData['applicationNumber']);
-		var obj = {"executeMeterApplicationDetails" : jsonObject}
+		var obj = {"executeWaterApplicationDetails" : jsonObject}
 		var o = JSON.stringify(obj);
 		var result = [];
 		$("#meterMake").find('option:gt(0)').remove();
 		$.ajax({
-			url : "/wtms/application/execute-update/search-result",
-			type : "GET",
+			
+			url : "/wtms/application/execute-update/search-meter",
+			type : "POST",
 			dataType : "json",
+			data : o,
 			cache : false,
 			contentType : "application/json ; charset=utf-8",
 			success : function(data) {
@@ -150,6 +156,7 @@ $('#search').on('click', function() {
 	        			return '<a onclick="openpopup(\'/wtms/application/view/'+row.applicationNumber+'\')" href="javascript:void(0);">'+data+'</a>';
 	        		}
 	        	},
+	        	{ "data":"pipesizeid", "class":"text-center", "visible":false, "title":"Pipe Size"},
 	        	{ "data":"consumerNumber", "class":"text-center", "title":"Consumer Number"},
 	        	{ "data":"ownerName", "class":"text-center", "title":"Owner Name"},
 	        	{ "data":"address", "class":"text-center", "title":"Address"},
@@ -228,7 +235,8 @@ $('#update').on('click', function(){
 		    }
 			myObj = { "id" : ""+$tr.find('.check_box').val(),
 					"executionDate" : "" + $tr.find('.execDate').val(),
-					"applicationNumber" : "" +$tr.find("td:eq(1)")[0].innerText
+					"applicationNumber" : "" +$tr.find("td:eq(1)")[0].innerText,
+					"pipeSizeId" : "" +$tr.find("td:eq(2)")[0].innerText
 			}
 			
 			jsonObj.push(myObj);
@@ -280,7 +288,14 @@ $('#update').on('click', function(){
 					bootbox.alert(" Execution date can not be greater than current date");
 					return false;
 				}
-				
+				else if(response.includes("Application Process Time not defined")) {
+					bootbox.alert(" Application process time is not defined for this application type and category. Please define using create application process time master and then update execution date.")
+					return false;
+				}
+				else {
+					bootbox.alert("water connection update failed");
+					return false;
+				}
 			},
 			error : function(response) {
 				bootbox.alert("water connection update failed");
@@ -369,6 +384,7 @@ $('#searchApplication').on('click', function() {
         			return '<a onclick="openpopup(\'/wtms/application/view/'+row.applicationNumber+'\')" href="javascript:void(0);">'+data+'</a>';
         		}
         	},
+        	{ "data":"pipesizeid", "visible":false,"title":"Pipe Size"},
         	{ "data":"consumerNumber", "class":"text-center", "title":"Consumer Number"},
         	{ "data":"ownerName", "class":"text-center", "title":"Owner Name"},
         	{ "data":"address", "class":"text-center", "title":"Address"},

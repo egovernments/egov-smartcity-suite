@@ -109,6 +109,7 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
@@ -336,12 +337,14 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         additionalRule, currState, null,
                         REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
                                 ? waterConnectionDetails.getApplicationDate() : null);
+
+                Integer sla = applicationProcessTimeService.getApplicationProcessTime(
+                        waterConnectionDetails.getApplicationType(),
+                        waterConnectionDetails.getCategory());
+                if (sla == null)
+                    throw new ApplicationRuntimeException("err.applicationprocesstime.undefined");
                 waterConnectionDetails.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withSLA(new LocalDateTime().plusDays(
-                                applicationProcessTimeService.getApplicationProcessTime(
-                                        waterConnectionDetails.getApplicationType(),
-                                        waterConnectionDetails.getCategory()))
-                                .toDate())
+                        .withSLA(new LocalDateTime().plusDays(sla).toDate())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
                         .withOwner(ownerPosition).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
             } else if (SIGNWORKFLOWACTION.equalsIgnoreCase(workFlowAction))

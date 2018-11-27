@@ -223,8 +223,11 @@
 			return false;
 		} else if (actionName == 'Reject Inspection') {
 			action = 'revPetition-rejectInspectionDetails.action';
-		} else if (actionName == 'Reject') {
-			action = 'revPetition-reject.action';
+		} else if (actionName == 'Withdraw') {
+			if (validateRecordInspection()) {
+				action = 'revPetition-reject.action';
+			} else
+				return false;
 		} else if (actionName == 'Approve' || actionName == 'Forward') {
 			if (statusCode == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY}"/>') {
 					action = 'revPetition-recordObjectionOutcome.action?objectionId='

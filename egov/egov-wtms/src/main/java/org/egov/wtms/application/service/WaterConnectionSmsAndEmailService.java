@@ -669,25 +669,13 @@ public class WaterConnectionSmsAndEmailService {
                     ApplicationThreadLocals.getDomainURL(), waterConnectionDetails.getApplicationNumber(),
                     waterTaxUtils.getMunicipalityName(), waterTaxUtils.getMunicipalityName() }, null);
         else if (Arrays.asList(SMSEMAILTYPENEWCONNEXECUTION, SMSEMAILTYPECHANGEOFUSEEXECUTION)
-                .contains(type)) {
-            if (!METERED.toUpperCase()
-                    .equalsIgnoreCase(waterConnectionDetails.getConnectionType().toString()))
-                emailBody = wcmsMessageSource
-                        .getMessage(code,
-                                new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
-                                        toDefaultDateFormat(waterConnectionDetails.getExecutionDate()),
-                                        amountFormat.format(waterTaxUtils.getCurrentDemand(waterConnectionDetails)
-                                                .getDemand() != null ? waterTaxUtils.getCurrentDemand(waterConnectionDetails)
-                                                        .getDemand().getBaseDemand() : BigDecimal.ZERO),
-                                        waterTaxUtils.getMunicipalityName() },
-                                null);
-            else
-                emailBody = wcmsMessageSource.getMessage(code,
-                        new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
-                                toDefaultDateFormat(waterConnectionDetails.getExecutionDate()),
-                                waterTaxUtils.getMunicipalityName() },
-                        null);
-        } else if (Arrays.asList(SMSEMAILTYPENEWCONNFEEPAID,
+                .contains(type))
+            emailBody = wcmsMessageSource.getMessage(code,
+                    new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
+                            toDefaultDateFormat(waterConnectionDetails.getExecutionDate()),
+                            waterTaxUtils.getMunicipalityName() },
+                    null);
+        else if (Arrays.asList(SMSEMAILTYPENEWCONNFEEPAID,
                 SMSEMAILTYPEADDCONNFEEPAID,
                 SMSEMAILTYPECHANGEOFUSEFEEPAID)
                 .contains(type)
@@ -813,27 +801,13 @@ public class WaterConnectionSmsAndEmailService {
                                                 .getFieldInspectionDetails().getEstimationCharges())) },
                                 null);
         } else if (type.equalsIgnoreCase(SMSEMAILTYPENEWCONNEXECUTION)
-                || type.equalsIgnoreCase(SMSEMAILTYPECHANGEOFUSEEXECUTION)) {
-            if (!METERED.toUpperCase()
-                    .equalsIgnoreCase(waterConnectionDetails.getConnectionType().toString()))
-                smsMsg = wcmsMessageSource
-                        .getMessage(code,
-                                new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
-                                        toDefaultDateFormat(waterConnectionDetails.getExecutionDate()),
-                                        amountFormat
-                                                .format(waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null
-                                                        ? waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand()
-                                                                .getBaseDemand()
-                                                        : BigDecimal.ZERO),
-                                        waterTaxUtils.getMunicipalityName() },
-                                null);
-            else
-                smsMsg = wcmsMessageSource.getMessage(code,
-                        new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
-                                toDefaultDateFormat(waterConnectionDetails.getExecutionDate()),
-                                waterTaxUtils.getMunicipalityName() },
-                        null);
-        } else if ((type.equalsIgnoreCase(SMSEMAILTYPENEWCONNFEEPAID)
+                || type.equalsIgnoreCase(SMSEMAILTYPECHANGEOFUSEEXECUTION))
+            smsMsg = wcmsMessageSource.getMessage(code,
+                    new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
+                            toDefaultDateFormat(waterConnectionDetails.getExecutionDate()),
+                            waterTaxUtils.getMunicipalityName() },
+                    null);
+        else if ((type.equalsIgnoreCase(SMSEMAILTYPENEWCONNFEEPAID)
                 || type.equalsIgnoreCase(SMSEMAILTYPEADDCONNFEEPAID)
                 || type.equalsIgnoreCase(SMSEMAILTYPECHANGEOFUSEFEEPAID))
                 && waterTaxDue.compareTo(BigDecimal.ZERO) == 0) {

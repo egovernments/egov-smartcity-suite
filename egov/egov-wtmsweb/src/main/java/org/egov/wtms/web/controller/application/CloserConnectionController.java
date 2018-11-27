@@ -77,6 +77,7 @@ import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.entity.enums.ClosureType;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.masters.service.ApplicationProcessTimeService;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
@@ -119,6 +120,9 @@ public class CloserConnectionController extends GenericConnectionController {
     @Autowired
     @Qualifier("parentMessageSource")
     private MessageSource wcmsMessageSource;
+    
+    @Autowired
+    private ApplicationProcessTimeService applicationProcessTimeService;
 
     @ModelAttribute
     public WaterConnectionDetails getWaterConnectionDetails(@PathVariable final String applicationCode) {
@@ -157,6 +161,12 @@ public class CloserConnectionController extends GenericConnectionController {
     public String loadViewData(final Model model, final HttpServletRequest request,
             final WaterConnectionDetails waterConnectionDetails, final String meesevaApplicationNumber) {
         Boolean loggedUserIsMeesevaUser;
+        
+        if(applicationProcessTimeService.getApplicationProcessTime(applicationTypeService.findByCode(WaterTaxConstants.CLOSINGCONNECTION),
+                waterConnectionDetails.getCategory())==null) {
+            throw new ApplicationRuntimeException("err.applicationprocesstime.undefined");
+        }
+        
         waterConnectionDetails.setPreviousApplicationType(waterConnectionDetails.getApplicationType().getCode());
         model.addAttribute("previousApplicationType", waterConnectionDetails.getPreviousApplicationType());
         model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());

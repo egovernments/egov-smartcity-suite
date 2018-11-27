@@ -1,0 +1,1 @@
+insert into egtl_configuration values (nextval('seq_egtl_configuration'),'DISABLED_PAYMENT_MODES','cheque','disabling modes of payment',(select id from eg_user where username='system' and type='SYSTEM'),now(),(select id from eg_user where username='system' and type='SYSTEM'),now(),0);

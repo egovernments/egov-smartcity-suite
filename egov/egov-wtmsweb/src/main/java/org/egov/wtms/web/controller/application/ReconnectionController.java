@@ -63,6 +63,7 @@ import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.masters.service.ApplicationProcessTimeService;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
@@ -113,6 +114,9 @@ public class ReconnectionController extends GenericConnectionController {
 
     @Autowired
     private SecurityUtils securityUtils;
+    
+    @Autowired
+    private ApplicationProcessTimeService applicationProcessTimeService;
 
     @ModelAttribute
     public WaterConnectionDetails getWaterConnectionDetails(@PathVariable final String applicationCode) {
@@ -145,6 +149,10 @@ public class ReconnectionController extends GenericConnectionController {
         final String meesevaApplicationNumber = request.getParameter("meesevaApplicationNumber");
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByConsumerCodeAndConnectionStatus(applicationCode, ConnectionStatus.CLOSED);
+        if(applicationProcessTimeService.getApplicationProcessTime(
+                applicationTypeService.findByCode(WaterTaxConstants.RECONNECTION), 
+                waterConnectionDetails.getCategory())==null)
+            throw new ApplicationRuntimeException("err.applicationprocesstime.undefined");
         return loadViewData(model, request, waterConnectionDetails, meesevaApplicationNumber);
 
     }
@@ -249,9 +257,7 @@ public class ReconnectionController extends GenericConnectionController {
         }
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-        // waterConnectionDetails.setCloseConnectionType(request.getParameter("closeConnectionType").charAt(0));
         final String addrule = request.getParameter("additionalRule");
-        // waterConnectionDetails.setConnectionStatus(ConnectionStatus.CLOSED);
 
         if (isAnonymousUser) {
             waterConnectionDetails.setSource(ONLINE);

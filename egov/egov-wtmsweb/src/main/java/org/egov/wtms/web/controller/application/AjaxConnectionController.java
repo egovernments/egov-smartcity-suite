@@ -47,8 +47,16 @@
  */
 package org.egov.wtms.web.controller.application;
 
-import com.google.gson.JsonObject;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
+import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.NewConnectionService;
@@ -74,6 +82,7 @@ import org.egov.wtms.masters.service.PipeSizeService;
 import org.egov.wtms.masters.service.UsageTypeService;
 import org.egov.wtms.masters.service.WaterRatesDetailsService;
 import org.egov.wtms.masters.service.WaterRatesHeaderService;
+import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,10 +94,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletResponse;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import com.google.gson.JsonObject;
 
 @Controller
 public class AjaxConnectionController {
@@ -132,9 +138,17 @@ public class AjaxConnectionController {
     @Autowired
     private WaterTaxUtils waterTaxUtils;
 
+    @Autowired
+    private PropertyExtnUtils propertyExtnUtils;
+
     @RequestMapping(value = "/ajaxconnection/check-primaryconnection-exists", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String isConnectionPresentForProperty(@RequestParam final String propertyID) {
+        AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(propertyID,
+                PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
+        String errorMessage = newConnectionService.validateProperty(assessmentDetails);
+        if (!errorMessage.isEmpty())
+            return errorMessage;
         return newConnectionService.checkConnectionPresentForProperty(propertyID);
     }
 

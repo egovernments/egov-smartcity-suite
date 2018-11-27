@@ -47,7 +47,7 @@
   --%>
 
 <%@ include file="/includes/taglibs.jsp"%>
-<div class="formmainbox">
+<div class="formmainbox" id="ownerdetails">
 	<table width="100%" border="0" cellspacing="0" cellpadding="0"
 		class="tablebottom" id="nameTable">
 		<tr>
@@ -218,6 +218,7 @@
 				</tr>
 			</s:iterator>
 		</s:else>
+		
 	</table>
 </div>
 <script>

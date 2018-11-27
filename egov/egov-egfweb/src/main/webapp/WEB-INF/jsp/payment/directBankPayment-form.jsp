@@ -228,7 +228,7 @@
 <script type="application/javascript">
     function isSpecialChar(){
         var documentNoEntered = document.getElementById('commonBean.documentNumber').value;
-        var replacedDocNo = documentNoEntered.replace(/[!$%^&*()_+|~=`{}\[\]":'\;<>?,.@#]/, '');
+        var replacedDocNo = documentNoEntered.replace(/[!$%^&*()_+|~=`{}\[\]":'\;<>?,.@#]/gi, '');
         document.getElementById('commonBean.documentNumber').value = replacedDocNo;
     }
 </script>

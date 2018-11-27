@@ -80,8 +80,8 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import static java.math.BigDecimal.ZERO;
-import static org.egov.tl.utils.Constants.DOCUMENT_STORE_PATH;
 import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACTIVE;
+import static org.egov.tl.utils.Constants.TL_FILE_STORE_DIR;
 
 @Service
 public class LegacyLicenseService extends LicenseService {
@@ -225,7 +225,7 @@ public class LegacyLicenseService extends LicenseService {
                                 .add(fileStoreService.store(
                                         file.getInputStream(),
                                         file.getOriginalFilename(),
-                                        file.getContentType(), DOCUMENT_STORE_PATH));
+                                        file.getContentType(), TL_FILE_STORE_DIR));
                         document.setEnclosed(true);
                         document.setDocDate(license.getApplicationDate());
                     } else if (document.getType().isMandatory() && file.isEmpty() && documents.isEmpty()) {
