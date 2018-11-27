@@ -48,143 +48,153 @@
 
 package org.egov.wtms.application.entity;
 
+import java.math.BigInteger;
 import java.util.Date;
 
 public class WaterConnExecutionDetails {
-    private Long id;
-    private String applicationNumber;
-    private String consumerNumber;
-    private Date fromDate;
-    private Date toDate;
-    private String revenueWard;
-    private String applicationType;
-    private String ownerName;
-    private String applicationStatus;
-    private String approvalDate;
-    private String executionDate;
-    private String meterMake;
-    private String initialReading;
-    private String meterSerialNumber;
-    private String address;
+	private BigInteger pipeSizeId;
+	private Long id;
+	private String applicationNumber;
+	private String consumerNumber;
+	private Date fromDate;
+	private Date toDate;
+	private String revenueWard;
+	private String applicationType;
+	private String ownerName;
+	private String applicationStatus;
+	private String approvalDate;
+	private String executionDate;
+	private String meterMake;
+	private String initialReading;
+	private String meterSerialNumber;
+	private String address;
 
-    public String getExecutionDate() {
-        return executionDate;
-    }
+	public BigInteger getPipeSizeId() {
+		return pipeSizeId;
+	}
 
-    public void setExecutionDate(final String executionDate) {
-        this.executionDate = executionDate;
-    }
+	public void setPipeSizeId(BigInteger pipeSizeId) {
+		this.pipeSizeId = pipeSizeId;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public String getExecutionDate() {
+		return executionDate;
+	}
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
+	public void setExecutionDate(final String executionDate) {
+		this.executionDate = executionDate;
+	}
 
-    public String getApplicationNumber() {
-        return applicationNumber;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setApplicationNumber(final String applicationNumber) {
-        this.applicationNumber = applicationNumber;
-    }
+	public void setId(final Long id) {
+		this.id = id;
+	}
 
-    public String getConsumerNumber() {
-        return consumerNumber;
-    }
+	public String getApplicationNumber() {
+		return applicationNumber;
+	}
 
-    public void setConsumerNumber(final String consumerNumber) {
-        this.consumerNumber = consumerNumber;
-    }
+	public void setApplicationNumber(final String applicationNumber) {
+		this.applicationNumber = applicationNumber;
+	}
 
-    public String getRevenueWard() {
-        return revenueWard;
-    }
+	public String getConsumerNumber() {
+		return consumerNumber;
+	}
 
-    public void setRevenueWard(final String revenueWard) {
-        this.revenueWard = revenueWard;
-    }
+	public void setConsumerNumber(final String consumerNumber) {
+		this.consumerNumber = consumerNumber;
+	}
 
-    public String getApplicationType() {
-        return applicationType;
-    }
+	public String getRevenueWard() {
+		return revenueWard;
+	}
 
-    public void setApplicationType(final String applicationType) {
-        this.applicationType = applicationType;
-    }
+	public void setRevenueWard(final String revenueWard) {
+		this.revenueWard = revenueWard;
+	}
 
-    public String getOwnerName() {
-        return ownerName;
-    }
+	public String getApplicationType() {
+		return applicationType;
+	}
 
-    public void setOwnerName(final String ownerName) {
-        this.ownerName = ownerName;
-    }
+	public void setApplicationType(final String applicationType) {
+		this.applicationType = applicationType;
+	}
 
-    public String getApprovalDate() {
-        return approvalDate;
-    }
+	public String getOwnerName() {
+		return ownerName;
+	}
 
-    public void setApprovalDate(final String approvalDate) {
-        this.approvalDate = approvalDate;
-    }
+	public void setOwnerName(final String ownerName) {
+		this.ownerName = ownerName;
+	}
 
-    public String getApplicationStatus() {
-        return applicationStatus;
-    }
+	public String getApprovalDate() {
+		return approvalDate;
+	}
 
-    public void setApplicationStatus(final String applicationStatus) {
-        this.applicationStatus = applicationStatus;
-    }
+	public void setApprovalDate(final String approvalDate) {
+		this.approvalDate = approvalDate;
+	}
 
-    public Date getFromDate() {
-        return fromDate;
-    }
+	public String getApplicationStatus() {
+		return applicationStatus;
+	}
 
-    public void setFromDate(final Date fromDate) {
-        this.fromDate = fromDate;
-    }
+	public void setApplicationStatus(final String applicationStatus) {
+		this.applicationStatus = applicationStatus;
+	}
 
-    public Date getToDate() {
-        return toDate;
-    }
+	public Date getFromDate() {
+		return fromDate;
+	}
 
-    public void setToDate(final Date toDate) {
-        this.toDate = toDate;
-    }
+	public void setFromDate(final Date fromDate) {
+		this.fromDate = fromDate;
+	}
 
-    public String getMeterMake() {
-        return meterMake;
-    }
+	public Date getToDate() {
+		return toDate;
+	}
 
-    public void setMeterMake(final String meterMake) {
-        this.meterMake = meterMake;
-    }
+	public void setToDate(final Date toDate) {
+		this.toDate = toDate;
+	}
 
-    public String getInitialReading() {
-        return initialReading;
-    }
+	public String getMeterMake() {
+		return meterMake;
+	}
 
-    public void setInitialReading(final String initialReading) {
-        this.initialReading = initialReading;
-    }
+	public void setMeterMake(final String meterMake) {
+		this.meterMake = meterMake;
+	}
 
-    public String getMeterSerialNumber() {
-        return meterSerialNumber;
-    }
+	public String getInitialReading() {
+		return initialReading;
+	}
 
-    public void setMeterSerialNumber(final String meterSerialNumber) {
-        this.meterSerialNumber = meterSerialNumber;
-    }
+	public void setInitialReading(final String initialReading) {
+		this.initialReading = initialReading;
+	}
 
-    public String getAddress() {
-        return address;
-    }
+	public String getMeterSerialNumber() {
+		return meterSerialNumber;
+	}
 
-    public void setAddress(final String address) {
-        this.address = address;
-    }
+	public void setMeterSerialNumber(final String meterSerialNumber) {
+		this.meterSerialNumber = meterSerialNumber;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(final String address) {
+		this.address = address;
+	}
 
 }
