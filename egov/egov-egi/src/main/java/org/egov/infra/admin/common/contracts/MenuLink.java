@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,22 +46,79 @@
  *
  */
 
-package org.egov.infra.admin.auditing.contract;
+package org.egov.infra.admin.common.contracts;
 
-import org.egov.infra.web.support.search.DataTableSearchRequest;
+import java.util.Objects;
 
-import javax.validation.constraints.Positive;
+public class MenuLink {
+    private Long id;
+    private String name;
+    private String contextRoot;
+    private String displayName;
+    private String url;
+    private boolean enabled;
 
-public class UserRoleChangeAuditReportRequest extends DataTableSearchRequest {
-
-    @Positive(message = "not valid")
-    private Long changedFor;
-
-    public Long getChangedFor() {
-        return changedFor;
+    public Long getId() {
+        return id;
     }
 
-    public void setChangedFor(Long changedFor) {
-        this.changedFor = changedFor;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getContextRoot() {
+        return contextRoot;
+    }
+
+    public void setContextRoot(String contextRoot) {
+        this.contextRoot = contextRoot;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof MenuLink))
+            return false;
+        MenuLink menuLink = (MenuLink) other;
+        return Objects.equals(getId(), menuLink.getId()) &&
+                Objects.equals(getName(), menuLink.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getName());
     }
 }

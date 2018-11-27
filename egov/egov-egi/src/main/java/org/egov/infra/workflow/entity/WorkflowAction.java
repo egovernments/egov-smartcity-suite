@@ -50,6 +50,7 @@ package org.egov.infra.workflow.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -57,7 +58,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 import static org.egov.infra.workflow.entity.WorkflowAction.SEQ_WF_ACTION;
 
@@ -72,16 +73,19 @@ public class WorkflowAction extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_WF_ACTION, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
-    @Length(min = 1, max = 255)
+    @NotBlank
+    @SafeHtml
+    @Length(max = 255)
     private String name;
 
-    @NotNull
-    @Length(min = 1, max = 1024)
+    @NotBlank
+    @SafeHtml
+    @Length(max = 1024)
     private String description;
 
-    @NotNull
-    @Length(min = 1, max = 255)
+    @NotBlank
+    @SafeHtml
+    @Length(max = 255)
     private String type;
 
     protected WorkflowAction() {

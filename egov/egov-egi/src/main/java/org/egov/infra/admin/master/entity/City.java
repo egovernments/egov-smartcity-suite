@@ -55,7 +55,7 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
-import javax.validation.constraints.NotBlank;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
@@ -70,6 +70,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -89,55 +91,68 @@ import static org.egov.infra.utils.ApplicationConstant.*;
 @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class City extends AbstractAuditable {
 
-    public static final String SEQ_CITY = "SEQ_EG_CITY";
     public static final String QUERY_CITY_BY_URL = "CITY_BY_URL";
+    protected static final String SEQ_CITY = "SEQ_EG_CITY";
     private static final long serialVersionUID = -6267923687226233397L;
+
     @Id
     @GeneratedValue(generator = SEQ_CITY, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @SafeHtml
     @NotBlank
+    @Length(max = 256)
     private String name;
 
     @SafeHtml
     @NotBlank
+    @Length(max = 256)
     private String localName;
 
     private boolean active;
 
     @SafeHtml
     @NotBlank
+    @Length(max = 128)
     private String domainURL;
 
     @SafeHtml
     @NotBlank
+    @Length(max = 4)
     private String code;
 
     @SafeHtml
     @NotBlank
+    @Length(max = 10)
     private String lgdCode;
 
     @SafeHtml
     @NotBlank
+    @Length(max = 10)
     private String districtCode;
 
     @SafeHtml
     @NotBlank
+    @Length(max = 10)
     private String districtLGDCode;
 
     @SafeHtml
     @NotBlank
+    @Length(max = 50)
     private String districtName;
 
     @SafeHtml
+    @Length(max = 50)
     private String regionName;
 
     @SafeHtml
+    @Length(max = 50)
     private String grade;
 
+    @Positive
     private Float longitude;
 
+    @Positive
     private Float latitude;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

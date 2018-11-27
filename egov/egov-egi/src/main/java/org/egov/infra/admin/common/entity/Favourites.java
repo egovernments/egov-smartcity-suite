@@ -49,7 +49,8 @@
 package org.egov.infra.admin.common.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
-import javax.validation.constraints.NotBlank;
+import org.egov.infra.persistence.validator.annotation.CompositeUnique;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
@@ -59,31 +60,42 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.util.Objects;
 
 import static org.egov.infra.admin.common.entity.Favourites.SEQ_FAVOURITES;
 
 @Entity
 @Table(name = "eg_favourites", uniqueConstraints = @UniqueConstraint(columnNames = {"userId", "actionId"}))
+@CompositeUnique(fields = {"userId", "actionId"})
 @SequenceGenerator(name = SEQ_FAVOURITES, sequenceName = SEQ_FAVOURITES, allocationSize = 1)
 public class Favourites extends AbstractPersistable<Long> {
 
-    public static final String SEQ_FAVOURITES = "SEQ_EG_FAVOURITES";
+    protected static final String SEQ_FAVOURITES = "SEQ_EG_FAVOURITES";
     private static final long serialVersionUID = 8966137226966715994L;
+
     @Id
     @GeneratedValue(generator = SEQ_FAVOURITES, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @Positive
+    @NotNull
     private Long userId;
 
+    @Positive
+    @NotNull
     private Integer actionId;
 
     @SafeHtml
     @NotBlank
+    @Length(max = 100)
     private String name;
 
     @SafeHtml
     @NotBlank
+    @Length(max = 50)
     private String contextRoot;
 
     public Long getId() {

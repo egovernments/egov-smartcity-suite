@@ -52,9 +52,24 @@ import com.google.gson.annotations.Expose;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.enums.AddressType;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
-import javax.persistence.*;
+import javax.persistence.Cacheable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import static org.egov.infra.persistence.entity.Address.SEQ_ADDRESS;
 
@@ -72,41 +87,52 @@ public abstract class Address extends AbstractPersistable<Long> {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQ_ADDRESS)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "userid")
     private User user;
 
     @SafeHtml
+    @Length(max = 32)
     private String houseNoBldgApt;
 
     @SafeHtml
+    @Length(max = 256)
     private String streetRoadLine;
 
     @SafeHtml
+    @Length(max = 256)
     private String landmark;
 
     @SafeHtml
+    @Length(max = 256)
     private String areaLocalitySector;
 
     @SafeHtml
+    @Length(max = 256)
     private String cityTownVillage;
 
     @SafeHtml
+    @Length(max = 100)
     private String district;
 
     @SafeHtml
+    @Length(max = 100)
     private String subdistrict;
 
     @SafeHtml
+    @Length(max = 100)
     private String postOffice;
 
     @SafeHtml
+    @Length(max = 100)
     private String state;
 
     @SafeHtml
+    @Length(max = 50)
     private String country;
 
     @SafeHtml
+    @Length(max = 10)
     private String pinCode;
 
     @Enumerated(EnumType.STRING)

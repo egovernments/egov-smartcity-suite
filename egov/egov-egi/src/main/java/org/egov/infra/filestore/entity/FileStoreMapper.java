@@ -48,10 +48,9 @@
 
 package org.egov.infra.filestore.entity;
 
-import static org.egov.infra.filestore.entity.FileStoreMapper.SEQ_FILESTOREMAPPER;
-
-import java.util.Date;
-import java.util.Objects;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -62,11 +61,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
+import java.util.Date;
+import java.util.Objects;
+
+import static org.egov.infra.filestore.entity.FileStoreMapper.SEQ_FILESTOREMAPPER;
 
 @Table(name = "eg_filestoremap")
 @Entity
@@ -84,7 +83,7 @@ public class FileStoreMapper extends AbstractPersistable<Long> {
     private String fileStoreId;
 
     @NotBlank
-    @Length(max = 100)
+    @Length(max = 255)
     @SafeHtml
     private String fileName;
 
@@ -152,7 +151,7 @@ public class FileStoreMapper extends AbstractPersistable<Long> {
             return true;
         if (!(other instanceof FileStoreMapper))
             return false;
-        final FileStoreMapper that = (FileStoreMapper) other;
+        FileStoreMapper that = (FileStoreMapper) other;
         return that.id != null && Objects.equals(id, that.id);
     }
 

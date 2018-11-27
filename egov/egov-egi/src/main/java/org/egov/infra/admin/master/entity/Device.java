@@ -50,7 +50,7 @@ package org.egov.infra.admin.master.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import javax.validation.constraints.NotBlank;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
@@ -59,28 +59,34 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
 @Entity
-@Unique(fields = "deviceuid", enableDfltMsg = true)
 @Table(name = "eg_device")
+@Unique(fields = "deviceuid", enableDfltMsg = true)
 @SequenceGenerator(name = Device.SEQ_DEVICE, sequenceName = Device.SEQ_DEVICE, allocationSize = 1)
 public class Device extends AbstractAuditable {
 
-    public static final String SEQ_DEVICE = "SEQ_EG_DEVICE";
+    protected static final String SEQ_DEVICE = "SEQ_EG_DEVICE";
     private static final long serialVersionUID = 7034114743461088547L;
+
     @Id
     @GeneratedValue(generator = SEQ_DEVICE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotBlank
     @SafeHtml
+    @Length(max = 128)
     private String deviceUId;
 
+    @NotBlank
     @SafeHtml
+    @Length(max = 32)
     private String type;
 
     @SafeHtml
+    @Length(max = 32)
     private String OSVersion;
 
     @Override

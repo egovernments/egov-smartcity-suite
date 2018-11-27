@@ -46,7 +46,7 @@
  *
  */
 
-package org.egov.infra.admin.auditing.contract;
+package org.egov.infra.admin.auditing.contracts;
 
 import org.egov.infra.web.support.search.DataTableSearchRequest;
 

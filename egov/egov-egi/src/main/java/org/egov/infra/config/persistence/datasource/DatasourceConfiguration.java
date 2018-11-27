@@ -66,7 +66,7 @@ public class DatasourceConfiguration {
 
     @Bean
     public JndiObjectFactoryBean dataSource() {
-        final JndiObjectFactoryBean dataSource = new JndiObjectFactoryBean();
+        JndiObjectFactoryBean dataSource = new JndiObjectFactoryBean();
         dataSource.setExpectedType(DataSource.class);
         dataSource.setJndiName(env.getProperty("default.jdbc.jndi.datasource"));
         return dataSource;

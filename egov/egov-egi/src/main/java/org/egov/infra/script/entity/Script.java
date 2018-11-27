@@ -50,6 +50,8 @@ package org.egov.infra.script.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.component.Period;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.joda.time.DateTime;
 
 import javax.persistence.Embedded;
@@ -63,6 +65,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.script.CompiledScript;
+import javax.validation.constraints.NotBlank;
 
 import static org.egov.infra.script.entity.Script.SEQ_SCRIPT;
 
@@ -83,9 +86,21 @@ public class Script extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_SCRIPT, strategy = GenerationType.SEQUENCE)
     private Long id;
+
+    @NotBlank
+    @SafeHtml
+    @Length(max = 256)
     private String type;
+
+    @NotBlank
+    @SafeHtml
     private String script;
+
+    @NotBlank
+    @SafeHtml
+    @Length(max = 256)
     private String name;
+
     @Embedded
     private Period period;
 
@@ -93,6 +108,7 @@ public class Script extends AbstractAuditable {
     private CompiledScript compiledScript;
 
     Script() {
+        //For Hibernate
     }
 
     public Script(final String name, final String type, final String script) {

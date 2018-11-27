@@ -49,6 +49,7 @@
 package org.egov.infra.workflow.matrix.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -69,11 +70,16 @@ import static org.egov.infra.workflow.matrix.entity.WorkFlowAmountRule.SEQ_WF_AM
 public class WorkFlowAmountRule extends AbstractPersistable<Long> {
     public static final String SEQ_WF_AMOUNTRULE = "SEQ_EG_WF_AMOUNTRULE";
     private static final long serialVersionUID = 3337723404458273459L;
+
     @Id
     @GeneratedValue(generator = SEQ_WF_AMOUNTRULE, strategy = GenerationType.SEQUENCE)
     private Long id;
+
     private BigDecimal fromQty;
+
     private BigDecimal toQty;
+
+    @Length(max = 30)
     private String ruleDesc;
     @OneToMany
     private Set<WorkFlowMatrix> workFlowMatrixes = new HashSet<>();

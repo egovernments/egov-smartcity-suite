@@ -52,7 +52,6 @@ import com.google.gson.annotations.Expose;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
-import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
@@ -61,6 +60,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
 import static org.egov.infra.admin.master.entity.Department.SEQ_DEPARTMENT;
@@ -71,19 +71,21 @@ import static org.egov.infra.admin.master.entity.Department.SEQ_DEPARTMENT;
 @SequenceGenerator(name = SEQ_DEPARTMENT, sequenceName = SEQ_DEPARTMENT, allocationSize = 1)
 public class Department extends AbstractAuditable {
 
-    public static final String SEQ_DEPARTMENT = "SEQ_EG_DEPARTMENT";
+    protected static final String SEQ_DEPARTMENT = "SEQ_EG_DEPARTMENT";
     private static final long serialVersionUID = 7630238192598939863L;
+
     @Expose
     @Id
     @GeneratedValue(generator = SEQ_DEPARTMENT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Length(min = 1, max = 128)
+    @NotBlank
+    @Length(max = 64)
     @SafeHtml
     private String name;
 
     @NotBlank
-    @Length(min = 1, max = 128)
+    @Length(max = 64)
     @SafeHtml
     private String code;
 

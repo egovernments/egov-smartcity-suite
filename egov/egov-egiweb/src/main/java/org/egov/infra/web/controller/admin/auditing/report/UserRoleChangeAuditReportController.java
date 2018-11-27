@@ -48,7 +48,7 @@
 
 package org.egov.infra.web.controller.admin.auditing.report;
 
-import org.egov.infra.admin.auditing.contract.UserRoleChangeAuditReportRequest;
+import org.egov.infra.admin.auditing.contracts.UserRoleChangeAuditReportRequest;
 import org.egov.infra.admin.auditing.service.UserAuditService;
 import org.egov.infra.utils.JsonUtils;
 import org.egov.infra.web.contract.response.UserRoleChangeAuditReportAdapter;

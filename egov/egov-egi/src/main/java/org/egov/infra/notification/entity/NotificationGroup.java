@@ -60,6 +60,7 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.Set;
@@ -77,7 +78,8 @@ public class NotificationGroup extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_EG_NOTIFICATION_GROUP, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Length(min = 1, max = 100)
+    @NotBlank
+    @Length(max = 100)
     @SafeHtml
     private String name;
 

@@ -48,9 +48,36 @@
 
 package org.egov.infra.exception;
 
+import javax.validation.ConstraintViolation;
+import java.util.Set;
+
+import static org.egov.infra.utils.ApplicationConstant.NEW_LINE;
+
 public class ApplicationValidationException extends ApplicationRuntimeException {
+
+    private final transient Set<ConstraintViolation> constraintViolations;
 
     public ApplicationValidationException(String msg) {
         super(msg);
+        this.constraintViolations = null;
+    }
+
+    public ApplicationValidationException(String msg, Set constraintViolations) {
+        super(prepareErrorMessage(msg, constraintViolations));
+        this.constraintViolations = constraintViolations;
+    }
+
+    private static String prepareErrorMessage(String msg, Set constraintViolations) {
+        StringBuilder errors = new StringBuilder(msg).append(NEW_LINE);
+        constraintViolations.iterator().forEachRemaining(constraintViolation -> {
+            ConstraintViolation violation = (ConstraintViolation) constraintViolation;
+            errors.append(violation.getPropertyPath()).append(" : ").append(violation.getMessage()).append(NEW_LINE);
+        });
+
+        return errors.toString();
+    }
+
+    public Set<ConstraintViolation> constraintViolations() {
+        return this.constraintViolations;
     }
 }

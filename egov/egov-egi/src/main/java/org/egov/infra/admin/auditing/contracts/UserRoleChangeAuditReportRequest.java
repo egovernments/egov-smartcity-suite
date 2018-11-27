@@ -46,13 +46,13 @@
  *
  */
 
-package org.egov.infra.admin.auditing.contract;
+package org.egov.infra.admin.auditing.contracts;
 
 import org.egov.infra.web.support.search.DataTableSearchRequest;
 
 import javax.validation.constraints.Positive;
 
-public class UserPasswordChangeAuditReportRequest extends DataTableSearchRequest {
+public class UserRoleChangeAuditReportRequest extends DataTableSearchRequest {
 
     @Positive(message = "not valid")
     private Long changedFor;

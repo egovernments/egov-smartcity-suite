@@ -50,6 +50,7 @@ package org.egov.infra.workflow.matrix.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.workflow.entity.WorkflowType;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -76,10 +77,20 @@ public class WorkFlowAdditionalRule extends AbstractPersistable<Long> {
     @ManyToOne
     @JoinColumn(name = "objecttypeid")
     private WorkflowType objecttypeid;
+
+    @Length(max = 512)
     private String additionalRule;
+
+    @Length(max = 512)
     private String states;
+
+    @Length(max = 512)
     private String status;
+
+    @Length(max = 512)
     private String buttons;
+
+    @Length(max = 512)
     private String workFlowActions;
 
     @Override

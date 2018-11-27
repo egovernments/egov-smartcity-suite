@@ -48,7 +48,7 @@
 
 package org.egov.infra.admin.master.service;
 
-import org.egov.infra.admin.common.entity.MenuLink;
+import org.egov.infra.admin.common.contracts.MenuLink;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.repository.ModuleRepository;

@@ -51,6 +51,7 @@ package org.egov.infra.admin.master.entity;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
@@ -60,7 +61,6 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
 import java.util.Objects;
 
 import static org.egov.infra.admin.master.entity.Location.SEQ_LOCATION;
@@ -69,20 +69,23 @@ import static org.egov.infra.admin.master.entity.Location.SEQ_LOCATION;
 @Table(name = "eg_location")
 @Cacheable
 @SequenceGenerator(name = SEQ_LOCATION, sequenceName = SEQ_LOCATION, allocationSize = 1)
-@Unique(fields = {"name"}, enableDfltMsg = true)
+@Unique(fields = "name", enableDfltMsg = true)
 public class Location extends AbstractPersistable<Long> {
 
-    public static final String SEQ_LOCATION = "SEQ_EG_LOCATION";
+    protected static final String SEQ_LOCATION = "SEQ_EG_LOCATION";
     private static final long serialVersionUID = 3457753550380426649L;
+
     @Id
     @GeneratedValue(generator = SEQ_LOCATION, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotNull
     @Length(min = 2, max = 50)
+    @SafeHtml
     private String name;
 
     @Length(max = 100)
+    @SafeHtml
     private String description;
 
     private boolean active;

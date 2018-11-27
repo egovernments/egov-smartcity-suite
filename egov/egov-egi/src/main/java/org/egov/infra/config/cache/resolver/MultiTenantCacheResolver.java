@@ -48,7 +48,6 @@
 
 package org.egov.infra.config.cache.resolver;
 
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.interceptor.AbstractCacheResolver;
@@ -56,6 +55,8 @@ import org.springframework.cache.interceptor.CacheOperationInvocationContext;
 
 import java.util.Collection;
 import java.util.Collections;
+
+import static org.egov.infra.config.core.ApplicationThreadLocals.getTenantID;
 
 public class MultiTenantCacheResolver extends AbstractCacheResolver {
 
@@ -65,7 +66,7 @@ public class MultiTenantCacheResolver extends AbstractCacheResolver {
     }
 
     @Override
-    protected Collection<String> getCacheNames(final CacheOperationInvocationContext<?> context) {
-        return Collections.singleton(ApplicationThreadLocals.getTenantID());
+    protected Collection<String> getCacheNames(CacheOperationInvocationContext<?> context) {
+        return Collections.singleton(getTenantID());
     }
 }

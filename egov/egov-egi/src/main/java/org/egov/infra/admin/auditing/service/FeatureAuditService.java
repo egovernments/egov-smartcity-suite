@@ -48,7 +48,7 @@
 
 package org.egov.infra.admin.auditing.service;
 
-import org.egov.infra.admin.auditing.contract.FeatureRoleChangeAuditReportRequest;
+import org.egov.infra.admin.auditing.contracts.FeatureRoleChangeAuditReportRequest;
 import org.egov.infra.admin.master.entity.Feature;
 import org.egov.infra.admin.master.repository.FeatureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +65,7 @@ public class FeatureAuditService {
     private FeatureRepository featureRepository;
 
     public Page<Revision<Integer, Feature>> getFeatureRoleChangeAudit(FeatureRoleChangeAuditReportRequest featureRoleChangeAuditReportRequest) {
-        final Pageable pageable = new PageRequest(featureRoleChangeAuditReportRequest.pageNumber(),
+        Pageable pageable = new PageRequest(featureRoleChangeAuditReportRequest.pageNumber(),
                 featureRoleChangeAuditReportRequest.pageSize(),
                 featureRoleChangeAuditReportRequest.orderDir(), featureRoleChangeAuditReportRequest.orderBy());
         return featureRepository.findRevisions(featureRoleChangeAuditReportRequest.getFeature(), pageable);

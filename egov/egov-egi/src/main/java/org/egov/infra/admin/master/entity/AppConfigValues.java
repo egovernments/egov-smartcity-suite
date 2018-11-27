@@ -52,7 +52,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.annotations.Expose;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
-import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
@@ -65,6 +64,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.Objects;
@@ -79,8 +79,9 @@ import static org.egov.infra.admin.master.entity.AppConfigValues.SEQ_APPCONFIG_V
 @SequenceGenerator(name = SEQ_APPCONFIG_VALUE, sequenceName = SEQ_APPCONFIG_VALUE, allocationSize = 1)
 public class AppConfigValues extends AbstractAuditable {
 
-    public static final String SEQ_APPCONFIG_VALUE = "SEQ_EG_APPCONFIG_VALUES";
-    private static final long serialVersionUID = 1L;
+    protected static final String SEQ_APPCONFIG_VALUE = "SEQ_EG_APPCONFIG_VALUES";
+    private static final long serialVersionUID = 7572304323306975487L;
+
     @Expose
     @Id
     @GeneratedValue(generator = SEQ_APPCONFIG_VALUE, strategy = SEQUENCE)
@@ -89,16 +90,15 @@ public class AppConfigValues extends AbstractAuditable {
     @NotBlank
     @SafeHtml
     @Length(max = 4000)
-    @Column(name = "value")
     private String value;
 
     @NotNull
     @Temporal(DATE)
-    @Column(name = "effective_from", updatable = false)
+    @Column(updatable = false)
     private Date effectiveFrom;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "key_id", nullable = false)
+    @JoinColumn(name = "config", nullable = false)
     @JsonIgnore
     private AppConfig config;
 

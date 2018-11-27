@@ -66,17 +66,18 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.util.Set;
 
 import static org.egov.infra.admin.master.entity.BoundaryType.SEQ_BOUNDARY_TYPE;
 
 @Entity
-@Table(name = "EG_BOUNDARY_TYPE")
+@Table(name = "EG_BOUNDARYTYPE")
 @Unique(fields = "code", enableDfltMsg = true)
 @SequenceGenerator(name = SEQ_BOUNDARY_TYPE, sequenceName = SEQ_BOUNDARY_TYPE, allocationSize = 1)
 public class BoundaryType extends AbstractAuditable {
 
-    public static final String SEQ_BOUNDARY_TYPE = "SEQ_EG_BOUNDARY_TYPE";
+    protected static final String SEQ_BOUNDARY_TYPE = "SEQ_EG_BOUNDARY_TYPE";
     private static final long serialVersionUID = 859229842367886336L;
     @Expose
     @Id
@@ -85,6 +86,7 @@ public class BoundaryType extends AbstractAuditable {
 
     @NotBlank
     @SafeHtml
+    @Length(max = 64)
     private String name;
 
     @NotBlank
@@ -101,9 +103,11 @@ public class BoundaryType extends AbstractAuditable {
     @JoinColumn(name = "parent")
     private BoundaryType parent;
 
+    @Positive
     private Long hierarchy;
 
     @SafeHtml
+    @Length(max = 64)
     private String localName;
 
     @Transient

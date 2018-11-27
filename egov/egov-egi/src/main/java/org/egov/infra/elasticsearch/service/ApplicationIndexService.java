@@ -94,15 +94,15 @@ public class ApplicationIndexService {
         applicationIndex.setCityGrade(defaultString((String) cityInfo.get(CITY_CORP_GRADE_KEY)));
         applicationIndex.setDistrictName(defaultString((String) cityInfo.get(CITY_DIST_NAME_KEY)));
         applicationIndex.setRegionName(defaultString((String) cityInfo.get(CITY_REGION_NAME_KEY)));
-        applicationIndexRepository.save(applicationIndex);
         applicationDocumentService.createOrUpdateApplicationDocument(applicationIndex);
+        applicationIndexRepository.save(applicationIndex);
         return applicationIndex;
     }
 
     @Transactional
     public ApplicationIndex updateApplicationIndex(ApplicationIndex applicationIndex) {
-        applicationIndexRepository.save(applicationIndex);
         applicationDocumentService.createOrUpdateApplicationDocument(applicationIndex);
+        applicationIndexRepository.save(applicationIndex);
         return applicationIndex;
     }
 
@@ -110,11 +110,11 @@ public class ApplicationIndexService {
         return applicationIndexRepository.findByApplicationNumberAndCityName(applicationNumber,
                 ApplicationThreadLocals.getCityName());
     }
-    
-	public List<ApplicationIndex> findAllByCityNameAndCreatedByAndApprovalStatus(User currentUser,
-			List<ApprovalStatus> approvalStatuses) {
-		return applicationIndexRepository.findAllByCityNameAndCreatedByAndApprovalStatus(ApplicationThreadLocals.getCityName(),
-				currentUser, approvalStatuses);
-	}
+
+    public List<ApplicationIndex> findAllByCityNameAndCreatedByAndApprovalStatus(User currentUser,
+                                                                                 List<ApprovalStatus> approvalStatuses) {
+        return applicationIndexRepository.findAllByCityNameAndCreatedByAndApprovalStatus(ApplicationThreadLocals.getCityName(),
+                currentUser, approvalStatuses);
+    }
 
 }

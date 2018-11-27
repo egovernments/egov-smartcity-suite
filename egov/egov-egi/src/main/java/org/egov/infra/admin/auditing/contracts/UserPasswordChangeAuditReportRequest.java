@@ -46,79 +46,22 @@
  *
  */
 
-package org.egov.infra.admin.common.entity;
+package org.egov.infra.admin.auditing.contracts;
 
-import java.util.Objects;
+import org.egov.infra.web.support.search.DataTableSearchRequest;
 
-public class MenuLink {
-    private Long id;
-    private String name;
-    private String contextRoot;
-    private String displayName;
-    private String url;
-    private boolean enabled;
+import javax.validation.constraints.Positive;
 
-    public Long getId() {
-        return id;
+public class UserPasswordChangeAuditReportRequest extends DataTableSearchRequest {
+
+    @Positive(message = "not valid")
+    private Long changedFor;
+
+    public Long getChangedFor() {
+        return changedFor;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public String getContextRoot() {
-        return contextRoot;
-    }
-
-    public void setContextRoot(final String contextRoot) {
-        this.contextRoot = contextRoot;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(final String displayName) {
-        this.displayName = displayName;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(final String url) {
-        this.url = url;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        if (this == other)
-            return true;
-        if (!(other instanceof MenuLink))
-            return false;
-        MenuLink menuLink = (MenuLink) other;
-        return Objects.equals(getId(), menuLink.getId()) &&
-                Objects.equals(getName(), menuLink.getName());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getName());
+    public void setChangedFor(Long changedFor) {
+        this.changedFor = changedFor;
     }
 }

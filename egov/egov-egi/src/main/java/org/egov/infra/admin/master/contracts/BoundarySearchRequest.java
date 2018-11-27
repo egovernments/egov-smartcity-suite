@@ -50,8 +50,11 @@ package org.egov.infra.admin.master.contracts;
 
 import org.egov.infra.web.support.search.DataTableSearchRequest;
 
+import javax.validation.constraints.Positive;
+
 public class BoundarySearchRequest extends DataTableSearchRequest {
 
+    @Positive
     private Long boundaryTypeId;
 
     public Long getBoundaryTypeId() {

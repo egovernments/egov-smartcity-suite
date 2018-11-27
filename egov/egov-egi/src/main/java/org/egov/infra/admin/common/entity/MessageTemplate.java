@@ -50,6 +50,8 @@ package org.egov.infra.admin.common.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
@@ -58,6 +60,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -66,17 +69,28 @@ import static org.egov.infra.admin.common.entity.MessageTemplate.SEQ_MESSAGETEMP
 @Entity
 @Table(name = "eg_messagetemplate")
 @Unique(fields = "templateName", enableDfltMsg = true)
-@Cacheable
 @SequenceGenerator(name = SEQ_MESSAGETEMPLATE, sequenceName = SEQ_MESSAGETEMPLATE, allocationSize = 1)
+@Cacheable
 public class MessageTemplate extends AbstractPersistable<Long> {
-    public static final String SEQ_MESSAGETEMPLATE = "SEQ_EG_MESSAGETEMPLATE";
+    protected static final String SEQ_MESSAGETEMPLATE = "SEQ_EG_MESSAGETEMPLATE";
     private static final long serialVersionUID = 3650406178933970435L;
+
     @Id
     @GeneratedValue(generator = SEQ_MESSAGETEMPLATE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @NotBlank
+    @Length(max = 100)
+    @SafeHtml
     private String templateName;
+
+    @NotBlank
+    @SafeHtml
     private String template;
+
+    @NotBlank
+    @Length(max = 10)
+    @SafeHtml
     private String locale;
 
     public Long getId() {

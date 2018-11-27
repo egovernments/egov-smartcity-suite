@@ -54,6 +54,7 @@ import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.utils.DateUtils;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -63,6 +64,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
@@ -72,36 +74,40 @@ import static org.egov.infra.validation.ValidatorUtils.assertNotNull;
 @Entity
 @Table(name = "EG_APPLICATIONINDEX")
 @SequenceGenerator(name = SEQ_APPLICATIONINDEX, sequenceName = SEQ_APPLICATIONINDEX, allocationSize = 1)
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "version")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "version")
 public class ApplicationIndex extends AbstractAuditable {
 
-    public static final String SEQ_APPLICATIONINDEX = "SEQ_EG_APPLICATIONINDEX";
+    protected static final String SEQ_APPLICATIONINDEX = "SEQ_EG_APPLICATIONINDEX";
     private static final long serialVersionUID = -5846090185417446039L;
 
     @Id
     @GeneratedValue(generator = SEQ_APPLICATIONINDEX, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
+    @NotBlank
     @Length(max = 50)
+    @SafeHtml
     private String moduleName;
 
-    @NotNull
+    @NotBlank
     @Length(max = 50)
+    @SafeHtml
     private String applicationNumber;
 
     @NotNull
     private Date applicationDate;
 
-    @NotNull
+    @NotBlank
     @Length(max = 150)
     private String applicationType;
 
-    @NotNull
+    @NotBlank
     @Length(max = 250)
+    @SafeHtml
     private String applicantName;
 
     @Length(max = 250)
+    @SafeHtml
     private String applicantAddress;
 
     /*
@@ -109,52 +115,65 @@ public class ApplicationIndex extends AbstractAuditable {
      */
     private Date disposalDate;
 
-    @NotNull
+    @NotBlank
     @Length(max = 50)
+    @SafeHtml
     private String status;
 
-    @NotNull
+    @NotBlank
     @Length(max = 250)
+    @SafeHtml
     private String url;
 
     @Length(max = 50)
+    @SafeHtml
     private String consumerCode;
 
-    @Length(min = 10, max = 50)
+    @Length(max = 12)
+    @SafeHtml
     private String mobileNumber;
 
+    @Length(max = 250)
+    @SafeHtml
     private String ownerName;
 
-    @Length(min = 10, max = 50)
+    @Length(max = 12)
+    @SafeHtml
     private String aadharNumber;
 
     private Integer elapsedDays;
 
-    @Length(max = 50)
+    @Length(max = 5)
     @Enumerated(EnumType.STRING)
     private ClosureStatus closed;
 
-    @Length(max = 50)
+    @Length(max = 20)
     @Enumerated(EnumType.STRING)
     private ApprovalStatus approved;
 
     @Length(max = 50)
+    @SafeHtml
     private String channel;
 
     @Length(max = 4)
+    @SafeHtml
     private String cityCode;
 
-    @NotNull
-    @Length(max = 250)
+    @NotBlank
+    @Length(max = 50)
+    @SafeHtml
     private String cityName;
 
     @Length(max = 50)
+    @SafeHtml
     private String cityGrade;
 
-    @Length(max = 250)
+    @Length(max = 50)
+    @SafeHtml
     private String districtName;
 
     @Length(max = 50)
+    @SafeHtml
     private String regionName;
 
     private Integer isClosed;

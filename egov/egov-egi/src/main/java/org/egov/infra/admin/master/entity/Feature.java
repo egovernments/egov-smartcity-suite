@@ -55,6 +55,8 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -68,6 +70,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 import java.util.Set;
 
@@ -81,16 +84,21 @@ import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 @Audited
 public class Feature extends AbstractPersistable<Long> {
 
-    public static final String SEQ_FEATURE = "SEQ_EG_FEATURE";
+    protected static final String SEQ_FEATURE = "SEQ_EG_FEATURE";
     private static final long serialVersionUID = -5308237250026445794L;
     @Id
     @GeneratedValue(generator = SEQ_FEATURE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotAudited
+    @NotBlank
+    @Length(max = 100)
+    @SafeHtml
     private String name;
 
     @NotAudited
+    @Length(max = 200)
+    @SafeHtml
     private String description;
 
     @ManyToOne

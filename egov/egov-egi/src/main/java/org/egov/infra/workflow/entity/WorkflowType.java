@@ -52,6 +52,8 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -62,6 +64,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 import static org.egov.infra.workflow.entity.WorkflowType.SEQ_WORKFLOWTYPES;
 
@@ -81,12 +84,24 @@ public class WorkflowType extends AbstractAuditable {
     @Fetch(FetchMode.JOIN)
     private Module module;
 
+    @NotBlank
+    @SafeHtml
+    @Length(max = 100)
     private String type;
 
+    @NotBlank
+    @SafeHtml
+    @Length(max = 255)
     private String typeFQN;
 
+    @NotBlank
+    @SafeHtml
+    @Length(max = 255)
     private String link;
 
+    @NotBlank
+    @SafeHtml
+    @Length(max = 100)
     private String displayName;
 
     private boolean enabled;

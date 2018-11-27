@@ -48,21 +48,8 @@
 
 package org.egov.infra.event.model;
 
-import static org.egov.infra.config.core.ApplicationThreadLocals.clearValues;
-import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
-import static org.egov.infra.config.core.ApplicationThreadLocals.getCityName;
-import static org.egov.infra.config.core.ApplicationThreadLocals.getDomainName;
-import static org.egov.infra.config.core.ApplicationThreadLocals.getDomainURL;
-import static org.egov.infra.config.core.ApplicationThreadLocals.getMunicipalityName;
-import static org.egov.infra.config.core.ApplicationThreadLocals.getTenantID;
-import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
-import static org.egov.infra.config.core.ApplicationThreadLocals.setCityCode;
-import static org.egov.infra.config.core.ApplicationThreadLocals.setCityName;
-import static org.egov.infra.config.core.ApplicationThreadLocals.setDomainName;
-import static org.egov.infra.config.core.ApplicationThreadLocals.setDomainURL;
-import static org.egov.infra.config.core.ApplicationThreadLocals.setMunicipalityName;
-import static org.egov.infra.config.core.ApplicationThreadLocals.setTenantID;
-import static org.egov.infra.config.core.ApplicationThreadLocals.setUserId;
+
+import static org.egov.infra.config.core.ApplicationThreadLocals.*;
 
 public abstract class AbstractApplicationEvent<T> {
 

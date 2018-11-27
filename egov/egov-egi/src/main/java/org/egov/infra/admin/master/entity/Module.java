@@ -48,6 +48,9 @@
 
 package org.egov.infra.admin.master.entity;
 
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
+
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -60,6 +63,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Objects;
@@ -73,12 +78,16 @@ import static org.egov.infra.admin.master.entity.Module.SEQ_MODULE;
 @Cacheable
 public class Module implements Serializable {
 
-    public static final String SEQ_MODULE = "SEQ_EG_MODULE";
+    protected static final String SEQ_MODULE = "SEQ_EG_MODULE";
     private static final long serialVersionUID = -632195454827894969L;
+
     @Id
     @GeneratedValue(generator = SEQ_MODULE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @SafeHtml
+    @NotBlank
+    @Length(max = 100)
     private String name;
 
     private boolean enabled;
@@ -87,14 +96,19 @@ public class Module implements Serializable {
     @JoinColumn(name = "parentModule")
     private Module parentModule;
 
+    @SafeHtml
+    @Length(max = 50)
     private String displayName;
 
+    @Positive
     private Integer orderNumber;
 
 
     @OneToMany(mappedBy = "parentModule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Action> actions = Collections.emptySet();
 
+    @Length(max = 50)
+    @SafeHtml
     private String contextRoot;
 
     public Long getId() {

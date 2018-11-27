@@ -49,6 +49,7 @@
 package org.egov.infra.workflow.matrix.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
@@ -59,7 +60,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -77,40 +78,52 @@ public class WorkFlowMatrix extends AbstractPersistable<Long> implements Cloneab
     private Long id;
 
     @SafeHtml
+    @Length(max = 30)
     private String department;
 
-    @NotNull
+    @NotBlank
+    @Length(max = 30)
     @SafeHtml
     private String objectType;
 
     @SafeHtml
+    @Length(max = 100)
     private String currentState;
 
+    @Length(max = 30)
     @SafeHtml
     private String currentStatus;
 
     @SafeHtml
+    @Length(max = 512)
     private String pendingActions;
 
     @SafeHtml
+    @Length(max = 2048)
     private String currentDesignation;
 
     @SafeHtml
+    @Length(max = 50)
     private String additionalRule;
 
     @SafeHtml
+    @Length(max = 100)
     private String nextState;
 
     @SafeHtml
+    @Length(max = 100)
     private String nextAction;
 
     @SafeHtml
+    @Length(max = 20148)
     private String nextDesignation;
 
     @SafeHtml
+    @Length(max = 100)
     private String nextStatus;
 
     @SafeHtml
+    @Length(max = 512)
     private String validActions;
 
     private BigDecimal fromQty;
@@ -123,6 +136,8 @@ public class WorkFlowMatrix extends AbstractPersistable<Long> implements Cloneab
     @Temporal(TemporalType.DATE)
     private Date toDate;
 
+    @SafeHtml
+    @Length(max = 200)
     private String enableFields;
 
     private Boolean forwardEnabled;

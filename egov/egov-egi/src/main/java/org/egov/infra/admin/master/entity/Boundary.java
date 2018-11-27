@@ -58,7 +58,6 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.Length;
-import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -70,10 +69,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -84,12 +85,10 @@ import static org.egov.infra.admin.master.entity.Boundary.SEQ_BOUNDARY;
 @CompositeUnique(fields = {"boundaryNum", "boundaryType"}, enableDfltMsg = true)
 @Unique(fields = "code", enableDfltMsg = true)
 @Table(name = "EG_BOUNDARY")
-@NamedQuery(name = "Boundary.findBoundariesByBoundaryType",
-        query = "select b from Boundary b where b.boundaryType.id = :boundaryTypeId")
 @SequenceGenerator(name = SEQ_BOUNDARY, sequenceName = SEQ_BOUNDARY, allocationSize = 1)
 public class Boundary extends AbstractAuditable {
 
-    public static final String SEQ_BOUNDARY = "seq_eg_boundary";
+    protected static final String SEQ_BOUNDARY = "seq_eg_boundary";
     private static final long serialVersionUID = 3054956514161912026L;
 
     @Expose
@@ -108,8 +107,11 @@ public class Boundary extends AbstractAuditable {
     private String code;
 
     @SafeHtml
+    @Length(max = 10)
     private String lgdCode;
 
+    @Positive
+    @NotNull
     private Long boundaryNum;
 
     @ManyToOne
@@ -129,22 +131,28 @@ public class Boundary extends AbstractAuditable {
 
     @DateFormat
     @DateTimeFormat(pattern = "dd-MM-yyyy")
+    @NotNull
     private Date fromDate;
 
     private Date toDate;
 
     private boolean active;
 
+    @Positive
     private Long bndryId;
 
     @SafeHtml
+    @Length(max = 256)
     private String localName;
 
+    @Positive
     private Float longitude;
 
+    @Positive
     private Float latitude;
 
     @Length(max = 32)
+    @SafeHtml
     private String materializedPath;
 
     @Override

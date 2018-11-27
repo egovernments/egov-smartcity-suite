@@ -53,7 +53,6 @@ import com.google.gson.annotations.Expose;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
-import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
@@ -62,16 +61,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 import static org.egov.infra.admin.master.entity.HierarchyType.SEQ_HIERARCHY_TYPE;
 
 @Entity
-@Unique(fields = {"name", "code"}, enableDfltMsg = true)
 @Table(name = "eg_hierarchy_type")
+@Unique(fields = {"name", "code"}, enableDfltMsg = true)
 @SequenceGenerator(name = SEQ_HIERARCHY_TYPE, sequenceName = SEQ_HIERARCHY_TYPE, allocationSize = 1)
 public class HierarchyType extends AbstractAuditable {
 
-    public static final String SEQ_HIERARCHY_TYPE = "SEQ_EG_HIERARCHY_TYPE";
+    protected static final String SEQ_HIERARCHY_TYPE = "SEQ_EG_HIERARCHY_TYPE";
     private static final long serialVersionUID = -7131667806935923935L;
     @Expose
     @Id

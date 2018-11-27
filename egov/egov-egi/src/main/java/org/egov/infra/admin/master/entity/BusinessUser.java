@@ -56,7 +56,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "eg_businessuser")
 public class BusinessUser extends User {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 647766471290064738L;
 
     public BusinessUser() {
         setType(UserType.BUSINESS);

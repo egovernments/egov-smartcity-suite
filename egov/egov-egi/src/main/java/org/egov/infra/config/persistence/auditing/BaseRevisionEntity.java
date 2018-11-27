@@ -51,10 +51,14 @@ package org.egov.infra.config.persistence.auditing;
 import org.egov.infra.config.persistence.auditing.listener.EntityAuditListener;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.RevisionEntity;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.util.Objects;
 
 @Entity
@@ -62,10 +66,14 @@ import java.util.Objects;
 @RevisionEntity(EntityAuditListener.class)
 public class BaseRevisionEntity extends DefaultRevisionEntity {
     private static final long serialVersionUID = -1956016149274910543L;
-    @NotNull
-    private Long userId;
 
     @NotNull
+    @Positive
+    private Long userId;
+
+    @NotBlank
+    @SafeHtml
+    @Length(max = 20)
     private String ipAddress;
 
     public Long getUserId() {

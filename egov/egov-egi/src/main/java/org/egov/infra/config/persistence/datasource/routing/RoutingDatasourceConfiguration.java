@@ -70,7 +70,7 @@ public class RoutingDatasourceConfiguration {
 
     @Bean(name = "readWriteDataSource")
     public JndiObjectFactoryBean readWriteDataSource() {
-        final JndiObjectFactoryBean dataSource = new JndiObjectFactoryBean();
+        JndiObjectFactoryBean dataSource = new JndiObjectFactoryBean();
         dataSource.setExpectedType(DataSource.class);
         dataSource.setJndiName(env.getProperty("default.jdbc.jndi.datasource"));
         return dataSource;
@@ -78,7 +78,7 @@ public class RoutingDatasourceConfiguration {
 
     @Bean(name = "readOnlyDataSource")
     public JndiObjectFactoryBean readOnlyDataSource() {
-        final JndiObjectFactoryBean dataSource = new JndiObjectFactoryBean();
+        JndiObjectFactoryBean dataSource = new JndiObjectFactoryBean();
         dataSource.setExpectedType(DataSource.class);
         dataSource.setJndiName(env.getProperty("default.jdbc.jndi.readonly.datasource"));
         return dataSource;

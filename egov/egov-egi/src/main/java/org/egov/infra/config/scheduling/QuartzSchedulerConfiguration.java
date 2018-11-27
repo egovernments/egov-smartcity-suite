@@ -74,7 +74,7 @@ import static org.quartz.impl.StdSchedulerFactory.PROP_SCHED_WRAP_JOB_IN_USER_TX
 
 @Configuration
 public class QuartzSchedulerConfiguration {
-    public static final String APP_SCHEDULER_NAME = "ERP_APP_SCHEDULER";
+    private static final String APP_SCHEDULER_NAME = "ERP_APP_SCHEDULER";
     private static final String FALSE = "false";
     private static final String TRUE = "true";
 

@@ -53,6 +53,7 @@ import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
 import org.springframework.beans.factory.annotation.Value;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getTenantID;
 
 public class DomainBasedSchemaTenantIdentifierResolver implements CurrentTenantIdentifierResolver {
 
@@ -61,7 +62,7 @@ public class DomainBasedSchemaTenantIdentifierResolver implements CurrentTenantI
 
     @Override
     public String resolveCurrentTenantIdentifier() {
-        return defaultIfBlank(ApplicationThreadLocals.getTenantID(), defaultSchema);
+        return defaultIfBlank(getTenantID(), defaultSchema);
     }
 
     @Override

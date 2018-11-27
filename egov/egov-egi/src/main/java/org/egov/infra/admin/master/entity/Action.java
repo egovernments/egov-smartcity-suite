@@ -53,6 +53,8 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -68,6 +70,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -92,29 +96,46 @@ public class Action extends AbstractAuditable {
     private Long id;
 
     @Column(unique = true)
+    @SafeHtml
+    @NotBlank
+    @Length(max = 100)
     private String name;
 
+    @SafeHtml
+    @NotBlank
+    @Length(max = 150)
     private String url;
 
+    @SafeHtml
+    @Length(max = 150)
     private String queryParams;
 
+    @SafeHtml
+    @Length(max = 50)
     private String queryParamRegex;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "eg_roleaction", joinColumns = @JoinColumn(name = "actionid"), inverseJoinColumns = @JoinColumn(name = "roleid"))
+    @JoinTable(name = "eg_roleaction", joinColumns = @JoinColumn(name = "actionid"),
+            inverseJoinColumns = @JoinColumn(name = "roleid"))
     @Fetch(FetchMode.SUBSELECT)
     private Set<Role> roles = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "parentModule")
+    @NotNull
     private Module parentModule;
 
     private Integer orderNumber;
 
+    @SafeHtml
+    @Length(max = 80)
     private String displayName;
 
     private boolean enabled;
 
+    @SafeHtml
+    @NotBlank
+    @Length(max = 32)
     private String contextRoot;
 
     @Override

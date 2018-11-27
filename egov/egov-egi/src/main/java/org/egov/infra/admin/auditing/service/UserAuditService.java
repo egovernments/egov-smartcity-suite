@@ -48,8 +48,8 @@
 
 package org.egov.infra.admin.auditing.service;
 
-import org.egov.infra.admin.auditing.contract.UserPasswordChangeAuditReportRequest;
-import org.egov.infra.admin.auditing.contract.UserRoleChangeAuditReportRequest;
+import org.egov.infra.admin.auditing.contracts.UserPasswordChangeAuditReportRequest;
+import org.egov.infra.admin.auditing.contracts.UserRoleChangeAuditReportRequest;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.UserRepository;
 import org.egov.infra.web.support.search.DataTableSearchRequest;
@@ -76,7 +76,7 @@ public class UserAuditService {
     }
 
     public Page<Revision<Integer, User>> getPagedUserRevision(Long userId, DataTableSearchRequest dataTableSearchRequest) {
-        final Pageable pageable = new PageRequest(dataTableSearchRequest.pageNumber(),
+        Pageable pageable = new PageRequest(dataTableSearchRequest.pageNumber(),
                 dataTableSearchRequest.pageSize(),
                 dataTableSearchRequest.orderDir(), dataTableSearchRequest.orderBy());
         return userRepository.findRevisions(userId, pageable);

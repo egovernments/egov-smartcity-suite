@@ -121,17 +121,17 @@ public class DBMigrationConfiguration {
             }
         }
 
-        return new Flyway();
+        return Flyway.configure().load();
     }
 
     private void migrateDatabase(DataSource dataSource, String schema, String... locations) {
-        Flyway flyway = new Flyway();
-        flyway.setBaselineOnMigrate(true);
-        flyway.setValidateOnMigrate(validateOnMigrate);
-        flyway.setOutOfOrder(true);
-        flyway.setLocations(locations);
-        flyway.setDataSource(dataSource);
-        flyway.setSchemas(schema);
+        Flyway flyway = Flyway.configure()
+                .baselineOnMigrate(true)
+                .validateOnMigrate(validateOnMigrate)
+                .outOfOrder(true)
+                .locations(locations)
+                .dataSource(dataSource)
+                .schemas(schema).load();
         if (repairMigration)
             flyway.repair();
         flyway.migrate();

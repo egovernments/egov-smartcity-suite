@@ -86,6 +86,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
@@ -121,24 +122,28 @@ public class User extends AbstractAuditable {
     @Column(name = "username", unique = true)
     @NotNull
     @Length(min = 2, max = 64)
+    @SafeHtml
     private String username;
 
     @NotNull
     @Length(min = 4, max = 64)
     @Audited
+    @SafeHtml
     private String password;
 
+    @SafeHtml
+    @Length(max = 10)
     private String salutation;
 
     @SafeHtml
-    @Length(min = 2, max = 64)
+    @Length(max = 64)
     private String guardian;
 
     @SafeHtml
-    @Length(min = 2, max = 64)
+    @Length(max = 64)
     private String guardianRelation;
 
-    @NotNull
+    @NotBlank
     @SafeHtml
     @Length(min = 2, max = 100)
     @Audited
@@ -160,6 +165,7 @@ public class User extends AbstractAuditable {
     private String emailId;
 
     @SafeHtml
+    @Length(max = 15)
     private String altContactNumber;
 
     @SafeHtml
@@ -188,7 +194,8 @@ public class User extends AbstractAuditable {
     @NotNull
     private Date pwdExpiryDate = new Date();
 
-    @NotNull
+    @NotBlank
+    @Length(max = 15)
     private String locale = "en_IN";
 
     @Enumerated(EnumType.STRING)

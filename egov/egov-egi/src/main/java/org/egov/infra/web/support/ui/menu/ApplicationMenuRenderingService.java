@@ -48,7 +48,7 @@
 
 package org.egov.infra.web.support.ui.menu;
 
-import org.egov.infra.admin.common.entity.MenuLink;
+import org.egov.infra.admin.common.contracts.MenuLink;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.springframework.beans.factory.annotation.Autowired;

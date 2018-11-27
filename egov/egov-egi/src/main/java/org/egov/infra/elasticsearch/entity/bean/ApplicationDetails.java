@@ -48,27 +48,27 @@
 
 package org.egov.infra.elasticsearch.entity.bean;
 
-import org.apache.commons.lang3.StringUtils;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 public class ApplicationDetails {
 
-    private String region = StringUtils.EMPTY;
-    private String district = StringUtils.EMPTY;
-    private String grade = StringUtils.EMPTY;
-    private String ulbName = StringUtils.EMPTY;
-    private String ulbCode = StringUtils.EMPTY;
-    private String revZone = StringUtils.EMPTY;
-    private String revWard = StringUtils.EMPTY;
-    private String admZone = StringUtils.EMPTY;
-    private String admWard = StringUtils.EMPTY;
-    private String locality = StringUtils.EMPTY;
-    private String commName = StringUtils.EMPTY;
-    private String commMobile = StringUtils.EMPTY;
-    private String serviceGroup = StringUtils.EMPTY;
-    private String serviceType = StringUtils.EMPTY;
-    private String functionaryName = StringUtils.EMPTY;
-    private String functionaryCode = StringUtils.EMPTY;
-    private String source = StringUtils.EMPTY;
+    private String region = EMPTY;
+    private String district = EMPTY;
+    private String grade = EMPTY;
+    private String ulbName = EMPTY;
+    private String ulbCode = EMPTY;
+    private String revZone = EMPTY;
+    private String revWard = EMPTY;
+    private String admZone = EMPTY;
+    private String admWard = EMPTY;
+    private String locality = EMPTY;
+    private String commName = EMPTY;
+    private String commMobile = EMPTY;
+    private String serviceGroup = EMPTY;
+    private String serviceType = EMPTY;
+    private String functionaryName = EMPTY;
+    private String functionaryCode = EMPTY;
+    private String source = EMPTY;
     private long totalReceived = 0;
     private long totalClosed = 0;
     private long totalOpen = 0;
