@@ -412,7 +412,7 @@ public class MeterReadingController {
         if (meteredRatesDetail.getFlatAmount() != null && meteredRatesDetail.getFlatAmount() != 0
                 && numberOfUnitsPerMonth.compareTo(BigDecimal.valueOf(usageSlab.getFromVolume())) > -1) {
             amtValue = numberOfUnitsPerMonth.subtract(BigDecimal.valueOf(usageSlab.getFromVolume())).add(BigDecimal.ONE)
-                    .divide(BigDecimal.valueOf(meteredRatesDetail.getRecursiveFactor()), 0, BigDecimal.ROUND_HALF_UP);
+                    .divide(BigDecimal.valueOf(meteredRatesDetail.getRecursiveFactor()), 0, BigDecimal.ROUND_CEILING);
             totalAmount = BigDecimal.valueOf(meteredRatesDetail.getFlatAmount()).add(amtValue
                     .multiply(BigDecimal.valueOf(meteredRatesDetail.getRecursiveAmount())));
         } else if (meteredRatesDetail.getRateAmount() != null && meteredRatesDetail.getRateAmount() != 0
@@ -422,7 +422,7 @@ public class MeterReadingController {
             amount2 = numberOfUnitsPerMonth
                     .subtract(BigDecimal.valueOf(usageSlab.getFromVolume()))
                     .add(BigDecimal.ONE)
-                    .divide(BigDecimal.valueOf(meteredRatesDetail.getRecursiveFactor()), 0, BigDecimal.ROUND_HALF_UP);
+                    .divide(BigDecimal.valueOf(meteredRatesDetail.getRecursiveFactor()), 0, BigDecimal.ROUND_CEILING);
             amtValue = amount2.multiply(BigDecimal.valueOf(meteredRatesDetail.getRecursiveAmount())).setScale(0,
                     BigDecimal.ROUND_HALF_UP);
             totalAmount = amount1.add(amtValue);
