@@ -53,10 +53,13 @@ import org.springframework.validation.FieldError;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.net.URLDecoder.decode;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -143,5 +146,13 @@ public final class WebUtils {
                 .stream()
                 .collect(Collectors.toMap(FieldError::getField,
                         FieldError::getDefaultMessage, (a, b) -> b, HashMap::new));
+    }
+
+    public static String decodeQueryString(String queryString) {
+        try {
+            return decode(queryString, UTF_8.name());
+        } catch (UnsupportedEncodingException usee) {
+            return queryString;
+        }
     }
 }

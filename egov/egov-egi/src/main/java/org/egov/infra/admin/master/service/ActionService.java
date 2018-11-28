@@ -61,6 +61,8 @@ import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.text.similarity.LevenshteinDistance.getDefaultInstance;
+import static org.egov.infra.web.utils.WebUtils.decodeQueryString;
+import static org.egov.infra.web.utils.WebUtils.extractURLWithoutQueryParams;
 
 @Service
 @Transactional(readOnly = true)
@@ -84,18 +86,21 @@ public class ActionService {
         return actionRepository.save(action);
     }
 
-    public Optional<Action> getActionByUrlAndContextRoot(String url, String queryString, String contextRoot) {
+    public Optional<Action> getActionByUrlAndContextRoot(String fullURL, String queryString, String contextRoot) {
         Action action;
         if (isBlank(queryString)) {
-            action = Optional.ofNullable(actionRepository.findByUrlAndContextRootAndQueryParamsIsNull(url, contextRoot))
-                    .orElse(findNearestMatchingAction(url, actionRepository.findByMatchingUrlAndContextRoot(url, contextRoot)));
+            action = Optional.ofNullable(actionRepository.findByUrlAndContextRootAndQueryParamsIsNull(fullURL, contextRoot))
+                    .orElse(findNearestMatchingAction(fullURL, actionRepository.findByMatchingUrlAndContextRoot(fullURL, contextRoot)));
 
         } else {
-            action = Optional.ofNullable(actionRepository.findByUrlAndContextRootAndQueryParams(url, contextRoot, queryString))
+            String queryStr = decodeQueryString(queryString);
+            String url = extractURLWithoutQueryParams(fullURL);
+            action = Optional.ofNullable(actionRepository.findByUrlAndContextRootAndQueryParams(url, contextRoot, queryStr))
                     .orElse(findNearestMatchingAction(url,
-                            actionRepository.findByMatchingUrlAndContextRootAndQueryParams(url, contextRoot, queryString)));
-            if (action != null && !action.queryParamMatches(queryString)) {
-                LOGGER.warn("Query params passed doesn't match with the regex specified for this action URL");
+                            actionRepository.findByMatchingUrlAndContextRootAndQueryParams(url, contextRoot, queryStr)));
+            if (action != null && !action.queryParamMatches(queryStr)) {
+                LOGGER.warn("Query params passed doesn't match with the regex specified for this action URL, provided:- {}, expected:- {}",
+                        queryStr, action.getQueryParamRegex());
                 return Optional.empty();
             }
         }

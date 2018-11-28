@@ -72,15 +72,12 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.infra.admin.master.entity.Action.SEQ_ACTION;
 
 @Entity
@@ -246,14 +243,9 @@ public class Action extends AbstractAuditable {
     }
 
     public boolean queryParamMatches(String queryParams) {
-        try {
-            queryParams = URLDecoder.decode(queryParams, UTF_8.name());
-            return isBlank(queryParamRegex) || QUERY_PARAM_PATTERN_CACHE
-                    .computeIfAbsent(queryParamRegex, val -> Pattern.compile(queryParamRegex))
-                    .matcher(queryParams).matches();
-        } catch (UnsupportedEncodingException usee) {
-            return false;
-        }
+        return isBlank(queryParamRegex) || QUERY_PARAM_PATTERN_CACHE
+                .computeIfAbsent(queryParamRegex, val -> Pattern.compile(queryParamRegex))
+                .matcher(queryParams).matches();
     }
 
     @Override
