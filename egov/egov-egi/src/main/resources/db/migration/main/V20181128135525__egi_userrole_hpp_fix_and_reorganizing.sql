@@ -21,10 +21,6 @@ DELETE FROM eg_roleaction WHERE actionid=(SELECT id FROM eg_action WHERE name='a
 
 DELETE FROM eg_action WHERE name='ajaxuserlist' AND contextroot='egi';
 
-INSERT INTO eg_roleaction(roleid,actionid) VALUES
-((SELECT id FROM eg_role WHERE name = 'SYSTEM') ,
- (SELECT id FROM eg_action WHERE name = 'EMPLOYEE BY USERNAME'));
-
 UPDATE eg_action SET name='EMPLOYEE ROLE BY USERNAME', url='/userrole/employee',
 queryParamRegex='userName=(\w+( \w+)*)', displayname='Employee Role By Username' WHERE name='AjaxLoadRoleByUser';
 
