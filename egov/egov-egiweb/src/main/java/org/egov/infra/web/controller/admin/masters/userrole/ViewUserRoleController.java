@@ -53,25 +53,23 @@ import org.egov.infra.admin.master.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping(value = "/userrole/view/{name}")
+@RequestMapping(value = "/userrole/view/{userId}")
 public class ViewUserRoleController {
-    private final UserService userService;
 
     @Autowired
-    public ViewUserRoleController(final UserService userService) {
-        this.userService = userService;
-    }
+    private UserService userService;
 
-    @RequestMapping
-    public String updateuserRole(@PathVariable final Long name, final Model model) {
-        final User user = userService.getUserById(name);
-        model.addAttribute("user", user);
+    @GetMapping
+    public String viewUserRoleByUserId(@PathVariable Long userId, Model model) {
+        User user = userService.getUserById(userId);
+        model.addAttribute("userName", new StringBuilder(10).append(user.getName()).append(" [ ")
+                .append(user.getUsername()).append(" ]").toString());
         model.addAttribute("roles", user.getRoles());
         return "userrole-view";
     }
-
 }

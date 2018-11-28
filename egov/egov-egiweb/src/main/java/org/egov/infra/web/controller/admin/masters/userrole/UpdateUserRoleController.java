@@ -67,14 +67,12 @@ import java.util.List;
 @Controller
 @RequestMapping(value = "/userrole/update/{userId}")
 public class UpdateUserRoleController {
-    private final UserService userService;
-    private final RoleService roleService;
 
     @Autowired
-    public UpdateUserRoleController(UserService userService, RoleService roleService) {
-        this.userService = userService;
-        this.roleService = roleService;
-    }
+    private UserService userService;
+
+    @Autowired
+    private RoleService roleService;
 
     @ModelAttribute
     public User user(@PathVariable Long userId) {
@@ -97,8 +95,8 @@ public class UpdateUserRoleController {
             return "/userrole/update/" + user.getId();
         userService.updateUser(user);
         redirectAttrs.addFlashAttribute("message", "msg.usr.role.update.success");
+        redirectAttrs.addFlashAttribute("fromUpdate", true);
         return "redirect:/userrole/view/" + user.getId();
-
     }
 
 }

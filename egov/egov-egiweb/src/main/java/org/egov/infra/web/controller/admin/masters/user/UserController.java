@@ -83,6 +83,12 @@ public class UserController {
         return toJson(userService.getAllEmployeeNameLike(employeeName));
     }
 
+    @GetMapping(value = "employee-username-like/", produces = APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public String getEmployeeRolesByUserName(@RequestParam String userName) {
+        return toJson(userService.getAllEmployeeUsernameLike(userName));
+    }
+
     private String toJson(List<User> users) {
         JsonArray userInfos = new JsonArray();
         users.forEach(user -> {
@@ -91,7 +97,6 @@ public class UserController {
             userInfo.addProperty("userName", user.getUsername());
             userInfo.addProperty("id", user.getId());
             userInfos.add(userInfo);
-
         });
         return userInfos.toString();
     }

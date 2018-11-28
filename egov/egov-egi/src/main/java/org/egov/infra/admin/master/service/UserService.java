@@ -69,6 +69,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.egov.infra.config.core.ApplicationThreadLocals.getMunicipalityName;
+import static org.egov.infra.persistence.entity.enums.UserType.EMPLOYEE;
 
 @Service
 @Transactional(readOnly = true)
@@ -124,6 +125,14 @@ public class UserService {
         return userRepository.findUserRolesByUserName(userName);
     }
 
+    public Set<Role> getEmployeeRolesByUsername(String userName) {
+        return getRolesByUsernameAndType(userName, EMPLOYEE);
+    }
+
+    public Set<Role> getRolesByUsernameAndType(String userName, UserType type) {
+        return userRepository.findUserRolesByUserNameAndType(userName, type);
+    }
+
     public User getUserById(Long id) {
         return userRepository.findOne(id);
     }
@@ -165,14 +174,18 @@ public class UserService {
     }
 
     public List<User> getAllEmployeeNameLike(String name) {
-        return userRepository.findByNameContainingIgnoreCaseAndTypeAndActiveTrue(name, UserType.EMPLOYEE);
+        return userRepository.findByNameContainingIgnoreCaseAndTypeAndActiveTrue(name, EMPLOYEE);
+    }
+
+    public List<User> getAllEmployeeUsernameLike(String name) {
+        return findAllByMatchingUserNameForType(name, EMPLOYEE);
     }
 
     public List<User> getUsersByUsernameAndRolename(String userName, String roleName) {
         return userRepository.findUsersByUserAndRoleName(userName, roleName);
     }
-    
-    public List<User> findByMobileNumberAndType(String mobileNumber,UserType type) {
-        return userRepository.findByMobileNumberAndType(mobileNumber,type);
+
+    public List<User> findByMobileNumberAndType(String mobileNumber, UserType type) {
+        return userRepository.findByMobileNumberAndType(mobileNumber, type);
     }
 }

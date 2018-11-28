@@ -46,68 +46,84 @@
  *
  */
 
-function populateUserRoles(dropdown) {
-	populaterolesSelect({
-		username : dropdown.value
-	});
-}
-
 $(document).ready(
-		function() {
-			if ($('#currentroles').size > 0) {
-				jQuery("#currentroles option[value!='']").each(function() {
-					var currRolVal = jQuery(this).val();
-					jQuery("#roles option[value!='']").each(function() {
-						if (jQuery(this).val() == currRolVal)
-							jQuery(this).prop('selected', true);
-					});
-				});
-			}
+    function () {
+        if ($('#currentroles').size > 0) {
+            $("#currentroles option[value!='']").each(function () {
+                var currRolVal = $(this).val();
+                $("#roles option[value!='']").each(function () {
+                    if ($(this).val() == currRolVal)
+                        $(this).prop('selected', true);
+                });
+            });
+        }
 
-			var userlist = new Bloodhound({
-				datumTokenizer : function(datum) {
-					return Bloodhound.tokenizers.whitespace(datum.value);
-				},
-				queryTokenizer : Bloodhound.tokenizers.whitespace,
-				remote : {
-					url : '/egi/userRole/ajax/userlist?userName=%QUERY',
-					filter : function(data) {
-						// Map the remote source JSON array to a JavaScript
-						// object array
-						return $.map(data, function(u) {
-							return {
-								name : u.Text,
-								value : u.Value
-							};
-						});
-					}
-				}
-			});
+        var userlist = new Bloodhound({
+            datumTokenizer: function (datum) {
+                return Bloodhound.tokenizers.whitespace(datum.value);
+            },
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            remote: {
+                url: '/egi/user/employee-username-like/?userName=%QUERY',
+                filter: function (data) {
+                    return $.map(JSON.parse(data), function (u) {
+                        return {
+                            name: u.name + " [" + u.userName + "]",
+                            userName: u.userName,
+                            value: u.id
+                        };
+                    });
+                }
+            }
+        });
 
-			userlist.initialize();
+        userlist.initialize();
 
-			var user_typeahead = $('#user_name').typeahead({
-				hint : true,
-				highlight : true,
-				minLength : 3
-			}, {
-				displayKey : 'name',
-				source : userlist.ttAdapter()
-			}).on('typeahead:selected', function(event, data) {
-				populateUserRoles(this);
-			});
-			typeaheadWithEventsHandling(user_typeahead, '#usernameId',
-					'#rolesSelect');
+        $('#user_name').typeahead({
+            hint: true,
+            highlight: true,
+            minLength: 3
+        }, {
+            displayKey: 'name',
+            source: userlist.ttAdapter()
+        }).on('typeahead:selected', function (event, data) {
+            $('#currentRoles').empty();
+            $('#usernameId').val('');
+            $.ajax({
+                type: "POST",
+                url: 'employee',
+                data: {userName: data.userName},
+                dataType: "json",
+                success: function (resp) {
+                    $.map(JSON.parse(resp), function (role) {
+                        $('#currentRoles')
+                            .append($("<option></option>")
+                                .attr("value", role.id)
+                                .text(role.name));
+                    });
+                    $('#usernameId').val(data.value);
+                },
+                error: function () {
+                    bootbox.alert('Could not load roles');
+                }
+            });
+        });
 
-			$('#multiselect > option:selected').each(
-					function() {
-						var opt = '<option value="' + $(this).val() + '">'
-								+ $(this).text() + '</option>';
-						$('#multiselect_to').append(opt);
-						$(this).remove();
+        $('#multiselect > option:selected').each(
+            function () {
+                var opt = '<option value="' + $(this).val() + '">'
+                    + $(this).text() + '</option>';
+                $('#multiselect_to').append(opt);
+                $(this).remove();
 
-			});
-			
-			$('#multiselect').removeAttr('name');
+            });
 
-		});
+        $('#multiselect').removeAttr('name');
+
+        try {
+            $('#userroleSearchBtn').click(function () {
+                window.location = '/egi/userrole/search';
+            })
+        } catch (e) {
+        }
+    });

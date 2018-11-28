@@ -72,11 +72,14 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.egov.infra.admin.master.entity.Action.SEQ_ACTION;
 
@@ -89,7 +92,7 @@ public class Action extends AbstractAuditable {
 
     protected static final String SEQ_ACTION = "SEQ_EG_ACTION";
     private static final long serialVersionUID = -5459067787684736822L;
-    private static final LRUCache<String, Pattern> QUERY_PARAM_PATTERN_CACHE = new LRUCache<>(0, 50);
+    private static final LRUCache<String, Pattern> QUERY_PARAM_PATTERN_CACHE = new LRUCache<>(0, 100);
 
     @Id
     @GeneratedValue(generator = SEQ_ACTION, strategy = GenerationType.SEQUENCE)
@@ -243,9 +246,14 @@ public class Action extends AbstractAuditable {
     }
 
     public boolean queryParamMatches(String queryParams) {
-        return isBlank(queryParamRegex) || QUERY_PARAM_PATTERN_CACHE
-                .computeIfAbsent(queryParamRegex, val -> Pattern.compile(queryParamRegex))
-                .matcher(queryParams).matches();
+        try {
+            queryParams = URLDecoder.decode(queryParams, UTF_8.name());
+            return isBlank(queryParamRegex) || QUERY_PARAM_PATTERN_CACHE
+                    .computeIfAbsent(queryParamRegex, val -> Pattern.compile(queryParamRegex))
+                    .matcher(queryParams).matches();
+        } catch (UnsupportedEncodingException usee) {
+            return false;
+        }
     }
 
     @Override

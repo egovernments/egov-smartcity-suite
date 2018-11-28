@@ -52,50 +52,54 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="row" id="page-content">
-	<div class="col-md-12">
-		<div class="panel" data-collapsed="0">
-			<div class="panel-body">
-				 <c:if test="${not empty message}">
+    <div class="col-md-12">
+        <div class="panel" data-collapsed="0">
+            <div class="panel-body">
+                <c:if test="${not empty message}">
                     <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
                 </c:if>
-		<form:form  id="updateuserRoleForm" method ="post" modelAttribute="user"  class="form-horizontal form-groups-bordered" >
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-						<strong><spring:message code="lbl.userRole"/></strong>
-					</div>
-				</div> 
-				<div class="panel-body">
-					<div class="row add-border">
-						<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.userrole.selecteduserName" /></div>
-						<div class="col-md-9 col-xs-6 add-margin" id="ct-name">
-							<c:out value="${user.username}"></c:out>
-						</div>
-					</div>
-						
-						   <div class="form-group">
-                      <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.userRole"/>
-                            <span class="mandatory"></span>
-                        </label>
-                        <div class="col-sm-6 add-margin">
-                            <form:select path="roles" multiple="true" size="10"
-                                         id="rolesSelect" cssClass="form-control" cssErrorClass="form-control error" required="required">
-                                       <form:options items="${roles}" itemValue="id" itemLabel="name"/>
-                                </form:select>
-                            <form:errors path="roles" cssClass="error-msg"/>
+                <div class="panel panel-primary" data-collapsed="0">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <strong><spring:message code="lbl.userRole"/></strong>
                         </div>
-                     </div> 		
-				</div>
-			</div>
-			<div class="row">
-				<div class="text-center">
-			        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();"><spring:message code="lbl.close"/></button>
-				</div>
-			</div>
-		</form:form>
-	</div>
-</div>
-</div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">
+                                <spring:message code="lbl.username"/>
+                            </label>
+                            <div class="col-sm-9 add-margin">
+                                <c:out value="${userName}"></c:out>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">
+                                <spring:message code="lbl.assigned.roles"/>
+                            </label>
+                            <div class="col-sm-6 add-margin">
+                                <form:select path="roles" multiple="true" size="10"
+                                             id="rolesSelect" cssClass="form-control" cssErrorClass="form-control error" required="required">
+                                    <form:options items="${roles}" itemValue="id" itemLabel="name"/>
+                                </form:select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="text-center">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();">
+                            <spring:message code="lbl.close"/>
+                        </button>
+                        <c:if test="${fromUpdate}">
+                            <button type="button" id="userroleSearchBtn" class="btn btn-primary">
+                                <spring:message code="lbl.search"/>
+                            </button>
+                        </c:if>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <script src="<cdn:url  value='/resources/js/app/userrole.js?rnd=${app_release_no}'/>"></script>

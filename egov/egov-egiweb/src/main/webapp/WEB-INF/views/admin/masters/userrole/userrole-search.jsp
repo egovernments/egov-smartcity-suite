@@ -46,11 +46,10 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="row" id="page-content">
     <div class="col-md-12">
@@ -60,7 +59,7 @@
         <c:if test="${not empty error}">
             <div class="alert alert-danger" role="alert"><spring:message code="${error}"/></div>
         </c:if>
-        <form:form action="search" method="get" class="form-horizontal form-groups-bordered" id="userrolesearchform">
+        <form:form action="search" method="POST" class="form-horizontal form-groups-bordered" id="userrolesearchform">
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">
                     <div class="panel-title">
@@ -73,7 +72,8 @@
                             <span class="mandatory"></span>
                         </label>
                         <div class="col-sm-6">
-                            <input id="user_name" type="text" class="form-control typeahead is_valid_alphanumeric" placeholder="Start typing and select it from below list" autocomplete="off" required="required"/>
+                            <input id="user_name" type="text" class="form-control typeahead is_valid_alphanumeric"
+                                   placeholder="Start typing and select it from below list" autocomplete="off" required="required"/>
                             <input type="hidden" name="userId" id="usernameId"/>
                         </div>
                     </div>
@@ -82,10 +82,7 @@
                             <spring:message code="lbl.current.userRole"/>
                         </label>
                         <div class="col-sm-6 add-margin">
-                            <egov:ajaxdropdown id="rolesAjax" fields="['Value','Text']"
-                                               dropdownId="rolesSelect" url="userRole/ajax/rolelist-for-user"/>
-                            <select id="rolesSelect" class="form-control"
-                                    multiple="multiple" size="10" readonly="readonly">
+                            <select id="currentRoles" class="form-control" multiple="multiple" size="10" readonly="readonly">
                             </select>
                         </div>
                     </div>
@@ -94,7 +91,9 @@
             <div class="row">
                 <div class="text-center">
                     <button type="submit" id="userroleUpdateBtn" class="btn btn-primary"><spring:message code="lbl.update"/></button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();"><spring:message code="lbl.close"/></button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();">
+                        <spring:message code="lbl.close"/>
+                    </button>
                 </div>
             </div>
         </form:form>

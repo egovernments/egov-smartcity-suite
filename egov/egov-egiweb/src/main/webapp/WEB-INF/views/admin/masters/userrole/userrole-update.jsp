@@ -67,10 +67,9 @@
                     <div class="panel panel-primary" data-collapsed="0">
                         <div class="panel-heading">
                             <div class="panel-title">
-                                <strong><spring:message code="lbl.hdr.userrole.info"/> For : <span style="
-    font-family: semibold;
-    font-size: 16px;
-"><c:out value="${user.username}"></c:out></span></strong>
+                                <strong><spring:message code="lbl.hdr.userrole.info"/> For :
+                                    <span style="font-family: semibold;font-size: 16px;">
+                                    <c:out value="${user.username}"></c:out></span></strong>
                             </div>
                         </div>
                         <form:hidden path="id" id="id" value="${user.id}"/>
@@ -144,11 +143,6 @@
     </div>
 </div>
 <script src="<cdn:url  value='/resources/js/app/userrole.js?rnd=${app_release_no}'/>"></script>
-<script>
-    $('#userroleSearchBtn').click(function () {
-        window.location = '/egi/userrole/search';
-    })
-</script>
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/multiselect.js'/>"></script>
 <script type="text/javascript">
     $('#multiselect').multiselect();

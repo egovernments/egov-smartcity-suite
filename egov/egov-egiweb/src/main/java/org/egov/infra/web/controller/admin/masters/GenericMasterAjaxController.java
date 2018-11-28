@@ -54,13 +54,9 @@ import com.google.gson.JsonObject;
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
-import org.egov.infra.admin.master.entity.Role;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
-import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.persistence.entity.enums.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -74,7 +70,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @Controller
 public class GenericMasterAjaxController {
@@ -89,9 +84,6 @@ public class GenericMasterAjaxController {
 
     @Autowired
     private BoundaryService boundaryService;
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private CrossHierarchyService crossHierarchyService;
@@ -150,47 +142,6 @@ public class GenericMasterAjaxController {
     @ResponseBody
     public boolean isChildBoundaryTypePresent(@RequestParam Long parentId) {
         return boundaryTypeService.getBoundaryTypeByParent(parentId) != null;
-    }
-
-    @GetMapping("/userRole/ajax/rolelist-for-user")
-    @ResponseBody
-    public void getRolesByUserName(@RequestParam String username, HttpServletResponse response) throws IOException {
-        if (username != null) {
-            final Set<Role> roles = userService.getRolesByUsername(username);
-
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            IOUtils.write(buildRoles(roles), response.getWriter());
-        }
-    }
-
-    private String buildRoles(Set<Role> roles) {
-        final JsonArray jsonArray = new JsonArray();
-        for (final Role role : roles) {
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty(VALUE_KEY, role.getId());
-            jsonObject.addProperty(DISPLAY_KEY, role.getName());
-            jsonArray.add(jsonObject);
-        }
-        return jsonArray.toString();
-    }
-
-    @GetMapping(value = "/userRole/ajax/userlist", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public void getAllActiveUserByNameLike(@RequestParam String userName, HttpServletResponse response) throws IOException {
-        final List<User> userList = userService.findAllByMatchingUserNameForType(userName, UserType.EMPLOYEE);
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        IOUtils.write(buildUser(userList), response.getWriter());
-    }
-
-    private String buildUser(List<User> users) {
-        final JsonArray jsonArray = new JsonArray();
-        for (final User user : users) {
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty(VALUE_KEY, user.getId());
-            jsonObject.addProperty(DISPLAY_KEY, user.getUsername());
-            jsonArray.add(jsonObject);
-        }
-        return jsonArray.toString();
     }
 
     @GetMapping("/boundary/ajaxBoundary-blockByLocality")
