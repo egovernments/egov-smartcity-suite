@@ -146,7 +146,9 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
     }
     
     @GetMapping(value = "/{assessmentNo}/{applicationSource}")
-    public String newForm(@ModelAttribute PropertyImpl property, final Model model, @RequestParam(required = false) final String meesevaApplicationNumber ,@PathVariable("applicationSource") String applicationSource) {
+    public String newForm(@ModelAttribute PropertyImpl property, final Model model,
+            @RequestParam(required = false) final String meesevaApplicationNumber,
+            @PathVariable("applicationSource") String applicationSource, final HttpServletRequest request) {
         BasicProperty basicProperty = property.getBasicProperty();
         if (basicProperty.isUnderWorkflow()) {
             model.addAttribute("wfPendingMsg", "Could not do " + APPLICATION_TYPE_DEMOLITION
@@ -204,6 +206,8 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
         model.addAttribute("currentPropertyTax", currentPropertyTax);
         model.addAttribute("currentPropertyTaxDue", currentPropertyTaxDue);
         model.addAttribute("arrearPropertyTaxDue", arrearPropertyTaxDue);
+        model.addAttribute("currentWaterTaxDue", propertyDemolitionService.getWaterTaxDues(basicProperty.getUpicNo(), request));
+        
         if (arrearPropertyTaxDue.compareTo(BigDecimal.ZERO) > 0) {
             model.addAttribute("taxDuesErrorMsg", "Please clear property tax due for property demolition ");
             return TARGET_TAX_DUES;
