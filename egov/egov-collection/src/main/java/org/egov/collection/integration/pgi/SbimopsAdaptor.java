@@ -300,9 +300,10 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
 
             if (isNotBlank(sbimopsResponse.getAuthStatus()) &&
                     sbimopsResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_FAILED)
-                    && (!responseParameterMap.get(SBIMOPS_STATUS.toUpperCase()).equals("F")))
+                    && (!responseParameterMap.get(SBIMOPS_STATUS.toUpperCase()).equals("F"))){
+                LOGGER.error("Request for failed transaction response:"+prepeareReconciliationRequest(onlinePayment));
                 LOGGER.error("CFMSFAILED TRANSACTION RESPONSE: " + responseParameterMap.toString());
-
+            }
             if (sbimopsResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS)) {
                 sbimopsResponse
                         .setTxnAmount(new BigDecimal(Double.valueOf(responseParameterMap.get(SBIMOPS_TAMT))));
@@ -349,7 +350,7 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
         }
         return response;
     }
-
+    
     private String prepeareReconciliationRequest(final OnlinePayment onlinePayment) {
         final JsonObject deptCodeJson = new JsonObject();
         deptCodeJson.addProperty(SBIMOPS_DEPTCODE,
