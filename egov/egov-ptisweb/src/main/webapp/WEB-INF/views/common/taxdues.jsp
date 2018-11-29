@@ -68,7 +68,7 @@
 						<spring:message code="lbl.assmtno" />
 					</div>
 					<div class="col-md-3 col-xs-3 add-margin view-content">
-						<c:out value="${assessementNo}"/>
+						<c:out value="${property.basicProperty.upicNo}"/>
 					</div>
 				</div>	
 				<div class="row add-border">	
@@ -82,7 +82,7 @@
 						<spring:message code="lbl.doorNumber" />
 					</div>
 					<div class="col-md-3 col-xs-3 add-margin view-content">
-						<strong><c:out value="${doorNo}"/></strong>
+						<strong><c:out value="${property.basicProperty.address.houseNoBldgApt}"/></strong>
 					</div>
 				</div>	
 				<div class="row add-border">	

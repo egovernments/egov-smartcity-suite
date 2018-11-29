@@ -71,8 +71,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -143,7 +145,7 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
         return null;
     }
     
-    @RequestMapping(value = "/{assessmentNo}/{applicationSource}", method = RequestMethod.GET)
+    @GetMapping(value = "/{assessmentNo}/{applicationSource}")
     public String newForm(@ModelAttribute PropertyImpl property, final Model model, @RequestParam(required = false) final String meesevaApplicationNumber ,@PathVariable("applicationSource") String applicationSource) {
         BasicProperty basicProperty = property.getBasicProperty();
         if (basicProperty.isUnderWorkflow()) {
@@ -198,6 +200,7 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
             arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(propertyTaxDetails.get(ARR_COLL_STR))
                     .add(currentFirstHalfTaxDue);
         }
+        model.addAttribute("ownerName", basicProperty.getPrimaryOwner().getName());
         model.addAttribute("currentPropertyTax", currentPropertyTax);
         model.addAttribute("currentPropertyTaxDue", currentPropertyTaxDue);
         model.addAttribute("arrearPropertyTaxDue", arrearPropertyTaxDue);
@@ -216,7 +219,7 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
 
 
     @Transactional
-    @RequestMapping(value = "/{assessmentNo}/{applicationSource}", method = RequestMethod.POST)
+    @PostMapping(value = "/{assessmentNo}/{applicationSource}")
     public String demoltionFormSubmit(@ModelAttribute PropertyImpl property, final BindingResult errors, final Model model, final HttpServletRequest request,
                                       @RequestParam String workFlowAction) throws TaxCalculatorExeption {
         String target;
@@ -276,7 +279,7 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
 		}
     }
     
-    @RequestMapping(value = "/generate-meesevareceipt/{assessmentNo}", method = RequestMethod.GET)
+    @GetMapping(value = "/generate-meesevareceipt/{assessmentNo}")
     public RedirectView generateMeesevaReceipt(final HttpServletRequest request, final Model model) {
         final String keyNameArray = request.getParameter("transactionServiceNumber");
         final RedirectView redirect = new RedirectView(PropertyTaxConstants.MEESEVA_REDIRECT_URL + keyNameArray, false);

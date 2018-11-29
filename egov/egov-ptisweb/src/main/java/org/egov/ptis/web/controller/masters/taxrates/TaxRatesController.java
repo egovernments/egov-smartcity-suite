@@ -62,9 +62,10 @@ import org.egov.ptis.master.service.TaxRatesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -94,21 +95,21 @@ public class TaxRatesController {
         return new AppConfigValues();
     }
 
-    @RequestMapping(value = "/appconfig/view", method = RequestMethod.GET)
+    @GetMapping(value = "/appconfig/view")
     public String showAppConfigTaxRates(final Model model) {
         final Map<String, Double> taxRatesMap = taxRatesService.getTaxDetails();
         model.addAttribute("taxRates", taxRatesMap);
         return TAXRATE_VIEW;
     }
 
-    @RequestMapping(value = "/appconfig/edit", method = RequestMethod.GET)
+    @GetMapping(value = "/appconfig/edit")
     public String viewTaxRates(final Model model) {
         final Map<String, Double> taxRatesMap = taxRatesService.getTaxDetails();
         model.addAttribute("taxRates", taxRatesMap);
         return TAXRATE_EDIT;
     }
 
-    @RequestMapping(value = "/appconfig/edit", method = RequestMethod.POST)
+    @PostMapping(value = "/appconfig/edit")
     public String saveAppConfigTaxRates(@ModelAttribute final DemandReasonDetailsBean taxRatesForm, final Model model,
             final HttpServletRequest request, final RedirectAttributes redirectAttributes) {
         final String resTaxValue = request.getParameter("General Tax Residential-value");
@@ -144,7 +145,7 @@ public class TaxRatesController {
         }
     }
 
-    @RequestMapping(value = "/view", method = RequestMethod.GET)
+    @GetMapping(value = "/view")
     public String showTaxRates(final Model model) {
         DemandReasonDetailsBean taxRatesForm = new DemandReasonDetailsBean();
         List<EgDemandReasonDetails> taxRates = taxRatesService.getTaxRates();
@@ -155,7 +156,7 @@ public class TaxRatesController {
         return "taxrates-view";
     }
 
-    @RequestMapping(value = "/edit", method = RequestMethod.GET)
+    @GetMapping(value = "/edit")
     public String taxRatesEditView(final Model model) {
         DemandReasonDetailsBean taxRatesForm = new DemandReasonDetailsBean();
         List<EgDemandReasonDetails> egDemandReasonDetails = taxRatesService.getTaxRates();
@@ -165,7 +166,7 @@ public class TaxRatesController {
         return "taxrates-editview";
     }
 
-    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+    @PostMapping(value = "/edit")
     public String saveTaxRates(@ModelAttribute final DemandReasonDetailsBean taxRatesForm, final Model model,
             final HttpServletRequest request, final RedirectAttributes redirectAttributes) {
         EgDemandReasonDetails existingDemandReasonDetails;
