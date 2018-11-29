@@ -49,8 +49,6 @@ package org.egov.stms.masters.repository;
 
 import org.egov.stms.masters.entity.DonationDetailMaster;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -58,8 +56,7 @@ import java.util.List;
 @Repository
 public interface DonationDetailMasterRepository extends JpaRepository<DonationDetailMaster, Long> {
 
-   List<DonationDetailMaster> findByDonation_Id(final Long donation);
-   
-   @Query("select D from DonationDetailMaster D where D.donation=:donation order by D.noOfClosets")
-   List<DonationDetailMaster> findDonationDetailsOrderByNumberOfClosets(@Param("donation") final Long donation);
+    List<DonationDetailMaster> findByDonationId(Long donation);
+
+    List<DonationDetailMaster> findByDonationOrderByNoOfClosets(Long donation);
 }
