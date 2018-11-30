@@ -213,6 +213,11 @@ public class PersistenceService<T, ID extends Serializable> {
         return q;
     }
 
+    public T findByNamedQuery(final String namedQuery, final Object... params) {
+        final List<T> results = findAllByNamedQuery(namedQuery, params);
+        return results.isEmpty() ? null : results.get(0);
+    }
+
     @Transactional
     public T persist(final T model) {
         validate(model);

@@ -69,6 +69,7 @@ import org.egov.ptis.client.service.calculator.APTaxCalculator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
 import org.egov.ptis.domain.dao.property.PropertyStatusValuesDAO;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.DocumentType;
@@ -138,6 +139,9 @@ public class PropertyServiceTest {
     @Mock
     private EisCommonService eisCommonService;
 
+    @Mock
+    private PropertyStatusDAO propertyStatusDAO;
+
     @InjectMocks
     private PropertyService propertyService;
 
@@ -151,7 +155,8 @@ public class PropertyServiceTest {
     @Test
     public void shouldSetReferenceNumberTo1WhenOrderDateIsNull() throws Exception {
         System.out.println(propertyService);
-        PropertyStatusValues propertyStatusValues = propertyService.createPropStatVal(new BasicPropertyImpl(), "", new Date(), null, null, null, "ok");
+        PropertyStatusValues propertyStatusValues = propertyService
+                .createPropStatVal(new BasicPropertyImpl(), "", new Date(), null, null, null, "ok");
         assertEquals("0001", propertyStatusValues.getReferenceNo());
     }
 }
