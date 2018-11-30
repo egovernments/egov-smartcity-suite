@@ -115,8 +115,6 @@
 	</s:form>
 	<script type="text/javascript">
 
-jQuery.noConflict();
-
 jQuery("#loadingMask").remove();
 jQuery(function ($) {
 	try { 

@@ -133,6 +133,8 @@ import org.egov.commons.Installment;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.commons.entity.Source;
+import org.egov.demand.dao.DepreciationMasterDao;
+import org.egov.demand.model.DepreciationMaster;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Module;
@@ -166,8 +168,11 @@ import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
+import org.egov.ptis.domain.dao.property.PropertyOccupationDAO;
 import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
 import org.egov.ptis.domain.dao.property.PropertyStatusValuesDAO;
+import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.enums.TransactionType;
@@ -190,13 +195,21 @@ import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.RoofType;
 import org.egov.ptis.domain.entity.property.StructureClassification;
+import org.egov.ptis.domain.entity.property.TaxExemptionReason;
 import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.entity.property.vacantland.LayoutApprovalAuthority;
 import org.egov.ptis.domain.entity.property.vacantland.VacantLandPlotArea;
+import org.egov.ptis.domain.repository.master.apartment.ApartmentRepository;
+import org.egov.ptis.domain.repository.master.floortype.FloorTypeRepository;
+import org.egov.ptis.domain.repository.master.rooftype.RoofTypeRepository;
+import org.egov.ptis.domain.repository.master.structureclassification.StructureClassificationRepository;
+import org.egov.ptis.domain.repository.master.taxexemption.TaxExemptionReasonRepository;
 import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthorityRepository;
 import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
+import org.egov.ptis.domain.repository.master.walltype.WallTypeRepository;
+import org.egov.ptis.domain.repository.master.woodtype.WoodTypeRepository;
 import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
@@ -338,11 +351,29 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     @PersistenceContext
     private transient EntityManager entityManager;
     @Autowired
-    private InstallmentDao installmentDao;
-    @Autowired
-    private ModuleService moduleDao;
-    @Autowired
     private BoundaryService boundaryService;
+    @Autowired
+    private WallTypeRepository wallTypeRepository;
+    @Autowired
+    private WoodTypeRepository woodTypeRepository;
+    @Autowired
+    private RoofTypeRepository roofTypeRepository;
+    @Autowired
+    private FloorTypeRepository floorTypeRepository;
+    @Autowired
+    private PropertyTypeMasterDAO propertyTypeMasterDAO;
+    @Autowired
+    private PropertyMutationMasterDAO propertyMutationMasterDAO;
+    @Autowired 
+    private StructureClassificationRepository classificationRepository;
+    @Autowired
+    private PropertyOccupationDAO propertyOccupationDAO;
+    @Autowired
+    private DepreciationMasterDao depreciationMasterDao;
+    @Autowired
+    private ApartmentRepository apartmentRepository;
+    @Autowired
+    TaxExemptionReasonRepository reasonRepository;
 
     public RevisionPetitionAction() {
 
@@ -401,24 +432,21 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         super.prepare();
         setUserInfo();
         documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.OBJECTION);
-        final List<WallType> wallTypes = getPersistenceService().findAllBy("from WallType order by name");
-        final List<WoodType> woodTypes = getPersistenceService().findAllBy("from WoodType order by name");
-        final List<PropertyTypeMaster> propTypeList = getPersistenceService()
-                .findAllBy("from PropertyTypeMaster where type != 'EWSHS' order by orderNo");
-        final List<PropertyMutationMaster> propMutList = getPersistenceService()
-                .findAllBy("from PropertyMutationMaster where type = 'MODIFY' and code in('OBJ')");
-        final List<String> structureList = getPersistenceService()
-                .findAllBy("from StructureClassification where isActive = true order by typeName ");
-        final List<PropertyOccupation> propOccList = getPersistenceService().findAllBy("from PropertyOccupation");
-        final List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
+        final List<WallType> wallTypes = wallTypeRepository.findAll();
+        final List<WoodType> woodTypes = woodTypeRepository.findAll();
+        final List<PropertyTypeMaster> propTypeList = propertyTypeMasterDAO.findAllExcludeEWSHS();
+		final List<PropertyMutationMaster> propMutList = (List<PropertyMutationMaster>) propertyMutationMasterDAO
+				.getPropertyMutationMasterByCodeAndType("OBJ", "MODIFY");
+        final List<StructureClassification> structureList = classificationRepository.findByIsActiveTrueOrderByTypeName();
+        final List<PropertyOccupation> propOccList = propertyOccupationDAO.findAll();
+        final List<DepreciationMaster> ageFacList =depreciationMasterDao.findAll();
         setFloorNoMap(FLOOR_MAP);
-        addDropdownData("floorType", getPersistenceService().findAllBy("from FloorType order by name"));
-        addDropdownData("roofType", getPersistenceService().findAllBy("from RoofType order by name"));
-        final List<String> apartmentsList = getPersistenceService().findAllBy("from Apartment order by name");
+        addDropdownData("floorType", floorTypeRepository.findAll());
+        addDropdownData("roofType", roofTypeRepository.findAll());
+        final List<Apartment> apartmentsList = apartmentRepository.findAll();
         final List<Boundary> zones = boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE, REVENUE_HIERARCHY_TYPE);
-        final List<String> taxExemptionReasonList = getPersistenceService()
-                .findAllBy("from TaxExemptionReason where isActive = true order by name");
+        final List<TaxExemptionReason> taxExemptionReasonList = reasonRepository.findByIsActiveTrueOrderByName();
         addDropdownData("wallType", wallTypes);
         addDropdownData("woodType", woodTypes);
         addDropdownData("PropTypeMaster", propTypeList);
@@ -1225,8 +1253,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     }
 
     public String viewObjectionDetails() {
-        objection = revisionPetitionService.find("from Objection where objectionNumber like ?",
-                objection.getObjectionNumber());
+		objection = (RevisionPetition) entityManager.createNamedQuery("RP_BY_APPLICATIONNO").setParameter("applicatiNo",
+				objection.getObjectionNumber());
         setOwnerName(objection.getBasicProperty().getProperty());
         setPropertyAddress(objection.getBasicProperty().getAddress());
         return "viewDetails";
@@ -1256,9 +1284,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         final Long oldPropTypeId = objection.getProperty().getPropertyDetail().getPropertyTypeMaster().getId();
 
         if (propTypeObjId != null && !propTypeObjId.trim().isEmpty() && !"-1".equals(propTypeObjId)) {
-            final PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService()
-                    .find("from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeObjId));
-
+            final PropertyTypeMaster propTypeMstr = propertyTypeMasterDAO.findById(Long.valueOf(propTypeObjId), false);
             if (!propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
                 propCompletionDate = propService
                         .getLowestDtOfCompFloorWise(objection.getProperty().getPropertyDetail().getFloorDetailsProxy());
@@ -1295,9 +1321,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
         updatePropertyID(objection.getBasicProperty());
         objection.getBasicProperty().getPropertyID().setZone(boundaryService.getBoundaryById(getZoneId()));
-        final PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService()
-                .find("from PropertyTypeMaster ptm where ptm.code = ?", OWNERSHIP_TYPE_VAC_LAND);
-
+        final PropertyTypeMaster propTypeMstr = propertyTypeMasterDAO.getPropertyTypeMasterByCode(OWNERSHIP_TYPE_VAC_LAND);
         if (oldPropTypeId == propTypeMstr.getId() && Long.parseLong(propTypeObjId) != propTypeMstr.getId()
                 || oldPropTypeId != propTypeMstr.getId() && Long.parseLong(propTypeObjId) == propTypeMstr.getId())
             if (propTypeMstr != null && StringUtils.equals(propTypeMstr.getId().toString(), propTypeObjId))
@@ -1360,8 +1384,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private void populatePropertyTypeCategory() {
         PropertyTypeMaster propTypeMstr = null;
         if (propTypeObjId != null && !propTypeObjId.trim().isEmpty() && !propTypeObjId.equals("-1"))
-            propTypeMstr = (PropertyTypeMaster) getPersistenceService()
-                    .find("from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeObjId));
+            propTypeMstr = propertyTypeMasterDAO.findById(Long.valueOf(propTypeObjId), false);
         else if (objection != null && objection.getProperty() != null
                 && objection.getProperty().getPropertyDetail() != null
                 && objection.getProperty().getPropertyDetail().getPropertyTypeMaster() != null
@@ -1498,14 +1521,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
     public void setRevisionPetitionService(final RevisionPetitionService revisionPetitionService) {
         this.revisionPetitionService = revisionPetitionService;
-    }
-
-    public PersistenceService<Property, Long> getPropertyImplService() {
-        return propertyImplService;
-    }
-
-    public void setPropertyImplService(final PersistenceService<Property, Long> propertyImplService) {
-        this.propertyImplService = propertyImplService;
     }
 
     public void setViewPropertyAction(final ViewPropertyAction viewPropertyAction) {

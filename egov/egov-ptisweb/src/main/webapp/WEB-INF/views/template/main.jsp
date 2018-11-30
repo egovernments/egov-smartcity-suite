@@ -61,6 +61,10 @@
     <c:if test="${analyticsEnabled}">
         <c:out value="${analyticsConfig}" escapeXml="false"/>
     </c:if>
+    <c:if test="${empty maxFileSize}">
+    	<spring:eval expression="@environment.getProperty('<modulename>.max.file.size')" scope="application" var="maxFileSize"/>
+    	<spring:eval expression="@environment.getProperty('<modulename>.allowed.file.ext')" scope="application" var="allowedFileExt"/>
+	</c:if>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">

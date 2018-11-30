@@ -60,7 +60,6 @@
 <!-- <script type="text/javascript" src="/ptis/javascript/unitRentAgreement.js"></script> -->
 
 <script type="text/javascript">
-	jQuery.noConflict();
 	jQuery("#loadingMask").remove();
 	function loadOnStartUp() {
    		var propType = '<s:property value="%{propertyDetail.propertyTypeMaster.type}"/>';

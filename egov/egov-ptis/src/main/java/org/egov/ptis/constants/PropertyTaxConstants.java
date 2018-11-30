@@ -229,9 +229,6 @@ public interface PropertyTaxConstants {
     public static final Character DMD_STATUS_NO_CHQ_BOUNCED = 'N';
 
     // Named Queries
-    public static final String QUERY_PROPERTYIMPL_BYID = "PROPERTYIMPL_BYID";
-    public static final String QUERY_WORKFLOW_PROPERTYIMPL_BYID = "WORKFLOW_PROPERTYIMPL_BYID";
-    public static final String GET_PROPERTY_TYPES = "getPropertyTypes";
     public static final String QUERY_STATUS_BY_MODULE_AND_CODE = "getStatusByModuleAndCode";
     public static final String QUERY_PROP_STATUS_BY_STATUSCODE = "getPropStatusByStatusCode";
 
@@ -392,20 +389,15 @@ public interface PropertyTaxConstants {
     public static final String QUERY_DEPRECIATION_BY_YEAR = "DEPRECIATION_BY_YEAR";
     public static final String QUERY_BASERATE_BY_OCCUPANCY_ZONE = "BASERATE_BY_OCCUPANCY_ZONE";
     public static final String QUERY_BASERATE_BY_ZONE_USAGE_STRUCTURE_OCCUPANCY = "BASERATE_BY_ZONE_USAGE_STRUCTURE_OCCUPANCY";
-    public static final String QUERY_PROPERTY_BY_UPICNO = "getPropertyByUpicNo";
     public static final String QUERY_PROPERTY_BY_UPICNO_AND_STATUS = "getPropertyByUpicNoAndStatus";
-    public static final String QUERY_BASICPROPERTY_BY_UPICNO = "getBasicPropertyByUpicNo";
-    public static final String QUERY_NOTICE_BY_NOTICENO = "getNoticeByNoticeNo";
     public static final String QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR = "INSTALLMENTLISTBY_MODULE_AND_STARTYEAR";
     public static final String QUERY_DEMANDREASONBY_CODE_AND_INSTALLMENTID = "DEMANDREASONBY_CODE_AND_INSTALLMENTID";
     public static final String QUERY_DEMANDREASONDETAILS_BY_DEMANDREASONID_DATE = "DEMANDREASONDETAILS_BY_DEMANDREASONID_DATE";
     public static final String QUERY_BASERENT_BY_BOUNDARY_FOR_OPENPLOT = "QUERY_BASERENT_BY_BOUNDARY_FOR_OPENPLOT";
     public static final String QUERY_LATEST_BILL_FOR_PROPERTY = "getLatestBillsForProperty";
-    public static final String QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE = "getPropStatValByUpicNoAndStatCodeAndISActive";
     public static final String QUERY_BILLRECEIPT_FOR_BILL = "getBillRcptGForBill";
     public static final String QUERY_INSTALLMENTBY_MODULE_AND_DESC = "INSTALLMENTBY_MODULE_AND_DESC";
     public static final String QUERY_BILLDETAIL_BILL_INST_RSN = "getBillDetailsforBillANDInstAndRsn";
-    public static final String QUERY_BASICPROPERTY_BY_BASICPROPID = "getBasicPropertyByBasicPropId";
     public static final String QUERY_PROPSTATVALUE_BY_BASICPROPID_CODE_ISACTIVE = "getPropStatValByBasicPropIdAndStatCodeAndISActive";
     public static final String QUERY_NOCOLL_DEMANDDET_FOR_PROPERTY = "getNoCollDemandDetForProperty";
     public static final String QUERY_NOCOLL_DEMANDDET_FOR_PROPERTY_FORINST = "getNoCollDemandDetForPropertyAndInst";

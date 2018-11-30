@@ -89,7 +89,7 @@ import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.service.DemandBill.DemandBillService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
-import org.hibernate.query.Query;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -102,6 +102,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_CLIENT_SPECIFIC_DMD_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
@@ -145,7 +148,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
     private BasicProperty basicProperty;
     private PropertyImpl property;
     private Map<String, Map<String, BigDecimal>> reasonwiseDues;
-    private List<ReportInfo> reportInfos = new ArrayList<ReportInfo>();
+    private List<ReportInfo> reportInfos = new ArrayList<>();
     InputStream billPDF;
     private String wardNum;
 
@@ -170,6 +173,9 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 
     @Autowired
     private ReportViewerUtil reportViewerUtil;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public StateAware getModel() {
@@ -197,9 +203,10 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
             }
             property = (PropertyImpl) basicProperty.getProperty();
 
-            final EgBill egBill = (EgBill) persistenceService.find("FROM EgBill WHERE module = ? "
-                    + "AND egBillType.code = ? AND consumerId = ? AND is_history = 'N'",
-                    moduleDao.getModuleByName(PTMODULENAME), BILLTYPE_MANUAL, basicProperty.getUpicNo());
+            final EgBill egBill = (EgBill) entityManager.unwrap(Session.class).createQuery("FROM EgBill WHERE module = :module "
+							+ "AND egBillType.code = :billType AND consumerId = :upicNo AND is_history = 'N'")
+					.setParameter("module", moduleDao.getModuleByName(PTMODULENAME))
+					.setParameter("billType", BILLTYPE_MANUAL).setParameter("upicNo", basicProperty.getUpicNo()).getSingleResult();
             ReportOutput reportOutput = null;
 
             if (egBill == null)
@@ -207,10 +214,11 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
             else {
                 final String query = "SELECT notice FROM EgBill bill, PtNotice notice left join notice.basicProperty bp "
                         + "WHERE bill.is_History = 'N' "
-                        + "AND bill.egBillType.code = ? "
-                        + "AND bill.billNo = notice.noticeNo " + "AND notice.noticeType = ? " + "AND bp = ?";
-                final PtNotice ptNotice = (PtNotice) persistenceService.find(query, BILLTYPE_MANUAL, NOTICE_TYPE_BILL,
-                        basicProperty);
+                        + "AND bill.egBillType.code = :billType "
+                        + "AND bill.billNo = notice.noticeNo " + "AND notice.noticeType = :noticeType " + "AND bp = :bp";
+				final PtNotice ptNotice = (PtNotice) entityManager.unwrap(Session.class).createQuery(query)
+						.setParameter("billType", BILLTYPE_MANUAL).setParameter("noticeType", NOTICE_TYPE_BILL)
+						.setParameter("bp", basicProperty).getSingleResult();
                 reportOutput = new ReportOutput();
 
                 // Reading from filestore by passing filestoremapper object
@@ -270,13 +278,11 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
                 .append(" and bp.id in (select basicProperty from PropertyImpl where status = 'A' and isExemptedFromTax = false ) ")
                 .append("group by bndry.name, bndry.boundaryNum ").append("order by bndry.boundaryNum, bndry.name");
 
-        final Query billQuery = getPersistenceService().getSession().getNamedQuery(QUERY_DEMAND_BILL_STATUS);
-        billQuery.setDate("FromDate", currInst.getFromDate());
-        billQuery.setDate("ToDate", currInst.getToDate());
-        final List<Object> billList = billQuery.list();
+		final List<Object> billList = (List<Object>) entityManager.createNamedQuery(QUERY_DEMAND_BILL_STATUS)
+				.setParameter("FromDate", currInst.getFromDate()).setParameter("ToDate", currInst.getToDate());
         LOGGER.info("billList : " + billList);
-        final Query propQuery = getPersistenceService().getSession().createQuery(propQueryString.toString());
-        final List<Object> propList = propQuery.list();
+		final List<Object> propList = (List<Object>) entityManager.unwrap(Session.class)
+				.createQuery(propQueryString.toString());
         LOGGER.info("propList : " + propList);
 
         for (final Object props : propList) {
@@ -336,17 +342,13 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
                 .append("and bndry.boundaryNum = :bndryNum ").append("group by bp.partNo ")
                 .append("order by bp.partNo");
 
-        final Query billQuery = getPersistenceService().getSession().createQuery(billQueryString.toString());
-        billQuery.setBigInteger("bndryNum", new BigInteger(wardNum));
-        billQuery.setDate("FromDate", currInst.getFromDate());
-        billQuery.setDate("ToDate", currInst.getToDate());
-        billQuery.setString("BillType", BILLTYPE_MANUAL);
+		final List<Object> billList = (List<Object>) entityManager.unwrap(Session.class)
+				.createQuery(billQueryString.toString()).setParameter("bndryNum", new BigInteger(wardNum))
+				.setParameter("FromDate", currInst.getFromDate()).setParameter("ToDate", currInst.getToDate())
+				.setParameter("BillType", BILLTYPE_MANUAL);
 
-        final List<Object> billList = billQuery.list();
-
-        final Query propQuery = getPersistenceService().getSession().createQuery(propQueryString.toString());
-        propQuery.setBigInteger("bndryNum", new BigInteger(wardNum));
-        final List<Object> propList = propQuery.list();
+		final List<Object> propList = (List<Object>) entityManager.unwrap(Session.class)
+				.createQuery(propQueryString.toString()).setParameter("bndryNum", new BigInteger(wardNum));
 
         for (final Object props : propList) {
             reportInfo = new ReportInfo();
@@ -385,9 +387,11 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 
     @Action(value = "/bills/billGeneration-cancelBill")
     public String cancelBill() {
-        final EgBill egBill = (EgBill) persistenceService.find("FROM EgBill " + "WHERE module = ? "
-                + "AND egBillType.code = ? " + "AND SUBSTRING(consumerId, 1, (LOCATE('(', consumerId)-1)) = ? "
-                + "AND is_history = 'N'", moduleDao.getModuleByName(PTMODULENAME), BILLTYPE_MANUAL, indexNumber);
+        final EgBill egBill = (EgBill) entityManager.unwrap(Session.class).createQuery("FROM EgBill " + "WHERE module = :module "
+                + "AND egBillType.code = :billType " + "AND SUBSTRING(consumerId, 1, (LOCATE('(', consumerId)-1)) = :indexNumber "
+						+ "AND is_history = 'N'")
+				.setParameter("module", moduleDao.getModuleByName(PTMODULENAME))
+				.setParameter("billType", BILLTYPE_MANUAL).setParameter("indexNumber", indexNumber).getSingleResult();
         if (egBill == null) {
             setAckMessage("There is no active Bill exist for index no : " + indexNumber);
             return ACK;

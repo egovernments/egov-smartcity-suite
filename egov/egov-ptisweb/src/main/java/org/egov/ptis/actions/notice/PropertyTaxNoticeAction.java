@@ -82,6 +82,8 @@ import org.egov.ptis.bean.PropertyNoticeInfo;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
+import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -198,6 +200,12 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 
 	@Autowired
 	private transient CityService cityService;
+	
+	@Autowired
+	private PropertyDAO propertyDAO;
+	
+	@Autowired
+	private BasicPropertyDAO basicPropertyDAO;
 
 	@Override
 	public StateAware getModel() {
@@ -228,8 +236,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 				fileStoreId.append(generatePropertyNotice(Long.valueOf(id[0]), id[1]));
 			} else if (PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION.equalsIgnoreCase(id[1])
 					|| NOTICE_TYPE_EXEMPTION.equalsIgnoreCase(id[1])) {
-				final BasicPropertyImpl basicProperty = (BasicPropertyImpl) getPersistenceService()
-						.findByNamedQuery(QUERY_BASICPROPERTY_BY_BASICPROPID, Long.valueOf(id[0]));
+				final BasicPropertyImpl basicProperty = (BasicPropertyImpl) basicPropertyDAO.findById(Long.valueOf(id[0]), false);
 				property = (PropertyImpl) basicProperty.getProperty();
 				if (property == null)
 					property = (PropertyImpl) basicProperty.getWFProperty();
@@ -249,8 +256,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 				fileStoreId.append(generatePropertyNotice(Long.valueOf(id[0]), id[1]));
 			} else if (DEMOLITION.equalsIgnoreCase(id[1])) {
 				noticeMode = APPLICATION_TYPE_DEMOLITION;
-				final BasicPropertyImpl basicProperty = (BasicPropertyImpl) getPersistenceService()
-						.findByNamedQuery(QUERY_BASICPROPERTY_BY_BASICPROPID, Long.valueOf(id[0]));
+				final BasicPropertyImpl basicProperty = (BasicPropertyImpl) basicPropertyDAO.findById(Long.valueOf(id[0]), false);
 				if (basicProperty.getWFProperty() != null) {
 					basicProperty.getProperty().setStatus(STATUS_ISHISTORY);
 					basicProperty.getWFProperty().setStatus(STATUS_ISACTIVE);
@@ -313,8 +319,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 			notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_VRPROCEEDINGS,
 					vacancyRemissionApproval.getVacancyRemission().getApplicationNumber());
 		} else {
-			basicProperty = (BasicPropertyImpl) getPersistenceService()
-					.findByNamedQuery(QUERY_BASICPROPERTY_BY_BASICPROPID, basicPropertyId);
+			basicProperty = (BasicPropertyImpl) basicPropertyDAO.findById(basicPropertyId, false);
 			property = (PropertyImpl) basicProperty.getProperty();
 			if (property == null)
 				property = (PropertyImpl) basicProperty.getWFProperty();
@@ -350,7 +355,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
                 else
                         natureOfWork = NATURE_GENERAL_REVISION_PETITION;
                 reportParams.put("natureOfWork", natureOfWork);
-                revisionPetitionService.setNoticeInfo(revisionPetition.getProperty(), propertyNotice, (BasicPropertyImpl) revisionPetition.getBasicProperty(), revisionPetition);
+                revisionPetitionService.setNoticeInfo(revisionPetition.getProperty(), propertyNotice, revisionPetition.getBasicProperty(), revisionPetition);
                 final List<PropertyAckNoticeInfo> floorDetails = getFloorDetailsForNotice();
                 propertyNotice.setFloorDetailsForNotice(floorDetails);
                 reportInput = new ReportRequest(PropertyTaxConstants.REPORT_TEMPLATENAME_RP_SPECIAL_NOTICE, propertyNotice,
@@ -362,8 +367,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         
     @Action(value = "/notice/propertyTaxNotice-generateNoticeForActionExemption")
 	public String generateNoticeForActionExemption() {
-		final BasicPropertyImpl basicProperty = (BasicPropertyImpl) getPersistenceService()
-				.findByNamedQuery(QUERY_BASICPROPERTY_BY_BASICPROPID, basicPropId);
+		final BasicPropertyImpl basicProperty = (BasicPropertyImpl) basicPropertyDAO.findById(basicPropId, false);
 		property = (PropertyImpl) basicProperty.getProperty();
 		if (property == null)
 			property = (PropertyImpl) basicProperty.getWFProperty();
@@ -382,8 +386,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 	public String generateNotice() {
 		setUlbCode(ApplicationThreadLocals.getCityCode());
 		Position ownerPosition;
-		final BasicPropertyImpl basicProperty = (BasicPropertyImpl) getPersistenceService()
-				.findByNamedQuery(QUERY_BASICPROPERTY_BY_BASICPROPID, basicPropId);
+		final BasicPropertyImpl basicProperty = (BasicPropertyImpl) basicPropertyDAO.findById(basicPropId, false);
 		property = (PropertyImpl) basicProperty.getProperty();
 		if (property == null)
 			property = (PropertyImpl) basicProperty.getWFProperty();
@@ -445,8 +448,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 	@Action(value = "/notice/propertyTaxNotice-generateExemptionNotice")
 	public String generateExemptionNotice() {
 		setUlbCode(ApplicationThreadLocals.getCityCode());
-		final BasicPropertyImpl basicProperty = (BasicPropertyImpl) getPersistenceService()
-				.findByNamedQuery(QUERY_BASICPROPERTY_BY_BASICPROPID, basicPropId);
+		final BasicPropertyImpl basicProperty = (BasicPropertyImpl) basicPropertyDAO.findById(basicPropId, false);
 		property = (PropertyImpl) basicProperty.getProperty();
 		if (property == null)
 			property = (PropertyImpl) basicProperty.getWFProperty();
@@ -509,8 +511,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 		new HashMap<String, Object>();
 		ReportRequest reportInput = null;
 		Position ownerPosition = null;
-		final BasicPropertyImpl basicProperty = (BasicPropertyImpl) getPersistenceService()
-				.findByNamedQuery(QUERY_BASICPROPERTY_BY_BASICPROPID, basicPropId);
+		final BasicPropertyImpl basicProperty = (BasicPropertyImpl) basicPropertyDAO.findById(basicPropId, false);
 		property = (PropertyImpl) basicProperty.getProperty();
 
 		if (property == null)
@@ -730,7 +731,8 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 				infoBean.setNew_rev_ARV(currDemand.getDmdCalculations().getAlv());
 
 			// Sets data for the latest history property
-			final PropertyImpl historyProperty = propService.getLatestHistoryProperty(basicProperty.getUpicNo());
+			final PropertyImpl historyProperty = (PropertyImpl) propertyDAO
+					.getHistoryPropertyForBasicProperty(basicProperty);
 			final Ptdemand historyDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(historyProperty);
 			if (historyProperty != null && historyDemand != null) {
 				totalTax = BigDecimal.ZERO;
@@ -746,7 +748,8 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 				infoBean.setExistingARV(currDemand.getDmdCalculations().getAlv() != null
 						? currDemand.getDmdCalculations().getAlv() : BigDecimal.ZERO);
 			} else if (!property.getIsExemptedFromTax()) {
-				final PropertyImpl historyProperty = propService.getLatestHistoryProperty(basicProperty.getUpicNo());
+				final PropertyImpl historyProperty = (PropertyImpl) propertyDAO
+						.getHistoryPropertyForBasicProperty(basicProperty);
 				final Ptdemand historyDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(historyProperty);
 				if (historyProperty != null && historyDemand != null) {
 					totalTax = BigDecimal.ZERO;

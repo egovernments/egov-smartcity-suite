@@ -136,7 +136,7 @@ public class ValidationUtil {
     
     @Autowired
     private ApplicationContext beanProvider;
-
+    
     private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     private static final String PINCODE_PATTERN = "^[1-9][0-9]{5}$";
@@ -1027,8 +1027,7 @@ public class ValidationUtil {
     public ErrorDetails validateUpdateRequest(final CreatePropertyDetails createPropDetails, final String mode)
             throws ParseException {
         ErrorDetails errorDetails = new ErrorDetails();
-        final BasicProperty bp = propertyExternalService
-                .getBasicPropertyByPropertyID(createPropDetails.getAssessmentNumber());
+        final BasicProperty bp = basicPropertyDAO.getAllBasicPropertyByPropertyID(createPropDetails.getAssessmentNumber());
         if (bp != null) {
             if (bp.isUnderWorkflow()) {
                 errorDetails.setErrorCode(PROPERTY_UNDERWORKFLOW_CODE);

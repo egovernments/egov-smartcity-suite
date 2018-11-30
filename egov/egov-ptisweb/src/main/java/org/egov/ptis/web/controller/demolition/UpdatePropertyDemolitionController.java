@@ -57,6 +57,7 @@ import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.demolition.PropertyDemolitionService;
@@ -126,12 +127,15 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     public UpdatePropertyDemolitionController(final PropertyDemolitionService propertyDemolitionService) {
         this.propertyDemolitionService = propertyDemolitionService;
     }
+    
+    @Autowired
+    private PropertyDAO propertyDAO;
 
     @ModelAttribute
     public PropertyImpl property(@PathVariable final String id) {
-        PropertyImpl property = propertyDemolitionService.findByNamedQuery(QUERY_WORKFLOW_PROPERTYIMPL_BYID, Long.valueOf(id));
+        PropertyImpl property = (PropertyImpl) propertyDAO.getWorkflowPropertyById(Long.valueOf(id));
         if (property == null)
-            property = propertyDemolitionService.findByNamedQuery(QUERY_PROPERTYIMPL_BYID, Long.valueOf(id));
+            property = (PropertyImpl) propertyDAO.findById(Long.valueOf(id), false);
         return property;
 
     }

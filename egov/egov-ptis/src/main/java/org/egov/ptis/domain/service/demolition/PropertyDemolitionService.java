@@ -281,9 +281,6 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
 
     private void transitionWorkFlow(final PropertyImpl property, final String approvarComments, final String workFlowAction,
             Long approverPosition, final String additionalRule) {
-
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("WorkFlow Transition For Demolition Started  ...");
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
         Position pos = null;
@@ -357,8 +354,6 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                     wFApprove(property, workFlowAction);
             }
         }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug(" WorkFlow Transition Completed for Demolition ...");
     }
 
     private boolean isJuniorOrSenAssistant(final String loggedInUserDesignation) {

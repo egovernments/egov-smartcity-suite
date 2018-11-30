@@ -62,7 +62,6 @@
 		</s:else>
 		</title>
 		<script type="text/javascript">
-			jQuery.noConflict();
 			jQuery("#loadingMask").remove();
 			function loadOnStartup () {
 				var propType = '<s:property value="%{basicProperty.property.propertyDetail.propertyTypeMaster.type}"/>';

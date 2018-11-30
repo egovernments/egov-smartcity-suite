@@ -68,12 +68,13 @@
 				<s:if test="mandatory">
 					<s:file name="assessmentDocuments[%{#status.index}].uploads"
 						value="%{assessmentDocuments[#status.index].uploads}"
-						cssClass="button" required="true" />
+						cssClass="button" required="true" 
+						data-accepts="%{allowedFileExt}" data-size="%{maxFileSize}"/>
 				</s:if>
 				<s:else>
 					<s:file name="assessmentDocuments[%{#status.index}].uploads"
 						value="%{assessmentDocuments[#status.index].uploads}"
-						cssClass="button" />
+						cssClass="button" data-accepts="%{allowedFileExt}" data-size="%{maxFileSize}" />
 				</s:else>
 			</s:if> <s:elseif
 				test="%{assessmentDocuments[#status.index].files.isEmpty()}">
@@ -86,7 +87,7 @@
 				<s:if test="mandatory">
 					<s:file name="assessmentDocuments[%{#status.index}].uploads"
 						value="%{assessmentDocuments[#status.index].uploads}"
-						cssClass="button" required="true" />
+						cssClass="button" required="true" data-accepts="%{allowedFileExt}" data-size="%{maxFileSize}"/>
 				</s:if>
 				<s:else>
 					<s:file name="assessmentDocuments[%{#status.index}].uploads"
@@ -99,7 +100,7 @@
 					<s:if test="%{allowEditDocument}">
 						<s:file name="assessmentDocuments[%{#status.index}].uploads"
 							value="%{assessmentDocuments[#status.index].uploads}"
-							cssClass="button" />
+							cssClass="button" data-accepts="%{allowedFileExt}" data-size="%{maxFileSize}"/>
 						<a
 							href="javascript:viewDocument('<s:property value="fileStoreId"/>')">
 							<s:property value="%{fileName}" />

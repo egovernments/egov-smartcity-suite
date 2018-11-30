@@ -46,7 +46,6 @@
  *
  */
 
-jQuery.noConflict();
 jQuery(document).ready(function(){
 	try {
 		jQuery(".datepicker").datepicker({

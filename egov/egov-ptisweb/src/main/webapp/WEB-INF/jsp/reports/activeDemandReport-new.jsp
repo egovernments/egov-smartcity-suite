@@ -52,7 +52,6 @@
 <head>
 	<title><s:text name="activeDemandReport.title"/></title>
 	<script type="text/javascript">
-		jQuery.noConflict();
 		jQuery(function() {
 			jQuery("#asOnDate").datepicker(
 				{

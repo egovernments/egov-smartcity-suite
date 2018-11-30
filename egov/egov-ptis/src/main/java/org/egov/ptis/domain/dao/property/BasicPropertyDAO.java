@@ -79,7 +79,7 @@ public interface BasicPropertyDAO {
 
     public BasicProperty getBasicPropertyByIndexNumAndParcelID(String indexNum, String parcelID);
 
-    public BasicProperty findById(Integer id, boolean lock);
+    public BasicProperty findById(Long id, boolean lock);
 
     public List<BasicProperty> findAll();
 

@@ -135,9 +135,9 @@ public class PropertySurveyService {
 
         final PropertyID propId = surveyBean.getProperty().getBasicProperty().getPropertyID();
         final BasicPropertyImpl basicProp = (BasicPropertyImpl) surveyBean.getProperty().getBasicProperty();
-        final boolean isApproved = state.contains(WF_STATE_COMMISSIONER_APPROVED) ? true : false;
+        final boolean isApproved = state.contains(WF_STATE_COMMISSIONER_APPROVED);
         final boolean isCancelled = (state.contains(WF_STATE_REJECTED)
-                && surveyBean.getProperty().getStatus().equals(STATUS_CANCELLED)) ? true : false;
+                && surveyBean.getProperty().getStatus().equals(STATUS_CANCELLED));
 
         ptGisIndex = PTGISIndex.builder().withApplicationNo(surveyBean.getProperty().getApplicationNo())
                 .withApplicationdate(applicationDate)
@@ -177,7 +177,7 @@ public class PropertySurveyService {
 
     private Double calculatetaxvariance(final String applicationType, final SurveyBean surveyBean, final PTGISIndex index) {
         Double taxVar;
-        BigDecimal sysTax = index.getSystemTax() == null ? surveyBean.getSystemTax() : new BigDecimal(index.getSystemTax());
+        BigDecimal sysTax = index.getSystemTax() == null ? surveyBean.getSystemTax() : BigDecimal.valueOf(index.getSystemTax());
 
         if (applicationType.equalsIgnoreCase(PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT)
                 && sysTax.compareTo(BigDecimal.ZERO) > 0)
@@ -230,8 +230,8 @@ public class PropertySurveyService {
                 ? StringUtils.EMPTY
                 : basicProperty.getUpicNo());
 
-        ptGisIndex.setIsCancelled(
-                (stateValue.contains(WF_STATE_CLOSED) && propertyImpl.getStatus().equals(STATUS_CANCELLED)) ? true : false);
+		ptGisIndex.setIsCancelled(
+				stateValue.contains(WF_STATE_CLOSED) && propertyImpl.getStatus().equals(STATUS_CANCELLED));
         ptGisIndex.setThirdPrtyFlag(propertyImpl.isThirdPartyVerified());
         ptGisIndex.setDoorNo(doorNo == null ? ptGisIndex.getDoorNo() : doorNo);
         ptGisIndex.setSentToThirdParty(propertyImpl.isSentToThirdParty());

@@ -92,7 +92,6 @@ import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.MutationRegistrationDetails;
 import org.egov.ptis.domain.entity.property.PropertyAddress;
 import org.egov.ptis.domain.entity.property.PropertyID;
-import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyMutationTransferee;
@@ -158,10 +157,6 @@ public class PropertyTransferService {
     @Autowired
     @Qualifier("propertyTaxNumberGenerator")
     private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
-
-    @Autowired
-    @Qualifier("ptaxApplicationTypeService")
-    private PersistenceService<PtApplicationType, Long> ptaxApplicationTypeService;
 
     @Autowired
     private UserService userService;
@@ -333,27 +328,8 @@ public class PropertyTransferService {
                 Double.valueOf((Double) waterTaxInfo.get("totalTaxDue")));
     }
 
-    public PropertyImpl getActiveProperty(final String upicNo) {
-        Query qry = entityManager.createNamedQuery("ACTIVE_PROPERTY_BYUPICNO");
-        qry.setParameter("upicNo", upicNo);
-        qry.setParameter("status", STATUS_ISACTIVE);
-        return (PropertyImpl) qry.getSingleResult();
-    }
-
     public BasicPropertyImpl getBasicPropertyByUpicNo(final String upicNo) {
         return (BasicPropertyImpl) basicPropertyDAO.getBasicPropertyByPropertyID(upicNo);
-    }
-
-    public List<DocumentType> getPropertyTransferDocumentTypes() {
-        Query qry = entityManager.createNamedQuery(DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE);
-        qry.setParameter("transactionType", TransactionType.TRANSFER);
-        return qry.getResultList();
-    }
-
-    public List<DocumentType> getSuccessionDouments() {
-        Query qry = entityManager.createNamedQuery(DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE);
-        qry.setParameter("transactionType", TransactionType.SUCCESSION_TRANSFER);
-        return qry.getResultList();
     }
 
     public List<PropertyMutationMaster> getPropertyTransferReasons() {
@@ -393,20 +369,20 @@ public class PropertyTransferService {
             ackBean.setApplicationType(PropertyTaxConstants.ALL_READY_REGISTER);
             ackBean.setTransferpropertyText("");
             ackBean.setTransferpropertyTextEnd("");
-            ackBean.setNoOfDays(ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "REGISTERED TRANSFER")
-                    .getResolutionTime().toString());
+			ackBean.setNoOfDays(((PtApplicationType) entityManager.createNamedQuery(PtApplicationType.BY_CODE)
+					.setParameter("code", "REGISTERED TRANSFER").getSingleResult()).getResolutionTime().toString());
         } else if (propertyMutation.getType().equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_PARTIAL_TRANSFER)) {
             ackBean.setApplicationType(PropertyTaxConstants.PARTT);
             ackBean.setTransferpropertyText(PropertyTaxConstants.TTTEXT);
             ackBean.setTransferpropertyTextEnd(PropertyTaxConstants.TTTEXTEND);
-            ackBean.setNoOfDays(ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "PARTIAL TRANSFER")
-                    .getResolutionTime().toString());
+			ackBean.setNoOfDays(((PtApplicationType) entityManager.createNamedQuery(PtApplicationType.BY_CODE)
+					.setParameter("code", "PARTIAL TRANSFER").getSingleResult()).getResolutionTime().toString());
         } else if (propertyMutation.getType().equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER)) {
             ackBean.setApplicationType(PropertyTaxConstants.FULLTT);
             ackBean.setTransferpropertyText(PropertyTaxConstants.TTTEXT);
             ackBean.setTransferpropertyTextEnd(PropertyTaxConstants.TTTEXTEND);
-            ackBean.setNoOfDays(ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "FULL TRANSFER")
-                    .getResolutionTime().toString());
+            ackBean.setNoOfDays(((PtApplicationType) entityManager.createNamedQuery(PtApplicationType.BY_CODE)
+					.setParameter("code", "FULL TRANSFER").getSingleResult()).getResolutionTime().toString());
         }
         ackBean.setApplicationNo(propertyMutation.getApplicationNo());
         ackBean.setApplicationDate(DateUtils.getDefaultFormattedDate(propertyMutation.getMutationDate()));

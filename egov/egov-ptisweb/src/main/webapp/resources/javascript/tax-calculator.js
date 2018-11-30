@@ -46,7 +46,6 @@
  *
  */
 
-jQuery.noConflict();
 jQuery( document ).ready(function() {
 	jQuery('#calculateTax').click( function () {
 		jQuery.ajax({url:"/ptis/modify/modifyProperty-calculateTax.action",

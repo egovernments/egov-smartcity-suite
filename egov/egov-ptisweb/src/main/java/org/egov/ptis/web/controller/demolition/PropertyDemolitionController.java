@@ -121,7 +121,7 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
     private PropertyTaxUtil propertyTaxUtil;
 
     @Autowired
-    private PropertyDemolitionService propertyDemolitionService;
+	private PropertyDemolitionService propertyDemolitionService;
 
     @Autowired
     private PropertyService propService;
@@ -241,9 +241,10 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
 				}
 				propertyDemolitionService.saveProperty(property.getBasicProperty().getActiveProperty(), property,
 						status, approvalComent, workFlowAction, approvalPosition, DEMOLITION, meesevaParams);
-			} else
+			} else {
 				propertyDemolitionService.saveProperty(property.getBasicProperty().getActiveProperty(), property,
 						status, approvalComent, workFlowAction, approvalPosition, DEMOLITION);
+			}
 
 			if (!propService.isEmployee(loggedInUser) || ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName())) {
 				Assignment assignment = propertyDemolitionService.getUserAssignment(loggedInUser, property);

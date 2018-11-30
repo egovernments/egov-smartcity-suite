@@ -48,7 +48,6 @@
 /**
  * Includes all the validations for create property
  */
-jQuery.noConflict();
 function makePropertyTypeMandatory() {
     var propertyType = document.forms[0].propTypeId.options[document.forms[0].propTypeId.selectedIndex].text;
     if (propertyType == "select") {

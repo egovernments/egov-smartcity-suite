@@ -109,21 +109,18 @@ body {
 						<label for="field-1" class="col-sm-2 control-label"><spring:message
 								code="lbl.fromDate" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<fmt:formatDate value="${currDate}" var="fromDate"
-								pattern="dd/MM/yyyy" />
-							<form:input path="" name="fromDate" id="fromDate"
-								cssClass="form-control datepicker" value="${fromDate}"
-								cssErrorClass="form-control error" />
-							<c:set value="${fromDate}" var="fromhidden" />
-						</div>
+							<form:input path="" id="fromDate" type="text" class="form-control low-width datepicker today" 
+							autocomplete="off" required="required"/>
+							<form:errors path="" cssClass="add-margin error-msg" />
+							<div id="fromdate" class="col-sm-10"></div>
+						</div>			
 						<label for="field-1" class="col-sm-2 control-label"><spring:message
 								code="lbl.toDate" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<fmt:formatDate value="${currDate}" var="toDate"
-								pattern="dd/MM/yyyy" />
-							<form:input path="" name="toDate" id="toDate"
-								cssClass="form-control datepicker" value="${toDate}"
-								cssErrorClass="form-control error" />
+							<form:input path="" id="toDate" type="text" class="form-control low-width datepicker today" 
+							autocomplete="off" required="required"/>
+							<form:errors path="" cssClass="add-margin error-msg" />
+							<div id="todate" class="col-sm-10"></div>
 						</div>
 					</div>
 				</div>
@@ -136,7 +133,7 @@ body {
 								code="lbl.serviceTypes" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:select name="serviceTypes" id="serviceTypes" path=""
-								cssClass="form-control" cssErrorClass="form-control error">
+								cssClass="form-control" cssErrorClass="form-control error" required="required">
 								<form:option value="">
 									<spring:message code="lbl.option.select" />
 								</form:option>

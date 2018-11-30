@@ -54,7 +54,6 @@
 <head>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/recovery.js"></script>
 	<script type="text/javascript">
-		jQuery.noConflict();
 		jQuery("#loadingMask").remove();
 	</script>
 		<title><s:text name="recovery"></s:text></title>

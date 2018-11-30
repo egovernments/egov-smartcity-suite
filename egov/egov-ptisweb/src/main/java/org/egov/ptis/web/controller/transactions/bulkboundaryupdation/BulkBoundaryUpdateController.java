@@ -50,6 +50,7 @@ package org.egov.ptis.web.controller.transactions.bulkboundaryupdation;
 
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.service.bulkboundaryupdatation.BulkBoundaryService;
@@ -60,9 +61,9 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
@@ -78,6 +79,9 @@ public class BulkBoundaryUpdateController {
 	@Autowired
 	private BulkBoundaryService bulkBoundaryService;
 	
+	@Autowired
+	private BasicPropertyDAO basicPropertyDAO;
+	
 	private static final String PROPERTY_ID = "propertyId";
 	private static final String LOCALITY = "locality";
 	private static final String BLOCK = "block";
@@ -85,7 +89,7 @@ public class BulkBoundaryUpdateController {
 	private static final String ELECTION_WARD = "electionWard";
 	
 	
-	@RequestMapping(value = "/update", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public String update(@RequestBody BulkBoundaryInfo mat, BindingResult errors, final Model model) {
 		List<BasicProperty> basicProperties = new ArrayList<>();
@@ -96,7 +100,7 @@ public class BulkBoundaryUpdateController {
 
 			for (int i = 0; i < jsonArray.length(); ++i) {
 				final JSONObject jsonobj = jsonArray.getJSONObject(i);
-				basicProperty = bulkBoundaryService.getBasicPropertyByPropertyID(jsonobj.getString(PROPERTY_ID));
+				basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(jsonobj.getString(PROPERTY_ID));
 				basicProperty.getPropertyID()
 						.setLocality(boundaryService.getBoundaryById(new Long(jsonobj.getString(LOCALITY))));
 				basicProperty.getPropertyID()

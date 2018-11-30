@@ -63,4 +63,6 @@ public interface ApartmentRepository extends JpaRepository<Apartment, Long> {
 
     List<Apartment> findByCodeLike(String apartmentCode);
 
+	Apartment findByCode(String code);
+
 }

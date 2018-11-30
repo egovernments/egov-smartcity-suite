@@ -17,6 +17,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.egov.ptis.domain.entity.es.PTGISIndex;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.survey.SearchSurveyPropertyAdaptor;
@@ -61,6 +62,9 @@ public class SurveyPropertyController {
     
     @PersistenceContext
     private EntityManager entityManager;
+    
+    @Autowired
+    private PropertyDAO propertyDAO;
 
     @ModelAttribute("applicationTypes")
     public Map<String, String> getApplicationTypes() {
@@ -104,9 +108,7 @@ public class SurveyPropertyController {
         try {
             User user = securityUtils.getCurrentUser();
             for (String applicationNo : applicationNumbersArray) {
-                final Query query = entityManager.createNamedQuery("PROPERTYIMPL_BY_APPLICATIONNO");
-                query.setParameter("applicatiNo", applicationNo);
-                property = (PropertyImpl) query.getSingleResult();
+                property = (PropertyImpl) propertyDAO.getPropertyByApplicationNo(applicationNo);
                 if (surveyApplicationService.updateWorkflow(applicationNo, user)) {
                     model.addAttribute("successMessage",
                             "Property workflow updated and application : " + applicationNo + " is moved to user : "

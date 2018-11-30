@@ -57,6 +57,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.StringUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Property;
@@ -132,12 +133,15 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     public UpdateTaxExemptionController(final TaxExemptionService taxExemptionService) {
         this.taxExemptionService = taxExemptionService;
     }
-
+    
+    @Autowired
+    private PropertyDAO propertyDAO;
+    
     @ModelAttribute
     public PropertyImpl property(@PathVariable final String id) {
-        PropertyImpl property = taxExemptionService.findByNamedQuery(QUERY_WORKFLOW_PROPERTYIMPL_BYID, Long.valueOf(id));
+		PropertyImpl property = (PropertyImpl) propertyDAO.getWorkflowPropertyById(Long.valueOf(id));
         if (property == null)
-            property = taxExemptionService.findByNamedQuery(QUERY_PROPERTYIMPL_BYID, Long.valueOf(id));
+            property = (PropertyImpl) propertyDAO.findById(Long.valueOf(id), false);;
         return property;
     }
 

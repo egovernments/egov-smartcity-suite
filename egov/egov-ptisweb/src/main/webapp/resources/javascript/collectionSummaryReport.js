@@ -47,8 +47,6 @@
  */
 
 var reportdatatable;
-jQuery.noConflict();
-
 function populateWard() {
 	populatewardId( {
 		zoneId : document.getElementById("zoneId").value

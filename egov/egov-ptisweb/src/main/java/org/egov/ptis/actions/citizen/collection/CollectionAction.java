@@ -61,11 +61,11 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
+import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,7 +86,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_S
 import static org.egov.ptis.constants.PropertyTaxConstants.MAX_ADVANCES_ALLOWED;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
 
 @Namespace("/citizen/collection")
 @ResultPath("/WEB-INF/jsp/")
@@ -95,7 +94,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_B
         @Result(name = CollectionAction.RESULT_TAXPAID, location = "citizen/collection/collection-taxPaid.jsp"),
         @Result(name = CollectionAction.USER_DETAILS, location = "citizen/collection/collection-ownerDetails.jsp"),
         @Result(name = CollectionAction.UPDATEMOBILE_FORM, location = "citizen/collection/collection-updateMobileNo.jsp")})
-@SuppressWarnings("serial")
 @ParentPackage("egov")
 @Validations
 public class CollectionAction extends BaseFormAction {
@@ -107,7 +105,6 @@ public class CollectionAction extends BaseFormAction {
     protected static final String USER_DETAILS = "ownerDetails";
     protected static final String UPDATEMOBILE_FORM = "updateMobileNo";
 
-    private PersistenceService<BasicProperty, Long> basicPropertyService;
     private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
     private PTBillServiceImpl ptBillServiceImpl;
     private BasicProperty basicProperty;
@@ -126,13 +123,13 @@ public class CollectionAction extends BaseFormAction {
     private UserService userService;
     @Autowired
     private PropertyTaxBillable propertyTaxBillable;
+    @Autowired
+    private BasicPropertyDAO basicPropertyDAO;
 
     @Override
     public void prepare() {
-        LOGGER.debug("Entered into prepare method");
         setUserId(ApplicationThreadLocals.getUserId());
-        basicProperty = basicPropertyService.findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO, assessmentNumber);
-        LOGGER.debug("Exit from prepare method");
+		basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNumber);
     }
 
     /**
@@ -209,14 +206,6 @@ public class CollectionAction extends BaseFormAction {
             userService.updateUser(propertyOwner);
         }
         return UPDATEMOBILE_FORM;
-    }
-
-    public PersistenceService<BasicProperty, Long> getBasicPropertyService() {
-        return basicPropertyService;
-    }
-
-    public void setbasicPropertyService(final PersistenceService<BasicProperty, Long> basicPropertyService) {
-        this.basicPropertyService = basicPropertyService;
     }
 
     public PropertyTaxNumberGenerator getPropertyTaxNumberGenerator() {

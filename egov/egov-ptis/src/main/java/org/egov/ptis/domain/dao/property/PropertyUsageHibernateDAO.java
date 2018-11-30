@@ -143,7 +143,7 @@ public class PropertyUsageHibernateDAO implements PropertyUsageDAO {
 
     @Override
     public PropertyUsage findById(Long id, boolean lock) {
-        return (PropertyUsage) getCurrentSession().createQuery("from PropertyUsage where id = ?").setParameter(0, id)
+        return (PropertyUsage) getCurrentSession().createQuery("from PropertyUsage where id = :id").setParameter("id", id)
                 .uniqueResult();
     }
 
@@ -161,6 +161,26 @@ public class PropertyUsageHibernateDAO implements PropertyUsageDAO {
 
     @Override
     public List<PropertyUsage> findAll() {
-        return getCurrentSession().createQuery("From PropertyUsage order by usageName").list();
+        return getCurrentSession().createQuery("From PropertyUsage order by usageName").getResultList();
     }
+    
+    @Override
+    public PropertyUsage getPropertyUsageByName(String usageName){
+		return (PropertyUsage) getCurrentSession().createQuery("from PropertyUsage where usageName = :usageName")
+				.setParameter("usageName", usageName)                .uniqueResult();
+    }
+
+	@Override
+	public List<PropertyUsage> getAllResidentialUsage() {
+		return getCurrentSession()
+				.createQuery("From PropertyUsage where isResidential = true and isActive = true  order by usageName")
+				.list();
+	}
+
+	@Override
+	public List<PropertyUsage> getAllNonResidentialUsage() {
+		return getCurrentSession()
+				.createQuery("From PropertyUsage where isResidential = false and isActive = true  order by usageName")
+				.list();
+	}
 }

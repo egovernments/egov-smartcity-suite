@@ -78,6 +78,8 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.dao.property.PropertyDAO;
+import org.egov.ptis.domain.dao.property.PropertyStatusValuesDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
@@ -137,9 +139,13 @@ public class ViewPropertyAction extends BaseFormAction {
     @Autowired
     private transient PropertyService propService;
     @Autowired
+    private PropertyDAO propertyDAO;
+    @Autowired
     private transient VacancyRemissionRepository vacancyRemissionRepository;
     @PersistenceContext
     private transient EntityManager entityManager;
+    @Autowired
+    private PropertyStatusValuesDAO propertyStatusValuesDAO;
 
     private transient Map<String, Map<String, BigDecimal>> demandCollMap = new TreeMap<>();
 
@@ -246,7 +252,8 @@ public class ViewPropertyAction extends BaseFormAction {
                 viewMap.put("ARV", BigDecimal.ZERO);
 
             propertyTaxUtil.setPersistenceService(persistenceService);
-            PropertyStatusValues statusValues = propertyTaxCommonUtils.getPropStatusValues(basicProperty);
+			PropertyStatusValues statusValues = propertyStatusValuesDAO
+					.getPropertyStatusValuesByBasicProperty(basicProperty);
             if (null != statusValues && null != statusValues.getReferenceBasicProperty())
                 viewMap.put("parentProps", statusValues.getReferenceBasicProperty().getUpicNo());
 
@@ -303,9 +310,7 @@ public class ViewPropertyAction extends BaseFormAction {
             if (Arrays.asList(APPLICATION_TYPE_NEW_ASSESSENT, APPLICATION_TYPE_ALTER_ASSESSENT, APPLICATION_TYPE_TAX_EXEMTION,
                     APPLICATION_TYPE_BIFURCATE_ASSESSENT,
                     APPLICATION_TYPE_DEMOLITION, APPLICATION_TYPE_AMALGAMATION).contains(appType)) {
-                final Query query = entityManager.createNamedQuery("PROPERTYIMPL_BY_APPLICATIONNO");
-                query.setParameter("applicatiNo", appNo);
-                property = (PropertyImpl) query.getSingleResult();
+                property = (PropertyImpl) propertyDAO.getPropertyByApplicationNo(appNo);
                 setBasicProperty(property.getBasicProperty());
                 setHistoryMap(propService.populateHistory(property));
                 if (appType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)) {

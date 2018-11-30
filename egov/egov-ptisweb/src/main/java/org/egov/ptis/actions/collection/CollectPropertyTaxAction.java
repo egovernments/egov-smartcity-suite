@@ -61,6 +61,7 @@ import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
+import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
 import org.hibernate.query.NativeQuery;
@@ -98,7 +99,6 @@ public class CollectPropertyTaxAction extends BaseFormAction {
     public static final String RESULT_VIEW = "view";
     public static final String RESULT_ERROR = "error";
 
-    private PersistenceService<BasicProperty, Long> basicPropertyService;
     private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
     private PropertyTaxCollection propertyTaxCollection;
     private PTBillServiceImpl ptBillServiceImpl;
@@ -111,7 +111,7 @@ public class CollectPropertyTaxAction extends BaseFormAction {
     private String infoMessage;
     DateFormat dateFormat = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
 
-    private final List<String> args = new ArrayList<String>();
+    private final List<String> args = new ArrayList<>();
 
     @Autowired
     private PropertyTaxBillable propertyTaxBillable;
@@ -120,9 +120,12 @@ public class CollectPropertyTaxAction extends BaseFormAction {
     public Object getModel() {
         return null;
     }
-
+    
     @Qualifier("entityQueryService")
     private @Autowired PersistenceService entityQueryService;
+    
+    @Autowired
+    private BasicPropertyDAO basicPropertyDao;
     
     /**
      * @return
@@ -135,8 +138,7 @@ public class CollectPropertyTaxAction extends BaseFormAction {
             setErrorMsg(getText("mandatory.assessmentNo"));
             return RESULT_ERROR;
         }
-        final BasicProperty basicProperty = basicPropertyService.findByNamedQuery(
-                PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO, propertyId);
+        final BasicProperty basicProperty = basicPropertyDao.getAllBasicPropertyByPropertyID(propertyId);
         if (basicProperty == null) {
             setErrorMsg(getText("validation.property.doesnot.exists"));
             return RESULT_ERROR;
@@ -170,8 +172,8 @@ public class CollectPropertyTaxAction extends BaseFormAction {
         qry.setParameter("propertyid", propertyId);
         final List<Object[]> list = (List<Object[]>) qry.list();
         
-		if (list!=null && list.size() > 0) {
-			final Object[] alters = (Object[]) list.get(0);
+		if (!list.isEmpty()) {
+			final Object[] alters = list.get(0);
 			infoMessage = "This property undergone Adition/Alteration on " + dateFormat.format((Date) alters[1])
 					+ " and the excess amount " + (BigDecimal) alters[2]
 					+ " was pending so, there might be difference in tax due compared to demand notice.";
@@ -201,10 +203,6 @@ public class CollectPropertyTaxAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Exiting method generatePropertyTaxBill, collectXML (before decode): " + billXml);
         return RESULT_VIEW;
-    }
-
-    public void setbasicPropertyService(final PersistenceService<BasicProperty, Long> basicPropertyService) {
-        this.basicPropertyService = basicPropertyService;
     }
 
     public String getPropertyId() {

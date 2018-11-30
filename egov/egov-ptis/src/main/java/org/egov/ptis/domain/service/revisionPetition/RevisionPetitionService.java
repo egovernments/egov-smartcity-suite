@@ -125,6 +125,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -169,6 +171,7 @@ import org.egov.ptis.bean.PropertyNoticeInfo;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
+import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
@@ -260,6 +263,12 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
 
     @Autowired
     private ModuleService moduleDao;
+    
+    @Autowired
+    private PropertyDAO propertyDAO;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public RevisionPetitionService() {
         super(RevisionPetition.class);
@@ -500,12 +509,12 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     }
 
     public RevisionPetition getExistingObjections(final BasicProperty basicProperty) {
-        return find("from RevisionPetition rp where rp.basicProperty = ?", basicProperty);
+        return (RevisionPetition) entityManager.createNamedQuery("RP_BY_BASICPROPERTY").setParameter("basicProperty", basicProperty);
     }
 
     public RevisionPetition getExistingGRP(final BasicProperty basicProperty) {
-        return find("from RevisionPetition rp where rp.basicProperty = ? and rp.type = ?", basicProperty,
-                NATURE_OF_WORK_GRP);
+		return (RevisionPetition) entityManager.createNamedQuery("RP_BY_BASICPROPERTYANDTYPE").setParameter("basicProperty", basicProperty)
+				.setParameter("type", NATURE_OF_WORK_GRP);
     }
 
     /**
@@ -570,8 +579,8 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
         ReportRequest reportRequest;
         if (objection != null) {
             final Map<String, BigDecimal> currentDemand = ptDemandDAO.getDemandCollMap(objection.getProperty());
-            final Map<String, BigDecimal> earlierDemand = ptDemandDAO.getDemandCollMap(
-                    propertyService.getLatestHistoryProperty(objection.getBasicProperty().getUpicNo()));
+			final Map<String, BigDecimal> earlierDemand = ptDemandDAO
+					.getDemandCollMap(propertyDAO.getHistoryPropertyForBasicProperty(objection.getBasicProperty()));
             if (NATURE_OF_WORK_RP.equalsIgnoreCase(objection.getType()))
                 natureOfWork = NATURE_REVISION_PETITION;
             else
@@ -602,7 +611,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     }
 
     public void setNoticeInfo(final PropertyImpl property, final PropertyNoticeInfo propertyNotice,
-            final BasicPropertyImpl basicProperty, final RevisionPetition objection) {
+            final BasicProperty basicProperty, final RevisionPetition objection) {
         final PropertyAckNoticeInfo infoBean = new PropertyAckNoticeInfo();
         final Address ownerAddress = basicProperty.getAddress();
         BigDecimal totalTax = BigDecimal.ZERO;
@@ -633,7 +642,8 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
             infoBean.setNew_rev_ARV(currDemand.getDmdCalculations().getAlv());
 
         // Sets data for the latest history property
-        final PropertyImpl historyProperty = propertyService.getLatestHistoryProperty(basicProperty.getUpicNo());
+		final PropertyImpl historyProperty = (PropertyImpl) propertyDAO
+				.getHistoryPropertyForBasicProperty(basicProperty);
         final Ptdemand historyDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(historyProperty);
         if (historyProperty != null && historyDemand != null) {
             totalTax = BigDecimal.ZERO;

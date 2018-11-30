@@ -61,6 +61,7 @@ import org.egov.commons.Area;
 import org.egov.commons.Installment;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.repository.UserRepository;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -73,6 +74,7 @@ import org.egov.portal.entity.Citizen;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
@@ -94,6 +96,8 @@ import org.egov.ptis.master.service.WallTypeService;
 import org.egov.ptis.master.service.WoodTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -130,7 +134,6 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private static final String PROPERTY_FORWARD_SUCCESS = "property.forward.success";
     protected static final String NOTICE = "notice";
     private static final String RESULT_ERROR = "error";
-    private static final String FROM_USER_WHERE_NAME_AND_MOBILE_NUMBER_AND_GENDER = "From User where name = ? and mobileNumber = ? and gender = ? ";
 
     private BasicProperty basicProp = new BasicPropertyImpl();
     private PropertyImpl oldProperty = new PropertyImpl();
@@ -209,6 +212,12 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepository;
     @Autowired
     private SurroundingsAuditService surroundingsAuditService;
+    @PersistenceContext
+    private EntityManager entityManager;
+    @Autowired
+    private PropertyDAO propertyDAO;
+    @Autowired
+    private UserRepository userRepository;
     
     public AmalgamationAction() {
         super();
@@ -240,18 +249,14 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         propertyByEmployee = propService.isEmployee(securityUtils.getCurrentUser());
         if (getModelId() != null && !getModelId().isEmpty()) {
             setBasicProp(basicPropertyDAO.getBasicPropertyByProperty(Long.valueOf(getModelId())));
-            if (logger.isDebugEnabled())
-                logger.debug("prepare: BasicProperty: " + basicProp);
-            propWF = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_WORKFLOW_PROPERTYIMPL_BYID,
-                    Long.valueOf(getModelId()));
+			propWF = (PropertyImpl) propertyDAO.getWorkflowPropertyById(Long.valueOf(getModelId()));
             if (propWF != null) {
                 setProperty(propWF);
                 historyMap = propService.populateHistory(propWF);
             } else
                 historyMap = propService.populateHistory(basicProp.getActiveProperty());
         } else if (indexNumber != null && !indexNumber.trim().isEmpty()) {
-            setBasicProp((BasicProperty) getPersistenceService().findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO,
-                    indexNumber));
+            setBasicProp(basicPropertyDAO.getAllBasicPropertyByPropertyID(indexNumber));
             preparePropertyTaxDetails(basicProp.getActiveProperty());
         }
 
@@ -437,8 +442,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         final long startTimeMillis = System.currentTimeMillis();
         loggedUserIsMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
         if (getModelId() != null && !getModelId().trim().isEmpty()) {
-            propWF = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_WORKFLOW_PROPERTYIMPL_BYID,
-                    Long.valueOf(getModelId()));
+            propWF = (PropertyImpl) propertyDAO.getWorkflowPropertyById(Long.valueOf(getModelId()));
             if (logger.isDebugEnabled())
                 logger.debug("forwardModify: Workflow property: " + propWF);
             basicProp = propWF.getBasicProperty();
@@ -560,8 +564,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         if (logger.isDebugEnabled())
             logger.debug("Entered into view, BasicProperty: " + basicProp + ", ModelId: " + getModelId());
         if (getModelId() != null) {
-            propertyModel = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
-                    Long.valueOf(getModelId()));
+            propertyModel = (PropertyImpl) propertyDAO.findById(Long.valueOf(getModelId()),false);
             setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
             isReassignEnabled = reassignService.isReassignEnabled();
             stateAwareId = propertyModel.getId();
@@ -615,8 +618,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                 return NEW;
             else if (checkDesignationsForView())
                 return VIEW;
-        propertyModel = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
-                Long.valueOf(getModelId()));
+        propertyModel = (PropertyImpl) propertyDAO.findById(Long.valueOf(getModelId()),false);
         if (logger.isDebugEnabled())
             logger.debug("forwardView: Workflow property: " + propertyModel);
         transitionWorkFlow(propertyModel);
@@ -637,11 +639,10 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private void populateBasicProp() {
         if (basicProp == null)
             if (StringUtils.isNotBlank(indexNumber))
-                setBasicProp((BasicProperty) getPersistenceService().findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO,
-                        indexNumber));
+                setBasicProp(basicPropertyDAO.getAllBasicPropertyByPropertyID(indexNumber));
             else if (StringUtils.isNotBlank(getModelId()))
-                setBasicProp(((PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
-                        Long.valueOf(getModelId()))).getBasicProperty());
+				setBasicProp(
+						((PropertyImpl) propertyDAO.findById(Long.valueOf(getModelId()), false)).getBasicProperty());
     }
 
     /**
@@ -823,10 +824,9 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                     user = userService.getUserByAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
                 else*/
                 if (StringUtils.isNotBlank(ownerInfo.getOwner().getMobileNumber()))
-                	 user = (User) basicPropertyService.find(FROM_USER_WHERE_NAME_AND_MOBILE_NUMBER_AND_GENDER, ownerInfo
+                	 user = userRepository.findByNameAndMobileNumberAndGender(ownerInfo
                              .getOwner().getName(), ownerInfo.getOwner().getMobileNumber(), ownerInfo.getOwner()
                                      .getGender());
-
                 if (user == null) {
                     final Citizen newOwner = new Citizen();
                     newOwner.setAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
@@ -889,8 +889,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         final List<String> childProperties = new ArrayList<>();
         if (logger.isDebugEnabled())
             logger.debug("Enter method approve");
-        propertyModel = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
-                Long.valueOf(getModelId()));
+        propertyModel = (PropertyImpl) propertyDAO.findById(Long.valueOf(getModelId()),false);
         if (logger.isDebugEnabled())
             logger.debug("approve: Workflow property: " + propertyModel);
         basicProp = propertyModel.getBasicProperty();
@@ -964,8 +963,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
             else if (checkDesignationsForView())
                 return VIEW;
         }
-        propertyModel = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
-                Long.valueOf(getModelId()));
+        propertyModel = (PropertyImpl) propertyDAO.findById(Long.valueOf(getModelId()),false);
         if (propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode()
                 .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             propertyModel.getPropertyDetail().getFloorDetails().clear();

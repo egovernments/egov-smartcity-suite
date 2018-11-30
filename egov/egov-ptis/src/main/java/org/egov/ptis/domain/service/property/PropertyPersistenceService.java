@@ -51,6 +51,7 @@ package org.egov.ptis.domain.service.property;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.repository.UserRepository;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -82,9 +83,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.PersistenceContext;
+
 public class PropertyPersistenceService extends PersistenceService<BasicProperty, Long> {
 
-    private static final String FROM_USER_WHERE_NAME_AND_MOBILE_NUMBER_AND_GENDER = "From User where name = ? and mobileNumber = ? and gender = ? ";
     private static final Logger LOGGER = Logger.getLogger(PropertyPersistenceService.class);
     private static final String CREATE_ACK_TEMPLATE = "mainCreatePropertyAck";
     @Autowired
@@ -96,7 +98,9 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
 
     @Autowired
     private CityService cityService;
-
+    @Autowired 
+    UserRepository userRepository;
+    
     public PropertyPersistenceService() {
         super(BasicProperty.class);
     }
@@ -115,13 +119,9 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
             orderNo++;
             if (ownerInfo != null) {
                 User user = null;
-                /*if (StringUtils.isNotBlank(ownerInfo.getOwner().getAadhaarNumber()))
-                    user = userService.getUserByAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
-                else*/
                 if (StringUtils.isNotBlank(ownerInfo.getOwner().getMobileNumber())) {
-                    user = (User) find(FROM_USER_WHERE_NAME_AND_MOBILE_NUMBER_AND_GENDER, ownerInfo
-                            .getOwner().getName(), ownerInfo.getOwner().getMobileNumber(), ownerInfo.getOwner()
-                                    .getGender());
+                    user = userRepository.findByNameAndMobileNumberAndGender(ownerInfo.getOwner().getName(),
+							ownerInfo.getOwner().getMobileNumber(), ownerInfo.getOwner().getGender());
                 }
                 if (user == null) {
                     final Citizen newOwner = new Citizen();
@@ -156,12 +156,8 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
             orderNo++;
             if (ownerInfo != null) {
                 User user;
-                if (StringUtils.isNotBlank(ownerInfo.getOwner().getAadhaarNumber()))
-                    user = userService.getUserByAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
-                else
-                    user = (User) find(FROM_USER_WHERE_NAME_AND_MOBILE_NUMBER_AND_GENDER, ownerInfo
-                            .getOwner().getName(), ownerInfo.getOwner().getMobileNumber(), ownerInfo.getOwner()
-                                    .getGender());
+                    user = userRepository.findByNameAndMobileNumberAndGender(ownerInfo.getOwner().getName(),
+							ownerInfo.getOwner().getMobileNumber(), ownerInfo.getOwner().getGender());
                 if (user == null) {
                     final Citizen newOwner = new Citizen();
                     user = createNewOwner(ownerInfo, newOwner);
@@ -275,12 +271,8 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
 
             if (ownerInfo != null) {
                 User user;
-                if (StringUtils.isNotBlank(ownerInfo.getOwner().getAadhaarNumber()))
-                    user = userService.getUserByAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
-                else
-                    user = (User) find(FROM_USER_WHERE_NAME_AND_MOBILE_NUMBER_AND_GENDER, ownerInfo
-                            .getOwner().getName(), ownerInfo.getOwner().getMobileNumber(), ownerInfo.getOwner()
-                                    .getGender());
+					user = userRepository.findByNameAndMobileNumberAndGender(ownerInfo.getOwner().getName(),
+							ownerInfo.getOwner().getMobileNumber(), ownerInfo.getOwner().getGender());
                 if (user == null) {
                     orderNo++;
                     Citizen newOwner = new Citizen();

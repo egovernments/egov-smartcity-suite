@@ -57,13 +57,13 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.service.bill.BillService;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.service.DemandBill.DemandBillService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpHeaders;
@@ -75,6 +75,8 @@ import org.springframework.validation.BindingResult;
 
 import java.io.File;
 import java.io.IOException;
+
+import javax.persistence.EntityManager;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_CLIENT_SPECIFIC_DMD_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
@@ -97,9 +99,9 @@ public class IntgDemandBillService {
     @Autowired
     private ModuleService moduleDao;
     @Autowired
-    protected transient PersistenceService persistenceService;
-    @Autowired
     protected FileStoreService fileStoreService;
+    @Autowired
+    private EntityManager entityManager;
 
     public void validate(final EgBill egBill, final BindingResult errors) {
         BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(egBill.getConsumerId());
@@ -127,18 +129,20 @@ public class IntgDemandBillService {
     private ReportOutput getBill(final String assessment) {
         ReportOutput reportOutput;
         BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessment);
-        final EgBill egBill = (EgBill) persistenceService.find("FROM EgBill WHERE module = ? "
-                + "AND egBillType.code = ? AND consumerId = ? AND is_history = 'N'",
-                moduleDao.getModuleByName(PTMODULENAME), BILLTYPE_MANUAL, basicProperty.getUpicNo());
+		final EgBill egBill = (EgBill) entityManager.unwrap(Session.class)
+				.createQuery(
+						"FROM EgBill WHERE module = :module AND egBillType.code = :type AND consumerId = :upicNo AND is_history = 'N'")
+				.setParameter("module", moduleDao.getModuleByName(PTMODULENAME)).setParameter("type", BILLTYPE_MANUAL)
+				.setParameter("upicNo", basicProperty.getUpicNo());
         if (egBill == null)
             reportOutput = billService.generateBill(basicProperty, ApplicationThreadLocals.getUserId().intValue());
         else {
-            final String query = "SELECT notice FROM EgBill bill, PtNotice notice left join notice.basicProperty bp "
-                    + "WHERE bill.is_History = 'N' "
-                    + "AND bill.egBillType.code = ? "
-                    + "AND bill.billNo = notice.noticeNo " + "AND notice.noticeType = ? " + "AND bp = ?";
-            final PtNotice ptNotice = (PtNotice) persistenceService.find(query, BILLTYPE_MANUAL, NOTICE_TYPE_BILL,
-                    basicProperty);
+			final PtNotice ptNotice = (PtNotice) entityManager.unwrap(Session.class)
+					.createQuery(
+							"SELECT notice FROM EgBill bill, PtNotice notice left join notice.basicProperty bp WHERE bill.is_History = 'N' AND bill.egBillType.code = :code AND bill.billNo = notice.noticeNo "
+									+ "AND notice.noticeType = :type " + "AND bp = :bp")
+					.setParameter("code", BILLTYPE_MANUAL).setParameter("type", NOTICE_TYPE_BILL)
+					.setParameter("bp", basicProperty);
             reportOutput = new ReportOutput();
             if (ptNotice != null && ptNotice.getFileStore() != null) {
                 final FileStoreMapper fsm = ptNotice.getFileStore();

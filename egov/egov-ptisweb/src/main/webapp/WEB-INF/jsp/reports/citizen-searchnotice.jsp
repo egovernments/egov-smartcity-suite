@@ -55,7 +55,6 @@
 <head>
 <title><s:text name="lbl.citizen.searchnotices" /></title>
 <script type="text/javascript">
-	jQuery.noConflict();
 	function performBeforeSubmit(obj) {
 		var indexNumber = jQuery("#indexNumber").val();
 		var applicationNo = jQuery("#applicationNo").val();

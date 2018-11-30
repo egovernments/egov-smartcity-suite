@@ -131,9 +131,15 @@ import org.egov.ptis.client.service.calculator.APTaxCalculator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyHibernateDAO;
+import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
+import org.egov.ptis.domain.dao.property.PropertyOccupationDAO;
+import org.egov.ptis.domain.dao.property.PropertySourceHibernateDAO;
+import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
 import org.egov.ptis.domain.dao.property.PropertyStatusValuesDAO;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
+import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
 import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
 import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
@@ -180,8 +186,16 @@ import org.egov.ptis.domain.repository.PropertyDepartmentRepository;
 import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthorityRepository;
 import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
+import org.egov.ptis.master.service.ApartmentService;
+import org.egov.ptis.master.service.FloorTypeService;
+import org.egov.ptis.master.service.RoofTypeService;
+import org.egov.ptis.master.service.StructureClassificationService;
+import org.egov.ptis.master.service.TaxExemptionReasonService;
+import org.egov.ptis.master.service.WallTypeService;
+import org.egov.ptis.master.service.WoodTypeService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.query.Query;
+import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -210,12 +224,8 @@ public class PropertyService {
     private static final String MV_QUERY = "select distinct pmv from PropertyMaterlizeView pmv where pmv.isActive = true ";
     private static final String OWNER_NAME = "OwnerName";
     private static final String HOUSE_NO = "HouseNo";
-    private static final String INST2 = ", inst: ";
     private static final String NEW_PROPERTY = ", newProperty: ";
     private static final String DATE_OF_COMPLETION = ", dateOfCompletion: ";
-    private static final String FROM_PROPERTY_USAGE_WHERE_ID = "from PropertyUsage pu where pu.id = ?";
-    private static final String FROM_PROPERTY_OCCUPATION_WHERE_ID = "from PropertyOccupation po where po.id = ?";
-    private static final String FROM_PROPERTY_MUTATION_MASTER_WHERE_CODE = "from PropertyMutationMaster PM where upper(PM.code) = ?";
     private static final Logger LOGGER = Logger.getLogger(PropertyService.class);
     public static final String APPLICATION_VIEW_URL = "/ptis/view/viewProperty-viewForm.action?applicationNo=%s&applicationType=%s";
     private static final String PROPERTY_WORKFLOW_STARTED = "Property Workflow Started";
@@ -247,7 +257,7 @@ public class PropertyService {
     @Autowired
     protected EisCommonsService eisCommonsService;
     @Autowired
-    private ModuleService moduleDao;
+    private ModuleService moduleService;
     @SuppressWarnings("rawtypes")
     @Autowired
     private InstallmentHibDao installmentDao;
@@ -287,39 +297,51 @@ public class PropertyService {
     private PTBillServiceImpl ptBillServiceImpl;
     @Autowired
     private EisCommonService eisCommonService;
-
     @Autowired
     private PropertyDepartmentRepository ptDepartmentRepository;
-
     @Autowired
     private VacantLandPlotAreaRepository vacantLandPlotAreaRepository;
-
     @Autowired
     private LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepository;
-
     @Autowired
     @Qualifier("documentTypeDetailsService")
     private PersistenceService<DocumentTypeDetails, Long> documentTypeDetailsService;
-
     @Autowired
     private SecurityUtils securityUtils;
-
     @Autowired
     private PropertyTypeMasterDAO propertyTypeMasterDAO;
-
-    @Autowired
-    @Qualifier("ptaxApplicationTypeService")
-    private PersistenceService<PtApplicationType, Long> ptaxApplicationTypeService;
-
     @Autowired
     private PortalInboxService portalInboxService;
-
     @PersistenceContext
     private EntityManager entityManager;
-
     @Autowired
     private PropertyHibernateDAO propertyHibernateDAO;
-
+    @Autowired
+    private FloorTypeService floorTypeService;
+    @Autowired
+    private RoofTypeService roofTypeService;
+    @Autowired
+    private WallTypeService wallTypeService;
+    @Autowired
+    private WoodTypeService woodTypeService;
+    @Autowired
+    private TaxExemptionReasonService taxExemptionReasonService;
+    @Autowired
+    private ApartmentService apartmentService;
+    @Autowired
+    private PropertyMutationMasterDAO propertyMutationMasterDAO;
+    @Autowired
+    private PropertyUsageDAO propertyUsageDAO;
+    @Autowired
+    private PropertyOccupationDAO propertyOccupationDAO;
+    @Autowired
+    private StructureClassificationService structureClassificationService;
+    @Autowired
+    private PropertyStatusDAO propertyStatusDAO;
+    @Autowired
+    private PropertyDAO propertyDAO;
+    @Autowired
+    private PropertySourceHibernateDAO propertySourceHibernateDAO;
     /**
      * Creates a new property if property is in transient state else updates persisted property
      *
@@ -345,38 +367,31 @@ public class PropertyService {
             final String docnumber, final String nonResPlotArea, final Long floorTypeId, final Long roofTypeId,
             final Long wallTypeId, final Long woodTypeId, final Long taxExemptId, final Long propertyDepartmentId,
             final Long vacantLandPlotAreaId, final Long layoutApprovalAuthorityId, final Boolean nonVacant) {
-        LOGGER.debug("Entered into createProperty");
-        LOGGER.debug("createProperty: Property: " + property + ", areaOfPlot: " + areaOfPlot + ", mutationCode: "
-                + mutationCode + ",propTypeId: " + propTypeId + ", propUsageId: " + propUsageId + ", propOccId: "
-                + propOccId + ", status: " + status);
-        currentInstall = (Installment) getPropPerServ().find(
-                "from Installment I where I.module.name=? and (I.fromDate <= ? and I.toDate >= ?) ", PTMODULENAME,
-                new Date(), new Date());
-        final PropertySource propertySource = (PropertySource) getPropPerServ()
-                .find("from PropertySource where propSrcCode = ?", PROP_SOURCE);
+		currentInstall = (Installment) installmentDao.getInstallmentsByModuleBetweenFromDateAndToDate(
+				moduleService.getModuleByName(PTMODULENAME), new Date(), new Date()).get(0);
+		final PropertySource propertySource = propertySourceHibernateDAO.getPropertySourceByCode(PROP_SOURCE);
         if (floorTypeId != null && floorTypeId != -1) {
-            final FloorType floorType = (FloorType) getPropPerServ().find("From FloorType where id = ?", floorTypeId);
+            final FloorType floorType = floorTypeService.getFloorTypeById(floorTypeId);
             property.getPropertyDetail().setFloorType(floorType);
         } else
             property.getPropertyDetail().setFloorType(null);
         if (roofTypeId != null && roofTypeId != -1) {
-            final RoofType roofType = (RoofType) getPropPerServ().find("From RoofType where id = ?", roofTypeId);
+            final RoofType roofType = roofTypeService.getRoofTypeById(roofTypeId);
             property.getPropertyDetail().setRoofType(roofType);
         } else
             property.getPropertyDetail().setRoofType(null);
         if (wallTypeId != null && wallTypeId != -1) {
-            final WallType wallType = (WallType) getPropPerServ().find("From WallType where id = ?", wallTypeId);
+            final WallType wallType = wallTypeService.getWallTypeById(wallTypeId);
             property.getPropertyDetail().setWallType(wallType);
         } else
             property.getPropertyDetail().setWallType(null);
         if (woodTypeId != null && woodTypeId != -1) {
-            final WoodType woodType = (WoodType) getPropPerServ().find("From WoodType where id = ?", woodTypeId);
+            final WoodType woodType = woodTypeService.getWoodTypeById(woodTypeId);
             property.getPropertyDetail().setWoodType(woodType);
         } else
             property.getPropertyDetail().setWoodType(null);
         if (taxExemptId != null && taxExemptId != -1) {
-            final TaxExemptionReason taxExemptionReason = (TaxExemptionReason) getPropPerServ()
-                    .find("From TaxExemptionReason where id = ?", taxExemptId);
+            final TaxExemptionReason taxExemptionReason = taxExemptionReasonService.getExemptionReasonById(taxExemptId);
             property.setTaxExemptedReason(taxExemptionReason);
             property.setIsExemptedFromTax(Boolean.TRUE);
         }
@@ -386,18 +401,18 @@ public class PropertyService {
             if (nonVacant)
                 area.setArea(new Float(property.getPropertyDetail().getExtentAppartenauntLand()));
             else
-                area.setArea(new Float(property.getPropertyDetail().getSitalArea().getArea()));
+                area.setArea(property.getPropertyDetail().getSitalArea().getArea());
         } else if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
             area.setArea(new Float(areaOfPlot));
             property.getPropertyDetail().setSitalArea(area);
         } else
-            area.setArea(new Float(property.getPropertyDetail().getSitalArea().getArea()));
+            area.setArea(property.getPropertyDetail().getSitalArea().getArea());
         property.getPropertyDetail().setSitalArea(area);
 
         if (property.getPropertyDetail().getApartment() != null
                 && property.getPropertyDetail().getApartment().getId() != null) {
-            final Apartment apartment = (Apartment) getPropPerServ().find("From Apartment where id = ?",
-                    property.getPropertyDetail().getApartment().getId());
+			final Apartment apartment = apartmentService
+					.getApartmentById(property.getPropertyDetail().getApartment().getId());
             property.getPropertyDetail().setApartment(apartment);
         } else
             property.getPropertyDetail().setApartment(null);
@@ -413,20 +428,16 @@ public class PropertyService {
         if (property.getId() == null && property.getPropertyDetail().isAppurtenantLandChecked() && !nonVacant)
             propTypeMstr = propertyTypeMasterDAO.getPropertyTypeMasterByCode(OWNERSHIP_TYPE_VAC_LAND);
         else
-            propTypeMstr = (PropertyTypeMaster) getPropPerServ().find("from PropertyTypeMaster PTM where PTM.id = ?",
-                    Long.valueOf(propTypeId));
-
-        final PropertyMutationMaster propMutMstr = (PropertyMutationMaster) getPropPerServ()
-                .find(FROM_PROPERTY_MUTATION_MASTER_WHERE_CODE, mutationCode);
+            propTypeMstr = propertyTypeMasterDAO.findById(Long.valueOf(propTypeId), false);
+		final PropertyMutationMaster propMutMstr = propertyMutationMasterDAO
+				.getPropertyMutationMasterByCode(mutationCode);
         if (propUsageId != null) {
-            final PropertyUsage usage = (PropertyUsage) getPropPerServ().find(FROM_PROPERTY_USAGE_WHERE_ID,
-                    Long.valueOf(propUsageId));
+			final PropertyUsage usage = propertyUsageDAO.findById(Long.valueOf(propUsageId), false);
             property.getPropertyDetail().setPropertyUsage(usage);
         } else
             property.getPropertyDetail().setPropertyUsage(null);
         if (propOccId != null) {
-            final PropertyOccupation occupancy = (PropertyOccupation) getPropPerServ()
-                    .find(FROM_PROPERTY_OCCUPATION_WHERE_ID, Long.valueOf(propOccId));
+			final PropertyOccupation occupancy = propertyOccupationDAO.findById(Long.valueOf(propOccId), false);
             property.getPropertyDetail().setPropertyOccupation(occupancy);
         } else
             property.getPropertyDetail().setPropertyOccupation(null);
@@ -450,7 +461,6 @@ public class PropertyService {
         property.setDocNumber(docnumber);
         if (property.getApplicationNo() == null)
             property.setApplicationNo(applicationNumberGenerator.generate());
-        LOGGER.debug("Exiting from createProperty");
         if (propertyDepartmentId != null && propertyDepartmentId != -1) {
             final PropertyDepartment propertyDepartment = ptDepartmentRepository.findOne(propertyDepartmentId);
             property.getPropertyDetail().setPropertyDepartment(propertyDepartment);
@@ -496,29 +506,21 @@ public class PropertyService {
                     PropertyUsage usage = null;
                     PropertyOccupation occupancy = null;
                     if (floor.getUnitType() != null)
-                        unitType = (PropertyTypeMaster) getPropPerServ()
-                                .find("from PropertyTypeMaster utype where utype.id = ?", floor.getUnitType().getId());
+                    	unitType = propertyTypeMasterDAO.findById(floor.getUnitType().getId(), false);
                     if (floor.getPropertyUsage() != null)
-                        usage = (PropertyUsage) getPropPerServ().find(FROM_PROPERTY_USAGE_WHERE_ID,
-                                floor.getPropertyUsage().getId());
+                    	usage = propertyUsageDAO.findById(floor.getPropertyUsage().getId(), false);
                     if (floor.getPropertyOccupation() != null)
-                        occupancy = (PropertyOccupation) getPropPerServ().find(FROM_PROPERTY_OCCUPATION_WHERE_ID,
-                                floor.getPropertyOccupation().getId());
-
+                    	occupancy = propertyOccupationDAO.findById(floor.getPropertyOccupation().getId(), false);
+                   
                     StructureClassification structureClass = null;
 
                     if (floor.getStructureClassification() != null)
-                        structureClass = (StructureClassification) getPropPerServ().find(
-                                "from StructureClassification sc where sc.id = ?",
-                                floor.getStructureClassification().getId());
+						structureClass = structureClassificationService
+								.findOne(floor.getStructureClassification().getId());
 
                     if (floor.getOccupancyDate() != null && floor.getConstructionDate() != null)
                         floor.setDepreciationMaster(propertyTaxUtil.getDepreciationByDate(floor.getConstructionDate(),
                                 floor.getOccupancyDate()));
-
-                    LOGGER.debug("createFloors: PropertyUsage: " + usage + ", PropertyOccupation: " + occupancy
-                            + ", StructureClass: " + structureClass);
-
                     if (unitType != null
                             && unitType.getCode().equalsIgnoreCase(UNITTYPE_OPEN_PLOT))
                         floor.setFloorNo(OPEN_PLOT_UNIT_FLOORNUMBER);
@@ -548,8 +550,6 @@ public class PropertyService {
             totBltUpArea.setArea(totBltUpAreaVal);
             property.getPropertyDetail().setTotalBuiltupArea(totBltUpArea);
         }
-
-        LOGGER.debug("Exiting from createFloors");
     }
 
     /**
@@ -567,14 +567,8 @@ public class PropertyService {
     public PropertyStatusValues createPropStatVal(final BasicProperty basicProperty, final String statusCode,
             final Date propCompletionDate, final String courtOrdNum, final Date orderDate, final String judgmtDetails,
             final String parentPropId) {
-        LOGGER.debug("Entered into createPropStatVal");
-        LOGGER.debug("createPropStatVal: basicProperty: " + basicProperty + ", statusCode: " + statusCode
-                + ", propCompletionDate: " + propCompletionDate + ", courtOrdNum: " + courtOrdNum + ", orderDate: "
-                + orderDate + ", judgmtDetails: " + judgmtDetails + ", parentPropId: " + parentPropId);
         final PropertyStatusValues propStatVal = new PropertyStatusValues();
-        final PropertyStatus propertyStatus = (PropertyStatus) getPropPerServ()
-                .find("from PropertyStatus where statusCode=?", statusCode);
-
+		final PropertyStatus propertyStatus = propertyStatusDAO.getPropertyStatusByCode(statusCode);
         propStatVal.setIsActive("Y");
         final User user = userService.getUserById(ApplicationThreadLocals.getUserId());
         propStatVal.setCreatedDate(new Date());
@@ -602,12 +596,9 @@ public class PropertyService {
         propStatVal.setBasicProperty(basicProperty);
         if (basicProperty.getPropertyMutationMaster() != null
                 && basicProperty.getPropertyMutationMaster().getCode().equals(PROP_CREATE_RSN_BIFUR)) {
-            final BasicProperty referenceBasicProperty = (BasicProperty) propPerServ
-                    .find("from BasicPropertyImpl bp where bp.upicNo=?", parentPropId);
+			final BasicProperty referenceBasicProperty = basicPropertyDAO.getAllBasicPropertyByPropertyID(parentPropId);
             propStatVal.setReferenceBasicProperty(referenceBasicProperty);
         }
-        LOGGER.debug("createPropStatVal: PropertyStatusValues: " + propStatVal);
-        LOGGER.debug("Exiting from createPropStatVal");
         return propStatVal;
     }
 
@@ -621,17 +612,12 @@ public class PropertyService {
      */
     public Property createDemand(final PropertyImpl property, final Date dateOfCompletion)
             throws TaxCalculatorExeption {
-        LOGGER.debug("Entered into createDemand");
-        LOGGER.debug("createDemand: Property: " + property + DATE_OF_COMPLETION + dateOfCompletion);
-
         instTaxMap = taxCalculator.calculatePropertyTax(property, dateOfCompletion);
-
         Ptdemand ptDemand;
         final Set<Ptdemand> ptDmdSet = new HashSet<>();
         Set<EgDemandDetails> dmdDetailSet;
         List<Installment> instList;
         instList = new ArrayList<>(instTaxMap.keySet());
-        LOGGER.debug("createDemand: instList: " + instList);
         currentInstall = propertyTaxCommonUtils.getCurrentInstallment();
         property.getPtDemandSet().clear();
 
@@ -689,8 +675,6 @@ public class PropertyService {
         }
 
         property.getPtDemandSet().addAll(ptDmdSet);
-
-        LOGGER.debug("Exiting from createDemand");
         return property;
     }
 
@@ -705,13 +689,8 @@ public class PropertyService {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public Property createDemandForModify(final Property oldProperty, final Property newProperty,
             final Date dateOfCompletion) {
-        LOGGER.debug("Entered into createDemandForModify");
-        LOGGER.debug("createDemandForModify: oldProperty: " + oldProperty + NEW_PROPERTY + newProperty
-                + DATE_OF_COMPLETION + dateOfCompletion);
-
         List<Installment> instList;
         instList = new ArrayList<>(instTaxMap.keySet());
-        LOGGER.debug("createDemandForModify: instList: " + instList);
         Ptdemand ptDemandOld;
         Ptdemand ptDemandNew;
         final Map<String, Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
@@ -728,7 +707,7 @@ public class PropertyService {
         if (!oldProperty.getPropertyDetail().getPropertyTypeMaster().getCode()
                 .equalsIgnoreCase(newProperty.getPropertyDetail().getPropertyTypeMaster().getCode())
                 || !oldProperty.getIsExemptedFromTax() ^ !newProperty.getIsExemptedFromTax())
-            createAllDmdDetails(oldProperty, newProperty, installmentFirstHalf, instList, instTaxMap);
+            createAllDmdDetails(oldProperty, newProperty, installmentFirstHalf, instList);
 
         final Map<String, Ptdemand> newPtdemandMap = getPtdemandsAsInstMap(newProperty.getPtDemandSet());
         ptDemandNew = newPtdemandMap.get(installmentFirstHalf.getDescription());
@@ -737,7 +716,7 @@ public class PropertyService {
                 new ArrayList(ptDemandNew.getEgDemandDetails()), instList);
 
         for (final Installment inst : instList) {
-            carryForwardCollection(newProperty, inst, newDemandDtlsMap.get(inst), ptDemandOld, oldPropTypeMaster,
+            carryForwardCollection(inst, newDemandDtlsMap.get(inst), ptDemandOld, oldPropTypeMaster,
                     newPropTypeMaster);
 
             /*
@@ -745,20 +724,17 @@ public class PropertyService {
              * Ptdemand of current year first installment
              */
             if (instList.size() == 1 && instList.get(0).equals(installmentSecondHalf))
-                carryForwardPenalty(ptDemandOld, ptDemandNew, installmentFirstHalf);
+                carryForwardPenalty(ptDemandOld, ptDemandNew);
             else if (inst.equals(currentInstall))
-                carryForwardPenalty(ptDemandOld, ptDemandNew, inst);
+                carryForwardPenalty(ptDemandOld, ptDemandNew);
         }
 
         // sort the installment list in ascending order to start the
         // excessCollection adjustment from 1st inst
-        LOGGER.info("before adjustExcessCollAmt newDemandDtlsMap.size: " + newDemandDtlsMap.size());
         Collections.sort(instList);
 
         if (!excessCollAmtMap.isEmpty())
             adjustExcessCollectionAmount(instList, newDemandDtlsMap, ptDemandNew);
-
-        LOGGER.debug("Exiting from createDemandForModify");
         return newProperty;
     }
 
@@ -767,9 +743,8 @@ public class PropertyService {
      *
      * @param ptDemandOld
      * @param ptDemandNew
-     * @param inst
      */
-    private void carryForwardPenalty(final Ptdemand ptDemandOld, final Ptdemand ptDemandNew, final Installment inst) {
+    private void carryForwardPenalty(final Ptdemand ptDemandOld, final Ptdemand ptDemandNew) {
         List<EgDemandDetails> penaltyDmdDtlsList;
         penaltyDmdDtlsList = getEgDemandDetailsListForReason(ptDemandOld.getEgDemandDetails(),
                 DEMANDRSN_CODE_PENALTY_FINES);
@@ -852,9 +827,7 @@ public class PropertyService {
             }
             getExcessCollAmtMap().put(inst, dmdRsnAmt);
         }
-
         LOGGER.info("Excess Collection - " + getExcessCollAmtMap());
-
         adjustExcessCollectionAmount(installments, demandDetailsSetByInstallment, currentDemand);
         return modProperty;
     }
@@ -883,12 +856,9 @@ public class PropertyService {
     public Map<Installment, Set<EgDemandDetails>> getEgDemandDetailsSetByInstallment(
             final Set<EgDemandDetails> demandDetailsSet) {
         final Map<Installment, Set<EgDemandDetails>> newEgDemandDetailsSetByInstallment = new HashMap<>();
-
         for (final EgDemandDetails dd : demandDetailsSet) {
-
             if (dd.getAmtCollected() == null)
                 dd.setAmtCollected(ZERO);
-
             if (newEgDemandDetailsSetByInstallment.get(dd.getEgDemandReason().getEgInstallmentMaster()) == null) {
                 final Set<EgDemandDetails> ddSet = new HashSet<>();
                 ddSet.add(dd);
@@ -907,7 +877,6 @@ public class PropertyService {
      */
     public Ptdemand getCurrrentDemand(final Property property) {
         Ptdemand currentDemand = null;
-
         for (final Ptdemand ptdemand : property.getPtDemandSet())
             if (ptdemand.getEgInstallmentMaster().equals(propertyTaxCommonUtils.getCurrentInstallment())) {
                 currentDemand = ptdemand;
@@ -923,7 +892,6 @@ public class PropertyService {
      * @return
      */
     public Date getPropOccupatedDate(final String dateOfCompletion) {
-        LOGGER.debug("Entered into getPropOccupatedDate, dateOfCompletion: " + dateOfCompletion);
         Date occupationDate = null;
         try {
             if (dateOfCompletion != null && !"".equals(dateOfCompletion))
@@ -931,7 +899,6 @@ public class PropertyService {
         } catch (final ParseException e) {
             LOGGER.error(e.getMessage(), e);
         }
-        LOGGER.debug("Exiting from getPropOccupatedDate");
         return occupationDate;
     }
 
@@ -945,21 +912,16 @@ public class PropertyService {
      */
     private Set<EgDemandDetails> createAllDmdDetails(final List<Installment> instList,
             final HashMap<Installment, TaxCalculationInfo> instTaxMap) {
-        LOGGER.debug("Entered into createAllDmdDeatails");
-
         final Set<EgDemandDetails> dmdDetSet = new HashSet<>();
         for (final Installment inst : instList) {
-
             final TaxCalculationInfo taxCalcInfo = instTaxMap.get(inst);
             final Map<String, BigDecimal> taxMap = taxCalculator
                     .getMiscTaxesForProp(taxCalcInfo.getUnitTaxCalculationInfos());
-
             for (final Map.Entry<String, BigDecimal> tax : taxMap.entrySet()) {
                 final EgDemandReason egDmdRsn = propertyTaxUtil.getDemandReasonByCodeAndInstallment(tax.getKey(), inst);
-                dmdDetSet.add(createDemandDetails(tax.getValue(), egDmdRsn, inst));
+                dmdDetSet.add(createDemandDetails(tax.getValue(), egDmdRsn));
             }
         }
-        LOGGER.debug("createAllDmdDeatails: dmdDetSet: " + dmdDetSet);
         return dmdDetSet;
     }
 
@@ -974,22 +936,14 @@ public class PropertyService {
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private void createAllDmdDetails(final Property oldProperty, final Property newProperty,
-            final Installment installment, final List<Installment> instList,
-            final HashMap<Installment, TaxCalculationInfo> instTaxMap) {
-        LOGGER.debug("Entered into createAllDmdDeatails");
-        LOGGER.debug("createAllDmdDeatails: oldProperty: " + oldProperty + NEW_PROPERTY + newProperty
-                + ",installment: " + installment + ", instList: " + instList);
+            final Installment installment, final List<Installment> instList) {
         final Set<EgDemandDetails> adjustedDmdDetailsSet = new HashSet<>();
-
         final Map<String, Ptdemand> oldPtdemandMap = getPtdemandsAsInstMap(oldProperty.getPtDemandSet());
         final Map<String, Ptdemand> newPtdemandMap = getPtdemandsAsInstMap(newProperty.getPtDemandSet());
-
         Ptdemand ptDemandOld;
         Ptdemand ptDemandNew;
-
         Set<EgDemandDetails> newEgDemandDetailsSet;
         Set<EgDemandDetails> oldEgDemandDetailsSet;
-
         final List<String> adjstmntReasons = new ArrayList<String>() {
             private static final long serialVersionUID = 860234856101419601L;
             {
@@ -1000,10 +954,8 @@ public class PropertyService {
                 add(DEMANDRSN_CODE_EDUCATIONAL_TAX);
             }
         };
-
         final List<String> rsnsForNewResProp = new ArrayList<String>() {
             private static final long serialVersionUID = -1654413629447625291L;
-
             {
                 addAll(NON_VACANT_TAX_DEMAND_CODES);
                 add(DEMANDRSN_CODE_VACANT_TAX);
@@ -1012,10 +964,8 @@ public class PropertyService {
                 add(DEMANDRSN_CODE_EDUCATIONAL_TAX);
             }
         };
-
         new ArrayList<String>() {
             private static final long serialVersionUID = -8513477823231046385L;
-
             {
                 addAll(NON_VACANT_TAX_DEMAND_CODES);
                 add(DEMANDRSN_CODE_VACANT_TAX);
@@ -1027,17 +977,10 @@ public class PropertyService {
 
         ptDemandOld = oldPtdemandMap.get(installment.getDescription());
         ptDemandNew = newPtdemandMap.get(installment.getDescription());
-
-        LOGGER.info("instList==========" + instList);
-
         final Map<Installment, Set<EgDemandDetails>> oldDemandDtlsMap = getEgDemandDetailsSetAsMap(
                 new ArrayList(ptDemandOld.getEgDemandDetails()), instList);
-        LOGGER.info("oldDemandDtlsMap : " + oldDemandDtlsMap);
-
         for (final Installment inst : instList) {
             oldEgDemandDetailsSet = oldDemandDtlsMap.get(inst);
-
-            LOGGER.info("inst==========" + inst);
             final Set<EgDemandDetails> demandDtls = demandDetails.get(inst);
             if (demandDtls != null)
                 for (final EgDemandDetails dd : demandDtls) {
@@ -1046,21 +989,14 @@ public class PropertyService {
                     adjustedDmdDetailsSet.add(ddClone);
                 }
             else {
-
                 EgDemandDetails oldEgdmndDetails;
                 EgDemandDetails newEgDmndDetails;
-
                 newEgDemandDetailsSet = new HashSet<>();
 
                 // Getting EgDemandDetails for inst installment
-
                 for (final EgDemandDetails edd : ptDemandNew.getEgDemandDetails())
                     if (edd.getEgDemandReason().getEgInstallmentMaster().equals(inst))
                         newEgDemandDetailsSet.add((EgDemandDetails) edd.clone());
-
-                LOGGER.info("Old Demand Set:" + inst + "=" + oldEgDemandDetailsSet);
-                LOGGER.info("New Demand set:" + inst + "=" + newEgDemandDetailsSet);
-
                 if (!oldProperty.getIsExemptedFromTax() && !newProperty.getIsExemptedFromTax())
                     for (int i = 0; i < adjstmntReasons.size(); i++) {
                         final String oldPropRsn = adjstmntReasons.get(i);
@@ -1071,12 +1007,10 @@ public class PropertyService {
                          * EgDemandDetails then doing collection adjustments
                          */
                         newEgDmndDetails = getEgDemandDetailsForReason(newEgDemandDetailsSet, oldPropRsn);
-
                         if (newEgDmndDetails == null) {
                             newPropRsn = rsnsForNewResProp.get(i);
                             oldEgdmndDetails = getEgDemandDetailsForReason(oldEgDemandDetailsSet, oldPropRsn);
                             newEgDmndDetails = getEgDemandDetailsForReason(newEgDemandDetailsSet, newPropRsn);
-
                             if (newEgDmndDetails != null && oldEgdmndDetails != null)
                                 newEgDmndDetails.setAmtCollected(
                                         newEgDmndDetails.getAmtCollected().add(oldEgdmndDetails.getAmtCollected()));
@@ -1091,7 +1025,6 @@ public class PropertyService {
                 // Collection carry forward logic (This logic is moved out
                 // of this method, bcoz it has to be invoked in all usecases
                 // and not only when there is property type change
-
                 adjustedDmdDetailsSet.addAll(newEgDemandDetailsSet);
                 demandDetails.put(inst, newEgDemandDetailsSet);
             }
@@ -1103,12 +1036,7 @@ public class PropertyService {
             final Ptdemand ptdNew = newPtdemandMap.get(installment.getDescription());
             ptdNew.setAmtCollected(ptdOld.getAmtCollected());
         }
-
-        LOGGER.info("Exit from PropertyService.createAllDmdDeatails, Modify Adjustments for "
-                + oldProperty.getBasicProperty().getUpicNo() + " And installment : " + installment + "\n\n"
-                + adjustedDmdDetailsSet);
         ptDemandNew.setEgDemandDetails(adjustedDmdDetailsSet);
-        LOGGER.debug("Exiting from createAllDmdDeatails");
     }
 
     /**
@@ -1122,32 +1050,21 @@ public class PropertyService {
      * @param newPropTypeMaster
      * @return
      */
-    private Set<EgDemandDetails> carryForwardCollection(final Property newProperty, final Installment inst,
+    private Set<EgDemandDetails> carryForwardCollection(final Installment inst,
             final Set<EgDemandDetails> newEgDemandDetailsSet, final Ptdemand ptDmndOld,
             final PropertyTypeMaster oldPropTypeMaster, final PropertyTypeMaster newPropTypeMaster) {
-        LOGGER.debug("Entered into carryForwardCollection");
-        LOGGER.debug("carryForwardCollection: newProperty: " + newProperty + INST2 + inst
-                + ", newEgDemandDetailsSet: " + newEgDemandDetailsSet + ", ptDmndOld: " + ptDmndOld
-                + ", oldPropTypeMaster: " + oldPropTypeMaster + ", newPropTypeMaster: " + newPropTypeMaster);
-
         final Map<String, BigDecimal> dmdRsnAmt = new LinkedHashMap<>();
-
         final List<String> demandReasonsWithAdvance = new ArrayList<>(DEMAND_RSNS_LIST);
         demandReasonsWithAdvance.add(DEMANDRSN_CODE_ADVANCE);
-
         for (final String rsn : demandReasonsWithAdvance) {
-
             List<EgDemandDetails> oldEgDmndDtlsList;
             List<EgDemandDetails> newEgDmndDtlsList;
-
             oldEgDmndDtlsList = getEgDemandDetailsListForReason(ptDmndOld.getEgDemandDetails(), rsn);
             newEgDmndDtlsList = getEgDemandDetailsListForReason(newEgDemandDetailsSet, rsn);
-
             Map<Installment, EgDemandDetails> oldDemandDtlsMap;
             Map<Installment, EgDemandDetails> newDemandDtlsMap;
             EgDemandDetails oldDmndDtls = null;
             EgDemandDetails newDmndDtls = null;
-
             if (!oldEgDmndDtlsList.isEmpty()) {
                 oldDemandDtlsMap = getEgDemandDetailsAsMap(oldEgDmndDtlsList);
                 oldDmndDtls = oldDemandDtlsMap.get(inst);
@@ -1156,14 +1073,11 @@ public class PropertyService {
                 newDemandDtlsMap = getEgDemandDetailsAsMap(newEgDmndDtlsList);
                 newDmndDtls = newDemandDtlsMap.get(inst);
             }
-
             calculateExcessCollection(dmdRsnAmt, rsn, oldDmndDtls, newDmndDtls);
         }
         excessCollAmtMap.put(inst, dmdRsnAmt);
 
         demandDetails.put(inst, newEgDemandDetailsSet);
-        LOGGER.debug("carryForwardCollection: newEgDemandDetailsSet: " + newEgDemandDetailsSet);
-        LOGGER.debug("Exiting from carryForwardCollection");
         return newEgDemandDetailsSet;
     }
 
@@ -1219,12 +1133,9 @@ public class PropertyService {
      * @return
      */
     private Map<String, Ptdemand> getPtdemandsAsInstMap(final Set<Ptdemand> ptdemandSet) {
-        LOGGER.debug("Entered into getPtDemandsAsInstMap, PtDemandSet: " + ptdemandSet);
         final Map<String, Ptdemand> ptDemandMap = new TreeMap<>();
         for (final Ptdemand ptDmnd : ptdemandSet)
             ptDemandMap.put(ptDmnd.getEgInstallmentMaster().getDescription(), ptDmnd);
-        LOGGER.debug("getPtDemandsAsInstMap, ptDemandMap: " + ptDemandMap);
-        LOGGER.debug("Exiting from getPtDemandsAsInstMap");
         return ptDemandMap;
     }
 
@@ -1235,12 +1146,9 @@ public class PropertyService {
      * @return demandDetailsMap
      */
     public Map<Installment, EgDemandDetails> getEgDemandDetailsAsMap(final List<EgDemandDetails> demandDetailsList) {
-        LOGGER.debug("Entered into getEgDemandDetailsAsMap, demandDetailsList: " + demandDetailsList);
         final Map<Installment, EgDemandDetails> demandDetailsMap = new HashMap<>();
         for (final EgDemandDetails dmndDtls : demandDetailsList)
             demandDetailsMap.put(dmndDtls.getEgDemandReason().getEgInstallmentMaster(), dmndDtls);
-        LOGGER.debug("getEgDemandDetailsAsMap: demandDetailsMap: " + demandDetailsMap);
-        LOGGER.debug("Exiting from getEgDemandDetailsAsMap");
         return demandDetailsMap;
     }
 
@@ -1252,11 +1160,8 @@ public class PropertyService {
      */
     public Map<Installment, Set<EgDemandDetails>> getEgDemandDetailsSetAsMap(
             final List<EgDemandDetails> demandDetailsList, final List<Installment> instList) {
-        LOGGER.debug("Entered into getEgDemandDetailsSetAsMap, demandDetailsList: " + demandDetailsList + ", instList: "
-                + instList);
         final Map<Installment, Set<EgDemandDetails>> demandDetailsMap = new HashMap<>();
         Set<EgDemandDetails> ddSet;
-
         for (final Installment inst : instList) {
             ddSet = new HashSet<>();
             for (final EgDemandDetails dd : demandDetailsList)
@@ -1264,8 +1169,6 @@ public class PropertyService {
                     ddSet.add(dd);
             demandDetailsMap.put(inst, ddSet);
         }
-        LOGGER.debug("getEgDemandDetailsSetAsMap: demandDetailsMap: " + demandDetailsMap);
-        LOGGER.debug("Exiting from getEgDemandDetailsSetAsMap");
         return demandDetailsMap;
     }
 
@@ -1278,8 +1181,6 @@ public class PropertyService {
      */
     public EgDemandDetails getEgDemandDetailsForReason(final Set<EgDemandDetails> egDemandDetailsSet,
             final String demandReason) {
-        LOGGER.debug("Entered into getEgDemandDetailsForReason, egDemandDetailsSet: " + egDemandDetailsSet
-                + ", demandReason: " + demandReason);
         final List<Map<String, EgDemandDetails>> egDemandDetailsList = getEgDemandDetailsAsMap(egDemandDetailsSet);
         EgDemandDetails egDemandDetails = null;
         for (final Map<String, EgDemandDetails> egDmndDtlsMap : egDemandDetailsList) {
@@ -1287,8 +1188,6 @@ public class PropertyService {
             if (egDemandDetails != null)
                 break;
         }
-        LOGGER.debug("getEgDemandDetailsForReason: egDemandDetails: " + egDemandDetails);
-        LOGGER.debug("Exiting from getEgDemandDetailsForReason");
         return egDemandDetails;
     }
 
@@ -1301,15 +1200,11 @@ public class PropertyService {
      */
     private List<EgDemandDetails> getEgDemandDetailsListForReason(final Set<EgDemandDetails> egDemandDetailsSet,
             final String demandReason) {
-        LOGGER.debug("Entered into getEgDemandDetailsListForReason: egDemandDetailsSet: " + egDemandDetailsSet
-                + ", demandReason: " + demandReason);
         final List<Map<String, EgDemandDetails>> egDemandDetailsList = getEgDemandDetailsAsMap(egDemandDetailsSet);
         final List<EgDemandDetails> demandListForReason = new ArrayList<>();
         for (final Map<String, EgDemandDetails> egDmndDtlsMap : egDemandDetailsList)
             if (egDmndDtlsMap.get(demandReason) != null)
                 demandListForReason.add(egDmndDtlsMap.get(demandReason));
-        LOGGER.debug("getEgDemandDetailsListForReason: demandListForReason: " + demandListForReason);
-        LOGGER.debug("Exiting from getEgDemandDetailsListForReason");
         return demandListForReason;
     }
 
@@ -1321,10 +1216,8 @@ public class PropertyService {
      * @return
      */
     public List<Map<String, EgDemandDetails>> getEgDemandDetailsAsMap(final Set<EgDemandDetails> egDemandDetailsSet) {
-        LOGGER.debug("Entered into getEgDemandDetailsAsMap, egDemandDetailsSet: " + egDemandDetailsSet);
         final List<EgDemandDetails> egDemandDetailsList = new ArrayList<>(egDemandDetailsSet);
         final List<Map<String, EgDemandDetails>> egDemandDetailsListOfMap = new ArrayList<>();
-
         for (final EgDemandDetails egDmndDtls : egDemandDetailsList) {
             final Map<String, EgDemandDetails> egDemandDetailsMap = new HashMap<>();
             final EgDemandReasonMaster dmndRsnMstr = egDmndDtls.getEgDemandReason().getEgDemandReasonMaster();
@@ -1354,8 +1247,6 @@ public class PropertyService {
                 egDemandDetailsMap.put(DEMANDRSN_CODE_ADVANCE, egDmndDtls);
             egDemandDetailsListOfMap.add(egDemandDetailsMap);
         }
-        LOGGER.debug(
-                "egDemandDetailsListOfMap: " + egDemandDetailsListOfMap + "\n Exiting from getEgDemandDetailsAsMap");
         return egDemandDetailsListOfMap;
     }
 
@@ -1368,8 +1259,6 @@ public class PropertyService {
      */
     private Set<EgDemandDetails> adjustmentsForTaxExempted(final Set<EgDemandDetails> oldEgDemandDetails,
             final Set<EgDemandDetails> newEgDemandDetails, final Installment inst) {
-        LOGGER.debug("Entered into adjustmentsForTaxExempted, oldEgDemandDetails: " + oldEgDemandDetails
-                + ", newEgDemandDetails: " + newEgDemandDetails + ", inst:" + inst);
         BigDecimal totalCollAdjstmntAmnt = BigDecimal.ZERO;
 
         for (final EgDemandDetails egDmndDtls : oldEgDemandDetails)
@@ -1394,7 +1283,6 @@ public class PropertyService {
             else if (egDmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY))
                 egDmndDtls.setAmtCollected(totalCollAdjstmntAmnt.multiply(new BigDecimal("0.25")));
         }
-        LOGGER.debug("newEgDmndDetails: " + newEgDmndDetails + "\nExiting from adjustmentsForTaxExempted");
         return new HashSet<>(newEgDmndDetails);
     }
 
@@ -1406,9 +1294,7 @@ public class PropertyService {
      * @param inst
      * @return Demand details
      */
-    private EgDemandDetails createDemandDetails(final BigDecimal amount, final EgDemandReason dmdRsn,
-            final Installment inst) {
-        LOGGER.debug("Entered into createDemandDetails, amount: " + amount + ", dmdRsn: " + dmdRsn + INST2 + inst);
+    private EgDemandDetails createDemandDetails(final BigDecimal amount, final EgDemandReason dmdRsn) {
         final EgDemandDetails demandDetail = new EgDemandDetails();
         demandDetail.setAmount(amount);
         demandDetail.setAmtCollected(BigDecimal.ZERO);
@@ -1416,7 +1302,6 @@ public class PropertyService {
         demandDetail.setEgDemandReason(dmdRsn);
         demandDetail.setCreateDate(new Date());
         demandDetail.setModifiedDate(new Date());
-        LOGGER.debug("demandDetail: " + demandDetail + "\nExiting from createDemandDetails");
         return demandDetail;
     }
 
@@ -1431,8 +1316,6 @@ public class PropertyService {
      */
     public EgDemandDetails createDemandDetails(final BigDecimal amount, final BigDecimal amountCollected,
             final EgDemandReason dmdRsn, final Installment inst) {
-        LOGGER.debug("Entered into createDemandDetails, amount: " + amount + "amountCollected: " + amountCollected
-                + ", dmdRsn: " + dmdRsn + INST2 + inst);
         final EgDemandDetails demandDetail = new EgDemandDetails();
         demandDetail.setAmount(amount != null ? amount : BigDecimal.ZERO);
         demandDetail.setAmtCollected(amountCollected != null ? amountCollected : BigDecimal.ZERO);
@@ -1440,7 +1323,6 @@ public class PropertyService {
         demandDetail.setEgDemandReason(dmdRsn);
         demandDetail.setCreateDate(new Date());
         demandDetail.setModifiedDate(new Date());
-        LOGGER.debug("demandDetail: " + demandDetail + "\nExiting from createDemandDetails");
         return demandDetail;
     }
 
@@ -1454,12 +1336,9 @@ public class PropertyService {
      */
     private FloorwiseDemandCalculations createFloorDmdCalc(final PTDemandCalculations ptDmdCal, final Floor floor,
             final TaxCalculationInfo taxCalcInfo) {
-        LOGGER.debug("Entered into createFloorDmdCalc, ptDmdCal: " + ptDmdCal + ", floor: " + floor + ", taxCalcInfo: "
-                + taxCalcInfo);
         final FloorwiseDemandCalculations floorDmdCalc = new FloorwiseDemandCalculations();
         floorDmdCalc.setPTDemandCalculations(ptDmdCal);
         floorDmdCalc.setFloor(floor);
-
         for (final UnitTaxCalculationInfo unitTax : taxCalcInfo.getUnitTaxCalculationInfos())
             if (FLOOR_MAP.get(floor.getFloorNo()).equals(unitTax.getFloorNumber())
                     && floor.getPropertyUsage().getUsageCode().equalsIgnoreCase(unitTax.getUnitUsage())
@@ -1469,7 +1348,6 @@ public class PropertyService {
                     && floor.getBuiltUpArea().getArea().equals(Float.valueOf(unitTax.getFloorArea().toString())))
                 setFloorDmdCalTax(unitTax, floorDmdCalc);
         totalAlv = totalAlv.add(floorDmdCalc.getAlv());
-        LOGGER.debug("floorDmdCalc: " + floorDmdCalc + "\nExiting from createFloorDmdCalc");
         return floorDmdCalc;
     }
 
@@ -1540,26 +1418,21 @@ public class PropertyService {
      * @param amalgPropIds
      * @param parentBasicProperty
      */
-    @SuppressWarnings({ "unchecked" })
     public void createAmalgPropStatVal(final String[] amalgPropIds, final BasicProperty parentBasicProperty) {
         LOGGER.debug("Entered into createAmalgPropStatVal, amalgPropIds(length): "
                 + (amalgPropIds != null ? amalgPropIds.length : ZERO) + ", parentBasicProperty: "
                 + parentBasicProperty);
-        final List<PropertyStatusValues> activePropStatVal = propPerServ.findAllByNamedQuery(
-                QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE, parentBasicProperty.getUpicNo(), "Y",
-                PROP_CREATE_RSN);
-        LOGGER.debug("createAmalgPropStatVal: activePropStatVal: " + activePropStatVal);
+		final List<PropertyStatusValues> activePropStatVal = propertyStatusValuesDAO
+				.getPropStatValByUpicNoAndStatCodeAndISActive(parentBasicProperty.getUpicNo(), "Y", PROP_CREATE_RSN);
         if (!activePropStatVal.isEmpty())
             for (final PropertyStatusValues propstatval : activePropStatVal)
                 propstatval.setIsActive("N");
 
         for (final String amalgId : amalgPropIds)
             if (StringUtils.isNotBlank(amalgId)) {
-                final BasicProperty amalgBasicProp = (BasicProperty) getPropPerServ()
-                        .findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO, amalgId);
+                final BasicProperty amalgBasicProp = basicPropertyDAO.getBasicPropertyByPropertyID(amalgId);
                 final PropertyStatusValues amalgPropStatVal = new PropertyStatusValues();
-                final PropertyStatus propertyStatus = (PropertyStatus) getPropPerServ()
-                        .find("from PropertyStatus where statusCode=?", MARK_DEACTIVE);
+				final PropertyStatus propertyStatus = propertyStatusDAO.getPropertyStatusByCode(MARK_DEACTIVE);
                 amalgPropStatVal.setIsActive("Y");
                 amalgPropStatVal.setPropertyStatus(propertyStatus);
                 amalgPropStatVal.setReferenceDate(new Date());
@@ -1589,7 +1462,7 @@ public class PropertyService {
                 + dateOfCompletion + ", property: " + property);
         Ptdemand currPtDmd = null;
         Ptdemand oldCurrPtDmd = null;
-        final Module module = moduleDao.getModuleByName(PTMODULENAME);
+        final Module module = moduleService.getModuleByName(PTMODULENAME);
         final Installment effectiveInstall = installmentDao.getInsatllmentByModuleForGivenDate(module,
                 dateOfCompletion);
         final Installment currInstall = propertyTaxCommonUtils.getCurrentInstallment();
@@ -1765,12 +1638,12 @@ public class PropertyService {
     }
 
     private void updateWFStatusValues(final BasicProperty basicProperty, final String statusCode) {
-        final PropertyStatusValues activePropStatVal = (PropertyStatusValues) propPerServ.findByNamedQuery(
-                QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE, basicProperty.getUpicNo(), "Y", statusCode);
+    	final PropertyStatusValues activePropStatVal = propertyStatusValuesDAO
+				.getPropStatValByUpicNoAndStatCodeAndISActive(basicProperty.getUpicNo(), "Y", statusCode).get(0);
         if (activePropStatVal != null)
             activePropStatVal.setIsActive("N");
-        final PropertyStatusValues wfPropStatVal = (PropertyStatusValues) propPerServ.findByNamedQuery(
-                QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE, basicProperty.getUpicNo(), "W", statusCode);
+        final PropertyStatusValues wfPropStatVal = propertyStatusValuesDAO
+				.getPropStatValByUpicNoAndStatCodeAndISActive(basicProperty.getUpicNo(), "W", statusCode).get(0);
         if (wfPropStatVal != null)
             wfPropStatVal.setIsActive("Y");
     }
@@ -1820,7 +1693,6 @@ public class PropertyService {
                                 dmdDet.getAmount());
                 instWiseDmd.put(inst, rsnWiseDmd);
             }
-        LOGGER.debug("Exiting from prepareRsnWiseDemandForOldProp");
         return instWiseDmd;
     }
 
@@ -1962,8 +1834,8 @@ public class PropertyService {
         newProperty.transition().start().withSenderName(initiater.getName()).withComments(PROPERTY_WORKFLOW_STARTED)
                 .withStateValue(value).withOwner(owner).withDateInfo(new Date());
 
-        final PropertyMutationMaster propMutMstr = (PropertyMutationMaster) getPropPerServ()
-                .find(FROM_PROPERTY_MUTATION_MASTER_WHERE_CODE, PROPERTY_MODIFY_REASON_DATA_ENTRY);
+        final PropertyMutationMaster propMutMstr = propertyMutationMasterDAO
+				.getPropertyMutationMasterByCode(PROPERTY_MODIFY_REASON_DATA_ENTRY);
         newProperty.getPropertyDetail().setPropertyMutationMaster(propMutMstr);
         newProperty.setStatus(STATUS_WORKFLOW);
         basicProperty.addProperty(newProperty);
@@ -1972,8 +1844,6 @@ public class PropertyService {
                 getPropertyCompletionDate(basicProperty, newProperty), null, null, null, null));
 
         basicProperty = basicPropertyService.update(basicProperty);
-        LOGGER.debug("Exiting from initiateDataEntryWorkflow");
-
     }
 
     /**
@@ -2032,9 +1902,8 @@ public class PropertyService {
     }
 
     public List<DocumentType> getDocumentTypesForTransactionType(final TransactionType transactionType) {
-        final javax.persistence.Query qry = entityManager.createNamedQuery(DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE);
-        qry.setParameter("transactionType", transactionType);
-        return qry.getResultList();
+		return (List<DocumentType>) entityManager.createNamedQuery(DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE)
+				.setParameter("transactionType", transactionType).getResultList();
     }
 
     /**
@@ -2367,39 +2236,38 @@ public class PropertyService {
     public int getSlaValue(final String applicationType) {
         int sla = 0;
         if (APPLICATION_TYPE_NEW_ASSESSENT.equals(applicationType))
-            sla = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "CREATE").getResolutionTime()
-                    .intValue();
+			sla = ((PtApplicationType) entityManager.createNamedQuery(PtApplicationType.BY_CODE).setParameter("code",
+					"CREATE").getSingleResult()).getResolutionTime().intValue();
         else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType))
-            sla = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "MODIFY").getResolutionTime()
-                    .intValue();
+			sla = ((PtApplicationType) entityManager.createNamedQuery(PtApplicationType.BY_CODE).setParameter("code",
+					"MODIFY").getSingleResult()).getResolutionTime().intValue();
         else if (APPLICATION_TYPE_GRP.equals(applicationType))
-            sla = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "GENERAL_REVISION_PETETION")
-                    .getResolutionTime().intValue();
+        	sla = ((PtApplicationType) entityManager.createNamedQuery(PtApplicationType.BY_CODE).setParameter("code",
+					"GENERAL_REVISION_PETETION").getSingleResult()).getResolutionTime().intValue();
         else if (APPLICATION_TYPE_REVISION_PETITION.equals(applicationType))
-            sla = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "REVISION_PETETION")
-                    .getResolutionTime().intValue();
+        	sla = ((PtApplicationType) entityManager.createNamedQuery(PtApplicationType.BY_CODE).setParameter("code",
+					"REVISION_PETETION").getSingleResult()).getResolutionTime().intValue();
         else if (NATURE_FULL_TRANSFER.equals(applicationType))
-            sla = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "FULL TRANSFER").getResolutionTime()
-                    .intValue();
+        	sla = ((PtApplicationType) entityManager.createNamedQuery(PtApplicationType.BY_CODE).setParameter("code",
+					"FULL TRANSFER").getSingleResult()).getResolutionTime().intValue();
         else if (NATURE_REGISTERED_TRANSFER.equals(applicationType))
-            sla = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "REGISTERED TRANSFER")
-                    .getResolutionTime()
-                    .intValue();
+        	sla = ((PtApplicationType) entityManager.createNamedQuery(PtApplicationType.BY_CODE).setParameter("code",
+					"REGISTERED TRANSFER").getSingleResult()).getResolutionTime().intValue();
         else if (APPLICATION_TYPE_VACANCY_REMISSION.equals(applicationType))
-            sla = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "VACANCY_REMISSION")
-                    .getResolutionTime().intValue();
+        	sla = ((PtApplicationType) entityManager.createNamedQuery(PtApplicationType.BY_CODE).setParameter("code",
+					"VACANCY_REMISSION").getSingleResult()).getResolutionTime().intValue();
         else if (APPLICATION_TYPE_TAX_EXEMTION.equals(applicationType))
-            sla = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "TAX_EXEMPTION")
-                    .getResolutionTime().intValue();
+        	sla = ((PtApplicationType) entityManager.createNamedQuery(PtApplicationType.BY_CODE).setParameter("code",
+					"TAX_EXEMPTION").getSingleResult()).getResolutionTime().intValue();
         else if (APPLICATION_TYPE_DEMOLITION.equals(applicationType))
-            sla = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "DEMOLITION")
-                    .getResolutionTime().intValue();
+        	sla = ((PtApplicationType) entityManager.createNamedQuery(PtApplicationType.BY_CODE).setParameter("code",
+					"DEMOLITION").getSingleResult()).getResolutionTime().intValue();
         else if (APPLICATION_TYPE_AMALGAMATION.equals(applicationType))
-            sla = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "AMALGAMATION")
-                    .getResolutionTime().intValue();
+        	sla = ((PtApplicationType) entityManager.createNamedQuery(PtApplicationType.BY_CODE).setParameter("code",
+					"AMALGAMATION").getSingleResult()).getResolutionTime().intValue();
         else if (APPLICATION_TYPE_BIFURCATE_ASSESSENT.equals(applicationType))
-            sla = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "BIFURCATION")
-                    .getResolutionTime().intValue();
+        	sla = ((PtApplicationType) entityManager.createNamedQuery(PtApplicationType.BY_CODE).setParameter("code",
+					"BIFURCATION").getSingleResult()).getResolutionTime().intValue();
         return sla;
     }
 
@@ -2487,23 +2355,10 @@ public class PropertyService {
          */
         else if (PROP_CREATE_RSN_BIFUR.equals(reason))
             if (parentBifurcated)
-                getLatestHistoryProperty(basicProperty.getUpicNo());
+				propertyDAO.getHistoryPropertyForBasicProperty(basicProperty);
             else
                 basicProperty.getActiveProperty();
         return errorMsg;
-    }
-
-    /**
-     * Returns the latest history property of a basic property
-     *
-     * @param upicNo
-     * @return
-     */
-    public PropertyImpl getLatestHistoryProperty(final String upicNo) {
-        final PropertyImpl property = (PropertyImpl) propPerServ.find(
-                "from PropertyImpl prop where prop.basicProperty.upicNo = ? and prop.status = 'H' order by prop.id desc",
-                upicNo);
-        return property;
     }
 
     /**
@@ -2748,10 +2603,9 @@ public class PropertyService {
         queryStr.append(
                 "select distinct pmv from PropertyMaterlizeView pmv where pmv.aggrCurrFirstHalfDmd is not null and pmv.aggrCurrFirstHalfDmd>=:fromDemand ")
                 .append("and pmv.aggrCurrFirstHalfDmd<=:toDemand and pmv.isActive = true ");
-        final Query query = propPerServ.getSession().createQuery(queryStr.toString());
-        query.setBigDecimal("fromDemand", new BigDecimal(fromDemand));
-        query.setBigDecimal("toDemand", new BigDecimal(toDemand));
-
+		final Query query = entityManager.unwrap(Session.class).createQuery(queryStr.toString())
+				.setParameter("fromDemand", new BigDecimal(fromDemand))
+				.setParameter("toDemand", new BigDecimal(toDemand));
         return (List<PropertyMaterlizeView>) query.list();
     }
 
@@ -2840,7 +2694,7 @@ public class PropertyService {
         if (ownerName != null && !ownerName.trim().isEmpty())
             queryStr.append(" and upper(trim(pmv.ownerName)) like :OwnerName");
 
-        final Query query = propPerServ.getSession().createQuery(queryStr.toString());
+        final Query query = entityManager.unwrap(Session.class).createQuery(queryStr.toString());
 
         if (null != zoneId && zoneId != -1)
             query.setLong("ZoneID", zoneId);
@@ -2861,7 +2715,7 @@ public class PropertyService {
         queryStr.append(MV_QUERY);
         if (StringUtils.isNotBlank(doorNo))
             queryStr.append("and pmv.houseNo like :doorNo ");
-        final Query query = propPerServ.getSession().createQuery(queryStr.toString());
+        final Query query = entityManager.unwrap(Session.class).createQuery(queryStr.toString());
         if (StringUtils.isNotBlank(doorNo))
             query.setString("doorNo", doorNo + "%");
         return (List<PropertyMaterlizeView>) query.list();
@@ -2874,7 +2728,7 @@ public class PropertyService {
         queryStr.append(MV_QUERY);
         if (StringUtils.isNotBlank(oldMuncipalNum))
             queryStr.append("and pmv.oldMuncipalNum=:oldMuncipalNum ");
-        final Query query = propPerServ.getSession().createQuery(queryStr.toString());
+        final Query query = entityManager.unwrap(Session.class).createQuery(queryStr.toString());
         if (StringUtils.isNotBlank(oldMuncipalNum))
             query.setString("oldMuncipalNum", oldMuncipalNum);
         return (List<PropertyMaterlizeView>) query.list();
@@ -2883,7 +2737,7 @@ public class PropertyService {
     public Map<String, Object> getOldMunicipalNumQuery(final String oldMuncipalNum) {
         final Map<String, Object> map = new HashMap<>();
         final String from = FROM_PROPERTY_MATERLIZE_VIEW_PMV;
-        final String where = "where pmv.isActive = true and pmv.oldMuncipalNum = ? ";
+        final String where = "where pmv.isActive = true and pmv.oldMuncipalNum = ?1 ";
         final StringBuilder search = new StringBuilder(SELECT_DISTINCT_PMV);
         final StringBuilder count = new StringBuilder(SELECT_COUNT_DISTINCT_PMV);
         map.put(SEARCH, search.append(from).append(where).toString());
@@ -2895,7 +2749,7 @@ public class PropertyService {
     public Map<String, Object> getAssessmentNumQuery(final String assessmentNumber) {
         final Map<String, Object> map = new HashMap<>();
         final String from = "from BasicPropertyImpl bp ";
-        final String where = "where bp.upicNo = ? and bp.active='Y' ";
+        final String where = "where bp.upicNo = ?1 and bp.active='Y' ";
         final StringBuilder search = new StringBuilder("select bp ");
         final StringBuilder count = new StringBuilder("select count(bp) ");
         map.put(SEARCH, search.append(from).append(where).toString());
@@ -2907,7 +2761,7 @@ public class PropertyService {
     public Map<String, Object> getDoorNoQuery(final String doorNo) {
         final Map<String, Object> map = new HashMap<>();
         final String from = FROM_PROPERTY_MATERLIZE_VIEW_PMV;
-        final String where = "where pmv.isActive = true and pmv.houseNo like ? ";
+        final String where = "where pmv.isActive = true and pmv.houseNo like ?1 ";
         final StringBuilder search = new StringBuilder(SELECT_DISTINCT_PMV);
         final StringBuilder count = new StringBuilder(SELECT_COUNT_DISTINCT_PMV);
         map.put(SEARCH, search.append(from).append(where).toString());
@@ -2919,7 +2773,7 @@ public class PropertyService {
     public Map<String, Object> getMobileNumberQuery(final String mobileNumber) {
         final Map<String, Object> map = new HashMap<>();
         final String from = FROM_PROPERTY_MATERLIZE_VIEW_PMV;
-        final String where = "where pmv.isActive = true and pmv.mobileNumber = ? ";
+        final String where = "where pmv.isActive = true and pmv.mobileNumber = ?1 ";
         final StringBuilder search = new StringBuilder(SELECT_DISTINCT_PMV);
         final StringBuilder count = new StringBuilder(SELECT_COUNT_DISTINCT_PMV);
         map.put(SEARCH, search.append(from).append(where).toString());
@@ -2938,12 +2792,13 @@ public class PropertyService {
         final StringBuilder where = new StringBuilder(WHERE_PMV_IS_ACTIVE_TRUE);
 
         final List params = new ArrayList();
+        int i=0;
         if (null != zoneId && zoneId != -1) {
-            where.append(" and pmv.zone.id = ?");
+            where.append(" and pmv.zone.id = ?").append(++i);
             params.add(zoneId);
         }
         if (null != wardId && wardId != -1) {
-            where.append(" and pmv.ward.id = ?");
+            where.append(" and pmv.ward.id = ?").append(++i);
             params.add(wardId);
         }
         if (houseNum != null && !houseNum.trim().isEmpty()) {
@@ -2951,7 +2806,7 @@ public class PropertyService {
             params.add(houseNum + "%");
         }
         if (ownerName != null && !ownerName.trim().isEmpty()) {
-            where.append(" and upper(trim(pmv.ownerName)) like ?");
+            where.append(" and upper(trim(pmv.ownerName)) like ?").append(++i);
             params.add("%" + ownerName.toUpperCase() + "%");
         }
 
@@ -2970,8 +2825,9 @@ public class PropertyService {
         final StringBuilder where = new StringBuilder(WHERE_PMV_IS_ACTIVE_TRUE);
 
         final List params = new ArrayList();
+        int i=0;
         if (null != locationId && locationId != -1) {
-            where.append(" and pmv.locality.id = ?");
+            where.append(" and pmv.locality.id = ?").append(++i);
             params.add(locationId);
         }
         if (houseNo != null && !houseNo.trim().isEmpty()) {
@@ -2979,7 +2835,7 @@ public class PropertyService {
             params.add(houseNo + "%");
         }
         if (ownerName != null && !ownerName.trim().isEmpty()) {
-            where.append(" and upper(trim(pmv.ownerName)) like ?");
+            where.append(" and upper(trim(pmv.ownerName)) like ?").append(++i);
             params.add("%" + ownerName.toUpperCase() + "%");
         }
 
@@ -2996,8 +2852,8 @@ public class PropertyService {
         final StringBuilder count = new StringBuilder(SELECT_COUNT_DISTINCT_PMV);
         final String from = FROM_PROPERTY_MATERLIZE_VIEW_PMV;
         final StringBuilder where = new StringBuilder(
-                "where pmv.aggrCurrFirstHalfDmd is not null and pmv.aggrCurrFirstHalfDmd >= ? ")
-                        .append("and pmv.aggrCurrFirstHalfDmd <= ? and pmv.isActive = true ");
+                "where pmv.aggrCurrFirstHalfDmd is not null and pmv.aggrCurrFirstHalfDmd >= ?1 ")
+                        .append("and pmv.aggrCurrFirstHalfDmd <= ?2 and pmv.isActive = true ");
 
         map.put(SEARCH, search.append(from).append(where).toString());
         map.put(COUNT, count.append(from).append(where).toString());
@@ -3014,13 +2870,13 @@ public class PropertyService {
         final StringBuilder count = new StringBuilder(SELECT_COUNT_DISTINCT_PMV);
         final String from = FROM_PROPERTY_MATERLIZE_VIEW_PMV;
         final StringBuilder where = new StringBuilder(WHERE_PMV_IS_ACTIVE_TRUE);
-
+        int i=0;
         if (StringUtils.isNotBlank(oldMuncipalNum)) {
-            where.append(" and pmv.oldMuncipalNum = ? ");
+            where.append(" and pmv.oldMuncipalNum = ?").append(++i);
             params.add(oldMuncipalNum);
         }
         if (StringUtils.isNotBlank(ownerName)) {
-            where.append(" and upper(trim(pmv.ownerName)) like ? ");
+            where.append(" and upper(trim(pmv.ownerName)) like ?").append(++i);
             params.add("%" + ownerName.toUpperCase() + "%");
         }
         if (StringUtils.isNotBlank(doorNo)) {
@@ -3041,7 +2897,7 @@ public class PropertyService {
         queryStr.append(MV_QUERY);
         if (StringUtils.isNotBlank(MobileNo))
             queryStr.append("and pmv.mobileNumber =:MobileNo ");
-        final Query query = propPerServ.getSession().createQuery(queryStr.toString());
+        final Query query = entityManager.unwrap(Session.class).createQuery(queryStr.toString());
         if (StringUtils.isNotBlank(MobileNo))
             query.setString("MobileNo", MobileNo);
         return (List<PropertyMaterlizeView>) query.list();
@@ -3390,7 +3246,7 @@ public class PropertyService {
      */
     public void calculateGrpPenalty(final Property modProperty, final Date propCompletionDate) {
         currentInstall = propertyTaxCommonUtils.getCurrentInstallment();
-        final Module module = moduleDao.getModuleByName(PTMODULENAME);
+        final Module module = moduleService.getModuleByName(PTMODULENAME);
         EgDemand currentDemand = null;
         for (final EgDemand egDemand : modProperty.getPtDemandSet())
             if (egDemand.getEgInstallmentMaster().equals(currentInstall)) {
@@ -3571,19 +3427,19 @@ public class PropertyService {
             final String nonResPlotArea, final String propUsageId, final String propOccId, final String propTypeId) {
         final PropertyDetail propertyDetail = property.getPropertyDetail();
         if (floorTypeId != null && floorTypeId != -1) {
-            final FloorType floorType = (FloorType) getPropPerServ().find("From FloorType where id = ?", floorTypeId);
+            final FloorType floorType = floorTypeService.getFloorTypeById(floorTypeId);
             propertyDetail.setFloorType(floorType);
         }
         if (roofTypeId != null && roofTypeId != -1) {
-            final RoofType roofType = (RoofType) getPropPerServ().find("From RoofType where id = ?", roofTypeId);
+            final RoofType roofType = roofTypeService.getRoofTypeById(roofTypeId);
             propertyDetail.setRoofType(roofType);
         }
         if (wallTypeId != null && wallTypeId != -1) {
-            final WallType wallType = (WallType) getPropPerServ().find("From WallType where id = ?", wallTypeId);
+            final WallType wallType = wallTypeService.getWallTypeById(wallTypeId);
             propertyDetail.setWallType(wallType);
         }
         if (woodTypeId != null && woodTypeId != -1) {
-            final WoodType woodType = (WoodType) getPropPerServ().find("From WoodType where id = ?", woodTypeId);
+            final WoodType woodType = woodTypeService.getWoodTypeById(woodTypeId);
             propertyDetail.setWoodType(woodType);
         }
         if (areaOfPlot != null && !areaOfPlot.isEmpty())
@@ -3591,8 +3447,8 @@ public class PropertyService {
         propertyDetail.setCategoryType(propertyDetail.getCategoryType());
 
         if (propertyDetail.getApartment() != null && propertyDetail.getApartment().getId() != null) {
-            final Apartment apartment = (Apartment) getPropPerServ().find("From Apartment where id = ?",
-                    property.getPropertyDetail().getApartment().getId());
+			final Apartment apartment = apartmentService
+					.getApartmentById(property.getPropertyDetail().getApartment().getId());
             propertyDetail.setApartment(apartment);
         }
 
@@ -3601,19 +3457,16 @@ public class PropertyService {
 
         propertyDetail.setFieldVerified('Y');
         propertyDetail.setProperty(property);
-        final PropertyMutationMaster propMutMstr = (PropertyMutationMaster) getPropPerServ().find(
-                FROM_PROPERTY_MUTATION_MASTER_WHERE_CODE,
-                property.getBasicProperty().getPropertyMutationMaster().getCode());
-        final PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPropPerServ()
-                .find("from PropertyTypeMaster PTM where PTM.id = ?", Long.valueOf(propTypeId));
+		final PropertyMutationMaster propMutMstr = propertyMutationMasterDAO
+				.getPropertyMutationMasterByCode(property.getBasicProperty().getPropertyMutationMaster().getCode());
+		final PropertyTypeMaster propTypeMstr = propertyTypeMasterDAO.findById(Long.valueOf(propTypeId), false);
         if (propUsageId != null) {
-            final PropertyUsage usage = (PropertyUsage) getPropPerServ().find(FROM_PROPERTY_USAGE_WHERE_ID,
-                    Long.valueOf(propUsageId));
-            propertyDetail.setPropertyUsage(usage);
+			final PropertyUsage usage = propertyUsageDAO.findById(Long.valueOf(propUsageId), false);
+			property.getPropertyDetail().setPropertyUsage(usage);
+			propertyDetail.setPropertyUsage(usage);
         }
         if (propOccId != null) {
-            final PropertyOccupation occupancy = (PropertyOccupation) getPropPerServ()
-                    .find(FROM_PROPERTY_OCCUPATION_WHERE_ID, Long.valueOf(propOccId));
+            final PropertyOccupation occupancy = propertyOccupationDAO.findById(Long.valueOf(propOccId), false);
             propertyDetail.setPropertyOccupation(occupancy);
         }
         if (propTypeMstr.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
@@ -3652,20 +3505,14 @@ public class PropertyService {
                     totBltUpAreaVal = totBltUpAreaVal + floorProxy.getBuiltUpArea().getArea();
                     // set all fields for each floor, if UID matches
                     if (floorProxy.getUnitType() != null)
-                        unitType = (PropertyTypeMaster) getPropPerServ().find(
-                                "from PropertyTypeMaster utype where utype.id = ?",
-                                floorProxy.getUnitType().getId());
+						unitType = propertyTypeMasterDAO.findById(floorProxy.getUnitType().getId(), false);
                     if (floorProxy.getPropertyUsage() != null)
-                        usage = (PropertyUsage) getPropPerServ().find(FROM_PROPERTY_USAGE_WHERE_ID,
-                                floorProxy.getPropertyUsage().getId());
+                        usage = propertyUsageDAO.findById(floorProxy.getPropertyUsage().getId(), false);
                     if (floorProxy.getPropertyOccupation() != null)
-                        occupancy = (PropertyOccupation) getPropPerServ().find(FROM_PROPERTY_OCCUPATION_WHERE_ID,
-                                floorProxy.getPropertyOccupation().getId());
-
-                    if (floorProxy.getStructureClassification() != null)
-                        structureClass = (StructureClassification) getPropPerServ().find(
-                                "from StructureClassification sc where sc.id = ?",
-                                floorProxy.getStructureClassification().getId());
+                        occupancy = propertyOccupationDAO.findById(floorProxy.getPropertyOccupation().getId(), false);
+					if (floorProxy.getStructureClassification() != null)
+						structureClass = structureClassificationService
+								.findOne(floorProxy.getStructureClassification().getId());
                     if (floorProxy.getOccupancyDate() != null && floorProxy.getConstructionDate() != null)
                         savedFloor.setDepreciationMaster(propertyTaxUtil.getDepreciationByDate(
                                 floorProxy.getConstructionDate(), floorProxy.getOccupancyDate()));
@@ -3726,10 +3573,9 @@ public class PropertyService {
      */
     public void updateReferenceBasicProperty(final BasicProperty basicProperty, final String parentPropId) {
 
-        final PropertyStatusValues propStatVal = (PropertyStatusValues) propPerServ.find(
-                "from PropertyStatusValues psv where psv.basicProperty=? order by createdDate desc", basicProperty);
-        final BasicProperty referenceBasicProperty = (BasicProperty) propPerServ
-                .find("from BasicPropertyImpl bp where bp.upicNo=?", parentPropId);
+		final PropertyStatusValues propStatVal = (PropertyStatusValues) propertyStatusValuesDAO
+				.getPropertyStatusValuesByBasicProperty(basicProperty);
+        final BasicProperty referenceBasicProperty = basicPropertyDAO.getInActiveBasicPropertyByPropertyID(parentPropId);
         if (referenceBasicProperty != null)
             propStatVal.setReferenceBasicProperty(referenceBasicProperty);
 
@@ -3919,37 +3765,13 @@ public class PropertyService {
     }
 
     public boolean isDuplicateDoorNumber(final String houseNo, final BasicProperty basicProperty) {
-        final Query basicPropByDoorNo = propPerServ.getSession().createQuery(
+        final Query basicPropByDoorNo = entityManager.unwrap(Session.class).createQuery(
                 "from BasicPropertyImpl bp where bp.address.houseNoBldgApt = :houseNo  and bp.active = 'Y' and bp.upicNo is not null");
         basicPropByDoorNo.setParameter("houseNo", houseNo);
         // this condition is required because, after rejection the validation shouldn't happen for the same houseNo
         return !basicPropByDoorNo.list().isEmpty()
                 && (basicProperty == null || !(basicProperty.getAddress().getHouseNoBldgApt() == null ? ""
                         : basicProperty.getAddress().getHouseNoBldgApt()).equals(houseNo));
-    }
-
-    public Map<Installment, Map<String, BigDecimal>> getExcessCollAmtMap() {
-        return excessCollAmtMap;
-    }
-
-    public void setExcessCollAmtMap(final Map<Installment, Map<String, BigDecimal>> excessCollAmtMap) {
-        this.excessCollAmtMap = excessCollAmtMap;
-    }
-
-    public EisCommonsService getEisCommonsService() {
-        return eisCommonsService;
-    }
-
-    public void setEisCommonsService(final EisCommonsService eisCommonsService) {
-        this.eisCommonsService = eisCommonsService;
-    }
-
-    public BigDecimal getTotalAlv() {
-        return totalAlv;
-    }
-
-    public void setTotalAlv(final BigDecimal totalAlv) {
-        this.totalAlv = totalAlv;
     }
 
     public void copyCollection(final PropertyImpl oldProperty, final PropertyImpl newProperty) {
@@ -4021,7 +3843,7 @@ public class PropertyService {
 
     @Transactional
     public void pushPortalMessage(final StateAware stateAware, final String applictionType) {
-        final Module module = moduleDao.getModuleByName(PTMODULENAME);
+        final Module module = moduleService.getModuleByName(PTMODULENAME);
         final PropertyImpl property = (PropertyImpl) stateAware;
         final BasicProperty basicProperty = property.getBasicProperty();
         final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,
@@ -4041,7 +3863,7 @@ public class PropertyService {
     @Transactional
     public void updatePortalMessage(final StateAware stateAware, final String applictionType) {
         final PropertyImpl property = (PropertyImpl) stateAware;
-        final Module module = moduleDao.getModuleByName(PTMODULENAME);
+        final Module module = moduleService.getModuleByName(PTMODULENAME);
         final BasicProperty basicProperty = property.getBasicProperty();
         portalInboxService.updateInboxMessage(property.getApplicationNo(), module.getId(),
                 property.getState().getValue(), isResolved(property), getSlaEndDate(applictionType),
@@ -4055,7 +3877,7 @@ public class PropertyService {
     }
 
     private String getDetailedMessage(final StateAware stateAware, final String applictionType) {
-        final Module module = moduleDao.getModuleByName(PTMODULENAME);
+        final Module module = moduleService.getModuleByName(PTMODULENAME);
         final StringBuilder detailedMessage = new StringBuilder();
         if (!applictionType.isEmpty() && propertyApplicationTypes().contains(applictionType)) {
             final PropertyImpl property = (PropertyImpl) stateAware;
@@ -4089,7 +3911,7 @@ public class PropertyService {
     }
 
     public PortalInbox getPortalInbox(final String applicationNumber) {
-        final Module module = moduleDao.getModuleByName(PTMODULENAME);
+        final Module module = moduleService.getModuleByName(PTMODULENAME);
         return portalInboxService.getPortalInboxByApplicationNo(applicationNumber, module.getId());
     }
 
@@ -4119,7 +3941,7 @@ public class PropertyService {
 
     @Transactional
     public void pushPropertyMutationPortalMessage(final StateAware stateAware, final String applictionType) {
-        final Module module = moduleDao.getModuleByName(PTMODULENAME);
+        final Module module = moduleService.getModuleByName(PTMODULENAME);
         final PropertyMutation propertyMutation = (PropertyMutation) stateAware;
         final BasicProperty basicProperty = propertyMutation.getBasicProperty();
         final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,
@@ -4138,7 +3960,7 @@ public class PropertyService {
      */
     @Transactional
     public void updatePropertyMutationPortalmessage(final StateAware stateAware, final String applictionType) {
-        final Module module = moduleDao.getModuleByName(PTMODULENAME);
+        final Module module = moduleService.getModuleByName(PTMODULENAME);
         final PropertyMutation propertyMutation = (PropertyMutation) stateAware;
         final BasicProperty basicProperty = propertyMutation.getBasicProperty();
         portalInboxService.updateInboxMessage(propertyMutation.getApplicationNo(), module.getId(),
@@ -4153,7 +3975,7 @@ public class PropertyService {
 
     @Transactional
     public void pushVacancyRemissionPortalMessage(final StateAware stateAware, final String applictionType) {
-        final Module module = moduleDao.getModuleByName(PTMODULENAME);
+        final Module module = moduleService.getModuleByName(PTMODULENAME);
         final VacancyRemission vacancyRemission = (VacancyRemission) stateAware;
         final BasicProperty basicProperty = vacancyRemission.getBasicProperty();
         final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,
@@ -4177,7 +3999,7 @@ public class PropertyService {
         VacancyRemissionApproval vacancyRemissionApproval;
         State state;
         String applicationNo;
-        final Module module = moduleDao.getModuleByName(PTMODULENAME);
+        final Module module = moduleService.getModuleByName(PTMODULENAME);
         final VacancyRemission vacancyRemission = (VacancyRemission) stateAware;
         final BasicProperty basicProperty = vacancyRemission.getBasicProperty();
 
@@ -4190,7 +4012,6 @@ public class PropertyService {
             applicationNo = vacancyRemissionApproval.getVacancyRemission().getApplicationNumber();
         } else {
             stateVal = vacancyRemission.getState().getValue() + ": " + vacancyRemission.getStatus();
-            ;
             resolved = isResolved(vacancyRemission);
             state = vacancyRemission.getState();
             applicationNo = vacancyRemission.getApplicationNumber();
@@ -4207,7 +4028,7 @@ public class PropertyService {
 
     @Transactional
     public void pushRevisionPetitionPortalMessage(final StateAware stateAware, final String applictionType) {
-        final Module module = moduleDao.getModuleByName(PTMODULENAME);
+        final Module module = moduleService.getModuleByName(PTMODULENAME);
         final RevisionPetition revisionPetition = (RevisionPetition) stateAware;
         final BasicProperty basicProperty = revisionPetition.getBasicProperty();
         final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,
@@ -4226,7 +4047,7 @@ public class PropertyService {
      */
     @Transactional
     public void updateRevisionPetitionPortalmessage(final StateAware stateAware, final String applictionType) {
-        final Module module = moduleDao.getModuleByName(PTMODULENAME);
+        final Module module = moduleService.getModuleByName(PTMODULENAME);
         final RevisionPetition revisionPetition = (RevisionPetition) stateAware;
         final BasicProperty basicProperty = revisionPetition.getBasicProperty();
         portalInboxService.updateInboxMessage(revisionPetition.getObjectionNumber(), module.getId(),
@@ -4356,7 +4177,7 @@ public class PropertyService {
         Map<String, Map<String, Object>> voucherDetails = new HashMap<>();
         currentInstall = propertyTaxCommonUtils.getCurrentInstallment();
         Map<String, String> glCodeMap = getGlCodesForTaxes();
-        Module module = moduleDao.getModuleByName(PTMODULENAME);
+        Module module = moduleService.getModuleByName(PTMODULENAME);
         Date effectiveDate;
         if (forCreate) {
             if (!currProperty.getPropertyDetail().getPropertyTypeMaster().getCode()
@@ -4550,5 +4371,29 @@ public class PropertyService {
         if (!qry.getResultList().isEmpty())
             closed = false;
         return closed;
+    }
+    
+    public Map<Installment, Map<String, BigDecimal>> getExcessCollAmtMap() {
+        return excessCollAmtMap;
+    }
+
+    public void setExcessCollAmtMap(final Map<Installment, Map<String, BigDecimal>> excessCollAmtMap) {
+        this.excessCollAmtMap = excessCollAmtMap;
+    }
+
+    public EisCommonsService getEisCommonsService() {
+        return eisCommonsService;
+    }
+
+    public void setEisCommonsService(final EisCommonsService eisCommonsService) {
+        this.eisCommonsService = eisCommonsService;
+    }
+
+    public BigDecimal getTotalAlv() {
+        return totalAlv;
+    }
+
+    public void setTotalAlv(final BigDecimal totalAlv) {
+        this.totalAlv = totalAlv;
     }
 }

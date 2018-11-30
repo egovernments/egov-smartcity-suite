@@ -60,6 +60,10 @@
     <c:if test="${analyticsEnabled}">
         <c:out value="${analyticsConfig}" escapeXml="false"/>
     </c:if>
+    <c:if test="${empty maxFileSize}">
+    	<spring:eval expression="@environment.getProperty('<modulename>.max.file.size')" scope="application" var="maxFileSize"/>
+    	<spring:eval expression="@environment.getProperty('<modulename>.allowed.file.ext')" scope="application" var="allowedFileExt"/>
+	</c:if>
     <%@ include file="/includes/meta.jsp" %>
     <meta name="_csrf" content="${_csrf.token}"/>
     <meta name="_csrf_header" content="${_csrf.headerName}"/>
@@ -73,6 +77,7 @@
     <link rel="stylesheet" type="text/css" href="<cdn:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>"/>
 
     <script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
+    <script src="<cdn:url value='/resources/global/js/egov/csrf.js?rnd=${app_release_no}' context='/egi'/>"></script>
     <script type="text/javascript" src="<cdn:url value='/resources/yui2.8/yuiloader/yuiloader-min.js'/>"></script>
     <script type="text/javascript" src="<cdn:url value='/resources/yui2.8/yahoo-dom-event/yahoo-dom-event.js'/>"></script>
     <script type="text/javascript" src="<cdn:url value='/resources/yui2.8/element/element-min.js'/>"></script>
@@ -94,11 +99,9 @@
     <script type="text/javascript" src="<cdn:url value='/resources/javascript/dateValidation.js?${app_release_no}'/>"></script>
     <script type="text/javascript" src="<cdn:url value='/resources/javascript/createProperty.js?${app_release_no}'/>"></script>
     <script type="text/javascript" src="<cdn:url value='/resources/javascript/json2.js?${app_release_no}'/>"></script>
-
     <script type="text/javascript" src="<cdn:url value='/resources/javascript/jquery/ajax-script.js?${app_release_no}'/>"></script>
     <script type="text/javascript" src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
     <script src="<cdn:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
-    <script src="<cdn:url value='/resources/global/js/egov/csrf.js?rnd=${app_release_no}' context='/egi'/>"></script>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>

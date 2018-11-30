@@ -66,7 +66,7 @@ import java.util.List;
 public interface EisCommonsService 
 {  
    public abstract void updatePosition(Position position);
-   public abstract Position getPositionById(Integer positionId);
+   public abstract Position getPositionById(Long positionId);
    public abstract Position getPositionByUserId(Long userId);
    public abstract User getUserforPosition(Position pos);
    public abstract Position getPositionForUserByIdAndDate(Integer userId, Date assignDate);

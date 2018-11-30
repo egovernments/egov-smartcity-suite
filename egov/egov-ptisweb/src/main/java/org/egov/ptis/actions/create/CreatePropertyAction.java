@@ -61,7 +61,8 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Area;
 import org.egov.commons.Installment;
 import org.egov.commons.entity.Source;
-import org.egov.demand.model.EgDemandDetails;
+import org.egov.demand.dao.DepreciationMasterDao;
+import org.egov.demand.model.DepreciationMaster;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
@@ -81,6 +82,13 @@ import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.client.service.calculator.APTaxCalculator;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.dao.property.PropertyDAO;
+import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
+import org.egov.ptis.domain.dao.property.PropertyOccupationDAO;
+import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
+import org.egov.ptis.domain.dao.property.PropertyStatusValuesDAO;
+import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.*;
@@ -89,8 +97,11 @@ import org.egov.ptis.domain.entity.property.vacantland.VacantLandPlotArea;
 import org.egov.ptis.domain.entity.property.view.SurveyBean;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.repository.PropertyDepartmentRepository;
+import org.egov.ptis.domain.repository.master.apartment.ApartmentRepository;
 import org.egov.ptis.domain.repository.master.floortype.FloorTypeRepository;
 import org.egov.ptis.domain.repository.master.rooftype.RoofTypeRepository;
+import org.egov.ptis.domain.repository.master.structureclassification.StructureClassificationRepository;
+import org.egov.ptis.domain.repository.master.taxexemption.TaxExemptionReasonRepository;
 import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthorityRepository;
 import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
 import org.egov.ptis.domain.repository.master.walltype.WallTypeRepository;
@@ -153,9 +164,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     protected static final String EDIT_DATA_ENTRY = "editDataEntry";
     private static final String MEESEVA_SERVICE_CODE_NEWPROPERTY = "PT01";
     private static final String MEESEVA_SERVICE_CODE_SUBDIVISION = "PT04";
-    private static final String PROPTYPEMASTER_QUERY = "from PropertyTypeMaster ptm where ptm.id = ?";
     private static final String MEESEVA_SERVICE_CODE = "meesevaServicecode";
-    private static final String MUTATION_MASTER_QUERY = "from PropertyMutationMaster pmm where pmm.type=? AND pmm.id=?";
     private static final String UNIT_RATE_ERROR = "unitrate.error";
     private static final String EXEMPTED_REASON_LIST = "taxExemptedList";
     private static final String NOTEXISTS_POSITION = "notexists.position";
@@ -241,6 +250,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private transient PropertySurveyService propertySurveyService;
     @Autowired
     private transient NoticeService noticeService;
+    @Autowired
+    private PropertyDAO propertyDAO;
     
 
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
@@ -289,6 +300,26 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     
     @PersistenceContext
     private transient EntityManager entityManager;
+    @Autowired
+    private PropertyTypeMasterDAO propertyTypeMasterDAO;
+    @Autowired 
+    private PropertyMutationMasterDAO propertyMutationMasterDAO;
+    @Autowired 
+    private PropertyStatusValuesDAO propertyStatusValuesDAO;
+    @Autowired
+    private PropertyStatusDAO propertyStatusDAO;
+    @Autowired
+    private PropertyOccupationDAO propertyOccupationDAO;
+    @Autowired 
+    private DepreciationMasterDao depreciationMasterDao;
+    @Autowired
+    private StructureClassificationRepository classificationRepository;
+    @Autowired
+    private ApartmentRepository apartmentRepository;
+    @Autowired
+    private TaxExemptionReasonRepository taxExemptionReasonRepository;
+    @Autowired
+    private BasicPropertyDAO basicPropertyDAO;
 
     public CreatePropertyAction() {
         super();
@@ -349,8 +380,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     @SuppressWarnings("unchecked")
     private void getMutationListByCode(final String code) {
-        final List<PropertyMutationMaster> mutationList = getPersistenceService()
-                .findAllBy("from PropertyMutationMaster pmm where pmm.type=? and pmm.code=?", PROP_CREATE_RSN, code);
+		final List<PropertyMutationMaster> mutationList = (List<PropertyMutationMaster>) propertyMutationMasterDAO
+				.getPropertyMutationMasterByCodeAndType(code, PROP_CREATE_RSN);
         addDropdownData("MutationList", mutationList);
     }
 
@@ -366,8 +397,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             return multipleSubmitRedirect();
         }
         if (property.getPropertyDetail().isAppurtenantLandChecked()) {
-            propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(PROPTYPEMASTER_QUERY,
-                    Long.valueOf(propTypeId));
+            propTypeMstr = propertyTypeMasterDAO.findById(Long.valueOf(propTypeId), false);
             if (propTypeMstr.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
                 property.getPropertyDetail().setPropertyType(VACANT_PROPERTY);
             else
@@ -582,8 +612,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 setFloorDetails(property);
             setPropTypeId(propertyDetail.getPropertyTypeMaster().getId().toString());
             if (propTypeId != null && !propTypeId.trim().isEmpty() && !"-1".equals(propTypeId)) {
-                propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(PROPTYPEMASTER_QUERY,
-                        Long.valueOf(propTypeId));
+                propTypeMstr = propertyTypeMasterDAO.findById(Long.valueOf(propTypeId), false);
                 if (propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
                     setPropTypeCategoryMap(VAC_LAND_PROPERTY_TYPE_CATEGORY);
                 else
@@ -605,8 +634,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             }
 
             if (propTypeId != null && !propTypeId.trim().isEmpty() && !"-1".equals(propTypeId)) {
-                propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(PROPTYPEMASTER_QUERY,
-                        Long.valueOf(propTypeId));
+                propTypeMstr = propertyTypeMasterDAO.findById(Long.valueOf(propTypeId), false);
                 setPropertyDepartmentId(property.getPropertyDetail().getPropertyDepartment() != null
                         ? property.getPropertyDetail().getPropertyDepartment().getId() : null);
                 if (propTypeMstr.getCode().equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT))
@@ -625,8 +653,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (basicProp != null) {
             basicProp.setPropertyOwnerInfoProxy(basicProp.getPropertyOwnerInfo());
             setMutationId(basicProp.getPropertyMutationMaster().getId());
-            final PropertyStatusValues statusValues = (PropertyStatusValues) getPersistenceService()
-                    .find("From PropertyStatusValues where basicProperty.id = ?", basicProp.getId());
+			final PropertyStatusValues statusValues = propertyStatusValuesDAO
+					.getPropertyStatusValuesByBasicProperty(basicProp);
             if (null != statusValues && null != statusValues.getReferenceBasicProperty())
                 setParentIndex(statusValues.getReferenceBasicProperty().getUpicNo());
             if (null != basicProp.getAddress()) {
@@ -838,8 +866,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         final Character status = STATUS_WORKFLOW;
         updatePropAddress(basicProp);
         basicPropertyService.createOwners(property, basicProp, ownerAddress);
-        final PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService()
-                .find(MUTATION_MASTER_QUERY, PROP_CREATE_RSN, mutationId);
+		final PropertyMutationMaster propertyMutationMaster = propertyMutationMasterDAO
+				.getPropertyMutationMasterByIdAndType(mutationId, PROP_CREATE_RSN);
         basicProp.setPropertyMutationMaster(propertyMutationMaster);
         taxExemptionId = taxExemptionId == null || taxExemptionId.isEmpty() ? "-1" : taxExemptionId;
         property = propService.createProperty(property, getAreaOfPlot(), propertyMutationMaster.getCode(), propTypeId,
@@ -902,11 +930,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         final String assessmentNo = propertyTaxNumberGenerator.generateAssessmentNumber();
         basicProp.setUpicNo(assessmentNo);
         basicProp.setAssessmentdate(new Date());
-        final PropertyStatus propStatus = (PropertyStatus) getPersistenceService()
-                .find("from PropertyStatus where statusCode=?", PROPERTY_STATUS_APPROVED);
+		final PropertyStatus propStatus = propertyStatusDAO.getPropertyStatusByCode(PROPERTY_STATUS_APPROVED);
         basicProp.setStatus(propStatus);
-        final PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService()
-                .find(MUTATION_MASTER_QUERY, PROP_CREATE_RSN, basicProp.getPropertyMutationMaster().getId());
+        final PropertyMutationMaster propertyMutationMaster = propertyMutationMasterDAO
+				.getPropertyMutationMasterByIdAndType(basicProp.getPropertyMutationMaster().getId(), PROP_CREATE_RSN);
         if (!propertyMutationMaster.getCode().equals(PROP_CREATE_RSN_BIFUR)
                 && basicProp.getPropertyStatusValuesSet().isEmpty()
                 && WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
@@ -1016,8 +1043,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         citizenPortalUser = propService.isCitizenPortalUser(securityUtils.getCurrentUser());
         isDataEntryOperator = propService.isDataEntryOperator(securityUtils.getCurrentUser());
         if (isNotBlank(getModelId())) {
-            property = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
-                    Long.valueOf(getModelId()));
+            property = (PropertyImpl) propertyDAO.findById(Long.valueOf(getModelId()),false);
             if (StringUtils.isNotBlank(modifyRsn))
                 property = (PropertyImpl) persistenceService.merge(property);
             basicProp = property.getBasicProperty();
@@ -1039,30 +1065,24 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         final List<RoofType> roofTypeList = roofTypeRepository.findByActiveTrueOrderByName();
         final List<WallType> wallTypeList = wallTypeRepository.findByActiveTrueOrderByName();
         final List<WoodType> woodTypeList = woodTypeRepository.findByActiveTrueOrderByName();
-        final List<PropertyTypeMaster> propTypeList = getPersistenceService()
-                .findAllBy("from PropertyTypeMaster where type != 'EWSHS' order by orderNo");
-        final List<PropertyOccupation> propOccList = getPersistenceService().findAllBy("from PropertyOccupation");
+        final List<PropertyTypeMaster> propTypeList = propertyTypeMasterDAO.findAllExcludeEWSHS();
+        final List<PropertyOccupation> propOccList = propertyOccupationDAO.findAll();
         List<PropertyMutationMaster> mutationList;
         if (StringUtils.isBlank(applicationSource))
-            mutationList = getPersistenceService().findAllBy("from PropertyMutationMaster pmm where pmm.type=?",
-                    PROP_CREATE_RSN);
+            mutationList = propertyMutationMasterDAO.getPropertyMutationMasterByType(PROP_CREATE_RSN);
         else
-            mutationList = getPersistenceService().findAllBy(
-                    "from PropertyMutationMaster pmm where pmm.type=? and pmm.code=?", PROP_CREATE_RSN,
-                    PROP_CREATE_RSN_NEWPROPERTY_CODE);
+			mutationList = (List<PropertyMutationMaster>) propertyMutationMasterDAO
+					.getPropertyMutationMasterByCodeAndType(PROP_CREATE_RSN_NEWPROPERTY_CODE, PROP_CREATE_RSN);
         if (null != property && property.getMeesevaServiceCode() != null) {
             if (property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVA_SERVICE_CODE_NEWPROPERTY))
                 getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_CODE);
             if (property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVA_SERVICE_CODE_SUBDIVISION))
                 getMutationListByCode(PROP_CREATE_RSN_BIFUR);
         }
-        final List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
-        final List<String> structureList = getPersistenceService()
-                .findAllBy("from StructureClassification where isActive = true order by typeName ");
-        final List<String> apartmentsList = getPersistenceService().findAllBy("from Apartment order by name");
-        final List<String> taxExemptionReasonList = getPersistenceService()
-                .findAllBy("from TaxExemptionReason where isActive = true order by name");
-
+        final List<DepreciationMaster> ageFacList = depreciationMasterDao.findAll();
+        final List<StructureClassification> structureList = classificationRepository.findByIsActiveTrueOrderByTypeName();
+        final List<Apartment> apartmentsList = apartmentRepository.findAll();
+        final List<TaxExemptionReason> taxExemptionReasonList = taxExemptionReasonRepository.findByIsActiveTrueOrderByName();
         final List<Boundary> localityList = boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY, LOCATION_HIERARCHY_TYPE);
         final List<Boundary> zones = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE,
@@ -1096,8 +1116,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         addDropdownData("enumerationBlockList", enumerationBlockList);
         addDropdownData("taxExemptionReasonList", taxExemptionReasonList);
         if (propTypeId != null && !propTypeId.trim().isEmpty() && !"-1".equals(propTypeId)) {
-            propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(PROPTYPEMASTER_QUERY,
-                    Long.valueOf(propTypeId));
+            propTypeMstr = propertyTypeMasterDAO.findById(Long.valueOf(propTypeId), false);
             if (propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
                 setPropTypeCategoryMap(VAC_LAND_PROPERTY_TYPE_CATEGORY);
             else
@@ -1113,8 +1132,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
         // Loading Property Department based on ownership of property
         if (propTypeId != null && !propTypeId.trim().isEmpty() && !"-1".equals(propTypeId)) {
-            propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(PROPTYPEMASTER_QUERY,
-                    Long.valueOf(propTypeId));
+            propTypeMstr = propertyTypeMasterDAO.findById(Long.valueOf(propTypeId), false);
             if (propTypeMstr.getCode().equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT))
                 setPropertyDepartmentList(propertyDepartmentRepository.getAllStateDepartments());
             else if (propTypeMstr.getCode().startsWith("CENTRAL_GOVT"))
@@ -1133,8 +1151,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     private BasicProperty createBasicProp(final Character status) {
         final BasicProperty basicProperty = new BasicPropertyImpl();
-        final PropertyStatus propStatus = (PropertyStatus) getPersistenceService()
-                .find("from PropertyStatus where statusCode=?", PROPERTY_STATUS_WORKFLOW);
+        final PropertyStatus propStatus = propertyStatusDAO.getPropertyStatusByCode(PROPERTY_STATUS_WORKFLOW);
         basicProperty.setRegdDocDate(property.getBasicProperty().getRegdDocDate());
         basicProperty.setRegdDocNo(property.getBasicProperty().getRegdDocNo());
         basicProperty.setActive(Boolean.TRUE);
@@ -1142,8 +1159,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         basicProperty.setPropertyID(createPropertyID(basicProperty));
         basicProperty.setStatus(propStatus);
         basicProperty.setUnderWorkflow(true);
-        final PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService()
-                .find(MUTATION_MASTER_QUERY, PROP_CREATE_RSN, mutationId);
+        final PropertyMutationMaster propertyMutationMaster = propertyMutationMasterDAO
+				.getPropertyMutationMasterByIdAndType(mutationId, PROP_CREATE_RSN);
         basicProperty.setPropertyMutationMaster(propertyMutationMaster);
         if (propertyMutationMaster.getCode().equals(PROP_CREATE_RSN_BIFUR)
                 || property.getPropertyDetail().isAppurtenantLandChecked())
@@ -1328,8 +1345,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             addActionError(getText("mandatory.localityId"));
 
         if (null != propTypeId && !"-1".equals(propTypeId))
-            propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(PROPTYPEMASTER_QUERY,
-                    Long.valueOf(propTypeId));
+            propTypeMstr = propertyTypeMasterDAO.findById(Long.valueOf(propTypeId), false);
         if (zoneId == null || zoneId == -1)
             addActionError(getText("mandatory.zone"));
         if (wardId == null || wardId == -1)
@@ -1366,12 +1382,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         }
 
         if (null != mutationId && mutationId != -1) {
-            final PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService()
-                    .find("from PropertyMutationMaster pmm where pmm.id=?", mutationId);
+            final PropertyMutationMaster propertyMutationMaster = propertyMutationMasterDAO.findById(mutationId, false);
             if (propertyMutationMaster.getCode().equals(PROP_CREATE_RSN_BIFUR))
                 if (StringUtils.isNotBlank(parentIndex)) {
-                    final BasicProperty basicProperty = basicPropertyService
-                            .find("From BasicPropertyImpl where upicNo = ? ", parentIndex);
+                    final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(parentIndex);
                     checkIfParentIsUnderWorkflow(basicProperty);
                     if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
                         final Area area = new Area();
@@ -1455,8 +1469,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         basicProp.setRegdDocNo(property.getBasicProperty().getRegdDocNo());
         basicProp.setActive(Boolean.TRUE);
         basicProp.setSource(PropertyTaxConstants.SOURCEOFDATA_DATAENTRY);
-        final PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService()
-                .find(MUTATION_MASTER_QUERY, PROP_CREATE_RSN, mutationId);
+        final PropertyMutationMaster propertyMutationMaster = propertyMutationMasterDAO
+				.getPropertyMutationMasterByIdAndType(mutationId, PROP_CREATE_RSN);
         basicProp.setPropertyMutationMaster(propertyMutationMaster);
         basicProp.setBoundary(boundaryService.getBoundaryById(getElectionWardId()));
 
@@ -1469,8 +1483,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 propertyCategory, nonResPlotArea, propUsageId, propOccId, propTypeId);
 
         if (StringUtils.isNotBlank(taxExemptionId) && !taxExemptionId.equals("-1")) {
-            final TaxExemptionReason taxExemptionReason = (TaxExemptionReason) persistenceService
-                    .find("From TaxExemptionReason where id = ?", Long.valueOf(taxExemptionId));
+            final TaxExemptionReason taxExemptionReason = taxExemptionReasonRepository.findOne(Long.valueOf(taxExemptionId));
             property.setTaxExemptedReason(taxExemptionReason);
             property.setIsExemptedFromTax(Boolean.TRUE);
         }
@@ -1492,10 +1505,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             addActionError(getText("mandatory.indexNumber"));
             return RESULT_DATAENTRY;
         }
-
-        propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(PROPTYPEMASTER_QUERY,
-                Long.valueOf(propTypeId));
-
+        propTypeMstr = propertyTypeMasterDAO.findById(Long.valueOf(propTypeId), false);
         if (!propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND) && StringUtils.isBlank(houseNumber)) {
             addActionError(getText("mandatory.doorNo"));
             return RESULT_DATAENTRY;
@@ -1536,8 +1546,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             }
         else {
             HashMap<Installment, TaxCalculationInfo> instTaxMap = new HashMap<>();
-            final PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService()
-                    .find(MUTATION_MASTER_QUERY, PROP_CREATE_RSN, mutationId);
+            final PropertyMutationMaster propertyMutationMaster = propertyMutationMasterDAO
+    				.getPropertyMutationMasterByIdAndType(mutationId, PROP_CREATE_RSN);
             BasicProperty basicProperty = new BasicPropertyImpl();
             if (basicProp == null) {
                 basicProperty = createBasicProp(STATUS_DEMAND_INACTIVE);

@@ -59,12 +59,15 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.domain.dao.property.CategoryDao;
+import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
 import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.egov.ptis.domain.entity.property.UnitRateAudit;
 import org.egov.ptis.domain.service.property.UnitRateAuditService;
+import org.egov.ptis.master.service.StructureClassificationService;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -73,6 +76,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.hibernate.Session;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
@@ -106,7 +113,19 @@ public class UnitRateAction extends BaseFormAction {
     
     @Autowired
     private UnitRateAuditService unitRateAuditService;
-
+    
+    @Autowired
+    private PropertyUsageDAO propertyUsageDAO;
+    
+    @Autowired
+    private StructureClassificationService structureClassificationService;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
+    
+    @Autowired
+    private CategoryDao categoryDao;
+    
     List<BoundaryCategory> bndryCatList;
 
     private static final String RESULT_ACK = "ack";
@@ -128,7 +147,6 @@ public class UnitRateAction extends BaseFormAction {
             setRoleName(propertyTaxUtil.getRolesForUserId(userId));
     }
 
-    @SuppressWarnings("unchecked")
     private void populateDropdowns() {
       List<Boundary> zoneList;
       List<PropertyUsage> usageList;
@@ -136,15 +154,13 @@ public class UnitRateAction extends BaseFormAction {
         if (mode.equalsIgnoreCase(EDIT)) {
             zoneList = boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE,
                     REVENUE_HIERARCHY_TYPE);
-            usageList = getPersistenceService().findAllBy("from PropertyUsage order by usageName");
-            structureClassificationList = getPersistenceService().findAllBy(
-                    "from StructureClassification order by typeName");
+            usageList = propertyUsageDAO.findAll();
+            structureClassificationList = structureClassificationService.getAllStructureTypes();
         } else {
             zoneList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE,
                     REVENUE_HIERARCHY_TYPE);
-            usageList = getPersistenceService().findAllBy("from PropertyUsage  where isactive = true order by usageName");
-            structureClassificationList = getPersistenceService().findAllBy(
-                    "from StructureClassification  where isactive = true order by typeName");
+            usageList = propertyUsageDAO.getAllActivePropertyUsage();
+            structureClassificationList = structureClassificationService.getAllActiveStructureTypes();
         }
         addDropdownData("ZoneList", zoneList);
         addDropdownData("UsageList", usageList);
@@ -157,7 +173,7 @@ public class UnitRateAction extends BaseFormAction {
         if (roleName.contains(ROLE_PTADMINISTRATOR.toUpperCase())) {
             if (mode.equals(EDIT) || "deactivate".equals(mode)) {
                 if (categoryId != null && categoryId != -1) {
-                    category = (Category) getPersistenceService().find("from Category where id = ?", categoryId);
+                    category = categoryDao.findById(categoryId, false);
                     setUsageId(category.getPropUsage().getId());
                     setStructureClassId(category.getStructureClass().getId());
                 }
@@ -180,11 +196,11 @@ public class UnitRateAction extends BaseFormAction {
 
     @Action(value = "/unitRate-create")
     public String create() {
-        Category existingCategory = (Category) getPersistenceService()
-                .find("select bc.category from BoundaryCategory bc where bc.bndry.id = ? "
-                        + "and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? and bc.category.fromDate = ? and bc.category.isActive = true ",
-                        zoneId, usageId, structureClassId, category.getFromDate());
-
+		Category existingCategory = (Category) entityManager.unwrap(Session.class)
+				.createQuery("select bc.category from BoundaryCategory bc where bc.bndry.id =:boundary "
+						+ "and bc.category.propUsage.id = :usage and bc.category.structureClass.id = :structure and bc.category.fromDate = :fromDate and bc.category.isActive = true ")
+				.setParameter("boundary", zoneId).setParameter("usage", usageId)
+				.setParameter("structure", structureClassId).setParameter("fromDate", category.getFromDate());
         // If category exists for the combination of zone, usage,structure and
         // from date, update the existing category's rate
         if (existingCategory != null) {
@@ -192,10 +208,8 @@ public class UnitRateAction extends BaseFormAction {
             mode = NEW;
             return RESULT_NEW;
         } else {
-            PropertyUsage usage = (PropertyUsage) getPersistenceService().find("from PropertyUsage where id = ? ",
-                    usageId);
-            StructureClassification structureClass = (StructureClassification) getPersistenceService().find(
-                    "from StructureClassification where id = ? ", structureClassId);
+            PropertyUsage usage =propertyUsageDAO.findById(usageId, false);
+            StructureClassification structureClass = structureClassificationService.findOne(structureClassId);
             Boundary zone = boundaryService.getBoundaryById(zoneId);
             
             category.setPropUsage(usage);
@@ -203,26 +217,26 @@ public class UnitRateAction extends BaseFormAction {
             category.setIsHistory('N');
             category.setIsActive(true);
             
-            Calendar category_toDate = Calendar.getInstance();
-            category_toDate.set(Calendar.DATE, 31);
-            category_toDate.set(Calendar.MONTH, 3);
-            category_toDate.set(Calendar.YEAR, 2099);
-            category_toDate.set(Calendar.HOUR_OF_DAY, 0);
-            category_toDate.set(Calendar.MINUTE, 0);
-            category_toDate.set(Calendar.SECOND, 0); 
+            Calendar categoryToDate = Calendar.getInstance();
+            categoryToDate.set(Calendar.DATE, 31);
+            categoryToDate.set(Calendar.MONTH, 3);
+            categoryToDate.set(Calendar.YEAR, 2099);
+            categoryToDate.set(Calendar.HOUR_OF_DAY, 0);
+            categoryToDate.set(Calendar.MINUTE, 0);
+            categoryToDate.set(Calendar.SECOND, 0); 
             
-            category.setToDate(category_toDate.getTime());
+            category.setToDate(categoryToDate.getTime());
             category.setCategoryName(usage.getUsageCode().concat("-").concat(structureClass.getConstrTypeCode())
                     .concat("-").concat(category.getCategoryAmount().toString()));
 
             if (zoneId != -1 && usageId != -1 && structureClassId != -1) {
-                existingCategory = (Category) getPersistenceService().find(
-                        "select bc.category from BoundaryCategory bc where bc.bndry.id = ? "
-                                + "and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? ", zoneId,
-                        usageId, structureClassId);
+                existingCategory = (Category) entityManager.unwrap(Session.class).createQuery("select bc.category from BoundaryCategory bc where bc.bndry.id = :bndry "
+								+ "and bc.category.propUsage.id = :usage and bc.category.structureClass.id = :structure ")
+						.setParameter("bndry", zoneId).setParameter("usage", usageId)
+						.setParameter("structure", structureClassId).getSingleResult();
                 if (existingCategory != null) {
                     Date toDate = existingCategory.getToDate();
-                    if (toDate == null || (toDate != null && toDate.after(category.getFromDate()))) {
+                    if (toDate == null || toDate.after(category.getFromDate())) {
                         Date newToDate = DateUtils.addDays(category.getFromDate(), -1);
                         existingCategory.setToDate(newToDate);
                     }
@@ -234,7 +248,7 @@ public class UnitRateAction extends BaseFormAction {
             boundaryCategory.setBndry(zone);
             boundaryCategory.setFromDate(category.getFromDate());
             boundaryCategory.setToDate(category.getToDate());
-            Set<BoundaryCategory> boundaryCategorySet = new HashSet<BoundaryCategory>();
+            Set<BoundaryCategory> boundaryCategorySet = new HashSet<>();
             boundaryCategorySet.add(boundaryCategory);
 
             category.setCatBoundaries(boundaryCategorySet);
@@ -261,13 +275,13 @@ public class UnitRateAction extends BaseFormAction {
                 mainStr.append(" and bndryCat.category.structureClass.id=:stucture");
             }
             mainStr.append(" and bndryCat.category.IsHistory = 'N' and bndryCat.category.isActive = true ");
-            final Query query = getPersistenceService().getSession().createQuery(mainStr.toString());
-            query.setLong("zone", zoneId);
+            final Query query = entityManager.unwrap(Session.class).createQuery(mainStr.toString());
+            query.setParameter("zone", zoneId);
             if (usageId != null && usageId != -1) {
-                query.setLong("usage", usageId);
+                query.setParameter("usage", usageId);
             }
             if (structureClassId != null && structureClassId != -1) {
-                query.setLong("stucture", structureClassId);
+                query.setParameter("stucture", structureClassId);
             }
             bndryCatList = query.list();
             if (bndryCatList.isEmpty()) {
@@ -294,23 +308,22 @@ public class UnitRateAction extends BaseFormAction {
     @Action(value = "/unitRate-update")
     public String update() {
         Category oldCategory = null;
-        Category existingCategory = (Category) getPersistenceService()
-                .find("select bc.category from BoundaryCategory bc where bc.bndry.id = ? "
-                        + "and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? and bc.category.fromDate = ? and bc.category.categoryAmount = ? and bc.category.isActive = true ",
-                        zoneId, usageId, structureClassId, category.getFromDate(), category.getCategoryAmount());
+        Category existingCategory = (Category) entityManager.unwrap(Session.class).createQuery("select bc.category from BoundaryCategory bc where bc.bndry.id = :bndry "
+						+ "and bc.category.propUsage.id = :usage and bc.category.structureClass.id =:structure and bc.category.fromDate = :fromDate and bc.category.categoryAmount =:amount and bc.category.isActive = true ")
+				.setParameter("bndry", zoneId).setParameter("usage", usageId)
+				.setParameter("structure", structureClassId).setParameter("fromDate", category.getFromDate())
+				.setParameter("amount", category.getCategoryAmount()).getSingleResult();
         if (existingCategory != null) {
             addActionError(getText("unit.rate.exists.for.combination"));
             mode = EDIT; 
             return RESULT_NEW;
         } else {
-            if (category != null && category.getId() != null && category.getId() != -1) {
-                oldCategory = (Category) getPersistenceService().find("from Category where id = ?", category.getId());
-            }
+            if (category.getId() != null && category.getId() != -1) {
+				oldCategory = categoryDao.findById(category.getId(), false);
+                }
             UnitRateAudit unitRateAudit = unitRateAuditService.setUnitRateAuditDetails(oldCategory, "update");
-            PropertyUsage usage = (PropertyUsage) getPersistenceService().find("from PropertyUsage where id = ? ",
-                    usageId);
-            StructureClassification structureClass = (StructureClassification) getPersistenceService().find(
-                    "from StructureClassification where id = ? ", structureClassId);
+            PropertyUsage usage = propertyUsageDAO.findById(usageId, false);
+			StructureClassification structureClass = structureClassificationService.findOne(structureClassId);
             
             if (oldCategory != null) {
                 oldCategory.setCategoryAmount(category.getCategoryAmount());
@@ -329,7 +342,7 @@ public class UnitRateAction extends BaseFormAction {
     @Action(value = "/unitRate-deactivate")
     public String deactivate() {
         if (categoryId != null && categoryId != -1) {
-            category = (Category) getPersistenceService().find("from Category where id = ?", categoryId);
+            category = categoryDao.findById(categoryId, false);
             UnitRateAudit unitRateAudit = unitRateAuditService.setUnitRateAuditDetails(category, "deactivate");
             category.setIsActive(false);
             setAckMessage("Unit Rate deactivated successfully!");

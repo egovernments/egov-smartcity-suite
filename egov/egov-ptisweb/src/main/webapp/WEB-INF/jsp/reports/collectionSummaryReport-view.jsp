@@ -88,9 +88,9 @@
 					jQuery.each(response, function (j, block) {
 						jQuery('#blockId').append("<option value='"+block.blockId+"'>"+block.blockName+"</option>");
 					});
-					<s:if test="%{blockId != null}">
+					var propertyByEmployee = '<s:property value="%{propertyByEmployee}"/>';
+					if('<s:property value="%{blockId}"/>' != null)
 						jQuery('#blockId').val('<s:property value="%{blockId}"/>');
-					</s:if>
 				}, 
 				error: function (response) {
 					jQuery('#blockId').html("");

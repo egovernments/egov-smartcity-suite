@@ -58,7 +58,6 @@
 	<title><s:text name="AddDemand" /> </title>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 	<script type="text/javascript">
-		jQuery.noConflict();
 		jQuery("#loadingMask").remove();
 	    var newInstallmentCount = 0;
 	    var mapSize = '<s:property value="%{demandDetailBeanList.size()}"/>';

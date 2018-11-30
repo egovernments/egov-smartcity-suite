@@ -87,6 +87,7 @@ import org.egov.ptis.domain.entity.property.TaxExemptionReason;
 import org.egov.ptis.domain.repository.vacancyremission.VacancyRemissionRepository;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.master.service.TaxExemptionReasonService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -102,7 +103,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -178,6 +178,9 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
     @Autowired
     private PropertyHibernateDAO propertyDAO;
+    
+    @Autowired
+    private TaxExemptionReasonService taxExemptionReasonService;
 
     Property property = null;
 
@@ -224,9 +227,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             floor.setPropertyDetail(propertyModel.getPropertyDetail());
         }
         if (StringUtils.isNotBlank(taxExemptedReason) && !taxExemptedReason.equals("-1")) {
-            final Query qry = entityManager.createNamedQuery("EXEMPTIOREASON_BYID");
-            qry.setParameter("id", Long.valueOf(taxExemptedReason));
-            taxExemptionReason = (TaxExemptionReason) qry.getSingleResult();
+			taxExemptionReason = taxExemptionReasonService.getExemptionReasonById(Long.valueOf(taxExemptedReason));
             propertyModel.setTaxExemptedReason(taxExemptionReason);
             propertyModel.setIsExemptedFromTax(Boolean.TRUE);
         } else {
@@ -281,9 +282,6 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
     private void transitionWorkFlow(final PropertyImpl property, final String approvarComments,
             final String workFlowAction, Long approverPosition, final String additionalRule,
             final Boolean propertyByEmployee) {
-
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("WorkFlow Transition For Demolition Started  ...");
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
         Position pos = null;
@@ -399,8 +397,6 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
                     buildSMS(property, workFlowAction);
             }
         }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug(" WorkFlow Transition Completed for Demolition ...");
     }
 
     public void addModelAttributes(final Model model, final BasicProperty basicProperty) {
@@ -526,17 +522,16 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
     }
 
     public BigDecimal getWaterTaxDues(final String assessmentNo, final HttpServletRequest request) {
-        return propertyService.getWaterTaxDues(assessmentNo, request).get(PropertyTaxConstants.WATER_TAX_DUES) == null
-                ? BigDecimal.ZERO : new BigDecimal(
-                        Double.valueOf((Double) propertyService.getWaterTaxDues(assessmentNo, request)
-                                .get(PropertyTaxConstants.WATER_TAX_DUES)));
+		return propertyService.getWaterTaxDues(assessmentNo, request).get(PropertyTaxConstants.WATER_TAX_DUES) == null
+				? BigDecimal.ZERO
+				: (BigDecimal) propertyService.getWaterTaxDues(assessmentNo, request).get(PropertyTaxConstants.WATER_TAX_DUES);
     }
 
     public Boolean isUnderWtmsWF(final String assessmentNo, final HttpServletRequest request) {
-        return propertyService.getWaterTaxDues(assessmentNo, request).get(PropertyTaxConstants.UNDER_WTMS_WF) == null
-                ? FALSE
-                : Boolean.valueOf((Boolean) propertyService.getWaterTaxDues(assessmentNo, request)
-                        .get(PropertyTaxConstants.UNDER_WTMS_WF));
+		return propertyService.getWaterTaxDues(assessmentNo, request).get(PropertyTaxConstants.UNDER_WTMS_WF) == null
+				? FALSE
+				: (Boolean) propertyService.getWaterTaxDues(assessmentNo, request)
+						.get(PropertyTaxConstants.UNDER_WTMS_WF);
     }
 
     public List<DocumentType> getDocuments(final TransactionType transactionType) {
@@ -546,9 +541,8 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
     @Transactional
     public void processAndStoreApplicationDocuments(final PropertyImpl property, final String taxExemptedReason,
             final String previousExemptionReason) {
-        final Query qry = entityManager.createNamedQuery("EXEMPTIOREASON_BYID");
-        qry.setParameter("id", Long.valueOf(taxExemptedReason));
-        TaxExemptionReason taxExemptionReason = (TaxExemptionReason) qry.getSingleResult();
+		TaxExemptionReason taxExemptionReason = taxExemptionReasonService
+				.getExemptionReasonById(Long.valueOf(taxExemptedReason));
         final TransactionType transactionType = getTransactionTypeByExemptionCode(taxExemptionReason.getCode());
         if (previousExemptionReason != null && !taxExemptionReason.getCode().equalsIgnoreCase(previousExemptionReason))
             property.getTaxExemptionDocuments().clear();
@@ -620,8 +614,8 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         for (final Object object : dmdCollList) {
             final Object[] listObj = (Object[]) object;
             instId = Integer.valueOf(listObj[0].toString());
-            demand = listObj[1] == null ? BigDecimal.ZERO : new BigDecimal((Double) listObj[1]);
-            collection = listObj[2] == null ? BigDecimal.ZERO : new BigDecimal((Double) listObj[2]);
+            demand = listObj[1] == null ? BigDecimal.ZERO : (BigDecimal) listObj[1];
+            collection = listObj[2] == null ? BigDecimal.ZERO : (BigDecimal) listObj[2];
 
             installment = installmentDao.findById(instId, false);
             if (installment.getFromDate().before(effectiveInst.getFromDate())) {

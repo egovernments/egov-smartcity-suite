@@ -73,6 +73,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import org.hibernate.Session;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.InputStream;
@@ -117,7 +118,7 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
     @Autowired
     private FinancialYearDAO financialYearDAO;
     @PersistenceContext
-    private EntityManager eManager;
+    private EntityManager entityManager;
     @Autowired
     private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
     @Autowired
@@ -185,29 +186,29 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
     }
     
     @ReadOnly
-    public PtNotice getPtNoticeByNoticeNumberAndNoticeType(final String noticeNo, final String noticeType) {
-
-        final Query qry = getSession().createQuery(
-                "from PtNotice Pn where upper(Pn.noticeNo) = :noticeNumber and upper(noticeType)=:noticeType ");
-        qry.setString("noticeNumber", noticeNo.toUpperCase());
-        qry.setString("noticeType", noticeType.toUpperCase());
-        return (PtNotice) qry.uniqueResult();
-    }
+	public PtNotice getPtNoticeByNoticeNumberAndNoticeType(final String noticeNo, final String noticeType) {
+		return (PtNotice) entityManager.createNamedQuery("getNoticeByNoticeNoAndType")
+				.setParameter("noticeNo", noticeNo).setParameter("noticeType", noticeType.toUpperCase());
+	}
     
     @ReadOnly
     public PtNotice getNoticeByApplicationNumber(final String applicationNo) {
-        return (PtNotice) basicPropertyService.find("from PtNotice where applicationNumber = ?", applicationNo);
+        return (PtNotice) entityManager.createNamedQuery("getNoticeByApplicationNo").setParameter("applicationNumber", applicationNo);
     }
     
     public PtNotice getNoticeByNoticeTypeAndApplicationNumber(final String noticeType, final String applicationNo) {
-        return (PtNotice) basicPropertyService.find("from PtNotice where noticeType = ? and applicationNumber = ?",
-                noticeType, applicationNo);
+		List<PtNotice> notice= entityManager.createNamedQuery("getNoticeByApplicationNoAndNoticeType")
+				.setParameter("noticeType", noticeType.toUpperCase()).setParameter("applicationNumber", applicationNo).getResultList();
+		if(!notice.isEmpty())
+			return notice.get(0);
+		else 
+			return null;
     }
 
     @ReadOnly
     public PtNotice getNoticeByNoticeTypeAndAssessmentNumner(final String noticeType, final String assessementNumber) {
-        return (PtNotice) basicPropertyService.find("from PtNotice where noticeType = ? and basicProperty.upicNo = ?",
-                noticeType, assessementNumber);
+		return (PtNotice) entityManager.createNamedQuery("getNoticesByAssessmentNoAndType")
+				.setParameter("noticeType", noticeType.toUpperCase()).setParameter("upicNo", assessementNumber);
     }
 
     public PersistenceService<BasicProperty, Long> getBasicPropertyService() {
@@ -227,9 +228,9 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         queryStr.append(" where notice.applicationNumber=:applicationNo");
         queryStr.append(
                 " and notice.id = ( select max(id) from PtNotice where  applicationNumber = notice.applicationNumber and basicProperty = mt.basicProperty)");
-        final Query query = getSession().createQuery(queryStr.toString());
+        final Query query = entityManager.unwrap(Session.class).createQuery(queryStr.toString());
         if (StringUtils.isNotBlank(applicationNo))
-            query.setString("applicationNo", applicationNo);
+            query.setParameter("applicationNo", applicationNo);
         @SuppressWarnings("unchecked")
         final List<String> notices = query.list();
         if (!notices.isEmpty())
@@ -247,35 +248,34 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         if (StringUtils.isNotBlank(indexNumber))
             queryStr.append(" where bp.upicNo=:assessmentNo ");
         queryStr.append(" order by mt.mutationDate desc ");
-        final Query query = getSession().createQuery(queryStr.toString());
-        if (StringUtils.isNotBlank(indexNumber))
-            query.setString("assessmentNo", indexNumber);
-        return query.list();
+		return entityManager.unwrap(Session.class).createQuery(queryStr.toString())
+				.setParameter("assessmentNo", indexNumber).getResultList();
     }
     
     @ReadOnly
-    public PtNotice getNoticeByTypeUpicNoAndFinYear(final String noticeType, final String assessementNumber) {
-        final CFinancialYear currFinYear = financialYearDAO.getFinancialYearByDate(new Date());
-        return (PtNotice) basicPropertyService.find("from PtNotice where noticeType = ? and basicProperty.upicNo = ? "
-                + " and noticeDate between ? and ? ",
-                noticeType, assessementNumber, currFinYear.getStartingDate(), currFinYear.getEndingDate());
-    }
+	public PtNotice getNoticeByTypeUpicNoAndFinYear(final String noticeType, final String assessementNumber) {
+		final CFinancialYear currFinYear = financialYearDAO.getFinancialYearByDate(new Date());
+		return (PtNotice) entityManager.unwrap(Session.class)
+				.createQuery("from PtNotice where noticeType =:type and basicProperty.upicNo =:upicNo "
+						+ " and noticeDate between :fromDate and :toDate ")
+				.setParameter("type", noticeType).setParameter("upicNo", assessementNumber)
+				.setParameter("fromDate", currFinYear.getStartingDate())
+				.setParameter("toDate", currFinYear.getEndingDate());
+	}
     
     @ReadOnly
     public PtNotice getPtNoticeByNoticeNumberAndBillType(final String noticeNo, final List<String> noticeType) {
-        final Query qry = getSession().createQuery(
-                "from PtNotice Pn where upper(Pn.noticeNo) = :noticeNumber and upper(noticeType) in (:noticeType) ");
-        qry.setString("noticeNumber", noticeNo.toUpperCase());
-        qry.setParameterList("noticeType", noticeType);
-        return (PtNotice) qry.uniqueResult();
+		return (PtNotice) entityManager.unwrap(Session.class)
+				.createQuery(
+						"from PtNotice Pn where upper(Pn.noticeNo) = :noticeNumber and upper(noticeType) in (:noticeType)")
+				.setParameter("noticeNumber", noticeNo.toUpperCase()).setParameter("noticeType", noticeType);
     }
     
     @ReadOnly
     @SuppressWarnings("unchecked")
     public List<PtNotice> getNoticeByAssessmentNumner(final String assessementNumber) {
-        final javax.persistence.Query qry = eManager.createNamedQuery("getAllNoticesByAssessmentNo");
-        qry.setParameter("upicNo", assessementNumber);
-        return qry.getResultList();
+		return (List<PtNotice>) entityManager.createNamedQuery("getAllNoticesByAssessmentNo").setParameter("upicNo",
+				assessementNumber);
     }
 
     /**

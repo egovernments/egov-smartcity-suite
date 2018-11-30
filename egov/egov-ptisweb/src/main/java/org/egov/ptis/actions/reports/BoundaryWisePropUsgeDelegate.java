@@ -52,7 +52,6 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
-import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
@@ -77,8 +76,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_RESD;
 @Transactional(readOnly = true)
 public class BoundaryWisePropUsgeDelegate {
 	private static final Logger LOGGER = Logger.getLogger(BoundaryWisePropUsgeDelegate.class);
-	@Autowired
-	PropertyUsageDAO propertyUsageDAO;
 	@Autowired
 	PropertyTypeMasterDAO propertyTypeMasterDAO;
 	@Autowired

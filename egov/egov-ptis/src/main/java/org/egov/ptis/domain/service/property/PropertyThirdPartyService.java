@@ -54,11 +54,11 @@ import org.apache.log4j.Logger;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
+import org.egov.ptis.domain.repository.vacancyremission.VacancyRemissionRepository;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.egov.ptis.notice.PtNotice;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,12 +69,15 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hibernate.Session;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 public class PropertyThirdPartyService {
 
     private static final Logger LOGGER = Logger.getLogger(PropertyThirdPartyService.class);
-    public PersistenceService persistenceService;
 
     @Autowired
     @Qualifier("fileStoreService")
@@ -82,39 +85,40 @@ public class PropertyThirdPartyService {
 
     @Autowired
     private PropertyTransferService transferOwnerService;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
+    
+    @Autowired
+    private VacancyRemissionRepository vacancyRemissionRepository;
 
     // For Exemption and vacancyremission is in progess
     public byte[] getSpecialNotice(String assessmentNo, String applicationNo, String applicationType)
             throws IOException {
         PtNotice ptNotice = null;
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Entered into getSpecialNotice application type:" + applicationType + ",application no:"
-                    + applicationNo);
         if (applicationType.equals(APPLICATION_TYPE_NEW_ASSESSENT)
                 || applicationType.equals(APPLICATION_TYPE_ALTER_ASSESSENT)
                 || applicationType.equals(APPLICATION_TYPE_BIFURCATE_ASSESSENT)
                 || applicationType.equals(APPLICATION_TYPE_DEMOLITION)
                 || applicationType.equals(APPLICATION_TYPE_AMALGAMATION)) {
-            if (StringUtils.isNotBlank(applicationNo)) {
-                ptNotice = (PtNotice) persistenceService.find(
-                        "from PtNotice where applicationNumber = ? and noticeType = ?", applicationNo,
-                        NOTICE_TYPE_SPECIAL_NOTICE);
-            } else if (StringUtils.isNotBlank(assessmentNo)) {
-                ptNotice = (PtNotice) persistenceService.find("from PtNotice where basicProperty.upicNo = ?",
-                        assessmentNo);
+			if (StringUtils.isNotBlank(applicationNo)) {
+				ptNotice = (PtNotice) entityManager.createNamedQuery("getNoticeByApplicationNoAndNoticeType")
+						.setParameter("noticeType", NOTICE_TYPE_SPECIAL_NOTICE)
+						.setParameter("applicationNumber", applicationNo);
+			} else if (StringUtils.isNotBlank(assessmentNo)) {
+                ptNotice = (PtNotice) entityManager.createNamedQuery("getAllNoticesByAssessmentNo").setParameter("upicNo", assessmentNo);
             }
         } else if (applicationType.equals(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP)) {
-            if (StringUtils.isNotBlank(applicationNo)) {
-                ptNotice = (PtNotice) persistenceService.find(
-                        "from PtNotice where applicationNumber = ? and noticeType = ?", applicationNo,
-                        NOTICE_TYPE_MUTATION_CERTIFICATE);
-            }
+			if (StringUtils.isNotBlank(applicationNo)) {
+				ptNotice = (PtNotice) entityManager.createNamedQuery("getNoticeByApplicationNoAndNoticeType")
+						.setParameter("noticeType", NOTICE_TYPE_MUTATION_CERTIFICATE)
+						.setParameter("applicationNumber", applicationNo);
+			}
 
-        } else if ((applicationType.equals(APPLICATION_TYPE_TAX_EXEMTION)) && (StringUtils.isNotBlank(applicationNo))) {
-                ptNotice = (PtNotice) persistenceService.find(
-                        "from PtNotice where applicationNumber = ? and noticeType = ?", applicationNo,
-                        NOTICE_TYPE_EXEMPTION);
-        }
+		} else if ((applicationType.equals(APPLICATION_TYPE_TAX_EXEMTION)) && (StringUtils.isNotBlank(applicationNo))) {
+			ptNotice = (PtNotice) entityManager.createNamedQuery("getNoticeByApplicationNoAndNoticeType")
+					.setParameter("noticeType", NOTICE_TYPE_EXEMPTION).setParameter("applicationNumber", applicationNo);
+		}
 
         if (ptNotice != null && ptNotice.getFileStore() != null) {
             if (LOGGER.isDebugEnabled())
@@ -124,19 +128,15 @@ public class PropertyThirdPartyService {
             return FileUtils.readFileToByteArray(file);
         } else
             return null;
-
     }
 
     public Map<String, String> validatePropertyStatus(String applicationNo, String applicationType) {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Entered into validatePropertyStatus method,applicationType:" + applicationType
-                    + ",application no:" + applicationNo);
         PropertyImpl property = null;
         PropertyMutation mutation = null;
         VacancyRemission vacancyRemission = null;
         RevisionPetition revisionPetition = null;
         StateHistory stateHistory = null;
-        Map<String, String> statusCommentsMap = new HashMap<String, String>();
+        Map<String, String> statusCommentsMap = new HashMap<>();
         if (applicationType.equals(APPLICATION_TYPE_NEW_ASSESSENT)
                 || applicationType.equals(APPLICATION_TYPE_ALTER_ASSESSENT)
                 || applicationType.equals(APPLICATION_TYPE_BIFURCATE_ASSESSENT)
@@ -144,12 +144,11 @@ public class PropertyThirdPartyService {
                 || applicationType.equals(APPLICATION_TYPE_DEMOLITION)
                 || applicationType.equals(APPLICATION_TYPE_AMALGAMATION)) {
             if (StringUtils.isNotBlank(applicationNo)) {
-                property = (PropertyImpl) persistenceService.find("From PropertyImpl where applicationNo = ? ",
-                        applicationNo);
+				property = (PropertyImpl) entityManager.unwrap(Session.class)
+						.createQuery("From PropertyImpl where applicationNo = :applicationNo ")
+						.setParameter("applicationNo", applicationNo);
             }
             if (null != property) {
-                if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("Inside applicationType:" + applicationType + "for property" + property);
                 if (!property.getState().getHistory().isEmpty()) {
                     int size = property.getState().getHistory().size();
                     stateHistory = property.getStateHistory().get(size - 1);
@@ -177,8 +176,6 @@ public class PropertyThirdPartyService {
                 mutation = transferOwnerService.getPropertyMutationByApplicationNo(applicationNo);
             }
             if (null != mutation) {
-                if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("Inside applicationType:" + applicationType + "for property mutation" + mutation);
                 if (!mutation.getState().getHistory().isEmpty()) {
                     int size = mutation.getState().getHistory().size();
                     stateHistory = mutation.getStateHistory().get(size - 1);
@@ -202,13 +199,9 @@ public class PropertyThirdPartyService {
             }
         } else if (applicationType.equals(APPLICATION_TYPE_VACANCY_REMISSION)) {
             if (StringUtils.isNotBlank(applicationNo)) {
-                vacancyRemission = (VacancyRemission) persistenceService.find(
-                        "From VacancyRemission where applicationNumber = ? ", applicationNo);
+                vacancyRemission = vacancyRemissionRepository.getVRByApplicationNo(applicationNo);
             }
             if (null != vacancyRemission) {
-                if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("Inside applicationType:" + applicationType + "for property vacancy remission"
-                            + vacancyRemission);
                 if (!vacancyRemission.getState().getHistory().isEmpty()) {
                     int size = vacancyRemission.getState().getHistory().size();
                     stateHistory = vacancyRemission.getStateHistory().get(size - 1);
@@ -231,13 +224,10 @@ public class PropertyThirdPartyService {
             }
         } else if (applicationType.equals(APPLICATION_TYPE_REVISION_PETITION)) {
             if (StringUtils.isNotBlank(applicationNo)) {
-                revisionPetition = (RevisionPetition) persistenceService.find(
-                        "From RevisionPetition where objectionNumber = ? ", applicationNo);
+				revisionPetition = (RevisionPetition) entityManager.createNamedQuery("RP_BY_APPLICATIONNO")
+						.setParameter("applicatiNo", applicationNo);
             }
             if (null != revisionPetition) {
-                if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("Inside applicationType:" + applicationType + "for property revision petition"
-                            + revisionPetition);
                 if (!revisionPetition.getState().getHistory().isEmpty()) {
                     int size = revisionPetition.getState().getHistory().size();
                     stateHistory = revisionPetition.getStateHistory().get(size - 1);
@@ -259,17 +249,6 @@ public class PropertyThirdPartyService {
                 }
             }
         }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Exiting from validatePropertyStatus method");
         return statusCommentsMap;
     }
-
-    public PersistenceService getPersistenceService() {
-        return persistenceService;
-    }
-
-    public void setPersistenceService(PersistenceService persistenceService) {
-        this.persistenceService = persistenceService;
-    }
-
 }

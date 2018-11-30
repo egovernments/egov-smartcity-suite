@@ -57,8 +57,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_SRC_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEPT_CODE_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.FUNCTION_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTIS_EG_MODULES_ID;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -108,6 +108,8 @@ public class FinancialUtil {
     private CreateVoucher createVoucher;
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtil;
+    @Autowired 
+    private ModuleService moduleService;
 
     /**
      * This method creates a Voucher
@@ -179,7 +181,7 @@ public class FinancialUtil {
      * @return Map Map contains account details.
      */
     private HashMap<String, Object> createAccDetailmap(String glcode, BigDecimal debitAmount, BigDecimal creditAmount) {
-        HashMap<String, Object> accountdetailmap = new HashMap<String, Object>();
+        HashMap<String, Object> accountdetailmap = new HashMap<>();
         accountdetailmap.put(VoucherConstant.GLCODE, glcode);
         accountdetailmap.put(VoucherConstant.DEBITAMOUNT, debitAmount);
         accountdetailmap.put(VoucherConstant.CREDITAMOUNT, creditAmount);
@@ -208,7 +210,7 @@ public class FinancialUtil {
         headerdetails.put(VoucherConstant.VOUCHERNUMBER, VOUCHERNUMBER);
         headerdetails.put(VoucherConstant.VOUCHERDATE, new Date());
         headerdetails.put(VoucherConstant.STATUS, 0);
-        headerdetails.put(VoucherConstant.MODULEID, propertyTaxCommonUtil.getModuleIdByName());
+        headerdetails.put(VoucherConstant.MODULEID, moduleService.getModuleByName(FILESTORE_MODULE_NAME));
         headerdetails.put(VoucherConstant.DEPARTMENTCODE, getDepartmentCode());
         headerdetails.put(VoucherConstant.FUNDCODE, getFundCode());
         headerdetails.put(VoucherConstant.SOURCEPATH, sourceURL);

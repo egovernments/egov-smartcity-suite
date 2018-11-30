@@ -84,9 +84,12 @@ import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.notice.PtNotice;
+import org.quartz.PersistJobDataAfterExecution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -167,6 +170,8 @@ public class SearchNoticesAction extends SearchFormAction {
     private BoundaryService boundaryService;
     @Autowired
     private NoticeService noticeService;
+    @PersistenceContext
+    private EntityManager entityManager;
     private String municipal;
     private String district;
     private String reportHeader;
@@ -380,8 +385,7 @@ public class SearchNoticesAction extends SearchFormAction {
     @SkipValidation
     @Action(value = "/searchNotices-showNotice")
     public String showNotice() throws IOException {
-        final PtNotice ptNotice = (PtNotice) getPersistenceService().find("from PtNotice notice where noticeNo=?",
-                noticeNumber);
+        final PtNotice ptNotice = (PtNotice) entityManager.createNamedQuery("getNoticeByNoticeNo").setParameter("noticeNo", noticeNumber);
         if (ptNotice == null) {
             addActionError(getText("DocMngr.file.unavailable"));
             return INDEX;
@@ -470,7 +474,7 @@ public class SearchNoticesAction extends SearchFormAction {
      * @return
      */
     public String getPropType(final String propertyType) {
-        final PropertyTypeMaster propTypeMstr = propertyTypeMasterDAO.findById(Integer.valueOf(propertyType), false);
+        final PropertyTypeMaster propTypeMstr = propertyTypeMasterDAO.findById(Long.valueOf(propertyType), false);
         return propTypeMstr.getType();
     }
 

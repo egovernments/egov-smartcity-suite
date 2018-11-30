@@ -75,6 +75,7 @@ import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
@@ -694,7 +695,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         return ACK;
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public void prepare() {
         final Long userId = securityUtils.getCurrentUser().getId();
         userDesignationList = propertyTaxCommonUtils.getAllDesignationsForUser(userId);
@@ -720,8 +722,11 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             currentPropertyTax = currentTaxAndDue.get(CURR_DMD_STR);
             currentPropertyTaxFirstHalf = propertyTaxDetails.get(CURR_FIRSTHALF_DMD_STR);
             currentPropertyTaxSecondHalf = propertyTaxDetails.get(CURR_SECONDHALF_DMD_STR);
-            documentTypes = transferOwnerService.getPropertyTransferDocumentTypes();
-            successionDocs = transferOwnerService.getSuccessionDouments();
+			documentTypes = (List<DocumentType>) entityManager
+					.createNamedQuery(DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE)
+					.setParameter("transactionType", TransactionType.TRANSFER).getResultList();
+            successionDocs = (List<DocumentType>) entityManager.createNamedQuery(DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE)
+    				.setParameter("transactionType", TransactionType.SUCCESSION_TRANSFER).getResultList();
             addDropdownData("MutationReason", transferOwnerService.getPropertyTransferReasons());
             if (propertyMutation.getReceiptNum() != null) {
                 final boolean isCanceled = propertyTaxCommonUtils.isReceiptCanceled(propertyMutation.getReceiptNum());

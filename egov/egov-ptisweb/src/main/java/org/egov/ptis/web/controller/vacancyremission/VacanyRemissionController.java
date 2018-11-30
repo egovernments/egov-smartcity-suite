@@ -208,7 +208,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                         final List<VacancyRemission> remissionList = vacancyRemissionService
                                 .getAllVacancyRemissionByUpicNo(basicProperty.getUpicNo());
                         if (!remissionList.isEmpty()) {
-                            vacancyRemission = remissionList.get(remissionList.size() - 1);
+                            vacancyRemission = remissionList.get(0);
                             if (vacancyRemission != null)
                                 if (vacancyRemission.getStatus().equalsIgnoreCase(
                                         PropertyTaxConstants.VR_STATUS_APPROVED)) {

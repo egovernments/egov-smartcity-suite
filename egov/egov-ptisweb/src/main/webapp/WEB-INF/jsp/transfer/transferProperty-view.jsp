@@ -54,7 +54,6 @@
 <head>
 <title><s:text name='transferProperty' /></title>
 <script type="text/javascript">
-	jQuery.noConflict();
 	jQuery("#loadingMask").remove();
 	function generateMutationCertificate(actionName) {
 		var mutation= jQuery('#mutationId').val();

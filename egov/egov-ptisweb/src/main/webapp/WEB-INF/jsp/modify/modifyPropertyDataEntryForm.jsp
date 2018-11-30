@@ -161,7 +161,7 @@
 		<td class="greybox" width="25%"><s:text name="property.type"></s:text>
 			<span class="mandatory1" id="prntMandatory">*</span> :</td>
 		<egov:ajaxdropdown id="propTypeCategoryId" fields="['Text','Value']" dropdownId="propTypeCategoryId"
-			url="/common/ajaxCommon-propTypeCategoryByPropType.action" />
+			url="common/ajaxCommon-propTypeCategoryByPropType.action" />
 		<td class="greybox">
 		   <s:select headerKey="-1"	headerValue="%{getText('default.select')}" name="propertyDetail.categoryType"
 				id="propTypeCategoryId" listKey="key" listValue="value" list="propTypeCategoryMap" value="%{propertyDetail.categoryType}"

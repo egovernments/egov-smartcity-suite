@@ -161,11 +161,10 @@ public class PropertyTaxCommonUtils {
      * @return Installment - the first half of the current financial year for PT module
      */
     public Installment getCurrentInstallment() {
-        final Query query = getSession().createQuery(
-                "select installment from Installment installment,CFinancialYear finYear where installment.module.name =:moduleName  and (cast(:currDate as date)) between finYear.startingDate and finYear.endingDate "
+        final Query query = entityManager.unwrap(Session.class).createQuery("select installment from Installment installment,CFinancialYear finYear where installment.module.name =:moduleName  and (cast(:currDate as date)) between finYear.startingDate and finYear.endingDate "
                         + " and cast(installment.fromDate as date) >= cast(finYear.startingDate as date) and cast(installment.toDate as date) <= cast(finYear.endingDate as date) order by installment.fromDate asc ");
-        query.setString("moduleName", PropertyTaxConstants.PTMODULENAME);
-        query.setDate("currDate", new Date());
+        query.setParameter("moduleName", PropertyTaxConstants.PTMODULENAME);
+        query.setParameter("currDate", new Date());
         final List<Installment> installments = query.list();
         return installments.get(0);
     }
@@ -276,9 +275,8 @@ public class PropertyTaxCommonUtils {
         List<Installment> advanceInstallments = new ArrayList<Installment>();
         final String query = "select inst from Installment inst where inst.module.name = '" + PTMODULENAME
                 + "' and inst.fromDate >= :startdate order by inst.fromDate asc ";
-        advanceInstallments = getSession().createQuery(query)
-                .setParameter("startdate", startDate)
-                .setMaxResults(PropertyTaxConstants.MAX_ADVANCES_ALLOWED).list();
+		advanceInstallments = entityManager.unwrap(Session.class).createQuery(query)
+				.setParameter("startdate", startDate).setMaxResults(PropertyTaxConstants.MAX_ADVANCES_ALLOWED).list();
         return advanceInstallments;
     }
 
@@ -299,7 +297,7 @@ public class PropertyTaxCommonUtils {
      */
     public String getAllDesignationsForUser(final Long userId) {
         List<Position> positions = null;
-        final List<String> designationList = new ArrayList<String>();
+        final List<String> designationList = new ArrayList<>();
         final StringBuilder listString = new StringBuilder();
         if (userId != null && userId.intValue() != 0) {
             positions = positionMasterService.getPositionsForEmployee(userId);
@@ -474,7 +472,7 @@ public class PropertyTaxCommonUtils {
      */
     public Boolean isEligibleInitiator(final Long userId) {
         return getAllDesignationsForUser(userId).contains(PropertyTaxConstants.JUNIOR_ASSISTANT)
-                || getAllDesignationsForUser(userId).contains(PropertyTaxConstants.SENIOR_ASSISTANT) ? true : false;
+                || getAllDesignationsForUser(userId).contains(PropertyTaxConstants.SENIOR_ASSISTANT);
 
     }
 
@@ -577,10 +575,10 @@ public class PropertyTaxCommonUtils {
 
     @SuppressWarnings("unchecked")
     public List<CFinancialYear> getAllFinancialYearsBetweenDates(final Date fromDate, final Date toDate) {
-        final Query query = getSession().createQuery(
+        final Query query = entityManager.unwrap(Session.class).createQuery(
                 " from CFinancialYear cfinancialyear where cfinancialyear.startingDate <:eDate and cfinancialyear.endingDate >=:sDate order by finYearRange asc ");
-        query.setDate("sDate", fromDate);
-        query.setDate("eDate", toDate);
+        query.setParameter("sDate", fromDate);
+        query.setParameter("eDate", toDate);
         return query.list();
     }
 
@@ -695,21 +693,18 @@ public class PropertyTaxCommonUtils {
             noticeType = NOTICE_TYPE_EXEMPTION;
         else if (workFlowAction.equalsIgnoreCase(NATURE_VACANCY_REMISSION))
             noticeType = NOTICE_TYPE_VRPROCEEDINGS;
-        final javax.persistence.Query qry = entityManager
-                .createQuery("from PtNotice notice where applicationNumber=? and noticeType=?");
-        qry.setParameter(1, applicationNo);
-        qry.setParameter(2, noticeType);
-        PtNotice notice = (PtNotice) qry.getSingleResult();
+		PtNotice notice = (PtNotice) entityManager.createNamedQuery("getNoticeByApplicationNoAndNoticeType")
+				.setParameter("applicationNumber", applicationNo).setParameter("noticeType", noticeType.toUpperCase())
+				.getSingleResult();
         return notice.getNoticeNo();
     }
 
     @SuppressWarnings("unchecked")
-    public List<PtNotice> getEndorsementNotices(final String applicationNo) {
-        final javax.persistence.Query qry = entityManager
-                .createQuery("from PtNotice notice where applicationNumber=? and noticeType='Endorsement Notice'");
-        qry.setParameter(1, applicationNo);
-        return (List<PtNotice>) qry.getResultList();
-    }
+	public List<PtNotice> getEndorsementNotices(final String applicationNo) {
+		return (List<PtNotice>) entityManager.createNamedQuery("getNoticeByApplicationNoAndNoticeType")
+				.setParameter("applicationNumber", applicationNo)
+				.setParameter("noticeType", "Endorsement Notice".toUpperCase()).getResultList();
+	}
 
     public Boolean getEndorsementGenerate(final Long userId, final State state) {
         String loggedInUserDesignation;
@@ -737,7 +732,7 @@ public class PropertyTaxCommonUtils {
     public boolean isEndorsementEnabled() {
         final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
                 PropertyTaxConstants.APPCONFIG_ENDORSEMENT);
-        return !appConfigValues.isEmpty() && "Y".equals(appConfigValues.get(0).getValue()) ? true : false;
+        return !appConfigValues.isEmpty() && "Y".equals(appConfigValues.get(0).getValue());
     }
     
     /**
@@ -805,45 +800,21 @@ public class PropertyTaxCommonUtils {
         return propertyMutationDAO.getLatestApprovedMutationForAssessmentNo(assessmentNo);
     }
 
-    public PropertyStatusValues getPropStatusValues(BasicProperty basicProperty) {
-        final Query query = getSession().createQuery("from PropertyStatusValues where basicProperty = :basicPropertyId");
-        query.setParameter("basicPropertyId", basicProperty);
-        return query.list().isEmpty() ? null : (PropertyStatusValues) query.list().get(0);
-    }
-    
     /**
      * Returns sum of all primary tax heads
      *
      * @return BigDecimal
      */
-    public BigDecimal getAggregateGenralTax(Map<String, BigDecimal> demandCollMap) {
-        
-        return nullCheckBigDecimal(demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX))
-                .add(nullCheckBigDecimal(demandCollMap.get(PropertyTaxConstants.DEMANDRSN_STR_LIGHT_TAX)))
-                .add(nullCheckBigDecimal(demandCollMap.get(DEMANDRSN_STR_WATER_TAX)))
-                .add(nullCheckBigDecimal(demandCollMap.get(DEMANDRSN_STR_SCAVENGE_TAX)))
-                .add(nullCheckBigDecimal(demandCollMap.get(DEMANDRSN_STR_DRAINAGE_TAX)));
-
-    }
-    
-
-    /**
-     * Returns zero if value is null otherwise value
-     *
-     * @return BigDecimal
-     */
-    public BigDecimal nullCheckBigDecimal(BigDecimal value) {
-
-        return value != null ? value : BigDecimal.ZERO;
-    }
-
-    public BigInteger getModuleIdByName(){
-    	BigInteger id = BigInteger.ZERO ;
-    	String selectQuery = " select id from eg_modules where name =:name ";
-        final Query qry = getSession().createNativeQuery(selectQuery).setString("name", PropertyTaxConstants.FILESTORE_MODULE_NAME);
-        List<Object> list = qry.list();
-        	if(!list.isEmpty())
-        		id = (BigInteger) list.get(0);
-    	return id;
-    }
+	public BigDecimal getAggregateGenralTax(Map<String, BigDecimal> demandCollMap) {
+		return demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX) != null ? demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX)
+				: BigDecimal.ZERO
+						.add(demandCollMap.get(PropertyTaxConstants.DEMANDRSN_STR_LIGHT_TAX) != null
+								? demandCollMap.get(PropertyTaxConstants.DEMANDRSN_STR_LIGHT_TAX) : BigDecimal.ZERO)
+						.add(demandCollMap.get(DEMANDRSN_STR_WATER_TAX) != null
+								? demandCollMap.get(DEMANDRSN_STR_WATER_TAX) : BigDecimal.ZERO)
+						.add(demandCollMap.get(DEMANDRSN_STR_SCAVENGE_TAX) != null
+								? demandCollMap.get(DEMANDRSN_STR_SCAVENGE_TAX) : BigDecimal.ZERO)
+						.add(demandCollMap.get(DEMANDRSN_STR_DRAINAGE_TAX) != null
+								? demandCollMap.get(DEMANDRSN_STR_SCAVENGE_TAX) : BigDecimal.ZERO);
+	}
 }

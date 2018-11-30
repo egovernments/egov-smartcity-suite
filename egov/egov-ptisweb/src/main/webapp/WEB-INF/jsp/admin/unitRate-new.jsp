@@ -60,7 +60,6 @@
 
 <script type="text/javascript">
 
-jQuery.noConflict();
 jQuery(function ($) {
 	try { 
 		$(".datepicker").datepicker({

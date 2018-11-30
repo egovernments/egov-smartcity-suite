@@ -62,7 +62,6 @@
 <script
 	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script type="text/javascript">
-	jQuery.noConflict();
 	jQuery("#loadingMask").remove();
 	function loadOnStartUp() {
 		enableBlock();

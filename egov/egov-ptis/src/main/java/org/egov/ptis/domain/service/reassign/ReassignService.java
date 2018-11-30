@@ -57,6 +57,8 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.bean.ReassignInfo;
+import org.egov.ptis.domain.dao.property.PropertyDAO;
+import org.egov.ptis.domain.dao.property.PropertyMutationDAO;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.VacancyRemissionService;
 import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
@@ -74,7 +76,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRAN
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.GENERAL_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVISION_PETITION;
 
 @Service
@@ -102,6 +103,12 @@ public class ReassignService {
     
     @Autowired
     private PropertyService propertyService;
+    
+    @Autowired
+    private PropertyDAO propertyDAO;
+    
+    @Autowired
+    private PropertyMutationDAO propertyMutationDAO;
 
     public User getLoggedInUser() {
         return securityUtils.getCurrentUser();
@@ -114,13 +121,13 @@ public class ReassignService {
         if (APPLICATION_TYPE_VACANCY_REMISSION.equalsIgnoreCase(transactionType)) {
             stateAware = vacancyRemissionService.getVacancyRemissionById(stateAwareId);
         } else if (APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equalsIgnoreCase(transactionType)) {
-            stateAware = persistenceService.find("From PropertyMutation where id = ? ", stateAwareId);
+            stateAware = propertyMutationDAO.findById(stateAwareId, false);
         } else if (GENERAL_REVISION_PETITION.equalsIgnoreCase(transactionType) || REVISION_PETITION.equalsIgnoreCase(transactionType)) {
             stateAware = revisionPetitionService.findById(Long.valueOf(stateAwareId), false);
             transactionType = transactionType.equalsIgnoreCase(REVISION_PETITION) ? APPLICATION_TYPE_REVISION_PETITION
                     : APPLICATION_TYPE_GRP;
         } else {
-            stateAware = persistenceService.findByNamedQuery(QUERY_PROPERTYIMPL_BYID, Long.valueOf(stateAwareId));
+			stateAware = (StateAware) propertyDAO.findById(stateAwareId, false);
         }
         stateAware.transition().progressWithStateCopy().withOwner(position).withInitiator(position);
         propertyService.updateIndexes(stateAware, transactionType);

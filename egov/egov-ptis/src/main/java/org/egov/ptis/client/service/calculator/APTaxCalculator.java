@@ -79,6 +79,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.Area;
 import org.egov.commons.Installment;
@@ -150,6 +153,9 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 
     @Autowired
     private PropertyOccupationService propertyOccupationService;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
     /**
      * @param property Property Object
      * @param applicableTaxes List of Applicable Taxes
@@ -373,9 +379,10 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     @SuppressWarnings("unchecked")
     private BoundaryCategory getBoundaryCategory(final Boundary zone, final Installment installment,
             final Long usageId, final Date occupancyDate, final Long classification) throws TaxCalculatorExeption {
-        final List<BoundaryCategory> categories = persistenceService.findAllByNamedQuery(QUERY_BASERATE_BY_OCCUPANCY_ZONE,
-                zone.getId(), usageId,
-                classification, occupancyDate, installment.getToDate());
+		final List<BoundaryCategory> categories = (List<BoundaryCategory>) entityManager.createNamedQuery(QUERY_BASERATE_BY_OCCUPANCY_ZONE)
+				.setParameter("boundary", zone.getId()).setParameter("usage", usageId)
+				.setParameter("structure", classification).setParameter("fromDate", occupancyDate)
+				.setParameter("toDate", installment.getToDate());
 
         LOGGER.debug("baseRentOfUnit - Installment : " + installment);
 

@@ -83,5 +83,9 @@ public class ApartmentService {
     public Apartment getApartmentById(final Long id) {
         return apartmentRepository.findOne(id);
     }
+    
+    public Apartment getApartmentByCode(final String code) {
+        return apartmentRepository.findByCode(code);
+    }
 
 }

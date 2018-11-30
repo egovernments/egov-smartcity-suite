@@ -85,10 +85,9 @@ public class PropertyTypeMasterHibernateDAO implements PropertyTypeMasterDAO {
     }
 
     @Override
-    public PropertyTypeMaster findById(final Integer id, final boolean lock) {
-        final Query qry = getCurrentSession().createQuery("from PropertyTypeMaster P where P.id =:id ");
-        qry.setInteger("id", id);
-        return (PropertyTypeMaster) qry.uniqueResult();
+    public PropertyTypeMaster findById(final Long id, final boolean lock) {
+		return (PropertyTypeMaster) getCurrentSession().createQuery("from PropertyTypeMaster P where P.id =:id ")
+				.setParameter("id", id).uniqueResult();
     }
 
     @SuppressWarnings("unchecked")

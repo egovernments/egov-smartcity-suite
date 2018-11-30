@@ -92,4 +92,6 @@ public interface DepreciationMasterDao {
 	public void delete(DepreciationMaster depreciationMaster);
 
 	public DepreciationMaster update(DepreciationMaster depreciationMaster);
+	
+	public DepreciationMaster findByName(String name);
 }

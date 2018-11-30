@@ -167,7 +167,7 @@
 			<span class="mandatory1" id="prntMandatory">*</span> :</td>
 		<egov:ajaxdropdown id="propTypeCategoryId" fields="['Text','Value']"
 			dropdownId="propTypeCategoryId"
-			url="/common/ajaxCommon-propTypeCategoryByPropType.action" />
+			url="common/ajaxCommon-propTypeCategoryByPropType.action" />
 		<td class="bluebox"><s:select headerKey="-1"
 				headerValue="%{getText('default.select')}"
 				name="property.propertyDetail.categoryType" id="propTypeCategoryId"

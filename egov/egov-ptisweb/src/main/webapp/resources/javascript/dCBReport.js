@@ -55,7 +55,6 @@
  */
 
 var reportdatatable;
-jQuery.noConflict();
 
 jQuery(document).ready(function() { 
 	drillDowntableContainer = jQuery("#tbldcbdrilldown");

@@ -96,7 +96,7 @@ public class FloorTypeService {
     
     public String getRolesForUserId(final Long userId) {
         String roleName;
-        final List<String> roleNameList = new ArrayList<String>();
+        final List<String> roleNameList = new ArrayList<>();
         final User user = userService.getUserById(userId);
         for (final Role role : user.getRoles()) {
             roleName = role.getName() != null ? role.getName() : "";

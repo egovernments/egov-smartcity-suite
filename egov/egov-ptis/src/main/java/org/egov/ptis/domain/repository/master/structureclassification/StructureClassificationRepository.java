@@ -77,4 +77,6 @@ public interface StructureClassificationRepository extends JpaRepository<Structu
 
 	@Query(value = "from Category where structureClass.id = :id and isActive = true")
 	List<Category> findByUsageUnitRateActive(@Param("id") Long id);
+	
+	StructureClassification findByTypeName(String typeName);
 }

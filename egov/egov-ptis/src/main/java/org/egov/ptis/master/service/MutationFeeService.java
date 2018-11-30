@@ -84,17 +84,17 @@ public class MutationFeeService {
     }
 
     public boolean validateForHighLimitNull() {
-        return mutationFeeRepository.findLowLimitForHighLimitNullValue() != null ? true : false;
+        return mutationFeeRepository.findLowLimitForHighLimitNullValue() != null;
     }
 
     public boolean getToDateBySlabName(final String slabName) {
         final Date today = new Date();
         final int result = today.compareTo(mutationFeeRepository.findToDateBySlabName(slabName));
-        return result >= 0 ? true : false;
+        return result >= 0;
     }
 
     public boolean findExistingSlabName(final String slabName) {
-        return !mutationFeeRepository.findIfSlabNameExists(slabName).isEmpty() ? true : false;
+        return !mutationFeeRepository.findIfSlabNameExists(slabName).isEmpty();
     }
 
     public Date getLatestToDateForSlabName(final String slabName) {
@@ -115,7 +115,7 @@ public class MutationFeeService {
 
     public boolean validateForMaxHighLimit(final BigDecimal lowlimit) {
         final BigDecimal result = lowlimit.subtract(getMaxHighLimit());
-        return result.compareTo(BigDecimal.ONE) == 0 ? true : false;
+        return result.compareTo(BigDecimal.ONE) == 0;
     }
 
     @Transactional

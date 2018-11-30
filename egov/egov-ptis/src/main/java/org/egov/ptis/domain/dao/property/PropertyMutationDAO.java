@@ -53,7 +53,7 @@ import java.util.List;
 
 public interface PropertyMutationDAO {
 	
-	public PropertyMutation findById(Integer id, boolean lock);
+	public PropertyMutation findById(Long id, boolean lock);
 
 	public List<PropertyMutation> findAll();
 

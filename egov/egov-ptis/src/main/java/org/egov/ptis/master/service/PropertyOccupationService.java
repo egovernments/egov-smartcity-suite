@@ -73,4 +73,8 @@ public class PropertyOccupationService {
     public PropertyOccupation getPropertyOccupationByID(final Long id) {
         return propertyOccupationRepository.findOne(id);
     }
+    
+    public PropertyOccupation getPropertyOccupationByCode(final String code){
+    	return propertyOccupationRepository.findByOccupancyCode(code);
+    }
 }

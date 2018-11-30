@@ -74,7 +74,6 @@
 <script type="text/javascript">
 
 
-	jQuery.noConflict();
 	jQuery(document).ready(function()
 			{	
 		var designation = '<s:property value="%{currentDesignation}"/>';

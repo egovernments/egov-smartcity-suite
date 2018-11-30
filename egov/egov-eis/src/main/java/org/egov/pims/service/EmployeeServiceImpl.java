@@ -984,7 +984,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
                 for (Iterator iter = qry.list().iterator(); iter.hasNext();) {
                     Integer id = (Integer) iter.next();
                     if (id != null)
-                        position = EisManagersUtill.getEisCommonsService().getPositionById(id);
+                        position = EisManagersUtill.getEisCommonsService().getPositionById(Long.valueOf(id.toString()));
                 }
             }
         } catch (HibernateException he) {
@@ -1841,7 +1841,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
     public List<Position> getPositionsForUser(User user, Date date) throws ApplicationException {
 
         List<Position> positionList = new ArrayList<Position>();
-        Integer pos = null;
+        Long pos = null;
         try {
             String mainStr = "";
 
@@ -1863,7 +1863,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             if (qry.list() != null && !qry.list().isEmpty()) {
 
                 for (Iterator iter = qry.list().iterator(); iter.hasNext();) {
-                    pos = (Integer) iter.next();
+                    pos = (Long) iter.next();
                     Position position = EisManagersUtill.getEisCommonsService().getPositionById(pos);
                     positionList.add(position);
                 }

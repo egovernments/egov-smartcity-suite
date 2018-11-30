@@ -49,6 +49,7 @@ package org.egov.ptis.domain.dao.property;
 
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.ptis.domain.entity.property.Category;
+import org.egov.ptis.domain.entity.property.Property;
 import org.hibernate.Criteria;
 import org.hibernate.query.Query;
 import org.hibernate.Session;
@@ -214,9 +215,9 @@ public class CategoryHibDao implements CategoryDao {
 	}
 
 	@Override
-	public Category findById(Integer id, boolean lock) {
-
-		return null;
+	public Category findById(Long id, boolean lock) {
+		return (Category) getCurrentSession().createQuery("from Category where id =:id ").setParameter("id", id)
+				.uniqueResult();
 	}
 
 	@Override

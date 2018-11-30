@@ -55,7 +55,6 @@
 <head>
 <title><s:text name="citize.search.notice" /></title>
 <script type="text/javascript">
-	jQuery.noConflict();
 	function performBeforeSubmit(obj) {
 		var indexNumber = jQuery("#indexNumber").val();
 		if (jQuery("#indexNumber").val() == '') {

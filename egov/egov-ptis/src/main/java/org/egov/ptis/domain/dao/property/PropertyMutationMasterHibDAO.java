@@ -48,6 +48,7 @@
 package org.egov.ptis.domain.dao.property;
 
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
+import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
@@ -136,9 +137,9 @@ public class PropertyMutationMasterHibDAO implements PropertyMutationMasterDAO {
 	}
 
 	@Override
-	public PropertyMutationMaster findById(Integer id, boolean lock) {
-
-		return null;
+	public PropertyMutationMaster findById(Long id, boolean lock) {
+		return (PropertyMutationMaster) getCurrentSession()
+				.createQuery("from PropertyMutationMaster P where P.id =:id ").setParameter("id", id).getSingleResult();
 	}
 
 	@Override
@@ -157,6 +158,23 @@ public class PropertyMutationMasterHibDAO implements PropertyMutationMasterDAO {
 	public PropertyMutationMaster update(PropertyMutationMaster propertyMutationMaster) {
 
 		return null;
+	}
+
+	@Override
+	public PropertyMutationMaster getPropertyMutationMasterByIdAndType(Long id, String type) {
+		Query qry = getCurrentSession()
+				.createQuery("from PropertyMutationMaster PM where id = :id and upper(PM.type) = :type");
+		qry.setParameter("id", id);
+		qry.setParameter("type", type.toUpperCase());
+		return (PropertyMutationMaster) qry.uniqueResult();
+	}
+
+	@Override
+	public List<PropertyMutationMaster> getPropertyMutationMasterByType(String type) {
+		Query qry = getCurrentSession()
+				.createQuery("from PropertyMutationMaster PM where upper(PM.type) = :type");
+		qry.setParameter("type", type.toUpperCase());
+		return qry.list();
 	}
 
 

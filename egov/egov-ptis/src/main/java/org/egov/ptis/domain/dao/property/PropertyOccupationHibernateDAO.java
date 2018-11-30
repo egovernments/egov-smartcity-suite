@@ -123,14 +123,13 @@ public class PropertyOccupationHibernateDAO implements PropertyOccupationDAO {
 
 	@Override
 	public PropertyOccupation findById(Long id, boolean lock) {
-
-		return null;
+		return (PropertyOccupation) getCurrentSession().createQuery("from PropertyOccupation where id =:id ")
+				.setParameter("id", id).uniqueResult();
 	}
 
 	@Override
 	public List<PropertyOccupation> findAll() {
-
-		return null;
+		return getCurrentSession().createQuery("from PropertyOccupation").getResultList();
 	}
 
 	@Override

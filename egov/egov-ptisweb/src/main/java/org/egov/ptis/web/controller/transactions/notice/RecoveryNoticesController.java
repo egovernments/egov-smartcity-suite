@@ -136,7 +136,7 @@ public class RecoveryNoticesController {
         final Long propertyType = noticeRequest.getPropertyType();
         if (!(propertyType == null || propertyType.equals(-1l))) {
             final Map<String, String> propTypeCategoryMap = new TreeMap<>();
-            final PropertyTypeMaster propTypeMstr = propertyTypeMasterDAO.findById(propertyType.intValue(),
+            final PropertyTypeMaster propTypeMstr = propertyTypeMasterDAO.findById(propertyType,
                     false);
             if (propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
                 propTypeCategoryMap.putAll(VAC_LAND_PROPERTY_TYPE_CATEGORY);

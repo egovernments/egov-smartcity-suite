@@ -66,8 +66,6 @@ import java.util.List;
 
 public interface PropertyDAO {
 
-	public Property getPropertyByID(String propID);
-
 	public Property getPropertyByBasicPropertyID(BasicProperty basicProperty);
 
 	public List getAllNonDefaultProperties(BasicProperty basicProp);
@@ -228,9 +226,7 @@ public interface PropertyDAO {
 	 */
 	public List getDmdCollForAllDmdReasons(EgDemand egDemand);
 
-	public Property findById(Integer id, boolean lock);
-
-	public List<Property> findAll();
+	public Property findById(Long id, boolean lock);
 
 	public Property create(Property property);
 
@@ -245,5 +241,6 @@ public interface PropertyDAO {
     public Property getHistoryPropertyForBasicProperty(BasicProperty basicProperty);
     
     public Property getPropertyByApplicationNo(String applicationNo);
-
+    
+    public Property getWorkflowPropertyById(Long id);
 }

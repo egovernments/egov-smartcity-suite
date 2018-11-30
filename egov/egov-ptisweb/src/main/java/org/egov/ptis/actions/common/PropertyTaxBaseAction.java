@@ -62,6 +62,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
@@ -86,10 +89,12 @@ import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
+import org.egov.pims.commons.dao.PositionMasterDAO;
 import org.egov.ptis.client.util.FinancialUtil;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
+import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -109,6 +114,7 @@ import org.egov.ptis.domain.service.property.SMSEmailService;
 import org.egov.ptis.master.service.PropertyUsageService;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
+import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -172,6 +178,12 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     private PropertyUsageService propertyUsageService;
     @Autowired
     protected PropertyTaxCommonUtils propertyTaxCommonUtils;
+    @Autowired 
+    private PropertyTypeMasterDAO propertyTypeMasterDAO;
+    @PersistenceContext
+    private EntityManager entityManager;
+    @Autowired
+    private PositionMasterDAO positionMasterDAO;
 
     private List<File> uploads = new ArrayList<>();
     private List<String> uploadFileNames = new ArrayList<>();
@@ -276,8 +288,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             addActionError(getText("mandatory.propcatType"));
 
         if (propTypeId != null && !"-1".equals(propTypeId)) {
-            final PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
-                    "from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
+            final PropertyTypeMaster propTypeMstr = propertyTypeMasterDAO.findById(Long.valueOf(propTypeId), false);
             if (propTypeMstr != null) {
                 Date regDocDate = null;
                 final PropertyDetail propertyDetail = property.getPropertyDetail();
@@ -423,8 +434,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     if (floor.getPropertyUsage() != null && isBlank(floor.getFirmName())
                             && null != floor.getPropertyUsage().getId()
                             && !"-1".equals(floor.getPropertyUsage().getId().toString())) {
-                        final PropertyUsage pu = propertyUsageService.findById(Long.valueOf(floor
-                                .getPropertyUsage().getId()));
+                        final PropertyUsage pu = propertyUsageService.findById(floor
+                                .getPropertyUsage().getId());
                         if (pu != null && !pu.getUsageName().equalsIgnoreCase(NATURE_OF_USAGE_RESIDENCE))
                             addActionError(getText("mandatory.floor.firmName", msgParams));
                     }
@@ -476,10 +487,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
      * @param basicProperty
      */
     protected void validateHouseNumber(final Long wardId, final String houseNo, final BasicProperty basicProperty) {
-        final Query qry = getPersistenceService()
-                .getSession()
-                .createQuery(
-                        "from BasicPropertyImpl bp where bp.address.houseNoBldgApt = :houseNo and bp.boundary.id = :wardId and bp.active = 'Y'");
+		final Query qry = entityManager.unwrap(Session.class).createQuery(
+				"from BasicPropertyImpl bp where bp.address.houseNoBldgApt = :houseNo and bp.boundary.id = :wardId and bp.active = 'Y'");
         qry.setParameter("houseNo", houseNo);
         qry.setParameter("wardId", wardId);
         if (!qry.list().isEmpty()
@@ -491,17 +500,10 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
      * Get Designation for logged in user
      */
     public void setUserInfo() {
-        if (logger.isDebugEnabled())
-            logger.debug("Entered into setUserInfo");
-
         final Long userId = securityUtils.getCurrentUser().getId();
-        if (logger.isDebugEnabled())
-            logger.debug("setUserInfo: Logged in userId" + userId);
         final Designation designation = propertyTaxUtil.getDesignationForUser(userId);
         if (designation != null)
             setUserDesgn(designation.getName());
-        if (logger.isDebugEnabled())
-            logger.debug("Exit from setUserInfo");
     }
 
     /**
@@ -619,7 +621,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
             pos = property.getCurrentState().getOwnerPosition();
         else if (null != approverPositionId && approverPositionId != -1)
-            pos = (Position) persistenceService.find("from Position where id=?", approverPositionId);
+            pos = positionMasterDAO.getPosition(approverPositionId);
         else
             pos = wfInitiator.getPosition();
 

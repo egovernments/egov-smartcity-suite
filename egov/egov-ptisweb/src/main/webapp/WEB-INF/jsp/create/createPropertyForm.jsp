@@ -69,7 +69,7 @@
 		<td class="greybox" width="25%"><s:text name="property.type"></s:text>
 			<span class="mandatory1" id="prntMandatory">*</span> :</td>
 		<egov:ajaxdropdown id="propTypeCategoryId" fields="['Text','Value']" dropdownId="propTypeCategoryId"
-			url="/common/ajaxCommon-propTypeCategoryByPropType.action" />
+			url="common/ajaxCommon-propTypeCategoryByPropType.action" />
 		<td class="greybox">
 		   <s:select headerKey="" headerValue="%{getText('default.select')}" name="propertyDetail.categoryType"
 				id="propTypeCategoryId" listKey="key" listValue="value" list="propTypeCategoryMap" value="%{propertyDetail.categoryType}"
@@ -96,7 +96,7 @@
 	<td class="greybox" width="5%">&nbsp;</td>
 	<td class="greybox" width="25%"><s:text name="label.property.department"/> :</td>
 		<egov:ajaxdropdown id="propertyDepartmentId" fields="['Value','Text']" dropdownId="propertyDepartmentId"
-			url="/common/ajaxcommon-propdepartment-byproptype.action" />
+			url="common/ajaxcommon-propdepartment-byproptype.action" />
 		<td class="greybox">
 		   <s:select headerKey="" headerValue="%{getText('default.select')}" name="propertyDepartmentId"
 				id="propertyDepartmentId" listKey="id" listValue="name" list="propertyDepartmentList" value="%{propertyDepartmentId}"

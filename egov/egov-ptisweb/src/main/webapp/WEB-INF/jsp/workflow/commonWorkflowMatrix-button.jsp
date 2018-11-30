@@ -47,7 +47,6 @@
   ~
   --%>
 <script>
-jQuery.noConflict();
 jQuery(document).on('change', ".applicationcheckbox", function () {
 	var applicationCheckVal = jQuery('#applicationCheck').prop("checked");
 	 if(applicationCheckVal)

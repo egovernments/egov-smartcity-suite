@@ -52,7 +52,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title><s:if test="mode=='create' || mode=='edit'">
+<title><s:if test="%{mode=='create' || mode=='edit'}">
 		<s:text name='NewProp.title' />
 	</s:if></title>
 <link
@@ -156,7 +156,6 @@
 		</s:push>
 	</s:form>
 	<script type="text/javascript">
-		jQuery.noConflict();
 		jQuery("#loadingMask").remove();
 		jQuery(function($) {
 			try {
@@ -225,9 +224,9 @@
 				}
 			});
 			populateBoundaries();
-			<s:if test = '%{propertyByEmployee}'>
+			var propertyByEmployee = '<s:property value="%{propertyByEmployee}"/>';
+			if(propertyByEmployee == 'true')
 				loadDesignationFromMatrix();
-			</s:if>
 			showHideFirmName();
 			if (jQuery('#floorDetailsEntered').is(":checked")) {
 				jQuery('#areaOfPlot').attr('readonly', true);
@@ -235,17 +234,18 @@
 			} else {
 				showHideLengthBreadth();
 			}
-			<s:if test = '%{propertyDetail.appurtenantLandChecked}'>
+			var appurtenantLandChecked = '<s:property value="%{propertyDetail.appurtenantLandChecked}"/>';
+			if(appurtenantLandChecked == 'true')
 				jQuery('#vacantLandArea').attr('readOnly', true);
-			</s:if>
-			<s:if test='%{showCheckboxForGIS && @org.egov.ptis.constants.PropertyTaxConstants@SOURCE_SURVEY.equalsIgnoreCase(model.source)}'>
+			var showCheckboxForGIS = '<s:property value="%{showCheckboxForGIS && @org.egov.ptis.constants.PropertyTaxConstants@SOURCE_SURVEY.equalsIgnoreCase(model.source)}"/>';
+			if(showCheckboxForGIS == 'true')
 				jQuery('#thirdPartyCheckbox').attr('disabled', true);	
-			</s:if>
 		}
 
 		function onSubmit() {
 			jQuery('#gender, #guardianRelation').removeAttr('disabled');
-			<s:if test="%{state == null}">
+			var state = '<s:property value="%{state}"/>';
+			if(state == null){
 				var propertyType = jQuery("#propTypeId option:selected").text();
 				if (propertyType != "Vacant Land" && !jQuery('#floorDetailsEntered').prop("checked")) {
 					bootbox.alert('Please check floor details entered checkbox');
@@ -256,11 +256,11 @@
 						jQuery(this).removeAttr('disabled');
 					}
 				});
-			</s:if>
+			}
 			document.forms[0].action = 'createProperty-create.action';
-			<s:if test="mode=='edit'">
+			var mode = '<s:property value="%{mode}"/>';
+			if(mode == 'edit')
 			document.forms[0].action = 'createProperty-forward.action';
-			</s:if>
 			document.forms[0].submit;
 			return true;
 		}

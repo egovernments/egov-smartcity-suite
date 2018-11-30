@@ -342,9 +342,8 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
     }
 
     @Override
-    public BasicProperty findById(Integer id, boolean lock) {
-
-        return null;
+    public BasicProperty findById(Long id, boolean lock) {
+        return (BasicProperty) getCurrentSession().createQuery("from BasicPropertyImpl where id=:id").setParameter("id", id).uniqueResult();
     }
 
     @Override

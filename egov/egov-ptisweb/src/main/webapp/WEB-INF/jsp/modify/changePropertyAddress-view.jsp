@@ -54,7 +54,6 @@
 	<head>
 		<title><s:text name="chPropAdd" /></title>
 		<script type="text/javascript">
-			jQuery.noConflict();
 			jQuery("#loadingMask").remove();
 		</script>
 	</head>

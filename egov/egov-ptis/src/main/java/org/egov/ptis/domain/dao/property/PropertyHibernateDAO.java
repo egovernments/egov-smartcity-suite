@@ -59,6 +59,7 @@ import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
+import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertySource;
 import org.egov.ptis.exceptions.PropertyNotFoundException;
 import org.hibernate.Criteria;
@@ -86,13 +87,6 @@ public class PropertyHibernateDAO implements PropertyDAO {
 
     private Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
-    }
-
-    @Override
-    public Property getPropertyByID(String propID) {
-        Query qry = getCurrentSession().createQuery("from PropertyImpl P where P.id =:ID ");
-        qry.setString("ID", propID);
-        return (Property) qry.uniqueResult();
     }
 
     /*
@@ -643,15 +637,11 @@ public class PropertyHibernateDAO implements PropertyDAO {
     }
 
     @Override
-    public Property findById(final Integer id, final boolean lock) {
-
-        return null;
-    }
-
-    @Override
-    public List<Property> findAll() {
-
-        return null;
+    public Property findById(final Long id, final boolean lock) {
+    	Query qry = getCurrentSession()
+                .createQuery("from PropertyImpl where id= :id");
+        qry.setParameter("id", id);
+        return (Property) qry.uniqueResult();
     }
 
     @Override
@@ -710,6 +700,13 @@ public class PropertyHibernateDAO implements PropertyDAO {
     	Query qry = getCurrentSession()
                 .createQuery("from PropertyImpl where applicationNo =:applicationNo ");
         qry.setString("applicationNo", applicationNo);
+        return (Property) qry.uniqueResult();
+    }
+    
+    public Property getWorkflowPropertyById(Long id){
+    	Query qry = getCurrentSession()
+                .createQuery("from PropertyImpl where id= :id and status = 'W'");
+        qry.setParameter("id", id);
         return (Property) qry.uniqueResult();
     }
 }

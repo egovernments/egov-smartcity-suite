@@ -140,4 +140,8 @@
     
     <query name="RP_BY_APPLICATIONNO">
         <![CDATA[from RevisionPetition where objectionNumber= :applicatiNo]]></query>
+    <query name="RP_BY_BASICPROPERTY">
+        <![CDATA[from RevisionPetition where basicProperty= :basicProperty]]></query> 
+    <query name="RP_BY_BASICPROPERTYANDTYPE">
+        <![CDATA[from RevisionPetition where basicProperty= :basicProperty and type= :type]]></query>   
 </hibernate-mapping>

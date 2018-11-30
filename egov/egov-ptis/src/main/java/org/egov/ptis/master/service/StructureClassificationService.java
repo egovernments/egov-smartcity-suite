@@ -87,8 +87,7 @@ public class StructureClassificationService {
 
 	public Installment getInstallment() {
 		final Module module = moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME);
-		final Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
-		return installment;
+		return installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
 	}
 
 	public List<StructureClassification> getAllActiveStructureTypes() {

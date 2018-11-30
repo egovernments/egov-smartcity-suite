@@ -73,6 +73,10 @@
                 <column name="filestoreid" />
         </many-to-one>
 	</class>
- <query name="getNoticeByNoticeNo"><![CDATA[from PtNotice where noticeNo=?1]]></query>
  <query name="getAllNoticesByAssessmentNo"><![CDATA[from PtNotice where basicProperty.upicNo=:upicNo]]></query>
+ <query name="getNoticeByNoticeNoAndType"><![CDATA[from PtNotice where noticeNo=:noticeNo and upper(noticeType)=:noticeType]]></query>
+ <query name="getNoticeByNoticeNo"><![CDATA[from PtNotice where noticeNo=:noticeNo ]]></query>
+ <query name="getNoticeByApplicationNo"><![CDATA[from PtNotice where applicationNumber=:applicationNumber]]></query>
+ <query name="getNoticeByApplicationNoAndNoticeType"><![CDATA[from PtNotice where applicationNumber=:applicationNumber and upper(noticeType)=:noticeType]]></query>
+ <query name="getNoticesByAssessmentNoAndType"><![CDATA[from PtNotice where basicProperty.upicNo=:upicNo and upper(noticeType)=:noticeType]]></query>
 </hibernate-mapping>

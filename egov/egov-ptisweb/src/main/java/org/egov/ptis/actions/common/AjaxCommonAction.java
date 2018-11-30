@@ -71,6 +71,8 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.pims.commons.Designation;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.CategoryDao;
+import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
+import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.DocumentType;
@@ -80,6 +82,8 @@ import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.egov.ptis.domain.model.MutationFeeDetails;
 import org.egov.ptis.domain.repository.PropertyDepartmentRepository;
+import org.egov.ptis.domain.repository.master.structureclassification.StructureClassificationRepository;
+import org.hibernate.Session;
 import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
@@ -87,6 +91,8 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -204,7 +210,14 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
     private transient PropertyDepartmentRepository propertyDepartmentRepository;
     @Autowired
     private transient UserRepository userRepository;
-
+    @Autowired
+    private PropertyUsageDAO propertyUsageDAO;
+    @Autowired
+    private PropertyTypeMasterDAO propertyTypeMasterDAO;
+    @Autowired
+    private StructureClassificationRepository structureClassificationRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
     @Override
     public Object getModel() {
         return null;
@@ -240,8 +253,9 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
         if (logger.isDebugEnabled())
             logger.debug("Entered into streetByWard, wardId: " + wardId);
         streetList = new ArrayList<>();
-        streetList = getPersistenceService().findAllBy("select CH.child from CrossHierarchy CH where CH.parent.id = ? ",
-                getWardId());
+		streetList = (List<Boundary>) entityManager.unwrap(Session.class)
+				.createQuery("select CH.child from CrossHierarchy CH where CH.parent.id = :id ")
+				.setParameter("id", getWardId());
         if (logger.isDebugEnabled())
             logger.debug("Exiting from streetByWard, No of streets in ward: " + wardId + " are "
                     + (streetList != null ? streetList : ZERO));
@@ -314,7 +328,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
                     designationId, new Date());
         if (logger.isDebugEnabled())
             logger.debug(
-                    "Exiting from populateUsersByDesignation : No of users : " + (userList != null ? userList : ZERO));
+                    "Exiting from populateUsersByDesignation : No of users : " + (!userList.isEmpty() ? userList : ZERO));
         return "userList";
     }
 
@@ -324,10 +338,8 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
             logger.debug("Entered into categoryByRateUsageAndStructClass method, Usage Factor: " + usageFactor
                     + ", Structure Classification: " + structFactor);
 
-        final PropertyUsage propUsage = (PropertyUsage) getPersistenceService()
-                .find("from PropertyUsage pu where pu.usageName=?", usageFactor);
-        final StructureClassification structureClass = (StructureClassification) getPersistenceService()
-                .find("from StructureClassification sc where sc.typeName=?", structFactor);
+        final PropertyUsage propUsage = propertyUsageDAO.getPropertyUsageByName(usageFactor);
+		final StructureClassification structureClass = structureClassificationRepository.findByTypeName(structFactor);
 
         if (propUsage != null && structureClass != null && revisedRate != null) {
             Criterion usgId;
@@ -362,13 +374,10 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
         }
     }
 
-    @Actions({ @Action(value = "/ajaxCommon-propTypeCategoryByPropType"),
+	@Actions({ @Action(value = "/ajaxCommon-propTypeCategoryByPropType"),
             @Action(value = "/public/ajaxCommon-propTypeCategoryByPropType") })
     public String propTypeCategoryByPropType() {
-        if (logger.isDebugEnabled())
-            logger.debug("Entered into propTypeCategoryByPropType, propTypeId: " + propTypeId);
-        final PropertyTypeMaster propType = (PropertyTypeMaster) getPersistenceService()
-                .find("from PropertyTypeMaster ptm where ptm.id=?", propTypeId.longValue());
+		final PropertyTypeMaster propType = propertyTypeMasterDAO.findById(propTypeId.longValue(), false);
         if (propType != null) {
             if (propType.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
                 propTypeCategoryMap.putAll(VAC_LAND_PROPERTY_TYPE_CATEGORY);
@@ -377,9 +386,6 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
             setPropTypeCategoryMap(propTypeCategoryMap);
         } else if (logger.isDebugEnabled())
             logger.debug("propTypeCategoryByPropType: NULL -> propType is null");
-        if (logger.isDebugEnabled())
-            logger.debug("Exiting from propTypeCategoryByPropType, No of Categories: "
-                    + (propTypeCategoryMap != null ? propTypeCategoryMap.size() : ZERO));
         return PROP_TYPE_CATEGORY;
     }
 
@@ -390,9 +396,10 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
             logger.debug("Entered into locationFactorsByWard, wardId: " + wardId);
 
         categoryList = new ArrayList<>();
-        categoryList.addAll(
-                getPersistenceService().findAllBy("select bc.category from BoundaryCategory bc where bc.bndry.id = ? "
-                        + "and bc.category.propUsage = null and bc.category.structureClass = null", wardId));
+		categoryList.addAll((List<Category>) entityManager.unwrap(Session.class)
+				.createQuery("select bc.category from BoundaryCategory bc where bc.bndry.id = :wardId "
+						+ "and bc.category.propUsage = null and bc.category.structureClass = null")
+				.setParameter("wardId", wardId));
 
         if (logger.isDebugEnabled()) {
             logger.debug("locationFactorsByWard: categories - " + categoryList);
@@ -414,12 +421,12 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
                 if (logger.isDebugEnabled())
                     logger.debug("Base Rate - Structural Factors");
                 structuralClassifications
-                        .addAll(getPersistenceService().findAllBy("from StructureClassification where code like 'R%'"));
+                        .addAll(structureClassificationRepository.findByConstrTypeCodeLike("R%"));
             } else {
                 if (logger.isDebugEnabled())
                     logger.debug("Rent Chart - Structural Factors");
                 structuralClassifications
-                        .addAll(getPersistenceService().findAllBy("from StructureClassification where code like 'R%'"));
+                        .addAll(structureClassificationRepository.findByConstrTypeCodeLike ("R%"));
             }
         } catch (final ParseException pe) {
             logger.error("Error while parsing Floor Completion / occupation", pe);
@@ -438,7 +445,12 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
             @Action(value = "/public/ajaxCommon-getUserByMobileNo") })
     public void getUserByMobileNo() throws IOException {
         if (StringUtils.isNotBlank(mobileNumber)) {
-            final User user = (User) getPersistenceService().find("From User where mobileNumber = ?", mobileNumber);
+			@SuppressWarnings("unchecked")
+			final List<User> userList = (List<User>) entityManager.unwrap(Session.class)
+					.createQuery("from User where mobileNumber = :mobileNo").setParameter("mobileNo", mobileNumber).getResultList();
+			User user= null;
+			if(!userList.isEmpty())
+				user = userList.get(0);
             final JSONObject jsonObject = new JSONObject();
             if (null != user) {
                 jsonObject.put("exists", Boolean.TRUE);
@@ -459,10 +471,11 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
     public String checkIfCategoryExists() {
         if (logger.isDebugEnabled())
             logger.debug("Entered into checkIfCategoryExists ");
-        final Category existingCategory = (Category) getPersistenceService().find(
-                "select bc.category from BoundaryCategory bc where bc.bndry.id = ? "
-                        + "and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? and bc.category.fromDate = ? and bc.category.isActive = true ",
-                zoneId, usageId, structureClassId, categoryFromDate);
+        final Category existingCategory = (Category) entityManager.unwrap(Session.class).createQuery(
+                "select bc.category from BoundaryCategory bc where bc.bndry.id = :bndry "
+						+ "and bc.category.propUsage.id = :usage and bc.category.structureClass.id = :structure and bc.category.fromDate = :fromDate and bc.category.isActive = true ")
+				.setParameter("bndry", zoneId).setParameter("usage", usageId)
+				.setParameter("structure", structureClassId).setParameter("fromDate", categoryFromDate).getSingleResult();
         if (existingCategory != null) {
             categoryExists = "yes";
             validationMessage = getText("unit.rate.exists.for.combination",
@@ -477,14 +490,11 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
         if (logger.isDebugEnabled())
             logger.debug("Entered into usageByPropType, propTypeId: " + propTypeId);
         if (propTypeCategory.equals(CATEGORY_MIXED))
-            propUsageList = getPersistenceService()
-                    .findAllBy("From PropertyUsage where isActive = true order by usageName ");
+            propUsageList = propertyUsageDAO.getAllActivePropertyUsage();
         else if (propTypeCategory.equals(CATEGORY_RESIDENTIAL))
-            propUsageList = getPersistenceService().findAllBy(
-                    "From PropertyUsage where isResidential = true and isActive = true  order by usageName ");
+            propUsageList = propertyUsageDAO.getAllResidentialUsage();
         else if (propTypeCategory.equals(CATEGORY_NON_RESIDENTIAL))
-            propUsageList = getPersistenceService().findAllBy(
-                    "From PropertyUsage where isResidential = false and isActive = true  order by usageName ");
+            propUsageList = propertyUsageDAO.getAllNonResidentialUsage();
         if (logger.isDebugEnabled())
             logger.debug("Exiting from usageByPropType, No of Usages: " + (propUsageList != null ? propUsageList : ZERO));
         return USAGE;
@@ -493,8 +503,9 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
     @Action(value = "/ajaxCommon-checkIfPropertyExists")
     public void checkIfPropertyExists() throws IOException {
         if (StringUtils.isNotBlank(assessmentNo)) {
-            final BasicProperty basicProperty = (BasicProperty) getPersistenceService()
-                    .find("from BasicPropertyImpl bp where bp.oldMuncipalNum=? and bp.active='Y'", assessmentNo);
+			final BasicProperty basicProperty = (BasicProperty) entityManager.unwrap(Session.class)
+					.createQuery("from BasicPropertyImpl bp where bp.oldMuncipalNum=:assessmentNo and bp.active='Y'")
+					.setParameter("assessmentNo", assessmentNo);
             final JSONObject jsonObject = new JSONObject();
             if (null != basicProperty)
                 jsonObject.put("exists", Boolean.TRUE);
@@ -517,9 +528,10 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
         if (documentValue.compareTo(ZERO) > 0) {
             BigDecimal excessDocValue;
             BigDecimal multiplicationFactor;
-            final MutationFeeDetails mutationFeeDetails = (MutationFeeDetails) getPersistenceService().find(
-                    "from MutationFeeDetails where lowLimit <= ? and (highLimit is null OR highLimit >= ?) and toDate > now()",
-                    documentValue, documentValue);
+			final MutationFeeDetails mutationFeeDetails = (MutationFeeDetails) entityManager.unwrap(Session.class)
+					.createQuery(
+							"from MutationFeeDetails where lowLimit <= :documentValue and (highLimit is null OR highLimit >= :documentValue) and toDate > now()")
+					.setParameter("documentValue", documentValue);
             if (mutationFeeDetails != null) {
                 if (mutationFeeDetails.getFlatAmount() != null
                         && mutationFeeDetails.getFlatAmount().compareTo(ZERO) > 0)
@@ -547,8 +559,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
             @Action(value = "/public/ajaxcommon-propdepartment-byproptype") })
     public String getPropDepartmentByPropType() {
         if (propTypeId != null) {
-            final PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService()
-                    .find("from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
+			final PropertyTypeMaster propTypeMstr = propertyTypeMasterDAO.findById(Long.valueOf(propTypeId), false);
             if (propTypeMstr.getCode().equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT))
                 propertyDepartmentList = propertyDepartmentRepository.getAllStateDepartments();
             else if (propTypeMstr.getCode().startsWith("CENTRAL_GOVT"))

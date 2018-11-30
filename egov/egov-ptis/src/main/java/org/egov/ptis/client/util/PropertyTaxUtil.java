@@ -121,7 +121,9 @@ import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
+import org.egov.commons.repository.CFinancialYearRepository;
 import org.egov.demand.dao.DemandGenericHibDao;
+import org.egov.demand.dao.DepreciationMasterDao;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.model.DepreciationMaster;
 import org.egov.demand.model.EgBill;
@@ -181,6 +183,7 @@ import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTaxDetail;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
+import org.egov.ptis.domain.repository.vacancyremission.VacancyRemissionRepository;
 import org.egov.ptis.domain.service.property.RebateService;
 import org.egov.ptis.master.service.TaxRatesService;
 import org.hibernate.query.Query;
@@ -189,10 +192,11 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
+import org.springframework.stereotype.Service;
 /**
  * @author malathi
  */
+@Service
 public class PropertyTaxUtil {
     private static final String UPIC_NO = "upicNo";
     private static final String DD_MM_YYYY = "dd/MM/yyyy";
@@ -252,7 +256,13 @@ public class PropertyTaxUtil {
     @Autowired
     private TaxRatesService taxRatesService;
     @Autowired
-    DepartmentService departmentService;
+    private DepartmentService departmentService;
+    @Autowired
+    private VacancyRemissionRepository vacancyRemissionRepository;
+    @Autowired
+    private CFinancialYearRepository financialYearRepository;
+    @Autowired
+    private DepreciationMasterDao depreciationMasterDao;
 
     public void setPersistenceService(final PersistenceService persistenceService) {
         this.persistenceService = persistenceService;
@@ -265,13 +275,7 @@ public class PropertyTaxUtil {
      * @return an instance of <code></code> representing the financial year for the given date
      */
     public CFinancialYear getFinancialYearforDate(final Date date) {
-        return (CFinancialYear) persistenceService
-                .getSession()
-                .createQuery(
-                        "from CFinancialYear cfinancialyear where ? between "
-                                + "cfinancialyear.startingDate and cfinancialyear.endingDate")
-                .setDate(0, date).list()
-                .get(0);
+        return financialYearRepository.getFinancialYearByDate(date);
     }
 
     public List<Installment> getInstallmentListByStartDate(final Date startDate) {
@@ -286,8 +290,8 @@ public class PropertyTaxUtil {
 
     public EgDemandReason getDemandReasonByCodeAndInstallment(final String demandReasonCode,
             final Installment installment) {
-        return (EgDemandReason) persistenceService.findByNamedQuery(QUERY_DEMANDREASONBY_CODE_AND_INSTALLMENTID,
-                demandReasonCode, installment.getId());
+		return (EgDemandReason) entityManager.createNamedQuery(QUERY_DEMANDREASONBY_CODE_AND_INSTALLMENTID)
+				.setParameter(1, demandReasonCode).setParameter(2, installment.getId()).getSingleResult();
     }
 
     public TaxCalculationInfo getTaxCalInfo(final Ptdemand demand) {
@@ -671,9 +675,11 @@ public class PropertyTaxUtil {
     }
 
     public void makeTheEgBillAsHistory(final BasicProperty basicProperty) {
-        final EgBill egBill = (EgBill) persistenceService.find(
-                "from EgBill where module = ? and consumerId like ? || '%' and is_history = 'N'",
-                moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME), basicProperty.getUpicNo());
+		final EgBill egBill = (EgBill) entityManager.unwrap(Session.class)
+				.createQuery(
+						"from EgBill where module =:module and consumerId like :upicNo || '%' and is_history = 'N'")
+				.setParameter("module", moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME))
+				.setParameter("upicNo", basicProperty.getUpicNo()).getSingleResult();
         if (egBill != null) {
             egBill.setIs_History("Y");
             egBill.setModifiedDate(new Date());
@@ -746,8 +752,8 @@ public class PropertyTaxUtil {
                                 + "where p.basicProperty.active = true " + "and p.basicProperty.upicNo = :upicNo "
                                 + "and (p.remarks is null or p.remarks <> :propertyMigrationRemarks) "
                                 + "and pd.effective_date is not null")
-                .setString(UPIC_NO, propertyId)
-                .setString("propertyMigrationRemarks", PropertyTaxConstants.STR_MIGRATED_REMARKS).list();
+                .setParameter(UPIC_NO, propertyId)
+                .setParameter("propertyMigrationRemarks", PropertyTaxConstants.STR_MIGRATED_REMARKS).list();
 
         Date earliestModificationDate = null;
         if (result.isEmpty())
@@ -798,7 +804,7 @@ public class PropertyTaxUtil {
                 + "and ptd.egInstallmentMaster = :installment";
 
         final Ptdemand ptDemand = (Ptdemand) entityManager.unwrap(Session.class).createQuery(query)
-                .setEntity(PROPERTY, property).setEntity(INSTALLMENT, currentInstallment).list().get(0);
+                .setParameter(PROPERTY, property).setParameter(INSTALLMENT, currentInstallment).list().get(0);
 
         for (final EgDemandDetails dmdDet : ptDemand.getEgDemandDetails()) {
 
@@ -855,7 +861,7 @@ public class PropertyTaxUtil {
                 + "and p = :property " + "and ptd.egInstallmentMaster = :installment";
 
         final List<Ptdemand> ptDemandList = entityManager.unwrap(Session.class).createQuery(query)
-                .setEntity(PROPERTY, property).setEntity(INSTALLMENT, currentInstallment).list();
+                .setParameter(PROPERTY, property).setParameter(INSTALLMENT, currentInstallment).list();
         if (!ptDemandList.isEmpty()) {
             final Ptdemand ptDemand = ptDemandList.get(0);
             for (final EgDemandDetails dmdDet : ptDemand.getEgDemandDetails()) {
@@ -897,7 +903,7 @@ public class PropertyTaxUtil {
                 + "where bp.upicNo = :upicNo and bp.active = true " + "and (p.remarks = null or p.remarks <> :remarks) "
                 + "order by p.createdDate";
         final List<Property> allProperties = entityManager.unwrap(Session.class).createQuery(query)
-                .setString(UPIC_NO, basicProperty.getUpicNo()).setString("remarks", PropertyTaxConstants.STR_MIGRATED_REMARKS)
+                .setParameter(UPIC_NO, basicProperty.getUpicNo()).setParameter("remarks", PropertyTaxConstants.STR_MIGRATED_REMARKS)
                 .list();
         new ArrayList<Property>();
         final List<String> mutationsCodes = Arrays.asList("NEW", "MODIFY");
@@ -973,13 +979,11 @@ public class PropertyTaxUtil {
             depreciationYear = "26-40";
         else
             depreciationYear = "Above 40";
-        return (DepreciationMaster) persistenceService.getSession()
-                .createQuery("from DepreciationMaster where depreciationName = :depreName")
-                .setString("depreName", depreciationYear).uniqueResult();
+        return depreciationMasterDao.findByName(depreciationYear);
     }
 
     public List<InstrumentType> prepareInstrumentTypeList() {
-        return persistenceService.findAllBy("from InstrumentType order by type");
+		return entityManager.unwrap(Session.class).createQuery("from InstrumentType order by type").getResultList();
     }
 
     public Boolean isCorporation() {
@@ -1112,7 +1116,7 @@ public class PropertyTaxUtil {
             throw new ApplicationRuntimeException(
                     "Error occured in Class : CollectionSummaryReportAction  Method : list " + e.getMessage());
         }
-        return persistenceService.getSession().createQuery(srchQryStr);
+        return entityManager.unwrap(Session.class).createQuery(srchQryStr);
     }
 
     /**
@@ -1154,7 +1158,7 @@ public class PropertyTaxUtil {
                         + "', 'DD/MM/YYYY') and to_date('" + sdf.format(new Date()) + "','DD/MM/YYYY')  ");
 
         query.append(" order by pm.basicProperty.id,pm.mutationDate ");
-        return persistenceService.getSession().createQuery(query.toString());
+        return entityManager.unwrap(Session.class).createQuery(query.toString());
     }
 
     /**
@@ -1178,7 +1182,7 @@ public class PropertyTaxUtil {
                 + finyear.getStartingDate() + "' and '" + finyear.getEndingDate() + "'"
                 + " and drm.code in (:demandReasonList)) as genTaxDtls";
         final Query qry = entityManager.unwrap(Session.class).createNativeQuery(selectQuery)
-                .setLong("basicPropId", basicPropId);
+                .setParameter("basicPropId", basicPropId);
         qry.setParameterList("demandReasonList", PropertyTaxConstants.NON_VACANT_TAX_DEMAND_CODES);
         list = qry.list();
         return null != list && !list.contains(null) ? new BigDecimal((Double) list.get(0)) : null;
@@ -1201,8 +1205,8 @@ public class PropertyTaxUtil {
                 + "where bp.active = true " + "and (p.status = 'W' or p.status = 'I' or p.status = 'A') "
                 + "and p = :property " + "and ptd.egInstallmentMaster = :installment";
 
-        List<Ptdemand> ptDemandList = entityManager.unwrap(Session.class).createQuery(query).setEntity("property", property)
-                .setEntity("installment", dmdInstallment).list();
+        List<Ptdemand> ptDemandList = entityManager.unwrap(Session.class).createQuery(query).setParameter("property", property)
+                .setParameter("installment", dmdInstallment).list();
         Ptdemand ptDemand = new Ptdemand();
         if (!ptDemandList.isEmpty()) {
             ptDemand = ptDemandList.get(0);
@@ -1239,12 +1243,11 @@ public class PropertyTaxUtil {
 
     public boolean enableVacancyRemission(final String upicNo) {
         boolean vrFlag = false;
-        final List<VacancyRemission> remissionList = persistenceService.findAllBy(
-                "select vr from VacancyRemission vr where vr.basicProperty.upicNo=? order by id desc", upicNo);
+        final List<VacancyRemission> remissionList = vacancyRemissionRepository.getAllVacancyRemissionByUpicNo(upicNo);
         if (remissionList.isEmpty())
             vrFlag = true;
         else {
-            final VacancyRemission vacancyRemission = remissionList.get(remissionList.size() - 1);
+            final VacancyRemission vacancyRemission = remissionList.get(0);
             if (vacancyRemission != null)
                 if (vacancyRemission.getStatus().equalsIgnoreCase(PropertyTaxConstants.VR_STATUS_APPROVED)) {
                     vrFlag = true;
@@ -1301,9 +1304,10 @@ public class PropertyTaxUtil {
      */
     public boolean checkForParentUsedInBifurcation(final String upicNo) {
         boolean isChildUnderWorkflow = false;
-        final PropertyStatusValues statusValues = (PropertyStatusValues) persistenceService
-                .find("select psv from PropertyStatusValues psv,PropertyImpl p where p.basicProperty.id=psv.basicProperty.id and psv.referenceBasicProperty.upicNo=? and p.propertyModifyReason='CREATE' and psv.basicProperty.underWorkflow = 't' and p.status='W' and (psv.remarks is null or psv.remarks != ? )",
-                        upicNo, APPURTENANT_PROPERTY);
+		final PropertyStatusValues statusValues = (PropertyStatusValues) entityManager.unwrap(Session.class)
+				.createQuery(
+						"select psv from PropertyStatusValues psv,PropertyImpl p where p.basicProperty.id=psv.basicProperty.id and psv.referenceBasicProperty.upicNo=:upicNo and p.propertyModifyReason='CREATE' and psv.basicProperty.underWorkflow = 't' and p.status='W' and (psv.remarks is null or psv.remarks !=:remarks)")
+				.setParameter("upicNo", upicNo).setParameter("remarks", APPURTENANT_PROPERTY).getSingleResult();
         if (statusValues != null)
             isChildUnderWorkflow = true;
         return isChildUnderWorkflow;
@@ -1318,8 +1322,8 @@ public class PropertyTaxUtil {
     public Date getLowestInstallmentForProperty(final Property property) {
         final String query = "select demandDetails.egDemandReason from Ptdemand ptd,EgDemandDetails demandDetails where ptd.egptProperty = :property "
                 + " and ptd.id = demandDetails.egDemand.id order by demandDetails.egDemandReason.egInstallmentMaster.fromDate";
-        final List<EgDemandReason> egDemandReason = persistenceService.getSession().createQuery(query.toString())
-                .setEntity(PROPERTY, property).list();
+		final List<EgDemandReason> egDemandReason = entityManager.unwrap(Session.class).createQuery(query.toString())
+				.setParameter(PROPERTY, property).getResultList();
         return null != egDemandReason && !egDemandReason.isEmpty() ? egDemandReason.get(0).getEgInstallmentMaster()
                 .getFromDate() : null;
 
@@ -1331,7 +1335,8 @@ public class PropertyTaxUtil {
      * @return boolean
      */
     public boolean checkIsNagarPanchayat() {
-        final String grade = (String) persistenceService.findAllBy("select grade from City").get(0);
+		final String grade = (String) entityManager.unwrap(Session.class).createQuery("select grade from City")
+				.getResultList().get(0);
         return PropertyTaxConstants.GRADE_NAGAR_PANCHAYAT.equalsIgnoreCase(grade);
     }
 
@@ -1383,7 +1388,7 @@ public class PropertyTaxUtil {
         orderByClause = orderByClause.concat(arrearBalanceCond + " desc, pmv.ward.id asc ");
         query.append(orderByClause);
 
-        final Query qry = persistenceService.getSession().createQuery(query.toString());
+        final Query qry = entityManager.unwrap(Session.class).createQuery(query.toString());
 
         for (final Entry<String, Object> entry : params.entrySet())
             qry.setParameter(entry.getKey(), entry.getValue());
@@ -1443,10 +1448,9 @@ public class PropertyTaxUtil {
 
     public List<Installment> getInstallments(final PropertyImpl property) {
         final EgDemand egDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
-        return persistenceService
-                .findAllBy(
-                        "select distinct(dd.egDemandReason.egInstallmentMaster) from EgDemandDetails dd where dd.egDemand = ? order by dd.egDemandReason.egInstallmentMaster.fromDate",
-                        egDemand);
+        return entityManager.unwrap(Session.class).createQuery(
+				"select distinct(dd.egDemandReason.egInstallmentMaster) from EgDemandDetails dd where dd.egDemand =:demand order by dd.egDemandReason.egInstallmentMaster.fromDate")
+				.setParameter("demand", egDemand).getResultList();
     }
 
     public Map<String, Installment> getInstallmentsForCurrYear(final Date currDate) {
@@ -1455,8 +1459,8 @@ public class PropertyTaxUtil {
                 + PTMODULENAME
                 + "'  and (cast(:currDate as date)) between finYear.startingDate and finYear.endingDate "
                 + " and cast(installment.fromDate as date) >= cast(finYear.startingDate as date) and cast(installment.toDate as date) <= cast(finYear.endingDate as date) order by installment.id ";
-        final Query qry = persistenceService.getSession().createQuery(query);
-        qry.setDate("currDate", currDate);
+        final Query qry = entityManager.unwrap(Session.class).createQuery(query);
+        qry.setParameter("currDate", currDate);
         final List<Installment> installments = qry.list();
         currYearInstMap.put(CURRENTYEAR_FIRST_HALF, installments.get(0));
         currYearInstMap.put(CURRENTYEAR_SECOND_HALF, installments.get(1));
@@ -1492,7 +1496,7 @@ public class PropertyTaxUtil {
                 + "and p = :property " + "and ptd.egInstallmentMaster = :demandInstallment ";
 
         final Ptdemand ptDemand = (Ptdemand) entityManager.unwrap(Session.class).createQuery(query)
-                .setEntity(PROPERTY, property).setEntity("demandInstallment", demandInstallment).list().get(0);
+                .setParameter(PROPERTY, property).setParameter("demandInstallment", demandInstallment).list().get(0);
 
         for (final EgDemandDetails dmdDet : ptDemand.getEgDemandDetails())
             if (dmdDet.getInstallmentStartDate().equals(effectiveInstallment.getFromDate())
@@ -1566,8 +1570,8 @@ public class PropertyTaxUtil {
         ReportRequest reportInput;
         Long resolutionTime;
         final Map<String, Object> reportParams = new HashMap<>();
-        resolutionTime = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, applicationType)
-                .getResolutionTime();
+        resolutionTime = ((PtApplicationType) entityManager.createNamedQuery(PtApplicationType.BY_CODE)
+				.setParameter("code", applicationType).getSingleResult()).getResolutionTime();
         reportParams.put(DUE_DATE, sdf.format(DateUtils.add(new Date(), Calendar.DAY_OF_MONTH, resolutionTime.intValue())));
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId);
         final StringBuilder queryString = new StringBuilder("from City");
@@ -1600,10 +1604,10 @@ public class PropertyTaxUtil {
                 + " and dr.id_installment = inst.id and dd.id_demand =:currentDemandId and inst.start_date between "
                 + ":firstHlfFromdt and :firstHlfTodt and drm.code in (:codelist)";
 
-        final Query qry = persistenceService.getSession().createNativeQuery(selectQuery)
-                .setLong("currentDemandId", currentDemand.getId())
-                .setDate("firstHlfFromdt", currentFirstHalf.getFromDate())
-                .setDate("firstHlfTodt", currentFirstHalf.getToDate())
+        final Query qry = entityManager.unwrap(Session.class).createNativeQuery(selectQuery)
+                .setParameter("currentDemandId", currentDemand.getId())
+                .setParameter("firstHlfFromdt", currentFirstHalf.getFromDate())
+                .setParameter("firstHlfTodt", currentFirstHalf.getToDate())
                 .setParameterList("codelist", Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX,
                         PropertyTaxConstants.DEMANDRSN_CODE_DRAINAGE_TAX, PropertyTaxConstants.DEMANDRSN_CODE_LIGHT_TAX,
                         PropertyTaxConstants.DEMANDRSN_CODE_SCAVENGE_TAX, PropertyTaxConstants.DEMANDRSN_CODE_WATER_TAX,
@@ -1625,8 +1629,8 @@ public class PropertyTaxUtil {
 
         Object amount = 0;
         if (currentDemand != null) {
-            amount = persistenceService.getSession().createNativeQuery(selectQuery)
-                    .setLong("currentDemandId", currentDemand.getId())
+            amount = entityManager.unwrap(Session.class).createNativeQuery(selectQuery)
+                    .setParameter("currentDemandId", currentDemand.getId())
                     .setParameterList("installments", Arrays.asList(currentFirstHalf.getId(), currentSecondHalf.getId()))
                     .setParameterList("codes", DEMAND_REASONS_FOR_REBATE_CALCULATION).uniqueResult();
         }

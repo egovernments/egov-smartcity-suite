@@ -51,6 +51,7 @@ package org.egov.ptis.domain.service.bulkboundaryupdatation;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.bean.BulkBoundaryRequest;
+import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.view.PropertyMVInfo;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
@@ -87,19 +88,7 @@ public class BulkBoundaryService {
 
 	@Autowired
 	private BulkBoundaryUpdationRepository bulkBoundaryUpdationRepository;
-
-	public BasicProperty getBasicPropertyByPropertyID(String propertyId) {
-		Query qry = null;
-		BasicProperty basicProperty = null;
-		if (propertyId != null && !propertyId.equals("")) {
-			qry = entityManager.unwrap(Session.class)
-					.createQuery("from BasicPropertyImpl BP where BP.upicNo =:propertyId and BP.active='Y' ");
-			qry.setString("propertyId", propertyId);
-			basicProperty = (BasicProperty) qry.uniqueResult();
-		}
-		return basicProperty;
-	}
-
+	
 	@Transactional
 	public boolean updateBasicPropertyByBoundary(List<BasicProperty> basicProperties) {
 		boolean success = false;

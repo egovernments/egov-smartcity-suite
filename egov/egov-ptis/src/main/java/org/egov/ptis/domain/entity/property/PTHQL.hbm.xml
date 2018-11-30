@@ -50,12 +50,6 @@
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 	
 <hibernate-mapping>
-	<query name="getPropertyByUpicNo">
-    <![CDATA[from PropertyImpl p where p.basicProperty.upicNo=?1 and p.basicProperty.active='Y' and p.state.value!='END' and p.isDefaultProperty='Y']]></query>
-    <query name="getBasicPropertyByUpicNo">
-    <![CDATA[from BasicPropertyImpl bp where bp.upicNo=?1 and bp.active='Y']]></query>
-    <query name="getPropertyTypes" >
-    <![CDATA[from PropertyTypeMaster]]></query>
     <query name="getPropertyByUpicNoAndStatus">
     <![CDATA[from PropertyImpl p where p.basicProperty.upicNo=?1 and p.basicProperty.active='Y' and p.status=?2 and p.isDefaultProperty='Y']]></query>
     <query name="getAllBasicPropertyByPropertyID">
@@ -66,8 +60,6 @@
     <![CDATA[from EgBill bill where bill.consumerId =?1 and bill.egBillType.code=?2 and bill.is_Cancelled='N' order by createTimeStamp desc]]></query>
     <query name="getPropertySatusForMemo"><!-- tatus code is PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER -->
     <![CDATA[from PropertyStatusValues PSV where PSV.basicProperty.upicNo = ?1 and PSV.isActive = 'Y' and PSV.propertyStatus.statusCode=?2 and PSV.createdDate >= ?3]]></query>
-    <query name="getPropStatValByUpicNoAndStatCodeAndISActive">
-    <![CDATA[from PropertyStatusValues PSV where PSV.basicProperty.upicNo = ?1 and PSV.isActive = ?2 and PSV.propertyStatus.statusCode=?3]]></query>
     <query name="getBillRcptGForBill">
     <![CDATA[from BillReceipt brcpt where brcpt.billId =?1]]></query>
     
@@ -80,9 +72,6 @@
 	<query name="getBillDetailsforBillANDInstAndRsn">
 	<![CDATA[from EgBillDetails billDtl where billDtl.egBill=?1 and billDtl.egInstallmentMaster=?2 and billDtl.glcode=?3]]></query>
 	
-	<query name="getBasicPropertyByBasicPropId">
-    <![CDATA[from BasicPropertyImpl bp where bp.id=?1 and bp.active='Y']]></query>
-    
      <query name="getPropStatValByBasicPropIdAndStatCodeAndISActive">
     <![CDATA[from PropertyStatusValues PSV where PSV.basicProperty.id = ?1 and PSV.isActive = ?2 and PSV.propertyStatus.statusCode=?3]]></query>
 </hibernate-mapping>

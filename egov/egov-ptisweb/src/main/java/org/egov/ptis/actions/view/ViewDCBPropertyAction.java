@@ -68,6 +68,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -96,6 +99,7 @@ import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyReceipt;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.exceptions.PropertyNotFoundException;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
@@ -141,6 +145,8 @@ public class ViewDCBPropertyAction extends BaseFormAction {
     private DCBService dcbService;
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
+    @PersistenceContext
+    EntityManager entityManager;
 
     public ViewDCBPropertyAction() {
     }
@@ -275,7 +281,7 @@ public class ViewDCBPropertyAction extends BaseFormAction {
 
     private List<Receipt> populateActiveReceiptsOnly(Map<Installment, List<Receipt>> receipts) {
 
-        List<Receipt> rcpt = new ArrayList<Receipt>();
+        List<Receipt> rcpt = new ArrayList<>();
         for (Map.Entry<Installment, List<Receipt>> entry : receipts.entrySet()) {
             for (Receipt r : entry.getValue()) {
                 if (!rcpt.contains(r) && !r.getReceiptStatus().equals(RCPT_CANCEL_STATUS)) {
@@ -303,7 +309,7 @@ public class ViewDCBPropertyAction extends BaseFormAction {
 
     private List<Receipt> populateCancelledReceiptsOnly(Map<Installment, List<Receipt>> receipts) {
 
-        List<Receipt> rcpt = new ArrayList<Receipt>();
+        List<Receipt> rcpt = new ArrayList<>();
         for (Map.Entry<Installment, List<Receipt>> entry : receipts.entrySet()) {
             for (Receipt r : entry.getValue()) {
                 if (!rcpt.contains(r) && r.getReceiptStatus().equals(RCPT_CANCEL_STATUS)) {
@@ -348,8 +354,9 @@ public class ViewDCBPropertyAction extends BaseFormAction {
         LOGGER.debug("Entered into getMigratedData");
         LOGGER.debug("getMigratedData - propertyId: " + getPropertyId());
         // List of property receipts
-        propReceiptList = getPersistenceService().findAllBy(
-                "from PropertyReceipt where basicProperty.id=? order by receiptDate desc", getBasicProperty().getId());
+		propReceiptList = (List<PropertyReceipt>) entityManager.unwrap(Session.class)
+				.createQuery("from PropertyReceipt where basicProperty.id=:bp order by receiptDate desc")
+				.setParameter("bp", getBasicProperty().getId());
         for (PropertyReceipt propReceipt : propReceiptList) {
             try {
                 propReceipt.setReceiptDate(sdf.parse(sdf.format(propReceipt.getReceiptDate())));

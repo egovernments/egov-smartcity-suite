@@ -384,8 +384,8 @@ public class PenaltyCalculationService {
                 + "and notice.noticeType = :noticeType and bp.upicNo = :upicNo order by notice.noticeDate";
 
         List<PtNotice> demandBills = entityManager.unwrap(Session.class).createQuery(query)
-                .setString("billTypeCode", BILLTYPE_MANUAL).setString("noticeType", NOTICE_TYPE_BILL)
-                .setString("upicNo", upicNo).list();
+                .setParameter("billTypeCode", BILLTYPE_MANUAL).setParameter("noticeType", NOTICE_TYPE_BILL)
+                .setParameter("upicNo", upicNo).list();
 
         if (demandBills.isEmpty()) {
             LOGGER.debug("getAllBillGenerationDates - {}", noBillMessage);
@@ -625,9 +625,9 @@ public class PenaltyCalculationService {
                 + " and n.noticeDate is not null "
                 + "and pvr.noticeDate is not null ";
 
-        List result = entityManager.unwrap(Session.class).createQuery(stringQuery).setString("upicNo", propertyId)
-                .setString("bpStatus", PropertyTaxConstants.STATUS_OBJECTED_STR)
-                .setString("noticePVR", NOTICE_PRATIVRUTTA).list();
+        List result = entityManager.unwrap(Session.class).createQuery(stringQuery).setParameter("upicNo", propertyId)
+                .setParameter("bpStatus", PropertyTaxConstants.STATUS_OBJECTED_STR)
+                .setParameter("noticePVR", NOTICE_PRATIVRUTTA).list();
 
         if (result.isEmpty()) {
             return null;

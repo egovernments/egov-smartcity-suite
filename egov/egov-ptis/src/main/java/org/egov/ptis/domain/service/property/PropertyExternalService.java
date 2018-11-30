@@ -94,6 +94,7 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -125,6 +126,8 @@ import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyHibernateDAO;
 import org.egov.ptis.domain.dao.property.PropertyMutationDAO;
+import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
+import org.egov.ptis.domain.dao.property.PropertyStatusHibernateDAO;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
@@ -184,10 +187,13 @@ import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.repository.vacancyremission.VacancyRemissionRepository;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
+import org.egov.ptis.master.service.ApartmentService;
 import org.egov.ptis.master.service.FloorTypeService;
+import org.egov.ptis.master.service.PropertyOccupationService;
 import org.egov.ptis.master.service.PropertyUsageService;
 import org.egov.ptis.master.service.RoofTypeService;
 import org.egov.ptis.master.service.StructureClassificationService;
+import org.egov.ptis.master.service.TaxExemptionReasonService;
 import org.egov.ptis.master.service.WallTypeService;
 import org.egov.ptis.master.service.WoodTypeService;
 import org.hibernate.Session;
@@ -289,6 +295,18 @@ public class PropertyExternalService {
     private PropertySurveyService surveyService;
     @Autowired
     private PropertyHibernateDAO propertyHibernateDAO;
+    @Autowired
+    private ApartmentService apartmentService;
+    @Autowired
+    private PropertyMutationMasterDAO propertyMutationMasterDAO;
+    @Autowired
+    private PropertyOccupationService propertyOccupationService;
+    @Autowired
+    private TaxExemptionReasonService taxExemptionReasonService;
+    @Autowired 
+    private DepartmentService departmentService;
+    @Autowired
+    private PropertyStatusHibernateDAO propertyStatusHibernateDAO;
 
     private PropertyImpl propty = new PropertyImpl();
 
@@ -926,10 +944,9 @@ public class PropertyExternalService {
         return mstrCodeNamePairDetailsList;
     }
 
-    @SuppressWarnings("unchecked")
     public List<MasterCodeNamePairDetails> getApartmentsAndComplexes() {
         final List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<>(0);
-        final List<Apartment> apartmentList = entityManager.createQuery("from Apartment").getResultList();
+        final List<Apartment> apartmentList = apartmentService.getAllApartments();
         if (null != apartmentList)
             for (final Apartment apartment : apartmentList) {
                 final MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
@@ -940,13 +957,11 @@ public class PropertyExternalService {
         return mstrCodeNamePairDetailsList;
     }
 
-    @SuppressWarnings("unchecked")
     public List<MasterCodeNamePairDetails> getReasonsForChangeProperty(final String reason) {
         final List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<>(0);
-        final Query qry = entityManager.createQuery("from PropertyMutationMaster pmm where pmm.type = :type");
-        qry.setParameter("type", reason);
-        final List<PropertyMutationMaster> propMutationMasterList = qry.getResultList();
-        if (null != propMutationMasterList)
+		final List<PropertyMutationMaster> propMutationMasterList = propertyMutationMasterDAO
+				.getAllPropertyMutationMastersByType(reason);
+		if (null != propMutationMasterList)
             for (final PropertyMutationMaster propMutationMaster : propMutationMasterList) {
                 final MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
                 mstrCodeNamePairDetails.setCode(propMutationMaster.getCode());
@@ -1034,10 +1049,9 @@ public class PropertyExternalService {
         return mstrCodeNamePairDetailsList;
     }
 
-    @SuppressWarnings("unchecked")
     public List<MasterCodeNamePairDetails> getFloorTypes() {
         final List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<>();
-        final List<FloorType> floorTypeList = entityManager.createQuery("from FloorType order by name").getResultList();
+        final List<FloorType> floorTypeList = floorTypeService.getAllFloors();
         for (final FloorType floorType : floorTypeList) {
             final MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
             mstrCodeNamePairDetails.setCode(floorType.getId().toString());
@@ -1047,10 +1061,9 @@ public class PropertyExternalService {
         return mstrCodeNamePairDetailsList;
     }
 
-    @SuppressWarnings("unchecked")
     public List<MasterCodeNamePairDetails> getRoofTypes() {
         final List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<>();
-        final List<RoofType> roofTypeList = entityManager.createQuery("from RoofType order by name").getResultList();
+        final List<RoofType> roofTypeList = roofTypeService.getAllRoofTypes();
         for (final RoofType roofType : roofTypeList) {
             final MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
             mstrCodeNamePairDetails.setCode(roofType.getId().toString());
@@ -1060,10 +1073,9 @@ public class PropertyExternalService {
         return mstrCodeNamePairDetailsList;
     }
 
-    @SuppressWarnings("unchecked")
     public List<MasterCodeNamePairDetails> getWallTypes() {
         final List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<>();
-        final List<WallType> wallTypeList = entityManager.createQuery("from WallType order by name").getResultList();
+        final List<WallType> wallTypeList = wallTypeService.getAllWalls();
         for (final WallType wallType : wallTypeList) {
             final MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
             mstrCodeNamePairDetails.setCode(wallType.getId().toString());
@@ -1073,10 +1085,9 @@ public class PropertyExternalService {
         return mstrCodeNamePairDetailsList;
     }
 
-    @SuppressWarnings("unchecked")
     public List<MasterCodeNamePairDetails> getWoodTypes() {
         final List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<>();
-        final List<WoodType> woodTypeList = entityManager.createQuery("from WoodType order by name").getResultList();
+        final List<WoodType> woodTypeList = woodTypeService.getAllWoodTypes();
         for (final WoodType woodType : woodTypeList) {
             final MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
             mstrCodeNamePairDetails.setCode(woodType.getId().toString());
@@ -1086,11 +1097,9 @@ public class PropertyExternalService {
         return mstrCodeNamePairDetailsList;
     }
 
-    @SuppressWarnings("unchecked")
     public List<MasterCodeNamePairDetails> getBuildingClassifications() {
         final List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<>();
-        final List<StructureClassification> structClsfList = entityManager.createQuery("from StructureClassification")
-                .getResultList();
+        final List<StructureClassification> structClsfList = structureClassificationService.getAllStructureTypes();
         for (final StructureClassification structClsf : structClsfList) {
             final MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
             mstrCodeNamePairDetails.setCode(structClsf.getConstrTypeCode());
@@ -1100,17 +1109,9 @@ public class PropertyExternalService {
         return mstrCodeNamePairDetailsList;
     }
 
-    public StructureClassification getStructureClassificationByCode(final String classificationCode) {
-        final Query qry = entityManager.createQuery("from StructureClassification sc where sc.constrTypeCode =:code");
-        qry.setParameter("code", classificationCode);
-        return (StructureClassification) qry.getSingleResult();
-    }
-
-    @SuppressWarnings("unchecked")
     public List<MasterCodeNamePairDetails> getNatureOfUsages() {
         final List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<>();
-        final List<PropertyUsage> usageList = entityManager.createQuery("from PropertyUsage order by usageName")
-                .getResultList();
+        final List<PropertyUsage> usageList = propertyUsageService.getAllActivePropertyUsages();
         for (final PropertyUsage propUsage : usageList) {
             final MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
             mstrCodeNamePairDetails.setCode(propUsage.getUsageCode());
@@ -1120,18 +1121,9 @@ public class PropertyExternalService {
         return mstrCodeNamePairDetailsList;
     }
 
-    public PropertyUsage getPropertyUsageByUsageCde(final String usageCode) {
-        final Query qry = entityManager
-                .createQuery("from PropertyUsage pu where pu.usageCode = :usageCode order by usageName");
-        qry.setParameter("usageCode", usageCode);
-        return (PropertyUsage) qry.getSingleResult();
-    }
-
-    @SuppressWarnings("unchecked")
     public List<MasterCodeNamePairDetails> getOccupancies() {
         final List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<>();
-        final List<PropertyOccupation> propOccupList = entityManager.createQuery("from PropertyOccupation")
-                .getResultList();
+        final List<PropertyOccupation> propOccupList = propertyOccupationService.getAllPropertyOccupations();
         for (final PropertyOccupation propOccup : propOccupList) {
             final MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
             mstrCodeNamePairDetails.setCode(propOccup.getOccupancyCode());
@@ -1142,17 +1134,12 @@ public class PropertyExternalService {
     }
 
     public PropertyOccupation getPropertyOccupationByOccupancyCode(final String occupancyCode) {
-        final Query qry = entityManager
-                .createQuery("from PropertyOccupation po where po.occupancyCode = :occupancyCode");
-        qry.setParameter("occupancyCode", occupancyCode);
-        return (PropertyOccupation) qry.getSingleResult();
+        return propertyOccupationService.getPropertyOccupationByCode(occupancyCode);
     }
 
-    @SuppressWarnings("unchecked")
     public List<MasterCodeNamePairDetails> getExemptionCategories() {
         final List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<>();
-        final List<TaxExemptionReason> taxExemptionReasonList = entityManager
-                .createQuery("from TaxExemptionReason where isActive = true order by name").getResultList();
+        final List<TaxExemptionReason> taxExemptionReasonList = taxExemptionReasonService.getAllActiveTaxExemptions();
         for (final TaxExemptionReason taxExemptionReason : taxExemptionReasonList) {
             final MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
             mstrCodeNamePairDetails.setCode(taxExemptionReason.getCode());
@@ -1162,21 +1149,9 @@ public class PropertyExternalService {
         return mstrCodeNamePairDetailsList;
     }
 
-    public TaxExemptionReason getTaxExemptionReasonByCode(final String exemptionReasonCode) {
-        TaxExemptionReason taxExemptionReason = null;
-        final Query qry = entityManager.createQuery("from TaxExemptionReason ter where ter.code = :code");
-        qry.setParameter("code", "" + exemptionReasonCode);
-        final List list = qry.getResultList();
-        if (null != list && !list.isEmpty())
-            taxExemptionReason = (TaxExemptionReason) qry.getSingleResult();
-        return taxExemptionReason;
-    }
-
-    @SuppressWarnings("unchecked")
     public List<MasterCodeNamePairDetails> getApproverDepartments() {
         final List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<>();
-        final List<Department> approverDepartmentList = entityManager.createQuery("from Department order by name")
-                .getResultList();
+        final List<Department> approverDepartmentList = departmentService.getAllDepartments();
         for (final Department approverDepartment : approverDepartmentList) {
             final MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
             mstrCodeNamePairDetails.setCode(approverDepartment.getCode());
@@ -1212,7 +1187,6 @@ public class PropertyExternalService {
         PropertyImpl gisProperty = (PropertyImpl) property.createPropertyclone();
         Ptdemand ptdemand = property.getPtDemandSet().iterator().next();
         Ptdemand gisPtdemand = gisProperty.getPtDemandSet().iterator().next();
-        List<Installment> instList = new ArrayList<>();
         if (gisPtdemand != null)
             gisPtdemand.getDmdCalculations().setAlv(ptdemand.getDmdCalculations().getAlv());
         if (!gisProperty.getPropertyDetail().getFloorDetails().isEmpty()) {
@@ -1300,8 +1274,8 @@ public class PropertyExternalService {
                     viewPropertyDetails.getMutationReason(),
                     propertyTypeMaster.getId().toString(), null, null, STATUS_ISACTIVE, viewPropertyDetails.getRegdDocNo(), null,
                     null,
-                    null, null, null, null, null, new Long(viewPropertyDetails.getVlPlotArea()),
-                    new Long(viewPropertyDetails.getLaAuthority()),
+                    null, null, null, null, null, viewPropertyDetails.getVlPlotArea(),
+                    viewPropertyDetails.getLaAuthority(),
                     Boolean.FALSE);
         }
 
@@ -1330,7 +1304,7 @@ public class PropertyExternalService {
         basicProperty.setSource(SOURCEOFDATA_SURVEY);
 
         // Get PropertyStatus object to set the status of the property
-        final PropertyStatus propertyStatus = getPropertyStatus();
+        final PropertyStatus propertyStatus = propertyStatusHibernateDAO.getPropertyStatusByCode(PROPERTY_STATUS_WORKFLOW);
         basicProperty.setStatus(propertyStatus);
         basicProperty.setUnderWorkflow(Boolean.TRUE);
         basicProperty.setParcelId(viewPropertyDetails.getParcelId());
@@ -1339,7 +1313,7 @@ public class PropertyExternalService {
         // Set isBillCreated property value as false
         basicProperty.setIsBillCreated(STATUS_BILL_NOTCREATED);
         // Set PropertyMutationMaster object
-        PropertyMutationMaster propertyMutationMaster = getPropertyMutationMaster(viewPropertyDetails.getMutationReason());
+        PropertyMutationMaster propertyMutationMaster = propertyMutationMasterDAO.getPropertyMutationMasterByCode(viewPropertyDetails.getMutationReason());
         basicProperty.setPropertyMutationMaster(propertyMutationMaster);
         // Creating Property Address object
         final Boundary block = getBoundaryByNumberAndType(viewPropertyDetails.getBlockName(), BLOCK, REVENUE_HIERARCHY_TYPE);
@@ -1387,7 +1361,7 @@ public class PropertyExternalService {
                     .setEffectiveDate(convertStringToDate(viewPropertyDetails.getFloorDetails().get(0).getOccupancyDate()));
         }
         if (StringUtils.isNotBlank(viewPropertyDetails.getApartmentCmplx())) {
-            final Apartment apartment = getApartmentByCode(viewPropertyDetails.getApartmentCmplx());
+            final Apartment apartment = apartmentService.getApartmentByCode(viewPropertyDetails.getApartmentCmplx());
             propertyImpl.getPropertyDetail().setApartment(apartment);
         }
 
@@ -1512,19 +1486,6 @@ public class PropertyExternalService {
         documentTypeDetailsService.persist(documentTypeDetails);
     }
 
-    private PropertyStatus getPropertyStatus() {
-        final Query qry = entityManager.createQuery("from PropertyStatus where statusCode = :statusCode");
-        qry.setParameter("statusCode", PROPERTY_STATUS_WORKFLOW);
-        return (PropertyStatus) qry.getSingleResult();
-    }
-
-    private PropertyMutationMaster getPropertyMutationMaster(final String mutationReasonCode) {
-        final Query qry = entityManager
-                .createQuery("from PropertyMutationMaster pmm where pmm.code = :mutationReasonCode");
-        qry.setParameter("mutationReasonCode", mutationReasonCode);
-        return (PropertyMutationMaster) qry.getSingleResult();
-    }
-
     /**
      * This method is used to validate the payment details to do the payments.
      *
@@ -1612,10 +1573,10 @@ public class PropertyExternalService {
             if (StringUtils.isNotBlank(floorDetails.getFloorNoCode()))
                 floor.setFloorNo(Integer.valueOf(floorDetails.getFloorNoCode()));
             if (StringUtils.isNotBlank(floorDetails.getBuildClassificationCode()))
-                floor.setStructureClassification(
-                        getStructureClassificationByCode(floorDetails.getBuildClassificationCode()));
+				floor.setStructureClassification(structureClassificationService
+						.getClassificationByCode(floorDetails.getBuildClassificationCode()));
             if (StringUtils.isNotBlank(floorDetails.getNatureOfUsageCode()))
-                floor.setPropertyUsage(getPropertyUsageByUsageCde(floorDetails.getNatureOfUsageCode()));
+                floor.setPropertyUsage(propertyUsageService.getUsageByCode(floorDetails.getNatureOfUsageCode()));
             if (StringUtils.isNotBlank(floorDetails.getOccupancyCode()))
                 floor.setPropertyOccupation(getPropertyOccupationByOccupancyCode(floorDetails.getOccupancyCode()));
             if (StringUtils.isNotBlank(floorDetails.getFirmName()))
@@ -1727,12 +1688,6 @@ public class PropertyExternalService {
             mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
         }
         return mstrCodeNamePairDetailsList;
-    }
-
-    private Apartment getApartmentByCode(final String apartmentCode) {
-        final Query qry = entityManager.createQuery("from Apartment ap where ap.code = :code");
-        qry.setParameter("code", apartmentCode);
-        return (Apartment) qry.getSingleResult();
     }
 
     /**
@@ -2452,13 +2407,14 @@ public class PropertyExternalService {
                 viewPropertyDetails.getPropertyTypeMaster());
         propertyImpl.getPropertyDetail().setEffectiveDate(convertStringToDate(viewPropertyDetails.getEffectiveDate()));
         if (StringUtils.isNotBlank(viewPropertyDetails.getApartmentCmplx())) {
-            final Apartment apartment = getApartmentByCode(viewPropertyDetails.getApartmentCmplx());
+            final Apartment apartment = apartmentService.getApartmentByCode(viewPropertyDetails.getApartmentCmplx());
             propertyImpl.getPropertyDetail().setApartment(apartment);
         }
         propertyImpl.setSource(SOURCE_SURVEY);
         propertyImpl.getPropertyDetail().setOccupancyCertificationNo(viewPropertyDetails.getOccupancyCertificationNo());
         propertyImpl.getPropertyDetail().setOccupancyCertificationDate(viewPropertyDetails.getOccupancyCertificationDate());
-        final PropertyMutationMaster propMutMstr = getPropertyMutationMaster(PROPERTY_MODIFY_REASON_ADD_OR_ALTER);
+		final PropertyMutationMaster propMutMstr = propertyMutationMasterDAO
+				.getPropertyMutationMasterByCode(PROPERTY_MODIFY_REASON_ADD_OR_ALTER);
         basicProperty.setPropertyMutationMaster(propMutMstr);
 
         if (!propertyTypeMaster.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
@@ -2527,8 +2483,8 @@ public class PropertyExternalService {
             propertyImpl = propService.createProperty(propertyImpl,
                     String.valueOf(viewPropertyDetails.getVacantLandArea()), propMutMstr.getCode(),
                     propertyTypeMaster.getId().toString(), null, null, STATUS_WORKFLOW, propertyImpl.getDocNumber(),
-                    null, null, null, null, null, null, null, new Long(viewPropertyDetails.getVlPlotArea()),
-                    new Long(viewPropertyDetails.getLaAuthority()), Boolean.FALSE);
+                    null, null, null, null, null, null, null, viewPropertyDetails.getVlPlotArea(),
+                    viewPropertyDetails.getLaAuthority(), Boolean.FALSE);
 
             if (StringUtils.isNotBlank(viewPropertyDetails.getNorthBoundary()))
                 basicProperty.getPropertyID().setNorthBoundary(viewPropertyDetails.getNorthBoundary());
@@ -2786,7 +2742,7 @@ public class PropertyExternalService {
         basicProperty.setPropertyID(propertyID);
 
         // Get PropertyStatus object to set the status of the property
-        final PropertyStatus propertyStatus = getPropertyStatus();
+        final PropertyStatus propertyStatus = propertyStatusHibernateDAO.getPropertyStatusByCode(PROPERTY_STATUS_WORKFLOW);
         basicProperty.setStatus(propertyStatus);
         basicProperty.setUnderWorkflow(Boolean.TRUE);
         basicProperty.setParcelId(viewPropertyDetails.getParcelId());
@@ -2794,7 +2750,7 @@ public class PropertyExternalService {
         basicProperty.setLongitude(viewPropertyDetails.getLongitude());
 
         // Set PropertyMutationMaster object
-        final PropertyMutationMaster propertyMutationMaster = getPropertyMutationMaster(viewPropertyDetails.getMutationReason());
+        final PropertyMutationMaster propertyMutationMaster = propertyMutationMasterDAO.getPropertyMutationMasterByCode(viewPropertyDetails.getMutationReason());
         basicProperty.setPropertyMutationMaster(propertyMutationMaster);
         // need to pass parent property index, in case of bifurcation
         if (propertyMutationMaster.getCode().equals(PROP_CREATE_RSN_BIFUR) || viewPropertyDetails.getIsExtentAppurtenantLand())
@@ -2876,8 +2832,8 @@ public class PropertyExternalService {
                     propertyTypeMaster.getId().toString(), null, null, STATUS_ISACTIVE, viewPropertyDetails.getRegdDocNo(), null,
                     null,
                     null, null, null, null, null,
-                    viewPropertyDetails.getVlPlotArea() != null ? Long.valueOf((viewPropertyDetails.getVlPlotArea())) : null,
-                    viewPropertyDetails.getVlPlotArea() != null ? Long.valueOf((viewPropertyDetails.getVlPlotArea())) : null,
+                    viewPropertyDetails.getVlPlotArea() != null ? viewPropertyDetails.getVlPlotArea() : null,
+                    viewPropertyDetails.getVlPlotArea() != null ? viewPropertyDetails.getVlPlotArea() : null,
                     Boolean.FALSE);
         }
         propertyImpl.setBasicProperty(basicProperty);
@@ -2908,16 +2864,6 @@ public class PropertyExternalService {
         propService.updateIndexes(propertyImpl, APPLICATION_TYPE_NEW_ASSESSENT);
         propService.processAndStoreDocument(propertyImpl.getAssessmentDocuments());
         return propertyImpl;
-    }
-
-    public BasicProperty getBasicPropertyByPropertyID(String propertyId) {
-        StringBuilder queryString = new StringBuilder();
-        queryString.append("from BasicPropertyImpl BP where BP.upicNo =:propertyId ");
-        BasicProperty basicProperty;
-        final Query qry = entityManager.createQuery(queryString.toString());
-        qry.setParameter("propertyId", propertyId);
-        basicProperty = (BasicProperty) qry.getSingleResult();
-        return basicProperty;
     }
 
     public Property getPropertyByBasicPropertyID(BasicProperty basicpropertyId) {
@@ -2957,8 +2903,11 @@ public class PropertyExternalService {
 
             if (betweenOrBefore(convertStringToDate(floorDetails.getOccupancyDate()), installment.getFromDate(),
                     installment.getToDate())) {
-                categories = persistenceService.findAllByNamedQuery(QUERY_BASERATE_BY_OCCUPANCY_ZONE, zone.getId(),
-                        usage.getId(), sc.getId(), convertStringToDate(floorDetails.getOccupancyDate()), installment.getToDate());
+				categories = (List<BoundaryCategory>) entityManager.createNamedQuery(QUERY_BASERATE_BY_OCCUPANCY_ZONE)
+						.setParameter("boundary", zone.getId()).setParameter("usage", usage.getId())
+						.setParameter("structure", sc.getId())
+						.setParameter("fromDate", convertStringToDate(floorDetails.getOccupancyDate()))
+						.setParameter("toDate", installment.getToDate());
                 if (categories.isEmpty()) {
                     isActive = Boolean.TRUE;
                 }

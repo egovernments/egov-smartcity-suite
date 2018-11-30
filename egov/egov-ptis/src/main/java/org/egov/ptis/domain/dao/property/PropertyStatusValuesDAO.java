@@ -48,14 +48,15 @@
 package org.egov.ptis.domain.dao.property;
 
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 
 import java.util.List;
 
 public interface PropertyStatusValuesDAO {
 
-	public PropertyStatusValues getLatestPropertyStatusValuesByPropertyIdAndCode(String PropertyId,
-			List Code);
+	public PropertyStatusValues getLatestPropertyStatusValuesByPropertyIdAndCode(String propertyId,
+			List code);
 
 	public List<PropertyStatusValues> getParentBasicPropsForChild(BasicProperty basicProperty);
 
@@ -69,9 +70,14 @@ public interface PropertyStatusValuesDAO {
 
 	public PropertyStatusValues update(PropertyStatusValues propertyStatusValues);
 	
-	public PropertyStatusValues getLatestPropertyStatusValuesByPropertyIdAndreferenceNo(String PropertyId,
+	public PropertyStatusValues getLatestPropertyStatusValuesByPropertyIdAndreferenceNo(String propertyId,
                 String referenceNumber);
-	
-	public List<PropertyStatusValues> getPropertyStatusValuesByReferenceBasicProperty(BasicProperty basicProperty);
 
+	public List<PropertyStatusValues> getPropStatValByUpicNoAndStatCodeAndISActive(String propertyId, String active,
+			String propertyStatus);
+
+	public List<PropertyStatusValues> getPropertyStatusValuesByReferenceBasicProperty(BasicProperty basicProperty);
+	
+	public PropertyStatusValues getPropertyStatusValuesByBasicProperty(BasicProperty basicProperty);
+	
 }

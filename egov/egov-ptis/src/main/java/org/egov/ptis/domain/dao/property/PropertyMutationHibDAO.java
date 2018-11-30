@@ -49,6 +49,7 @@ package org.egov.ptis.domain.dao.property;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
+import org.egov.ptis.domain.entity.property.PropertyOccupation;
 import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
@@ -70,9 +71,9 @@ public class PropertyMutationHibDAO implements PropertyMutationDAO {
 	}
 
 	@Override
-	public PropertyMutation findById(Integer id, boolean lock) {
-
-		return null;
+	public PropertyMutation findById(Long id, boolean lock) {
+		return (PropertyMutation) getCurrentSession().createQuery("from PropertyMutation where id =:id ")
+				.setParameter("id", id).uniqueResult();
 	}
 
 	@Override

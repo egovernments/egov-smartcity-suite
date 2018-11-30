@@ -71,5 +71,11 @@ public interface PropertyUsageDAO {
 	public PropertyUsage create(PropertyUsage propertyUsage);
 
 	public void delete(PropertyUsage propertyUsage);
+	
+	public PropertyUsage getPropertyUsageByName(String usageName);
+	
+	public List<PropertyUsage> getAllResidentialUsage();
+	
+	public List<PropertyUsage> getAllNonResidentialUsage();
 
 }

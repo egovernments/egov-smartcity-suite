@@ -114,7 +114,7 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 		}
 
 	}
-	public  Position getPositionById(Integer positionId)
+	public  Position getPositionById(Long positionId)
 
 	{
 		Position pos = null;
@@ -153,10 +153,10 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 			List retList = qry.list();
 			if(retList!=null && !retList.isEmpty())
 			{
-				Integer posId = null;
+				Long posId = null;
 				for(Iterator iter = retList.iterator();iter.hasNext();)
 				{
-					posId = (Integer)iter.next();
+					posId = (Long)iter.next();
 				}
 				if (posId != null)
 				{
@@ -190,10 +190,10 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 			List retList = qry.list();
 			if(retList!=null && !retList.isEmpty())
 			{
-				Integer posId = null;
+				Long posId = null;
 				for(Iterator iter = retList.iterator();iter.hasNext();)
 				{
-					posId = (Integer)iter.next();
+					posId = (Long)iter.next();
 				}
 				if (posId != null)
 				{

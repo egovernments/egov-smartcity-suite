@@ -194,7 +194,7 @@ public class PropertyUsageService {
     public Boolean isActiveUsage(String code){
     	return propertyUsageRepository.findIsActiveByCode(code);
     }
-    public PropertyUsage  getUsageByCode(String code){
+    public PropertyUsage getUsageByCode(String code){
     	return propertyUsageRepository.findUsageByCode(code);
     }
     

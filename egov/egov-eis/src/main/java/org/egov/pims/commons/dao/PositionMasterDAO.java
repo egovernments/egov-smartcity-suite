@@ -104,12 +104,12 @@ public class PositionMasterDAO
         }
     }
 
-    public Position getPosition(int posId)
+    public Position getPosition(Long posId)
     {
         try
         {
         	Position desig = null;
-            desig = (Position)getCurrentSession().get(Position.class, Integer.valueOf(posId));
+            desig = (Position)getCurrentSession().get(Position.class, posId);
             return desig;
         }
         catch(Exception e)

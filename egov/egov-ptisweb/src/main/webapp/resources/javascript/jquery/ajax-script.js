@@ -38,8 +38,6 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 # 
 #-------------------------------------------------------------------------------*/
-jQuery.noConflict();
-
 /*function doLoadingMask() {
     jQuery("#loadingMask").dialog({ 
         modal: true,

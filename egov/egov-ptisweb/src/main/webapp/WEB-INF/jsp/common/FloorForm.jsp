@@ -70,7 +70,7 @@
 		
 		<th class="bluebgheadtd freeze-action-th"><s:text name="Add/Delete" /></th>
 	</tr>
-	<s:if test="propertyDetail.floorDetailsProxy.size()==0">
+	<s:if test="%{propertyDetail.floorDetailsProxy.size()==0}">
 		<tr id="Floorinfo">
 			<s:hidden name="propertyDetail.floorDetailsProxy[0].floorUid" id="propertyDetail.floorDetailsProxy[0].floorUid"
                        value="%{propertyDetail.floorDetailsProxy[0].floorUid}"></s:hidden>
@@ -96,7 +96,7 @@
 				</div>
 			</td>
 			<egov:ajaxdropdown id="floorUsage" fields="['Text','Value']" dropdownId="floorUsage"
-			url="/common/ajaxCommon-usageByPropType.action" afterSuccess="loadUsages"/>
+			url="common/ajaxCommon-usageByPropType.action" afterSuccess="loadUsages"/>
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:select headerKey="" headerValue="%{getText('default.select')}"
@@ -222,12 +222,12 @@
 			
 			<td class="blueborderfortd freeze-action-td" id="AddRemoveFloor">
 			
-			  <span id="addF" alt="AddF" class="tblactionicon add" 
+			  <span id="addF" class="tblactionicon add" 
 			        onclick="javascript:addFloor(); return false;">
 			           <i class="fa fa-plus-circle"></i>
 			  </span>
 			  &nbsp;
-			  <span id="dDelF" alt="DelF" class="tblactionicon delete" 
+			  <span id="dDelF" class="tblactionicon delete" 
 			        onclick="javascript:delFloor(this);return false;">
 			           <i class="fa fa-minus-circle"></i>
 			  </span>
@@ -273,7 +273,7 @@
 					</div>
 				</td>
 				<egov:ajaxdropdown id="floorUsage" fields="['Text','Value']" dropdownId="floorUsage"
-			          url="/common/ajaxCommon-usageByPropType.action" afterSuccess="loadUsages"/>
+			          url="common/ajaxCommon-usageByPropType.action" afterSuccess="loadUsages"/>
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 							<s:select headerKey=""
@@ -406,12 +406,12 @@
 			</td>
 			
 				<td class="blueborderfortd freeze-action-td" id="AddRemoveFloor">
-				  <span id="addF" alt="AddF" class="tblactionicon add" 
+				  <span id="addF" class="tblactionicon add" 
 			        onclick="javascript:addFloor(); return false;">
 			           <i class="fa fa-plus-circle"></i>
 				  </span>
 				  &nbsp;
-				  <span id="dDelF" alt="DelF" class="tblactionicon delete" 
+				  <span id="dDelF" class="tblactionicon delete" 
 				        onclick="javascript:delFloor(this);return false;">
 				           <i class="fa fa-minus-circle"></i>
 				  </span>

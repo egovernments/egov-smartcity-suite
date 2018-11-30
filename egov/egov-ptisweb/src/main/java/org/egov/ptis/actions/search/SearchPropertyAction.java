@@ -89,6 +89,7 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyMutationDAO;
+import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
@@ -269,6 +270,9 @@ public class SearchPropertyAction extends SearchFormAction {
 
     @Autowired
     private transient PropertyMutationDAO propertyMutationDAO;
+    
+    @Autowired
+    private PropertyTypeMasterDAO propertyTypeMasterDAO;
     
     @Autowired 
     private transient PropertyCourtCaseService propertyCourtCaseService;
@@ -713,13 +717,8 @@ public class SearchPropertyAction extends SearchFormAction {
     @ValidationErrorPage(value = "new")
     @Action(value = "/search/searchProperty-searchByDemand")
     public String searchByDemand() {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Entered into searchByDemand  method");
-            LOGGER.debug("From Demand No : " + fromDemand + ", " + "To Demand No : " + toDemand);
-        }
         if (fromDemand != null && fromDemand != "" && toDemand != null && toDemand != "")
             try {
-
                 setQueryMap(propertyService.getDemandQuery(fromDemand, toDemand));
                 super.search();
                 for (final PropertyMaterlizeView propMatview : (List<PropertyMaterlizeView>) searchResult.getList()) {
@@ -758,8 +757,7 @@ public class SearchPropertyAction extends SearchFormAction {
         setWardndryMap(CommonServices.getFormattedBndryMap(wardList));
         prepareWardDropDownData(zoneId != null, wardId != null);
         addDropdownData("Location", locationList);
-        addDropdownData("PropTypeMaster",
-                getPersistenceService().findAllByNamedQuery(PropertyTaxConstants.GET_PROPERTY_TYPES));
+        addDropdownData("PropTypeMaster",propertyTypeMasterDAO.findAll());
         final Long userId = getUserId();
         if (userId != null)
             setRoleName(propertyTaxUtil.getRolesForUserId(userId));

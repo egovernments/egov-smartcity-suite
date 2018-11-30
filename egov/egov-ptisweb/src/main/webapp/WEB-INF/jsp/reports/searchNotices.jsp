@@ -62,7 +62,6 @@
 <script
 	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script type="text/javascript">
-	jQuery.noConflict();
 	jQuery(function($) {
 		try {
 			jQuery(".datepicker").datepicker({

@@ -56,7 +56,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_REASON_ORDER_M
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_DATAENTRY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY_DMDRSN_CODE_MAP;
 
@@ -75,6 +74,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -100,6 +102,7 @@ import org.egov.ptis.bean.DemandDetail;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
+import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
@@ -112,6 +115,7 @@ import org.egov.ptis.domain.service.DemandAuditService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -137,7 +141,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
  *
  * @author nayeem
  */
-@SuppressWarnings("serial")
 @ParentPackage("egov")
 @Namespace("/edit")
 @ResultPath("/WEB-INF/jsp/")
@@ -160,18 +163,18 @@ public class EditDemandAction extends BaseFormAction {
 
     private static final String QUERY_DEMAND_DETAILS = "SELECT dd FROM Ptdemand ptd "
             + "LEFT JOIN ptd.egDemandDetails dd " + "LEFT JOIN ptd.egptProperty p " + "LEFT JOIN  p.basicProperty bp "
-            + "WHERE bp = ? " + "AND bp.active = true " + "AND p.status = 'A' ";
+            + "WHERE bp = :bp " + "AND bp.active = true " + "AND p.status = 'A' ";
 
     private static final String QUERYINSTPTDEMAND = "select ptd from Ptdemand ptd inner join fetch ptd.egDemandDetails dd "
             + "inner join fetch dd.egDemandReason dr inner join fetch dr.egDemandReasonMaster drm "
             + "inner join fetch ptd.egptProperty p inner join fetch p.basicProperty bp "
             + "where bp.active = true and (p.status = 'A' or p.status = 'I' or p.status = 'W') "
-            + "and bp = ? and ptd.egInstallmentMaster = ? ";
+            + "and bp = :bp and ptd.egInstallmentMaster = :installment ";
 
     private static final String QUERY_NONZERO_DEMAND_DETAILS = QUERY_DEMAND_DETAILS + " AND dd.amount >= 0 ";
 
     private static final String QUERYINSTDD = QUERY_NONZERO_DEMAND_DETAILS
-            + " AND ptd.egInstallmentMaster = ? ";
+            + " AND ptd.egInstallmentMaster = :installment ";
 
     private static final String EDIT_DEMAND = "Edit Demand";
     private static final String EDIT_TYPE_POSTFIX = "-";
@@ -204,8 +207,12 @@ public class EditDemandAction extends BaseFormAction {
     @Autowired
     @Qualifier("propertyImplService")
     private PersistenceService propertyImplService;
+    @Autowired
+    private BasicPropertyDAO basicPropertyDAO;
+    @PersistenceContext
+    private EntityManager entityManager;
+    
     private final DemandAudit demandAudit = new DemandAudit();
-
     private List<EgDemandDetails> demandDetails = new ArrayList<>();
     private List<DemandDetail> demandDetailBeanList = new ArrayList<>();
     private List<Installment> allInstallments = new ArrayList<>();
@@ -221,11 +228,7 @@ public class EditDemandAction extends BaseFormAction {
     @Override
     @SkipValidation
     public void prepare() {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Entered into prepare");
-
-        basicProperty = (BasicProperty) getPersistenceService().findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO,
-                propertyId);
+		basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId);
         if (null != basicProperty.getActiveProperty())
             if (basicProperty.getActiveProperty().getPropertyDetail().getPropertyTypeMaster().getCode()
                     .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
@@ -252,9 +255,6 @@ public class EditDemandAction extends BaseFormAction {
         allInstallments.removeAll(propertyInstallments);
 
         addDropdownData("allInstallments", allInstallments);
-
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Exiting from prepare");
     }
 
     @Override
@@ -390,8 +390,8 @@ public class EditDemandAction extends BaseFormAction {
         ownerName = basicProperty.getFullOwnerName();
         mobileNumber = basicProperty.getMobileNumber();
         propertyAddress = basicProperty.getAddress().toString();
-        demandDetails = getPersistenceService().findAllBy(QUERYINSTDD, basicProperty,
-                propertyTaxCommonUtils.getCurrentInstallment());
+		demandDetails = (List<EgDemandDetails>) entityManager.unwrap(Session.class).createQuery(QUERYINSTDD).setParameter("bp", basicProperty)
+				.setParameter("installment", propertyTaxCommonUtils.getCurrentInstallment()).getResultList();
         if (!demandDetails.isEmpty())
             Collections.sort(demandDetails, (o1, o2) -> o1.getEgDemandReason().getEgInstallmentMaster()
                     .compareTo(o2.getEgDemandReason().getEgInstallmentMaster()));
@@ -557,15 +557,15 @@ public class EditDemandAction extends BaseFormAction {
     public String update() {
         if (LOGGER.isDebugEnabled())
             LOGGER.info("Entered into update, basicProperty=" + basicProperty);
-        final List<EgDemandDetails> demandDetailsFromDB = getPersistenceService()
-                .findAllBy(QUERY_NONZERO_DEMAND_DETAILS, basicProperty);
+		final List<EgDemandDetails> demandDetailsFromDB = (List<EgDemandDetails>) entityManager.unwrap(Session.class)
+				.createQuery(QUERY_NONZERO_DEMAND_DETAILS).setParameter("bp", basicProperty);
         final Installment currentInstallment = propertyTaxCommonUtils.getCurrentInstallment();
         final Map<Installment, List<EgDemandDetails>> demandDetails = new TreeMap<>();
 
         final String queryZeroDemandDetails = QUERY_DEMAND_DETAILS + " AND dd.amount = 0";
 
-        final List<EgDemandDetails> dmdDtlsWithZeroAmt = getPersistenceService().findAllBy(queryZeroDemandDetails,
-                basicProperty);
+		final List<EgDemandDetails> dmdDtlsWithZeroAmt = (List<EgDemandDetails>) entityManager.unwrap(Session.class)
+				.createQuery(queryZeroDemandDetails).setParameter("bp", basicProperty);
         final Set<Installment> zeroInstallments = new TreeSet<>();
 
         BigDecimal totalDmd = BigDecimal.ZERO;
@@ -660,8 +660,9 @@ public class EditDemandAction extends BaseFormAction {
         if (!demandAudit.getDemandAuditDetails().isEmpty())
             demandAuditService.saveDetails(demandAudit);
 
-        final List<EgDemandDetails> currentInstdemandDetailsFromDB = getPersistenceService().findAllBy(
-                QUERYINSTDD, basicProperty, propertyTaxCommonUtils.getCurrentInstallment());
+		final List<EgDemandDetails> currentInstdemandDetailsFromDB = (List<EgDemandDetails>) entityManager.unwrap(Session.class)
+				.createQuery(QUERYINSTDD).setParameter("bp", basicProperty)
+				.setParameter("instalment", propertyTaxCommonUtils.getCurrentInstallment());
 
         final Map<Installment, Set<EgDemandDetails>> demandDetailsSetByInstallment = getEgDemandDetailsSetByInstallment(
                 currentInstdemandDetailsFromDB);
@@ -695,8 +696,9 @@ public class EditDemandAction extends BaseFormAction {
             if (!entry.getValue().get(0).getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
                     .equalsIgnoreCase(DEMANDRSN_STR_CHQ_BOUNCE_PENALTY))
                 demandDetailsToBeSaved.addAll(new HashSet<EgDemandDetails>(entry.getValue()));
-        final List<Ptdemand> currPtdemand = getPersistenceService().findAllBy(QUERYINSTPTDEMAND, basicProperty,
-                propertyTaxCommonUtils.getCurrentInstallment());
+		final List<Ptdemand> currPtdemand = (List<Ptdemand>) entityManager.unwrap(Session.class).createQuery(QUERYINSTPTDEMAND)
+				.setParameter("bp", basicProperty)
+				.setParameter("installment", propertyTaxCommonUtils.getCurrentInstallment()).getResultList();
 
         if (currPtdemand != null && currPtdemand.isEmpty()) {
             final Ptdemand ptDemand = new Ptdemand();

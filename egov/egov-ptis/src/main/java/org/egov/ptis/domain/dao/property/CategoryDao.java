@@ -70,7 +70,7 @@ public interface CategoryDao {
 
 	public List<Category> getCategoryByRateUsageAndStructClass(Criterion criterion);
 
-	public Category findById(Integer id, boolean lock);
+	public Category findById(Long id, boolean lock);
 
 	public List<Category> findAll();
 
