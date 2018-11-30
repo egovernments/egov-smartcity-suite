@@ -301,7 +301,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
 
     public AccountCodePurpose getAccountCodePurpose(final String purposeName) {
         final AccountCodePurpose acctCodePurposeObj = (AccountCodePurpose) getPersistenceService()
-                .find(" from AccountCodePurpose" + " where name = ? ", purposeName);
+                .find(" from AccountCodePurpose" + " where name = ?1 ", purposeName);
         return acctCodePurposeObj;
     }
 

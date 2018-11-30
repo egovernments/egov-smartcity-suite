@@ -881,7 +881,7 @@ public class ChallanAction extends BaseFormAction {
         for (final ReceiptDetailInfo rDetails : billDetailslist) {
 
             final CChartOfAccountDetail chartOfAccountDetail = (CChartOfAccountDetail) getPersistenceService().find(
-                    " from CChartOfAccountDetail" + " where glCodeId=(select id from CChartOfAccounts where glcode=?)",
+                    " from CChartOfAccountDetail" + " where glCodeId=(select id from CChartOfAccounts where glcode=?1)",
                     rDetails.getGlcodeDetail());
 
             if (null != chartOfAccountDetail) {

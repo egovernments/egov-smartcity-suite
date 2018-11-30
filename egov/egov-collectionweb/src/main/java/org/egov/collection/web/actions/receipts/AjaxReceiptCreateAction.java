@@ -99,7 +99,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
     protected static final String SERVICE_LIST = "serviceList";
     private String value;
     private List<EntityType> entityList;
-    private static final String accountDetailTypeQuery = " from Accountdetailtype where id=?";
+    private static final String accountDetailTypeQuery = " from Accountdetailtype where id=?1";
     private List<Scheme> schemeList;
     private List<SubScheme> subSchemes;
     private List<ServiceDetails> serviceList;
@@ -127,7 +127,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
         final String serviceId = parameters.get(SERVICEID)[0];
 
         final ServiceDetails service = (ServiceDetails) getPersistenceService().find(
-                " from ServiceDetails where id=? ", Long.valueOf(serviceId));
+                " from ServiceDetails where id=?1 ", Long.valueOf(serviceId));
 
         if (null != service)
             for (final Department department : service.getServiceDept())
@@ -145,7 +145,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
 
         for (final String element : arr) {
             final CChartOfAccountDetail chartOfAccountDetail = (CChartOfAccountDetail) getPersistenceService().find(
-                    " from CChartOfAccountDetail" + " where glCodeId=(select id from CChartOfAccounts where glcode=?)",
+                    " from CChartOfAccountDetail" + " where glCodeId=(select id from CChartOfAccounts where glcode=?1)",
                     element);
 
             if (null != chartOfAccountDetail)
@@ -166,7 +166,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
         final List<Accountdetailtype> list = getPersistenceService()
                 .findAllBy(
                         " from Accountdetailtype"
-                                + " where id in (select detailTypeId from CChartOfAccountDetail where glCodeId=(select id from CChartOfAccounts where glcode=?))  ",
+                                + " where id in (select detailTypeId from CChartOfAccountDetail where glCodeId=(select id from CChartOfAccounts where glcode=?1))  ",
                         accountCode);
         if (list == null || list.isEmpty())
             value = index + "~" + ERROR + "#";
@@ -292,7 +292,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
 
             final List<EntityType> entityList = getPersistenceService().findAllBy(
                     " from " + adt.getFullQualifiedName() + ""
-                            + " where id in (select detailkey from Accountdetailkey where accountdetailtype.id=?)  ",
+                            + " where id in (select detailkey from Accountdetailkey where accountdetailtype.id=?1)  ",
                     Integer.valueOf(parameters.get(DETAILTYPEID)[0]));
 
             if (getEntityList() == null || getEntityList().isEmpty())
@@ -304,7 +304,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
                         break;
                     } else if (entity.getCode().equals(code)) {
                         final Accountdetailkey key = (Accountdetailkey) getPersistenceService().find(
-                                " from Accountdetailkey where accountdetailtype.id=? and detailkey=? ",
+                                " from Accountdetailkey where accountdetailtype.id=?1 and detailkey=?2 ",
                                 Integer.valueOf(parameters.get(DETAILTYPEID)[0]), entity.getEntityId());
                         if (key == null)
                             value = index + "~" + ERROR + "#";
@@ -333,7 +333,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
 
         setEntityList(getPersistenceService().findAllBy(
                 "select entity from " + adt.getFullQualifiedName() + " entity,Accountdetailkey adk"
-                        + " where entity.id =adk.detailkey and adk.accountdetailtype.id=? ",
+                        + " where entity.id =adk.detailkey and adk.accountdetailtype.id=?1",
                 Integer.valueOf(detailTypeId)));
 
         return "entities";
@@ -349,7 +349,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
         final List<Accountdetailtype> list = getPersistenceService()
                 .findAllBy(
                         " from Accountdetailtype"
-                                + " where id in (select detailTypeId from CChartOfAccountDetail where glCodeId=(select id from CChartOfAccounts where glcode=?))  ",
+                                + " where id in (select detailTypeId from CChartOfAccountDetail where glCodeId=(select id from CChartOfAccounts where glcode=?1))  ",
                         accountCode);
 
         for (final Accountdetailtype accountdetailtype : list)
@@ -368,10 +368,10 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
         final Integer fundId = Integer.valueOf(parameters.get("fundId")[0]);
         if (null == fundId || fundId == -1)
             schemeList = getPersistenceService().findAllBy(
-                    " from Scheme where fund.id=? and isActive=true order by name", -1);
+                    " from Scheme where fund.id=?1 and isActive=true order by name", -1);
         else
             schemeList = getPersistenceService().findAllBy(
-                    " from Scheme where fund.id=? and isActive=true order by name", fundId);
+                    " from Scheme where fund.id=?1 and isActive=true order by name", fundId);
 
         return "schemeList";
     }
@@ -382,7 +382,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
         final Integer schemeId = Integer.valueOf(parameters.get("schemeId")[0]);
         if (null != schemeId && schemeId != -1)
             subSchemes = getPersistenceService().findAllBy(
-                    "from SubScheme where scheme.id=? and isActive=true order by name", schemeId);
+                    "from SubScheme where scheme.id=?1 and isActive=true order by name", schemeId);
         else
             subSchemes = Collections.emptyList();
 
@@ -507,7 +507,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
                 subledgerDetails.addAll(account.getSubledgerDetails());
                 if (subledgerDetails.isEmpty()) {
                     final CChartOfAccountDetail chartOfAccountDetail = (CChartOfAccountDetail) getPersistenceService()
-                            .find("from CChartOfAccountDetail cd where cd.glCodeId.id=?", account.getGlCodeId().getId());
+                            .find("from CChartOfAccountDetail cd where cd.glCodeId.id=?1", account.getGlCodeId().getId());
                     servicInfo = new ServiceSubledgerInfo();
                     if (chartOfAccountDetail != null) {
                         servicInfo.setDetailType(chartOfAccountDetail.getDetailTypeId());

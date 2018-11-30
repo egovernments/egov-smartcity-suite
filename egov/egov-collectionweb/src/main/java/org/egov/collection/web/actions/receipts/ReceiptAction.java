@@ -1654,7 +1654,7 @@ public class ReceiptAction extends BaseFormAction {
         // detail codes.
         for (final ReceiptDetailInfo rDetails : billRebateDetailslist) {
             final CChartOfAccountDetail chartOfAccountDetail = (CChartOfAccountDetail) getPersistenceService().find(
-                    " from CChartOfAccountDetail" + " where glCodeId=(select id from CChartOfAccounts where glcode=?)",
+                    " from CChartOfAccountDetail" + " where glCodeId=(select id from CChartOfAccounts where glcode=?1)",
                     rDetails.getGlcodeDetail());
             if (null != chartOfAccountDetail) {
                 accountDetailMap = new HashMap<>();
@@ -1709,7 +1709,7 @@ public class ReceiptAction extends BaseFormAction {
             }
         }
         final List<CFinancialYear> list = persistenceService.findAllBy(
-                "from CFinancialYear where isActiveForPosting=true and startingDate <= ? and endingDate >= ?",
+                "from CFinancialYear where isActiveForPosting=true and startingDate <= ?1 and endingDate >= ?2",
                 getVoucherDate(), getVoucherDate());
         if (list.isEmpty()) {
             addActionError(getText("miscreciept.fYear.notActive"));

@@ -178,7 +178,7 @@ public class SearchReceiptAction extends SearchFormAction {
 
     public List getReceiptStatuses() {
         return persistenceService.findAllBy(
-                "from EgwStatus s where moduletype=? and code != ? order by description",
+                "from EgwStatus s where moduletype=?1 and code != ?2 order by description",
                 ReceiptHeader.class.getSimpleName(), CollectionConstants.RECEIPT_STATUS_CODE_PENDING);
     }
 

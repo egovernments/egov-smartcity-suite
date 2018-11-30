@@ -189,7 +189,7 @@ public class RemittanceServiceImpl extends RemittanceService {
                 .equals(CollectionConstants.YES))
             showRemitDate = true;
 
-        final Bankaccount depositedBankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
+        final Bankaccount depositedBankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?1",
                 Long.valueOf(accountNumberId.longValue()));
         final String serviceGlCode = depositedBankAccount.getChartofaccounts().getGlcode();
         for (int i = 0; i < serviceNameArr.length; i++) {
@@ -217,7 +217,7 @@ public class RemittanceServiceImpl extends RemittanceService {
                     cashQueryBuilder.append(receiptFundCondition);
                     cashQueryBuilder.append(receiptDepartmentCondition);
                     cashQueryBuilder.append(
-                            "and receipt.status.id=(select id from org.egov.commons.EgwStatus where moduletype=? and code=?) ");
+                            "and receipt.status.id=(select id from org.egov.commons.EgwStatus where moduletype=?1 and code=?2) ");
                     cashQueryBuilder.append(receiptSourceCondition);
                     cashQueryBuilder.append(depositedBranchCondition);
                     final Object arguments[] = new Object[9];
@@ -648,7 +648,7 @@ public class RemittanceServiceImpl extends RemittanceService {
         final List<ReceiptHeader> bankRemitList = new ArrayList<>();
         final SimpleDateFormat dateFomatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         final String receiptInstrumentQueryString = "select DISTINCT (instruments) from org.egov.collection.entity.ReceiptHeader receipt "
-                + "join receipt.receiptInstrument as instruments join receipt.receiptMisc as receiptMisc where instruments.id=?";
+                + "join receipt.receiptInstrument as instruments join receipt.receiptMisc as receiptMisc where instruments.id=?1";
 
         StringBuilder chequeInHandQuery = new StringBuilder(
                 "SELECT COA.GLCODE FROM CHARTOFACCOUNTS COA,EGF_INSTRUMENTACCOUNTCODES IAC,EGF_INSTRUMENTTYPE IT ")
@@ -687,7 +687,7 @@ public class RemittanceServiceImpl extends RemittanceService {
                 .equals(CollectionConstants.YES))
             showRemitDate = true;
 
-        final Bankaccount depositedBankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
+        final Bankaccount depositedBankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?1",
                 Long.valueOf(accountNumberId.longValue()));
         final String serviceGlCode = depositedBankAccount.getChartofaccounts().getGlcode();
 

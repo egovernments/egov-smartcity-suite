@@ -136,7 +136,7 @@ public class RemittanceSchedulerService {
     public Map<String, Object> constructInstrumentMap(final Map<String, Object> instrumentDepositMap,
             final Bankaccount bankaccount, final InstrumentHeader instrumentHeader, final CVoucherHeader voucherHeader) {
         final InstrumentType instrumentType = (InstrumentType) persistenceService.find(
-                "select it from InstrumentType it,InstrumentHeader ih where " + "ih.instrumentType=it.id and ih.id=?",
+                "select it from InstrumentType it,InstrumentHeader ih where ih.instrumentType=it.id and ih.id=?1",
                 instrumentHeader.getId());
         instrumentDepositMap.put("instrumentheader", instrumentHeader.getId());
         instrumentDepositMap.put("bankaccountid", bankaccount.getId());

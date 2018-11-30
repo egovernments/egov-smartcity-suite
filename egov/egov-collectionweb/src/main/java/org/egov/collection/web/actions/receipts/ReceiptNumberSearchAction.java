@@ -100,7 +100,7 @@ public class ReceiptNumberSearchAction extends BaseFormAction {
     public Collection<ReceiptHeader> getManualReceiptNumberList() {
         if (StringUtils.isNotBlank(query))
             receiptNumberList = receiptHeaderService.findAllBy(
-                    "from org.egov.collection.entity.ReceiptHeader where upper(manualreceiptnumber) like  ? || '%'",
+                    "from org.egov.collection.entity.ReceiptHeader where upper(manualreceiptnumber) like  ?1 || '%'",
                     query.toUpperCase());
         return receiptNumberList;
     }
@@ -108,7 +108,7 @@ public class ReceiptNumberSearchAction extends BaseFormAction {
     public Collection<ReceiptHeader> getReceiptNumberList() {
         if (StringUtils.isNotBlank(query))
             receiptNumberList = receiptHeaderService.findAllBy(
-                    "from org.egov.collection.entity.ReceiptHeader where upper(receiptnumber) like '%' || ? || '%'",
+                    "from org.egov.collection.entity.ReceiptHeader where upper(receiptnumber) like '%' || ?1 || '%'",
                     query.toUpperCase());
         return receiptNumberList;
     }

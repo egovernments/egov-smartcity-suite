@@ -185,7 +185,7 @@ public class DishonoredChequeAction extends SearchFormAction {
             bankId = Long.parseLong(id[0]);
         }
         final InstrumentType instType = (InstrumentType) getPersistenceService().find(
-                "from InstrumentType where type=?", instrumentMode);
+                "from InstrumentType where type=?1", instrumentMode);
         final String searchQuery = receiptHeaderService.getReceiptHeaderforDishonor(instType.getId(), accountNumber,
                 bankId, chequeNumber, chequeDate.toString());
         final String srchQry = "select rpt.id as receiptheaderid,ih.id as instrumentheaderid,rpt.receiptnumber as receiptnumber,rpt.receiptdate as receiptdate,ih.instrumentnumber as instrumentnumber,"

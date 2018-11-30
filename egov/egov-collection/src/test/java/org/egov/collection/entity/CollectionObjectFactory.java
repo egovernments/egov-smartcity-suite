@@ -693,7 +693,7 @@ public class CollectionObjectFactory {
 		instrHdr.setInstrumentAmount(BigDecimal.valueOf(1000));
 		instrHdr.setStatusId(createEgwStatus("testStatus", MODULE_NAME_TESTRECEIPTHEADER));
 		
-		instrHdr.setInstrumentType((InstrumentType) service.find("from InstrumentType where type=?",
+		instrHdr.setInstrumentType((InstrumentType) service.find("from InstrumentType where type=?1",
 				CollectionConstants.INSTRUMENTTYPE_BANK));
 		
 		instrHdr.setBankAccountId(createBankAccount("testGLCode"));

@@ -92,7 +92,7 @@ public class BankSearchAction extends BaseFormAction {
 
     public Collection<Bank> getBankList() {
         if (StringUtils.isNotBlank(getQuery()))
-            bankList = bankService.findAllBy("from Bank where upper(name) like ? || '%'", getQuery().toUpperCase());
+            bankList = bankService.findAllBy("from Bank where upper(name) like ?1 || '%'", getQuery().toUpperCase());
         return bankList;
     }
 

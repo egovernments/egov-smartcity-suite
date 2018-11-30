@@ -878,7 +878,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             final Bankaccount bankaccount, final InstrumentHeader instrumentHeader, final CVoucherHeader voucherHeader,
             final Date voucherDate) {
         final InstrumentType instrumentType = (InstrumentType) persistenceService.find(
-                "select it from InstrumentType it,InstrumentHeader ih where " + "ih.instrumentType=it.id and ih.id=?",
+                "select it from InstrumentType it,InstrumentHeader ih where " + "ih.instrumentType=it.id and ih.id=?1",
                 instrumentHeader.getId());
         instrumentDepositeMap.put("instrumentheader", instrumentHeader.getId());
         instrumentDepositeMap.put("bankaccountid", bankaccount.getId());

@@ -118,7 +118,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
     @Action(value = "/receipts/ajaxBankRemittance-bankBranchList")
     public String bankBranchList() {
         if (getFundId() != null) {
-            final Fund fund = (Fund) persistenceService.find("from Fund where id=?", fundId);
+            final Fund fund = (Fund) persistenceService.find("from Fund where id=?1", fundId);
             if (fund == null)
                 throw new ValidationException(Arrays.asList(new ValidationError("fund.not.found",
                         "Fund information not available")));
@@ -126,7 +126,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
         }
         if (serviceName == null && serviceId != null && serviceId != -1) {
             final ServiceDetails serviceDetails = (ServiceDetails) persistenceService.find(
-                    "from ServiceDetails where id=?", serviceId);
+                    "from ServiceDetails where id=?1", serviceId);
             setServiceName(serviceDetails.getName());
         }
         final String bankBranchQueryString = "select distinct(bb.id) as branchid,b.NAME||'-'||bb.BRANCHNAME as branchname from BANK b,BANKBRANCH bb, BANKACCOUNT ba,"
@@ -182,7 +182,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
     @Action(value = "/receipts/ajaxBankRemittance-accountList")
     public String accountList() {
         if (fundId != null && fundId != -1) {
-            final Fund fund = (Fund) persistenceService.find("from Fund where id=?", fundId);
+            final Fund fund = (Fund) persistenceService.find("from Fund where id=?1", fundId);
             if (fund == null)
                 throw new ValidationException(Arrays.asList(new ValidationError("fund.not.found",
                         "Fund information not available")));
@@ -190,7 +190,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
         }
         if (serviceName == null && serviceId != null && serviceId != -1) {
             final ServiceDetails serviceDetails = (ServiceDetails) persistenceService.find(
-                    "from ServiceDetails where id=?", serviceId);
+                    "from ServiceDetails where id=?1", serviceId);
             setServiceName(serviceDetails.getName());
         }
         final String bankAccountQueryString = "select ba.id as accountid,ba.accountnumber as accountnumber from BANKACCOUNT ba,"
@@ -270,7 +270,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
 
     @Action(value = "/receipts/ajaxBankRemittance-serviceListNotMappedToAccount")
     public String serviceListNotMappedToAccount() {
-        final String serviceAccountQueryString = "select distinct sd from ServiceDetails sd where sd.isEnabled='true' and sd.serviceCategory.id=? ";
+        final String serviceAccountQueryString = "select distinct sd from ServiceDetails sd where sd.isEnabled='true' and sd.serviceCategory.id=?1 ";
         final Query serviceListQuery = persistenceService.getSession().createQuery(serviceAccountQueryString);
         serviceListQuery.setParameter(0, serviceId);
         serviceNameList = serviceListQuery.list();

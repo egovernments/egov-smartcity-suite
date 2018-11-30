@@ -244,7 +244,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
     @Override
     public RestReceiptInfo getDetailsByTransactionId(final PaymentInfoSearchRequest paymentInfoSearchRequest) {
         LOGGER.info(paymentInfoSearchRequest.getSource());
-        final ReceiptHeader header = find("from ReceiptHeader r where r.manualreceiptnumber=? and r.source=? ",
+        final ReceiptHeader header = find("from ReceiptHeader r where r.manualreceiptnumber=?1 and r.source=?2 ",
                 paymentInfoSearchRequest.getTransactionId(), paymentInfoSearchRequest.getSource());
         if (header == null)
             throw new ApplicationRuntimeException("No data found");
