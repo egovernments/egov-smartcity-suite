@@ -85,12 +85,12 @@ import org.egov.services.instrument.InstrumentService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
+import org.elasticsearch.index.mapper.core.DateFieldMapper;
 import org.hibernate.HibernateException;
 import org.hibernate.query.Query;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.BigDecimalType;
-import org.hibernate.type.LongType;
+import org.hibernate.type.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.context.WebApplicationContext;
@@ -112,8 +112,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-//import com.exilant.eGov.src.domain.Bank;
 
 @Results({
         @Result(name = "bankAccountByBranch", location = "common-bankAccountByBranch.jsp"),
@@ -158,11 +156,11 @@ public class CommonAction extends BaseFormAction {
 
     private static final Logger LOGGER = Logger.getLogger(CommonAction.class);
     private static final long serialVersionUID = 1L;
-    private static final String RTGSNUMBERSQUERY = "SELECT ih.id, ih.transactionNumber FROM InstrumentHeader ih, InstrumentVoucher iv, "
-            + "Paymentheader ph WHERE ih.isPayCheque ='1' AND ih.bankAccountId.id = ?1 AND ih.statusId.description in ('New')" +
-            " AND ih.statusId.moduletype='Instrument' AND iv.instrumentHeaderId = ih.id and ih.bankAccountId is not null " +
-            "AND iv.voucherHeaderId     = ph.voucherheader AND ph.bankaccount = ih.bankAccountId AND ph.type = '"
-            + FinancialConstants.MODEOFPAYMENT_RTGS + "' " + "GROUP BY ih.transactionNumber,ih.id order by ih.id desc";
+    private static final StringBuilder RTGSNUMBERSQUERY = new StringBuilder("SELECT ih.id, ih.transactionNumber FROM InstrumentHeader ih, InstrumentVoucher iv, ")
+            .append("Paymentheader ph WHERE ih.isPayCheque ='1' AND ih.bankAccountId.id = ?1 AND ih.statusId.description in ('New')")
+            .append(" AND ih.statusId.moduletype='Instrument' AND iv.instrumentHeaderId = ih.id and ih.bankAccountId is not null ")
+            .append("AND iv.voucherHeaderId = ph.voucherheader AND ph.bankaccount = ih.bankAccountId AND ph.type = '")
+            .append(FinancialConstants.MODEOFPAYMENT_RTGS).append("' ").append("GROUP BY ih.transactionNumber,ih.id order by ih.id desc");
     private Integer fundId;
     private Integer schemeId;
     private Integer department;
@@ -305,10 +303,10 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Fund Id received is : " + fundId);
         if (null == fundId)
             schemeList = getPersistenceService().findAllBy(
-                    " from Scheme where fund.id=? and isActive=true order by name", -1);
+                    " from Scheme where fund.id=?1 and isActive=true order by name", -1);
         else
             schemeList = getPersistenceService()
-                    .findAllBy(" from Scheme where fund.id=? and isactive=true order by name", fundId);
+                    .findAllBy(" from Scheme where fund.id=?1 and isactive=true order by name", fundId);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Scheme List size : " + schemeList.size());
         if (LOGGER.isDebugEnabled())
@@ -323,14 +321,14 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Starting ajaxLoadSchemeBy20...");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Fund Id received is :  " + fundId + "   and Startswith   :" + startsWith);
-        startsWith = "%" + startsWith + "%";
-        schemeList = new ArrayList<Scheme>();
-        final String qry = "from Scheme  where upper(code) like upper(?) or upper(name) like upper(?) and isactive=true ";
+        startsWith = new StringBuilder("%").append(startsWith).append("%").toString();
+        schemeList = new ArrayList<>();
+        final StringBuilder qry = new StringBuilder("from Scheme where upper(code) like upper(?1) or upper(name) like upper(?2) and isactive=true ");
         if (null != fundId && fundId != -1)
-            schemeList.addAll(getPersistenceService().findPageBy(qry + " and fund.id=(?) order by code,name ", 0,
+            schemeList.addAll(getPersistenceService().findPageBy(qry.append(" and fund.id=(?3) order by code, name ").toString(), 0,
                     20, startsWith, startsWith, fundId).getList());
         else
-            schemeList.addAll(getPersistenceService().findPageBy(qry + " order by code,name  ", 0, 20, startsWith,
+            schemeList.addAll(getPersistenceService().findPageBy(qry.append(" order by code, name  ").toString(), 0, 20, startsWith,
                     startsWith).getList());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Scheme List size : " + schemeList.size());
@@ -347,7 +345,7 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Scheme Id received is : " + schemeId);
         if (null != schemeId && schemeId != -1) {
-            subSchemes = getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive=true order by name",
+            subSchemes = getPersistenceService().findAllBy("from SubScheme where scheme.id=?1 and isActive=true order by name",
                     schemeId);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Subscheme List size : " + subSchemes.size());
@@ -366,14 +364,14 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Starting ajaxLoadSubSchemeBy20...");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("schemeId Id received is :  " + schemeId + "   and Startswith   :" + startsWith);
-        startsWith = "%" + startsWith + "%";
-        subSchemes = new ArrayList<SubScheme>();
-        final String qry = "from SubScheme  where upper(code) like upper(?) or upper(name) like upper(?) and isactive=true ";
+        startsWith = new StringBuilder("%").append(startsWith).append("%").toString();
+        subSchemes = new ArrayList<>();
+        final StringBuilder qry = new StringBuilder("from SubScheme  where upper(code) like upper(?1) or upper(name) like upper(?2) and isactive=true ");
         if (null != schemeId)
-            subSchemes.addAll(getPersistenceService().findPageBy(qry + " and scheme.id=(?) order by code,name",
+            subSchemes.addAll(getPersistenceService().findPageBy(qry.append(" and scheme.id=(?3) order by code,name").toString(),
                     0, 20, startsWith, startsWith, schemeId).getList());
         else
-            subSchemes.addAll(getPersistenceService().findPageBy(qry + " order by code,name ", 0, 20,
+            subSchemes.addAll(getPersistenceService().findPageBy(qry.append(" order by code,name ").toString(), 0, 20,
                     startsWith, startsWith).getList());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Scheme List size : " + subSchemes.size());
@@ -395,32 +393,29 @@ public class CommonAction extends BaseFormAction {
         try {
             final List<Object[]> bankBranch = getPersistenceService()
                     .findAllBy(
-                            "select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),bankBranch.branchname) as bankbranchname "
-                                    +
-                                    " FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount "
-                                    +
-                                    " where  bank.isactive=true  and bankBranch.isactive=true and bankaccount.isactive=true  and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id"
-                                    +
-                                    " and bankaccount.fund.id=?1 order by 2",
+                            new StringBuilder("select DISTINCT concat(concat(bank.id,'-'), bankBranch.id) as bankbranchid, concat(concat(bank.name,' '), bankBranch.branchname) as bankbranchname ")
+                                    .append(" FROM Bank bank, Bankbranch bankBranch, Bankaccount bankaccount ")
+                                    .append(" where bank.isactive = true and bankBranch.isactive = true and bankaccount.isactive = true  and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id")
+                                    .append(" and bankaccount.fund.id = ?1 order by 2").toString(),
                             fundId);
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankBranch.size());
-            bankBranchList = new ArrayList<Map<String, Object>>();
+            bankBranchList = new ArrayList<>();
             Map<String, Object> bankBrmap;
             for (final Object[] element : bankBranch) {
-                bankBrmap = new HashMap<String, Object>();
+                bankBrmap = new HashMap<>();
                 bankBrmap.put("bankBranchId", element[0].toString());
                 bankBrmap.put("bankBranchName", element[1].toString());
                 bankBranchList.add(bankBrmap);
             }
 
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new HibernateException(e.getMessage()));
 
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new Exception(e.getMessage()));
         }
 
@@ -438,10 +433,10 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Starting ajaxLoadAllBanks...");
         String fundChk = "";
         List<Object[]> bankBranch;
-        final StringBuffer bankQuery = new StringBuffer();
+        final StringBuilder bankQuery = new StringBuilder();
         if (fundId != null)
             // ajaxLoadBanks();
-            fundChk = " and bankaccount.fund.id=?";
+            fundChk = " and bankaccount.fund.id=?1";
         try {
             bankQuery
                     .append("select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' ')")
@@ -450,26 +445,26 @@ public class CommonAction extends BaseFormAction {
                     .append("and bankBranch.id = bankaccount.bankbranch.id");
             if (fundId != null)
                 bankBranch = getPersistenceService().findAllBy(
-                        bankQuery.append(fundChk).toString() + " order by 2", fundId);
+                        bankQuery.append(fundChk).append(" order by 2").toString(), fundId);
             else
-                bankBranch = getPersistenceService().findAllBy(bankQuery.toString() + " order by 2");
+                bankBranch = getPersistenceService().findAllBy(bankQuery.append(" order by 2").toString());
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankBranch.size());
-            bankBranchList = new ArrayList<Map<String, Object>>();
+            bankBranchList = new ArrayList<>();
             Map<String, Object> bankBrmap;
             for (final Object[] element : bankBranch) {
-                bankBrmap = new HashMap<String, Object>();
+                bankBrmap = new HashMap<>();
                 bankBrmap.put("bankBranchId", element[0].toString());
                 bankBrmap.put("bankBranchName", element[1].toString());
                 bankBranchList.add(bankBrmap);
             }
 
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new HibernateException(e.getMessage()));
 
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new Exception(e.getMessage()));
         }
 
@@ -490,18 +485,18 @@ public class CommonAction extends BaseFormAction {
             if (fundId != null)
                 bankList = getPersistenceService()
                         .findAllBy(
-                                "select distinct b from Bank b,Bankbranch bb , Bankaccount ba  where bb.bank=b and ba.bankbranch =bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and ba.fund.id=?",
+                                "select distinct b from Bank b,Bankbranch bb , Bankaccount ba  where bb.bank = b and ba.bankbranch = bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and ba.fund.id = ?1",
                                 fundId);
             else
                 bankList = getPersistenceService()
                         .findAllBy(
-                                "select distinct b from Bank b,Bankbranch bb , Bankaccount ba  where bb.bank=b and ba.bankbranch =bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS')");
+                                "select distinct b from Bank b,Bankbranch bb , Bankaccount ba  where bb.bank = b and ba.bankbranch = bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS')");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size =  " + bankList.size());
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting bank  " + e.getMessage(), new HibernateException(e.getMessage()));
+            LOGGER.error("Exception occured while getting bank  ", new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting bank  " + e.getMessage(), new HibernateException(e.getMessage()));
+            LOGGER.error("Exception occured while getting bank  ", new HibernateException(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadAllBanksByFund.");
@@ -519,15 +514,15 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("CommonAction | ajaxLoadBanks");
         int index = 0;
         String[] strArray = null;
-        final StringBuffer query = new StringBuffer();
+        final StringBuilder query = new StringBuilder();
         query.append(
-                "select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),bankBranch.branchname) as bankbranchname ")
-                .append("FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount where  bank.isactive=true  and bankBranch.isactive=true and ")
-                .append(" bankaccount.isactive=true and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id ");
-        if (fundId != null)
-            query.append("and bankaccount.fund.id=? and bankaccount.type in(");
-        else
-            query.append("and bankaccount.type in(");
+                "select DISTINCT concat(concat(bank.id,'-'), bankBranch.id) as bankbranchid, concat(concat(bank.name,' '), bankBranch.branchname) as bankbranchname ")
+                .append("FROM Bank bank, Bankbranch bankBranch, Bankaccount bankaccount where bank.isactive = true and bankBranch.isactive = true and ")
+                .append(" bankaccount.isactive = true and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id ");
+        if (fundId != null) {
+            query.append("and bankaccount.fund.id = ?1 and bankaccount.type in (");
+        } else
+            query.append("and bankaccount.type in (");
         if (typeOfAccount.indexOf(",") != -1) {
             strArray = typeOfAccount.split(",");
             for (final String type : strArray) {
@@ -549,21 +544,21 @@ public class CommonAction extends BaseFormAction {
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankBranch.size());
-            bankBranchList = new ArrayList<Map<String, Object>>();
+            bankBranchList = new ArrayList<>();
             Map<String, Object> bankBrmap;
             for (final Object[] element : bankBranch) {
-                bankBrmap = new HashMap<String, Object>();
+                bankBrmap = new HashMap<>();
                 bankBrmap.put("bankBranchId", element[0].toString());
                 bankBrmap.put("bankBranchName", element[1].toString());
                 bankBranchList.add(bankBrmap);
             }
 
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new HibernateException(e.getMessage()));
 
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new Exception(e.getMessage()));
         }
 
@@ -585,15 +580,15 @@ public class CommonAction extends BaseFormAction {
 
             accNumList = getPersistenceService()
                     .findAllBy(
-                            "from Bankaccount ba where ba.bankbranch.id=?1 and ba.bankbranch.bank.id=?2 and isactive=true order by ba.chartofaccounts.glcode",
+                            "from Bankaccount ba where ba.bankbranch.id = ?1 and ba.bankbranch.bank.id = ?2 and isactive = true order by ba.chartofaccounts.glcode",
                             branchId, bankId);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank account Number list size =  " + accNumList.size());
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting bank account numbers " + e.getMessage(),
+            LOGGER.error("Exception occured while getting bank account numbers ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting bank account numbers " + e.getMessage(),
+            LOGGER.error("Exception occured while getting bank account numbers ",
                     new HibernateException(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
@@ -611,15 +606,15 @@ public class CommonAction extends BaseFormAction {
 
             accNumList = getPersistenceService()
                     .findAllBy(
-                            "from Bankaccount ba where ba.bankbranch.id=? and isactive=true order by ba.chartofaccounts.glcode",
+                            "from Bankaccount ba where ba.bankbranch.id = ?1 and isactive = true order by ba.chartofaccounts.glcode",
                             branchId);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank account Number list size =  " + accNumList.size());
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting bank account numbers " + e.getMessage(),
+            LOGGER.error("Exception occured while getting bank account numbers ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting bank account numbers " + e.getMessage(),
+            LOGGER.error("Exception occured while getting bank account numbers ",
                     new HibernateException(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
@@ -639,19 +634,19 @@ public class CommonAction extends BaseFormAction {
             if (fundId != null)
                 branchList = getPersistenceService()
                         .findAllBy(
-                                "select distinct bb from Bankbranch bb , Bankaccount ba  where ba.bankbranch =bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bb.bank.id=?1 and bb.isactive=true and ba.fund.id=?2",
+                                "select distinct bb from Bankbranch bb , Bankaccount ba  where ba.bankbranch = bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bb.bank.id = ?1 and bb.isactive = true and ba.fund.id = ?2",
                                 bankId, fundId);
             else
                 branchList = getPersistenceService()
                         .findAllBy(
-                                "select distinct bb from Bankbranch bb , Bankaccount ba  where ba.bankbranch =bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bb.bank.id=?1 and bb.isactive=true",
+                                "select distinct bb from Bankbranch bb , Bankaccount ba  where ba.bankbranch = bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bb.bank.id = ?1 and bb.isactive = true",
                                 bankId);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank Branch Number list size =  " + branchList.size());
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting bank branch " + e.getMessage(), new HibernateException(e.getMessage()));
+            LOGGER.error("Exception occured while getting bank branch ", new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting bank branch " + e.getMessage(), new HibernateException(e.getMessage()));
+            LOGGER.error("Exception occured while getting bank branch ", new HibernateException(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadBankBranchFromBank.");
@@ -669,20 +664,20 @@ public class CommonAction extends BaseFormAction {
             if (fundId != null)
                 accNumList = getPersistenceService()
                         .findAllBy(
-                                "from Bankaccount ba where ba.bankbranch.id=?1 and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and ba.isactive=true and ba.fund.id=?2",
+                                "from Bankaccount ba where ba.bankbranch.id = ?1 and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and ba.isactive = true and ba.fund.id = ?2",
                                 branchId, fundId);
             else
                 accNumList = getPersistenceService()
                         .findAllBy(
-                                "from Bankaccount ba where ba.bankbranch.id=?1 and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and ba.isactive=true",
+                                "from Bankaccount ba where ba.bankbranch.id = ?1 and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and ba.isactive = true",
                                 branchId);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank Account Number list size =  " + accNumList.size());
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting bank account " + e.getMessage(),
+            LOGGER.error("Exception occured while getting bank account ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting bank account " + e.getMessage(),
+            LOGGER.error("Exception occured while getting bank account ",
                     new HibernateException(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
@@ -698,9 +693,9 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("CommonAction | ajaxLoadRTGSChequeFromBankAcc");
         List<Object[]> resultList = new ArrayList<Object[]>();
-        new ArrayList<Object>();
+        new ArrayList<>();
         // rtgsNumber=;
-        instrumentHeaderList = new ArrayList<InstrumentHeader>();
+        instrumentHeaderList = new ArrayList<>();
         /*
          * if(!StringUtils.isEmpty(query)) { strquery=
          * "select appReq from ApplicationRequest appReq where upper(appReq.applicationNo) like '%'||?||'%' ";
@@ -727,21 +722,18 @@ public class CommonAction extends BaseFormAction {
             calendar.get(Calendar.DATE);
             final Date date = calendar.getTime();
             final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yy");
-            final String date1 = sdf.format(date);
 
             resultList = getPersistenceService()
-                    .findAllBy(RTGSNUMBERSQUERY, bankaccountId);
+                    .findAllBy(RTGSNUMBERSQUERY.toString(), bankaccountId);
             for (final Object[] obj : resultList) {
-                InstrumentHeader ih = new InstrumentHeader();
-                ih = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?1", (Long) obj[0]);
-
+                InstrumentHeader ih = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id = ?1", (Long) obj[0]);
                 instrumentHeaderList.add(ih);
             }
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting bank account " + e.getMessage(),
+            LOGGER.error("Exception occured while getting bank account ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting bank account " + e.getMessage(),
+            LOGGER.error("Exception occured while getting bank account ",
                     new HibernateException(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
@@ -760,19 +752,19 @@ public class CommonAction extends BaseFormAction {
             if (fundId != null && fundId != -1 && fundId != 0)
                 accNumList = getPersistenceService()
                         .findAllBy(
-                                "from Bankaccount ba where ba.bankbranch.id=? and fund.id=? and isactive=true order by ba.chartofaccounts.glcode",
+                                "from Bankaccount ba where ba.bankbranch.id = ?1 and fund.id = ?2 and isactive = true order by ba.chartofaccounts.glcode",
                                 branchId, fundId);
             else
                 accNumList = getPersistenceService().findAllBy(
-                        "from Bankaccount ba where ba.bankbranch.id=? and isactive=true order by ba.chartofaccounts.glcode",
+                        "from Bankaccount ba where ba.bankbranch.id = ?1 and isactive = true order by ba.chartofaccounts.glcode",
                         branchId);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank account Number list size =  " + accNumList.size());
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting bank account numbers " + e.getMessage(),
+            LOGGER.error("Exception occured while getting bank account numbers ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting bank account numbers " + e.getMessage(),
+            LOGGER.error("Exception occured while getting bank account numbers ",
                     new HibernateException(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
@@ -791,15 +783,15 @@ public class CommonAction extends BaseFormAction {
             if (departmentId != null && departmentId != -1 && departmentId != 0)
                 drawingList = getPersistenceService()
                         .findAllBy(
-                                "select do from DrawingOfficer do,Department dept,DepartmentDOMapping ddm where ddm.department.id = dept.id and ddm.drawingOfficer.id = do.id and dept.id = ?",
+                                "select do from DrawingOfficer do, Department dept, DepartmentDOMapping ddm where ddm.department.id = dept.id and ddm.drawingOfficer.id = do.id and dept.id = ?1 ",
                                 departmentId);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Drawing officers  list size =  " + drawingList.size());
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting Drawing officers " + e.getMessage(),
+            LOGGER.error("Exception occured while getting Drawing officers ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting Drawing officers " + e.getMessage(),
+            LOGGER.error("Exception occured while getting Drawing officers ",
                     new HibernateException(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
@@ -822,42 +814,42 @@ public class CommonAction extends BaseFormAction {
                     if (fundId != null)
                         accNumList = getPersistenceService()
                                 .findAllBy(
-                                        "from Bankaccount ba where ba.bankbranch.id=? and ba.fund.id=? and ba.bankbranch.bank.id=? and isactive=true and type in (?, ?) order by ba.chartofaccounts.glcode",
+                                        "from Bankaccount ba where ba.bankbranch.id = ?1 and ba.fund.id = ?2 and ba.bankbranch.bank.id = ?3 and ba.isactive = true and ba.type in (?4, ?5) order by ba.chartofaccounts.glcode",
                                         branchId, fundId, bankId, BankAccountType.valueOf(strArray[0].toUpperCase()),
                                         BankAccountType.valueOf(strArray[1].toUpperCase()));
                     else
                         accNumList = getPersistenceService()
                                 .findAllBy(
-                                        "from Bankaccount ba where ba.bankbranch.id=? and  ba.bankbranch.bank.id=? and isactive=true and type in (?, ?) order by ba.chartofaccounts.glcode",
+                                        "from Bankaccount ba where ba.bankbranch.id = ?1 and  ba.bankbranch.bank.id = ?2 and ba.isactive = true and ba.type in (?3, ?4) order by ba.chartofaccounts.glcode",
                                         branchId, bankId, BankAccountType.valueOf(strArray[0]),
                                         BankAccountType.valueOf(strArray[1]));
                 } else if (fundId != null)
                     accNumList = getPersistenceService()
                             .findAllBy(
-                                    "from Bankaccount ba where ba.bankbranch.id=? and ba.fund.id=? and ba.bankbranch.bank.id=? and isactive=true and type in (?) order by ba.chartofaccounts.glcode",
+                                    "from Bankaccount ba where ba.bankbranch.id = ?1 and ba.fund.id = ?2 and ba.bankbranch.bank.id = ?3 and ba.isactive = true and ba.type in (?4) order by ba.chartofaccounts.glcode",
                                     branchId, fundId, bankId, typeOfAccount);
                 else
                     accNumList = getPersistenceService()
                             .findAllBy(
-                                    "from Bankaccount ba where ba.bankbranch.id=?  and ba.bankbranch.bank.id=? and isactive=true and type in (?) order by ba.chartofaccounts.glcode",
+                                    "from Bankaccount ba where ba.bankbranch.id = ?1  and ba.bankbranch.bank.id = ?2 and ba.isactive = true and ba.type in (?3) order by ba.chartofaccounts.glcode",
                                     branchId, bankId, typeOfAccount);
             } else if (fundId != null)
                 accNumList = getPersistenceService()
                         .findAllBy(
-                                "from Bankaccount ba where ba.bankbranch.id=? and ba.fund.id=? and ba.bankbranch.bank.id=? and isactive=true order by ba.chartofaccounts.glcode",
+                                "from Bankaccount ba where ba.bankbranch.id = ?1 and ba.fund.id = ?2 and ba.bankbranch.bank.id = ?3 and ba.isactive = true order by ba.chartofaccounts.glcode",
                                 branchId, fundId, bankId);
             else
                 accNumList = getPersistenceService()
                         .findAllBy(
-                                "from Bankaccount ba where ba.bankbranch.id=?  and ba.bankbranch.bank.id=? and isactive=true order by ba.chartofaccounts.glcode",
+                                "from Bankaccount ba where ba.bankbranch.id = ?1 and ba.bankbranch.bank.id = ?2 and ba.isactive = true order by ba.chartofaccounts.glcode",
                                 branchId, bankId);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank account Number list size =  " + accNumList.size());
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting bank account numbers " + e.getMessage(),
+            LOGGER.error("Exception occured while getting bank account numbers ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting bank account numbers " + e.getMessage(),
+            LOGGER.error("Exception occured while getting bank account numbers ",
                     new HibernateException(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
@@ -877,15 +869,15 @@ public class CommonAction extends BaseFormAction {
             final String accountNumId = parameters.get("accnum")[0];
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank account number id received = " + accountNumId);
-            value = (String) getPersistenceService().find("select narration from Bankaccount where id=?",
+            value = (String) getPersistenceService().find("select narration from Bankaccount where id = ?1",
                     Long.valueOf(accountNumId));
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Naration value = " + value);
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting bank account narration " + e.getMessage(),
+            LOGGER.error("Exception occured while getting bank account narration ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting bank account narration " + e.getMessage(),
+            LOGGER.error("Exception occured while getting bank account narration ",
                     new HibernateException(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
@@ -905,14 +897,14 @@ public class CommonAction extends BaseFormAction {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank account number id received = " + accountNumId);
             value = (String) getPersistenceService().find(
-                    "select concat(concat(narration,'-'),fund.id) from Bankaccount where id=?", Integer.valueOf(accountNumId));
+                    "select concat(concat(narration,'-'),fund.id) from Bankaccount where id = ?1", Integer.valueOf(accountNumId));
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Naration value = " + value);
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting bank account narration " + e.getMessage(),
+            LOGGER.error("Exception occured while getting bank account narration ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting bank account narration " + e.getMessage(),
+            LOGGER.error("Exception occured while getting bank account narration ",
                     new HibernateException(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
@@ -921,12 +913,12 @@ public class CommonAction extends BaseFormAction {
     }
 
     @Action(value = "/voucher/common-getDetailType")
-    public String getDetailType() throws Exception {
+    public String getDetailType() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting getDetailType...");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside getDetailType method");
-        value = "";
+        String value = "";
         final String accountCode = parameters.get("accountCode")[0];
         final String index = parameters.get("index")[0];
         if (LOGGER.isDebugEnabled())
@@ -935,14 +927,12 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("index is : = " + index);
         final List<Accountdetailtype> list = getPersistenceService()
                 .findAllBy(
-                        " from Accountdetailtype"
-                                +
-                                " where id in (select detailTypeId from CChartOfAccountDetail where glCodeId=(select id from CChartOfAccounts where glcode=?))  ",
+                        " from Accountdetailtype where id in (select detailTypeId from CChartOfAccountDetail where glCodeId = (select id from CChartOfAccounts where glcode = ?1))  ",
                         accountCode);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" list :" + list);
         for (final Accountdetailtype accountdetailtype : list)
-            value = value + index + "~" + accountdetailtype.getDescription() + "~" + accountdetailtype.getId().toString() + "#";
+            value = new StringBuilder(value).append(index).append("~").append(accountdetailtype.getDescription()).append("~").append(accountdetailtype.getId().toString()).append("#").toString();
         if (!value.equals(""))
             value = value.substring(0, value.length() - 1);
 
@@ -960,10 +950,10 @@ public class CommonAction extends BaseFormAction {
         try {
             branchList = persistenceService
                     .findAllBy(
-                            "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund.id=? ) and br.isactive=true order by br.bank.name asc",
+                            "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund.id = ?1 ) and br.isactive = true order by br.bank.name asc",
                             fundId);
         } catch (final Exception e) {
-            LOGGER.error("Exception while loading ajaxLoadBankBranch=" + e.getMessage());
+            LOGGER.error("Exception while loading ajaxLoadBankBranch", e);
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadBankBranch.");
@@ -977,10 +967,10 @@ public class CommonAction extends BaseFormAction {
         try {
             branchList = persistenceService
                     .findAllBy(
-                            "select distinct bb from Bankbranch bb,Bankaccount ba where bb.bank.id=? and ba.bankbranch=bb and bb.isactive=true",
+                            "select distinct bb from Bankbranch bb, Bankaccount ba where bb.bank.id = ?1 and ba.bankbranch = bb and bb.isactive = true",
                             bankId);
         } catch (final Exception e) {
-            LOGGER.error("Exception while loading ajaxLoadBankBranch=" + e.getMessage());
+            LOGGER.error("Exception while loading ajaxLoadBankBranch", e);
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadBankBranch.");
@@ -1009,7 +999,7 @@ public class CommonAction extends BaseFormAction {
                 }
                 accNumList = persistenceService
                         .findAllBy(
-                                " from Bankaccount where accountnumber=? and isactive=true order by chartofaccounts.glcode ",
+                                " from Bankaccount where accountnumber = ?1 and isactive = true order by chartofaccounts.glcode ",
                                 bankAccount);
             } else if (typeOfAccount != null && !typeOfAccount.equals("")) {
                 if (typeOfAccount.indexOf(",") != -1) {
@@ -1017,36 +1007,36 @@ public class CommonAction extends BaseFormAction {
                     if (fundId != null && fundId != -1 && fundId != 0)
                         accNumList = persistenceService
                                 .findAllBy(
-                                        " from Bankaccount where fund.id=? and bankbranch.id=? and isactive=true  and type in (?,?) order by chartofaccounts.glcode ",
+                                        " from Bankaccount where fund.id = ?1 and bankbranch.id = ?2 and isactive = true  and type in (?3, ?4) order by chartofaccounts.glcode ",
                                         fundId, branchId, BankAccountType.valueOf(strArray[0]),
                                         BankAccountType.valueOf(strArray[1]));
                     else
                         accNumList = persistenceService
                                 .findAllBy(
-                                        " from Bankaccount where  bankbranch.id=? and isactive=true  and type in (?,?) order by chartofaccounts.glcode ",
-                                        fundId, branchId, BankAccountType.valueOf(strArray[0]),
+                                        " from Bankaccount where  bankbranch.id = ?1 and isactive = true  and type in (?2, ?3) order by chartofaccounts.glcode ",
+                                        branchId, BankAccountType.valueOf(strArray[0]),
                                         BankAccountType.valueOf(strArray[1]));
                 } else if (fundId != null && fundId != -1 && fundId != 0)
                     accNumList = persistenceService
                             .findAllBy(
-                                    " from Bankaccount where fund.id=? and bankbranch.id=? and isactive=true  and type in (?) order by chartofaccounts.glcode ",
+                                    " from Bankaccount where fund.id = ?1 and bankbranch.id = ?2 and isactive = true  and type in (?3) order by chartofaccounts.glcode ",
                                     fundId, branchId, typeOfAccount);
                 else
                     accNumList = persistenceService
                             .findAllBy(
-                                    " from Bankaccount where  bankbranch.id=? and isactive=true  and type in (?) order by chartofaccounts.glcode ",
-                                    fundId, branchId, typeOfAccount);
+                                    " from Bankaccount where  bankbranch.id = ?1 and isactive = true  and type in (?2) order by chartofaccounts.glcode ",
+                                    branchId, typeOfAccount);
             } else if (fundId != null && fundId != -1 && fundId != 0)
                 accNumList = persistenceService
                         .findAllBy(
-                                " from Bankaccount where fund.id=? and bankbranch.id=? and isactive=true order by chartofaccounts.glcode",
+                                " from Bankaccount where fund.id = ?1 and bankbranch.id = ?2 and isactive = true order by chartofaccounts.glcode",
                                 fundId, branchId);
             else
                 accNumList = persistenceService.findAllBy(
-                        " from Bankaccount where  bankbranch.id=? and isactive=true order by chartofaccounts.glcode",
-                        fundId, branchId);
+                        " from Bankaccount where  bankbranch.id = ?1 and isactive = true order by chartofaccounts.glcode",
+                        branchId);
         } catch (final Exception e) {
-            LOGGER.error("Exception while loading ajaxLoadBankAccounts=" + e.getMessage());
+            LOGGER.error("Exception while loading ajaxLoadBankAccounts", e);
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadBankAccounts.");
@@ -1058,11 +1048,11 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadBankAccountsBySubscheme...");
 
-        final SubScheme subScheme = (SubScheme) persistenceService.find("from SubScheme where id = " + subSchemeId);
+        final SubScheme subScheme = (SubScheme) persistenceService.find("from SubScheme where id = ?1", subSchemeId);
         fundId = subScheme.getScheme().getFund().getId();
         final String[] strArray = typeOfAccount.split(",");
         accNumList = persistenceService.findAllBy(
-                " from Bankaccount where fund.id=? and isactive=true  and type in (?,?) order by chartofaccounts.glcode ",
+                " from Bankaccount where fund.id = ?1 and isactive = true and type in (?2, ?3) order by chartofaccounts.glcode ",
                 fundId,
                 strArray[0], strArray[1]);
         if (LOGGER.isDebugEnabled())
@@ -1087,43 +1077,43 @@ public class CommonAction extends BaseFormAction {
         final String index = parameters.get("index")[0];
         try {
 
-            final Accountdetailtype adt = (Accountdetailtype) getPersistenceService().find(" from Accountdetailtype where id=?",
+            final Accountdetailtype adt = (Accountdetailtype) getPersistenceService().find(" from Accountdetailtype where id = ?1",
                     Integer.valueOf(parameters.get("detailtypeid")[0]));
             if (adt == null) {
-                value = index + "~" + ERROR;
+                value = new StringBuilder(index).append("~").append(ERROR).toString();
                 return "result";
             }
             if (adt.getTablename().equalsIgnoreCase("EG_EMPLOYEE")) {
                 final PersonalInformation information = (PersonalInformation) getPersistenceService().find(
-                        " from PersonalInformation where employeeCode=? and isActive=true", code);
+                        " from PersonalInformation where employeeCode = ?1 and isActive = true", code);
                 if (information == null)
-                    value = index + "~" + ERROR;
+                    value = new StringBuilder(index).append("~").append(ERROR).toString();
                 else
-                    value = index + "~" + information.getIdPersonalInformation() + "~" + information.getEmployeeFirstName();
+                    value = new StringBuilder(index).append("~").append(information.getIdPersonalInformation()).append("~").append(information.getEmployeeFirstName()).toString();
             } else if (adt.getTablename().equalsIgnoreCase("RELATION")) {
                 final Relation relation = (Relation) getPersistenceService().find(
-                        " from Relation where code=? and isactive=true",
+                        " from Relation where code = ?1 and isactive = true",
                         code);
                 if (relation == null)
-                    value = index + "~" + ERROR;
+                    value = new StringBuilder(index).append("~").append(ERROR).toString();
                 else
-                    value = index + "~" + relation.getId() + "~" + relation.getName();
+                    value = new StringBuilder(index).append("~").append(relation.getId()).append("~").append(relation.getName()).toString();
             } else if (adt.getTablename().equalsIgnoreCase("ACCOUNTENTITYMASTER")) {
                 final AccountEntity accountEntity = (AccountEntity) getPersistenceService().find(
-                        " from AccountEntity where code=? and isactive=true ", code);
+                        " from AccountEntity where code = ?1 and isactive = true ", code);
                 if (accountEntity == null)
-                    value = index + "~" + ERROR;
+                    value = new StringBuilder(index).append("~").append(ERROR).toString();
                 else
-                    value = index + "~" + accountEntity.getId() + "~" + accountEntity.getCode();
+                    value = new StringBuilder(index).append("~").append(accountEntity.getId()).append("~").append(accountEntity.getCode()).toString();
             }
         } catch (final HibernateException e) {
             if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Exception occuerd while getting detail code " + e.getMessage());
-            value = index + "~" + ERROR;
+                LOGGER.debug("Exception occuerd while getting detail code ", e);
+            value = new StringBuilder(index).append("~").append(ERROR).toString();
         } catch (final Exception e) {
             if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Exception occuerd while getting detail code " + e.getMessage());
-            value = index + "~" + ERROR;
+                LOGGER.debug("Exception occuerd while getting detail code ", e);
+            value = new StringBuilder(index).append("~").append(ERROR).toString();
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxValidateDetailCode.");
@@ -1131,7 +1121,7 @@ public class CommonAction extends BaseFormAction {
     }
 
     @Action(value = "/voucher/common-getDetailCode")
-    public String getDetailCode() throws Exception {
+    public String getDetailCode() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting getDetailCode...");
         value = "";
@@ -1143,15 +1133,14 @@ public class CommonAction extends BaseFormAction {
         for (final String accountCode : accountCodes) {
 
             final CChartOfAccountDetail chartOfAccountDetail = (CChartOfAccountDetail) getPersistenceService().find(
-                    " from CChartOfAccountDetail" +
-                            " where glCodeId=(select id from CChartOfAccounts where glcode=?)",
+                    " from CChartOfAccountDetail where glCodeId = (select id from CChartOfAccounts where glcode = ?1)",
                     accountCode);
 
             if (null != chartOfAccountDetail)
                 if (value.trim().length() != 0)
-                    value = value + "~" + accountCode + "~" + chartOfAccountDetail.getGlCodeId().getId().toString();
+                    value = new StringBuilder(value).append("~").append(accountCode).append("~").append(chartOfAccountDetail.getGlCodeId().getId().toString()).toString();
                 else
-                    value = accountCode + "~" + chartOfAccountDetail.getGlCodeId().getId().toString();
+                    value = new StringBuilder(accountCode).append("~").append(chartOfAccountDetail.getGlCodeId().getId().toString()).toString();
 
         } /*
            * if(values.trim().length()!=0){ values=index+"~"+values; }
@@ -1168,42 +1157,42 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Starting ajaxGetDetailCode...");
         final String index = parameters.get("index")[0];
         try {
-            final Accountdetailtype adt = (Accountdetailtype) getPersistenceService().find(" from Accountdetailtype where id=?",
+            final Accountdetailtype adt = (Accountdetailtype) getPersistenceService().find(" from Accountdetailtype where id = ?1",
                     Integer.valueOf(parameters.get("detailtypeid")[0]));
             if (adt == null) {
-                value = index + "~" + ERROR;
+                value = new StringBuilder(index).append("~").append(ERROR).toString();
                 return "result";
             }
             if (adt.getTablename().equalsIgnoreCase("EG_EMPLOYEE")) {
                 final List<PersonalInformation> information = getPersistenceService().findAllBy(
-                        "from PersonalInformation where isActive=true order by employeeCode");
+                        "from PersonalInformation where isActive = true order by employeeCode");
                 if (information == null)
-                    value = index + "~" + ERROR;
+                    value = new StringBuilder(index).append("~").append(ERROR).toString();
                 else
                     for (final PersonalInformation personalInformation : information)
                         detailCodes.add(personalInformation.getIdPersonalInformation() + "-"
                                 + personalInformation.getEmployeeFirstName());
             } else if (adt.getTablename().equalsIgnoreCase("RELATION")) {
                 final List<Relation> relation = getPersistenceService().findAllBy(
-                        "from Relation where isactive=true order by code");
+                        "from Relation where isactive = true order by code");
                 if (relation == null)
-                    value = index + "~" + ERROR;
+                    value = new StringBuilder(index).append("~").append(ERROR).toString();
                 else
                     for (final Relation rel : relation)
                         detailCodes.add(rel.getId() + "-" + rel.getName());
             } else if (adt.getTablename().equalsIgnoreCase("ACCOUNTENTITYMASTER")) {
                 final List<AccountEntity> accountEntity = getPersistenceService().findAllBy(
-                        " from AccountEntity where isactive=true order by code");
+                        " from AccountEntity where isactive = true order by code");
                 if (accountEntity == null)
-                    value = index + "~" + ERROR;
+                    value = new StringBuilder(index).append("~").append(ERROR).toString();
                 else
                     for (final AccountEntity rel : accountEntity)
                         detailCodes.add(rel.getId() + "-" + rel.getCode());
             }
         } catch (final Exception e) {
             if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Exception occuerd while getting detail code " + e.getMessage());
-            value = index + "~" + ERROR;
+                LOGGER.debug("Exception occuerd while getting detail code ",  e);
+            value = new StringBuilder(index).append("~").append(ERROR).toString();
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxGetDetailCode.");
@@ -1216,13 +1205,13 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting prepare...");
         final List<Object> voucherNameList = getPersistenceService().findAllBy(
-                "select  distinct name from  CVoucherHeader where type=?", type);
-        nameList = new ArrayList<Map<String, String>>();
+                "select  distinct name from  CVoucherHeader where type = ?1", type);
+        nameList = new ArrayList<>();
         Map<String, String> voucherNamesMap;
         for (final Object voucherName : voucherNameList) {
             if (LOGGER.isInfoEnabled())
-                LOGGER.info("..................................................................." + (String) voucherName);
-            voucherNamesMap = new LinkedHashMap<String, String>();
+                LOGGER.info("..................................................................." + voucherName);
+            voucherNamesMap = new LinkedHashMap<>();
             voucherNamesMap.put("key", (String) voucherName);
             voucherNamesMap.put("val", (String) voucherName);
             nameList.add(voucherNamesMap);
@@ -1270,7 +1259,7 @@ public class CommonAction extends BaseFormAction {
     }
 
     @Action(value = "/voucher/common-ajaxLoadUser")
-    public String ajaxLoadUser() throws Exception {
+    public String ajaxLoadUser() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadUser...");
         userList = new ArrayList<User>();
@@ -1280,9 +1269,7 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Functionar received : = " + functionaryName);
         String functionaryId = null;
         if (!"ANYFUNCTIONARY".equalsIgnoreCase(functionaryName)) {
-            final Functionary functionary = (Functionary) persistenceService.find("from Functionary where name='"
-                    + functionaryName
-                    + "'");
+            final Functionary functionary = (Functionary) persistenceService.find("from Functionary where name = ?1",functionaryName);
             functionaryId = functionary != null ? functionary.getId().toString() : null;
         }
         if (departmentId != -1 && designationId != -1 && null != functionaryName && functionaryName.trim().length() != 0) {
@@ -1296,7 +1283,7 @@ public class CommonAction extends BaseFormAction {
         return "users";
     }
 
-    public String ajaxHodForDept() throws Exception {
+    public String ajaxHodForDept() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxHodForDept...");
         userList = new ArrayList<User>();
@@ -1332,14 +1319,14 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadEntites...");
         if (accountDetailType == null)
-            entitiesList = new ArrayList<EntityType>();
+            entitiesList = new ArrayList<>();
         else {
             final Accountdetailtype detailType = (Accountdetailtype) persistenceService.find(
-                    "from Accountdetailtype where id=? order by name", accountDetailType);
+                    "from Accountdetailtype where id = ?1 order by name", accountDetailType);
             final String table = detailType.getFullQualifiedName();
             final Class<?> service = Class.forName(table);
             String simpleName = service.getSimpleName();
-            simpleName = simpleName.substring(0, 1).toLowerCase() + simpleName.substring(1) + "Service";
+            simpleName = simpleName.substring(0, 1).toLowerCase().concat(simpleName.substring(1)).concat("Service");
 
             final WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(ServletActionContext
                     .getServletContext());
@@ -1357,14 +1344,14 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadEntitesBy20...");
         if (accountDetailType == null || accountDetailType == 0)
-            entitiesList = new ArrayList<EntityType>();
+            entitiesList = new ArrayList<>();
         else {
             final Accountdetailtype detailType = (Accountdetailtype) persistenceService.find(
-                    "from Accountdetailtype where id=? order by name", accountDetailType);
+                    "from Accountdetailtype where id = ?1 order by name", accountDetailType);
             final String table = detailType.getFullQualifiedName();
             final Class<?> service = Class.forName(table);
             String simpleName = service.getSimpleName();
-            simpleName = simpleName.substring(0, 1).toLowerCase() + simpleName.substring(1) + "Service";
+            simpleName = simpleName.substring(0, 1).toLowerCase().concat(simpleName.substring(1)).concat("Service");
 
             final WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(ServletActionContext
                     .getServletContext());
@@ -1378,16 +1365,16 @@ public class CommonAction extends BaseFormAction {
 
     @SuppressWarnings("unchecked")
     @Action(value = "/voucher/common-ajaxLoadRTGSNumberBy20")
-    public String ajaxLoadRTGSNumberBy20() throws ClassNotFoundException {
+    public String ajaxLoadRTGSNumberBy20() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadRTGSNumberBy20...");
         if (bankaccountId == null || bankaccountId == 0)
-            numberList = new ArrayList<String>();
+            numberList = new ArrayList<>();
         else
             numberList = persistenceService
                     .findAllBy(
-                            "SELECT ih.transactionNumber FROM InstrumentHeader ih where  ih.bankAccountId.id =? and ih.instrumentType.id=5 and upper(transactionNumber) like upper(?)",
-                            bankaccountId, "%" + rtgsNumber + "%");
+                            "SELECT ih.transactionNumber FROM InstrumentHeader ih where  ih.bankAccountId.id = ?1 and ih.instrumentType.id = 5 and upper(transactionNumber) like upper(?2)",
+                            bankaccountId, "%".concat(rtgsNumber).concat("%"));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadRTGSNumberBy20.");
         return "rtgsNumbers";
@@ -1395,7 +1382,7 @@ public class CommonAction extends BaseFormAction {
 
     @SuppressWarnings("unchecked")
     @Action(value = "/voucher/common-ajaxLoadRTGSNumberByAccountId")
-    public String ajaxLoadRTGSNumberByAccountId() throws ClassNotFoundException {
+    public String ajaxLoadRTGSNumberByAccountId() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadRTGSNumberBy20...");
         if (bankaccountId == null || bankaccountId == 0)
@@ -1403,8 +1390,8 @@ public class CommonAction extends BaseFormAction {
         else
             numberList = persistenceService
                     .findAllBy(
-                            "SELECT ih.transactionNumber FROM InstrumentHeader ih where  ih.bankAccountId.id =?  and upper(transactionNumber) like upper(?)",
-                            bankaccountId, rtgsNumber + "%");
+                            "SELECT ih.transactionNumber FROM InstrumentHeader ih where ih.bankAccountId.id = ?1 and upper(transactionNumber) like upper(?2)",
+                            bankaccountId, rtgsNumber.concat("%"));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadRTGSNumberBy20.");
         return "rtgsNumbers";
@@ -1416,7 +1403,7 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Starting ajaxLoadCheckList...");
         if (LOGGER.isInfoEnabled())
             LOGGER.info("..............................................................................ajaxLoadCheckList");
-        final EgBillSubType egBillSubType = (EgBillSubType) persistenceService.find("from EgBillSubType where id=?",
+        final EgBillSubType egBillSubType = (EgBillSubType) persistenceService.find("from EgBillSubType where id = ?1",
                 billSubtypeId.longValue());
         checkList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF", egBillSubType.getName());
         if (checkList.size() == 0)
@@ -1430,21 +1417,21 @@ public class CommonAction extends BaseFormAction {
 
     @SuppressWarnings("unchecked")
     @Action(value = "/voucher/common-searchEntites")
-    public String searchEntites() throws ClassNotFoundException {
+    public String searchEntites() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting searchEntites...");
         searchType = "EntitySearch";
         if (accountDetailType == null)
-            entitiesList = new ArrayList<EntityType>();
+            entitiesList = new ArrayList<>();
         else {
             final Accountdetailtype detailType = (Accountdetailtype) persistenceService.find(
-                    "from Accountdetailtype where id=? order by name", accountDetailType);
+                    "from Accountdetailtype where id = ?1 order by name", accountDetailType);
             final String table = detailType.getFullQualifiedName();
             accountDetailTypeName = detailType.getName();
             try {
                 final Class<?> service = Class.forName(table);
                 String simpleName = service.getSimpleName();
-                simpleName = simpleName.substring(0, 1).toLowerCase() + simpleName.substring(1) + "Service";
+                simpleName = simpleName.substring(0, 1).toLowerCase().concat(simpleName.substring(1)).concat("Service");
 
                 final WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(ServletActionContext
                         .getServletContext());
@@ -1454,8 +1441,8 @@ public class CommonAction extends BaseFormAction {
                 entitiesList = (List<EntityType>) entityService.getAllActiveEntities(accountDetailType);
             } catch (final Exception e) {
                 if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("Service Not Available Exception : " + e.getMessage());
-                entitiesList = new ArrayList<EntityType>();
+                    LOGGER.debug("Service Not Available Exception : ", e);
+                entitiesList = new ArrayList<>();
             }
         }
         if (LOGGER.isDebugEnabled())
@@ -1465,7 +1452,7 @@ public class CommonAction extends BaseFormAction {
 
     @SuppressWarnings("unchecked")
     @Action(value = "/voucher/common-searchAccountCodes")
-    public String searchAccountCodes() throws ClassNotFoundException {
+    public String searchAccountCodes() {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting accountCodes...");
@@ -1484,39 +1471,35 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadBanksWithAssignedCheques...");
         try {
-            final String vouchersWithNewInstrumentsQuery = "select voucherheaderid from egf_instrumentvoucher eiv,egf_instrumentheader ih,"
-                    +
-                    " egw_status egws where eiv.instrumentheaderid=ih.id and egws.id=ih.id_status and egws.moduletype='Instrument' and egws.description='New' and "
-                    +
-                    " ih.transactionNumber is not null";
-            StringBuffer queryString = new StringBuffer();
-            queryString = queryString
-                    .append("select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),"
-                            +
-                            "bankBranch.branchname) as bankbranchname from  voucherheader vh,Bank bank,Bankbranch bankBranch,Bankaccount bankaccount, ")
-                    .append(" paymentheader ph where  ")
-                    .append(" ph.voucherheaderid=vh.id and vh.id  in (" + vouchersWithNewInstrumentsQuery.toString()
-                            + ") and bank.isactive=true  and bankBranch.isactive=true ")
-                    .append(" and  bank.id = bankBranch.bankid and bankBranch.id = bankaccount.BRANCHID and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date")
-                    .append(" and ph.bankaccountnumberid=bankaccount.id  and bankaccount.isactive=true order by 2");
+            final StringBuilder vouchersWithNewInstrumentsQuery = new StringBuilder("select voucherheaderid")
+                    .append(" from egf_instrumentvoucher eiv, egf_instrumentheader ih, egw_status egws")
+                    .append(" where eiv.instrumentheaderid = ih.id and egws.id = ih.id_status and egws.moduletype = 'Instrument' and egws.description = 'New' and")
+                    .append(" ih.transactionNumber is not null");
+            StringBuilder queryString = new StringBuilder("select DISTINCT concat(concat(bank.id,'-'), bankBranch.id) as bankbranchid, concat(concat(bank.name,' '), bankBranch.branchname) as bankbranchname")
+                    .append(" from voucherheader vh, Bank bank, Bankbranch bankBranch, Bankaccount bankaccount, paymentheader ph")
+                    .append(" where ph.voucherheaderid = vh.id and vh.id  in (")
+                    .append(vouchersWithNewInstrumentsQuery)
+                    .append(") and bank.isactive = true and bankBranch.isactive = true ")
+                    .append(" and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.BRANCHID and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date")
+                    .append(" and ph.bankaccountnumberid = bankaccount.id and bankaccount.isactive = true order by 2");
             final List<Object[]> bankBranch = persistenceService.getSession().createNativeQuery(queryString.toString())
                     .setParameter("date", getAsOnDate())
                     .list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankBranch.size());
-            bankBranchList = new ArrayList<Map<String, Object>>();
+            bankBranchList = new ArrayList<>();
             Map<String, Object> bankBrmap;
             for (final Object[] element : bankBranch) {
-                bankBrmap = new HashMap<String, Object>();
+                bankBrmap = new HashMap<>();
                 bankBrmap.put("bankBranchId", element[0].toString());
                 bankBrmap.put("bankBranchName", element[1].toString());
                 bankBranchList.add(bankBrmap);
             }
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new Exception(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
@@ -1532,37 +1515,34 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadBanksWithAssignedCheques...");
         try {
-            final String vouchersWithNewInstrumentsQuery = "select voucherheaderid from egf_instrumentvoucher eiv,egf_instrumentheader ih,"
-                    +
-                    " egw_status egws where eiv.instrumentheaderid=ih.id and egws.id=ih.id_status and egws.moduletype='Instrument' and egws.description='New'  ";
-            StringBuffer queryString = new StringBuffer();
-            queryString = queryString
-                    .append("select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),"
-                            +
-                            "bankBranch.branchname) as bankbranchname from  voucherheader vh,Bank bank,Bankbranch bankBranch,Bankaccount bankaccount, ")
-                    .append(" paymentheader ph where  ")
-                    .append(" ph.voucherheaderid=vh.id and vh.id  in (" + vouchersWithNewInstrumentsQuery.toString()
-                            + ") and bank.isactive=true  and bankBranch.isactive=true ")
+            final StringBuilder vouchersWithNewInstrumentsQuery = new StringBuilder("select voucherheaderid")
+                    .append(" from egf_instrumentvoucher eiv, egf_instrumentheader ih, egw_status egws")
+                    .append(" where eiv.instrumentheaderid = ih.id and egws.id = ih.id_status and egws.moduletype = 'Instrument' and egws.description='New' ");
+            StringBuilder queryString = new StringBuilder("select DISTINCT concat(concat(bank.id,'-'), bankBranch.id) as bankbranchid, concat(concat(bank.name,' '), bankBranch.branchname) as bankbranchname")
+                    .append(" from voucherheader vh, Bank bank, Bankbranch bankBranch, Bankaccount bankaccount, paymentheader ph")
+                    .append(" where ph.voucherheaderid = vh.id and vh.id  in (")
+                    .append(vouchersWithNewInstrumentsQuery)
+                    .append(") and bank.isactive = true and bankBranch.isactive=true ")
                     .append(" and  bank.id = bankBranch.bankid and bankBranch.id = bankaccount.BRANCHID and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date")
-                    .append(" and ph.bankaccountnumberid=bankaccount.id  and bankaccount.isactive=true order by 2");
+                    .append(" and ph.bankaccountnumberid = bankaccount.id and bankaccount.isactive = true order by 2");
             final List<Object[]> bankBranch = persistenceService.getSession().createNativeQuery(queryString.toString())
                     .setParameter("date", getAsOnDate())
                     .list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankBranch.size());
-            bankBranchList = new ArrayList<Map<String, Object>>();
+            bankBranchList = new ArrayList<>();
             Map<String, Object> bankBrmap;
             for (final Object[] element : bankBranch) {
-                bankBrmap = new HashMap<String, Object>();
+                bankBrmap = new HashMap<>();
                 bankBrmap.put("bankBranchId", element[0].toString());
                 bankBrmap.put("bankBranchName", element[1].toString());
                 bankBranchList.add(bankBrmap);
             }
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new Exception(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
@@ -1581,48 +1561,42 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadBanksAccountsWithAssignedCheques...");
         try {
-            accNumList = new ArrayList<Bankaccount>();
-            StringBuffer queryString = new StringBuffer();
-            queryString = queryString
-                    .append("select bankaccount.accountnumber as accountnumber,bankaccount.accounttype as accounttype,cast(bankaccount.id as integer) as id,coa.glcode as glCode "
-                            +
-                            " from  voucherheader vh,chartofaccounts coa,Bank bank,Bankbranch bankBranch,Bankaccount bankaccount,paymentheader ph,  "
-                            +
-                            "egf_instrumentvoucher eiv,egf_instrumentheader ih,egw_status egws ")
-                    .append("where ph.voucherheaderid=vh.id and coa.id=bankaccount.glcodeid and vh.id=eiv.VOUCHERHEADERID and ")
-                    .append("  eiv.instrumentheaderid=ih.id and egws.id=ih.id_status and egws.moduletype='Instrument' and egws.description='New' and ih.transactionNumber is not null")
-                    .append("and ih.instrumenttype=(select id from egf_instrumenttype where upper(type)='CHEQUE') and ispaycheque='1' ")
-                    .append(" and bank.isactive=true  and bankBranch.isactive=true and bankaccount.isactive=true ")
-                    .append(" and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.branchid="
-                            + branchId
-                            + "  and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date");
-
-            queryString = queryString.append(" and ph.bankaccountnumberid=bankaccount.id  order by vh.voucherdate desc");
+            accNumList = new ArrayList<>();
+            StringBuilder queryString = new StringBuilder("select bankaccount.accountnumber as accountnumber, bankaccount.accounttype as accounttype, cast(bankaccount.id as integer) as id, coa.glcode as glCode")
+                    .append(" from voucherheader vh, chartofaccounts coa, Bank bank, Bankbranch bankBranch, Bankaccount bankaccount, paymentheader ph, egf_instrumentvoucher eiv, egf_instrumentheader ih, egw_status egws")
+                    .append(" where ph.voucherheaderid = vh.id and coa.id = bankaccount.glcodeid and vh.id = eiv.VOUCHERHEADERID and")
+                    .append(" eiv.instrumentheaderid=ih.id and egws.id=ih.id_status and egws.moduletype='Instrument' and egws.description='New' and ih.transactionNumber is not null")
+                    .append(" and ih.instrumenttype = (select id from egf_instrumenttype where upper(type) = 'CHEQUE') and ispaycheque = '1'")
+                    .append(" and bank.isactive = true and bankBranch.isactive = true and bankaccount.isactive = true")
+                    .append(" and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.branchid = :branchId")
+                    .append(" and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date");
+            queryString = queryString.append(" and ph.bankaccountnumberid = bankaccount.id order by vh.voucherdate desc");
             final List<Object[]> bankAccounts = persistenceService.getSession().createNativeQuery(queryString.toString())
-                    .setDate("date", getAsOnDate())
+                    .setParameter("date", getAsOnDate(), DateType.INSTANCE)
+                    .setParameter("branchId", branchId, IntegerType.INSTANCE)
                     .list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankAccounts.size());
             final List<String> addedBanks = new ArrayList<String>();
             for (final Object[] account : bankAccounts) {
-                final String accountNumberAndType = account[0].toString() + "-" + account[1].toString();
+                final String accountNumberAndType = account[0].toString().concat("-").concat(account[1].toString());
                 if (!addedBanks.contains(accountNumberAndType)) {
                     final Bankaccount bankaccount = new Bankaccount();
                     bankaccount.setAccountnumber(account[0].toString());
                     bankaccount.setAccounttype(account[1].toString());
                     bankaccount.setId(Long.valueOf(account[2].toString()));
-                    final CChartOfAccounts chartofaccounts = new CChartOfAccounts();
-                    chartofaccounts.setGlcode(account[3].toString());
-                    bankaccount.setChartofaccounts(chartofaccounts);
+                    final CChartOfAccounts chartOfAccounts = new CChartOfAccounts();
+                    chartOfAccounts.setGlcode(account[3].toString());
+                    bankaccount.setChartofaccounts(chartOfAccounts);
                     addedBanks.add(accountNumberAndType);
                     accNumList.add(bankaccount);
                 }
             }
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new Exception(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
@@ -1642,56 +1616,52 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Starting ajaxLoadBanksAccountsWithAssignedCheques...");
         try {
             accNumList = new ArrayList<Bankaccount>();
-            StringBuffer queryString = new StringBuffer();
-            queryString = queryString
-                    .append("select bankaccount.accountnumber as accountnumber,bankaccount.accounttype as accounttype,cast(bankaccount.id as integer) as id,coa.glcode as glCode ,bank.name as bankName"
-                            +
-                            " from  voucherheader vh,chartofaccounts coa,Bank bank,Bankbranch bankBranch,Bankaccount bankaccount,paymentheader ph,  "
-                            +
-                            "egf_instrumentvoucher eiv,egf_instrumentheader ih,egw_status egws ")
-                    .append("where ph.voucherheaderid=vh.id and coa.id=bankaccount.glcodeid and vh.id=eiv.VOUCHERHEADERID and ")
-                    .append("  eiv.instrumentheaderid=ih.id and egws.id=ih.id_status and egws.moduletype='Instrument' and egws.description='New' ")
-                    .append("and ih.instrumenttype=(select id from egf_instrumenttype where upper(type)=:type) and ispaycheque='1' ")
-                    .append(" and bank.isactive=true  and bankBranch.isactive=true and bankaccount.isactive=true ")
-                    .append(" and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.branchid="
-                            + branchId
-                            + "  and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date");
-
-            queryString = queryString.append(" and ph.bankaccountnumberid=bankaccount.id  order by vh.voucherdate desc");
+            StringBuilder queryString = new StringBuilder("select bankaccount.accountnumber as accountnumber, bankaccount.accounttype as accounttype,")
+                    .append(" cast(bankaccount.id as integer) as id, coa.glcode as glCode, bank.name as bankName")
+                    .append(" from voucherheader vh, chartofaccounts coa, Bank bank, Bankbranch bankBranch, Bankaccount bankaccount, paymentheader ph,")
+                    .append(" egf_instrumentvoucher eiv, egf_instrumentheader ih, egw_status egws")
+                    .append(" where ph.voucherheaderid = vh.id and coa.id = bankaccount.glcodeid and vh.id = eiv.VOUCHERHEADERID and ")
+                    .append(" eiv.instrumentheaderid = ih.id and egws.id = ih.id_status and egws.moduletype = 'Instrument' and egws.description='New'")
+                    .append(" and ih.instrumenttype = (select id from egf_instrumenttype where upper(type) = :type) and ispaycheque = '1'")
+                    .append(" and bank.isactive = true and bankBranch.isactive = true and bankaccount.isactive = true")
+                    .append(" and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.branchid = : branchId")
+                    .append(" and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date");
+            queryString = queryString.append(" and ph.bankaccountnumberid = bankaccount.id order by vh.voucherdate desc");
             if (type == null || type.equalsIgnoreCase(""))
                 type = "CHEQUE";
             final List<Object[]> bankAccounts = persistenceService.getSession().createNativeQuery(queryString.toString())
-                    .setDate("date", getAsOnDate())
-                    .setString("type", type)
+                    .setParameter("date", getAsOnDate(), DateType.INSTANCE)
+                    .setParameter("type", type, StringType.INSTANCE)
+                    .setParameter("branchId", branchId, IntegerType.INSTANCE)
                     .list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankAccounts.size());
             final List<String> addedBanks = new ArrayList<String>();
             for (final Object[] account : bankAccounts) {
                 final String accountNumberAndType = account[0] != null ? account[0].toString()
-                        : "" + "-" + account[4] != null ? account[4].toString() : "";
+                        : "".concat("-").concat(account[4] != null ? account[4].toString() : "");
                 if (!addedBanks.contains(accountNumberAndType)) {
                     final Bankaccount bankaccount = new Bankaccount();
                     bankaccount.setAccountnumber(account[0] != null ? account[0].toString() : "");
                     // bankaccount.setAccounttype(account[1]!=null?account[1].toString():"");
                     bankaccount.setId(Long.valueOf(account[2] != null ? account[2].toString() : ""));
-                    final CChartOfAccounts chartofaccounts = new CChartOfAccounts();
-                    chartofaccounts.setGlcode(account[3] != null ? account[3].toString() : "");
+                    final CChartOfAccounts chartOfAccounts = new CChartOfAccounts();
+                    chartOfAccounts.setGlcode(account[3] != null ? account[3].toString() : "");
                     final Bankbranch branch = new Bankbranch();
                     final Bank bank = new Bank();
                     bank.setName(account[4].toString());
                     branch.setBank(bank);
                     bankaccount.setBankbranch(branch);
-                    bankaccount.setChartofaccounts(chartofaccounts);
+                    bankaccount.setChartofaccounts(chartOfAccounts);
                     addedBanks.add(accountNumberAndType);
                     accNumList.add(bankaccount);
                 }
             }
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new Exception(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
@@ -1790,7 +1760,6 @@ public class CommonAction extends BaseFormAction {
     public void setInstrumentService(final InstrumentService instrumentService) {
         this.instrumentService = instrumentService;
     }
-
     
     public Long getDepartmentId() {
         return departmentId;
@@ -1942,73 +1911,54 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadBanksWithApprovedPayments...");
         try {
-            StringBuffer queryString = new StringBuffer();
             // query to fetch vouchers for which no cheque has been assigned
-            queryString = queryString
-                    .append("select distinct concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),"
-                            +
-                            " bankBranch.branchname) as bankbranchname " +
-                            " from Bank bank,  Bankbranch bankBranch,   Bankaccount bankaccount where bankaccount.id in ( " +
-                            " select DISTINCT ph.bankaccountnumberid from " +
-                            " paymentheader ph,egf_instrumentvoucher iv right outer join voucherheader vh on " +
-                            " vh.id =iv.VOUCHERHEADERID where ph.voucherheaderid=vh.id  and " +
-                            " vh.status=0  and " +
-                            " ph.voucherheaderid=vh.id  " +
-                            " and iv.VOUCHERHEADERID is null ");
+            StringBuilder queryString = new StringBuilder("select distinct concat(concat(bank.id,'-'), bankBranch.id) as bankbranchid, concat(concat(bank.name,' '), bankBranch.branchname) as bankbranchname ")
+                    .append(" from Bank bank,  Bankbranch bankBranch,   Bankaccount bankaccount")
+                    .append(" where bankaccount.id in (select DISTINCT ph.bankaccountnumberid ")
+                    .append(" from paymentheader ph, egf_instrumentvoucher iv right outer join voucherheader vh on vh.id = iv.VOUCHERHEADERID")
+                    .append(" where ph.voucherheaderid=vh.id and vh.status = 0 and ph.voucherheaderid = vh.id and iv.VOUCHERHEADERID is null ");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and vh.fundid=" + fundId.longValue());
-            queryString = queryString.append(" and vh.name NOT IN ( '" + FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE
-                    + "','" + FinancialConstants.PAYMENTVOUCHER_NAME_SALARY + "')");
-            queryString = queryString.append("and vh.voucherdate <= :date1 )");
-            queryString = queryString
-                    .append(" AND bank.id = bankBranch.bankid AND bank.isactive=true AND bankBranch.isactive=true " +
-                            "AND bankaccount.type IN ('RECEIPTS_PAYMENTS','PAYMENTS') AND bankBranch.id = bankaccount.branchid");
+                queryString.append(" and vh.fundid = :fundId");
+            queryString.append(" and vh.name NOT IN ( '").append(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE)
+                    .append("','").append(FinancialConstants.PAYMENTVOUCHER_NAME_SALARY).append("')")
+                    .append(" and vh.voucherdate <= :date1 )")
+                    .append(" AND bank.id = bankBranch.bankid AND bank.isactive = true AND bankBranch.isactive = true")
+                    .append(" AND bankaccount.type IN ('RECEIPTS_PAYMENTS','PAYMENTS') AND bankBranch.id = bankaccount.branchid");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
+                queryString.append(" and bankaccount.fundid = :fundId");
 
             // query to fetch vouchers for which cheque has been assigned and surrendered
-            queryString = queryString
-                    .append(" union select distinct concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),"
-                            +
-                            "bankBranch.branchname) as bankbranchname "
-                            +
-                            " from Bank bank,  Bankbranch bankBranch,   Bankaccount bankaccount where bankaccount.id in ( "
-                            +
-                            " select DISTINCT ph.bankaccountnumberid from "
-                            +
-                            " egf_instrumentvoucher iv,voucherheader vh,"
-                            +
-                            " paymentheader ph,egw_status egws,(select ih1.id,ih1.id_status from egf_instrumentheader ih1, "
-                            +
-                            "(select bankid,bankaccountid,instrumentnumber,max(id) as id from egf_instrumentheader group by bankid,bankaccountid,"
-                            +
-                            "instrumentnumber) max_rec where max_rec.bankid=ih1.bankid and max_rec.bankaccountid=ih1.bankaccountid and max_rec.instrumentnumber=ih1.instrumentnumber "
-                            +
-                            " and max_rec.id=ih1.id) ih where ph.voucherheaderid=vh.id " +
-                            " and vh.status=0  and ph.voucherheaderid=vh.id " +
-                            " and iv.voucherheaderid=vh.id and iv.instrumentheaderid=ih.id and " +
-                            "ih.id_status=egws.id and egws.description in  ('Surrendered','Surrender_For_Reassign')");
+            queryString.append(" union select distinct concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid, concat(concat(bank.name,' '), bankBranch.branchname) as bankbranchname")
+                    .append(" from Bank bank, Bankbranch bankBranch, Bankaccount bankaccount")
+                    .append(" where bankaccount.id in ( select DISTINCT ph.bankaccountnumberid")
+                    .append(" from egf_instrumentvoucher iv,voucherheader vh, paymentheader ph, egw_status egws, (")
+                    .append(" select ih1.id,ih1.id_status from egf_instrumentheader ih1, (select bankid, bankaccountid, instrumentnumber, max(id) as id")
+                    .append("from egf_instrumentheader group by bankid,bankaccountid, instrumentnumber) max_rec")
+                    .append(" where max_rec.bankid = ih1.bankid and max_rec.bankaccountid = ih1.bankaccountid and max_rec.instrumentnumber = ih1.instrumentnumber ")
+                    .append(" and max_rec.id=ih1.id) ih")
+                    .append(" where ph.voucherheaderid = vh.id and vh.status = 0 and ph.voucherheaderid = vh.id and iv.voucherheaderid = vh.id and iv.instrumentheaderid = ih.id and")
+                    .append(" ih.id_status = egws.id and egws.description in ('Surrendered','Surrender_For_Reassign')");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and vh.fundid=" + fundId.longValue());
+                queryString.append(" and vh.fundid = :fundId");
 
-            queryString = queryString.append("  and vh.voucherdate <= :date2 " +
-                    " and vh.name NOT IN ( '" + FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE + "','"
-                    + FinancialConstants.PAYMENTVOUCHER_NAME_SALARY + "' ) ) ");
-            queryString = queryString
-                    .append(" AND bank.id = bankBranch.bankid AND bank.isactive=true AND bankBranch.isactive=true " +
-                            "AND bankaccount.type IN ('RECEIPTS_PAYMENTS','PAYMENTS') AND bankBranch.id = bankaccount.branchid");
+            queryString.append(" and vh.voucherdate <= :date2 and vh.name NOT IN ('").append(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE).append("','")
+                    .append(FinancialConstants.PAYMENTVOUCHER_NAME_SALARY).append("' ) ) ")
+                    .append(" AND bank.id = bankBranch.bankid AND bank.isactive = true AND bankBranch.isactive = true ")
+                    .append(" AND bankaccount.type IN ('RECEIPTS_PAYMENTS','PAYMENTS') AND bankBranch.id = bankaccount.branchid");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
+                queryString.append(" and bankaccount.fundid = :fundId");
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank check dates are  " + getAsOnDate() + queryString.toString());
-            final List<Object[]> bankBranch = persistenceService.getSession().createNativeQuery(queryString.toString())
-                    .setDate("date1", getAsOnDate())
-                    .setDate("date2", getAsOnDate())
-                    .list();
+            NativeQuery query =  persistenceService.getSession().createNativeQuery(queryString.toString());
+            query.setParameter("date1", getAsOnDate(), DateType.INSTANCE)
+                .setParameter("date2", getAsOnDate(), DateType.INSTANCE);
+            if (fundId != null && fundId != 0 && fundId != -1)
+                query.setParameter("fundId", fundId.longValue(), LongType.INSTANCE);
+            final List<Object[]> bankBranch = query.list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankBranch.size());
-            bankBranchList = new ArrayList<Map<String, Object>>();
+            bankBranchList = new ArrayList<>();
             final List<String> addedBanks = new ArrayList<String>();
             for (final Object[] account : bankBranch) {
                 final String bankBranchName = account[1].toString();
@@ -2021,10 +1971,10 @@ public class CommonAction extends BaseFormAction {
                 }
             }
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new Exception(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
@@ -2038,77 +1988,56 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadBanksWithApprovedPayments...");
         try {
-            StringBuffer queryString = new StringBuffer();
             // query to fetch vouchers for which no cheque has been assigned
-            queryString = queryString
-                    .append("select distinct concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),"
-                            +
-                            "bankBranch.branchname) as bankbranchname "
-                            +
-                            "from voucherheader vh,Bank bank,Bankbranch bankBranch,Bankaccount bankaccount,vouchermis vmis, eg_department d,"
-                            +
-                            "generalledger gl,paymentheader ph,egf_instrumentvoucher iv right outer join voucherheader vh1 on "
-                            +
-                            "vh1.id =iv.VOUCHERHEADERID,egw_status egws where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and "
-                            +
-                            "vmis.departmentid= d.id and vh.status=0 and gl.voucherheaderid=vh.id and "
-                            +
-                            "ph.voucherheaderid=vh.id and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and "
-                            +
-                            "bankBranch.id = bankaccount.branchid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS')" +
-                            " and  vh1.id=vh.id and iv.VOUCHERHEADERID is null ");
+            StringBuilder queryString = new StringBuilder("select distinct concat(concat(bank.id,'-'), bankBranch.id) as bankbranchid, concat(concat(bank.name,' '), bankBranch.branchname) as bankbranchname")
+                    .append(" from voucherheader vh, Bank bank, Bankbranch bankBranch, Bankaccount bankaccount, vouchermis vmis, eg_department d,")
+                    .append(" generalledger gl, paymentheader ph, egf_instrumentvoucher iv right outer join voucherheader vh1 on vh1.id = iv.VOUCHERHEADERID, egw_status egws ")
+                    .append(" where ph.voucherheaderid = vh.id and vh.id = vmis.voucherheaderid and vmis.departmentid = d.id and vh.status = 0 and gl.voucherheaderid = vh.id and ")
+                    .append(" ph.voucherheaderid = vh.id and bank.isactive = true and bankBranch.isactive = true and bank.id = bankBranch.bankid and ")
+                    .append(" bankBranch.id = bankaccount.branchid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS')")
+                    .append(" and  vh1.id = vh.id and iv.VOUCHERHEADERID is null ");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
+                queryString.append(" and bankaccount.fundid = :fundId");
             if (departmentId != null && departmentId != 0 && departmentId != -1)
-                queryString = queryString.append(" and vmis.departmentid=" + departmentId);
-            queryString = queryString
-                    .append(" and gl.debitamount!=0 and gl.debitamount is not null and vh.voucherdate <= :date1 " +
-                            " and ph.bankaccountnumberid=bankaccount.id and vh.type='"
-                            + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "' and  vh.name NOT IN ( '"
-                            + FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE + "','"
-                            + FinancialConstants.PAYMENTVOUCHER_NAME_SALARY + "' ) ");
+                queryString.append(" and vmis.departmentid = :departmentId");
+            queryString.append(" and gl.debitamount != 0 and gl.debitamount is not null and vh.voucherdate <= :date1 and ph.bankaccountnumberid = bankaccount.id and vh.type='")
+                    .append(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT).append("' and  vh.name NOT IN ( '")
+                    .append(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE).append("','")
+                    .append(FinancialConstants.PAYMENTVOUCHER_NAME_SALARY).append("' ) ");
             // query to fetch vouchers for which cheque has been assigned and surrendered
-            queryString = queryString
-                    .append(" union select distinct concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),"
-                            +
-                            "bankBranch.branchname) as bankbranchname from egf_instrumentvoucher iv,voucherheader vh,"
-                            +
-                            "Bank bank,Bankbranch bankBranch,Bankaccount bankaccount,vouchermis vmis, eg_department d,generalledger gl,"
-                            +
-                            "paymentheader ph,egw_status egws,(select ih1.id,ih1.id_status from egf_instrumentheader ih1, "
-                            +
-                            "(select bankid,bankaccountid,instrumentnumber,max(lastmodifieddate) as lastmodifieddate from egf_instrumentheader group by bankid,bankaccountid,"
-                            +
-                            "instrumentnumber) max_rec where max_rec.bankid=ih1.bankid and max_rec.bankaccountid=ih1.bankaccountid and max_rec.instrumentnumber=ih1.instrumentnumber "
-                            +
-                            "and max_rec.lastmodifieddate=ih1.lastmodifieddate) ih where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and "
-                            +
-                            "vmis.departmentid= d.id and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
-                            +
-                            "and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and "
-                            +
-                            "bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and  iv.voucherheaderid=vh.id and iv.instrumentheaderid=ih.id and "
-                            +
-                            "ih.id_status=egws.id and egws.description in  ('Surrendered','Surrender_For_Reassign')");
+            queryString.append(" union select distinct concat(concat(bank.id,'-'), bankBranch.id) as bankbranchid, concat(concat(bank.name,' '), bankBranch.branchname) as bankbranchname")
+                    .append(" from egf_instrumentvoucher iv, voucherheader vh, Bank bank, Bankbranch bankBranch, Bankaccount bankaccount, vouchermis vmis, eg_department d, generalledger gl,")
+                    .append(" paymentheader ph, egw_status egws, (select ih1.id, ih1.id_status from egf_instrumentheader ih1,")
+                    .append(" (select bankid, bankaccountid, instrumentnumber, max(lastmodifieddate) as lastmodifieddate")
+                    .append(" from egf_instrumentheader group by bankid,bankaccountid, instrumentnumber) max_rec")
+                    .append(" where max_rec.bankid = ih1.bankid and max_rec.bankaccountid = ih1.bankaccountid and max_rec.instrumentnumber = ih1.instrumentnumber")
+                    .append(" and max_rec.lastmodifieddate = ih1.lastmodifieddate) ih where ph.voucherheaderid = vh.id and vh.id = vmis.voucherheaderid and")
+                    .append(" vmis.departmentid = d.id and vh.status = 0 and gl.voucherheaderid = vh.id and ph.voucherheaderid = vh.id")
+                    .append(" and bank.isactive = true and bankBranch.isactive = true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and")
+                    .append(" bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and iv.voucherheaderid = vh.id and iv.instrumentheaderid = ih.id and")
+                    .append(" ih.id_status = egws.id and egws.description in ('Surrendered','Surrender_For_Reassign')");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
+                queryString.append(" and bankaccount.fundid = :fundId");
             if (departmentId != null && departmentId != 0 && departmentId != -1)
-                queryString = queryString.append(" and vmis.departmentid=" + departmentId);
-            queryString = queryString
-                    .append(" and gl.debitamount!=0 and gl.debitamount is not null and vh.voucherdate <= :date2 " +
-                            " and ph.bankaccountnumberid=bankaccount.id and vh.type='"
-                            + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "' and vh.name NOT IN ( '"
-                            + FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE + "','"
-                            + FinancialConstants.PAYMENTVOUCHER_NAME_SALARY + "' ) order by 2 ");
+                queryString.append(" and vmis.departmentid = :departmentId");
+            queryString.append(" and gl.debitamount != 0 and gl.debitamount is not null and vh.voucherdate <= :date2")
+                    .append(" and ph.bankaccountnumberid = bankaccount.id and vh.type = '")
+                    .append(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT).append("' and vh.name NOT IN ( '")
+                    .append(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE).append("','")
+                    .append(FinancialConstants.PAYMENTVOUCHER_NAME_SALARY).append("' ) order by 2 ");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank check dates are  " + getAsOnDate());
-            final List<Object[]> bankBranch = persistenceService.getSession().createNativeQuery(queryString.toString())
-                    .setDate("date1", getAsOnDate())
-                    .setDate("date2", getAsOnDate())
-                    .list();
+            NativeQuery query = persistenceService.getSession().createNativeQuery(queryString.toString());
+            query.setParameter("date1", getAsOnDate(), DateType.INSTANCE)
+                    .setParameter("date2", getAsOnDate(), DateType.INSTANCE);
+            if (fundId != null && fundId != 0 && fundId != -1)
+                query.setParameter("fundId", fundId.longValue(), LongType.INSTANCE);
+            if (departmentId != null && departmentId != 0 && departmentId != -1)
+                query.setParameter("departmentId", departmentId, LongType.INSTANCE);
+            final List<Object[]> bankBranch = query.list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankBranch.size());
-            bankBranchList = new ArrayList<Map<String, Object>>();
+            bankBranchList = new ArrayList<>();
             final List<String> addedBanks = new ArrayList<String>();
             for (final Object[] account : bankBranch) {
                 final String bankBranchName = account[1].toString();
@@ -2121,10 +2050,10 @@ public class CommonAction extends BaseFormAction {
                 }
             }
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new Exception(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
@@ -2138,75 +2067,54 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadBanksWithApprovedSalaryPayments...");
         try {
-            StringBuffer queryString = new StringBuffer();
             // query to fetch vouchers for which no cheque has been assigned
-            queryString = queryString
-                    .append("select distinct concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),"
-                            +
-                            "bankBranch.branchname) as bankbranchname "
-                            +
-                            "from voucherheader vh,Bank bank,Bankbranch bankBranch,Bankaccount bankaccount,vouchermis vmis, eg_department d,"
-                            +
-                            "generalledger gl,paymentheader ph,egf_instrumentvoucher iv right outer join voucherheader vh1 on "
-                            +
-                            "vh1.id =iv.VOUCHERHEADERID,egw_status egws where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and "
-                            +
-                            "vmis.departmentid= d.id and vh.status=0 and gl.voucherheaderid=vh.id and "
-                            +
-                            "ph.voucherheaderid=vh.id and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and "
-                            +
-                            "bankBranch.id = bankaccount.branchid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS')" +
-                            " and  vh1.id=vh.id and iv.VOUCHERHEADERID is null ");
+            StringBuilder queryString = new StringBuilder("select distinct concat(concat(bank.id,'-'), bankBranch.id) as bankbranchid, concat(concat(bank.name,' '), bankBranch.branchname) as bankbranchname ")
+                    .append(" from voucherheader vh, Bank bank, Bankbranch bankBranch, Bankaccount bankaccount, vouchermis vmis, eg_department d,")
+                    .append(" generalledger gl, paymentheader ph, egf_instrumentvoucher iv right outer join voucherheader vh1 on vh1.id = iv.VOUCHERHEADERID, egw_status egws")
+                    .append(" where ph.voucherheaderid = vh.id and vh.id = vmis.voucherheaderid and vmis.departmentid = d.id and vh.status = 0 and gl.voucherheaderid = vh.id and")
+                    .append(" ph.voucherheaderid = vh.id and bank.isactive = true and bankBranch.isactive = true and bank.id = bankBranch.bankid and")
+                    .append(" bankBranch.id = bankaccount.branchid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh1.id = vh.id and iv.VOUCHERHEADERID is null ");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
+                queryString.append(" and bankaccount.fundid = :fundId");
             if (departmentId != null && departmentId != 0 && departmentId != -1)
-                queryString = queryString.append(" and vmis.departmentid=" + departmentId);
-            queryString = queryString
-                    .append(" and gl.debitamount!=0 and gl.debitamount is not null and vh.voucherdate <= :date1 " +
-                            " and ph.bankaccountnumberid=bankaccount.id and vh.type='"
-                            + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "' and vh.name='"
-                            + FinancialConstants.PAYMENTVOUCHER_NAME_SALARY + "'  ");
+                queryString.append(" and vmis.departmentid = :departmentId");
+            queryString.append(" and gl.debitamount != 0 and gl.debitamount is not null and vh.voucherdate <= :date1 ")
+                    .append(" and ph.bankaccountnumberid = bankaccount.id and vh.type = '")
+                    .append(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT).append("' and vh.name='")
+                    .append(FinancialConstants.PAYMENTVOUCHER_NAME_SALARY).append("'  ");
             // query to fetch vouchers for which cheque has been assigned and surrendered
-            queryString = queryString
-                    .append(" union select distinct concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),"
-                            +
-                            "bankBranch.branchname) as bankbranchname from egf_instrumentvoucher iv,voucherheader vh,"
-                            +
-                            "Bank bank,Bankbranch bankBranch,Bankaccount bankaccount,vouchermis vmis, eg_department d,generalledger gl,"
-                            +
-                            "paymentheader ph,egw_status egws,(select ih1.id,ih1.id_status from egf_instrumentheader ih1, "
-                            +
-                            "(select bankid,bankaccountid,instrumentnumber,max(lastmodifieddate) as lastmodifieddate from egf_instrumentheader group by bankid,bankaccountid,"
-                            +
-                            "instrumentnumber) max_rec where max_rec.bankid=ih1.bankid and max_rec.bankaccountid=ih1.bankaccountid and max_rec.instrumentnumber=ih1.instrumentnumber "
-                            +
-                            "and max_rec.lastmodifieddate=ih1.lastmodifieddate) ih where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and "
-                            +
-                            "vmis.departmentid= d.id and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
-                            +
-                            "and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and "
-                            +
-                            "bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and  iv.voucherheaderid=vh.id and iv.instrumentheaderid=ih.id and "
-                            +
-                            "ih.id_status=egws.id and egws.description in  ('Surrendered','Surrender_For_Reassign')");
+            queryString.append(" union select distinct concat(concat(bank.id,'-'), bankBranch.id) as bankbranchid, concat(concat(bank.name,' '), bankBranch.branchname) as bankbranchname")
+                    .append(" from egf_instrumentvoucher iv, voucherheader vh, Bank bank, Bankbranch bankBranch, Bankaccount bankaccount, vouchermis vmis, eg_department d, generalledger gl,")
+                    .append(" paymentheader ph, egw_status egws, (select ih1.id, ih1.id_status from egf_instrumentheader ih1, (select bankid, bankaccountid, instrumentnumber,")
+                    .append(" max(lastmodifieddate) as lastmodifieddate")
+                    .append(" from egf_instrumentheader group by bankid, bankaccountid, instrumentnumber) max_rec")
+                    .append(" where max_rec.bankid = ih1.bankid and max_rec.bankaccountid = ih1.bankaccountid and max_rec.instrumentnumber = ih1.instrumentnumber")
+                    .append(" and max_rec.lastmodifieddate = ih1.lastmodifieddate) ih where ph.voucherheaderid = vh.id and vh.id = vmis.voucherheaderid and")
+                    .append(" vmis.departmentid = d.id and vh.status = 0 and gl.voucherheaderid = vh.id and ph.voucherheaderid = vh.id")
+                    .append(" and bank.isactive = true and bankBranch.isactive = true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and")
+                    .append(" bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and iv.voucherheaderid = vh.id and iv.instrumentheaderid = ih.id and")
+                    .append(" ih.id_status = egws.id and egws.description in ('Surrendered','Surrender_For_Reassign')");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
+                queryString.append(" and bankaccount.fundid = :fundId");
             if (departmentId != null && departmentId != 0 && departmentId != -1)
-                queryString = queryString.append(" and vmis.departmentid=" + departmentId);
-            queryString = queryString
-                    .append(" and gl.debitamount!=0 and gl.debitamount is not null and vh.voucherdate <= :date2 " +
-                            " and ph.bankaccountnumberid=bankaccount.id and vh.type='"
-                            + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "' and vh.name='"
-                            + FinancialConstants.PAYMENTVOUCHER_NAME_SALARY + "' order by 2  ");
+                queryString.append(" and vmis.departmentid = :departmentId");
+            queryString.append(" and gl.debitamount != 0 and gl.debitamount is not null and vh.voucherdate <= :date2")
+                    .append(" and ph.bankaccountnumberid = bankaccount.id and vh.type = '")
+                    .append(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT).append("' and vh.name = '")
+                    .append(FinancialConstants.PAYMENTVOUCHER_NAME_SALARY).append("' order by 2  ");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank check dates are  " + getAsOnDate());
-            final List<Object[]> bankBranch = persistenceService.getSession().createNativeQuery(queryString.toString())
-                    .setDate("date1", getAsOnDate())
-                    .setDate("date2", getAsOnDate())
-                    .list();
+            NativeQuery query = persistenceService.getSession().createNativeQuery(queryString.toString());
+            query.setParameter("date1", getAsOnDate(), DateType.INSTANCE);
+            query.setParameter("date2", getAsOnDate(), DateType.INSTANCE);
+            if (fundId != null && fundId != 0 && fundId != -1)
+                query.setParameter("fundId", fundId.longValue(), LongType.INSTANCE);
+            if (departmentId != null && departmentId != 0 && departmentId != -1)
+                query.setParameter("departmentId", departmentId, LongType.INSTANCE);
+            final List<Object[]> bankBranch = query.list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankBranch.size());
-            bankBranchList = new ArrayList<Map<String, Object>>();
+            bankBranchList = new ArrayList<>();
             final List<String> addedBanks = new ArrayList<String>();
             for (final Object[] account : bankBranch) {
                 final String bankBranchName = account[1].toString();
@@ -2219,10 +2127,10 @@ public class CommonAction extends BaseFormAction {
                 }
             }
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new Exception(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
@@ -2236,75 +2144,52 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadBanksWithApprovedSalaryPayments...");
         try {
-            StringBuffer queryString = new StringBuffer();
             // query to fetch vouchers for which no cheque has been assigned
-            queryString = queryString
-                    .append("select distinct concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),"
-                            +
-                            "bankBranch.branchname) as bankbranchname "
-                            +
-                            "from voucherheader vh,Bank bank,Bankbranch bankBranch,Bankaccount bankaccount,vouchermis vmis, eg_department d,"
-                            +
-                            "generalledger gl,paymentheader ph,egf_instrumentvoucher iv right outer join voucherheader vh1 on "
-                            +
-                            "vh1.id =iv.VOUCHERHEADERID,egw_status egws where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and "
-                            +
-                            "vmis.departmentid= d.id and vh.status=0 and gl.voucherheaderid=vh.id and "
-                            +
-                            "ph.voucherheaderid=vh.id and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and "
-                            +
-                            "bankBranch.id = bankaccount.branchid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS')" +
-                            " and  vh1.id=vh.id and iv.VOUCHERHEADERID is null ");
+            StringBuilder queryString = new StringBuilder("select distinct concat(concat(bank.id,'-'), bankBranch.id) as bankbranchid, concat(concat(bank.name,' '), bankBranch.branchname) as bankbranchname")
+                    .append(" from voucherheader vh, Bank bank, Bankbranch bankBranch, Bankaccount bankaccount, vouchermis vmis, eg_department d, generalledger gl, paymentheader ph,")
+                    .append(" egf_instrumentvoucher iv right outer join voucherheader vh1 on vh1.id = iv.VOUCHERHEADERID, egw_status egws")
+                    .append(" where ph.voucherheaderid = vh.id and vh.id = vmis.voucherheaderid and vmis.departmentid = d.id and vh.status = 0 and gl.voucherheaderid = vh.id and")
+                    .append(" ph.voucherheaderid = vh.id and bank.isactive = true and bankBranch.isactive = true and bank.id = bankBranch.bankid and")
+                    .append(" bankBranch.id = bankaccount.branchid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh1.id = vh.id and iv.VOUCHERHEADERID is null ");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
+                queryString.append(" and bankaccount.fundid = :fundId");
             if (departmentId != null && departmentId != 0 && departmentId != -1)
-                queryString = queryString.append(" and vmis.departmentid=" + departmentId);
-            queryString = queryString
-                    .append(" and gl.debitamount!=0 and gl.debitamount is not null and vh.voucherdate <= :date1 " +
-                            " and ph.bankaccountnumberid=bankaccount.id and vh.type='"
-                            + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "' and vh.name='"
-                            + FinancialConstants.PAYMENTVOUCHER_NAME_PENSION + "'  ");
+                queryString.append(" and vmis.departmentid = :departmentId");
+            queryString.append(" and gl.debitamount != 0 and gl.debitamount is not null and vh.voucherdate <= :date1 and ph.bankaccountnumberid = bankaccount.id and vh.type = '")
+                    .append(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT).append("' and vh.name = '")
+                    .append(FinancialConstants.PAYMENTVOUCHER_NAME_PENSION).append("'  ");
             // query to fetch vouchers for which cheque has been assigned and surrendered
-            queryString = queryString
-                    .append(" union select distinct concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),"
-                            +
-                            "bankBranch.branchname) as bankbranchname from egf_instrumentvoucher iv,voucherheader vh,"
-                            +
-                            "Bank bank,Bankbranch bankBranch,Bankaccount bankaccount,vouchermis vmis, eg_department d,generalledger gl,"
-                            +
-                            "paymentheader ph,egw_status egws,(select ih1.id,ih1.id_status from egf_instrumentheader ih1, "
-                            +
-                            "(select bankid,bankaccountid,instrumentnumber,max(lastmodifieddate) as lastmodifieddate from egf_instrumentheader group by bankid,bankaccountid,"
-                            +
-                            "instrumentnumber) max_rec where max_rec.bankid=ih1.bankid and max_rec.bankaccountid=ih1.bankaccountid and max_rec.instrumentnumber=ih1.instrumentnumber "
-                            +
-                            "and max_rec.lastmodifieddate=ih1.lastmodifieddate) ih where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and "
-                            +
-                            "vmis.departmentid= d.id and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
-                            +
-                            "and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and "
-                            +
-                            "bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and  iv.voucherheaderid=vh.id and iv.instrumentheaderid=ih.id and "
-                            +
-                            "ih.id_status=egws.id and egws.description in  ('Surrendered','Surrender_For_Reassign')");
+            queryString.append(" union select distinct concat(concat(bank.id,'-'), bankBranch.id) as bankbranchid, concat(concat(bank.name,' '), bankBranch.branchname) as bankbranchname")
+                    .append(" from egf_instrumentvoucher iv,voucherheader vh, Bank bank, Bankbranch bankBranch, Bankaccount bankaccount, vouchermis vmis, eg_department d,generalledger gl,")
+                    .append(" paymentheader ph, egw_status egws, (select ih1.id, ih1.id_status from egf_instrumentheader ih1, (select bankid, bankaccountid, instrumentnumber,")
+                    .append(" max(lastmodifieddate) as lastmodifieddate from egf_instrumentheader group by bankid, bankaccountid, instrumentnumber) max_rec")
+                    .append(" where max_rec.bankid = ih1.bankid and max_rec.bankaccountid = ih1.bankaccountid and max_rec.instrumentnumber = ih1.instrumentnumber")
+                    .append(" and max_rec.lastmodifieddate = ih1.lastmodifieddate) ih where ph.voucherheaderid = vh.id and vh.id = vmis.voucherheaderid and")
+                    .append(" vmis.departmentid = d.id and vh.status = 0 and gl.voucherheaderid = vh.id and ph.voucherheaderid = vh.id")
+                    .append(" and bank.isactive = true  and bankBranch.isactive = true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and")
+                    .append(" bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and iv.voucherheaderid = vh.id and iv.instrumentheaderid = ih.id and")
+                    .append(" ih.id_status = egws.id and egws.description in ('Surrendered','Surrender_For_Reassign')");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
+                queryString.append(" and bankaccount.fundid = :fundId");
             if (departmentId != null && departmentId != 0 && departmentId != -1)
-                queryString = queryString.append(" and vmis.departmentid=" + departmentId);
-            queryString = queryString
-                    .append(" and gl.debitamount!=0 and gl.debitamount is not null and vh.voucherdate <= :date2 " +
-                            " and ph.bankaccountnumberid=bankaccount.id and vh.type='"
-                            + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "' and vh.name='"
-                            + FinancialConstants.PAYMENTVOUCHER_NAME_PENSION + "' order by 2  ");
+                queryString.append(" and vmis.departmentid = :departmentId");
+            queryString.append(" and gl.debitamount != 0 and gl.debitamount is not null and vh.voucherdate <= :date2")
+                    .append(" and ph.bankaccountnumberid = bankaccount.id and vh.type = '")
+                    .append(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT).append("' and vh.name = '")
+                    .append(FinancialConstants.PAYMENTVOUCHER_NAME_PENSION).append("' order by 2  ");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank check dates are  " + getAsOnDate());
-            final List<Object[]> bankBranch = persistenceService.getSession().createNativeQuery(queryString.toString())
-                    .setDate("date1", getAsOnDate())
-                    .setDate("date2", getAsOnDate())
-                    .list();
+            NativeQuery query = persistenceService.getSession().createNativeQuery(queryString.toString());
+            query.setParameter("date1", getAsOnDate(), DateType.INSTANCE)
+                    .setParameter("date2", getAsOnDate(), DateType.INSTANCE);
+            if (fundId != null && fundId != 0 && fundId != -1)
+                query.setParameter("fundId", fundId.longValue(), LongType.INSTANCE);
+            if (departmentId != null && departmentId != 0 && departmentId != -1)
+                query.setParameter("departmentId", departmentId, LongType.INSTANCE);
+            final List<Object[]> bankBranch = query.list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankBranch.size());
-            bankBranchList = new ArrayList<Map<String, Object>>();
+            bankBranchList = new ArrayList<>();
             final List<String> addedBanks = new ArrayList<String>();
             for (final Object[] account : bankBranch) {
                 final String bankBranchName = account[1].toString();
@@ -2317,10 +2202,10 @@ public class CommonAction extends BaseFormAction {
                 }
             }
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new Exception(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
@@ -2334,74 +2219,49 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadBanksWithApprovedRemittances...");
         try {
-            StringBuffer queryString = new StringBuffer();
-            queryString = queryString
-                    .append("select distinct concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),"
-                            +
-                            "bankBranch.branchname) as bankbranchname "
-                            +
-                            "from voucherheader vh,Bank bank,Bankbranch bankBranch,Bankaccount bankaccount,vouchermis vmis, eg_department d,eg_remittance rem,"
-                            +
-                            "generalledger gl left outer join function f on gl.functionid=f.id,paymentheader ph,"
-                            +
-                            "egf_instrumentvoucher iv right outer join voucherheader vh1 on vh1.id =iv.VOUCHERHEADERID,egw_status egws "
-                            +
-                            "where  ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and vmis.departmentid= d.id and vh.status=0 "
-                            +
-                            "and rem.paymentvhid=vh.id ");
+            StringBuilder queryString = new StringBuilder("select distinct concat(concat(bank.id,'-'), bankBranch.id) as bankbranchid, concat(concat(bank.name,' '), bankBranch.branchname) as bankbranchname")
+                    .append(" from voucherheader vh, Bank bank, Bankbranch bankBranch, Bankaccount bankaccount, vouchermis vmis, eg_department d, eg_remittance rem,")
+                    .append(" generalledger gl left outer join function f on gl.functionid = f.id,paymentheader ph, egf_instrumentvoucher iv right outer join voucherheader vh1 on vh1.id = iv.VOUCHERHEADERID, egw_status egws ")
+                    .append(" where ph.voucherheaderid = vh.id and vh.id = vmis.voucherheaderid and vmis.departmentid = d.id and vh.status = 0 and rem.paymentvhid = vh.id ");
             if (recoveryId != null && recoveryId != 0)
-                queryString = queryString.append(" and rem.tdsid=" + recoveryId);
-            queryString = queryString.append(
-                    " and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id and bank.isactive=true  and bankBranch.isactive=true "
-                            +
-                            "and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS')"
-                            +
-                            " and  vh1.id=vh.id and iv.VOUCHERHEADERID is null ");
+                queryString.append(" and rem.tdsid = :recoveryId");
+            queryString.append(" and gl.voucherheaderid = vh.id and ph.voucherheaderid = vh.id and bank.isactive = true and bankBranch.isactive = true")
+                    .append(" and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS')")
+                    .append(" and vh1.id = vh.id and iv.VOUCHERHEADERID is null ");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
-            queryString = queryString
-                    .append(" and gl.debitamount!=0 and gl.debitamount is not null and vh.voucherdate <= :date1")
-                    .append(" and ph.bankaccountnumberid=bankaccount.id and ph.type='" + FinancialConstants.MODEOFPAYMENT_CASH
-                            + "'  and vh.type='" + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "' and vh.name='"
-                            + FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE + "' ");
+                queryString.append(" and bankaccount.fundid = :fundId");
+            queryString.append(" and gl.debitamount != 0 and gl.debitamount is not null and vh.voucherdate <= :date1")
+                    .append(" and ph.bankaccountnumberid = bankaccount.id and ph.type ='").append(FinancialConstants.MODEOFPAYMENT_CASH)
+                    .append("' and vh.type = '").append(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT).append("' and vh.name = '")
+                    .append(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE).append("' ");
 
-            queryString
-                    .append(" union select distinct concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),"
-                            +
-                            "bankBranch.branchname) as bankbranchname from egf_instrumentvoucher iv,voucherheader vh,eg_remittance rem,"
-                            +
-                            "Bank bank,Bankbranch bankBranch,Bankaccount bankaccount,vouchermis vmis, eg_department d,generalledger gl left outer join function f on "
-                            +
-                            "gl.functionid=f.id,paymentheader ph, egw_status egws,(select ih1.id,ih1.id_status from egf_instrumentheader ih1, "
-                            +
-                            "(select bankid,bankaccountid,instrumentnumber,max(lastmodifieddate) as lastmodifieddate from egf_instrumentheader group by bankid,bankaccountid,"
-                            +
-                            "instrumentnumber) max_rec where max_rec.bankid=ih1.bankid and max_rec.bankaccountid=ih1.bankaccountid and max_rec.instrumentnumber=ih1.instrumentnumber "
-                            +
-                            "and max_rec.lastmodifieddate=ih1.lastmodifieddate) ih where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and "
-                            +
-                            "vmis.departmentid= d.id and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
-                            +
-                            "and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and "
-                            +
-                            "bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and  iv.voucherheaderid=vh.id and iv.instrumentheaderid=ih.id and "
-                            +
-                            " rem.paymentvhid=vh.id ");
+            queryString.append(" union select distinct concat(concat(bank.id,'-'), bankBranch.id) as bankbranchid, concat(concat(bank.name,' '), bankBranch.branchname) as bankbranchname")
+                    .append(" from egf_instrumentvoucher iv, voucherheader vh, eg_remittance rem, Bank bank, Bankbranch bankBranch, Bankaccount bankaccount, vouchermis vmis, eg_department d,")
+                    .append(" generalledger gl left outer join function f on gl.functionid = f.id,paymentheader ph, egw_status egws, (select ih1.id, ih1.id_status from egf_instrumentheader ih1,")
+                    .append(" (select bankid, bankaccountid, instrumentnumber, max(lastmodifieddate) as lastmodifieddate from egf_instrumentheader group by bankid,bankaccountid,")
+                    .append(" instrumentnumber) max_rec where max_rec.bankid = ih1.bankid and max_rec.bankaccountid = ih1.bankaccountid and max_rec.instrumentnumber = ih1.instrumentnumber")
+                    .append(" and max_rec.lastmodifieddate = ih1.lastmodifieddate) ih where ph.voucherheaderid = vh.id and vh.id = vmis.voucherheaderid and")
+                    .append(" vmis.departmentid = d.id and vh.status = 0 and gl.voucherheaderid = vh.id and ph.voucherheaderid = vh.id")
+                    .append(" and bank.isactive = true and bankBranch.isactive = true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and")
+                    .append(" bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and  iv.voucherheaderid = vh.id and iv.instrumentheaderid = ih.id and")
+                    .append(" rem.paymentvhid = vh.id ");
             if (recoveryId != null && recoveryId != 0)
-                queryString = queryString.append(" and rem.tdsid=" + recoveryId);
-            queryString = queryString
-                    .append(" and ih.id_status=egws.id and egws.description in ('Surrendered','Surrender_For_Reassign') ");
+                queryString.append(" and rem.tdsid = :recoveryId");
+            queryString.append(" and ih.id_status = egws.id and egws.description in ('Surrendered','Surrender_For_Reassign')");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
-            queryString = queryString
-                    .append(" and gl.debitamount!=0 and gl.debitamount is not null and vh.voucherdate <= :date2")
-                    .append(" and ph.bankaccountnumberid=bankaccount.id and ph.type='" + FinancialConstants.MODEOFPAYMENT_CASH
-                            + "' and vh.type='" + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "' and vh.name='"
-                            + FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE + "' order by 2 ");
-            final List<Object[]> bankBranch = persistenceService.getSession().createNativeQuery(queryString.toString())
-                    .setDate("date1", getAsOnDate())
-                    .setDate("date2", getAsOnDate())
-                    .list();
+                queryString.append(" and bankaccount.fundid = :fundId");
+            queryString.append(" and gl.debitamount != 0 and gl.debitamount is not null and vh.voucherdate <= :date2")
+                    .append(" and ph.bankaccountnumberid = bankaccount.id and ph.type='").append(FinancialConstants.MODEOFPAYMENT_CASH)
+                    .append("' and vh.type = '").append(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT).append("' and vh.name = '")
+                    .append(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE).append("' order by 2 ");
+            NativeQuery query = persistenceService.getSession().createNativeQuery(queryString.toString());
+            query.setParameter("date1", getAsOnDate(), DateType.INSTANCE)
+                .setParameter("date2", getAsOnDate(), DateType.INSTANCE);
+            if (recoveryId != null && recoveryId != 0)
+                query.setParameter("recoveryId", recoveryId, LongType.INSTANCE);
+            if (fundId != null && fundId != 0 && fundId != -1)
+                query.setParameter("fundId", fundId.longValue(), LongType.INSTANCE);
+            final List<Object[]> bankBranch = query.list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankBranch.size());
             bankBranchList = new ArrayList<>();
@@ -2417,10 +2277,10 @@ public class CommonAction extends BaseFormAction {
                 }
             }
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new Exception(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
@@ -2475,25 +2335,24 @@ public class CommonAction extends BaseFormAction {
                     LOGGER.debug("condtitionalAppConfigIsPresent -----");
                 final String ownerIdList = getCommaSeperatedListForDesignationNameAndFunctionaryName(designationName,
                         functionaryName);
-                bankAccounts = persistenceService.findAllBy("select p.bankaccount" +
-                        " from Paymentheader p where p.voucherheader.voucherDate<='" + Constants.DDMMYYYYFORMAT2.format(asOnDate)
-                        + "' and p.state.type='Paymentheader' " +
-                        " and p.bankaccount.bankbranch.bank.isactive=true  and p.bankaccount.bankbranch.isactive=true " +
-                        "and p.bankaccount.fund.id=? and p.state.owner in (" + ownerIdList
-                        + ") order by p.bankaccount.bankbranch.bank.name,p.bankaccount.bankbranch.branchname", fundId);
+                bankAccounts = persistenceService.findAllBy(new StringBuilder("select p.bankaccount")
+                        .append(" from Paymentheader p")
+                        .append(" where p.voucherheader.voucherDate <= ?1 and p.state.type='Paymentheader' and p.bankaccount.bankbranch.bank.isactive = true")
+                        .append(" and p.bankaccount.bankbranch.isactive = true and p.bankaccount.fund.id = ?2 and p.state.owner in (?3)")
+                        .append(" order by p.bankaccount.bankbranch.bank.name, p.bankaccount.bankbranch.branchname").toString(),
+                        Constants.DDMMYYYYFORMAT2.format(asOnDate), fundId, ownerIdList);
             } else
-                bankAccounts = persistenceService.findAllBy("select p.bankaccount" +
-                        " from Paymentheader p where p.voucherheader.voucherDate<='" + Constants.DDMMYYYYFORMAT2.format(asOnDate)
-                        + "' and p.state.type='Paymentheader' " +
-                        " and p.bankaccount.bankbranch.bank.isactive=true  and p.bankaccount.bankbranch.isactive=true " +
-                        "and p.bankaccount.fund.id=? and p.state.value like '" + stateWithoutCondition
-                        + "' order by p.bankaccount.bankbranch.bank.name,p.bankaccount.bankbranch.branchname", fundId);
+                bankAccounts = persistenceService.findAllBy(new StringBuilder("select p.bankaccount")
+                        .append(" from Paymentheader p")
+                        .append(" where p.voucherheader.voucherDate <= ?1 and p.state.type='Paymentheader' and p.bankaccount.bankbranch.bank.isactive = true")
+                        .append(" and p.bankaccount.bankbranch.isactive = true and p.bankaccount.fund.id = ?2 and p.state.value like '")
+                        .append(stateWithoutCondition).append("' order by p.bankaccount.bankbranch.bank.name, p.bankaccount.bankbranch.branchname").toString(),
+                        Constants.DDMMYYYYFORMAT2.format(asOnDate), fundId);
 
-            bankBranchList = new ArrayList<Map<String, Object>>();
+            bankBranchList = new ArrayList<>();
             final List<String> addedBanks = new ArrayList<String>();
             for (final Bankaccount account : bankAccounts) {
-                final String bankBranchName = account.getBankbranch().getBank().getName() + "-"
-                        + account.getBankbranch().getBranchname();
+                final String bankBranchName = account.getBankbranch().getBank().getName().concat("-").concat(account.getBankbranch().getBranchname());
                 if (!addedBanks.contains(bankBranchName)) {
                     addedBanks.add(bankBranchName);
                     final Map<String, Object> bankBrmap = new HashMap<String, Object>();
@@ -2504,10 +2363,10 @@ public class CommonAction extends BaseFormAction {
                 }
             }
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new Exception(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
@@ -2517,16 +2376,17 @@ public class CommonAction extends BaseFormAction {
 
     private String getCommaSeperatedListForDesignationNameAndFunctionaryName(final String designationName,
             final String functionaryName) {
-        final String qrySQL = "select pos_id from eg_eis_employeeinfo empinfo, eg_designation desg, functionary func   " +
-                " where empinfo.functionary_id=func.id and empinfo.DESIGNATIONID=desg.DESIGNATIONID " +
-                " and empinfo.isactive=true   " +
-                " and desg.DESIGNATION_NAME like '" + designationName + "' and func.NAME like '" + functionaryName + "' ";
-        final Query query = persistenceService.getSession().createNativeQuery(qrySQL);
+        final StringBuilder qryString = new StringBuilder("select pos_id from eg_eis_employeeinfo empinfo, eg_designation desg, functionary func")
+                .append(" where empinfo.functionary_id = func.id and empinfo.DESIGNATIONID = desg.DESIGNATIONID")
+                .append(" and empinfo.isactive = true and desg.DESIGNATION_NAME like :designationName and func.NAME like :functionaryName ");
+        final Query query = persistenceService.getSession().createNativeQuery(qryString.toString());
+        query.setParameter("designationName", designationName, StringType.INSTANCE)
+            .setParameter("functionaryName", functionaryName, StringType.INSTANCE);
         final List<BigDecimal> result = query.list();
         if (result == null || result.isEmpty())
             throw new ValidationException("", "No employee with functionary -" + functionaryName + " and designation - "
                     + designationName);
-        final StringBuffer returnListSB = new StringBuffer();
+        final StringBuilder returnListSB = new StringBuilder();
         String commaSeperatedList = "";
         for (final BigDecimal posId : result)
             returnListSB.append(posId.toString() + ",");
@@ -2548,7 +2408,7 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadBankAccountsWithPaymentInWorkFlow...");
         try {
-            accNumList = new ArrayList<Bankaccount>();
+            accNumList = new ArrayList<>();
             final String voucherStatusKey = parameters.get("voucherStatusKey")[0];
             final List<AppConfigValues> appConfig = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,
                     voucherStatusKey);
@@ -2587,31 +2447,21 @@ public class CommonAction extends BaseFormAction {
                         functionaryName);
                 bankAccounts = persistenceService
                         .findAllBy(
-                                "select p.bankaccount"
-                                        +
-                                        " from Paymentheader p where p.voucherheader.voucherDate<='"
-                                        + Constants.DDMMYYYYFORMAT2.format(asOnDate)
-                                        + "' and p.state.type='Paymentheader' "
-                                        +
-                                        " and p.bankaccount.isactive=true  and p.bankaccount.bankbranch.isactive=true and  p.bankaccount.bankbranch.id=?"
-                                        +
-                                        "and p.bankaccount.fund.id=? and p.state.owner in  ( " + ownerIdList
-                                        + ") order by p.bankaccount.bankbranch.bank.name,p.bankaccount.bankbranch.branchname",
-                                branchId, fundId);
+                                new StringBuilder("select p.bankaccount")
+                                        .append(" from Paymentheader p where p.voucherheader.voucherDate <= ?1")
+                                        .append(" and p.state.type = 'Paymentheader' and p.bankaccount.isactive = true and p.bankaccount.bankbranch.isactive = true")
+                                        .append(" and p.bankaccount.bankbranch.id = ?2 and p.bankaccount.fund.id = ?3 and p.state.owner in (?4)")
+                                        .append(" order by p.bankaccount.bankbranch.bank.name, p.bankaccount.bankbranch.branchname").toString(),
+                                        Constants.DDMMYYYYFORMAT2.format(asOnDate), branchId, fundId, ownerIdList);
             } else
                 bankAccounts = persistenceService
                         .findAllBy(
-                                "select p.bankaccount"
-                                        +
-                                        " from Paymentheader p where p.voucherheader.voucherDate<='"
-                                        + Constants.DDMMYYYYFORMAT2.format(asOnDate)
-                                        + "' and p.state.type='Paymentheader' "
-                                        +
-                                        " and p.bankaccount.isactive=true  and p.bankaccount.bankbranch.isactive=true and  p.bankaccount.bankbranch.id=?"
-                                        +
-                                        "and p.bankaccount.fund.id=? and p.state.value like '" + stateWithoutCondition
-                                        + "' order by p.bankaccount.bankbranch.bank.name,p.bankaccount.bankbranch.branchname",
-                                branchId, fundId);
+                                new StringBuilder("select p.bankaccount")
+                                        .append(" from Paymentheader p where p.voucherheader.voucherDate <= ?1")
+                                        .append(" and p.state.type = 'Paymentheader' and p.bankaccount.isactive = true and p.bankaccount.bankbranch.isactive = true")
+                                .append(" and p.bankaccount.bankbranch.id = ?2 and p.bankaccount.fund.id = ?3 and p.state.value like '")
+                                        .append(stateWithoutCondition).append("' order by p.bankaccount.bankbranch.bank.name, p.bankaccount.bankbranch.branchname").toString(),
+                                Constants.DDMMYYYYFORMAT2.format(asOnDate), branchId, fundId);
 
             final List<String> addedBanks = new ArrayList<String>();
             for (final Bankaccount account : bankAccounts) {
@@ -2622,10 +2472,10 @@ public class CommonAction extends BaseFormAction {
                 }
             }
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data for bankaccount dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bankaccount dropdown ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting the data for bankaccount dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bankaccount dropdown ",
                     new Exception(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
@@ -2641,105 +2491,68 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting | ajaxLoadBankAccountsWithApprovedPayments ");
         try {
-            accNumList = new ArrayList<Bankaccount>();
+            accNumList = new ArrayList<>();
             StringBuffer queryString = new StringBuffer();
             // query to fetch vouchers for which no cheque has been assigned
-            queryString = queryString
-                    .append("SELECT  bankaccount.accountnumber AS accountnumber,  bank.name AS bankName,"
-                            +
-                            " CAST(bankaccount.id AS INTEGER) AS id, coa.glcode AS glCode  FROM chartofaccounts coa, bankaccount bankaccount ,bankbranch branch,bank bank "
-                            +
-                            " WHERE bankaccount.ID IN (SELECT DISTINCT PH.bankaccountnumberid  "
-                            +
-                            " FROM   paymentheader ph,  voucherheader vh left OUTER JOIN egf_instrumentvoucher iv ON vh.id =iv.VOUCHERHEADERID"
-                            +
-                            " WHERE ph.voucherheaderid  =vh.id AND vh.status=0 AND VH.FUNDID="
-                            + fundId
-                            + " AND ph.voucherheaderid    =vh.id"
-                            +
-                            " AND iv.VOUCHERHEADERID   IS NULL AND vh.name NOT          IN ( 'Remittance Payment','Salary Bill Payment' ))"
-                            +
-                            " AND coa.id = bankaccount.glcodeid AND bankaccount.type     IN ('RECEIPTS_PAYMENTS','PAYMENTS')"
-                            +
-                            " AND bankaccount.fundid    =" + fundId.longValue()
-                            + " AND bankaccount.branchid = branch.id and branch.bankid = bank.id and  bankaccount.branchid  ="
-                            + branchId
-                            + " and bankaccount.isactive=true ");
+            queryString.append("SELECT bankaccount.accountnumber AS accountnumber, bank.name AS bankName, CAST(bankaccount.id AS INTEGER) AS id, coa.glcode AS glCode")
+                    .append(" FROM chartofaccounts coa, bankaccount bankaccount ,bankbranch branch, bank bank")
+                    .append(" WHERE bankaccount.ID IN (SELECT DISTINCT PH.bankaccountnumberid")
+                    .append(" FROM paymentheader ph, voucherheader vh left OUTER JOIN egf_instrumentvoucher iv ON vh.id = iv.VOUCHERHEADERID")
+                    .append(" WHERE ph.voucherheaderid = vh.id AND vh.status = 0 AND VH.FUNDID = :fundId AND ph.voucherheaderid = vh.id AND iv.VOUCHERHEADERID IS NULL")
+                    .append(" AND vh.name NOT IN ('Remittance Payment', 'Salary Bill Payment')) AND coa.id = bankaccount.glcodeid AND bankaccount.type IN ('RECEIPTS_PAYMENTS','PAYMENTS')")
+                    .append(" AND bankaccount.fundid = :fundId AND bankaccount.branchid = branch.id and branch.bankid = bank.id and bankaccount.branchid = :branchId")
+                    .append(" and bankaccount.isactive = true");
             // queryString =
             // queryString.append(" and ph.bankaccountnumberid=bankaccount.id and
             // vh.type='"+FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT+"' and vh.name NOT IN (
             // '"+FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE+"','"+FinancialConstants.PAYMENTVOUCHER_NAME_SALARY+"' ) ");
             // query to fetch vouchers for which cheque has been assigned and surrendered
-            queryString
-                    .append(" union select bankaccount.accountnumber as accountnumber,bank.name as bankName,cast(bankaccount.id as integer) as id,coa.glcode as glCode "
-                            +
-                            " from chartofaccounts coa, "
-                            +
-                            " Bankaccount bankaccount  ,bankbranch branch,bank bank "
-                            +
-                            " where bankaccount.branchid = branch.id and branch.bankid = bank.id and  bankaccount.id in(SELECT DISTINCT PH.bankaccountnumberid  from  "
-                            +
-                            " egf_instrumentvoucher iv,voucherheader vh,"
-                            +
-                            " paymentheader ph,egw_status egws,(select ih1.id,ih1.id_status from egf_instrumentheader ih1, "
-                            +
-                            " (select bankid,bankaccountid,instrumentnumber,max(id) as id from egf_instrumentheader group by bankid,bankaccountid,"
-                            +
-                            " instrumentnumber) max_rec where max_rec.bankid=ih1.bankid and max_rec.bankaccountid=ih1.bankaccountid and max_rec.instrumentnumber=ih1.instrumentnumber "
-                            +
-                            " and max_rec.id=ih1.id) ih where ph.voucherheaderid=vh.id  and "
-                            +
-                            " vh.fundid="
-                            + fundId.longValue()
-                            +
-                            " and vh.status=0 and  ph.voucherheaderid=vh.id and  iv.voucherheaderid=vh.id and iv.instrumentheaderid=ih.id "
-                            +
-                            " and ph.bankaccountnumberid=bankaccount.id  and vh.type='"
-                            + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT
-                            + "'"
-                            +
-                            " and vh.name NOT IN ( '"
-                            + FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE
-                            + "','"
-                            + FinancialConstants.PAYMENTVOUCHER_NAME_SALARY
-                            + "' )"
-                            +
-                            " and ih.id_status=egws.id and egws.description in ('Surrendered','Surrender_For_Reassign') )"
-                            +
-                            " and coa.id=bankaccount.glcodeid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS')  and bankaccount.branchid="
-                            + branchId);
+            queryString.append(" union select bankaccount.accountnumber as accountnumber, bank.name as bankName, cast(bankaccount.id as integer) as id, coa.glcode as glCode ")
+                    .append(" from chartofaccounts coa, Bankaccount bankaccount, bankbranch branch, bank bank")
+                    .append(" where bankaccount.branchid = branch.id and branch.bankid = bank.id and bankaccount.id in (SELECT DISTINCT PH.bankaccountnumberid from")
+                    .append(" egf_instrumentvoucher iv, voucherheader vh, paymentheader ph, egw_status egws, (select ih1.id, ih1.id_status from egf_instrumentheader ih1,")
+                    .append(" (select bankid, bankaccountid, instrumentnumber, max(id) as id from egf_instrumentheader group by bankid,bankaccountid, instrumentnumber) max_rec")
+                    .append(" where max_rec.bankid = ih1.bankid and max_rec.bankaccountid = ih1.bankaccountid and max_rec.instrumentnumber = ih1.instrumentnumber")
+                    .append(" and max_rec.id = ih1.id) ih where ph.voucherheaderid = vh.id and vh.fundid = :fundId and vh.status = 0 and ph.voucherheaderid = vh.id")
+                    .append(" and iv.voucherheaderid = vh.id and iv.instrumentheaderid = ih.id and ph.bankaccountnumberid = bankaccount.id and vh.type = '")
+                    .append(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT).append("'").append(" and vh.name NOT IN ( '").append(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE)
+                    .append("','").append(FinancialConstants.PAYMENTVOUCHER_NAME_SALARY).append("' )").append(" and ih.id_status = egws.id")
+                    .append(" and egws.description in ('Surrendered','Surrender_For_Reassign')) and coa.id = bankaccount.glcodeid")
+                    .append(" and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bankaccount.branchid = :branchId");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
+                queryString.append(" and bankaccount.fundid = :fundId");
+            NativeQuery query = persistenceService.getSession().createNativeQuery(queryString.toString());
+            query.setParameter("fundId", fundId.longValue(), LongType.INSTANCE)
+                    .setParameter("branchId", branchId, IntegerType.INSTANCE);
 
-            final List<Object[]> bankAccounts = persistenceService.getSession().createNativeQuery(queryString.toString())
-                    .list();
+            final List<Object[]> bankAccounts = query.list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank accont list size is " + bankAccounts.size() + "and Query is " + queryString.toString());
             final List<String> addedBanks = new ArrayList<String>();
             for (final Object[] account : bankAccounts) {
-                final String accountNumberAndType = account[0].toString() + "-" + account[1].toString();
+                final String accountNumberAndType = account[0].toString().concat("-").concat(account[1].toString());
                 if (!addedBanks.contains(accountNumberAndType)) {
                     final Bankaccount bankaccount = new Bankaccount();
                     bankaccount.setAccountnumber(account[0].toString());
                     // bankaccount.setAccounttype(account[1].toString());
-                    final CChartOfAccounts chartofaccounts = new CChartOfAccounts();
+                    final CChartOfAccounts chartOfAccounts = new CChartOfAccounts();
                     final Bankbranch branch = new Bankbranch();
                     final Bank bank = new Bank();
                     bank.setName(account[1].toString());
                     branch.setBank(bank);
                     bankaccount.setBankbranch(branch);
-                    chartofaccounts.setGlcode(account[3].toString());
-                    bankaccount.setChartofaccounts(chartofaccounts);
+                    chartOfAccounts.setGlcode(account[3].toString());
+                    bankaccount.setChartofaccounts(chartOfAccounts);
                     bankaccount.setId(Long.valueOf(account[2].toString()));
                     addedBanks.add(accountNumberAndType);
                     accNumList.add(bankaccount);
                 }
             }
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new Exception(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
@@ -2755,88 +2568,73 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadBankAccountsWithApprovedSalaryPayments...");
         try {
-            accNumList = new ArrayList<Bankaccount>();
-            StringBuffer queryString = new StringBuffer();
+            accNumList = new ArrayList<>();
             // query to fetch vouchers for which no cheque has been assigned
-            queryString = queryString
-                    .append("select distinct bankaccount.accountnumber as accountnumber,bankaccount.accounttype as accounttype,cast(bankaccount.id as integer) as id,coa.glcode as glCode "
-                            +
-                            "from chartofaccounts coa,voucherheader vh,Bank bank,Bankbranch bankBranch,Bankaccount bankaccount,vouchermis vmis, eg_department d,"
-                            +
-                            "generalledger gl ,paymentheader ph,"
-                            +
-                            "egf_instrumentvoucher iv right outer join voucherheader vh1 on vh1.id =iv.VOUCHERHEADERID  "
-                            +
-                            "where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and vmis.departmentid= d.id and vh.status=0 "
-                            +
-                            " and coa.id=bankaccount.glcodeid and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id and bank.isactive=true  and bankBranch.isactive=true "
-                            +
-                            "and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bankaccount.branchid="
-                            + branchId +
-                            " and  vh1.id=vh.id and iv.VOUCHERHEADERID is null");
+            StringBuilder queryString = new StringBuilder("select distinct bankaccount.accountnumber as accountnumber, bankaccount.accounttype as accounttype,")
+                    .append(" cast(bankaccount.id as integer) as id, coa.glcode as glCode")
+                    .append(" from chartofaccounts coa, voucherheader vh, Bank bank, Bankbranch bankBranch, Bankaccount bankaccount, vouchermis vmis, eg_department d,")
+                    .append(" generalledger gl, paymentheader ph, egf_instrumentvoucher iv right outer join voucherheader vh1 on vh1.id = iv.VOUCHERHEADERID")
+                    .append(" where ph.voucherheaderid = vh.id and vh.id = vmis.voucherheaderid and vmis.departmentid = d.id and vh.status = 0")
+                    .append(" and coa.id = bankaccount.glcodeid and gl.voucherheaderid = vh.id and ph.voucherheaderid = vh.id and bank.isactive = true and bankBranch.isactive = true")
+                    .append(" and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS')")
+                    .append(" and bankaccount.branchid = :branchId and vh1.id = vh.id and iv.VOUCHERHEADERID is null");
 
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
+                queryString.append(" and bankaccount.fundid = :fundId");
             if (departmentId != null && departmentId != 0 && departmentId != -1)
-                queryString = queryString.append(" and vmis.departmentid=" + departmentId);
-            queryString = queryString.append(" and ph.bankaccountnumberid=bankaccount.id  and vh.type='"
-                    + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "' and vh.name='"
-                    + FinancialConstants.PAYMENTVOUCHER_NAME_SALARY + "'");
+                queryString.append(" and vmis.departmentid = :departmentId");
+            queryString.append(" and ph.bankaccountnumberid = bankaccount.id and vh.type = :voucherType'")
+                    .append(" and vh.name = :voucherName");
             // query to fetch vouchers for which cheque has been assigned and surrendered
-            queryString
-                    .append(" union select bankaccount.accountnumber as accountnumber,bankaccount.accounttype as accounttype,cast(bankaccount.id as integer) as id,coa.glcode as glCode "
-                            +
-                            " from chartofaccounts coa,egf_instrumentvoucher iv,voucherheader vh,"
-                            +
-                            "Bank bank,Bankbranch bankBranch,Bankaccount bankaccount,vouchermis vmis, eg_department d,generalledger gl,"
-                            +
-                            "paymentheader ph,egw_status egws,(select ih1.id,ih1.id_status from egf_instrumentheader ih1, "
-                            +
-                            "(select bankid,bankaccountid,instrumentnumber,max(lastmodifieddate) as lastmodifieddate from egf_instrumentheader group by bankid,bankaccountid,"
-                            +
-                            "instrumentnumber) max_rec where max_rec.bankid=ih1.bankid and max_rec.bankaccountid=ih1.bankaccountid and max_rec.instrumentnumber=ih1.instrumentnumber "
-                            +
-                            "and max_rec.lastmodifieddate=ih1.lastmodifieddate) ih where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and "
-                            +
-                            "vmis.departmentid= d.id and coa.id=bankaccount.glcodeid and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
-                            +
-                            "and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and "
-                            +
-                            "bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and  iv.voucherheaderid=vh.id and iv.instrumentheaderid=ih.id and bankaccount.branchid="
-                            + branchId +
-                            " and ih.id_status=egws.id and egws.description in ('Surrendered','Surrender_For_Reassign')");
+            queryString.append(" union select bankaccount.accountnumber as accountnumber, bankaccount.accounttype as accounttype, cast(bankaccount.id as integer) as id, coa.glcode as glCode")
+                    .append(" from chartofaccounts coa, egf_instrumentvoucher iv, voucherheader vh, Bank bank, Bankbranch bankBranch, Bankaccount bankaccount, vouchermis vmis,")
+                    .append(" eg_department d,generalledger gl, paymentheader ph, egw_status egws, (select ih1.id, ih1.id_status from egf_instrumentheader ih1,")
+                    .append(" (select bankid, bankaccountid, instrumentnumber, max(lastmodifieddate) as lastmodifieddate from egf_instrumentheader")
+                    .append(" group by bankid, bankaccountid, instrumentnumber) max_rec")
+                    .append(" where max_rec.bankid = ih1.bankid and max_rec.bankaccountid = ih1.bankaccountid and max_rec.instrumentnumber = ih1.instrumentnumber")
+                    .append(" and max_rec.lastmodifieddate = ih1.lastmodifieddate) ih where ph.voucherheaderid = vh.id and vh.id = vmis.voucherheaderid and vmis.departmentid = d.id")
+                    .append(" and coa.id = bankaccount.glcodeid and vh.status = 0 and gl.voucherheaderid = vh.id and ph.voucherheaderid = vh.id and bank.isactive = true")
+                    .append(" and bankBranch.isactive = true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS')")
+                    .append(" and iv.voucherheaderid = vh.id and iv.instrumentheaderid = ih.id and bankaccount.branchid = :branchId and ih.id_status = egws.id")
+                    .append(" and egws.description in ('Surrendered','Surrender_For_Reassign')");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
+                queryString.append(" and bankaccount.fundid = :fundId");
             if (departmentId != null && departmentId != 0 && departmentId != -1)
-                queryString = queryString.append(" and vmis.departmentid=" + departmentId);
-            queryString = queryString.append(" and ph.bankaccountnumberid=bankaccount.id  and vh.type='"
-                    + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "' and vh.name='"
-                    + FinancialConstants.PAYMENTVOUCHER_NAME_SALARY + "' order by 4 ");
+                queryString.append(" and vmis.departmentid = :departmentId");
+            queryString.append(" and ph.bankaccountnumberid = bankaccount.id and vh.type = :voucherType and vh.name = :voucherName order by 4 ");
 
-            final List<Object[]> bankAccounts = persistenceService.getSession().createNativeQuery(queryString.toString())
-                    .list();
+            NativeQuery query = persistenceService.getSession().createNativeQuery(queryString.toString());
+            query.setParameter("branchId", branchId, IntegerType.INSTANCE);
+            if (fundId != null && fundId != 0 && fundId != -1)
+                query.setParameter("fundId", fundId.longValue(), LongType.INSTANCE);
+            if (departmentId != null && departmentId != 0 && departmentId != -1)
+                query.setParameter("departmentId", departmentId, LongType.INSTANCE);
+            query.setParameter("voucherType", FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT, StringType.INSTANCE)
+                    .setParameter("voucherName", FinancialConstants.PAYMENTVOUCHER_NAME_SALARY, StringType.INSTANCE);
+
+            final List<Object[]> bankAccounts = query.list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank accont list size is " + bankAccounts.size());
             final List<String> addedBanks = new ArrayList<String>();
             for (final Object[] account : bankAccounts) {
-                final String accountNumberAndType = account[0].toString() + "-" + account[1].toString();
+                final String accountNumberAndType = account[0].toString().concat("-").concat(account[1].toString());
                 if (!addedBanks.contains(accountNumberAndType)) {
                     final Bankaccount bankaccount = new Bankaccount();
                     bankaccount.setAccountnumber(account[0].toString());
                     bankaccount.setAccounttype(account[1].toString());
-                    final CChartOfAccounts chartofaccounts = new CChartOfAccounts();
-                    chartofaccounts.setGlcode(account[3].toString());
-                    bankaccount.setChartofaccounts(chartofaccounts);
+                    final CChartOfAccounts chartOfAccounts = new CChartOfAccounts();
+                    chartOfAccounts.setGlcode(account[3].toString());
+                    bankaccount.setChartofaccounts(chartOfAccounts);
                     bankaccount.setId(Long.valueOf(account[2].toString()));
                     addedBanks.add(accountNumberAndType);
                     accNumList.add(bankaccount);
                 }
             }
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new Exception(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
@@ -2850,88 +2648,71 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadBankAccountsWithApprovedPensionPayments...");
         try {
-            accNumList = new ArrayList<Bankaccount>();
+            accNumList = new ArrayList<>();
             StringBuffer queryString = new StringBuffer();
             // query to fetch vouchers for which no cheque has been assigned
-            queryString = queryString
-                    .append("select distinct bankaccount.accountnumber as accountnumber,bankaccount.accounttype as accounttype,cast(bankaccount.id as integer) as id,coa.glcode as glCode "
-                            +
-                            "from chartofaccounts coa,voucherheader vh,Bank bank,Bankbranch bankBranch,Bankaccount bankaccount,vouchermis vmis, eg_department d,"
-                            +
-                            "generalledger gl ,paymentheader ph,"
-                            +
-                            "egf_instrumentvoucher iv right outer join voucherheader vh1 on vh1.id =iv.VOUCHERHEADERID  "
-                            +
-                            "where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and vmis.departmentid= d.id and vh.status=0 "
-                            +
-                            " and coa.id=bankaccount.glcodeid and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id and bank.isactive=true  and bankBranch.isactive=true "
-                            +
-                            "and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bankaccount.branchid="
-                            + branchId +
-                            " and  vh1.id=vh.id and iv.VOUCHERHEADERID is null");
+            queryString.append("select distinct bankaccount.accountnumber as accountnumber, bankaccount.accounttype as accounttype, cast(bankaccount.id as integer) as id, coa.glcode as glCode")
+                    .append(" from chartofaccounts coa, voucherheader vh, Bank bank, Bankbranch bankBranch, Bankaccount bankaccount, vouchermis vmis, eg_department d,")
+                    .append(" generalledger gl, paymentheader ph, egf_instrumentvoucher iv right outer join voucherheader vh1 on vh1.id = iv.VOUCHERHEADERID")
+                    .append(" where ph.voucherheaderid = vh.id and vh.id = vmis.voucherheaderid and vmis.departmentid = d.id and vh.status = 0")
+                    .append(" and coa.id = bankaccount.glcodeid and gl.voucherheaderid = vh.id and ph.voucherheaderid = vh.id and bank.isactive = true and bankBranch.isactive = true")
+                    .append(" and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.type in ('RECEIPTS_PAYMENTS', 'PAYMENTS')")
+                    .append(" and bankaccount.branchid = :branchId and vh1.id = vh.id and iv.VOUCHERHEADERID is null");
 
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
+                queryString.append(" and bankaccount.fundid = :fundId");
             if (departmentId != null && departmentId != 0 && departmentId != -1)
-                queryString = queryString.append(" and vmis.departmentid=" + departmentId);
-            queryString = queryString.append(" and ph.bankaccountnumberid=bankaccount.id  and vh.type='"
-                    + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "' and vh.name='"
-                    + FinancialConstants.PAYMENTVOUCHER_NAME_PENSION + "'");
+                queryString.append(" and vmis.departmentid = :departmentId");
+            queryString.append(" and ph.bankaccountnumberid = bankaccount.id and vh.type = :voucherType and vh.name = :voucherName");
             // query to fetch vouchers for which cheque has been assigned and surrendered
-            queryString
-                    .append(" union select bankaccount.accountnumber as accountnumber,bankaccount.accounttype as accounttype,cast(bankaccount.id as integer) as id,coa.glcode as glCode "
-                            +
-                            " from chartofaccounts coa,egf_instrumentvoucher iv,voucherheader vh,"
-                            +
-                            "Bank bank,Bankbranch bankBranch,Bankaccount bankaccount,vouchermis vmis, eg_department d,generalledger gl,"
-                            +
-                            "paymentheader ph,egw_status egws,(select ih1.id,ih1.id_status from egf_instrumentheader ih1, "
-                            +
-                            "(select bankid,bankaccountid,instrumentnumber,max(lastmodifieddate) as lastmodifieddate from egf_instrumentheader group by bankid,bankaccountid,"
-                            +
-                            "instrumentnumber) max_rec where max_rec.bankid=ih1.bankid and max_rec.bankaccountid=ih1.bankaccountid and max_rec.instrumentnumber=ih1.instrumentnumber "
-                            +
-                            "and max_rec.lastmodifieddate=ih1.lastmodifieddate) ih where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and "
-                            +
-                            "vmis.departmentid= d.id and coa.id=bankaccount.glcodeid and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
-                            +
-                            "and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and "
-                            +
-                            "bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and  iv.voucherheaderid=vh.id and iv.instrumentheaderid=ih.id and bankaccount.branchid="
-                            + branchId +
-                            " and ih.id_status=egws.id and egws.description in ('Surrendered','Surrender_For_Reassign')");
+            queryString.append(" union select bankaccount.accountnumber as accountnumber, bankaccount.accounttype as accounttype, cast(bankaccount.id as integer) as id, coa.glcode as glCode")
+                    .append(" from chartofaccounts coa, egf_instrumentvoucher iv, voucherheader vh, Bank bank, Bankbranch bankBranch, Bankaccount bankaccount, vouchermis vmis,")
+                    .append(" eg_department d, generalledger gl, paymentheader ph, egw_status egws, (select ih1.id, ih1.id_status from egf_instrumentheader ih1,")
+                    .append(" (select bankid, bankaccountid, instrumentnumber, max(lastmodifieddate) as lastmodifieddate")
+                    .append(" from egf_instrumentheader group by bankid, bankaccountid, instrumentnumber) max_rec")
+                    .append(" where max_rec.bankid = ih1.bankid and max_rec.bankaccountid = ih1.bankaccountid and max_rec.instrumentnumber = ih1.instrumentnumber")
+                    .append(" and max_rec.lastmodifieddate = ih1.lastmodifieddate) ih where ph.voucherheaderid = vh.id and vh.id = vmis.voucherheaderid")
+                    .append(" and vmis.departmentid = d.id and coa.id = bankaccount.glcodeid and vh.status = 0 and gl.voucherheaderid = vh.id and ph.voucherheaderid = vh.id")
+                    .append(" and bank.isactive = true and bankBranch.isactive = true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid")
+                    .append(" and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and iv.voucherheaderid = vh.id and iv.instrumentheaderid = ih.id")
+                    .append(" and bankaccount.branchid = :branchId and ih.id_status = egws.id and egws.description in ('Surrendered','Surrender_For_Reassign')");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
+                queryString.append(" and bankaccount.fundid = :fundId");
             if (departmentId != null && departmentId != 0 && departmentId != -1)
-                queryString = queryString.append(" and vmis.departmentid=" + departmentId);
-            queryString = queryString.append(" and ph.bankaccountnumberid=bankaccount.id  and vh.type='"
-                    + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "' and vh.name='"
-                    + FinancialConstants.PAYMENTVOUCHER_NAME_PENSION + "' order by 4 ");
+                queryString.append(" and vmis.departmentid = :departmentId");
+            queryString.append(" and ph.bankaccountnumberid = bankaccount.id and vh.type = :voucherType and vh.name = :voucherName order by 4");
+            NativeQuery query = persistenceService.getSession().createNativeQuery(queryString.toString());
+            query.setParameter("branchId", branchId, IntegerType.INSTANCE);
+            if (fundId != null && fundId != 0 && fundId != -1)
+                query.setParameter("fundId", fundId.longValue(), LongType.INSTANCE);
+            if (departmentId != null && departmentId != 0 && departmentId != -1)
+                query.setParameter("departmentId", departmentId, LongType.INSTANCE);
+            query.setParameter("voucherType", FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT, StringType.INSTANCE)
+                    .setParameter("voucherName", FinancialConstants.PAYMENTVOUCHER_NAME_PENSION, StringType.INSTANCE);
 
-            final List<Object[]> bankAccounts = persistenceService.getSession().createNativeQuery(queryString.toString())
-                    .list();
+            final List<Object[]> bankAccounts = query.list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank accont list size is " + bankAccounts.size());
             final List<String> addedBanks = new ArrayList<String>();
             for (final Object[] account : bankAccounts) {
-                final String accountNumberAndType = account[0].toString() + "-" + account[1].toString();
+                final String accountNumberAndType = account[0].toString().concat("-").concat(account[1].toString());
                 if (!addedBanks.contains(accountNumberAndType)) {
                     final Bankaccount bankaccount = new Bankaccount();
                     bankaccount.setAccountnumber(account[0].toString());
                     bankaccount.setAccounttype(account[1].toString());
-                    final CChartOfAccounts chartofaccounts = new CChartOfAccounts();
-                    chartofaccounts.setGlcode(account[3].toString());
-                    bankaccount.setChartofaccounts(chartofaccounts);
+                    final CChartOfAccounts chartOfAccounts = new CChartOfAccounts();
+                    chartOfAccounts.setGlcode(account[3].toString());
+                    bankaccount.setChartofaccounts(chartOfAccounts);
                     bankaccount.setId(Long.valueOf(account[2].toString()));
                     addedBanks.add(accountNumberAndType);
                     accNumList.add(bankaccount);
                 }
             }
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new Exception(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
@@ -2945,99 +2726,76 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadBankAccountsWithApprovedRemittances...");
         try {
-            accNumList = new ArrayList<Bankaccount>();
-            StringBuffer queryString = new StringBuffer();
-            queryString = queryString
-                    .append("select distinct bankaccount.accountnumber as accountnumber,bank.name as bankName,cast(bankaccount.id as integer) as id,coa.glcode as glCode "
-                            +
-                            "from chartofaccounts coa,voucherheader vh,Bank bank,Bankbranch bankBranch,Bankaccount bankaccount,vouchermis vmis, eg_department d,EG_REMITTANCE rem ,"
-                            +
-                            "generalledger gl left outer join function f on gl.functionid=f.id,paymentheader ph,"
-                            +
-                            "egf_instrumentvoucher iv right outer join voucherheader vh1 on vh1.id =iv.VOUCHERHEADERID  "
-                            +
-                            "where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and vmis.departmentid= d.id and vh.status=0 "
-                            +
-                            "and rem.paymentvhid=vh.id ");
+            accNumList = new ArrayList<>();
+            StringBuilder queryString = new StringBuilder("select distinct bankaccount.accountnumber as accountnumber, bank.name as bankName, cast(bankaccount.id as integer) as id, coa.glcode as glCode")
+                    .append(" from chartofaccounts coa, voucherheader vh, Bank bank, Bankbranch bankBranch, Bankaccount bankaccount, vouchermis vmis, eg_department d, EG_REMITTANCE rem,")
+                    .append(" generalledger gl left outer join function f on gl.functionid = f.id, paymentheader ph, egf_instrumentvoucher iv right outer join voucherheader vh1 on vh1.id = iv.VOUCHERHEADERID")
+                    .append(" where ph.voucherheaderid = vh.id and vh.id = vmis.voucherheaderid and vmis.departmentid = d.id and vh.status = 0 and rem.paymentvhid = vh.id");
             if (recoveryId != null && recoveryId != 0)
-                queryString = queryString.append(" and rem.tdsid=" + recoveryId);
-            queryString = queryString.append(
-                    " and coa.id=bankaccount.glcodeid and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id and bank.isactive=true  and bankBranch.isactive=true "
-                            +
-                            " and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bankaccount.branchid="
-                            + branchId +
-                            " and  vh1.id=vh.id and iv.VOUCHERHEADERID is null");
+                queryString.append(" and rem.tdsid = :recoveryId");
+            queryString.append(" and coa.id = bankaccount.glcodeid and gl.voucherheaderid = vh.id and ph.voucherheaderid = vh.id and bank.isactive = true and bankBranch.isactive = true")
+                    .append(" and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS')" +
+                            " and bankaccount.branchid = :branchId and vh1.id = vh.id and iv.VOUCHERHEADERID is null");
 
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
-            queryString = queryString.append(" and ph.bankaccountnumberid=bankaccount.id and ph.type='"
-                    + FinancialConstants.MODEOFPAYMENT_CASH + "' and vh.type='"
-                    + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "' and vh.name='"
-                    + FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE + "'");
+                queryString.append(" and bankaccount.fundid = :fundId");
+            queryString.append(" and ph.bankaccountnumberid = bankaccount.id and ph.type = :paymentType and vh.type = :voucherType and vh.name = :voucherName");
 
-            queryString
-                    .append(" union select bankaccount.accountnumber as accountnumber,bank.name as bankName,cast(bankaccount.id as integer) as id,coa.glcode as glCode "
-                            +
-                            " from chartofaccounts coa,egf_instrumentvoucher iv,voucherheader vh,"
-                            +
-                            "Bank bank,Bankbranch bankBranch,Bankaccount bankaccount,vouchermis vmis, eg_department d,eg_remittance rem ,generalledger gl left outer join function f on "
-                            +
-                            "gl.functionid=f.id,paymentheader ph,egw_status egws,(select ih1.id,ih1.id_status from egf_instrumentheader ih1, "
-                            +
-                            "(select bankid,bankaccountid,instrumentnumber,max(lastmodifieddate) as lastmodifieddate from egf_instrumentheader group by bankid,bankaccountid,"
-                            +
-                            " instrumentnumber) max_rec where max_rec.bankid=ih1.bankid and max_rec.bankaccountid=ih1.bankaccountid and max_rec.instrumentnumber=ih1.instrumentnumber "
-                            +
-                            " and max_rec.lastmodifieddate=ih1.lastmodifieddate) ih where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid  "
-                            +
-                            " and rem.paymentvhid=vh.id ");
+            queryString.append(" union select bankaccount.accountnumber as accountnumber, bank.name as bankName, cast(bankaccount.id as integer) as id, coa.glcode as glCode")
+                    .append(" from chartofaccounts coa, egf_instrumentvoucher iv, voucherheader vh, Bank bank, Bankbranch bankBranch, Bankaccount bankaccount, vouchermis vmis,")
+                    .append(" eg_department d, eg_remittance rem, generalledger gl left outer join function f on gl.functionid = f.id,paymentheader ph, egw_status egws,")
+                    .append(" (select ih1.id, ih1.id_status from egf_instrumentheader ih1, (select bankid, bankaccountid, instrumentnumber, max(lastmodifieddate) as lastmodifieddate")
+                    .append(" from egf_instrumentheader group by bankid, bankaccountid, instrumentnumber) max_rec")
+                    .append(" where max_rec.bankid = ih1.bankid and max_rec.bankaccountid = ih1.bankaccountid and max_rec.instrumentnumber = ih1.instrumentnumber")
+                    .append(" and max_rec.lastmodifieddate=ih1.lastmodifieddate) ih where ph.voucherheaderid=vh.id and vh.id= vmis.voucherheaderid and rem.paymentvhid = vh.id ");
             if (recoveryId != null && recoveryId != 0)
-                queryString = queryString.append(" and rem.tdsid=" + recoveryId);
-            queryString = queryString.append(
-                    " and vmis.departmentid= d.id and coa.id=bankaccount.glcodeid and vh.status=0 and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id "
-                            +
-                            " and bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.branchid="
-                            + branchId
-                            +
-                            " and  bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and  iv.voucherheaderid=vh.id and iv.instrumentheaderid=ih.id and "
-                            +
-                            "ih.id_status=egws.id and egws.description in ('Surrendered','Surrender_For_Reassign')");
+                queryString.append(" and rem.tdsid = :recoveryId");
+            queryString.append(" and vmis.departmentid = d.id and coa.id = bankaccount.glcodeid and vh.status = 0 and gl.voucherheaderid = vh.id and ph.voucherheaderid = vh.id ")
+                    .append(" and bank.isactive = true and bankBranch.isactive = true and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid")
+                    .append(" and bankaccount.branchid = :branchId and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and iv.voucherheaderid = vh.id")
+                    .append(" and iv.instrumentheaderid = ih.id and ih.id_status = egws.id and egws.description in ('Surrendered', 'Surrender_For_Reassign')");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
-            queryString = queryString.append(" and ph.bankaccountnumberid=bankaccount.id and  ph.type='"
-                    + FinancialConstants.MODEOFPAYMENT_CASH + "' and vh.type='"
-                    + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "' and vh.name='"
-                    + FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE + "' order by 4 ");
+                queryString.append(" and bankaccount.fundid = :fundId");
+            queryString.append(" and ph.bankaccountnumberid = bankaccount.id and  ph.type = :paymentType and vh.type = :voucherType and vh.name = :voucherName order by 4");
 
-            final List<Object[]> bankAccounts = persistenceService.getSession().createNativeQuery(queryString.toString())
-                    .list();
+            NativeQuery query = persistenceService.getSession().createNativeQuery(queryString.toString());
+            if (recoveryId != null && recoveryId != 0)
+                query.setParameter("recoveryId", recoveryId, LongType.INSTANCE);
+            query.setParameter("branchId", branchId, IntegerType.INSTANCE);
+            if (fundId != null && fundId != 0 && fundId != -1)
+                query.setParameter("fundId", fundId.longValue(), LongType.INSTANCE);
+            query.setParameter("paymentType", FinancialConstants.MODEOFPAYMENT_CASH, StringType.INSTANCE);
+            query.setParameter("voucherType", FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT, StringType.INSTANCE);
+            query.setParameter("voucherName", FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE, StringType.INSTANCE);
+
+            final List<Object[]> bankAccounts = query.list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankAccounts.size());
             final List<String> addedBanks = new ArrayList<String>();
             for (final Object[] account : bankAccounts) {
-                final String accountNumberAndType = account[0].toString() + "-" + account[1].toString();
+                final String accountNumberAndType = account[0].toString().concat("-").concat(account[1].toString());
                 if (!addedBanks.contains(accountNumberAndType)) {
                     final Bankaccount bankaccount = new Bankaccount();
                     bankaccount.setAccountnumber(account[0].toString());
                     bankaccount.setAccounttype(account[1].toString());
-                    final CChartOfAccounts chartofaccounts = new CChartOfAccounts();
-                    chartofaccounts.setGlcode(account[3].toString());
+                    final CChartOfAccounts chartOfAccounts = new CChartOfAccounts();
+                    chartOfAccounts.setGlcode(account[3].toString());
                     final Bankbranch branch = new Bankbranch();
                     final Bank bank = new Bank();
                     bank.setName(account[1].toString());
                     branch.setBank(bank);
                     bankaccount.setBankbranch(branch);
-                    bankaccount.setChartofaccounts(chartofaccounts);
+                    bankaccount.setChartofaccounts(chartOfAccounts);
                     bankaccount.setId(Long.valueOf(account[2].toString()));
                     addedBanks.add(accountNumberAndType);
                     accNumList.add(bankaccount);
                 }
             }
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new Exception(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
@@ -3062,7 +2820,7 @@ public class CommonAction extends BaseFormAction {
 
         Map<String, Object> map = null;
         if (getBillRegisterId() != null) {
-            final EgBillregister cbill = (EgBillregister) persistenceService.find(" from EgBillregister where id=?",
+            final EgBillregister cbill = (EgBillregister) persistenceService.find(" from EgBillregister where id = ?1",
                     getBillRegisterId());
             map = voucherService.getDesgBYPassingWfItem(scriptName, cbill, departmentId.intValue());
         } else
@@ -3100,9 +2858,11 @@ public class CommonAction extends BaseFormAction {
     public String ajaxLoadProjectCodesForSubScheme() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadProjectCodesForSubScheme...");
-        final String sql = "select pc.id as id,pc.code as code,pc.name as name from egw_projectcode pc,egf_subscheme_project ssp where  pc.id=ssp.projectcodeid and ssp.subschemeid="
-                + subSchemeId;
-        final NativeQuery pcQuery = persistenceService.getSession().createNativeQuery(sql);
+        final StringBuilder sql = new StringBuilder("select pc.id as id, pc.code as code, pc.name as name from egw_projectcode pc, egf_subscheme_project ssp")
+                .append(" where pc.id = ssp.projectcodeid and ssp.subschemeid = :subSchemeId");
+        final NativeQuery pcQuery = persistenceService.getSession().createNativeQuery(sql.toString());
+        pcQuery.setParameter("subSchemeId", subSchemeId, IntegerType.INSTANCE);
+
         pcQuery.addScalar("id", LongType.INSTANCE)
                 .addScalar("code")
                 .addScalar("name")
@@ -3119,17 +2879,19 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Starting ajaxLoadUnmappedProjectCodesBy20...");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("schemeId Id received is :  " + subSchemeId + "   and Startswith   :" + startsWith);
-        projectCodeStringList = new ArrayList<String>();
-        startsWith = "%" + startsWith + "%";
-        final String qry = " select * from (SELECT pc.code || '`-`'|| pc.description|| '`~`' ||pc.id  FROM egw_projectcode pc LEFT OUTER JOIN "
-                +
-                " egf_subscheme_project sp ON pc.id = sp.projectcodeid WHERE sp.projectcodeid IS NULL and pc.code like '"
-                + startsWith + "' " +
-                " ORDER BY pc.code) where rownum<=20";
+        projectCodeStringList = new ArrayList<>();
+        startsWith = "%".concat(startsWith).concat("%");
+        final StringBuilder qry = new StringBuilder(" select * from (SELECT pc.code || '`-`'|| pc.description|| '`~`' || pc.id FROM egw_projectcode pc LEFT OUTER JOIN")
+                .append(" egf_subscheme_project sp ON pc.id = sp.projectcodeid WHERE sp.projectcodeid IS NULL and pc.code like :startsWith")
+                .append(" ORDER BY pc.code) where rownum <= 20");
         if (null == subSchemeId) {
 
-        } else
-            projectCodeStringList = persistenceService.getSession().createNativeQuery(qry).list();
+        } else {
+            NativeQuery query = persistenceService.getSession().createNativeQuery(qry.toString())
+                    .setParameter("startsWith", startsWith, StringType.INSTANCE);
+            projectCodeStringList = query.list();
+        }
+
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Scheme List size : " + projectCodeStringList.size());
         if (LOGGER.isDebugEnabled())
@@ -3142,14 +2904,14 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadDocumentNoAndDate...");
         if (billVhId != null && billVhId != 0) {
-            final CVoucherHeader vh = (CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?", billVhId);
+            final CVoucherHeader vh = (CVoucherHeader) persistenceService.find("from CVoucherHeader where id = ?1", billVhId);
             if (vh != null) {
                 final EgBillregister bill = (EgBillregister) persistenceService.find(
-                        "select mis.egBillregister from EgBillregistermis  mis where mis.voucherHeader=?", vh);
+                        "select mis.egBillregister from EgBillregistermis  mis where mis.voucherHeader = ?1", vh);
                 if (bill != null) {
                     final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                     final String billDateStr = sdf.format(bill.getBilldate());
-                    returnStream = bill.getBillnumber() + "$" + billDateStr;
+                    returnStream = bill.getBillnumber().concat("$").concat(billDateStr);
                 }
             }
         }
@@ -3164,39 +2926,32 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadChequeNoAndDate...");
         if (billVhId != null && billVhId.intValue() != 0) {
-            final String instrumentRelatedQry = "select NVL(ih.id,0), NVL( NVL(ih.instrumentnumber, ih.transactionnumber),0), "
-                    +
-                    " TO_CHAR(NVL(ih.instrumentdate, ih.transactiondate),'dd/mm/yyyy'), "
-                    +
-                    " NVL( ih.instrumentamount,0),NVL(ba.id,0),NVL(ba.accountnumber,0),NVL(bb.branchname ||'-' || b.name,0) "
-                    +
-                    " from egf_instrumentvoucher iv, egf_instrumentheader ih LEFT OUTER JOIN bankaccount ba ON ih.bankaccountid= ba.id 	"
-                    +
-                    " left outer JOIN bankbranch bb on ba.branchid= bb.id LEFT OUTER JOIN bank b ON b.id= bb.bankid  " +
-                    " where iv.instrumentheaderid=ih.id and iv.voucherheaderid=" + billVhId;
-            final String voucherDescriptionQry = "select NVL(vh.description,0) from voucherheader vh  where vh.id= " + billVhId;
-            final String fundingAgencyQry = "select  nvl( fa.id,0),nvl(fa.name,0) from "
-                    +
-                    " generalledger g  LEFT OUTER JOIN generalledgerdetail gd on gd.generalledgerid= g.id, "
-                    +
-                    " egf_fundingagency fa where gd.detailtypeid=(select id from accountdetailtype where accountdetailtype.name='FundingAgency' ) "
-                    +
-                    " and fa.id= gd.detailkeyid and g.voucherheaderid= " + billVhId;
-            final List<Object[]> resultList1 = persistenceService.getSession().createNativeQuery(instrumentRelatedQry).list();
-            final List<Object[]> resultList2 = persistenceService.getSession().createNativeQuery(voucherDescriptionQry).list();
-            final List<Object[]> resultList3 = persistenceService.getSession().createNativeQuery(fundingAgencyQry).list();
+            final StringBuilder instrumentRelatedQry = new StringBuilder("select NVL(ih.id,0), NVL( NVL(ih.instrumentnumber, ih.transactionnumber),0), TO_CHAR(NVL(ih.instrumentdate," +
+                    " ih.transactiondate),'dd/mm/yyyy'), NVL( ih.instrumentamount,0), NVL(ba.id,0), NVL(ba.accountnumber,0), NVL(bb.branchname ||'-' || b.name,0)" +
+                    " from egf_instrumentvoucher iv, egf_instrumentheader ih LEFT OUTER JOIN bankaccount ba ON ih.bankaccountid = ba.id left outer JOIN bankbranch bb on ba.branchid = bb.id" +
+                    " LEFT OUTER JOIN bank b ON b.id = bb.bankid where iv.instrumentheaderid = ih.id and iv.voucherheaderid = :billVhId");
+            final String voucherDescriptionQry = "select NVL(vh.description,0) from voucherheader vh where vh.id = :billVhId";
+            final StringBuilder fundingAgencyQry = new StringBuilder(" select nvl( fa.id,0), nvl(fa.name,0)")
+                    .append(" from generalledger g LEFT OUTER JOIN generalledgerdetail gd on gd.generalledgerid= g.id, egf_fundingagency fa")
+                    .append(" where gd.detailtypeid = (select id from accountdetailtype where accountdetailtype.name = 'FundingAgency')")
+                    .append(" and fa.id = gd.detailkeyid and g.voucherheaderid = :billVhId");
+            final List<Object[]> resultList1 = persistenceService.getSession().createNativeQuery(instrumentRelatedQry.toString())
+                    .setParameter("billVhId", billVhId, LongType.INSTANCE).list();
+            final List<Object[]> resultList2 = persistenceService.getSession().createNativeQuery(voucherDescriptionQry)
+                    .setParameter("billVhId", billVhId, LongType.INSTANCE).list();
+            final List<Object[]> resultList3 = persistenceService.getSession().createNativeQuery(fundingAgencyQry.toString())
+                    .setParameter("billVhId", billVhId, LongType.INSTANCE).list();
             String instrumentResult;
             if (resultList1.size() == 0)
                 instrumentResult = "0$0$-$0$0$0$-";
             else
-                instrumentResult = resultList1.get(0)[0] + "$" + resultList1.get(0)[1] + "$"
-                        + (resultList1.get(0)[2] == null ? "-" : resultList1.get(0)[2]) +
-                        "$" + resultList1.get(0)[3] + "$" + resultList1.get(0)[4] + "$" + resultList1.get(0)[5] + "$"
-                        + resultList1.get(0)[6];
+                instrumentResult = new StringBuilder(resultList1.get(0)[0].toString()).append("$").append(resultList1.get(0)[1]).append("$")
+                        .append((resultList1.get(0)[2] == null ? "-" : resultList1.get(0)[2])).append("$").append(resultList1.get(0)[3]).append("$")
+                        .append(resultList1.get(0)[4]).append("$").append(resultList1.get(0)[5]).append("$").append(resultList1.get(0)[6]).toString();
             final String voucherDescResult = resultList2.size() == 0 ? "$0" : "$" + resultList2.get(0);
             final String fundingAgencyResult = resultList3.size() == 0 ? "$0$0" : "$" + resultList3.get(0)[0] + "$" + resultList3
                     .get(0)[1];
-            returnStream = instrumentResult + voucherDescResult + fundingAgencyResult;
+            returnStream = instrumentResult.concat(voucherDescResult).concat(fundingAgencyResult);
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadChequeNoAndDate.");
@@ -3206,12 +2961,13 @@ public class CommonAction extends BaseFormAction {
     @SuppressWarnings("unchecked")
     @Action(value = "/voucher/common-ajaxLoadVoucherAmount")
     public String ajaxLoadVoucherAmount() {
-        final String chequeAmtQry = "select ih.instrumentamount, ih.id from egf_instrumentheader ih, egf_instrumentvoucher" +
-                " iv where ih.id= iv.instrumentheaderid and iv.voucherheaderid=?";
-        final List<Object[]> resultList2 = persistenceService.getSession().createNativeQuery(chequeAmtQry).setLong(0, billVhId)
+        final StringBuilder chequeAmtQry = new StringBuilder("select ih.instrumentamount, ih.id")
+                .append(" from egf_instrumentheader ih, egf_instrumentvoucher iv where ih.id= iv.instrumentheaderid and iv.voucherheaderid = :billVhId");
+        final List<Object[]> resultList2 = persistenceService.getSession().createNativeQuery(chequeAmtQry.toString())
+                .setParameter("billVhId", billVhId, LongType.INSTANCE)
                 .list();
         String chqAmtResult;
-        if (resultList2.size() == 0)
+        if (resultList2.isEmpty())
             chqAmtResult = "0$0";
         else
             chqAmtResult = resultList2.get(0)[0] + "$" + resultList2.get(0)[1];
@@ -3219,20 +2975,18 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadFundingAgencyAmount...");
         if (billVhId != null && billVhId.intValue() != 0) {
-            final String grantAMountQry = "select sum(g.debitAmount) as accountBalance from generalledger g" +
-                    " where g.voucherheaderid=? ";
-            // List<Object[]> resultList1=
+            final String grantAMountQry = "select sum(g.debitAmount) as accountBalance from generalledger g where g.voucherheaderid = :billVhId ";
             final Query qry = persistenceService.getSession().createNativeQuery(grantAMountQry)
-                    .addScalar("accountBalance", BigDecimalType.INSTANCE);
-            qry.setLong(0, billVhId);
+                    .addScalar("accountBalance", BigDecimalType.INSTANCE)
+                    .setParameter("billVhId", billVhId, LongType.INSTANCE);
             qry.setResultTransformer(Transformers.aliasToBean(CommonBean.class));
             final List<CommonBean> resultList1 = qry.list();
             String grantAmountResult;
-            if (resultList1.size() == 0)
+            if (resultList1.isEmpty())
                 grantAmountResult = "0$0";
             else
                 grantAmountResult = resultList1.get(0).getAccountBalance().toString();
-            if (resultList2.size() == 0)
+            if (resultList2.isEmpty())
                 returnStream = grantAmountResult;
             else
                 returnStream = chqAmtResult;
@@ -3249,9 +3003,9 @@ public class CommonAction extends BaseFormAction {
             String subLedger = null;
             String amtSubledger = null;
             final Accountdetailtype detType = (Accountdetailtype) persistenceService
-                    .find("from Accountdetailtype where name='Commercial Tax Officer'");
+                    .find("from Accountdetailtype where name = 'Commercial Tax Officer'");
             final List<CGeneralLedger> glList = persistenceService.findAllBy(
-                    "from CGeneralLedger where voucherHeaderId.id=?", billVhId);
+                    "from CGeneralLedger where voucherHeaderId.id = ?1", billVhId);
             if (detType != null)
                 for (final CGeneralLedger gl : glList) {
                     final Set<CGeneralLedgerDetail> generalLedgerDetails = gl.getGeneralLedgerDetails();
@@ -3260,15 +3014,14 @@ public class CommonAction extends BaseFormAction {
                             amount = gld.getAmount().toString();
 
                             final AccountEntity entity = (AccountEntity) persistenceService.find(
-                                    "from AccountEntity where id=? and accountdetailtype=?", gld.getDetailKeyId(), detType);
+                                    "from AccountEntity where id = ?1 and accountdetailtype = ?2", gld.getDetailKeyId(), detType);
                             subLedger = entity.getName();
-
                         }
                 }
             if (amount == null && subLedger == null)
                 amtSubledger = "0$0";
             else
-                amtSubledger = amount + "$" + subLedger;
+                amtSubledger = amount.concat("$").concat(subLedger);
             returnStream = amtSubledger;
         }
         if (LOGGER.isDebugEnabled())
@@ -3286,20 +3039,20 @@ public class CommonAction extends BaseFormAction {
         try {
             accNumList = getPersistenceService()
                     .findAllBy(
-                            "from Bankaccount ba where ba.bankbranch.id=? and isactive=true order by ba.chartofaccounts.glcode",
+                            "from Bankaccount ba where ba.bankbranch.id = ?1 and isactive = true order by ba.chartofaccounts.glcode",
                             branchId);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank account Number list size =  " + accNumList.size());
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting bank account numbers " + e.getMessage(),
+            LOGGER.error("Exception occured while getting bank account numbers ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting bank account numbers " + e.getMessage(),
+            LOGGER.error("Exception occured while getting bank account numbers ",
                     new HibernateException(e.getMessage()));
         }
-        final StringBuffer accountNumbers = new StringBuffer(256);
+        final StringBuilder accountNumbers = new StringBuilder();
         for (final Bankaccount acc : accNumList)
-            accountNumbers.append(acc.getChartofaccounts().getGlcode() + "-" + acc.getAccountnumber() + "~" + acc.getId() + "$");
+            accountNumbers.append(acc.getChartofaccounts().getGlcode()).append("-").append(acc.getAccountnumber()).append("~").append(acc.getId()).append("$");
         returnStream = accountNumbers.toString();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadBranchAccountNumbers.");
@@ -3312,28 +3065,19 @@ public class CommonAction extends BaseFormAction {
         String query = "";
 
         if (glCode == null) {
-
             coaList = (List<CChartOfAccounts>) persistenceService
                     .findAllBy("from CChartOfAccounts  where parentId is null order by glcode asc");
-
-            // query=" SELECT '' AS \"type\", ID AS \"chartOfAccounts_ID\", name AS \"chartOfAccounts_name\", parentId AS
-            // \"chartOfAccounts_parentId\", glcode AS \"chartOfAccounts_glCode\" FROM chartOfAccounts where parentId is null
-            // order by id asc";
-
         } else {
             coaList = (List<CChartOfAccounts>) persistenceService.findAllBy(
-                    "from CChartOfAccounts where parentId=? order by glcode ",
+                    "from CChartOfAccounts where parentId = ?1 order by glcode ",
                     Long.valueOf(glCode));
-            // query=" SELECT '' AS \"type\", ID AS \"chartOfAccounts_ID\", name AS \"chartOfAccounts_name\", parentId AS
-            // \"chartOfAccounts_parentId\", glcode AS \"chartOfAccounts_glCode\" FROM chartOfAccounts where parentId ="+glCode+"
-            // order by id asc";
         }
         result = new StringBuffer();
-        StringBuffer type = new StringBuffer();
-        StringBuffer chartOfAccounts_ID = new StringBuffer();
-        StringBuffer chartOfAccounts_name = new StringBuffer();
-        StringBuffer chartOfAccounts_parentId = new StringBuffer();
-        StringBuffer chartOfAccounts_glCode = new StringBuffer();
+        StringBuilder type = new StringBuilder();
+        StringBuilder chartOfAccounts_ID = new StringBuilder();
+        StringBuilder chartOfAccounts_name = new StringBuilder();
+        StringBuilder chartOfAccounts_parentId = new StringBuilder();
+        StringBuilder chartOfAccounts_glCode = new StringBuilder();
         int i = 0;
         for (CChartOfAccounts cc : coaList) {
             if (i > 0) {
@@ -3342,7 +3086,6 @@ public class CommonAction extends BaseFormAction {
                 chartOfAccounts_name.append("+");
                 chartOfAccounts_parentId.append("+");
                 chartOfAccounts_glCode.append("+");
-
             }
             i++;
             type.append("null");
@@ -3352,8 +3095,8 @@ public class CommonAction extends BaseFormAction {
             chartOfAccounts_glCode.append(cc.getGlcode());
 
         }
-        result.append(type.toString() + "^" + chartOfAccounts_ID.toString() + "^" + chartOfAccounts_name + "^" +
-                chartOfAccounts_parentId.toString() + "^" + chartOfAccounts_glCode.toString() + "^");
+        result.append(type.toString()).append("^").append(chartOfAccounts_ID.toString()).append("^").append(chartOfAccounts_name).append("^")
+                .append(chartOfAccounts_parentId.toString()).append("^").append(chartOfAccounts_glCode.toString()).append("^");
         return "COA";
     }
 
@@ -3363,17 +3106,13 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadGLreportCodes...");
         if (glCode == null)
-            glCodesList = new ArrayList<CChartOfAccounts>();
+            glCodesList = new ArrayList<>();
         else
             glCodesList = persistenceService
                     .findAllBy(
-                            "select ca from CChartOfAccounts ca where"
-                                    +
-                                    " ca.glcode not in(select glcode from CChartOfAccounts where glcode like '47%' and glcode not like '471%' and glcode !='4741')"
-                                    +
-                                    " and ca.glcode not in (select glcode from CChartOfAccounts where glcode = '471%') " +
-                                    " and ca.isActiveForPosting=true and ca.classification=4  and ca.glcode like ?1",
-                            glCode + "%");
+                            new StringBuilder("select ca from CChartOfAccounts ca where ca.glcode not in (select glcode from CChartOfAccounts where glcode like '47%'")
+                                    .append(" and glcode not like '471%' and glcode !='4741') and ca.glcode not in (select glcode from CChartOfAccounts where glcode = '471%') ")
+                            .append(" and ca.isActiveForPosting = true and ca.classification = 4 and ca.glcode like ?1").toString(), glCode.concat("%"));
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadGLreportCodes.");
@@ -3389,9 +3128,8 @@ public class CommonAction extends BaseFormAction {
             glCodesList = new ArrayList<CChartOfAccounts>();
         else
             glCodesList = persistenceService.findAllBy(
-                    "select DISTINCT coa from CChartOfAccounts coa,CChartOfAccountDetail cod  where " +
-                            " coa = cod.glCodeId and coa.classification=4 and coa.glcode like ?1",
-                    glCode + "%");
+                    "select DISTINCT coa from CChartOfAccounts coa, CChartOfAccountDetail cod  where coa = cod.glCodeId and coa.classification = 4 and coa.glcode like ?1",
+                    glCode.concat("%"));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadSLreportCodes.");
         return "glCodes";
@@ -3406,8 +3144,8 @@ public class CommonAction extends BaseFormAction {
             functionCodesList = new ArrayList<CFunction>();
         else {
             String funCodeName = "%" + function.toLowerCase() + "%";
-            functionCodesList = persistenceService.findAllBy("select f from CFunction f where" +
-                    " isActive = true and isNotLeaf = false and lower(name) like ?1 or lower(code) like ?2 ", funCodeName,
+            functionCodesList = persistenceService.findAllBy(new StringBuilder("select f from CFunction f")
+                    .append(" where isActive = true and isNotLeaf = false and lower(name) like ?1 or lower(code) like ?2 ").toString(), funCodeName,
                     funCodeName);
         }
         if (LOGGER.isDebugEnabled())
@@ -3432,10 +3170,10 @@ public class CommonAction extends BaseFormAction {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Sub Ledger Type list size =  " + subLedgerTypeList.size());
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting Sub Ledger Type " + e.getMessage(),
+            LOGGER.error("Exception occured while getting Sub Ledger Type ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting Sub Ledger Type " + e.getMessage(),
+            LOGGER.error("Exception occured while getting Sub Ledger Type ",
                     new HibernateException(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
@@ -3459,15 +3197,12 @@ public class CommonAction extends BaseFormAction {
 
         coaList = persistenceService.findAllBy(
                 " from CChartOfAccounts where classification=4 and isactiveforposting = true order by glcode ");
-        // String
-        // query="select glcode||'`-`'||name||'`~`'||ID as \"code\" from chartofaccounts where classification=4 and
-        // isactiveforposting = true order by glcode ";*/
 
         result = new StringBuffer();
         for (CChartOfAccounts cc : coaList) {
-            result.append(cc.getGlcode() + "`-`");
-            result.append(cc.getName() + "`~`");
-            result.append(cc.getId() + "+");
+            result.append(cc.getGlcode()).append("`-`");
+            result.append(cc.getName()).append("`~`");
+            result.append(cc.getId()).append("+");
         }
         result.append("^");
         if (LOGGER.isDebugEnabled())
@@ -3482,20 +3217,17 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Starting ajaxGetAllCoaCodesExceptCashBank...");
 
         coaList = persistenceService
-                .findAllBy(
-                        " FROM CChartOfAccounts   WHERE classification = 4 AND "
-                                + "isactiveforposting = true AND parentid  not in(select id  from CChartOfAccounts where purposeid in "
-                                + "( SELECT id FROM AccountCodePurpose  WHERE UPPER (NAME) = UPPER ('Cash In Hand') OR UPPER (NAME) = UPPER ('Bank Codes')"
-                                + " OR UPPER (NAME) = UPPER ('Cheque In Hand')) ) "
-                                + " and id  not in(select id  from CChartOfAccounts where purposeid in ( SELECT id FROM AccountCodePurpose WHERE "
-                                + "	UPPER (NAME) = UPPER ('Cash In Hand') OR UPPER (NAME) = UPPER ('Bank Codes') OR UPPER (NAME) = UPPER ('Cheque In Hand')) )"
-                                + "	and glcode not like '471%' ORDER BY glcode  ");
+                .findAllBy(new StringBuilder(" FROM CChartOfAccounts WHERE classification = 4 AND isactiveforposting = true AND parentid not in")
+                        .append(" (select id from CChartOfAccounts where purposeid in (SELECT id FROM AccountCodePurpose WHERE UPPER(NAME) = UPPER('Cash In Hand')")
+                        .append(" OR UPPER(NAME) = UPPER('Bank Codes') OR UPPER(NAME) = UPPER('Cheque In Hand'))) and id not in")
+                        .append(" (select id from CChartOfAccounts where purposeid in (SELECT id FROM AccountCodePurpose WHERE UPPER(NAME) = UPPER('Cash In Hand')")
+                        .append(" OR UPPER(NAME) = UPPER('Bank Codes') OR UPPER(NAME) = UPPER('Cheque In Hand'))) and glcode not like '471%' ORDER BY glcode ").toString());
 
         result = new StringBuffer();
         for (CChartOfAccounts cc : coaList) {
-            result.append(cc.getGlcode() + "`-`");
-            result.append(cc.getName() + "`~`");
-            result.append(cc.getId() + "+");
+            result.append(cc.getGlcode()).append("`-`");
+            result.append(cc.getName()).append("`~`");
+            result.append(cc.getId()).append("+");
         }
         result.append("^");
         if (LOGGER.isDebugEnabled())
@@ -3510,16 +3242,13 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Starting ajaxGetAllAssetCodes...");
 
         coaList = persistenceService.findAllBy(
-                " from CChartOfAccounts where classification=4 and isactiveforposting = true and type = 'A' order by glcode  ");
-        // String
-        // query="select glcode||'`-`'||name|| '`-`' || ID as \"code\" from chartofaccounts where classification=4 and
-        // isactiveforposting = true and type = 'A' order by glcode ";
+                " from CChartOfAccounts where classification = 4 and isactiveforposting = true and type = 'A' order by glcode ");
 
         result = new StringBuffer();
         for (CChartOfAccounts cc : coaList) {
-            result.append(cc.getGlcode() + "`-`");
-            result.append(cc.getName() + "`-`");
-            result.append(cc.getId() + "+");
+            result.append(cc.getGlcode()).append("`-`");
+            result.append(cc.getName()).append("`-`");
+            result.append(cc.getId()).append("+");
         }
         result.append("^");
         if (LOGGER.isDebugEnabled())
@@ -3534,16 +3263,13 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Starting ajaxGetAllLiabCodes...");
 
         coaList = persistenceService.findAllBy(
-                " from CChartOfAccounts where classification=4 and isactiveforposting = true and type = 'L' order by glcode  ");
-        // String
-        // query="select glcode||'`-`'||name|| '`-`' || ID as \"code\" from chartofaccounts where classification=4 and
-        // isactiveforposting = true and type = 'L' order by glcode ";
+                " from CChartOfAccounts where classification = 4 and isactiveforposting = true and type = 'L' order by glcode  ");
 
         result = new StringBuffer();
         for (CChartOfAccounts cc : coaList) {
-            result.append(cc.getGlcode() + "`-`");
-            result.append(cc.getName() + "`-`");
-            result.append(cc.getId() + "+");
+            result.append(cc.getGlcode()).append("`-`");
+            result.append(cc.getName()).append("`-`");
+            result.append(cc.getId()).append("+");
         }
         result.append("^");
         if (LOGGER.isDebugEnabled())
@@ -3558,16 +3284,13 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Starting ajaxGetAllFunctionName...");
 
         functionCodesList = persistenceService
-                .findAllBy("select f from CFunction f where  isactive = true AND isnotleaf=false order by name");
-        // String
-        // query="select code||'`-`'||name||'`~`'||id as \"code\" from function where isactive = true AND isnotleaf=false order by
-        // name ";
+                .findAllBy("select f from CFunction f where  isactive = true AND isnotleaf = false order by name");
 
         result = new StringBuffer();
         for (CFunction cf : functionCodesList) {
-            result.append(cf.getCode() + "`-`");
-            result.append(cf.getName() + "`~`");
-            result.append(cf.getId() + "+");
+            result.append(cf.getCode()).append("`-`");
+            result.append(cf.getName()).append("`~`");
+            result.append(cf.getId()).append("+");
         }
         result.append("^");
         if (LOGGER.isDebugEnabled())
@@ -3582,11 +3305,10 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Starting ajaxGetAllBankName...");
 
         bankList = persistenceService.findAllBy("from Bank where  isactive = true order by name");
-        // String query="select name||'`-`'||id as \"code\" from bank where isactive = true order by name ";
         result = new StringBuffer();
         for (Bank b : bankList) {
-            result.append(b.getName() + "`-`");
-            result.append(b.getId() + "+");
+            result.append(b.getName()).append("`-`");
+            result.append(b.getId()).append("+");
         }
         result.append("^");
         if (LOGGER.isDebugEnabled())
@@ -3601,16 +3323,13 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Starting ajaxGetAllCoaNames...");
 
         coaList = persistenceService.findAllBy(
-                " from CChartOfAccounts where classification=4 and isactiveforposting = true order by glcode ");
-        // final String
-        // query="select name||'`-`'||glcode||'`-`'||ID as \"code\" from chartofaccounts where classification=4 and
-        // isactiveforposting = true order by glcode ";
+                " from CChartOfAccounts where classification = 4 and isactiveforposting = true order by glcode ");
 
         result = new StringBuffer();
         for (CChartOfAccounts cc : coaList) {
-            result.append(cc.getName() + "`-`");
-            result.append(cc.getGlcode() + "`-`");
-            result.append(cc.getId() + "+");
+            result.append(cc.getName()).append("`-`");
+            result.append(cc.getGlcode()).append("`-`");
+            result.append(cc.getId()).append("+");
         }
         result.append("^");
         if (LOGGER.isDebugEnabled())
@@ -3624,19 +3343,17 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxCoaDetailCode...");
         if (glCode == null)
-            glCodesList = new ArrayList<CChartOfAccounts>();
+            glCodesList = new ArrayList<>();
         else {
-            String codeName = "%" + glCode + "%";
+            String codeName = "%".concat(glCode).concat("%");
             glCodesList = persistenceService
-                    .findAllBy("select glcode from CChartOfAccounts ca where  classification=4 and isactiveforposting = true "
-                            + "and glcode like ? order by glcode", codeName);
+                    .findAllBy("select glcode from CChartOfAccounts ca where  classification = 4 and isactiveforposting = true ".concat(
+                            "and glcode like ?1 order by glcode"), codeName);
         }
-        // String query="select glcode as \"code\" from chartofaccounts where classification=4 and isactiveforposting = true
-        // and glcode like '"+accountCode+"'|| '%' order by glcode ";
 
         result = new StringBuffer();
         for (CChartOfAccounts cc : coaList) {
-            result.append(cc.getGlcode() + "+");
+            result.append(cc.getGlcode()).append("+");
         }
         result.append("^");
         if (LOGGER.isDebugEnabled())
@@ -3796,75 +3513,48 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadBanksWithPayGenAndRTGSNotAssigned...");
         List<Object[]> bankBranch;
-        final StringBuffer bankQuery = new StringBuffer();
+        final StringBuilder bankQuery = new StringBuilder();
         try {
             bankQuery
-                    .append("SELECT DISTINCT CONCAT(CONCAT(bank.id,'-'),bankBranch.id) AS bankbranchid,CONCAT(CONCAT(bank.name,' '),"
-                            +
-                            " bankBranch.branchname) AS bankbranchname	FROM voucherheader vh,Bank bank,Bankbranch bankBranch,Bankaccount bankaccount,"
-                            +
-                            " paymentheader ph,egf_instrumentvoucher iv right outer join voucherheader vh1 ON  vh1.id =iv.VOUCHERHEADERID"
-                            +
-                            " WHERE ph.voucherheaderid=vh.id AND vh.status=0  AND bank.isactive=true  AND bankBranch.isactive=true AND bank.id = bankBranch.bankid"
-                            +
-                            " AND bankBranch.id = bankaccount.branchid  AND  bankaccount.TYPE IN ('RECEIPTS_PAYMENTS','PAYMENTS')"
-                            +
-                            " AND  vh1.id=vh.id AND iv.VOUCHERHEADERID IS NULL	 AND ph.type = '"
-                            + FinancialConstants.MODEOFPAYMENT_RTGS
-                            + "' "
-                            +
-                            " AND vh.name = '"
-                            + FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE
-                            + "' "
-                            +
-                            " UNION"
-                            +
-                            " SELECT DISTINCT CONCAT(CONCAT(bank.id,'-'),bankBranch.id) AS bankbranchid,CONCAT(CONCAT(bank.name,' '),"
-                            +
-                            " bankBranch.branchname) AS bankbranchname"
-                            +
-                            " FROM egf_instrumentvoucher iv,voucherheader vh,Bank bank,Bankbranch bankBranch,Bankaccount bankaccount,"
-                            +
-                            " vouchermis vmis,"
-                            +
-                            " paymentheader ph,egw_status egws,(SELECT ih1.id,ih1.id_status FROM egf_instrumentheader ih1,"
-                            +
-                            " (SELECT bankid,bankaccountid,instrumentnumber,MAX(lastmodifieddate) AS lastmodifieddate FROM egf_instrumentheader GROUP BY bankid,bankaccountid,"
-                            +
-                            " instrumentnumber) max_rec WHERE max_rec.bankid=ih1.bankid AND max_rec.bankaccountid=ih1.bankaccountid AND max_rec.instrumentnumber=ih1.instrumentnumber"
-                            +
-                            " AND max_rec.lastmodifieddate=ih1.lastmodifieddate) ih WHERE ph.voucherheaderid=vh.id AND vh.id= vmis.voucherheaderid"
-                            +
-                            " AND vh.status=0  AND ph.voucherheaderid=vh.id 	AND bank.isactive=true "
-                            +
-                            " AND bankBranch.isactive=true AND bank.id = bankBranch.bankid AND bankBranch.id = bankaccount.branchid "
-                            +
-                            " AND bankaccount.TYPE IN ('RECEIPTS_PAYMENTS','PAYMENTS') AND  iv.voucherheaderid=vh.id AND iv.instrumentheaderid=ih.id "
-                            +
-                            " AND ih.id_status=egws.id AND egws.description IN  ('Surrendered','Surrender_For_Reassign')" +
-                            " AND  ph.type = '" + FinancialConstants.MODEOFPAYMENT_RTGS + "' " +
-                            " AND vh.name = '" + FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE + "' " +
-                            "  order by 2 ");
+                    .append("SELECT DISTINCT CONCAT(CONCAT(bank.id,'-'), bankBranch.id) AS bankbranchid, CONCAT(CONCAT(bank.name,' '), bankBranch.branchname) AS bankbranchname")
+                    .append(" FROM voucherheader vh, Bank bank, Bankbranch bankBranch, Bankaccount bankaccount, paymentheader ph, egf_instrumentvoucher iv")
+                    .append(" right outer join voucherheader vh1 ON vh1.id = iv.VOUCHERHEADERID")
+                    .append(" WHERE ph.voucherheaderid = vh.id AND vh.status = 0 AND bank.isactive = true AND bankBranch.isactive = true AND bank.id = bankBranch.bankid")
+                    .append(" AND bankBranch.id = bankaccount.branchid AND bankaccount.TYPE IN ('RECEIPTS_PAYMENTS', 'PAYMENTS') AND vh1.id = vh.id AND iv.VOUCHERHEADERID IS NULL")
+                    .append(" AND ph.type = :paymentType AND vh.name = :voucherName")
+                    .append(" UNION")
+                    .append(" SELECT DISTINCT CONCAT(CONCAT(bank.id,'-'), bankBranch.id) AS bankbranchid, CONCAT(CONCAT(bank.name,' '), bankBranch.branchname) AS bankbranchname")
+                    .append(" FROM egf_instrumentvoucher iv, voucherheader vh, Bank bank, Bankbranch bankBranch, Bankaccount bankaccount, vouchermis vmis, paymentheader ph,")
+                    .append(" egw_status egws, (SELECT ih1.id, ih1.id_status FROM egf_instrumentheader ih1, (SELECT bankid, bankaccountid, instrumentnumber,")
+                    .append(" MAX(lastmodifieddate) AS lastmodifieddate FROM egf_instrumentheader GROUP BY bankid, bankaccountid, instrumentnumber) max_rec")
+                    .append(" WHERE max_rec.bankid = ih1.bankid AND max_rec.bankaccountid = ih1.bankaccountid AND max_rec.instrumentnumber = ih1.instrumentnumber")
+                    .append(" AND max_rec.lastmodifieddate = ih1.lastmodifieddate) ih WHERE ph.voucherheaderid = vh.id AND vh.id = vmis.voucherheaderid")
+                    .append(" AND vh.status = 0 AND ph.voucherheaderid = vh.id AND bank.isactive = true AND bankBranch.isactive = true AND bank.id = bankBranch.bankid")
+                    .append(" AND bankBranch.id = bankaccount.branchid AND bankaccount.TYPE IN ('RECEIPTS_PAYMENTS','PAYMENTS') AND iv.voucherheaderid = vh.id")
+                    .append(" AND iv.instrumentheaderid = ih.id AND ih.id_status = egws.id AND egws.description IN ('Surrendered','Surrender_For_Reassign')")
+                    .append(" AND ph.type = :paymentType AND vh.name = :voucherName order by 2 ");
 
-            bankBranch = persistenceService.getSession().createNativeQuery(bankQuery.toString()).list();
+            bankBranch = persistenceService.getSession().createNativeQuery(bankQuery.toString())
+                    .setParameter("paymentType", FinancialConstants.MODEOFPAYMENT_RTGS, StringType.INSTANCE)
+                    .setParameter("voucherName", FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE, StringType.INSTANCE).list();
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankBranch.size());
-            bankBranchList = new ArrayList<Map<String, Object>>();
+            bankBranchList = new ArrayList<>();
             Map<String, Object> bankBrmap;
             for (final Object[] element : bankBranch) {
-                bankBrmap = new HashMap<String, Object>();
+                bankBrmap = new HashMap<>();
                 bankBrmap.put("bankBranchId", element[0].toString());
                 bankBrmap.put("bankBranchName", element[1].toString());
                 bankBranchList.add(bankBrmap);
             }
 
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new HibernateException(e.getMessage()));
 
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new Exception(e.getMessage()));
         }
 
@@ -3880,109 +3570,69 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadBankAccountsWithPayGenAndRTGSNotAssigned...");
         try {
-            accNumList = new ArrayList<Bankaccount>();
+            accNumList = new ArrayList<>();
             String bankaccountFundQuery = "";
             String voucherheaderFundQuery = "";
             if (fundId != null && fundId != 0 && fundId != -1) {
-                bankaccountFundQuery = " and bankaccount.fundid=" + fundId.longValue();
-                voucherheaderFundQuery = "  AND VH.FUNDID=" + fundId;
+                bankaccountFundQuery = " and bankaccount.fundid = :fundId";
+                voucherheaderFundQuery = " AND VH.FUNDID = :fundId";
             }
-            StringBuffer queryString = new StringBuffer();
             // query to fetch vouchers for which RTGS not assigned
-            queryString = queryString
-                    .append("SELECT  bankaccount.accountnumber AS accountnumber,  bankaccount.accounttype AS accounttype,"
-                            +
-                            " CAST(bankaccount.id AS INTEGER) AS id, coa.glcode AS glCode  FROM chartofaccounts coa, bankaccount bankaccount"
-                            +
-                            " WHERE bankaccount.ID IN (SELECT DISTINCT PH.bankaccountnumberid  "
-                            +
-                            " FROM   paymentheader ph,  voucherheader vh left OUTER JOIN egf_instrumentvoucher iv ON vh.id =iv.VOUCHERHEADERID"
-                            +
-                            " WHERE ph.voucherheaderid  =vh.id AND vh.status=0 "
-                            + voucherheaderFundQuery
-                            + " AND ph.voucherheaderid    =vh.id"
-                            +
-                            " AND iv.VOUCHERHEADERID   IS NULL "
-                            +
-                            " AND vh.name = '"
-                            + FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE
-                            + "' "
-                            +
-                            " AND ph.type = '"
-                            + FinancialConstants.MODEOFPAYMENT_RTGS
-                            + "' "
-                            +
-                            " AND coa.id                =bankaccount.glcodeid AND bankaccount.type     IN ('RECEIPTS_PAYMENTS','PAYMENTS'))"
-                            +
-                            bankaccountFundQuery +
-                            " AND bankaccount.branchid  =" + branchId + " and bankaccount.isactive=true ");
+            StringBuilder queryString = new StringBuilder("SELECT bankaccount.accountnumber AS accountnumber, bankaccount.accounttype AS accounttype,")
+                    .append(" CAST(bankaccount.id AS INTEGER) AS id, coa.glcode AS glCode")
+                    .append(" FROM chartofaccounts coa, bankaccount bankaccount")
+                    .append(" WHERE bankaccount.ID IN (SELECT DISTINCT PH.bankaccountnumberid")
+                    .append(" FROM paymentheader ph, voucherheader vh left OUTER JOIN egf_instrumentvoucher iv ON vh.id = iv.VOUCHERHEADERID")
+                    .append(" WHERE ph.voucherheaderid = vh.id AND vh.status = 0 ").append(voucherheaderFundQuery).append(" AND ph.voucherheaderid = vh.id")
+                    .append(" AND iv.VOUCHERHEADERID IS NULL AND vh.name = :voucherName AND ph.type = :paymentType AND coa.id = bankaccount.glcodeid")
+                    .append(" AND bankaccount.type IN ('RECEIPTS_PAYMENTS', 'PAYMENTS'))").append(bankaccountFundQuery)
+                    .append(" AND bankaccount.branchid = :branchId and bankaccount.isactive = true ");
             // query to fetch vouchers for which cheque has been assigned and surrendered
             queryString
-                    .append(" union select bankaccount.accountnumber as accountnumber,bankaccount.accounttype as accounttype,cast(bankaccount.id as integer) as id,coa.glcode as glCode "
-                            +
-                            " from chartofaccounts coa, "
-                            +
-                            " Bankaccount bankaccount"
-                            +
-                            " where bankaccount.id in(SELECT DISTINCT PH.bankaccountnumberid  from  "
-                            +
-                            " egf_instrumentvoucher iv,voucherheader vh,"
-                            +
-                            " paymentheader ph,egw_status egws,(select ih1.id,ih1.id_status from egf_instrumentheader ih1, "
-                            +
-                            " (select bankid,bankaccountid,instrumentnumber,max(id) as id from egf_instrumentheader group by bankid,bankaccountid,"
-                            +
-                            " instrumentnumber) max_rec where max_rec.bankid=ih1.bankid and max_rec.bankaccountid=ih1.bankaccountid and max_rec.instrumentnumber=ih1.instrumentnumber "
-                            +
-                            " and max_rec.id=ih1.id) ih where ph.voucherheaderid=vh.id   "
-                            +
-                            voucherheaderFundQuery
-                            +
-                            " and vh.status=0 and  ph.voucherheaderid=vh.id and  iv.voucherheaderid=vh.id and iv.instrumentheaderid=ih.id "
-                            +
-                            " and ph.bankaccountnumberid=bankaccount.id  and vh.type='"
-                            + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT
-                            + "'"
-                            +
-                            " AND vh.name = '"
-                            + FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE
-                            + "' "
-                            +
-                            " AND ph.type = '"
-                            + FinancialConstants.MODEOFPAYMENT_RTGS
-                            + "' "
-                            +
-                            " and ih.id_status=egws.id and egws.description in ('Surrendered','Surrender_For_Reassign') )"
-                            +
-                            " and coa.id=bankaccount.glcodeid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS')  and bankaccount.branchid="
-                            + branchId);
+                    .append(" union select bankaccount.accountnumber as accountnumber, bankaccount.accounttype as accounttype, cast(bankaccount.id as integer) as id,")
+                    .append(" coa.glcode as glCode from chartofaccounts coa, Bankaccount bankaccount")
+                    .append(" where bankaccount.id in (SELECT DISTINCT PH.bankaccountnumberid from egf_instrumentvoucher iv, voucherheader vh, paymentheader ph, egw_status egws,")
+                    .append(" (select ih1.id, ih1.id_status from egf_instrumentheader ih1, (select bankid, bankaccountid, instrumentnumber, max(id) as id")
+                    .append(" from egf_instrumentheader group by bankid, bankaccountid, instrumentnumber) max_rec")
+                    .append(" where max_rec.bankid = ih1.bankid and max_rec.bankaccountid = ih1.bankaccountid and max_rec.instrumentnumber = ih1.instrumentnumber ")
+                    .append(" and max_rec.id = ih1.id) ih where ph.voucherheaderid = vh.id").append(voucherheaderFundQuery)
+                    .append(" and vh.status = 0 and ph.voucherheaderid = vh.id and iv.voucherheaderid = vh.id and iv.instrumentheaderid = ih.id and ph.bankaccountnumberid = bankaccount.id")
+                    .append(" and vh.type = :voucherType AND vh.name = :voucherName AND ph.type = :paymentType and ih.id_status = egws.id")
+                    .append(" and egws.description in ('Surrendered', 'Surrender_For_Reassign')) and coa.id = bankaccount.glcodeid and bankaccount.type in ('RECEIPTS_PAYMENTS', 'PAYMENTS')")
+                    .append(" and bankaccount.branchid = :branchId");
 
-            queryString = queryString.append(bankaccountFundQuery);
+            queryString.append(bankaccountFundQuery);
 
-            final List<Object[]> bankAccounts = persistenceService.getSession().createNativeQuery(queryString.toString()).list();
+            final List<Object[]> bankAccounts = persistenceService.getSession().createNativeQuery(queryString.toString())
+                    .setParameter("fundId", fundId.longValue(), LongType.INSTANCE)
+                    .setParameter("voucherName", FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE, StringType.INSTANCE)
+                    .setParameter("paymentType", FinancialConstants.MODEOFPAYMENT_RTGS, StringType.INSTANCE)
+                    .setParameter("branchId", branchId, IntegerType.INSTANCE)
+                    .setParameter("voucherType", FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT, StringType.INSTANCE)
+                    .list();
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank accont list size is " + bankAccounts.size() + "and Query is " + queryString.toString());
             final List<String> addedBanks = new ArrayList<String>();
             for (final Object[] account : bankAccounts) {
-                final String accountNumberAndType = account[0].toString() + "-" + account[1].toString();
+                final String accountNumberAndType = account[0].toString().concat("-").concat(account[1].toString());
                 if (!addedBanks.contains(accountNumberAndType)) {
                     final Bankaccount bankaccount = new Bankaccount();
                     bankaccount.setAccountnumber(account[0].toString());
                     bankaccount.setAccounttype(account[1].toString());
-                    final CChartOfAccounts chartofaccounts = new CChartOfAccounts();
-                    chartofaccounts.setGlcode(account[3].toString());
-                    bankaccount.setChartofaccounts(chartofaccounts);
+                    final CChartOfAccounts chartOfAccounts = new CChartOfAccounts();
+                    chartOfAccounts.setGlcode(account[3].toString());
+                    bankaccount.setChartofaccounts(chartOfAccounts);
                     bankaccount.setId(Long.valueOf(account[2].toString()));
                     addedBanks.add(accountNumberAndType);
                     accNumList.add(bankaccount);
                 }
             }
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown ",
                     new Exception(e.getMessage()));
         }
         if (LOGGER.isDebugEnabled())
@@ -3995,19 +3645,16 @@ public class CommonAction extends BaseFormAction {
      */
     @Action(value = "/voucher/common-searchARFNumbers")
     public String searchARFNumbers() {
-        String strquery = "";
         final ArrayList<Object> params = new ArrayList<Object>();
         if (!StringUtils.isEmpty(query)) {
-            strquery = "select distinct(arf.advanceRequisitionNumber) from EgAdvanceRequisition arf where arf.status.code = ? "
-                    +
-                    " and arf.arftype = ? and NOT EXISTS (select 1 from CVoucherHeader vh where vh.id=arf.egAdvanceReqMises.voucherheader.id and arf.egAdvanceReqMises.voucherheader.status<>4) "
-                    +
-                    " and UPPER(arf.advanceRequisitionNumber) like '%'||?||'%' order by arf.advanceRequisitionNumber";
+            StringBuilder strquery = new StringBuilder("select distinct(arf.advanceRequisitionNumber) from EgAdvanceRequisition arf where arf.status.code = ?1 ")
+                    .append(" and arf.arftype = ?2 and NOT EXISTS (select 1 from CVoucherHeader vh where vh.id = arf.egAdvanceReqMises.voucherheader.id")
+                    .append(" and arf.egAdvanceReqMises.voucherheader.status <> 4) and UPPER(arf.advanceRequisitionNumber) like '%'||?3||'%' order by arf.advanceRequisitionNumber");
             params.add(ARF_STATUS_APPROVED);
             params.add(ARF_TYPE);
             params.add(query.toUpperCase());
 
-            arfNumberSearchList = persistenceService.findAllBy(strquery, params.toArray());
+            arfNumberSearchList = persistenceService.findAllBy(strquery.toString(), params.toArray());
         }
         return ARF_NUMBER_SEARCH_RESULTS;
     }
@@ -4019,16 +3666,15 @@ public class CommonAction extends BaseFormAction {
             if (bankaccount != null && departmentId != null) {
                 yearCodeList = persistenceService
                         .findAllBy(
-                                "select  DISTINCT fs from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd  where ac.serialNo = fs.id and  bankAccountId=?"
-                                        + " and ac.id=cd.accountCheque and cd.allotedTo.id=?"
-                                        + " order by fs.id desc ",
+                                new StringBuilder("select DISTINCT fs from AccountCheques ac, CFinancialYear fs, ChequeDeptMapping cd where ac.serialNo = fs.id")
+                                .append(" and bankAccountId = ?1 and ac.id = cd.accountCheque and cd.allotedTo.id = ?2 order by fs.id desc ").toString(),
                                 bankaccount, departmentId);
             }
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting year code " + e.getMessage(),
+            LOGGER.error("Exception occured while getting year code ",
                     new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting year code " + e.getMessage(),
+            LOGGER.error("Exception occured while getting year code ",
                     new HibernateException(e.getMessage()));
         }
         return "yearCode";

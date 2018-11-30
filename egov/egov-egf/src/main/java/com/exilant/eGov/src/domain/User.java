@@ -56,7 +56,7 @@ package com.exilant.eGov.src.domain;
 import com.exilant.exility.common.TaskFailedException;
 import org.apache.log4j.Logger;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.query.Query;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,18 +66,26 @@ import java.util.List;
 
 /**
  * @author sahinab
- *
+ * <p>
  * TODO To change the template for this generated type comment go to Window - Preferences - Java - Code Style - Code Templates
  */
 @Transactional(readOnly = true)
 public class User {
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
 
     private static final Logger LOGGER = Logger.getLogger(User.class);
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
     private String userName;
     private String role;
+
+    /**
+     * @param userName
+     */
+    public User(final String userName) {
+        super();
+        this.userName = userName;
+    }
 
     /**
      * @return Returns the role.
@@ -101,49 +109,40 @@ public class User {
     }
 
     /**
-     * @param userId The userId to set.
+     * @param userName The userName to set.
      */
     public void setUserName(final String userName) {
         this.userName = userName;
     }
 
-    /**
-     * @param userId
-     */
-    public User(final String userName) {
-        super();
-        this.userName = userName;
-    }
-
     // this method gets the assigned role for the user from the database.
     public String getRole(final Connection con) throws TaskFailedException {
-        // if(LOGGER.isDebugEnabled()) LOGGER.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>domain user");
-        final String query = "select r.Role_name as role from EG_ROLES r, EG_USER u,EG_USERROLE ur where u.user_name=? and ur.id_role=r.id_role and u.id_user=ur.id_user ";
+        final String query = "select r.Role_name as role from EG_ROLES r, EG_USER u, EG_USERROLE ur where u.user_name = :userName and ur.id_role = r.id_role and u.id_user = ur.id_user ";
         String role = "";
         try {
-            final Query ps = persistenceService.getSession().createNativeQuery(query);
-            ps.setString(0, userName);
-            final List<Object[]> rs = ps.list();
+            final List<Object[]> rs = persistenceService.getSession().createNativeQuery(query)
+                    .setParameter("userName", userName, StringType.INSTANCE)
+                    .list();
             for (final Object[] element : rs)
                 role = element[0].toString();
         } catch (final Exception ex) {
-            LOGGER.error("Task Failed Error" + ex.getMessage(), ex);
+            LOGGER.error("Task Failed Error", ex);
             throw new TaskFailedException();
         }
         return role;
     }
 
     public int getId() throws TaskFailedException {
-        final String query = "select id_user from EG_USER where user_name=? ";
+        final String query = "select id_user from EG_USER where user_name = :userName ";
         int userId = 0;
         try {
-            final Query ps = persistenceService.getSession().createNativeQuery(query);
-            ps.setString(0, userName);
-            final List<Object[]> rs = ps.list();
+            final List<Object[]> rs = persistenceService.getSession().createNativeQuery(query)
+                    .setParameter("userName", userName, StringType.INSTANCE)
+                    .list();
             for (final Object[] element : rs)
                 userId = Integer.parseInt(element[0].toString());
         } catch (final Exception ex) {
-            LOGGER.error("EXP in getId" + ex.getMessage());
+            LOGGER.error("EXP in getId", ex);
             throw new TaskFailedException();
         }
         return userId;

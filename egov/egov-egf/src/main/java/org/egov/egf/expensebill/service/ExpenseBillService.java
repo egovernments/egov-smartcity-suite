@@ -99,13 +99,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.script.ScriptContext;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author venki
@@ -114,7 +108,6 @@ import java.util.Set;
 @Service
 @Transactional(readOnly = true)
 public class ExpenseBillService {
-
 
     private static final Logger LOG = LoggerFactory.getLogger(ExpenseBillService.class);
     private final ExpenseBillRepository expenseBillRepository;
@@ -245,7 +238,6 @@ public class ExpenseBillService {
             persistDocuments(documentDetails);
         }
 
-
         // TODO: add the code to handle new screen for view bills of all type
         if (savedEgBillregister.getEgBillregistermis().getSourcePath() == null
                 || StringUtils.isBlank(savedEgBillregister.getEgBillregistermis().getSourcePath()))
@@ -260,7 +252,6 @@ public class ExpenseBillService {
         final List<EgChecklists> checkLists = checkListService.getByObjectId(egBillregister.getId());
         for (final EgChecklists check : checkLists)
             checkListService.delete(check);
-
     }
 
     @Transactional
@@ -271,7 +262,6 @@ public class ExpenseBillService {
             check.setAppconfigvalue(configValue);
             checkListService.create(check);
         }
-
     }
 
     public void checkBudgetAndGenerateBANumber(final EgBillregister egBillregister) {
@@ -315,8 +305,8 @@ public class ExpenseBillService {
             } catch (final ValidationException e) {
                 throw new ValidationException(e.getErrors());
             }
-
         }
+
         if (updatedegBillregister != null) {
             if (workFlowAction.equals(FinancialConstants.CREATEANDAPPROVE))
                 updatedegBillregister.setStatus(financialUtils.getStatusByModuleAndCode(FinancialConstants.CONTINGENCYBILL_FIN,
@@ -362,7 +352,6 @@ public class ExpenseBillService {
                     && workFlowAction.equals(FinancialConstants.BUTTONFORWARD))
                 egBillregister.setStatus(financialUtils.getStatusByModuleAndCode(FinancialConstants.CONTINGENCYBILL_FIN,
                         FinancialConstants.CONTINGENCYBILL_CREATED_STATUS));
-
     }
 
     @Transactional(readOnly = true)
@@ -413,7 +402,7 @@ public class ExpenseBillService {
             wfInitiator = assignmentService.getPrimaryAssignmentForUser(egBillregister.getCreatedBy().getId());
         if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workFlowAction)) {
             stateValue = FinancialConstants.WORKFLOW_STATE_REJECTED;
-            egBillregister.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
+            egBillregister.transition().progressWithStateCopy().withSenderName(user.getUsername().concat("::").concat(user.getName()))
                     .withComments(approvalComent)
                     .withStateValue(stateValue).withDateInfo(currentDate.toDate())
                     .withOwner(wfInitiator.getPosition())
@@ -465,7 +454,7 @@ public class ExpenseBillService {
                 if (stateValue.isEmpty())
                     stateValue = wfmatrix.getNextState();
 
-                egBillregister.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
+                egBillregister.transition().end().withSenderName(user.getUsername().concat("::").concat(user.getName()))
                         .withComments(approvalComent)
                         .withStateValue(stateValue).withDateInfo(new Date())
                         .withNextAction(wfmatrix.getNextAction())
@@ -481,7 +470,7 @@ public class ExpenseBillService {
                 if (stateValue.isEmpty())
                     stateValue = wfmatrix.getNextState();
 
-                egBillregister.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
+                egBillregister.transition().progressWithStateCopy().withSenderName(user.getUsername().concat("::").concat(user.getName()))
                         .withComments(approvalComent)
                         .withStateValue(stateValue).withDateInfo(new Date()).withOwner(wfInitiator.getPosition())
                         .withNextAction(wfmatrix.getNextAction())
@@ -514,7 +503,6 @@ public class ExpenseBillService {
         return bill == null;
     }
 
-
     private Map<String, Object> getBudgetDetails(EgBillregister egBillregister, EgBilldetails billDetail,
                                                  Map<String, Object> budgetDataMap, Map<String, Object> paramMap) {
 
@@ -522,7 +510,6 @@ public class ExpenseBillService {
         BigDecimal currentBillAmount;
         BigDecimal soFarAppropriated;
         BigDecimal actualAmount;
-
 
         if (egBillregister.getEgBillregistermis().getVoucherHeader() != null) {
             budgetDataMap.put(Constants.ASONDATE, egBillregister.getEgBillregistermis().getVoucherHeader().getVoucherDate());
@@ -582,7 +569,6 @@ public class ExpenseBillService {
         budgetApprDetailsMap.put("expenseIncurredIncludingCurrentBill", cumilativeIncludingCurrentBill);
         budgetApprDetailsMap.put("currentBalanceAvailable", currentBalanceAvailable);
         budgetApprDetailsMap.put("accountCode", billDetail.getChartOfAccounts().getGlcode());
-
 
         return budgetApprDetailsMap;
 

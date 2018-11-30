@@ -1384,7 +1384,7 @@ public class EgovCommon {
         else
             return persistenceService
                     .findAllBy(
-                            "from CChartOfAccounts  a LEFT OUTER JOIN  fetch a.chartOfAccountDetails  b where (size(a.chartOfAccountDetails) = 0 or b.detailTypeId.id=?)and a.isActiveForPosting=true and a.classification=4 order by a.id",
+                            "from CChartOfAccounts  a LEFT OUTER JOIN  fetch a.chartOfAccountDetails  b where (size(a.chartOfAccountDetails) = 0 or b.detailTypeId.id=?1)and a.isActiveForPosting=true and a.classification=4 order by a.id",
                             accountDetailTypeId);
     }
 

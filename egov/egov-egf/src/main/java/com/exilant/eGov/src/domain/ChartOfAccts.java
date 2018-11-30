@@ -61,7 +61,9 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.HibernateException;
-import org.hibernate.query.Query;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,6 +78,11 @@ import java.util.Locale;
 
 @Transactional(readOnly = true)
 public class ChartOfAccts {
+    private static final Logger LOGGER = Logger.getLogger(ChartOfAccts.class);
+    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale
+            .getDefault());
+    private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy",
+            Locale.getDefault());
     private String id = null;
     private String glCode = null;
     private String name = null;
@@ -100,28 +107,21 @@ public class ChartOfAccts {
     private String paymentoperation = null;
     private String budgetCheckReqd = null;
     private boolean isId = false, isField = false;
-    private static final Logger LOGGER = Logger.getLogger(ChartOfAccts.class);
-   
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    @Autowired
     private AppConfigValueService appConfigValuesService;
+    private @Autowired
+    EGovernCommon eGovernCommon;
 
-    private @Autowired EGovernCommon eGovernCommon;
-    
-    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale
-            .getDefault());
-    private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy",
-            Locale.getDefault());
+    public String getId() {
+        return id;
+    }
 
     public void setId(final String aId) {
         id = aId;
         isId = true;
-    }
-
-    public String getId() {
-        return id;
     }
 
     public void setGLCode(final String aGLCode) {
@@ -244,8 +244,7 @@ public class ChartOfAccts {
     }
 
     @Transactional
-    public void insert(final Connection connection) throws SQLException,
-    TaskFailedException {
+    public void insert(final Connection connection) {
         created = new SimpleDateFormat("dd/mm/yyyy").format(new Date());
         try {
             created = formatter.format(sdf.parse(created));
@@ -254,35 +253,36 @@ public class ChartOfAccts {
             setId(String.valueOf(PrimaryKeyGenerator
                     .getNextKey("ChartOfAccounts")));
 
-            final String insertQuery = "INSERT INTO ChartOfAccounts (id, glCode, name, description, isActiveForPosting, "
-                    + " parentId, lastModified, modifiedBy, "
-                    + "created,  purposeid,functionreqd, operation,type,classification,class,budgetCheckReq,majorcode)"
-                    + "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            final StringBuilder insertQuery = new StringBuilder("INSERT INTO ChartOfAccounts (id, glCode, name, description, isActiveForPosting, parentId, lastModified, modifiedBy,")
+                    .append(" created, purposeid, functionreqd, operation, type, classification, class, budgetCheckReq, majorcode)")
+                    .append(" values (:id, :glCode, :name, :description, :isActiveForPosting, :parentId, :lastModified, :modifiedBy, :created, :purposeid, :functionreqd, :operation,")
+                    .append(" :type, :classification, :class, :budgetCheckReq, :majorcode)");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(insertQuery);
 
-            persistenceService.getSession().createNativeQuery(insertQuery)
-            .setInteger(0, Integer.parseInt(id))
-            .setString(1, removeSingleQuotes(glCode))
-            .setString(2, removeSingleQuotes(name))
-            .setString(3, removeSingleQuotes(description))
-            .setString(4, removeSingleQuotes(isActiveForPosting))
-            .setString(5, removeSingleQuotes(parentId))
-            .setString(6, removeSingleQuotes(lastModified))
-            .setString(7, removeSingleQuotes(modifiedBy))
-            .setString(8, removeSingleQuotes(created))
-            .setString(9, removeSingleQuotes(purposeid))
-            .setString(10, removeSingleQuotes(functionreqd))
-            .setString(11, removeSingleQuotes(operation))
-            .setString(12, removeSingleQuotes(type))
-            .setString(13, removeSingleQuotes(classification))
-            .setString(14, removeSingleQuotes(classname))
-            .setString(15, removeSingleQuotes(budgetCheckReqd))
-            .setString(16, removeSingleQuotes(getMajorCode(glCode))).executeUpdate();
+            persistenceService.getSession().createNativeQuery(insertQuery.toString())
+                    .setParameter("id", Integer.parseInt(id), IntegerType.INSTANCE)
+                    .setParameter("glCode", removeSingleQuotes(glCode), StringType.INSTANCE)
+                    .setParameter("name", removeSingleQuotes(name), StringType.INSTANCE)
+                    .setParameter("description", removeSingleQuotes(description), StringType.INSTANCE)
+                    .setParameter("isActiveForPosting", removeSingleQuotes(isActiveForPosting), StringType.INSTANCE)
+                    .setParameter("parentId", removeSingleQuotes(parentId), StringType.INSTANCE)
+                    .setParameter("lastModified", removeSingleQuotes(lastModified), StringType.INSTANCE)
+                    .setParameter("modifiedBy", removeSingleQuotes(modifiedBy), StringType.INSTANCE)
+                    .setParameter("created", removeSingleQuotes(created), StringType.INSTANCE)
+                    .setParameter("purposeid", removeSingleQuotes(purposeid), StringType.INSTANCE)
+                    .setParameter("functionreqd", removeSingleQuotes(functionreqd), StringType.INSTANCE)
+                    .setParameter("operation", removeSingleQuotes(operation), StringType.INSTANCE)
+                    .setParameter("type", removeSingleQuotes(type), StringType.INSTANCE)
+                    .setParameter("classification", removeSingleQuotes(classification), StringType.INSTANCE)
+                    .setParameter("class", removeSingleQuotes(classname), StringType.INSTANCE)
+                    .setParameter("budgetCheckReq", removeSingleQuotes(budgetCheckReqd), StringType.INSTANCE)
+                    .setParameter("majorcode", removeSingleQuotes(getMajorCode(glCode)), StringType.INSTANCE)
+                    .executeUpdate();
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data  " + e.getMessage(), new HibernateException(e.getMessage()));
+            LOGGER.error("Exception occured while getting the data  ", new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting the data  " + e.getMessage(), new Exception(e.getMessage()));
+            LOGGER.error("Exception occured while getting the data  ", new Exception(e.getMessage()));
         }
     }
 
@@ -290,7 +290,6 @@ public class ChartOfAccts {
         if (obj != null)
             obj = obj.replaceAll("'", "");
         return obj;
-
     }
 
     /**
@@ -308,21 +307,17 @@ public class ChartOfAccts {
                     "coa_majorcode_length is not defined in appconfig");
         final int majorcodelength = Integer.valueOf(appList.get(0).getValue());
         final String glcode1 = glcode.substring(0, glcode.length());
-        return glcode1.length() >= majorcodelength ? "'"
-                + glcode1.substring(0, majorcodelength) + "'" : "''";
+        return glcode1.length() >= majorcodelength ? "'".concat(glcode1.substring(0, majorcodelength)).concat("'") : "''";
     }
 
     @Transactional
-    public void update() throws SQLException,
-    TaskFailedException {
+    public void update() throws SQLException, TaskFailedException {
         if (isId && isField)
             newUpdate();
     }
 
-    public void newUpdate() throws TaskFailedException,
-    SQLException {
+    public void newUpdate() {
         created = eGovernCommon.getCurrentDate();
-        Query pstmt = null;
         try {
             created = formatter.format(sdf.parse(created));
         } catch (final ParseException parseExp) {
@@ -331,112 +326,107 @@ public class ChartOfAccts {
         }
         setCreated(created);
         setLastModified(created);
-        final StringBuilder query = new StringBuilder(500);
-        query.append("update ChartOfAccounts set ");
+        final StringBuilder query = new StringBuilder("update ChartOfAccounts set");
         if (glCode != null)
-            query.append("glCode=?,");
+            query.append(" glCode = :glCode,");
         if (name != null)
-            query.append("name=?,");
+            query.append(" name = :name,");
         if (description != null)
-            query.append("description=?,");
+            query.append(" description = :description,");
         if (isActiveForPosting != null)
-            query.append("ISACTIVEFORPOSTING=?,");
+            query.append(" ISACTIVEFORPOSTING = :isActiveForPosting,");
         if (parentId != null)
-            query.append("PARENTID=?,");
+            query.append(" PARENTID = :parentId,");
         if (lastModified != null)
-            query.append("LASTMODIFIED=?,");
+            query.append(" LASTMODIFIED = :lastModified,");
         if (modifiedBy != null)
-            query.append("MODIFIEDBY=?,");
+            query.append(" MODIFIEDBY = :modifiedBy,");
         if (created != null)
-            query.append("CREATED=?,");
+            query.append(" CREATED = :created,");
         if (purposeid != null)
-            query.append("PURPOSEID=?,");
+            query.append(" PURPOSEID = :purposeId,");
         if (operation != null)
-            query.append("OPERATION=?,");
+            query.append(" OPERATION = :operation,");
         if (FIEoperation != null)
-            query.append("FIEOPERATION=?,");
+            query.append(" FIEOPERATION = :fieOperation,");
         if (type != null)
-            query.append("type=?,");
+            query.append(" type = :type,");
         if (classname != null)
-            query.append("class=?,");
+            query.append(" class = :class,");
         if (classification != null)
-            query.append("CLASSIFICATION=?,");
+            query.append(" CLASSIFICATION = :classification,");
         if (functionreqd != null)
-            query.append("FUNCTIONREQD=?,");
+            query.append(" FUNCTIONREQD = :functionReqd,");
         if (scheduleId != null)
-            query.append("SCHEDULEID=?,");
+            query.append(" SCHEDULEID = :scheduleId,");
         if (FIEscheduleId != null)
-            query.append("FIEscheduleId=?,");
+            query.append(" FIEscheduleId = :fieScheduleId,");
         if (receiptscheduleid != null)
-            query.append("RECEIPTSCHEDULEID=?,");
+            query.append(" RECEIPTSCHEDULEID = :receiptScheduleId,");
         if (receiptoperation != null)
-            query.append("RECEIPTOPERATION=?,");
+            query.append(" RECEIPTOPERATION = :receiptOperation,");
         if (paymentscheduleid != null)
-            query.append("PAYMENTSCHEDULEID=?,");
+            query.append(" PAYMENTSCHEDULEID = :paymentScheduleId,");
         if (paymentoperation != null)
-            query.append("PAYMENTOPERATION=?,");
+            query.append(" PAYMENTOPERATION = :paymentOperation,");
         if (budgetCheckReqd != null)
-            query.append("BUDGETCHECKREQ=?,");
+            query.append(" BUDGETCHECKREQ = :budgetCheckReq,");
         final int lastIndexOfComma = query.lastIndexOf(",");
         query.deleteCharAt(lastIndexOfComma);
-        query.append(" where id=?");
-
+        query.append(" where id = :id");
         try {
-            int i = 1;
-            pstmt = persistenceService.getSession().createNativeQuery(query.toString());
+            NativeQuery nativeQuery = persistenceService.getSession().createNativeQuery(query.toString());
 
             if (glCode != null)
-                pstmt.setString(i++, glCode);
+                nativeQuery.setParameter("glCode", glCode, StringType.INSTANCE);
             if (name != null)
-                pstmt.setString(i++, name);
+                nativeQuery.setParameter("name", name, StringType.INSTANCE);
             if (description != null)
-                pstmt.setString(i++, description);
+                nativeQuery.setParameter("description", description, StringType.INSTANCE);
             if (isActiveForPosting != null)
-                pstmt.setString(i++, isActiveForPosting);
+                nativeQuery.setParameter("isActiveForPosting", isActiveForPosting, StringType.INSTANCE);
             if (parentId != null)
-                pstmt.setString(i++, parentId);
+                nativeQuery.setParameter("parentId", parentId, StringType.INSTANCE);
             if (lastModified != null)
-                pstmt.setString(i++, lastModified);
+                nativeQuery.setParameter("lastModified", lastModified, StringType.INSTANCE);
             if (modifiedBy != null)
-                pstmt.setString(i++, modifiedBy);
+                nativeQuery.setParameter("modifiedBy", modifiedBy, StringType.INSTANCE);
             if (created != null)
-                pstmt.setString(i++, created);
+                nativeQuery.setParameter("created", created, StringType.INSTANCE);
             if (purposeid != null)
-                pstmt.setString(i++, purposeid);
+                nativeQuery.setParameter("purposeId", purposeid, StringType.INSTANCE);
             if (operation != null)
-                pstmt.setString(i++, operation);
+                nativeQuery.setParameter("operation", operation, StringType.INSTANCE);
             if (FIEoperation != null)
-                pstmt.setString(i++, FIEoperation);
+                nativeQuery.setParameter("fieOperation", FIEoperation, StringType.INSTANCE);
             if (type != null)
-                pstmt.setString(i++, type);
+                nativeQuery.setParameter("type", type, StringType.INSTANCE);
             if (classname != null)
-                pstmt.setString(i++, classname);
+                nativeQuery.setParameter("class", classname, StringType.INSTANCE);
             if (classification != null)
-                pstmt.setString(i++, classification);
+                nativeQuery.setParameter("classification", classification, StringType.INSTANCE);
             if (functionreqd != null)
-                pstmt.setString(i++, functionreqd);
+                nativeQuery.setParameter("functionReqd", functionreqd, StringType.INSTANCE);
             if (scheduleId != null)
-                pstmt.setString(i++, scheduleId);
+                nativeQuery.setParameter("scheduleId", scheduleId, StringType.INSTANCE);
             if (FIEscheduleId != null)
-                pstmt.setInteger(i++, FIEscheduleId);
+                nativeQuery.setParameter("fieScheduleId", FIEscheduleId, IntegerType.INSTANCE);
             if (receiptscheduleid != null)
-                pstmt.setString(i++, receiptscheduleid);
+                nativeQuery.setParameter("receiptScheduleId", receiptscheduleid, StringType.INSTANCE);
             if (receiptoperation != null)
-                pstmt.setString(i++, receiptoperation);
+                nativeQuery.setParameter("receiptOperation", receiptoperation, StringType.INSTANCE);
             if (paymentscheduleid != null)
-                pstmt.setString(i++, paymentscheduleid);
+                nativeQuery.setParameter("paymentScheduleId", paymentscheduleid, StringType.INSTANCE);
             if (paymentoperation != null)
-                pstmt.setString(i++, paymentoperation);
+                nativeQuery.setParameter("paymentOperation", paymentoperation, StringType.INSTANCE);
             if (budgetCheckReqd != null)
-                pstmt.setString(i++, budgetCheckReqd);
-            pstmt.setString(i++, id);
-
-            pstmt.executeUpdate();
+                nativeQuery.setParameter("budgetCheckReq", budgetCheckReqd, StringType.INSTANCE);
+            nativeQuery.setParameter("id", id, StringType.INSTANCE);
+            nativeQuery.executeUpdate();
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data  " + e.getMessage(), new HibernateException(e.getMessage()));
+            LOGGER.error("Exception occured while getting the data  ", new HibernateException(e.getMessage()));
         } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting the data  " + e.getMessage(), new Exception(e.getMessage()));
+            LOGGER.error("Exception occured while getting the data  ", new Exception(e.getMessage()));
         }
     }
-
 }

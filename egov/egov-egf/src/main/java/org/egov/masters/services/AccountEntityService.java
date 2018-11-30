@@ -63,12 +63,11 @@ import java.util.List;
 
 /**
  * @author mani
- *
  */
 @Deprecated
 @Transactional(readOnly = true)
 public class AccountEntityService extends PersistenceService<AccountEntity, Integer> implements EntityTypeService {
-    
+
     public AccountEntityService() {
         super(AccountEntity.class);
     }
@@ -76,11 +75,11 @@ public class AccountEntityService extends PersistenceService<AccountEntity, Inte
     public AccountEntityService(final Class<AccountEntity> type) {
         super(type);
     }
-    
+
     @Override
     public List<EntityType> getAllActiveEntities(final Integer accountDetailTypeId) {
         final List<EntityType> entities = new ArrayList<EntityType>();
-        entities.addAll(findAllBy("from AccountEntity a where a.isactive=? and accountdetailtype.id=?", true, accountDetailTypeId));
+        entities.addAll(findAllBy("from AccountEntity a where a.isactive = ?1 and accountdetailtype.id = ?2", true, accountDetailTypeId));
         return entities;
     }
 
@@ -88,42 +87,32 @@ public class AccountEntityService extends PersistenceService<AccountEntity, Inte
     public List<EntityType> filterActiveEntities(String filterKey, final int maxRecords, final Integer accountDetailTypeId) {
         final Integer pageSize = maxRecords > 0 ? maxRecords : null;
         final List<EntityType> entities = new ArrayList<EntityType>();
-        filterKey = "%" + filterKey + "%";
-        final String qry = "from AccountEntity  where accountdetailtype.id=? and ((upper(code) like upper(?) or upper(name) like upper(?))  and isactive=?)   order by code,name";
+        filterKey = "%".concat(filterKey).concat("%");
+        final String qry = "from AccountEntity where accountdetailtype.id = ?1 and ((upper(code) like upper(?2) or upper(name) like upper(?3)) and isactive = ?4) order by code, name";
         entities.addAll(findPageBy(qry, 0, pageSize, accountDetailTypeId, filterKey, filterKey, true)
                 .getList());
         return entities;
-
     }
 
     @Override
-    public List getAssetCodesForProjectCode(final Integer accountdetailkey)
-            throws ValidationException {
-
+    public List getAssetCodesForProjectCode(final Integer accountdetailkey) throws ValidationException {
         return null;
     }
 
     @Override
     public List<EntityType> validateEntityForRTGS(final List<Long> idsList) throws ValidationException {
-
         return null;
-
     }
 
     @Override
     public List<EntityType> getEntitiesById(final List<Long> idsList) throws ValidationException {
-
         final List<Integer> ids = new ArrayList<Integer>();
         if (idsList != null)
             for (final Long id : idsList)
                 ids.add(id.intValue());
-
-        List<EntityType> entities = new ArrayList<EntityType>();
-        final Query entitysQuery = getSession().createQuery(" from AccountEntity where id in ( :IDS )");
-        entitysQuery.setParameterList("IDS", ids);
-        entities = entitysQuery.list();
+        final Query entitysQuery = getSession().createQuery("from AccountEntity where id in (:ids)");
+        entitysQuery.setParameterList("ids", ids);
+        List<EntityType> entities = entitysQuery.list();
         return entities;
-
     }
-
 }

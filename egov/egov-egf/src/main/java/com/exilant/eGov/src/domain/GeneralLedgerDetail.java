@@ -56,6 +56,8 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 import org.apache.log4j.Logger;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.query.Query;
+import org.hibernate.type.BigDecimalType;
+import org.hibernate.type.LongType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,72 +67,70 @@ import java.sql.SQLException;
 
 @Transactional(readOnly = true)
 public class GeneralLedgerDetail {
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
-
+    private static final Logger LOGGER = Logger.getLogger(GeneralLedgerDetail.class);
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
     private String id = null;
     private String glId = null;
     private String detailKeyId = null;
     private String detailTypeId = null;
     private String detailAmt = "0";
-    private static final Logger LOGGER = Logger.getLogger(GeneralLedgerDetail.class);
-
-    public void setId(final String aId) {
-        id = aId;
-    }
-
-    public void setGLId(final String aGLId) {
-        glId = aGLId;
-    }
-
-    public void setDetailKeyId(final String aDetailKeyId) {
-        detailKeyId = aDetailKeyId;
-    }
-
-    public void setDetailTypeId(final String aDetailTypeId) {
-        detailTypeId = aDetailTypeId;
-    }
-
-    public void setDetailAmt(final String aDetailAmt) {
-        detailAmt = aDetailAmt;
-    }
 
     public int getId() {
         return Integer.valueOf(id).intValue();
+    }
+
+    public void setId(final String aId) {
+        id = aId;
     }
 
     public String getGLId() {
         return glId;
     }
 
+    public void setGLId(final String aGLId) {
+        glId = aGLId;
+    }
+
     public String getDetailKeyId() {
         return detailKeyId;
+    }
+
+    public void setDetailKeyId(final String aDetailKeyId) {
+        detailKeyId = aDetailKeyId;
     }
 
     public String getDetailTypeId() {
         return detailTypeId;
     }
 
+    public void setDetailTypeId(final String aDetailTypeId) {
+        detailTypeId = aDetailTypeId;
+    }
+
     public String getDetailAmt() {
         return detailAmt;
     }
 
+    public void setDetailAmt(final String aDetailAmt) {
+        detailAmt = aDetailAmt;
+    }
+
     @Transactional
-    public void insert() throws SQLException
-    {
+    public void insert() throws SQLException {
         setId(String.valueOf(PrimaryKeyGenerator.getNextKey("GeneralLedgerDetail")));
 
-        final String insertQuery = "INSERT INTO GeneralLedgerDetail (id, generalLedgerId, detailKeyId, detailTypeId,amount) " +
-                "VALUES ( ?, ?, ?, ?, ?)";
+        final StringBuilder insertQuery = new StringBuilder("INSERT INTO GeneralLedgerDetail(id, generalLedgerId, detailKeyId, detailTypeId, amount)")
+                .append(" VALUES ( :id, :generalLedgerId, :detailKeyId, :detailTypeId, :amount)");
 
-        final Query pst = persistenceService.getSession().createNativeQuery(insertQuery);
-        pst.setLong(0, Long.valueOf(id));
-        pst.setLong(1, Long.valueOf(glId));
-        pst.setLong(2, Long.valueOf(detailKeyId));
-        pst.setLong(3, Long.valueOf(detailTypeId));
-        pst.setBigDecimal(4, new BigDecimal(detailAmt));
-        pst.executeUpdate();
+        persistenceService.getSession().createNativeQuery(insertQuery.toString())
+                .setParameter("id", Long.valueOf(id), LongType.INSTANCE)
+                .setParameter("generalLedgerId", Long.valueOf(glId), LongType.INSTANCE)
+                .setParameter("detailKeyId", Long.valueOf(detailKeyId), LongType.INSTANCE)
+                .setParameter("detailTypeId", Long.valueOf(detailTypeId), LongType.INSTANCE)
+                .setParameter("amount", new BigDecimal(detailAmt), BigDecimalType.INSTANCE)
+                .executeUpdate();
         if (LOGGER.isInfoEnabled())
             LOGGER.info(insertQuery);
     }

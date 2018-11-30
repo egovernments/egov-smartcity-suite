@@ -125,20 +125,20 @@ public class ScheduleMapping {
             // scheduleName=common.formatString(scheduleName);
             final String insertQuery = "INSERT INTO schedulemapping (id, reportType,schedule, scheduleName, createdBy, createdDate, "
                     + "lastModifiedBy,lastModifiedDate,repSubType,isRemission) "
-                    + "values(?,?,?,?,?,?,?,?,?,?)";
+                    + "values(:id,:reportType,:schedule,:scheduleName,:createdBy,:createdDate,:lastModifiedBy,:lastModifiedDate,:repSubType,:isRemission)";
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(insertQuery);
             pstmt = persistenceService.getSession().createNativeQuery(insertQuery);
-            pstmt.setString(0, id);
-            pstmt.setString(1, reportType);
-            pstmt.setString(2, schedule);
-            pstmt.setString(3, scheduleName);
-            pstmt.setString(4, createdBy);
-            pstmt.setString(5, createdDate);
-            pstmt.setString(6, lastModifiedBy);
-            pstmt.setString(7, lastModifiedDate);
-            pstmt.setString(8, repSubType);
-            pstmt.setString(9, isRemission);
+            pstmt.setParameter("id", id);
+            pstmt.setParameter("reportType", reportType);
+            pstmt.setParameter("schedule", schedule);
+            pstmt.setParameter("scheduleName", scheduleName);
+            pstmt.setParameter("createdBy", createdBy);
+            pstmt.setParameter("createdDate", createdDate);
+            pstmt.setParameter("lastModifiedBy", lastModifiedBy);
+            pstmt.setParameter("lastModifiedDate", lastModifiedDate);
+            pstmt.setParameter("repSubType", repSubType);
+            pstmt.setParameter("isRemission", isRemission);
             pstmt.executeUpdate();
         } catch (final Exception e) {
             LOGGER.error("ERROR" + e.getMessage(), e);
@@ -169,48 +169,47 @@ public class ScheduleMapping {
         final StringBuilder query = new StringBuilder(500);
         query.append("update schedulemapping set ");
         if (reportType != null)
-            query.append("REPORTTYPE=?,");
+            query.append("REPORTTYPE=:reportType,");
         if (schedule != null)
-            query.append("SCHEDULE=?,");
+            query.append("SCHEDULE=:schedule,");
         if (scheduleName != null)
-            query.append("SCHEDULENAME=?,");
+            query.append("SCHEDULENAME=:scheduleName,");
         if (createdBy != null)
-            query.append("CREATEDBY=?,");
+            query.append("CREATEDBY=:createdBy,");
         if (createdDate != null && !createdDate.isEmpty())
-            query.append("CREATEDDATE=?,");
+            query.append("CREATEDDATE=:createdDate,");
         if (lastModifiedBy != null)
-            query.append("LASTMODIFIEDBY=?,");
+            query.append("LASTMODIFIEDBY=:lastModifiedBy,");
         if (lastModifiedDate != null)
-            query.append("LASTMODIFIEDDATE=?,");
+            query.append("LASTMODIFIEDDATE=:lastModifiedDate,");
         if (repSubType != null)
-            query.append("REPSUBTYPE=?,");
+            query.append("REPSUBTYPE=:repSubType,");
         if (isRemission != null)
-            query.append("ISREMISSION=?,");
+            query.append("ISREMISSION=:isRemission,");
         final int lastIndexOfComma = query.lastIndexOf(",");
         query.deleteCharAt(lastIndexOfComma);
-        query.append(" where id=?");
+        query.append(" where id=:id");
         try {
-            int i = 1;
             pstmt = persistenceService.getSession().createNativeQuery(query.toString());
             if (reportType != null)
-                pstmt.setString(i++, reportType);
+                pstmt.setParameter("reportType", reportType);
             if (schedule != null)
-                pstmt.setString(i++, schedule);
+                pstmt.setParameter("schedule", schedule);
             if (scheduleName != null)
-                pstmt.setString(i++, scheduleName);
+                pstmt.setParameter("scheduleName", scheduleName);
             if (createdBy != null)
-                pstmt.setString(i++, createdBy);
+                pstmt.setParameter("createdBy", createdBy);
             if (createdDate != null && !createdDate.isEmpty())
-                pstmt.setString(i++, createdDate);
+                pstmt.setParameter("createdDate", createdDate);
             if (lastModifiedBy != null)
-                pstmt.setString(i++, lastModifiedBy);
+                pstmt.setParameter("lastModifiedBy", lastModifiedBy);
             if (lastModifiedDate != null)
-                pstmt.setString(i++, lastModifiedDate);
+                pstmt.setParameter("lastModifiedDate", lastModifiedDate);
             if (repSubType != null)
-                pstmt.setString(i++, repSubType);
+                pstmt.setParameter("repSubType", repSubType);
             if (isRemission != null)
-                pstmt.setString(i++, isRemission);
-            pstmt.setString(i++, id);
+                pstmt.setParameter("isRemission", isRemission);
+            pstmt.setParameter("id", id);
 
             pstmt.executeUpdate();
         } catch (final Exception e) {

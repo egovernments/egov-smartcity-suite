@@ -55,25 +55,23 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.format.Formatter;
 import org.springframework.stereotype.Component;
 
-import java.text.ParseException;
 import java.util.Locale;
 
 @Component("budgetHeadFormatter")
 public class BudgetHeadFormatter implements Formatter<BudgetGroup> {
 
-	@Autowired
-	@Qualifier("persistenceService")
-	private PersistenceService<BudgetGroup, Long> persistenceService;
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService<BudgetGroup, Long> persistenceService;
 
-	@Override
-	public String print(final BudgetGroup object, final Locale locale) {
-		return object.getName();
-	}
+    @Override
+    public String print(final BudgetGroup object, final Locale locale) {
+        return object.getName();
+    }
 
-	@Override
-	public BudgetGroup parse(final String id, final Locale locale)
-			throws ParseException {
-		return StringUtils.isNotBlank(id) ? persistenceService.load(
-				Long.valueOf(id), BudgetGroup.class) : null;
-	}
+    @Override
+    public BudgetGroup parse(final String id, final Locale locale) {
+        return StringUtils.isNotBlank(id) ? persistenceService.load(
+                Long.valueOf(id), BudgetGroup.class) : null;
+    }
 }

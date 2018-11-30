@@ -99,11 +99,11 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
 
             String sql = "select sbd.mmonth as \"salaryBillDetail_mmonth\" ,vh.fundid as \"fund_id\",vh.fundSourceid as \"fundSource_id\",sph.chequeid from salarybilldetail sbd,voucherheader  vh ,subledgerpaymentheader sph "
                     +
-                    " where  sph.salarybillid=sbd.id and sph.voucherheaderid=vh.id and vh.cgn= ?";
+                    " where  sph.salarybillid=sbd.id and sph.voucherheaderid=vh.id and vh.cgn=:cgn";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
             pst = persistenceService.getSession().createNativeQuery(sql);
-            pst.setString(0, cgn);
+            pst.setParameter("cgn", cgn);
             rset = pst.list();
             for (final Object[] element : rset) {
                 mmonth = element[0].toString();
@@ -122,11 +122,11 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
                     " paidto as \"chequeDetail_payTo\" ," +
                     " from subledgerpaymentheader" +
                     " sph,voucherheader  vh ,fund f,fundSource fs where " +
-                    " sph.voucherheaderid=vh.id  and f.id=vh.fundid and fs.id=vh.fundSourceid and vh.cgn= ?";
+                    " sph.voucherheaderid=vh.id  and f.id=vh.fundid and fs.id=vh.fundSourceid and vh.cgn=:cgn";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
             pst = persistenceService.getSession().createNativeQuery(sql);
-            pst.setString(0, cgn);
+            pst.setParameter("cgn", cgn);
             rset = pst.list();
             for (final Object[] element : rset) {
                 dc.addValue("subLedgerPaymentHeader_paidBy", element[0].toString());
@@ -138,11 +138,11 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
 
             sql = "select a.name as \"subLedgerPaymentHeader_paidBy\",c.glcode as \"billCollector_chequeInHandDesc\",b.glcode as \"billCollector_cashInHandDesc\" from billcollector a,chartofaccounts b,chartofaccounts c where "
                     +
-                    " a.cashinhand=b.id and a.chequeinhand=c.id and b.id!=c.id and a.id= ?";
+                    " a.cashinhand=b.id and a.chequeinhand=c.id and b.id!=c.id and a.id=:paidBy";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
             pst = persistenceService.getSession().createNativeQuery(sql);
-            pst.setString(0, dc.getValue("subLedgerPaymentHeader_paidBy"));
+            pst.setParameter("paidBy", dc.getValue("subLedgerPaymentHeader_paidBy"));
             rset = pst.list();
             for (final Object[] element : rset) {
                 dc.addValue("subLedgerPaymentHeader_paidBy", element[0].toString());
@@ -153,11 +153,11 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
             dc.addValue("salaryBillDetail_mmonth", mmonth);
 
             sql = "select  b.id as \"subLedgerPaymentHeader_bankId\" from bank a ,bankbranch b, bankaccount c  where" +
-                    " a.id=b.bankid and b.id=c.branchid and c.id= ?";
+                    " a.id=b.bankid and b.id=c.branchid and c.id=:accId";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
             pst = persistenceService.getSession().createNativeQuery(sql);
-            pst.setString(0, dc.getValue("accId"));
+            pst.setString("accId", dc.getValue("accId"));
             rset = pst.list();
             for (final Object[] element : rset)
                 dc.addValue("subLedgerPaymentHeader_bankId", element[0].toString());
@@ -165,11 +165,11 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
 
             sql = " select count(*) from salaryBillDetail s,voucherHeader v, subledgerpaymentheader sph " +
                     " where   v.id=s.voucherHeaderId AND " +
-                    " sph.salarybillid=s.id and sph.voucherheaderid in(select id from voucherheader where cgn= ?)";
+                    " sph.salarybillid=s.id and sph.voucherheaderid in(select id from voucherheader where cgn=:cgn)";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
             pst = persistenceService.getSession().createNativeQuery(sql);
-            pst.setString(0, cgn);
+            pst.setParameter("cgn", cgn);
             rset = pst.list();
             for (final Object[] element : rset)
                 noOfRec = Integer.parseInt(element[0].toString());
@@ -186,11 +186,11 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
                         +
                         " from salaryBillDetail s,voucherHeader v, subledgerpaymentheader sph where    v.id=s.voucherHeaderId AND"
                         +
-                        " sph.salarybillid=s.id and sph.voucherheaderid in(select id from voucherheader where cgn= ?) ";
+                        " sph.salarybillid=s.id and sph.voucherheaderid in(select id from voucherheader where cgn=:cgn) ";
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug(sql);
                 pst = persistenceService.getSession().createNativeQuery(sql);
-                pst.setString(0, cgn);
+                pst.setParameter("cgn", cgn);
                 rset = pst.list();
 
                 for (final Object[] element : rset) {
@@ -222,19 +222,18 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
                     +
                     " sph.voucherheaderid=vh.id  and cq.id=sph.chequeid"
                     +
-                    " and chequeid is not null and chequeid>0 and vh.cgn= ?"
+                    " and chequeid is not null and chequeid>0 and vh.cgn=:cgn"
                     +
                     " union "
                     +
                     " select cgn as \"voucherHeader_cgn\",vouchernumber as \"voucherHeader_voucherNumber\",to_char(voucherdate,'dd-mon-yyyy') as \"voucherHeader_voucherDate\",'','',vh.description as \"narration\" from voucherheader vh,subledgerpaymentheader sph  where"
                     +
                     " sph.voucherheaderid=vh.id " +
-                    " and (chequeid is  null or chequeid =0 )and vh.cgn= ?";
+                    " and (chequeid is  null or chequeid =0 ) and vh.cgn=:cgn";
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
             pst = persistenceService.getSession().createNativeQuery(sql);
-            pst.setString(0, cgn);
-            pst.setString(1, cgn);
+            pst.setParameter("cgn", cgn);
             rset = pst.list();
             for (final Object[] element : rset) {
                 dc.addValue("voucherHeader_cgn", element[0].toString());

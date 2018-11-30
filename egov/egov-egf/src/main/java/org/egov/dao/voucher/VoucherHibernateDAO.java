@@ -198,10 +198,10 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
             dataType = method.getReturnType().getSimpleName();
             if (dataType.equals("Long"))
                 entity = (EntityType) persistenceService.find(
-                        "from " + detailTypeName + " where id=? order by name", detailKeyId.longValue());
+                        new StringBuilder("from ").append(detailTypeName).append(" where id = ?1 order by name").toString(), detailKeyId.longValue());
             else
                 entity = (EntityType) persistenceService.find(
-                        "from " + detailTypeName + " where id=? order by name", detailKeyId);
+                        new StringBuilder("from ").append(detailTypeName).append(" where id = ?1 order by name").toString(), detailKeyId);
         } catch (final Exception e) {
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getMessage()));

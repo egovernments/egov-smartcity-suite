@@ -201,14 +201,14 @@ public class PaymentActionHelper {
         detailMap = new HashMap<String, Object>();
         detailMap.put(VoucherConstant.CREDITAMOUNT, remittanceBean.getTotalAmount().toString());
         detailMap.put(VoucherConstant.DEBITAMOUNT, ZERO);
-        final Bankaccount account = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
+        final Bankaccount account = (Bankaccount) persistenceService.find("from Bankaccount where id = ?1",
                 Long.valueOf(commonBean.getAccountNumberId()));
         detailMap.put(VoucherConstant.GLCODE, account.getChartofaccounts().getGlcode());
         accountdetails.add(detailMap);
         detailMap = new HashMap<String, Object>();
         detailMap.put(VoucherConstant.CREDITAMOUNT, ZERO);
         detailMap.put(VoucherConstant.DEBITAMOUNT, remittanceBean.getTotalAmount().toString());
-        recovery = (Recovery) persistenceService.find("from Recovery where id=?", remittanceBean.getRecoveryId());
+        recovery = (Recovery) persistenceService.find("from Recovery where id = ?1", remittanceBean.getRecoveryId());
         detailMap.put(VoucherConstant.GLCODE, recovery.getChartofaccounts().getGlcode());
         accountdetails.add(detailMap);
         subledgerDetails = addSubledgerGroupBy(subledgerDetails, recovery.getChartofaccounts().getGlcode(), listRemitBean);
@@ -308,7 +308,7 @@ public class PaymentActionHelper {
             LOGGER.debug("Inside getPaymentBills");
         try {
             miscBillList = miscbilldetailService.findAllBy(
-                    " from Miscbilldetail where payVoucherHeader.id = ? order by paidto",
+                    " from Miscbilldetail where payVoucherHeader.id = ?1 order by paidto",
                     paymentheader.getVoucherheader().getId());
 
         } catch (final Exception e) {
@@ -346,7 +346,7 @@ public class PaymentActionHelper {
         for (final RemittanceBean rbean : listRemitBean)
         {
             final EgRemittanceGldtl remittancegldtl = (EgRemittanceGldtl) persistenceService.find(
-                    "from EgRemittanceGldtl where id=?",
+                    "from EgRemittanceGldtl where id = ?1",
                     rbean.getRemittance_gl_dtlId());
             remittancegldtl.setRemittedamt(rbean.getPartialAmount());
             persistenceService.persist(remittancegldtl);
