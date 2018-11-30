@@ -96,21 +96,6 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
     private static final String SBIMOPS_HOA_FORMAT = "%-19sVN";
     private static final String REQUEST_CONTENT_TYPE = "application/json";
 
-    // SBIMOPS payment gateway variables
-    public static final String SBIMOPS_DEPTCODE = "DEPTCODE";
-    public static final String SBIMOPS_DDCODE = "ddocode";
-    public static final String SBIMOPS_HOA = "hoa";
-    public static final String SBIMOPS_DEPTTRANSID = "depttransid";
-    public static final String SBIMOPS_REMITTER_NAME = "remittersname";
-    public static final String SBIMOPS_TAMOUNT = "tamount";
-    public static final String SBIMOPS_MD = "MD";
-    public static final String SBIMOPS_DRU = "dru";
-    public static final String SBIMOPS_BANKSTATUS = "bankstatus";
-    public static final String SBIMOPS_BANK_DATE = "bankdate";
-    public static final String SBIMOPS_BANK_AMOUNT = "bankamount";
-    public static final String SBIMOPS_BANK_NAME = "bankname";
-    public static final String SBIMOPS_UAMOUNT = "uamount";
-
     public static final String SBIMOPS_DC = "DC";
     public static final String SBIMOPS_DTID = "DTID";
     public static final String SBIMOPS_RN = "RN";
@@ -123,6 +108,7 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
     public static final String SBIMOPS_STATUS = "Status";
 
     // SBIMOPS reconciliation parameters name
+    public static final String SBIMOPS_DEPTCODE = "DEPTCODE";
     public static final String SBIMOPS_DEPTTID = "DEPTTID";
     public static final String SBIMOPS_ROW = "ROW";
     public static final String SBIMOPS_RECORDSET = "RECORDSET";
@@ -300,8 +286,8 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
 
             if (isNotBlank(sbimopsResponse.getAuthStatus()) &&
                     sbimopsResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_FAILED)
-                    && (!responseParameterMap.get(SBIMOPS_STATUS.toUpperCase()).equals("F"))){
-                LOGGER.error("Request for failed transaction response:"+prepeareReconciliationRequest(onlinePayment));
+                    && (!responseParameterMap.get(SBIMOPS_STATUS.toUpperCase()).equals("F"))) {
+                LOGGER.error("Request for failed transaction response:" + prepeareReconciliationRequest(onlinePayment));
                 LOGGER.error("CFMSFAILED TRANSACTION RESPONSE: " + responseParameterMap.toString());
             }
             if (sbimopsResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS)) {
@@ -350,7 +336,7 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
         }
         return response;
     }
-    
+
     private String prepeareReconciliationRequest(final OnlinePayment onlinePayment) {
         final JsonObject deptCodeJson = new JsonObject();
         deptCodeJson.addProperty(SBIMOPS_DEPTCODE,
