@@ -143,9 +143,7 @@
          <constructor-arg index="0" ref="propertyMutationPersistenceService"/>
     </bean>
     
-    <bean id="propertyThirdPartyService" class="org.egov.ptis.domain.service.property.PropertyThirdPartyService" scope="prototype">
-        <property name="persistenceService" ref="persistenceService" />
-    </bean>
+    <bean id="propertyThirdPartyService" class="org.egov.ptis.domain.service.property.PropertyThirdPartyService" scope="prototype"/>
     
     <bean id="propertyExternalService" class="org.egov.ptis.domain.service.property.PropertyExternalService" scope="prototype"/>
     
