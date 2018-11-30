@@ -1118,6 +1118,7 @@ function showHideMandataryMark(obj){
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<tr><td>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" id="billsheaderinfotable">
+		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 		<s:hidden name="collectXML" id="collectXML" value="%{collectXML}" />
 		<s:hidden label="totalNoOfAccounts" id="totalNoOfAccounts" value="%{totalNoOfAccounts}" name="totalNoOfAccounts"/>
 		<s:hidden label="reasonForCancellation" id="reasonForCancellation" name="reasonForCancellation" />

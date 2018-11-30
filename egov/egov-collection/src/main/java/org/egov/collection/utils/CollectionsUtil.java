@@ -294,7 +294,7 @@ public class CollectionsUtil {
      */
     public Location getLocationOfUser(final Map<String, Object> sessionMap) {
         Location location = null;
-        final String locationId = (String) sessionMap.get(LOCATION_FIELD);
+        final String locationId = sessionMap.get(LOCATION_FIELD).toString();
         if (locationId != null && !locationId.isEmpty())
             location = getLocationById(Long.valueOf(locationId));
         if (location == null)
@@ -480,9 +480,9 @@ public class CollectionsUtil {
         return (CFinancialYear) persistenceService
                 .getSession()
                 .createQuery(
-                        "from CFinancialYear cfinancialyear where ? between "
+                        "from CFinancialYear cfinancialyear where ?1 between "
                                 + "cfinancialyear.startingDate and cfinancialyear.endingDate")
-                .setDate(0, date).list()
+                .setDate(1, date).list()
                 .get(0);
     }
 

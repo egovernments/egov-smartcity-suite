@@ -804,7 +804,7 @@ public class ChartOfAccounts {
 					gLedger.setVoucherlineId(Integer.parseInt(txn
 							.getVoucherLineId()));
 				CChartOfAccounts cChartOfAccounts = (CChartOfAccounts) persistenceService
-						.find("from CChartOfAccounts where id=?", glAcc.getId());
+						.find("from CChartOfAccounts where id = ?1", glAcc.getId());
 				gLedger.setGlcodeId(cChartOfAccounts);
 				gLedger.setGlcode(txn.getGlCode());
 				gLedger.setDebitAmount(Double.parseDouble(txn.getDrAmount()));
