@@ -97,7 +97,7 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
     private static final String REQUEST_CONTENT_TYPE = "application/json";
 
     // SBIMOPS payment gateway variables
-    public static final String SBIMOPS_DEPTCODE = "deptcode";
+    public static final String SBIMOPS_DEPTCODE = "DEPTCODE";
     public static final String SBIMOPS_DDCODE = "ddocode";
     public static final String SBIMOPS_HOA = "hoa";
     public static final String SBIMOPS_DEPTTRANSID = "depttransid";
