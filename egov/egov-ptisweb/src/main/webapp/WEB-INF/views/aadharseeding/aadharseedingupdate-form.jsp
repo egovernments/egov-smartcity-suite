@@ -203,8 +203,17 @@
 							<label><spring:message code="lbl.surveyNumber" /></label>
 						</div>
 						<div class="col-xs-3 add-margin view-content">
-							<strong><c:out
-									value="${aadharSeedingUpdate.surveyNumber}" default="N/A" /> </strong>
+							<c:choose>
+								<c:when test="${aadharSeedingUpdate.surveyNumber == ''}">
+								<strong>N/A</strong>
+								</c:when>
+								<c:otherwise>
+									<strong><c:out
+											value="${aadharSeedingUpdate.surveyNumber}" default="N/A" />
+									</strong>
+
+								</c:otherwise>
+								</c:choose>
 						</div>
 					</div>
 					<div class="row add-border">
