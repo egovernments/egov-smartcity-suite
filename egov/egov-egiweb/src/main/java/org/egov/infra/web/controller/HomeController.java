@@ -54,12 +54,16 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.validation.ValidatorUtils;
+import org.egov.infra.web.contract.request.FeedbackRequest;
+import org.egov.infra.web.contract.request.PasswordChangeRequest;
 import org.egov.infra.web.contract.response.HomePageResponse;
 import org.egov.infra.web.support.ui.menu.ApplicationMenuRenderingService;
+import org.egov.infra.web.utils.WebUtils;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -100,6 +104,7 @@ public class HomeController {
     private static final String PROFILE_EDIT_VIEW = "profile-edit";
     private static final String DEFAULT_EMP_PWD = "12345678";
     private static final String DEFAULT_USER_PWD = "demo";
+    private static final String RESP_SUCCESS = "SUCCESS";
 
     @Autowired
     private ApplicationMenuRenderingService applicationMenuRenderingService;
@@ -186,26 +191,37 @@ public class HomeController {
 
     @ResponseBody
     @PostMapping("password/update")
-    public String changePassword(@RequestParam String currentPwd, @RequestParam String newPwd, @RequestParam String retypeNewPwd) {
-        User user = userService.getCurrentUser();
-        if (passwordEncoder.matches(currentPwd, user.getPassword())) {
-            if (!validatorUtils.isValidPassword(newPwd))
-                return "NEWPWD_INVALID";
-            if (newPwd.equals(retypeNewPwd)) {
-                userService.updateUserPassword(user, newPwd);
-                return "SUCCESS";
+    public ResponseEntity changePassword(@Valid PasswordChangeRequest passwordChangeRequest, BindingResult bindResult) {
+        if (bindResult.hasErrors()) {
+            return ResponseEntity.badRequest().body(WebUtils.bindErrorToMap(bindResult));
+        } else {
+            User user = userService.getCurrentUser();
+            if (passwordEncoder.matches(passwordChangeRequest.getCurrentPwd(), user.getPassword())) {
+                if (passwordEncoder.matches(passwordChangeRequest.getNewPwd(), user.getPassword()))
+                    return ResponseEntity.ok("NEW_AND_CURR_PWD_SAME");
+                if (!validatorUtils.isValidPassword(passwordChangeRequest.getNewPwd()))
+                    return ResponseEntity.ok("NEWPWD_INVALID");
+                if (passwordChangeRequest.getNewPwd().equals(passwordChangeRequest.getRetypeNewPwd())) {
+                    userService.updateUserPassword(user, passwordChangeRequest.getNewPwd());
+                    return ResponseEntity.ok(RESP_SUCCESS);
+                }
+                return ResponseEntity.ok("NEWPWD_UNMATCH");
             }
-            return "NEWPWD_UNMATCH";
+            return ResponseEntity.ok("CURRPWD_UNMATCH");
         }
-        return "CURRPWD_UNMATCH";
     }
 
     @ResponseBody
     @PostMapping("feedback/sent")
-    public boolean sendFeedback(@RequestParam String subject, @RequestParam String message) {
-        cityService.sentFeedBackMail(cityService.getContactEmail(), subject,
-                format(FEEDBACK_MSG_FORMAT, message, "Regards", user().getName()));
-        return true;
+    public ResponseEntity sendFeedback(@Valid FeedbackRequest feedbackRequest, BindingResult bindResult) {
+
+        if (bindResult.hasErrors()) {
+            return ResponseEntity.badRequest().body(WebUtils.bindErrorToMap(bindResult));
+        } else {
+            cityService.sentFeedBackMail(cityService.getContactEmail(), feedbackRequest.getSubject(),
+                    format(FEEDBACK_MSG_FORMAT, feedbackRequest.getMessage(), "Regards", user().getName()));
+            return ResponseEntity.ok(RESP_SUCCESS);
+        }
     }
 
     @GetMapping(PROFILE_EDIT)

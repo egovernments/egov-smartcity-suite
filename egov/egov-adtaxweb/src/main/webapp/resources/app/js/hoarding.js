@@ -119,11 +119,11 @@ $(document).ready(function () {
     });
 
     $('#locality').change(function () {
-        var url = "/egi/boundary/ajaxBoundary-blockByLocality";
+        var url = "/egi/boundary/block/by-locality";
         populateBoundaries(url);
     });
     $('#ward').change(function () {
-        var url = "/egi/boundary/ajaxBoundary-blockByWard.action";
+        var url = "/egi/boundary/block/by-ward";
         populateBlock(url);
     });
 
@@ -295,13 +295,14 @@ $(document).ready(function () {
             $('#ward').html("");
             $('#block').html("");
             $('#street').html("");
-            $.each(response.results.boundaries, function (j, boundary) {
+            var jsonResp = JSON.parse(response);
+            $.each(jsonResp.results.boundaries, function (j, boundary) {
                 if (boundary.wardId) {
                     $('#ward').append("<option value='" + boundary.wardId + "'>" + boundary.wardName + "</option>");
                 }
                 $('#block').append("<option value='" + boundary.blockId + "'>" + boundary.blockName + "</option>");
             });
-            $.each(response.results.streets, function (j, street) {
+            $.each(jsonResp.results.streets, function (j, street) {
                 $('#street').append("<option value='" + street.streetId + "'>" + street.streetName + "</option>");
             });
         })
@@ -329,7 +330,7 @@ $(document).ready(function () {
         }).done(function (response) {
 
             $('#block').html("");
-            $.each(response, function (j, block) {
+            $.each(JSON.parse(response), function (j, block) {
                 $('#block').append("<option value='" + block.blockId + "'>" + block.blockName + "</option>");
             });
         })

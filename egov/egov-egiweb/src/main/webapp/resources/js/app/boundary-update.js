@@ -46,29 +46,6 @@
  *
  */
 
-function populateBoundaryTypes(dropdown) {
-    populateboundaryType({
-        hierarchyTypeId: dropdown.value
-    });
-}
-
-$("#boundaryType").change(function () {
-    $('#boundary').find('option:gt(0)').remove();
-    if ($("#boundaryType").val() !== '') {
-        $.ajax({
-            type: "GET",
-            url: "/egi/boundary/search/by-boundarytype",
-            data: {'boundaryTypeId': $("#boundaryType").val()},
-            dataType: "json",
-            success: function (response) {
-                $.each(JSON.parse(response), function (key, boundary) {
-                    $('#boundary').append('<option value="' + boundary.id + '">' + boundary.name + '</option>');
-                });
-            }
-        });
-    }
-});
-
 var oTable;
 
 $('#searchBtn').click(function () {
@@ -100,7 +77,8 @@ $('#searchBtn').click(function () {
             },
             "aLengthMenu": [[10, 25, 50, -1],
                 [10, 25, 50, "All"]],
-            "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+            "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i>" +
+                "<'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
             "columns": [{
                 "mData": "name",
                 "name": "name",
@@ -134,7 +112,8 @@ $('#searchBtn').click(function () {
                 'sClass': "text-center",
                 "bSortable": false,
                 "target": -1,
-                "defaultContent": '<span class="add-padding"><i class="fa fa-pencil-square-o fa-lg edit"></i></span><span class="add-padding"><i class="fa fa-eye fa-lg view"></i></span>'
+                "defaultContent": '<span class="add-padding"><i class="fa fa-pencil-square-o fa-lg edit"></i>' +
+                    '</span><span class="add-padding"><i class="fa fa-eye fa-lg view"></i></span>'
             }, {
                 "data": "id",
                 "visible": false,

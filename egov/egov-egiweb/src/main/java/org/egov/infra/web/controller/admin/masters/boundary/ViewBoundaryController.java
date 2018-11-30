@@ -50,7 +50,6 @@ package org.egov.infra.web.controller.admin.masters.boundary;
 
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -69,7 +68,7 @@ public class ViewBoundaryController {
         return "boundary-view";
     }
 
-    @GetMapping(value = "{boundaryId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("{boundaryId}")
     public String viewBoundaries(@PathVariable Long boundaryId, Model model) {
         model.addAttribute("boundary", boundaryService.getBoundaryById(boundaryId));
         return "boundary-view";

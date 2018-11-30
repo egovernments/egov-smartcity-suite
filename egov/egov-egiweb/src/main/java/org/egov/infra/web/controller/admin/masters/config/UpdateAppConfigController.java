@@ -53,10 +53,11 @@ import org.egov.infra.admin.master.service.AppConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
@@ -65,20 +66,16 @@ import javax.validation.Valid;
 @RequestMapping("/app/config/update/{moduleName}/{keyName}")
 public class UpdateAppConfigController {
 
-    private final AppConfigService appConfigService;
-
     @Autowired
-    public UpdateAppConfigController(final AppConfigService appConfigValueService) {
-        this.appConfigService = appConfigValueService;
-    }
+    private AppConfigService appConfigService;
 
     @ModelAttribute
     public AppConfig appConfig(@PathVariable String moduleName, @PathVariable String keyName) {
         return appConfigService.getAppConfigByModuleNameAndKeyName(moduleName, keyName);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public String updateAppConfigForm(@ModelAttribute final AppConfig appConfig, final RedirectAttributes redirectAttrs) {
+    @GetMapping
+    public String updateAppConfigForm(@ModelAttribute AppConfig appConfig, RedirectAttributes redirectAttrs) {
         if (appConfig == null) {
             redirectAttrs.addFlashAttribute("message", "err.app.config.not.found");
             return "redirect:/app/config/update";
@@ -86,10 +83,10 @@ public class UpdateAppConfigController {
         return "app-config-edit";
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public String updateAppConfig(@Valid @ModelAttribute AppConfig appConfig, final BindingResult errors,
-                                  final RedirectAttributes redirectAttrs) {
-        if (errors.hasErrors())
+    @PostMapping
+    public String updateAppConfig(@Valid @ModelAttribute AppConfig appConfig, BindingResult bindResult,
+                                  RedirectAttributes redirectAttrs) {
+        if (bindResult.hasErrors())
             return "app-config-edit";
         appConfigService.updateAppConfig(appConfig);
         redirectAttrs.addFlashAttribute("message", "msg.appconfig.update.success");

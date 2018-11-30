@@ -53,9 +53,10 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * @author subhash
@@ -65,32 +66,29 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class SearchDepartmentController {
 
     private static final String UPDATE = "update";
-    private static final String VIEW = "view"; 
-    private final DepartmentService departmentService;
+    private static final String VIEW = "view";
 
     @Autowired
-    public SearchDepartmentController(final DepartmentService departmentService) {
-        this.departmentService = departmentService;
-    }
+    private DepartmentService departmentService;
 
     @ModelAttribute
     public Department departmentModel() {
         return new Department();
     }
 
-    @RequestMapping(value = { VIEW, UPDATE }, method = RequestMethod.GET)
-    public String searchForm(final Model model) {
+    @GetMapping({VIEW, UPDATE})
+    public String searchForm(Model model) {
         model.addAttribute("departments", departmentService.getAllDepartments());
         return "department-search";
     }
 
-    @RequestMapping(value = VIEW, method = RequestMethod.POST)
-    public String viewDepartment(@ModelAttribute final Department department) {
+    @PostMapping(VIEW)
+    public String viewDepartment(@ModelAttribute Department department) {
         return "redirect:/department/view/" + department.getName();
     }
 
-    @RequestMapping(value = UPDATE, method = RequestMethod.POST)
-    public String updateDepartmentForm(@ModelAttribute final Department department) {
+    @PostMapping(UPDATE)
+    public String updateDepartmentForm(@ModelAttribute Department department) {
         return "redirect:/department/update/" + department.getName();
     }
 }

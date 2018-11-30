@@ -274,7 +274,7 @@ $(document).ready(function () {
         console.log("came jursidiction" + $('#locality').val());
         $.ajax({
             type: "GET",
-            url: "/egi/boundary/ajaxBoundary-blockByLocality",
+            url: "/egi/boundary/block/by-locality",
             cache: true,
             dataType: "json",
             data: {
@@ -285,13 +285,14 @@ $(document).ready(function () {
             $('#ward').html("");
             $('#block').html("");
             $('#street').html("");
-            $.each(response.results.boundaries, function (j, boundary) {
+            var jsonResp = JSON.parse(response);
+            $.each(jsonResp.results.boundaries, function (j, boundary) {
                 if (boundary.wardId) {
                     $('#ward').append("<option value='" + boundary.wardId + "'>" + boundary.wardName + "</option>");
                 }
                 $('#block').append("<option value='" + boundary.blockId + "'>" + boundary.blockName + "</option>");
             });
-            $.each(response.results.streets, function (j, street) {
+            $.each(jsonResp.results.streets, function (j, street) {
                 $('#street').append("<option value='" + street.streetId + "'>" + street.streetName + "</option>");
             });
         })
@@ -309,7 +310,7 @@ $(document).ready(function () {
     function populateBlock() {
         $.ajax({
             type: "GET",
-            url: "/egi/boundary/ajaxBoundary-blockByWard.action",
+            url: "/egi/boundary/block/by-ward",
             cache: true,
             dataType: "json",
             data: {
@@ -318,7 +319,7 @@ $(document).ready(function () {
         }).done(function (response) {
 
             $('#block').html("");
-            $.each(response, function (j, block) {
+            $.each(JSON.parse(response), function (j, block) {
                 $('#block').append("<option value='" + block.blockId + "'>" + block.blockName + "</option>");
             });
         })

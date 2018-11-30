@@ -46,34 +46,22 @@
  *
  */
 
-
-function populateBoundaryTypes(dropdown) {
-    populateboundaryTypeSelect({
-        hierarchyTypeId: dropdown.value
-    });
-}
-
-/**
- * Ajax validation to check for child boundary type for a parent
- */
 function checkForChild() {
-    var id = $("#boundaryTypeSelect").val();
+    var id = $("#boundaryType").val();
     if (id == '') {
-        bootbox.alert('Please select the Boundary Type !');
+        bootbox.alert('Please select a Boundary Type !');
         return false;
-    }
-    else {
+    } else {
         $.ajax({
             type: "GET",
-            url: "ajax/checkchild",
+            url: "has-child-boundarytype",
             data: {'parentId': id},
             dataType: "json",
             success: function (response) {
                 if (response == true) {
                     bootbox.alert('Child already exists!');
                     return false;
-                }
-                else {
+                } else {
                     $("#boundaryTypeSearch").submit();
                     return true;
                 }
@@ -102,8 +90,7 @@ function validateName() {
     if (childName == parentName) {
         bootbox.alert('Child and parent boundary types cannot have the same name!');
         return false;
-    }
-    else {
+    } else {
         $("#boundaryTypeAddChildform").submit();
         return true;
     }

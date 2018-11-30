@@ -55,9 +55,10 @@ import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
@@ -65,52 +66,44 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@RequestMapping(value ="/boundarytype/create")
+@RequestMapping(value = "/boundarytype/create")
 public class CreateBoundaryTypeController {
 
-	private HierarchyTypeService hierarchyTypeService;
-	private BoundaryTypeService boundaryTypeService;
-	
-	@Autowired
-	public CreateBoundaryTypeController(BoundaryTypeService boundaryTypeService,HierarchyTypeService hierarchyTypeService) {
-		this.boundaryTypeService = boundaryTypeService;
-		this.hierarchyTypeService = hierarchyTypeService;
-	}
-	
-	@ModelAttribute
-	 public BoundaryType boundaryTypeModel() {
-	        return new BoundaryType();
-	 }
-	
-	@RequestMapping(method = RequestMethod.GET)
-	public String newForm() {
-	    return "boundaryType-form";
-	}
-	
-	@ModelAttribute("hierarchyTypes")
-	public List<HierarchyType> getHierarchyTypes(){
-		final List<HierarchyType> heirarchyList = new ArrayList<HierarchyType>();
-		List<HierarchyType> hierarchyTypeList = hierarchyTypeService.getAllHierarchyTypes();
-		for (final HierarchyType hierarchyType : hierarchyTypeList) {
-			BoundaryType bType = boundaryTypeService.getBoundaryTypeByHierarchyTypeNameAndLevel(hierarchyType.getName(),1l);
-			if(bType == null){
-				heirarchyList.add(hierarchyType);
-			}
-		}
-		return heirarchyList;
-	}
-	
-	@RequestMapping(method =RequestMethod.POST)
-	public String create(@Valid @ModelAttribute BoundaryType boundaryType, final BindingResult errors, RedirectAttributes redirectAttrs) {
-    	
-        if (errors.hasErrors())
+    @Autowired
+    private HierarchyTypeService hierarchyTypeService;
+
+    @Autowired
+    private BoundaryTypeService boundaryTypeService;
+
+    @ModelAttribute
+    public BoundaryType boundaryTypeModel() {
+        return new BoundaryType();
+    }
+
+    @ModelAttribute("hierarchyTypes")
+    public List<HierarchyType> getHierarchyTypes() {
+        List<HierarchyType> firstLevelHierarchyTypes = new ArrayList<>();
+        for (HierarchyType hierarchyType : hierarchyTypeService.getAllHierarchyTypes()) {
+            BoundaryType bType = boundaryTypeService.getBoundaryTypeByHierarchyTypeNameAndLevel(hierarchyType.getName(), 1L);
+            if (bType == null) {
+                firstLevelHierarchyTypes.add(hierarchyType);
+            }
+        }
+        return firstLevelHierarchyTypes;
+    }
+
+    @GetMapping
+    public String newForm() {
+        return "boundaryType-form";
+    }
+
+    @PostMapping
+    public String create(@Valid @ModelAttribute BoundaryType boundaryType, BindingResult bindResult, RedirectAttributes redirectAttrs) {
+        if (bindResult.hasErrors())
             return "boundaryType-form";
-        
         boundaryTypeService.setHierarchyLevel(boundaryType, "create");
         boundaryTypeService.createBoundaryType(boundaryType);
         redirectAttrs.addFlashAttribute("message", "msg.bndrytype.create.success");
-
-        return "redirect:/boundarytype/view/"+boundaryType.getId();
+        return "redirect:/boundarytype/view/" + boundaryType.getId();
     }
-	
 }

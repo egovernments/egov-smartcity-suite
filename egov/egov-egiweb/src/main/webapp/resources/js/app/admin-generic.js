@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,37 +46,44 @@
  *
  */
 
-package org.egov.infra.web.controller.admin.masters.hierarchytype;
-
-import org.egov.infra.admin.master.entity.HierarchyType;
-import org.egov.infra.admin.master.service.HierarchyTypeService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-@Controller
-@RequestMapping("/hierarchytype")
-public class ViewHierarchyTypeController {
-
-    private static final String REQUEST_MAP_VIEW = "/view/{typeName}";
-
-    @Autowired
-    private HierarchyTypeService hierarchyTypeService;
-
-    public ViewHierarchyTypeController(HierarchyTypeService hierarchyTypeService) {
-        this.hierarchyTypeService = hierarchyTypeService;
+//Fetches Boundary Type by Hierarchy Type
+$('.boundarytype-auto').change(function () {
+    $('#boundaryType').find('option:gt(0)').remove();
+    if ($("#hierarchyType").val() !== '') {
+        $.ajax({
+            type: "GET",
+            url: "/egi/boundarytype/by-hierarchy",
+            data: {'hierarchyTypeId': $("#hierarchyType").val()},
+            dataType: "json",
+            success: function (response) {
+                $.each(JSON.parse(response), function (key, boundarytype) {
+                    $('#boundaryType')
+                        .append($("<option></option>")
+                            .attr("value", boundarytype.id)
+                            .text(boundarytype.name));
+                });
+            }
+        });
     }
+});
 
-    @ModelAttribute
-    public HierarchyType hierarchyTypeModel(@PathVariable String typeName) {
-        return hierarchyTypeService.getHierarchyTypeByName(typeName);
+//Fetches Boundary by Boundary Type
+$(".boundary-auto").change(function () {
+    $('#boundary').find('option:gt(0)').remove();
+    if ($("#boundaryType").val() !== '') {
+        $.ajax({
+            type: "GET",
+            url: "/egi/boundary/search/by-boundarytype",
+            data: {'boundaryTypeId': $("#boundaryType").val()},
+            dataType: "json",
+            success: function (response) {
+                $.each(JSON.parse(response), function (key, boundary) {
+                    $('#boundary')
+                        .append($("<option></option>")
+                            .attr("value", boundary.id)
+                            .text(boundary.name));
+                });
+            }
+        });
     }
-
-    @GetMapping(REQUEST_MAP_VIEW)
-    public String hierarchyTypeViewForm() {
-        return "hierarchyType-view";
-    }
-}
+});

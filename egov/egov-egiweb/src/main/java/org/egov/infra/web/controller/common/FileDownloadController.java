@@ -50,24 +50,30 @@ package org.egov.infra.web.controller.common;
 
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.FileStoreUtils;
+import org.egov.infra.web.contract.request.FileDownloadRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import static java.lang.String.format;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getTenantID;
+import static org.egov.infra.utils.ApplicationConstant.ANY_MIME_TYPE;
+
 @Controller
 @RequestMapping("/downloadfile")
 public class FileDownloadController {
+    private static final String GIS_KML_FILE_PATH = "gis/%s/wards.kml";
 
     @Autowired
     private FileStoreUtils fileStoreUtils;
@@ -75,22 +81,23 @@ public class FileDownloadController {
     @Autowired
     private CityService cityService;
 
-    @GetMapping(produces = "*/*")
+    @GetMapping(produces = ANY_MIME_TYPE)
     @ResponseBody
-    public ResponseEntity download(@RequestParam String fileStoreId, @RequestParam String moduleName,
-                                   @RequestParam(defaultValue = "false") boolean toSave) {
-        return fileStoreUtils.fileAsResponseEntity(fileStoreId, moduleName, toSave);
+    public ResponseEntity download(@Valid FileDownloadRequest fileDownloadRequest, BindingResult bindResult) {
+        return bindResult.hasErrors() ? ResponseEntity.badRequest().body("none") :
+                fileStoreUtils.fileAsResponseEntity(fileDownloadRequest.getFileStoreId(),
+                        fileDownloadRequest.getModuleName(), fileDownloadRequest.isToSave());
     }
 
-    @GetMapping(value = "/logo", produces = "*/*")
+    @GetMapping(value = "/logo", produces = ANY_MIME_TYPE)
     public void getLogo(HttpServletResponse response) throws IOException {
         IOUtils.write(cityService.getCityLogoAsBytes(), response.getOutputStream());
     }
 
-    @GetMapping(value = "/gis", produces = "*/*")
+    @GetMapping(value = "/gis", produces = ANY_MIME_TYPE)
     public void getKML(HttpServletResponse response) throws IOException {
         try (InputStream in = Thread.currentThread().getContextClassLoader()
-                .getResourceAsStream("gis/" + ApplicationThreadLocals.getTenantID() + "/wards.kml");
+                .getResourceAsStream(format(GIS_KML_FILE_PATH, getTenantID()));
              OutputStream out = response.getOutputStream()) {
             if (in != null) {
                 response.setHeader("Content-Disposition", "inline;filename=wards.kml");

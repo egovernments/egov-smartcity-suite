@@ -48,16 +48,6 @@
 
 $(document).ready(
     function () {
-        if ($('#currentroles').size > 0) {
-            $("#currentroles option[value!='']").each(function () {
-                var currRolVal = $(this).val();
-                $("#roles option[value!='']").each(function () {
-                    if ($(this).val() == currRolVal)
-                        $(this).prop('selected', true);
-                });
-            });
-        }
-
         var userlist = new Bloodhound({
             datumTokenizer: function (datum) {
                 return Bloodhound.tokenizers.whitespace(datum.value);
@@ -113,17 +103,17 @@ $(document).ready(
             function () {
                 var opt = '<option value="' + $(this).val() + '">'
                     + $(this).text() + '</option>';
-                $('#multiselect_to').append(opt);
+                $('#multiselect_to')
+                    .append($("<option></option>")
+                    .attr("value", $(this).val())
+                    .text($(this).text()));
                 $(this).remove();
 
             });
 
         $('#multiselect').removeAttr('name');
 
-        try {
-            $('#userroleSearchBtn').click(function () {
-                window.location = '/egi/userrole/search';
-            })
-        } catch (e) {
-        }
+        $('#userroleSearchBtn').click(function () {
+            window.location = '/egi/userrole/search';
+        })
     });

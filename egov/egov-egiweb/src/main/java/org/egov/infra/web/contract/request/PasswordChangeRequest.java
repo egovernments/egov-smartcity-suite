@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,37 +46,51 @@
  *
  */
 
-package org.egov.infra.web.controller.admin.masters.hierarchytype;
+package org.egov.infra.web.contract.request;
 
-import org.egov.infra.admin.master.entity.HierarchyType;
-import org.egov.infra.admin.master.service.HierarchyTypeService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
-@Controller
-@RequestMapping("/hierarchytype")
-public class ViewHierarchyTypeController {
+import javax.validation.constraints.NotBlank;
 
-    private static final String REQUEST_MAP_VIEW = "/view/{typeName}";
+public class PasswordChangeRequest {
 
-    @Autowired
-    private HierarchyTypeService hierarchyTypeService;
+    @SafeHtml
+    @NotBlank
+    @Length(max = 32)
+    private String currentPwd;
 
-    public ViewHierarchyTypeController(HierarchyTypeService hierarchyTypeService) {
-        this.hierarchyTypeService = hierarchyTypeService;
+    @SafeHtml
+    @NotBlank
+    @Length(max = 32)
+    private String newPwd;
+
+    @SafeHtml
+    @NotBlank
+    @Length(max = 32)
+    private String retypeNewPwd;
+
+    public String getCurrentPwd() {
+        return currentPwd;
     }
 
-    @ModelAttribute
-    public HierarchyType hierarchyTypeModel(@PathVariable String typeName) {
-        return hierarchyTypeService.getHierarchyTypeByName(typeName);
+    public void setCurrentPwd(final String currentPwd) {
+        this.currentPwd = currentPwd;
     }
 
-    @GetMapping(REQUEST_MAP_VIEW)
-    public String hierarchyTypeViewForm() {
-        return "hierarchyType-view";
+    public String getNewPwd() {
+        return newPwd;
+    }
+
+    public void setNewPwd(final String newPwd) {
+        this.newPwd = newPwd;
+    }
+
+    public String getRetypeNewPwd() {
+        return retypeNewPwd;
+    }
+
+    public void setRetypeNewPwd(final String retypeNewPwd) {
+        this.retypeNewPwd = retypeNewPwd;
     }
 }

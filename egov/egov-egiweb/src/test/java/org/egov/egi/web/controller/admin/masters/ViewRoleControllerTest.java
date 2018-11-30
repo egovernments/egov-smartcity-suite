@@ -52,6 +52,7 @@ import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.web.controller.admin.masters.role.ViewRoleController;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -62,12 +63,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class ViewRoleControllerTest extends AbstractContextControllerTest<ViewRoleController> {
 
-    private MockMvc mockMvc;
-
     public String name;
-
+    private MockMvc mockMvc;
     @Mock
     private RoleService roleService;
+
+    @InjectMocks
+    private ViewRoleController viewRoleController;
 
     @Before
     public void before() {
@@ -79,8 +81,7 @@ public class ViewRoleControllerTest extends AbstractContextControllerTest<ViewRo
     protected ViewRoleController initController() {
 
         initMocks(this);
-
-        return new ViewRoleController(roleService);
+        return viewRoleController;
     }
 
     @Test

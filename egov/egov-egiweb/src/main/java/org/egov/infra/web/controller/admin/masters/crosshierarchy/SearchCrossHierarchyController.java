@@ -59,6 +59,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -85,7 +86,7 @@ public class SearchCrossHierarchyController {
     }
 
     @PostMapping
-    public String searchCrossHierarchy(@ModelAttribute CrossHierarchyRequest crossHierarchyRequest, BindingResult errors) {
+    public String searchCrossHierarchy(@Valid @ModelAttribute CrossHierarchyRequest crossHierarchyRequest, BindingResult errors) {
         if (errors.hasErrors())
             return "cross-hierarchy-search";
         return String.format(CROSS_HIERARCHY_UPDATE_VIEW, crossHierarchyRequest.getBoundaryType().getId(),

@@ -52,10 +52,10 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * @author subhash
@@ -64,19 +64,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = "/department/view/{name}")
 public class ViewDepartmentController {
 
-    private final DepartmentService departmentService;
-
     @Autowired
-    public ViewDepartmentController(final DepartmentService departmentService) {
-        this.departmentService = departmentService;
-    }
+    private DepartmentService departmentService;
 
     @ModelAttribute
-    public Department departmentModel(@PathVariable final String name) {
+    public Department departmentModel(@PathVariable String name) {
         return departmentService.getDepartmentByName(name);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     public String viewDepartment() {
         return "department-view";
     }

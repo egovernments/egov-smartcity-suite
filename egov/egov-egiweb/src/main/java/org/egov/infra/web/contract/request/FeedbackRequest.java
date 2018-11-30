@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,37 +46,38 @@
  *
  */
 
-package org.egov.infra.web.controller.admin.masters.hierarchytype;
+package org.egov.infra.web.contract.request;
 
-import org.egov.infra.admin.master.entity.HierarchyType;
-import org.egov.infra.admin.master.service.HierarchyTypeService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
-@Controller
-@RequestMapping("/hierarchytype")
-public class ViewHierarchyTypeController {
+import javax.validation.constraints.NotBlank;
 
-    private static final String REQUEST_MAP_VIEW = "/view/{typeName}";
+public class FeedbackRequest {
 
-    @Autowired
-    private HierarchyTypeService hierarchyTypeService;
+    @SafeHtml
+    @NotBlank
+    @Length(min = 1, max = 1000)
+    private String message;
 
-    public ViewHierarchyTypeController(HierarchyTypeService hierarchyTypeService) {
-        this.hierarchyTypeService = hierarchyTypeService;
+    @SafeHtml
+    @NotBlank
+    @Length(min = 1, max = 100)
+    private String subject;
+
+    public String getMessage() {
+        return message;
     }
 
-    @ModelAttribute
-    public HierarchyType hierarchyTypeModel(@PathVariable String typeName) {
-        return hierarchyTypeService.getHierarchyTypeByName(typeName);
+    public void setMessage(final String message) {
+        this.message = message;
     }
 
-    @GetMapping(REQUEST_MAP_VIEW)
-    public String hierarchyTypeViewForm() {
-        return "hierarchyType-view";
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(final String subject) {
+        this.subject = subject;
     }
 }

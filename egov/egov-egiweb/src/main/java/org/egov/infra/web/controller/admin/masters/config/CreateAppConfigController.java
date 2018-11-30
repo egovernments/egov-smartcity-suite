@@ -55,9 +55,10 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
@@ -67,15 +68,11 @@ import java.util.List;
 @RequestMapping(value = "/app/config/create")
 public class CreateAppConfigController {
 
-    private final AppConfigService appConfigValueService;
+    @Autowired
+    private AppConfigService appConfigValueService;
 
     @Autowired
     private ModuleService moduleService;
-
-    @Autowired
-    public CreateAppConfigController(final AppConfigService appConfigValueService) {
-        this.appConfigValueService = appConfigValueService;
-    }
 
     @ModelAttribute
     public AppConfig appConfig() {
@@ -87,15 +84,15 @@ public class CreateAppConfigController {
         return moduleService.getAllTopModules();
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     public String createAppConfigForm() {
         return "app-config-create";
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public String createAppConfig(@Valid @ModelAttribute AppConfig appConfig, final BindingResult errors,
-                                       final RedirectAttributes redirectAttrs) {
-        if (errors.hasErrors())
+    @PostMapping
+    public String createAppConfig(@Valid @ModelAttribute AppConfig appConfig, BindingResult bindResult,
+                                  RedirectAttributes redirectAttrs) {
+        if (bindResult.hasErrors())
             return "app-config-create";
         appConfigValueService.createAppConfig(appConfig);
         redirectAttrs.addFlashAttribute("message", "msg.appconfig.create.success");

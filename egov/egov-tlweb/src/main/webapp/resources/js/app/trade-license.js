@@ -57,17 +57,18 @@ $(document).ready(function () {
         if (this.value !== '') {
             $.ajax({
                 type: "GET",
-                url: "/egi/boundary/ajaxBoundary-blockByLocality",
+                url: "/egi/boundary/block/by-locality",
                 cache: true,
                 dataType: "json",
                 data: {'locality': this.value}
             }).done(function (response) {
-                if (response.results.boundaries.length < 1) {
+                var jsonResp = JSON.parse(response);
+                if (jsonResp.results.boundaries.length < 1) {
                     bootbox.alert("Could not find ward for Locality : " + $('#boundary').find(":selected").text());
                     $('#boundary').val('');
                     return;
                 }
-                $.each(response.results.boundaries, function (key, boundary) {
+                $.each(jsonResp.results.boundaries, function (key, boundary) {
                     $('#parentBoundary').append('<option value="' + boundary.wardId + '">' + boundary.wardName + '</option>');
                 });
 
@@ -77,12 +78,12 @@ $(document).ready(function () {
             });
             $.ajax({
                 type: "GET",
-                url: "/egi/boundary/ward-bylocality",
+                url: "/egi/boundary/ward/by-locality",
                 cache: true,
                 dataType: "json",
                 data: {'locality': this.value}
             }).done(function (response) {
-                $.each(response, function (key, boundary) {
+                $.each(JSON.parse(response), function (key, boundary) {
                     $('#adminWard').append('<option value="' + boundary.wardId + '">' + boundary.wardName + '</option>');
                 });
 

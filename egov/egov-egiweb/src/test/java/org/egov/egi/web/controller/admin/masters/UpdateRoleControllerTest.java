@@ -56,6 +56,7 @@ import org.egov.infra.web.controller.admin.masters.role.UpdateRoleController;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -74,26 +75,31 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class UpdateRoleControllerTest extends AbstractContextControllerTest<UpdateRoleController> {
 
-	@Mock
+    @Mock
     private RoleService roleService;
-	
-	@Mock
+
+    @Mock
     private SecurityUtils securityUtils;
-	@Mock
-	private User user;
+
+    @Mock
+    private User user;
+
+    @InjectMocks
+    private UpdateRoleController updateRoleController;
+
     private MockMvc mockMvc;
-    
+
 
     @Override
     protected UpdateRoleController initController() {
         initMocks(this);
 
-        return new UpdateRoleController(roleService);
+        return updateRoleController;
     }
 
     @Before
     public void before() {
-    	when(securityUtils.getCurrentUser()).thenReturn(user);
+        when(securityUtils.getCurrentUser()).thenReturn(user);
         mockMvc = mvcBuilder.build();
         Role role = new Role();
         role.setName("existing");
@@ -103,8 +109,8 @@ public class UpdateRoleControllerTest extends AbstractContextControllerTest<Upda
     @Test
     public void shouldRetrieveExistingRoleForUpdate() throws Exception {
 
-    	Role role = new Role();
-    	 role.setName("existing");
+        Role role = new Role();
+        role.setName("existing");
 
 
         MvcResult result = this.mockMvc.perform(get("/role/update/" + role.getName()))
@@ -115,7 +121,7 @@ public class UpdateRoleControllerTest extends AbstractContextControllerTest<Upda
         Role existingRole = (Role) result.getModelAndView().getModelMap().get("role");
         assertEquals(role.getName(), existingRole.getName());
     }
- 
+
     @Test
     public void shouldUpdateRole() throws Exception {
         this.mockMvc.perform(post("/role/update/existing")
@@ -133,7 +139,7 @@ public class UpdateRoleControllerTest extends AbstractContextControllerTest<Upda
     @Test
     public void shouldValidateRoleWhileUpdating() throws Exception {
         this.mockMvc.perform(post("/role/update/existing")
-                .param("name",""))
+                .param("name", ""))
                 .andExpect(model().hasErrors())
                 .andExpect(model().attributeHasFieldErrors("role", "name"))
                 .andExpect(model().errorCount(1))
@@ -141,5 +147,5 @@ public class UpdateRoleControllerTest extends AbstractContextControllerTest<Upda
 
         verify(roleService, never()).update(any(Role.class));
     }
-   
+
 }

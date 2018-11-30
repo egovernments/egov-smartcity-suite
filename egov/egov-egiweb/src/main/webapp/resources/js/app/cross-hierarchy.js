@@ -46,13 +46,6 @@
  *
  */
 
-function populateBoundary(dropdown) {
-    populateboundarySelect({
-        boundaryTypeId: dropdown.value
-    });
-
-}
-
 $(document).ready(function () {
 
     $('#crosshierarchysave').unbind('click').bind('click', function (e) {

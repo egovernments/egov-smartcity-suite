@@ -76,17 +76,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 public class CreateRoleControllerTest extends AbstractContextControllerTest<CreateRoleController> {
-	
-	
-	@Mock
+
+
+    @Mock
     private SecurityUtils securityUtils;
-	
+
     @Mock
     private RoleService roleService;
-    
+
     @InjectMocks
-    private CreateRoleController controller;
-    
+    private CreateRoleController createRoleController;
+
     @Mock
     private User user;
 
@@ -96,12 +96,12 @@ public class CreateRoleControllerTest extends AbstractContextControllerTest<Crea
     @Override
     protected CreateRoleController initController() {
         initMocks(this);
-        return new CreateRoleController(roleService);
+        return createRoleController;
     }
 
     @Before
     public void before() {
-    	when(securityUtils.getCurrentUser()).thenReturn(user);
+        when(securityUtils.getCurrentUser()).thenReturn(user);
         mockMvc = mvcBuilder.build();
     }
 
@@ -111,7 +111,7 @@ public class CreateRoleControllerTest extends AbstractContextControllerTest<Crea
                 .andExpect(view().name("role-form"))
                 .andExpect(status().isOk());
     }
-    
+
     @Test
     public void shouldCreateNewRole() throws Exception {
         this.mockMvc.perform(post("/role/create")
@@ -126,7 +126,7 @@ public class CreateRoleControllerTest extends AbstractContextControllerTest<Crea
         assertTrue(createdRole.isNew());
         assertEquals("new-role", createdRole.getName());
     }
-    
+
     @Test
     public void shouldValidateRoleWhileCreating() throws Exception {
         this.mockMvc.perform(post("/role/create"))
@@ -136,6 +136,6 @@ public class CreateRoleControllerTest extends AbstractContextControllerTest<Crea
 
         verify(roleService, never()).createRole(any(Role.class));
     }
-  
-    
+
+
 }

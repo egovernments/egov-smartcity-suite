@@ -427,7 +427,7 @@
 	
 	function populateBoundaries() {
 		jQuery.ajax({
-			url: "/egi/boundary/ajaxBoundary-blockByLocality",
+			url: "/egi/boundary/block/by-locality",
 			type: "GET",
 			data: {
 				locality : jQuery('#localityId').val()
@@ -438,13 +438,14 @@
 				jQuery('#wardId').html("");
 				jQuery('#blockId').html("");
 				jQuery('#streetId').html("");
-				jQuery.each(response.results.boundaries, function (j, boundary) {
+                var jsonResp = JSON.parse(response);
+				jQuery.each(jsonResp.results.boundaries, function (j, boundary) {
 					if (boundary.wardId) {
 						jQuery('#wardId').append("<option value='"+boundary.wardId+"'>"+boundary.wardName+"</option>");
 					}
 					jQuery('#blockId').append("<option value='"+boundary.blockId+"'>"+boundary.blockName+"</option>");
 				});
-				jQuery.each(response.results.streets, function (j, street) {
+				jQuery.each(jsonResp.results.streets, function (j, street) {
 					jQuery('#streetId').append("<option value='"+street.streetId+"'>"+street.streetName+"</option>");
 				});
 				if(wardId != null)
@@ -466,7 +467,7 @@
 
 	function populateBlock(wardId) {
 		jQuery.ajax({
-			url: "/egi/boundary/ajaxBoundary-blockByWard.action",
+			url: "/egi/boundary/block/by-ward",
 			type: "GET",
 			data: {
 				wardId : wardId
@@ -475,7 +476,7 @@
 			dataType: "json",
 			success: function (response) {
 				jQuery('#blockId').html("");
-				jQuery.each(response, function (j, block) {
+				jQuery.each(JSON.parse(response), function (j, block) {
 					jQuery('#blockId').append("<option value='"+block.blockId+"'>"+block.blockName+"</option>");
 				});
 			}, 

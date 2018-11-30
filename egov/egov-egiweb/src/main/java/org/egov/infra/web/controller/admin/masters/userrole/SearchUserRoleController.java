@@ -69,12 +69,12 @@ public class SearchUserRoleController {
     @Autowired
     private UserService userService;
 
-    @GetMapping(value = "/search")
+    @GetMapping("/search")
     public String viewSearch() {
         return "userrole-search";
     }
 
-    @PostMapping(value = "/search", params = {"userId"})
+    @PostMapping("/search")
     public String searchUserRoleByUserId(@RequestParam Long userId, Model model) {
         if (userId == null || userId < 1) {
             model.addAttribute("error", "invalid.user.entered");
@@ -83,7 +83,7 @@ public class SearchUserRoleController {
         return "redirect:/userrole/update/" + userId;
     }
 
-    @PostMapping(value = "/employee", params = "userName", produces = APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = "/employee", produces = APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     public String getEmployeeRolesByUserName(@RequestParam String userName) {
         JsonArray roleInfos = new JsonArray();

@@ -62,7 +62,6 @@ import org.egov.infra.validation.regex.Constants;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.Audited;
-import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.joda.time.DateTime;
@@ -86,6 +85,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -442,6 +442,10 @@ public class User extends AbstractAuditable {
     public boolean hasAnyRole(String... roleName) {
         List<String> roleNames = Arrays.asList(roleName);
         return roles.stream().anyMatch(role -> roleNames.contains(role.getName()));
+    }
+
+    public boolean hasAnyInternalRole() {
+        return roles.stream().anyMatch(role -> role.isInternal());
     }
 
     public boolean hasAnyType(UserType... types) {

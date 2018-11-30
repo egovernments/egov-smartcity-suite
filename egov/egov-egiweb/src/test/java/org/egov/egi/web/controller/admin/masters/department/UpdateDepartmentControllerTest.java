@@ -54,6 +54,7 @@ import org.egov.infra.web.controller.admin.masters.department.UpdateDepartmentCo
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -71,58 +72,60 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * This class is used to test Update Department Controller
- * 
- * @author subhash
  *
+ * @author subhash
  */
 public class UpdateDepartmentControllerTest extends
-		AbstractContextControllerTest<UpdateDepartmentController> {
+        AbstractContextControllerTest<UpdateDepartmentController> {
 
-	@Mock
-	private DepartmentService departmentService;
+    @Mock
+    private DepartmentService departmentService;
 
-	private MockMvc mockMvc;
+    @InjectMocks
+    private UpdateDepartmentController updateDepartmentController;
 
-	@Override
-	protected UpdateDepartmentController initController() {
-		initMocks(this);
-		return new UpdateDepartmentController(departmentService);
-	}
+    private MockMvc mockMvc;
 
-	@Before
-	public void before() {
-		mockMvc = mvcBuilder.build();
-		Department department = new Department();
-		department.setName("testing");
-		when(departmentService.getDepartmentByName(department.getName())).thenReturn(department);
-	}
+    @Override
+    protected UpdateDepartmentController initController() {
+        initMocks(this);
+        return updateDepartmentController;
+    }
 
-	@Test
-	public void shouldResolveUpdateDepartmentForm() throws Exception {
-		mockMvc.perform(get("/department/update/testing")).andExpect(
-				view().name("department-updateForm"));
-		verify(departmentService).getDepartmentByName("testing");
-	}
+    @Before
+    public void before() {
+        mockMvc = mvcBuilder.build();
+        Department department = new Department();
+        department.setName("testing");
+        when(departmentService.getDepartmentByName(department.getName())).thenReturn(department);
+    }
 
-	@Test
-	public void shouldUpdateDepartment() throws Exception {
-		mockMvc.perform(
-				post("/department/update/testing").param("name", "testing1").param("code",
-						"testing1")).andExpect(model().hasNoErrors())
-				.andExpect(redirectedUrl("/department/view/testing1"));
-		ArgumentCaptor<Department> argumentCaptor = ArgumentCaptor.forClass(Department.class);
-		verify(departmentService).updateDepartment(argumentCaptor.capture());
-		Department updatedDepartment = argumentCaptor.getValue();
-		assertEquals(updatedDepartment.getName(), "testing1");
-		assertEquals(updatedDepartment.getCode(), "testing1");
-	}
+    @Test
+    public void shouldResolveUpdateDepartmentForm() throws Exception {
+        mockMvc.perform(get("/department/update/testing")).andExpect(
+                view().name("department-updateForm"));
+        verify(departmentService).getDepartmentByName("testing");
+    }
 
-	@Test
-	public void shouldValidateWhileUpdating() throws Exception {
-		this.mockMvc.perform(post("/department/update/testing")).andExpect(model().hasErrors())
-				.andExpect(model().attributeHasFieldErrors("department", "code"))
-				.andExpect(view().name("department-updateForm"))
-				.andExpect(model().errorCount(1));
-		verify(departmentService, never()).updateDepartment(any(Department.class));
-	}
+    @Test
+    public void shouldUpdateDepartment() throws Exception {
+        mockMvc.perform(
+                post("/department/update/testing").param("name", "testing1").param("code",
+                        "testing1")).andExpect(model().hasNoErrors())
+                .andExpect(redirectedUrl("/department/view/testing1"));
+        ArgumentCaptor<Department> argumentCaptor = ArgumentCaptor.forClass(Department.class);
+        verify(departmentService).updateDepartment(argumentCaptor.capture());
+        Department updatedDepartment = argumentCaptor.getValue();
+        assertEquals(updatedDepartment.getName(), "testing1");
+        assertEquals(updatedDepartment.getCode(), "testing1");
+    }
+
+    @Test
+    public void shouldValidateWhileUpdating() throws Exception {
+        this.mockMvc.perform(post("/department/update/testing")).andExpect(model().hasErrors())
+                .andExpect(model().attributeHasFieldErrors("department", "code"))
+                .andExpect(view().name("department-updateForm"))
+                .andExpect(model().errorCount(1));
+        verify(departmentService, never()).updateDepartment(any(Department.class));
+    }
 }

@@ -52,6 +52,7 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.web.controller.admin.masters.department.ViewDepartmentController;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -62,32 +63,34 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * This class is used to test the View Department Controller
- * 
- * @author subhash
  *
+ * @author subhash
  */
 public class ViewDepartmentControllerTest extends
-		AbstractContextControllerTest<ViewDepartmentController> {
+        AbstractContextControllerTest<ViewDepartmentController> {
 
-	@Mock
-	private DepartmentService departmentService;
+    @Mock
+    private DepartmentService departmentService;
 
-	private MockMvc mockMvc;
+    @InjectMocks
+    private ViewDepartmentController viewDepartmentController;
 
-	@Override
-	protected ViewDepartmentController initController() {
-		initMocks(this);
-		return new ViewDepartmentController(departmentService);
-	}
+    private MockMvc mockMvc;
 
-	@Before
-	public void before() {
-		mockMvc = mvcBuilder.build();
-	}
+    @Override
+    protected ViewDepartmentController initController() {
+        initMocks(this);
+        return viewDepartmentController;
+    }
 
-	@Test
-	public void shouldViewDepartment() throws Exception {
-		mockMvc.perform(get("/department/view/testing")).andExpect(view().name("department-view"));
-		verify(departmentService).getDepartmentByName("testing");
-	}
+    @Before
+    public void before() {
+        mockMvc = mvcBuilder.build();
+    }
+
+    @Test
+    public void shouldViewDepartment() throws Exception {
+        mockMvc.perform(get("/department/view/testing")).andExpect(view().name("department-view"));
+        verify(departmentService).getDepartmentByName("testing");
+    }
 }

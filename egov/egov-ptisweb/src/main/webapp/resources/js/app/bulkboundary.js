@@ -253,7 +253,7 @@ jQuery(document).ready(function() {
 						var locality = localityDropdown.val();
 						jQuery
 								.ajax({
-									url : "/egi/boundary/ajaxBoundary-blockByLocality",
+									url : "/egi/boundary/block/by-locality",
 									type : "GET",
 									data : {
 										"locality" : locality
@@ -264,7 +264,8 @@ jQuery(document).ready(function() {
 										var $tr = localityDropdown.closest('tr');
 										$tr.find('.blockClass_tbl').html("");
 										$tr.find('.wardClass_tbl').html("");
-										jQuery.each(response.results.boundaries,function(j, boundary) {
+                                        var jsonResp = JSON.parse(response);
+										jQuery.each(jsonResp.results.boundaries,function(j, boundary) {
 												if (boundary.wardId) {
 													$tr.find('.wardClass_tbl').append("<option value='"+ boundary.wardId+ "'>"+ boundary.wardName+ "</option>");
 												}

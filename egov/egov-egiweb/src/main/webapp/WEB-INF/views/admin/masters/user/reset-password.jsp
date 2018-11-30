@@ -109,7 +109,7 @@
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             limit: 10,
             remote: {
-                url: 'employee-name-like/?employeeName=',
+                url: 'employee-name-like/?name=',
                 replace: function (url, query) {
                     if ($('#username').val()) {
                         url += encodeURIComponent($('#username').val());

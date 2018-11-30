@@ -117,6 +117,7 @@ public final class ApplicationConstant {
     public static final String AUTO = "AUTO";
     public static final String ANONYMOUS = "Anonymous";
     public static final String NEW_LINE = System.lineSeparator();
+    public static final String ANY_MIME_TYPE = "*/*";
 
     private ApplicationConstant() {
     }

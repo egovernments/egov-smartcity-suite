@@ -57,9 +57,10 @@ import org.egov.infra.admin.master.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -81,28 +82,28 @@ public class FeatureAccessControlController {
     @Autowired
     private FeatureAccessControlService featureAccessControlService;
 
-    @RequestMapping(value = "/by-feature", method = RequestMethod.GET)
+    @GetMapping("by-feature")
     public String createByFeature(Model model) {
         model.addAttribute("features", featureService.getAllFeatures());
         model.addAttribute("modules", moduleService.getAllTopModules());
         return "accesscontrol-search";
     }
 
-    @RequestMapping(value = "/by-role", method = RequestMethod.GET)
+    @GetMapping("by-role")
     public String createByRole(Model model) {
         model.addAttribute("roles", roleService.getAllRoles());
         model.addAttribute("modules", moduleService.getAllTopModules());
         return "accesscontrol-search";
     }
 
-    @RequestMapping(value = "/by-feature", method = RequestMethod.POST)
+    @PostMapping("by-feature")
     public String createByFeature(@RequestParam Long featureId, Model model) {
         model.addAttribute("roles", roleService.getAllRoles());
         model.addAttribute("feature", featureService.getFeatureById(featureId));
         return "accesscontrol";
     }
 
-    @RequestMapping(value = "/by-role", method = RequestMethod.POST)
+    @PostMapping("by-role")
     public String createByRole(@RequestParam Long roleId, @RequestParam(required = false) Long moduleId, Model model) {
         model.addAttribute("features", moduleId == null ? featureService.getAllFeatures() :
                 featureService.getAllFeaturesByModuleId(moduleId));
@@ -110,24 +111,23 @@ public class FeatureAccessControlController {
         return "accesscontrol";
     }
 
-    @RequestMapping(value = "/grant/{featureId}/{roleId}", method = RequestMethod.POST)
+    @PostMapping("/grant/{featureId}/{roleId}")
     @ResponseBody
     public String createFeatureRoleMapping(@PathVariable("featureId") Feature feature, @PathVariable("roleId") Role role) {
         featureAccessControlService.grantAccess(feature, role);
         return "DONE";
     }
 
-    @RequestMapping(value = "/revoke/{featureId}/{roleId}", method = RequestMethod.POST)
+    @PostMapping("/revoke/{featureId}/{roleId}")
     @ResponseBody
     public String removeFeatureRoleMapping(@PathVariable("featureId") Feature feature, @PathVariable("roleId") Role role) {
         featureAccessControlService.revokeAccess(feature, role);
         return "DONE";
     }
 
-    @RequestMapping(value = "/list-by-module/{moduleId}", method = RequestMethod.GET)
+    @GetMapping("/list-by-module/{moduleId}")
     @ResponseBody
     public List<Feature> featuresByModule(@PathVariable Long moduleId) {
         return featureService.getAllFeaturesByModuleId(moduleId);
     }
-
 }

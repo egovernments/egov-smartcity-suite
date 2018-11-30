@@ -69,13 +69,19 @@ $(document).ready(function () {
         $.ajax({
             url: 'home/feedback/sent',
             type: 'POST',
-            data: {'subject': $("#subject").val(), 'message': $("#comment").val()},
+            data: {'subject': $("#subject").val(), 'message': $("#message").val()},
             success: function (data) {
                 bootbox.alert("Your feedback successfully submitted.");
             },
-            error: function () {
-
+            error: function (xhr) {
+                try {
+                    showValidationMessage(xhr.responseJSON);
+                } catch (e) {
+                    bootbox.alert("Could not send the feedback");
+                }
             }, complete: function () {
+                $("#subject").val('');
+                $("#message").val('')
                 $('.add-feedback').modal('hide');
             }
         });
@@ -88,40 +94,50 @@ $(document).ready(function () {
             url: 'home/password/update',
             type: 'POST',
             data: {
-                'currentPwd': $("#old-pass").val(),
-                'newPwd': $("#new-pass").val(),
-                'retypeNewPwd': $("#retype-pass").val()
+                'currentPwd': $("#currentPwd").val(),
+                'newPwd': $("#newPwd").val(),
+                'retypeNewPwd': $("#retypeNewPwd").val()
             },
             success: function (data) {
                 var msg = "";
                 if (data == "SUCCESS") {
-                    $("#old-pass").val("");
-                    $("#new-pass").val("");
-                    $("#retype-pass").val("");
+                    $("#currentPwd").val("");
+                    $("#newPwd").val("");
+                    $("#retypeNewPwd").val("");
                     $('.change-password').modal('hide');
                     bootbox.alert("Your password has been updated.");
                     $('.pass-cancel').removeAttr('disabled');
                     $('#pass-alert').hide();
                 } else if (data == "NEWPWD_UNMATCH") {
                     msg = "New password you have entered does not match with retyped password.";
-                    $("#new-pass").val("");
-                    $("#retype-pass").val("");
+                    $("#newPwd").val("");
+                    $("#retypeNewPwd").val("");
                     $('.change-password').modal('show');
                 } else if (data == "CURRPWD_UNMATCH") {
                     msg = "Old password you have entered is incorrect.";
-                    $("#old-pass").val("");
+                    $("#currentPwd").val("");
                     $('.change-password').modal('show');
                 } else if (data == "NEWPWD_INVALID") {
                     msg = $('.password-error-msg').html();
-                    $("#new-pass").val("");
-                    $("#retype-pass").val("");
+                    $("#newPwd").val("");
+                    $("#retypeNewPwd").val("");
+                    $('.change-password').modal('show');
+                } else if (data == 'NEW_AND_CURR_PWD_SAME') {
+                    msg = "New Password cannot be same as your Old Password, try a different one.";
+                    $("#newPwd").val("");
+                    $("#retypeNewPwd").val("");
                     $('.change-password').modal('show');
                 }
+
                 $('.password-error').html(msg).show();
 
             },
-            error: function () {
-                bootbox.alert("Internal server error occurred, please try after sometime.");
+            error: function (xhr) {
+                try {
+                    showValidationMessage(xhr.responseJSON);
+                } catch (e) {
+                    bootbox.alert("Could not change the password");
+                }
             }
         });
 
@@ -225,8 +241,7 @@ $(document).ready(function () {
         if (!$(this).data('now')) {
             taskName = $(this).data('task') ? unescape($(this).data('task')) : "";
             moduleName = $(this).data('module') ? unescape($(this).data('module')) : "";
-        }
-        else
+        } else
             taskName = unescape($(this).data('now'));
 
         now_json = [];
@@ -367,8 +382,7 @@ $(document).ready(function () {
             for (var i = 0; i < theObject.length; i++) {
                 result = getObject(theObject[i], searchkey);
             }
-        }
-        else {
+        } else {
             for (var prop in theObject) {
                 if (prop == 'name') {
                     if (theObject[prop].toLowerCase().indexOf(searchkey) >= 0) {
@@ -495,8 +509,7 @@ function worklist() {
 
                     if (taskItem) {
                         taskItem[Object.keys(taskItem)[0]] += 1;
-                    }
-                    else {
+                    } else {
                         var task = item.task;
                         var moduleValJson = {};
                         moduleValJson[task] = 1;

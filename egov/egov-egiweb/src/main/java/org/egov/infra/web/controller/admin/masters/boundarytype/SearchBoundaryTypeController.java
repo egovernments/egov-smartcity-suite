@@ -48,6 +48,8 @@
 
 package org.egov.infra.web.controller.admin.masters.boundarytype;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.HierarchyTypeService;
@@ -55,61 +57,80 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
+@RequestMapping("/boundarytype")
 public class SearchBoundaryTypeController {
 
-    private final HierarchyTypeService hierarchyTypeService;
+    @Autowired
+    private HierarchyTypeService hierarchyTypeService;
 
     @Autowired
-    public SearchBoundaryTypeController(final BoundaryTypeService boundaryTypeService,
-            final HierarchyTypeService hierarchyTypeService) {
-        this.hierarchyTypeService = hierarchyTypeService;
-    }
+    private BoundaryTypeService boundaryTypeService;
 
     @ModelAttribute
     public BoundaryType boundaryTypeModel() {
         return new BoundaryType();
     }
 
-    @RequestMapping(value = "/boundarytype/view", method = RequestMethod.GET)
-    public String viewSearch(final Model model) {
+    @GetMapping("by-hierarchy")
+    @ResponseBody
+    public String getBoundaryTypeByHierarchyType(@RequestParam Long hierarchyTypeId) {
+        JsonArray boundaryTypes = new JsonArray();
+        for (BoundaryType boundaryType : boundaryTypeService.getAllBoundarTypesByHierarchyTypeId(hierarchyTypeId)) {
+            JsonObject boundaryTypeData = new JsonObject();
+            boundaryTypeData.addProperty("name", boundaryType.getName());
+            boundaryTypeData.addProperty("id", boundaryType.getId());
+            boundaryTypes.add(boundaryTypeData);
+        }
+
+        return boundaryTypes.toString();
+    }
+
+    @GetMapping("has-child-boundarytype")
+    @ResponseBody
+    public boolean childBoundaryTypeIsPresent(@RequestParam Long parentId) {
+        return boundaryTypeService.getBoundaryTypeByParent(parentId) != null;
+    }
+
+    @GetMapping("view")
+    public String viewSearch(Model model) {
         model.addAttribute("hierarchyTypes", hierarchyTypeService.getAllHierarchyTypes());
         model.addAttribute("mode", "view");
         return "boundaryType-search";
     }
 
-    @RequestMapping(value = "/boundarytype/update", method = RequestMethod.GET)
-    public String updateSearch(final Model model) {
+    @GetMapping("update")
+    public String updateSearch(Model model) {
         model.addAttribute("hierarchyTypes", hierarchyTypeService.getAllHierarchyTypes());
         model.addAttribute("mode", "update");
         return "boundaryType-search";
     }
 
-    @RequestMapping(value = "/boundarytype/addchild", method = RequestMethod.GET)
-    public String addChildSearch(final Model model) {
+    @GetMapping("addchild")
+    public String addChildSearch(Model model) {
         model.addAttribute("hierarchyTypes", hierarchyTypeService.getAllHierarchyTypes());
         model.addAttribute("mode", "addChild");
         return "boundaryType-search";
     }
 
-    @RequestMapping(value = { "/boundarytype/view", "/boundarytype/update", "/boundarytype/addchild" }, method = RequestMethod.POST)
-    public String search(@ModelAttribute final BoundaryType boundaryType, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final HttpServletRequest request) {
-
-        if (errors.hasErrors())
+    @PostMapping({"view", "update", "addchild"})
+    public String search(@ModelAttribute BoundaryType boundaryType, BindingResult bindResult, HttpServletRequest request) {
+        if (bindResult.hasErrors())
             return "boundaryType-form";
 
-        final String requestURI = request.getRequestURI();
+        String requestURI = request.getRequestURI();
         String redirectURI = "";
-        final String[] idSplit = boundaryType.getName().split(",");
-        final Long boundaryTypeId = Long.valueOf(idSplit[idSplit.length - 1]);
+        String[] idSplit = boundaryType.getName().split(",");
+        Long boundaryTypeId = Long.valueOf(idSplit[idSplit.length - 1]);
 
         if (requestURI.contains("view"))
             redirectURI = "redirect:/boundarytype/view/" + boundaryTypeId;

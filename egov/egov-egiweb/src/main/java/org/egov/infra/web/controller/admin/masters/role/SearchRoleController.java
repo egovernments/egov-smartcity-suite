@@ -53,24 +53,19 @@ import org.egov.infra.admin.master.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Controller
 @RequestMapping("/role")
 public class SearchRoleController {
-    private final RoleService roleService;
 
     @Autowired
-    public SearchRoleController(final RoleService roleService) {
-        this.roleService = roleService;
-    }
+    private RoleService roleService;
 
     @ModelAttribute
     public Role roleModel() {
@@ -82,33 +77,27 @@ public class SearchRoleController {
         return roleService.getAllRoles();
     }
 
-    @RequestMapping(value = "/viewsearch", method = RequestMethod.GET)
-    public String viewSearch(final Model model) {
+    @GetMapping("/viewsearch")
+    public String viewSearch(Model model) {
         model.addAttribute("mode", "view");
         return "role-search";
 
     }
 
-    @RequestMapping(value = "/updatesearch", method = RequestMethod.GET)
-    public String updateSearch(final Model model) {
+    @GetMapping("/updatesearch")
+    public String updateSearch(Model model) {
         model.addAttribute("mode", "update");
         return "role-search";
 
     }
 
-    @RequestMapping(value = "/view", method = RequestMethod.POST)
-    public String viewRole(@Valid @ModelAttribute final Role role, final BindingResult errors,
-            final RedirectAttributes redirectAttrs) {
-
+    @PostMapping("/view")
+    public String viewRole(@ModelAttribute Role role) {
         return "redirect:/role/view/" + role.getName();
-
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String updateSearch(@Valid @ModelAttribute final Role role, final BindingResult errors,
-            final RedirectAttributes redirectAttrs) {
-
+    @PostMapping("/update")
+    public String updateSearch(@ModelAttribute Role role) {
         return "redirect:/role/update/" + role.getName();
     }
-
 }

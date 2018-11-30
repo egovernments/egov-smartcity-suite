@@ -88,7 +88,7 @@ $(document).ready(function(){
 	$('#zoneList').change(function(){
 		$.ajax({
 			type: "GET",
-			url: "/egi/boundary/ajaxBoundary-blockByLocality",
+			url: "/egi/boundary/block/by-locality",
 			cache: true,
 			dataType: "json",
 			data:{
@@ -97,7 +97,8 @@ $(document).ready(function(){
 			success: function (response) {
 				$('#wardlist').empty();
 				$('#wardlist').append($('<option>').text('Select from below').attr('value', ""));
-				$.each(response.results.boundaries, function (j, boundary) {
+                var jsonResp = JSON.parse(response);
+				$.each(jsonResp.results.boundaries, function (j, boundary) {
 					if (boundary.wardId) {
 							$('#wardlist').append($('<option>').text(boundary.wardName).attr('value', boundary.wardId))
 					}

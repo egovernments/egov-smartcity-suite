@@ -57,8 +57,9 @@ import org.egov.infra.web.support.json.adapter.BoundaryAdapter;
 import org.egov.infra.web.support.json.adapter.BoundaryDatatableAdapter;
 import org.egov.infra.web.support.ui.DataTable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -66,9 +67,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.validation.Valid;
 import java.util.List;
 
+import static java.util.Collections.emptyList;
 import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
@@ -93,23 +97,23 @@ public class SearchBoundaryController {
 
     @PostMapping(produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String searchBoundary(BoundarySearchRequest searchRequest) {
-        return new DataTable<>(boundaryService.getPageOfBoundaries(searchRequest), searchRequest.draw())
+    public String searchBoundary(@Valid BoundarySearchRequest searchRequest, BindingResult bindResult) {
+        return new DataTable<>(bindResult.hasErrors() ? new PageImpl<>(emptyList())
+                : boundaryService.getPageOfBoundaries(searchRequest), searchRequest.draw())
                 .toJson(BoundaryDatatableAdapter.class);
 
     }
 
-    @GetMapping(value = "wards-by-zone", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "wards-by-zone", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<Boundary> getWardByZone(@RequestParam Long zoneId) {
         return boundaryService.getActiveChildBoundariesByBoundaryId(zoneId);
     }
 
-    @GetMapping(value = "by-boundarytype", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "by-boundarytype", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public String boundaryByBoundaryType(@RequestParam Long boundaryTypeId) {
         return toJSON(boundaryService
-                .getActiveBoundariesByBoundaryTypeId(boundaryTypeId), Boundary.class, BoundaryAdapter.class)
-                .toString();
+                .getActiveBoundariesByBoundaryTypeId(boundaryTypeId), Boundary.class, BoundaryAdapter.class);
     }
 }

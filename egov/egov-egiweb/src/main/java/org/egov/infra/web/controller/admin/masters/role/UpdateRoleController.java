@@ -53,10 +53,11 @@ import org.egov.infra.admin.master.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
@@ -65,36 +66,25 @@ import javax.validation.Valid;
 @RequestMapping(value = "/role/update/{name}")
 public class UpdateRoleController {
 
-    private final RoleService roleService;
-
     @Autowired
-    public UpdateRoleController(final RoleService roleService) {
-        this.roleService = roleService;
-    }
+    private RoleService roleService;
 
     @ModelAttribute
-    public Role roleModel(@PathVariable final String name) {
-
+    public Role roleModel(@PathVariable String name) {
         return roleService.getRoleByName(name);
-
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     public String updateRoleForm() {
         return "role-update";
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute final Role role, final BindingResult errors,
-            final RedirectAttributes redirectAttrs) {
-
-        if (errors.hasErrors())
+    @PostMapping
+    public String update(@Valid @ModelAttribute Role role, BindingResult bindResult, RedirectAttributes redirectAttrs) {
+        if (bindResult.hasErrors())
             return "role-update";
-
         roleService.update(role);
         redirectAttrs.addFlashAttribute("message", "msg.role.update.success");
-
         return "redirect:/role/view/" + role.getName();
     }
-
 }

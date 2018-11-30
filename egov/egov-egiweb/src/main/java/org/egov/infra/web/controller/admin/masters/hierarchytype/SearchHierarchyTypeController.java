@@ -52,12 +52,11 @@ import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -69,12 +68,8 @@ public class SearchHierarchyTypeController {
     private static final String REQUEST_MAP_VIEW = "/view";
     private static final String REQUEST_MAP_UPDATE = "/update";
 
-    private final HierarchyTypeService hierarchyTypeService;
-
     @Autowired
-    public SearchHierarchyTypeController(final HierarchyTypeService hierarchyTypeService) {
-        this.hierarchyTypeService = hierarchyTypeService;
-    }
+    private HierarchyTypeService hierarchyTypeService;
 
     @ModelAttribute
     public HierarchyType hierarchyTypeModel() {
@@ -86,17 +81,16 @@ public class SearchHierarchyTypeController {
         return hierarchyTypeService.getAllHierarchyTypes();
     }
 
-    @RequestMapping(value = { REQUEST_MAP_VIEW, REQUEST_MAP_UPDATE }, method = RequestMethod.GET)
-    public String showHierarchyTypes(final Model model) {
+    @GetMapping({REQUEST_MAP_VIEW, REQUEST_MAP_UPDATE})
+    public String showHierarchyTypes() {
         return "hierarchyType-list";
     }
 
-    @RequestMapping(value = { REQUEST_MAP_VIEW, REQUEST_MAP_UPDATE }, method = RequestMethod.POST)
-    public String search(@ModelAttribute final HierarchyType hierarchyType, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final HttpServletRequest request) {
-        if (errors.hasErrors())
+    @PostMapping({REQUEST_MAP_VIEW, REQUEST_MAP_UPDATE})
+    public String search(@ModelAttribute HierarchyType hierarchyType, BindingResult bindResult, HttpServletRequest request) {
+        if (bindResult.hasErrors())
             return "boundaryType-form";
-        final String requestURI = request.getRequestURI();
+        String requestURI = request.getRequestURI();
         String redirectURI = "";
         if (requestURI.contains("view"))
             redirectURI = "redirect:/hierarchytype/view/" + hierarchyType.getName();

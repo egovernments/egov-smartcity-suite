@@ -52,11 +52,11 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
@@ -69,27 +69,23 @@ import javax.validation.Valid;
 @RequestMapping(value = "/department/create")
 public class CreateDepartmentController {
 
-    private final DepartmentService departmentService;
-
     @Autowired
-    public CreateDepartmentController(final DepartmentService departmentService) {
-        this.departmentService = departmentService;
-    }
+    private DepartmentService departmentService;
 
     @ModelAttribute
     public Department departmentModel() {
         return new Department();
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public String createDepartmentForm(final Model model) {
+    @GetMapping
+    public String createDepartmentForm() {
         return "department-form";
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public String createDepartment(@Valid @ModelAttribute final Department department, final BindingResult errors,
-            final RedirectAttributes redirectAttrs) {
-        if (errors.hasErrors())
+    @PostMapping
+    public String createDepartment(@Valid @ModelAttribute Department department, BindingResult bindResult,
+                                   RedirectAttributes redirectAttrs) {
+        if (bindResult.hasErrors())
             return "department-form";
 
         departmentService.createDepartment(department);

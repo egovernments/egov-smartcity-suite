@@ -54,6 +54,7 @@ import org.egov.infra.web.controller.admin.masters.department.CreateDepartmentCo
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -72,54 +73,57 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * This Class is used to test Create Department Controller
- * 
+ *
  * @author subhash
  */
 public class CreateDepartmentControllerTest extends
-		AbstractContextControllerTest<CreateDepartmentController> {
+        AbstractContextControllerTest<CreateDepartmentController> {
 
-	@Mock
-	private DepartmentService departmentService;
+    @Mock
+    private DepartmentService departmentService;
 
-	private MockMvc mockMvc;
+    @InjectMocks
+    private CreateDepartmentController createDepartmentController;
 
-	@Override
-	protected CreateDepartmentController initController() {
-		initMocks(this);
-		return new CreateDepartmentController(departmentService);
-	}
+    private MockMvc mockMvc;
 
-	@Before
-	public void before() {
-		mockMvc = mvcBuilder.build();
-	}
+    @Override
+    protected CreateDepartmentController initController() {
+        initMocks(this);
+        return createDepartmentController;
+    }
 
-	@Test
-	public void shouldResolveDepartmentCreationForm() throws Exception {
-		this.mockMvc.perform(get("/department/create")).andExpect(view().name("department-form"))
-				.andExpect(status().isOk());
-	}
+    @Before
+    public void before() {
+        mockMvc = mvcBuilder.build();
+    }
 
-	@Test
-	public void shouldCreateNewDepartment() throws Exception {
-		this.mockMvc
-				.perform(
-						post("/department/create").param("name", "testing")
-								.param("code", "testing")).andExpect(model().hasNoErrors())
-				.andExpect(redirectedUrl("/department/view/testing"));
-		ArgumentCaptor<Department> argumentCaptor = ArgumentCaptor.forClass(Department.class);
-		verify(departmentService).createDepartment(argumentCaptor.capture());
-		Department createdDeprtment = argumentCaptor.getValue();
-		assertTrue(createdDeprtment.isNew());
-		assertEquals(createdDeprtment.getName(), "testing");
-		assertEquals(createdDeprtment.getCode(), "testing");
-	}
+    @Test
+    public void shouldResolveDepartmentCreationForm() throws Exception {
+        this.mockMvc.perform(get("/department/create")).andExpect(view().name("department-form"))
+                .andExpect(status().isOk());
+    }
 
-	@Test
-	public void shouldValidateWhileCreating() throws Exception {
-		this.mockMvc.perform(post("/department/create")).andExpect(model().hasErrors())
-				.andExpect(model().attributeHasFieldErrors("department", "code"))
-				.andExpect(view().name("department-form"));
-		verify(departmentService, never()).createDepartment(any(Department.class));
-	}
+    @Test
+    public void shouldCreateNewDepartment() throws Exception {
+        this.mockMvc
+                .perform(
+                        post("/department/create").param("name", "testing")
+                                .param("code", "testing")).andExpect(model().hasNoErrors())
+                .andExpect(redirectedUrl("/department/view/testing"));
+        ArgumentCaptor<Department> argumentCaptor = ArgumentCaptor.forClass(Department.class);
+        verify(departmentService).createDepartment(argumentCaptor.capture());
+        Department createdDeprtment = argumentCaptor.getValue();
+        assertTrue(createdDeprtment.isNew());
+        assertEquals(createdDeprtment.getName(), "testing");
+        assertEquals(createdDeprtment.getCode(), "testing");
+    }
+
+    @Test
+    public void shouldValidateWhileCreating() throws Exception {
+        this.mockMvc.perform(post("/department/create")).andExpect(model().hasErrors())
+                .andExpect(model().attributeHasFieldErrors("department", "code"))
+                .andExpect(view().name("department-form"));
+        verify(departmentService, never()).createDepartment(any(Department.class));
+    }
 }

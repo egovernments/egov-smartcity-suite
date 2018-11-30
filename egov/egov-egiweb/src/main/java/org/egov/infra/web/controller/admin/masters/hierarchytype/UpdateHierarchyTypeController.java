@@ -52,12 +52,12 @@ import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
@@ -68,27 +68,23 @@ public class UpdateHierarchyTypeController {
 
     private static final String REDIRECT_URL_VIEW = "redirect:/hierarchytype/view/";
     private static final String REQUEST_MAP_UPDATE = "/update/{name}";
-    
-    private HierarchyTypeService hierarchyTypeService;
-    
+
     @Autowired
-    public UpdateHierarchyTypeController(HierarchyTypeService hierarchyTypeService) {
-        this.hierarchyTypeService = hierarchyTypeService;
-    }
-    
+    private HierarchyTypeService hierarchyTypeService;
+
     @ModelAttribute
-    public HierarchyType hierarchyTypeModel(@PathVariable String  name) {
-           return hierarchyTypeService.getHierarchyTypeByName(name);
+    public HierarchyType hierarchyTypeModel(@PathVariable String name) {
+        return hierarchyTypeService.getHierarchyTypeByName(name);
     }
-    
-    @RequestMapping(value = REQUEST_MAP_UPDATE, method = RequestMethod.GET)
-    public String hierarchyTypeUpdateForm(Model model) {
+
+    @GetMapping(REQUEST_MAP_UPDATE)
+    public String hierarchyTypeUpdateForm() {
         return "hierarchyType-updateForm";
     }
-    
-    @RequestMapping(value = REQUEST_MAP_UPDATE, method = RequestMethod.POST)
+
+    @PostMapping(REQUEST_MAP_UPDATE)
     public String updateHierarchyType(@ModelAttribute @Valid HierarchyType hierarchyType, BindingResult errors,
-            RedirectAttributes additionalAttr) {
+                                      RedirectAttributes additionalAttr) {
 
         if (errors.hasErrors()) {
             return "hierarchyType-updateForm";
@@ -100,5 +96,4 @@ public class UpdateHierarchyTypeController {
 
         return REDIRECT_URL_VIEW + hierarchyType.getName();
     }
-    
 }

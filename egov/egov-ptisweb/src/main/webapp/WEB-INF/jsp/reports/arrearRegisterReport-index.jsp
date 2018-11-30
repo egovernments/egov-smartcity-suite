@@ -79,7 +79,7 @@
 	jQuery(document).ready(function(){
 		 jQuery('#localityId').change(function() {
 			jQuery.ajax({
-				url: "/egi/boundary/ajaxBoundary-blockByLocality",
+				url: "/egi/boundary/block/by-locality",
 				type: "GET",
 				data: {
 					locality : jQuery('#localityId').val()
@@ -87,14 +87,15 @@
 				cache: false,
 				dataType: "json",
 				success: function (response) {
-					jQuery('#zoneId').val(response.zoneId);
+                    var jsonResp = JSON.parse(response);
+					jQuery('#zoneId').val(jsonResp.zoneId);
 					setTimeout(function(){
   					//your code to be executed after 1 seconds
-						jQuery('#wardId').val(response.wardId);
+						jQuery('#wardId').val(jsonResp.wardId);
 						populateBlock();
 						setTimeout(function(){
 		  					//your code to be executed after 1 seconds
-								jQuery('#areaId').val(response.blockId);
+								jQuery('#areaId').val(jsonResp.blockId);
 							}, 1000);
 					}, 1000); 
 				}, 

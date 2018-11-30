@@ -64,6 +64,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -100,7 +101,7 @@ public class ModifyCrossHierarchyController {
     }
 
     @PostMapping
-    public String updateCrossHierarchy(@ModelAttribute CrossHierarchyRequest crossHierarchyRequest,
+    public String updateCrossHierarchy(@Valid @ModelAttribute CrossHierarchyRequest crossHierarchyRequest,
                                        BindingResult bindResult, RedirectAttributes redirectAttrs) {
         if (bindResult.hasErrors())
             return "cross-hierarchy-edit";

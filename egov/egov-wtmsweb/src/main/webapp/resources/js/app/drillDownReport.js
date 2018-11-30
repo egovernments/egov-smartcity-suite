@@ -152,7 +152,7 @@ function callajaxdatatableForDrilDownReport() {
 $('#ward').change(function(){
 	console.log("came on change of ward"+$('#ward').val());
 	jQuery.ajax({
-		url: "/egi/boundary/ajaxBoundary-blockByWard.action",
+		url: "/egi/boundary/block/by-ward",
 		type: "GET",
 		data: {
 			wardId : jQuery('#ward').val()
@@ -163,7 +163,7 @@ $('#ward').change(function(){
 			console.log("success"+response);
 			jQuery('#block').html("");
 			jQuery('#block').append("<option value=''>Select</option>");
-			jQuery.each(response, function(index, value) {
+			jQuery.each(JSON.parse(response), function(index, value) {
 				jQuery('#block').append($('<option>').text(value.blockName).attr('value', value.blockId));
 			});
 		}, 

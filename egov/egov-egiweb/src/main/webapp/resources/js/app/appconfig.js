@@ -71,7 +71,7 @@ $(document).ready(function () {
         oTable = $('#view-appConfig-tbl').DataTable({
             processing: true,
             serverSide: true,
-            type: 'GET',
+            type: 'POST',
             sort: true,
             filter: true,
             responsive: true,
@@ -80,7 +80,7 @@ $(document).ready(function () {
             "order": [[1, 'asc']],
             ajax: {
                 url: "list",
-                type: "GET",
+                type: "POST",
                 data: function (args) {
                     return {"args": JSON.stringify(args), "moduleName": $("#moduleName").val()};
                 }
@@ -135,8 +135,7 @@ $(document).ready(function () {
             // This row is already open - close it
             row.child.hide();
             tr.removeClass('shown');
-        }
-        else {
+        } else {
             // Open this row
             row.child(format(row.data())).show();
             tr.addClass('shown');
@@ -209,8 +208,7 @@ $(document).ready(function () {
                 if ($(this).closest('tr').find('input').hasClass('dynamicInput')) {
                     console.log('Dynamic Row deleted');
                     deleteandreplaceindexintable($(this));
-                }
-                else {
+                } else {
                     console.log('Existing Row deleted');
                     $(this).closest('tr').hide().find('input.markedForRemoval').val('true');
                 }

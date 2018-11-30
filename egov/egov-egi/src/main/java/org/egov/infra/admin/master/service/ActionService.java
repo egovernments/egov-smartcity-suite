@@ -99,7 +99,7 @@ public class ActionService {
                     .orElse(findNearestMatchingAction(url,
                             actionRepository.findByMatchingUrlAndContextRootAndQueryParams(url, contextRoot, queryStr)));
             if (action != null && !action.queryParamMatches(queryStr)) {
-                LOGGER.warn("Query params passed doesn't match with the regex specified for this action URL, provided:- {}, expected:- {}",
+                LOGGER.warn("Action URL query params doesn't match with the expected, provided:- {}, expected:- {}",
                         queryStr, action.getQueryParamRegex());
                 return Optional.empty();
             }

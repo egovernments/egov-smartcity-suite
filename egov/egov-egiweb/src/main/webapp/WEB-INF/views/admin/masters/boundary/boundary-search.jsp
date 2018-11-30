@@ -50,7 +50,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <link rel="stylesheet" href="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css'/>">
 <div class="row" id="page-content">
@@ -72,7 +71,7 @@
                                     <span class="mandatory"></span>
                                 </label>
                                 <div class="col-sm-6 add-margin">
-                                    <select id="hierarchyTypeSelect" class="form-control" onchange="populateBoundaryTypes(this);" required="required">
+                                    <select id="hierarchyType" class="form-control boundarytype-auto"  required="required">
                                         <option value=""><spring:message code="lbl.select"/></option>
                                         <c:forEach items="${hierarchyTypes}" var="hierarchyType">
                                             <option value="${hierarchyType.id}">${hierarchyType.name}</option>
@@ -84,8 +83,6 @@
                                 <label class="col-sm-3 control-label"><spring:message
                                         code="lbl.boundaryType"/><span class="mandatory"></span></label>
                                 <div class="col-sm-6 add-margin">
-                                    <egov:ajaxdropdown id="boundaryTypeAjax" fields="['Text','Value']"
-                                                       dropdownId="boundaryType" url="boundarytype/ajax/boundarytypelist-for-hierarchy"/>
                                     <select id="boundaryType" class="form-control" required="required">
                                         <option value=""><spring:message code="lbl.select"/></option>
                                     </select>
@@ -112,4 +109,5 @@
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js'/>"></script>
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js'/>"></script>
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/admin-generic.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url  value='/resources/js/app/boundary-search.js?rnd=${app_release_no}'/>"></script>

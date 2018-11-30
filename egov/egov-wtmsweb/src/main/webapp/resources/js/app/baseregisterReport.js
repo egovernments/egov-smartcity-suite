@@ -120,7 +120,7 @@ $('#baseRegisterReportSearch').click(function(e){
 $('#ward').change(function(){
 	console.log("came on change of ward"+$('#ward').val());
 	jQuery.ajax({
-		url: "/egi/boundary/ajaxBoundary-blockByWard.action",
+		url: "/egi/boundary/block/by-ward",
 		type: "GET",
 		data: {
 			wardId : jQuery('#ward').val()

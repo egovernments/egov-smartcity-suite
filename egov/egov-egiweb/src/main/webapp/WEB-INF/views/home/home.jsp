@@ -320,12 +320,17 @@
                 <form id="feedback-form" class="form-horizontal form-groups-bordered">
                     <div class="form-group">
                         <div class="col-md-12 add-margin">
-                            <input type="text" class="form-control" id="subject" placeholder="Subject">
+                            <label for="subject">
+                                <spring:message code="lbl.subject"/>
+                            </label><input type="text" class="form-control" id="subject" placeholder="Subject">
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="col-md-12 add-margin">
-                            <textarea class="form-control" rows="5" id="comment" placeholder="Message"></textarea>
+                            <label for="message">
+                                <spring:message code="lbl.message"/>
+                            </label>
+                            <textarea class="form-control" rows="5" id="message" placeholder="Message"></textarea>
                             <spring:message code="lbl.feedback.mail.footer" arguments="${empty sessionScope.corpContactEmail ? 'none'
                             : sessionScope.corpContactEmail}"/>
                         </div>
@@ -358,27 +363,36 @@
                 <form id="password-form" class="form-horizontal form-groups-bordered">
                     <div class="form-group">
                         <div class="col-md-4">
-                            <label class="control-label"><spring:message code="lbl.old.password"/></label>
+                            <label class="control-label" for="currentPwd">
+                                <spring:message code="lbl.old.password"/>
+                            </label>
                         </div>
                         <div class="col-md-8 add-margin">
-                            <input style="display:none">
-                            <input type="password" class="form-control" id="old-pass" required="required">
+                            <input style="display:none" type="password">
+                            <input type="password" class="form-control" id="currentPwd" required="required" autocomplete="new-password">
                         </div>
                     </div>
                     <div class="form-group" id="wrap">
                         <div class="col-md-4">
-                            <label class="control-label"><spring:message code="lbl.new.password"/></label>
+                            <label class="control-label" for="newPwd">
+                                <spring:message code="lbl.new.password"/>
+                            </label>
                         </div>
                         <div class="col-md-8 add-margin">
-                            <input type="password" class="form-control check-password" id="new-pass" maxlength="32" data-container="#wrap" data-toggle="popover" data-content="${pwdmsg}">
+                            <input style="display:none" type="password">
+                            <input type="password" class="form-control check-password" id="newPwd" maxlength="32"
+                                   data-container="#wrap" data-toggle="popover" data-content="${pwdmsg}" autocomplete="new-password">
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="col-md-4">
-                            <label class="control-label"><spring:message code="lbl.confirm.password"/></label>
+                            <label class="control-label" for="retypeNewPwd">
+                                <spring:message code="lbl.confirm.password"/>
+                            </label>
                         </div>
                         <div class="col-md-8 add-margin">
-                            <input type="password" class="form-control check-password" id="retype-pass" maxlength="32">
+                            <input style="display:none" type="password">
+                            <input type="password" class="form-control check-password" id="retypeNewPwd" maxlength="32" autocomplete="new-password">
                             <div class="password-error error-msg display-hide"><spring:message code="err.pwd.incorrect"/></div>
                             <div class="password-error-msg display-hide">${pwdmsg}</div>
                         </div>

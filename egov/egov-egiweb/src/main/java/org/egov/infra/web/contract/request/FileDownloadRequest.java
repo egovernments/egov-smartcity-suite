@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,37 +46,45 @@
  *
  */
 
-package org.egov.infra.web.controller.admin.masters.hierarchytype;
+package org.egov.infra.web.contract.request;
 
-import org.egov.infra.admin.master.entity.HierarchyType;
-import org.egov.infra.admin.master.service.HierarchyTypeService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.hibernate.validator.constraints.SafeHtml;
 
-@Controller
-@RequestMapping("/hierarchytype")
-public class ViewHierarchyTypeController {
+import javax.validation.constraints.NotBlank;
 
-    private static final String REQUEST_MAP_VIEW = "/view/{typeName}";
+public class FileDownloadRequest {
 
-    @Autowired
-    private HierarchyTypeService hierarchyTypeService;
+    @NotBlank
+    @SafeHtml
+    private String fileStoreId;
 
-    public ViewHierarchyTypeController(HierarchyTypeService hierarchyTypeService) {
-        this.hierarchyTypeService = hierarchyTypeService;
+    @NotBlank
+    @SafeHtml
+    private String moduleName;
+
+    private boolean toSave;
+
+    public String getFileStoreId() {
+        return fileStoreId;
     }
 
-    @ModelAttribute
-    public HierarchyType hierarchyTypeModel(@PathVariable String typeName) {
-        return hierarchyTypeService.getHierarchyTypeByName(typeName);
+    public void setFileStoreId(final String fileStoreId) {
+        this.fileStoreId = fileStoreId;
     }
 
-    @GetMapping(REQUEST_MAP_VIEW)
-    public String hierarchyTypeViewForm() {
-        return "hierarchyType-view";
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public void setModuleName(final String moduleName) {
+        this.moduleName = moduleName;
+    }
+
+    public boolean isToSave() {
+        return toSave;
+    }
+
+    public void setToSave(final boolean toSave) {
+        this.toSave = toSave;
     }
 }

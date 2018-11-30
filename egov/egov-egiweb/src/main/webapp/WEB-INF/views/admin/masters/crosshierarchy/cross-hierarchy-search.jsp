@@ -46,12 +46,11 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
 <div class="row" id="page-content">
     <div class="col-md-12">
         <c:if test="${not empty message}">
@@ -73,9 +72,8 @@
                         <label class="col-sm-3 control-label"><spring:message
                                 code="lbl.boundaryType"/> <span class="mandatory"></span></label>
                         <div class="col-sm-6 add-margin">
-                            <form:select path="boundaryType" onchange="populateBoundary(this);"
-                                         id="boundaryTypeName" cssClass="form-control" cssErrorClass="form-control error"
-                                         required="required">
+                            <form:select path="boundaryType" id="boundaryType" cssClass="form-control boundary-auto"
+                                         cssErrorClass="form-control error" required="required">
                                 <form:option value=""> <spring:message code="lbl.select"/> </form:option>
                                 <form:options items="${boundaryTypes}" itemValue="id" itemLabel="hierarchyType.name"/>
                             </form:select><input type="hidden" id="boundaryTypeId" value=""/>
@@ -87,11 +85,8 @@
                         <label class="col-sm-3 control-label"><spring:message
                                 code="lbl.boundary"/> <span class="mandatory"></span></label>
                         <div class="col-sm-6 add-margin">
-                            <egov:ajaxdropdown id="boundaryAjax" fields="['Text','Value']"
-                                               dropdownId="boundarySelect"
-                                               url="../egi/boundaries-by-boundaryType"/>
                             <form:select path="boundary"
-                                         id="boundarySelect" cssClass="form-control" cssErrorClass="form-control error"
+                                         id="boundary" cssClass="form-control" cssErrorClass="form-control error"
                                          required="required">
                                 <form:option value=""> <spring:message code="lbl.select"/> </form:option>
                             </form:select>
@@ -113,4 +108,5 @@
         </form:form>
     </div>
 </div>
+<script src="<cdn:url  value='/resources/js/app/admin-generic.js'/>"></script>
 <script src="<cdn:url  value='/resources/js/app/cross-hierarchy.js'/>"></script>

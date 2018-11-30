@@ -147,7 +147,7 @@ jQuery('#ward').change(
 				jQuery('#block').prop("disabled", true);
 			} else {
 				jQuery.ajax({
-					url : "/egi/boundary/ajaxBoundary-blockByWard.action",
+					url : "/egi/boundary/block/by-ward",
 					type : "GET",
 					data : {
 						wardId : wardId
@@ -159,7 +159,7 @@ jQuery('#ward').change(
 						jQuery('#block').html("");
 						jQuery('#block').append(
 								"<option value='-1'>All</option>");
-						jQuery.each(response, function(j, block) {
+						jQuery.each(JSON.parse(response), function(j, block) {
 							jQuery('#block').append(
 									"<option value='" + block.blockId + "'>"
 											+ block.blockName + "</option>");

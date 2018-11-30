@@ -52,6 +52,7 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.web.controller.admin.masters.department.SearchDepartmentController;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -63,48 +64,50 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * This class is used to test the Search Department Controller
- * 
- * @author subhash
  *
+ * @author subhash
  */
 public class SearchDepartmentControllerTest extends
-		AbstractContextControllerTest<SearchDepartmentController> {
+        AbstractContextControllerTest<SearchDepartmentController> {
 
-	@Mock
-	private DepartmentService departmentService;
+    @Mock
+    private DepartmentService departmentService;
 
-	private MockMvc mockMvc;
+    @InjectMocks
+    private SearchDepartmentController searchDepartmentController;
 
-	@Override
-	protected SearchDepartmentController initController() {
-		initMocks(this);
-		return new SearchDepartmentController(departmentService);
-	}
+    private MockMvc mockMvc;
 
-	@Before
-	public void before() {
-		mockMvc = mvcBuilder.build();
-	}
+    @Override
+    protected SearchDepartmentController initController() {
+        initMocks(this);
+        return searchDepartmentController;
+    }
 
-	@Test
-	public void shouldResolveViewDepartmentForm() throws Exception {
-		mockMvc.perform(get("/department/view")).andExpect(view().name("department-search"));
-	}
+    @Before
+    public void before() {
+        mockMvc = mvcBuilder.build();
+    }
 
-	@Test
-	public void shouldResolveUpdateDepartmentForm() throws Exception {
-		mockMvc.perform(get("/department/update")).andExpect(view().name("department-search"));
-	}
+    @Test
+    public void shouldResolveViewDepartmentForm() throws Exception {
+        mockMvc.perform(get("/department/view")).andExpect(view().name("department-search"));
+    }
 
-	@Test
-	public void shouldViewDepartment() throws Exception {
-		mockMvc.perform(post("/department/view").param("name", "testing")).andExpect(
-				redirectedUrl("/department/view/testing"));
-	}
+    @Test
+    public void shouldResolveUpdateDepartmentForm() throws Exception {
+        mockMvc.perform(get("/department/update")).andExpect(view().name("department-search"));
+    }
 
-	@Test
-	public void shouldViewDepartmentToUpdate() throws Exception {
-		mockMvc.perform(post("/department/update").param("name", "testing")).andExpect(
-				redirectedUrl("/department/update/testing"));
-	}
+    @Test
+    public void shouldViewDepartment() throws Exception {
+        mockMvc.perform(post("/department/view").param("name", "testing")).andExpect(
+                redirectedUrl("/department/view/testing"));
+    }
+
+    @Test
+    public void shouldViewDepartmentToUpdate() throws Exception {
+        mockMvc.perform(post("/department/update").param("name", "testing")).andExpect(
+                redirectedUrl("/department/update/testing"));
+    }
 }

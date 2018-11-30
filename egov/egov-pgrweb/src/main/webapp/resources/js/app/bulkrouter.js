@@ -74,13 +74,16 @@ $(document).ready(function () {
         } else {
             $.ajax({
                 type: "GET",
-                url: "/egi/boundaries-by-boundaryType",
+                url: "/egi/boundary/search/by-boundarytype",
                 cache: true,
                 data: {'boundaryTypeId': this.value}
-            }).done(function (data) {
+            }).done(function (response) {
                 $('#boundaries').empty();
-                $.each(data, function (key, value) {
-                    $('#boundaries').append('<option value="' + value.Value + '">' + value.Text + '</option>');
+                $.each(JSON.parse(response), function (key, boundary) {
+                    $('#boundaries')
+                        .append($("<option></option>")
+                            .attr("value", boundary.id)
+                            .text(boundary.name));
                 });
                 if (btype != "") {
                     $("#boundaries").val(btype);

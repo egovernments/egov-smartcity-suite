@@ -71,16 +71,16 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping(value = "username-like/{name}", produces = APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = "name-like/{name}", produces = APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    public String userNames(@PathVariable String name) {
+    public String getUserByName(@PathVariable String name) {
         return toJson(userService.getUsersByNameLike(name));
     }
 
     @GetMapping(value = "employee-name-like/", produces = APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    public String users(@RequestParam String employeeName) {
-        return toJson(userService.getAllEmployeeNameLike(employeeName));
+    public String getEmployeesByName(@RequestParam String name) {
+        return toJson(userService.getAllEmployeeNameLike(name));
     }
 
     @GetMapping(value = "employee-username-like/", produces = APPLICATION_JSON_UTF8_VALUE)

@@ -62,6 +62,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -90,9 +91,11 @@ public class UpdateUserRoleController {
     }
 
     @PostMapping
-    public String updateUserRoles(@ModelAttribute User user, BindingResult errors, RedirectAttributes redirectAttrs) {
-        if (errors.hasErrors())
-            return "/userrole/update/" + user.getId();
+    public String updateUserRoles(@Valid @ModelAttribute User user, BindingResult bindResult, RedirectAttributes redirectAttrs) {
+        if(user.hasAnyInternalRole())
+            bindResult.rejectValue("roles", "err.internal.roles.found");
+        if (bindResult.hasErrors())
+            return "userrole-update";
         userService.updateUser(user);
         redirectAttrs.addFlashAttribute("message", "msg.usr.role.update.success");
         redirectAttrs.addFlashAttribute("fromUpdate", true);

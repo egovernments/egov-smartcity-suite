@@ -76,7 +76,7 @@
 	<script type="text/javascript">
 		function populateBlock() {
 			jQuery.ajax({
-				url: "/egi/boundary/ajaxBoundary-blockByWard.action",
+				url: "/egi/boundary/block/by-ward",
 				type: "GET",
 				data: {
 					wardId : jQuery('#wardId').val()
@@ -85,7 +85,7 @@
 				dataType: "json",
 				success: function (response) {
 					jQuery('#blockId').html("");
-					jQuery.each(response, function (j, block) {
+					jQuery.each(JSON.parse(response), function (j, block) {
 						jQuery('#blockId').append("<option value='"+block.blockId+"'>"+block.blockName+"</option>");
 					});
 					var propertyByEmployee = '<s:property value="%{propertyByEmployee}"/>';

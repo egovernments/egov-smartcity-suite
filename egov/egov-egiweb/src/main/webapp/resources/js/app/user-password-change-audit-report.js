@@ -53,7 +53,7 @@ $(document).ready(function () {
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: '/egi/user/username-like/%QUERY',
+            url: '/egi/user/name-like/%QUERY',
             filter: function (data) {
                 return $.map(JSON.parse(data), function (user) {
                     return {

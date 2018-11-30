@@ -52,6 +52,7 @@ import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.web.controller.admin.masters.boundarytype.ViewBoundaryTypeController;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -63,11 +64,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ViewBoundaryTypeControllerTest extends AbstractContextControllerTest<ViewBoundaryTypeController> {
 
     private MockMvc mockMvc;
-    
+
     @Mock
     private BoundaryTypeService boundaryTypeService;
-    
-    
+
+    @InjectMocks
+    private ViewBoundaryTypeController viewBoundaryTypeController;
+
     @Before
     public void before() {
         mockMvc = mvcBuilder.build();
@@ -76,16 +79,16 @@ public class ViewBoundaryTypeControllerTest extends AbstractContextControllerTes
     @Override
     protected ViewBoundaryTypeController initController() {
         initMocks(this);
-        return new ViewBoundaryTypeController(boundaryTypeService);
+        return viewBoundaryTypeController;
     }
-    
+
     @Test
     public void getViewBoundaryTypeResult() throws Exception {
-            Long id = 1l;
-            this.mockMvc.perform(get("/boundarytype/view/"+id))
-                            .andExpect(view().name("boundaryType-view"))
-                            .andExpect(status().isOk());
+        Long id = 1l;
+        this.mockMvc.perform(get("/boundarytype/view/" + id))
+                .andExpect(view().name("boundaryType-view"))
+                .andExpect(status().isOk());
 
     }
-    
+
 }

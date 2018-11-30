@@ -50,12 +50,17 @@ package org.egov.infra.admin.master.contracts;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public class CrossHierarchyRequest {
 
     private List<Boundary> boundaries;
+
+    @NotNull
     private Boundary boundary;
+
+    @NotNull
     private BoundaryType boundaryType;
 
     public List<Boundary> getBoundaries() {

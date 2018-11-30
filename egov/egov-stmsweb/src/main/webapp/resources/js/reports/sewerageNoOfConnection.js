@@ -124,7 +124,7 @@ function callAjaxDataTableForReport(ward,block,locality){
 
 $('#ward').change(function(){
 	jQuery.ajax({
-		url: "/egi/boundary/ajaxBoundary-blockByWard.action",
+		url: "/egi/boundary/block/by-ward",
 		type: "GET",
 		data: {
 			wardId : jQuery('#ward').val()
@@ -134,7 +134,7 @@ $('#ward').change(function(){
 		success: function (response) {
 			jQuery('#block').html("");
 			jQuery('#block').append("<option value=''>Select</option>");
-			jQuery.each(response, function(index, value) {
+			jQuery.each(JSON.parse(response), function(index, value) {
 				jQuery('#block').append($('<option>').text(value.blockName).attr('value', value.blockName));
 			});
 		}, 

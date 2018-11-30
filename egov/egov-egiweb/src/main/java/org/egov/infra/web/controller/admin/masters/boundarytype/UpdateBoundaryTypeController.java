@@ -53,10 +53,11 @@ import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
@@ -65,30 +66,26 @@ import javax.validation.Valid;
 @RequestMapping("/boundarytype/update/{id}")
 public class UpdateBoundaryTypeController {
 
-private BoundaryTypeService boundaryTypeService;
-	
-	@Autowired
-	public UpdateBoundaryTypeController(BoundaryTypeService boundaryTypeService){
-		this.boundaryTypeService = boundaryTypeService;
-	}
-	
-	@ModelAttribute
-        public BoundaryType boundaryTypeModel(@PathVariable Long id){
-            return boundaryTypeService.getBoundaryTypeById(id);
-        }
-	
-	@RequestMapping(method = RequestMethod.GET)
-	public String updateBoundaryTypeForm(){
-		return "boundaryType-update";
-	}
-	
-	@RequestMapping(method =RequestMethod.POST)
-	public String updateBoundaryType(@Valid @ModelAttribute BoundaryType boundaryType,final BindingResult errors, RedirectAttributes redirectAttrs){
-		if (errors.hasErrors())
+    @Autowired
+    private BoundaryTypeService boundaryTypeService;
+
+    @ModelAttribute
+    public BoundaryType boundaryTypeModel(@PathVariable Long id) {
+        return boundaryTypeService.getBoundaryTypeById(id);
+    }
+
+    @GetMapping
+    public String updateBoundaryTypeForm() {
+        return "boundaryType-update";
+    }
+
+    @PostMapping
+    public String updateBoundaryType(@Valid @ModelAttribute BoundaryType boundaryType, BindingResult bindResult,
+                                     RedirectAttributes redirectAttrs) {
+        if (bindResult.hasErrors())
             return "boundaryType-update";
-		
-		boundaryTypeService.updateBoundaryType(boundaryType);
-		redirectAttrs.addFlashAttribute("message", "msg.bndrytype.update.success");
-		return "redirect:/boundarytype/view/"+boundaryType.getId();
-	}
+        boundaryTypeService.updateBoundaryType(boundaryType);
+        redirectAttrs.addFlashAttribute("message", "msg.bndrytype.update.success");
+        return "redirect:/boundarytype/view/" + boundaryType.getId();
+    }
 }

@@ -69,7 +69,8 @@
                             <div class="panel-title">
                                 <strong><spring:message code="lbl.hdr.userrole.info"/> For :
                                     <span style="font-family: semibold;font-size: 16px;">
-                                    <c:out value="${user.username}"></c:out></span></strong>
+                                    <c:out value="${user.name}"/> [<c:out value="${user.username}"/>]
+                                    </span></strong>
                             </div>
                         </div>
                         <form:hidden path="id" id="id" value="${user.id}"/>
@@ -84,8 +85,7 @@
                                             </div>
                                             <br/>
                                             <form:select path="roles" multiple="true" size="11"
-                                                         id="multiselect" cssClass="form-control"
-                                                         cssErrorClass="form-control error">
+                                                         id="multiselect" cssClass="form-control">
                                                 <form:options items="${roles}" itemValue="id"
                                                               itemLabel="name"/>
                                             </form:select>
@@ -109,7 +109,7 @@
                                             <br/>
                                             <form:select path="roles" multiple="true" size="11"
                                                          id="multiselect_to" cssClass="form-control"
-                                                         cssErrorClass="form-control">
+                                                         cssErrorClass="form-control error">
                                             </form:select>
                                             <form:errors path="roles" cssClass="error-msg"/>
                                         </div>
@@ -142,8 +142,9 @@
         </div>
     </div>
 </div>
-<script src="<cdn:url  value='/resources/js/app/userrole.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/multiselect.js'/>"></script>
-<script type="text/javascript">
+<script src="<cdn:url  value='/resources/js/app/userrole.js?rnd=${app_release_no}'/>"></script>
+
+<script>
     $('#multiselect').multiselect();
 </script>
