@@ -56,6 +56,8 @@ import com.exilant.exility.common.TaskFailedException;
 import org.apache.log4j.Logger;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.FinancialConstants;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -66,36 +68,34 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-public class DishonoredChequeReport
-{
+public class DishonoredChequeReport {
+    private static final Logger LOGGER = Logger.getLogger(DishonoredChequeReport.class);
+    private final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss.SSS", Locale.getDefault());
+    public String originalVcId[];
+    public String bankRefNo[];
+    public String bankCharge[];
     List<Object[]> rs;
     TaskFailedException taskExc;
     String chqFromDate = "", chqToDate = "";
     String chequeNo = "";
-    String intrumentMode = "";
+    String instrumentMode = "";
     Long fundId;
-    public String originalVcId[];
-    public String bankRefNo[];
-    public String bankCharge[];
     ArrayList arList = new ArrayList();
     java.util.Date dt = new java.util.Date();
     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-    private final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss.SSS", Locale.getDefault());
-   
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired CommnFunctions commnFunctions;
-    private static final Logger LOGGER = Logger.getLogger(DishonoredChequeReport.class);
+    @Autowired
+    CommnFunctions commnFunctions;
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
 
     public DishonoredChequeReport() {
     }
 
     // get all Dishonored Cheque details -- chqstatus=2,isReconciled=1,isDishonored=1
 
-    public ArrayList getDishonoredChequeDetails(final DishonoredChequeBean disChqBean) throws TaskFailedException, Exception
-    {
+    public ArrayList getDishonoredChequeDetails(final DishonoredChequeBean disChqBean) throws TaskFailedException, Exception {
         if (LOGGER.isInfoEnabled())
             LOGGER.info(" INSIDE getDishonoredChequeDetails()>>>>>>>> ");
         try {
@@ -130,53 +130,54 @@ public class DishonoredChequeReport
             if (!"".equals(disChqBean.getMode()))
                 // intrumentMode=disChqBean.getMode();
                 if (disChqBean.getMode().equals("1"))
-                    intrumentMode = FinancialConstants.INSTRUMENT_TYPE_DD;
+                    instrumentMode = FinancialConstants.INSTRUMENT_TYPE_DD;
                 else
-                    intrumentMode = FinancialConstants.INSTRUMENT_TYPE_CHEQUE;
+                    instrumentMode = FinancialConstants.INSTRUMENT_TYPE_CHEQUE;
 
             // This method for getting bank ref no,bank charge amount and old voucher header id for the Dishonored cheques
             getBankEntryDetails();
 
-            final StringBuffer basicquery1 = new StringBuffer(
-                    "SELECT distinct vh.id as \"voucherHeaderId\",vh.id as \"payinVHeaderId\",vh.cgn as \"cgnumber\""
-                            + ",vh.VOUCHERNUMBER as \"voucherNumber\",vh.TYPE as \"type\",vh.FUNDID as \"fundId\",vh.FUNDSOURCEID as \"fundSourceId\",ih.INSTRUMENTNUMBER as \"chequeNumber\","
-                            + " ih.INSTRUMENTDATE as \"chequeDate\",ih.INSTRUMENTAMOUNT as \"amount\",bank.NAME as \"bank\",bacc.ACCOUNTNUMBER as \"accNumber\""
-                            + ",bacc.ID as \"accIdParam\",ih.PAYTO as \"payTo\" ,ih.ISPAYCHEQUE AS \"payCheque\","
-                            + " vmis.DEPARTMENTID AS \"departmentId\",vmis.FUNCTIONARYID AS \"functionaryId\",iod.INSTRUMENTSTATUSDATE as \"recChequeDate\""
-                            + " ,iod.dishonorbankrefno  as \"dishonorBankRefNo\",status.description  as \"status\""
-                            + " FROM VOUCHERHEADER vh,egf_instrumentheader ih,BANK bank,BANKACCOUNT bacc,VOUCHERMIS vmis,bankbranch branch,"
-                            +
-                    "egf_instrumenttype it,EGF_INSTRUMENTVOUCHER iv, egf_instrumentotherdetails iod, egw_status status ");
+            final StringBuilder basicquery1 = new StringBuilder("SELECT distinct vh.id as \"voucherHeaderId\", vh.id as \"payinVHeaderId\",")
+                    .append(" vh.cgn as \"cgnumber\", vh.VOUCHERNUMBER as \"voucherNumber\", vh.TYPE as \"type\", vh.FUNDID as \"fundId\",")
+                    .append(" vh.FUNDSOURCEID as \"fundSourceId\", ih.INSTRUMENTNUMBER as \"chequeNumber\", ih.INSTRUMENTDATE as \"chequeDate\",")
+                    .append(" ih.INSTRUMENTAMOUNT as \"amount\", bank.NAME as \"bank\", bacc.ACCOUNTNUMBER as \"accNumber\", bacc.ID as \"accIdParam\",")
+                    .append(" ih.PAYTO as \"payTo\", ih.ISPAYCHEQUE AS \"payCheque\", vmis.DEPARTMENTID AS \"departmentId\",")
+                    .append(" vmis.FUNCTIONARYID AS \"functionaryId\", iod.INSTRUMENTSTATUSDATE as \"recChequeDate\",")
+                    .append(" iod.dishonorbankrefno as \"dishonorBankRefNo\", status.description as \"status\"")
+                    .append(" FROM VOUCHERHEADER vh, egf_instrumentheader ih, BANK bank, BANKACCOUNT bacc, VOUCHERMIS vmis, bankbranch branch,")
+                    .append(" egf_instrumenttype it, EGF_INSTRUMENTVOUCHER iv, egf_instrumentotherdetails iod, egw_status status ");
 
-            StringBuffer wherequery1 = new StringBuffer(
-                    " WHERE vh.status=0 AND vh.id=vmis.voucherheaderid "
-                            +
-                            " and ih.INSTRUMENTTYPE=it.id and it.TYPE='"
-                            + intrumentMode
-                            + "' and iv.VOUCHERHEADERID=vh.ID and iv.INSTRUMENTHEADERID=ih.id "
-                            +
-                            " and iod.instrumentheaderid=ih.id "
-                            +
-                            " and ih.id_status=status.id and  status.moduletype='Instrument' and  status.description  in ('Dishonored','dishonour cheque in workflow') "
-                            +
-                    " and ih.BANKACCOUNTID=bacc.id and bacc.BRANCHID=branch.id and branch.BANKID=bank.id");
+            StringBuilder wherequery1 = new StringBuilder(" WHERE vh.status = 0 AND vh.id = vmis.voucherheaderid and ih.INSTRUMENTTYPE = it.id")
+                    .append(" and it.TYPE = :instrumentMode and iv.VOUCHERHEADERID = vh.ID and iv.INSTRUMENTHEADERID = ih.id and iod.instrumentheaderid = ih.id")
+                    .append(" and ih.id_status = status.id and status.moduletype = 'Instrument' and status.description")
+                    .append(" in ('Dishonored', 'dishonour cheque in workflow') and ih.BANKACCOUNTID = bacc.id and bacc.BRANCHID = branch.id")
+                    .append(" and branch.BANKID = bank.id");
 
-            final StringBuffer orderbyquery = new StringBuffer(" ORDER BY \"voucherNumber\",\"type\",\"chequeDate\" ");
+            final StringBuffer orderbyquery = new StringBuffer(" ORDER BY \"voucherNumber\", \"type\", \"chequeDate\" ");
 
             if (fundId != null && fundId != 0)
-                wherequery1 = wherequery1.append(" AND vh.FUNDID=").append(fundId);
+                wherequery1 = wherequery1.append(" AND vh.FUNDID = :fundId");
 
             if (!"".equals(chqFromDate))
-                wherequery1 = wherequery1.append(" AND ih.INSTRUMENTDATE  >='").append(chqFromDate).append("'");
+                wherequery1 = wherequery1.append(" AND ih.INSTRUMENTDATE  >= :chqFromDate");
             if (!"".equals(chqToDate))
-                wherequery1 = wherequery1.append(" AND ih.INSTRUMENTDATE  <='").append(chqToDate).append("'");
+                wherequery1 = wherequery1.append(" AND ih.INSTRUMENTDATE  <= :chqToDate");
             if (!"".equals(chequeNo))
-                wherequery1 = wherequery1.append(" AND ih.INSTRUMENTNUMBER=trim('").append(chequeNo).append("')");
+                wherequery1 = wherequery1.append(" AND ih.INSTRUMENTNUMBER = trim(:chequeNo)");
 
-            final String query = new StringBuffer().append(basicquery1).append(wherequery1).append(orderbyquery).toString();
+            final StringBuilder query = new StringBuilder()
+                    .append(basicquery1)
+                    .append(wherequery1)
+                    .append(orderbyquery);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("  getDishonoredChequeDetails Query is  " + query);
-            rs = persistenceService.getSession().createNativeQuery(query).list();
+            rs = persistenceService.getSession().createNativeQuery(query.toString())
+                    .setParameter("instrumentMode", instrumentMode, StringType.INSTANCE)
+                    .setParameter("fundId", fundId, LongType.INSTANCE)
+                    .setParameter("chqFromDate", chqFromDate, StringType.INSTANCE)
+                    .setParameter("chqToDate", chqToDate, StringType.INSTANCE)
+                    .setParameter("chequeNo", chequeNo, StringType.INSTANCE)
+                    .list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("After Execute Query----getDishonoredChequeDetails");
             int i = 1;
@@ -195,8 +196,7 @@ public class DishonoredChequeReport
 
                 // for bank charges
                 for (int k = 0; k < originalVcId.length; k++)
-                    if (originalVcId[k].equals(voucherHeaderId))
-                    {
+                    if (originalVcId[k].equals(voucherHeaderId)) {
                         bkChgAvailable = true;
                         // data.put("bankRefNumber",bankRefNo[k] );
                         data.put("bankChargeAmt", bankCharge[k]);
@@ -237,12 +237,10 @@ public class DishonoredChequeReport
                     chequeNumber = element[7].toString();
                 else
                     chequeNumber = "&nbsp;";
-                if (element[8].toString() != null)
-                {
+                if (element[8].toString() != null) {
                     dt = format.parse(element[8].toString());
                     chequeDate = formatter.format(dt);
-                }
-                else
+                } else
                     chequeDate = "&nbsp;";
                 if (element[9].toString() != null)
                     amount = element[9].toString();
@@ -273,7 +271,7 @@ public class DishonoredChequeReport
                 data.put("voucherHeaderId", voucherHeaderId);
                 data.put("payinSlipVHeaderId", payinSlipVHeaderId);
                 data.put("cgnum", cgnum);
-                data.put("insMode", intrumentMode);
+                data.put("insMode", instrumentMode);
                 data.put("voucherNumber", voucherNumber);
                 data.put("bankRefNumber", bankReferenceNo);
                 data.put("voucherType", voucherType);
@@ -293,7 +291,7 @@ public class DishonoredChequeReport
 
             }// while
         } catch (final SQLException sqlE) {
-            LOGGER.error("Exception in main " + sqlE);
+            LOGGER.error("Exception in main ", sqlE);
             throw taskExc;
         }
         return arList;
@@ -305,38 +303,43 @@ public class DishonoredChequeReport
 
     private void getBankEntryDetails() throws Exception {
         try {
-            final StringBuffer basicquery1 = new StringBuffer(
-                    "SELECT rvh.id AS \"voucherHeaderId\",rvh.cgn AS \"cgnumber\",rvh.VOUCHERNUMBER AS \"voucherNumber\","
-                            + " rvh.TYPE AS \"vouType\",rvh.FUNDID AS \"fundId\",rvh.ORIGINALVCID AS \"oldVhId\","
-                            + " be.REFNO AS \"bankRefNumber\",be.TXNDATE AS \"bankRefDate\",be.TXNAMOUNT AS \"bankChargeAmt\" "
-                            + " FROM VOUCHERHEADER rvh,bankentries be");
-            StringBuffer wherequery1 = new StringBuffer(" WHERE rvh.NAME='Bank Entry' AND rvh.ID=be.VOUCHERHEADERID "
-                    + " AND rvh.ORIGINALVCID!=0  AND rvh.TYPE='Payment' ");
-            final StringBuffer orderbyquery = new StringBuffer(" ORDER BY \"oldVhId\" ");
+            final StringBuilder basicquery1 = new StringBuilder("SELECT rvh.id AS \"voucherHeaderId\", rvh.cgn AS \"cgnumber\",")
+                    .append(" rvh.VOUCHERNUMBER AS \"voucherNumber\", rvh.TYPE AS \"vouType\", rvh.FUNDID AS \"fundId\", rvh.ORIGINALVCID AS \"oldVhId\",")
+                    .append(" be.REFNO AS \"bankRefNumber\", be.TXNDATE AS \"bankRefDate\", be.TXNAMOUNT AS \"bankChargeAmt\"")
+                    .append(" FROM VOUCHERHEADER rvh, bankentries be");
+            StringBuilder wherequery1 = new StringBuilder(" WHERE rvh.NAME = 'Bank Entry' AND rvh.ID = be.VOUCHERHEADERID ")
+                    .append(" AND rvh.ORIGINALVCID != 0 AND rvh.TYPE = 'Payment'");
+            final StringBuilder orderbyquery = new StringBuilder(" ORDER BY \"oldVhId\" ");
 
             if (fundId != null && fundId != 0)
-                wherequery1 = wherequery1.append(" AND rvh.FUNDID=").append(fundId);
+                wherequery1.append(" AND rvh.FUNDID = :fundId");
 
             if (!chqFromDate.equals("") && !chqToDate.equals("")) {
                 if (LOGGER.isInfoEnabled())
                     LOGGER.info(" INSIDE FROM AND TO DATE ");
-                wherequery1 = wherequery1.append(" AND be.txndate BETWEEN ").append("to_date('" + chqFromDate + "')")
-                        .append(" and ").append("to_date('" + chqToDate + "')");
+                wherequery1.append(" AND be.txndate BETWEEN to_date(:chqFromDate) and to_date(:chqToDate)");
             } else {
                 if (LOGGER.isInfoEnabled())
                     LOGGER.info(" INSIDE FROM OR TO DATE ");
                 if (!chqFromDate.equals(""))
-                    wherequery1 = wherequery1.append(" AND be.txndate >='").append(chqFromDate).append("'");
+                    wherequery1.append(" AND be.txndate >= :chqFromDate");
                 if (!chqToDate.equals(""))
-                    wherequery1 = wherequery1.append(" AND be.txndate <='").append(chqToDate).append("'");
+                    wherequery1 = wherequery1.append(" AND be.txndate <= :chqToDate");
             }
 
-            final String query = new StringBuffer().append(basicquery1).append(wherequery1).append(orderbyquery).toString();
+            final StringBuilder query = new StringBuilder()
+                    .append(basicquery1)
+                    .append(wherequery1)
+                    .append(orderbyquery)
 
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("  getBankEntryDetails Query is  " + query);
 
-            rs = persistenceService.getSession().createNativeQuery(query).list();
+            rs = persistenceService.getSession().createNativeQuery(query.toString())
+                    .setParameter("fundId", fundId, LongType.INSTANCE)
+                    .setParameter("chqFromDate", chqFromDate, StringType.INSTANCE)
+                    .setParameter("chqToDate", chqToDate, StringType.INSTANCE)
+                    .list();
 
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("After Execute Query----getBankEntryDetails");
@@ -356,7 +359,7 @@ public class DishonoredChequeReport
                 i += 1;
             }
         } catch (final Exception sqlE) {
-            LOGGER.error("Exception in main " + sqlE);
+            LOGGER.error("Exception in main ", sqlE);
             throw taskExc;
         }
     }

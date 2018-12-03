@@ -157,5 +157,5 @@ public class BankReconciliationSummary {
         }
         return unReconciledDrCr;
     }
-    
+
 }

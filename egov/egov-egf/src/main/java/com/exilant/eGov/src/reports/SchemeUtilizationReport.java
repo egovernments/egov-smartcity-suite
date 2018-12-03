@@ -63,16 +63,12 @@ import java.sql.ResultSetMetaData;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-public class SchemeUtilizationReport
-{
+public class SchemeUtilizationReport {
 
     private static final Logger LOGGER = Logger.getLogger(SchemeUtilizationReport.class);
+    private static TaskFailedException taskExc;
     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
     String filterGlcode = "";
@@ -86,15 +82,12 @@ public class SchemeUtilizationReport
     CallableStatement cstmt = null;
     CallableStatement cstmt2 = null;
     String dynamicSubSchemName[];
-    private static TaskFailedException taskExc;
 
     public ArrayList getSchemeUtilizationReport(final int pschemeid, final String startDate, final String endDate)
-            throws Exception
-    {
+            throws Exception {
 
         Connection con = null;
-        try
-        {
+        try {
             con = null;// This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 
             LinkedHashMap data = null;
@@ -145,15 +138,13 @@ public class SchemeUtilizationReport
             new LinkedHashMap();
             String columnLabel = "", amt = "";
 
-            if (rs.next())
-            {
+            if (rs.next()) {
                 if (LOGGER.isInfoEnabled())
                     LOGGER.info("Inside while-for Opening balance Row");
                 data = new LinkedHashMap();
                 data.put("particulars", "<b>Opening Balance</b>");
 
-                for (int j = 0; j < dynamicColumn; j++)
-                {
+                for (int j = 0; j < dynamicColumn; j++) {
                     // if(LOGGER.isInfoEnabled()) LOGGER.info("dynamicColumn amount--->"+rs.getString(j+1));
                     // Here dynamic Column is starting from "1",that's why we have to start dynamic Column count from "1" onwards.
                     amt = rs.getString(j + 1);
@@ -170,16 +161,14 @@ public class SchemeUtilizationReport
                     data.put("schemetotal", "0.00");
 
                 part1.add(data);
-            }
-            else	// if no records in opening balance
+            } else    // if no records in opening balance
             {
                 if (LOGGER.isInfoEnabled())
                     LOGGER.info("Inside else--No records for Opening balance ");
                 data = new LinkedHashMap();
                 data.put("particulars", "<b>Opening Balance</b>");
 
-                for (int j = 0; j < dynamicColumn; j++)
-                {
+                for (int j = 0; j < dynamicColumn; j++) {
                     columnLabel = rsmd.getColumnName(j + 1);
                     data.put(columnLabel, "0.00");
                 }// for
@@ -237,8 +226,7 @@ public class SchemeUtilizationReport
             final String closingBalanceSubHead = "";
 
             dynamicSubSchemName = new String[dynamicColumn2];
-            for (int j = 0; j < dynamicColumn2; j++)
-            {
+            for (int j = 0; j < dynamicColumn2; j++) {
 
                 // Here dynamic Column is starting from "3",that's why we have to start dynamic Column count from "3" onwards.
                 dynamicSubSchemName[j] = rsmd2.getColumnName(j + 3);
@@ -247,8 +235,7 @@ public class SchemeUtilizationReport
 
             }
 
-            while (rs2.next())
-            {
+            while (rs2.next()) {
 
                 if (LOGGER.isInfoEnabled())
                     LOGGER.info("Inside while-for Scheme and sub scheme row");
@@ -256,16 +243,13 @@ public class SchemeUtilizationReport
                 // double totalSubScheme2 =0;
                 String columnLabel2 = "", amt2 = "";
 
-                if (rs2.getString("CTYPE").equalsIgnoreCase("L"))
-                {
-                    if (!addCapitalReceiptsSubHead.equals("CRECEIPTS"))
-                    {
+                if (rs2.getString("CTYPE").equalsIgnoreCase("L")) {
+                    if (!addCapitalReceiptsSubHead.equals("CRECEIPTS")) {
                         data = new LinkedHashMap();
 
                         data.put("particulars", "<b>Add: Capital Receipts</b>");
 
-                        for (int j = 0; j < dynamicColumn2; j++)
-                        {
+                        for (int j = 0; j < dynamicColumn2; j++) {
                             columnLabel2 = rsmd2.getColumnName(j + 3);
                             data.put(columnLabel2, "&nbsp;");
                         }
@@ -280,8 +264,7 @@ public class SchemeUtilizationReport
 
                     data.put("particulars", rs2.getString("MAJORCODE") + "-" + rs2.getString("COANAME"));
 
-                    for (int j = 0; j < dynamicColumn2; j++)
-                    {
+                    for (int j = 0; j < dynamicColumn2; j++) {
                         // if(LOGGER.isInfoEnabled()) LOGGER.info("dynamicColumn amount--->"+rs2.getString(j+3));
                         // Here dynamic Column is starting from "3",that's why we have to start dynamic Column count from "3"
                         // onwards.
@@ -305,14 +288,11 @@ public class SchemeUtilizationReport
 
                     part2.add(data);
                 } // for "Liability code"
-                else if (rs2.getString("CTYPE").equalsIgnoreCase("I"))
-                {
-                    if (!addRevenueReceiptsSubHead.equals("RENENUERECEIPTS"))
-                    {
+                else if (rs2.getString("CTYPE").equalsIgnoreCase("I")) {
+                    if (!addRevenueReceiptsSubHead.equals("RENENUERECEIPTS")) {
                         data = new LinkedHashMap();
                         data.put("particulars", "<b>Add: Revenue Receipts</b>");
-                        for (int j = 0; j < dynamicColumn2; j++)
-                        {
+                        for (int j = 0; j < dynamicColumn2; j++) {
                             columnLabel2 = rsmd2.getColumnName(j + 3);
                             data.put(columnLabel2, "&nbsp;");
                         }
@@ -322,8 +302,7 @@ public class SchemeUtilizationReport
                     }
                     data = new LinkedHashMap();
                     data.put("particulars", rs2.getString("MAJORCODE") + "-" + rs2.getString("COANAME"));
-                    for (int j = 0; j < dynamicColumn2; j++)
-                    {
+                    for (int j = 0; j < dynamicColumn2; j++) {
                         // if(LOGGER.isInfoEnabled()) LOGGER.info("dynamicColumn amount--->"+rs2.getString(j+3));
                         amt2 = rs2.getString(j + 3);
 
@@ -347,16 +326,13 @@ public class SchemeUtilizationReport
                     part3.add(data);
 
                 } // for "Income code"
-                else if (rs2.getString("CTYPE").equalsIgnoreCase("A"))
-                {
-                    if (!lessCapitalExpSubHead.equals("CEXPENDITURE"))
-                    {
+                else if (rs2.getString("CTYPE").equalsIgnoreCase("A")) {
+                    if (!lessCapitalExpSubHead.equals("CEXPENDITURE")) {
                         data = new LinkedHashMap();
 
                         data.put("particulars", "<b>Less: Capital Expenditure</b>");
 
-                        for (int j = 0; j < dynamicColumn2; j++)
-                        {
+                        for (int j = 0; j < dynamicColumn2; j++) {
                             columnLabel2 = rsmd2.getColumnName(j + 3);
                             data.put(columnLabel2, "&nbsp;");
                         }
@@ -370,8 +346,7 @@ public class SchemeUtilizationReport
                     data = new LinkedHashMap();
                     data.put("particulars", rs2.getString("MAJORCODE") + "-" + rs2.getString("COANAME"));
 
-                    for (int j = 0; j < dynamicColumn2; j++)
-                    {
+                    for (int j = 0; j < dynamicColumn2; j++) {
                         // if(LOGGER.isInfoEnabled()) LOGGER.info("dynamicColumn amount--->"+rs2.getString(j+3));
                         amt2 = rs2.getString(j + 3);
 
@@ -398,16 +373,13 @@ public class SchemeUtilizationReport
                     part4.add(data);
 
                 } // for "Asset code"
-                else if (rs2.getString("CTYPE").equalsIgnoreCase("E"))
-                {
-                    if (!lessRevenueExpSubHead.equals("RENENUEEXPENDITURE"))
-                    {
+                else if (rs2.getString("CTYPE").equalsIgnoreCase("E")) {
+                    if (!lessRevenueExpSubHead.equals("RENENUEEXPENDITURE")) {
                         data = new LinkedHashMap();
 
                         data.put("particulars", "<b>Less: Revenue Expenditure</b>");
 
-                        for (int j = 0; j < dynamicColumn2; j++)
-                        {
+                        for (int j = 0; j < dynamicColumn2; j++) {
                             columnLabel2 = rsmd2.getColumnName(j + 3);
                             data.put(columnLabel2, "&nbsp;");
                         }
@@ -421,8 +393,7 @@ public class SchemeUtilizationReport
                     data = new LinkedHashMap();
                     data.put("particulars", rs2.getString("MAJORCODE") + "-" + rs2.getString("COANAME"));
 
-                    for (int j = 0; j < dynamicColumn2; j++)
-                    {
+                    for (int j = 0; j < dynamicColumn2; j++) {
                         // if(LOGGER.isInfoEnabled()) LOGGER.info("dynamicColumn amount--->"+rs2.getString(j+3));
                         amt2 = rs2.getString(j + 3);
 
@@ -459,8 +430,7 @@ public class SchemeUtilizationReport
 
             // If it is no record for that particular ctype,we have to show empty row start
 
-            if (addCapitalReceiptsSubHead.equals(""))
-            {
+            if (addCapitalReceiptsSubHead.equals("")) {
 
                 if (LOGGER.isInfoEnabled())
                     LOGGER.info("Inside If it is No Capital Receipts---------->");
@@ -477,8 +447,7 @@ public class SchemeUtilizationReport
                 part2.add(data);
 
             }
-            if (addRevenueReceiptsSubHead.equals(""))
-            {
+            if (addRevenueReceiptsSubHead.equals("")) {
                 if (LOGGER.isInfoEnabled())
                     LOGGER.info("Inside If it is No Revenue Receipts----------->");
 
@@ -494,8 +463,7 @@ public class SchemeUtilizationReport
                 part3.add(data);
 
             }
-            if (lessCapitalExpSubHead.equals(""))
-            {
+            if (lessCapitalExpSubHead.equals("")) {
 
                 if (LOGGER.isInfoEnabled())
                     LOGGER.info("Inside If it is No Capital Expenditure---------->");
@@ -512,8 +480,7 @@ public class SchemeUtilizationReport
                 part4.add(data);
 
             }
-            if (lessRevenueExpSubHead.equals(""))
-            {
+            if (lessRevenueExpSubHead.equals("")) {
                 if (LOGGER.isInfoEnabled())
                     LOGGER.info("Inside If it is No Revenue Expenditure---------->");
                 data = new LinkedHashMap();
@@ -535,22 +502,19 @@ public class SchemeUtilizationReport
             final LinkedHashMap totalOpeningBal = new LinkedHashMap();
 
             final Iterator itr = part1.iterator();
-            while (itr.hasNext())
-            {
+            while (itr.hasNext()) {
                 final LinkedHashMap hm = (LinkedHashMap) itr.next();
                 final Set keySet = hm.keySet();
                 final Iterator itr1 = keySet.iterator();
-                while (itr1.hasNext())
-                {
+                while (itr1.hasNext()) {
 
                     final String str = (String) itr1.next();
                     for (int i = 0; i < dynamicSubSchemName.length; i++)
-                        if (totalOpeningBal.containsKey(dynamicSubSchemName[i]))
-                        {
+                        if (totalOpeningBal.containsKey(dynamicSubSchemName[i])) {
                             BigDecimal temp = new BigDecimal("0.00");
                             if (!hm.get(dynamicSubSchemName[i]).equals("&nbsp;") && str.equals(dynamicSubSchemName[i]))
                                 temp = new BigDecimal(totalOpeningBal.get(dynamicSubSchemName[i]).toString())
-                            .add(new BigDecimal(hm.get(dynamicSubSchemName[i]).toString()));
+                                        .add(new BigDecimal(hm.get(dynamicSubSchemName[i]).toString()));
                             else
                                 temp = new BigDecimal(totalOpeningBal.get(dynamicSubSchemName[i]).toString());
                             totalOpeningBal.put(dynamicSubSchemName[i], temp);
@@ -558,8 +522,7 @@ public class SchemeUtilizationReport
                             totalOpeningBal.put(dynamicSubSchemName[i], hm.get(dynamicSubSchemName[i]).toString());
 
                     // for scheme total
-                    if (totalOpeningBal.containsKey("schemetotal"))
-                    {
+                    if (totalOpeningBal.containsKey("schemetotal")) {
 
                         BigDecimal temp = new BigDecimal("0.00");
                         if (!hm.get("schemetotal").equals("&nbsp;") && str.equals("schemetotal"))
@@ -576,21 +539,18 @@ public class SchemeUtilizationReport
             }// end while 1
 
             final Iterator itr2 = part2.iterator();
-            while (itr2.hasNext())
-            {
+            while (itr2.hasNext()) {
                 final LinkedHashMap hm = (LinkedHashMap) itr2.next();
                 final Set keySet = hm.keySet();
                 final Iterator itr1 = keySet.iterator();
-                while (itr1.hasNext())
-                {
+                while (itr1.hasNext()) {
                     final String str = (String) itr1.next();
                     for (int i = 0; i < dynamicSubSchemName.length; i++)
-                        if (totalOpeningBal.containsKey(dynamicSubSchemName[i]))
-                        {
+                        if (totalOpeningBal.containsKey(dynamicSubSchemName[i])) {
                             BigDecimal temp = new BigDecimal("0.00");
                             if (!hm.get(dynamicSubSchemName[i]).equals("&nbsp;") && str.equals(dynamicSubSchemName[i]))
                                 temp = new BigDecimal(totalOpeningBal.get(dynamicSubSchemName[i]).toString())
-                            .add(new BigDecimal(hm.get(dynamicSubSchemName[i]).toString()));
+                                        .add(new BigDecimal(hm.get(dynamicSubSchemName[i]).toString()));
                             else
                                 temp = new BigDecimal(totalOpeningBal.get(dynamicSubSchemName[i]).toString());
                             totalOpeningBal.put(dynamicSubSchemName[i], temp);
@@ -598,8 +558,7 @@ public class SchemeUtilizationReport
                             totalOpeningBal.put(dynamicSubSchemName[i], hm.get(dynamicSubSchemName[i]).toString());
 
                     // for scheme total
-                    if (totalOpeningBal.containsKey("schemetotal"))
-                    {
+                    if (totalOpeningBal.containsKey("schemetotal")) {
                         BigDecimal temp = new BigDecimal("0.00");
                         if (!hm.get("schemetotal").equals("&nbsp;") && str.equals("schemetotal"))
                             temp = new BigDecimal(totalOpeningBal.get("schemetotal").toString()).add(new BigDecimal(hm
@@ -615,21 +574,18 @@ public class SchemeUtilizationReport
             }// end while 1
 
             final Iterator itr3 = part3.iterator();
-            while (itr3.hasNext())
-            {
+            while (itr3.hasNext()) {
                 final LinkedHashMap hm = (LinkedHashMap) itr3.next();
                 final Set keySet = hm.keySet();
                 final Iterator itr1 = keySet.iterator();
-                while (itr1.hasNext())
-                {
+                while (itr1.hasNext()) {
                     final String str = (String) itr1.next();
                     for (int i = 0; i < dynamicSubSchemName.length; i++)
-                        if (totalOpeningBal.containsKey(dynamicSubSchemName[i]))
-                        {
+                        if (totalOpeningBal.containsKey(dynamicSubSchemName[i])) {
                             BigDecimal temp = new BigDecimal("0.00");
                             if (!hm.get(dynamicSubSchemName[i]).equals("&nbsp;") && str.equals(dynamicSubSchemName[i]))
                                 temp = new BigDecimal(totalOpeningBal.get(dynamicSubSchemName[i]).toString())
-                            .add(new BigDecimal(hm.get(dynamicSubSchemName[i]).toString()));
+                                        .add(new BigDecimal(hm.get(dynamicSubSchemName[i]).toString()));
                             else
                                 temp = new BigDecimal(totalOpeningBal.get(dynamicSubSchemName[i]).toString());
                             totalOpeningBal.put(dynamicSubSchemName[i], temp);
@@ -637,8 +593,7 @@ public class SchemeUtilizationReport
                             totalOpeningBal.put(dynamicSubSchemName[i], hm.get(dynamicSubSchemName[i]).toString());
 
                     // for scheme total
-                    if (totalOpeningBal.containsKey("schemetotal"))
-                    {
+                    if (totalOpeningBal.containsKey("schemetotal")) {
                         BigDecimal temp = new BigDecimal("0.00");
                         if (!hm.get("schemetotal").equals("&nbsp;") && str.equals("schemetotal"))
                             temp = new BigDecimal(totalOpeningBal.get("schemetotal").toString()).add(new BigDecimal(hm
@@ -653,8 +608,7 @@ public class SchemeUtilizationReport
                 }// end while 2
             }// end while 1
 
-            if (!totalReceiptsSubHead.equals("TotalReceipts"))
-            {
+            if (!totalReceiptsSubHead.equals("TotalReceipts")) {
                 data = new LinkedHashMap();
 
                 data.put("particulars", "<b>Total Receipts including Opening Balance</b>");
@@ -673,21 +627,18 @@ public class SchemeUtilizationReport
             // cumulative for Total Closing Balance start
 
             final Iterator itr4 = part4.iterator();
-            while (itr4.hasNext())
-            {
+            while (itr4.hasNext()) {
                 final LinkedHashMap hm = (LinkedHashMap) itr4.next();
                 final Set keySet = hm.keySet();
                 final Iterator itr1 = keySet.iterator();
-                while (itr1.hasNext())
-                {
+                while (itr1.hasNext()) {
                     final String str = (String) itr1.next();
                     for (int i = 0; i < dynamicSubSchemName.length; i++)
-                        if (totalOpeningBal.containsKey(dynamicSubSchemName[i]))
-                        {
+                        if (totalOpeningBal.containsKey(dynamicSubSchemName[i])) {
                             BigDecimal temp = new BigDecimal("0.00");
                             if (!hm.get(dynamicSubSchemName[i]).equals("&nbsp;") && str.equals(dynamicSubSchemName[i]))
                                 temp = new BigDecimal(totalOpeningBal.get(dynamicSubSchemName[i]).toString())
-                            .subtract(new BigDecimal(hm.get(dynamicSubSchemName[i]).toString()));
+                                        .subtract(new BigDecimal(hm.get(dynamicSubSchemName[i]).toString()));
                             else
                                 temp = new BigDecimal(totalOpeningBal.get(dynamicSubSchemName[i]).toString());
                             totalOpeningBal.put(dynamicSubSchemName[i], temp);
@@ -695,8 +646,7 @@ public class SchemeUtilizationReport
                             totalOpeningBal.put(dynamicSubSchemName[i], hm.get(dynamicSubSchemName[i]).toString());
 
                     // for scheme total
-                    if (totalOpeningBal.containsKey("schemetotal"))
-                    {
+                    if (totalOpeningBal.containsKey("schemetotal")) {
                         BigDecimal temp = new BigDecimal("0.00");
                         if (!hm.get("schemetotal").equals("&nbsp;") && str.equals("schemetotal"))
                             temp = new BigDecimal(totalOpeningBal.get("schemetotal").toString()).subtract(new BigDecimal(hm
@@ -712,21 +662,18 @@ public class SchemeUtilizationReport
             }// end while 1
 
             final Iterator itr5 = part5.iterator();
-            while (itr5.hasNext())
-            {
+            while (itr5.hasNext()) {
                 final LinkedHashMap hm = (LinkedHashMap) itr5.next();
                 final Set keySet = hm.keySet();
                 final Iterator itr1 = keySet.iterator();
-                while (itr1.hasNext())
-                {
+                while (itr1.hasNext()) {
                     final String str = (String) itr1.next();
                     for (int i = 0; i < dynamicSubSchemName.length; i++)
-                        if (totalOpeningBal.containsKey(dynamicSubSchemName[i]))
-                        {
+                        if (totalOpeningBal.containsKey(dynamicSubSchemName[i])) {
                             BigDecimal temp = new BigDecimal(0);
                             if (!hm.get(dynamicSubSchemName[i]).equals("&nbsp;") && str.equals(dynamicSubSchemName[i]))
                                 temp = new BigDecimal(totalOpeningBal.get(dynamicSubSchemName[i]).toString())
-                            .subtract(new BigDecimal(hm.get(dynamicSubSchemName[i]).toString()));
+                                        .subtract(new BigDecimal(hm.get(dynamicSubSchemName[i]).toString()));
                             else
                                 temp = new BigDecimal(totalOpeningBal.get(dynamicSubSchemName[i]).toString());
                             totalOpeningBal.put(dynamicSubSchemName[i], temp);
@@ -734,8 +681,7 @@ public class SchemeUtilizationReport
                             totalOpeningBal.put(dynamicSubSchemName[i], hm.get(dynamicSubSchemName[i]).toString());
 
                     // for scheme total
-                    if (totalOpeningBal.containsKey("schemetotal"))
-                    {
+                    if (totalOpeningBal.containsKey("schemetotal")) {
                         BigDecimal temp = new BigDecimal(0);
                         if (!hm.get("schemetotal").equals("&nbsp;") && str.equals("schemetotal"))
                             temp = new BigDecimal(totalOpeningBal.get("schemetotal").toString()).subtract(new BigDecimal(hm
@@ -750,8 +696,7 @@ public class SchemeUtilizationReport
                 }// end while 2
             }// end while 1
 
-            if (!closingBalanceSubHead.equals("ClosingBalance "))
-            {
+            if (!closingBalanceSubHead.equals("ClosingBalance ")) {
                 data = new LinkedHashMap();
 
                 data.put("particulars", "<b>Closing Balance</b>");
@@ -767,8 +712,7 @@ public class SchemeUtilizationReport
 
             // cumulative for Total Closing Balance end
 
-        } catch (final Exception e)
-        {
+        } catch (final Exception e) {
             LOGGER.error("Exp in Scheme Report==" + e.getMessage());
             throw taskExc;
         }
@@ -778,49 +722,42 @@ public class SchemeUtilizationReport
         final ArrayList finalReportList = new ArrayList();
 
         final Iterator itrOpBal = part1.iterator();
-        while (itrOpBal.hasNext())
-        {
+        while (itrOpBal.hasNext()) {
             final LinkedHashMap hm = (LinkedHashMap) itrOpBal.next();
             finalReportList.add(hm);
         }
 
         final Iterator itr1 = part2.iterator();
-        while (itr1.hasNext())
-        {
+        while (itr1.hasNext()) {
             final LinkedHashMap hm = (LinkedHashMap) itr1.next();
             finalReportList.add(hm);
         }
         final Iterator itr2 = part3.iterator();
-        while (itr2.hasNext())
-        {
+        while (itr2.hasNext()) {
             final LinkedHashMap hm = (LinkedHashMap) itr2.next();
             finalReportList.add(hm);
         }
 
         final Iterator itrTotalR = partTotalReceipts.iterator();
-        while (itrTotalR.hasNext())
-        {
+        while (itrTotalR.hasNext()) {
             final LinkedHashMap hm = (LinkedHashMap) itrTotalR.next();
             finalReportList.add(hm);
         }
 
         final Iterator itr3 = part4.iterator();
-        while (itr3.hasNext())
-        {
+        while (itr3.hasNext()) {
             final LinkedHashMap hm = (LinkedHashMap) itr3.next();
             finalReportList.add(hm);
         }
 
         final Iterator itr4 = part5.iterator();
-        while (itr4.hasNext())
-        {
+        while (itr4.hasNext()) {
             final LinkedHashMap hm = (LinkedHashMap) itr4.next();
             finalReportList.add(hm);
         }
 
         final Iterator itrClosingTotal = partTotalClosingBal.iterator();
-        while (itrClosingTotal.hasNext())
-        {
+        while (itrClosingTotal.hasNext()) {
             final LinkedHashMap hm = (LinkedHashMap) itrClosingTotal.next();
             finalReportList.add(hm);
         }
@@ -828,8 +765,7 @@ public class SchemeUtilizationReport
         return finalReportList;
     }
 
-    public String formatAmtTwoDecimal(final String amt)
-    {
+    public String formatAmtTwoDecimal(final String amt) {
         // BigDecimal ammt= new BigDecimal(0.000);
         NumberFormat formatter;
         formatter = new DecimalFormat("##############0.00");

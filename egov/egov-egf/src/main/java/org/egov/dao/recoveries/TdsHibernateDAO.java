@@ -246,12 +246,11 @@ public class TdsHibernateDAO {
         final StringBuffer recoveryQuery = new StringBuffer(400);
         List<Recovery> listTds;
         recoveryQuery
-                .append("From Recovery where egPartytype.id in ( select id from EgPartytype where code=?) and isactive=true");
+                .append("From Recovery where egPartytype.id in ( select id from EgPartytype where code = ?1) and isactive = true");
         if (null != asOndate)
-            recoveryQuery.append(" and id in (select recovery.id from EgDeductionDetails where datefrom <= '")
-                    .append(DDMMYYYYFORMAT1.format(asOndate)).append("' AND dateto >='")
-                    .append(DDMMYYYYFORMAT1.format(asOndate)).append("')");
-        listTds = persistenceService.findAllBy(recoveryQuery.toString(), "Contractor");
+            recoveryQuery.append(" and id in (select recovery.id from EgDeductionDetails where datefrom <= ?2 AND dateto >= ?3)");
+        listTds = persistenceService.findAllBy(recoveryQuery.toString(), "Contractor", DDMMYYYYFORMAT1.format(asOndate),
+                DDMMYYYYFORMAT1.format(asOndate));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("The size of recovery for party type Contractor is :" + listTds.size());
         if (LOGGER.isDebugEnabled())
@@ -262,7 +261,7 @@ public class TdsHibernateDAO {
 
     public EgPartytype getPartytypeByCode(final String code) {
         session = getCurrentSession();
-        final Query qry = session.createQuery("from EgPartytype where code=:code");
+        final Query qry = session.createQuery("from EgPartytype where code = :code");
         qry.setString("code", code.trim());
         return (EgPartytype) qry.uniqueResult();
     }

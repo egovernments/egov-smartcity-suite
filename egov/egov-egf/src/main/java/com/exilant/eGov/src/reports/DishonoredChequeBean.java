@@ -51,8 +51,7 @@
  */
 package com.exilant.eGov.src.reports;
 
-public class DishonoredChequeBean
-{
+public class DishonoredChequeBean {
 
     // For search criteria parameter
     private String startDate = "";

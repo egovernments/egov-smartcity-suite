@@ -143,7 +143,7 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
                 {
                     final EgChecklists checkList = new EgChecklists();
                     final AppConfigValues configValue = (AppConfigValues) persistenceService.find(
-                            "from AppConfigValues where id=?",
+                            "from AppConfigValues where id = ?1",
                             clh.getId());
                     checkList.setObjectid(bill.getId());
                     checkList.setAppconfigvalue(configValue);
@@ -221,7 +221,7 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
                     .withDateInfo(currentDate.toDate());
         } else {
             if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
-                pos = (Position) persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
+                pos = (Position) persistenceService.find("from Position where id = ?1", workflowBean.getApproverPositionId());
             if (null == billregister.getState()) {
                 final WorkFlowMatrix wfmatrix = billRegisterWorkflowService.getWfMatrix(billregister.getStateType(), null,
                         null, null, workflowBean.getCurrentState(), null);

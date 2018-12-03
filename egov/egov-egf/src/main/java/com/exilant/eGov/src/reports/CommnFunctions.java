@@ -57,6 +57,8 @@ import com.exilant.exility.common.TaskFailedException;
 import org.apache.log4j.Logger;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.query.Query;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -70,50 +72,45 @@ import java.util.List;
 
 /**
  * @author Lakshmi
- *
+ * <p>
  * TODO To change the template for this generated type comment go to Window - Preferences - Java - Code Style - Code Templates
  */
 @Service
-public class CommnFunctions
-{
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
-
+public class CommnFunctions {
     private static final Logger LOGGER = Logger.getLogger(CommnFunctions.class);
-    private List<Object[]> resultset;
-    Query pstmt = null;
     private static TaskFailedException taskExc;
     /**/
     public String reqFundId[];
     public String reqFundName[];
+    Query pstmt = null;
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    private List<Object[]> resultset;
 
     /**
      * This method extracts all the fund ids and fund names.
-     * @param conn :reference of Connection
-     * @param fundId :The id of the fund for which the opening balances has to be calculated
+     *
+     * @param fundId    :The id of the fund for which the opening balances has to be calculated
      * @param startDate :The start date of the financial year for which opening balance has to be calculated
-     * @param endDate :The end date of the financial year for which opening balance has to be calculated.
-     * @param effFilter :The Effective Date Filter
-     * @param type1 :The type of account code (A,E,L,I)
-     * @param type2 :The type of account code (A,E,L,I)
+     * @param endDate   :The end date of the financial year for which opening balance has to be calculated.
      * @throws Exception
      */
-    public void getFundList(final String fundId, final String startDate, final String endDate) throws Exception
-    {
+    public void getFundList(final String fundId, final String startDate, final String endDate) throws Exception {
         String fundCondition = "";
-        // String fundCondition1="";
         if (!fundId.equalsIgnoreCase(""))
-            fundCondition = " AND Id=? ";
-        // fundCondition1="AND transactionsummary.fundId="+fundId+" ";
-        try
-        {
-            final String query = " select id,name from fund where isactive=true and isnotleaf!=true " + fundCondition + " order by id";
+            fundCondition = " AND Id = :fundId ";
+        try {
+            final StringBuilder query = new StringBuilder("select id, name")
+                    .append(" from fund")
+                    .append(" where isactive = true and isnotleaf != true ")
+                    .append(fundCondition)
+                    .append(" order by id");
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("getFundList: " + query);
-            pstmt = persistenceService.getSession().createNativeQuery(query);
+            pstmt = persistenceService.getSession().createNativeQuery(query.toString());
             if (!fundId.equalsIgnoreCase(""))
-                pstmt.setString(0, fundId);
+                pstmt.setParameter("fundId", fundId, StringType.INSTANCE);
             resultset = pstmt.list();
             int resSize = 0, i = 0;
             resSize = resultset.size();
@@ -125,11 +122,9 @@ public class CommnFunctions
                 reqFundId[i] = element[0].toString();
                 reqFundName[i] = element[1].toString();
                 i += 1;
-
             }
-        } catch (final Exception ex)
-        {
-            LOGGER.error("ERROR in FundList coomonfun" + ex.getMessage(), ex);
+        } catch (final Exception ex) {
+            LOGGER.error("ERROR in FundList coomonfun", ex);
             LOGGER.error("Error in getting fund list");
             throw taskExc;
         }
@@ -139,47 +134,45 @@ public class CommnFunctions
      * Get the opening balance for the list of account codes for a particular fund if fund is passed as a parameter for a
      * particular financial year. Else get the opening balance of all the account codes irrespective of fund for a particular
      * financial year
-     * @param fundId :The id of the fund for which the opening balances has to be calculated
-     * @param type1 :The type of account code (A,I)
-     * @param type2 :The type of account code (L,E)
-     * @param substringVal :The no of digits to pick from the glcode for grouping. (2 for major code, 3 for minor code)
-     * @param startDate :The start date of the financial year for which opening balance has to be calculated
-     * @param endDate :The end date of the financial year for which opening balance has to be calculated.
+     *
+     * @param fundId                        :The id of the fund for which the opening balances has to be calculated
+     * @param type1                         :The type of account code (A,I)
+     * @param type2                         :The type of account code (L,E)
+     * @param substringVal                  :The no of digits to pick from the glcode for grouping. (2 for major code, 3 for minor code)
+     * @param startDate                     :The start date of the financial year for which opening balance has to be calculated
+     * @param endDate                       :The end date of the financial year for which opening balance has to be calculated.
      * @param classification:Classification of the code for which opening balance has to be calculated
-     * @param reqFundId1 :List of fundIds
-     * @param openingBal :This parameter is called by reference so it acts as input & output
+     * @param reqFundId1                    :List of fundIds
+     * @param openingBal                    :This parameter is called by reference so it acts as input & output
      * @throws Exception
      */
     public void getOpeningBalance(final String fundId, final String type1, final String type2, final String substringVal,
-            final String startDate,
-            final String endDate, final int classification, final String reqFundId1[], final HashMap openingBal) throws Exception
-    {
+                                  final String startDate,
+                                  final String endDate, final int classification, final String reqFundId1[], final HashMap openingBal) throws Exception {
         String fundCondition = "";
         if (!fundId.equalsIgnoreCase(""))
-            fundCondition = "AND f.Id=? ";
+            fundCondition = " AND f.Id = :fundId";
         String glcode = "", fuId = "";
-        final String query = "SELECT substr(coa.glcode,0,"
-                + substringVal
-                + ") as \"glcode\",ts.fundid as \"fundid\" ,"
-                + " case when coa.type = ? then sum(ts.openingcreditbalance)-sum(ts.openingdebitbalance) else sum(ts.openingdebitbalance)-sum(ts.openingcreditbalance) end as \"amount\" "
-                + " FROM transactionsummary ts,  chartofaccounts coa,fund  f   WHERE (coa.TYPE = ? OR coa.TYPE = ?) and coa.id = ts.glcodeid "
-                + " AND financialyearid =(SELECT ID FROM financialyear WHERE startingdate <= ? AND endingdate >= ?)  "
-                + fundCondition + " and f.id=ts.fundid and f.isactive=true and f.isnotleaf!=true "
-                + " GROUP BY substr(coa.glcode,0," + substringVal + "), fundid ,coa.type ";
+        final StringBuilder query = new StringBuilder("SELECT substr(coa.glcode, 0, ").append(substringVal)
+                .append(" ) as \"glcode\", ts.fundid as \"fundid\", case when coa.type = :type2 then sum(ts.openingcreditbalance) - sum(ts.openingdebitbalance)")
+                .append(" else sum(ts.openingdebitbalance)-sum(ts.openingcreditbalance) end as \"amount\"")
+                .append(" FROM transactionsummary ts,  chartofaccounts coa,fund  f")
+                .append(" WHERE (coa.TYPE = :type1 OR coa.TYPE = :type2) and coa.id = ts.glcodeid ")
+                .append(" AND financialyearid = (SELECT ID FROM financialyear WHERE startingdate <= :startDate AND endingdate >= :endDate)")
+                .append(fundCondition).append(" and f.id = ts.fundid and f.isactive = true and f.isnotleaf != true")
+                .append(" GROUP BY substr(coa.glcode, 0, ").append(substringVal)
+                .append("), fundid, coa.type ");
         if (LOGGER.isInfoEnabled())
             LOGGER.info("query " + query);
-        try
-        {
-            int j = 1;
+        try {
             getFundList(fundId, startDate, endDate);
-            pstmt = persistenceService.getSession().createNativeQuery(query);
-            pstmt.setString(j++, type2);
-            pstmt.setString(j++, type1);
-            pstmt.setString(j++, type2);
-            pstmt.setString(j++, startDate);
-            pstmt.setString(j++, endDate);
+            pstmt = persistenceService.getSession().createNativeQuery(query.toString());
+            pstmt.setParameter("type2", type2, StringType.INSTANCE);
+            pstmt.setParameter("type1", type1, StringType.INSTANCE);
+            pstmt.setParameter("startDate", startDate, StringType.INSTANCE);
+            pstmt.setParameter("endDate", endDate, StringType.INSTANCE);
             if (!fundId.equalsIgnoreCase(""))
-                pstmt.setString(j++, fundId);
+                pstmt.setParameter("fundId", fundId, StringType.INSTANCE);
             resultset = pstmt.list();
             Double opeBal = null;
             HashMap openingBalsubList = null;
@@ -187,8 +180,7 @@ public class CommnFunctions
                 glcode = element[0].toString();
                 fuId = element[1].toString();
                 opeBal = Double.parseDouble(element[2].toString());
-                if (!openingBal.containsKey(glcode))
-                {
+                if (!openingBal.containsKey(glcode)) {
                     openingBalsubList = new HashMap();
                     for (final String element2 : reqFundId1)
                         if (element2.equalsIgnoreCase(fuId))
@@ -200,65 +192,61 @@ public class CommnFunctions
                     ((HashMap) openingBal.get(glcode)).put(fuId, opeBal);
 
             }
-        } catch (final Exception e)
-        {
+        } catch (final Exception e) {
             if (LOGGER.isInfoEnabled())
-                LOGGER.info("Error in getOpeningBalance" + e.getMessage(), e);
+                LOGGER.info("Error in getOpeningBalance", e);
             throw taskExc;
         }
-
     }
 
     /**
      * Get the sum of debit amount minus the sum of credit amounts for the list of account codes for a particular fund from the GL
      * if fund is passed as a parameter for a particular financial year. Else get the sum of debit amount minus the sum of credit
      * amounts of all the account codes irrespective of fund for a particular financial year
-     * @param fundid :The id of the fund for which the opening balances has to be calculated
-     * @param type1 :The type of account code (A,E,L,I)
-     * @param type2 :The type of account code (A,E,L,I)
-     * @param substringVal :The no of digits to pick from the glcode for grouping. (2 for major code, 3 for minor code)
-     * @param startDate :The start date of the financial year for which opening balance has to be calculated
-     * @param endDate :The end date of the financial year for which opening balance has to be calculated
-     * @param classification :Classification of the code for which opening balance has to be calculated
-     * @param effFilter :The Effective Date Filter
+     *
+     * @param fundid                 :The id of the fund for which the opening balances has to be calculated
+     * @param type1                  :The type of account code (A,E,L,I)
+     * @param type2                  :The type of account code (A,E,L,I)
+     * @param substringVal           :The no of digits to pick from the glcode for grouping. (2 for major code, 3 for minor code)
+     * @param startDate              :The start date of the financial year for which opening balance has to be calculated
+     * @param endDate                :The end date of the financial year for which opening balance has to be calculated
+     * @param classification         :Classification of the code for which opening balance has to be calculated
+     * @param effFilter              :The Effective Date Filter
      * @param txnBalancehasmap:Since HashMap is called by Reference same list will get effected in called method
      * @throws Exception
      */
     public void getTxnBalance(final Connection conn, final String fundid, final String type1, final String type2,
-            final String substringVal, final String startDate,
-            final String endDate, final int classification, final String effFilter, final HashMap txnBalancehasmap)
-            throws Exception
-    {
+                              final String substringVal, final String startDate,
+                              final String endDate, final int classification, final String effFilter, final HashMap txnBalancehasmap)
+            throws Exception {
         String fundCondition = " ";
         if (fundid != null && !fundid.equals(""))
-            fundCondition = " and vh.fundid= ?";
+            fundCondition = " and vh.fundid = :fundId";
 
-        final String query1 = "SELECT SUBSTR(coa.GLCODE,1,2)as \"glCode\",vh.fundid as \"fundId\",case when sum(gl.debitamount)-sum(gl.creditAmount) = null then 0 else sum(gl.debitamount)-sum(gl.creditAmount)"
-                + "as \"amount\" FROM chartofaccounts  coa,generalledger gl,"
-                + " voucherHeader vh WHERE coa.TYPE = ? and vh.ID =  gl.VOUCHERHEADERID AND  gl.glcode=coa.glcode "
-                + " AND vh.VOUCHERDATE >= ? AND vh.VOUCHERDATE <= ?" + fundCondition + "  " + effFilter;
+        final StringBuilder query1 = new StringBuilder("SELECT SUBSTR(coa.GLCODE,1,2) as \"glCode\", vh.fundid as \"fundId\", case when sum(gl.debitamount) - sum(gl.creditAmount) = null")
+                .append(" then 0 else sum(gl.debitamount) - sum(gl.creditAmount) as \"amount\"")
+                .append(" FROM chartofaccounts coa, generalledger gl, voucherHeader vh")
+                .append(" WHERE coa.TYPE = :type1 and vh.ID = gl.VOUCHERHEADERID AND gl.glcode=coa.glcode AND vh.VOUCHERDATE >= :startDate AND vh.VOUCHERDATE <= :endDate")
+                .append(fundCondition).append("  ").append(effFilter);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("getI: " + query1);
-        try
-        {
-            int j = 1;
-            pstmt = persistenceService.getSession().createNativeQuery(query1);
-            pstmt.setString(j++, type1);
-            pstmt.setString(j++, startDate);
-            pstmt.setString(j++, endDate);
+        try {
+            pstmt = persistenceService.getSession().createNativeQuery(query1.toString());
+            pstmt.setParameter("type1", type1, StringType.INSTANCE);
+            pstmt.setParameter("startDate", startDate, StringType.INSTANCE);
+            pstmt.setParameter("endDate", endDate, StringType.INSTANCE);
             if (fundid != null && !fundid.equals(""))
-                pstmt.setString(j++, fundid);
+                pstmt.setParameter("fundId", fundid, StringType.INSTANCE);
             resultset = pstmt.list();
             final Object[] firstElement = resultset != null && resultset.size() > 0 ? resultset.get(1) : null;
             for (final Object[] element : resultset) {
                 final String accntCode = element[0].toString();
-                // String accntCode2=accntCode;
                 final String fund = element[1].toString();
                 final String amt = element[2].toString();
                 final HashMap txnBalance = new HashMap();
                 /** Storing fund and amount pairs of same GLCode into HashMap **/
                 if (!txnBalancehasmap.containsKey(accntCode))// accntCode2.equalsIgnoreCase(accntCode))//Loops until GlCode
-                    // changes
+                // changes
                 {
                     for (final String element2 : reqFundId)
                         if (element2.equalsIgnoreCase(fund))
@@ -275,57 +263,52 @@ public class CommnFunctions
                 txnBalancehasmap.put(accntCode, txnBalance);
             }
 
-        } catch (final Exception se)
-        {
-            LOGGER.error("Error in getschedulewiseOB" + se.getMessage(), se);
+        } catch (final Exception se) {
+            LOGGER.error("Error in getschedulewiseOB", se);
             throw taskExc;
         }
     }
 
     /**
-     *
-     * @param fundid :The id of the fund for which the opening balances has to be calculated
-     * @param type1 :The type of account code (A,E,L,I)
-     * @param type2 :The type of account code (A,E,L,I)
-     * @param substringVal :The no of digits to pick from the glcode for grouping. (2 for major code, 3 for minor code)
-     * @param startDate :The start date of the financial year for which opening balance has to be calculated
-     * @param endDate :The end date of the financial year for which opening balance has to be calculated
-     * @param classification :Classification of the code for which opening balance has to be calculated
+     * @param type1            :The type of account code (A,E,L,I)
+     * @param type2            :The type of account code (A,E,L,I)
+     * @param substringVal     :The no of digits to pick from the glcode for grouping. (2 for major code, 3 for minor code)
+     * @param startDate        :The start date of the financial year for which opening balance has to be calculated
+     * @param endDate          :The end date of the financial year for which opening balance has to be calculated
+     * @param classification   :Classification of the code for which opening balance has to be calculated
      * @param txnCreditBalance :This parameter is called by reference so it acts as input & output
      * @throws Exception
      */
     public void getTxnCreditBalance(final Connection conn, final String fundId, final String type1, final String type2,
-            final String substringVal,
-            final String startDate, final String endDate, final int classification, final HashMap txnCreditBalance)
-            throws Exception
-    {
+                                    final String substringVal,
+                                    final String startDate, final String endDate, final int classification, final HashMap txnCreditBalance)
+            throws Exception {
         String fundCondition = "";
         if (!fundId.equalsIgnoreCase(""))
-            fundCondition = "AND f.Id=? ";
+            fundCondition = " AND f.Id = :fundId ";
         String glcode = "", fuId = "";
-        String type = "(coa.TYPE = ? OR coa.TYPE = ?) and";
+        String type = " (coa.TYPE = :type1 OR coa.TYPE = :type2) and";
         if (type1 == null || type1.trim().equals(""))
             type = "";
-        final String query = "SELECT substr(coa.glcode,0," + substringVal + ") as \"glcode\",ts.fundid as \"fundid\" ,"
-                + " sum(ts.openingcreditbalance) as \"amount\" "
-                + " FROM transactionsummary ts,  chartofaccounts coa,fund  f   WHERE " + type + " coa.id = ts.glcodeid "
-                + " AND financialyearid =(SELECT ID FROM financialyear WHERE startingdate <= ? AND endingdate >= ?)  "
-                + fundCondition + " and f.id=ts.fundid and f.isactive=true and f.isnotleaf!=true "
-                + " GROUP BY substr(coa.glcode,0," + substringVal + "), fundid ,coa.type";
+        final StringBuilder query = new StringBuilder("SELECT substr(coa.glcode,0,").append(substringVal)
+                .append(") as \"glcode\", ts.fundid as \"fundid\" , sum(ts.openingcreditbalance) as \"amount\"")
+                .append(" FROM transactionsummary ts, chartofaccounts coa, fund f")
+                .append(" WHERE ").append(type)
+                .append(" coa.id = ts.glcodeid AND financialyearid = (SELECT ID FROM financialyear WHERE startingdate <= :startDate AND endingdate >= :endDate)")
+                .append(fundCondition).append(" and f.id = ts.fundid and f.isactive = true and f.isnotleaf != true ")
+                .append(" GROUP BY substr(coa.glcode, 0, ").append(substringVal).append("), fundid, coa.type");
         if (LOGGER.isInfoEnabled())
             LOGGER.info("query " + query);
-        try
-        {
-            int j = 1;
-            pstmt = persistenceService.getSession().createNativeQuery(query);
+        try {
+            pstmt = persistenceService.getSession().createNativeQuery(query.toString());
             if (type1 == null || type1.trim().equals("")) {
-                pstmt.setString(j++, type1);
-                pstmt.setString(j++, type2);
+                pstmt.setParameter("type1", type1, StringType.INSTANCE);
+                pstmt.setParameter("type2", type2, StringType.INSTANCE);
             }
-            pstmt.setString(j++, startDate);
-            pstmt.setString(j++, endDate);
+            pstmt.setParameter("startDate", startDate, StringType.INSTANCE);
+            pstmt.setParameter("endDate", endDate, StringType.INSTANCE);
             if (!fundId.equalsIgnoreCase(""))
-                pstmt.setString(j++, fundId);
+                pstmt.setParameter("fundId", fundId, StringType.INSTANCE);
             resultset = pstmt.list();
             Double opeBal = null;
             HashMap creditBalsubList = null;
@@ -333,8 +316,7 @@ public class CommnFunctions
                 glcode = element[0].toString();
                 fuId = element[1].toString();
                 opeBal = Double.parseDouble(element[2].toString());
-                if (!txnCreditBalance.containsKey(glcode))
-                {
+                if (!txnCreditBalance.containsKey(glcode)) {
                     creditBalsubList = new HashMap();
                     for (final String element2 : reqFundId)
                         if (element2.equalsIgnoreCase(fuId))
@@ -344,58 +326,51 @@ public class CommnFunctions
                     txnCreditBalance.put(glcode, creditBalsubList);
                 } else
                     ((HashMap) txnCreditBalance.get(glcode)).put(fuId, opeBal);
-
             }
-        } catch (final Exception e)
-        {
+        } catch (final Exception e) {
             LOGGER.error("Error in getCreditBalance");
             if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Exp=" + e.getMessage(), e);
+                LOGGER.debug("Exp = ", e);
             throw new Exception();
         }
     }
 
     /**
-     *
-     * @param fundId :The id of the fund for which the opening balances has to be calculated
-     * @param type1 :The type of account code (A,E,L,I)
-     * @param type2 :The type of account code (A,E,L,I)
-     * @param substringVal :The no of digits to pick from the glcode for grouping. (2 for major code, 3 for minor code)
-     * @param startDate :The start date of the financial year for which opening balance has to be calculated
-     * @param endDate :The end date of the financial year for which opening balance has to be calculated
-     * @param classification :classification of the code for which opening balance has to be calculated
+     * @param fundId               :The id of the fund for which the opening balances has to be calculated
+     * @param type1                :The type of account code (A,E,L,I)
+     * @param type2                :The type of account code (A,E,L,I)
+     * @param substringVal         :The no of digits to pick from the glcode for grouping. (2 for major code, 3 for minor code)
+     * @param startDate            :The start date of the financial year for which opening balance has to be calculated
+     * @param endDate              :The end date of the financial year for which opening balance has to be calculated
+     * @param classification       :classification of the code for which opening balance has to be calculated
      * @param txnDebitBalance:This parameter is called by reference so it acts as input & output
      * @throws Exception
      */
     public void getTxnDebitBalance(final Connection conn, final String fundId, final String type1, final String type2,
-            final String substringVal,
-            final String startDate, final String endDate, final int classification, final HashMap txnDebitBalance)
-            throws Exception
-    {
+                                   final String substringVal,
+                                   final String startDate, final String endDate, final int classification, final HashMap txnDebitBalance)
+            throws Exception {
         String fundCondition = "";
         if (!fundId.equalsIgnoreCase(""))
-            fundCondition = "AND f.Id=? ";
+            fundCondition = " AND f.Id = :fundId ";
         String glcode = "", fuId = "";
-        final String query = "SELECT substr(coa.glcode,0,"
-                + substringVal
-                + ") as \"glcode\",ts.fundid as \"fundid\" ,"
-                + " sum(ts.openingdebitbalance) as \"amount\" "
-                + " FROM transactionsummary ts,  chartofaccounts coa,fund  f   WHERE (coa.TYPE = ? OR coa.TYPE = ?) and coa.id = ts.glcodeid "
-                + " AND financialyearid =(SELECT ID FROM financialyear WHERE startingdate <= ? AND endingdate >= ?)  "
-                + fundCondition + " and f.id=ts.fundid and f.isactive=true and f.isnotleaf!=true "
-                + " GROUP BY substr(coa.glcode,0," + substringVal + "), fundid ,coa.type";
+        final StringBuilder query = new StringBuilder("SELECT substr(coa.glcode, 0, ").append(substringVal)
+                .append(" ) as \"glcode\", ts.fundid as \"fundid\", sum(ts.openingdebitbalance) as \"amount\"")
+                .append(" FROM transactionsummary ts, chartofaccounts coa, fund f")
+                .append(" WHERE (coa.TYPE = :type1 OR coa.TYPE = :type2) and coa.id = ts.glcodeid")
+                .append(" AND financialyearid = (SELECT ID FROM financialyear WHERE startingdate <= :startDate AND endingdate >= :endDate) ")
+                .append(fundCondition).append(" and f.id = ts.fundid and f.isactive = true and f.isnotleaf != true")
+                .append(" GROUP BY substr(coa.glcode, 0, " + substringVal + "), fundid, coa.type");
         if (LOGGER.isInfoEnabled())
             LOGGER.info("query " + query);
-        try
-        {
-            int j = 1;
-            pstmt = persistenceService.getSession().createNativeQuery(query);
-            pstmt.setString(j++, type1);
-            pstmt.setString(j++, type2);
-            pstmt.setString(j++, startDate);
-            pstmt.setString(j++, endDate);
+        try {
+            pstmt = persistenceService.getSession().createNativeQuery(query.toString());
+            pstmt.setParameter("type1", type1, StringType.INSTANCE);
+            pstmt.setParameter("type2", type2, StringType.INSTANCE);
+            pstmt.setParameter("startDate", startDate, StringType.INSTANCE);
+            pstmt.setParameter("endDate", endDate, StringType.INSTANCE);
             if (!fundId.equalsIgnoreCase(""))
-                pstmt.setString(j++, fundId);
+                pstmt.setParameter("fundId", fundId, StringType.INSTANCE);
             resultset = pstmt.list();
             Double opeBal = null;
             HashMap debitBalsubList = null;
@@ -403,8 +378,7 @@ public class CommnFunctions
                 glcode = element[0].toString();
                 fuId = element[1].toString();
                 opeBal = Double.parseDouble(element[2].toString());
-                if (!txnDebitBalance.containsKey(glcode))
-                {
+                if (!txnDebitBalance.containsKey(glcode)) {
                     debitBalsubList = new HashMap();
                     for (final String element2 : reqFundId)
                         if (element2.equalsIgnoreCase(fuId))
@@ -414,11 +388,9 @@ public class CommnFunctions
                     txnDebitBalance.put(glcode, debitBalsubList);
                 } else
                     ((HashMap) txnDebitBalance.get(glcode)).put(fuId, opeBal);
-
             }
-        } catch (final Exception e)
-        {
-            LOGGER.error("Error in getDebitBalance" + e.getMessage(), e);
+        } catch (final Exception e) {
+            LOGGER.error("Error in getDebitBalance", e);
             throw taskExc;
         }
     }
@@ -426,56 +398,52 @@ public class CommnFunctions
     /**
      * convert amount in rupeese to thousands or lakhs
      *
-     * @param amt :amount to be converted
+     * @param amt    :amount to be converted
      * @param amt_In : to "thousands" or "lakhs"
      * @return
      */
 
-    public String formatAmt(final String amt, final String amt_In)
-    {
+    public String formatAmt(final String amt, final String amt_In) {
         BigDecimal ammt = new BigDecimal(0.000);
         NumberFormat formatter;
         formatter = new DecimalFormat("##############0.00");
         final int val = amt_In.equalsIgnoreCase("thousand") ? 1 : amt_In.equalsIgnoreCase("lakhs") ? 2 : 3;
-        switch (val)
-        {
-        case 1:
-            ammt = BigDecimal.valueOf(Double.parseDouble(amt) / 1000);
-            ammt = ammt.setScale(2, BigDecimal.ROUND_HALF_UP);
-            break;
+        switch (val) {
+            case 1:
+                ammt = BigDecimal.valueOf(Double.parseDouble(amt) / 1000);
+                ammt = ammt.setScale(2, BigDecimal.ROUND_HALF_UP);
+                break;
 
-        case 2:
-            ammt = BigDecimal.valueOf(Double.parseDouble(amt) / 100000);
-            ammt = ammt.setScale(2, BigDecimal.ROUND_HALF_UP);
-            break;
-        default:
-            ammt = BigDecimal.valueOf(Double.valueOf(amt));
-            BigDecimal tmpAmt = new BigDecimal(ammt.toBigInteger());
-            tmpAmt = tmpAmt.add(BigDecimal.valueOf(0.5));
-            if (ammt.doubleValue() > tmpAmt.doubleValue())
-                ammt = ammt.setScale(0, BigDecimal.ROUND_HALF_UP);
+            case 2:
+                ammt = BigDecimal.valueOf(Double.parseDouble(amt) / 100000);
+                ammt = ammt.setScale(2, BigDecimal.ROUND_HALF_UP);
+                break;
+            default:
+                ammt = BigDecimal.valueOf(Double.valueOf(amt));
+                BigDecimal tmpAmt = new BigDecimal(ammt.toBigInteger());
+                tmpAmt = tmpAmt.add(BigDecimal.valueOf(0.5));
+                if (ammt.doubleValue() > tmpAmt.doubleValue())
+                    ammt = ammt.setScale(0, BigDecimal.ROUND_HALF_UP);
 
         }
 
         return formatter.format(Double.valueOf(ammt.toString()));
     }
 
-    public String getStartDate(final int finYearId) throws TaskFailedException
-    {
-        String startDate = "" ;
-        final String query = "SELECT TO_CHAR(startingdate,'DD/MM/YYYY') FROM FINANCIALYEAR WHERE id= ?";
-        try
-        {
-            pstmt = persistenceService.getSession().createNativeQuery(query);
-            pstmt.setInteger(0, finYearId);
+    public String getStartDate(final int finYearId) throws TaskFailedException {
+        String startDate = "";
+        final StringBuilder query = new StringBuilder("SELECT TO_CHAR(startingdate,'DD/MM/YYYY')")
+                .append(" FROM FINANCIALYEAR")
+                .append(" WHERE id = :finYearId");
+        try {
+            List list = persistenceService.getSession().createNativeQuery(query.toString())
+                    .setParameter("finYearId", finYearId, IntegerType.INSTANCE)
+                    .list();
+            if (list != null)
+                startDate = list.get(0).toString();
 
-            List list = pstmt.list();
-            if(list!=null)
-            	startDate = list.get(0).toString();
-
-        } catch (final Exception sql)
-        {
-            LOGGER.error("Exp in getStartDate :" + sql.getMessage(), sql);
+        } catch (final Exception sql) {
+            LOGGER.error("Exp in getStartDate :", sql);
             throw taskExc;
         }
         return startDate;
@@ -484,24 +452,22 @@ public class CommnFunctions
     /**
      * function to get financial year end Date
      *
-     * @param con
      * @param finYearId
      * @return
      */
-    public String getEndDate(final int finYearId) throws TaskFailedException
-    {
+    public String getEndDate(final int finYearId) throws TaskFailedException {
         String endDate = "";
-        final String query = "SELECT TO_CHAR(endingdate,'DD/MM/YYYY') FROM FINANCIALYEAR WHERE id= ?";
-        try
-        {
-            pstmt = persistenceService.getSession().createNativeQuery(query);
-            pstmt.setInteger(0, finYearId);
-            resultset = pstmt.list();
+        final StringBuilder query = new StringBuilder("SELECT TO_CHAR(endingdate,'DD/MM/YYYY')")
+                .append(" FROM FINANCIALYEAR")
+                .append(" WHERE id = :finYearId");
+        try {
+            resultset = persistenceService.getSession().createNativeQuery(query.toString())
+                    .setParameter("finYearId", finYearId, IntegerType.INSTANCE)
+                    .list();
             for (final Object[] element : resultset)
                 endDate = element[0].toString();
-        } catch (final Exception sql)
-        {
-            LOGGER.error("error inside getEndDate" + sql.getMessage(), sql);
+        } catch (final Exception sql) {
+            LOGGER.error("error inside getEndDate", sql);
             throw taskExc;
         }
         return endDate;
@@ -513,15 +479,12 @@ public class CommnFunctions
      * @param strNumberToConvert
      * @return
      */
-    public StringBuffer numberToString(final String strNumberToConvert)
-    {
+    public StringBuffer numberToString(final String strNumberToConvert) {
         String strNumber = "", signBit = "";
-        if (strNumberToConvert.startsWith("-"))
-        {
+        if (strNumberToConvert.startsWith("-")) {
             strNumber = "" + strNumberToConvert.substring(1, strNumberToConvert.length());
             signBit = "-";
-        }
-        else
+        } else
             strNumber = "" + strNumberToConvert;
         final DecimalFormat dft = new DecimalFormat("##############0.00");
         final String strtemp = "" + dft.format(Double.parseDouble(strNumber));
@@ -535,16 +498,14 @@ public class CommnFunctions
         return strbNumber;
     }
 
-    
 
     // used to format the report schedule
     /*
      * tagName is the string[] containing <schedlue>lessGlcodes
      */
     public String addToAddLessSubTotals(final String glcode, final BigDecimal amt, final String[] tagName, final int index,
-            final BigDecimal[] addSubtotals,
-            final BigDecimal[] lessSubtotals, final String status)
-    {
+                                        final BigDecimal[] addSubtotals,
+                                        final BigDecimal[] lessSubtotals, final String status) {
         String returnStatus = "";
 
         for (final String element : tagName) {
@@ -552,8 +513,7 @@ public class CommnFunctions
                 if (lessSubtotals[index] == null)
                     lessSubtotals[index] = BigDecimal.ZERO;
                 lessSubtotals[index] = lessSubtotals[index].add(amt);
-            }
-            else {
+            } else {
                 if (addSubtotals[index] == null)
                     addSubtotals[index] = BigDecimal.ZERO;
                 addSubtotals[index] = addSubtotals[index].add(amt);

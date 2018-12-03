@@ -827,18 +827,20 @@ public class CashBook {
      *                             if end date is not provided then set financial year end date
      */
     public String getMinCode(final String minGlCode) throws TaskFailedException {
-        // if(LOGGER.isInfoEnabled()) LOGGER.info("coming");
+
         String minCode = "";
         try {
-            final String query = "select glcode from chartofaccounts where glcode like :glCode|| '%' and classification = 4 order by glcode asc";
-            pstmt = persistenceService.getSession().createNativeQuery(query)
-                    .setParameter("glCode", minGlCode, StringType.INSTANCE);
-            final List<Object[]> rset = pstmt.list();
+            final StringBuilder query = new StringBuilder("select glcode")
+                    .append(" from chartofaccounts")
+                    .append(" where glcode like :glCode|| '%' and classification = 4 order by glcode asc");
+            final List<Object[]> rset = persistenceService.getSession().createNativeQuery(query.toString())
+                    .setParameter("glCode", minGlCode, StringType.INSTANCE)
+                    .list();
             for (final Object[] element : rset)
                 minCode = element[0].toString();
         } catch (final Exception sqlex) {
             LOGGER.error(
-                    "Exception while getting minGlCode" + sqlex.getMessage(),
+                    "Exception while getting minGlCode",
                     sqlex);
             throw taskExc;
         }
@@ -848,10 +850,12 @@ public class CashBook {
     public String getMaxCode(final String maxGlCode) throws TaskFailedException {
         String maxCode = "";
         try {
-            final String query = "  select glcode from chartofaccounts where glcode like :glCode|| '%' and classification = 4 order by glcode desc";
-            pstmt = persistenceService.getSession().createNativeQuery(query)
-                    .setParameter("glCode", maxGlCode);
-            final List<Object[]> rset = pstmt.list();
+            final StringBuilder query = new StringBuilder("select glcode")
+                    .append(" from chartofaccounts")
+                    .append(" where glcode like :glCode|| '%' and classification = 4 order by glcode desc");
+            final List<Object[]> rset = persistenceService.getSession().createNativeQuery(query.toString())
+                    .setParameter("glCode", maxGlCode)
+                    .list();
             for (final Object[] element : rset)
                 maxCode = element[0].toString();
         } catch (final Exception sqlex) {
@@ -866,14 +870,14 @@ public class CashBook {
     public String getCGN(final String id) throws TaskFailedException {
         String cgn = "";
         pstmt = null;
-        List<Object[]> rsCgn = null;
         if (!id.equals(""))
             try {
-                final String queryCgn = "select CGN from VOUCHERHEADER where id = :id";
-                pstmt = persistenceService.getSession().createNativeQuery(
-                        queryCgn);
-                pstmt.setParameter("id", id, StringType.INSTANCE);
-                rsCgn = pstmt.list();
+                final StringBuilder queryCgn = new StringBuilder("select CGN")
+                        .append(" from VOUCHERHEADER")
+                        .append(" where id = :id");
+                List<Object[]> rsCgn = persistenceService.getSession().createNativeQuery(queryCgn.toString())
+                        .setParameter("id", id, StringType.INSTANCE)
+                        .list();
                 for (final Object[] element : rsCgn)
                     cgn = element[0].toString();
 
@@ -916,22 +920,23 @@ public class CashBook {
 
     private String[] getGlcode(final String bId) throws TaskFailedException {
         final String glcode[] = new String[2];
-        List<Object[]> rs = null;
-
         try {
-
-            final String query = "select glcode as \"glcode\" from chartofaccounts where id in (select cashinhand from codemapping where eg_boundaryid = :boundaryId)";
+            final StringBuilder query = new StringBuilder("select glcode as \"glcode\"")
+                    .append(" from chartofaccounts")
+                    .append(" where id in (select cashinhand from codemapping where eg_boundaryid = :boundaryId)");
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(query);
-            pstmt = persistenceService.getSession().createNativeQuery(query);
-            pstmt.setParameter("boundaryId", bId, StringType.INSTANCE);
-            rs = pstmt.list();
+            List<Object[]> rs = persistenceService.getSession().createNativeQuery(query.toString())
+                    .setParameter("boundaryId", bId, StringType.INSTANCE)
+                    .list();
             for (final Object[] element : rs)
                 glcode[0] = element[0].toString();
-            final String str = "select glcode from chartofaccounts where id in (select chequeinHand from codemapping where eg_boundaryid = :boundaryId)";
-            pstmt = persistenceService.getSession().createNativeQuery(str);
-            pstmt.setParameter("boundaryId", bId, StringType.INSTANCE);
-            rs = pstmt.list();
+            final StringBuilder str = new StringBuilder("select glcode")
+                    .append(" from chartofaccounts")
+                    .append(" where id in (select chequeinHand from codemapping where eg_boundaryid = :boundaryId)");
+            rs = persistenceService.getSession().createNativeQuery(str.toString())
+                    .setParameter("boundaryId", bId, StringType.INSTANCE)
+                    .list();
             for (final Object[] element : rs)
                 glcode[1] = element[0].toString();
         } catch (final Exception e) {
@@ -948,11 +953,12 @@ public class CashBook {
         Query pstmt = null;
         try {
 
-            final String query = "select name as \"name\" from companydetail";
-            pstmt = persistenceService.getSession().createNativeQuery(query);
+            final StringBuilder query = new StringBuilder("select name as \"name\"")
+                    .append(" from companydetail");
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(query);
-            rs = pstmt.list();
+            rs = persistenceService.getSession().createNativeQuery(query.toString())
+                    .list();
             for (final Object[] element : rs)
                 ulbName = element[0].toString();
         } catch (final Exception e) {

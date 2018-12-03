@@ -55,17 +55,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * @author Iliyaraja
- *
+ * <p>
  * TODO To change the template for this generated type comment go to Window - Preferences - Java - Code Style - Code Templates
  */
-public class BillRegisterBean
-{
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
-
-
+public class BillRegisterBean {
     private static final Logger LOGGER = Logger.getLogger(BillRegisterBean.class);
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
     private String id = null;
     private String billNumber = null;
     private String billDate = null;
@@ -91,183 +88,180 @@ public class BillRegisterBean
     public BillRegisterBean() {
     }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getBillNumber() {
-		return billNumber;
-	}
+    public String getBillNumber() {
+        return billNumber;
+    }
 
-	public void setBillNumber(String billNumber) {
-		this.billNumber = billNumber;
-	}
+    public void setBillNumber(String billNumber) {
+        this.billNumber = billNumber;
+    }
 
-	public String getBillDate() {
-		return billDate;
-	}
+    public String getBillDate() {
+        return billDate;
+    }
 
-	public void setBillDate(String billDate) {
-		this.billDate = billDate;
-	}
+    public void setBillDate(String billDate) {
+        this.billDate = billDate;
+    }
 
-	public String getBillStatus() {
-		return billStatus;
-	}
+    public String getBillStatus() {
+        return billStatus;
+    }
 
-	public void setBillStatus(String billStatus) {
-		this.billStatus = billStatus;
-	}
+    public void setBillStatus(String billStatus) {
+        this.billStatus = billStatus;
+    }
 
-	public String getFieldId() {
-		return fieldId;
-	}
+    public String getFieldId() {
+        return fieldId;
+    }
 
-	public void setFieldId(String fieldId) {
-		this.fieldId = fieldId;
-	}
+    public void setFieldId(String fieldId) {
+        this.fieldId = fieldId;
+    }
 
-	public String getWorksDetailId() {
-		return worksDetailId;
-	}
+    public String getWorksDetailId() {
+        return worksDetailId;
+    }
 
-	public void setWorksDetailId(String worksDetailId) {
-		this.worksDetailId = worksDetailId;
-	}
+    public void setWorksDetailId(String worksDetailId) {
+        this.worksDetailId = worksDetailId;
+    }
 
-	public double getBillAmount() {
-		return billAmount;
-	}
+    public double getBillAmount() {
+        return billAmount;
+    }
 
-	public void setBillAmount(double billAmount) {
-		this.billAmount = billAmount;
-	}
+    public void setBillAmount(double billAmount) {
+        this.billAmount = billAmount;
+    }
 
-	public String getBillNarration() {
-		return billNarration;
-	}
+    public String getBillNarration() {
+        return billNarration;
+    }
 
-	public void setBillNarration(String billNarration) {
-		this.billNarration = billNarration;
-	}
+    public void setBillNarration(String billNarration) {
+        this.billNarration = billNarration;
+    }
 
-	public String getExpenditureType() {
-		return expenditureType;
-	}
+    public String getExpenditureType() {
+        return expenditureType;
+    }
 
-	public void setExpenditureType(String expenditureType) {
-		this.expenditureType = expenditureType;
-	}
+    public void setExpenditureType(String expenditureType) {
+        this.expenditureType = expenditureType;
+    }
 
-	public String getBillType() {
-		return billType;
-	}
+    public String getBillType() {
+        return billType;
+    }
 
-	public void setBillType(String billType) {
-		this.billType = billType;
-	}
+    public void setBillType(String billType) {
+        this.billType = billType;
+    }
 
-	public double getPassedAmount() {
-		return passedAmount;
-	}
+    public double getPassedAmount() {
+        return passedAmount;
+    }
 
-	public void setPassedAmount(double passedAmount) {
-		this.passedAmount = passedAmount;
-	}
+    public void setPassedAmount(double passedAmount) {
+        this.passedAmount = passedAmount;
+    }
 
-	public double getAdvanceAdjusted() {
-		return advanceAdjusted;
-	}
+    public double getAdvanceAdjusted() {
+        return advanceAdjusted;
+    }
 
-	public void setAdvanceAdjusted(double advanceAdjusted) {
-		this.advanceAdjusted = advanceAdjusted;
-	}
+    public void setAdvanceAdjusted(double advanceAdjusted) {
+        this.advanceAdjusted = advanceAdjusted;
+    }
 
-	public int getCreatedby() {
-		return createdby;
-	}
+    public int getCreatedby() {
+        return createdby;
+    }
 
-	public void setCreatedby(int createdby) {
-		this.createdby = createdby;
-	}
+    public void setCreatedby(int createdby) {
+        this.createdby = createdby;
+    }
 
-	public int getLastModifiedBy() {
-		return lastModifiedBy;
-	}
+    public int getLastModifiedBy() {
+        return lastModifiedBy;
+    }
 
-	public void setLastModifiedBy(int lastModifiedBy) {
-		this.lastModifiedBy = lastModifiedBy;
-	}
+    public void setLastModifiedBy(int lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
 
-	public String getCreatedDate() {
-		return createdDate;
-	}
+    public String getCreatedDate() {
+        return createdDate;
+    }
 
-	public void setCreatedDate(String createdDate) {
-		this.createdDate = createdDate;
-	}
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
+    }
 
-	public String getLastModifiedDate() {
-		return lastModifiedDate;
-	}
+    public String getLastModifiedDate() {
+        return lastModifiedDate;
+    }
 
-	public void setLastModifiedDate(String lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
+    public void setLastModifiedDate(String lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
 
-	public String getBillStatusId() {
-		return billStatusId;
-	}
+    public String getBillStatusId() {
+        return billStatusId;
+    }
 
-	public void setBillStatusId(String billStatusId) {
-		this.billStatusId = billStatusId;
-	}
+    public void setBillStatusId(String billStatusId) {
+        this.billStatusId = billStatusId;
+    }
 
-	public TaskFailedException getTaskExc() {
-		return taskExc;
-	}
+    public TaskFailedException getTaskExc() {
+        return taskExc;
+    }
 
-	public void setTaskExc(TaskFailedException taskExc) {
-		this.taskExc = taskExc;
-	}
+    public void setTaskExc(TaskFailedException taskExc) {
+        this.taskExc = taskExc;
+    }
 
-	public boolean getIsId() {
-		return isId;
-	}
+    public boolean getIsId() {
+        return isId;
+    }
 
-	public void setIsId(boolean isId) {
-		this.isId = isId;
-	}
+    public void setIsId(boolean isId) {
+        this.isId = isId;
+    }
 
-	public boolean isField() {
-		return isField;
-	}
+    public boolean isField() {
+        return isField;
+    }
 
-	public void setField(boolean isField) {
-		this.isField = isField;
-	}
+    public void setField(boolean isField) {
+        this.isField = isField;
+    }
 
-	public boolean getIsSelected() {
-		return isSelected;
-	}
+    public boolean getIsSelected() {
+        return isSelected;
+    }
 
-	public void setIsSelected(boolean isSelected) {
-		this.isSelected = isSelected;
-	}
+    public void setIsSelected(boolean isSelected) {
+        this.isSelected = isSelected;
+    }
 
-	public String getBillDeptName() {
-		return billDeptName;
-	}
+    public String getBillDeptName() {
+        return billDeptName;
+    }
 
-	public void setBillDeptName(String billDeptName) {
-		this.billDeptName = billDeptName;
-	}
+    public void setBillDeptName(String billDeptName) {
+        this.billDeptName = billDeptName;
+    }
 
-   
-
-   
 }

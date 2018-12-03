@@ -412,7 +412,7 @@ public class PaymentActionHelper {
                     .withDateInfo(currentDate.toDate());
         } else {
             if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
-                pos = (Position) persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
+                pos = (Position) persistenceService.find("from Position where id = ?1", workflowBean.getApproverPositionId());
             if (null == paymentheader.getState()) {
                 final WorkFlowMatrix wfmatrix = paymentHeaderWorkflowService.getWfMatrix(paymentheader.getStateType(), null,
                         null, null, workflowBean.getCurrentState(), null);
@@ -438,7 +438,7 @@ public class PaymentActionHelper {
     public List<EgAdvanceRequisition> getAdvanceRequisitionDetails(Paymentheader paymentheader) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside getAdvanceRequisitionDetails");
-        return persistenceService.findAllBy("from EgAdvanceRequisition where egAdvanceReqMises.voucherheader.id=?", paymentheader
+        return persistenceService.findAllBy("from EgAdvanceRequisition where egAdvanceReqMises.voucherheader.id = ?1", paymentheader
                 .getVoucherheader().getId());
     }
 

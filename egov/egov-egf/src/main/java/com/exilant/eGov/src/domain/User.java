@@ -117,10 +117,12 @@ public class User {
 
     // this method gets the assigned role for the user from the database.
     public String getRole(final Connection con) throws TaskFailedException {
-        final String query = "select r.Role_name as role from EG_ROLES r, EG_USER u, EG_USERROLE ur where u.user_name = :userName and ur.id_role = r.id_role and u.id_user = ur.id_user ";
+        final StringBuilder query = new StringBuilder("select r.Role_name as role")
+                .append(" from EG_ROLES r, EG_USER u, EG_USERROLE ur")
+                .append(" where u.user_name = :userName and ur.id_role = r.id_role and u.id_user = ur.id_user ");
         String role = "";
         try {
-            final List<Object[]> rs = persistenceService.getSession().createNativeQuery(query)
+            final List<Object[]> rs = persistenceService.getSession().createNativeQuery(query.toString())
                     .setParameter("userName", userName, StringType.INSTANCE)
                     .list();
             for (final Object[] element : rs)
@@ -133,10 +135,12 @@ public class User {
     }
 
     public int getId() throws TaskFailedException {
-        final String query = "select id_user from EG_USER where user_name = :userName ";
+        final StringBuilder query = new StringBuilder("select id_user")
+                .append(" from EG_USER")
+                .append(" where user_name = :userName ");
         int userId = 0;
         try {
-            final List<Object[]> rs = persistenceService.getSession().createNativeQuery(query)
+            final List<Object[]> rs = persistenceService.getSession().createNativeQuery(query.toString())
                     .setParameter("userName", userName, StringType.INSTANCE)
                     .list();
             for (final Object[] element : rs)

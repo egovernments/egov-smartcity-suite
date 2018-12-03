@@ -55,6 +55,7 @@ import com.exilant.exility.common.TaskFailedException;
 import org.apache.log4j.Logger;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.query.Query;
+import org.hibernate.type.LongType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -68,29 +69,44 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Service
-public class OpeningBalance
-{
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
-
-
+public class OpeningBalance {
+    private static final Logger LOGGER = Logger.getLogger(OpeningBalance.class);
     List<Object[]> resultset;
     Query pstmt = null;
+    ArrayList al = new ArrayList();
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
     private String fundId = "", finYear = "", deptId = "";
     private double grandTotalDr = 0.0, grandTotalCr = 0.0;
     private String fund = "", checkFund = "";
-    private String glcode = "", name = "", narration = "" , deptcode= "",functioncode = "";
+    private String glcode = "", name = "", narration = "", deptcode = "", functioncode = "";
     private Double debit, credit, balance;
-    ArrayList al = new ArrayList();
 
-    private static final Logger LOGGER = Logger.getLogger(OpeningBalance.class);
+    public static StringBuffer numberToString(final String strNumberToConvert) {
+        String strNumber = "", signBit = "";
+        if (strNumberToConvert.startsWith("-")) {
+            strNumber = "" + strNumberToConvert.substring(1, strNumberToConvert.length());
+            signBit = "-";
+        } else
+            strNumber = "" + strNumberToConvert;
+        final DecimalFormat dft = new DecimalFormat("##############0.00");
+        final String strtemp = "" + dft.format(Double.parseDouble(strNumber));
+        StringBuffer strbNumber = new StringBuffer(strtemp);
+        final int intLen = strbNumber.length();
+
+        for (int i = intLen - 6; i > 0; i = i - 2)
+            strbNumber.insert(i, ',');
+        if (signBit.equals("-"))
+            strbNumber = strbNumber.insert(0, "-");
+        return strbNumber;
+    }
 
     // This method is called by the OpeningBalance.jsp
-    public ArrayList getOBReport(final OpeningBalanceInputBean OPBean) throws TaskFailedException
-    {
+    public ArrayList getOBReport(final OpeningBalanceInputBean OPBean) throws TaskFailedException {
         // String asOnDate1=OPBean.getAsOnDate();
         // isCurDate(con,asOnDate1);
         try {
@@ -114,48 +130,43 @@ public class OpeningBalance
     }
 
     private void getReport() throws SQLException {
-        String query = " ";
+        StringBuilder query = new StringBuilder();
         String fundCondition = "";
         String deptCondition = "";
         double totalDr = 0.0, totalCr = 0.0;
         new DecimalFormat();
         new DecimalFormat("###############.00");
         if (!fundId.equalsIgnoreCase(""))
-            fundCondition = " and b.id=? ";
+            fundCondition = " and b.id = :fundId ";
         if (!deptId.equalsIgnoreCase(""))
-            deptCondition = " and a.DEPARTMENTID=? ";
-        query = "SELECT b.name AS \"fund\",c.glcode AS \"accountcode\",c.name AS \"accountname\",'' as \"narration\",SUM(a.openingdebitbalance) AS \"debit\","
-                + " SUM(a.openingcreditbalance)AS \"credit\",dept.code AS \"deptcode\",fn.code AS \"functioncode\"  FROM TRANSACTIONSUMMARY a,FUND  b,CHARTOFACCOUNTS c, eg_department dept,function fn "
-                + " WHERE c.id in (select glcodeid from chartofaccountdetail  ) and a.departmentid= dept.id and fn.id = a.functionid and  a.financialyearid=? "
-                + fundCondition
-                + deptCondition
-                + " AND a.fundid=b.id AND a.glcodeid=c.id AND (a.openingdebitbalance>0 OR a.openingcreditbalance>0) GROUP BY b.name, c.glcode,c.name,dept.code,fn.code union";
-        query = query + " SELECT b.name AS \"fund\",c.glcode AS \"accountcode\",c.name AS \"accountname\",a.narration as \"narration\",SUM(a.openingdebitbalance) AS \"debit\","
-                + " SUM(a.openingcreditbalance)AS \"credit\",dept.code AS \"deptcode\",fn.code AS \"functioncode\"  FROM TRANSACTIONSUMMARY a,FUND  b,CHARTOFACCOUNTS c, eg_department dept,function fn "
-                + " WHERE c.id not in (select glcodeid from chartofaccountdetail  ) and a.departmentid= dept.id and fn.id = a.functionid and  a.financialyearid=? "
-                + fundCondition
-                + deptCondition
-                + " AND a.fundid=b.id AND a.glcodeid=c.id AND (a.openingdebitbalance>0 OR a.openingcreditbalance>0) GROUP BY b.name, c.glcode,c.name,dept.code,fn.code, a.narration ";
-       if (LOGGER.isDebugEnabled())
+            deptCondition = " and a.DEPARTMENTID = :departmentId ";
+        query.append("SELECT b.name AS \"fund\", c.glcode AS \"accountcode\", c.name AS \"accountname\", '' as \"narration\", SUM(a.openingdebitbalance) AS \"debit\",")
+                .append(" SUM(a.openingcreditbalance) AS \"credit\", dept.code AS \"deptcode\", fn.code AS \"functioncode\"")
+                .append(" FROM TRANSACTIONSUMMARY a, FUND b, CHARTOFACCOUNTS c, eg_department dept, function fn ")
+                .append(" WHERE c.id in (select glcodeid from chartofaccountdetail) and a.departmentid = dept.id and fn.id = a.functionid and a.financialyearid = :finYearId")
+                .append(fundCondition).append(deptCondition)
+                .append(" AND a.fundid = b.id AND a.glcodeid = c.id AND (a.openingdebitbalance > 0 OR a.openingcreditbalance > 0) GROUP BY b.name, c.glcode, c.name, dept.code, fn.code")
+                .append(" union SELECT b.name AS \"fund\", c.glcode AS \"accountcode\", c.name AS \"accountname\", a.narration as \"narration\", SUM(a.openingdebitbalance) AS \"debit\",")
+                .append(" SUM(a.openingcreditbalance) AS \"credit\", dept.code AS \"deptcode\", fn.code AS \"functioncode\"")
+                .append(" FROM TRANSACTIONSUMMARY a, FUND b, CHARTOFACCOUNTS c, eg_department dept, function fn")
+                .append(" WHERE c.id not in (select glcodeid from chartofaccountdetail) and a.departmentid = dept.id and fn.id = a.functionid and a.financialyearid = :finYearId")
+                .append(fundCondition).append(deptCondition)
+                .append(" AND a.fundid = b.id AND a.glcodeid = c.id AND (a.openingdebitbalance > 0 OR a.openingcreditbalance > 0)")
+                .append(" GROUP BY b.name, c.glcode, c.name, dept.code, fn.code, a.narration ");
+        if (LOGGER.isDebugEnabled())
             LOGGER.debug("Opening balance Query ...." + query);
 
         try {
             OpeningBalanceBean ob = null;
-            pstmt = persistenceService.getSession().createNativeQuery(query);
-            int i = 0;
-            pstmt.setLong(i++, Long.valueOf(finYear));
+            pstmt = persistenceService.getSession().createNativeQuery(query.toString());
+            pstmt.setParameter("finYearId", Long.valueOf(finYear), LongType.INSTANCE);
             if (!fundId.equalsIgnoreCase(""))
-                pstmt.setLong(i++, Long.valueOf(fundId));
+                pstmt.setParameter("fundId", Long.valueOf(fundId), LongType.INSTANCE);
             if (!deptId.equalsIgnoreCase(""))
-                pstmt.setLong(i++,Long.valueOf( deptId));
-            pstmt.setLong(i++, Long.valueOf(finYear));
-            if (!fundId.equalsIgnoreCase(""))
-                pstmt.setLong(i++, Long.valueOf(fundId));
-            if (!deptId.equalsIgnoreCase(""))
-                pstmt.setLong(i++,Long.valueOf( deptId));
-            List<Object[]> list= pstmt.list();
-            resultset =list;
-            
+                pstmt.setParameter("departmentId", Long.valueOf(deptId), LongType.INSTANCE);
+            List<Object[]> list = pstmt.list();
+            resultset = list;
+
             for (final Object[] element : resultset) {
                 if (!checkFund.equalsIgnoreCase(element[0].toString())
                         && !checkFund.equalsIgnoreCase("")) {
@@ -164,13 +175,10 @@ public class OpeningBalance
                     opeBalDiff.setAccCode("&nbsp;");
                     opeBalDiff.setAccName("<b>&nbsp;&nbsp;&nbsp; Difference&nbsp;&nbsp;</b>");
                     final double diff = totalDr - totalCr;
-                    if (diff > 0)
-                    {
+                    if (diff > 0) {
                         opeBalDiff.setDebit("&nbsp;");
                         opeBalDiff.setCredit("<b>" + numberToString(((Double) diff).toString()).toString() + "</b>");
-                    }
-                    else
-                    {
+                    } else {
                         opeBalDiff.setDebit("<b>" + numberToString(((Double) diff).toString()).toString() + "</b>");
                         opeBalDiff.setCredit("&nbsp;");
                     }
@@ -179,14 +187,11 @@ public class OpeningBalance
                     opeBal.setFund("&nbsp;");
                     opeBal.setAccCode("&nbsp;");
                     opeBal.setAccName("<b>&nbsp;&nbsp;&nbsp; Total:&nbsp;&nbsp;</b>");
-                    if (diff > 0)
-                    {
+                    if (diff > 0) {
                         totalCr = totalCr + diff;
                         opeBal.setDebit("<b>" + numberToString(((Double) totalDr).toString()).toString() + "</b>");
                         opeBal.setCredit("<b>" + numberToString(((Double) totalCr).toString()).toString() + "</b>");
-                    }
-                    else
-                    {
+                    } else {
                         totalDr = totalDr + diff * -1;
                         opeBal.setDebit("<b>" + numberToString(((Double) totalDr).toString()).toString() + "</b>");
                         opeBal.setCredit("<b>" + numberToString(((Double) totalCr).toString()).toString() + "</b>");
@@ -199,7 +204,7 @@ public class OpeningBalance
                 fund = element[0].toString();
                 glcode = element[1].toString();
                 name = element[2].toString();
-                if(element[3]!=null)
+                if (element[3] != null)
                     narration = formatStringToFixedLength(element[3].toString(), 30);
                 debit = Double.parseDouble(element[4].toString());
                 credit = Double.parseDouble(element[5].toString());
@@ -213,16 +218,12 @@ public class OpeningBalance
                 ob.setDeptcode(deptcode);
                 ob.setFunctioncode(functioncode);
 
-                if (debit != null && credit != null)
-                {
+                if (debit != null && credit != null) {
                     balance = debit - credit;
-                    if (balance > 0)
-                    {
+                    if (balance > 0) {
                         ob.setDebit(numberToString(balance.toString()).toString());
                         ob.setCredit("&nbsp;");
-                    }
-                    else
-                    {
+                    } else {
                         balance = credit - debit;
                         ob.setDebit("&nbsp;");
                         ob.setCredit(numberToString(balance.toString()).toString());
@@ -251,13 +252,10 @@ public class OpeningBalance
             opeBalDiff.setDeptcode("&nbsp;");
             opeBalDiff.setFunctioncode("&nbsp;");
             final double diff = totalDr - totalCr;
-            if (diff > 0)
-            {
+            if (diff > 0) {
                 opeBalDiff.setDebit("&nbsp;");
                 opeBalDiff.setCredit("<b>" + numberToString(((Double) diff).toString()).toString() + "</b>");
-            }
-            else
-            {
+            } else {
                 opeBalDiff.setDebit("<b>" + numberToString(((Double) diff).toString()).toString() + "</b>");
                 opeBalDiff.setCredit("&nbsp;");
             }
@@ -269,29 +267,24 @@ public class OpeningBalance
             opeBal.setDescription("&nbsp;");
             opeBal.setDeptcode("&nbsp;");
             opeBal.setFunctioncode("&nbsp;");
-            if (diff > 0)
-            {
+            if (diff > 0) {
                 totalCr = totalCr + diff;
                 opeBal.setDebit("<b>" + numberToString(((Double) totalDr).toString()).toString() + "</b>");
                 opeBal.setCredit("<b>" + numberToString(((Double) totalCr).toString()).toString() + "</b>");
-            }
-            else
-            {
+            } else {
                 totalDr = totalDr + diff * -1;
                 opeBal.setDebit("<b>" + numberToString(((Double) totalDr).toString()).toString() + "</b>");
                 opeBal.setCredit("<b>" + numberToString(((Double) totalCr).toString()).toString() + "</b>");
             }
             al.add(opeBal);
 
-        } catch (final Exception e)
-        {
+        } catch (final Exception e) {
             LOGGER.error("Error in getReport", e);
             throw new SQLException();
         }
     }
 
-    private void formatReport()
-    {
+    private void formatReport() {
         new DecimalFormat();
         // formatter = new DecimalFormat("##,##,##,##,##,##,###.00");
         final double diff = grandTotalDr - grandTotalCr;
@@ -302,14 +295,11 @@ public class OpeningBalance
         ob.setDescription("<hr>&nbsp;<hr>");
         ob.setDeptcode("&nbsp;");
         ob.setFunctioncode("&nbsp;");
-        if (diff > 0)
-        {
+        if (diff > 0) {
             grandTotalCr = grandTotalCr + diff;
             ob.setDebit("<hr>&nbsp;<b>" + numberToString(((Double) grandTotalDr).toString()).toString() + "</b><hr>");
             ob.setCredit("<hr>&nbsp;<b>" + numberToString(((Double) grandTotalCr).toString()).toString() + "</b><hr>");
-        }
-        else
-        {
+        } else {
             grandTotalDr = grandTotalDr + diff * -1;
             ob.setDebit("<hr>&nbsp;<b>" + numberToString(((Double) grandTotalDr).toString()).toString() + "</b><hr>");
             ob.setCredit("<hr>&nbsp;<b>" + numberToString(((Double) grandTotalCr).toString()).toString() + "</b><hr>");
@@ -326,11 +316,11 @@ public class OpeningBalance
 
             final int ret = Integer.parseInt(dt2[2]) > Integer.parseInt(dt1[2]) ? 1 : Integer.parseInt(dt2[2]) < Integer
                     .parseInt(dt1[2]) ? -1 : Integer.parseInt(dt2[1]) > Integer.parseInt(dt1[1]) ? 1 : Integer
-                            .parseInt(dt2[1]) < Integer.parseInt(dt1[1]) ? -1
-                                    : Integer.parseInt(dt2[0]) > Integer.parseInt(dt1[0]) ? 1 : Integer.parseInt(dt2[0]) < Integer
-                                            .parseInt(dt1[0]) ? -1 : 0;
-                                    if (ret == -1)
-                                        throw new Exception();
+                    .parseInt(dt2[1]) < Integer.parseInt(dt1[1]) ? -1
+                    : Integer.parseInt(dt2[0]) > Integer.parseInt(dt1[0]) ? 1 : Integer.parseInt(dt2[0]) < Integer
+                    .parseInt(dt1[0]) ? -1 : 0;
+            if (ret == -1)
+                throw new Exception();
 
         } catch (final Exception ex) {
             LOGGER.error("Exception " + ex, ex);
@@ -339,36 +329,14 @@ public class OpeningBalance
 
     }
 
-    public static StringBuffer numberToString(final String strNumberToConvert)
-    {
-        String strNumber = "", signBit = "";
-        if (strNumberToConvert.startsWith("-"))
-        {
-            strNumber = "" + strNumberToConvert.substring(1, strNumberToConvert.length());
-            signBit = "-";
-        }
-        else
-            strNumber = "" + strNumberToConvert;
-        final DecimalFormat dft = new DecimalFormat("##############0.00");
-        final String strtemp = "" + dft.format(Double.parseDouble(strNumber));
-        StringBuffer strbNumber = new StringBuffer(strtemp);
-        final int intLen = strbNumber.length();
-
-        for (int i = intLen - 6; i > 0; i = i - 2)
-            strbNumber.insert(i, ',');
-        if (signBit.equals("-"))
-            strbNumber = strbNumber.insert(0, "-");
-        return strbNumber;
-    }
-
     /**
      * this function inserts html line break at the interval of fixedLength value in String str
+     *
      * @param str
      * @param fixedLength
      * @return
      */
-    public String formatStringToFixedLength(String str, final int fixedLength)
-    {
+    public String formatStringToFixedLength(String str, final int fixedLength) {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("insidde formatStringToFixedLength");
 
@@ -377,8 +345,7 @@ public class OpeningBalance
             return str;
         int sIndex = 0;
         String formattedString = "";
-        while (sIndex < str.length())
-        {
+        while (sIndex < str.length()) {
             if (sIndex + fixedLength >= str.length())
                 formattedString = formattedString + str.substring(sIndex, str.length());
             else
