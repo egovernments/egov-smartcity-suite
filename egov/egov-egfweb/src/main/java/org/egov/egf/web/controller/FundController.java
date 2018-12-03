@@ -55,7 +55,6 @@ import org.egov.commons.service.FundService;
 import org.egov.egf.web.adaptor.FundJsonAdaptor;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -110,7 +109,6 @@ public class FundController {
         fundService.create(fund);
         redirectAttrs.addFlashAttribute("message",
                 messageSource.getMessage("msg.fund.success", null, null));
-        EgovMasterDataCaching.removeFromCache("egi-fund");
         return "redirect:/fund/result/" + fund.getId();
     }
 
@@ -135,7 +133,6 @@ public class FundController {
         fundService.update(fund);
         redirectAttrs.addFlashAttribute("message",
                 messageSource.getMessage("msg.fund.success", null, null));
-        EgovMasterDataCaching.removeFromCache("egi-fund");
         return "redirect:/fund/result/" + fund.getId();
     }
 

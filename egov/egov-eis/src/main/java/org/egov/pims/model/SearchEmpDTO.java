@@ -158,7 +158,7 @@ public class SearchEmpDTO implements java.io.Serializable
 	public String getDepartment()
 	{
 		
-		List deptMasterList=Collections.emptyList();//EgovMasterDataCaching.getInstance().get("egEmp-department");
+		List deptMasterList=Collections.emptyList();
 		Map deptmap = getDepartmentMap(deptMasterList);
 		String dept = (String)deptmap.get(getDepID());
 		
@@ -168,7 +168,7 @@ public class SearchEmpDTO implements java.io.Serializable
 	public String getDesignation()
 	{
 		String desig = "N/A";
-		List designationMasterList=Collections.emptyList();//EgovMasterDataCaching.getInstance().get("egEmp-DesignationMaster");
+		List designationMasterList=Collections.emptyList();
 		Map mapOfDesignation = getDsig(designationMasterList);
 		if(mapOfDesignation.get(getDesID())!=null)
 			desig = (String)mapOfDesignation.get(getDesID());

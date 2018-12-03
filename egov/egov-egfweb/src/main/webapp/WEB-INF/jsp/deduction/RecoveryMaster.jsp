@@ -52,7 +52,6 @@
 
 <%@ page import="org.apache.log4j.Logger"%>
 <%@ page import="org.egov.deduction.client.RecoverySetupForm"%>
-<%@ page import="org.egov.infstr.utils.EgovMasterDataCaching"%>
 <%@ page import="java.util.ArrayList"%>
 <%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn" %>
 
@@ -63,13 +62,7 @@
 
 	<%
 	RecoverySetupForm rsf = (RecoverySetupForm)request.getAttribute("RecoverySetupForm");
-	Logger logger = Logger.getLogger(getClass().getName()); 
-
-	ArrayList glCodeList=(ArrayList)EgovMasterDataCaching.getInstance().get("egi-coaCodesForLiability");
-	ArrayList empglCodeList=(ArrayList)EgovMasterDataCaching.getInstance().get("egi-AllCoaCodesOfEarning");
-	ArrayList partyMasterList=(ArrayList)EgovMasterDataCaching.getInstance().get("egi-partyTypeMaster");
-	ArrayList tdsTypeList=(ArrayList)EgovMasterDataCaching.getInstance().get("egi-tdsType");
-	ArrayList bankList=(ArrayList)EgovMasterDataCaching.getInstance().get("egf-bank");
+	Logger logger = Logger.getLogger(getClass().getName());
 	//logger.infor("calculation type : "+rsf.getCalculationType());
 %>
 
