@@ -1106,16 +1106,16 @@ public class GeneralLedgerReport {
             } else {
 
                 if (deptId != null && !deptId.equalsIgnoreCase(""))
-                    pstmt.setLong(i++, Long.parseLong(deptId));
-                pstmt.setString(i++, glCode);
+                    pstmt.setParameter("departmentId", Long.parseLong(deptId), LongType.INSTANCE);
+                pstmt.setParameter("glCode", glCode, StringType.INSTANCE);
                 if (!fundId.equalsIgnoreCase(""))
-                    pstmt.setLong(i++, Long.parseLong(fundId));
+                    pstmt.setParameter("fundId", Long.parseLong(fundId), LongType.INSTANCE);
                 if (!fundSourceId.equalsIgnoreCase(""))
-                    pstmt.setLong(i++, Long.parseLong(fundSourceId));
+                    pstmt.setParameter("fundSourceId", Long.parseLong(fundSourceId), LongType.INSTANCE);
                 if (!StringUtils.isEmpty(functionId))
-                    pstmt.setLong(i++, Long.parseLong(functionId));
-                pstmt.setString(i++, startDate);
-                pstmt.setString(i++, tillDate);
+                    pstmt.setParameter("functionId", Long.parseLong(functionId), LongType.INSTANCE);
+                pstmt.setParameter("startDate", startDate, StringType.INSTANCE);
+                pstmt.setParameter("endDate", tillDate, StringType.INSTANCE);
             }
             final List<Object[]> list = pstmt.list();
             resultset = list;

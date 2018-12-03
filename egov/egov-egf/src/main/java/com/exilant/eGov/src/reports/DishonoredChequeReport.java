@@ -330,7 +330,7 @@ public class DishonoredChequeReport {
             final StringBuilder query = new StringBuilder()
                     .append(basicquery1)
                     .append(wherequery1)
-                    .append(orderbyquery)
+                    .append(orderbyquery);
 
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("  getBankEntryDetails Query is  " + query);
