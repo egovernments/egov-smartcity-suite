@@ -51,6 +51,7 @@ package org.egov.infra.admin.common.entity;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.annotations.Immutable;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.joda.time.DateTime;
@@ -77,6 +78,7 @@ import static org.egov.infra.admin.common.entity.IdentityRecovery.SEQ_IDENTITYRE
 @Table(name = "eg_identityrecovery")
 @Unique(fields = "token", enableDfltMsg = true)
 @SequenceGenerator(name = SEQ_IDENTITYRECOVERY, sequenceName = SEQ_IDENTITYRECOVERY, allocationSize = 1)
+@Immutable
 public class IdentityRecovery extends AbstractPersistable<Long> {
 
     protected static final String SEQ_IDENTITYRECOVERY = "SEQ_EG_IDENTITYRECOVERY";
@@ -92,7 +94,7 @@ public class IdentityRecovery extends AbstractPersistable<Long> {
     private String token;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "userid", nullable = false, updatable = false)
+    @JoinColumn(name = "userid", nullable = false)
     @NotNull
     private User user;
 

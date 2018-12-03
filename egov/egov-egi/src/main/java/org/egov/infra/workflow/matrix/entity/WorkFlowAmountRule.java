@@ -48,6 +48,7 @@
 
 package org.egov.infra.workflow.matrix.entity;
 
+import jdk.nashorn.internal.ir.annotations.Immutable;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.validator.constraints.Length;
 
@@ -66,6 +67,7 @@ import static org.egov.infra.workflow.matrix.entity.WorkFlowAmountRule.SEQ_WF_AM
 
 @Entity
 @Table(name = "EG_WF_AMOUNTRULE")
+@Immutable
 @SequenceGenerator(name = SEQ_WF_AMOUNTRULE, sequenceName = SEQ_WF_AMOUNTRULE, allocationSize = 1)
 public class WorkFlowAmountRule extends AbstractPersistable<Long> {
     public static final String SEQ_WF_AMOUNTRULE = "SEQ_EG_WF_AMOUNTRULE";

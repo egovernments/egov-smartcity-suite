@@ -48,6 +48,7 @@
 
 package org.egov.infra.workflow.matrix.entity;
 
+import jdk.nashorn.internal.ir.annotations.Immutable;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -68,6 +69,7 @@ import static org.egov.infra.workflow.matrix.entity.WorkFlowMatrix.SEQ_WF_MATRIX
 
 @Entity
 @Table(name = "EG_WF_MATRIX")
+@Immutable
 @SequenceGenerator(name = SEQ_WF_MATRIX, sequenceName = SEQ_WF_MATRIX, allocationSize = 1)
 public class WorkFlowMatrix extends AbstractPersistable<Long> implements Cloneable {
 

@@ -53,9 +53,9 @@ import com.google.gson.annotations.Expose;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
-import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -65,6 +65,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.Set;
@@ -92,18 +93,20 @@ public class BoundaryType extends AbstractAuditable {
     @NotBlank
     @Length(max = 25)
     @SafeHtml
+    @Column(updatable = false)
     private String code;
 
     @ManyToOne
     @NotNull
-    @JoinColumn(name = "hierarchytype")
+    @JoinColumn(name = "hierarchytype", updatable = false)
     private HierarchyType hierarchyType;
 
     @ManyToOne
-    @JoinColumn(name = "parent")
+    @JoinColumn(name = "parent", updatable = false)
     private BoundaryType parent;
 
     @Positive
+    @Column(updatable = false)
     private Long hierarchy;
 
     @SafeHtml

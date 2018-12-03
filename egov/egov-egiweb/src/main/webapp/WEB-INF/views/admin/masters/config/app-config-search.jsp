@@ -46,7 +46,7 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
@@ -71,9 +71,9 @@
                                 class="mandatory"></span></label>
                         <div class="col-sm-6 add-margin">
                             <select name="appConfigModuleName" id="appConfigModuleName" class="form-control" required="required">
-                                <option value=""> <spring:message code="lbl.select"/> </option>
+                                <option value=""><spring:message code="lbl.select"/></option>
                                 <c:forEach items="${modules}" var="module">
-                                <option value="${module.name}">${module.name}</option>
+                                    <option value="${module.name}">${module.name}</option>
                                 </c:forEach>
                             </select>
                         </div>
@@ -85,7 +85,8 @@
                             <label class="col-sm-3 control-label"><spring:message code="lbl.AppconfigKeyName"/><span
                                     class="mandatory"></span></label>
                             <div class="col-sm-6 add-margin">
-                                <select id="appConfigKeyName" name="appConfigKeyName" data-first-option="false" class="form-control" required="required">
+                                <select id="appConfigKeyName" name="appConfigKeyName" data-first-option="false" class="form-control"
+                                        required="required">
                                     <option value="">
                                         <spring:message code="lbl.AppconfigKeyName"/>
                                     </option>

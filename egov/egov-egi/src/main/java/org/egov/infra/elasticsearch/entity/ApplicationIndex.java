@@ -52,10 +52,12 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
 import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.utils.DateUtils;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -73,6 +75,7 @@ import static org.egov.infra.validation.ValidatorUtils.assertNotNull;
 
 @Entity
 @Table(name = "EG_APPLICATIONINDEX")
+@Unique(fields = "applicationNumber")
 @SequenceGenerator(name = SEQ_APPLICATIONINDEX, sequenceName = SEQ_APPLICATIONINDEX, allocationSize = 1)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "version")
 public class ApplicationIndex extends AbstractAuditable {
@@ -87,23 +90,28 @@ public class ApplicationIndex extends AbstractAuditable {
     @NotBlank
     @Length(max = 50)
     @SafeHtml
+    @Column(updatable = false)
     private String moduleName;
 
     @NotBlank
     @Length(max = 50)
     @SafeHtml
+    @Column(updatable = false)
     private String applicationNumber;
 
     @NotNull
+    @Column(updatable = false)
     private Date applicationDate;
 
     @NotBlank
     @Length(max = 150)
+    @Column(updatable = false)
     private String applicationType;
 
     @NotBlank
     @Length(max = 250)
     @SafeHtml
+    @Column(updatable = false)
     private String applicantName;
 
     @Length(max = 250)
@@ -153,27 +161,33 @@ public class ApplicationIndex extends AbstractAuditable {
 
     @Length(max = 50)
     @SafeHtml
+    @Column(updatable = false)
     private String channel;
 
     @Length(max = 4)
     @SafeHtml
+    @Column(updatable = false)
     private String cityCode;
 
     @NotBlank
     @Length(max = 50)
     @SafeHtml
+    @Column(updatable = false)
     private String cityName;
 
     @Length(max = 50)
     @SafeHtml
+    @Column(updatable = false)
     private String cityGrade;
 
     @Length(max = 50)
     @SafeHtml
+    @Column(updatable = false)
     private String districtName;
 
     @Length(max = 50)
     @SafeHtml
+    @Column(updatable = false)
     private String regionName;
 
     private Integer isClosed;

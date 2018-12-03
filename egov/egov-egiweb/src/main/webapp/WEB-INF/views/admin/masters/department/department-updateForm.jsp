@@ -78,7 +78,8 @@
 									<spring:message code="lbl.departmentCode"/><span class="mandatory"></span>
 								</label>
 								<div class="col-sm-6">
-									<form:input path="code" id="code" type="text" class="form-control low-width" placeholder="" autocomplete="off" required="required"/>
+									<form:input path="code" id="code" type="text" class="form-control low-width"
+												placeholder="" autocomplete="off" required="required" readonly="true"/>
 									<form:errors path="code" class="add-margin error-msg"/>
 								</div>
 							</div>

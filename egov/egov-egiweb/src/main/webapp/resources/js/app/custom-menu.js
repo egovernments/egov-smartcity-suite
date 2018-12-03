@@ -205,6 +205,7 @@ $(document).ready(function () {
         fd.append('actionId', actionId);
         fd.append('name', $("#fav-name").val());
         fd.append('contextRoot', contextRoot);
+        fd.append("userId",1);
         $.ajax({
             type: "POST",
             url: "home/favourite/add",

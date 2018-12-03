@@ -48,6 +48,7 @@
 
 package org.egov.infra.workflow.entity;
 
+import jdk.nashorn.internal.ir.annotations.Immutable;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -65,6 +66,7 @@ import static org.egov.infra.workflow.entity.WorkflowAction.SEQ_WF_ACTION;
 @Entity
 @Table(name = "EG_WF_ACTION")
 @SequenceGenerator(name = SEQ_WF_ACTION, sequenceName = SEQ_WF_ACTION, allocationSize = 1)
+@Immutable
 public class WorkflowAction extends AbstractAuditable {
 
     static final String SEQ_WF_ACTION = "SEQ_EG_WF_ACTION";

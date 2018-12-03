@@ -48,6 +48,7 @@
 
 package org.egov.infra.filestore.entity;
 
+import jdk.nashorn.internal.ir.annotations.Immutable;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -70,6 +71,7 @@ import static org.egov.infra.filestore.entity.FileStoreMapper.SEQ_FILESTOREMAPPE
 @Table(name = "eg_filestoremap")
 @Entity
 @SequenceGenerator(name = SEQ_FILESTOREMAPPER, sequenceName = SEQ_FILESTOREMAPPER, allocationSize = 1)
+@Immutable
 public class FileStoreMapper extends AbstractPersistable<Long> {
     public static final String SEQ_FILESTOREMAPPER = "SEQ_EG_FILESTOREMAP";
     private static final long serialVersionUID = -2997164207274266823L;

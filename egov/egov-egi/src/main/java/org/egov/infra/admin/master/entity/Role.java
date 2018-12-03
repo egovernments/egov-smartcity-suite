@@ -53,6 +53,7 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -80,6 +81,7 @@ public class Role extends AbstractAuditable {
     @NotBlank
     @SafeHtml
     @Length(max = 32)
+    @Column(updatable = false)
     private String name;
 
     @SafeHtml

@@ -119,10 +119,10 @@ public class User extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_USER, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(name = "username", unique = true)
     @NotNull
     @Length(min = 2, max = 64)
     @SafeHtml
+    @Column(unique = true, updatable = false)
     private String username;
 
     @NotNull
@@ -199,7 +199,7 @@ public class User extends AbstractAuditable {
     private String locale = "en_IN";
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "type")
+    @Column(name = "type", updatable = false)
     private UserType type;
 
     private byte[] signature;

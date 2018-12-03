@@ -50,7 +50,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<link rel="stylesheet"	href="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css'/>">
+<link rel="stylesheet" href="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css'/>">
 <div class="row" id="page-content">
     <div class="col-md-12">
         <c:if test="${not empty message}">
@@ -70,7 +70,7 @@
                         <label class="col-sm-3 control-label"><spring:message code="lbl.module"/></label>
                         <div class="col-sm-6 add-margin">
                             <select id="moduleName" class="form-control">
-                                <option value=""> <spring:message code="lbl.select"/> </option>
+                                <option value=""><spring:message code="lbl.select"/></option>
                                 <c:forEach items="${modules}" var="module">
                                     <option value="${module.name}">${module.name}</option>
                                 </c:forEach>
@@ -94,35 +94,39 @@
     </div>
 </div>
 <style>
-td.details-control,tr.shown td.details-control{
-	position:relative;
-}
-td.details-control:before {
-    content: "\f055";
-    font-family: FontAwesome;
-    position:absolute;
-    top: 8px;
-    font-size: 16px;
-}
-tr.shown td.details-control:before {
-    content: "\f056"; 
-    font-family: FontAwesome;
-    position:absolute;
-    top: 8px;
-    font-size: 16px;
-}
-.table tbody thead:first-child > tr:first-child th {
-    background: #fff;
-    color: #333;
-    font-family: semibold;
-}
-.table thead:first-child > tr:first-child th:first-child{
-	border-left: 1px solid #ccc;
-}
+    td.details-control, tr.shown td.details-control {
+        position: relative;
+    }
+
+    td.details-control:before {
+        content: "\f055";
+        font-family: FontAwesome;
+        position: absolute;
+        top: 8px;
+        font-size: 16px;
+    }
+
+    tr.shown td.details-control:before {
+        content: "\f056";
+        font-family: FontAwesome;
+        position: absolute;
+        top: 8px;
+        font-size: 16px;
+    }
+
+    .table tbody thead:first-child > tr:first-child th {
+        background: #fff;
+        color: #333;
+        font-family: semibold;
+    }
+
+    .table thead:first-child > tr:first-child th:first-child {
+        border-left: 1px solid #ccc;
+    }
 </style>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
-<script	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js'/>"></script>
-<script	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js'/>"></script>
-<script	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js'/>"></script>
+<script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js'/>"></script>
+<script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js'/>"></script>
+<script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js'/>"></script>
 <script src="<cdn:url  value='/resources/js/app/appconfig.js?rnd=${app_release_no}'/>"></script>

@@ -64,6 +64,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
@@ -89,8 +90,8 @@ import static org.hibernate.annotations.FetchMode.JOIN;
 @NamedEntityGraph(name = FETCH_WITH_VALUES, attributeNodes = @NamedAttributeNode("confValues"))
 public class AppConfig extends AbstractAuditable {
 
-    protected static final String SEQ_APPCONFIG = "SEQ_EG_APPCONFIG";
     public static final String FETCH_WITH_VALUES = "AppConfig.values";
+    protected static final String SEQ_APPCONFIG = "SEQ_EG_APPCONFIG";
     private static final long serialVersionUID = 8904645810221559541L;
 
     @Expose
@@ -118,6 +119,7 @@ public class AppConfig extends AbstractAuditable {
     @OneToMany(cascade = ALL, fetch = EAGER, mappedBy = "config", orphanRemoval = true)
     @Fetch(JOIN)
     @NotEmpty
+    @OrderBy("effectiveFrom")
     private List<AppConfigValues> confValues = new ArrayList<>();
 
     @Override

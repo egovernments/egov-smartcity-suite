@@ -46,7 +46,7 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
@@ -86,7 +86,7 @@
                                         <label class="col-sm-3 control-label"><spring:message
                                                 code="lbl.boundaryType"/><span class="mandatory"></span></label>
                                         <div class="col-sm-6 add-margin">
-                                            <select id="boundaryType" class="form-control" required="required">
+                                            <select id="boundaryType" class="form-control boundary-auto" required="required">
                                                 <option value=""><spring:message code="lbl.select"/></option>
                                             </select>
                                         </div>

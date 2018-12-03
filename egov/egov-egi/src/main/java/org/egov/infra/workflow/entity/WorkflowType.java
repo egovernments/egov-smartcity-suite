@@ -52,6 +52,7 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Immutable;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -70,6 +71,7 @@ import static org.egov.infra.workflow.entity.WorkflowType.SEQ_WORKFLOWTYPES;
 
 @Entity
 @Table(name = "EG_WF_TYPES")
+@Immutable
 @SequenceGenerator(name = SEQ_WORKFLOWTYPES, sequenceName = SEQ_WORKFLOWTYPES, allocationSize = 1)
 public class WorkflowType extends AbstractAuditable {
 

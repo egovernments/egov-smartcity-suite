@@ -54,6 +54,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Cacheable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -82,6 +83,7 @@ public class MessageTemplate extends AbstractPersistable<Long> {
     @NotBlank
     @Length(max = 100)
     @SafeHtml
+    @Column(updatable = false)
     private String templateName;
 
     @NotBlank

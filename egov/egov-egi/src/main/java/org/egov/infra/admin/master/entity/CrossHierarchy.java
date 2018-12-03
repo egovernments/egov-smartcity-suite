@@ -51,6 +51,7 @@ package org.egov.infra.admin.master.entity;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -67,6 +68,7 @@ import static org.egov.infra.admin.master.entity.CrossHierarchy.SEQ_CROSSHIERARC
 @Entity
 @Table(name = "EG_CROSSHIERARCHY")
 @SequenceGenerator(name = SEQ_CROSSHIERARCHY, sequenceName = SEQ_CROSSHIERARCHY, allocationSize = 1)
+@Immutable
 public class CrossHierarchy extends AbstractPersistable<Long> {
     protected static final String SEQ_CROSSHIERARCHY = "seq_eg_crosshierarchy";
     private static final long serialVersionUID = 5586809829548733921L;
@@ -87,14 +89,16 @@ public class CrossHierarchy extends AbstractPersistable<Long> {
     @NotNull
     private Boundary child;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "parenttype")
     @Fetch(value = FetchMode.JOIN)
+    @NotNull
     private BoundaryType parentType;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "childtype")
     @Fetch(value = FetchMode.JOIN)
+    @NotNull
     private BoundaryType childType;
 
     @Override

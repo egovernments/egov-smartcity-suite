@@ -62,6 +62,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -104,6 +105,7 @@ public class Boundary extends AbstractAuditable {
     @Length(max = 25)
     @SafeHtml
     @NotBlank
+    @Column(updatable = false)
     private String code;
 
     @SafeHtml
@@ -112,6 +114,7 @@ public class Boundary extends AbstractAuditable {
 
     @Positive
     @NotNull
+    @Column(updatable = false)
     private Long boundaryNum;
 
     @ManyToOne

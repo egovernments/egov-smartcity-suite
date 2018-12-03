@@ -48,6 +48,7 @@
 
 package org.egov.infra.workflow.matrix.entity;
 
+import jdk.nashorn.internal.ir.annotations.Immutable;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.workflow.entity.WorkflowType;
 import org.hibernate.validator.constraints.Length;
@@ -65,6 +66,7 @@ import static org.egov.infra.workflow.matrix.entity.WorkFlowAdditionalRule.SEQ_W
 
 @Entity
 @Table(name = "EG_WF_ADDITIONALRULE")
+@Immutable
 @SequenceGenerator(name = SEQ_WF_ADDITIONALRULE, sequenceName = SEQ_WF_ADDITIONALRULE, allocationSize = 1)
 public class WorkFlowAdditionalRule extends AbstractPersistable<Long> {
 

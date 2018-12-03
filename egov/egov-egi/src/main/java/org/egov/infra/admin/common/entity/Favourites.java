@@ -50,6 +50,7 @@ package org.egov.infra.admin.common.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.CompositeUnique;
+import org.hibernate.annotations.Immutable;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -71,6 +72,7 @@ import static org.egov.infra.admin.common.entity.Favourites.SEQ_FAVOURITES;
 @Table(name = "eg_favourites", uniqueConstraints = @UniqueConstraint(columnNames = {"userId", "actionId"}))
 @CompositeUnique(fields = {"userId", "actionId"})
 @SequenceGenerator(name = SEQ_FAVOURITES, sequenceName = SEQ_FAVOURITES, allocationSize = 1)
+@Immutable
 public class Favourites extends AbstractPersistable<Long> {
 
     protected static final String SEQ_FAVOURITES = "SEQ_EG_FAVOURITES";

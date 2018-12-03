@@ -59,6 +59,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -119,6 +120,7 @@ public class City extends AbstractAuditable {
     @SafeHtml
     @NotBlank
     @Length(max = 4)
+    @Column(updatable = false)
     private String code;
 
     @SafeHtml

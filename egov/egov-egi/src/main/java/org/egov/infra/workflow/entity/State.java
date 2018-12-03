@@ -52,7 +52,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.utils.JsonUtils;
 import org.hibernate.validator.constraints.Length;
-import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
@@ -72,6 +71,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.HashSet;
@@ -97,6 +97,7 @@ public class State<T extends OwnerGroup> extends AbstractAuditable {
     @NotBlank
     @Length(max = 50)
     @SafeHtml
+    @Column(updatable = false)
     private String type;
 
     @NotBlank

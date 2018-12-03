@@ -51,42 +51,46 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <div class="row" id="page-content">
-	<div class="col-md-12">
-				 <c:if test="${not empty message}">
-                    <div id="message" class="success"><spring:message code="${message}"/></div>
-                </c:if>
-		<form:form  method="post" class="form-horizontal form-groups-bordered" modelAttribute="role" id="updaterole" >
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-						<strong><spring:message code="lbl.hdr.updateRole"/></strong>
-					</div>
-				</div> 
-				
-				<div class="panel-body custom-form">
-					<div class="form-group">
-						<label class="col-sm-3 control-label"><spring:message code="lbl.roleName"/><span class="mandatory"></span></label>
-						<div class="col-sm-6">
-							<form:input path="name" id="name" type="text" class="form-control low-width" placeholder="" autocomplete="off" required="required"/>
+    <div class="col-md-12">
+        <c:if test="${not empty message}">
+            <div id="message" class="success"><spring:message code="${message}"/></div>
+        </c:if>
+        <form:form method="post" class="form-horizontal form-groups-bordered" modelAttribute="role" id="updaterole">
+            <div class="panel panel-primary" data-collapsed="0">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <strong><spring:message code="lbl.hdr.updateRole"/></strong>
+                    </div>
+                </div>
+
+                <div class="panel-body custom-form">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label"><spring:message code="lbl.roleName"/><span class="mandatory"></span></label>
+                        <div class="col-sm-6">
+                            <form:input path="name" id="name" type="text" class="form-control low-width" placeholder=""
+                                        autocomplete="off" required="required" readonly="true"/>
                             <form:errors path="name" cssClass="add-margin error-msg"/>
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-3 control-label"><spring:message code="lbl.roleDesc"/></label>
-						<div class="col-sm-6">
-							<form:input path="description" id="description" type="text" class="form-control low-width" placeholder="" autocomplete="off"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label"><spring:message code="lbl.roleDesc"/></label>
+                        <div class="col-sm-6">
+                            <form:input path="description" id="description" type="text" class="form-control low-width" placeholder=""
+                                        autocomplete="off"/>
                             <form:errors path="description" cssClass="add-margin error-msg"/>
-						</div>
-					</div>
-					
-				</div>
-			</div>
-			<div class="row">
-				<div class="text-center">
-					<button type="submit" class="btn btn-primary"><spring:message code="lbl.update"/></button>
-			         <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();"><spring:message code="lbl.close"/></button>
-				</div>
-			</div>
-		</form:form>
-			</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary"><spring:message code="lbl.update"/></button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();">
+                        <spring:message code="lbl.close"/>
+                    </button>
+                </div>
+            </div>
+        </form:form>
+    </div>
 </div>

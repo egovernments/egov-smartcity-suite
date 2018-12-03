@@ -56,36 +56,36 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly=true)
+@Transactional(readOnly = true)
 public class FavouritesService {
-    
+
     @Autowired
     private FavouritesRepository favouritesRepository;
-    
+
     @Autowired
     private SecurityUtils securityUtils;
 
     public Favourites getFavouriteByUserIdAndActionId(Long userId, Integer actionId) {
         return favouritesRepository.findByUserIdAndActionId(userId, actionId);
     }
-    
+
     @Transactional
     public boolean removeFromCurrentUserFavourite(Integer actionId) {
-    	final Favourites favourites = getFavouriteByUserIdAndActionId(securityUtils.getCurrentUser().getId(),actionId);
-    	if(favourites == null) {
-    		return Boolean.FALSE;
-    	} 
-    	favouritesRepository.delete(favourites);
-    	return Boolean.TRUE;
+        Favourites favourites = getFavouriteByUserIdAndActionId(securityUtils.getCurrentUser().getId(), actionId);
+        if (favourites == null) {
+            return Boolean.FALSE;
+        }
+        favouritesRepository.delete(favourites);
+        return Boolean.TRUE;
     }
-    
+
     @Transactional
     public Favourites addToCurrentUserFavourite(Favourites favourites) {
-    	 final Long userId = securityUtils.getCurrentUser().getId();
-         if (getFavouriteByUserIdAndActionId(userId, favourites.getActionId()) == null) {
-        	 favourites.setUserId(userId);
-        	 favouritesRepository.save(favourites);
-         } 
+        Long userId = securityUtils.getCurrentUser().getId();
+        if (getFavouriteByUserIdAndActionId(userId, favourites.getActionId()) == null) {
+            favourites.setUserId(userId);
+            favouritesRepository.save(favourites);
+        }
         return favourites;
     }
 }
