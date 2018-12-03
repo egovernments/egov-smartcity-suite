@@ -55,17 +55,16 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
-import org.egov.commons.service.AccountdetailtypeService;
-import org.egov.commons.service.ChartOfAccountsService;
-import org.egov.commons.service.EntityTypeService;
-import org.egov.commons.service.FunctionService;
-import org.egov.commons.service.FundService;
+import org.egov.commons.service.*;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.expensebill.service.ExpenseBillService;
 import org.egov.egf.model.BillPaymentDetails;
 import org.egov.egf.utils.FinancialUtils;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.model.bills.*;
+import org.egov.model.bills.EgBillPayeedetails;
+import org.egov.model.bills.EgBilldetails;
+import org.egov.model.bills.EgBillregister;
+import org.egov.model.bills.EgBillregistermis;
 import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.BillDetails;
 import org.egov.restapi.model.BillPayeeDetails;
@@ -84,14 +83,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 @Service
 @Transactional(readOnly = true)
@@ -604,12 +602,12 @@ public class BillService {
         for (final BillPayeeDetails payeeDetails : billRegister.getBillPayeeDetails()) {
             final CChartOfAccounts coa = chartOfAccountsService
                     .getByGlCode(payeeDetails.getGlcode());
-            if (payeeDetails.getCreditAmount() != null) {
+            if (payeeDetails.getCreditAmount().compareTo(BigDecimal.ZERO) != 0) {
                 contractorAccountDetailType = chartOfAccountsHibernateDAO.getAccountDetailTypeIdByName(
                         coa.getGlcode(), WorksConstants.ACCOUNTDETAIL_TYPE_CONTRACTOR);
                 if (contractorAccountDetailType != null)
                     populateEgBillPayeedetails(egBilldetails, payeeDetails, details);
-            } else if (payeeDetails.getDebitAmount() != null) {
+            } else if (payeeDetails.getDebitAmount().compareTo(BigDecimal.ZERO) != 0) {
                 projectCodeAccountDetailType = chartOfAccountsHibernateDAO.getAccountDetailTypeIdByName(coa.getGlcode(),
                         WorksConstants.PROJECTCODE);
                 contractorAccountDetailType = chartOfAccountsHibernateDAO.getAccountDetailTypeIdByName(
