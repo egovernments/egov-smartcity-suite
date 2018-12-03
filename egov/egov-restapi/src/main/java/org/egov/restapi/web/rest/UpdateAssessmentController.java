@@ -59,6 +59,7 @@ import org.egov.ptis.domain.model.NewPropertyDetails;
 import org.egov.ptis.domain.model.ViewPropertyDetails;
 import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthorityRepository;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
+import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.AmenitiesDetails;
 import org.egov.restapi.model.AssessmentsDetails;
 import org.egov.restapi.model.ConstructionTypeDetails;
@@ -75,6 +76,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.text.ParseException;
 
+import static org.egov.restapi.constants.RestApiConstants.PROPERTY_UNDERWORKFLOW_CODE;
+import static org.egov.restapi.constants.RestApiConstants.PROPERTY_UNDERWORKFLOW_REQ_MSG;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -105,8 +108,13 @@ public class UpdateAssessmentController {
 		ApplicationThreadLocals.setUserId(2L);
 		NewPropertyDetails newPropertyDetails;
 		CreatePropertyDetails createPropDetails = (CreatePropertyDetails) getObjectFromJSONRequest(createPropertyDetails, CreatePropertyDetails.class);
-		
-		ErrorDetails errorDetails = validationUtil.validateUpdateRequest(createPropDetails, PropertyTaxConstants.PROPERTY_MODE_MODIFY);
+		//Commenting the validation to restrict the API
+		//uncomment when required
+		//ErrorDetails errorDetails = validationUtil.validateUpdateRequest(createPropDetails, PropertyTaxConstants.PROPERTY_MODE_MODIFY);
+		//Creating one error and returning, please remove when need API
+		ErrorDetails errorDetails = new ErrorDetails();
+		errorDetails.setErrorCode(RestApiConstants.API_DISABLED);
+                errorDetails.setErrorMessage(RestApiConstants.API_DISABLED_CODE);
 		if (errorDetails != null && errorDetails.getErrorCode() != null) {
 			newPropertyDetails = new NewPropertyDetails();
 			newPropertyDetails.setReferenceId(createPropDetails.getReferenceId());

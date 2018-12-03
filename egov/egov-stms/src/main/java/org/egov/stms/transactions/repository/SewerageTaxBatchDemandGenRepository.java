@@ -49,7 +49,6 @@ package org.egov.stms.transactions.repository;
 
 import org.egov.stms.entity.SewerageTaxBatchDemandGenerate;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -57,7 +56,6 @@ import java.util.List;
 @Repository
 public interface SewerageTaxBatchDemandGenRepository extends JpaRepository<SewerageTaxBatchDemandGenerate, Long> {
 
-    @Query("select A from SewerageTaxBatchDemandGenerate A where A.active is true order by createdDate asc ")
-    List<SewerageTaxBatchDemandGenerate> findActiveBatchDemands();
+    List<SewerageTaxBatchDemandGenerate> findByActiveTrueOrderByCreatedDate();
 
 }

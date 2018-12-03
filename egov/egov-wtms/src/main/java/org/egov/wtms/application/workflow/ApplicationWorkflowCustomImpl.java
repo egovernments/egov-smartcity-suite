@@ -85,6 +85,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_SUPERUSER;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SENIOR_ASSISTANT_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNWORKFLOWACTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SUPERINTENDING_ENGINEER_DESIGNATION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.TAP_INSPPECTOR_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_CANCEL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
@@ -473,7 +474,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 && waterConnectionDetails.getStatus().getCode()
                         .equals(APPLICATION_STATUS_DIGITALSIGNPENDING)
                 && (loggedInUserDesignation.equalsIgnoreCase(MUNICIPAL_ENGINEER_DESIGN)
-                        || loggedInUserDesignation.equalsIgnoreCase(SUPERIENTEND_ENGINEER_DESIGN)
+                        || loggedInUserDesignation.equalsIgnoreCase(SUPERINTENDING_ENGINEER_DESIGNATION)
                         || loggedInUserDesignation.equalsIgnoreCase(EXECUTIVE_ENGINEER_DESIGN)
                         || loggedInUserDesignation.equalsIgnoreCase(DEPUTY_ENGINEER_DESIGN)))
             workFlowMatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
@@ -502,7 +503,8 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
     private boolean isCurrentUserApprover(String loggedInUserDesignation) {
         return isNotBlank(loggedInUserDesignation) &&
                 Arrays.asList(COMMISSIONER_DESGN, EXECUTIVE_ENGINEER_DESIGN, MUNICIPAL_ENGINEER_DESIGN, DEPUTY_ENGINEER_DESIGN,
-                        SUPERIENTEND_ENGINEER_DESIGN, ASSISTANT_EXECUTIVE_ENGINEER_DESIGN).contains(loggedInUserDesignation);
+                        SUPERIENTEND_ENGINEER_DESIGN, SUPERINTENDING_ENGINEER_DESIGNATION,
+                        ASSISTANT_EXECUTIVE_ENGINEER_DESIGN).contains(loggedInUserDesignation);
     }
 
     public String getNatureOfTask(final WaterConnectionDetails waterConnectionDetails) {

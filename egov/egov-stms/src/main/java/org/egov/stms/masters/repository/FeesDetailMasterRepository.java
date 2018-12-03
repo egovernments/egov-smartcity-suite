@@ -49,8 +49,6 @@ package org.egov.stms.masters.repository;
 
 import org.egov.stms.masters.entity.FeesDetailMaster;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -60,11 +58,9 @@ public interface FeesDetailMasterRepository extends JpaRepository<FeesDetailMast
 
     FeesDetailMaster findByCodeAndIsActive(String code, boolean active);
 
-    @Query("select fd from FeesDetailMaster fd where UPPER(fd.fees.code) = UPPER(:code)  order by fd.id")
-    List<FeesDetailMaster> findAllByFeesCode(@Param("code") String code);
-    
-    @Query("select fd from FeesDetailMaster fd where UPPER(fd.fees.code) = UPPER(:code) and isActive=true order by fd.id")
-    List<FeesDetailMaster> findAllActiveFeesDetailByFeesCode(@Param("code") String code);
- 
-    
+    List<FeesDetailMaster> findByFeesCodeContainingIgnoreCaseOrderById(String code);
+
+    List<FeesDetailMaster> findByFeesCodeContainingIgnoreCaseAndIsActiveTrueOrderById(String code);
+
+
 }

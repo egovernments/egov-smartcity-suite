@@ -63,11 +63,11 @@ public class DonationDetailMasterService {
     public DonationDetailMasterRepository donationDetailMasterRepository;
 
     public List<DonationDetailMaster> findDonationDetailsByDonationId(final Long donation) {
-        return donationDetailMasterRepository.findByDonation_Id(donation);
+        return donationDetailMasterRepository.findByDonationId(donation);
     }
 
     public List<DonationDetailMaster> findDonationDetailsOrderByNumberOfClosets(final Long donation) {
-        return donationDetailMasterRepository.findDonationDetailsOrderByNumberOfClosets(donation);
+        return donationDetailMasterRepository.findByDonationOrderByNoOfClosets(donation);
     }
 
 }

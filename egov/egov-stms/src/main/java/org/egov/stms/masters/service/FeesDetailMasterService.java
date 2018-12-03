@@ -59,22 +59,23 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class FeesDetailMasterService {
 
-      private  final  FeesDetailMasterRepository feesDetailMasterRepository;
+    private final FeesDetailMasterRepository feesDetailMasterRepository;
 
-      @Autowired
-      public FeesDetailMasterService(final FeesDetailMasterRepository feesDetailMasterRepository) {
-          this.feesDetailMasterRepository = feesDetailMasterRepository;
-      }
-      
-      public FeesDetailMaster findByCodeAndIsActive(final String  code,
-              final boolean active) {
-          return feesDetailMasterRepository.findByCodeAndIsActive(code, active);
-      }
-      
-      public List<FeesDetailMaster> findAllFeesDetailByFeesCode(final String code) {
-          return feesDetailMasterRepository.findAllByFeesCode(code);
-      }
-      public List<FeesDetailMaster> findAllActiveFeesDetailByFeesCode(final String code) {
-          return feesDetailMasterRepository.findAllActiveFeesDetailByFeesCode(code);
-      }
+    @Autowired
+    public FeesDetailMasterService(final FeesDetailMasterRepository feesDetailMasterRepository) {
+        this.feesDetailMasterRepository = feesDetailMasterRepository;
+    }
+
+    public FeesDetailMaster findByCodeAndIsActive(final String code,
+                                                  final boolean active) {
+        return feesDetailMasterRepository.findByCodeAndIsActive(code, active);
+    }
+
+    public List<FeesDetailMaster> findAllFeesDetailByFeesCode(final String code) {
+        return feesDetailMasterRepository.findByFeesCodeContainingIgnoreCaseOrderById(code);
+    }
+
+    public List<FeesDetailMaster> findAllActiveFeesDetailByFeesCode(final String code) {
+        return feesDetailMasterRepository.findByFeesCodeContainingIgnoreCaseAndIsActiveTrueOrderById(code);
+    }
 }

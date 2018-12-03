@@ -63,24 +63,24 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 public class DocumentTypeMasterService {
-  
-    @Autowired
-    private  DocumentTypeMasterRepository documentTypeMasterRepository;
 
-   
+    @Autowired
+    private DocumentTypeMasterRepository documentTypeMasterRepository;
+
+
     public DocumentTypeMaster findOne(final Long id) {
         return documentTypeMasterRepository.findOne(id);
     }
 
     @Transactional
-    public DocumentTypeMaster createDocumentName(final DocumentTypeMaster DocumentTypeMaster) {
-        DocumentTypeMaster.setActive(true);
-        return documentTypeMasterRepository.save(DocumentTypeMaster);
+    public DocumentTypeMaster createDocumentName(final DocumentTypeMaster documentTypeMaster) {
+        documentTypeMaster.setActive(true);
+        return documentTypeMasterRepository.save(documentTypeMaster);
     }
 
     @Transactional
-    public void updateDocumentName(final DocumentTypeMaster DocumentTypeMaster) {
-        documentTypeMasterRepository.save(DocumentTypeMaster);
+    public void updateDocumentName(final DocumentTypeMaster documentTypeMaster) {
+        documentTypeMasterRepository.save(documentTypeMaster);
     }
 
     public List<DocumentTypeMaster> findAll() {
@@ -105,12 +105,12 @@ public class DocumentTypeMasterService {
     }
 
     public DocumentTypeMaster findByApplicationTypeAndDescription(final SewerageApplicationType applicationType,
-            final String description) {
+                                                                  final String description) {
         return documentTypeMasterRepository.findByApplicationTypeAndDescription(applicationType, description);
     }
 
     public List<DocumentTypeMaster> getAllActiveDocumentTypeMasterByApplicationType(final SewerageApplicationType applicationType) {
-        return documentTypeMasterRepository.findAllActiveDocumentTypeMasterByApplicationType(applicationType);
+        return documentTypeMasterRepository.findByApplicationTypeAndIsActiveTrueOrderById(applicationType);
     }
 
 }

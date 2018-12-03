@@ -710,5 +710,8 @@ public class RestApiConstants {
 
     public static final String THIRD_PARTY_ERR_CODE_NOT_VALID_FUND_CODE = "EGF-REST-133";
     public static final String THIRD_PARTY_ERR_MSG_NOT_VALID_FUND_CODE = "Provided fund code is not valid";
+    
+    public static final String API_DISABLED = "00";
+    public static final String API_DISABLED_CODE = "This API is temporarily disabled!";
 
 }

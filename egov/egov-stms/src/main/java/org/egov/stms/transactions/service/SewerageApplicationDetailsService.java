@@ -234,7 +234,7 @@ public class SewerageApplicationDetailsService {
 
     public SewerageApplicationDetails findByApplicationNumberAndConnectionStatus(final String applicationNumber,
                                                                                  final SewerageConnectionStatus status) {
-        return sewerageApplicationDetailsRepository.findByApplicationNumberAndConnection_Status(applicationNumber,
+        return sewerageApplicationDetailsRepository.findByApplicationNumberAndConnectionStatus(applicationNumber,
                 status);
     }
 
@@ -246,7 +246,7 @@ public class SewerageApplicationDetailsService {
     }
 
     public List<SewerageApplicationDetails> findByConnectionShscNumber(final String shscNumber) {
-        return sewerageApplicationDetailsRepository.findByConnection_ShscNumber(shscNumber);
+        return sewerageApplicationDetailsRepository.findByConnectionShscNumber(shscNumber);
     }
 
     @Transactional
@@ -381,11 +381,11 @@ public class SewerageApplicationDetailsService {
     }
 
     public List<SewerageApplicationDetails> getSewerageConnectionDetailsByPropertyIDentifier(final String propertyIdentifier) {
-        return sewerageApplicationDetailsRepository.getSewerageConnectionDetailsByPropertyID(propertyIdentifier);
+        return sewerageApplicationDetailsRepository.findByIsActiveTrueAndConnectionDetailPropertyIdentifierOrderByIdDesc(propertyIdentifier);
     }
 
     public SewerageApplicationDetails findByShscNumberAndIsActive(final String shscNumber) {
-        return sewerageApplicationDetailsRepository.getActiveSewerageApplicationByShscNumber(shscNumber);
+        return sewerageApplicationDetailsRepository.findByConnectionShscNumberAndIsActiveTrue(shscNumber);
     }
 
     public String checkValidPropertyAssessmentNumber(final String asessmentNumber) {
@@ -1018,7 +1018,7 @@ public class SewerageApplicationDetailsService {
     }
 
     public SewerageApplicationDetails isApplicationInProgress(final String shscNumber) {
-        return sewerageApplicationDetailsRepository.getSewerageApplicationInWorkFlow(shscNumber);
+        return sewerageApplicationDetailsRepository.findByConnectionShscNumberAndIsActiveFalseAndStatusCodeNotIn(shscNumber, Arrays.asList("CANCELLED", "SANCTIONED"));
     }
 
     public BigDecimal getPendingTaxAmount(final SewerageApplicationDetails sewerageApplicationDetails) {
