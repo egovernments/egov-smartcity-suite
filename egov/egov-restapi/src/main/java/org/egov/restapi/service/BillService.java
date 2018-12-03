@@ -602,12 +602,12 @@ public class BillService {
         for (final BillPayeeDetails payeeDetails : billRegister.getBillPayeeDetails()) {
             final CChartOfAccounts coa = chartOfAccountsService
                     .getByGlCode(payeeDetails.getGlcode());
-            if (payeeDetails.getCreditAmount() != null) {
+            if (payeeDetails.getCreditAmount() != null && payeeDetails.getCreditAmount().compareTo(BigDecimal.ZERO) != 0) {
                 contractorAccountDetailType = chartOfAccountsHibernateDAO.getAccountDetailTypeIdByName(
                         coa.getGlcode(), WorksConstants.ACCOUNTDETAIL_TYPE_CONTRACTOR);
                 if (contractorAccountDetailType != null)
                     populateEgBillPayeedetails(egBilldetails, payeeDetails, details);
-            } else if (payeeDetails.getDebitAmount() != null) {
+            } else if (payeeDetails.getDebitAmount() != null && payeeDetails.getDebitAmount().compareTo(BigDecimal.ZERO) != 0) {
                 projectCodeAccountDetailType = chartOfAccountsHibernateDAO.getAccountDetailTypeIdByName(coa.getGlcode(),
                         WorksConstants.PROJECTCODE);
                 contractorAccountDetailType = chartOfAccountsHibernateDAO.getAccountDetailTypeIdByName(
