@@ -49,42 +49,45 @@ package org.egov.pgr.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.pims.commons.Position;
+import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.GeneratedValue;
-import javax.persistence.ManyToOne;
-import javax.persistence.JoinColumn;
-import javax.persistence.FetchType;
-import javax.persistence.GenerationType;
 import javax.validation.constraints.NotNull;
 
+import static javax.persistence.FetchType.EAGER;
 import static org.egov.pgr.entity.EscalationHierarchy.SEQ_ESCALATIONHIERARCHY;
 
 @Entity
 @Table(name = "egpgr_escalationhierarchy")
 @SequenceGenerator(name = SEQ_ESCALATIONHIERARCHY, sequenceName = SEQ_ESCALATIONHIERARCHY, allocationSize = 1)
+@Immutable
 public class EscalationHierarchy extends AbstractAuditable {
-    public static final String SEQ_ESCALATIONHIERARCHY = "SEQ_EGPGR_ESCALATIONHIERARCHY";
+
+    protected static final String SEQ_ESCALATIONHIERARCHY = "SEQ_EGPGR_ESCALATIONHIERARCHY";
     private static final long serialVersionUID = -6097906596110329202L;
     @Id
     @GeneratedValue(generator = SEQ_ESCALATIONHIERARCHY, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = EAGER, optional = false)
     @JoinColumn(name = "fromposition")
     private Position fromPosition;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = EAGER, optional = false)
     @JoinColumn(name = "toposition")
     private Position toPosition;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = EAGER, optional = false)
     @JoinColumn(name = "grievancetype")
     private ComplaintType grievanceType;
 

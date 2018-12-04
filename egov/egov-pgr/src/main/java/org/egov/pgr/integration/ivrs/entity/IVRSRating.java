@@ -50,6 +50,7 @@ package org.egov.pgr.integration.ivrs.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.annotations.Immutable;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -67,6 +68,7 @@ import static org.egov.pgr.integration.ivrs.entity.IVRSRating.SEQ_IVRS_RATING;
 @Table(name = "EGPGR_IVRS_RATING")
 @SequenceGenerator(name = SEQ_IVRS_RATING, sequenceName = SEQ_IVRS_RATING, allocationSize = 1)
 @Unique(fields = "name", enableDfltMsg = true)
+@Immutable
 public class IVRSRating extends AbstractPersistable<Long> {
 
     protected static final String SEQ_IVRS_RATING = "SEQ_EGPGR_IVRS_RATING";

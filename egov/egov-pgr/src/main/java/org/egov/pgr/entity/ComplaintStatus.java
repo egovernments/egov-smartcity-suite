@@ -49,6 +49,9 @@
 package org.egov.pgr.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.annotations.Immutable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -56,7 +59,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 import static org.apache.commons.lang3.StringUtils.capitalize;
 import static org.egov.pgr.entity.ComplaintStatus.SEQ_COMPLAINTSTATUS;
@@ -64,15 +67,22 @@ import static org.egov.pgr.entity.ComplaintStatus.SEQ_COMPLAINTSTATUS;
 @Entity
 @Table(name = "egpgr_complaintstatus")
 @SequenceGenerator(name = SEQ_COMPLAINTSTATUS, sequenceName = SEQ_COMPLAINTSTATUS, allocationSize = 1)
+@Immutable
 public class ComplaintStatus extends AbstractPersistable<Long> {
-    public static final String SEQ_COMPLAINTSTATUS = "SEQ_EGPGR_COMPLAINTSTATUS";
+
+    protected static final String SEQ_COMPLAINTSTATUS = "SEQ_EGPGR_COMPLAINTSTATUS";
     private static final long serialVersionUID = -9009821412847211632L;
+
     @Id
     @GeneratedValue(generator = SEQ_COMPLAINTSTATUS, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
+    @NotBlank
+    @SafeHtml
+    @Length(max = 25)
     private String name;
+
+    private boolean visible;
 
     @Override
     public Long getId() {
@@ -96,4 +106,11 @@ public class ComplaintStatus extends AbstractPersistable<Long> {
         return capitalize(this.name.toLowerCase());
     }
 
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(final boolean visible) {
+        this.visible = visible;
+    }
 }

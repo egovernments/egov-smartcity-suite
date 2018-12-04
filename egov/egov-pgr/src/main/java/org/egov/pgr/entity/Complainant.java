@@ -50,8 +50,7 @@ package org.egov.pgr.entity;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.infra.validation.regex.Constants;
-import org.hibernate.validator.constraints.Email;
+import org.hibernate.annotations.Immutable;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -63,17 +62,22 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 
+import static org.egov.infra.validation.regex.Constants.EMAIL;
+import static org.egov.infra.validation.regex.Constants.MOBILE_NUM;
 import static org.egov.pgr.entity.Complainant.SEQ_COMPLAINANT;
 
 @Entity
 @Table(name = "egpgr_complainant")
 @SequenceGenerator(name = SEQ_COMPLAINANT, sequenceName = SEQ_COMPLAINANT, allocationSize = 1)
+@Immutable
 public class Complainant extends AbstractPersistable<Long> {
 
-    public static final String SEQ_COMPLAINANT = "SEQ_EGPGR_COMPLAINANT";
+    protected static final String SEQ_COMPLAINANT = "SEQ_EGPGR_COMPLAINANT";
     private static final long serialVersionUID = 5691022600220045218L;
+
     @Id
     @GeneratedValue(generator = SEQ_COMPLAINANT, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -84,12 +88,12 @@ public class Complainant extends AbstractPersistable<Long> {
 
     @Length(max = 20)
     @SafeHtml
-    @Pattern(regexp = Constants.MOBILE_NUM)
+    @Pattern(regexp = MOBILE_NUM)
     private String mobile;
 
     @Length(max = 128)
     @SafeHtml
-    @Email(regexp = Constants.EMAIL)
+    @Email(regexp = EMAIL)
     private String email;
 
     @ManyToOne

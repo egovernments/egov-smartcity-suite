@@ -86,12 +86,12 @@ public class IVRSFeedbackReview extends AbstractAuditable {
     private Long id;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "feedbackReason")
     private IVRSFeedbackReason feedbackReason;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "rating")
     private IVRSRating rating;
 
@@ -100,7 +100,7 @@ public class IVRSFeedbackReview extends AbstractAuditable {
     private String detail;
 
     @NotNull
-    @OneToOne
+    @OneToOne(optional = false)
     @JoinColumn(name = "complaint")
     private Complaint complaint;
 

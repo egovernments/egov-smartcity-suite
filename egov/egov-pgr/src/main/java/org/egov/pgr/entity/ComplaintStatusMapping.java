@@ -48,11 +48,11 @@
 
 package org.egov.pgr.entity;
 
+import jdk.nashorn.internal.ir.annotations.Immutable;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -60,37 +60,42 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+
+import static javax.persistence.FetchType.LAZY;
+import static org.egov.pgr.entity.ComplaintStatusMapping.SEQ_STATUSMAP;
 
 @Entity
 @Table(name = "egpgr_complaintstatus_mapping")
-@SequenceGenerator(name = ComplaintStatusMapping.SEQ_STATUSMAP, sequenceName = ComplaintStatusMapping.SEQ_STATUSMAP, allocationSize = 1)
+@SequenceGenerator(name = SEQ_STATUSMAP, sequenceName = SEQ_STATUSMAP, allocationSize = 1)
+@Immutable
 public class ComplaintStatusMapping extends AbstractPersistable<Long> {
 
-    public static final String SEQ_STATUSMAP = "SEQ_EGPGR_COMPLAINTSTATUS_MAPPING";
+    protected static final String SEQ_STATUSMAP = "SEQ_EGPGR_COMPLAINTSTATUS_MAPPING";
     private static final long serialVersionUID = -1671713502661376820L;
+
     @Id
     @GeneratedValue(generator = SEQ_STATUSMAP, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY, optional = false)
     @JoinColumn(name = "current_status_id")
     private ComplaintStatus currentStatus;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY, optional = false)
     @JoinColumn(name = "show_status_id")
     private ComplaintStatus showStatus;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @Valid
+    @ManyToOne(fetch = LAZY, optional = false)
     @JoinColumn(name = "role_id")
     private Role role;
 
     @NotNull
+    @Positive
     private Integer orderNo;
 
     @Override
@@ -99,7 +104,7 @@ public class ComplaintStatusMapping extends AbstractPersistable<Long> {
     }
 
     @Override
-    protected void setId(final Long id) {
+    protected void setId(Long id) {
         this.id = id;
     }
 
@@ -107,7 +112,7 @@ public class ComplaintStatusMapping extends AbstractPersistable<Long> {
         return currentStatus;
     }
 
-    public void setCurrentStatus(final ComplaintStatus currentStatus) {
+    public void setCurrentStatus(ComplaintStatus currentStatus) {
         this.currentStatus = currentStatus;
     }
 
@@ -115,7 +120,7 @@ public class ComplaintStatusMapping extends AbstractPersistable<Long> {
         return showStatus;
     }
 
-    public void setShowStatus(final ComplaintStatus showStatus) {
+    public void setShowStatus(ComplaintStatus showStatus) {
         this.showStatus = showStatus;
     }
 
@@ -123,7 +128,7 @@ public class ComplaintStatusMapping extends AbstractPersistable<Long> {
         return role;
     }
 
-    public void setRole(final Role role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 
@@ -131,7 +136,7 @@ public class ComplaintStatusMapping extends AbstractPersistable<Long> {
         return orderNo;
     }
 
-    public void setOrderNo(final Integer orderNo) {
+    public void setOrderNo(Integer orderNo) {
         this.orderNo = orderNo;
     }
 

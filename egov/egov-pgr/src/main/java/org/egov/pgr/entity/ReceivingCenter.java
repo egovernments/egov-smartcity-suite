@@ -49,6 +49,10 @@
 package org.egov.pgr.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.annotations.Immutable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -57,23 +61,33 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
+
+import static org.egov.pgr.entity.ReceivingCenter.SEQ_RECEIVINGCENTER;
 
 @Entity
-@Table(name = "egpgr_receiving_center", uniqueConstraints = @UniqueConstraint(columnNames = { "name" }) )
-@SequenceGenerator(name = ReceivingCenter.SEQ_RECEIVINGCENTER, sequenceName = ReceivingCenter.SEQ_RECEIVINGCENTER, allocationSize = 1)
+@Table(name = "egpgr_receiving_center", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
+@Unique(fields = "name")
+@SequenceGenerator(name = SEQ_RECEIVINGCENTER, sequenceName = SEQ_RECEIVINGCENTER, allocationSize = 1)
+@Immutable
 public class ReceivingCenter extends AbstractPersistable<Long> {
 
+    protected static final String SEQ_RECEIVINGCENTER = "SEQ_EGPGR_RECEIVING_CENTER";
     private static final long serialVersionUID = -1568590266889348235L;
-    public static final String SEQ_RECEIVINGCENTER = "SEQ_EGPGR_RECEIVING_CENTER";
 
     @Id
     @GeneratedValue(generator = SEQ_RECEIVINGCENTER, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @NotBlank
+    @SafeHtml
+    @Length(max = 100)
     private String name;
 
     private boolean isCrnRequired;
 
+    @Positive
     private Long orderNo;
 
     @Override

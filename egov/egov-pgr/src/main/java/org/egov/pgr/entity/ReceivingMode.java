@@ -50,6 +50,7 @@ package org.egov.pgr.entity;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.annotations.Immutable;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -59,6 +60,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 import static org.egov.pgr.entity.ReceivingMode.SEQ_RECEIVINGMODE;
 
@@ -66,6 +68,7 @@ import static org.egov.pgr.entity.ReceivingMode.SEQ_RECEIVINGMODE;
 @Table(name = "egpgr_receivingmode")
 @SequenceGenerator(name = SEQ_RECEIVINGMODE, sequenceName = SEQ_RECEIVINGMODE, allocationSize = 1)
 @Unique(fields = {"name", "code"}, enableDfltMsg = true)
+@Immutable
 public class ReceivingMode extends AbstractPersistable<Long> {
 
     protected static final String SEQ_RECEIVINGMODE = "seq_egpgr_receivingmode";
@@ -75,11 +78,13 @@ public class ReceivingMode extends AbstractPersistable<Long> {
     private Long id;
 
     @SafeHtml
-    @Length(min = 1, max = 150)
+    @Length(max = 150)
+    @NotBlank
     private String name;
 
     @SafeHtml
-    @Length(min = 1, max = 50)
+    @Length(max = 50)
+    @NotBlank
     private String code;
 
     private boolean visible;

@@ -48,14 +48,14 @@
 
 package org.egov.infra.persistence.entity.component;
 
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.Min;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 
 public class Money implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Positive(message = "non.negative")
+    @Min(value = 0, message = "non.negative")
     private double value;
 
     private Money() {

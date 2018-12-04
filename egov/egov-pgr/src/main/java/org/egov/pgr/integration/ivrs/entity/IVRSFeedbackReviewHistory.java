@@ -50,6 +50,9 @@ package org.egov.pgr.integration.ivrs.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.pgr.entity.Complaint;
+import org.hibernate.annotations.Immutable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -68,6 +71,7 @@ import static org.egov.pgr.integration.ivrs.entity.IVRSFeedbackReviewHistory.SEQ
 @Entity
 @Table(name = "EGPGR_IVRS_FEEDBACK_REVIEW_HISTORY")
 @SequenceGenerator(name = SEQ_IVRS_FEEDBACKREVIEW_HISTORY, sequenceName = SEQ_IVRS_FEEDBACKREVIEW_HISTORY, allocationSize = 1)
+@Immutable
 public class IVRSFeedbackReviewHistory extends AbstractAuditable {
 
     protected static final String SEQ_IVRS_FEEDBACKREVIEW_HISTORY = "SEQ_IVRS_FEEDBACK_REVIEW_HISTORY";
@@ -77,25 +81,27 @@ public class IVRSFeedbackReviewHistory extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_IVRS_FEEDBACKREVIEW_HISTORY, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne(targetEntity = IVRSFeedbackReview.class, fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "feedbackReview")
     private IVRSFeedbackReview feedbackReview;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "complaint")
     private Complaint complaint;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "rating")
     private IVRSRating rating;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "feedbackReason")
     private IVRSFeedbackReason feedbackReason;
 
+    @SafeHtml
+    @Length(max = 128)
     private String detail;
 
     public IVRSFeedbackReviewHistory() {

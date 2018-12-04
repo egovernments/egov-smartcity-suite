@@ -50,6 +50,7 @@ package org.egov.pgr.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.pims.commons.Position;
+import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -67,18 +68,20 @@ import static org.egov.pgr.entity.ForwardSkippablePosition.SEQ_EGPGR_FORWARD_SKI
 @Table(name = "EGPGR_FORWARD_SKIPPABLE_POSITION")
 @SequenceGenerator(name = SEQ_EGPGR_FORWARD_SKIPPABLE_POSITION, sequenceName = SEQ_EGPGR_FORWARD_SKIPPABLE_POSITION,
         allocationSize = 1)
+@Immutable
 public class ForwardSkippablePosition extends AbstractPersistable<Long> {
 
-    public static final String SEQ_EGPGR_FORWARD_SKIPPABLE_POSITION = "SEQ_EGPGR_FORWARD_SKIPPABLE_POSITION";
+    protected static final String SEQ_EGPGR_FORWARD_SKIPPABLE_POSITION = "SEQ_EGPGR_FORWARD_SKIPPABLE_POSITION";
     protected static final long serialVersionUID = -1317277378596990014L;
 
     @Id
     @GeneratedValue(generator = SEQ_EGPGR_FORWARD_SKIPPABLE_POSITION, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "position")
     private Position position;
+
     private boolean skippable;
 
     @Override

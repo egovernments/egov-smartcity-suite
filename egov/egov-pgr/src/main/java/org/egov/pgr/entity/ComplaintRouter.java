@@ -62,26 +62,29 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import static org.egov.pgr.entity.ComplaintRouter.SEQ_COMPLAINTROUTER;
+
 @Entity
 @Table(name = "egpgr_router")
-@SequenceGenerator(name = ComplaintRouter.SEQ_COMPLAINTROUTER, sequenceName = ComplaintRouter.SEQ_COMPLAINTROUTER, allocationSize = 1)
+@SequenceGenerator(name = SEQ_COMPLAINTROUTER, sequenceName = SEQ_COMPLAINTROUTER, allocationSize = 1)
 public class ComplaintRouter extends AbstractAuditable {
 
-    public static final String SEQ_COMPLAINTROUTER = "SEQ_EGPGR_ROUTER";
+    protected static final String SEQ_COMPLAINTROUTER = "SEQ_EGPGR_ROUTER";
     private static final long serialVersionUID = 5691022600220045218L;
+
     @Id
     @GeneratedValue(generator = SEQ_COMPLAINTROUTER, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "complainttypeid")
+    @JoinColumn(name = "complainttypeid", updatable = false)
     private ComplaintType complaintType;
 
     @ManyToOne
-    @JoinColumn(name = "bndryid")
+    @JoinColumn(name = "bndryid", updatable = false)
     private Boundary boundary;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @NotNull
     @JoinColumn(name = "position")
     private Position position;

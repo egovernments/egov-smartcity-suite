@@ -48,6 +48,7 @@
 
 package org.egov.pgr.entity;
 
+import jdk.nashorn.internal.ir.annotations.Immutable;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
@@ -59,7 +60,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 import static org.egov.pgr.entity.Priority.SEQ_PRIORITY;
 
@@ -67,6 +70,7 @@ import static org.egov.pgr.entity.Priority.SEQ_PRIORITY;
 @Table(name = "egpgr_priority")
 @SequenceGenerator(name = SEQ_PRIORITY, sequenceName = SEQ_PRIORITY, allocationSize = 1)
 @Unique(fields = {"name", "code"}, enableDfltMsg = true)
+@Immutable
 public class Priority extends AbstractPersistable<Long> {
 
     protected static final String SEQ_PRIORITY = "seq_egpgr_priority";
@@ -76,14 +80,17 @@ public class Priority extends AbstractPersistable<Long> {
     private Long id;
 
     @SafeHtml
-    @Length(min = 1, max = 64)
+    @Length(max = 64)
+    @NotBlank
     private String name;
 
     @SafeHtml
-    @Length(min = 1, max = 50)
+    @Length(max = 50)
+    @NotBlank
     private String code;
 
     @NotNull
+    @Positive
     private Integer weight;
 
     @Override

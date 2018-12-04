@@ -63,8 +63,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Positive;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Objects;
@@ -100,7 +100,7 @@ public class Module implements Serializable {
     @Length(max = 50)
     private String displayName;
 
-    @Positive
+    @Min(0)
     private Integer orderNumber;
 
 

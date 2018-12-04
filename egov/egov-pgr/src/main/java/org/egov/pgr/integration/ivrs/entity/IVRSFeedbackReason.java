@@ -50,8 +50,8 @@ package org.egov.pgr.integration.ivrs.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.annotations.Immutable;
 import org.hibernate.validator.constraints.Length;
-import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
@@ -60,6 +60,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 import static org.egov.pgr.integration.ivrs.entity.IVRSFeedbackReason.SEQ_IVRS_FEEDBACKREASON;
 
@@ -67,6 +68,7 @@ import static org.egov.pgr.integration.ivrs.entity.IVRSFeedbackReason.SEQ_IVRS_F
 @Table(name = "EGPGR_IVRS_FEEDBACK_REASON")
 @SequenceGenerator(name = SEQ_IVRS_FEEDBACKREASON, sequenceName = SEQ_IVRS_FEEDBACKREASON, allocationSize = 1)
 @Unique(fields = {"code", "name"}, enableDfltMsg = true)
+@Immutable
 public class IVRSFeedbackReason extends AbstractPersistable<Long> {
 
     protected static final String SEQ_IVRS_FEEDBACKREASON = "SEQ_EGPGR_IVRS_FEEDBACK_REASON";

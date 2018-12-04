@@ -52,7 +52,6 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
-import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
@@ -65,6 +64,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import static org.egov.pgr.entity.ComplaintType.SEQ_COMPLAINTTYPE;
@@ -74,8 +74,9 @@ import static org.egov.pgr.entity.ComplaintType.SEQ_COMPLAINTTYPE;
 @Table(name = "egpgr_complainttype")
 @SequenceGenerator(name = SEQ_COMPLAINTTYPE, sequenceName = SEQ_COMPLAINTTYPE, allocationSize = 1)
 public class ComplaintType extends AbstractAuditable {
-    public static final String SEQ_COMPLAINTTYPE = "SEQ_EGPGR_COMPLAINTTYPE";
+    protected static final String SEQ_COMPLAINTTYPE = "SEQ_EGPGR_COMPLAINTTYPE";
     private static final long serialVersionUID = 8904645810221559541L;
+
     @Id
     @GeneratedValue(generator = SEQ_COMPLAINTTYPE, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -112,6 +113,7 @@ public class ComplaintType extends AbstractAuditable {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "category")
+    @NotNull
     private ComplaintTypeCategory category;
 
     @Override

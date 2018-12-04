@@ -52,7 +52,6 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.pgr.entity.Complaint;
 import org.hibernate.validator.constraints.Length;
-import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
@@ -64,6 +63,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
@@ -84,16 +86,17 @@ public class IVRSFeedback extends AbstractAuditable {
     private Long id;
 
     @NotNull
-    @OneToOne
-    @JoinColumn(name = "complaint")
+    @OneToOne(optional = false)
+    @JoinColumn(name = "complaint", updatable = false)
     private Complaint complaint;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "ivrsRating")
     private IVRSRating ivrsRating;
 
     @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
     private Date feedbackDate;
 
     @NotBlank

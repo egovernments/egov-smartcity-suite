@@ -61,12 +61,9 @@ import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -77,9 +74,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.Comparator;
@@ -88,6 +85,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.EnumType.ORDINAL;
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.TemporalType.TIMESTAMP;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.egov.infra.utils.ApplicationConstant.HYPHEN;
 import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
 import static org.egov.pgr.entity.Complaint.SEQ_COMPLAINT;
@@ -108,50 +110,52 @@ public class Complaint extends StateAware<Position> {
     @GeneratedValue(generator = SEQ_COMPLAINT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(name = "crn", unique = true)
+    @Column(unique = true, updatable = false)
     @Length(max = 32)
     @SafeHtml
-    private String crn = "";
+    private String crn = EMPTY;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @NotNull
     @JoinColumn(name = "complaintType", nullable = false)
     private ComplaintType complaintType;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = ALL, optional = false)
     @Valid
     @NotNull
-    @JoinColumn(name = "complainant", nullable = false)
+    @JoinColumn(name = "complainant", nullable = false, updatable = false)
     private Complainant complainant = new Complainant();
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "assignee")
     private Position assignee;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY, optional = false)
     @JoinColumn(name = "currentOwner")
     private User currentOwner;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "location")
     private Boundary location;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @NotNull
     @JoinColumn(name = "status")
     private ComplaintStatus status = new ComplaintStatus();
 
     @Length(min = 10, max = 500)
     @SafeHtml
-    @NotNull
+    @NotBlank
+    @Column(updatable = false)
     private String details;
 
     @Length(max = 200)
     @SafeHtml
+    @Column(updatable = false)
     private String landmarkDetails;
 
-    @ManyToOne
-    @JoinColumn(name = "receivingMode")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "receivingMode", updatable = false)
     @NotNull
     private ReceivingMode receivingMode;
 
@@ -160,16 +164,18 @@ public class Complaint extends StateAware<Position> {
     private Priority priority;
 
     @ManyToOne
-    @JoinColumn(name = "receivingCenter")
+    @JoinColumn(name = "receivingCenter", updatable = false)
     private ReceivingCenter receivingCenter;
 
     @SafeHtml
     @Length(max = 200)
+    @Column(updatable = false)
     private String receivingCenterDetails;
 
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(fetch = LAZY, orphanRemoval = true, cascade = ALL)
     @JoinTable(name = "egpgr_supportdocs", joinColumns = @JoinColumn(name = "complaintid"),
             inverseJoinColumns = @JoinColumn(name = "filestoreid"))
+    @Valid
     private Set<FileStoreMapper> supportDocs = Collections.emptySet();
 
     private double lng;
@@ -177,13 +183,14 @@ public class Complaint extends StateAware<Position> {
     private double lat;
 
     @Column(name = "escalation_date", nullable = false)
+    @Temporal(TIMESTAMP)
     private Date escalationDate;
 
     @ManyToOne
     @JoinColumn(name = "department", nullable = false)
     private Department department;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(ORDINAL)
     private CitizenFeedback citizenFeedback;
 
     @ManyToOne
@@ -192,7 +199,7 @@ public class Complaint extends StateAware<Position> {
 
     private boolean notifyComplainant = true;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TIMESTAMP)
     private Date completionDate;
 
     @Transient

@@ -67,13 +67,17 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
+import static org.egov.pgr.entity.ComplaintTypeCategory.SEQ_COMP_TYPE_CATEGORY;
+
 @Entity
 @Unique(fields = "name", enableDfltMsg = true)
 @Table(name = "egpgr_complainttype_category")
-@SequenceGenerator(name = ComplaintTypeCategory.SEQ_COMP_TYPE_CATEGORY, sequenceName = ComplaintTypeCategory.SEQ_COMP_TYPE_CATEGORY, allocationSize = 1)
+@SequenceGenerator(name = SEQ_COMP_TYPE_CATEGORY, sequenceName = SEQ_COMP_TYPE_CATEGORY, allocationSize = 1)
 public class ComplaintTypeCategory extends AbstractPersistable<Long> {
-    public static final String SEQ_COMP_TYPE_CATEGORY = "SEQ_EGPGR_COMPLAINTTYPE_CATEGORY";
+
+    protected static final String SEQ_COMP_TYPE_CATEGORY = "SEQ_EGPGR_COMPLAINTTYPE_CATEGORY";
     private static final long serialVersionUID = 2739365086791183614L;
+
     @Id
     @GeneratedValue(generator = SEQ_COMP_TYPE_CATEGORY, strategy = GenerationType.SEQUENCE)
     private Long id;

@@ -50,10 +50,10 @@ package org.egov.pgr.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.pims.commons.Designation;
+import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -61,35 +61,38 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
+import static javax.persistence.FetchType.LAZY;
 import static org.egov.pgr.entity.Escalation.SEQ_ESCALATION;
 
 @Entity
 @Table(name = "egpgr_escalation")
 @SequenceGenerator(name = SEQ_ESCALATION, sequenceName = SEQ_ESCALATION, allocationSize = 1)
+@Immutable
 public class Escalation extends AbstractAuditable {
 
-    public static final String SEQ_ESCALATION = "SEQ_EGPGR_ESCALATION";
+    protected static final String SEQ_ESCALATION = "SEQ_EGPGR_ESCALATION";
     private static final long serialVersionUID = -1317277378596990014L;
+
     @Id
     @GeneratedValue(generator = SEQ_ESCALATION, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Valid
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY, optional = false)
     @JoinColumn(name = "complaint_type_id")
     private ComplaintType complaintType;
 
-    @Valid
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY, optional = false)
     @JoinColumn(name = "designation_id")
     private Designation designation;
 
     @Column(name = "no_of_hrs")
+    @Positive
+    @NotNull
     private Integer noOfHrs;
 
     @Override
