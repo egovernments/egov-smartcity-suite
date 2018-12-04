@@ -207,7 +207,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
                 return REPORT_PAGE;
             }
             addNewDocuments();
-            licenseApplicationService.updateTradeLicense(license(), workflowBean);
+            licenseApplicationService.updateLicense(license(), workflowBean);
             successMessage();
             if (GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
                 return GENERATE_CERTIFICATE;

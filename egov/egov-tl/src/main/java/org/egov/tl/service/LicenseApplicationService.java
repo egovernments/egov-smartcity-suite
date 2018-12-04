@@ -147,9 +147,8 @@ public class LicenseApplicationService extends TradeLicenseService {
         return license;
     }
 
-    @Override
     @Transactional
-    public void updateTradeLicense(TradeLicense license, WorkflowBean workflowBean) {
+    public void updateLicense(TradeLicense license, WorkflowBean workflowBean) {
         processAndStoreDocument(license);
         updateDemandForTradeAreaChange(license);
         license.setCollectionPending(!license.isPaid());
