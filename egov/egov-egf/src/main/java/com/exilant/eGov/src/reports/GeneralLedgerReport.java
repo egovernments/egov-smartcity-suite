@@ -77,10 +77,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class GeneralLedgerReport {
@@ -244,8 +241,8 @@ public class GeneralLedgerReport {
         engineQry = engine.getVouchersListQuery(reBean);
         final String functionId = reBean.getFunctionId();
         try {
-            final List list = getQuery(glCode1, startDate, endDate, accEntityId, accEntityKey, reportBean.getFieldId(),
-                    reBean.getFunctionId());
+            final List list = getQuery(glCode1, accEntityId, accEntityKey, reportBean.getFieldId(),
+                    reBean.getFunctionId(), reBean.getQuery(), reBean.getParams());
             resultset1 = list;
             list.toArray();
             final ArrayList data = new ArrayList();
@@ -283,9 +280,9 @@ public class GeneralLedgerReport {
                 if (LOGGER.isInfoEnabled())
                     LOGGER.info("openingBalance--------------->" + openingBalance);
 
-                final String sqlString = "select name as \"glname\" from chartofaccounts where glcode=?";
+                final String sqlString = "select name as \"glname\" from chartofaccounts where glcode = :glCode";
                 pstmt = persistenceService.getSession().createNativeQuery(sqlString);
-                pstmt.setString(0, glCode1);
+                pstmt.setParameter("glCode", glCode1, StringType.INSTANCE);
                 final List res = pstmt.list();
                 String aName = "";
                 if (res != null)
@@ -857,9 +854,8 @@ public class GeneralLedgerReport {
     }
 
     @SuppressWarnings("unchecked")
-    private List getQuery(final String glCode1, final String startDate, final String endDate,
-                          final String accEntityId, final String accEntityKey, final String fieldId, final String functionId)
-            throws TaskFailedException {
+    private List getQuery(final String glCode1, final String accEntityId, final String accEntityKey, final String fieldId, final String functionId,
+                          String queryString, Map<String, String> params) throws TaskFailedException {
         StringBuilder query;
         StringBuilder addTableToQuery = new StringBuilder("");
         StringBuilder entityCondition = new StringBuilder("");
@@ -894,7 +890,7 @@ public class GeneralLedgerReport {
                     .append(" AND f.id = vh.fundId ")
                     .append(entityCondition)
                     .append(" and vh.id in (")
-                    .append(engineQry)
+                    .append(queryString)
                     .append(" ) AND (gl.debitamount > 0 OR gl.creditamount > 0) ")
                     .append(" order by vh.id asc , gl.glCode");
         else {
@@ -914,7 +910,7 @@ public class GeneralLedgerReport {
                     .append(" AND gl.glcode = :glCode1 AND (gl.debitamount > 0 OR gl.creditamount > 0) ")
                     .append(functionCondition)
                     .append(" and vh.id in (")
-                    .append(engineQry).append(" )")
+                    .append(queryString).append(" )")
                     .append(" group by vh.id, gl.glcode, vh.voucherDate, vh.voucherNumber, coa.name, gl.description,")
                     .append(" vh.type || '-' || vh.name||CASE WHEN status = 1 THEN '(Reversed)' ELSE (CASE WHEN status = 2")
                     .append(" THEN '(Reversal)' ELSE '' END) END, gl.debitamount , gl.creditamount  ,f.name,")
@@ -924,11 +920,12 @@ public class GeneralLedgerReport {
                 LOGGER.debug("____________________________________________________________" + query.toString());
         }
         try {
-            return persistenceService.getSession().createNativeQuery(query.toString())
-                    .setParameter("accEntityId", accEntityId, StringType.INSTANCE)
+            pstmt = persistenceService.getSession().createNativeQuery(query.toString());
+            pstmt.setParameter("accEntityId", accEntityId, StringType.INSTANCE)
                     .setParameter("functionId", functionId, StringType.INSTANCE)
-                    .setParameter("glCode1", glCode1, StringType.INSTANCE)
-                    .list();
+                    .setParameter("glCode1", glCode1, StringType.INSTANCE);
+            params.entrySet().forEach(entry -> pstmt.setParameter(entry.getKey(), entry.getValue(), StringType.INSTANCE));
+            return pstmt.list();
         } catch (final Exception e) {
             LOGGER.error("Exception in getQuery:", e);
             throw taskExc;

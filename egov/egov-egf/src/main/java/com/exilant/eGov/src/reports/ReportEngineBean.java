@@ -51,6 +51,7 @@ import org.apache.log4j.Logger;
 import org.egov.infra.exception.ApplicationRuntimeException;
 
 import java.util.List;
+import java.util.Map;
 
 public class ReportEngineBean {
     private static final Logger LOGGER = Logger.getLogger(ReportEngineBean.class);
@@ -71,6 +72,8 @@ public class ReportEngineBean {
     private List<String> excludeStatuses;
     private List<String> includeStatuses;
     private int filtersCount = 0;
+    private String query;
+    private Map<String, String> params;
 
     public String getFundId() {
         return fundId;
@@ -221,19 +224,15 @@ public class ReportEngineBean {
         return filtersCount;
     }
 
-    public String getCommaSeperatedValues(final List<String> list) throws ApplicationRuntimeException
-    {
+    public String getCommaSeperatedValues(final List<String> list) throws ApplicationRuntimeException {
         final StringBuffer commaSeperatedValues = new StringBuffer("");
-        if (!list.isEmpty())
-        {
+        if (!list.isEmpty()) {
             if (list.size() == 1)
                 commaSeperatedValues.append(list.get(0).toString());
-            else
-            {
+            else {
 
                 String comma = "";
-                for (int i = 0; i < list.size(); i++)
-                {
+                for (int i = 0; i < list.size(); i++) {
                     commaSeperatedValues.append(comma + list.get(i).toString());
                     comma = ",";
                 }
@@ -247,4 +246,19 @@ public class ReportEngineBean {
         return commaSeperatedValues.toString();
     }
 
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
+
+    public Map<String, String> getParams() {
+        return params;
+    }
+
+    public void setParams(Map<String, String> params) {
+        this.params = params;
+    }
 }

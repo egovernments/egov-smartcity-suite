@@ -56,6 +56,8 @@ package com.exilant.GLEngine;
 import com.exilant.exility.common.TaskFailedException;
 import org.apache.log4j.Logger;
 import org.egov.infstr.services.PersistenceService;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -65,26 +67,23 @@ import java.util.List;
 
 /**
  * @author siddhu
- *
+ * <p>
  * TODO To change the template for this generated type comment go to Window - Preferences - Java - Code Style - Code Templates
  * This class caches employee data for a transaction and clear at the end of each transaction
- *
  */
 @Service
 public class RequiredValidator {
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
-
     final static Logger LOGGER = Logger.getLogger(RequiredValidator.class);
     static HashMap employeeMap = null;
     static int empDetailId = 0;
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
 
     /**
      *
      */
-    public static void clearEmployeeMap()
-    {
+    public static void clearEmployeeMap() {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("...................................................................................Clearing the employeeMap");
         if (employeeMap != null)
@@ -92,10 +91,8 @@ public class RequiredValidator {
         empDetailId = 0;
     }
 
-    public boolean isEmployee(final int detailId)
-    {
-        if (empDetailId == 0)
-        {
+    public boolean isEmployee(final int detailId) {
+        if (empDetailId == 0) {
             final List list = persistenceService.getSession()
                     .createQuery("select id From Accountdetailtype where name='EMPLOYEE'")
                     .list();
@@ -110,10 +107,14 @@ public class RequiredValidator {
 
     public boolean validateKey(final int detailId, final String keyToValidate) throws TaskFailedException {
 
-        final String sql = "select detailKey as \"detailKey\" ,detailName as \"detailName\"," +
-                "groupID as \"groupID\",ID as \"ID\" from accountdetailkey where detailTypeId="
-                + String.valueOf(detailId) + " and detailKey = " + String.valueOf(keyToValidate);
-        final List list = persistenceService.getSession().createNativeQuery(sql).list();
+        final StringBuilder sql = new StringBuilder("select detailKey as \"detailKey\", detailName as \"detailName\",")
+                .append(" groupID as \"groupID\", ID as \"ID\"")
+                .append(" from accountdetailkey")
+                .append(" where detailTypeId = :detailId and detailKey = :keyToValidate");
+        final List list = persistenceService.getSession().createNativeQuery(sql.toString())
+                .setParameter("detailId", detailId, IntegerType.INSTANCE)
+                .setParameter("keyToValidate", keyToValidate, StringType.INSTANCE)
+                .list();
         if (list != null && list.size() > 0)
             return true;
         else

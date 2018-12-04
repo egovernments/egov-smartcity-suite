@@ -249,18 +249,17 @@ public class CashBook {
             BigDecimal cashOpeningBalance = new BigDecimal("0.00");
             BigDecimal chequeOpeningBalance = new BigDecimal("0.00");
 
-            final ReportEngineBean reBean = engine
+            ReportEngineBean reBean = engine
                     .populateReportEngineBean(reportBean);
-            final String engineQry = engine.getVouchersListQuery(reBean);
+            engine.getVouchersListQuery(reBean);
 
-            final String query = getQuery(engineQry);
+            final String query = getQuery(reBean.getQuery());
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("**************QUERY: " + query);
 
-            // try{
-
             try {
                 pstmt = persistenceService.getSession().createNativeQuery(query);
+                reBean.getParams().entrySet().forEach(entry -> pstmt.setParameter(entry.getKey(), entry.getValue()));
             } catch (final Exception e) {
                 LOGGER.error("Exception in creating statement:", e);
                 throw taskExc;

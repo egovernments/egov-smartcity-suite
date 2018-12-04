@@ -51,8 +51,7 @@
  */
 package com.exilant.eGov.src.reports;
 
-public class ReceiptPaymentBean
-{
+public class ReceiptPaymentBean {
     private String period;
     private String fundId;
     private String tempFund;
@@ -340,16 +339,14 @@ public class ReceiptPaymentBean
     /**
      * @return the toDate
      */
-    public String getToDate()
-    {
+    public String getToDate() {
         return toDate;
     }
 
     /**
      * @param toDate the toDate to set
      */
-    public void setToDate(final String toDate)
-    {
+    public void setToDate(final String toDate) {
         this.toDate = toDate;
     }
 

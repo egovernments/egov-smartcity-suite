@@ -52,9 +52,7 @@
 package com.exilant.eGov.src.reports;
 
 
-public class OpeningBalanceBean
-{
-
+public class OpeningBalanceBean {
     private String fund;
     private String accCode;
     private String accName;
@@ -72,20 +70,20 @@ public class OpeningBalanceBean
         this.fund = fund;
     }
 
-    public void setAccCode(final String accCode) {
-        this.accCode = accCode;
-    }
-
     public String getAccCode() {
         return accCode;
     }
 
-    public void setAccName(final String accName) {
-        this.accName = accName;
+    public void setAccCode(final String accCode) {
+        this.accCode = accCode;
     }
 
     public String getAccName() {
         return accName;
+    }
+
+    public void setAccName(final String accName) {
+        this.accName = accName;
     }
 
     public String getDebit() {
@@ -133,5 +131,5 @@ public class OpeningBalanceBean
     public void setFunctioncode(String functioncode) {
         this.functioncode = functioncode;
     }
-    
+
 }

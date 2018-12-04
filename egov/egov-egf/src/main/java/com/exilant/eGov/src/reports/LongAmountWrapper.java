@@ -53,24 +53,21 @@ import java.text.DecimalFormat;
 
 /**
  * Simple column decorator which formats a Amount.
+ *
  * @author Sumit
  */
-public class LongAmountWrapper implements ColumnDecorator
-{
+public class LongAmountWrapper implements ColumnDecorator {
 
     private final DecimalFormat moneyFormat = new DecimalFormat("#,###,###.00");
 
     @Override
-    public final String decorate(final Object columnValue)
-    {
-        // if(LOGGER.isDebugEnabled()) LOGGER.debug("columnValue:"+columnValue);
+    public final String decorate(final Object columnValue) {
 
         final String colVal = "" + columnValue;
 
         if (colVal.equals("0.0"))
             return "";
-        else
-        {
+        else {
             final double d = Double.parseDouble(colVal);
             return moneyFormat.format(d);
         }

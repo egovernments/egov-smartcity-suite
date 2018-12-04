@@ -66,6 +66,9 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.query.Query;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -78,20 +81,18 @@ import java.util.List;
 
 /**
  * @author Administrator TODO To change the template for this generated type
- *         comment go to Window - Preferences - Java - Code Style - Code
- *         Templates
+ * comment go to Window - Preferences - Java - Code Style - Code
+ * Templates
  */
 @Service
 public class RptSubLedgerSchedule {
+    private static final Logger LOGGER = Logger.getLogger(RptSubLedgerSchedule.class);
     double totalDr, totalCr, totalOpgBal, totalClosingBal;
     List<Object[]> resultset;
     TaskFailedException taskExc;
     private String glCode, accEntityId, fundId, fyId, deptId;
     private CFinancialYear fyObj;
-  
     private LinkedList dataList;
-    private static final Logger LOGGER = Logger.getLogger(RptSubLedgerSchedule.class);
- 
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
@@ -104,9 +105,28 @@ public class RptSubLedgerSchedule {
 
     private Query pst;
 
+    public static StringBuffer numberToString(final String strNumberToConvert) {
+        String strNumber = "", signBit = "";
+        if (strNumberToConvert.startsWith("-")) {
+            strNumber = "" + strNumberToConvert.substring(1, strNumberToConvert.length());
+            signBit = "-";
+        } else
+            strNumber = "" + strNumberToConvert;
+        final DecimalFormat dft = new DecimalFormat("##############0.00");
+        final String strtemp = "" + dft.format(Double.parseDouble(strNumber));
+        StringBuffer strbNumber = new StringBuffer(strtemp);
+        final int intLen = strbNumber.length();
+
+        for (int i = intLen - 6; i > 0; i = i - 2)
+            strbNumber.insert(i, ',');
+        if (signBit.equals("-"))
+            strbNumber = strbNumber.insert(0, "-");
+        return strbNumber;
+    }
+
     // code for SubLedger type
     public LinkedList getSubLedgerTypeSchedule(final GeneralLedgerBean reportBean) throws TaskFailedException {
- 
+
         glCode = reportBean.getGlcode();
         fundId = reportBean.getFund_id();
         deptId = reportBean.getDeptId();
@@ -133,7 +153,7 @@ public class RptSubLedgerSchedule {
                 formstartDate = formatter1.format(dt);
             }
         } catch (final Exception e) {
-            LOGGER.error("Parse Error" + e);
+            LOGGER.error("Parse Error", e);
             throw new TaskFailedException();
         }
         startDateDBFormat = formstartDate;
@@ -141,7 +161,7 @@ public class RptSubLedgerSchedule {
 
         fyObj = financialYearDAO.getFinYearByDate(dt);
         fyId = fyObj.getId().toString();
-  
+
         final Date finYrStartingDate = fyObj.getStartingDate();
         final String formatedDateStr = formatter1.format(finYrStartingDate);
         if (LOGGER.isInfoEnabled())
@@ -152,7 +172,7 @@ public class RptSubLedgerSchedule {
             formatSLTypeReport();
             reportBean.setAccName(getAccountname(glCode));
         } catch (final Exception exception) {
-            LOGGER.error("Exception in getSubLedgerTypeSchedule .." + exception.getMessage());
+            LOGGER.error("Exception in getSubLedgerTypeSchedule ..", exception);
             throw new TaskFailedException();
         }
         return dataList;
@@ -163,16 +183,16 @@ public class RptSubLedgerSchedule {
         String departmentFromCondition = "";
         String departmentWhereCondition = "";
         String departmentConditionTran = "";
-        dataList = new LinkedList();                
+        dataList = new LinkedList();
 
         totalCr = 0.0;
         totalDr = 0.0;
         totalOpgBal = 0.0;
         totalClosingBal = 0.0;
         if (deptId != null && !deptId.equalsIgnoreCase("")) {
-            departmentConditionTran = " and DEPARTMENTID=? ";
-            departmentFromCondition = ",vouchermis vmis";
-            departmentWhereCondition = "AND vh.id = vmis.voucherheaderid and vmis.departmentid=? ";
+            departmentConditionTran = " and DEPARTMENTID = :departmentId";
+            departmentFromCondition = " , vouchermis vmis";
+            departmentWhereCondition = " AND vh.id = vmis.voucherheaderid and vmis.departmentid = :departmentId";
         }
         final List<AppConfigValues> listAppConfVal = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
                 "statusexcludeReport");
@@ -181,200 +201,161 @@ public class RptSubLedgerSchedule {
         else
             throw new ApplicationRuntimeException("Exlcude statuses not defined for Reports");
 
-        String query ="Select complist.detkeyid as slid,sum(coalesce(complist.OpbCredit,0)) as OpgCreditBal,sum(coalesce(complist.OpbDebit,0)) as OpgDebitBal,"
-            +" sum(coalesce(complist.PrevDebit,0))  as PrvDb,sum(coalesce(complist.PrevCredit,0))  as PrvCr,"
-            +" sum(coalesce(complist.Credit,0)) as TxnCredit,sum(coalesce(complist.Debit,0)) as TxnDebit"
-            +" from("
-            +" Select gld.detailkeyid as detkeyid,0 as OpbCredit,0 as OpbDebit,0 as PrevDebit,0 as PrevCredit,SUM (gld.amount)  AS Debit , 0 AS Credit"
-            +" FROM generalledgerdetail gld, generalledger gl,voucherheader vh "
-            + departmentFromCondition
-            +" WHERE gld.detailtypeid  = ? AND gld.generalledgerid = gl .ID "
-            +" AND gl.glcodeid=(Select ID FROM chartofaccounts WHERE glcode = ?) AND gl.debitamount > 0 AND gl.voucherheaderid = vh .ID"
-             +" AND vh.voucherdate >= to_date(?,'dd/mm/yyyy') AND vh.voucherdate <= to_date(?,'dd/mm/yyyy')  AND vh.fundid= ? "
-            + departmentWhereCondition
-            +"  AND vh.status NOT IN ("
-            + defaultStatusExclude
-            +") GROUP BY gld.detailkeyid "
-            +" UNION ALL "
-            +" Select gld.detailkeyid as detkeyid,0 as OpbCredit,0 as OpbDebit,0 as PrevDebit,0 as PrevCredit, 0 AS Debit , SUM (gld.amount) AS Credit "
-            +" FROM generalledgerdetail gld, generalledger gl,voucherheader vh  "
-            + departmentFromCondition
-            +" WHERE gld.detailtypeid  = ? AND gld.generalledgerid = gl .ID AND gl.glcodeid=(Select ID FROM chartofaccounts WHERE glcode = ?) "
-            +" AND gl.creditamount > 0 AND gl.voucherheaderid = vh .ID AND vh.voucherdate >= to_date(?,'dd/mm/yyyy') AND vh.voucherdate <= "
-            +" to_date(?,'dd/mm/yyyy')  AND vh.fundid= ? "
-            + departmentWhereCondition
-            +" AND vh.status NOT IN ("
-            + defaultStatusExclude
-            +") GROUP BY gld.detailkeyid  "
-            +" UNION ALL"
-            +" Select gld.detailkeyid AS detkeyid ,0 as OpbCredit,0 as OpbDebit,coalesce( SUM (gld.amount ),0)  AS PrevDebit , 0 AS PrevCredit ,0 AS Debit,0 AS Credit "
-            +" FROM generalledgerdetail gld, generalledger gl, voucherheader vh  "
-            + departmentFromCondition
-            + " WHERE gld.detailtypeid  = ? AND gld.generalledgerid = gl.ID "
-            +" AND gl.glcodeid=(Select ID FROM chartofaccounts WHERE glcode = ?) AND gl.debitamount > 0 AND gl.voucherheaderid = vh .ID "
-            +" AND vh.voucherdate >=(Select startingdate FROM financialyear WHERE startingdate <= to_date(?,'dd/mm/yyyy') "
-            +" AND endingdate >= to_date(?,'dd/mm/yyyy') ) AND vh.voucherdate <= to_date(?,'dd/mm/yyyy')-1 "
-            + departmentWhereCondition
-            +" AND vh.fundid = ? AND vh.status NOT  IN ("
-            + defaultStatusExclude
-            +") GROUP BY gld.detailkeyid  "
-            +" UNION ALL"
-            +" Select gld.detailkeyid AS detkeyid ,0 as OpbCredit,0 as OpbDebit,0  AS PrevDebit , coalesce( SUM (gld.amount ),0) AS PrevCredit ,0 AS Debit,0 AS Credit "
-            +" FROM generalledgerdetail gld, generalledger gl, voucherheader vh  "
-            + departmentFromCondition
-            + " WHERE gld.detailtypeid  = ? AND gld.generalledgerid = gl.ID "
-            +" AND gl.glcodeid=(Select ID FROM chartofaccounts WHERE glcode = ?) AND gl.creditamount > 0 AND gl.voucherheaderid = vh .ID "
-            +" AND vh.voucherdate >=(Select startingdate FROM financialyear WHERE startingdate <= to_date(?,'dd/mm/yyyy') "
-            +" AND endingdate >= to_date(?,'dd/mm/yyyy') ) AND vh.voucherdate <= to_date(?,'dd/mm/yyyy')-1 "
-            + departmentWhereCondition
-            +" AND vh.fundid = ? AND vh.status NOT  IN ("
-            + defaultStatusExclude
-            +") GROUP BY gld.detailkeyid "
-            +" UNION ALL"
-            +" Select ACCOUNTDETAILKEY AS detkeyid , SUM(openingcreditbalance) AS OpbCredit , SUM(openingdebitbalance) AS OpbDebit,0  AS PrevDebit , 0 AS PrevCredit ,0 AS Debit,0 AS Credit "
-            +" FROM transactionsummary WHERE glcodeid=(Select ID FROM chartofaccounts WHERE glcode = ?) "
-            +" AND (openingcreditbalance > 0 OR openingdebitbalance > 0) AND accountdetailtypeid= ? AND fundid= ? AND financialyearid= ?  "
-            + departmentConditionTran
-            +" GROUP BY detkeyid "
-            +") as complist"
-            +" group by  slid order by slid";
-            
-            int i = 0;
-            pst = persistenceService.getSession().createNativeQuery(query);
-            pst.setLong(i++, Integer.valueOf(accEntityId));
-            pst.setString(i++, glCode);
-            pst.setString(i++, startDate);
-            pst.setString(i++, endDate);
-            pst.setLong(i++, Long.parseLong(fundId));
-            if (deptId != null && !deptId.equalsIgnoreCase(""))
-                pst.setLong(i++, Long.parseLong(deptId));
-  
-            pst.setLong(i++, Integer.valueOf(accEntityId));
-            pst.setString(i++, glCode);
-            pst.setString(i++, startDate);
-            pst.setString(i++, endDate);
-            pst.setLong(i++, Long.parseLong(fundId));
-            if (deptId != null && !deptId.equalsIgnoreCase(""))
-                pst.setLong(i++, Long.parseLong(deptId));
- 
-            pst.setLong(i++, Integer.valueOf(accEntityId));
-            pst.setString(i++, glCode);
-            pst.setString(i++, startDate);
-            pst.setString(i++, endDate);
-            pst.setString(i++, startDate);
-            if (deptId != null && !deptId.equalsIgnoreCase(""))
-                pst.setLong(i++, Long.parseLong(deptId));
-            pst.setLong(i++, Long.parseLong(fundId));
+        StringBuilder query = new StringBuilder("Select complist.detkeyid as slid, sum(coalesce(complist.OpbCredit,0)) as OpgCreditBal, sum(coalesce(complist.OpbDebit,0)) as OpgDebitBal,")
+                .append(" sum(coalesce(complist.PrevDebit,0)) as PrvDb, sum(coalesce(complist.PrevCredit,0)) as PrvCr, sum(coalesce(complist.Credit,0)) as TxnCredit,")
+                .append(" sum(coalesce(complist.Debit,0)) as TxnDebit")
+                .append(" from(Select gld.detailkeyid as detkeyid, 0 as OpbCredit, 0 as OpbDebit, 0 as PrevDebit, 0 as PrevCredit, SUM(gld.amount) AS Debit, 0 AS Credit")
+                .append(" FROM generalledgerdetail gld, generalledger gl, voucherheader vh ")
+                .append(departmentFromCondition)
+                .append(" WHERE gld.detailtypeid  = :detailTypeId AND gld.generalledgerid = gl.ID ")
+                .append(" AND gl.glcodeid = (Select ID FROM chartofaccounts WHERE glcode = :glcode) AND gl.debitamount > 0 AND gl.voucherheaderid = vh .ID")
+                .append(" AND vh.voucherdate >= to_date(:startDate,'dd/mm/yyyy') AND vh.voucherdate <= to_date(:endDate,'dd/mm/yyyy') AND vh.fundid = :fundId ")
+                .append(departmentWhereCondition)
+                .append(" AND vh.status NOT IN (")
+                .append(defaultStatusExclude)
+                .append(") GROUP BY gld.detailkeyid ")
+                .append(" UNION ALL ")
+                .append(" Select gld.detailkeyid as detkeyid, 0 as OpbCredit, 0 as OpbDebit, 0 as PrevDebit, 0 as PrevCredit, 0 AS Debit, SUM (gld.amount) AS Credit ")
+                .append(" FROM generalledgerdetail gld, generalledger gl, voucherheader vh  ")
+                .append(departmentFromCondition)
+                .append(" WHERE gld.detailtypeid  = :detailTypeId AND gld.generalledgerid = gl.ID AND gl.glcodeid = (Select ID FROM chartofaccounts WHERE glcode = :glcode) ")
+                .append(" AND gl.creditamount > 0 AND gl.voucherheaderid = vh.ID AND vh.voucherdate >= to_date(:startDate,'dd/mm/yyyy') AND vh.voucherdate <= ")
+                .append(" to_date(:endDate,'dd/mm/yyyy') AND vh.fundid = :fundId ")
+                .append(departmentWhereCondition)
+                .append(" AND vh.status NOT IN (")
+                .append(defaultStatusExclude)
+                .append(") GROUP BY gld.detailkeyid  ")
+                .append(" UNION ALL")
+                .append(" Select gld.detailkeyid AS detkeyid , 0 as OpbCredit, 0 as OpbDebit, coalesce( SUM (gld.amount ),0) AS PrevDebit, 0 AS PrevCredit ,0 AS Debit, 0 AS Credit ")
+                .append(" FROM generalledgerdetail gld, generalledger gl, voucherheader vh ")
+                .append(departmentFromCondition)
+                .append(" WHERE gld.detailtypeid = :detailTypeId AND gld.generalledgerid = gl.ID AND gl.glcodeid = (Select ID FROM chartofaccounts WHERE glcode = :glcode) AND gl.debitamount > 0")
+                .append(" AND gl.voucherheaderid = vh.ID AND vh.voucherdate >= (Select startingdate FROM financialyear WHERE startingdate <= to_date(:startDate,'dd/mm/yyyy')")
+                .append(" AND endingdate >= to_date(:endDate,'dd/mm/yyyy') ) AND vh.voucherdate <= to_date(:startDate,'dd/mm/yyyy')-1 ")
+                .append(departmentWhereCondition)
+                .append(" AND vh.fundid = :fundId AND vh.status NOT  IN (")
+                .append(defaultStatusExclude)
+                .append(") GROUP BY gld.detailkeyid  ")
+                .append(" UNION ALL")
+                .append(" Select gld.detailkeyid AS detkeyid , 0 as OpbCredit, 0 as OpbDebit, 0 AS PrevDebit, coalesce(SUM (gld.amount ),0) AS PrevCredit, 0 AS Debit, 0 AS Credit ")
+                .append(" FROM generalledgerdetail gld, generalledger gl, voucherheader vh ")
+                .append(departmentFromCondition)
+                .append(" WHERE gld.detailtypeid = :detailTypeId AND gld.generalledgerid = gl.ID AND gl.glcodeid =(Select ID FROM chartofaccounts WHERE glcode = :glcode) AND gl.creditamount > 0")
+                .append(" AND gl.voucherheaderid = vh.ID AND vh.voucherdate >= (Select startingdate FROM financialyear WHERE startingdate <= to_date(:startDate,'dd/mm/yyyy') ")
+                .append(" AND endingdate >= to_date(:endDate,'dd/mm/yyyy') ) AND vh.voucherdate <= to_date(:startDate,'dd/mm/yyyy')-1 ")
+                .append(departmentWhereCondition)
+                .append(" AND vh.fundid = :fundId AND vh.status NOT IN (")
+                .append(defaultStatusExclude)
+                .append(") GROUP BY gld.detailkeyid ")
+                .append(" UNION ALL")
+                .append(" Select ACCOUNTDETAILKEY AS detkeyid , SUM(openingcreditbalance) AS OpbCredit , SUM(openingdebitbalance) AS OpbDebit, 0 AS PrevDebit, 0 AS PrevCredit,")
+                .append(" 0 AS Debit, 0 AS Credit ")
+                .append(" FROM transactionsummary WHERE glcodeid =(Select ID FROM chartofaccounts WHERE glcode = :glcode) ")
+                .append(" AND (openingcreditbalance > 0 OR openingdebitbalance > 0) AND accountdetailtypeid = :detailTypeId AND fundid = :fundId AND financialyearid = :fyId  ")
+                .append(departmentConditionTran)
+                .append(" GROUP BY detkeyid) as complist group by  slid order by slid");
 
-            pst.setLong(i++, Integer.valueOf(accEntityId));
-            pst.setString(i++, glCode);
-            pst.setString(i++, startDate);
-            pst.setString(i++, endDate);
-            pst.setString(i++, startDate);
-            if (deptId != null && !deptId.equalsIgnoreCase(""))
-                pst.setLong(i++, Long.parseLong(deptId));
-            pst.setLong(i++, Long.parseLong(fundId));
+        pst = persistenceService.getSession().createNativeQuery(query.toString())
+                .setParameter("detailTypeId", Integer.valueOf(accEntityId), IntegerType.INSTANCE)
+                .setParameter("glcode", glCode, StringType.INSTANCE)
+                .setParameter("startDate", startDate, StringType.INSTANCE)
+                .setParameter("endDate", endDate, StringType.INSTANCE)
+                .setParameter("fundId", Long.parseLong(fundId), LongType.INSTANCE);
+        if (deptId != null && !deptId.equalsIgnoreCase(""))
+            pst.setParameter("departmentId", Long.parseLong(deptId), LongType.INSTANCE);
+        pst.setParameter("fyId", Long.parseLong(fyId), LongType.INSTANCE);
 
-            pst.setString(i++, glCode);
-            pst.setLong(i++, Integer.valueOf(accEntityId));
-            pst.setLong(i++, Long.parseLong(fundId));
-            pst.setLong(i++, Long.parseLong(fyId));
-            if (deptId != null && !deptId.equalsIgnoreCase(""))
-                pst.setLong(i++, Long.parseLong(deptId));
-
-            if (LOGGER.isInfoEnabled())
+        if (LOGGER.isInfoEnabled())
             LOGGER.info("Main QUERY..." + query);
         try {
             GeneralLedgerBean gb = null;
             resultset = pst.list();
 
             final Accountdetailtype accountdetailtype = (Accountdetailtype) persistenceService.find(
-                    " from Accountdetailtype where id=?", Integer.valueOf(accEntityId));
-            EntityType entity = null ;
-            if(resultset.size()!=0)
-            {
-            for (final Object[] element : resultset) {
-                gb = new GeneralLedgerBean();
-                double openingBal = 0.0;
-                double closingBal = 0.0;
-                double opgCredit = 0.0;
-                double opgDebit = 0.0;
-                double prevDebit = 0.0;
-                double prevCredit = 0.0;
-                double debitamount = 0.0;
-                double creditamount = 0.0;
-             
-                try {
-                       entity = (EntityType) persistenceService.find(" from " + accountdetailtype.getFullQualifiedName()
-                                + " where id="+element[0].toString());
-                    } catch ( final Exception ee) {
+                    " from Accountdetailtype where id = ?1", Integer.valueOf(accEntityId));
+            EntityType entity = null;
+            if (resultset.size() != 0) {
+                for (final Object[] element : resultset) {
+                    gb = new GeneralLedgerBean();
+                    double openingBal = 0.0;
+                    double closingBal = 0.0;
+                    double opgCredit = 0.0;
+                    double opgDebit = 0.0;
+                    double prevDebit = 0.0;
+                    double prevCredit = 0.0;
+                    double debitamount = 0.0;
+                    double creditamount = 0.0;
+
+                    try {
+                        entity = (EntityType) persistenceService.find(" from " .concat(accountdetailtype.getFullQualifiedName())
+                                .concat(" where id = ?1"), element[0].toString());
+                    } catch (final Exception ee) {
                         LOGGER.error(ee.getMessage(), ee);
-                        entity = (EntityType) persistenceService.find(" from " + accountdetailtype.getFullQualifiedName()
-                                + " where id="+element[0].toString());
-                    }    
-          
-                if (entity != null) {
-                    gb.setCode(entity.getCode());
-                    gb.setName(entity.getName());
-                } else {
-                    gb.setCode("");
-                    gb.setName("");
+                        entity = (EntityType) persistenceService.find(" from " .concat(accountdetailtype.getFullQualifiedName())
+                                .concat(" where id = ?1"), element[0].toString());
+                    }
+                    if (entity != null) {
+                        gb.setCode(entity.getCode());
+                        gb.setName(entity.getName());
+                    } else {
+                        gb.setCode("");
+                        gb.setName("");
+                    }
+
+                    gb.setAccEntityKey(element[0].toString());
+                    if (element[5].toString() != null)
+                        creditamount = Double.parseDouble(element[5].toString());
+                    if (element[6].toString() != null)
+                        debitamount = Double.parseDouble(element[6].toString());
+                    if (element[1].toString() != null)
+                        opgCredit = Double.parseDouble(element[1].toString());
+                    if (element[2].toString() != null)
+                        opgDebit = Double.parseDouble(element[2].toString());
+                    if (element[3].toString() != null)
+                        prevDebit = Double.parseDouble(element[3].toString());
+                    if (element[4].toString() != null)
+                        prevCredit = Double.parseDouble(element[4].toString());
+
+                    openingBal = opgCredit + prevCredit - (opgDebit + prevDebit);
+                    if (LOGGER.isDebugEnabled())
+                        LOGGER.debug("Calcualted opening balance... " + openingBal + "==");
+                    if (openingBal > 0) {
+                        gb.setOpeningBal("" + numberToString(((Double) openingBal).toString()) + " Cr");
+                        totalOpgBal = totalOpgBal + openingBal;
+                    } else if (openingBal < 0) {
+                        totalOpgBal = totalOpgBal + openingBal;
+                        final double openingBal1 = openingBal * -1;
+                        gb.setOpeningBal("" + numberToString(((Double) openingBal1).toString()) + " Dr");
+                    } else
+                        gb.setOpeningBal("&nbsp;");
+
+                    closingBal = openingBal + creditamount - debitamount;
+                    if (closingBal > 0)
+                        gb.setClosingBal("" + numberToString(((Double) closingBal).toString()) + " Cr");
+                    else if (closingBal < 0) {
+                        final double closingBal1 = closingBal * -1;
+                        gb.setClosingBal("" + numberToString(((Double) closingBal1).toString()) + " Dr");
+                    } else
+                        gb.setClosingBal("&nbsp;");
+
+                    if (debitamount > 0) {
+                        gb.setDebitamount("" + numberToString(((Double) debitamount).toString()));
+                        totalDr = totalDr + debitamount;
+                    } else
+                        gb.setDebitamount("&nbsp;");
+                    if (creditamount > 0) {
+                        gb.setCreditamount("" + numberToString(((Double) creditamount).toString()));
+                        totalCr = totalCr + creditamount;
+                    } else
+                        gb.setCreditamount("&nbsp;");
+
+                    gb.setAccEntityId(accEntityId);
+                    totalClosingBal = totalOpgBal + totalCr - totalDr;
+                    dataList.add(gb);
                 }
-                
-                gb.setAccEntityKey(element[0].toString());
-                if (element[5].toString() != null)
-                    creditamount = Double.parseDouble(element[5].toString());
-                if (element[6].toString() != null)
-                    debitamount = Double.parseDouble(element[6].toString());
-                if (element[1].toString() != null)
-                    opgCredit = Double.parseDouble(element[1].toString());
-                if (element[2].toString() != null)
-                    opgDebit = Double.parseDouble(element[2].toString());
-                if (element[3].toString() != null)
-                    prevDebit = Double.parseDouble(element[3].toString());
-                if (element[4].toString() != null)
-                    prevCredit = Double.parseDouble(element[4].toString());
-
-                openingBal = opgCredit + prevCredit - (opgDebit + prevDebit);
-                if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("Calcualted opening balance... " + openingBal + "==");
-                if (openingBal > 0) {
-                    gb.setOpeningBal("" + numberToString(((Double) openingBal).toString()) + " Cr");
-                    totalOpgBal = totalOpgBal + openingBal;
-                } else if (openingBal < 0) {
-                    totalOpgBal = totalOpgBal + openingBal;
-                    final double openingBal1 = openingBal * -1;
-                    gb.setOpeningBal("" + numberToString(((Double) openingBal1).toString()) + " Dr");
-                } else
-                    gb.setOpeningBal("&nbsp;");
-
-                closingBal = openingBal + creditamount - debitamount;
-                if (closingBal > 0)
-                    gb.setClosingBal("" + numberToString(((Double) closingBal).toString()) + " Cr");
-                else if (closingBal < 0) {
-                    final double closingBal1 = closingBal * -1;
-                    gb.setClosingBal("" + numberToString(((Double) closingBal1).toString()) + " Dr");
-                } else
-                    gb.setClosingBal("&nbsp;");
-
-                if (debitamount > 0) {
-                    gb.setDebitamount("" + numberToString(((Double) debitamount).toString()));
-                    totalDr = totalDr + debitamount;
-                } else
-                    gb.setDebitamount("&nbsp;");
-                if (creditamount > 0) {
-                    gb.setCreditamount("" + numberToString(((Double) creditamount).toString()));
-                    totalCr = totalCr + creditamount;
-                } else
-                    gb.setCreditamount("&nbsp;");
-                
-                gb.setAccEntityId(accEntityId);
-                totalClosingBal = totalOpgBal + totalCr - totalDr;
-                dataList.add(gb);
-            }
             }
         } catch (final Exception e) {
-            LOGGER.error("Error in subledger schedule report....." + e.getMessage());
+            LOGGER.error("Error in subledger schedule report.....", e);
             throw new TaskFailedException();
         }
     }
@@ -414,37 +395,18 @@ public class RptSubLedgerSchedule {
     private String getAccountname(final String glCode) {
         String accName = "";
         try {
-            final String query = "select name from chartofaccounts where glCode= ?";
-            pst = persistenceService.getSession().createNativeQuery(query);
-            pst.setString(0, glCode);
-              final List list = pst.list();
+            final String query = "select name from chartofaccounts where glCode = :glcode";
+            final List list = persistenceService.getSession().createNativeQuery(query)
+                    .setParameter("glcode", glCode, StringType.INSTANCE)
+                    .list();
             if (list.get(0) != null)
                 accName = list.get(0).toString();
 
         } catch (final Exception sqlex) {
-            LOGGER.error("Exp in getAccountname" + sqlex.getMessage(), sqlex);
+            LOGGER.error("Exp in getAccountname", sqlex);
             return null;
         }
         return accName;
-    }
-
-    public static StringBuffer numberToString(final String strNumberToConvert) {
-        String strNumber = "", signBit = "";
-        if (strNumberToConvert.startsWith("-")) {
-            strNumber = "" + strNumberToConvert.substring(1, strNumberToConvert.length());
-            signBit = "-";
-        } else
-            strNumber = "" + strNumberToConvert;
-        final DecimalFormat dft = new DecimalFormat("##############0.00");
-        final String strtemp = "" + dft.format(Double.parseDouble(strNumber));
-        StringBuffer strbNumber = new StringBuffer(strtemp);
-        final int intLen = strbNumber.length();
-
-        for (int i = intLen - 6; i > 0; i = i - 2)
-            strbNumber.insert(i, ',');
-        if (signBit.equals("-"))
-            strbNumber = strbNumber.insert(0, "-");
-        return strbNumber;
     }
 
 }

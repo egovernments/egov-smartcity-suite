@@ -55,31 +55,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- *
  * @author Manikanta
- *
  */
 @Service
 public class ReportEngine {
     private final static Logger LOGGER = Logger.getLogger(ReportEngine.class);
     /**
-     *
      * @param reBean
      * @return query
-     *
      */
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
-    public String getVouchersListQuery(final ReportEngineBean reBean) throws ApplicationRuntimeException {
+    public ReportEngineBean getVouchersListQuery(final ReportEngineBean reBean) throws ApplicationRuntimeException {
+        Map<String, String> params = new HashMap<>();
         boolean includeVouchermis = false;
         boolean includeGeneralLedger = false;
         String firstParam = "";
         final String andParam = " and ";
-        final StringBuffer reportEngineQry = new StringBuffer("");
+        final StringBuilder reportEngineQry = new StringBuilder("");
 
         try {
             if (reBean.getSchemeId() != null || reBean.getSubSchemeId() != null || reBean.getFundsourceId() != null
@@ -88,84 +87,96 @@ public class ReportEngine {
             if (reBean.getFunctionId() != null)
                 includeGeneralLedger = true;
 
-            reportEngineQry.append("select ");
+            reportEngineQry.append("select");
             /**
              * add fields which are to be fetched
              */
-            reportEngineQry.append("voucher.id as \"vocherId\" ");
+            reportEngineQry.append(" voucher.id as \"vocherId\"");
 
-            reportEngineQry.append(" from ");
+            reportEngineQry.append(" from");
             /**
              * add the table names if no fields of a perticular table is passed ommit it eg if scheme,subscheme or divisionid is
              * not passed donot include vouchermis or if function is not passed donot include generalledger
              */
             if (includeVouchermis && includeGeneralLedger)
-                reportEngineQry.append(" ( voucherheader voucher left join vouchermis mis on voucher.id=mis.voucherheaderid)"
-                        + "left join generalledger ledger on voucher.id=ledger.voucherheaderid ");
+                reportEngineQry.append(" (voucherheader voucher left join vouchermis mis on voucher.id = mis.voucherheaderid)")
+                        .append(" left join generalledger ledger on voucher.id = ledger.voucherheaderid");
             else if (includeVouchermis)
-                reportEngineQry.append(" voucherheader voucher left join vouchermis mis on voucher.id=mis.voucherheaderid ");
+                reportEngineQry.append(" voucherheader voucher left join vouchermis mis on voucher.id = mis.voucherheaderid");
             else if (includeGeneralLedger)
                 reportEngineQry
-                        .append(" voucherheader voucher left join generalledger ledger on voucher.id=ledger.voucherheaderid ");
+                        .append(" voucherheader voucher left join generalledger ledger on voucher.id = ledger.voucherheaderid");
             else
-                reportEngineQry.append(" voucherheader voucher ");
+                reportEngineQry.append(" voucherheader voucher");
 
             // if parmeters are passed then set "where" clause
             if (reBean.getFiltersCount() >= 1)
-                reportEngineQry.append(" where ");
+                reportEngineQry.append(" where");
 
             /**
              * where conditions add the conditions for the variables in the ReportEngineBean
              *
              */
             if (checkNullandEmpty(reBean.getFundId())) {
-                reportEngineQry.append(firstParam + " voucher.fundId=" + reBean.getFundId());
+                reportEngineQry.append(firstParam).append(" voucher.fundId = :fundId");
+                params.put("fundId", reBean.getFundId());
                 firstParam = andParam;
             }
             if (checkNullandEmpty(reBean.getFundsourceId())) {
-                reportEngineQry.append(firstParam + " mis.fundsourceId=" + reBean.getFundsourceId());
+                reportEngineQry.append(firstParam).append(" mis.fundsourceId = :fundSourceId");
+                params.put("fundSourceId", reBean.getFundsourceId());
                 firstParam = andParam;
             }
 
             if (checkNullandEmpty(reBean.getFromDate())) {
-                reportEngineQry.append(firstParam + " voucher.voucherDate>=to_date('" + reBean.getFromDate() + "','dd/MM/yyyy')");
+                reportEngineQry.append(firstParam).append(" voucher.voucherDate >= to_date(:fromDate,'dd/MM/yyyy')");
+                params.put("fromDate", reBean.getFromDate());
                 firstParam = andParam;
             }
             if (checkNullandEmpty(reBean.getToDate())) {
-                reportEngineQry.append(firstParam + " voucher.voucherDate<=to_date('" + reBean.getToDate() + "','dd/MM/yyyy')");
+                reportEngineQry.append(firstParam).append(" voucher.voucherDate <= to_date(:toDate,'dd/MM/yyyy')");
+                params.put("toDate", reBean.getToDate());
                 firstParam = andParam;
             }
 
             if (checkNullandEmpty(reBean.getFromVoucherNumber())) {
-                reportEngineQry.append(firstParam + " voucher.fromVouchernumber>=" + reBean.getFromVoucherNumber());
+                reportEngineQry.append(firstParam).append(" voucher.fromVouchernumber >= :fromVoucherNumber");
+                params.put("fromVoucherNumber", reBean.getFromVoucherNumber());
                 firstParam = andParam;
             }
             if (checkNullandEmpty(reBean.getToVoucherNumber())) {
-                reportEngineQry.append(firstParam + " voucher.toVouchernumber<=" + reBean.getToVoucherNumber());
+                reportEngineQry.append(firstParam).append(" voucher.toVouchernumber <= :toVoucherNumber");
+                params.put("toVoucherNumber", reBean.getToVoucherNumber());
                 firstParam = andParam;
             }
             if (checkNullandEmpty(reBean.getSchemeId())) {
-                reportEngineQry.append(firstParam + " mis.schemeId=" + reBean.getSchemeId());
+                reportEngineQry.append(firstParam).append(" mis.schemeId = :schemeId");
+                params.put("schemeId", reBean.getSchemeId());
                 firstParam = andParam;
             }
             if (checkNullandEmpty(reBean.getSubSchemeId())) {
-                reportEngineQry.append(firstParam + " mis.subSchemeId=" + reBean.getSubSchemeId());
+                reportEngineQry.append(firstParam).append(" mis.subSchemeId = :subSchemeId");
+                params.put("subSchemeId", reBean.getSubSchemeId());
                 firstParam = andParam;
             }
             if (checkNullandEmpty(reBean.getDivisionId())) {
-                reportEngineQry.append(firstParam + " mis.divisionId=" + reBean.getDivisionId());
+                reportEngineQry.append(firstParam).append(" mis.divisionId = :divisionId");
+                params.put("divisionId", reBean.getDivisionId());
                 firstParam = andParam;
             }
             if (checkNullandEmpty(reBean.getDepartmentId())) {
-                reportEngineQry.append(firstParam + " mis.departmentId=" + reBean.getDepartmentId());
+                reportEngineQry.append(firstParam).append(" mis.departmentId = :departmentId");
+                params.put("departmentId", reBean.getDepartmentId());
                 firstParam = andParam;
             }
             if (checkNullandEmpty(reBean.getFunctionaryId())) {
-                reportEngineQry.append(firstParam + " mis.functionaryId=" + reBean.getFunctionaryId());
+                reportEngineQry.append(firstParam).append(" mis.functionaryId = :functionaryId");
+                params.put("functionaryId", reBean.getFunctionaryId());
                 firstParam = andParam;
             }
             if (checkNullandEmpty(reBean.getFunctionId())) {
-                reportEngineQry.append(firstParam + " ledger.functionid=" + reBean.getFunctionId());
+                reportEngineQry.append(firstParam).append(" ledger.functionid = :functionId");
+                params.put("functionId", reBean.getFunctionId());
                 firstParam = andParam;
             }
 
@@ -182,9 +193,11 @@ public class ReportEngine {
                 defaultStatusExclude = listAppConfVal.get(0).getValue();
             else
                 throw new ApplicationRuntimeException("Exlcude statusses not  are not defined for Reports");
-            reportEngineQry.append(firstParam + "voucher.status not in(" + defaultStatusExclude);
+            reportEngineQry.append(firstParam).append(" voucher.status not in (:defaultStatus");
+            params.put("defaultStatus", defaultStatusExclude);
             if (reBean.getExcludeStatuses() != null && reBean.getExcludeStatuses().size() > 0) {
-                reportEngineQry.append("," + reBean.getCommaSeperatedValues(reBean.getExcludeStatuses()) + " )");
+                reportEngineQry.append(",").append(":excludeStatuses)");
+                params.put("excludeStatuses", reBean.getCommaSeperatedValues(reBean.getExcludeStatuses()));
                 firstParam = andParam;
             } else {
                 reportEngineQry.append(")");
@@ -192,8 +205,8 @@ public class ReportEngine {
             }
 
             if (reBean.getIncludeStatuses() != null && reBean.getIncludeStatuses().size() > 0) {
-                reportEngineQry.append(firstParam + " voucher.status in( "
-                        + reBean.getCommaSeperatedValues(reBean.getIncludeStatuses()) + " )");
+                reportEngineQry.append(firstParam).append(" voucher.status in(:includeStatuses)");
+                params.put("includeStatuses", reBean.getCommaSeperatedValues(reBean.getIncludeStatuses()));
                 firstParam = andParam;
             }
 
@@ -205,8 +218,9 @@ public class ReportEngine {
             LOGGER.debug("-----------------------Engine Query-------------------");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(reportEngineQry.toString());
-        return reportEngineQry.toString();
-
+        reBean.setQuery(reportEngineQry.toString());
+        reBean.setParams(params);
+        return reBean;
     }
 
     private boolean checkNullandEmpty(final String column) {

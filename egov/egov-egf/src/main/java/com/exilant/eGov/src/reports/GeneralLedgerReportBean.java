@@ -53,9 +53,11 @@ package com.exilant.eGov.src.reports;
 
 import org.apache.log4j.Logger;
 
-public class GeneralLedgerReportBean
-{
+public class GeneralLedgerReportBean {
     private static final Logger LOGGER = Logger.getLogger(GeneralLedgerReportBean.class);
+    public String functionCodeId;
+    public String functionCode;
+    public String heading;
     private String glCode1;
     private String glCode2;
     private String snapShotDateTime;
@@ -76,7 +78,6 @@ public class GeneralLedgerReportBean
     private String entityName;
     private String accEntitycode;
     private Integer subledger;
-
     private String rcptVchrDate;
     private String rcptVchrNo;
     private String rcptAccCode;
@@ -99,19 +100,13 @@ public class GeneralLedgerReportBean
     private String Cheque;
     private String accountCode;
     private String fundName;
-
     private String netRcptAmount;
     private String netPymntAmount;
-
     private String departmentId;
     private String functionaryId;
     private String fieldId;
-    public String functionCodeId;
-    public String functionCode;
-    public String heading;
 
-    public GeneralLedgerReportBean(final String str)
-    {
+    public GeneralLedgerReportBean(final String str) {
         glCode1 = "";
         glCode2 = "";
         snapShotDateTime = "";
@@ -159,8 +154,7 @@ public class GeneralLedgerReportBean
         heading = null;
     }
 
-    public GeneralLedgerReportBean()
-    {
+    public GeneralLedgerReportBean() {
         glCode1 = "";
         glCode2 = "";
         snapShotDateTime = "";
@@ -374,32 +368,34 @@ public class GeneralLedgerReportBean
         this.isConfirmedCount = isConfirmedCount;
     }
 
-    /**
-     * @return Returns the cGN.
-     */
-
-    public void setReportType(final String rptType) {
-        reportType = rptType;
-
-    }
 
     /**
-     * @param chequeInHand to set.
+     * @return Returns the reportType.
      */
     public String getReportType() {
         return reportType;
     }
 
-    public void setUlbName(final String ulbName) {
-        this.ulbName = ulbName;
-
+    /**
+     * @param rptType to set.
+     */
+    public void setReportType(final String rptType) {
+        reportType = rptType;
     }
 
     /**
-     * @param chequeInHand to set.
+     * @return Returns the ulbName.
      */
     public String getUlbName() {
         return ulbName;
+    }
+
+    public void setUlbName(final String ulbName) {
+        this.ulbName = ulbName;
+    }
+
+    public String getForRunningBalance() {
+        return forRunningBalance;
     }
 
     public void setForRunningBalance(final String forRunningBalance) {
@@ -407,84 +403,79 @@ public class GeneralLedgerReportBean
 
     }
 
-    public String getForRunningBalance() {
-        return forRunningBalance;
-    }
-
-    /**
-     *
-     * @param rptType
-     */
-    public void setRcptVchrNo(final String vchrNo) {
-        rcptVchrNo = vchrNo;
-    }
-
     public String getRcptVchrNo() {
         return rcptVchrNo;
     }
 
-    public void setRcptVchrDate(final String rcptVchrDate) {
-        this.rcptVchrDate = rcptVchrDate;
+    /**
+     * @param vchrNo
+     */
+    public void setRcptVchrNo(final String vchrNo) {
+        rcptVchrNo = vchrNo;
     }
 
     public String getRcptVchrDate() {
         return rcptVchrDate;
     }
 
-    public void setRcptAccCode(final String rcptAccCode) {
-        this.rcptAccCode = rcptAccCode;
+    public void setRcptVchrDate(final String rcptVchrDate) {
+        this.rcptVchrDate = rcptVchrDate;
     }
 
     public String getRcptAccCode() {
         return rcptAccCode;
     }
 
-    public void setRcptFuncCode(final String rcptFuncCode) {
-        this.rcptFuncCode = rcptFuncCode;
+    public void setRcptAccCode(final String rcptAccCode) {
+        this.rcptAccCode = rcptAccCode;
     }
 
     public String getRcptFuncCode() {
         return rcptFuncCode;
     }
 
-    public void setRcptBgtCode(final String rcptBgtCode) {
-        this.rcptBgtCode = rcptBgtCode;
+    public void setRcptFuncCode(final String rcptFuncCode) {
+        this.rcptFuncCode = rcptFuncCode;
     }
 
     public String getRcptBgtCode() {
         return rcptBgtCode;
     }
 
-    public void setRcptParticulars(final String rcptParticulars) {
-        this.rcptParticulars = rcptParticulars;
+    public void setRcptBgtCode(final String rcptBgtCode) {
+        this.rcptBgtCode = rcptBgtCode;
     }
 
     public String getRcptParticulars() {
         return rcptParticulars;
     }
 
-    public void setRcptcashInHandAmt(final String rcptcashInHandAmt) {
-        this.rcptcashInHandAmt = rcptcashInHandAmt;
+    public void setRcptParticulars(final String rcptParticulars) {
+        this.rcptParticulars = rcptParticulars;
     }
 
     public String getRcptcashInHandAmt() {
         return rcptcashInHandAmt;
     }
 
-    public void setRcptChqInHandAmt(final String rcptChqInHandAmt) {
-        this.rcptChqInHandAmt = rcptChqInHandAmt;
+    public void setRcptcashInHandAmt(final String rcptcashInHandAmt) {
+        this.rcptcashInHandAmt = rcptcashInHandAmt;
     }
 
     public String getRcptChqInHandAmt() {
         return rcptChqInHandAmt;
     }
 
-    public void setRcptSrcOfFinance(final String rcptSrcOfFinance) {
-        this.rcptSrcOfFinance = rcptSrcOfFinance;
+    public void setRcptChqInHandAmt(final String rcptChqInHandAmt) {
+        this.rcptChqInHandAmt = rcptChqInHandAmt;
     }
 
     public String getRcptSrcOfFinance() {
         return rcptSrcOfFinance;
+    }
+
+    public void setRcptSrcOfFinance(final String rcptSrcOfFinance) {
+        this.rcptSrcOfFinance = rcptSrcOfFinance;
     }
 
     public void setpmtVchrDate(final String pmtVchrDate) {
@@ -495,68 +486,68 @@ public class GeneralLedgerReportBean
         return pmtVchrDate;
     }
 
-    public void setPmtVchrNo(final String pmtVchrNo) {
-        this.pmtVchrNo = pmtVchrNo;
-    }
-
     public String getPmtVchrNo() {
         return pmtVchrNo;
     }
 
-    public void setPmtAccCode(final String pmtAccCode) {
-        this.pmtAccCode = pmtAccCode;
+    public void setPmtVchrNo(final String pmtVchrNo) {
+        this.pmtVchrNo = pmtVchrNo;
     }
 
     public String getPmtAccCode() {
         return pmtAccCode;
     }
 
-    public void setPmtFuncCode(final String pmtFuncCode) {
-        this.pmtFuncCode = pmtFuncCode;
+    public void setPmtAccCode(final String pmtAccCode) {
+        this.pmtAccCode = pmtAccCode;
     }
 
     public String getPmtFuncCode() {
         return pmtFuncCode;
     }
 
-    public void setPmtBgtCode(final String pmtBgtCode) {
-        this.pmtBgtCode = pmtBgtCode;
+    public void setPmtFuncCode(final String pmtFuncCode) {
+        this.pmtFuncCode = pmtFuncCode;
     }
 
     public String getPmtBgtCode() {
         return pmtBgtCode;
     }
 
-    public void setPmtParticulars(final String pmtParticulars) {
-        this.pmtParticulars = pmtParticulars;
+    public void setPmtBgtCode(final String pmtBgtCode) {
+        this.pmtBgtCode = pmtBgtCode;
     }
 
     public String getPmtParticulars() {
         return pmtParticulars;
     }
 
-    public void setPmtCashInHandAmt(final String pmtCashInHandAmt) {
-        this.pmtCashInHandAmt = pmtCashInHandAmt;
+    public void setPmtParticulars(final String pmtParticulars) {
+        this.pmtParticulars = pmtParticulars;
     }
 
     public String getPmtCashInHandAmt() {
         return pmtCashInHandAmt;
     }
 
-    public void setPmtChqInHandAmt(final String pmtChqInHandAmt) {
-        this.pmtChqInHandAmt = pmtChqInHandAmt;
+    public void setPmtCashInHandAmt(final String pmtCashInHandAmt) {
+        this.pmtCashInHandAmt = pmtCashInHandAmt;
     }
 
     public String getPmtChqInHandAmt() {
         return pmtChqInHandAmt;
     }
 
-    public void setPmtSrcOfFinance(final String pmtSrcOfFinance) {
-        this.pmtSrcOfFinance = pmtSrcOfFinance;
+    public void setPmtChqInHandAmt(final String pmtChqInHandAmt) {
+        this.pmtChqInHandAmt = pmtChqInHandAmt;
     }
 
     public String getPmtSrcOfFinance() {
         return pmtSrcOfFinance;
+    }
+
+    public void setPmtSrcOfFinance(final String pmtSrcOfFinance) {
+        this.pmtSrcOfFinance = pmtSrcOfFinance;
     }
 
     public String getCGN() {
@@ -578,7 +569,7 @@ public class GeneralLedgerReportBean
     }
 
     /**
-     * @param endDate The endDate to set.
+     * @param boundary The boundary to set.
      */
     public void setBoundary(final String boundary) {
         if (LOGGER.isDebugEnabled())
@@ -625,64 +616,56 @@ public class GeneralLedgerReportBean
     /**
      * @return Returns the accountCode.
      */
-    public String getAccountCode()
-    {
+    public String getAccountCode() {
         return accountCode;
     }
 
     /**
      * @param accountCode The accountCode to set.
      */
-    public void setAccountCode(final String accountCode)
-    {
+    public void setAccountCode(final String accountCode) {
         this.accountCode = accountCode;
     }
 
     /**
      * @return Returns the fundName.
      */
-    public String getFundName()
-    {
+    public String getFundName() {
         return fundName;
     }
 
     /**
      * @param fundName The fundName to set.
      */
-    public void setFundName(final String fundName)
-    {
+    public void setFundName(final String fundName) {
         this.fundName = fundName;
     }
 
     /**
      * @return the netPymntAmount
      */
-    public String getNetPymntAmount()
-    {
+    public String getNetPymntAmount() {
         return netPymntAmount;
     }
 
     /**
      * @param netPymntAmount the netPymntAmount to set
      */
-    public void setNetPymntAmount(final String netPymntAmount)
-    {
+    public void setNetPymntAmount(final String netPymntAmount) {
         this.netPymntAmount = netPymntAmount;
     }
 
     /**
      * @return the netRcptAmount
      */
-    public String getNetRcptAmount()
-    {
+    public String getNetRcptAmount() {
         return netRcptAmount;
     }
 
     /**
      * @param netRcptAmount the netRcptAmount to set
      */
-    public void setNetRcptAmount(final String netRcptAmount)
-    {
+    public void setNetRcptAmount(final String netRcptAmount) {
         this.netRcptAmount = netRcptAmount;
     }
 

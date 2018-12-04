@@ -47,6 +47,7 @@
  */
 /**
  * Created on Aug 08, 2005
+ *
  * @author pushpendra.singh
  */
 
@@ -73,9 +74,9 @@ public class IESchedules extends AbstractTask {
     /* this method is called by Exility */
     @Override
     public void execute(final String taskName, final String gridName, final DataCollection dc,
-            final Connection conn, final boolean erroOrNoData,
-            final boolean gridHasColumnHeading, final String prefix)
-                    throws TaskFailedException {
+                        final Connection conn, final boolean erroOrNoData,
+                        final boolean gridHasColumnHeading, final String prefix)
+            throws TaskFailedException {
         // if(LOGGER.isDebugEnabled()) LOGGER.debug("****************IESchedules");
         this.conn = conn;
         formatter = new DecimalFormat();
@@ -89,9 +90,13 @@ public class IESchedules extends AbstractTask {
     private void printSchedules(final DataCollection dc) throws TaskFailedException {
         final String tableTime = dc.getValue("tableToDrop");
         final String mainTable = "coaie" + tableTime;
-        final String report = "SELECT scheduleglCode AS \"glcode\", case when operation = 'L' then 'Less: ' else ' ' end  || schedulename AS \"name\", 'Schedule ' || schschedule || ': ' || summaryname || '[Code No ' || summaryglcode || ']' AS \"schTitle\", case when schschedule = NULL then '-' else schschedule AS \"schedule\", curYearAmount AS \"curyearamount\", preyearamount AS \"preyearamount\", operation AS \"operation\", TYPE AS \"type\" FROM "
-                + mainTable
-                + " WHERE TYPE = 'I' OR TYPE = 'E' ORDER BY scheduleglCode, TYPE, operation";
+        final StringBuilder report = new StringBuilder("SELECT scheduleglCode AS \"glcode\", case when operation = 'L' then 'Less: ' else ' ' end  ||")
+                .append(" schedulename AS \"name\", 'Schedule ' || schschedule || ': ' || summaryname || '[Code No ' || summaryglcode || ']' AS \"schTitle\",")
+                .append(" case when schschedule = NULL then '-' else schschedule AS \"schedule\", curYearAmount AS \"curyearamount\",")
+                .append(" preyearamount AS \"preyearamount\", operation AS \"operation\", TYPE AS \"type\"")
+                .append(" FROM ")
+                .append(mainTable)
+                .append(" WHERE TYPE = 'I' OR TYPE = 'E' ORDER BY scheduleglCode, TYPE, operation");
         PreparedStatement pst = null;
         ResultSet rs = null;
         final ArrayList ar = new ArrayList();
@@ -107,10 +112,10 @@ public class IESchedules extends AbstractTask {
                 .getValue("eDate");
         dc.addValue("pageTitle",
                 "Income & Expenditure Schedules For the period of " + sDate
-                + " to " + eDate);
+                        + " to " + eDate);
 
         try {
-            pst = conn.prepareStatement(report);
+            pst = conn.prepareStatement(report.toString());
             rs = pst.executeQuery();
 
             while (rs.next()) {
@@ -133,8 +138,8 @@ public class IESchedules extends AbstractTask {
                         dc.addValue("showRowIESchedule" + (cnt + 1), "false");
                         schTitle[cnt] += " -No Data";
                     }
-                    final String total[] = { "-", "Total", formatter.format(sumCur),
-                            formatter.format(sumPre) };
+                    final String total[] = {"-", "Total", formatter.format(sumCur),
+                            formatter.format(sumPre)};
                     ar.add(total);
                     rowCount++;
 
@@ -147,8 +152,8 @@ public class IESchedules extends AbstractTask {
 
                 if (operation.equalsIgnoreCase("L")
                         && preSchedule.equalsIgnoreCase(schedule)) {
-                    final String total[] = { "-", "Sub Total",
-                            formatter.format(sumCur), formatter.format(sumPre) };
+                    final String total[] = {"-", "Sub Total",
+                            formatter.format(sumCur), formatter.format(sumPre)};
                     ar.add(total);
                     rowCount++;
                 }
@@ -159,8 +164,8 @@ public class IESchedules extends AbstractTask {
                     sumCur = sumCur + curAmt;
                     sumPre = sumPre + preAmt;
                 }
-                final String row[] = { rs.getString("glcode"), rs.getString("name"),
-                        formatter.format(curAmt), formatter.format(preAmt) };
+                final String row[] = {rs.getString("glcode"), rs.getString("name"),
+                        formatter.format(curAmt), formatter.format(preAmt)};
                 ar.add(row);
                 preSchedule = schedule;
             }

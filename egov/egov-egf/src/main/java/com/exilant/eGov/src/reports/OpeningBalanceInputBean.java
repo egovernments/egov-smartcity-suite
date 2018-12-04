@@ -52,8 +52,7 @@
 package com.exilant.eGov.src.reports;
 
 
-public class OpeningBalanceInputBean
-{
+public class OpeningBalanceInputBean {
     String obFund_id;
     String finYear;
     String deptId;
@@ -66,12 +65,12 @@ public class OpeningBalanceInputBean
         this.obFund_id = obFund_id;
     }
 
-    public void setFinYear(final String finYear) {
-        this.finYear = finYear;
-    }
-
     public String getFinYear() {
         return finYear;
+    }
+
+    public void setFinYear(final String finYear) {
+        this.finYear = finYear;
     }
 
     public String getDeptId() {
