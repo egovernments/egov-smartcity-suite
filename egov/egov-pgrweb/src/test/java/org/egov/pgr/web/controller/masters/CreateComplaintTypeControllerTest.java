@@ -51,6 +51,7 @@ import org.egov.builder.entities.DepartmentBuilder;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.entity.ComplaintTypeCategory;
 import org.egov.pgr.service.ComplaintTypeCategoryService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.web.controller.AbstractContextControllerTest;
@@ -118,6 +119,18 @@ public class CreateComplaintTypeControllerTest extends AbstractContextController
                 return department;
             }
         });
+       formatterService.addFormatter(new Formatter<ComplaintTypeCategory>() {
+
+           @Override
+           public String print(ComplaintTypeCategory object, Locale locale) {
+               return null;
+           }
+
+           @Override
+           public ComplaintTypeCategory parse(String text, Locale locale) throws ParseException {
+               return new ComplaintTypeCategory();
+           }
+       });
         mvcBuilder.setConversionService(formatterService);
         mockMvc = mvcBuilder.build();
       
@@ -152,6 +165,7 @@ public class CreateComplaintTypeControllerTest extends AbstractContextController
         final Integer slaHours = 24;
         this.mockMvc.perform(post("/complainttype/create")
                 .param("department", "1")
+                .param("category", "1")
                 .param("name", "new-complaint-type").param("code", "test").param("slaHours", "24"))
                 .andExpect(model().hasNoErrors())
                 .andExpect(view().name("redirect:/complainttype/view/test"));
