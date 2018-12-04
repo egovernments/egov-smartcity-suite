@@ -90,7 +90,6 @@ public class GeneralLedgerReport {
     String accEntityKey = null;
     BigDecimal slDrAmount = new BigDecimal("0.00");
     BigDecimal slCrAmount = new BigDecimal("0.00");
-    String engineQry = null;
     String startDate, endDate, effTime, rType = "gl";
     com.exilant.eGov.src.transactions.OpBal OpBal = new com.exilant.eGov.src.transactions.OpBal();
     DecimalFormat dft = new DecimalFormat("##############0.00");
@@ -238,7 +237,7 @@ public class GeneralLedgerReport {
         double txnDrSum = 0, txnCrSum = 0, openingBalance = 0, closingBalance = 0;
 
         final ReportEngineBean reBean = engine.populateReportEngineBean(reportBean);
-        engineQry = engine.getVouchersListQuery(reBean);
+        engine.getVouchersListQuery(reBean);
         final String functionId = reBean.getFunctionId();
         try {
             final List list = getQuery(glCode1, accEntityId, accEntityKey, reportBean.getFieldId(),
