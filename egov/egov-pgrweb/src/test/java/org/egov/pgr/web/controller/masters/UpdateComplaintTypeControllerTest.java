@@ -51,6 +51,7 @@ import org.egov.builder.entities.DepartmentBuilder;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.entity.ComplaintTypeCategory;
 import org.egov.pgr.service.ComplaintTypeCategoryService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.web.controller.AbstractContextControllerTest;
@@ -123,6 +124,7 @@ public class UpdateComplaintTypeControllerTest extends AbstractContextController
         code = "existing";
         ComplaintType complaintType = new ComplaintType();
         complaintType.setDepartment(department);
+        complaintType.setCategory(new ComplaintTypeCategory());
         complaintType.setCode("existing");
         complaintType.setSlaHours(24);
         when(complaintTypeService.findByCode(code)).thenReturn(complaintType);
@@ -136,6 +138,7 @@ public class UpdateComplaintTypeControllerTest extends AbstractContextController
 
         ComplaintType complaintType = new ComplaintType();
         complaintType.setCode("existing");
+        complaintType.setCategory(new ComplaintTypeCategory());
         complaintType.setSlaHours(24);
         code = "existing";
         when(departmentService.getAllDepartments()).thenReturn(departments);
@@ -155,6 +158,7 @@ public class UpdateComplaintTypeControllerTest extends AbstractContextController
         ComplaintType complaintType = new ComplaintType();
         complaintType.setCode("existing");
         complaintType.setSlaHours(24);
+        complaintType.setCategory(new ComplaintTypeCategory());
         when(complaintTypeService.updateComplaintType(any(ComplaintType.class))).thenReturn(complaintType);
         this.mockMvc.perform(post("/complainttype/update/existing")
                 .param("name", "existing-complaint-type").param("code", "Test"))
