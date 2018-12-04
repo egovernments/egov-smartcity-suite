@@ -48,7 +48,7 @@
 package com.exilant.exility.common;
 
 import org.apache.log4j.Logger;
-import org.egov.infstr.utils.EGovConfig;
+import org.egov.utils.EGovConfig;
 
 import java.net.URL;
 import java.util.HashMap;

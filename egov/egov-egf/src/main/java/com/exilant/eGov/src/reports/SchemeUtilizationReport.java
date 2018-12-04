@@ -53,7 +53,7 @@ package com.exilant.eGov.src.reports;
 
 import com.exilant.exility.common.TaskFailedException;
 import org.apache.log4j.Logger;
-import org.egov.infstr.utils.EGovConfig;
+import org.egov.utils.EGovConfig;
 
 import java.math.BigDecimal;
 import java.sql.CallableStatement;

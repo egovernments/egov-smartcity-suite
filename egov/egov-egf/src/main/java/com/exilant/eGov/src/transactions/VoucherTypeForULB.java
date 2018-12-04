@@ -50,7 +50,7 @@ package com.exilant.eGov.src.transactions;
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infstr.utils.EGovConfig;
+import org.egov.utils.EGovConfig;
 import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

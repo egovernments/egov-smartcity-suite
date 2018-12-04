@@ -57,7 +57,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infstr.utils.EGovConfig;
+import org.egov.utils.EGovConfig;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;

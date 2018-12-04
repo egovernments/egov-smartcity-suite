@@ -62,7 +62,7 @@ package com.exilant.exility.pagemanager;
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.XMLLoader;
 import org.apache.log4j.Logger;
-import org.egov.infstr.utils.EGovConfig;
+import org.egov.utils.EGovConfig;
 
 import java.io.File;
 import java.net.URL;

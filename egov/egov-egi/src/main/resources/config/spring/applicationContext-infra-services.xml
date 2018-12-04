@@ -56,8 +56,6 @@
 		
 	<context:component-scan base-package="org.egov.infra, org.egov.infstr"/>
 
-	<bean id="masterDataCache" class="org.egov.infstr.utils.EgovMasterDataCaching" lazy-init="false"/>
-	
 	<bean id="persistenceService" class="org.egov.infstr.services.PersistenceService">
         <constructor-arg name="type">
             <null/>

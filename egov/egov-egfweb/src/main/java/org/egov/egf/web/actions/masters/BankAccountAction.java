@@ -61,7 +61,7 @@ import org.egov.commons.utils.BankAccountType;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infstr.utils.EGovConfig;
+import org.egov.utils.EGovConfig;
 import org.egov.model.masters.AccountCodePurpose;
 import org.egov.utils.Constants;
 import org.json.JSONException;

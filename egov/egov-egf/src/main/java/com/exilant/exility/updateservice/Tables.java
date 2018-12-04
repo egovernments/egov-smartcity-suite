@@ -48,7 +48,7 @@
 package com.exilant.exility.updateservice;
 
 import com.exilant.exility.common.XMLLoader;
-import org.egov.infstr.utils.EGovConfig;
+import org.egov.utils.EGovConfig;
 
 import java.io.File;
 import java.net.URL;

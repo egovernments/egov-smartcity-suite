@@ -58,7 +58,7 @@ import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EGovConfig;
+import org.egov.utils.EGovConfig;
 import org.hibernate.query.Query;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
