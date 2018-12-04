@@ -145,12 +145,7 @@ public class ClamAVScanner implements VirusScanner {
         if (virusScannerEnabled) {
             try (SocketChannel socketChannel = SocketChannel.open(this.address)) {
                 socketChannel.write(ByteBuffer.wrap(PING));
-                socketChannel.socket().setSoTimeout(this.timeout);
-                ByteBuffer data = ByteBuffer.allocate(1024);
-                socketChannel.read(data);
-                String status = new String(data.array());
-                status = status.substring(0, status.indexOf(0));
-                return PONG.equals(status);
+                virusScannerEnabled = PONG.equals(readResponse(socketChannel));
             } catch (IOException ioe) {
                 throw new ApplicationRuntimeException("Error occurred while Clam AV ping", ioe);
             }
@@ -159,11 +154,7 @@ public class ClamAVScanner implements VirusScanner {
     }
 
     private String parseScannerOutput(SocketChannel socketChannel) throws IOException {
-        socketChannel.socket().setSoTimeout(this.timeout);
-        ByteBuffer data = ByteBuffer.allocate(1024);
-        socketChannel.read(data);
-        String status = new String(data.array());
-        status = status.substring(0, status.indexOf(0));
+        String status = readResponse(socketChannel);
         Matcher matcher = FOUND_RESPONSE_PATTERN.matcher(status);
         if (matcher.matches()) {
             LOGGER.warn("Virus found on uploaded file, Details : {}", status);
@@ -172,5 +163,13 @@ public class ClamAVScanner implements VirusScanner {
             return NOT_FOUND;
         }
         throw new ApplicationRuntimeException(status);
+    }
+
+    private String readResponse(final SocketChannel socketChannel) throws IOException {
+        socketChannel.socket().setSoTimeout(this.timeout);
+        ByteBuffer data = ByteBuffer.allocate(1024);
+        socketChannel.read(data);
+        String status = new String(data.array());
+        return status.substring(0, status.indexOf(0));
     }
 }
