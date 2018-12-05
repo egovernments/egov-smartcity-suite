@@ -141,8 +141,7 @@ public class RegistrationUnitController {
         .createMrRegistrationUnit(marriageRegistrationUnit);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage(
                 "msg.registrationunit.success", null, null));
-        return "redirect:/masters/mrregistrationunit/result/"
-        + marriageRegistrationUnit.getId();
+        return "redirect:/masters/mrregistrationunit/result/".concat(marriageRegistrationUnit.getId().toString());
     }
 
     @RequestMapping(value = "/mrregistrationunit/result/{id}", method = RequestMethod.GET)
@@ -207,8 +206,7 @@ public class RegistrationUnitController {
         .updateMrRegistrationUnit(marriageRegistrationUnit);
         redirectAttributes.addFlashAttribute("message", messageSource
                 .getMessage("msg.registrationunit.update.success", null, null));
-        return "redirect:/masters/mrregistrationunit/result/"
-        + marriageRegistrationUnit.getId();
+        return "redirect:/masters/mrregistrationunit/result/".concat(marriageRegistrationUnit.getId().toString());
     }
 
 }

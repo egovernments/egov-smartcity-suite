@@ -102,7 +102,7 @@ public class MarriageFeeController {
         marriageFee.setFeeType(MarriageFeeCriteriaType.GENERAL);
         marriageFeeService.create(marriageFee);
         redirectAttributes.addFlashAttribute("message", messageSource.getMessage("msg.fee.create.success", null, null));
-        return "redirect:/masters/fee/success/" + marriageFee.getId();
+        return "redirect:/masters/fee/success/".concat(marriageFee.getId().toString());
 
     }
 
@@ -159,6 +159,6 @@ public class MarriageFeeController {
         marriageFeeService.update(marriageFee);
         redirectAttributes.addFlashAttribute("message",
                 messageSource.getMessage("msg.fee.update.success", null, null));
-        return "redirect:/masters/fee/success/" + marriageFee.getId();
+        return "redirect:/masters/fee/success/".concat(marriageFee.getId().toString());
     }
 }

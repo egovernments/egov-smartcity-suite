@@ -100,7 +100,7 @@ public class ReIssueCertificateUpdateIndexesService {
                 .withApplicationType(MarriageFeeType.CERTIFICATEISSUE.name())
                 .withApplicantName(reIssue.getApplicant().getFullName())
                 .withStatus(reIssue.getStatus().getDescription()).withUrl(
-                        "/mrs/reissue/viewapplication/" + reIssue.getApplicationNo())
+                        "/mrs/reissue/viewapplication/".concat(reIssue.getApplicationNo()))
                 .withApplicantAddress(reIssue.getApplicant().getContactInfo().getResidenceAddress())
                 .withOwnername(StringUtils.isNotEmpty(user) ? user : StringUtils.EMPTY)
                 .withChannel(reIssue.getSource() == null ? Source.SYSTEM.toString() : reIssue.getSource())

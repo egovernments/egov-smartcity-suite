@@ -128,9 +128,9 @@ public class MarriageReassignController extends GenericWorkFlowController {
         Assignment assignment = assignmentService.getAssignmentsForPosition(positionId).get(0);
         String appNo = marriageReassignService.getStateObject(marriageReassignInfo, position);
         if (StringUtils.isNotEmpty(appNo)) {
-            successMessage = "Marriage application with reference number : " + appNo + " successfully re-assigned to "
-                    + assignment.getEmployee().getName() + "~" + assignment.getDesignation().getName() + ":"
-                    + assignment.getDepartment().getCode();
+            successMessage = new StringBuilder().append("Marriage application with reference number : ").append(appNo).append(" successfully re-assigned to ")
+            		.append(assignment.getEmployee().getName()).append("~").append(assignment.getDesignation().getName())
+            		.append(":").append(assignment.getDepartment().getCode()).toString();
             model.addAttribute(SUCCESSMESSAGE, successMessage);
         } else {
             model.addAttribute(SUCCESSMESSAGE, "Reassign Failed!");

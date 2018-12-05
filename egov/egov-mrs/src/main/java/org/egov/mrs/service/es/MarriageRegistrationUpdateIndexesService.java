@@ -119,14 +119,14 @@ public class MarriageRegistrationUpdateIndexesService {
         } else
             user = securityUtils.getCurrentUser();
 
-        final String url = "/mrs/registration/viewapplication/" + marriageRegistration.getApplicationNo();
+        final String url = "/mrs/registration/viewapplication/".concat(marriageRegistration.getApplicationNo());
 
         ApplicationIndex applicationIndex = applicationIndexService
                 .findByApplicationNumber(marriageRegistration.getApplicationNo());
         // update existing application index
         if (applicationIndex != null && null != marriageRegistration.getId()) {
             applicationIndex.setStatus(marriageRegistration.getStatus().getDescription());
-            applicationIndex.setOwnerName(user != null ? user.getUsername() + "::" + user.getName() : "");
+            applicationIndex.setOwnerName(user != null ? user.getUsername().concat("::").concat(user.getName()) : "");
 
             // mark application index as closed on Application Approved
             if (APPROVED.equals(marriageRegistration.getStatus().getCode()) ||
@@ -161,12 +161,12 @@ public class MarriageRegistrationUpdateIndexesService {
                     .withApplicationNumber(marriageRegistration.getApplicationNo())
                     .withApplicationDate(marriageRegistration.getApplicationDate())
                     .withApplicationType(MarriageCertificateType.REGISTRATION.toString())
-                    .withApplicantName(marriageRegistration.getHusband().getFullName() + "::"
-                            + marriageRegistration.getWife().getFullName())
+                    .withApplicantName(marriageRegistration.getHusband().getFullName().concat("::")
+                            .concat(marriageRegistration.getWife().getFullName()))
                     .withStatus(marriageRegistration.getStatus().getDescription()).withUrl(
                             String.format(url))
                     .withApplicantAddress(marriageRegistration.getHusband().getContactInfo().getResidenceAddress())
-                    .withOwnername(user != null ? user.getUsername() + "::" + user.getName().trim() : "")
+                    .withOwnername(user != null ? user.getUsername().concat("::").concat(user.getName().trim()) : "")
                     .withChannel(marriageRegistration.getSource() == null ? Source.SYSTEM.toString()
                             : marriageRegistration.getSource())
                     .withMobileNumber(marriageRegistration.getHusband().getContactInfo().getMobileNo())

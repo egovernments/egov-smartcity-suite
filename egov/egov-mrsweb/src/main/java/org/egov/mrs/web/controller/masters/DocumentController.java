@@ -114,7 +114,7 @@ public class DocumentController {
         marriageDocumentService.create(marriageDocument);
         redirectAttributes.addFlashAttribute("message", messageSource
                 .getMessage("msg.document.create.success", null, null));
-        return "redirect:/masters/document/success/" + marriageDocument.getId();
+        return "redirect:/masters/document/success/".concat(marriageDocument.getId().toString());
     }
 
     private void validate(final Errors errors, final MarriageDocument marriageDocument) {
@@ -189,7 +189,7 @@ public class DocumentController {
 
         redirectAttributes.addFlashAttribute("message", messageSource
                 .getMessage("msg.document.update.success", null, null));
-        return "redirect:/masters/document/success/" + marriageDocument.getId();
+        return "redirect:/masters/document/success/".concat(marriageDocument.getId().toString());
     }
 
 }

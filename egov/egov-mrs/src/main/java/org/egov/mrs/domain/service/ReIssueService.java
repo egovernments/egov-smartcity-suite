@@ -350,20 +350,20 @@ public class ReIssueService {
                 historyMap = new HashMap<>(0);
                 historyMap.put("date", stateHistory.getDateInfo());
                 historyMap.put("comments", stateHistory.getComments() != null ? stateHistory.getComments() : "");
-                historyMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
-                        + stateHistory.getLastModifiedBy().getName());
+                historyMap.put("updatedBy", new StringBuilder().append(stateHistory.getLastModifiedBy().getUsername()).append("::")
+                        .append(stateHistory.getLastModifiedBy().getName()));
                 historyMap.put("status", stateHistory.getValue());
                 final Position owner = stateHistory.getOwnerPosition();
                 user = stateHistory.getOwnerUser();
                 if (null != user) {
-                    historyMap.put(USER, user.getUsername() + "::" + user.getName());
+                    historyMap.put(USER, new StringBuilder().append(user.getUsername()).append("::").append(user.getName()));
                     historyMap.put(DEPARTMENT,
                             null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
                                     .getDepartmentForUser(user.getId()).getName() : "");
                 } else if (null != owner && null != owner.getDeptDesig()) {
                     user = eisCommonService.getUserForPosition(owner.getId(), new Date());
                     historyMap
-                            .put(USER, null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
+                            .put(USER, null != user.getUsername() ? (new StringBuilder().append(user.getUsername()).append("::").append(user.getName())) : "");
                     historyMap.put(DEPARTMENT, null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
                             .getDepartment().getName() : "");
                 }
@@ -372,17 +372,17 @@ public class ReIssueService {
 
             map.put("date", state.getDateInfo());
             map.put("comments", state.getComments() != null ? state.getComments() : "");
-            map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
+            map.put("updatedBy", new StringBuilder().append(state.getLastModifiedBy().getUsername()).append("::").append(state.getLastModifiedBy().getName()));
             map.put("status", state.getValue());
             final Position ownerPosition = state.getOwnerPosition();
             user = state.getOwnerUser();
             if (null != user) {
-                map.put(USER, user.getUsername() + "::" + user.getName());
+                map.put(USER, new StringBuilder().append(user.getUsername()).append("::").append(user.getName()));
                 map.put(DEPARTMENT, null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
                         .getDepartmentForUser(user.getId()).getName() : "");
             } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
                 user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
-                map.put(USER, null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
+                map.put(USER, null != user.getUsername() ? (new StringBuilder().append(user.getUsername()).append("::").append(user.getName())) : "");
                 map.put(DEPARTMENT, null != ownerPosition.getDeptDesig().getDepartment() ? ownerPosition
                         .getDeptDesig().getDepartment().getName() : "");
             }
@@ -404,7 +404,7 @@ public class ReIssueService {
         final Module module = moduleDao.getModuleByName(MarriageConstants.MODULE_NAME);
 
         final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,
-                reIssue.getState().getNatureOfTask() + " : " + module.getDisplayName(),
+                reIssue.getState().getNatureOfTask().concat(" : ").concat(module.getDisplayName()),
                 reIssue.getApplicationNo(), reIssue.getRegistration().getRegistrationNo(), reIssue.getId(),
                 null, "Success",
                 String.format(REISSUE_APPLICATION_VIEW, reIssue.getId()),

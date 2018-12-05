@@ -206,7 +206,7 @@ public class MarriageSmsAndEmailService {
         MarriageCertificate marriageCertificate = marriageCertificateService.getGeneratedCertificate(registration);
         String pdfLink = null;
         if(null!=marriageCertificate && marriageCertificate.getId()!=null)
-         pdfLink = ApplicationThreadLocals.getDomainURL()+"/mrs/registration/printcertficate/"+marriageCertificate.getId();
+         pdfLink = ApplicationThreadLocals.getDomainURL().concat("/mrs/registration/printcertficate/").concat(marriageCertificate.getId().toString());
        return mrsMessageSource.getMessage(msgKeyMail,
                 new String[] { registration.getHusband().getFullName(), registration.getWife().getFullName(), registration.getApplicationNo(), pdfLink,ApplicationThreadLocals.getMunicipalityName() },
                 null);
@@ -216,7 +216,7 @@ public class MarriageSmsAndEmailService {
         MarriageCertificate marriageCertificate = marriageCertificateService.getGeneratedReIssueCertificateForPrint(reIssue);
         String pdfLink = null;
         if(null!=marriageCertificate && marriageCertificate.getId()!=null)
-         pdfLink = ApplicationThreadLocals.getDomainURL()+"/mrs/registration/printcertficate/"+marriageCertificate.getId();
+         pdfLink = ApplicationThreadLocals.getDomainURL().concat("/mrs/registration/printcertficate/").concat(marriageCertificate.getId().toString());
         return mrsMessageSource.getMessage(msgKeyMail,
                 new String[] { reIssue.getApplicant().getFullName(), reIssue.getApplicationNo(), pdfLink,ApplicationThreadLocals.getMunicipalityName()}, null);
     }

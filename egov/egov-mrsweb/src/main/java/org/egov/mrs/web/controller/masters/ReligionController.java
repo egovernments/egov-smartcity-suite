@@ -103,7 +103,7 @@ public class ReligionController {
         religionService.createReligion(marriageReligion);
         redirectAttributes.addFlashAttribute("message", messageSource
                 .getMessage("msg.religion.create.success", null, null));
-        return "redirect:/masters/religion/success/" + marriageReligion.getId();
+        return "redirect:/masters/religion/success/".concat(marriageReligion.getId().toString());
     }
 
     @RequestMapping(value = "/religion/success/{id}", method = RequestMethod.GET)
@@ -153,6 +153,6 @@ public class ReligionController {
         religionService.updateReligion(marriageReligion);
         redirectAttributes.addFlashAttribute("message", messageSource
                 .getMessage("msg.religion.update.success", null, null));
-        return "redirect:/masters/religion/success/" + marriageReligion.getId();
+        return "redirect:/masters/religion/success/".concat(marriageReligion.getId().toString());
     }
 }

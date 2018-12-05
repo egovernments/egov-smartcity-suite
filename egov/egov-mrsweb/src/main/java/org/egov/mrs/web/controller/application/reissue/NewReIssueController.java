@@ -235,7 +235,7 @@ public class NewReIssueController extends GenericWorkFlowController {
         model.addAttribute("feepaid", reIssue.getFeePaid().doubleValue());
         if (!isEmployee) {
             redirectAttributes.addFlashAttribute(MESSAGE, message);
-            return "redirect:/reissue/reissue-certificate-ackowledgement/" + appNo;
+            return "redirect:/reissue/reissue-certificate-ackowledgement/".concat(appNo);
 
         } else
             return "reissue-ack";
@@ -284,8 +284,7 @@ public class NewReIssueController extends GenericWorkFlowController {
                     MarriageConstants.MODULE_NAME, MarriageConstants.REISSUE_PRINTREJECTIONCERTIFICATE);
             if (reIssueResult != null && appConfigValues != null && !appConfigValues.isEmpty()
                     && "YES".equalsIgnoreCase(appConfigValues.get(0).getValue()))
-                return "redirect:/certificate/reissue?id="
-                        + reIssueResult.getId();
+                return "redirect:/certificate/reissue?id=".concat(reIssueResult.getId().toString());
         }
         if (reIssueResult != null)
             model.addAttribute("ackNumber", reIssueResult.getApplicationNo());

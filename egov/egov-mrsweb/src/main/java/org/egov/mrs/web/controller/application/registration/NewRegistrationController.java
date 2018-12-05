@@ -214,10 +214,9 @@ public class NewRegistrationController extends MarriageRegistrationController {
         model.addAttribute(IS_EMPLOYEE, isEmployee);
         if (!isEmployee && !loggedUserIsMeesevaUser) {
             redirectAttributes.addFlashAttribute(MESSAGE, message);
-            return "redirect:/registration/new-mrgregistration-ackowledgement/" + appNo;
+            return "redirect:/registration/new-mrgregistration-ackowledgement/".concat(appNo);
         } else if (loggedUserIsMeesevaUser) {
-            return "redirect:/registration/generate-meesevareceipt?transactionServiceNumber="
-                    + marriageRegistration.getApplicationNo();
+            return "redirect:/registration/generate-meesevareceipt?transactionServiceNumber=".concat(marriageRegistration.getApplicationNo());
         } else
             return "registration-ack";
     }

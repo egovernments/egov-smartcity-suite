@@ -92,6 +92,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
@@ -214,11 +215,11 @@ public class MarriageRegistrationReportsService {
         final Map<String, String> params = new HashMap<>();
 
         final StringBuilder queryStrForRegistration = new StringBuilder(1000);
-        queryStrForRegistration
-                .append(
-                        "Select reg.registrationno,reg.dateofmarriage,reg.applicationdate,reg.rejectionreason,cert.certificateno,cert.certificatetype,cert.certificatedate, brndy.name,(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as hus_name from egmrs_applicant app where app.id = reg.husband),(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as wife_name from egmrs_applicant app where app.id = reg.wife),reg.id "
-                                + " from egmrs_registration reg, egmrs_certificate cert, eg_boundary brndy,egw_status st"
-                                + " where reg.zone = brndy.id and reg.status = st.id and st.code in('REGISTERED')  and reg.id = cert.registration and cert.reissue is null ");
+		queryStrForRegistration
+				.append("Select reg.registrationno,reg.dateofmarriage,reg.applicationdate,reg.rejectionreason,cert.certificateno,cert.certificatetype,cert.certificatedate, brndy.name,(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as hus_name ")
+				.append(" from egmrs_applicant app where app.id = reg.husband),(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as wife_name from egmrs_applicant app where app.id = reg.wife),reg.id ")
+				.append(" from egmrs_registration reg, egmrs_certificate cert, eg_boundary brndy,egw_status st")
+				.append(" where reg.zone = brndy.id and reg.status = st.id and st.code in('REGISTERED')  and reg.id = cert.registration and cert.reissue is null ");
         if (certificate.getRegistration().getZone() != null) {
             queryStrForRegistration.append(REG_ZONE_WHERE_CONDITION);
             params.put(ZONE, String.valueOf(certificate.getRegistration().getZone().getId()));
@@ -251,11 +252,11 @@ public class MarriageRegistrationReportsService {
         }
 
         final StringBuilder queryStrForReissue = new StringBuilder(1100);
-        queryStrForReissue
-                .append(
-                        "Select reg.registrationno,reg.dateofmarriage,reg.applicationdate,reg.rejectionreason,cert.certificateno,cert.certificatetype,cert.certificatedate, brndy.name,(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as hus_name from egmrs_applicant app where app.id = reg.husband),(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as wife_name from egmrs_applicant app where app.id = reg.wife),reg.id"
-                                + " from egmrs_registration reg,egmrs_reissue reis, egmrs_certificate cert, eg_boundary brndy,egw_status st "
-                                + " where reg.zone = brndy.id and reg.id=reis.registration and reis.status = st.id and st.code in('CERTIFICATEREISSUED','REJECTION')  and reis.id = cert.reissue and cert.registration is null");
+		queryStrForReissue
+				.append("Select reg.registrationno,reg.dateofmarriage,reg.applicationdate,reg.rejectionreason,cert.certificateno,cert.certificatetype,cert.certificatedate, brndy.name,(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as hus_name ")
+				.append(" from egmrs_applicant app where app.id = reg.husband),(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as wife_name from egmrs_applicant app where app.id = reg.wife),reg.id")
+				.append(" from egmrs_registration reg,egmrs_reissue reis, egmrs_certificate cert, eg_boundary brndy,egw_status st ")
+				.append(" where reg.zone = brndy.id and reg.id=reis.registration and reis.status = st.id and st.code in('CERTIFICATEREISSUED','REJECTION')  and reis.id = cert.reissue and cert.registration is null");
         if (certificate.getRegistration().getZone() != null) {
             queryStrForReissue.append(REG_ZONE_WHERE_CONDITION);
             params.put(ZONE, String.valueOf(certificate.getRegistration().getZone().getId()));
@@ -292,7 +293,7 @@ public class MarriageRegistrationReportsService {
         aggregateQueryStr.append(UNION);
         aggregateQueryStr.append(queryStrForReissue.toString());
 
-        final org.hibernate.query.Query query = getCurrentSession().createNativeQuery(aggregateQueryStr.toString());
+        final Query query = getCurrentSession().createNativeQuery(aggregateQueryStr.toString());
         for (final Map.Entry<String, String> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         return query.list();
@@ -305,10 +306,9 @@ public class MarriageRegistrationReportsService {
         final Map<String, Integer> params = new HashMap<>();
         final StringBuilder queryForHusband = new StringBuilder(1000);
         queryForHusband
-                .append(
-                        "(Select ap.ageinyears , count(*) from egmrs_registration rg,egmrs_applicant ap,egmrs_registrationunit  ru,egw_status st"
-                                + " where rg.husband=ap.id and  rg.registrationunit=ru.id and rg.status = st.id and  st.code='REGISTERED'"
-                                + " and extract( year from rg.applicationdate)=:year ");
+                .append("(Select ap.ageinyears , count(*) from egmrs_registration rg,egmrs_applicant ap,egmrs_registrationunit  ru,egw_status st")
+                .append(" where rg.husband=ap.id and  rg.registrationunit=ru.id and rg.status = st.id and  st.code='REGISTERED'")
+                .append(" and extract( year from rg.applicationdate)=:year ");
         params.put(INPUTYEAR, year);
 
         if (registration.getMarriageRegistrationUnit().getId() != null) {
@@ -323,7 +323,7 @@ public class MarriageRegistrationReportsService {
         }
         queryForHusband.append("group by ap.ageinyears order by ap.ageinyears )");
 
-        final org.hibernate.query.Query query = getCurrentSession().createNativeQuery(queryForHusband.toString());
+        final Query query = getCurrentSession().createNativeQuery(queryForHusband.toString());
         for (final Map.Entry<String, Integer> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         return query.list();
@@ -337,10 +337,9 @@ public class MarriageRegistrationReportsService {
         final Map<String, Integer> params = new HashMap<>();
         final StringBuilder queryForWife = new StringBuilder(1000);
         queryForWife
-                .append(
-                        "(Select ap.ageinyears , count(*) from egmrs_registration rg,egmrs_applicant ap,egmrs_registrationunit  ru,egw_status st"
-                                + " where rg.wife=ap.id and  rg.registrationunit=ru.id and rg.status = st.id and  st.code='REGISTERED'"
-                                + " and  extract( year from rg.applicationdate)=:year ");
+                .append("(Select ap.ageinyears , count(*) from egmrs_registration rg,egmrs_applicant ap,egmrs_registrationunit  ru,egw_status st")
+                .append(" where rg.wife=ap.id and  rg.registrationunit=ru.id and rg.status = st.id and  st.code='REGISTERED'")
+                .append(" and  extract( year from rg.applicationdate)=:year ");
         params.put(INPUTYEAR, year);
 
         if (registration.getMarriageRegistrationUnit().getId() != null) {
@@ -357,7 +356,7 @@ public class MarriageRegistrationReportsService {
         }
         queryForWife.append("group by ap.ageinyears order by ap.ageinyears )");
 
-        final org.hibernate.query.Query query = getCurrentSession().createNativeQuery(queryForWife.toString());
+        final Query query = getCurrentSession().createNativeQuery(queryForWife.toString());
         for (final Map.Entry<String, Integer> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         return query.list();
@@ -370,9 +369,9 @@ public class MarriageRegistrationReportsService {
         final Map<String, Integer> params = new HashMap<>();
         final StringBuilder queryForAct = new StringBuilder(700);
         queryForAct
-                .append("(select extract( month from reg.applicationdate) as Month,count(*)  from egmrs_registration  reg, egmrs_act  act, egw_status  status ,egmrs_registrationunit ru,eg_boundary b "
-                        + "where reg.marriageact=act.id and  reg.registrationunit=ru.id and reg.status = status.id and status.code in('REGISTERED')  and reg.zone=b.id and "
-                        + "reg.marriageact=:act and extract( year from reg.applicationdate)=:year ");
+                .append("(select extract( month from reg.applicationdate) as Month,count(*)  from egmrs_registration  reg, egmrs_act  act, egw_status  status ,egmrs_registrationunit ru,eg_boundary b ")
+                .append(" where reg.marriageact=act.id and  reg.registrationunit=ru.id and reg.status = status.id and status.code in('REGISTERED')  and reg.zone=b.id and ")
+                .append(" reg.marriageact=:act and extract( year from reg.applicationdate)=:year ");
         params.put("act", registration.getMarriageAct().getId().intValue());
         params.put(INPUTYEAR, year);
         if (registration.getMarriageRegistrationUnit().getId() != null) {
@@ -389,7 +388,7 @@ public class MarriageRegistrationReportsService {
         }
         queryForAct.append("group by Month)");
 
-        final org.hibernate.query.Query query = getCurrentSession().createNativeQuery(queryForAct.toString());
+        final Query query = getCurrentSession().createNativeQuery(queryForAct.toString());
         for (final Map.Entry<String, Integer> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         return query.list();
@@ -461,8 +460,7 @@ public class MarriageRegistrationReportsService {
         final Map<String, String> params = new HashMap<>();
         final StringBuilder queryStrForHusbandCount = new StringBuilder(600);
         queryStrForHusbandCount
-                .append(
-                        "select app.relationstatus,to_char(app.createddate,'Mon'),count(*) from egmrs_applicant as app ,egmrs_registration as reg where reg.husband = app.id  ");
+                .append("select app.relationstatus,to_char(app.createddate,'Mon'),count(*) from egmrs_applicant as app ,egmrs_registration as reg where reg.husband = app.id  ");
         if (maritalStatus != null) {
             queryStrForHusbandCount.append(" and app.relationstatus=:maritalStatus");
             params.put("maritalStatus", maritalStatus);
@@ -493,7 +491,7 @@ public class MarriageRegistrationReportsService {
 
         queryStrForHusbandCount.append(
                 " group by app.relationstatus, to_char(app.createddate,'Mon') order by to_char(app.createddate,'Mon') desc");
-        final org.hibernate.query.Query query = getCurrentSession().createNativeQuery(queryStrForHusbandCount.toString());
+        final Query query = getCurrentSession().createNativeQuery(queryStrForHusbandCount.toString());
         for (final Map.Entry<String, String> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         return query.list();
@@ -506,8 +504,7 @@ public class MarriageRegistrationReportsService {
         final Map<String, String> params = new HashMap<>();
         final StringBuilder queryStrForWifeCount = new StringBuilder(600);
         queryStrForWifeCount
-                .append(
-                        "select app.relationstatus,to_char(app.createddate,'Mon'),count(*) from egmrs_applicant as app ,egmrs_registration as reg where reg.wife = app.id  ");
+                .append("select app.relationstatus,to_char(app.createddate,'Mon'),count(*) from egmrs_applicant as app ,egmrs_registration as reg where reg.wife = app.id  ");
         if (maritalStatus != null) {
             queryStrForWifeCount.append(" and app.relationstatus=:maritalStatus");
             params.put("maritalStatus", maritalStatus);
@@ -537,7 +534,7 @@ public class MarriageRegistrationReportsService {
         }
         queryStrForWifeCount.append(
                 " group by app.relationstatus, to_char(app.createddate,'Mon') order by to_char(app.createddate,'Mon') desc");
-        final org.hibernate.query.Query query = getCurrentSession().createNativeQuery(queryStrForWifeCount.toString());
+        final Query query = getCurrentSession().createNativeQuery(queryStrForWifeCount.toString());
         for (final Map.Entry<String, String> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         return query.list();
@@ -651,13 +648,13 @@ public class MarriageRegistrationReportsService {
         final StringBuilder queryStr = new StringBuilder(700);
         queryStr.append("select Month, SUM(Amount),Monthname from (");
         queryStrForRegFee
-                .append("(select extract(month from applicationdate) as Month,SUM(reg.feepaid) as Amount,to_char(applicationdate,'Month') as Monthname from egmrs_registration reg,egmrs_registrationunit regunit,eg_demand demand "
-                        + "where reg.registrationunit=regunit.id and reg.demand=demand.id and demand.amt_collected!=0 ");
+                .append("(select extract(month from applicationdate) as Month,SUM(reg.feepaid) as Amount,to_char(applicationdate,'Month') as Monthname from egmrs_registration reg,egmrs_registrationunit regunit,eg_demand demand ")
+                .append(" where reg.registrationunit=regunit.id and reg.demand=demand.id and demand.amt_collected!=0 ");
         buildSearchCriteriaMonthWiseFundCollection(registration, year, params, intparams, queryStrForRegFee);
 
         queryStrForReissueFee
-                .append("(select extract(month from applicationdate) as Month,SUM(reissue.feepaid) as Amount,to_char(applicationdate,'Month') as Monthname from egmrs_reissue reissue,egmrs_registrationunit regunit,eg_demand demand "
-                        + "where reissue.registrationunit=regunit.id and reissue.demand=demand.id and demand.amt_collected!=0 ");
+                .append("(select extract(month from applicationdate) as Month,SUM(reissue.feepaid) as Amount,to_char(applicationdate,'Month') as Monthname from egmrs_reissue reissue,egmrs_registrationunit regunit,eg_demand demand ")
+                .append(" where reissue.registrationunit=regunit.id and reissue.demand=demand.id and demand.amt_collected!=0 ");
         buildSearchCriteriaMonthWiseFundCollection(registration, year, params, intparams, queryStrForReissueFee);
 
         final StringBuilder aggregateQueryStr = new StringBuilder();
@@ -667,7 +664,7 @@ public class MarriageRegistrationReportsService {
         queryStr.append(aggregateQueryStr.toString());
         queryStr.append(") as x GROUP BY MONTH,Monthname");
 
-        final org.hibernate.query.Query query = getCurrentSession().createNativeQuery(queryStr.toString());
+        final Query query = getCurrentSession().createNativeQuery(queryStr.toString());
         for (final Map.Entry<String, String> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         for (final Map.Entry<String, Integer> intparam : intparams.entrySet())
@@ -693,8 +690,7 @@ public class MarriageRegistrationReportsService {
             params.put(REGUNIT, registration.getMarriageRegistrationUnit().getId().toString());
         }
 
-        queryStrFOorApplns.append(
-                "group by regunit.name,extract(month from applicationdate),to_char(applicationdate,'Month') order by regunit.name)");
+        queryStrFOorApplns.append("group by regunit.name,extract(month from applicationdate),to_char(applicationdate,'Month') order by regunit.name)");
     }
 
     @ReadOnly
@@ -704,8 +700,8 @@ public class MarriageRegistrationReportsService {
         final Map<String, String> params = new HashMap<>();
         final StringBuilder queryStrForRegCount = new StringBuilder(1000);
         queryStrForRegCount
-                .append("(select regunit.name,count(*),to_char(applicationdate,'Mon'),'registration' from egmrs_registration reg,egmrs_registrationunit regunit,egw_status st "
-                        + "where reg.registrationunit=regunit.id and reg.status = st.id and st.code='REGISTERED' ");
+                .append("(select regunit.name,count(*),to_char(applicationdate,'Mon'),'registration' from egmrs_registration reg,egmrs_registrationunit regunit,egw_status st ")
+                .append(" where reg.registrationunit=regunit.id and reg.status = st.id and st.code='REGISTERED' ");
 
         if (registration.getZone().getId() != null) {
             queryStrForRegCount
@@ -715,8 +711,8 @@ public class MarriageRegistrationReportsService {
         buildCriteriaForMrgApplicationsCount(registration, params, queryStrForRegCount);
         final StringBuilder queryStrForReissueCount = new StringBuilder(1000);
         queryStrForReissueCount
-                .append("(select regunit.name,count(*),to_char(applicationdate,'Mon'),'reissue' from egmrs_reissue rei,egmrs_registrationunit regunit,egw_status st"
-                        + " where rei.registrationunit=regunit.id and rei.status = st.id and st.code='CERTIFICATEREISSUED' ");
+                .append("(select regunit.name,count(*),to_char(applicationdate,'Mon'),'reissue' from egmrs_reissue rei,egmrs_registrationunit regunit,egw_status st")
+                .append(" where rei.registrationunit=regunit.id and rei.status = st.id and st.code='CERTIFICATEREISSUED' ");
 
         if (registration.getZone().getId() != null) {
             queryStrForReissueCount
@@ -730,7 +726,7 @@ public class MarriageRegistrationReportsService {
         aggregateQueryStr.append(UNION);
         aggregateQueryStr.append(queryStrForReissueCount.toString());
 
-        final org.hibernate.query.Query query = getCurrentSession().createNativeQuery(aggregateQueryStr.toString());
+        final Query query = getCurrentSession().createNativeQuery(aggregateQueryStr.toString());
         for (final Map.Entry<String, String> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         return query.list();
@@ -868,9 +864,9 @@ public class MarriageRegistrationReportsService {
         final StringBuilder queryForAct = new StringBuilder(1000);
 
         queryForAct
-                .append("(select act.name,count(*) from egmrs_registration  reg, egmrs_act  act, egw_status  status ,egmrs_registrationunit ru,eg_boundary b "
-                        + "where reg.marriageact=act.id and status.code in('APPROVED')  and reg.registrationunit=ru.id and reg.status = status.id and reg.zone=b.id "
-                        + " and extract( year from reg.applicationdate)=:year ");
+                .append("(select act.name,count(*) from egmrs_registration  reg, egmrs_act  act, egw_status  status ,egmrs_registrationunit ru,eg_boundary b ")
+                .append(" where reg.marriageact=act.id and status.code in('APPROVED')  and reg.registrationunit=ru.id and reg.status = status.id and reg.zone=b.id ")
+                .append(" and extract( year from reg.applicationdate)=:year ");
         params.put(INPUTYEAR, year);
         if (registration.getMarriageRegistrationUnit().getId() != null) {
             queryForAct
@@ -885,7 +881,7 @@ public class MarriageRegistrationReportsService {
 
         }
         queryForAct.append("group by act.name)");
-        final org.hibernate.query.Query query = getCurrentSession().createNativeQuery(queryForAct.toString());
+        final Query query = getCurrentSession().createNativeQuery(queryForAct.toString());
         for (final Map.Entry<String, Integer> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         return query.list();
@@ -922,16 +918,17 @@ public class MarriageRegistrationReportsService {
     @SuppressWarnings("unchecked")
     public List<MarriageRegistration> getmonthWiseActDetails(final int year,
             final int month, final Long actid) {
+    	final StringBuilder monthYear = new StringBuilder(10);
         final Criteria criteria = getCurrentSession().createCriteria(
                 MarriageRegistration.class, MARRIAGE_REGISTRATION).createAlias(MARRIAGE_REGISTRATION_STATUS, STATUS);
-        final String monthYear = month + "/" + year;
+        monthYear.append(month).append("/").append(year);
         if (actid != null)
             criteria.createAlias("marriageRegistration.marriageAct",
                     "marriageAct")
                     .add(Restrictions.eq("marriageAct.id", actid));
         if (StringUtils.isNotBlank(monthYear))
-            criteria.add(Restrictions.between(MARRIAGE_REGISTRATION_APPLICATION_DATE, getMonthStartday(monthYear),
-                    getMonthEndday(monthYear)));
+            criteria.add(Restrictions.between(MARRIAGE_REGISTRATION_APPLICATION_DATE, getMonthStartday(monthYear.toString()),
+                    getMonthEndday(monthYear.toString())));
 
         criteria.add(Restrictions.in(STATUS_DOT_CODE, MarriageRegistration.RegistrationStatus.APPROVED.name()));
         return criteria.list();
@@ -943,20 +940,20 @@ public class MarriageRegistrationReportsService {
         final String[] values = day.split("-");
         final StringBuilder queryStrForRegistration = new StringBuilder(1000);
         final Map<String, Double> params = new HashMap<>();
-        queryStrForRegistration
-                .append(
-                        "Select reg.applicationno,reg.registrationno,(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as hus_name from egmrs_applicant app where app.id = reg.husband),(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as wife_name from egmrs_applicant app where app.id = reg.wife),reg.dateofmarriage,reg.applicationdate,reg.placeofmarriage, brndy.name,st.code,'Marriage Registration',state.owner_pos,state.nextaction"
-                                + " from egmrs_registration reg,egmrs_applicant app, eg_boundary brndy,egw_status st,eg_wf_states state"
-                                + " where reg.state_id = state.id and reg.zone = brndy.id and reg.status = st.id and st.code not in ('REGISTERED','CANCELLED') and EXTRACT(EPOCH FROM date_trunc('day',(now()-reg.applicationdate)))/60/60/24 between :fromdays and :todays ");
+		queryStrForRegistration
+				.append("Select reg.applicationno,reg.registrationno,(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as hus_name from egmrs_applicant app where app.id = reg.husband),(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as wife_name ")
+				.append(" from egmrs_applicant app where app.id = reg.wife),reg.dateofmarriage,reg.applicationdate,reg.placeofmarriage, brndy.name,st.code,'Marriage Registration',state.owner_pos,state.nextaction")
+				.append(" from egmrs_registration reg,egmrs_applicant app, eg_boundary brndy,egw_status st,eg_wf_states state")
+				.append(" where reg.state_id = state.id and reg.zone = brndy.id and reg.status = st.id and st.code not in ('REGISTERED','CANCELLED') and EXTRACT(EPOCH FROM date_trunc('day',(now()-reg.applicationdate)))/60/60/24 between :fromdays and :todays ");
         params.put("fromdays", Double.valueOf(values[0]));
         params.put("todays", Double.valueOf(values[1]));
 
         final StringBuilder queryStrForReissue = new StringBuilder(1000);
-        queryStrForReissue
-                .append(
-                        "Select rei.applicationno,reg.registrationno,(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as hus_name from egmrs_applicant app where app.id = reg.husband),(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as wife_name from egmrs_applicant app where app.id = reg.wife),reg.dateofmarriage,rei.applicationdate,reg.placeofmarriage,brndy.name,st.code,'Reissue',state1.owner_pos,state1.nextaction as action1"
-                                + " from egmrs_reissue rei,egmrs_registration reg, egmrs_applicant app, eg_boundary brndy,egw_status st,eg_wf_states state1"
-                                + " where rei.state_id = state1.id and rei.registration=reg.id and rei.zone = brndy.id and rei.status = st.id and st.code not in ('CERTIFICATEREISSUED','CANCELLED') and EXTRACT(EPOCH FROM date_trunc('day',(now()-rei.applicationdate)))/60/60/24 between :fromdays and :todays ");
+		queryStrForReissue
+				.append("Select rei.applicationno,reg.registrationno,(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as hus_name from egmrs_applicant app where app.id = reg.husband),(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as wife_name ")
+				.append(" from egmrs_applicant app where app.id = reg.wife),reg.dateofmarriage,rei.applicationdate,reg.placeofmarriage,brndy.name,st.code,'Reissue',state1.owner_pos,state1.nextaction as action1")
+				.append(" from egmrs_reissue rei,egmrs_registration reg, egmrs_applicant app, eg_boundary brndy,egw_status st,eg_wf_states state1")
+				.append(" where rei.state_id = state1.id and rei.registration=reg.id and rei.zone = brndy.id and rei.status = st.id and st.code not in ('CERTIFICATEREISSUED','CANCELLED') and EXTRACT(EPOCH FROM date_trunc('day',(now()-rei.applicationdate)))/60/60/24 between :fromdays and :todays ");
         params.put("fromdays", Double.valueOf(values[0]));
         params.put("todays", Double.valueOf(values[1]));
 
@@ -966,7 +963,7 @@ public class MarriageRegistrationReportsService {
         aggregateQueryStr.append(UNION);
         aggregateQueryStr.append(queryStrForReissue.toString());
 
-        final org.hibernate.query.Query query = getCurrentSession().createNativeQuery(aggregateQueryStr.toString());
+        final Query query = getCurrentSession().createNativeQuery(aggregateQueryStr.toString());
         for (final Map.Entry<String, Double> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         return query.list();
@@ -979,10 +976,9 @@ public class MarriageRegistrationReportsService {
         final Map<String, Integer> params = new HashMap<>();
         final StringBuilder queryStrForRegAgeingDetails = new StringBuilder(1000);
         queryStrForRegAgeingDetails
-                .append(
-                        "(Select EXTRACT(EPOCH FROM date_trunc('day',(now()-applicationdate)))/60/60/24, count(*),st.code"
-                                + " from egmrs_registration reg,egw_status st,egmrs_registrationunit ru,eg_boundary brndy"
-                                + " where reg.zone=brndy.id and reg.registrationunit=ru.id and status = st.id and st.code not in ('REGISTERED','CANCELLED') and extract(year from applicationdate)=:year ");
+                .append("(Select EXTRACT(EPOCH FROM date_trunc('day',(now()-applicationdate)))/60/60/24, count(*),st.code")
+                .append(" from egmrs_registration reg,egw_status st,egmrs_registrationunit ru,eg_boundary brndy")
+                .append(" where reg.zone=brndy.id and reg.registrationunit=ru.id and status = st.id and st.code not in ('REGISTERED','CANCELLED') and extract(year from applicationdate)=:year ");
 
         params.put(INPUTYEAR, year);
         if (registration.getMarriageRegistrationUnit().getId() != null) {
@@ -1002,10 +998,9 @@ public class MarriageRegistrationReportsService {
 
         final StringBuilder queryStrForReIssueAgeingDetails = new StringBuilder(1000);
         queryStrForReIssueAgeingDetails
-                .append(
-                        "(Select EXTRACT(EPOCH FROM date_trunc('day',(now()-applicationdate)))/60/60/24, count(*),st.code"
-                                + " from egmrs_reissue rei,egw_status st,egmrs_registrationunit ru,eg_boundary brndy"
-                                + " where  rei.registrationunit=ru.id and  rei.zone=brndy.id and status = st.id and st.code not in ('CERTIFICATEREISSUED','CANCELLED') and extract(year from applicationdate)=:year  ");
+                .append("(Select EXTRACT(EPOCH FROM date_trunc('day',(now()-applicationdate)))/60/60/24, count(*),st.code")
+                .append(" from egmrs_reissue rei,egw_status st,egmrs_registrationunit ru,eg_boundary brndy")
+                .append(" where  rei.registrationunit=ru.id and  rei.zone=brndy.id and status = st.id and st.code not in ('CERTIFICATEREISSUED','CANCELLED') and extract(year from applicationdate)=:year  ");
         params.put(INPUTYEAR, year);
 
         if (registration.getMarriageRegistrationUnit().getId() != null) {
@@ -1029,7 +1024,7 @@ public class MarriageRegistrationReportsService {
         aggregateQueryStr.append(UNION);
         aggregateQueryStr.append(queryStrForReIssueAgeingDetails.toString());
 
-        final org.hibernate.query.Query query = getCurrentSession().createNativeQuery(aggregateQueryStr.toString());
+        final Query query = getCurrentSession().createNativeQuery(aggregateQueryStr.toString());
         for (final Map.Entry<String, Integer> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         return query.list();
@@ -1044,8 +1039,8 @@ public class MarriageRegistrationReportsService {
         final Map<String, String> params = new HashMap<>();
         final StringBuilder queryStrForRegCount = new StringBuilder(1000);
         queryStrForRegCount
-                .append("select regunit.name,st.code,count(*) from egmrs_registration reg,egmrs_registrationunit regunit,egw_status st"
-                        + " where reg.registrationunit=regunit.id and reg.status = st.id  ");
+                .append("select regunit.name,st.code,count(*) from egmrs_registration reg,egmrs_registrationunit regunit,egw_status st")
+                .append(" where reg.registrationunit=regunit.id and reg.status = st.id  ");
         if (fromDate != null) {
             queryStrForRegCount.append(" and applicationdate >= to_timestamp(:fromdate,'yyyy-MM-dd HH24:mi:ss')");
             params.put(FROMDATE, sf.format(resetFromDateTimeStamp(fromDate)));
@@ -1076,7 +1071,7 @@ public class MarriageRegistrationReportsService {
 
         queryStrForRegCount.append(" group by regunit.name,st.code order by regunit.name desc");
 
-        final org.hibernate.query.Query query = getCurrentSession().createNativeQuery(queryStrForRegCount.toString());
+        final Query query = getCurrentSession().createNativeQuery(queryStrForRegCount.toString());
         for (final Map.Entry<String, String> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         return query.list();

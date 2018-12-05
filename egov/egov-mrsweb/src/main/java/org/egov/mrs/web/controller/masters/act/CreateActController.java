@@ -88,7 +88,7 @@ public class CreateActController {
         marriageActService.create(act);
         redirectAttributes.addFlashAttribute("message",
                 messageSource.getMessage("msg.act.create.success", null, null));
-        return "redirect:/masters/act/success/" + act.getId();
+        return "redirect:/masters/act/success/".concat(act.getId().toString());
     }
 
 }

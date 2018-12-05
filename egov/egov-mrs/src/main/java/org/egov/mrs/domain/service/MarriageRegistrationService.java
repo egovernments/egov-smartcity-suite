@@ -796,8 +796,8 @@ public class MarriageRegistrationService {
                 historyMap = new HashMap<>(0);
                 historyMap.put("date", stateHistory.getDateInfo());
                 historyMap.put("comments", StringUtils.emptyIfNull(stateHistory.getComments()));
-                historyMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
-                        + stateHistory.getLastModifiedBy().getName());
+                historyMap.put("updatedBy", new StringBuilder().append(stateHistory.getLastModifiedBy().getUsername()).append("::")
+                        .append(stateHistory.getLastModifiedBy().getName()));
                 historyMap.put(STATUS, stateHistory.getValue());
                 final Position owner = stateHistory.getOwnerPosition();
                 user = stateHistory.getOwnerUser();
@@ -807,7 +807,7 @@ public class MarriageRegistrationService {
             }
             map.put("date", state.getDateInfo());
             map.put("comments", StringUtils.emptyIfNull(state.getComments()));
-            map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
+            map.put("updatedBy", new StringBuilder().append(state.getLastModifiedBy().getUsername()).append("::").append(state.getLastModifiedBy().getName()));
             map.put(STATUS, state.getValue());
             final Position ownerPosition = state.getOwnerPosition();
             user = state.getOwnerUser();
@@ -822,7 +822,7 @@ public class MarriageRegistrationService {
         Department userDepartment;
         if (user!=null) {
             userDepartment=eisCommonService.getDepartmentForUser(user.getId());
-            map.put(USER, user.getUsername() + "::" + user.getName());
+            map.put(USER, new StringBuilder().append(user.getUsername()).append("::").append(user.getName()));
             map.put(DEPARTMENT,
                      userDepartment!=null ? userDepartment.getName() : "");
         } else if (owner != null && owner.getDeptDesig() != null) {
@@ -842,9 +842,8 @@ public class MarriageRegistrationService {
 
         if (user == null)
             username = NA;
-        else {
-            username = user.getUsername() + "::" + user.getName();
-        }
+        else 
+        	username = user.getUsername().concat("::").concat(user.getName());
 
         map.put(USER, username);
         map.put(DEPARTMENT, owner.getDeptDesig().getDepartment() != null ? owner
@@ -951,7 +950,7 @@ public class MarriageRegistrationService {
         final Module module = moduleDao.getModuleByName(MarriageConstants.MODULE_NAME);
 
         final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,
-                marriageRegistration.getState().getNatureOfTask() + " : " + module.getDisplayName(),
+                marriageRegistration.getState().getNatureOfTask().concat(" : ").concat(module.getDisplayName()),
                 marriageRegistration.getApplicationNo(), marriageRegistration.getRegistrationNo(), marriageRegistration.getId(),
                 null, "Success",
                 String.format(MRS_APPLICATION_VIEW, marriageRegistration.getId()),

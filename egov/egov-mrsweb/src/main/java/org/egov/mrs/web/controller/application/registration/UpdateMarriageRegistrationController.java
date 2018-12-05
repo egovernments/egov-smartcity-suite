@@ -189,7 +189,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
 
     private void buildMrgRegistrationUpdateResult(final MarriageRegistration marriageRegistration, final Model model) {
         if (LOGGER.isInfoEnabled())
-            LOGGER.info("..........InsidebuildMrgRegistrationUpdateResult........ " + marriageRegistration.getApplicationNo());
+            LOGGER.info("..........InsidebuildMrgRegistrationUpdateResult........ ".concat(marriageRegistration.getApplicationNo()));
         if (!marriageRegistration.isLegacy()) {
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("..........No legacy  entry........ ");
@@ -396,7 +396,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         }
         // On print certificate, output registration certificate
         if (isNotBlank(workFlowAction) && workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_PRINTCERTIFICATE))
-            return "redirect:/certificate/registration?id=" + marriageRegistration.getId();
+            return "redirect:/certificate/registration?id=".concat(marriageRegistration.getId().toString());
 
         model.addAttribute("message", message);
         return MRG_REGISTRATION_SUCCESS;
