@@ -61,15 +61,17 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="type" required="required" id="type"
 								class="form-control mandatory text-left patternvalidation"
-								data-pattern="alphanumeric" maxlength="20" />
+								data-pattern="alphanumeric" maxlength="20" onkeypress="return replaceSpecialChar(event)" onkeyup="isSpecialChar()"
+										onblur="isSpecialChar()" />
 							<form:errors path="type" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.recoveryname" /> <span class="mandatory1">*</span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="recoveryName" required="required"
+							<form:input path="recoveryName" required="required" id="recoveryName"
 								class="form-control mandatory text-left patternvalidation"
-								data-pattern="alphanumeric" maxlength="50" />
+								data-pattern="alphanumeric" maxlength="50"  onkeypress="return replaceSpecialChar(event)" onkeyup="isValidReoveryName()"
+										onblur="isValidReoveryName()"/>
 							<form:errors path="recoveryName" cssClass="error-msg" />
 						</div>
 					</div>
@@ -177,3 +179,20 @@
 		</div>
 	</div>
 </div>
+<script type="application/javascript">
+    function replaceSpecialChar(e) {
+        var k;
+        document.all ? k = e.keyCode : k = e.which;
+        return ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8 || k == 32 || (k >= 48 && k <= 57));
+    }
+    function isSpecialChar(){
+        var valueEntered = document.getElementById('type').value;
+        var replacedValue = valueEntered.replace(/[!$%^&*()_+|~=`{}\[\]":'\;<>?,.@#]/gi, '');
+        document.getElementById('type').value = replacedValue;
+    }
+    function isValidReoveryName(){
+        var valueEntered = document.getElementById('recoveryName').value;
+        var replacedValue = valueEntered.replace(/[!$%^&*()_+|~=`{}\[\]":'\;<>?,.@#]/gi, '');
+        document.getElementById('recoveryName').value = replacedValue;
+	}
+</script>

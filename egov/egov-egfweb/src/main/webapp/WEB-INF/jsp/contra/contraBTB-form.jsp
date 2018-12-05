@@ -199,7 +199,8 @@
 				name="contra.refNumber" /></span> <span class="greybox"><span
 			class="mandatory1">*</span></span></td>
 	<td class="greybox"><s:textfield name="contraBean.chequeNumber"
-			id="chequeNum" value="%{contraBean.chequeNumber}" /></td>
+			id="chequeNum" value="%{contraBean.chequeNumber}" onkeypress="return replaceSpecialChar(event)" onkeyup="isSpecialChar()"
+									 onblur="isSpecialChar()" /></td>
 	<td class="greybox"><span id="mdcDate"><s:text
 				name="contra.refDate" /></span></td>
 	<td class="greybox"><s:textfield id="chequeDate"
@@ -234,7 +235,18 @@
 	var i=0;
 	<s:iterator var="f" value="%{dropdownData.fundList}" status="stat">
 		fund_map[i++]= '<s:property value="%{id}"/>'+"_"+'<s:property value="%{chartofaccountsByPayglcodeid.glcode}"/>';
-	</s:iterator>	
+	</s:iterator>
+
+    function replaceSpecialChar(e) {
+        var k;
+        document.all ? k = e.keyCode : k = e.which;
+        return ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8 || k == 32 || (k >= 48 && k <= 57));
+    }
+    function isSpecialChar(){
+        var valueEntered = document.getElementById('chequeNum').value;
+        var replacedValue = valueEntered.replace(/[!$%^&*()_+|~=`{}\[\]":'\;<>?,.@#]/gi, '');
+        document.getElementById('chequeNum').value = replacedValue;
+    }
 	
-	</script>
+</script>
 
