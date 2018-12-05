@@ -204,12 +204,12 @@
 						</div>
 						<div class="col-xs-3 add-margin view-content">
 							<c:choose>
-								<c:when test="${aadharSeedingUpdate.surveyNumber == ''}">
+								<c:when test="${aadharSeedingUpdate.surveyNumber.isEmpty()}">
 								<strong>N/A</strong>
 								</c:when>
 								<c:otherwise>
 									<strong><c:out
-											value="${aadharSeedingUpdate.surveyNumber}" default="N/A" />
+											value="${!aadharSeedingUpdate.surveyNumber.isEmpty()}" default="N/A" />
 									</strong>
 
 								</c:otherwise>
