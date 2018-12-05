@@ -158,7 +158,7 @@ public class ServiceTypeToBankAccountMappingAction extends BaseFormAction {
 
     @SuppressWarnings("unchecked")
     private List<Bank> getBankMappedToService() {
-        final String serviceBankQueryString = "select distinct asm.bankAccountId.bankbranch.bank from BankAccountServiceMap asm)";
+        final String serviceBankQueryString = "select distinct asm.bankAccountId.bankbranch.bank from BankAccountServiceMap asm";
         final Query bankListQuery = persistenceService.getSession().createQuery(serviceBankQueryString);
         return bankListQuery.list();
     }
@@ -248,7 +248,7 @@ public class ServiceTypeToBankAccountMappingAction extends BaseFormAction {
         if (bankAccountServiceMap.getServiceDetails().getId() != null
                 && bankAccountServiceMap.getBankAccountId().getId() != null) {
             final BankAccountServiceMap bankAccountServiceMapObj = bankAccountMappingService.find(
-                    " from BankAccountServiceMap where serviceDetails.id=? and bankAccountId.id=?",
+                    " from BankAccountServiceMap where serviceDetails.id=?1 and bankAccountId.id=?2",
                     bankAccountServiceMap.getServiceDetails().getId(), bankAccountServiceMap.getBankAccountId().getId());
             if (bankAccountServiceMapObj != null) {
                 if (bankAccountServiceMap.getId() == null && bankAccountServiceMapObj.getId() != null) {

@@ -1,4 +1,3 @@
-
 <%--
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
@@ -52,7 +51,6 @@
 <head>
 <title>Collections Submission/Approval</title>
 <script>
-jQuery.noConflict();
 jQuery(document).ready(function() {
   	 
      jQuery(" form ").submit(function( event ) {

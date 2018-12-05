@@ -52,7 +52,6 @@
 <head>
 <title><s:text name="cheque.remittance.title" /></title>
 <script type="text/javascript">
-	jQuery.noConflict();
 	var isDatepickerOpened = false;
 	jQuery(document)
 			.ready(

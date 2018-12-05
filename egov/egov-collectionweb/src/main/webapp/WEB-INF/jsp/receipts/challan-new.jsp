@@ -1,4 +1,3 @@
-
 <%--
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
@@ -80,7 +79,6 @@ function process(date){
 	   return new Date(parts[2], parts[1] - 1, parts[0]);
 	}
 	
-jQuery.noConflict();
 jQuery(document).ready(function() {
 
      jQuery(" form ").submit(function( event ) {

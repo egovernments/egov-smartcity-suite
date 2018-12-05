@@ -76,6 +76,7 @@
     <link href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
           rel="stylesheet" type="text/css"/>
 
+ 
     <script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
     <script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
     <script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
@@ -97,14 +98,16 @@
     <script type="text/javascript" src="<cdn:url value='/resources/commonyui/yui2.8/animation/animation-min.js' context='/collection'/>"></script>
     <script type="text/javascript" src="<cdn:url value='/resources/commonjs/ajaxCommonFunctions.js' context='/collection'/>"></script>
     <script type="text/javascript" src="<cdn:url value='/resources/js/helper.js' context='/collection'/>"></script>
-    <script type="text/javascript" src="<cdn:url value='/resources/js/collections.js' context='/collection'/>"></script>
-    <script type="text/javascript" src="<cdn:url value='/resources/js/calender.js' context='/collection'/>"></script>
+    <script type="text/javascript" src="<cdn:url value='/resources/js/collections.js' />"></script>
+    <script type="text/javascript" src="<cdn:url value='/resources/js/calender.js' context='/collection'/>"></script> 
+    <script>var $=jQuery.noConflict();</script>    
     <script src="<cdn:url value='/resources/global/js/egov/csrf.js?rnd=${app_release_no}' context='/egi'/>"></script>
 
     <script>
         const tokenVal = '${_csrf.token}';
         const tokenName = '${_csrf.parameterName}';
     </script>
+   
     <decorator:head/>
 </head>
 

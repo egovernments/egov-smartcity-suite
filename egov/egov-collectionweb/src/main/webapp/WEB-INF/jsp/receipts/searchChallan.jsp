@@ -52,7 +52,6 @@
 	<title><s:text name="searchchallan.title"/></title>
 	<script>
 	
-	jQuery.noConflict();
 	jQuery(document).ready(function() {
 	  	 
 	     jQuery(" form ").submit(function( event ) {

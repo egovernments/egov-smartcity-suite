@@ -59,7 +59,6 @@
 	href="${pageContext.request.contextPath}/resources/css/collectionspublic.css?rnd=${app_release_no}" />
 <script type="text/javascript">
 
-jQuery.noConflict();
 jQuery(document).ready(function() {
   	 
      jQuery(" form ").submit(function( event ) {

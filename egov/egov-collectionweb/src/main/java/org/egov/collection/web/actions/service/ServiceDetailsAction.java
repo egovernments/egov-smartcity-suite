@@ -308,7 +308,6 @@ public class ServiceDetailsAction extends BaseFormAction {
                 isVoucherApproved = serviceDetails.getIsVoucherApproved();
                 serviceDetails.setIsVoucherApproved(isVoucherApproved);
             }
-            serviceDetailsService.getSession().flush();
             serviceDetailsService.persist(serviceDetails);
             addActionMessage(getText("service.create.success.msg", new String[] { getModel().getCode(),
                     getModel().getName() }));

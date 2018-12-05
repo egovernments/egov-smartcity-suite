@@ -54,7 +54,6 @@
 	<title><s:text name="searchreceipts.title"/></title>
 <script  >
 
-jQuery.noConflict();
 jQuery(document).ready(function() {
   	 
      jQuery(" form ").submit(function( event ) {

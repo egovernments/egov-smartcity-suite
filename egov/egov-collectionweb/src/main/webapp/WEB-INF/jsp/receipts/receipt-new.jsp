@@ -65,7 +65,6 @@
 </style>
 <script type="text/javascript">
 
-jQuery.noConflict();
 
 var isDatepickerOpened=false;
 jQuery(document).ready(function() {
