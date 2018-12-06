@@ -115,16 +115,16 @@ public class CreateRoleControllerTest extends AbstractContextControllerTest<Crea
     @Test
     public void shouldCreateNewRole() throws Exception {
         this.mockMvc.perform(post("/role/create")
-                .param("name", "new-role"))
+                .param("name", "new role"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(redirectedUrl("/role/view/new-role"));
+                .andExpect(redirectedUrl("/role/view/new role"));
 
         ArgumentCaptor<Role> argumentCaptor = ArgumentCaptor.forClass(Role.class);
         verify(roleService).createRole(argumentCaptor.capture());
 
         Role createdRole = argumentCaptor.getValue();
         assertTrue(createdRole.isNew());
-        assertEquals("new-role", createdRole.getName());
+        assertEquals("new role", createdRole.getName());
     }
 
     @Test

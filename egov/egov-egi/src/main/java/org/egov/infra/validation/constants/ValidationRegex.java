@@ -72,11 +72,11 @@ public class ValidationRegex {
      */
     public static final String UNSIGNED_NUMERIC = "^\\d*\\.?\\d*$";
     public static final String MASTER_DATA_CODE = "[\\w-]+";
-    public static final String NAME_WITH_SPECIAL_CHARS = "[\\w ()/-]+";
-    public static final String ALPHABETS_UNDERSCORE_HYPHEN_SPACE = "[A-Za-z_- ]+";
-    public static final String ALPHANUMERIC_UNDERSCORE_HYPHEN_SPACE = "[\\w- ]+";
-    public static final String ALPHANUMERIC_WITH_SPECIAL_CHARS = "[\\w-& :,/.()@#]+";
+    public static final String NAME_WITH_SPECIAL_CHARS = "[\\w\\s()/-]+";
+    public static final String ALPHABETS_UNDERSCORE_HYPHEN_SPACE = "[A-Za-z\\s_-]+";
+    public static final String ALPHANUMERIC_UNDERSCORE_HYPHEN_SPACE = "[\\w\\s-]+";
+    public static final String ALPHANUMERIC_WITH_SPECIAL_CHARS = "[\\w-&\\s:,/.()@#]+";
     public static final String SALUTATION = "^(Mrs?|Miss)$";
-    public static final String PERSON_NAME = "^([[a-zA-Z]+([. a-zA-Z]+)])$";
+    public static final String PERSON_NAME = "^([[a-zA-Z]+([.\\sa-zA-Z]+)])$";
     public static final String USERNAME = "^(?:[\\w+( \\w+)*]{2,64}|[[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*]{2,100}@(?:[a-zA-Z0-9-]{1,22}+\\.)+[a-zA-Z]{2,6})$";
 }

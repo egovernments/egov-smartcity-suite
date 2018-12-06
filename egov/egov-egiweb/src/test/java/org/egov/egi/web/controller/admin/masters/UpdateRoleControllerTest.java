@@ -142,7 +142,7 @@ public class UpdateRoleControllerTest extends AbstractContextControllerTest<Upda
                 .param("name", ""))
                 .andExpect(model().hasErrors())
                 .andExpect(model().attributeHasFieldErrors("role", "name"))
-                .andExpect(model().errorCount(1))
+                .andExpect(model().errorCount(2))
                 .andExpect(view().name("role-update"));
 
         verify(roleService, never()).update(any(Role.class));
