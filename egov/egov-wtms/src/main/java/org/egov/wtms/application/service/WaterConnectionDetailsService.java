@@ -1217,7 +1217,7 @@ public class WaterConnectionDetailsService {
 		WaterRatesDetails waterRatesDetails = connectionDemandService
 				.getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
 		if (waterRatesDetails == null)
-			throw new ApplicationRuntimeException("err.water.rate.not.found");
+			throw new ApplicationRuntimeException("err.water.rate.not.configured.within.period");
 	}
 
 	public String getApprovalPositionOnValidate(Long approvalPositionId) {
