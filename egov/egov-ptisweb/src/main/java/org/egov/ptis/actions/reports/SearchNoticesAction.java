@@ -746,7 +746,7 @@ public class SearchNoticesAction extends SearchFormAction {
     @Action(value = "/searchnotice-result")
     public String getNotices() {
 
-        if (!indexNumber.isEmpty()) {
+        if (indexNumber != null && !indexNumber.isEmpty()) {
             reportHeader = reportHeader + PROPERTY_ID + indexNumber;
             setIndexNumber(indexNumber);
 
