@@ -48,6 +48,8 @@
 
 package org.egov.collection.utils;
 
+import static org.egov.infra.security.utils.SecurityConstants.LOCATION_FIELD;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -60,6 +62,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.collection.config.properties.CollectionApplicationProperties;
 import org.egov.collection.constants.CollectionConstants;
@@ -130,8 +133,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import static org.egov.infra.security.utils.SecurityConstants.LOCATION_FIELD;
 
 @Service
 public class CollectionsUtil {
@@ -294,12 +295,13 @@ public class CollectionsUtil {
      */
     public Location getLocationOfUser(final Map<String, Object> sessionMap) {
         Location location = null;
-        final String locationId = sessionMap.get(LOCATION_FIELD).toString();
-        if (locationId != null && !locationId.isEmpty())
+        final String locationId = sessionMap.get(LOCATION_FIELD) == null ? ""
+                : sessionMap.get(LOCATION_FIELD).toString();
+        if (StringUtils.isNotBlank(locationId))
             location = getLocationById(Long.valueOf(locationId));
-        if (location == null)
-            throw new ValidationException(Arrays.asList(new ValidationError("Location Not Found",
-                    "submitcollections.validation.error.location.notfound")));
+        else
+            throw new ValidationException(Arrays.asList(
+                    new ValidationError("Location Not Found", "submitcollections.validation.error.location.notfound")));
         return location;
     }
 
@@ -352,9 +354,9 @@ public class CollectionsUtil {
      */
     public List<String> getCollectionModesNotAllowed(final User loggedInUser) {
         final List<String> collectionsModeNotAllowed = new ArrayList<>(0);
-        final List<AppConfigValues> deptCodesApp = appConfigValuesService
-                .getConfigValuesByModuleAndKey(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                        CollectionConstants.COLLECTION_DEPARTMENT_COLLMODES);
+        final List<AppConfigValues> deptCodesApp = appConfigValuesService.getConfigValuesByModuleAndKey(
+                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                CollectionConstants.COLLECTION_DEPARTMENT_COLLMODES);
         final List<String> deptCodes = new ArrayList<>();
         for (final AppConfigValues deptCode : deptCodesApp)
             deptCodes.add(deptCode.getValue());
@@ -368,10 +370,11 @@ public class CollectionsUtil {
                     isDeptAllowed = true;
         }
         if (isEmp && !isDeptAllowed)
-            throw new ValidationException(Arrays.asList(new ValidationError("Department",
-                    "billreceipt.counter.deptcode.null")));
+            throw new ValidationException(
+                    Arrays.asList(new ValidationError("Department", "billreceipt.counter.deptcode.null")));
         if (isBankCollectionOperator(loggedInUser)) {
-            // Bank Collection Operator cash, cheque, dd and card collection modes are
+            // Bank Collection Operator cash, cheque, dd and card collection
+            // modes are
             // allowed.
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_ONLINE);
@@ -414,9 +417,9 @@ public class CollectionsUtil {
         List<Assignment> assignment = new ArrayList<>();
         for (final String dept : department) {
             for (final String desg : designation) {
-                assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
-                        .getDepartmentByName(dept).getId(), designationService.getDesignationByName(desg).getId(),
-                        boundary.getId());
+                assignment = assignmentService.findByDepartmentDesignationAndBoundary(
+                        departmentService.getDepartmentByName(dept).getId(),
+                        designationService.getDesignationByName(desg).getId(), boundary.getId());
                 if (!assignment.isEmpty())
                     break;
             }
@@ -477,13 +480,10 @@ public class CollectionsUtil {
      * @return an instance of <code></code> representing the financial year for the given date
      */
     public CFinancialYear getFinancialYearforDate(final Date date) {
-        return (CFinancialYear) persistenceService
-                .getSession()
-                .createQuery(
-                        "from CFinancialYear cfinancialyear where ?1 between "
-                                + "cfinancialyear.startingDate and cfinancialyear.endingDate")
-                .setDate(1, date).list()
-                .get(0);
+        return (CFinancialYear) persistenceService.getSession()
+                .createQuery("from CFinancialYear cfinancialyear where ?1 between "
+                        + "cfinancialyear.startingDate and cfinancialyear.endingDate")
+                .setDate(1, date).list().get(0);
     }
 
     /**
@@ -669,8 +669,8 @@ public class CollectionsUtil {
     }
 
     public List<Designation> getDesignationsAllowedForChallanApproval(final Integer departmentId) {
-        final List<Designation> designations = designationService.getAllDesignationByDepartment(
-                Long.valueOf(departmentId), new Date());
+        final List<Designation> designations = designationService
+                .getAllDesignationByDepartment(Long.valueOf(departmentId), new Date());
         final List<Designation> designation = new ArrayList<>(0);
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
@@ -689,8 +689,8 @@ public class CollectionsUtil {
                 CollectionConstants.COLLECTION_DESIG_CHALLAN_WORKFLOW);
         if (null != appConfigValue && !appConfigValue.isEmpty())
             for (final AppConfigValues app : appConfigValue) {
-                final List<Assignment> assignments = assignmentService.findPrimaryAssignmentForDesignationName(app
-                        .getValue());
+                final List<Assignment> assignments = assignmentService
+                        .findPrimaryAssignmentForDesignationName(app.getValue());
                 for (final Assignment assign : assignments)
                     if (!departments.contains(assign.getDepartment()))
                         departments.add(assign.getDepartment());
@@ -707,10 +707,10 @@ public class CollectionsUtil {
      * @returna a <code>Boolean</code> indicating if the glcode is arrear account head
      */
     public boolean isPropertyTaxArrearAccountHead(final String glcode, final String description) {
-        final List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(
-                CollectionConstants.MODULE_NAME_PROPERTYTAX, "ISARREARACCOUNT");
-        final AppConfigValues penaltyGlCode = appConfigValuesService.getAppConfigValueByDate(
-                CollectionConstants.MODULE_NAME_PROPERTYTAX, "PTPENALTYGLCODE", new Date());
+        final List<AppConfigValues> list = appConfigValuesService
+                .getConfigValuesByModuleAndKey(CollectionConstants.MODULE_NAME_PROPERTYTAX, "ISARREARACCOUNT");
+        final AppConfigValues penaltyGlCode = appConfigValuesService
+                .getAppConfigValueByDate(CollectionConstants.MODULE_NAME_PROPERTYTAX, "PTPENALTYGLCODE", new Date());
         boolean retValue;
         LOGGER.debug("isPropertyTaxArrearAccountHead glcode " + glcode + " description " + description);
         if (penaltyGlCode != null && penaltyGlCode.getValue().equals(glcode)) {
@@ -790,8 +790,8 @@ public class CollectionsUtil {
         billReceiptInfoReq.setRequestInfo(microserviceUtils.createRequestInfo());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("updateReceiptDetailsAndGetReceiptAmountInfo - before calling LAMS update");
-        final String url = collectionApplicationProperties.getLamsServiceUrl().concat(
-                collectionApplicationProperties.getUpdateDemandUrl(serviceCode.toLowerCase()));
+        final String url = collectionApplicationProperties.getLamsServiceUrl()
+                .concat(collectionApplicationProperties.getUpdateDemandUrl(serviceCode.toLowerCase()));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("updateReceiptDetailsAndGetReceiptAmountInfo - url" + url);
         ReceiptAmountInfo receiptAmountInfo = null;
@@ -826,8 +826,8 @@ public class CollectionsUtil {
                     receiptAmountInfo = updateReceiptDetailsAndGetReceiptAmountInfo(new BillReceiptReq(billReceipt),
                             billingService.getCode());
                 else {
-                    final BillingIntegrationService billingServiceBean = (BillingIntegrationService) getBean(billingService
-                            .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
+                    final BillingIntegrationService billingServiceBean = (BillingIntegrationService) getBean(
+                            billingService.getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
                     receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(billReceipt);
                 }
             } catch (final Exception e) {
@@ -836,20 +836,14 @@ public class CollectionsUtil {
                 LOGGER.error(errMsg, e);
                 throw new ApplicationRuntimeException(errMsg, e);
             }
-        return CollectionIndex
-                .builder()
-                .withReceiptDate(receiptHeader.getReceiptdate())
-                .withReceiptnumber(receiptHeader.getReceiptnumber())
-                .withBillingservice(billingService.getName())
-                .withPaymentMode(instrumentType)
-                .withTotalamount(receiptHeader.getTotalAmount())
-                .withChannel(receiptHeader.getSource())
-                .withStatus(receiptHeader.getStatus().getDescription())
+        return CollectionIndex.builder().withReceiptDate(receiptHeader.getReceiptdate())
+                .withReceiptnumber(receiptHeader.getReceiptnumber()).withBillingservice(billingService.getName())
+                .withPaymentMode(instrumentType).withTotalamount(receiptHeader.getTotalAmount())
+                .withChannel(receiptHeader.getSource()).withStatus(receiptHeader.getStatus().getDescription())
                 .withConsumerCode(receiptHeader.getConsumerCode() != null ? receiptHeader.getConsumerCode() : "")
                 .withBillNumber(receiptHeader.getReferencenumber() != null ? receiptHeader.getReferencenumber() : null)
-                .withPaymentGateway(
-                        receiptHeader.getOnlinePayment() != null ? receiptHeader.getOnlinePayment().getService()
-                                .getName() : "")
+                .withPaymentGateway(receiptHeader.getOnlinePayment() != null
+                        ? receiptHeader.getOnlinePayment().getService().getName() : "")
                 .withConsumerName(receiptHeader.getPayeeName() != null ? receiptHeader.getPayeeName() : "")
                 .withReceiptCreator(receiptHeader.getCreatedBy() != null ? receiptHeader.getCreatedBy().getName() : "")
                 .withArrearAmount(receiptAmountInfo.getArrearsAmount())
@@ -882,9 +876,9 @@ public class CollectionsUtil {
     }
 
     public Designation getDesignationForApprover() {
-        return designationService.getDesignationByName(getAppConfigValue(
-                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                CollectionConstants.COLLECTION_DESIGNATIONFORAPPROVER));
+        return designationService
+                .getDesignationByName(getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                        CollectionConstants.COLLECTION_DESIGNATIONFORAPPROVER));
     }
 
     public String getApproverName(final Position position) {
@@ -899,8 +893,8 @@ public class CollectionsUtil {
 
     public List<ReceiptDetail> reconstructReceiptDetail(final ReceiptHeader receiptHeader,
             final List<ReceiptDetail> receiptDetailList) {
-        final BillingIntegrationService billingService = (BillingIntegrationService) getBean(receiptHeader.getService()
-                .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
+        final BillingIntegrationService billingService = (BillingIntegrationService) getBean(
+                receiptHeader.getService().getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
         return billingService.reconstructReceiptDetail(receiptHeader.getReferencenumber(),
                 receiptHeader.getTotalAmount(), receiptDetailList);
     }
@@ -938,8 +932,8 @@ public class CollectionsUtil {
     public Boolean getVoucherType() {
         Boolean voucherTypeForChequeDDCard = false;
         if (getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                CollectionConstants.APPCONFIG_VALUE_REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD).equals(
-                        CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
+                CollectionConstants.APPCONFIG_VALUE_REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD)
+                        .equals(CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
             voucherTypeForChequeDDCard = true;
         return voucherTypeForChequeDDCard;
     }
@@ -984,9 +978,9 @@ public class CollectionsUtil {
 
     public void emailReceiptAsAttachment(final ReceiptHeader receiptHeader, final byte[] attachment) {
         String emailBody = collectionApplicationProperties.getEmailBody();
-        emailBody = String.format(emailBody, ApplicationThreadLocals.getCityName(), receiptHeader.getTotalAmount()
-                .toString(), receiptHeader.getService().getName(), receiptHeader.getConsumerCode(), receiptHeader
-                        .getReceiptdate().toString(),
+        emailBody = String.format(emailBody, ApplicationThreadLocals.getCityName(),
+                receiptHeader.getTotalAmount().toString(), receiptHeader.getService().getName(),
+                receiptHeader.getConsumerCode(), receiptHeader.getReceiptdate().toString(),
                 ApplicationThreadLocals.getCityName());
         String emailSubject = collectionApplicationProperties.getEmailSubject();
         emailSubject = String.format(emailSubject, receiptHeader.getService().getName());

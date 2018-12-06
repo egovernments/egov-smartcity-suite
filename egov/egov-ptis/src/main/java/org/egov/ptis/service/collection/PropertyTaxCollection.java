@@ -335,7 +335,7 @@ public class PropertyTaxCollection extends TaxCollection {
         final List<EgDemandDetails> demandDetailList = persistenceService.findAllBy(
                 "select dmdet FROM EgDemandDetails dmdet " + "left join fetch dmdet.egDemandReason dmdRsn "
                         + "left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr "
-                        + "left join fetch dmdRsn.egInstallmentMaster installment WHERE dmdet.egDemand = ?",
+                        + "left join fetch dmdRsn.egInstallmentMaster installment WHERE dmdet.egDemand = ?1",
                 demand);
 
         LOGGER.info("saveCollectionDetails : End get demandDetailList");
@@ -719,8 +719,8 @@ public class PropertyTaxCollection extends TaxCollection {
 
         final EgBill egBill = egBillDAO.findById(billId, false);
 
-        final String query = "SELECT ptd FROM Ptdemand ptd WHERE ptd.egInstallmentMaster = ? "
-                + "AND ptd.egptProperty.basicProperty.upicNo = ? "
+        final String query = "SELECT ptd FROM Ptdemand ptd WHERE ptd.egInstallmentMaster = ?1 "
+                + "AND ptd.egptProperty.basicProperty.upicNo = ?2 "
                 + "AND ptd.isHistory = 'N' "
                 + "AND (ptd.egptProperty.status = 'I' OR ptd.egptProperty.status = 'A') "
                 + "AND ptd.egptProperty.basicProperty.active = true";
