@@ -85,10 +85,10 @@
 		<div class="col-sm-2 add-margin text-center">
 		<c:choose>
 		<c:when test="${doc.mandatory}">
-			<input type="file" id="file${status.index}id" name="documents[${status.index}].file" class="file-ellipsis upload-file" required="required">
+			<input type="file" id="file${status.index}id" name="documents[${status.index}].file" class="file-ellipsis upload-file" required="required" data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 		</c:when>
 		<c:otherwise>
-			<input type="file" id="file${status.index}id" name="documents[${status.index}].file" class="file-ellipsis upload-file">
+			<input type="file" id="file${status.index}id" name="documents[${status.index}].file" class="file-ellipsis upload-file" data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 		</c:otherwise>
 		</c:choose>	
 			<form:errors path="documents[${status.index}].file" cssClass="add-margin error-msg" />
@@ -173,10 +173,10 @@
 		<div class="col-sm-2 add-margin text-center">
 			<c:choose>
 			<c:when test="${doc.name=='Passport'}">
-				<input type="file" id="indvcommonhusband${doc.name}file${status.index}id" name="husband.documents[${status.index}].file" class="file-ellipsis upload-file">
+				<input type="file" id="indvcommonhusband${doc.name}file${status.index}id" name="husband.documents[${status.index}].file" class="file-ellipsis upload-file" data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 			</c:when>
 			<c:otherwise>
-				<input type="file" id="indvcommonhusbandfile${status.index}id" name="husband.documents[${status.index}].file" class="file-ellipsis upload-file">
+				<input type="file" id="indvcommonhusbandfile${status.index}id" name="husband.documents[${status.index}].file" class="file-ellipsis upload-file" data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 			</c:otherwise>
 			</c:choose>
 			<form:errors path="husband.documents[${status.index}].file" cssClass="add-margin error-msg" />
@@ -197,10 +197,10 @@
 		<div class="col-sm-2 add-margin text-center">
 			<c:choose>
 			<c:when test="${doc.name=='Passport'}">
-				<input type="file" id="indvcommonwife${doc.name}file${status.index}id" name="wife.documents[${status.index}].file" class="file-ellipsis upload-file">
+				<input type="file" id="indvcommonwife${doc.name}file${status.index}id" name="wife.documents[${status.index}].file" class="file-ellipsis upload-file" data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 			</c:when>
 			<c:otherwise>
-				<input type="file" id="indvcommonwifefile${status.index}id" name="wife.documents[${status.index}].file" class="file-ellipsis upload-file">
+				<input type="file" id="indvcommonwifefile${status.index}id" name="wife.documents[${status.index}].file" class="file-ellipsis upload-file" data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 			</c:otherwise>
 			</c:choose>
 			<form:errors path="wife.documents[${status.index}].file" cssClass="add-margin error-msg" />
@@ -268,7 +268,7 @@
 			<c:out value="${doc.name}"></c:out>
 		</div>
 		<div class="col-sm-2 add-margin text-center">
-			<input type="file" id="ageproofhusbandfile${status.index}id" name="husband.documents[${status.index}].file" class="file-ellipsis upload-file">
+			<input type="file" id="ageproofhusbandfile${status.index}id" name="husband.documents[${status.index}].file" class="file-ellipsis upload-file" data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 			<form:errors path="husband.documents[${status.index}].file" cssClass="add-margin error-msg" />
 			&nbsp;&nbsp;
 			<c:set value="false" var="isDocFound"></c:set>
@@ -285,7 +285,7 @@
 		</div>
 		<div class="col-sm-1"></div>
 		<div class="col-sm-2 add-margin text-center">
-			<input type="file" id="ageproofwifefile${status.index}id" name="wife.documents[${status.index}].file" class="file-ellipsis upload-file">
+			<input type="file" id="ageproofwifefile${status.index}id" name="wife.documents[${status.index}].file" class="file-ellipsis upload-file" data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 			<form:errors path="wife.documents[${status.index}].file" cssClass="add-margin error-msg" />
 			
 			<c:set value="false" var="isDocFound"></c:set>
@@ -407,7 +407,7 @@
 			<c:out value="${doc.name}"></c:out>
 		</div>
 		<div class="col-sm-2 add-margin text-center">
-			<input type="file" id="addressproofhusbandfile${status.index}id" name="husband.documents[${status.index}].file" class="file-ellipsis upload-file">
+			<input type="file" id="addressproofhusbandfile${status.index}id" name="husband.documents[${status.index}].file" class="file-ellipsis upload-file" data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 			<form:errors path="husband.documents[${status.index}].file" cssClass="add-margin error-msg" />
 			&nbsp;&nbsp;
 			<c:set value="false" var="isDocFound"></c:set>
@@ -424,7 +424,7 @@
 		</div>
 		<div class="col-sm-1"></div>
 		<div class="col-sm-2 add-margin text-center">
-			<input type="file" id="addressproofwifefile${status.index}id" name="wife.documents[${status.index}].file" class="file-ellipsis upload-file">
+			<input type="file" id="addressproofwifefile${status.index}id" name="wife.documents[${status.index}].file" class="file-ellipsis upload-file" data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 			<form:errors path="wife.documents[${status.index}].file" cssClass="add-margin error-msg" />
 			
 			<c:set value="false" var="isDocFound"></c:set>

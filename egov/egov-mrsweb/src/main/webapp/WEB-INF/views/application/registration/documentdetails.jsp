@@ -82,7 +82,7 @@
 			<div class="col-sm-2 add-margin text-center">
 				<input type="file" id="file${status.index}id"
 					name="documents[${status.index}].file"
-					class="file-ellipsis upload-file">
+					class="file-ellipsis upload-file" data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 				<form:errors path="documents[${status.index}].file"
 					cssClass="add-margin error-msg" />
 			</div>
@@ -134,7 +134,7 @@
 			<div class="col-sm-2 add-margin text-center">
 				<input type="file" id="file${status.index}id"
 					name="husband.documents[${status.index}].file"
-					class="file-ellipsis upload-file">
+					class="file-ellipsis upload-file" data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 				<form:errors path="husband.documents[${status.index}].file"
 					cssClass="add-margin error-msg" />
 				&nbsp;&nbsp;
@@ -158,7 +158,7 @@
 			<div class="col-sm-2 add-margin text-center">
 				<input type="file" id="file${status.index}id"
 					name="wife.documents[${status.index}].file"
-					class="file-ellipsis upload-file">
+					class="file-ellipsis upload-file" data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 				<form:errors path="wife.documents[${status.index}].file"
 					cssClass="add-margin error-msg" />
 

@@ -199,7 +199,7 @@
 						name="${applicant}.photo">
 					<input type="file" data-fileto="${applicant}-photo"
 						id="${applicant}-photo" name="${applicant}.photoFile"
-						class="file-ellipsis upload-file validate-file" accept="image/*">
+						class="file-ellipsis upload-file validate-file" accept="image/*" data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 				</c:when>
 				<c:otherwise>
 					<img class="add-border marriage-img"
@@ -207,7 +207,7 @@
 						name="${applicant}.photo">
 					<input type="file" id="${applicant}-photo"
 						data-fileto="${applicant}-photo" name="${applicant}.photoFile"
-						class="file-ellipsis validate-file" required="required" accept="image/*">
+						class="file-ellipsis validate-file" required="required" accept="image/*" data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 				</c:otherwise>
 			</c:choose>
 

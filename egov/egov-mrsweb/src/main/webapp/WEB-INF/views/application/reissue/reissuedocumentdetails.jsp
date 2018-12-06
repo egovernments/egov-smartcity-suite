@@ -64,7 +64,7 @@
 			<c:out value="${doc.name}"></c:out>
 		</div>
 		<div class="col-sm-2 add-margin text-center">
-			<input type="file" id="file${status.index}id" name="applicant.documents[${status.index}].file" class="file-ellipsis upload-file">
+			<input type="file" id="file${status.index}id" name="applicant.documents[${status.index}].file" class="file-ellipsis upload-file" data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 			<form:errors path="applicant.documents[${status.index}].file" cssClass="add-margin error-msg" />
 			&nbsp;&nbsp;
 			<c:set value="false" var="isDocFound"></c:set>

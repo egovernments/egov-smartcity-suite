@@ -236,7 +236,7 @@
 					height="150" width="130" />
 				<input type="file" id="marriage-photo" name="marriagePhotoFile"
 					class="file-ellipsis validate-file" data-fileto="marriage-photo"
-					accept="image/*">
+					accept="image/*" data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 				<form:errors path="marriagePhotoFile"
 					cssClass="add-margin error-msg" />
 			</c:when>
@@ -245,7 +245,7 @@
 					height="150" width="130" />
 				<input type="file" id="marriage-photo" name="marriagePhotoFile"
 					class="file-ellipsis validate-file" required="required"
-					data-fileto="marriage-photo" accept="image/*">
+					data-fileto="marriage-photo" accept="image/*" data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 				<form:errors path="marriagePhotoFile"
 					cssClass="add-margin error-msg" />
 			</c:otherwise>
