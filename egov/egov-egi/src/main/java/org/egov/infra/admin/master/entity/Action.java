@@ -55,6 +55,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
+import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -70,15 +71,22 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.infra.admin.master.entity.Action.SEQ_ACTION;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_UNDERSCORE_HYPHEN_SPACE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_UNDERSCORE_HYPHEN_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
 
 @Entity
 @Table(name = "eg_action")
@@ -89,7 +97,7 @@ public class Action extends AbstractAuditable {
 
     protected static final String SEQ_ACTION = "SEQ_EG_ACTION";
     private static final long serialVersionUID = -5459067787684736822L;
-    private static final LRUCache<String, Pattern> QUERY_PARAM_PATTERN_CACHE = new LRUCache<>(0, 100);
+    private static final LRUCache<String, java.util.regex.Pattern> QUERY_PARAM_PATTERN_CACHE = new LRUCache<>(0, 100);
 
     @Id
     @GeneratedValue(generator = SEQ_ACTION, strategy = GenerationType.SEQUENCE)
@@ -99,11 +107,13 @@ public class Action extends AbstractAuditable {
     @SafeHtml
     @NotBlank
     @Length(max = 100)
+    @Pattern(regexp = ALPHABETS_UNDERSCORE_HYPHEN_SPACE, message = INVALID_ALPHABETS_UNDERSCORE_HYPHEN_SPACE)
     private String name;
 
     @SafeHtml
     @NotBlank
     @Length(max = 150)
+    @URL
     private String url;
 
     @SafeHtml
@@ -125,10 +135,12 @@ public class Action extends AbstractAuditable {
     @NotNull
     private Module parentModule;
 
+    @Min(0)
     private Integer orderNumber;
 
     @SafeHtml
     @Length(max = 80)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String displayName;
 
     private boolean enabled;
@@ -136,6 +148,7 @@ public class Action extends AbstractAuditable {
     @SafeHtml
     @NotBlank
     @Length(max = 32)
+    @Pattern(regexp = ALPHABETS, message = INVALID_ALPHABETS)
     private String contextRoot;
 
     @Override
@@ -244,7 +257,7 @@ public class Action extends AbstractAuditable {
 
     public boolean queryParamMatches(String queryParams) {
         return isBlank(queryParamRegex) || QUERY_PARAM_PATTERN_CACHE
-                .computeIfAbsent(queryParamRegex, val -> Pattern.compile(queryParamRegex))
+                .computeIfAbsent(queryParamRegex, val -> java.util.regex.Pattern.compile(queryParamRegex))
                 .matcher(queryParams).matches();
     }
 

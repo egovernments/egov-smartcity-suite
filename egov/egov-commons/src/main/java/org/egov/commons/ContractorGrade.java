@@ -52,7 +52,7 @@ import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infra.validation.regex.Constants;
+import org.egov.infra.validation.constants.ValidationRegex;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
 
@@ -68,7 +68,7 @@ public class ContractorGrade extends BaseModel {
 
 	@Required(message = "contractorGrade.grade.null")
 	@Length(max = 20, message = "contractorGrade.grade.length")
-        @OptionalPattern(regex = Constants.ALPHANUMERICWITHSPECIALCHAR, message = "contractorGrade.grade.alphaNumeric")
+        @OptionalPattern(regex = ValidationRegex.ALPHANUMERIC_WITH_SPECIAL_CHARS, message = "contractorGrade.grade.alphaNumeric")
 	private String grade;
 
 	@Required(message = "contractorGrade.description.null")
@@ -77,12 +77,12 @@ public class ContractorGrade extends BaseModel {
 
 	@Required(message = "contractorGrade.minAmount.null")
 	@Min(value = 0, message = "contractorGrade.minAmount.valid")
-	@OptionalPattern(regex = Constants.NUMERIC, message = "contractorGrade.minAmount.numeric")
+	@OptionalPattern(regex = ValidationRegex.NUMERIC, message = "contractorGrade.minAmount.numeric")
 	private BigDecimal minAmount;
 
 	@Required(message = "contractorGrade.maxAmount.null")
 	@Min(value = 0, message = "contractorGrade.maxAmount.valid")
-	@OptionalPattern(regex = Constants.NUMERIC, message = "contractorGrade.maxAmount.numeric")
+	@OptionalPattern(regex = ValidationRegex.NUMERIC, message = "contractorGrade.maxAmount.numeric")
 	private BigDecimal maxAmount;
 
 	private String maxAmountString;

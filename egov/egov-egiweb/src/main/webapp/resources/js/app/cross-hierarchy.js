@@ -54,7 +54,7 @@ $(document).ready(function () {
 
         bootbox.confirm("Existing Cross hierarchy mapping will be overridden, Are you sure?", function (result) {
             if (result) {
-                document.forms["crossHierarchyForm"].submit();
+                $("#crossHierarchyForm").submit();
             }
         });
 

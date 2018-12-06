@@ -65,12 +65,19 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 
 import static org.egov.infra.admin.master.entity.Module.SEQ_MODULE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_UNDERSCORE_HYPHEN_SPACE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_UNDERSCORE_HYPHEN_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
 
 @Entity
 @Table(name = "eg_module")
@@ -88,6 +95,7 @@ public class Module implements Serializable {
     @SafeHtml
     @NotBlank
     @Length(max = 100)
+    @Pattern(regexp = ALPHABETS_UNDERSCORE_HYPHEN_SPACE, message = INVALID_ALPHABETS_UNDERSCORE_HYPHEN_SPACE)
     private String name;
 
     private boolean enabled;
@@ -98,6 +106,7 @@ public class Module implements Serializable {
 
     @SafeHtml
     @Length(max = 50)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String displayName;
 
     @Min(0)
@@ -109,6 +118,7 @@ public class Module implements Serializable {
 
     @Length(max = 50)
     @SafeHtml
+    @Pattern(regexp = ALPHABETS, message = INVALID_ALPHABETS)
     private String contextRoot;
 
     public Long getId() {

@@ -57,6 +57,7 @@ import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
+import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -72,6 +73,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import java.util.HashMap;
 import java.util.Map;
@@ -83,6 +85,10 @@ import static org.egov.infra.admin.master.entity.City.SEQ_CITY;
 import static org.egov.infra.security.utils.captcha.CaptchaUtils.CITY_CAPTCHA_PRIV_KEY;
 import static org.egov.infra.security.utils.captcha.CaptchaUtils.CITY_CAPTCHA_PUB_KEY;
 import static org.egov.infra.utils.ApplicationConstant.*;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_MASTER_DATA_CODE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.MASTER_DATA_CODE;
 
 @Entity
 @Unique(fields = {"code", "domainURL"}, enableDfltMsg = true)
@@ -103,11 +109,13 @@ public class City extends AbstractAuditable {
     @SafeHtml
     @NotBlank
     @Length(max = 256)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String name;
 
     @SafeHtml
     @NotBlank
     @Length(max = 256)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String localName;
 
     private boolean active;
@@ -115,36 +123,43 @@ public class City extends AbstractAuditable {
     @SafeHtml
     @NotBlank
     @Length(max = 128)
+    @URL
     private String domainURL;
 
     @SafeHtml
     @NotBlank
     @Length(max = 4)
     @Column(updatable = false)
+    @Pattern(regexp = MASTER_DATA_CODE, message = INVALID_MASTER_DATA_CODE)
     private String code;
 
     @SafeHtml
     @NotBlank
     @Length(max = 10)
+    @Pattern(regexp = MASTER_DATA_CODE, message = INVALID_MASTER_DATA_CODE)
     private String lgdCode;
 
     @SafeHtml
     @NotBlank
     @Length(max = 10)
+    @Pattern(regexp = MASTER_DATA_CODE, message = INVALID_MASTER_DATA_CODE)
     private String districtCode;
 
     @SafeHtml
     @NotBlank
     @Length(max = 10)
+    @Pattern(regexp = MASTER_DATA_CODE, message = INVALID_MASTER_DATA_CODE)
     private String districtLGDCode;
 
     @SafeHtml
     @NotBlank
     @Length(max = 50)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String districtName;
 
     @SafeHtml
     @Length(max = 50)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String regionName;
 
     @SafeHtml

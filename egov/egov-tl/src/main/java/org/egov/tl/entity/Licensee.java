@@ -49,11 +49,12 @@
 package org.egov.tl.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.validation.regex.Constants;
+import org.egov.infra.validation.constants.ValidationRegex;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
-import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -97,7 +98,7 @@ public class Licensee extends AbstractAuditable {
     @SafeHtml
     @Length(min = 10, max = 10)
     @Column(name = "MOBILE_PHONENUMBER")
-    @Pattern(regexp = Constants.MOBILE_NUM)
+    @Pattern(regexp = ValidationRegex.MOBILE_NUM)
     private String mobilePhoneNumber;
 
     @SafeHtml
@@ -109,7 +110,7 @@ public class Licensee extends AbstractAuditable {
     @SafeHtml
     @Length(max = 64)
     @Column(name = "EMAIL_ID")
-    @Email(regexp = Constants.EMAIL)
+    @Email(regexp = ValidationRegex.EMAIL)
     private String emailId;
 
     @NotBlank

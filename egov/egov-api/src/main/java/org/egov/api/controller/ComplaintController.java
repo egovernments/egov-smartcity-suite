@@ -130,7 +130,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static org.egov.infra.validation.regex.Constants.EMAIL;
+import static org.egov.infra.validation.constants.ValidationRegex.EMAIL;
 import static org.egov.pgr.utils.constants.PGRConstants.CITIZEN_APP_MODE;
 import static org.egov.pgr.utils.constants.PGRConstants.EMPLOYEE_APP_MODE;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;

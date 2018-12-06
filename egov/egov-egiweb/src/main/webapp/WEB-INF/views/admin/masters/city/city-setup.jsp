@@ -46,7 +46,7 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
@@ -83,8 +83,8 @@
                                     <form:input path="name" id="name" type="text"
                                                 data-toggle="popover" data-trigger="focus" data-placement="right"
                                                 data-content="${helptext}"
-                                                class="form-control" placeholder="" autocomplete="off"
-                                                required="required"/>
+                                                class="form-control is_valid_alphabet" placeholder="" autocomplete="off"
+                                                required="required" maxlength="256"/>
                                     <form:errors path="name" cssClass="add-margin error-msg"/>
                                 </div>
                             </div>
@@ -97,8 +97,8 @@
                                 <div class="col-sm-6" style="padding-top: 7px">
                                     <form:input path="localName" id="localName" type="text"
                                                 data-toggle="popover" data-trigger="focus" data-placement="right"
-                                                data-content="${helptext}"
-                                                class="form-control" placeholder="" autocomplete="off"/>
+                                                data-content="${helptext}" maxlength="256"
+                                                class="form-control is_valid_alphabet" placeholder="" autocomplete="off"/>
                                     <form:errors path="localName" cssClass="add-margin error-msg"/>
                                 </div>
 
@@ -112,8 +112,8 @@
                                 <div class="col-sm-6" style="padding-top: 7px">
                                     <form:input path="code" id="code" type="text"
                                                 data-toggle="popover" data-trigger="focus" data-placement="right"
-                                                data-content="${helptext}"
-                                                class="form-control" placeholder="" autocomplete="off"
+                                                data-content="${helptext}" maxlength="4"
+                                                class="form-control patternvalidation" data-pattern="masterCode" placeholder="" autocomplete="off"
                                                 required="required"/>
                                     <form:errors path="code" cssClass="add-margin error-msg"/>
                                 </div>
@@ -128,8 +128,8 @@
                                 <div class="col-sm-6" style="padding-top: 7px">
                                     <form:input path="lgdCode" id="lgdCode" type="text"
                                                 data-toggle="popover" data-trigger="focus" data-placement="right"
-                                                data-content="${helptext}"
-                                                class="form-control" placeholder="" autocomplete="off"
+                                                data-content="${helptext}" maxlength="10"
+                                                class="form-control patternvalidation" data-pattern="masterCode" placeholder="" autocomplete="off"
                                                 required="required"/>
                                     <form:errors path="lgdCode" cssClass="add-margin error-msg"/>
                                 </div>
@@ -144,7 +144,7 @@
                                 <div class="col-sm-6" style="padding-top: 7px">
                                     <form:input path="domainURL" id="domainURL" type="text"
                                                 data-toggle="popover" data-trigger="focus" data-placement="right"
-                                                data-content="${helptext}"
+                                                data-content="${helptext}" maxlength="128"
                                                 class="form-control" placeholder="" autocomplete="off"
                                                 required="required"/>
                                     <form:errors path="domainURL" cssClass="add-margin error-msg"/>
@@ -160,8 +160,8 @@
                                 <div class="col-sm-6" style="padding-top: 7px">
                                     <form:input path="districtName" id="districtName" type="text"
                                                 data-toggle="popover" data-trigger="focus" data-placement="right"
-                                                data-content="${helptext}"
-                                                class="form-control" placeholder="" autocomplete="off"
+                                                data-content="${helptext}" maxlength="50"
+                                                class="form-control is_valid_alphabet" placeholder="" autocomplete="off"
                                                 required="required"/>
                                     <form:errors path="districtName"
                                                  cssClass="add-margin error-msg"/>
@@ -177,8 +177,8 @@
                                 <div class="col-sm-6" style="padding-top: 7px">
                                     <form:input path="districtCode" id="districtCode" type="text"
                                                 data-toggle="popover" data-trigger="focus" data-placement="right"
-                                                data-content="${helptext}"
-                                                class="form-control" placeholder="" autocomplete="off"
+                                                data-content="${helptext}" maxlength="10"
+                                                class="form-control patternvalidation" data-pattern="masterCode" placeholder="" autocomplete="off"
                                                 required="required"/>
                                     <form:errors path="districtCode"
                                                  cssClass="add-margin error-msg"/>
@@ -193,8 +193,8 @@
                                 <div class="col-sm-6" style="padding-top: 7px">
                                     <form:input path="districtLGDCode" id="districtLGDCode" type="text"
                                                 data-toggle="popover" data-trigger="focus" data-placement="right"
-                                                data-content="${helptext}"
-                                                class="form-control" placeholder="" autocomplete="off"
+                                                data-content="${helptext}" maxlength="10"
+                                                class="form-control patternvalidation" data-pattern="masterCode" placeholder="" autocomplete="off"
                                                 required="required"/>
                                     <form:errors path="districtLGDCode" cssClass="add-margin error-msg"/>
                                 </div>
@@ -209,8 +209,8 @@
                                 <div class="col-sm-6" style="padding-top: 7px">
                                     <form:input path="regionName" id="regionName" type="text"
                                                 data-toggle="popover" data-trigger="focus" data-placement="right"
-                                                data-content="${helptext}"
-                                                class="form-control" placeholder="" autocomplete="off"/>
+                                                data-content="${helptext}" maxlength="50"
+                                                class="form-control is_valid_alphabet" placeholder="" autocomplete="off"/>
                                     <form:errors path="regionName" cssClass="add-margin error-msg"/>
                                 </div>
                             </div>
@@ -223,7 +223,7 @@
                                 <div class="col-sm-6" style="padding-top: 7px">
                                     <form:input path="grade" id="grade" type="text"
                                                 data-toggle="popover" data-trigger="focus" data-placement="right"
-                                                data-content="${helptext}"
+                                                data-content="${helptext}" maxlength="50"
                                                 class="form-control" placeholder="" autocomplete="off"/>
                                     <form:errors path="grade" cssClass="add-margin error-msg"/>
                                 </div>
@@ -270,8 +270,8 @@
                                 <div class="col-sm-6" style="padding-top: 7px">
                                     <form:input path="preferences.municipalityName" id="municipalityName"
                                                 type="text" data-toggle="popover" data-trigger="focus" data-placement="right"
-                                                data-content="${helptext}" cssClass="form-control" placeholder=""
-                                                autocomplete="off" required="required"/>
+                                                data-content="${helptext}" cssClass="form-control is_valid_alphabet" placeholder=""
+                                                autocomplete="off" required="required" maxlength="50"/>
                                     <form:errors path="preferences.municipalityName"
                                                  cssClass="add-margin error-msg"/>
                                 </div>
@@ -287,7 +287,7 @@
                                     <form:textarea path="preferences.municipalityAddress"
                                                    id="municipalityAddress" type="text" data-toggle="popover" data-trigger="focus" data-placement="right"
                                                    data-content="${helptext}" cssClass="form-control"
-                                                   placeholder="" autocomplete="off" rows="5"/>
+                                                   placeholder="" autocomplete="off" rows="5" maxlength="200"/>
                                     <form:errors path="preferences.municipalityAddress"
                                                  cssClass="add-margin error-msg"/>
                                 </div>
@@ -302,7 +302,7 @@
                                     <form:input path="preferences.municipalityContactNo"
                                                 id="municipalityContactNo" type="text" data-toggle="popover" data-trigger="focus" data-placement="right"
                                                 data-content="${helptext}" cssClass="form-control"
-                                                placeholder="" autocomplete="off"/>
+                                                placeholder="" autocomplete="off" maxlength="20"/>
                                     <form:errors path="preferences.municipalityContactNo"
                                                  cssClass="add-margin error-msg"/>
                                 </div>
@@ -317,7 +317,7 @@
                                     <form:input path="preferences.municipalityContactEmail"
                                                 id="municipalityContactEmail" type="text"
                                                 data-toggle="popover" data-trigger="focus" data-placement="right"
-                                                data-content="${helptext}"
+                                                data-content="${helptext}" maxlength="50"
                                                 cssClass="form-control" placeholder="" autocomplete="off"/>
                                     <form:errors path="preferences.municipalityContactEmail"
                                                  cssClass="add-margin error-msg"/>
@@ -333,7 +333,7 @@
                                     <form:input path="preferences.municipalityCallCenterNo"
                                                 id="municipalityCallCenterNo" type="text"
                                                 data-toggle="popover" data-trigger="focus" data-placement="right"
-                                                data-content="${helptext}"
+                                                data-content="${helptext}" maxlength="20"
                                                 cssClass="form-control" placeholder="" autocomplete="off"/>
                                     <form:errors path="preferences.municipalityCallCenterNo"
                                                  cssClass="add-margin error-msg"/>
@@ -349,7 +349,7 @@
                                     <form:input path="preferences.municipalityGisLocation"
                                                 id="municipalityOfficeGisLocation" type="text"
                                                 data-toggle="popover" data-trigger="focus" data-placement="right"
-                                                data-content="${helptext}"
+                                                data-content="${helptext}" maxlength="100"
                                                 cssClass="form-control" placeholder="" autocomplete="off"/>
                                     <form:errors path="preferences.municipalityGisLocation" cssClass="add-margin error-msg"/>
                                 </div>
@@ -364,8 +364,7 @@
                                     <form:input path="preferences.municipalityFacebookLink" id="facebookLink"
                                                 type="text" cssClass="form-control" placeholder=""
                                                 data-toggle="popover" data-trigger="focus" data-placement="right"
-                                                data-content="${helptext}"
-                                                autocomplete="off"/>
+                                                data-content="${helptext}" maxlength="100" autocomplete="off"/>
                                     <form:errors path="preferences.municipalityFacebookLink" cssClass="add-margin error-msg"/>
                                 </div>
                             </div>
@@ -379,8 +378,7 @@
                                     <form:input path="preferences.municipalityTwitterLink" id="twitterLink"
                                                 type="text" cssClass="form-control" placeholder=""
                                                 data-toggle="popover" data-trigger="focus" data-placement="right"
-                                                data-content="${helptext}"
-                                                autocomplete="off"/>
+                                                data-content="${helptext}" maxlength="100" autocomplete="off"/>
                                     <form:errors path="preferences.municipalityTwitterLink" cssClass="add-margin error-msg"/>
                                 </div>
                             </div>
@@ -425,7 +423,7 @@
                                 <div class="col-sm-6" style="padding-top: 7px">
                                     <form:input path="preferences.recaptchaPK" id="recaptchaPK" type="password"
                                                 data-toggle="popover" data-trigger="focus" data-placement="right"
-                                                data-content="${helptext}"
+                                                data-content="${helptext}" maxlength="64"
                                                 class="form-control" placeholder="" autocomplete="off"
                                                 required="required"/>
                                     <form:errors path="preferences.recaptchaPK" cssClass="add-margin error-msg"/>
@@ -441,7 +439,7 @@
                                 <div class="col-sm-6" style="padding-top: 7px">
                                     <form:input path="preferences.recaptchaPub" id="recaptchaPub" type="password"
                                                 data-toggle="popover" data-trigger="focus" data-placement="right"
-                                                data-content="${helptext}"
+                                                data-content="${helptext}" maxlength="64"
                                                 class="form-control" placeholder="" autocomplete="off"
                                                 required="required"/>
 
@@ -458,7 +456,7 @@
                                 <div class="col-sm-6" style="padding-top: 7px">
                                     <form:input path="preferences.googleApiKey" id="googleApiKey" type="password"
                                                 data-toggle="popover" data-trigger="focus" data-placement="right"
-                                                data-content="${helptext}"
+                                                data-content="${helptext}" maxlength="50"
                                                 class="form-control" placeholder="" autocomplete="off"
                                                 required="required"/>
                                     <form:errors path="preferences.googleApiKey" cssClass="add-margin error-msg"/>

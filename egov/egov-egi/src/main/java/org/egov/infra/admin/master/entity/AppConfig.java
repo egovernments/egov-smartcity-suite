@@ -71,6 +71,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -81,6 +82,8 @@ import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.SEQUENCE;
 import static org.egov.infra.admin.master.entity.AppConfig.FETCH_WITH_VALUES;
 import static org.egov.infra.admin.master.entity.AppConfig.SEQ_APPCONFIG;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHANUMERIC_UNDERSCORE_HYPHEN_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHANUMERIC_UNDERSCORE_HYPHEN_SPACE;
 import static org.hibernate.annotations.FetchMode.JOIN;
 
 @Entity
@@ -103,6 +106,7 @@ public class AppConfig extends AbstractAuditable {
     @NotBlank
     @Length(max = 250)
     @Column(updatable = false)
+    @Pattern(regexp = ALPHANUMERIC_UNDERSCORE_HYPHEN_SPACE, message = INVALID_ALPHANUMERIC_UNDERSCORE_HYPHEN_SPACE)
     private String keyName;
 
     @ManyToOne(fetch = LAZY, optional = false)

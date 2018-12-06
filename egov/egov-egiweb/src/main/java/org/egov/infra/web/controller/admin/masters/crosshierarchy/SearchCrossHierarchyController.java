@@ -63,7 +63,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Controller
-@RequestMapping("/crosshierarchy/update")
+@RequestMapping("/crosshierarchy/search")
 public class SearchCrossHierarchyController {
 
     private static final String CROSS_HIERARCHY_UPDATE_VIEW = "redirect:/crosshierarchy/update/%s/%s";

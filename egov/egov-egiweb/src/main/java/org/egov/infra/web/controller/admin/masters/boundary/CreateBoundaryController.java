@@ -120,7 +120,8 @@ public class CreateBoundaryController {
         if (bindResult.hasErrors()) {
             BoundaryType boundaryType = boundary.getBoundaryType();
             model.addAttribute("boundaryType", boundaryType);
-            model.addAttribute("parentBoundary", boundaryService.getActiveBoundariesByBoundaryTypeId(boundaryType.getParent().getId()));
+            if (boundaryType.getParent() != null)
+                model.addAttribute("parentBoundary", boundaryService.getActiveBoundariesByBoundaryTypeId(boundaryType.getParent().getId()));
             return BOUNDARY_CREATE_VIEW;
         }
         boundaryService.createBoundary(boundary);

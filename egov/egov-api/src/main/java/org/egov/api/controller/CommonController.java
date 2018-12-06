@@ -76,7 +76,7 @@ import java.util.Date;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.infra.validation.regex.Constants.MOBILE_NUM;
+import static org.egov.infra.validation.constants.ValidationRegex.MOBILE_NUM;
 
 /**
  * @author Sheik

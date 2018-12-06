@@ -49,7 +49,7 @@
 package org.egov.infra.persistence.validator;
 
 import org.egov.infra.persistence.validator.annotation.Numeric;
-import org.egov.infra.validation.regex.Constants;
+import org.egov.infra.validation.constants.ValidationRegex;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -71,7 +71,7 @@ public class NumericValidator implements ConstraintValidator<Numeric, Object> {
             if (org.apache.commons.lang.StringUtils.isBlank(stringVal))
                 return true;
 
-            return stringVal.trim().matches(Constants.NUMERIC);
+            return stringVal.trim().matches(ValidationRegex.NUMERIC);
         }
 
     }

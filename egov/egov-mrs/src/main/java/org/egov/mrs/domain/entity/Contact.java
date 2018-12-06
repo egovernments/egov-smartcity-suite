@@ -48,20 +48,20 @@
 
 package org.egov.mrs.domain.entity;
 
-import org.egov.infra.validation.regex.Constants;
+import org.egov.infra.validation.constants.ValidationRegex;
 import org.hibernate.envers.Audited;
-import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Embeddable;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Embeddable
 public class Contact {
 
-    @Pattern(regexp = Constants.MOBILE_NUM)
+    @Pattern(regexp = ValidationRegex.MOBILE_NUM)
     @SafeHtml
     @Length(max = 15)
     @Audited
@@ -70,7 +70,7 @@ public class Contact {
     @SafeHtml
     @Audited
     @Length(max = 128)
-    @Email(regexp = Constants.EMAIL)
+    @Email(regexp = ValidationRegex.EMAIL)
     private String email;
 
     @NotNull
@@ -78,7 +78,7 @@ public class Contact {
     @Length(max = 256)
     private String residenceAddress;
 
-  /*  @NotNull*/
+    /*  @NotNull*/
     @SafeHtml
     @Length(max = 256)
     private String officeAddress;

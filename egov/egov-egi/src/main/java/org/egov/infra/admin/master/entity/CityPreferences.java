@@ -54,6 +54,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
+import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -64,11 +65,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.admin.master.entity.CityPreferences.SEQ_CITY_PREF;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PHONE_NUMBER;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.EMAIL;
+import static org.egov.infra.validation.constants.ValidationRegex.PHONE_NUMBER;
 
 @Entity
 @Table(name = "eg_citypreferences")
@@ -90,10 +98,12 @@ public class CityPreferences extends AbstractAuditable {
     @NotNull
     @SafeHtml
     @Length(max = 50)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String municipalityName;
 
     @SafeHtml
     @Length(max = 20)
+    @Pattern(regexp = PHONE_NUMBER, message = INVALID_PHONE_NUMBER)
     private String municipalityContactNo;
 
     @SafeHtml
@@ -102,22 +112,27 @@ public class CityPreferences extends AbstractAuditable {
 
     @SafeHtml
     @Length(max = 50)
+    @Email(regexp = EMAIL)
     private String municipalityContactEmail;
 
     @SafeHtml
     @Length(max = 100)
+    @URL
     private String municipalityGisLocation;
 
     @SafeHtml
     @Length(max = 20)
+    @Pattern(regexp = PHONE_NUMBER, message = INVALID_PHONE_NUMBER)
     private String municipalityCallCenterNo;
 
     @SafeHtml
     @Length(max = 100)
+    @URL
     private String municipalityFacebookLink;
 
     @SafeHtml
     @Length(max = 100)
+    @URL
     private String municipalityTwitterLink;
 
     @SafeHtml

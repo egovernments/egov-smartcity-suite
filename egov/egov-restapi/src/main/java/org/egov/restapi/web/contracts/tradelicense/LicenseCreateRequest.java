@@ -60,18 +60,18 @@ import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import static org.egov.infra.validation.regex.Constants.ALPHABETS_WITHSPACE;
-import static org.egov.infra.validation.regex.Constants.EMAIL;
-import static org.egov.infra.validation.regex.Constants.NUMERIC;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.EMAIL;
+import static org.egov.infra.validation.constants.ValidationRegex.NUMERIC;
 
 public class LicenseCreateRequest {
 
-    @Pattern(regexp = ALPHABETS_WITHSPACE, message = "Invalid Applicant Name")
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = "Invalid Applicant Name")
     @NotBlank(message = "Applicant Name is required")
     @Length(max = 256, message = "Applicant Name accepts maximum 256 characters")
     private String applicantName;
 
-    @Pattern(regexp = ALPHABETS_WITHSPACE, message = "Invalid Father/Spouse Name")
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = "Invalid Father/Spouse Name")
     @NotBlank(message = "Father/Spouse Name is required")
     @Length(max = 256, message = "Father/Spouse Name accepts maximum 256 characters")
     private String fatherOrSpouseName;

@@ -67,10 +67,15 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import java.util.Set;
 
 import static org.egov.infra.admin.master.entity.BoundaryType.SEQ_BOUNDARY_TYPE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_MASTER_DATA_CODE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.MASTER_DATA_CODE;
 
 @Entity
 @Table(name = "EG_BOUNDARYTYPE")
@@ -88,12 +93,14 @@ public class BoundaryType extends AbstractAuditable {
     @NotBlank
     @SafeHtml
     @Length(max = 64)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String name;
 
     @NotBlank
     @Length(max = 25)
     @SafeHtml
     @Column(updatable = false)
+    @Pattern(regexp = MASTER_DATA_CODE, message = INVALID_MASTER_DATA_CODE)
     private String code;
 
     @ManyToOne
@@ -111,6 +118,7 @@ public class BoundaryType extends AbstractAuditable {
 
     @SafeHtml
     @Length(max = 64)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String localName;
 
     @Transient

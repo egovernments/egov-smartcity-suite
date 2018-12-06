@@ -61,9 +61,12 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.Objects;
 
 import static org.egov.infra.admin.master.entity.Location.SEQ_LOCATION;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_NAME_WITH_SPECIAL_CHARS;
+import static org.egov.infra.validation.constants.ValidationRegex.NAME_WITH_SPECIAL_CHARS;
 
 @Entity
 @Table(name = "eg_location")
@@ -82,6 +85,7 @@ public class Location extends AbstractPersistable<Long> {
     @NotNull
     @Length(min = 2, max = 50)
     @SafeHtml
+    @Pattern(regexp = NAME_WITH_SPECIAL_CHARS, message = INVALID_NAME_WITH_SPECIAL_CHARS)
     private String name;
 
     @Length(max = 100)

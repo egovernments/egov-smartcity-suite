@@ -47,7 +47,7 @@
  */
 package org.egov.portal.web.controller.firm;
 
-import org.egov.infra.validation.regex.Constants;
+import org.egov.infra.validation.constants.ValidationRegex;
 import org.egov.portal.entity.Firm;
 import org.egov.portal.entity.FirmUser;
 import org.egov.portal.firm.service.FirmService;
@@ -93,7 +93,7 @@ public abstract class BaseFirmController {
         int index = 0;
         for (final FirmUser firmUsers : firm.getTempFirmUsers()) {
 
-            if (firmUsers.getEmailId() != null && !firmUsers.getEmailId().matches(Constants.EMAIL))
+            if (firmUsers.getEmailId() != null && !firmUsers.getEmailId().matches(ValidationRegex.EMAIL))
                 resultBinder.rejectValue("tempFirmUsers[" + index + "].emailId",
                         "error.firm.emailid");
             if (firmUsers.getMobileNumber() != null && firmUsers.getMobileNumber().length() != 10)

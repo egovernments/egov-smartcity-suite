@@ -49,7 +49,7 @@ package org.egov.eis.entity;
 
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.validation.regex.Constants;
+import org.egov.infra.validation.constants.ValidationRegex;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
@@ -75,7 +75,7 @@ public class EmployeeType extends AbstractAuditable {
     private static final long serialVersionUID = 747671541670667791L;
     @SafeHtml
     @Column(name = "name", unique = true)
-    @Pattern(regexp = Constants.ALPHABETS)
+    @Pattern(regexp = ValidationRegex.ALPHABETS)
     public String name;
     @Id
     @GeneratedValue(generator = SEQ_EMPLOYEETYPE, strategy = GenerationType.SEQUENCE)

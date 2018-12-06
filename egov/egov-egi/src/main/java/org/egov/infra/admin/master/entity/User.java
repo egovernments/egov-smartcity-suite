@@ -58,7 +58,6 @@ import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infra.validation.regex.Constants;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.Audited;
@@ -101,6 +100,18 @@ import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.StringUtils.overlay;
 import static org.apache.commons.lang3.StringUtils.repeat;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PERSON_NAME;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PAN_NUMBER;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PHONE_NUMBER;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_SALUTATION;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_USERNAME;
+import static org.egov.infra.validation.constants.ValidationRegex.PERSON_NAME;
+import static org.egov.infra.validation.constants.ValidationRegex.EMAIL;
+import static org.egov.infra.validation.constants.ValidationRegex.MOBILE_NUM;
+import static org.egov.infra.validation.constants.ValidationRegex.PAN_NUMBER;
+import static org.egov.infra.validation.constants.ValidationRegex.PHONE_NUMBER;
+import static org.egov.infra.validation.constants.ValidationRegex.SALUTATION;
+import static org.egov.infra.validation.constants.ValidationRegex.USERNAME;
 import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
 @Entity
@@ -123,6 +134,7 @@ public class User extends AbstractAuditable {
     @Length(min = 2, max = 64)
     @SafeHtml
     @Column(unique = true, updatable = false)
+    @Pattern(regexp = USERNAME, message = INVALID_USERNAME)
     private String username;
 
     @NotNull
@@ -133,10 +145,12 @@ public class User extends AbstractAuditable {
 
     @SafeHtml
     @Length(max = 10)
+    @Pattern(regexp = SALUTATION, message = INVALID_SALUTATION)
     private String salutation;
 
     @SafeHtml
     @Length(max = 64)
+    @Pattern(regexp = PERSON_NAME, message = INVALID_PERSON_NAME)
     private String guardian;
 
     @SafeHtml
@@ -147,29 +161,32 @@ public class User extends AbstractAuditable {
     @SafeHtml
     @Length(min = 2, max = 100)
     @Audited
+    @Pattern(regexp = PERSON_NAME, message = INVALID_PERSON_NAME)
     private String name;
 
     @Enumerated(EnumType.ORDINAL)
     private Gender gender;
 
-    @Pattern(regexp = Constants.MOBILE_NUM)
     @SafeHtml
     @Length(max = 15)
     @Audited
+    @Pattern(regexp = MOBILE_NUM)
     private String mobileNumber;
 
-    @Email(regexp = Constants.EMAIL)
     @SafeHtml
     @Length(max = 128)
     @Audited
+    @Email(regexp = EMAIL)
     private String emailId;
 
     @SafeHtml
     @Length(max = 15)
+    @Pattern(regexp = PHONE_NUMBER, message = INVALID_PHONE_NUMBER)
     private String altContactNumber;
 
     @SafeHtml
     @Length(max = 10)
+    @Pattern(regexp = PAN_NUMBER, message = INVALID_PAN_NUMBER)
     private String pan;
 
     @SafeHtml
@@ -196,6 +213,7 @@ public class User extends AbstractAuditable {
 
     @NotBlank
     @Length(max = 15)
+    @SafeHtml
     private String locale = "en_IN";
 
     @Enumerated(EnumType.STRING)

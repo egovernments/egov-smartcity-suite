@@ -63,10 +63,13 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.util.Date;
 import java.util.Objects;
 
 import static org.egov.infra.filestore.entity.FileStoreMapper.SEQ_FILESTOREMAPPER;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_FILE_NAME;
+import static org.egov.infra.validation.constants.ValidationRegex.FILE_NAME;
 
 @Table(name = "eg_filestoremap")
 @Entity
@@ -87,6 +90,7 @@ public class FileStoreMapper extends AbstractPersistable<Long> {
     @NotBlank
     @Length(max = 255)
     @SafeHtml
+    @Pattern(regexp = FILE_NAME, message = INVALID_FILE_NAME)
     private String fileName;
 
     @Length(max = 100)

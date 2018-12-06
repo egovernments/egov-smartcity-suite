@@ -53,7 +53,7 @@ import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infra.validation.regex.Constants;
+import org.egov.infra.validation.constants.ValidationRegex;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
@@ -95,7 +95,7 @@ public class Employee extends User implements EntityType {
     @NotNull
     @SafeHtml
     @Column(name = "code", unique = true)
-    @Pattern(regexp = Constants.ALPHANUMERIC)
+    @Pattern(regexp = ValidationRegex.ALPHANUMERIC)
     @Audited
     private String code;
 

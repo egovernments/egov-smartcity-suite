@@ -51,7 +51,7 @@ import org.egov.infra.persistence.validator.annotation.GreaterThan;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infra.validation.regex.Constants;
+import org.egov.infra.validation.constants.ValidationRegex;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.models.workorder.WorkOrderActivity;
 import org.hibernate.validator.constraints.Length;
@@ -79,7 +79,7 @@ public class MBDetails extends BaseModel {
     private double amtForCurrQuantity;
     private double cumlvAmtForCurrCumlvQuantity;
     private Date mbdetailsDate;
-    @OptionalPattern(regex = Constants.ALPHANUMERIC_WITHSLASHES, message = "mbdetails.ordernumber")
+    @OptionalPattern(regex = ValidationRegex.ALPHANUMERIC_WITHSLASHES, message = "mbdetails.ordernumber")
     private String OrderNumber;
     // -------------------------------------------------------------------
     private double totalEstQuantity; // Added for RE

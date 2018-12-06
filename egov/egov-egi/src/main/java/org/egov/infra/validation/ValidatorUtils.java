@@ -56,10 +56,10 @@ import java.util.regex.Pattern;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.infra.validation.regex.Constants.LOW_PASSWORD;
-import static org.egov.infra.validation.regex.Constants.MEDIUM_PASSWORD;
-import static org.egov.infra.validation.regex.Constants.NONE_PASSWORD;
-import static org.egov.infra.validation.regex.Constants.STRONG_PASSWORD;
+import static org.egov.infra.validation.constants.ValidationRegex.LOW_PASSWORD;
+import static org.egov.infra.validation.constants.ValidationRegex.MEDIUM_PASSWORD;
+import static org.egov.infra.validation.constants.ValidationRegex.NONE_PASSWORD;
+import static org.egov.infra.validation.constants.ValidationRegex.STRONG_PASSWORD;
 
 @Service("validatorUtils")
 public class ValidatorUtils {

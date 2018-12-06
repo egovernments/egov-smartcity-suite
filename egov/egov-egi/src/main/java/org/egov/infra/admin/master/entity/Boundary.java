@@ -75,12 +75,17 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 import static org.egov.infra.admin.master.entity.Boundary.SEQ_BOUNDARY;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_MASTER_DATA_CODE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_NAME_WITH_SPECIAL_CHARS;
+import static org.egov.infra.validation.constants.ValidationRegex.MASTER_DATA_CODE;
+import static org.egov.infra.validation.constants.ValidationRegex.NAME_WITH_SPECIAL_CHARS;
 
 @Entity
 @CompositeUnique(fields = {"boundaryNum", "boundaryType"}, enableDfltMsg = true)
@@ -100,16 +105,19 @@ public class Boundary extends AbstractAuditable {
     @Length(max = 512)
     @SafeHtml
     @NotBlank
+    @Pattern(regexp = NAME_WITH_SPECIAL_CHARS, message = INVALID_NAME_WITH_SPECIAL_CHARS)
     private String name;
 
     @Length(max = 25)
     @SafeHtml
     @NotBlank
     @Column(updatable = false)
+    @Pattern(regexp = MASTER_DATA_CODE, message = INVALID_MASTER_DATA_CODE)
     private String code;
 
     @SafeHtml
     @Length(max = 10)
+    @Pattern(regexp = MASTER_DATA_CODE, message = INVALID_MASTER_DATA_CODE)
     private String lgdCode;
 
     @Positive
@@ -146,6 +154,7 @@ public class Boundary extends AbstractAuditable {
 
     @SafeHtml
     @Length(max = 256)
+    @Pattern(regexp = NAME_WITH_SPECIAL_CHARS, message = INVALID_NAME_WITH_SPECIAL_CHARS)
     private String localName;
 
     @Positive

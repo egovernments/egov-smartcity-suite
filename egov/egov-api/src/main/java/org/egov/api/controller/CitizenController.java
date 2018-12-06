@@ -75,7 +75,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import java.util.Date;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.infra.validation.regex.Constants.EMAIL;
+import static org.egov.infra.validation.constants.ValidationRegex.EMAIL;
 
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1.0")

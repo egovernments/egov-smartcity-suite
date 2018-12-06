@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,25 +46,25 @@
  *
  */
 
-package org.egov.infra.persistence.validator;
+package org.egov.infra.validation.constants;
 
-import org.egov.infra.persistence.validator.annotation.AlphaNumeric;
-import org.egov.infra.validation.constants.ValidationRegex;
+public final class ValidationErrorCode {
+    public static final String INVALID_ALPHABETS_WITH_SPACE = "{invalid.pattern.alphabets.with.space}";
+    public static final String INVALID_MASTER_DATA_CODE = "{invalid.pattern.master.data.code}";
+    public static final String INVALID_NAME_WITH_SPECIAL_CHARS = "{invalid.pattern.name.with.special.chars}";
+    public static final String INVALID_ALPHABETS_UNDERSCORE_HYPHEN_SPACE = "{invalid.pattern.alphabets.with.underscore.hyphen.space}";
+    public static final String INVALID_ALPHANUMERIC_UNDERSCORE_HYPHEN_SPACE = "{invalid.pattern.alphanumeric.with.underscore.hyphen.space}";
+    public static final String INVALID_ALPHANUMERIC_WITH_SPECIAL_CHARS = "{invalid.pattern.alphanumeric.with.special.chars}";
+    public static final String INVALID_PHONE_NUMBER = "{invalid.phone.number}";
+    public static final String INVALID_ALPHANUMERIC_WITH_SPACE = "{invalid.pattern.alphanumeric.with.space}";
+    public static final String INVALID_PAN_NUMBER = "{invalid.pan.number}";
+    public static final String INVALID_SALUTATION = "{invalid.salutation}";
+    public static final String INVALID_PERSON_NAME = "{invalid.person.name}";
+    public static final String INVALID_USERNAME = "{invalid.username}";
+    public static final String INVALID_ALPHABETS = "{invalid.pattern.alphabet}";
+    public static final String INVALID_FILE_NAME = "{invalid.file.name}";
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
-import static org.apache.commons.lang.StringUtils.isBlank;
-
-public class AlphaNumericValidator implements ConstraintValidator<AlphaNumeric, String> {
-
-    @Override
-    public void initialize(AlphaNumeric alphaNumeric) {
-        // Unused
-    }
-
-    @Override
-    public boolean isValid(String value, ConstraintValidatorContext constraintValidatorCtxt) {
-        return isBlank(value) || value.trim().matches(ValidationRegex.ALPHANUMERIC_WITH_SPACE);
+    private ValidationErrorCode() {
+        //only static fields
     }
 }

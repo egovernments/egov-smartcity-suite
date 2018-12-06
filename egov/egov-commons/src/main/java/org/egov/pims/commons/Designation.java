@@ -52,9 +52,7 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infra.validation.regex.Constants;
 import org.hibernate.annotations.NamedQuery;
-import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
@@ -69,10 +67,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_UNDERSCORE_HYPHEN_SPACE;
 import static org.egov.pims.commons.Designation.SEQ_DESIGNATION;
 
 @Entity
@@ -89,7 +89,7 @@ public class Designation extends AbstractAuditable {
     private Long id;
     @NotBlank
     @SafeHtml
-    @Pattern(regexp = Constants.ALLTYPESOFALPHABETS_WITHMIXEDCHAR, message = "Name should contain letters with space and (-,_)")
+    @Pattern(regexp = ALPHABETS_UNDERSCORE_HYPHEN_SPACE, message = "Name should contain letters with space and (-,_)")
     private String name;
     @NotBlank
     @SafeHtml

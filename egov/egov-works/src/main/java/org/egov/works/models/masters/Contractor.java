@@ -54,7 +54,7 @@ import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infra.validation.regex.Constants;
+import org.egov.infra.validation.constants.ValidationRegex;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
@@ -86,10 +86,10 @@ public class Contractor extends BaseModel implements EntityType {
     private String paymentAddress;
 
     @Length(max = 100, message = "contractor.contactPerson.length")
-    @OptionalPattern(regex = Constants.ALPHANUMERIC_WITHSPACE, message = "contractor.contactPerson.alphaNumeric")
+    @OptionalPattern(regex = ValidationRegex.ALPHANUMERIC_WITH_SPACE, message = "contractor.contactPerson.alphaNumeric")
     private String contactPerson;
 
-    @OptionalPattern(regex = Constants.EMAIL, message = "contractor.email.invalid")
+    @OptionalPattern(regex = ValidationRegex.EMAIL, message = "contractor.email.invalid")
     @Length(max = 100, message = "contractor.email.length")
     private String email;
 
@@ -98,21 +98,21 @@ public class Contractor extends BaseModel implements EntityType {
     private String narration;
 
     @Length(max = 10, message = "contractor.panNumber.length")
-    @OptionalPattern(regex = Constants.PANNUMBER, message = "contractor.panNumber.alphaNumeric")
+    @OptionalPattern(regex = ValidationRegex.PAN_NUMBER, message = "contractor.panNumber.alphaNumeric")
     private String panNumber;
 
     @Length(max = 14, message = "contractor.tinNumber.length")
-    @OptionalPattern(regex = Constants.ALPHANUMERIC, message = "contractor.tinNumber.alphaNumeric")
+    @OptionalPattern(regex = ValidationRegex.ALPHANUMERIC, message = "contractor.tinNumber.alphaNumeric")
     private String tinNumber;
 
     private Bank bank;
 
     @Length(max = 15, message = "contractor.ifscCode.length")
-    @OptionalPattern(regex = Constants.ALPHANUMERIC, message = "contractor.ifscCode.alphaNumeric")
+    @OptionalPattern(regex = ValidationRegex.ALPHANUMERIC, message = "contractor.ifscCode.alphaNumeric")
     private String ifscCode;
 
     @Length(max = 22, message = "contractor.bankAccount.length")
-    @OptionalPattern(regex = Constants.ALPHANUMERIC, message = "contractor.bankAccount.alphaNumeric")
+    @OptionalPattern(regex = ValidationRegex.ALPHANUMERIC, message = "contractor.bankAccount.alphaNumeric")
     private String bankAccount;
 
     @Length(max = 50, message = "contractor.pwdApprovalCode.length")
@@ -124,7 +124,7 @@ public class Contractor extends BaseModel implements EntityType {
     private List<ContractorDetail> contractorDetails = new LinkedList<ContractorDetail>();
 
     @Length(max = 10)
-    @OptionalPattern(regex = Constants.MOBILE_NUM, message = "depositworks.roadcut.invalid.mobileno")
+    @OptionalPattern(regex = ValidationRegex.MOBILE_NUM, message = "depositworks.roadcut.invalid.mobileno")
     private String mobileNumber;
 
     @Override

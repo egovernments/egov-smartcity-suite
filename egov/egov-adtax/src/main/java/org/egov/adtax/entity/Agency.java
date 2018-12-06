@@ -48,8 +48,11 @@
 
 package org.egov.adtax.entity;
 
-import java.util.HashSet;
-import java.util.Set;
+import org.egov.adtax.entity.enums.AgencyStatus;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -67,25 +70,20 @@ import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.egov.adtax.entity.enums.AgencyStatus;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infra.validation.regex.Constants;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import static org.egov.infra.validation.constants.ValidationRegex.EMAIL;
+import static org.egov.infra.validation.constants.ValidationRegex.MOBILE_NUM;
 
 @Entity
 @Table(name = "EGADTAX_AGENCY")
 @SequenceGenerator(name = Agency.SEQ_AGENCY, sequenceName = Agency.SEQ_AGENCY, allocationSize = 1)
-@Unique(id = "id", tableName = "EGADTAX_AGENCY", columnName = { "code", "name" }, fields = {
-        "code", "name" }, enableDfltMsg = true, message = "Already Exist.Value should be unique.")
+@Unique(fields = {"code", "name"}, enableDfltMsg = true, message = "Already Exist.Value should be unique.")
 public class Agency extends AbstractAuditable {
 
-    private static final long serialVersionUID = 4958014584254475596L;
-
     public static final String SEQ_AGENCY = "SEQ_EGADTAX_AGENCY";
-
+    private static final long serialVersionUID = 4958014584254475596L;
     @Id
     @GeneratedValue(generator = SEQ_AGENCY, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -103,13 +101,13 @@ public class Agency extends AbstractAuditable {
     @SafeHtml
     private String ssId;
 
-    @Email(regexp = Constants.EMAIL)
+    @Email(regexp = EMAIL)
     @Length(max = 128)
     @SafeHtml
     private String emailId;
 
     @NotNull
-    @Pattern(regexp = Constants.MOBILE_NUM)
+    @Pattern(regexp = MOBILE_NUM)
     @Length(max = 15)
     @SafeHtml
     private String mobileNumber;
@@ -138,14 +136,14 @@ public class Agency extends AbstractAuditable {
     }
 
     @Override
-    protected void setId(final Long id) {
-        this.id = id;
-
+    public Long getId() {
+        return id;
     }
 
     @Override
-    public Long getId() {
-        return id;
+    protected void setId(final Long id) {
+        this.id = id;
+
     }
 
     public String getCode() {

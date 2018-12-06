@@ -67,7 +67,7 @@ import java.util.regex.Pattern;
 
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import static org.egov.infra.security.utils.scanner.VirusScanner.FOUND;
-import static org.egov.infra.validation.regex.Constants.FILE_NAME;
+import static org.egov.infra.validation.constants.ValidationRegex.FILE_NAME;
 
 @Service
 public class FileValidator {

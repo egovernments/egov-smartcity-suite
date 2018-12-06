@@ -65,8 +65,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 
-import static org.egov.infra.validation.regex.Constants.EMAIL;
-import static org.egov.infra.validation.regex.Constants.MOBILE_NUM;
+import static org.egov.infra.validation.constants.ValidationRegex.EMAIL;
+import static org.egov.infra.validation.constants.ValidationRegex.MOBILE_NUM;
 import static org.egov.pgr.entity.Complainant.SEQ_COMPLAINANT;
 
 @Entity

@@ -70,7 +70,8 @@
                             <spring:message code="lbl.hierarchyType.name"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-6">
-                            <form:input path="name" id="name" type="text" class="form-control low-width is_valid_alphanumeric" placeholder="" autocomplete="off" required="required"/>
+                            <form:input path="name" id="name" type="text" class="form-control low-width is_valid_alphabet"
+                                        placeholder="" autocomplete="off" required="required" maxlength="128"/>
                             <form:errors path="name" cssClass="add-margin error-msg"/>
                         </div>
                     </div>
@@ -79,7 +80,8 @@
                             <spring:message code="lbl.hierarchyType.code"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-6">
-                            <form:input path="code" id="code" type="text" class="form-control low-width patternvalidation" data-pattern="masterCode" placeholder="" autocomplete="off" required="required" maxlength="25"/>
+                            <form:input path="code" id="code" type="text" class="form-control low-width patternvalidation"
+                                        data-pattern="masterCode" placeholder="" autocomplete="off" required="required" maxlength="25"/>
                             <form:errors path="code" cssClass="add-margin error-msg"/>
                         </div>
                     </div>
@@ -88,7 +90,8 @@
                             <spring:message code="lbl.hierarchyType.localName"/>
                         </label>
                         <div class="col-sm-6">
-                            <form:input path="localName" id="localName" type="text" class="form-control low-width is_valid_alphanumeric" placeholder="" autocomplete="off"/>
+                            <form:input path="localName" id="localName" type="text" class="form-control low-width is_valid_alphabet"
+                                        placeholder="" autocomplete="off" maxlength="256"/>
                             <form:errors path="localName" cssClass="add-margin error-msg"/>
                         </div>
                     </div>

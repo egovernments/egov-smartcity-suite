@@ -52,7 +52,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.ContractorGrade;
-import org.egov.infra.validation.regex.Constants;
+import org.egov.infra.validation.constants.ValidationRegex;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.works.master.service.ContractorGradeService;
@@ -174,7 +174,7 @@ public class ContractorGradeAction extends SearchFormAction {
             setMaxAmount(Double.parseDouble(s1));
 
         if (grade != null && !grade.equals("")) {
-            hasNoErrors = Pattern.matches(Constants.ALPHANUMERIC_WITHSPACE, grade);
+            hasNoErrors = Pattern.matches(ValidationRegex.ALPHANUMERIC_WITH_SPACE, grade);
             if (hasNoErrors == false)
                 addActionError(getText("contractorGrade.grade.alphaNumeric"));
         }

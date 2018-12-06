@@ -107,6 +107,6 @@ public class ModifyCrossHierarchyController {
             return "cross-hierarchy-edit";
         crossHierarchyService.addOrRemoveCrossHierarchy(crossHierarchyRequest);
         redirectAttrs.addFlashAttribute("message", "msg.crosshierarchy.update.success");
-        return "redirect:/crosshierarchy/update";
+        return "redirect:/crosshierarchy/search";
     }
 }

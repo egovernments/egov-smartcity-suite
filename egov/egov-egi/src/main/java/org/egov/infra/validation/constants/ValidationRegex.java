@@ -46,26 +46,24 @@
  *
  */
 
-package org.egov.infra.validation.regex;
+package org.egov.infra.validation.constants;
 
-public class Constants {
+public class ValidationRegex {
     public static final String IP_ADDRESS = "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
-    public static final String PHONE_NUM = "^(\\+[1-9][0-9]*(\\([0-9]*\\)|-[0-9]*-))?[0]?[1-9][0-9\\- ]*$";
+    public static final String PHONE_NUMBER = "[0-9 -]+";
     public static final String MOBILE_NUM = "^((\\+)?(\\d{2}[-]))?(\\d{10}){1}?$";
     public static final String STRONG_PASSWORD = "(?=^.{8,32}$)(?=.*\\d)(?!.*[&<>#%\\'\\\"\\\\\\/])(?!.*\\s)(?=.*[A-Z])(?=.*[a-z]).*$";
     public static final String MEDIUM_PASSWORD = "(?=^.{8,32}$)(?=.*\\d)(?!.*\\s)(?=.*[A-Z])(?=.*[a-z]).*$";
     public static final String LOW_PASSWORD = "(?=^.{4,32}$)(?!.*\\s)(?=.*\\d)(?=.*[A-Z])(?=.*[a-z]).*$";
     public static final String NONE_PASSWORD = "(?=^.{6,32}$)(?!.*\\s).*$";
     public static final String EMAIL = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
-    public static final String MIXEDCHAR = "^[a-z|A-Z|]+[a-z|A-Z|&/ :,-.]*";
     public static final String ALPHANUMERIC = "[0-9a-zA-Z]+";
-    public static final String PANNUMBER = "[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}";
+    public static final String PAN_NUMBER = "[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}";
     public static final String NUMERIC = "[0-9]+";
     public static final String ALPHABETS = "[A-Za-z]+";
-    public static final String ALPHABETS_WITHSPACE = "[A-Za-z ]+";
-    public static final String ALPHANUMERIC_WITHSPACE = "[0-9a-zA-Z ]+";
+    public static final String ALPHABETS_WITH_SPACE = "[A-Za-z ]+";
+    public static final String ALPHANUMERIC_WITH_SPACE = "[0-9a-zA-Z ]+";
     public static final String ALPHANUMERIC_WITHSLASHES = "[0-9a-zA-Z/]+";
-    public static final String NUMERIC_WITHMIXEDCHAR = "[0-9-,]+";
     public static final String DATEFORMAT = "(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)[0-9]{2}";
     public static final String FILE_NAME = "^[\\w\\[\\]()\\-\\s]{1,245}.(%s){1,9}$";
     /**
@@ -73,15 +71,12 @@ public class Constants {
      * strings.
      */
     public static final String UNSIGNED_NUMERIC = "^\\d*\\.?\\d*$";
-    public static final String UNSIGNED_NUMBER = "^\\d*$";
-    /**
-     * Matches any floating point number/NUMERIC, including optional sign
-     * character (-). Also matches empty strings.
-     */
-    public static final String SIGNED_NUMERIC = "^(\\-)?\\d*(\\.\\d+)?$";
-    public static final String SIGNED_NUMBER = "^(\\-)?\\d*$";
-    public static final String ALPHABETS_WITHMIXEDCHAR = "[A-Z-_ ]+";
-    public static final String ALLTYPESOFALPHABETS_WITHMIXEDCHAR = "[A-Za-z-_ ]+";
-    public static final String ALPHANUMERICWITHSPECIALCHAR = "[0-9a-zA-Z-& :,/.()@]+";
-
+    public static final String MASTER_DATA_CODE = "[\\w-]+";
+    public static final String NAME_WITH_SPECIAL_CHARS = "[\\w ()/-]+";
+    public static final String ALPHABETS_UNDERSCORE_HYPHEN_SPACE = "[A-Za-z_- ]+";
+    public static final String ALPHANUMERIC_UNDERSCORE_HYPHEN_SPACE = "[\\w- ]+";
+    public static final String ALPHANUMERIC_WITH_SPECIAL_CHARS = "[\\w-& :,/.()@#]+";
+    public static final String SALUTATION = "^(Mrs?|Miss)$";
+    public static final String PERSON_NAME = "^([[a-zA-Z]+([. a-zA-Z]+)])$";
+    public static final String USERNAME = "^(?:[\\w+( \\w+)*]{2,64}|[[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*]{2,100}@(?:[a-zA-Z0-9-]{1,22}+\\.)+[a-zA-Z]{2,6})$";
 }
