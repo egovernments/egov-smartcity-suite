@@ -251,9 +251,9 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
              */
 
         } catch (final HibernateException e) {
-            throw new HibernateException("exception in voucherHibDao while deleting from general ledger" + e);
+            throw new HibernateException("exception in voucherHibDao while deleting from general ledger" , e);
         } catch (final ApplicationRuntimeException e) {
-            throw new ApplicationRuntimeException("exception in voucherHibDao while deleting from general ledger" + e);
+            throw new ApplicationRuntimeException("exception in voucherHibDao while deleting from general ledger", e);
         }
 
     }

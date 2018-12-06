@@ -2364,7 +2364,7 @@ public class CreateVoucher {
 				transaxtionList.add(transaction);
 			}
 		} catch (final Exception e) {
-			LOGGER.error("Exception occured while posting data into voucher detail and transaction");
+			LOGGER.error("Exception occured while posting data into voucher detail and transaction" ,e);
 			throw new ApplicationRuntimeException(
 					"Exception occured while posting data into voucher detail and transaction"
 							+ e.getMessage());
@@ -2604,7 +2604,7 @@ public class CreateVoucher {
 					formatter.format(vh.getVoucherDate())))
 				throw new ApplicationRuntimeException("Voucher creation Failed");
 		} catch (final Exception e) {
-			LOGGER.error("Inside exception updatePJV" + e.getMessage());
+			LOGGER.error(ERR, e);
 			throw new ApplicationRuntimeException(e.getMessage());
 		}
 	}
@@ -2657,8 +2657,7 @@ public class CreateVoucher {
 			pstmt1.executeUpdate();
 
 		} catch (final Exception e) {
-			LOGGER.error("Inside exception deleteVoucherdetailAndGL"
-					+ e.getMessage());
+			LOGGER.error("Inside exception deleteVoucherdetailAndGL", e);
 			throw new ApplicationRuntimeException(e.getMessage());
 		}
 	}
@@ -3075,7 +3074,7 @@ public class CreateVoucher {
 	           } else
 	               isUnique = true;
 	       } catch (final Exception ex) {
-	           LOGGER.error("error in finding unique VoucherNumber");
+	           LOGGER.error("error in finding unique VoucherNumber" , ex);
 	            throw new ApplicationRuntimeException("error in finding unique VoucherNumber"); 
 	       } finally {
 	           
@@ -3091,7 +3090,7 @@ public class CreateVoucher {
 			final List<BigInteger> rset = pst.list();
 			fiscalPeriod = rset != null ? rset.get(0) : BigInteger.ZERO;
 		} catch (final Exception e) {
-			LOGGER.error("Exception..." + e.getMessage());
+			LOGGER.error(ERR , e);
 			throw new TaskFailedException(e.getMessage());
 		}
 		return fiscalPeriod.toString();

@@ -124,10 +124,10 @@ public class BudgetGroupHibernateDAO implements BudgetGroupDAO {
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("budgetGroup saved id" + budgetGroup.getName());
         } catch (final ValidationException v) {
-            LOGGER.error("Error in createBudgetGroup===" + v.getErrors());
+            LOGGER.error("Error in createBudgetGroup===", v);
             throw new ValidationException(v.getErrors());
         } catch (final Exception e) {
-            LOGGER.error(e.getCause() + " Error in createBudgetGroup");
+            LOGGER.error(" Error in createBudgetGroup" , e.getCause());
             throw new ValidationException(EMPTY_STRING, "egovexception in creation of budgetGroup" + e);
         }
 
@@ -170,10 +170,10 @@ public class BudgetGroupHibernateDAO implements BudgetGroupDAO {
                 throw new ValidationException(EMPTY_STRING, "No budget defined for the year "
                         + fiancialyear.getFinYearRange());
         } catch (final ValidationException v) {
-            LOGGER.error("Exception in getBudgetHeadByDateAndFunction API()" + v.getErrors());
+            LOGGER.error("Exception in getBudgetHeadByDateAndFunction API()" ,v);
             throw new ValidationException(v.getErrors());
         } catch (final Exception e) {
-            LOGGER.error("Exception in getBudgetHeadByDateAndFunction API()=======" + e.getMessage());
+            LOGGER.error("Exception in getBudgetHeadByDateAndFunction API()=======" , e);
             throw new ValidationException(EMPTY_STRING, e.getMessage());
         }
         return budgetHeadList;
@@ -195,10 +195,10 @@ public class BudgetGroupHibernateDAO implements BudgetGroupDAO {
             final Query qry = session.createQuery(" from BudgetGroup where isActive=true order by name");
             budgetHeadList = qry.list();
         } catch (final ValidationException v) {
-            LOGGER.error("Exception in getBudgetGroupList API()" + v.getErrors());
+            LOGGER.error("Exception in getBudgetGroupList API()" ,v);
             throw new ValidationException(v.getErrors());
         } catch (final Exception e) {
-            LOGGER.error("Exception in getBudgetGroupList API()=======" + e.getMessage());
+            LOGGER.error("Exception in getBudgetGroupList API()=======", e);
             throw new ValidationException(EMPTY_STRING, e.getMessage());
         }
         return budgetHeadList;
@@ -237,10 +237,10 @@ public class BudgetGroupHibernateDAO implements BudgetGroupDAO {
                 throw new ValidationException(EMPTY_STRING, "No budget heads mapped for the function code - "
                         + functionCode);
         } catch (final ValidationException v) {
-            LOGGER.error("Exception in getBudgetHeadByFunction API()" + v.getErrors());
+            LOGGER.error("Exception in getBudgetHeadByFunction API()", v);
             throw new ValidationException(v.getErrors());
         } catch (final Exception e) {
-            LOGGER.error("Exception in getBudgetHeadByFunction API()=======" + e.getMessage());
+            LOGGER.error("Exception in getBudgetHeadByFunction API()=======", e);
             throw new ValidationException(EMPTY_STRING, e.getMessage());
         }
         return budgetHeadList;
@@ -400,10 +400,10 @@ public class BudgetGroupHibernateDAO implements BudgetGroupDAO {
             }
 
         } catch (final ValidationException v) {
-            LOGGER.error("Exception in getBudgetHeadByFunction API()" + v.getErrors());
+            LOGGER.error("Exception in getBudgetHeadByFunction API()", v);
             throw new ValidationException(v.getErrors());
         } catch (final Exception e) {
-            LOGGER.error("Exception in getBudgetHeadByFunction API()=======" + e.getMessage());
+            LOGGER.error("Exception in getBudgetHeadByFunction API()=======" , e);
             throw new ValidationException(EMPTY_STRING, e.getMessage());
         }
         return budgetHeadList;
@@ -457,10 +457,10 @@ public class BudgetGroupHibernateDAO implements BudgetGroupDAO {
                 throw new ValidationException(EMPTY_STRING,
                         "No budget heads mapped for the given fund,department,function and account type ");
         } catch (final ValidationException v) {
-            LOGGER.error("Exception in getBudgetGroupsByFundFunctionDeptAndAccountType API()" + v.getErrors());
+            LOGGER.error("Exception in getBudgetGroupsByFundFunctionDeptAndAccountType API()" , v);
             throw new ValidationException(v.getErrors());
         } catch (final Exception e) {
-            LOGGER.error("Exception in getBudgetGroupsByFundFunctionDeptAndAccountType API()=======" + e.getMessage());
+            LOGGER.error("Exception in getBudgetGroupsByFundFunctionDeptAndAccountType API()" ,e);
             throw new ValidationException(EMPTY_STRING, e.getMessage());
         }
         return budgetHeadList;
