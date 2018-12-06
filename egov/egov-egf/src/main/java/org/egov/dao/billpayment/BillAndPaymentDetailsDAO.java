@@ -6,5 +6,5 @@ import java.util.List;
 
 
 public interface BillAndPaymentDetailsDAO {
-	List<BillPaymentDetails> getBillAndPaymentDetails(String billNo);
+    List<BillPaymentDetails> getBillAndPaymentDetails(String billNo);
 }

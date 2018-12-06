@@ -53,8 +53,9 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.bills.EgBillregister;
-import org.hibernate.query.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
+import org.hibernate.type.LongType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -69,6 +70,14 @@ import java.util.List;
 @Transactional(readOnly = true)
 @Repository
 public class EgBillRegisterHibernateDAO {
+    private final Logger LOGGER = Logger.getLogger(getClass());
+    @PersistenceContext
+    private EntityManager entityManager;
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService<EgBillregister, Long> egBillRegisterService;
+    private Session session;
+
     @Transactional
     public EgBillregister update(final EgBillregister entity) {
         getCurrentSession().update(entity);
@@ -86,38 +95,20 @@ public class EgBillRegisterHibernateDAO {
         getCurrentSession().delete(entity);
     }
 
-    
     public EgBillregister findById(Long id, boolean lock) {
         return (EgBillregister) getCurrentSession().load(EgBillregister.class, id);
     }
 
     public List<EgBillregister> findAll() {
-        return (List<EgBillregister>) getCurrentSession().createCriteria(EgBillregister.class).list();
+        return getCurrentSession().createQuery("from EgBillregister").list();
     }
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 
-    private final Logger LOGGER = Logger.getLogger(getClass());
-    @Autowired
-    @Qualifier("persistenceService")
-    private PersistenceService<EgBillregister, Long> egBillRegisterService;
-    private Session session;
-
-   
-
     public List<String> getDistinctEXpType() {
-        session = getCurrentSession();
-
-        final List<String> list = session.createQuery("select DISTINCT (expendituretype) from EgBillregister egbills")
-                .list();
-        return list;
-
+        return getCurrentSession().createQuery("select DISTINCT (expendituretype) from EgBillregister egbills").list();
     }
 
     // shoud get called only for other t Fixed asset
@@ -129,8 +120,8 @@ public class EgBillRegisterHibernateDAO {
                     "VoucherHeader supplied is null")));
         session = getCurrentSession();
         final Query qry = session
-                .createQuery("from  EgBillregister br where br.egBillregistermis.voucherHeader.id=:voucherId");
-        qry.setLong("voucherId", voucherHeader.getId());
+                .createQuery("from  EgBillregister br where br.egBillregistermis.voucherHeader.id = :voucherId")
+                .setParameter("voucherId", voucherHeader.getId(), LongType.INSTANCE);
         final EgBillregister billRegister = (EgBillregister) qry.uniqueResult();
         return billRegister == null ? null : billRegister.getExpendituretype();
     }
@@ -144,11 +135,11 @@ public class EgBillRegisterHibernateDAO {
                     "VoucherHeader supplied is null")));
         session = getCurrentSession();
         final Query qry = session
-                .createQuery("from  EgBillregister br where br.egBillregistermis.voucherHeader.id=:voucherId");
-        qry.setLong("voucherId", voucherHeader.getId());
+                .createQuery("from  EgBillregister br where br.egBillregistermis.voucherHeader.id = :voucherId")
+                .setParameter("voucherId", voucherHeader.getId(), LongType.INSTANCE);
         final EgBillregister billRegister = (EgBillregister) qry.uniqueResult();
         return billRegister == null ? "General"
                 : billRegister.getEgBillregistermis().getEgBillSubType() == null ? billRegister.getExpendituretype()
-                        : billRegister.getEgBillregistermis().getEgBillSubType().getName();
+                : billRegister.getEgBillregistermis().getEgBillSubType().getName();
     }
 }

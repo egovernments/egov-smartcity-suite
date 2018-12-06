@@ -59,6 +59,9 @@ import java.util.List;
 @Transactional(readOnly = true)
 @Repository
 public class BudgetUsageHibernateDAO implements BudgetUsageDAO {
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Transactional
     public BudgetUsage update(final BudgetUsage entity) {
         getCurrentSession().update(entity);
@@ -82,17 +85,12 @@ public class BudgetUsageHibernateDAO implements BudgetUsageDAO {
     }
 
     public List<BudgetUsage> findAll() {
-        return (List<BudgetUsage>) getCurrentSession().createCriteria(BudgetUsage.class).list();
+        return (List<BudgetUsage>) getCurrentSession().createQuery("from BudgetUsage").list();
     }
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 
-    
 
 }

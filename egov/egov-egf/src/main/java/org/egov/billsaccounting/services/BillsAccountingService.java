@@ -57,8 +57,8 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.voucher.PreApprovedVoucher;
-import org.hibernate.query.Query;
 import org.hibernate.Session;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,9 +67,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *
  * @author Manikanta
- *
  */
 
 @Transactional(readOnly = true)
@@ -79,41 +77,40 @@ public class BillsAccountingService {
 
     private static final String MISSINGMSG = "is not defined in AppConfig values cannot proceed creating voucher";
 
-   
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired
+
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    @Autowired
     private AppConfigValueService appConfigValuesService;
 
     @Autowired
     private CreateVoucher createVoucher;
+
     /**
      * API to create voucher in pre approved status
+     *
      * @param billId
      * @return
      */
     @Transactional
     public long createPreApprovedVoucherFromBill(final int billId, final String voucherNumber, final Date voucherDate)
-            throws ApplicationRuntimeException, ValidationException
-    {
+            throws ApplicationRuntimeException, ValidationException {
         String voucherStatus = null;
         long vh = -1;
         try {
             final List vStatusList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF", "PREAPPROVEDVOUCHERSTATUS");
 
-            if (!vStatusList.isEmpty() && vStatusList.size() == 1)
-            {
+            if (!vStatusList.isEmpty() && vStatusList.size() == 1) {
                 final AppConfigValues appVal = (AppConfigValues) vStatusList.get(0);
                 voucherStatus = appVal.getValue();
             } else
                 throw new ApplicationRuntimeException("PREAPPROVEDVOUCHERSTATUS" + MISSINGMSG);
-           vh = createVoucher.createVoucherFromBill(billId, voucherStatus, voucherNumber, voucherDate);
+            vh = createVoucher.createVoucherFromBill(billId, voucherStatus, voucherNumber, voucherDate);
         } catch (final ValidationException e) {
             LOGGER.error(e.getErrors());
             throw new ValidationException(e.getErrors());
-        } catch (final Exception e)
-        {
+        } catch (final Exception e) {
             LOGGER.error(e.getMessage());
             throw new ApplicationRuntimeException(e.getMessage());
 
@@ -124,27 +121,25 @@ public class BillsAccountingService {
 
     /**
      * API to create voucher in pre approved status
+     *
      * @param billId
      * @return
      */
     @Transactional
     public long createPreApprovedVoucherFromBillForPJV(final int billId, final List<PreApprovedVoucher> voucherdetailList,
-            final List<PreApprovedVoucher> subLedgerList) throws ApplicationRuntimeException
-    {
+                                                       final List<PreApprovedVoucher> subLedgerList) throws ApplicationRuntimeException {
         String voucherStatus = null;
         long vh = -1;
         try {
             final List vStatusList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF", "PREAPPROVEDVOUCHERSTATUS");
 
-            if (!vStatusList.isEmpty() && vStatusList.size() == 1)
-            {
+            if (!vStatusList.isEmpty() && vStatusList.size() == 1) {
                 final AppConfigValues appVal = (AppConfigValues) vStatusList.get(0);
                 voucherStatus = appVal.getValue();
             } else
                 throw new ApplicationRuntimeException("PREAPPROVEDVOUCHERSTATUS" + MISSINGMSG);
             vh = createVoucher.createVoucherFromBillForPJV(billId, voucherStatus, voucherdetailList, subLedgerList);
-        } catch (final Exception e)
-        {
+        } catch (final Exception e) {
             LOGGER.error(e.getMessage());
             throw new ApplicationRuntimeException(e.getMessage());
 
@@ -155,18 +150,17 @@ public class BillsAccountingService {
 
     /**
      * API to Change the status of preapproved voucher
+     *
      * @param vouhcerheaderid
      * @return
      */
     @Transactional
-    public void createVoucherfromPreApprovedVoucher(final long vouhcerheaderid) throws ApplicationRuntimeException
-    {
+    public void createVoucherfromPreApprovedVoucher(final long vouhcerheaderid) throws ApplicationRuntimeException {
         String voucherStatus = null;
 
         try {
             final List vStatusList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF", "APPROVEDVOUCHERSTATUS");
-            if (!vStatusList.isEmpty() && vStatusList.size() == 1)
-            {
+            if (!vStatusList.isEmpty() && vStatusList.size() == 1) {
                 final AppConfigValues appVal = (AppConfigValues) vStatusList.get(0);
                 voucherStatus = appVal.getValue();
             } else
@@ -184,25 +178,23 @@ public class BillsAccountingService {
 
     /**
      * Api to create voucher from bill with normal flow
+     *
      * @param billId
      * @return
      */
     @Transactional
-    public long createVoucherFromBill(final int billId) throws ApplicationRuntimeException
-    {
+    public long createVoucherFromBill(final int billId) throws ApplicationRuntimeException {
         try {
             String voucherStatus = null;
             final List vStatusList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF", "DEFAULTVOUCHERCREATIONSTATUS");
-            if (!vStatusList.isEmpty() && vStatusList.size() == 1)
-            {
+            if (!vStatusList.isEmpty() && vStatusList.size() == 1) {
                 final AppConfigValues appVal = (AppConfigValues) vStatusList.get(0);
                 voucherStatus = appVal.getValue();
             } else
                 throw new ApplicationRuntimeException("DEFAULTVOUCHERCREATIONSTATUS" + MISSINGMSG);
-             final long vh = createVoucher.createVoucherFromBill(billId, voucherStatus, null, null);
+            final long vh = createVoucher.createVoucherFromBill(billId, voucherStatus, null, null);
             return vh;
-        } catch (final Exception e)
-        {
+        } catch (final Exception e) {
             LOGGER.error(e.getMessage());
             throw new ApplicationRuntimeException(e.getMessage());
         }
@@ -211,32 +203,30 @@ public class BillsAccountingService {
 
     @Transactional
     public void updatePJV(final CVoucherHeader vh, final List<PreApprovedVoucher> detailList,
-            final List<PreApprovedVoucher> subledgerlist)
-            throws ApplicationRuntimeException
-    {
+                          final List<PreApprovedVoucher> subledgerlist)
+            throws ApplicationRuntimeException {
         createVoucher.updatePJV(vh, detailList, subledgerlist);
     }
 
     /**
      * To get the PJV number for the bill number
+     *
      * @param billNumber
      * @return
      */
     @Transactional
-    public CVoucherHeader getPJVNumberForBill(final String billNumber) throws ApplicationException
-    {
-        try
-        {
+    public CVoucherHeader getPJVNumberForBill(final String billNumber) throws ApplicationException {
+        try {
             final Session session = persistenceService.getSession();
-            final Query query = session
-                    .createQuery("select br.egBillregistermis.voucherHeader from EgBillregister br where br.billnumber=:billNumber");
-            query.setString("billNumber", billNumber);
-            if (null == query.uniqueResult())
-                throw new ApplicationException("PJV is not created for this bill number [" + billNumber + "]");
+            final CVoucherHeader voucherHeader = (CVoucherHeader) session
+                    .createQuery("select br.egBillregistermis.voucherHeader from EgBillregister br where br.billnumber = :billNumber")
+                    .setParameter("billNumber", billNumber, StringType.INSTANCE)
+                    .uniqueResult();
+            if (null == voucherHeader)
+                throw new ApplicationException("PJV is not created for this bill number [".concat(billNumber).concat("]"));
 
-            return (CVoucherHeader) query.uniqueResult();
-        } catch (final Exception e)
-        {
+            return voucherHeader;
+        } catch (final Exception e) {
             throw new ApplicationException(e.getMessage());
         }
     }

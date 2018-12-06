@@ -102,10 +102,11 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
             final Map<String, Object> searchFilterMap) throws ApplicationException, ParseException {
 
         final StringBuffer sql = new StringBuffer(500);
-        sql.append(" and vh.type='Journal Voucher' ");
+        sql.append(" and vh.type = 'Journal Voucher' ");
         sql.append(" and vh.isConfirmed != 1 ");
-        if (null != voucherHeader.getVoucherNumber() && StringUtils.isNotEmpty(voucherHeader.getVoucherNumber()))
+        if (null != voucherHeader.getVoucherNumber() && StringUtils.isNotEmpty(voucherHeader.getVoucherNumber())) {
             sql.append(" and vh.voucherNumber like '%").append(voucherHeader.getVoucherNumber()).append("%'");
+        }
         if (null != searchFilterMap.get(Constants.VOUCHERDATEFROM) && StringUtils.isNotEmpty
                 (searchFilterMap.get(Constants.VOUCHERDATEFROM).toString()))
             sql.append(" and vh.voucherDate>='").append(Constants.DDMMYYYYFORMAT1.format(Constants.DDMMYYYYFORMAT2.

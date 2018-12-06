@@ -87,7 +87,7 @@ public interface BudgetGroupDAO {
     BudgetGroup update(BudgetGroup entity);
 
     public List<BudgetGroup> getBudgetGroupsByFundFunctionDeptAndAccountType(final Integer fund, final Long dept,
-            final Long function, final String accountType) throws ValidationException;
+                                                                             final Long function, final String accountType) throws ValidationException;
 
     void delete(BudgetGroup entity);
 }

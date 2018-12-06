@@ -51,13 +51,19 @@ package org.egov.dao.bills;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.model.bills.EgBilldetails;
-import org.hibernate.query.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -68,6 +74,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 @Repository
 @Transactional(readOnly = true)
 public class EgBilldetailsHibernateDAO implements EgBilldetailsDAO {
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -93,7 +100,7 @@ public class EgBilldetailsHibernateDAO implements EgBilldetailsDAO {
     }
 
     public List<EgBilldetails> findAll() {
-        return (List<EgBilldetails>) getCurrentSession().createCriteria(EgBilldetails.class).list();
+        return getCurrentSession().createQuery("from EgBilldetails").list();
     }
 
     public Session getCurrentSession() {
@@ -103,65 +110,56 @@ public class EgBilldetailsHibernateDAO implements EgBilldetailsDAO {
     @Override
     public BigDecimal getOtherBillsAmount(final Long minGlCodeId, final Long maxGlCodeId, final Long majGlCodeId,
                                           final String finYearID, final String functionId, final String schemeId, final String subSchemeId,
-                                          final String asOnDate, final String billType) throws Exception {
+                                          final String asOnDate, final String billType) {
         final StringBuilder qryStr = new StringBuilder();
         final BigDecimal result = new BigDecimal("0.00");
         try {
-            String dateCond = "";
-            String funcStr = "";
-            String schStr = "";
-            String glcodeStr = "";
-
-            qryStr.append("select sum(bd.debitamount) from EgBilldetails bd, EgBillregister br, EgBillregistermis brm where br.id=bd.egBillregister.id and br.id=brm.egBillregister.id and bd.egBillregister.id=brm.egBillregister.id and brm.financialyear.id =:finYearID and br.expendituretype not in ( :billType)  and br.status.id not in (SELECT es.id FROM EgwStatus es  WHERE  UPPER(es.description) LIKE '%CANCELLED%') ");
-
+            qryStr.append("select sum(bd.debitamount)")
+                    .append(" from EgBilldetails bd, EgBillregister br, EgBillregistermis brm")
+                    .append(" where br.id = bd.egBillregister.id and br.id = brm.egBillregister.id and bd.egBillregister.id = brm.egBillregister.id")
+                    .append(" and brm.financialyear.id = :finYearID and br.expendituretype not in (:billType) and br.status.id not in")
+                    .append(" (SELECT es.id FROM EgwStatus es WHERE UPPER(es.description) LIKE '%CANCELLED%') ");
             if (isNotBlank(asOnDate))
-                dateCond = " and br.billdate <=:asOnDate";
+                qryStr.append(" and br.billdate <= :asOnDate");
 
             if (isNotBlank(functionId))
-                funcStr = " and bd.functionid =:functionId";
+                qryStr.append(" and bd.functionid = :functionId");
 
             if (isNotBlank(schemeId) && isBlank(subSchemeId))
-                schStr = "  and brm.scheme =:schemeId";
+                qryStr.append(" and brm.scheme = :schemeId");
 
             if (isNotBlank(schemeId) && isNotBlank(subSchemeId))
-                schStr = "  and brm.scheme =:schemeId and brm.subScheme =:subSchemeId";
+                qryStr.append(" and brm.scheme = :schemeId and brm.subScheme = :subSchemeId");
 
             if (minGlCodeId != 0 && maxGlCodeId != 0)
-                glcodeStr = " and bd.glcodeid between :minGlCodeId and :maxGlCodeId";
+                qryStr.append(" and bd.glcodeid between :minGlCodeId and :maxGlCodeId");
             else if (maxGlCodeId != 0)
-                glcodeStr = " and bd.glcodeid =:maxGlCodeId";
+                qryStr.append(" and bd.glcodeid = :maxGlCodeId");
             else if (majGlCodeId != 0)
-                glcodeStr = " and bd.glcodeid =:majGlCodeId";
+                qryStr.append(" and bd.glcodeid = :majGlCodeId");
 
-            qryStr.append(dateCond);
-            qryStr.append(funcStr);
-            qryStr.append(schStr);
-            qryStr.append(glcodeStr);
             Query qry = getCurrentSession().createQuery(qryStr.toString());
             if (isNotBlank(functionId))
-                qry.setString("functionId", functionId);
+                qry.setParameter("functionId", functionId, StringType.INSTANCE);
             if (isNotBlank(schemeId) && isBlank(subSchemeId))
-                qry.setString("schemeId", schemeId);
+                qry.setParameter("schemeId", schemeId, StringType.INSTANCE);
             if (isNotBlank(schemeId) && isNotBlank(subSchemeId)) {
-                qry.setString("schemeId", schemeId);
-                qry.setString("subSchemeId", subSchemeId);
+                qry.setParameter("schemeId", schemeId, StringType.INSTANCE);
+                qry.setParameter("subSchemeId", subSchemeId, StringType.INSTANCE);
             }
             if (isNotBlank(asOnDate))
-                qry.setString("asOnDate", asOnDate);
+                qry.setParameter("asOnDate", asOnDate, StringType.INSTANCE);
             if (minGlCodeId != 0 && maxGlCodeId != 0) {
-                qry.setLong("minGlCodeId", minGlCodeId);
-                qry.setLong("maxGlCodeId", maxGlCodeId);
+                qry.setParameter("minGlCodeId", minGlCodeId, LongType.INSTANCE);
+                qry.setParameter("maxGlCodeId", maxGlCodeId, LongType.INSTANCE);
             } else if (maxGlCodeId != 0)
-                qry.setLong("maxGlCodeId", maxGlCodeId);
+                qry.setParameter("maxGlCodeId", maxGlCodeId, LongType.INSTANCE);
             else if (majGlCodeId != 0)
-                qry.setLong("majGlCodeId", majGlCodeId);
-            qry.setString("finYearID", finYearID);
-            qry.setString("billType", billType);
-
-            if (qry.uniqueResult() != null)
-                return new BigDecimal(qry.uniqueResult().toString());
-            else
-                return result;
+                qry.setParameter("majGlCodeId", majGlCodeId, LongType.INSTANCE);
+            qry.setParameter("finYearID", finYearID, StringType.INSTANCE);
+            qry.setParameter("billType", billType, StringType.INSTANCE);
+            Object res = qry.uniqueResult();
+            return res != null ? new BigDecimal(res.toString()) : result;
         } catch (final Exception e) {
             throw new ApplicationRuntimeException("Error occurred while getting other bill amount", e);
         }
@@ -169,14 +167,13 @@ public class EgBilldetailsHibernateDAO implements EgBilldetailsDAO {
 
     @Override
     public EgBilldetails getBillDetails(final Long billId, final List glcodeIdList) throws Exception {
-        
+
         try {
-            StringBuilder qryStr = new StringBuilder();
-            qryStr.append("from EgBilldetails bd where bd.creditamount>0 AND bd.glcodeid IN (:glcodeIds) AND billid=:billId ");
-            Query qry = getCurrentSession().createQuery(qryStr.toString());
-            qry.setParameterList("glcodeIds", glcodeIdList);
-            qry.setLong("billId", billId);
-            return (EgBilldetails) qry.uniqueResult();
+            StringBuilder qryStr = new StringBuilder("from EgBilldetails bd where bd.creditamount > 0 AND bd.glcodeid IN (:glcodeIds) AND billid = :billId ");
+            return (EgBilldetails) getCurrentSession().createQuery(qryStr.toString())
+                    .setParameterList("glcodeIds", glcodeIdList)
+                    .setParameter("billId", billId, LongType.INSTANCE)
+                    .uniqueResult();
         } catch (final Exception e) {
             throw new ApplicationException(e.getMessage());
         }

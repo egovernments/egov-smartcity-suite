@@ -61,8 +61,11 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FunctionDAO;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.budget.BudgetGroup;
-import org.hibernate.query.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,6 +76,16 @@ import java.util.List;
 
 @Transactional(readOnly = true)
 public class BudgetGroupHibernateDAO implements BudgetGroupDAO {
+    private static final Logger LOGGER = Logger.getLogger(BudgetGroupHibernateDAO.class);
+    private static final String EMPTY_STRING = "";
+    @PersistenceContext
+    private EntityManager entityManager;
+    private Session session;
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
+    @Autowired
+    private FunctionDAO functionDAO;
+
     @Transactional
     public BudgetGroup update(final BudgetGroup entity) {
         getCurrentSession().update(entity);
@@ -95,24 +108,12 @@ public class BudgetGroupHibernateDAO implements BudgetGroupDAO {
     }
 
     public List<BudgetGroup> findAll() {
-        return (List<BudgetGroup>) getCurrentSession().createCriteria(BudgetGroup.class).list();
+        return (List<BudgetGroup>) getCurrentSession().createQuery("from BudgetGroup").list();
     }
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
-
-    private static final Logger LOGGER = Logger.getLogger(BudgetGroupHibernateDAO.class);
-    private Session session;
-    private static final String EMPTY_STRING = "";
-
-    @Autowired
-    private FinancialYearDAO financialYearDAO;
-    @Autowired
-    private FunctionDAO functionDAO;
 
     @Transactional
     public BudgetGroup createBudgetGroup(final BudgetGroup cbg) throws ValidationException {
@@ -140,30 +141,29 @@ public class BudgetGroupHibernateDAO implements BudgetGroupDAO {
         List<BudgetGroup> budgetHeadList = new ArrayList<BudgetGroup>();
         try {
             CFunction function = null;
-            final StringBuffer qryStr = new StringBuffer();
+            final StringBuilder qryStr = new StringBuilder();
             final CFinancialYear fiancialyear = financialYearDAO.getFinancialYearByDate(date);
 
             if (fiancialyear == null)
                 throw new ValidationException(EMPTY_STRING, "Date is not defined in the Financial year master");
 
             qryStr.append(
-                    "from BudgetGroup bg where  bg in ( select bd.budgetGroup from BudgetDetail bd  where bd.budget.financialYear=:financialYearId   ");
+                    "from BudgetGroup bg where bg in( select bd.budgetGroup from BudgetDetail bd where bd.budget.financialYear = :financialYearId");
 
             if (functionCode != null && !functionCode.equals("")) {
                 function = functionDAO.getFunctionByCode(functionCode);
                 if (function == null || function.getId() == null)
                     throw new ValidationException(EMPTY_STRING, "Function Code is not defined in the system");
-
-                qryStr.append(" AND bd.function=:functionId ");
+                qryStr.append(" AND bd.function = :functionId ");
             }
             qryStr.append(" ) ");
 
             session = getCurrentSession();
             final Query qry = session.createQuery(qryStr.toString());
-            qry.setLong("financialYearId", Long.valueOf(fiancialyear.getId()));
+            qry.setParameter("financialYearId", Long.valueOf(fiancialyear.getId()), LongType.INSTANCE);
 
             if (functionCode != null && !functionCode.equals(""))
-                qry.setLong("functionId", function.getId());
+                qry.setParameter("functionId", function.getId(), LongType.INSTANCE);
             budgetHeadList = qry.list();
 
             if (budgetHeadList.isEmpty() || budgetHeadList.size() == 0)
@@ -182,8 +182,8 @@ public class BudgetGroupHibernateDAO implements BudgetGroupDAO {
     @Override
     public BudgetGroup getBudgetHeadById(final Long id) {
         session = getCurrentSession();
-        final Query qry = session.createQuery("from BudgetGroup bg where bg.id =:id");
-        qry.setLong("id", id);
+        final Query qry = session.createQuery("from BudgetGroup bg where bg.id = :id");
+        qry.setParameter("id", id, LongType.INSTANCE);
         return (BudgetGroup) qry.uniqueResult();
     }
 
@@ -192,7 +192,7 @@ public class BudgetGroupHibernateDAO implements BudgetGroupDAO {
         List<BudgetGroup> budgetHeadList = null;
         try {
             session = getCurrentSession();
-            final Query qry = session.createQuery(" from BudgetGroup where isActive=true order by name");
+            final Query qry = session.createQuery(" from BudgetGroup where isActive = true order by name");
             budgetHeadList = qry.list();
         } catch (final ValidationException v) {
             LOGGER.error("Exception in getBudgetGroupList API()" ,v);
@@ -206,8 +206,8 @@ public class BudgetGroupHibernateDAO implements BudgetGroupDAO {
 
     /**
      * Returns a list of BudgetGroup having entry in budget detail with the given function code.
-     * 
-     * @param function code
+     *
+     * @param functionCode code
      * @throws ValidationException
      */
     @Override
@@ -216,7 +216,7 @@ public class BudgetGroupHibernateDAO implements BudgetGroupDAO {
         List<BudgetGroup> budgetHeadList = new ArrayList<BudgetGroup>();
         try {
             CFunction function = null;
-            final StringBuffer qryStr = new StringBuffer();
+            final StringBuilder qryStr = new StringBuilder();
 
             if (functionCode != null && !functionCode.equals("")) {
                 function = functionDAO.getFunctionByCode(functionCode);
@@ -224,13 +224,13 @@ public class BudgetGroupHibernateDAO implements BudgetGroupDAO {
                     throw new ValidationException(EMPTY_STRING, "Function Code is not defined in the system");
 
                 qryStr.append(
-                        "from BudgetGroup bg where  bg in ( select distinct bd.budgetGroup from BudgetDetail bd  where bd.function=:functionId ) order by bg.name");
+                        "from BudgetGroup bg where  bg in ( select distinct bd.budgetGroup from BudgetDetail bd  where bd.function = :functionId ) order by bg.name");
             }
             session = getCurrentSession();
             final Query qry = session.createQuery(qryStr.toString());
 
             if (functionCode != null && !functionCode.equals(""))
-                qry.setLong("functionId", function.getId());
+                qry.setParameter("functionId", function.getId(), LongType.INSTANCE);
             budgetHeadList = qry.list();
 
             if (budgetHeadList.isEmpty() || budgetHeadList.size() == 0)
@@ -250,14 +250,14 @@ public class BudgetGroupHibernateDAO implements BudgetGroupDAO {
     /**
      * Returns a list of BudgetGroup having entry in budget detail with the given function code or given List of ChartOfAccounts
      * or both.
-     * 
-     * @param function code
+     *
+     * @param functionCode        code
      * @param chartOfAccountsList
      * @throws ValidationException
      */
     @Override
     public List<BudgetGroup> getBudgetHeadByCOAandFunction(final String functionCode,
-            final List<CChartOfAccounts> chartOfAccountsList) throws ValidationException {
+                                                           final List<CChartOfAccounts> chartOfAccountsList) throws ValidationException {
 
         List<BudgetGroup> budgetHeadList = new ArrayList<BudgetGroup>();
         try {
@@ -278,29 +278,28 @@ public class BudgetGroupHibernateDAO implements BudgetGroupDAO {
                     final int step = 1000;
                     List<BudgetGroup> newbudgetHeadList;
                     while (size - step >= 0) {
-                        newbudgetHeadList = new ArrayList<BudgetGroup>();
+                        newbudgetHeadList = new ArrayList<>();
                         toIndex += step;
                         final Query budgetHeadsQuery = getCurrentSession()
                                 .createQuery(
                                         " from BudgetGroup bg where  bg.maxCode.id in ( :IDS1 ) and bg.minCode.id in ( :IDS2 )");
-                        budgetHeadsQuery.setParameterList("IDS1", coaIds.subList(fromIndex, toIndex));
-                        budgetHeadsQuery.setParameterList("IDS2", coaIds.subList(fromIndex, toIndex));
+                        budgetHeadsQuery.setParameterList("IDS1", coaIds.subList(fromIndex, toIndex), LongType.INSTANCE);
+                        budgetHeadsQuery.setParameterList("IDS2", coaIds.subList(fromIndex, toIndex), LongType.INSTANCE);
                         newbudgetHeadList = budgetHeadsQuery.list();
                         fromIndex = toIndex;
                         size -= step;
                         if (newbudgetHeadList != null)
                             budgetHeadList.addAll(newbudgetHeadList);
-
                     }
 
                     if (size > 0) {
-                        newbudgetHeadList = new ArrayList<BudgetGroup>();
+                        newbudgetHeadList = new ArrayList<>();
                         fromIndex = toIndex;
                         toIndex = fromIndex + size;
                         final Query budgetHeadsQuery = getCurrentSession().createQuery(
                                 " from BudgetGroup bg where bg.maxCode.id in ( :IDS1 ) and bg.minCode.id in ( :IDS2 )");
-                        budgetHeadsQuery.setParameterList("IDS1", coaIds.subList(fromIndex, toIndex));
-                        budgetHeadsQuery.setParameterList("IDS2", coaIds.subList(fromIndex, toIndex));
+                        budgetHeadsQuery.setParameterList("IDS1", coaIds.subList(fromIndex, toIndex), LongType.INSTANCE);
+                        budgetHeadsQuery.setParameterList("IDS2", coaIds.subList(fromIndex, toIndex), LongType.INSTANCE);
                         newbudgetHeadList = budgetHeadsQuery.list();
                         if (newbudgetHeadList != null)
                             budgetHeadList.addAll(newbudgetHeadList);
@@ -309,8 +308,8 @@ public class BudgetGroupHibernateDAO implements BudgetGroupDAO {
                 } else {
                     final Query budgetHeadsQuery = getCurrentSession().createQuery(
                             " from BudgetGroup bg where  bg.maxCode.id in ( :IDS1 ) and bg.minCode.id in ( :IDS2 )");
-                    budgetHeadsQuery.setParameterList("IDS1", coaIds);
-                    budgetHeadsQuery.setParameterList("IDS2", coaIds);
+                    budgetHeadsQuery.setParameterList("IDS1", coaIds, LongType.INSTANCE);
+                    budgetHeadsQuery.setParameterList("IDS2", coaIds, LongType.INSTANCE);
                     budgetHeadList = budgetHeadsQuery.list();
                 }
                 if (budgetHeadList.isEmpty() || budgetHeadList.size() == 0)
@@ -345,11 +344,12 @@ public class BudgetGroupHibernateDAO implements BudgetGroupDAO {
                         toIndex += step;
                         final Query budgetHeadsQuery = getCurrentSession()
                                 .createQuery(
-                                        " from BudgetGroup bg where bg.maxCode.id in ( :IDS1 ) and bg.minCode.id in ( :IDS2 ) and bg in ( select bd.budgetGroup from BudgetDetail bd  where bd.function=:functionId ) order by bg.name");
-                        budgetHeadsQuery.setParameterList("IDS1", coaIds.subList(fromIndex, toIndex));
-                        budgetHeadsQuery.setParameterList("IDS2", coaIds.subList(fromIndex, toIndex));
+                                        new StringBuilder(" from BudgetGroup bg where bg.maxCode.id in ( :IDS1 ) and bg.minCode.id in ( :IDS2 )")
+                                                .append(" and bg in ( select bd.budgetGroup from BudgetDetail bd  where bd.function = :functionId ) order by bg.name").toString());
+                        budgetHeadsQuery.setParameterList("IDS1", coaIds.subList(fromIndex, toIndex), LongType.INSTANCE);
+                        budgetHeadsQuery.setParameterList("IDS2", coaIds.subList(fromIndex, toIndex), LongType.INSTANCE);
                         if (functionCode != null && !functionCode.equals(""))
-                            budgetHeadsQuery.setLong("functionId", function.getId());
+                            budgetHeadsQuery.setParameter("functionId", function.getId(), LongType.INSTANCE);
                         newbudgetHeadList = budgetHeadsQuery.list();
                         fromIndex = toIndex;
                         size -= step;
@@ -363,12 +363,12 @@ public class BudgetGroupHibernateDAO implements BudgetGroupDAO {
                         fromIndex = toIndex;
                         toIndex = fromIndex + size;
                         final Query budgetHeadsQuery = getCurrentSession()
-                                .createQuery(
-                                        " from BudgetGroup bg where  bg.maxCode.id in ( :IDS1 ) and bg.minCode.id in ( :IDS2 ) and bg in ( select bd.budgetGroup from BudgetDetail bd  where bd.function=:functionId ) order by bg.name");
-                        budgetHeadsQuery.setParameterList("IDS1", coaIds.subList(fromIndex, toIndex));
-                        budgetHeadsQuery.setParameterList("IDS2", coaIds.subList(fromIndex, toIndex));
+                                .createQuery(new StringBuilder(" from BudgetGroup bg where  bg.maxCode.id in ( :IDS1 ) and bg.minCode.id in ( :IDS2 )")
+                                        .append(" and bg in ( select bd.budgetGroup from BudgetDetail bd  where bd.function = :functionId ) order by bg.name").toString());
+                        budgetHeadsQuery.setParameterList("IDS1", coaIds.subList(fromIndex, toIndex), LongType.INSTANCE);
+                        budgetHeadsQuery.setParameterList("IDS2", coaIds.subList(fromIndex, toIndex), LongType.INSTANCE);
                         if (functionCode != null && !functionCode.equals(""))
-                            budgetHeadsQuery.setLong("functionId", function.getId());
+                            budgetHeadsQuery.setParameter("functionId", function.getId(), LongType.INSTANCE);
                         newbudgetHeadList = budgetHeadsQuery.list();
                         if (newbudgetHeadList != null)
                             budgetHeadList.addAll(newbudgetHeadList);
@@ -376,12 +376,12 @@ public class BudgetGroupHibernateDAO implements BudgetGroupDAO {
 
                 } else {
                     final Query budgetHeadsQuery = getCurrentSession()
-                            .createQuery(
-                                    " from BudgetGroup bg where  bg.maxCode.id in ( :IDS1 ) and bg.minCode.id in ( :IDS2 ) and bg in ( select bd.budgetGroup from BudgetDetail bd  where bd.function=:functionId ) order by bg.name ");
-                    budgetHeadsQuery.setParameterList("IDS1", coaIds);
-                    budgetHeadsQuery.setParameterList("IDS2", coaIds);
+                            .createQuery(new StringBuilder(" from BudgetGroup bg where  bg.maxCode.id in ( :IDS1 ) and bg.minCode.id in ( :IDS2 )")
+                                    .append(" and bg in ( select bd.budgetGroup from BudgetDetail bd  where bd.function = :functionId ) order by bg.name ").toString());
+                    budgetHeadsQuery.setParameterList("IDS1", coaIds, LongType.INSTANCE);
+                    budgetHeadsQuery.setParameterList("IDS2", coaIds, LongType.INSTANCE);
                     if (functionCode != null && !functionCode.equals(""))
-                        budgetHeadsQuery.setLong("functionId", function.getId());
+                        budgetHeadsQuery.setParameter("functionId", function.getId(), LongType.INSTANCE);
                     budgetHeadList = budgetHeadsQuery.list();
                 }
                 if (budgetHeadList.isEmpty() || budgetHeadList.size() == 0)
@@ -412,13 +412,13 @@ public class BudgetGroupHibernateDAO implements BudgetGroupDAO {
 
     /**
      * Returns a list of BudgetGroup having entry in budget detail with the given fund,function,department and account type.
-     * 
+     *
      * @param fund,function,department and account type
      * @throws ValidationException
      */
     @Override
     public List<BudgetGroup> getBudgetGroupsByFundFunctionDeptAndAccountType(final Integer fund, final Long dept,
-            final Long function, final String accountType) throws ValidationException {
+                                                                             final Long function, final String accountType) throws ValidationException {
 
         List<BudgetGroup> budgetHeadList = new ArrayList<BudgetGroup>();
         try {
@@ -426,13 +426,13 @@ public class BudgetGroupHibernateDAO implements BudgetGroupDAO {
             final StringBuffer filtersQryStr = new StringBuffer();
             final StringBuffer accountTypeQryStr = new StringBuffer();
             if (fund != null)
-                filtersQryStr.append(" and bd.fund.id =:fund ");
+                filtersQryStr.append(" and bd.fund.id = :fund ");
             if (dept != null)
-                filtersQryStr.append(" and bd.executingDepartment.id =:dept ");
+                filtersQryStr.append(" and bd.executingDepartment.id = :dept ");
             if (function != null)
-                filtersQryStr.append(" and bd.function.id =:function ");
+                filtersQryStr.append(" and bd.function.id = :function ");
             if (accountType != null)
-                accountTypeQryStr.append(" and bg.accountType =:accountType ");
+                accountTypeQryStr.append(" and bg.accountType = :accountType ");
 
             qryStr.append(
                     "from BudgetGroup bg where  bg in ( select distinct bd.budgetGroup from BudgetDetail bd  where bd.id is not null ");
@@ -443,13 +443,13 @@ public class BudgetGroupHibernateDAO implements BudgetGroupDAO {
             session = getCurrentSession();
             final Query qry = session.createQuery(qryStr.toString());
             if (fund != null)
-                qry.setInteger("fund", fund);
+                qry.setParameter("fund", fund, IntegerType.INSTANCE);
             if (dept != null)
-                qry.setLong("dept", dept);
+                qry.setParameter("dept", dept, LongType.INSTANCE);
             if (function != null)
-                qry.setLong("function", function);
+                qry.setParameter("function", function, LongType.INSTANCE);
             if (accountType != null)
-                qry.setString("accountType", accountType);
+                qry.setParameter("accountType", accountType, StringType.INSTANCE);
 
             budgetHeadList = qry.list();
 
