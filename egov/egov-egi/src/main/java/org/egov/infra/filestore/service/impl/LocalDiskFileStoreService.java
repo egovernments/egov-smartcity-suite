@@ -48,7 +48,6 @@
 
 package org.egov.infra.filestore.service.impl;
 
-import org.apache.commons.io.IOUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.exception.ApplicationValidationException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -59,6 +58,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -69,6 +69,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.io.File.separator;
+import static java.lang.Integer.MAX_VALUE;
 import static java.util.UUID.randomUUID;
 import static org.apache.commons.io.FileUtils.getUserDirectoryPath;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
@@ -96,11 +97,6 @@ public class LocalDiskFileStoreService implements FileStoreService {
     @Override
     public FileStoreMapper store(File sourceFile, String fileName, String mimeType, String moduleName) {
         return store(sourceFile, fileName, mimeType, moduleName, true);
-    }
-
-    @Override
-    public FileStoreMapper store(InputStream sourceFileStream, String fileName, String mimeType, String moduleName) {
-        return store(sourceFileStream, fileName, mimeType, moduleName, true);
     }
 
     @Override
@@ -142,12 +138,14 @@ public class LocalDiskFileStoreService implements FileStoreService {
     }
 
     @Override
-    public FileStoreMapper store(InputStream fileStream, String fileName, String mimeType, String moduleName, boolean closeStream) {
-        try {
-            if (fileValidator.fileValid(fileStream, fileName, moduleName)) {
+    public FileStoreMapper store(InputStream fileStream, String fileName, String mimeType, String moduleName) {
+        try (BufferedInputStream fileBufferStream = new BufferedInputStream(fileStream)) {
+            fileBufferStream.mark(MAX_VALUE);
+            if (fileValidator.fileValid(fileBufferStream, fileName, moduleName)) {
+                fileBufferStream.reset();
                 FileStoreMapper fileMapper = new FileStoreMapper(randomUUID().toString(), fileName);
                 Path newFilePath = this.createNewFilePath(fileMapper, moduleName);
-                Files.copy(fileStream, newFilePath);
+                Files.copy(fileBufferStream, newFilePath);
                 fileMapper.setContentType(mimeType);
                 return fileMapper;
             } else {
@@ -156,9 +154,6 @@ public class LocalDiskFileStoreService implements FileStoreService {
         } catch (IOException e) {
             throw new ApplicationRuntimeException(String.format(FILE_STORE_ERROR,
                     this.fileStoreBaseDir, getCityCode(), moduleName), e);
-        } finally {
-            if (closeStream)
-                IOUtils.closeQuietly(fileStream);
         }
     }
 
