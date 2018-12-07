@@ -57,7 +57,6 @@ import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
-import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -123,7 +122,6 @@ public class City extends AbstractAuditable {
     @SafeHtml
     @NotBlank
     @Length(max = 128)
-    @URL
     private String domainURL;
 
     @SafeHtml
