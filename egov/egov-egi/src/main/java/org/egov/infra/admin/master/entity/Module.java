@@ -48,6 +48,7 @@
 
 package org.egov.infra.admin.master.entity;
 
+import org.hibernate.annotations.Immutable;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -83,6 +84,7 @@ import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH
 @Table(name = "eg_module")
 @SequenceGenerator(name = SEQ_MODULE, sequenceName = SEQ_MODULE, allocationSize = 1)
 @Cacheable
+@Immutable
 public class Module implements Serializable {
 
     protected static final String SEQ_MODULE = "SEQ_EG_MODULE";

@@ -46,7 +46,7 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
@@ -96,8 +96,6 @@
                                         placeholder="" autocomplete="off" required="" readonly="true" value="${appConfig.module.name}"/>
                         </div>
                     </div>
-
-
                 </div>
             </div>
 
