@@ -84,6 +84,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -322,11 +323,12 @@ public class Complaint extends StateAware<Position> {
         this.supportDocs = supportDocs;
     }
 
+    @SuppressWarnings("unused")
     public Set<FileStoreMapper> supportDocsOrderById() {
         return this.supportDocs
                 .stream()
                 .sorted(Comparator.comparing(FileStoreMapper::getId))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     public Boundary getLocation() {
