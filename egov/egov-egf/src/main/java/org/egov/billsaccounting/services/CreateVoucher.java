@@ -107,6 +107,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import javax.persistence.TemporalType;
+
 /**
  * This Class will create voucher from bill <br>
  *
@@ -2960,25 +2962,25 @@ public class CreateVoucher {
         boolean isUnique = false;
         String fyStartDate = "", fyEndDate = "";
         vcNum = vcNum.toUpperCase();
-        Query pst = null;
         List<Object[]> rs = null;
         try {
-            final StringBuilder query1 = new StringBuilder("SELECT to_char(startingDate, 'DD-Mon-YYYY') AS \"startingDate\", to_char(endingDate, 'DD-Mon-YYYY') AS \"endingDate\"")
-                    .append(" FROM financialYear")
-                    .append(" WHERE startingDate <= :vcDate AND endingDate >= :vcDate ");
+            final StringBuilder query1 = new StringBuilder(
+                    "SELECT to_char(startingDate, 'DD-Mon-YYYY') AS \"startingDate\", to_char(endingDate, 'DD-Mon-YYYY') AS \"endingDate\"")
+                            .append(" FROM financialYear")
+                            .append(" WHERE startingDate <= date(:vcDate) AND endingDate >= date(:vcDate)");
             rs = persistenceService.getSession().createNativeQuery(query1.toString())
-                    .setParameter("vcDate", vcDate, StringType.INSTANCE)
+                    .setParameter("vcDate", vcDate, TemporalType.DATE)
                     .list();
             if (rs != null && rs.size() > 0)
                 for (final Object[] element : rs) {
                     fyStartDate = element[0].toString();
                     fyEndDate = element[1].toString();
                 }
-            final String query2 = "SELECT id FROM voucherHeader WHERE voucherNumber = :vcNum AND voucherDate >= :fyStartDate AND voucherDate <= :fyEndDate and status != 4";
+            final String query2 = "SELECT id FROM voucherHeader WHERE voucherNumber = :vcNum AND voucherDate >= date(:fyStartDate) AND voucherDate <= date(:fyEndDate) and status != 4";
             rs = persistenceService.getSession().createNativeQuery(query2)
                     .setParameter("vcNum", vcNum, StringType.INSTANCE)
-                    .setParameter("fyStartDate", fyStartDate, StringType.INSTANCE)
-                    .setParameter("fyEndDate", fyEndDate, StringType.INSTANCE)
+                    .setParameter("fyStartDate", fyStartDate, TemporalType.DATE)
+                    .setParameter("fyEndDate", fyEndDate, TemporalType.DATE)
                     .list();
             if (rs != null && rs.size() > 0) {
                 if (LOGGER.isDebugEnabled())
@@ -2996,10 +2998,10 @@ public class CreateVoucher {
 
     public String getFiscalPeriod(final String vDate) throws TaskFailedException {
         BigInteger fiscalPeriod = null;
-        final String sql = "select id from fiscalperiod  where :vDate between startingdate and endingdate";
+        final String sql = "select id from fiscalperiod  where date(:vDate) between startingdate and endingdate";
         try {
             final List<BigInteger> rset = persistenceService.getSession().createNativeQuery(sql)
-                    .setParameter("vDate", vDate, StringType.INSTANCE)
+                    .setParameter("vDate", vDate, TemporalType.DATE)
                     .list();
             fiscalPeriod = rset != null ? rset.get(0) : BigInteger.ZERO;
         } catch (final Exception e) {
