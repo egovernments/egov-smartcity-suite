@@ -2499,7 +2499,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             if (isNull(queryParamMap.get("fundId")))
                 throw new ValidationException(EMPTY_STRING, "Fund is required");
             else {
-                query.append(" and bd.fund.id = :fundId").append();
+                query.append(" and bd.fund.id = :fundId");
                 params.put("fundId", Integer.valueOf(queryParamMap.get("fundId").toString()));
             }
         if (!isNull(grpByVls.get("department")))
