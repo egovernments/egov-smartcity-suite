@@ -96,7 +96,11 @@ public class UpdateBoundaryController {
     }
 
     @GetMapping("{id}")
-    public String showUpdateBoundaryForm(Model model) {
+    public String showUpdateBoundaryForm(@ModelAttribute Boundary boundary, Model model, RedirectAttributes attribs) {
+        if (boundary == null || boundary.isNew()) {
+            attribs.addFlashAttribute("error", "err.boundary.not.found");
+            return "redirect:/boundary/update/";
+        }
         model.addAttribute("search", false);
         return BOUNDARY_UPDATE_VIEW;
     }

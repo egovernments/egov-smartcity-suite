@@ -56,6 +56,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/boundarytype/view/{id}")
@@ -70,7 +71,11 @@ public class ViewBoundaryTypeController {
     }
 
     @GetMapping
-    public String viewBoundaryType() {
+    public String viewBoundaryType(@ModelAttribute BoundaryType boundaryType, RedirectAttributes attributes) {
+        if (boundaryType == null) {
+            attributes.addFlashAttribute("error", "err.boundarytype.not.found");
+            return "redirect:/boundarytype/view";
+        }
         return "boundaryType-view";
     }
 }

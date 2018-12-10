@@ -53,47 +53,49 @@
 
 <div class="row" id="page-content">
     <div class="col-md-12">
-                <c:if test="${not empty message}">
-                    <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
-                </c:if>
+        <c:if test="${not empty message}">
+            <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
+        </c:if>
+        <c:if test="${not empty error}">
+            <div class="alert alert-danger" role="alert"><spring:message code="${error}"/></div>
+        </c:if>
+        <form:form id="viewHierarchyType" method="post"
+                   modelAttribute="hierarchyType" class="form-horizontal form-groups-bordered">
+            <div class="panel panel-primary" data-collapsed="0">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <strong><spring:message code="lbl.hdr.viewHierarchyType"/></strong>
+                    </div>
+                </div>
 
-                <form:form id="viewHierarchyType" method="post"
-                           modelAttribute="hierarchyType" class="form-horizontal form-groups-bordered">
-					<div class="panel panel-primary" data-collapsed="0">
-						<div class="panel-heading">
-							<div class="panel-title">
-								<strong><spring:message code="lbl.hdr.viewHierarchyType"/></strong>
-							</div>
-						</div> 
-						
-						<div class="panel-body custom-form">
-							<div class="form-group">
-								<label class="col-sm-3 control-label">
-									<spring:message code="lbl.hierarchyType" />
-									<span class="mandatory"></span>
-								</label>
-								<div class="col-sm-6 add-margin">
-	                            <form:select path="name"
-	                                         id="comp_type_dept" cssClass="form-control" cssErrorClass="form-control error" required="required">
-	                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
-	                                <form:options items="${hierarchyTypes}" itemValue="name" itemLabel="name"/>
-	                            </form:select>
-	                            <form:errors path="name" cssClass="error-msg"/>
-	                        </div>
-						</div>
-	                </div>
-	                </div>
-
+                <div class="panel-body custom-form">
                     <div class="form-group">
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>                           
-                            <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()">
-                            	<spring:message code="lbl.close"/>
-                            </button>
+                        <label class="col-sm-3 control-label">
+                            <spring:message code="lbl.hierarchyType"/>
+                            <span class="mandatory"></span>
+                        </label>
+                        <div class="col-sm-6 add-margin">
+                            <form:select path="name"
+                                         id="comp_type_dept" cssClass="form-control" cssErrorClass="form-control error" required="required">
+                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
+                                <form:options items="${hierarchyTypes}" itemValue="name" itemLabel="name"/>
+                            </form:select>
+                            <form:errors path="name" cssClass="error-msg"/>
                         </div>
                     </div>
-                    
-                </form:form>
+                </div>
             </div>
+
+            <div class="form-group">
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
+                    <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()">
+                        <spring:message code="lbl.close"/>
+                    </button>
+                </div>
+            </div>
+
+        </form:form>
+    </div>
 </div>

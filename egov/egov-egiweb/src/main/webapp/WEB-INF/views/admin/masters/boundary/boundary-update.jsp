@@ -57,6 +57,9 @@
     <div class="col-md-12">
         <div class="panel" data-collapsed="0">
             <div class="panel-body">
+                <c:if test="${not empty error}">
+                    <div class="alert alert-danger" role="alert"><spring:message code="${error}"/></div>
+                </c:if>
                 <c:choose>
                     <c:when test="${search}">
                         <form id="boundaryCreateSearchForm" class="form-horizontal form-groups-bordered" method="get">

@@ -70,7 +70,7 @@ public class CompareDatesValidator implements ConstraintValidator<CompareDates, 
         try {
             Date fromDate = (Date) FieldUtils.readField(target, compareDates.fromDate(), true);
             Date toDate = (Date) FieldUtils.readField(target, compareDates.toDate(), true);
-            boolean isValid = fromDate != null && toDate != null && fromDate.before(toDate);
+            boolean isValid = fromDate == null || toDate == null || fromDate.before(toDate);
             if (!isValid)
                 validatorContext.buildConstraintViolationWithTemplate(compareDates.message()).
                         addPropertyNode(compareDates.toDate()).addConstraintViolation();

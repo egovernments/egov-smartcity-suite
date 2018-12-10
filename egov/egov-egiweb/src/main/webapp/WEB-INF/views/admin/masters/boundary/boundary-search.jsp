@@ -71,7 +71,7 @@
                                     <span class="mandatory"></span>
                                 </label>
                                 <div class="col-sm-6 add-margin">
-                                    <select id="hierarchyType" class="form-control boundarytype-auto"  required="required">
+                                    <select id="hierarchyType" class="form-control boundarytype-auto" required="required">
                                         <option value=""><spring:message code="lbl.select"/></option>
                                         <c:forEach items="${hierarchyTypes}" var="hierarchyType">
                                             <option value="${hierarchyType.id}">${hierarchyType.name}</option>

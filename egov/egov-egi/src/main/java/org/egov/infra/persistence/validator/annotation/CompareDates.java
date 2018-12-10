@@ -64,9 +64,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Constraint(validatedBy = CompareDatesValidator.class)
 public @interface CompareDates {
-    String fromDate();
+    String fromDate() default "fromDate";
 
-    String toDate();
+    String toDate() default "toDate";
 
     String message() default "{validator.compareDates}";
 

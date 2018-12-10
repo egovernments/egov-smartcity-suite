@@ -52,14 +52,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Objects;
 import com.google.gson.annotations.Expose;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.CompareDates;
 import org.egov.infra.persistence.validator.annotation.CompositeUnique;
-import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -88,10 +87,11 @@ import static org.egov.infra.validation.constants.ValidationRegex.MASTER_DATA_CO
 import static org.egov.infra.validation.constants.ValidationRegex.NAME_WITH_SPECIAL_CHARS;
 
 @Entity
-@CompositeUnique(fields = {"boundaryNum", "boundaryType"}, enableDfltMsg = true)
-@Unique(fields = "code", enableDfltMsg = true)
 @Table(name = "EG_BOUNDARY")
 @SequenceGenerator(name = SEQ_BOUNDARY, sequenceName = SEQ_BOUNDARY, allocationSize = 1)
+@CompositeUnique(fields = {"boundaryNum", "boundaryType"}, enableDfltMsg = true)
+@Unique(fields = "code", enableDfltMsg = true)
+@CompareDates
 public class Boundary extends AbstractAuditable {
 
     protected static final String SEQ_BOUNDARY = "seq_eg_boundary";
@@ -140,8 +140,6 @@ public class Boundary extends AbstractAuditable {
     @JsonIgnore
     private Set<Boundary> children = new HashSet<>();
 
-    @DateFormat
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
     @NotNull
     private Date fromDate;
 

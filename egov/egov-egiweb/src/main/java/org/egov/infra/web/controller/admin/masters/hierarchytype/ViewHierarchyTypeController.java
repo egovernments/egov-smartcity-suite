@@ -56,6 +56,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/hierarchytype")
@@ -66,17 +67,17 @@ public class ViewHierarchyTypeController {
     @Autowired
     private HierarchyTypeService hierarchyTypeService;
 
-    public ViewHierarchyTypeController(HierarchyTypeService hierarchyTypeService) {
-        this.hierarchyTypeService = hierarchyTypeService;
-    }
-
     @ModelAttribute
     public HierarchyType hierarchyTypeModel(@PathVariable String typeName) {
         return hierarchyTypeService.getHierarchyTypeByName(typeName);
     }
 
     @GetMapping(REQUEST_MAP_VIEW)
-    public String hierarchyTypeViewForm() {
+    public String hierarchyTypeViewForm(@ModelAttribute HierarchyType hierarchyType, RedirectAttributes attributes) {
+        if (hierarchyType == null) {
+            attributes.addFlashAttribute("error", "err.hierarchytype.not.found");
+            return "redirect:/hierarchytype/view";
+        }
         return "hierarchyType-view";
     }
 }
