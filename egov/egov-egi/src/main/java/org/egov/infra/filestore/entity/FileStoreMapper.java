@@ -49,7 +49,7 @@
 package org.egov.infra.filestore.entity;
 
 import jdk.nashorn.internal.ir.annotations.Immutable;
-import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -60,11 +60,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-import java.util.Date;
 import java.util.Objects;
 
 import static org.egov.infra.filestore.entity.FileStoreMapper.SEQ_FILESTOREMAPPER;
@@ -75,9 +72,10 @@ import static org.egov.infra.validation.constants.ValidationRegex.FILE_NAME;
 @Entity
 @SequenceGenerator(name = SEQ_FILESTOREMAPPER, sequenceName = SEQ_FILESTOREMAPPER, allocationSize = 1)
 @Immutable
-public class FileStoreMapper extends AbstractPersistable<Long> {
-    public static final String SEQ_FILESTOREMAPPER = "SEQ_EG_FILESTOREMAP";
+public class FileStoreMapper extends AbstractAuditable {
+    protected static final String SEQ_FILESTOREMAPPER = "SEQ_EG_FILESTOREMAP";
     private static final long serialVersionUID = -2997164207274266823L;
+
     @Id
     @GeneratedValue(generator = SEQ_FILESTOREMAPPER, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -96,9 +94,6 @@ public class FileStoreMapper extends AbstractPersistable<Long> {
     @Length(max = 100)
     @SafeHtml
     private String contentType;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdDate = new Date();
 
     protected FileStoreMapper() {
         // For JPA
@@ -141,14 +136,6 @@ public class FileStoreMapper extends AbstractPersistable<Long> {
 
     public void setContentType(String contentType) {
         this.contentType = contentType;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
     }
 
     @Override
