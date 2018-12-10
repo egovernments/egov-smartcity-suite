@@ -47,6 +47,20 @@
  */
 
 $(document).ready(function () {
+    jQuery.fn.preventDoubleSubmission = function () {
+        $(this).on('submit', function (e) {
+            var $form = $(this);
+            if ($form.data('submitted') === true) {
+                e.preventDefault();
+            } else {
+                $form.data('submitted', true);
+            }
+        });
+        return this;
+    };
+
+    $('form').preventDoubleSubmission();
+
     $('#new-pass').popover({trigger: "focus", placement: "bottom"});
 
     $(document).on("keydown", disableRefresh);
@@ -65,7 +79,6 @@ $(document).ready(function () {
         });
 
     $('#feedback-form').on('submit', function (e) {
-        e.preventDefault();
         $.ajax({
             url: 'home/feedback/sent',
             type: 'POST',
@@ -89,7 +102,6 @@ $(document).ready(function () {
     });
 
     $('#password-form').on('submit', function (e) {
-        e.preventDefault();
         if ($("#currentPwd").val() !== '' && $("#newPwd").val() !== '' && $("#retypeNewPwd").val() !== '') {
             $.ajax({
                 url: 'home/password/update',
