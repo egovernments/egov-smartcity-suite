@@ -289,7 +289,7 @@
                 <div style="text-align:left">
                     <a name="viewdcb" class="btn btn-secondary align-right" id="viewdcb"
                        onclick="window.open('/tl/dcb/view/'+ '${tradeLicense.uid}', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');">
-                        <spring:message code='lbl.show.dcb'/></a>
+                        <spring:message code='lbl.show.dcb' htmlEscape="false"/></a>
                 </div>
             </td>
         </tr>

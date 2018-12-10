@@ -142,7 +142,7 @@
                                   value="%{approverDepartment}" onchange="loadDesignationFromMatrix();"
                                   cssClass="form-control"/>
                         <egov:ajaxdropdown fields="['Text','Value']"
-                                           url="workflow/ajaxWorkFlow-getDesignationsByObjectType.action"
+                                           url="workflow/ajaxWorkFlow-findDesignationsByObjectType.action"
                                            id="approverDesignation" dropdownId="approverDesignation"
                                            contextToBeUsed="/eis"/>
                     </div>
@@ -193,7 +193,7 @@
                                   value="%{approverDepartment}" onchange="loadDesignationFromMatrix();"
                                   cssClass="form-control"/>
                         <egov:ajaxdropdown fields="['Text','Value']"
-                                           url="workflow/ajaxWorkFlow-getDesignationsByObjectType.action"
+                                           url="workflow/ajaxWorkFlow-findDesignationsByObjectType.action"
                                            id="approverDesignation" dropdownId="approverDesignation"
                                            contextToBeUsed="/eis"/>
                     </div>

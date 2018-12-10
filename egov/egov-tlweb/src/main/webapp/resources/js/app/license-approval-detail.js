@@ -52,7 +52,7 @@ $('#approvalDepartment').change(function () {
     $('#approverPositionId').find('option:gt(0)').remove();
     if (this.value !== '') {
         $.ajax({
-            url: "/eis/ajaxWorkFlow-getDesignationsByObjectTypeAndDesignation",
+            url: "/eis/ajaxWorkFlow-findDesignationsByObjectTypeAndDesignation",
             type: "GET",
             data: {
                 approvalDepartment: $('#approvalDepartment').val(),
