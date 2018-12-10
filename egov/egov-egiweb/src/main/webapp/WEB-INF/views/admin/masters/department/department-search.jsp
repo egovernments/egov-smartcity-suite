@@ -46,45 +46,48 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
 <div class="row" id="page-content">
-	<div class="col-md-12">
-				<c:if test="${not empty message}">
-					<div class="success" id="message"><spring:message code="${message}"/></div>
-				</c:if>
-				<form:form id="departmentSearchForm" method="post" modelAttribute="department" class="form-horizontal form-groups-bordered">
-					<div class="panel panel-primary" data-collapsed = "0">
-						<div class="panel-heading">
-							<div class="panel-title">
-								<strong><spring:message code="title.department.search"/></strong>
-							</div>
-						</div>
-						<div class="panel-body custom-form">
-							<div class="form-group">
-								<label class="col-sm-3 control-label">
-									<spring:message code="lbl.department"/><span class="mandatory"></span>
-								</label>
-								<div class="col-sm-6 add-margin">
-									<form:select path="name" id="dept" cssClass="form-control" cssErrorClass="form-control error" required="required">
-										<form:option value="" ><spring:message code="lbl.select"/></form:option>
-										<form:options items="${departments}" itemLabel="name" itemValue="name"></form:options>
-									</form:select>
-									<form:errors path="name" cssClass="error-msg"/>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="form-group">
-						<div class="text-center">
-							<button type="submit" class="btn btn-primary"><spring:message code="lbl.search"/></button>
-							<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
-							<button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();"><spring:message code="lbl.close"/></button>
-						</div>
-					</div>
-				</form:form>
-			</div>
+    <div class="col-md-12">
+        <c:if test="${not empty message}">
+            <div class="success" id="message"><spring:message code="${message}"/></div>
+        </c:if>
+        <c:if test="${not empty error}">
+            <div class="alert alert-danger" role="alert"><spring:message code="${error}" arguments="${deptName}"/></div>
+        </c:if>
+        <form:form id="departmentSearchForm" method="post" modelAttribute="department" class="form-horizontal form-groups-bordered">
+            <div class="panel panel-primary" data-collapsed="0">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <strong><spring:message code="title.department.search"/></strong>
+                    </div>
+                </div>
+                <div class="panel-body custom-form">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">
+                            <spring:message code="lbl.department"/><span class="mandatory"></span>
+                        </label>
+                        <div class="col-sm-6 add-margin">
+                            <form:select path="name" id="dept" cssClass="form-control" cssErrorClass="form-control error" required="required">
+                                <form:option value=""><spring:message code="lbl.select"/></form:option>
+                                <form:options items="${departments}" itemLabel="name" itemValue="name"></form:options>
+                            </form:select>
+                            <form:errors path="name" cssClass="error-msg"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary"><spring:message code="lbl.search"/></button>
+                    <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();"><spring:message code="lbl.close"/></button>
+                </div>
+            </div>
+        </form:form>
+    </div>
 </div>

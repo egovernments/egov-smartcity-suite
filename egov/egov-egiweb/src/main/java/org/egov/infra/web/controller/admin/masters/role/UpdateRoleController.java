@@ -75,7 +75,12 @@ public class UpdateRoleController {
     }
 
     @GetMapping
-    public String updateRoleForm() {
+    public String updateRoleForm(@PathVariable String name, @ModelAttribute Role role, RedirectAttributes attribs) {
+        if (role == null) {
+            attribs.addFlashAttribute("error", "err.role.not.found");
+            attribs.addFlashAttribute("roleName", name);
+            return "redirect:/role/updatesearch";
+        }
         return "role-update";
     }
 

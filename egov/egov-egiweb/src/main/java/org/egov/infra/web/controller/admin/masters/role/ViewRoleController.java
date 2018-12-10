@@ -59,6 +59,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/role/view/{name}")
@@ -73,7 +74,12 @@ public class ViewRoleController {
     }
 
     @GetMapping
-    public String viewRole() {
+    public String viewRole(@PathVariable String name, @ModelAttribute Role role, RedirectAttributes attribs) {
+        if (role == null) {
+            attribs.addFlashAttribute("error", "err.role.not.found");
+            attribs.addFlashAttribute("roleName", name);
+            return "redirect:/role/viewsearch";
+        }
         return "role-view";
     }
 

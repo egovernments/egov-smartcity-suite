@@ -78,7 +78,12 @@ public class UpdateDepartmentController {
     }
 
     @GetMapping
-    public String updateDepartmentForm() {
+    public String updateDepartmentForm(@PathVariable String name, @ModelAttribute Department department, RedirectAttributes attribs) {
+        if (department == null) {
+            attribs.addFlashAttribute("error", "err.department.not.found");
+            attribs.addFlashAttribute("deptName", name);
+            return "redirect:/department/update";
+        }
         return "department-updateForm";
     }
 

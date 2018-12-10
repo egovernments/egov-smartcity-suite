@@ -56,6 +56,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * @author subhash
@@ -73,7 +74,13 @@ public class ViewDepartmentController {
     }
 
     @GetMapping
-    public String viewDepartment() {
+    public String viewDepartment(@PathVariable String name, @ModelAttribute Department department, RedirectAttributes attribs) {
+        if (department == null) {
+            attribs.addFlashAttribute("error", "err.department.not.found");
+            attribs.addFlashAttribute("deptName", name);
+            return "redirect:/department/view";
+        }
+
         return "department-view";
     }
 }

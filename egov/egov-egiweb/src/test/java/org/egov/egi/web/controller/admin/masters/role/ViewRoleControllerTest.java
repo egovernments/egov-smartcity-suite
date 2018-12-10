@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,9 +45,10 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.egi.web.controller.admin.masters;
+package org.egov.egi.web.controller.admin.masters.role;
 
 import org.egov.egi.web.controller.AbstractContextControllerTest;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.web.controller.admin.masters.role.ViewRoleController;
 import org.junit.Before;
@@ -56,6 +57,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -85,9 +87,21 @@ public class ViewRoleControllerTest extends AbstractContextControllerTest<ViewRo
     }
 
     @Test
-    public void getViewRoleResult() throws Exception {
+    public void shouldRedirectToSearch() throws Exception {
+        name = "nonexisting-role";
+        mockMvc.perform(get("/role/view/" + name))
+                .andExpect(view().name("redirect:/role/viewsearch"))
+                .andExpect(status().is3xxRedirection());
+
+    }
+
+    @Test
+    public void shouldViewRole() throws Exception {
         name = "existing-role";
-        mockMvc.perform(get("/role/view/" + name)).andExpect(view().name("role-view")).andExpect(status().isOk());
+        when(roleService.getRoleByName(name)).thenReturn(new Role());
+        mockMvc.perform(get("/role/view/" + name))
+                .andExpect(view().name("role-view"))
+                .andExpect(status().isOk());
 
     }
 

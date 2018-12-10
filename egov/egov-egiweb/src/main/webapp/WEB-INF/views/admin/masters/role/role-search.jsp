@@ -52,19 +52,22 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="row" id="page-content">
-	<div class="col-md-12">
-				 <c:if test="${not empty message}">
-                    <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
-                </c:if>
-		<form:form  mothod ="post" class="form-horizontal form-groups-bordered" action = "/egi/role/${mode}" modelAttribute="role" id="roleViewSearchForm" >
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-						<strong><spring:message code="lbl.hdr.searchRole"/></strong>
-					</div>
-				</div> 
-				<div class="panel-body custom-form">
-				  <div class="form-group">
+    <div class="col-md-12">
+        <c:if test="${not empty message}">
+            <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
+        </c:if>
+        <c:if test="${not empty error}">
+            <div class="alert alert-danger" role="alert"><spring:message code="${error}" arguments="${roleName}"/></div>
+        </c:if>
+        <form:form mothod="post" class="form-horizontal form-groups-bordered" action="/egi/role/${mode}" modelAttribute="role" id="roleViewSearchForm">
+            <div class="panel panel-primary" data-collapsed="0">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <strong><spring:message code="lbl.hdr.searchRole"/></strong>
+                    </div>
+                </div>
+                <div class="panel-body custom-form">
+                    <div class="form-group">
                         <label class="col-sm-3 control-label">
                             <spring:message code="lbl.roleName"/>
                             <span class="mandatory"></span>
@@ -78,15 +81,15 @@
                             <form:errors path="name" cssClass="error-msg"/>
                         </div>
                     </div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="text-center">
-					<button type="submit" class="btn btn-primary"><spring:message code="lbl.search"/></button>
-			        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();"><spring:message code="lbl.close"/></button>
-				</div>
-			</div>
-				</form:form>
-			</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary"><spring:message code="lbl.search"/></button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();"><spring:message code="lbl.close"/></button>
+                </div>
+            </div>
+        </form:form>
+    </div>
 </div>
 <script src="<cdn:url  value='/resources/js/app/role.js?rnd=${app_release_no}'/>"></script>

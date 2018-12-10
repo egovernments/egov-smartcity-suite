@@ -51,12 +51,9 @@ package org.egov.infra.admin.master.contracts;
 import org.egov.infra.web.support.search.DataTableSearchRequest;
 import org.hibernate.validator.constraints.SafeHtml;
 
-import javax.validation.constraints.NotBlank;
-
 public class AppConfigSearchRequest extends DataTableSearchRequest {
 
     @SafeHtml
-    @NotBlank
     private String moduleName;
 
     public String getModuleName() {

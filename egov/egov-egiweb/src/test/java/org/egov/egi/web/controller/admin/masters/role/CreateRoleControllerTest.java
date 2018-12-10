@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,62 +45,97 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.egi.web.controller.admin.masters;
+package org.egov.egi.web.controller.admin.masters.role;
+
 
 import org.egov.egi.web.controller.AbstractContextControllerTest;
-import org.egov.infra.admin.master.entity.BoundaryType;
-import org.egov.infra.admin.master.service.BoundaryTypeService;
-import org.egov.infra.web.controller.admin.masters.boundarytype.ViewBoundaryTypeController;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.RoleService;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.web.controller.admin.masters.role.CreateRoleController;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-public class ViewBoundaryTypeControllerTest extends AbstractContextControllerTest<ViewBoundaryTypeController> {
+public class CreateRoleControllerTest extends AbstractContextControllerTest<CreateRoleController> {
+
+
+    @Mock
+    private SecurityUtils securityUtils;
+
+    @Mock
+    private RoleService roleService;
+
+    @InjectMocks
+    private CreateRoleController createRoleController;
+
+    @Mock
+    private User user;
 
     private MockMvc mockMvc;
 
-    @Mock
-    private BoundaryTypeService boundaryTypeService;
 
-    @InjectMocks
-    private ViewBoundaryTypeController viewBoundaryTypeController;
+    @Override
+    protected CreateRoleController initController() {
+        initMocks(this);
+        return createRoleController;
+    }
 
     @Before
     public void before() {
+        when(securityUtils.getCurrentUser()).thenReturn(user);
         mockMvc = mvcBuilder.build();
     }
 
-    @Override
-    protected ViewBoundaryTypeController initController() {
-        initMocks(this);
-        return viewBoundaryTypeController;
-    }
-
     @Test
-    public void shouldRedirectToView() throws Exception {
-        this.mockMvc.perform(get("/boundarytype/view/" + 10))
-                .andExpect(view().name("redirect:/boundarytype/view"))
-                .andExpect(status().is3xxRedirection());
-
-    }
-
-    @Test
-    public void shouldReturnBoundaryTypeView() throws Exception {
-        Long id = 1l;
-        when(boundaryTypeService.getBoundaryTypeById(id))
-                .thenReturn(new BoundaryType());
-        this.mockMvc.perform(get("/boundarytype/view/" + id))
-                .andExpect(view().name("boundaryType-view"))
+    public void shouldResolveRoleCreationPage() throws Exception {
+        this.mockMvc.perform(get("/role/create"))
+                .andExpect(view().name("role-form"))
                 .andExpect(status().isOk());
-
     }
+
+    @Test
+    public void shouldCreateNewRole() throws Exception {
+        this.mockMvc.perform(post("/role/create")
+                .param("name", "new role"))
+                .andExpect(model().hasNoErrors())
+                .andExpect(redirectedUrl("/role/view/new role"));
+
+        ArgumentCaptor<Role> argumentCaptor = ArgumentCaptor.forClass(Role.class);
+        verify(roleService).createRole(argumentCaptor.capture());
+
+        Role createdRole = argumentCaptor.getValue();
+        assertTrue(createdRole.isNew());
+        assertEquals("new role", createdRole.getName());
+    }
+
+    @Test
+    public void shouldValidateRoleWhileCreating() throws Exception {
+        this.mockMvc.perform(post("/role/create"))
+                .andExpect(model().hasErrors())
+                .andExpect(model().attributeHasFieldErrors("role", "name"))
+                .andExpect(view().name("role-form"));
+
+        verify(roleService, never()).createRole(any(Role.class));
+    }
+
 
 }
