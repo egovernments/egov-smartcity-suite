@@ -48,6 +48,7 @@
 package org.egov.egi.web.controller.admin.masters;
 
 import org.egov.egi.web.controller.AbstractContextControllerTest;
+import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.web.controller.admin.masters.boundarytype.ViewBoundaryTypeController;
 import org.junit.Before;
@@ -56,6 +57,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -83,8 +85,18 @@ public class ViewBoundaryTypeControllerTest extends AbstractContextControllerTes
     }
 
     @Test
-    public void getViewBoundaryTypeResult() throws Exception {
+    public void shouldRedirectToView() throws Exception {
+        this.mockMvc.perform(get("/boundarytype/view/" + 10))
+                .andExpect(view().name("redirect:/boundarytype/view"))
+                .andExpect(status().is3xxRedirection());
+
+    }
+
+    @Test
+    public void shouldReturnBoundaryTypeView() throws Exception {
         Long id = 1l;
+        when(boundaryTypeService.getBoundaryTypeById(id))
+                .thenReturn(new BoundaryType());
         this.mockMvc.perform(get("/boundarytype/view/" + id))
                 .andExpect(view().name("boundaryType-view"))
                 .andExpect(status().isOk());
