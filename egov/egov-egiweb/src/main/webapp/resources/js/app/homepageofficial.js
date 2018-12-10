@@ -90,57 +90,59 @@ $(document).ready(function () {
 
     $('#password-form').on('submit', function (e) {
         e.preventDefault();
-        $.ajax({
-            url: 'home/password/update',
-            type: 'POST',
-            data: {
-                'currentPwd': $("#currentPwd").val(),
-                'newPwd': $("#newPwd").val(),
-                'retypeNewPwd': $("#retypeNewPwd").val()
-            },
-            success: function (data) {
-                var msg = "";
-                if (data == "SUCCESS") {
-                    $("#currentPwd").val("");
-                    $("#newPwd").val("");
-                    $("#retypeNewPwd").val("");
-                    $('.change-password').modal('hide');
-                    bootbox.alert("Your password has been updated.");
-                    $('.pass-cancel').removeAttr('disabled');
-                    $('#pass-alert').hide();
-                } else if (data == "NEWPWD_UNMATCH") {
-                    msg = "New password you have entered does not match with retyped password.";
-                    $("#newPwd").val("");
-                    $("#retypeNewPwd").val("");
-                    $('.change-password').modal('show');
-                } else if (data == "CURRPWD_UNMATCH") {
-                    msg = "Old password you have entered is incorrect.";
-                    $("#currentPwd").val("");
-                    $('.change-password').modal('show');
-                } else if (data == "NEWPWD_INVALID") {
-                    msg = $('.password-error-msg').html();
-                    $("#newPwd").val("");
-                    $("#retypeNewPwd").val("");
-                    $('.change-password').modal('show');
-                } else if (data == 'NEW_AND_CURR_PWD_SAME') {
-                    msg = "New Password cannot be same as your Old Password, try a different one.";
-                    $("#newPwd").val("");
-                    $("#retypeNewPwd").val("");
-                    $('.change-password').modal('show');
+        if ($("#currentPwd").val() !== '' && $("#newPwd").val() !== '' && $("#retypeNewPwd").val() !== '') {
+            $.ajax({
+                url: 'home/password/update',
+                async: false,
+                type: 'POST',
+                data: {
+                    'currentPwd': $("#currentPwd").val(),
+                    'newPwd': $("#newPwd").val(),
+                    'retypeNewPwd': $("#retypeNewPwd").val()
+                },
+                success: function (data) {
+                    var msg = "";
+                    if (data == "SUCCESS") {
+                        $("#currentPwd").val("");
+                        $("#newPwd").val("");
+                        $("#retypeNewPwd").val("");
+                        $('.change-password').modal('hide');
+                        bootbox.alert("Your password has been updated.");
+                        $('.pass-cancel').removeAttr('disabled');
+                        $('#pass-alert').hide();
+                    } else if (data == "NEWPWD_UNMATCH") {
+                        msg = "New password you have entered does not match with retyped password.";
+                        $("#newPwd").val("");
+                        $("#retypeNewPwd").val("");
+                        $('.change-password').modal('show');
+                    } else if (data == "CURRPWD_UNMATCH") {
+                        msg = "Old password you have entered is incorrect.";
+                        $("#currentPwd").val("");
+                        $('.change-password').modal('show');
+                    } else if (data == "NEWPWD_INVALID") {
+                        msg = $('.password-error-msg').html();
+                        $("#newPwd").val("");
+                        $("#retypeNewPwd").val("");
+                        $('.change-password').modal('show');
+                    } else if (data == 'NEW_AND_CURR_PWD_SAME') {
+                        msg = "New Password cannot be same as your Old Password, try a different one.";
+                        $("#newPwd").val("");
+                        $("#retypeNewPwd").val("");
+                        $('.change-password').modal('show');
+                    }
+
+                    $('.password-error').html(msg).show();
+
+                },
+                error: function (xhr) {
+                    try {
+                        showValidationMessage(xhr.responseJSON);
+                    } catch (e) {
+                        bootbox.alert("Could not change the password");
+                    }
                 }
-
-                $('.password-error').html(msg).show();
-
-            },
-            error: function (xhr) {
-                try {
-                    showValidationMessage(xhr.responseJSON);
-                } catch (e) {
-                    bootbox.alert("Could not change the password");
-                }
-            }
-        });
-
+            });
+        }
     });
 
     worklist();
