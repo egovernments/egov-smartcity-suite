@@ -147,7 +147,8 @@ public class ClamAVScanner implements VirusScanner {
                 socketChannel.write(ByteBuffer.wrap(PING));
                 virusScannerEnabled = PONG.equals(readResponse(socketChannel));
             } catch (IOException ioe) {
-                throw new ApplicationRuntimeException("Error occurred while Clam AV ping", ioe);
+                LOGGER.warn("Error occurred while Clam AV ping", ioe);
+                return false;
             }
         }
         return virusScannerEnabled;
