@@ -63,7 +63,9 @@
             <div class="panel-body custom-form">
                 <form:form role="form" action="edit" modelAttribute="user" commandName="user" id="user" cssClass="form-horizontal form-groups-bordered">
                     <div class="form-group">
-                        <label class="col-sm-3 control-label"><spring:message code="lbl.fullname"/><span class="mandatory set-mandatory"></span></label>
+                        <label class="col-sm-3 control-label"><spring:message code="lbl.fullname"/>
+                            <span class="mandatory set-mandatory"></span>
+                        </label>
                         <div class="col-sm-2 col-md-1 add-margin">
                             <form:select class="form-control" id="salutation" path="salutation" required="required">
                                 <form:option value=""></form:option>
@@ -71,9 +73,11 @@
                                 <form:option value="Mrs"><spring:message code="lbl.mrs"/></form:option>
                                 <form:option value="Miss"><spring:message code="lbl.miss"/></form:option>
                             </form:select>
+                            <form:errors path="salutation" cssClass="add-margin error-msg"/>
                         </div>
                         <div class="col-sm-5 col-md-5 add-margin">
                             <form:input path="name" cssClass="form-control" placeholder="Name" maxlength="100" required="required"/>
+                            <form:errors path="name" cssClass="add-margin error-msg"/>
                         </div>
                     </div>
 
