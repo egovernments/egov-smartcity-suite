@@ -62,9 +62,9 @@ public class InstrumentVoucherService extends PersistenceService<InstrumentVouch
     public InstrumentVoucherService(Class<InstrumentVoucher> type) {
         super(type);
     }
-    
-    public InstrumentVoucher getInstrumentVoucherByVoucherHeader(Long instrumentHeaderId){
-        
-       return find("from InstrumentVoucher where instrumentHeaderId.id=?",instrumentHeaderId);
+
+    public InstrumentVoucher getInstrumentVoucherByVoucherHeader(Long instrumentHeaderId) {
+
+        return find("from InstrumentVoucher where instrumentHeaderId.id=?1", instrumentHeaderId);
     }
 }

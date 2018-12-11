@@ -63,6 +63,7 @@ import org.egov.model.voucher.WorkflowBean;
 import org.egov.pims.commons.Position;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.query.Query;
+import org.hibernate.type.LongType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -76,6 +77,8 @@ import java.util.List;
 
 @Component
 public class BudgetDetailActionHelper {
+    private static final String REFERENCEBUDGET = "no.reference.budget";
+    private static Logger LOGGER = Logger.getLogger(BudgetDetailActionHelper.class);
     @Autowired
     private BudgetDefinitionService budgetDefinitionService;
     @Autowired
@@ -89,13 +92,10 @@ public class BudgetDetailActionHelper {
     @Autowired
     @Qualifier("budgetDetailService")
     private BudgetDetailService budgetDetailService;
-
     @Autowired
     private SecurityUtils securityUtils;
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
-    private static Logger LOGGER = Logger.getLogger(BudgetDetailActionHelper.class);
-    private static final String REFERENCEBUDGET = "no.reference.budget";
 
     @Transactional
     public void create(final BudgetDetailHelperBean parameterObject) {
@@ -123,8 +123,8 @@ public class BudgetDetailActionHelper {
     }
 
     public void saveBudgetDetails(final Boolean addNewDetails, final Budget budget,
-            final List<BudgetDetail> budgetDetailList, final List<BigDecimal> beAmounts, final EgwStatus egwStatus,
-            final WorkflowBean workflowBean, final Position owner) {
+                                  final List<BudgetDetail> budgetDetailList, final List<BigDecimal> beAmounts, final EgwStatus egwStatus,
+                                  final WorkflowBean workflowBean, final Position owner) {
 
         int index = 0;
         Budget refBudget;
@@ -194,13 +194,13 @@ public class BudgetDetailActionHelper {
             addlCondtion.append("and budgetGroup.id=:budgetGroupid");
         new ArrayList<BudgetDetail>();
         final Query qry = persistenceService.getSession().createNativeQuery(addlCondtion.toString());
-        qry.setLong("budgetid", budget.getId());
+        qry.setParameter("budgetid", budget.getId(), LongType.INSTANCE);
         if (referenceBudgetFor != null)
-            qry.setLong("referenceBudget", referenceBudgetFor.getId());
+            qry.setParameter("referenceBudget", referenceBudgetFor.getId(), LongType.INSTANCE);
         if (searchfunctionid != null && searchfunctionid != 0)
-            qry.setLong("functionid", searchfunctionid);
+            qry.setParameter("functionid", searchfunctionid, LongType.INSTANCE);
         if (searchbudgetGroupid != null && searchbudgetGroupid != 0)
-            qry.setLong("budgetGroupid", searchbudgetGroupid);
+            qry.setParameter("budgetGroupid", searchbudgetGroupid, LongType.INSTANCE);
         qry.executeUpdate();
     }
 
@@ -211,9 +211,9 @@ public class BudgetDetailActionHelper {
         for (final BudgetProposalBean bpBean : bpBeanList) {
             if (bpBean == null || bpBean.getId() == null)
                 continue;
-            bd = budgetDetailService.find("from BudgetDetail where id=?", bpBean.getId());
+            bd = budgetDetailService.find("from BudgetDetail where id=?1", bpBean.getId());
             bd.setOriginalAmount(bpBean.getProposedRE());
-            be = budgetDetailService.find("from BudgetDetail where id=?", bpBean.getNextYrId());
+            be = budgetDetailService.find("from BudgetDetail where id=?1", bpBean.getNextYrId());
             be.setOriginalAmount(bpBean.getProposedBE());
             if (bpBean.getDocumentNumber() != null)
                 bd.setDocumentNumber(bpBean.getDocumentNumber());

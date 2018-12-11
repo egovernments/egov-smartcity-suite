@@ -80,8 +80,7 @@ public class RemittanceJob extends AbstractQuartzJob implements StatefulJob {
         scheduledRemittanceService.searchRecovery(glcode, jobName, schedularLogId, null, null);
     }
 
-    private RemittanceSchedulerLog buildRemittanceScheduler(final RemittanceSchedulerLog remittanceScheduler)
-    {
+    private RemittanceSchedulerLog buildRemittanceScheduler(final RemittanceSchedulerLog remittanceScheduler) {
         remittanceScheduler.setGlcode(null);
         remittanceScheduler.setSchType(FinancialConstants.REMITTANCE_SCHEDULER_SCHEDULAR_TYPE_AUTO);
         remittanceScheduler.setSchJobName(getJobName());

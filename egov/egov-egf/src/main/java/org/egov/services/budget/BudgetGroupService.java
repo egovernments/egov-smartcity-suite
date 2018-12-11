@@ -61,11 +61,11 @@ public class BudgetGroupService extends PersistenceService<BudgetGroup, Long> {
 
     public BudgetGroup getBudgetGroup(final Long coaId) {
         BudgetGroup budgetGroup = null;
-        budgetGroup = find("from BudgetGroup where majorCode.id=? or maxCode.id =? or minCode.id = ?", coaId, coaId, coaId);
+        budgetGroup = find("from BudgetGroup where majorCode.id=?1 or maxCode.id =?2 or minCode.id = ?3", coaId, coaId, coaId);
         return budgetGroup;
     }
 
     public BudgetGroup getBudgetGroupByName(final String name) {
-        return find("from BudgetGroup where name=?", name);
+        return find("from BudgetGroup where name=?1", name);
     }
 }

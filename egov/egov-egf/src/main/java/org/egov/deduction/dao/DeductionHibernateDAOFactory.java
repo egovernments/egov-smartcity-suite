@@ -47,7 +47,6 @@
  */
 
 
-
 package org.egov.deduction.dao;
 
 import org.egov.infstr.services.PersistenceService;
@@ -67,39 +66,33 @@ import org.springframework.transaction.annotation.Transactional;
  * <ttpersistenceService.getSession()</tt>,
  */
 @Transactional(readOnly = true)
-public class DeductionHibernateDAOFactory extends DeductionDAOFactory
-{
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
+public class DeductionHibernateDAOFactory extends DeductionDAOFactory {
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
 
-    protected Session getCurrentSession()
-    {
+    protected Session getCurrentSession() {
         // returns a reference to the current Session.
         return persistenceService.getSession();
     }
 
-    
-    public EgRemittanceGldtlHibernateDAO getEgRemittanceGldtlDAO()
-    {
+
+    public EgRemittanceGldtlHibernateDAO getEgRemittanceGldtlDAO() {
         return new EgRemittanceGldtlHibernateDAO();
     }
 
-    
-    public EgRemittanceHibernateDAO getEgRemittanceDAO()
-    {
+
+    public EgRemittanceHibernateDAO getEgRemittanceDAO() {
         return new EgRemittanceHibernateDAO();
     }
 
     @Override
-    public GeneralledgerdetailHibernateDAO getGeneralledgerdetailDAO()
-    {
+    public GeneralledgerdetailHibernateDAO getGeneralledgerdetailDAO() {
         return new GeneralledgerdetailHibernateDAO();
     }
 
-    
-    public EgRemittanceDetailHibernateDAO getEgRemittanceDetailDAO()
-    {
+
+    public EgRemittanceDetailHibernateDAO getEgRemittanceDetailDAO() {
         return new EgRemittanceDetailHibernateDAO();
     }
 

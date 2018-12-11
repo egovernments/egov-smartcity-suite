@@ -59,33 +59,29 @@ import java.util.List;
 
 @Transactional(readOnly = true)
 public class BillsService {
-    
+
     @Autowired
     private EgBillRegisterHibernateDAO egBillRegisterHibernateDAO;
     @Autowired
     private BillAndPaymentDetailsDAO billAndPaymentDetailsDAO;
-    public EgBillregister createBillRegister(final EgBillregister billregister)
-    {
+
+    public EgBillregister createBillRegister(final EgBillregister billregister) {
         return (EgBillregister) egBillRegisterHibernateDAO.create(billregister);
     }
 
-    public EgBillregister updateBillRegister(final EgBillregister billregister)
-    {
+    public EgBillregister updateBillRegister(final EgBillregister billregister) {
         return (EgBillregister) egBillRegisterHibernateDAO.update(billregister);
     }
 
-    public EgBillregister getBillRegisterById(final Integer billid)
-    {
+    public EgBillregister getBillRegisterById(final Integer billid) {
         return (EgBillregister) egBillRegisterHibernateDAO.findById(new Long(billid), false);
     }
 
-    public List<String> getDistExpType()
-    {
+    public List<String> getDistExpType() {
         return egBillRegisterHibernateDAO.getDistinctEXpType();
     }
 
-    public String getBillTypeforVoucher(final CVoucherHeader voucherHeader)
-    {
+    public String getBillTypeforVoucher(final CVoucherHeader voucherHeader) {
         return egBillRegisterHibernateDAO.getBillTypeforVoucher(voucherHeader);
     }
 

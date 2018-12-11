@@ -47,7 +47,6 @@
  */
 
 
-
 package org.egov.deduction.dao;
 
 /**
@@ -61,12 +60,10 @@ package org.egov.deduction.dao;
  * <p>
  */
 
-public abstract class DeductionDAOFactory
-{
+public abstract class DeductionDAOFactory {
     private static final DeductionDAOFactory HIBERNATE = new DeductionHibernateDAOFactory();
 
-    public static DeductionDAOFactory getDAOFactory()
-    {
+    public static DeductionDAOFactory getDAOFactory() {
         return HIBERNATE;
     }
 

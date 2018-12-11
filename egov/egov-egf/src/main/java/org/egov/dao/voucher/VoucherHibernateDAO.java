@@ -65,10 +65,9 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.Constants;
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.query.Query;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.LongType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -79,7 +78,6 @@ import java.util.Map;
 
 /**
  * @author Manoranjan
- *
  */
 @Transactional(readOnly = true)
 public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long> {
@@ -99,40 +97,38 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
     }
 
     public List<CVoucherHeader> getVoucherList(final CVoucherHeader voucherHeader,
-            final Map<String, Object> searchFilterMap) throws ApplicationException, ParseException {
+                                               final Map<String, Object> searchFilterMap) throws ApplicationException, ParseException {
 
         final StringBuffer sql = new StringBuffer(500);
         sql.append(" and vh.type = 'Journal Voucher' ");
         sql.append(" and vh.isConfirmed != 1 ");
         if (null != voucherHeader.getVoucherNumber() && StringUtils.isNotEmpty(voucherHeader.getVoucherNumber())) {
-            sql.append(" and vh.voucherNumber like '%").append(voucherHeader.getVoucherNumber()).append("%'");
+            sql.append(" and vh.voucherNumber like ?1");
         }
         if (null != searchFilterMap.get(Constants.VOUCHERDATEFROM) && StringUtils.isNotEmpty
                 (searchFilterMap.get(Constants.VOUCHERDATEFROM).toString()))
-            sql.append(" and vh.voucherDate>='").append(Constants.DDMMYYYYFORMAT1.format(Constants.DDMMYYYYFORMAT2.
-                    parse(searchFilterMap.get(Constants.VOUCHERDATEFROM).toString()))).append("'");
+            sql.append(" and vh.voucherDate >= ?2");
         if (null != searchFilterMap.get(Constants.VOUCHERDATETO) && StringUtils.isNotEmpty
                 (searchFilterMap.get(Constants.VOUCHERDATETO).toString()))
-            sql.append(" and vh.voucherDate<='").append(Constants.DDMMYYYYFORMAT1.format(Constants.DDMMYYYYFORMAT2.
-                    parse(searchFilterMap.get(Constants.VOUCHERDATETO).toString()))).append("'");
+            sql.append(" and vh.voucherDate <= ?3");
 
         if (null != voucherHeader.getFundId())
-            sql.append(" and vh.fundId=").append(voucherHeader.getFundId().getId());
+            sql.append(" and vh.fundId = ?4");
         if (null != voucherHeader.getVouchermis().getFundsource())
-            sql.append(" and vh.fundsourceId=").append(voucherHeader.getVouchermis().getFundsource().getId());
+            sql.append(" and vh.fundsourceId = ?5");
 
         if (null != voucherHeader.getVouchermis().getDepartmentid())
-            sql.append(" and vh.vouchermis.departmentid=").append(voucherHeader.getVouchermis().getDepartmentid().getId());
+            sql.append(" and vh.vouchermis.departmentid = ?6");
 
         if (voucherHeader.getVouchermis().getSchemeid() != null)
-            sql.append(" and vh.vouchermis.schemeid=").append(voucherHeader.getVouchermis().getSchemeid().getId());
+            sql.append(" and vh.vouchermis.schemeid = ?7");
 
         if (null != voucherHeader.getVouchermis().getSubschemeid())
-            sql.append(" and vh.vouchermis.subschemeid=").append(voucherHeader.getVouchermis().getSubschemeid().getId());
+            sql.append(" and vh.vouchermis.subschemeid = ?8");
         if (null != voucherHeader.getVouchermis().getFunctionary())
-            sql.append(" and vh.vouchermis.functionary=").append(voucherHeader.getVouchermis().getFunctionary().getId());
+            sql.append(" and vh.vouchermis.functionary = ?9");
         if (null != voucherHeader.getVouchermis().getDivisionid())
-            sql.append(" and vh.vouchermis.divisionid=").append(voucherHeader.getVouchermis().getDivisionid().getId());
+            sql.append(" and vh.vouchermis.divisionid = ?10");
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("sql====================" + sql.toString());
@@ -140,8 +136,16 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
                 "statusexcludeReport");
         final String statusExclude = appList.get(0).getValue();
 
-        final List<CVoucherHeader> list = findAllBy(" from CVoucherHeader vh where vh.status not in ("
-                + statusExclude + ") " + sql.toString() + " order by vh.cgn,vh.voucherNumber,vh.voucherDate ");
+        final List<CVoucherHeader> list = findAllBy(new StringBuilder(" from CVoucherHeader vh where vh.status not in (")
+                        .append(statusExclude)
+                        .append(") ")
+                        .append(sql.toString())
+                        .append(" order by vh.cgn,vh.voucherNumber,vh.voucherDate ").toString(), "%".concat(voucherHeader.getVoucherNumber()).concat("%"),
+                Constants.DDMMYYYYFORMAT1.format(Constants.DDMMYYYYFORMAT2.
+                        parse(searchFilterMap.get(Constants.VOUCHERDATEFROM).toString())), Constants.DDMMYYYYFORMAT1.format(Constants.DDMMYYYYFORMAT2.
+                        parse(searchFilterMap.get(Constants.VOUCHERDATETO).toString())), voucherHeader.getFundId().getId(), voucherHeader.getVouchermis().getFundsource().getId(),
+                voucherHeader.getVouchermis().getDepartmentid().getId(), voucherHeader.getVouchermis().getSchemeid().getId(), voucherHeader.getVouchermis().getSubschemeid().getId(),
+                voucherHeader.getVouchermis().getFunctionary().getId(), voucherHeader.getVouchermis().getDivisionid().getId());
         return list;
     }
 
@@ -150,9 +154,9 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("VoucherHibernateDAO | getVoucherHeaderById | Start ");
-        final List<CVoucherHeader> vhList = getSession()
-                .createCriteria(CVoucherHeader.class).
-                add(Restrictions.eq("id", voucherId)).list();
+        final List<CVoucherHeader> vhList = getSession().createQuery("from CVoucherHeader where id = :id")
+                .setParameter("id", voucherId, LongType.INSTANCE)
+                .list();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("numer of voucher with voucherheaderid " + voucherId + "=" + vhList.size());
         return vhList.get(0);
@@ -162,30 +166,25 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
     public List<CGeneralLedger> getGLInfo(final Long voucherId) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("VoucherHibernateDAO | getGLInfo | Start ");
-        return getSession().createCriteria(CGeneralLedger.class).createCriteria("voucherHeaderId")
-                .add(Restrictions.eq("id", voucherId)).list();
-
+        return getSession().createQuery("from CGeneralLedger where voucherHeaderId.id = :id")
+                .setParameter("id", voucherId, LongType.INSTANCE)
+                .list();
     }
 
     @SuppressWarnings("unchecked")
     public List<CGeneralLedgerDetail> getGeneralledgerdetail(final Long gledgerId) {
-
-        final Criteria criteria = getSession().createCriteria(CGeneralLedgerDetail.class);
-        criteria.add(Restrictions.eq("generalLedgerId.id",gledgerId));
-        return criteria.list();
-
+        return getSession().createQuery("from CGeneralLedgerDetail where generalLedgerId.id = :id")
+                .setParameter("id", gledgerId, LongType.INSTANCE)
+                .list();
     }
 
     public Accountdetailtype getAccountDetailById(final Integer accDetailTypeId) {
-
-        final Criteria criteria = getSession().createCriteria(Accountdetailtype.class);
-        criteria.add(Restrictions.eq("id", accDetailTypeId));
-        return (Accountdetailtype) criteria.list().get(0);
-
+        return (Accountdetailtype) getSession().createQuery("from Accountdetailtype where id = :id")
+                .setParameter("id", accDetailTypeId, IntegerType.INSTANCE)
+                .list().get(0);
     }
 
-    public EntityType getEntityInfo(final Integer detailKeyId, final Integer detailtypeId) throws ValidationException
-    {
+    public EntityType getEntityInfo(final Integer detailKeyId, final Integer detailtypeId) throws ValidationException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("VoucherHibernateDAO | getDetailCodeName | start");
         EntityType entity = null;
@@ -232,14 +231,13 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
              */
             final List<CGeneralLedger> glList = getGLInfo(Long.parseLong(voucherHeaderId.toString()));
             for (final CGeneralLedger generalLedger : glList) {
-                final List<CGeneralLedgerDetail> glDetailList = getSession().
-                        createCriteria(CGeneralLedgerDetail.class)
-                        .add(Restrictions.eq("generalLedgerId.id", generalLedger.getId())).list();
+                final List<CGeneralLedgerDetail> glDetailList = getSession().createQuery("from CGeneralLedgerDetail where generalLedgerId.id = :id")
+                        .setParameter("id", generalLedger.getId())
+                        .list();
                 for (final CGeneralLedgerDetail generalLedgerDetail : glDetailList) {
-                    final Query qry = getSession().createQuery(
-                            "delete from EgRemittanceGldtl where generalledgerdetail.id=:gldetailId");
-                    qry.setInteger("gldetailId", Integer.valueOf(generalLedgerDetail.getId().toString()));
-                    qry.executeUpdate();
+                    getSession().createQuery("delete from EG_REMITTANCE_GLDTL where GLDTLID = :gldetailId")
+                            .setParameter("gldetailId", Integer.valueOf(generalLedgerDetail.getId().toString()), IntegerType.INSTANCE)
+                            .executeUpdate();
                 }
             }
             /**
@@ -252,7 +250,7 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
              */
 
         } catch (final HibernateException e) {
-            throw new HibernateException("exception in voucherHibDao while deleting from general ledger" , e);
+            throw new HibernateException("exception in voucherHibDao while deleting from general ledger", e);
         } catch (final ApplicationRuntimeException e) {
             throw new ApplicationRuntimeException("exception in voucherHibDao while deleting from general ledger", e);
         }

@@ -65,9 +65,9 @@ public class BudgetDetailHelperBean {
     public WorkflowBean workflowBean;
 
     public BudgetDetailHelperBean(final Boolean addNewDetails, final List<BigDecimal> beAmounts,
-            final List<BudgetDetail> budgetDetailList, final EgwStatus egwStatus, final BudgetDetail budgetDetail,
-            final Long budgetGroupId,
-            final Long searchFunctionId, final WorkflowBean workflowBean) {
+                                  final List<BudgetDetail> budgetDetailList, final EgwStatus egwStatus, final BudgetDetail budgetDetail,
+                                  final Long budgetGroupId,
+                                  final Long searchFunctionId, final WorkflowBean workflowBean) {
         this.addNewDetails = addNewDetails;
         this.beAmounts = beAmounts;
         this.budgetDetailList = budgetDetailList;

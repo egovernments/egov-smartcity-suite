@@ -50,9 +50,8 @@ package org.egov.services.deduction;
 import org.egov.deduction.model.EgRemittanceGldtl;
 import org.egov.infstr.services.PersistenceService;
 
-public class RemittanceGeneralLedgerDetailService extends PersistenceService<EgRemittanceGldtl, Long>
-{
-    
+public class RemittanceGeneralLedgerDetailService extends PersistenceService<EgRemittanceGldtl, Long> {
+
     public RemittanceGeneralLedgerDetailService() {
         super(EgRemittanceGldtl.class);
     }

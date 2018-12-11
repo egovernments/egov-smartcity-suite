@@ -77,7 +77,7 @@ public class FundingAgencyService extends PersistenceService<FundingAgency, Inte
     @Override
     public List<EntityType> getAllActiveEntities(final Integer accountDetailTypeId) {
         final List<EntityType> entities = new ArrayList<EntityType>();
-        entities.addAll(findAllBy("from FundingAgency r where r.isActive=?", true));
+        entities.addAll(findAllBy("from FundingAgency r where r.isActive=?1", true));
         return entities;
     }
 
@@ -87,7 +87,7 @@ public class FundingAgencyService extends PersistenceService<FundingAgency, Inte
         final Integer pageSize = maxRecords > 0 ? maxRecords : null;
         final List<EntityType> entities = new ArrayList<EntityType>();
         filterKey = "%" + filterKey + "%";
-        final String qry = "from FundingAgency r where upper(code) like upper(?) or upper(name) like upper(?) and r.isActive=? order by code,name";
+        final String qry = "from FundingAgency r where upper(code) like upper(?1) or upper(name) like upper(?2) and r.isActive=?3 order by code,name";
         entities.addAll(findPageBy(qry, 0, pageSize, filterKey, filterKey, true).getList());
         return entities;
     }

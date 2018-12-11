@@ -48,11 +48,7 @@
 package org.egov.services.budget;
 
 import org.apache.commons.lang.StringUtils;
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.CFunction;
-import org.egov.commons.CGeneralLedger;
-import org.egov.commons.CVoucherHeader;
+import org.egov.commons.*;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
@@ -77,12 +73,12 @@ import java.util.Map;
 
 @Transactional(readOnly = true)
 public class BudgetAppropriationService extends PersistenceService {
-	@Autowired
+    @Autowired
     private FinancialYearDAO financialYearDAO;
     private BudgetDetailsDAO budgetDetailsDAO;
     @Autowired
     private AppConfigValueService appConfigValuesService;
-    
+
     @Autowired
     private BudgetControlTypeService budgetControlTypeService;
 
@@ -106,7 +102,7 @@ public class BudgetAppropriationService extends PersistenceService {
                 !"".equalsIgnoreCase(bill.getEgBillregistermis().getBudgetaryAppnumber())) {
             final CFinancialYear financialYear = financialYearDAO.getFinancialYearByDate(bill.getBilldate());
             for (final EgBilldetails detail : bill.getEgBilldetailes()) {
-                final CChartOfAccounts coa = (CChartOfAccounts) find("from CChartOfAccounts where id=?",
+                final CChartOfAccounts coa = (CChartOfAccounts) find("from CChartOfAccounts where id=?1",
                         Long.valueOf(detail.getGlcodeid().toString()));
                 if (isBudgetCheckNeeded(coa)) {
                     final BudgetReportEntry budgetReportEntry = new BudgetReportEntry();
@@ -126,7 +122,7 @@ public class BudgetAppropriationService extends PersistenceService {
                 && voucher.getVouchermis().getBudgetaryAppnumber() != null
                 && !"".equalsIgnoreCase(voucher.getVouchermis().getBudgetaryAppnumber())) {
             final CFinancialYear financialYear = financialYearDAO.getFinancialYearByDate(voucher.getVoucherDate());
-            final List<CGeneralLedger> ledgerDetails = findAllBy("from CGeneralLedger where voucherHeaderId.id=?",
+            final List<CGeneralLedger> ledgerDetails = findAllBy("from CGeneralLedger where voucherHeaderId.id=?1",
                     voucher.getId());
             final Department dept = getDepartmentForVoucher(voucher);
             for (final CGeneralLedger detail : ledgerDetails)
@@ -143,15 +139,15 @@ public class BudgetAppropriationService extends PersistenceService {
     }
 
     private boolean isBudgetCheckNeeded(final CChartOfAccounts coa) {
-    	 boolean checkReq=false; 
-    	if(!budgetControlTypeService.getConfigValue().equals(BudgetControlType.BudgetCheckOption.NONE.toString()))
-			if (null != coa && null != coa.getBudgetCheckReq() && coa.getBudgetCheckReq())
-                checkReq = true;  
+        boolean checkReq = false;
+        if (!budgetControlTypeService.getConfigValue().equals(BudgetControlType.BudgetCheckOption.NONE.toString()))
+            if (null != coa && null != coa.getBudgetCheckReq() && coa.getBudgetCheckReq())
+                checkReq = true;
         return checkReq;
     }
 
     private void populateDataForBill(final EgBillregister bill, final CFinancialYear financialYear, final EgBilldetails detail,
-            final BudgetReportEntry budgetReportEntry, final CChartOfAccounts coa) {
+                                     final BudgetReportEntry budgetReportEntry, final CChartOfAccounts coa) {
         final CFunction function = getFunction(detail);
         final Map<String, Object> budgetDataMap = getRequiredBudgetDataForBill(bill, financialYear, function, coa);
         budgetReportEntry.setFunctionName(function.getName());
@@ -178,8 +174,8 @@ public class BudgetAppropriationService extends PersistenceService {
     }
 
     private void populateDataForVoucher(final CVoucherHeader voucher, final CFinancialYear financialYear,
-            final CGeneralLedger detail,
-            final BudgetReportEntry budgetReportEntry) {
+                                        final CGeneralLedger detail,
+                                        final BudgetReportEntry budgetReportEntry) {
         final CFunction function = getFunctionForGl(detail);
         final CChartOfAccounts coa = detail.getGlcodeId();
         final Map<String, Object> budgetDataMap = getRequiredBudgetDataForVoucher(voucher, financialYear, function, coa);
@@ -236,17 +232,17 @@ public class BudgetAppropriationService extends PersistenceService {
 
     private Department getDepartmentForVoucher(final CVoucherHeader voucher) {
         if (voucher != null && voucher.getVouchermis().getDepartmentid() != null)
-            return (Department) find("from Department where id=?", voucher.getVouchermis().getDepartmentid().getId());
+            return (Department) find("from Department where id=?1", voucher.getVouchermis().getDepartmentid().getId());
         return null;
     }
 
     private CFunction getFunction(final EgBilldetails detail) {
-        return (CFunction) find("from CFunction where id=?", Long.valueOf(detail.getFunctionid().toString()));
+        return (CFunction) find("from CFunction where id=?1", Long.valueOf(detail.getFunctionid().toString()));
     }
 
     private CFunction getFunctionForGl(final CGeneralLedger detail) {
         if (detail.getFunctionId() != null)
-            return (CFunction) find("from CFunction where id=?", Long.valueOf(detail.getFunctionId().toString()));
+            return (CFunction) find("from CFunction where id=?1", Long.valueOf(detail.getFunctionId().toString()));
         return null;
     }
 
@@ -265,7 +261,7 @@ public class BudgetAppropriationService extends PersistenceService {
     }
 
     private Map<String, Object> getRequiredBudgetDataForBill(final EgBillregister cbill, final CFinancialYear financialYear,
-            final CFunction function, final CChartOfAccounts coa) {
+                                                             final CFunction function, final CChartOfAccounts coa) {
         final Map<String, Object> budgetDataMap = new HashMap<String, Object>();
         budgetDataMap.put("financialyearid", financialYear.getId());
         budgetDataMap.put(Constants.DEPTID, cbill.getEgBillregistermis().getEgDepartment().getId());
@@ -287,7 +283,7 @@ public class BudgetAppropriationService extends PersistenceService {
     }
 
     private Map<String, Object> getRequiredBudgetDataForVoucher(final CVoucherHeader voucher, final CFinancialYear financialYear,
-            final CFunction function, final CChartOfAccounts coa) {
+                                                                final CFunction function, final CChartOfAccounts coa) {
         final Map<String, Object> budgetDataMap = new HashMap<String, Object>();
         budgetDataMap.put("financialyearid", financialYear.getId());
         if (voucher.getVouchermis().getDepartmentid() != null)

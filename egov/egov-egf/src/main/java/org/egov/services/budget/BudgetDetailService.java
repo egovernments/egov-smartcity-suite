@@ -299,7 +299,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             final PersistenceService persistenceService) {
         if (budget == null || budget.getId() == null)
             return Collections.EMPTY_LIST;
-        budget = (Budget) persistenceService.find("from Budget where id=?", budget.getId());
+        budget = (Budget) persistenceService.find("from Budget where id=?1", budget.getId());
         final BudgetDetail detail = new BudgetDetail();
         detail.copyFrom(example);
         detail.setBudget(null);
@@ -395,7 +395,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     private List<Budget> findChildren(final Budget parent) {
-        return ((PersistenceService) this).findAllBy("from Budget b where b.parent=?", parent);
+        return ((PersistenceService) this).findAllBy("from Budget b where b.parent=?1", parent);
     }
 
     private void collectLeafBudgets(final Budget parent, final List<Budget> children) {
@@ -487,12 +487,12 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             return null;
         if (budget.getMaterializedPath().length() == 1)
             return budget;
-        return (Budget) persistenceService.find("from Budget where materializedPath=?",
+        return (Budget) persistenceService.find("from Budget where materializedPath=?1",
                 budget.getMaterializedPath().split("\\.")[0]);
     }
 
     protected User getUser() {
-        return (User) ((PersistenceService) this).find(" from User where id=?", ApplicationThreadLocals.getUserId());
+        return (User) ((PersistenceService) this).find(" from User where id=?1", ApplicationThreadLocals.getUserId());
     }
 
     public Position getPositionForEmployee(final Employee emp) throws ApplicationRuntimeException {
@@ -598,7 +598,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         String count = "";
         if (detail.getBudget() != null) {
             materializedPath = detail.getBudget().getMaterializedPath();
-            final List<BudgetDetail> parallelBudgetDetails = findAllBy("from BudgetDetail bd where bd.budget=?",
+            final List<BudgetDetail> parallelBudgetDetails = findAllBy("from BudgetDetail bd where bd.budget=?1",
                     detail.getBudget());
             if (parallelBudgetDetails != null)
                 count = String.valueOf(parallelBudgetDetails.size() + 1);
@@ -1867,7 +1867,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         persistenceService.getSession().createNativeQuery(BUDGETDETAIL_STATES_INSERT).setLong("stateId", stateId)
                 .executeUpdate();
 
-        budgetDetail.setWfState((State) persistenceService.find("from State where id = ?", stateId));
+        budgetDetail.setWfState((State) persistenceService.find("from State where id = ?1", stateId));
         return budgetDetail;
     }
 
@@ -2013,7 +2013,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         }
         persistenceService.getSession().createNativeQuery(BUDGET_STATES_INSERT).setLong("stateId", stateId)
                 .executeUpdate();
-        budgetState = (State) persistenceService.find("from State where id = ?", stateId);
+        budgetState = (State) persistenceService.find("from State where id = ?1", stateId);
         budget.setWfState(budgetState);
         return budget;
     }
@@ -2152,7 +2152,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     public BudgetDetail getBudgetDetail(final Integer fundId, final Long functionId, final Long deptId,
             final Long glCodeId, final CFinancialYear fYear, final String budgetType) {
         return find(
-                "from BudgetDetail bd where bd.fund.id = ? and bd.function.id = ? and bd.executingDepartment.id = ? and bd.budgetGroup.maxCode.id = ? and bd.budget.financialYear.id = ? and bd.budget.isbere = ?",
+                "from BudgetDetail bd where bd.fund.id = ?1 and bd.function.id = ?2 and bd.executingDepartment.id = ?3 and bd.budgetGroup.maxCode.id = ?4 and bd.budget.financialYear.id = ?5 and bd.budget.isbere = ?6",
                 fundId, functionId, deptId, glCodeId, fYear.getId(), budgetType);
 
     }
@@ -2160,7 +2160,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     public BudgetDetail getBudgetDetail(final Integer fundId, final Long functionId, final Long deptId,
             final Long budgetGroupId) {
         return find(
-                "from BudgetDetail bd where bd.fund.id = ? and bd.function.id = ? and bd.executingDepartment.id = ? and bd.budgetGroup.id= ?",
+                "from BudgetDetail bd where bd.fund.id = ?1 and bd.function.id = ?2 and bd.executingDepartment.id = ?3 and bd.budgetGroup.id= ?4",
                 fundId, functionId, deptId, budgetGroupId);
     }
 
@@ -2256,7 +2256,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             }
         } else {
             if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
-                pos = (Position) persistenceService.find("from Position where id=?",
+                pos = (Position) persistenceService.find("from Position where id=?1",
                         workflowBean.getApproverPositionId());
             if (null == budgetDetail.getState()) {
                 budgetDetail.transition().start().withSenderName(user.getName())

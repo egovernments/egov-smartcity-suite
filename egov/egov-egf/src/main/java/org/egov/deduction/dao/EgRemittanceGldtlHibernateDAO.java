@@ -47,7 +47,6 @@
  */
 
 
-
 package org.egov.deduction.dao;
 
 import org.egov.deduction.model.EgRemittanceGldtl;
@@ -66,6 +65,9 @@ import java.util.List;
  */
 
 public class EgRemittanceGldtlHibernateDAO {
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Transactional
     public EgRemittanceGldtl update(final EgRemittanceGldtl entity) {
         getCurrentSession().update(entity);
@@ -83,22 +85,16 @@ public class EgRemittanceGldtlHibernateDAO {
         getCurrentSession().delete(entity);
     }
 
-    
     public EgRemittanceGldtl findById(Number id, boolean lock) {
         return (EgRemittanceGldtl) getCurrentSession().load(EgRemittanceGldtl.class, id);
     }
 
     public List<EgRemittanceGldtl> findAll() {
-        return (List<EgRemittanceGldtl>) getCurrentSession().createCriteria(EgRemittanceGldtl.class).list();
+        return (List<EgRemittanceGldtl>) getCurrentSession().createQuery("from EgRemittanceGldtl").list();
     }
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 
-    
 }

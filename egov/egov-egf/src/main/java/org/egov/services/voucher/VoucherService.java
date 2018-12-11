@@ -53,15 +53,7 @@ import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.egov.commons.Accountdetailtype;
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.CFiscalPeriod;
-import org.egov.commons.CGeneralLedger;
-import org.egov.commons.CGeneralLedgerDetail;
-import org.egov.commons.CVoucherHeader;
-import org.egov.commons.EgfRecordStatus;
-import org.egov.commons.EgwStatus;
+import org.egov.commons.*;
 import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
 import org.egov.commons.dao.ChartOfAccountsDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
@@ -94,12 +86,7 @@ import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.utils.EGovConfig;
-import org.egov.model.bills.EgBillPayeedetails;
-import org.egov.model.bills.EgBillSubType;
-import org.egov.model.bills.EgBilldetails;
-import org.egov.model.bills.EgBillregister;
-import org.egov.model.bills.EgBillregistermis;
+import org.egov.model.bills.*;
 import org.egov.model.payment.Paymentheader;
 import org.egov.model.voucher.VoucherDetails;
 import org.egov.model.voucher.VoucherTypeBean;
@@ -110,6 +97,7 @@ import org.egov.pims.service.EisUtilService;
 import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.services.bills.EgBillRegisterService;
 import org.egov.utils.Constants;
+import org.egov.utils.EGovConfig;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.HibernateException;
@@ -120,14 +108,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
@@ -141,7 +122,8 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
     @Autowired
     @Qualifier("budgetDetailsDAO")
     private BudgetDetailsDAO budgetDetailsDAO;
-    private @Autowired AppConfigValueService appConfigValuesService;
+    private @Autowired
+    AppConfigValueService appConfigValuesService;
     @Autowired
     @Qualifier("voucherHibDAO")
     private VoucherHibernateDAO voucherHibDAO;
@@ -189,7 +171,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
     @Autowired
     @Qualifier("recordStatusPersistenceService")
     private PersistenceService recordStatusPersistenceService;
-    
+
     @Autowired
     private ChartOfAccountDetailService chartOfAccountDetailService;
 
@@ -227,11 +209,11 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
     }
 
     public Department getTempDepartmentForWfItem(final CVoucherHeader cv,
-            final Position position) {
+                                                 final Position position) {
         Department d = null;
         eisCommonService.getEmployeeByUserId(cv.getCreatedBy().getId());
         d = (Department) persistenceService
-                .find("select v.deptId from EmployeeView v left join v.userMaster  as user where v.isPrimary=true and user.id=?",
+                .find("select v.deptId from EmployeeView v left join v.userMaster  as user where v.isPrimary=true and user.id=?1",
                         ApplicationThreadLocals.getUserId());
         return d;
     }
@@ -279,7 +261,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
             paramMap.put("debitAmt", detail.getDebitamount());
             paramMap.put("creditAmt", detail.getCreditamount());
             coa = (CChartOfAccounts) persistenceService.find(
-                    " from CChartOfAccounts where id=?",
+                    " from CChartOfAccounts where id=?1",
                     Long.valueOf(detail.getGlcodeid().toString()));
             paramMap.put("glcode", coa.getGlcode());
             if (detail.getFunctionid() != null)
@@ -300,7 +282,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
         return result;
     }
 
-    @SuppressWarnings({ "unchecked", "deprecation" })
+    @SuppressWarnings({"unchecked", "deprecation"})
     public Map<String, Object> getDesgByDeptAndTypeAndVoucherDate(
             final String type, final String scriptName, final Date vouDate,
             final Paymentheader paymentheader) {
@@ -337,7 +319,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
                         designation.getId()
                                 + "-"
                                 + desgFuncryName.substring(0,
-                                        desgFuncryName.indexOf('-')));
+                                desgFuncryName.indexOf('-')));
                 designationList.add(desgFuncryMap);
             } else if (desgFuncryName.equalsIgnoreCase("END"))
                 map.put("wfitemstate", "END");
@@ -354,16 +336,16 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
                             FinancialConstants.PAYMENTVOUCHER_NAME_DIRECTBANK)) {
                 final Paymentheader ph = (Paymentheader) persistenceService
                         .find("select ph from Paymentheader ph , Miscbilldetail misc ,CVoucherHeader vh,CGeneralLedger gl where misc.payVoucherHeader = ph.voucherheader and misc.billVoucherHeader = vh and gl.voucherHeaderId = vh and vh.status not in ("
-                                + FinancialConstants.CANCELLEDVOUCHERSTATUS
-                                + ") and gl.debitAmount > 0  and (gl.glcode like '210%' or gl.glcode like '460%') and ph = ? ",
+                                        + FinancialConstants.CANCELLEDVOUCHERSTATUS
+                                        + ") and gl.debitAmount > 0  and (gl.glcode like '210%' or gl.glcode like '460%') and ph = ?1 ",
                                 paymentheader);
                 if (ph != null)
                     return (double) 0;
                 else {
                     final Double grossAmount = (Double) persistenceService
                             .find("select sum(gl.debitAmount) from Paymentheader ph , Miscbilldetail misc ,CVoucherHeader vh,CGeneralLedger gl where misc.payVoucherHeader = ph.voucherheader and misc.billVoucherHeader = vh and gl.voucherHeaderId = vh and vh.status not in ("
-                                    + FinancialConstants.CANCELLEDVOUCHERSTATUS
-                                    + ") and gl.debitAmount > 0 and ph = ?",
+                                            + FinancialConstants.CANCELLEDVOUCHERSTATUS
+                                            + ") and gl.debitAmount > 0 and ph = ?1",
                                     paymentheader);
 
                     return grossAmount != null ? grossAmount : (double) 0;
@@ -372,16 +354,16 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
             } else {
                 final Paymentheader ph = (Paymentheader) persistenceService
                         .find("select ph from Paymentheader ph ,CVoucherHeader vh,CGeneralLedger gl where ph.voucherheader = vh and gl.voucherHeaderId = vh and vh.status not in ("
-                                + FinancialConstants.CANCELLEDVOUCHERSTATUS
-                                + ") and gl.debitAmount > 0 and (gl.glcode like '210%' or gl.glcode like '460%') and ph = ? ",
+                                        + FinancialConstants.CANCELLEDVOUCHERSTATUS
+                                        + ") and gl.debitAmount > 0 and (gl.glcode like '210%' or gl.glcode like '460%') and ph = ?1 ",
                                 paymentheader);
                 if (ph != null)
                     return (double) 0;
                 else {
                     final Double grossAmount = (Double) persistenceService
                             .find("select sum(gl.debitAmount) from Paymentheader ph ,CVoucherHeader vh,CGeneralLedger gl where ph.voucherheader = vh and gl.voucherHeaderId = vh and vh.status not in ("
-                                    + FinancialConstants.CANCELLEDVOUCHERSTATUS
-                                    + ") and gl.debitAmount > 0 and ph = ?",
+                                            + FinancialConstants.CANCELLEDVOUCHERSTATUS
+                                            + ") and gl.debitAmount > 0 and ph = ?1",
                                     paymentheader);
 
                     return grossAmount != null ? grossAmount : (double) 0;
@@ -432,10 +414,10 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
                         .put("status",
                                 voucherheader.getStatus() == 0 ? voucherheader
                                         .getIsConfirmed() == 0 ? "UnConfirmed"
-                                                : "Confirmed"
+                                        : "Confirmed"
                                         : voucherheader.getStatus() == 1 ? "Reversed"
-                                                : voucherheader.getStatus() == 2 ? "Reversal"
-                                                        : "");
+                                        : voucherheader.getStatus() == 2 ? "Reversal"
+                                        : "");
 
             voucherList.add(voucherMap);
         }
@@ -451,7 +433,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
             LOGGER.debug("VoucherService | getVoucherDetails | Start");
         final Map<String, Object> voucherMap = new HashMap<>();
         final CVoucherHeader voucherHeader = (CVoucherHeader) persistenceService
-                .find("from CVoucherHeader where id=?", voucherId);
+                .find("from CVoucherHeader where id=?1", voucherId);
         voucherMap.put(Constants.VOUCHERHEADER, voucherHeader);
         final List<CGeneralLedger> glList = voucherHibDAO
                 .getGLInfo(voucherHeader.getId());
@@ -521,7 +503,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
                         subLedgerDetail.setDetailKey(entity.getName());
                         subLedgerDetail.setFunctionDetail(generalLedger
                                 .getFunctionId() != null ? generalLedger
-                                        .getFunctionId().toString() : "0");
+                                .getFunctionId().toString() : "0");
                         subLedgerlist.add(subLedgerDetail);
                     }
                 }
@@ -569,7 +551,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
         CVoucherHeader existingVH = null;
         try {
             if (voucherHeader.getId() != null && voucherHeader.getId() != -1)
-                existingVH = find("from CVoucherHeader where id=?",
+                existingVH = find("from CVoucherHeader where id=?1",
                         voucherHeader.getId());
             existingVH = getUpdatedVNumCGVN(existingVH, voucherHeader,
                     voucherNumType);
@@ -608,7 +590,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
     }
 
     public CVoucherHeader getUpdatedVNumCGVN(final CVoucherHeader existingVH,
-            final CVoucherHeader voucherHeader, String voucherNumType) {
+                                             final CVoucherHeader voucherHeader, String voucherNumType) {
 
         String autoVoucherType = null;
         if (voucherNumType.equalsIgnoreCase("Journal Voucher"))
@@ -618,7 +600,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
                 .substring(
                         Integer.parseInt(FinancialConstants.VOUCHERNO_TYPE_LENGTH)
                                 - Integer
-                                        .parseInt(FinancialConstants.VOUCHERNO_TYPE_SUBLENGTH),
+                                .parseInt(FinancialConstants.VOUCHERNO_TYPE_SUBLENGTH),
                         Integer.parseInt(FinancialConstants.VOUCHERNO_TYPE_LENGTH));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("autoVoucherType FOR MODIFIED VOUCHER :"
@@ -651,7 +633,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
 
                 final String strVoucherNumber = voucherHelper
                         .getGeneratedVoucherNumber(voucherHeader.getFundId()
-                                .getId(), autoVoucherType, voucherHeader
+                                        .getId(), autoVoucherType, voucherHeader
                                         .getVoucherDate(),
                                 vNumGenMode, voucherHeader
                                         .getVoucherNumber());
@@ -672,7 +654,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
                 // A financial Year can have multiple fiscalPeriod so comparing
                 // previous and new financial year id
                 final CFiscalPeriod fiscalPeriod = (CFiscalPeriod) persistenceService
-                        .find(" from CFiscalPeriod where id=?",
+                        .find(" from CFiscalPeriod where id=?1",
                                 Long.valueOf(fiscalPeriodIdStr));
                 final String financialYearId = financialYearDAO
                         .getFinancialYearId(Constants.DDMMYYYYFORMAT2
@@ -682,7 +664,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
                 if (existingVH.getFiscalPeriodId().equals(
                         voucherHeader.getFiscalPeriodId())
                         && fiscalPeriod.getcFinancialYear().getId().longValue() == financialYear
-                                .getId().longValue()) {
+                        .getId().longValue()) {
                     final String vDate = Constants.DDMMYYYYFORMAT2
                             .format(voucherHeader.getVoucherDate());
                     if (LOGGER.isDebugEnabled())
@@ -700,7 +682,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
                 } else {
                     final String strVoucherNumber = voucherHelper
                             .getGeneratedVoucherNumber(voucherHeader
-                                    .getFundId().getId(), autoVoucherType,
+                                            .getFundId().getId(), autoVoucherType,
                                     voucherHeader.getVoucherDate(),
                                     vNumGenMode, voucherHeader
                                             .getVoucherNumber());
@@ -724,13 +706,13 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
             // manual voucher number
             else if ("Manual".equalsIgnoreCase(vNumGenMode)
                     && !existingVH
-                            .getVoucherNumber()
-                            .substring(
-                                    Integer.valueOf(FinancialConstants.VOUCHERNO_TYPE_LENGTH))
-                            .equalsIgnoreCase(voucherHeader.getVoucherNumber())) {
+                    .getVoucherNumber()
+                    .substring(
+                            Integer.valueOf(FinancialConstants.VOUCHERNO_TYPE_LENGTH))
+                    .equalsIgnoreCase(voucherHeader.getVoucherNumber())) {
                 final String strVoucherNumber = voucherHelper
                         .getGeneratedVoucherNumber(voucherHeader.getFundId()
-                                .getId(), autoVoucherType, voucherHeader
+                                        .getId(), autoVoucherType, voucherHeader
                                         .getVoucherDate(),
                                 vNumGenMode, voucherHeader
                                         .getVoucherNumber());
@@ -815,7 +797,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
                     if (null != voucherHeader
                             .getIsRestrictedtoOneFunctionCenter()
                             && voucherHeader
-                                    .getIsRestrictedtoOneFunctionCenter())
+                            .getIsRestrictedtoOneFunctionCenter())
                         detailedFunc = voucherHeader.getVouchermis()
                                 .getFunction().toString();
                     else
@@ -824,7 +806,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
                             .getDetailType().getId().toString();
                     if (glcodeId.equals(detailGlCode)
                             && (repeatedglCodes.contains(glcodeId) ? accDetailFunc
-                                    .equals(detailedFunc) : true)) {
+                            .equals(detailedFunc) : true)) {
                         final TransaxtionParameter reqData = new TransaxtionParameter();
                         final Accountdetailtype adt = accountdetailtypeHibernateDAO
                                 .findById(Integer.valueOf(detailtypeid), false);
@@ -855,13 +837,13 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
     }
 
     public void setVoucherHeaderDetails(final CVoucherHeader voucherHeader,
-            final VoucherTypeBean voucherTypeBean) throws Exception {
+                                        final VoucherTypeBean voucherTypeBean) throws Exception {
         voucherHeader.setName(voucherTypeBean.getVoucherName());
         voucherHeader.setType(voucherTypeBean.getVoucherType());
         String vNumGenMode = null;
         if (null != voucherHeader.getType()
                 && FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL
-                        .equalsIgnoreCase(voucherHeader.getType()))
+                .equalsIgnoreCase(voucherHeader.getType()))
             vNumGenMode = voucherTypeForULB.readVoucherTypes("Journal");
         else
             vNumGenMode = voucherTypeForULB.readVoucherTypes(voucherTypeBean
@@ -889,7 +871,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
         String vNumGenMode = null;
         if (null != voucherHeader.getType()
                 && FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL
-                        .equalsIgnoreCase(voucherHeader.getType()))
+                .equalsIgnoreCase(voucherHeader.getType()))
             vNumGenMode = voucherTypeForULB.readVoucherTypes("Journal");
         else
             vNumGenMode = voucherTypeForULB.readVoucherTypes(voucherTypeBean
@@ -971,10 +953,6 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
         return voucherHeader;
     }
 
-    enum voucherTypeEnum {
-        JOURNALVOUCHER, CONTRA, RECEIPT, PAYMENT;
-    }
-
     protected String getCgnType(String vType) {
         vType = vType.toUpperCase().replaceAll(" ", "");
         String cgnType = null;
@@ -983,18 +961,18 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
             typetoCheck = "JOURNALVOUCHER";
 
         switch (voucherTypeEnum.valueOf(typetoCheck.toUpperCase())) {
-        case JOURNALVOUCHER:
-            cgnType = "JVG";
-            break;
-        case CONTRA:
-            cgnType = "CSL";
-            break;
-        case RECEIPT:
-            cgnType = "MSR";
-            break;
-        case PAYMENT:
-            cgnType = "DBP";
-            break;
+            case JOURNALVOUCHER:
+                cgnType = "JVG";
+                break;
+            case CONTRA:
+                cgnType = "CSL";
+                break;
+            case RECEIPT:
+                cgnType = "MSR";
+                break;
+            case PAYMENT:
+                cgnType = "DBP";
+                break;
         }
         return cgnType;
     }
@@ -1024,9 +1002,9 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
 
     }
 
-    @SuppressWarnings({ "unchecked", "deprecation" })
+    @SuppressWarnings({"unchecked", "deprecation"})
     public Map<String, Object> getDesgByDeptAndType(final String type,
-            final String scriptName) {
+                                                    final String scriptName) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Voucher Service | getDesgUserByDeptAndDesgName | Start");
         final Map<String, Object> map = new HashMap<>();
@@ -1046,7 +1024,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
         return map;
     }
 
-    @SuppressWarnings({ "unchecked", "deprecation" })
+    @SuppressWarnings({"unchecked", "deprecation"})
     public Map<String, Object> getDesgByDeptAndTypeAndvouDate(
             final String type, final String scriptName, final Date vouDate) {
         if (LOGGER.isDebugEnabled())
@@ -1056,10 +1034,10 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
         persistenceService.findAllByNamedQuery(Script.BY_NAME, scriptName).get(
                 0);
         final List<String> list = null;/*
-                                        * (List<String>) validScript.eval(Script .createContext( "eisCommonServiceBean",
-                                        * eisCommonService,"userId", Integer.valueOf (ApplicationThreadLocals
-                                        * .getUserId().trim()),"DATE",new Date() ,"type",type,"vouDate",vouDate.getTime ()));
-                                        */
+         * (List<String>) validScript.eval(Script .createContext( "eisCommonServiceBean",
+         * eisCommonService,"userId", Integer.valueOf (ApplicationThreadLocals
+         * .getUserId().trim()),"DATE",new Date() ,"type",type,"vouDate",vouDate.getTime ()));
+         */
         Map<String, Object> desgFuncryMap;
         final List<Map<String, Object>> designationList = new ArrayList<>();
         for (final String desgFuncryName : list)
@@ -1078,7 +1056,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
                         designation.getId()
                                 + "-"
                                 + desgFuncryName.substring(0,
-                                        desgFuncryName.indexOf('-')));
+                                desgFuncryName.indexOf('-')));
                 designationList.add(desgFuncryMap);
             } else if (desgFuncryName.equalsIgnoreCase("END"))
                 map.put("wfitemstate", "END");
@@ -1086,7 +1064,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
         return map;
     }
 
-    @SuppressWarnings({ "unchecked", "deprecation" })
+    @SuppressWarnings({"unchecked", "deprecation"})
     public Map<String, Object> getDesgByDeptAndTypeAndVoudate(
             final String type, final String scriptName, final Date vouDate) {
         if (LOGGER.isDebugEnabled())
@@ -1096,10 +1074,10 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
         persistenceService.findAllByNamedQuery(Script.BY_NAME, scriptName).get(
                 0);
         final List<String> list = null;/*
-                                        * (List<String>) validScript.eval(Script .createContext( "eisCommonServiceBean",
-                                        * eisCommonService,"userId", Integer.valueOf (ApplicationThreadLocals
-                                        * .getUserId().trim()),"DATE",new Date() ,"type",type,"vouDate",vouDate.getTime ()));
-                                        */
+         * (List<String>) validScript.eval(Script .createContext( "eisCommonServiceBean",
+         * eisCommonService,"userId", Integer.valueOf (ApplicationThreadLocals
+         * .getUserId().trim()),"DATE",new Date() ,"type",type,"vouDate",vouDate.getTime ()));
+         */
         Map<String, Object> desgFuncryMap;
         final List<Map<String, Object>> designationList = new ArrayList<>();
         for (final String desgFuncryName : list)
@@ -1118,7 +1096,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
                         designation.getId()
                                 + "-"
                                 + desgFuncryName.substring(0,
-                                        desgFuncryName.indexOf('-')));
+                                desgFuncryName.indexOf('-')));
                 designationList.add(desgFuncryMap);
             } else if (desgFuncryName.equalsIgnoreCase("END"))
                 map.put("wfitemstate", "END");
@@ -1126,9 +1104,9 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
         return map;
     }
 
-    @SuppressWarnings({ "unchecked", "deprecation" })
+    @SuppressWarnings({"unchecked", "deprecation"})
     public Map<String, Object> getDesgBYPassingWfItem(final String scriptName,
-            final Object wfitem, final Integer deptId) {
+                                                      final Object wfitem, final Integer deptId) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Voucher Service | getDesgUserByDeptAndDesgName | Start");
         final Map<String, Object> map = new HashMap<>();
@@ -1147,7 +1125,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
             if (desgFuncryName.trim().length() != 0
                     && !desgFuncryName.equalsIgnoreCase("END")
                     && !desgFuncryName
-                            .equalsIgnoreCase("ANYFUNCTIONARY-ANYDESG")) {
+                    .equalsIgnoreCase("ANYFUNCTIONARY-ANYDESG")) {
                 desgFuncryMap = new HashMap<>();
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Designation and Functionary  Name  = "
@@ -1161,7 +1139,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
                         designation.getId()
                                 + "-"
                                 + desgFuncryName.substring(0,
-                                        desgFuncryName.indexOf('-')));
+                                desgFuncryName.indexOf('-')));
                 designationList.add(desgFuncryMap);
                 map.put("wfitemstate", desgFuncryName);
             } else if (desgFuncryName
@@ -1176,7 +1154,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
 
     @SuppressWarnings("unchecked")
     public List<Map<String, Object>> getAllDesgByAndDept(final Integer deptId,
-            final String desgfuncry) {
+                                                         final String desgfuncry) {
         Map<String, Object> desgMap;
         final List<Map<String, Object>> desgList = new ArrayList<>();
         if (LOGGER.isDebugEnabled())
@@ -1186,7 +1164,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
         final StringBuilder query = new StringBuilder();
         query.append(
                 "select DISTINCT desg.name,desg.id from Designation desg , EmployeeView ev where ")
-                .append(" desg.id=ev.desigId.id and ev.deptId.id = ? and ev.userMaster is not null");
+                .append(" desg.id=ev.desigId.id and ev.deptId.id = ?1 and ev.userMaster is not null");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("getAllDesgByFuncryAndDept Query : = "
                     + query.toString());
@@ -1219,15 +1197,14 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
     }
 
     /**
-     *
-     * @description - creates the bill register object for the vouchers except expense JV.eisService
      * @param billDetailslist -having account details info.
-     * @param subLedgerlist - having sub ledger details info.
-     * @param voucherHeader - header and misc details info.
+     * @param subLedgerlist   - having sub ledger details info.
+     * @param voucherHeader   - header and misc details info.
      * @param voucherTypeBean - voucher type info.
      * @param totalBillAmount - total bill amount.
      * @return - returns the created egbillregister object.
      * @throws Exception
+     * @description - creates the bill register object for the vouchers except expense JV.eisService
      */
     @Transactional
     public EgBillregister createBillForVoucherSubType(
@@ -1246,31 +1223,31 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
             if ("Contractor Journal".equalsIgnoreCase(voucherTypeBean
                     .getVoucherName())) {
                 egwstatus = (EgwStatus) persistenceService
-                        .find("from EgwStatus where upper(moduletype)=? and upper(description)=?",
+                        .find("from EgwStatus where upper(moduletype)=?1 and upper(description)=?2",
                                 "CONTRACTORBILL", "APPROVED");
                 egBillregister.setExpendituretype("Works");
             } else if ("Supplier Journal".equalsIgnoreCase(voucherTypeBean
                     .getVoucherName())) {
                 egwstatus = (EgwStatus) persistenceService
-                        .find("from EgwStatus where upper(moduletype)=? and upper(description)=?",
+                        .find("from EgwStatus where upper(moduletype)=?1 and upper(description)=?2",
                                 "SBILL", "APPROVED");
                 egBillregister.setExpendituretype("Purchase");
             } else if ("Salary Journal".equalsIgnoreCase(voucherTypeBean
                     .getVoucherName())) {
                 egwstatus = (EgwStatus) persistenceService
-                        .find("from EgwStatus where upper(moduletype)=? and upper(description)=?",
+                        .find("from EgwStatus where upper(moduletype)=?1 and upper(description)=?2",
                                 "SALBILL", "APPROVED");
                 egBillregister.setExpendituretype("Salary");
             } else if ("Expense Journal".equalsIgnoreCase(voucherTypeBean
                     .getVoucherName())) {
                 egwstatus = (EgwStatus) persistenceService
-                        .find("from EgwStatus where upper(moduletype)=? and upper(description)=?",
+                        .find("from EgwStatus where upper(moduletype)=?1 and upper(description)=?2",
                                 "EXPENSEBILL", "APPROVED");
                 egBillregister.setExpendituretype("Expense");
             } else if ("Pension Journal".equalsIgnoreCase(voucherTypeBean
                     .getVoucherName())) {
                 egwstatus = (EgwStatus) persistenceService
-                        .find("from EgwStatus where upper(moduletype)=? and upper(description)=?",
+                        .find("from EgwStatus where upper(moduletype)=?1 and upper(description)=?2",
                                 "PENSIONBILL", "APPROVED");
                 egBillregister.setExpendituretype("Pension");
             }
@@ -1313,7 +1290,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
             if (voucherTypeBean.getVoucherNumType().equalsIgnoreCase(
                     "fixedassetjv")) {
                 final EgBillSubType egBillSubType = (EgBillSubType) persistenceService
-                        .find("from EgBillSubType where name=? and expenditureType=?",
+                        .find("from EgBillSubType where name=?1 and expenditureType=?2",
                                 "Fixed Asset", "Purchase");
                 egBillregistermis.setEgBillSubType(egBillSubType);
             }
@@ -1371,14 +1348,14 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
     }
 
     /**
-     * @description - update the bill register objects in the JV modify screen for voucher sub types.
      * @param billDetailslist - account detail info.
-     * @param subLedgerlist - Bill Payee details info.
-     * @param voucherHeader - bill register and mis info.
+     * @param subLedgerlist   - Bill Payee details info.
+     * @param voucherHeader   - bill register and mis info.
      * @param voucherTypeBean - different voucher sub type and bill type info.
      * @param totalBillAmount - total debit amount.
      * @return egBillregister - the updated bill register object.
      * @throws ValidationException
+     * @description - update the bill register objects in the JV modify screen for voucher sub types.
      */
     @Transactional
     public EgBillregister updateBillForVSubType(
@@ -1464,7 +1441,6 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
     }
 
     /**
-     *
      * @param egBillregister
      * @param billDetailslist
      * @param subLedgerlist
@@ -1578,13 +1554,13 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
         persistenceService.findAllByNamedQuery(Script.BY_NAME,
                 "BudgetDetail.get.default.department").get(0);
         final String defaultDepartmentName = null;/*
-                                                   * (String) script.eval(Script.createContext ("eisCommonServiceBean",
-                                                   * eisCommonService, "userId",Integer .valueOf(ApplicationThreadLocals
-                                                   * .getUserId().trim())));
-                                                   */
+         * (String) script.eval(Script.createContext ("eisCommonServiceBean",
+         * eisCommonService, "userId",Integer .valueOf(ApplicationThreadLocals
+         * .getUserId().trim())));
+         */
         if (!"".equalsIgnoreCase(defaultDepartmentName)) {
             final Department dept = (Department) persistenceService.find(
-                    "from Department where name=?", defaultDepartmentName);
+                    "from Department where name=?1", defaultDepartmentName);
             if (dept != null)
                 return dept.getId().intValue();
         }
@@ -1614,6 +1590,10 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
 
     public void setVoucherHelper(final VoucherHelper voucherHelper) {
         this.voucherHelper = voucherHelper;
+    }
+
+    enum voucherTypeEnum {
+        JOURNALVOUCHER, CONTRA, RECEIPT, PAYMENT;
     }
 
 }

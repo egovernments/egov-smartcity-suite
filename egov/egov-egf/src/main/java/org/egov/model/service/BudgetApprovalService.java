@@ -85,8 +85,7 @@ public class BudgetApprovalService {
     }
 
     public List<Long> financialYear() {
-        final String query = "select bd.financialYear.id from Budget bd where bd.isbere='RE' and "
-                + "bd.status.id=:statusId";
+        final String query = "select bd.financialYear.id from Budget bd where bd.isbere='RE' and bd.status.id=:statusId";
         final List<Long> budgetDetailsList = persistenceService.getSession().createQuery(query)
                 .setParameter("statusId", getBudgetStatus(FinancialConstants.BUDGET, "Created").getId()).list();
         return budgetDetailsList;

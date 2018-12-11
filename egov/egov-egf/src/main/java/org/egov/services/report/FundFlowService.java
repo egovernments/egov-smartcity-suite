@@ -73,14 +73,14 @@ import java.util.List;
 
 /**
  * @author mani
- *
  */
 @SuppressWarnings("unchecked")
 public class FundFlowService extends PersistenceService {
-    private static Logger LOGGER = Logger.getLogger(FundFlowService.class);
     private static final SimpleDateFormat sqlformat = new SimpleDateFormat("dd-MMM-yyyy");
     private static final String START_FINANCIALYEAR_DATE = "01-Apr-2012";
-    private @Autowired AppConfigValueService appConfigValuesService;
+    private static Logger LOGGER = Logger.getLogger(FundFlowService.class);
+    private @Autowired
+    AppConfigValueService appConfigValuesService;
 
     public FundFlowService() {
         super(null);
@@ -89,6 +89,7 @@ public class FundFlowService extends PersistenceService {
     public FundFlowService(Class type) {
         super(type);
     }
+
     /**
      * All amounts is in lakhs
      */
@@ -107,11 +108,9 @@ public class FundFlowService extends PersistenceService {
         String stateWithoutCondition = "";
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Before Appconfig Check ------");
-        for (final AppConfigValues app : appConfig)
-        {
+        for (final AppConfigValues app : appConfig) {
             appConfigValue = app.getValue();
-            if (appConfigValue.contains(FinancialConstants.DELIMITER_FOR_VOUCHER_STATUS_TO_CHECK_BANK_BALANCE))
-            {
+            if (appConfigValue.contains(FinancialConstants.DELIMITER_FOR_VOUCHER_STATUS_TO_CHECK_BANK_BALANCE)) {
                 condtitionalAppConfigIsPresent = true;
                 final String[] array = appConfigValue
                         .split(FinancialConstants.DELIMITER_FOR_VOUCHER_STATUS_TO_CHECK_BANK_BALANCE);
@@ -127,58 +126,53 @@ public class FundFlowService extends PersistenceService {
             LOGGER.debug("After Appconfig Check ------");
         // get BPVs for the cuurent date which are in the workflow
         StringBuffer outstandingPaymentQryStr = new StringBuffer(500);
-        if (condtitionalAppConfigIsPresent)
-        {
+        if (condtitionalAppConfigIsPresent) {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("condtitionalAppConfigIsPresent ------");
             outstandingPaymentQryStr =
                     outstandingPaymentQryStr
-                    .
-                    append("SELECT DISTINCT( ba.accountnumber)      AS accountNumber ,  ROUND(SUM(ph.paymentamount)/100000,2) AS outStandingBPV"
-                            +
-                            " FROM voucherheader vh,paymentheader ph,bankaccount ba,eg_wf_states state, eg_eis_employeeinfo empinfo, "
-                            +
-                            " eg_designation desg, functionary func "
-                            +
-                            " where ph.state_id =state.id and empinfo.pos_id= state.owner and empinfo.functionary_id=func.id  and empinfo.isactive=true "
-                            +
-                            " and empinfo.DESIGNATIONID=desg.DESIGNATIONID and vh.id =ph.voucherheaderid and  ba.id=ph.bankaccountnumberid"
-                            +
-                            " and desg.DESIGNATION_NAME like '"
-                            + designationName
-                            + "' and func.NAME like '"
-                            + functionaryName + "' ");
-            if (fundId != null && fundId != -1)
-            {
+                            .
+                                    append("SELECT DISTINCT( ba.accountnumber)      AS accountNumber ,  ROUND(SUM(ph.paymentamount)/100000,2) AS outStandingBPV"
+                                            +
+                                            " FROM voucherheader vh,paymentheader ph,bankaccount ba,eg_wf_states state, eg_eis_employeeinfo empinfo, "
+                                            +
+                                            " eg_designation desg, functionary func "
+                                            +
+                                            " where ph.state_id =state.id and empinfo.pos_id= state.owner and empinfo.functionary_id=func.id  and empinfo.isactive=true "
+                                            +
+                                            " and empinfo.DESIGNATIONID=desg.DESIGNATIONID and vh.id =ph.voucherheaderid and  ba.id=ph.bankaccountnumberid"
+                                            +
+                                            " and desg.DESIGNATION_NAME like '"
+                                            + designationName
+                                            + "' and func.NAME like '"
+                                            + functionaryName + "' ");
+            if (fundId != null && fundId != -1) {
                 outstandingPaymentQryStr.append(" and vh.fundid =" + fundId);
                 outstandingPaymentQryStr.append(" and ba.fundid =" + fundId);
             }
             outstandingPaymentQryStr.append(" and vh.voucherdate <='")
-            .append(voucherDate)
-            .append("'  and vh.voucherdate >='" + START_FINANCIALYEAR_DATE)
-            .append("' group by accountNumber  ");
-        }
-        else
-        {
+                    .append(voucherDate)
+                    .append("'  and vh.voucherdate >='" + START_FINANCIALYEAR_DATE)
+                    .append("' group by accountNumber  ");
+        } else {
             outstandingPaymentQryStr =
                     outstandingPaymentQryStr
-                    .
-                    append("SELECT DISTINCT( ba.accountnumber)      AS accountNumber ,  ROUND(SUM(ph.paymentamount)/100000,2) AS outStandingBPV"
-                            +
-                            " FROM voucherheader vh,paymentheader ph,bankaccount ba,eg_wf_states state where ph.state_id     =state.id "
-                            +
-                            "	and vh.id =ph.voucherheaderid and  ba.id=ph.bankaccountnumberid");
-            if (fundId != null && fundId != -1)
-            {
+                            .
+                                    append("SELECT DISTINCT( ba.accountnumber)      AS accountNumber ,  ROUND(SUM(ph.paymentamount)/100000,2) AS outStandingBPV"
+                                            +
+                                            " FROM voucherheader vh,paymentheader ph,bankaccount ba,eg_wf_states state where ph.state_id     =state.id "
+                                            +
+                                            "	and vh.id =ph.voucherheaderid and  ba.id=ph.bankaccountnumberid");
+            if (fundId != null && fundId != -1) {
                 outstandingPaymentQryStr.append(" and vh.fundid =" + fundId);
                 outstandingPaymentQryStr.append(" and ba.fundid =" + fundId);
             }
             outstandingPaymentQryStr.append(" and vh.voucherdate <='")
-            .append(voucherDate)
-            .append("'  and vh.voucherdate >='" + START_FINANCIALYEAR_DATE)
-            .append("' and state.value like '")
-            .append(stateWithoutCondition)
-            .append("' group by accountNumber  ");
+                    .append(voucherDate)
+                    .append("'  and vh.voucherdate >='" + START_FINANCIALYEAR_DATE)
+                    .append("' and state.value like '")
+                    .append(stateWithoutCondition)
+                    .append("' group by accountNumber  ");
         }
 
         if (LOGGER.isDebugEnabled())
@@ -198,8 +192,7 @@ public class FundFlowService extends PersistenceService {
             throw new ValidationException("", "PAYMENT_WF_STATUS_FOR_BANK_BALANCE_CHECK is not defined in AppConfig");
         String voucherStatus = "";
         final StringBuffer values = new StringBuffer(200);
-        for (final AppConfigValues app : appConfig)
-        {
+        for (final AppConfigValues app : appConfig) {
             values.append("'");
             values.append(app.getValue());
             values.append("',");
@@ -211,24 +204,23 @@ public class FundFlowService extends PersistenceService {
         StringBuffer conCurrancePaymentQryStr = new StringBuffer(500);
         conCurrancePaymentQryStr =
                 conCurrancePaymentQryStr
-                .
-                append("SELECT DISTINCT( ba.accountnumber)      AS accountNumber ,  ROUND(SUM(ph.paymentamount)/100000,2) AS concurranceBPV"
-                        +
-                        " FROM voucherheader vh,paymentheader ph,bankaccount ba,eg_wf_states state where ph.state_id     =state.id "
-                        +
-                        "	and vh.id =ph.voucherheaderid and  ba.id=ph.bankaccountnumberid and  vh.voucherdate >='"
-                        + START_FINANCIALYEAR_DATE + "'");
+                        .
+                                append("SELECT DISTINCT( ba.accountnumber)      AS accountNumber ,  ROUND(SUM(ph.paymentamount)/100000,2) AS concurranceBPV"
+                                        +
+                                        " FROM voucherheader vh,paymentheader ph,bankaccount ba,eg_wf_states state where ph.state_id     =state.id "
+                                        +
+                                        "	and vh.id =ph.voucherheaderid and  ba.id=ph.bankaccountnumberid and  vh.voucherdate >='"
+                                        + START_FINANCIALYEAR_DATE + "'");
 
-        if (fundId != null && fundId != -1)
-        {
+        if (fundId != null && fundId != -1) {
             conCurrancePaymentQryStr.append(" and vh.fundid =" + fundId);
             conCurrancePaymentQryStr.append(" and ba.fundid =" + fundId);
         }
         conCurrancePaymentQryStr.append(" and to_char(created_date,'dd-Mon-yyyy') ='")
-        .append(voucherDate)
-        .append("' and ( state.value in (")
-        .append(voucherStatus)
-        .append(")OR vh.status=0 ) group by accountNumber  ");
+                .append(voucherDate)
+                .append("' and ( state.value in (")
+                .append(voucherStatus)
+                .append(")OR vh.status=0 ) group by accountNumber  ");
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Concurrancey payment " + conCurrancePaymentQryStr.toString());
@@ -245,11 +237,11 @@ public class FundFlowService extends PersistenceService {
     public List<FundFlowBean> getAllpaymentAccounts(final Long fundId) {
         final StringBuffer allPaymentAccounts = new StringBuffer(500);
         allPaymentAccounts
-        .append("select ba.id as bankAccountId, ba.accountnumber as accountNumber, coa.glcode as glcode,b.code as bankName ,fd.name as fundName "
-                +
-                "from Chartofaccounts  coa,  fund fd, bankaccount ba left outer join bankbranch bb  on ba.branchid=bb.id left outer "
-                +
-                "join bank b on bb.bankid=b.id where  coa.id=ba.glcodeid and ba.fundid= fd.id and ba.isactive=true and ba.type in ('PAYMENTS','RECEIPTS_PAYMENTS') ");
+                .append("select ba.id as bankAccountId, ba.accountnumber as accountNumber, coa.glcode as glcode,b.code as bankName ,fd.name as fundName "
+                        +
+                        "from Chartofaccounts  coa,  fund fd, bankaccount ba left outer join bankbranch bb  on ba.branchid=bb.id left outer "
+                        +
+                        "join bank b on bb.bankid=b.id where  coa.id=ba.glcodeid and ba.fundid= fd.id and ba.isactive=true and ba.type in ('PAYMENTS','RECEIPTS_PAYMENTS') ");
         if (fundId != null && fundId != -1)
             allPaymentAccounts.append("and ba.fundid=" + fundId);
         else
@@ -267,20 +259,19 @@ public class FundFlowService extends PersistenceService {
 
     /**
      * get All Receipt Bank Accounts for the selected Fund
-     *
      */
     public List<FundFlowBean> getAllReceiptAccounts(final Long fundId) {
         final StringBuffer allAccounts = new StringBuffer(500);
         allAccounts
-        .append("select ba.id as bankAccountId, ba.accountnumber as accountNumber, coa.glcode as glcode,b.code as bankName ,fd.name as fundName, "
-                +
-                " case when ba.narration = null then 0 else (case when instr(ba.narration,'"
-                + FinancialConstants.BANKACCOUNT_WALKIN_PAYMENT_DESCRIPTION
-                + "',1)  = 1 then 1 else 0 end ) end as walkinPaymentAccount "
-                +
-                " from Chartofaccounts  coa, fund fd, bankaccount ba left outer join bankbranch bb  on ba.branchid=bb.id left outer "
-                +
-                " join bank b on bb.bankid=b.id where coa.id=ba.glcodeid and ba.fundid= fd.id and ba.isactive=true and ba.type in ('RECEIPTS') ");
+                .append("select ba.id as bankAccountId, ba.accountnumber as accountNumber, coa.glcode as glcode,b.code as bankName ,fd.name as fundName, "
+                        +
+                        " case when ba.narration = null then 0 else (case when instr(ba.narration,'"
+                        + FinancialConstants.BANKACCOUNT_WALKIN_PAYMENT_DESCRIPTION
+                        + "',1)  = 1 then 1 else 0 end ) end as walkinPaymentAccount "
+                        +
+                        " from Chartofaccounts  coa, fund fd, bankaccount ba left outer join bankbranch bb  on ba.branchid=bb.id left outer "
+                        +
+                        " join bank b on bb.bankid=b.id where coa.id=ba.glcodeid and ba.fundid= fd.id and ba.isactive=true and ba.type in ('RECEIPTS') ");
         if (fundId != null && fundId != -1)
             allAccounts.append(" and ba.fundid=" + fundId);
         else
@@ -328,6 +319,7 @@ public class FundFlowService extends PersistenceService {
 
     /**
      * get Receipt Bank Accounts of selected Fund which has Contra payment for current day
+     *
      * @param voucherDate
      * @return
      */
@@ -369,6 +361,7 @@ public class FundFlowService extends PersistenceService {
      * get Receipt Bank Accounts of selected Fund which has Contra payment for current day When you use contraJournal voucher put
      * fund condition for voucherheader which will remove duplicate entry duplicate is coming since Interfund transfer creates two
      * vouchers with two different funds.
+     *
      * @param voucherDate
      * @return
      */
@@ -407,8 +400,7 @@ public class FundFlowService extends PersistenceService {
         return tempList;
     }
 
-    public BigDecimal getBankBalance(final Long bankaccountId, Date asPerDate, final Long bankAccGlcodeId)
-    {
+    public BigDecimal getBankBalance(final Long bankaccountId, Date asPerDate, final Long bankAccGlcodeId) {
 
         try {
             asPerDate = sqlformat.parse(sqlformat.format(asPerDate));
@@ -427,9 +419,9 @@ public class FundFlowService extends PersistenceService {
         if (bankaccountId == null)
             throw new ValidationException(Arrays.asList(new ValidationError("bankaccount.id.is.null",
                     "BankAccountId is not provided")));
-       // setType(FundFlowBean.class);
+        // setType(FundFlowBean.class);
         final FundFlowBean fundFlowBean = (FundFlowBean) this.find(
-                "from FundFlowBean where bankAccountId=? and to_date(reportDate)=?",
+                "from FundFlowBean where bankAccountId=?1 and to_date(reportDate)=?2",
                 BigDecimal.valueOf(bankaccountId), asPerDate);
         // Means Report is not Generated
         if (fundFlowBean == null)
@@ -439,8 +431,8 @@ public class FundFlowService extends PersistenceService {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Querying and getting the bank balance");
         BigDecimal bankBalance = fundFlowBean.getOpeningBalance().add(fundFlowBean.getCurrentReceipt());// since all amounts in
-                                                                                                        // lakh multiply by lakh
-                                                                                                        // and return
+        // lakh multiply by lakh
+        // and return
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("value from fundflow = " + bankBalance);
         bankBalance = bankBalance.multiply(new BigDecimal(100000));
@@ -460,8 +452,9 @@ public class FundFlowService extends PersistenceService {
 
     /**
      * it is for single bankaccount
+     *
      * @param asPerDate
-     * @param bankId TODO
+     * @param bankId        TODO
      * @param bankaccountId
      */
     private BigDecimal getContraPayment(final Long bankaccountId, final Date asPerDate, final Long accountGlcodeId) {
@@ -507,9 +500,9 @@ public class FundFlowService extends PersistenceService {
 
     /**
      * it is for single bankaccount
+     *
      * @param bankaccountId
      * @param asPerDate
-     *
      */
     private BigDecimal getContraReceipt(final Long bankaccountId, final Date asPerDate, final Long accountGlcodeId) {
         final StringBuffer qry = new StringBuffer(100);
@@ -554,20 +547,19 @@ public class FundFlowService extends PersistenceService {
 
     /**
      * it is for single bankaccount Will return the concurrence done for the day for the give bank account
+     *
      * @param bankaccountId
      * @param asPerDate
      * @return
      */
-    private BigDecimal getOutStandingPayment(final Long bankaccountId, final Date asPerDate)
-    {
+    private BigDecimal getOutStandingPayment(final Long bankaccountId, final Date asPerDate) {
         final List<AppConfigValues> appConfig = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,
                 "PAYMENT_WF_STATUS_FOR_BANK_BALANCE_CHECK");
         if (appConfig == null || appConfig.isEmpty())
             throw new ValidationException("", "PAYMENT_WF_STATUS_FOR_BANK_BALANCE_CHECK is not defined in AppConfig");
         String voucherStatus = "";
         final StringBuffer values = new StringBuffer(200);
-        for (final AppConfigValues app : appConfig)
-        {
+        for (final AppConfigValues app : appConfig) {
             values.append("'");
             values.append(app.getValue());
             values.append("',");
@@ -578,14 +570,14 @@ public class FundFlowService extends PersistenceService {
         StringBuffer outstandingPaymentQryStr = new StringBuffer(500);
         outstandingPaymentQryStr =
                 outstandingPaymentQryStr
-                .
-                append("SELECT case when SUM(case when ph.paymentamount = null then 0 else ph.paymentamount end ) = null then 0 else SUM(case when ph.paymentamount = null then 0 else ph.paymentamount) end AS concurranceBPV"
-                        +
-                        " FROM voucherheader vh right join  paymentheader ph on vh.id=ph.voucherheaderid,bankaccount ba,eg_wf_states state where ph.state_id     =state.id "
-                        +
-                        "	and vh.id =ph.voucherheaderid and  ba.id=ph.bankaccountnumberid and ba.id="
-                        + bankaccountId
-                        + "")
+                        .
+                                append("SELECT case when SUM(case when ph.paymentamount = null then 0 else ph.paymentamount end ) = null then 0 else SUM(case when ph.paymentamount = null then 0 else ph.paymentamount) end AS concurranceBPV"
+                                        +
+                                        " FROM voucherheader vh right join  paymentheader ph on vh.id=ph.voucherheaderid,bankaccount ba,eg_wf_states state where ph.state_id     =state.id "
+                                        +
+                                        "	and vh.id =ph.voucherheaderid and  ba.id=ph.bankaccountnumberid and ba.id="
+                                        + bankaccountId
+                                        + "")
                         .append(" and vh.fiscalperiodid in (select id from fiscalperiod where financialyearid=(select f.id from financialyear f where CURRENT_DATE between f.startingdate and f.endingdate))")
                         .append(" and vh.voucherdate >= '")
                         .append(START_FINANCIALYEAR_DATE + "' ")

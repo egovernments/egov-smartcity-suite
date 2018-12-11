@@ -97,7 +97,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
         majorCodeLength = Integer.valueOf(balanceSheetService.getAppConfigValueFor(Constants.EGF, "coa_majorcode_length"));
         final Date fromDate = balanceSheetService.getFromDate(balanceSheet);
         final Date toDate = balanceSheetService.getToDate(balanceSheet);
-        final CChartOfAccounts coa = (CChartOfAccounts) find("from CChartOfAccounts where glcode=?", majorCode);
+        final CChartOfAccounts coa = (CChartOfAccounts) find("from CChartOfAccounts where glcode=?1", majorCode);
         final List<Fund> fundList = balanceSheet.getFunds();
         populateCurrentYearAmountForSchedule(balanceSheet, fundList, balanceSheetService.getFilterQuery(balanceSheet), toDate,
                 fromDate, majorCode, coa.getType());

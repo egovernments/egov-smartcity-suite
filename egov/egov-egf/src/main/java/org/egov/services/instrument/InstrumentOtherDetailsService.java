@@ -67,15 +67,14 @@ public class InstrumentOtherDetailsService extends PersistenceService<Instrument
     }
 
     @Transactional
-    public void reconcile(Date recociledOn,Long ihId,BigDecimal instrumentAmount)
-    {
-    	InstrumentOtherDetails io = find("from InstrumentOtherDetails where instrumentHeaderId.id=?",ihId);
-    	io.setReconciledAmount(instrumentAmount);
-    	io.setReconciledOn(recociledOn);
-    	io.setInstrumentStatusDate(new Date());
-    	applyAuditing(io);
-    	update(io);
-    	
+    public void reconcile(Date recociledOn, Long ihId, BigDecimal instrumentAmount) {
+        InstrumentOtherDetails io = find("from InstrumentOtherDetails where instrumentHeaderId.id=?1", ihId);
+        io.setReconciledAmount(instrumentAmount);
+        io.setReconciledOn(recociledOn);
+        io.setInstrumentStatusDate(new Date());
+        applyAuditing(io);
+        update(io);
+
     }
-	
+
 }

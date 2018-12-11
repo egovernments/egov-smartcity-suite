@@ -47,14 +47,13 @@
  */
 
 
-
 package org.egov.deduction.dao;
 
 import org.egov.deduction.model.EgRemittance;
 import org.egov.deduction.model.EgRemittanceDetail;
 import org.egov.deduction.model.EgRemittanceGldtl;
-import org.hibernate.query.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -69,6 +68,9 @@ import java.util.List;
  */
 @Transactional(readOnly = true)
 public class EgRemittanceDetailHibernateDAO {
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Transactional
     public EgRemittanceDetail update(final EgRemittanceDetail entity) {
         getCurrentSession().update(entity);
@@ -91,29 +93,25 @@ public class EgRemittanceDetailHibernateDAO {
     }
 
     public List<EgRemittanceDetail> findAll() {
-        return (List<EgRemittanceDetail>) getCurrentSession().createCriteria(EgRemittanceDetail.class).list();
+        return (List<EgRemittanceDetail>) getCurrentSession().createQuery("from EgRemittanceDetail").list();
     }
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 
-   
 
     public List<EgRemittanceDetail> getEgRemittanceDetailByEgRmt(final EgRemittance egRmt) {
-        final Query qry = getCurrentSession().createQuery("from EgRemittanceDetail erd where erd.egRemittance =:egRmt");
-        qry.setEntity("egRmt", egRmt);
-        return qry.list();
+        return (List<EgRemittanceDetail>) getCurrentSession().createQuery(
+                "from EgRemittanceDetail erd where erd.egRemittance = :egRmt")
+                .setParameter("egRmt", egRmt)
+                .list();
     }
 
     public EgRemittanceDetail getEgRemittanceDetailFilterBy(final EgRemittance egRmt, final EgRemittanceGldtl egRmtGldtl) {
-        final Query qry = getCurrentSession().createQuery(
-                "from EgRemittanceDetail erd where erd.egRemittance =:egRmt and erd.egRemittanceGldtl =:egRmtGldtl");
-        qry.setEntity("egRmt", egRmt);
-        qry.setEntity("egRmtGldtl", egRmtGldtl);
+        final Query qry = getCurrentSession().createQuery("from EgRemittanceDetail erd where erd.egRemittance = :egRmt and erd.egRemittanceGldtl = :egRmtGldtl")
+                .setParameter("egRmt", egRmt)
+                .setParameter("egRmtGldtl", egRmtGldtl);
         return (EgRemittanceDetail) qry.uniqueResult();
     }
 }

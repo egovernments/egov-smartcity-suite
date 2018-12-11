@@ -47,7 +47,6 @@
  */
 
 
-
 package org.egov.deduction.dao;
 
 import org.apache.log4j.Logger;
@@ -55,8 +54,9 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.Fund;
 import org.egov.deduction.model.EgRemittance;
 import org.egov.model.recoveries.Recovery;
-import org.hibernate.query.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
+import org.hibernate.type.StringType;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -71,6 +71,10 @@ import java.util.List;
  */
 @Transactional(readOnly = true)
 public class EgRemittanceHibernateDAO {
+    private final static Logger LOGGER = Logger.getLogger(EgRemittanceHibernateDAO.class);
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Transactional
     public EgRemittance update(final EgRemittance entity) {
         getCurrentSession().update(entity);
@@ -88,66 +92,51 @@ public class EgRemittanceHibernateDAO {
         getCurrentSession().delete(entity);
     }
 
-    
     public EgRemittance findById(Number id, boolean lock) {
         return (EgRemittance) getCurrentSession().load(EgRemittance.class, id);
     }
 
     public List<EgRemittance> findAll() {
-        return (List<EgRemittance>) getCurrentSession().createCriteria(EgRemittance.class).list();
+        return (List<EgRemittance>) getCurrentSession().createQuery("from EgRemittance").list();
     }
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 
-    private final static Logger LOGGER = Logger.getLogger(EgRemittanceHibernateDAO.class);
-
-
     public List<EgRemittance> getEgRemittanceFilterBy(final Fund fund, final Recovery recovery, final String month,
-            final CFinancialYear financialyear) {
+                                                      final CFinancialYear financialyear) {
         Query qry;
         final StringBuffer qryStr = new StringBuffer();
-        List<EgRemittance> egRemittanceList = null;
-        qryStr.append("From EgRemittance rmt where rmt.voucherheader.type='Payment' and rmt.voucherheader.status=0");
-        qry = getCurrentSession().createQuery(qryStr.toString());
+        qryStr.append("From EgRemittance rmt where rmt.voucherheader.type = 'Payment' and rmt.voucherheader.status = 0");
         if (fund != null) {
             qryStr.append(" and (rmt.fund = :fund)");
-            qry = getCurrentSession().createQuery(qryStr.toString());
         }
         if (recovery != null) {
             qryStr.append(" and (rmt.tds = :recovery)");
-            qry = getCurrentSession().createQuery(qryStr.toString());
         }
         if (month != null) {
             qryStr.append(" and (rmt.month = :month)");
-            qry = getCurrentSession().createQuery(qryStr.toString());
         }
         if (financialyear != null) {
-            qryStr.append(" and (rmt.financialyear =:financialyear)");
-            qry = getCurrentSession().createQuery(qryStr.toString());
+            qryStr.append(" and (rmt.financialyear = :financialyear)");
         }
 
         qryStr.append(" order by upper(rmt.tds.type)");
         qry = getCurrentSession().createQuery(qryStr.toString());
 
         if (fund != null)
-            qry.setEntity("fund", fund);
+            qry.setParameter("fund", fund);
         if (recovery != null)
-            qry.setEntity("recovery", recovery);
+            qry.setParameter("recovery", recovery);
         if (month != null)
-            qry.setString("month", month);
+            qry.setParameter("month", month, StringType.INSTANCE);
         if (financialyear != null)
-            qry.setEntity("financialyear", financialyear);
+            qry.setParameter("financialyear", financialyear);
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("qryStr " + qryStr.toString());
-        egRemittanceList = qry.list();
-        return egRemittanceList;
+        return qry.list();
     }
 
 }

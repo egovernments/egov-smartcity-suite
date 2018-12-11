@@ -173,19 +173,20 @@ public class ReceiptPaymentService {
 
         StringBuilder query = new StringBuilder(500);
 
-        query.append("select rp.glcode,rp.name,rp.debitAmount ,rp.creditAmount from (select  " +
-                "g.glcode as glcode,c.name as name ,0 as debitAmount," +
-                "sum(g.creditAmount) as creditAmount from GeneralLedger g" +
-                ",VoucherHeader v,ChartofAccounts c where g.voucherHeaderId=v.id" +
-                " and v.status not in(4,5) " + queryStr +
-                " and v.type='Receipt' and c.id=g.glcodeId  and c.majorcode!='450'  group by g.glcode,c.name ");
-        query.append(" union select  g.glcode as glcode,c.name as name ,sum(g.debitAmount) as debitAmount," +
-                "0 as creditAmount from GeneralLedger g" +
-                ",VoucherHeader v,ChartofAccounts c where g.voucherHeaderId=v.id" +
-                " and v.status not in(4,5)" + queryStr +
-                "and v.type='Payment' and c.id=g.glcodeId  and c.majorcode!='450' group by g.glcode,c.name) as rp order by rp.glcode");
+        query.append("select rp.glcode,rp.name,rp.debitAmount ,rp.creditAmount from (select  ")
+                .append("g.glcode as glcode,c.name as name ,0 as debitAmount,")
+                .append("sum(g.creditAmount) as creditAmount from GeneralLedger g")
+                .append(",VoucherHeader v,ChartofAccounts c where g.voucherHeaderId=v.id")
+                .append(" and v.status not in(4,5) ").append(queryStr)
+                .append(" and v.type='Receipt' and c.id=g.glcodeId  and c.majorcode!='450'  group by g.glcode,c.name ");
+        query.append(" union select  g.glcode as glcode,c.name as name ,sum(g.debitAmount) as debitAmount,")
+                .append("0 as creditAmount from GeneralLedger g")
+                .append(",VoucherHeader v,ChartofAccounts c where g.voucherHeaderId=v.id")
+                .append(" and v.status not in(4,5)").append(queryStr)
+                .append("and v.type='Payment' and c.id=g.glcodeId  and c.majorcode!='450' group by g.glcode,c.name) as rp order by rp.glcode");
 
-        return entityManager.createNativeQuery(query.toString()).setParameter("fundId", receiptPayment.getFund().getId())
+        return entityManager.createNativeQuery(query.toString())
+                .setParameter("fundId", receiptPayment.getFund().getId())
                 .setParameter("startDate", receiptPayment.getFromDate())
                 .setParameter("endDate", receiptPayment.getToDate());
     }
@@ -202,9 +203,9 @@ public class ReceiptPaymentService {
     private Query openingBalanceTillFromDate(ReceiptPayment receiptPayment) {
         StringBuilder query = new StringBuilder(500);
         CFinancialYear fin = cFinancialYearService.findOne(receiptPayment.getFinancialYear().getId());
-        query.append("select sum(g.debitamount-g.creditamount) as amount from generalledger g ,voucherheader v,chartofaccounts c where v.id=g.voucherheaderid" +
-                "        and v.status not in (4,5) and v.voucherdate >=:finStartDate and  v.voucherdate <=:fromDate and" +
-                "        c.id=g.glcodeid and g.glcode in(select cc.glcode from chartofaccounts cc where cc.majorcode ='450')");
+        query.append("select sum(g.debitamount-g.creditamount) as amount from generalledger g ,voucherheader v,chartofaccounts c where v.id=g.voucherheaderid")
+                .append(" and v.status not in (4,5) and v.voucherdate >=:finStartDate and  v.voucherdate <=:fromDate and")
+                .append(" c.id=g.glcodeid and g.glcode in(select cc.glcode from chartofaccounts cc where cc.majorcode ='450')");
 
         return entityManager.createNativeQuery(query.toString())
                 .setParameter("finStartDate", fin.getStartingDate()).setParameter("fromDate", receiptPayment.getFromDate());

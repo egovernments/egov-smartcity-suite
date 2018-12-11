@@ -47,10 +47,6 @@
  */
 package org.egov.services.cheque;
 
-import java.text.ParseException;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.Bankaccount;
 import org.egov.infra.admin.master.entity.Department;
@@ -59,11 +55,17 @@ import org.egov.model.cheque.AccountCheques;
 import org.egov.model.cheque.ChequeDeptMapping;
 import org.egov.model.masters.ChequeDetail;
 import org.egov.utils.Constants;
-import org.hibernate.query.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.text.ParseException;
+import java.util.List;
+import java.util.Map;
 
 public class AccountChequesService extends PersistenceService<AccountCheques, Long> {
 
@@ -87,7 +89,7 @@ public class AccountChequesService extends PersistenceService<AccountCheques, Lo
 
     @Transactional
     public void createCheques(List<ChequeDetail> chequeDetailsList, Map<String, String> chequeIdMap,
-            Map<String, AccountCheques> chequeMap, Bankaccount bankaccount, String deletedChqDeptId) {
+                              Map<String, AccountCheques> chequeMap, Bankaccount bankaccount, String deletedChqDeptId) {
 
         final Session session = getSession();
         AccountCheques accountCheques;
@@ -99,9 +101,11 @@ public class AccountChequesService extends PersistenceService<AccountCheques, Lo
                 if (chequeDetail.getAccountChequeId() != null
                         && null == chequeIdMap.get(chequeDetail.getAccountChequeId().toString())) {
                     session.createQuery(
-                            "delete from ChequeDeptMapping where accountCheque.id=" + chequeDetail.getAccountChequeId())
+                            "delete from ChequeDeptMapping where accountCheque.id=:id")
+                            .setParameter("id", chequeDetail.getAccountChequeId(), LongType.INSTANCE)
                             .executeUpdate();
-                    session.createQuery("delete from AccountCheques where id=" + chequeDetail.getAccountChequeId())
+                    session.createQuery("delete from AccountCheques where id=:id")
+                            .setParameter("id", chequeDetail.getAccountChequeId(), LongType.INSTANCE)
                             .executeUpdate();
                     chequeIdMap.put(chequeDetail.getAccountChequeId().toString(), chequeDetail.getAccountChequeId().toString());
 
@@ -126,8 +130,7 @@ public class AccountChequesService extends PersistenceService<AccountCheques, Lo
                             + chequeDetail.getSerialNo());
                 chqDept = new ChequeDeptMapping();
                 chqDept.setAccountCheque(accountCheques);
-                final Department dept = (Department) persistenceService.find("from Department where id="
-                        + chequeDetail.getDeptId());
+                final Department dept = (Department) persistenceService.find("from Department where id=?1", chequeDetail.getDeptId());
                 chqDept.setAllotedTo(dept);
                 chequeDeptMappingService.persist(chqDept);
             }
@@ -141,7 +144,8 @@ public class AccountChequesService extends PersistenceService<AccountCheques, Lo
         final Session session = getSession();
 
         if (null != deletedChqDeptId && !deletedChqDeptId.equalsIgnoreCase("")) {
-            final Query qry = session.createQuery("delete from ChequeDeptMapping where id in (" + deletedChqDeptId + ")");
+            final Query qry = session.createQuery("delete from ChequeDeptMapping where id in (:id)")
+                    .setParameter("id", deletedChqDeptId, StringType.INSTANCE);
             qry.executeUpdate();
         }
 
@@ -153,18 +157,17 @@ public class AccountChequesService extends PersistenceService<AccountCheques, Lo
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("AccountChequeAction | save | accChqDelquery " + accChqDelquery.toString());
         final Query delqry = session.createQuery(accChqDelquery.toString());
-        delqry.setLong("bankAccId", bankaccount.getId());
+        delqry.setParameter("bankAccId", bankaccount.getId(), LongType.INSTANCE);
         delqry.executeUpdate();
 
     }
-    
-    public List<ChequeDeptMapping> getChequeListByBankAccId(Long bankAccountId)
-    {
-        return persistenceService.findAllBy("from ChequeDeptMapping where accountCheque.bankAccountId.id =?", bankAccountId);
+
+    public List<ChequeDeptMapping> getChequeListByBankAccId(Long bankAccountId) {
+        return persistenceService.findAllBy("from ChequeDeptMapping where accountCheque.bankAccountId.id =?1", bankAccountId);
     }
 
     public List<ChequeDeptMapping> getChequesByBankAccIdFinId(Long bankAccountId, Long financialYearId) {
-        return persistenceService.findAllBy("from ChequeDeptMapping where accountCheque.bankAccountId.id =? " +
-                "and accountCheque.serialNo =?", bankAccountId, financialYearId);
+        return persistenceService.findAllBy("from ChequeDeptMapping where accountCheque.bankAccountId.id =?1 " +
+                "and accountCheque.serialNo =?2", bankAccountId, financialYearId);
     }
 }

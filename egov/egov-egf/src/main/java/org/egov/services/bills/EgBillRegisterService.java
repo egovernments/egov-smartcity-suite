@@ -79,8 +79,7 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
-public class EgBillRegisterService extends PersistenceService<EgBillregister, Long>
-{
+public class EgBillRegisterService extends PersistenceService<EgBillregister, Long> {
     final private static Logger LOGGER = Logger.getLogger(JournalVoucherActionHelper.class);
     private static final String FAILED = "Transaction failed";
     private static final String EXCEPTION_WHILE_SAVING_DATA = "Exception while saving data";
@@ -110,15 +109,12 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
     public EgBillregister createBill(EgBillregister bill, WorkflowBean workflowBean, List<CheckListHelper> checkListsTable) {
         try {
             applyAuditing(bill);
-            if (FinancialConstants.CREATEANDAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()) && bill.getState() == null)
-            {
+            if (FinancialConstants.CREATEANDAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()) && bill.getState() == null) {
                 bill.setBillstatus("APPROVED");
                 EgwStatus egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.CONTINGENCYBILL_FIN,
                         FinancialConstants.CONTINGENCYBILL_APPROVED_STATUS);
                 bill.setStatus(egwStatus);
-            }
-            else
-            {
+            } else {
                 bill = transitionWorkFlow(bill, workflowBean);
                 applyAuditing(bill.getState());
             }
@@ -139,8 +135,7 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
     public void createCheckList(final EgBillregister bill, List<CheckListHelper> checkListsTable) {
         try {
             if (checkListsTable != null)
-                for (final CheckListHelper clh : checkListsTable)
-                {
+                for (final CheckListHelper clh : checkListsTable) {
                     final EgChecklists checkList = new EgChecklists();
                     final AppConfigValues configValue = (AppConfigValues) persistenceService.find(
                             "from AppConfigValues where id = ?1",
@@ -159,8 +154,7 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
     }
 
     @Transactional
-    public EgBillregister sendForApproval(EgBillregister bill, WorkflowBean workflowBean)
-    {
+    public EgBillregister sendForApproval(EgBillregister bill, WorkflowBean workflowBean) {
         try {
             bill = transitionWorkFlow(bill, workflowBean);
             applyAuditing(bill.getState());

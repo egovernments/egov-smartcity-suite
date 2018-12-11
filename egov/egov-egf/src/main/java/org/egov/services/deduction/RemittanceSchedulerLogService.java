@@ -50,8 +50,7 @@ package org.egov.services.deduction;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.recoveries.RemittanceSchedulerLog;
 
-public class RemittanceSchedulerLogService extends PersistenceService<RemittanceSchedulerLog, Long>
-{
+public class RemittanceSchedulerLogService extends PersistenceService<RemittanceSchedulerLog, Long> {
     public RemittanceSchedulerLogService() {
         super(RemittanceSchedulerLog.class);
     }

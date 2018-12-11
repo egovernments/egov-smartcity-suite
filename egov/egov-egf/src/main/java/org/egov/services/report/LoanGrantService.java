@@ -86,7 +86,7 @@ public class LoanGrantService extends PersistenceService {
     public List<Object> schemeUtilizationBy(final Integer schemeId, final Integer subSchemeId, final Date fromDate,
             final Date toDate,
             final List<Integer> projectCodeIdList, final Integer fundId) {
-        final Accountdetailtype detailType = (Accountdetailtype) find("from Accountdetailtype where upper(name)=?", "PROJECTCODE");
+        final Accountdetailtype detailType = (Accountdetailtype) find("from Accountdetailtype where upper(name)=?1", "PROJECTCODE");
         final StringBuffer schemeUtilSql = new StringBuffer(512);
         String pcStr = "";
         if (projectCodeIdList != null && projectCodeIdList.size() > 0)
@@ -218,11 +218,11 @@ public class LoanGrantService extends PersistenceService {
             List<Long> fundingAgencyList = null;
             if (subSchemeId != null)
                 fundingAgencyList = findAllBy(
-                        "select distinct fundingAgency.id from LoanGrantDetail lgd  where lgd.header.subScheme.id=? ",
+                        "select distinct fundingAgency.id from LoanGrantDetail lgd  where lgd.header.subScheme.id=?1 ",
                         subSchemeId);
             else
                 fundingAgencyList = findAllBy(
-                        "select distinct lgd.fundingAgency.id from LoanGrantDetail lgd ,LoanGrantHeader lg,SubScheme ss,Scheme s where lg.subScheme.id=ss.id and s.id=ss.scheme.id and lg.id=lgd.header.id and s.id=?",
+                        "select distinct lgd.fundingAgency.id from LoanGrantDetail lgd ,LoanGrantHeader lg,SubScheme ss,Scheme s where lg.subScheme.id=ss.id and s.id=ss.scheme.id and lg.id=lgd.header.id and s.id=?1",
                         schemeId);
 
             for (final Long faId : fundingAgencyList) {
@@ -388,7 +388,7 @@ public class LoanGrantService extends PersistenceService {
         {
             final StringBuffer ss = new StringBuffer(256);
             ss.append("select distinct lgd.fundingAgency.id from LoanGrantDetail lgd ,LoanGrantHeader lg,SubScheme ss," +
-                    "Scheme s where lg.subScheme.id=ss.id and s.id=ss.scheme.id and lg.id=lgd.header.id and s.id=?");
+                    "Scheme s where lg.subScheme.id=ss.id and s.id=ss.scheme.id and lg.id=lgd.header.id and s.id=?1");
             final List<Long> agencyList = findAllBy(ss.toString(), schemeId);
             loanByAgencyList = new ArrayList<Object>();
             for (final Long id : agencyList)

@@ -91,20 +91,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author mani
- *
  */
 public class ScheduledRemittanceService {
     /**
@@ -118,21 +108,22 @@ public class ScheduledRemittanceService {
     private final static int bankAccountIdIndex = 1;
     private final static int detailTypeIndex = 2;
     private final static int detailKeyIndex = 3;
+    private final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+    private final Date today = new Date();
+    @Autowired
+    CreateVoucher createVoucher;
+    // Map of remittance amount grouped for a voucher combination and subledger
+    Map<String, Double> detailKeyGroupeMap = new HashMap<String, Double>();
+    String remitted;
     // id,code into fundMap .
     private Map<Integer, String> fundMap;
     private Map<Integer, String> deptMap;
     private Map<Integer, Integer> deptDOMap;
     // fundcode-bankaccountid
     private Map<String, Integer> receiptBankAccountMap;
-    
-    
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
-
-    @Autowired
-    CreateVoucher createVoucher;
-
     private FinancialYearDAO financialYearDAO;
     @Autowired
     @Qualifier("recoveryPersistenceService")
@@ -142,32 +133,18 @@ public class ScheduledRemittanceService {
     private PaymentService paymentService;
     private PersistenceService<RemittanceSchedulerLog, Integer> remittanceSchedulerLogService;
     private SimpleWorkflowService<Paymentheader> paymentWorkflowService;
-    private final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
     private List<String> receiptFundCodes;
     private EisCommonService eisCommonService;
     private HashMap<String, Integer> GJVBankAccountMap;
-
     private ArrayList<String> GJVFundCodes;
-
     private Date startDate;
-
-    private final Date today = new Date();
-
     private String glcode;
-
     private String jobName;
-
     private Date lastRunDate;
     private StringBuffer errorMessage = new StringBuffer(1024);
     private Recovery recovery;
     private Map<String, List<AutoRemittanceBean>> voucherGroupMap = new HashMap<String, List<AutoRemittanceBean>>();
-
-    // Map of remittance amount grouped for a voucher combination and subledger
-    Map<String, Double> detailKeyGroupeMap = new HashMap<String, Double>();
-
     private List<AutoRemittanceBean> recoveries;
-    String remitted;
-
     private boolean isControlCode = true;
 
     private Long schedularLogId;
@@ -183,17 +160,17 @@ public class ScheduledRemittanceService {
     /**
      * Our jboss Trnasaction manager does not support nested transactions https://community.jboss.org/thread/206684 so all have to
      * be managed by flush,clear
-     *
+     * <p>
      * this api called the schedulars by coa and iniitates
-     *
+     * <p>
      * any issues if trigger is not getting fired check QRTZ_TRIGGERS table. if the job type is manual on any exception it is
      * thrown back to
+     *
      * @return
      */
     public boolean searchRecovery(final String recoveryGlcode, final String recoveryjobName, final Long recoverySchedularLogId,
-            final Integer deptId,
-            final Date recoverylastRunDate)
-    {
+                                  final Integer deptId,
+                                  final Date recoverylastRunDate) {
 
         glcode = recoveryGlcode;
         jobName = recoveryjobName;
@@ -208,27 +185,24 @@ public class ScheduledRemittanceService {
             validate(glcode);
             new Date();
             recovery = recoveryService.find("from Recovery where chartofaccounts.glcode=" + glcode);
-            if (recovery == null)
-            {
+            if (recovery == null) {
                 LOGGER.error("glcode is not mapped to tds :" + glcode + "\n");
                 throw new ApplicationRuntimeException("glcode is not mapped to tds  : " + glcode);
             }
             remitted = recovery.getRemitted();
 
             final List coads = remittancePersistenceService.findAllBy(
-                    "from CChartOfAccountDetail where glcodeId=?", recovery.getChartofaccounts());
+                    "from CChartOfAccountDetail where glcodeId=?1", recovery.getChartofaccounts());
             if (coads == null || coads.size() == 0)
                 isControlCode = false;
 
-            for (final Integer dept : deptMap.keySet())
-            {
+            for (final Integer dept : deptMap.keySet()) {
                 // if deptId is not null then it is from manual screen invocation for a department
 
                 if (deptId != null)
                     if (!dept.equals(deptId))
                         continue;
-                if (LOGGER.isDebugEnabled())
-                {
+                if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("**********************************************");
                     LOGGER.debug("Starting for Department :" + deptMap.get(dept));
                 }
@@ -240,22 +214,18 @@ public class ScheduledRemittanceService {
                 // initialize for each department so that i wont contain previous department data
                 detailKeyGroupeMap = new HashMap<String, Double>();
                 voucherGroupMap = new HashMap<String, List<AutoRemittanceBean>>();
-                if (isControlCode == false)
-                {
+                if (isControlCode == false) {
                     recoveries = searchNonControlCodeRecoveryByCOA(dept);
-                    if (recoveries.isEmpty())
-                    {
+                    if (recoveries.isEmpty()) {
                         errorMessage.append("  No Recoveries found for " + deptMap.get(dept) + "\n");
                         continue;
                     }
                     createRemittanceForNonControlCodeRecovery(dept, drawingOfficer);
 
-                } else
-                {
+                } else {
 
                     recoveries = searchRecoveryByCOA(dept);
-                    if (recoveries.isEmpty())
-                    {
+                    if (recoveries.isEmpty()) {
                         errorMessage.append("  No Recoveries found for " + deptMap.get(dept) + "\n");
                         continue;
                     }
@@ -266,8 +236,7 @@ public class ScheduledRemittanceService {
                     // combination for which group the detailkey and find total amount
                     String detailKeyCombination = null;
 
-                    for (final AutoRemittanceBean bean : recoveries)
-                    {
+                    for (final AutoRemittanceBean bean : recoveries) {
 
                         // All receipt will have 0 as bankaccountid and s it is targetted to have only municipal fund
                         if (bean.getBankAccountId() == 0)
@@ -278,8 +247,7 @@ public class ScheduledRemittanceService {
                         voucherCombination = bean.getFundId() + "-" + bean.getBankAccountId();
                         detailKeyCombination = voucherCombination + "-" + bean.getDetailtypeId() + "-" + bean.getDetailkeyId();
 
-                        if (LOGGER.isDebugEnabled())
-                        {
+                        if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug(bean.toString());
                             LOGGER.debug("detailKeyCombination:" + detailKeyCombination);
                         }
@@ -313,8 +281,7 @@ public class ScheduledRemittanceService {
                                     find(" from  Bankaccount where id="
                                             + Integer.parseInt(voucher.split("-")[bankAccountIdIndex]) + "");
 
-                            if (ba == null)
-                            {
+                            if (ba == null) {
                                 LOGGER.error("Bank Glcode for fundId "
                                         + fundMap.get(Integer.parseInt(voucher.split("-")[fundIndex])) + " ,recoverId:"
                                         + recovery.getType() + " not found");
@@ -349,16 +316,14 @@ public class ScheduledRemittanceService {
 
                             // updateScheduleLog(errorMessage.toString(),jobName,glcode,false);
 
+                        } catch (final Exception e) {
+
+                            errorMessage.append(dept + ":" + e.getMessage() + "\n");
+                            successForAutoRemittance = false;
+
+                            // updateScheduleLog(errorMessage.toString(),jobName,glcode,false);
+
                         }
-
-                    catch (final Exception e) {
-
-                        errorMessage.append(dept + ":" + e.getMessage() + "\n");
-                        successForAutoRemittance = false;
-
-                        // updateScheduleLog(errorMessage.toString(),jobName,glcode,false);
-
-                    }
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Done for Department :" + deptMap.get(dept));
                         LOGGER.debug("**********************************************");
@@ -374,14 +339,11 @@ public class ScheduledRemittanceService {
             successForAutoRemittance = false;
             errorMessage.append(e.getMessage() + "\n");
 
-        }
-
-        catch (final Exception e) {
+        } catch (final Exception e) {
             successForAutoRemittance = false;
             errorMessage.append(e.getMessage() + "\n");
 
-        } finally
-        {
+        } finally {
             updateScheduleLog(errorMessage.toString(), jobName, glcode, true, schedularLogId);
 
         }
@@ -397,8 +359,7 @@ public class ScheduledRemittanceService {
         String voucherCombination = null;
         // combination for which group the detailkey and find total amount
 
-        for (final AutoRemittanceBean bean : recoveries)
-        {
+        for (final AutoRemittanceBean bean : recoveries) {
             // All receipt will have 0 as bankaccountid and s it is targetted to have only municipal fund
             if (bean.getBankAccountId() == 0)
                 bean.setBankAccountId(receiptBankAccountMap.get(fundMap.get(bean.getFundId())));
@@ -406,8 +367,7 @@ public class ScheduledRemittanceService {
                 bean.setBankAccountId(GJVBankAccountMap.get(fundMap.get(bean.getFundId())));
 
             voucherCombination = bean.getFundId() + "-" + bean.getBankAccountId();
-            if (LOGGER.isDebugEnabled())
-            {
+            if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(bean.toString());
                 LOGGER.debug("voucherCombination:" + voucherCombination);
             }
@@ -429,8 +389,7 @@ public class ScheduledRemittanceService {
                 // issues
                 final Bankaccount ba = (Bankaccount) persistenceService.
                         find(" from  Bankaccount where id=" + Integer.parseInt(voucher.split("-")[bankAccountIdIndex]) + "");
-                if (ba == null)
-                {
+                if (ba == null) {
                     LOGGER.error("Bank Glcode for fundId " + fundMap.get(Integer.parseInt(voucher.split("-")[fundIndex]))
                             + " ,recoverId:" + recovery.getType() + " not found");
                     errorMessage.append("Bank Glcode for fundId " + fundMap.get(Integer.parseInt(voucher.split("-")[fundIndex]))
@@ -476,7 +435,6 @@ public class ScheduledRemittanceService {
     }
 
     /**
-     *
      * @param dept
      * @param bankaccount
      * @return This query depends on back update of data remittancedate. If remittance date is null it will pick the amount else
@@ -519,9 +477,9 @@ public class ScheduledRemittanceService {
 
         final NativeQuery query = persistenceService.getSession().createNativeQuery(qry.toString());
         query.addScalar("generalledgerId", IntegerType.INSTANCE)
-        .addScalar("fundId", IntegerType.INSTANCE)
-        .addScalar("gldtlAmount", DoubleType.INSTANCE)
-        .addScalar("bankAccountId", IntegerType.INSTANCE);
+                .addScalar("fundId", IntegerType.INSTANCE)
+                .addScalar("gldtlAmount", DoubleType.INSTANCE)
+                .addScalar("bankAccountId", IntegerType.INSTANCE);
         if (lastRunDate != null)
             query.setDate("lastrundate", new java.sql.Date(lastRunDate.getTime()));
 
@@ -537,19 +495,16 @@ public class ScheduledRemittanceService {
 
     private DrawingOfficer validateDrawingOfficer(final StringBuffer errorMessage, final Integer dept) {
 
-        if (deptDOMap.get(dept) == null)
-        {
+        if (deptDOMap.get(dept) == null) {
             LOGGER.error("Drawing officer Mapping Not found for department code " + deptMap.get(dept));
             errorMessage.append("Drawing officer Mapping Not found for department code " + deptMap.get(dept) + "\n");
             return null;
 
-        } else
-        {
+        } else {
 
             final DrawingOfficer drawingOfficer1 = (DrawingOfficer) persistenceService.find(
-                    "from DrawingOfficer where id=? ", deptDOMap.get(dept).intValue());
-            if (drawingOfficer1.getTan() == null)
-            {
+                    "from DrawingOfficer where id=?1 ", deptDOMap.get(dept).intValue());
+            if (drawingOfficer1.getTan() == null) {
                 LOGGER.error("Drawing officer Mapping Not found for department code " + deptMap.get(dept));
                 errorMessage.append("Drawing officer Mapping Not found for department code " + deptMap.get(dept) + "\n");
                 return null;
@@ -571,6 +526,7 @@ public class ScheduledRemittanceService {
 
     /**
      * updates generalledger table's remittance date to date on which remittance created for recovery
+     *
      * @param glIds
      */
     private void updateRemittancedateInLeddger(final List<Integer> glIds) {
@@ -579,8 +535,7 @@ public class ScheduledRemittanceService {
             LOGGER.debug("Starting updateRemittancedateInLeddger with  " + glIds.size() + " glIds detailed as" + glIds);
         int size = glIds.size();
         int suceessCount = 0;
-        if (size <= 999)
-        {
+        if (size <= 999) {
 
             final NativeQuery glQuery = persistenceService.getSession().createNativeQuery(
                     "update generalledger set remittancedate=:date where id in (:glIds)");
@@ -588,13 +543,11 @@ public class ScheduledRemittanceService {
             glQuery.setParameterList("glIds", glIds);
             suceessCount += glQuery.executeUpdate();
 
-        } else
-        {
+        } else {
             // this part is incomplete
             int fromIndex = 0;
             int toIndex = 999;
-            while (size % 1000 >= 1000)
-            {
+            while (size % 1000 >= 1000) {
 
                 final NativeQuery glQuery = persistenceService.getSession().createNativeQuery(
                         "update generalledger set remittancedate=:date where id in (:glIds)");
@@ -622,7 +575,6 @@ public class ScheduledRemittanceService {
      * sessions Remittance processing is done by departmnet ,fund. For search we need "id" where as to create voucher we need
      * "code" for both department and fund. Drawing officer id is saved into paymentheader table as these are responsible for
      * remittance of recovery done.
-     *
      */
     private void loadCommonData() {
         if (LOGGER.isDebugEnabled())
@@ -663,21 +615,20 @@ public class ScheduledRemittanceService {
                         "AuoRemittance_Account_Number_For_GJV app config key not defined",
                         "AuoRemittance_Account_Number_For_GJV app config key not defined")));
 
-                for (final AppConfigValues appConfigVal : appConfigList)
-                {
-                    value = appConfigVal.getValue();
+            for (final AppConfigValues appConfigVal : appConfigList) {
+                value = appConfigVal.getValue();
 
-                    final List<Bankaccount> bankAcountsList = persistenceService.findAllBy(
-                            "from Bankaccount ba where accountNumber=?", value.split("-")[1]);
-                    if (bankAcountsList.size() == 1)
-                        GJVBankAccountMap.put(value.split("-")[0], bankAcountsList.get(0).getId().intValue());
-                    else
-                        throw new ValidationException(
-                                Arrays.asList(new ValidationError(
-                                        "AuoRemittance_Account_Number_For_Receipts app config value  does not return proper single account",
-                                        "AuoRemittance_Account_Number_For_GJV app config value  does not return proper single account")));
+                final List<Bankaccount> bankAcountsList = persistenceService.findAllBy(
+                        "from Bankaccount ba where accountNumber=?1", value.split("-")[1]);
+                if (bankAcountsList.size() == 1)
+                    GJVBankAccountMap.put(value.split("-")[0], bankAcountsList.get(0).getId().intValue());
+                else
+                    throw new ValidationException(
+                            Arrays.asList(new ValidationError(
+                                    "AuoRemittance_Account_Number_For_Receipts app config value  does not return proper single account",
+                                    "AuoRemittance_Account_Number_For_GJV app config value  does not return proper single account")));
 
-                }
+            }
 
             GJVFundCodes = new ArrayList<String>();
             for (final String s : GJVBankAccountMap.keySet())
@@ -706,26 +657,25 @@ public class ScheduledRemittanceService {
             // 2. 02-****701
             receiptBankAccountMap = new HashMap<String, Integer>();
             String value = "";
-             final List<AppConfigValues> appConfigList =appConfigValueService.getConfigValuesByModuleAndKey("EGF", "AuoRemittance_Account_Number_For_Receipts");
+            final List<AppConfigValues> appConfigList = appConfigValueService.getConfigValuesByModuleAndKey("EGF", "AuoRemittance_Account_Number_For_Receipts");
             if (appConfigList == null)
                 throw new ValidationException(Arrays.asList(new ValidationError(
                         "AuoRemittance_Account_Number_For_Receipts app config key not defined",
                         "AuoRemittance_Account_Number_For_Receipts app config key not defined")));
-                for (final AppConfigValues appConfigVal : appConfigList)
-                {
-                    value = appConfigVal.getValue();
+            for (final AppConfigValues appConfigVal : appConfigList) {
+                value = appConfigVal.getValue();
 
-                    final List<Bankaccount> bankAcountsList = persistenceService.findAllBy(
-                            "from Bankaccount ba where accountNumber=?", value.split("-")[1]);
-                    if (bankAcountsList.size() == 1)
-                        receiptBankAccountMap.put(value.split("-")[0], bankAcountsList.get(0).getId().intValue());
-                    else
-                        throw new ValidationException(
-                                Arrays.asList(new ValidationError(
-                                        "AuoRemittance_Account_Number_For_Receipts app config value  does not return proper single account",
-                                        "AuoRemittance_Account_Number_For_Receipts app config value  does not return proper single account")));
+                final List<Bankaccount> bankAcountsList = persistenceService.findAllBy(
+                        "from Bankaccount ba where accountNumber=?1", value.split("-")[1]);
+                if (bankAcountsList.size() == 1)
+                    receiptBankAccountMap.put(value.split("-")[0], bankAcountsList.get(0).getId().intValue());
+                else
+                    throw new ValidationException(
+                            Arrays.asList(new ValidationError(
+                                    "AuoRemittance_Account_Number_For_Receipts app config value  does not return proper single account",
+                                    "AuoRemittance_Account_Number_For_Receipts app config value  does not return proper single account")));
 
-                }
+            }
 
             receiptFundCodes = new ArrayList<String>();
             for (final String s : receiptBankAccountMap.keySet())
@@ -741,12 +691,10 @@ public class ScheduledRemittanceService {
 
     private Map<Integer, Integer> getDOsForDepartment() {
 
-        @SuppressWarnings("unchecked")
-        final List<Object[]> list = persistenceService.getSession()
-        .createNativeQuery("select department_id,drawingofficer_id from eg_dept_do_mapping  order by  department_id").list();
+        @SuppressWarnings("unchecked") final List<Object[]> list = persistenceService.getSession()
+                .createNativeQuery("select department_id,drawingofficer_id from eg_dept_do_mapping  order by  department_id").list();
         final Map<Integer, Integer> deptMap = new LinkedHashMap<Integer, Integer>();
-        for (final Object[] dept : list)
-        {
+        for (final Object[] dept : list) {
             final BigDecimal id = (BigDecimal) dept[0];
             final BigDecimal officer = (BigDecimal) dept[1];
             deptMap.put(id.intValue(), officer.intValue());
@@ -760,12 +708,10 @@ public class ScheduledRemittanceService {
     }
 
     private Map<Integer, String> getDepartments() {
-        @SuppressWarnings("unchecked")
-        final List<Object[]> list = persistenceService.getSession()
-        .createNativeQuery("select id_dept,dept_Code from eg_department  order by dept_Code").list();
+        @SuppressWarnings("unchecked") final List<Object[]> list = persistenceService.getSession()
+                .createNativeQuery("select id_dept,dept_Code from eg_department  order by dept_Code").list();
         final Map<Integer, String> deptMap = new LinkedHashMap<Integer, String>();
-        for (final Object[] dept : list)
-        {
+        for (final Object[] dept : list) {
             final BigDecimal id = (BigDecimal) dept[0];
 
             deptMap.put(id.intValue(), (String) dept[1]);
@@ -775,18 +721,15 @@ public class ScheduledRemittanceService {
     }
 
     /**
-     *
      * @param glcode All common validation should be put here as of now 2 validations 1. Drawing officer mapping to department,
-     * drawing officer tan number added in the search itself 2. Bank account to coa-fund mapping is added in the search itself
-     *
-     *
-     * */
+     *               drawing officer tan number added in the search itself 2. Bank account to coa-fund mapping is added in the search itself
+     */
     private void validate(final String glcode) {
 
     }
 
     private void updateScheduleLog(final String message, final String jobName, final String glcode, final boolean success,
-            final Long schedularLogId) {
+                                   final Long schedularLogId) {
         final RemittanceSchedulerLog record = (RemittanceSchedulerLog) persistenceService.getSession().load(
                 RemittanceSchedulerLog.class, schedularLogId);
         record.setGlcode(glcode);
@@ -827,30 +770,26 @@ public class ScheduledRemittanceService {
         final Set<EgRemittanceDetail> egRemittanceDetail = new HashSet<EgRemittanceDetail>();
         EgRemittanceDetail remitDetail = null;
         int count = 0;
-        for (final AutoRemittanceBean bean : voucherGroupMap.get(voucher))
-        {
+        for (final AutoRemittanceBean bean : voucherGroupMap.get(voucher)) {
 
             remitDetail = new EgRemittanceDetail();
             remitDetail.setEgRemittance(remit);
             remitDetail.setRemittedamt(BigDecimal.valueOf(bean.getPendingAmount()));
             remitDetail.setLastmodifieddate(today);
             // update to EgRemittanceGldtl only if the recovery is control code .
-            if (isControlCode)
-            {
+            if (isControlCode) {
                 final EgRemittanceGldtl remittancegldtl = (EgRemittanceGldtl) egRemittancegldtlService.getSession().load(
                         EgRemittanceGldtl.class, Integer.valueOf(bean.getRemittanceGldtlId()));
                 remittancegldtl.setRemittedamt(BigDecimal.valueOf(bean.getGldtlAmount()));
                 remitDetail.setEgRemittanceGldtl(remittancegldtl);
-            } else
-            {
+            } else {
                 remitDetail.setGeneralLedger((CGeneralLedger) remittancePersistenceService.getSession().load(
                         CGeneralLedger.class, Long.valueOf(bean.getGeneralledgerId())));
                 remitDetail.setRemittedamt(BigDecimal.valueOf(bean.getGldtlAmount()));
             }
             egRemittanceDetail.add(remitDetail);
             glIds.add(bean.getGeneralledgerId());
-            if (LOGGER.isDebugEnabled())
-            {
+            if (LOGGER.isDebugEnabled()) {
                 count++;
                 LOGGER.debug("No of remittance Items added. You can see if the transaction is getting slower here " + count);
 
@@ -863,23 +802,21 @@ public class ScheduledRemittanceService {
     }
 
     private CVoucherHeader createPayment(final Integer dept, final String voucher, final DrawingOfficer drawingOfficer,
-            final Bankaccount ba) {
+                                         final Bankaccount ba) {
         double totalAmount = 0d;
         HashMap<String, Object> subledgertDetailMap = null;
         HashMap<String, Object> detailMap = null;
         final List<HashMap<String, Object>> accountdetails = new ArrayList<HashMap<String, Object>>();
         final List<HashMap<String, Object>> subledgerDetails = new ArrayList<HashMap<String, Object>>();
         detailMap = new HashMap<String, Object>();
-        if (!isControlCode)
-        {
+        if (!isControlCode) {
             final List<AutoRemittanceBean> uniquelist = voucherGroupMap.get(voucher);
             for (final AutoRemittanceBean bean : uniquelist)
                 totalAmount += bean.getGldtlAmount();
 
         } else
             for (final String detail : detailKeyGroupeMap.keySet())
-                if (detail.startsWith(voucher))
-                {
+                if (detail.startsWith(voucher)) {
                     totalAmount += detailKeyGroupeMap.get(detail);
                     final String[] split = detail.split("-");
                     subledgertDetailMap = new HashMap<String, Object>();
@@ -940,16 +877,13 @@ public class ScheduledRemittanceService {
     }
 
     /**
-     *
      * @return This api needs to be updated to logic of fetching
      */
     private Map<Integer, String> getFunds() {
-        @SuppressWarnings("unchecked")
-        final List<Object[]> list = persistenceService.getSession()
-        .createNativeQuery("select id,code from Fund where isactive=true order by code").list();
+        @SuppressWarnings("unchecked") final List<Object[]> list = persistenceService.getSession()
+                .createNativeQuery("select id,code from Fund where isactive=true order by code").list();
         final Map<Integer, String> fundMap = new HashMap<Integer, String>();
-        for (final Object[] fund : list)
-        {
+        for (final Object[] fund : list) {
             final BigDecimal id = (BigDecimal) fund[0];
 
             fundMap.put(id.intValue(), (String) fund[1]);
@@ -968,53 +902,52 @@ public class ScheduledRemittanceService {
      *
      */
     /**
-     * @author Elzan
-     * @param glcode Will select the sum of recovery for the specified period- period means the date from the last run scheduler
-     * date to system date. From the remittance scheduler log get the latest rundate for the successful job. There can be case
-     * where the scheduler ran and failed We should not be considering this date.
-     *
-     ** Next step is to identify the vouchers that should come for remittance payment. There are basically 4 categories here. For
-     * all these categories there is a common rule- once remitted vouchers should not come for remittance again unless the
-     * associated payment is cancelled.
-     *
-     **** 1.Select all the approved vouchers where the selected glcode comes in the credit side and moduleid=10. This is to identify
-     * collection receipts. For all these vouchers check for the payinslip reference in the instrumentotherdetail table. Payinslip
-     * should exist and should be approved.
-     *
-     **** 2.Select all the Journal Vouchers where moduleid is not 10 (not collection receipts), where the selected glcode comes in
-     * the credit side. For all these vouchers check if the payment is made to the concerned parties (contractor, supplier,
-     * employee, DO etc). Check if the instrument is allocated to these payments - cheque,cash or RTGS. Consider the vouchers if
-     * all these are done. The cheques/RTGS assigned should be valid and not in "Surrendered" state.
-     *
-     *** 3.Select all approved adjustment entries where there is no payment needed (voucher type="Journal Voucher" and
-     * name="JVGeneral") where the selected glcode comes in the credit side.
-     *
-     *** 4.Direct bank payments where the deductions are made. Here select all such approved payments where the selected glcode
-     * comes in the credit side. Check if there is a valid instrument allocated to these payments - cheque,cash or RTGS this will
-     * be manual so not picking up
-     *
-     *
-     ** How to figure out how many payment voucher needs to be created? Read the configuration parameters from the app_config
-     * "DEFAULTTXNMISATTRRIBUTES". Aggregate the vouchers based on the configuration parameters Do not consider Drawing officer
-     * for aggregation since the department to DO mapping is one to one.
-     *
-     ** How to calculate the remittance payment amount? There are 2 categories here - not remitted at all, partially remitted
-     * (there in the system now) 1. For all the selected vouchers get the gldtlamt from EG_REMITTANCE_GLDTL WHERE remittedamt IS
-     * NOT NULL 2. For all the selected vouchers get the gldtlamt from EG_REMITTANCE_GLDTL WHERE gldtlamt!=remittedamt 3. Select
-     * only those generalledger entries which has remittance date as null 4. One issue is the manual generation of remittance
-     * allows partial so generalledger entry for remittance payment is not updated. So the search might get longer. All the
-     * parameters for remittance payment needs to be identified and set for the following- 1. Payto - will be from the recovery
-     * master 2. DO (new field) - based on the department of the payment, get this value from the DEPARTMENT-DO mapping master. 3.
-     * Subledger information will be same as that of the original voucher 4. The bank from which the payment needs to be made will
-     * be configured in the set up master (either in recovery master or separately) 5. Approver to which the payment needs to be
-     * send to 6. function to be used in case the function is made non-mandatory in "DEFAULTTXNMISATTRRIBUTES". 7. Department for
-     * the payment voucher will be the bill department (as per aggregation) 8. Fund for the payment voucher will be the bill fund
-     * (as per aggregation)
+     * @param glcode      Will select the sum of recovery for the specified period- period means the date from the last run scheduler
+     *                    date to system date. From the remittance scheduler log get the latest rundate for the successful job. There can be case
+     *                    where the scheduler ran and failed We should not be considering this date.
+     *                    <p>
+     *                    * Next step is to identify the vouchers that should come for remittance payment. There are basically 4 categories here. For
+     *                    all these categories there is a common rule- once remitted vouchers should not come for remittance again unless the
+     *                    associated payment is cancelled.
+     *                    <p>
+     *                    *** 1.Select all the approved vouchers where the selected glcode comes in the credit side and moduleid=10. This is to identify
+     *                    collection receipts. For all these vouchers check for the payinslip reference in the instrumentotherdetail table. Payinslip
+     *                    should exist and should be approved.
+     *                    <p>
+     *                    *** 2.Select all the Journal Vouchers where moduleid is not 10 (not collection receipts), where the selected glcode comes in
+     *                    the credit side. For all these vouchers check if the payment is made to the concerned parties (contractor, supplier,
+     *                    employee, DO etc). Check if the instrument is allocated to these payments - cheque,cash or RTGS. Consider the vouchers if
+     *                    all these are done. The cheques/RTGS assigned should be valid and not in "Surrendered" state.
+     *                    <p>
+     *                    ** 3.Select all approved adjustment entries where there is no payment needed (voucher type="Journal Voucher" and
+     *                    name="JVGeneral") where the selected glcode comes in the credit side.
+     *                    <p>
+     *                    ** 4.Direct bank payments where the deductions are made. Here select all such approved payments where the selected glcode
+     *                    comes in the credit side. Check if there is a valid instrument allocated to these payments - cheque,cash or RTGS this will
+     *                    be manual so not picking up
+     *                    <p>
+     *                    <p>
+     *                    * How to figure out how many payment voucher needs to be created? Read the configuration parameters from the app_config
+     *                    "DEFAULTTXNMISATTRRIBUTES". Aggregate the vouchers based on the configuration parameters Do not consider Drawing officer
+     *                    for aggregation since the department to DO mapping is one to one.
+     *                    <p>
+     *                    * How to calculate the remittance payment amount? There are 2 categories here - not remitted at all, partially remitted
+     *                    (there in the system now) 1. For all the selected vouchers get the gldtlamt from EG_REMITTANCE_GLDTL WHERE remittedamt IS
+     *                    NOT NULL 2. For all the selected vouchers get the gldtlamt from EG_REMITTANCE_GLDTL WHERE gldtlamt!=remittedamt 3. Select
+     *                    only those generalledger entries which has remittance date as null 4. One issue is the manual generation of remittance
+     *                    allows partial so generalledger entry for remittance payment is not updated. So the search might get longer. All the
+     *                    parameters for remittance payment needs to be identified and set for the following- 1. Payto - will be from the recovery
+     *                    master 2. DO (new field) - based on the department of the payment, get this value from the DEPARTMENT-DO mapping master. 3.
+     *                    Subledger information will be same as that of the original voucher 4. The bank from which the payment needs to be made will
+     *                    be configured in the set up master (either in recovery master or separately) 5. Approver to which the payment needs to be
+     *                    send to 6. function to be used in case the function is made non-mandatory in "DEFAULTTXNMISATTRRIBUTES". 7. Department for
+     *                    the payment voucher will be the bill department (as per aggregation) 8. Fund for the payment voucher will be the bill fund
+     *                    (as per aggregation)
      * @param lastRunDate
      * @return
+     * @author Elzan
      */
-    private List<AutoRemittanceBean> searchRecoveryByCOA(final Integer deptId)
-    {
+    private List<AutoRemittanceBean> searchRecoveryByCOA(final Integer deptId) {
         recoveries = new ArrayList<AutoRemittanceBean>();
         recoveries.addAll(getReceiptRecoveries(deptId, 0));
         recoveries.addAll(getJVRecoveries(deptId));
@@ -1048,9 +981,9 @@ public class ScheduledRemittanceService {
 
         final NativeQuery query = persistenceService.getSession().createNativeQuery(qry.toString());
         query.addScalar("generalledgerId", IntegerType.INSTANCE)
-        .addScalar("fundId", IntegerType.INSTANCE)
-        .addScalar("gldtlAmount", DoubleType.INSTANCE)
-        .addScalar("bankAccountId", IntegerType.INSTANCE);
+                .addScalar("fundId", IntegerType.INSTANCE)
+                .addScalar("gldtlAmount", DoubleType.INSTANCE)
+                .addScalar("bankAccountId", IntegerType.INSTANCE);
         if (lastRunDate != null)
             query.setDate("lastrundate", new java.sql.Date(lastRunDate.getTime()));
 
@@ -1090,9 +1023,9 @@ public class ScheduledRemittanceService {
 
         final NativeQuery query = persistenceService.getSession().createNativeQuery(qry.toString());
         query.addScalar("generalledgerId", IntegerType.INSTANCE)
-        .addScalar("fundId", IntegerType.INSTANCE)
-        .addScalar("gldtlAmount", DoubleType.INSTANCE)
-        .addScalar("bankAccountId", IntegerType.INSTANCE);
+                .addScalar("fundId", IntegerType.INSTANCE)
+                .addScalar("gldtlAmount", DoubleType.INSTANCE)
+                .addScalar("bankAccountId", IntegerType.INSTANCE);
         if (lastRunDate != null)
             query.setDate("lastrundate", new java.sql.Date(lastRunDate.getTime()));
 
@@ -1110,13 +1043,13 @@ public class ScheduledRemittanceService {
         final SimpleDateFormat stringToDate = new SimpleDateFormat("dd/MM/yyyy");
         String value = null;
         try {
-            final List<AppConfigValues> appConfigList =  appConfigValueService.getConfigValuesByModuleAndKey("EGF", "AutoRemittance_Start_Date");
+            final List<AppConfigValues> appConfigList = appConfigValueService.getConfigValuesByModuleAndKey("EGF", "AutoRemittance_Start_Date");
             if (appConfigList == null)
                 throw new ValidationException(Arrays.asList(new ValidationError(
                         "AutoRemittance_Start_Date app config key not defined",
                         "AutoRemittance_Start_Date app config key not defined")));
-                for (final AppConfigValues appConfigVal : appConfigList)
-                    value = appConfigVal.getValue();
+            for (final AppConfigValues appConfigVal : appConfigList)
+                value = appConfigVal.getValue();
 
             startDate = stringToDate.parse(value);
         } catch (final ParseException e) {
@@ -1132,10 +1065,9 @@ public class ScheduledRemittanceService {
     }
 
     /**
-     *
      * @param gjvBankAccountId
-     * @param glcode will return all GJV recoveries which dont have payments attached to it fund condition is not added as we have
-     * to search . Whatever mapped in app config should succed others should fail
+     * @param glcode           will return all GJV recoveries which dont have payments attached to it fund condition is not added as we have
+     *                         to search . Whatever mapped in app config should succed others should fail
      */
     @SuppressWarnings("unchecked")
     private List<AutoRemittanceBean> getGJVRecovries(final Integer deptId, final Integer gjvBankAccountId) {
@@ -1189,13 +1121,13 @@ public class ScheduledRemittanceService {
             queryStr.append(" and vh.voucherdate>= '" + sdf.format(startDate) + "' ");
         final NativeQuery query = persistenceService.getSession().createNativeQuery(queryStr.toString());
         query.addScalar("generalledgerId", IntegerType.INSTANCE)
-        .addScalar("fundId", IntegerType.INSTANCE)
-        .addScalar("gldtlAmount", DoubleType.INSTANCE)
-        .addScalar("detailtypeId", IntegerType.INSTANCE)
-        .addScalar("detailkeyId", IntegerType.INSTANCE)
-        .addScalar("remittanceGldtlId", IntegerType.INSTANCE)
-        .addScalar("pendingAmount", DoubleType.INSTANCE)
-        .addScalar("bankAccountId", IntegerType.INSTANCE);
+                .addScalar("fundId", IntegerType.INSTANCE)
+                .addScalar("gldtlAmount", DoubleType.INSTANCE)
+                .addScalar("detailtypeId", IntegerType.INSTANCE)
+                .addScalar("detailkeyId", IntegerType.INSTANCE)
+                .addScalar("remittanceGldtlId", IntegerType.INSTANCE)
+                .addScalar("pendingAmount", DoubleType.INSTANCE)
+                .addScalar("bankAccountId", IntegerType.INSTANCE);
         /*
          * if(lastRunDate!=null) { query.setDate("lastrundate", new java.sql.Date(lastRunDate.getTime())); } if(lastRunDate!=null)
          * { query.setDate("startdate", new java.sql.Date(startDate.getTime())); }
@@ -1208,7 +1140,6 @@ public class ScheduledRemittanceService {
     }
 
     /**
-     *
      * @param recoveryId Will return all voucher recoveries which are billpayment done and check also assigned
      * @param deptId
      * @return
@@ -1268,13 +1199,13 @@ public class ScheduledRemittanceService {
                     + sdf.format(startDate) + "' ) ");
         final NativeQuery query = persistenceService.getSession().createNativeQuery(queryStr.toString());
         query.addScalar("generalledgerId", IntegerType.INSTANCE)
-        .addScalar("fundId", IntegerType.INSTANCE)
-        .addScalar("gldtlAmount", DoubleType.INSTANCE)
-        .addScalar("detailtypeId", IntegerType.INSTANCE)
-        .addScalar("detailkeyId", IntegerType.INSTANCE)
-        .addScalar("remittanceGldtlId", IntegerType.INSTANCE)
-        .addScalar("pendingAmount", DoubleType.INSTANCE)
-        .addScalar("bankAccountId", IntegerType.INSTANCE);
+                .addScalar("fundId", IntegerType.INSTANCE)
+                .addScalar("gldtlAmount", DoubleType.INSTANCE)
+                .addScalar("detailtypeId", IntegerType.INSTANCE)
+                .addScalar("detailkeyId", IntegerType.INSTANCE)
+                .addScalar("remittanceGldtlId", IntegerType.INSTANCE)
+                .addScalar("pendingAmount", DoubleType.INSTANCE)
+                .addScalar("bankAccountId", IntegerType.INSTANCE);
         /*
          * if(lastRunDate!=null) { query.setDate("lastrundate", new java.sql.Date(lastRunDate.getTime())); } if(lastRunDate!=null)
          * { query.setDate("startdate", new java.sql.Date(startDate.getTime())); }
@@ -1287,14 +1218,12 @@ public class ScheduledRemittanceService {
     }
 
     /**
-     *
-     * @param recoveryId Will return all receipt recoveries which are Remitted and approved
+     * @param recoveryId           Will return all receipt recoveries which are Remitted and approved
      * @param deptId
      * @param lastRunDate
      * @param startDate
      * @param receiptBankAccountId
      * @return
-     *
      */
     private List getReceiptRecoveries(final Integer deptId, final Integer receiptBankAccountId) {
 
@@ -1357,13 +1286,13 @@ public class ScheduledRemittanceService {
 
         final NativeQuery query = persistenceService.getSession().createNativeQuery(queryStr.toString());
         query.addScalar("generalledgerId", IntegerType.INSTANCE)
-        .addScalar("fundId", IntegerType.INSTANCE)
-        .addScalar("gldtlAmount", DoubleType.INSTANCE)
-        .addScalar("detailtypeId", IntegerType.INSTANCE)
-        .addScalar("detailkeyId", IntegerType.INSTANCE)
-        .addScalar("remittanceGldtlId", IntegerType.INSTANCE)
-        .addScalar("pendingAmount", DoubleType.INSTANCE)
-        .addScalar("bankAccountId", IntegerType.INSTANCE);
+                .addScalar("fundId", IntegerType.INSTANCE)
+                .addScalar("gldtlAmount", DoubleType.INSTANCE)
+                .addScalar("detailtypeId", IntegerType.INSTANCE)
+                .addScalar("detailkeyId", IntegerType.INSTANCE)
+                .addScalar("remittanceGldtlId", IntegerType.INSTANCE)
+                .addScalar("pendingAmount", DoubleType.INSTANCE)
+                .addScalar("bankAccountId", IntegerType.INSTANCE);
         /*
          * if(lastRunDate!=null) { query.setDate("lastrundate", new java.sql.Date(lastRunDate.getTime())); } if(startDate!=null) {
          * query.setDate("startdate", new java.sql.Date(startDate.getTime())); }
@@ -1381,11 +1310,6 @@ public class ScheduledRemittanceService {
         this.financialYearDAO = financialYearDAO;
     }
 
-    public void setRemittancePersistenceService(
-            final RemittancePersistenceService remittancePersistenceService) {
-        this.remittancePersistenceService = remittancePersistenceService;
-    }
-
     public void setEgRemittancegldtlService(
             final PersistenceService<EgRemittanceGldtl, Integer> egRemittancegldtlService) {
         this.egRemittancegldtlService = egRemittancegldtlService;
@@ -1393,6 +1317,11 @@ public class ScheduledRemittanceService {
 
     public RemittancePersistenceService getRemittancePersistenceService() {
         return remittancePersistenceService;
+    }
+
+    public void setRemittancePersistenceService(
+            final RemittancePersistenceService remittancePersistenceService) {
+        this.remittancePersistenceService = remittancePersistenceService;
     }
 
     public void setPaymentService(final PaymentService paymentService) {
@@ -1404,13 +1333,13 @@ public class ScheduledRemittanceService {
         this.paymentWorkflowService = paymentWorkflowService;
     }
 
+    public PersistenceService<RemittanceSchedulerLog, Integer> getRemittanceSchedulerLogService() {
+        return remittanceSchedulerLogService;
+    }
+
     public void setRemittanceSchedulerLogService(
             final PersistenceService<RemittanceSchedulerLog, Integer> remittanceSchedulerLogService) {
         this.remittanceSchedulerLogService = remittanceSchedulerLogService;
-    }
-
-    public PersistenceService<RemittanceSchedulerLog, Integer> getRemittanceSchedulerLogService() {
-        return remittanceSchedulerLogService;
     }
 
     public Map<Integer, Integer> getDeptDOMap() {

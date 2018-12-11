@@ -205,7 +205,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting getContractorSupplierPaymentsForChequeAssignment...");
 
-        final Bankaccount ba = (Bankaccount) persistenceService.find(" from Bankaccount where id=?",
+        final Bankaccount ba = (Bankaccount) persistenceService.find(" from Bankaccount where id=?1",
                 Long.valueOf(parameters.get("bankaccount")[0]));
 
         String billCondition = "";// "'"+FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT+"'";
@@ -1275,7 +1275,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
         EntityType entity;
         try {
             final Accountdetailtype accountdetailtype = (Accountdetailtype) persistenceService.find(
-                    " from Accountdetailtype where id=?", detailTypeId);
+                    " from Accountdetailtype where id=?1", detailTypeId);
             final Class<?> service = Class.forName(accountdetailtype.getFullQualifiedName());
             // getting the entity type service.
             final String detailTypeName = service.getSimpleName();
@@ -1284,10 +1284,10 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
             dataType = method.getReturnType().getSimpleName();
             if (dataType.equals("Long"))
                 entity = (EntityType) persistenceService.find(
-                        "from " + detailTypeName + " where id=? order by name", Long.valueOf(detailKeyId.toString()));
+                        "from " + detailTypeName + " where id=?1 order by name", Long.valueOf(detailKeyId.toString()));
             else
                 entity = (EntityType) persistenceService.find(
-                        "from " + detailTypeName + " where id=? order by name", Integer.valueOf(detailKeyId.toString()));
+                        "from " + detailTypeName + " where id=1 order by name", Integer.valueOf(detailKeyId.toString()));
         } catch (final Exception e) {
             LOGGER.error("Exception to get EntityType=" + e.getMessage() + "for detailTypeId=" + detailTypeId
                     + "  for Detail key " + detailKeyId);
