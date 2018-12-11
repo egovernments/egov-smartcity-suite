@@ -57,6 +57,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Session;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -64,7 +65,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -121,18 +121,17 @@ public class CoaCache implements Serializable {
         final Session currentSession = persistenceService.getSession();
         NativeQuery createNativeQuery = currentSession.createNativeQuery(sql.toString());
         createNativeQuery
-                .addScalar("id")
+                .addScalar("id", IntegerType.INSTANCE)
                 .addScalar("name")
                 .addScalar("tableName")
                 .addScalar("description")
                 .addScalar("columnName")
                 .addScalar("attributeName")
                 .setResultTransformer(Transformers.aliasToBean(AccountDetailType.class));
-        List<AccountDetailType> accountDetailTypeList = new ArrayList<AccountDetailType>();
-        List<GLAccount> glAccountCodesList = new ArrayList<GLAccount>();
-        new ArrayList<GLAccount>();
 
-        accountDetailTypeList = createNativeQuery.list();
+
+
+        List<AccountDetailType> accountDetailTypeList = createNativeQuery.list();
         for (final AccountDetailType type : accountDetailTypeList)
             accountDetailType.put(type.getAttributeName(), type);
         sql = new StringBuilder("select ID as \"ID\", glCode as \"glCode\" ,name as \"name\" ,")
@@ -140,22 +139,22 @@ public class CoaCache implements Serializable {
                 .append(" from chartofaccounts ");
         createNativeQuery = currentSession.createNativeQuery(sql.toString());
         createNativeQuery
-                .addScalar("ID")
+                .addScalar("ID", IntegerType.INSTANCE)
                 .addScalar("glCode")
                 .addScalar("name")
                 .addScalar("isActiveForPosting")
-                .addScalar("classification")
+                .addScalar("classification", LongType.INSTANCE)
                 .addScalar("functionRequired")
                 .setResultTransformer(Transformers.aliasToBean(GLAccount.class));
 
-        glAccountCodesList = createNativeQuery.list();
+        List<GLAccount> glAccountCodesList = createNativeQuery.list();
         for (final GLAccount type : glAccountCodesList)
             glAccountCodes.put(type.getCode(), type);
         for (final GLAccount type : glAccountCodesList)
             glAccountIds.put(type.getId(), type);
         loadParameters(glAccountCodes, glAccountIds);
         try {
-            final HashMap<String, HashMap> hm = new HashMap<String, HashMap>();
+            final HashMap<String, HashMap> hm = new HashMap<>();
             hm.put(ACCOUNTDETAILTYPENODE, accountDetailType);
             hm.put(GLACCCODENODE, glAccountCodes);
             if (LOGGER.isDebugEnabled())

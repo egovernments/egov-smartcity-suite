@@ -78,6 +78,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TemporalType;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -1280,9 +1281,6 @@ public class ChartOfAccounts {
     public boolean isClosedForPosting(final String date)
             throws TaskFailedException {
         boolean isClosed = true;
-        String chkqry = null;
-        Query psmt = null;
-        Query psmt1 = null;
         try {
             final SimpleDateFormat formatter = new SimpleDateFormat(
                     "dd-MMM-yyyy");
@@ -1292,18 +1290,17 @@ public class ChartOfAccounts {
                 isClosed = false;
 
             if (!isClosed) {
-                final String qry = "SELECT id FROM closedPeriods WHERE to_char(startingDate, \'DD-MON-YYYY\') <= :date AND endingDate >= :date";
+                final String qry = "SELECT id FROM closedPeriods WHERE startingDate <= date(:date) AND endingDate >= date(:date)";
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug(qry);
                 List<Object[]> rs = persistenceService.getSession().createNativeQuery(qry)
-                        .setParameter("date", date, StringType.INSTANCE)
+                        .setParameter("date", date, TemporalType.DATE)
                         .list();
                 if (!(rs != null && rs.size() > 0))
                     isClosed = false;
                 else
                     isClosed = true;
             }
-
         } catch (final HibernateException e) {
             isClosed = true;
             LOGGER.error("Exception occured while getting the data ", new HibernateException(e.getMessage()));
