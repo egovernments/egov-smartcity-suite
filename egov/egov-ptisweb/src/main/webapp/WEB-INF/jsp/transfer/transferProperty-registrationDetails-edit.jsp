@@ -53,64 +53,89 @@
 			</div>
 		</td>
 	</tr>
+	<s:if test="%{id != null}">
 		<tr>
 			<td class="greybox2">&nbsp;</td>
 			<td class="greybox"><s:text name="regst.details.sellerName"></s:text>
 				:</td>
-			<td class="greybox"><span class="bold"><s:textfield name="mutationRegistrationDetails.seller"
-						value="%{mutationRegistrationDetails.seller}" id="seller" maxlength="127"/></span></td>
+			<td class="greybox"><span class="bold"><s:textfield
+						name="mutationRegistrationDetails.seller"
+						value="%{mutationRegistrationDetails.seller}" id="seller"
+						maxlength="127" /></span></td>
 			<td class="greybox"><s:text name="regst.details.buyerName" /> :</td>
-			<td class="greybox"><span class="bold">
-						<s:textfield name="mutationRegistrationDetails.buyer" value="%{mutationRegistrationDetails.buyer}" id="buyer" maxlength="127"/>
+			<td class="greybox"><span class="bold"> <s:textfield
+						name="mutationRegistrationDetails.buyer"
+						value="%{mutationRegistrationDetails.buyer}" id="buyer"
+						maxlength="127" />
 			</span></td>
 		</tr>
 		<tr>
 			<td class="greybox2">&nbsp;</td>
 			<td class="greybox"><s:text name="regst.details.doorNo" />:</td>
-			<td class="greybox"><span class="bold"><s:textfield name="mutationRegistrationDetails.doorNo"
-						value="%{mutationRegistrationDetails.doorNo}" id="doorNo" maxlength="127" /></span></td>
+			<td class="greybox"><span class="bold"><s:textfield
+						name="mutationRegistrationDetails.doorNo"
+						value="%{mutationRegistrationDetails.doorNo}" id="doorNo"
+						maxlength="127" /></span></td>
 			<td class="greybox"><s:text name="regst.details.address" />:</td>
-			<td class="greybox"><span class="bold"><s:textfield name="mutationRegistrationDetails.address"
-						value="%{mutationRegistrationDetails.address}" id="address" maxlength="127" /></span></td>
+			<td class="greybox"><span class="bold"><s:textfield
+						name="mutationRegistrationDetails.address"
+						value="%{mutationRegistrationDetails.address}" id="address"
+						maxlength="127" /></span></td>
 		</tr>
+	</s:if>
 	<tr>
 		<td class="greybox2">&nbsp;</td>
 		<td class="greybox"><s:text
 				name="regst.details.registeredPlotArea" /> :</td>
-		<td class="greybox"><span class="bold"><s:textfield name="mutationRegistrationDetails.plotArea"
-					value="%{mutationRegistrationDetails.plotArea}" id="plotArea" maxlength="15" onblur="trim(this,this.value);checkForTwoDecimals(this,'Registered Plot Area');checkZero(this,'Registered Plot Area');"/></span></td>
+		<td class="greybox"><span class="bold"><s:textfield
+					name="mutationRegistrationDetails.plotArea"
+					value="%{mutationRegistrationDetails.plotArea}" id="plotArea"
+					maxlength="15"
+					onblur="trim(this,this.value);checkForTwoDecimals(this,'Registered Plot Area');checkZero(this,'Registered Plot Area');" /></span></td>
 		<td class="greybox"><s:text
 				name="regst.details.registeredPlinthArea" /> :</td>
-		<td class="greybox"><span class="bold"><s:textfield name="mutationRegistrationDetails.plinthArea"
-					value="%{mutationRegistrationDetails.plinthArea}" id="plinthArea" maxlength="15" onblur="trim(this,this.value);checkForTwoDecimals(this,'Registered Plinth Area');checkZero(this,'Registered Plinth Area');"/></span></td>
+		<td class="greybox"><span class="bold"><s:textfield
+					name="mutationRegistrationDetails.plinthArea"
+					value="%{mutationRegistrationDetails.plinthArea}" id="plinthArea"
+					maxlength="15"
+					onblur="trim(this,this.value);checkForTwoDecimals(this,'Registered Plinth Area');checkZero(this,'Registered Plinth Area');" /></span></td>
 	</tr>
 
 	<tr>
 		<td class="bluebox2">&nbsp;</td>
 		<td class="bluebox"><s:text name="regst.details.eastBoundary" />
 			:</td>
-		<td class="bluebox"><span class="bold"><s:textfield name="mutationRegistrationDetails.eastBoundary"
-					value="%{mutationRegistrationDetails.eastBoundary}" id="eastBoundary" maxlength="127"/></span></td>
+		<td class="bluebox"><span class="bold"><s:textfield
+					name="mutationRegistrationDetails.eastBoundary"
+					value="%{mutationRegistrationDetails.eastBoundary}"
+					id="eastBoundary" maxlength="127" /></span></td>
 		<td class="bluebox"><s:text name="regst.details.westBoundary" />:</td>
-		<td class="bluebox"><span class="bold"><s:textfield name="mutationRegistrationDetails.westBoundary"
-					value="%{mutationRegistrationDetails.westBoundary}" id="westBoundary" maxlength="127"/></span></td>
+		<td class="bluebox"><span class="bold"><s:textfield
+					name="mutationRegistrationDetails.westBoundary"
+					value="%{mutationRegistrationDetails.westBoundary}"
+					id="westBoundary" maxlength="127" /></span></td>
 	</tr>
 	<tr>
 		<td class="greybox2">&nbsp;</td>
 		<td class="greybox"><s:text name="regst.details.northBoundary" />
 			:</td>
-		<td class="greybox"><span class="bold"><s:textfield name="mutationRegistrationDetails.northBoundary"
-					value="%{mutationRegistrationDetails.northBoundary}" id="northBoundary" maxlength="127" /></span></td>
+		<td class="greybox"><span class="bold"><s:textfield
+					name="mutationRegistrationDetails.northBoundary"
+					value="%{mutationRegistrationDetails.northBoundary}"
+					id="northBoundary" maxlength="127" /></span></td>
 		<td class="greybox"><s:text name="regst.details.southBoundary" />
 			:</td>
-		<td class="greybox"><span class="bold"><s:textfield name="mutationRegistrationDetails.southBoundary"
-					value="%{mutationRegistrationDetails.southBoundary}" id="southBoundary" maxlength="127" /></span></td>
+		<td class="greybox"><span class="bold"><s:textfield
+					name="mutationRegistrationDetails.southBoundary"
+					value="%{mutationRegistrationDetails.southBoundary}"
+					id="southBoundary" maxlength="127" /></span></td>
 	</tr>
 	<tr>
 		<td class="greybox2">&nbsp;</td>
-		<td class="greybox"><s:text name="regst.details.sroName" />
-			:</td>
-		<td class="greybox"><span class="bold"><s:textfield name="mutationRegistrationDetails.sroName"
-					value="%{mutationRegistrationDetails.sroName}" id="sroName" maxlength="127" /></span></td>
+		<td class="greybox"><s:text name="regst.details.sroName" /> :</td>
+		<td class="greybox"><span class="bold"><s:textfield
+					name="mutationRegistrationDetails.sroName"
+					value="%{mutationRegistrationDetails.sroName}" id="sroName"
+					maxlength="127" /></span></td>
 	</tr>
 </table>
