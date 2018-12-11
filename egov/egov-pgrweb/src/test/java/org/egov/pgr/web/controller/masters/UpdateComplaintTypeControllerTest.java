@@ -161,7 +161,7 @@ public class UpdateComplaintTypeControllerTest extends AbstractContextController
         complaintType.setCategory(new ComplaintTypeCategory());
         when(complaintTypeService.updateComplaintType(any(ComplaintType.class))).thenReturn(complaintType);
         this.mockMvc.perform(post("/complainttype/update/existing")
-                .param("name", "existing-complaint-type").param("code", "Test"))
+                .param("name", "existing complaint type").param("code", "Test"))
                 .andExpect(model().hasNoErrors())
                 .andExpect(view().name("redirect:/complainttype/view/existing"));
 
@@ -169,7 +169,7 @@ public class UpdateComplaintTypeControllerTest extends AbstractContextController
         verify(complaintTypeService).updateComplaintType(argumentCaptor.capture());
 
         ComplaintType createdComplaintType = argumentCaptor.getValue();
-        assertEquals("existing-complaint-type", createdComplaintType.getName());
+        assertEquals("existing complaint type", createdComplaintType.getName());
     }
 
     @Test
@@ -178,7 +178,7 @@ public class UpdateComplaintTypeControllerTest extends AbstractContextController
                 .param("name","").param("code", "Test"))
                 .andExpect(model().hasErrors())
                 .andExpect(model().attributeHasFieldErrors("complaintType", "name"))
-                .andExpect(model().errorCount(1))
+                .andExpect(model().errorCount(2))
                 .andExpect(view().name("complaint-type"));
 
         verify(complaintTypeService, never()).updateComplaintType(any(ComplaintType.class));

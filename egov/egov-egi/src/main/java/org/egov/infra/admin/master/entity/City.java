@@ -112,7 +112,6 @@ public class City extends AbstractAuditable {
     private String name;
 
     @SafeHtml
-    @NotBlank
     @Length(max = 256)
     @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String localName;

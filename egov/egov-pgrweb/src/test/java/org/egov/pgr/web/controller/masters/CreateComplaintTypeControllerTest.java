@@ -166,7 +166,7 @@ public class CreateComplaintTypeControllerTest extends AbstractContextController
         this.mockMvc.perform(post("/complainttype/create")
                 .param("department", "1")
                 .param("category", "1")
-                .param("name", "new-complaint-type").param("code", "test").param("slaHours", "24"))
+                .param("name", "new complaint type").param("code", "test").param("slaHours", "24"))
                 .andExpect(model().hasNoErrors())
                 .andExpect(view().name("redirect:/complainttype/view/test"));
 
@@ -175,7 +175,7 @@ public class CreateComplaintTypeControllerTest extends AbstractContextController
 
         ComplaintType createdComplaintType = argumentCaptor.getValue();
         assertTrue(createdComplaintType.isNew());
-        assertEquals("new-complaint-type", createdComplaintType.getName());
+        assertEquals("new complaint type", createdComplaintType.getName());
     }
 
     @Test
