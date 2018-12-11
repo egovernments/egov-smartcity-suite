@@ -49,8 +49,8 @@
 package org.egov.pgr.dashboard.repository;
 
 import org.egov.pgr.config.properties.GrievanceApplicationSettings;
-import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
+import org.hibernate.query.NativeQuery;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -66,39 +66,52 @@ import static org.egov.infra.utils.DateUtils.startOfGivenDate;
 @Repository
 public class DashboardRepository {
 
+    private static final String WEEKLY_RESOLUTION_TREND = "pgr.comp.resolution.weekly.trend";
+    private static final String WEEKLY_REGISTRATION_TREND = "pgr.comp.reg.weekly.trend";
+    private static final String LAST_SIX_MONTH_AGGR = "pgr.comp.six.month.aggr";
+    private static final String GRIEVANCE_TYPEWISE_PERCENTAGE = "pgr.comp.type.wise.perc";
+    private static final String WARDWISE_PERFORMANCE = "pgr.wardwiseperformance";
+    private static final String OPEN_GRIEVANCE_AGGR = "pgr.open.comp.aggr";
+    private static final String BOUNDARYWISE_PERCENTAGE = "pgr.bndry.wise.perc";
+    private static final String TOP_GRIEVANCE_BY_TYPE = "pgr.top.comp.types";
+    private static final String CURRENT_MONTH_TOP_GRIEVANCE_BY_TYPE = "pgr.top.comp.types.current.month";
+    private static final String SIX_MONTHS_WARDWISE_REGISTRATION = "pgr.comp.reg.six.month.wardwise";
+    private static final String SIX_MONTHS_WARDWISE_RESOLUTION = "pgr.comp.redressed.six.month.wardwise";
+    private static final String SIX_MONTHS_WARDWISE_GRIEVANCES_PER_PROPERTY = "pgr.comp.per.property.six.month.wardwise";
+
     @PersistenceContext
     private EntityManager entityManager;
 
     @Autowired
     private GrievanceApplicationSettings grievanceApplicationSettings;
 
-    public List<Object[]> fetchComplaintResolutionTrendBetween(final Date fromDate, final Date toDate) {
-        return fetchDateRangeData("pgr.comp.resolution.weekly.trend", fromDate, toDate);
+    public List<Object[]> fetchComplaintResolutionTrendBetween(Date fromDate, Date toDate) {
+        return fetchDateRangeData(WEEKLY_RESOLUTION_TREND, fromDate, toDate);
     }
 
-    public List<Object[]> fetchComplaintRegistrationTrendBetween(final Date fromDate, final Date toDate) {
-        return fetchDateRangeData("pgr.comp.reg.weekly.trend", fromDate, toDate);
+    public List<Object[]> fetchComplaintRegistrationTrendBetween(Date fromDate, Date toDate) {
+        return fetchDateRangeData(WEEKLY_REGISTRATION_TREND, fromDate, toDate);
     }
 
-    public List<Object[]> fetchMonthlyAggregateBetween(final Date fromDate, final Date toDate) {
-        return fetchDateRangeData("pgr.comp.six.month.aggr", fromDate, toDate);
+    public List<Object[]> fetchMonthlyAggregateBetween(Date fromDate, Date toDate) {
+        return fetchDateRangeData(LAST_SIX_MONTH_AGGR, fromDate, toDate);
     }
 
-    public List<Object[]> fetchComplaintTypeWiseBetween(final Date fromDate, final Date toDate) {
-        return fetchDateRangeData("pgr.comp.type.wise.perc", fromDate, toDate);
+    public List<Object[]> fetchComplaintTypeWiseBetween(Date fromDate, Date toDate) {
+        return fetchDateRangeData(GRIEVANCE_TYPEWISE_PERCENTAGE, fromDate, toDate);
     }
 
-    public List<Object[]> fetchWardwisePerformanceTill(final DateTime toDate) {
-        final NativeQuery qry = getQuery("pgr.wardwiseperformance");
+    public List<Object[]> fetchWardwisePerformanceTill(DateTime toDate) {
+        NativeQuery qry = getQuery(WARDWISE_PERFORMANCE);
         qry.setParameter("thirteenDaysBefore", endOfGivenDate(toDate.minusDays(13)).toDate());
         qry.setParameter("fourteenDaysBefore", startOfGivenDate(toDate.minusDays(14)).toDate());
         qry.setParameter("currentDate", endOfGivenDate(toDate).toDate());
         return qry.list();
     }
 
-    public Object[] fetchComplaintAgeing(final String querykey, final String wardName) {
-        final NativeQuery qry = getQuery(querykey);
-        final DateTime currentDate = new DateTime();
+    public Object[] fetchComplaintAgeing(String querykey, String wardName) {
+        NativeQuery qry = getQuery(querykey);
+        DateTime currentDate = new DateTime();
         qry.setParameter("grtthn90", endOfGivenDate(currentDate.minusDays(90)).toDate());
         qry.setParameter("lsthn90", endOfGivenDate(currentDate.minusDays(90)).toDate());
         qry.setParameter("grtthn45", endOfGivenDate(currentDate.minusDays(45)).toDate());
@@ -111,52 +124,49 @@ public class DashboardRepository {
         return (Object[]) qry.uniqueResult();
     }
 
-    public List<Object[]> fetchOpenComplaintAggregateBetween(final DateTime fromDate, final DateTime toDate) {
-        return fetchDateRangeData("pgr.open.comp.aggr", fromDate.toDate(), toDate.toDate());
+    public List<Object[]> fetchOpenComplaintAggregateBetween(DateTime fromDate, DateTime toDate) {
+        return fetchDateRangeData(OPEN_GRIEVANCE_AGGR, fromDate.toDate(), toDate.toDate());
     }
 
-    public List<Object[]> fetchComplaintsByComplaintTypeGroupByWard(final Long complaintTypeId, final DateTime fromDate,
-                                                                    final DateTime toDate) {
-        final NativeQuery qry = getQuery("pgr.bndry.wise.perc");
+    public List<Object[]> fetchComplaintsByComplaintTypeGroupByWard(Long complaintTypeId, DateTime fromDate,
+                                                                    DateTime toDate) {
+        NativeQuery qry = getQuery(BOUNDARYWISE_PERCENTAGE);
         qry.setParameter("fromDate", fromDate.toDate());
         qry.setParameter("toDate", toDate.toDate());
         qry.setParameter("compTypeId", complaintTypeId);
         return qry.list();
     }
 
-    public List<Object[]> fetchTopComplaintsBetween(final Date fromDate, final Date toDate) {
-        return fetchDateRangeData("pgr.top.comp.types", fromDate, toDate);
+    public List<Object[]> fetchTopComplaintsBetween(Date fromDate, Date toDate) {
+        return fetchDateRangeData(TOP_GRIEVANCE_BY_TYPE, fromDate, toDate);
     }
 
-    private List<Object[]> fetchDateRangeData(final String query, final Date fromDate, final Date toDate) {
-        final NativeQuery qry = getQuery(query);
+    private List<Object[]> fetchDateRangeData(String query, Date fromDate, Date toDate) {
+        NativeQuery qry = getQuery(query);
         qry.setParameter("fromDate", fromDate);
         qry.setParameter("toDate", toDate);
         return qry.list();
     }
 
     public List<Object[]> fetchGISCompPerPropertyWardWise() {
-        final NativeQuery qry = getQuery("pgr.comp.per.property.six.month.wardwise");
-        return qry.list();
+        return getQuery(SIX_MONTHS_WARDWISE_GRIEVANCES_PER_PROPERTY).list();
     }
 
     public List<Object[]> fetchGISCompRedressedWardWise() {
-        final NativeQuery qry = getQuery("pgr.comp.redressed.six.month.wardwise");
-        return qry.list();
+        return getQuery(SIX_MONTHS_WARDWISE_RESOLUTION).list();
     }
 
     public List<Object[]> fetchGISRegCompWardWise() {
-        final NativeQuery qry = getQuery("pgr.comp.reg.six.month.wardwise");
-        return qry.list();
+        return getQuery(SIX_MONTHS_WARDWISE_REGISTRATION).list();
     }
 
-    private NativeQuery getQuery(final String sqlKey) {
+    private NativeQuery getQuery(String sqlKey) {
         return entityManager.unwrap(Session.class)
                 .createNativeQuery(grievanceApplicationSettings.getValue(sqlKey));
     }
 
-    public List<Object[]> fetchTopComplaintsForCurrentMonthBetween(final Date fromDate, final Date toDate) {
-        return fetchDateRangeData("pgr.top.comp.types.current.month", fromDate, toDate);
+    public List<Object[]> fetchTopComplaintsForCurrentMonthBetween(Date fromDate, Date toDate) {
+        return fetchDateRangeData(CURRENT_MONTH_TOP_GRIEVANCE_BY_TYPE, fromDate, toDate);
 
     }
 }

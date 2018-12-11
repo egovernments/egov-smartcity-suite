@@ -66,7 +66,13 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
 
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_MASTER_DATA_CODE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.MASTER_DATA_CODE;
 import static org.egov.pgr.entity.ComplaintType.SEQ_COMPLAINTTYPE;
 
 @Entity
@@ -84,16 +90,19 @@ public class ComplaintType extends AbstractAuditable {
     @NotBlank
     @SafeHtml
     @Length(max = 150)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String name;
 
     @SafeHtml
     @Length(max = 200)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String localName;
 
     @NotBlank
     @Length(max = 20)
     @SafeHtml
-    @Column(name = "code", updatable = false)
+    @Column(updatable = false)
+    @Pattern(regexp = MASTER_DATA_CODE, message = INVALID_MASTER_DATA_CODE)
     private String code;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -105,6 +114,7 @@ public class ComplaintType extends AbstractAuditable {
     private String description;
 
     @NotNull
+    @Positive
     private Integer slaHours;
 
     private boolean isActive;

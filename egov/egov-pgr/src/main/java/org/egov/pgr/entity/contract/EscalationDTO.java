@@ -48,33 +48,30 @@
 
 package org.egov.pgr.entity.contract;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
-import org.egov.infra.web.support.ui.DataTable;
-import org.egov.pgr.entity.Escalation;
+import org.egov.pgr.entity.ComplaintType;
+import org.egov.pims.commons.Position;
 
-import java.lang.reflect.Type;
-import java.util.List;
-
-public class EscalationTimeAdaptor implements DataTableJsonAdapter<Escalation> {
-    @Override
-    public JsonElement serialize(final DataTable<Escalation> escalationResponse, final Type type,
-            final JsonSerializationContext jsc) {
-        final List<Escalation> escalationResult = escalationResponse.getData();
-        final JsonArray escalationDate = new JsonArray();
-        escalationResult.forEach(escalation -> {
-            final JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("complaintType",
-                    null != escalation.getComplaintType() ? escalation.getComplaintType().getName() : "NA");
-            jsonObject.addProperty("designation",
-                    null != escalation.getDesignation() ? escalation.getDesignation().getName() : "NA");
-            jsonObject.addProperty("noOfHours", null != escalation.getNoOfHrs() ? escalation.getNoOfHrs().toString() : "NA");
-
-            escalationDate.add(jsonObject);
-        });
-        return enhance(escalationDate, escalationResponse);
+public class EscalationDTO {
+    private Position fromPosition;
+    private Position toPosition;
+    private ComplaintType complaintType;
+    
+    public Position getFromPosition() {
+        return fromPosition;
+    }
+    public void setFromPosition(Position fromPosition) {
+        this.fromPosition = fromPosition;
+    }
+    public Position getToPosition() {
+        return toPosition;
+    }
+    public void setToPosition(Position toPosition) {
+        this.toPosition = toPosition;
+    }
+    public ComplaintType getComplaintType() {
+        return complaintType;
+    }
+    public void setComplaintType(ComplaintType complaintType) {
+        this.complaintType = complaintType;
     }
 }

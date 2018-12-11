@@ -50,7 +50,7 @@ package org.egov.pgr.web.controller.masters.escalation;
 
 import org.egov.infra.web.support.ui.DataTable;
 import org.egov.pgr.entity.Escalation;
-import org.egov.pgr.entity.contract.EscalationTimeAdaptor;
+import org.egov.pgr.web.contracts.response.EscalationTimeResponseAdaptor;
 import org.egov.pgr.entity.contract.EscalationTimeSearchRequest;
 import org.egov.pgr.service.ComplaintEscalationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +83,6 @@ public class ViewEscalationTimeController {
     @ResponseBody
     public String viewEscalationTime(EscalationTimeSearchRequest escalationTimeSearchRequest) {
         return new DataTable<>(escalationService.getEscalationsTime(escalationTimeSearchRequest),
-                escalationTimeSearchRequest.draw()).toJson(EscalationTimeAdaptor.class);
+                escalationTimeSearchRequest.draw()).toJson(EscalationTimeResponseAdaptor.class);
     }
 }

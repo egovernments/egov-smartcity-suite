@@ -62,8 +62,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
 import static org.egov.pgr.entity.ReceivingCenter.SEQ_RECEIVINGCENTER;
 
 @Entity
@@ -83,6 +86,7 @@ public class ReceivingCenter extends AbstractPersistable<Long> {
     @NotBlank
     @SafeHtml
     @Length(max = 100)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String name;
 
     private boolean isCrnRequired;

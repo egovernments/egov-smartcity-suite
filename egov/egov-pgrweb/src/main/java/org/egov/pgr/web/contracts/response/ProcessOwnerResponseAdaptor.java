@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,42 +46,28 @@
  *
  */
 
-package org.egov.pgr.entity.contract;
+package org.egov.pgr.web.contracts.response;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
-import org.egov.infra.web.support.ui.DataTable;
-import org.egov.pgr.entity.ComplaintType;
+import com.google.gson.JsonSerializer;
+import org.egov.eis.entity.EmployeeView;
 
 import java.lang.reflect.Type;
-import java.util.List;
 
-import static org.egov.infra.utils.ApplicationConstant.NA;
-import static org.egov.infra.utils.StringUtils.defaultIfBlank;
-import static org.egov.infra.utils.StringUtils.toYesOrNo;
+import static java.lang.String.format;
 
-public class ComplaintTypeAdaptor implements DataTableJsonAdapter<ComplaintType> {
+public class ProcessOwnerResponseAdaptor implements JsonSerializer<EmployeeView> {
+
+    private static final String PROCESS_OWNER = "%s [%s]";
 
     @Override
-    public JsonElement serialize(DataTable<ComplaintType> compaintTypeResponse, Type type, JsonSerializationContext jsc) {
-        List<ComplaintType> complaintTypeResult = compaintTypeResponse.getData();
-        JsonArray compalintTypeResultData = new JsonArray();
-        complaintTypeResult.forEach(compaintType -> {
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("name", compaintType.getName());
-            jsonObject.addProperty("category", compaintType.getCategory().getName());
-            jsonObject.addProperty("department", compaintType.getDepartment() != null ? compaintType.getDepartment()
-                    .getName() : NA);
-            jsonObject.addProperty("code", compaintType.getCode());
-            jsonObject.addProperty("isActive", toYesOrNo(compaintType.getIsActive()));
-            jsonObject.addProperty("description", defaultIfBlank(compaintType.getDescription()));
-            jsonObject.addProperty("slahours", defaultIfBlank(compaintType.getSlaHours().toString()));
-            jsonObject.addProperty("hasfinancialImpact", toYesOrNo(compaintType.isHasFinancialImpact()));
-            compalintTypeResultData.add(jsonObject);
-        });
-        return enhance(compalintTypeResultData, compaintTypeResponse);
+    public JsonElement serialize(EmployeeView employee, Type typeOfSrc, JsonSerializationContext context) {
+        JsonObject processOwner = new JsonObject();
+        processOwner.addProperty("name", format(PROCESS_OWNER, employee.getName(), employee.getPosition().getName()));
+        processOwner.addProperty("positionId", employee.getPosition().getId());
+        processOwner.addProperty("empId", employee.getEmployee().getId());
+        return processOwner;
     }
 }

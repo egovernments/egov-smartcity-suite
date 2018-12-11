@@ -61,7 +61,7 @@ import javax.validation.constraints.Pattern;
 @Embeddable
 public class Contact {
 
-    @Pattern(regexp = ValidationRegex.MOBILE_NUM)
+    @Pattern(regexp = ValidationRegex.MOBILE_NUMBER)
     @SafeHtml
     @Length(max = 15)
     @Audited

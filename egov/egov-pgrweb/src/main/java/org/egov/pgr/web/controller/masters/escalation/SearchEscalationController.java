@@ -52,7 +52,7 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.EscalationHierarchy;
-import org.egov.pgr.entity.contract.EscalationForm;
+import org.egov.pgr.entity.contract.EscalationRequest;
 import org.egov.pgr.service.ComplaintEscalationService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.service.EscalationHierarchyService;
@@ -93,8 +93,8 @@ public class SearchEscalationController {
     private ComplaintEscalationService complaintEscalationService;
 
     @ModelAttribute
-    public EscalationForm escalationForm() {
-        return new EscalationForm();
+    public EscalationRequest escalationForm() {
+        return new EscalationRequest();
     }
 
     @ModelAttribute("complaintTypes")
@@ -113,20 +113,20 @@ public class SearchEscalationController {
     }
 
     @PostMapping
-    public String searchForm(EscalationForm escalationForm, Model model) {
+    public String searchForm(EscalationRequest escalationRequest, Model model) {
 
-        if (escalationForm.getPosition() != null) {
+        if (escalationRequest.getPosition() != null) {
             List<EscalationHierarchy> positionHeirarchyList = escalationHierarchyService
-                    .getHeirarchyByFromPosition(escalationForm.getPosition().getId());
+                    .getHeirarchyByFromPosition(escalationRequest.getPosition().getId());
             if (!positionHeirarchyList.isEmpty()) {
-                escalationForm.setEscalationHierarchyList(positionHeirarchyList);
+                escalationRequest.setEscalationHierarchyList(positionHeirarchyList);
                 model.addAttribute("mode", "dataFound");
             } else {
                 positionHeirarchyList = new ArrayList<>();
                 EscalationHierarchy escalationHierarchy = new EscalationHierarchy();
-                escalationHierarchy.setFromPosition(positionMasterService.getPositionById(escalationForm.getPosition().getId()));
+                escalationHierarchy.setFromPosition(positionMasterService.getPositionById(escalationRequest.getPosition().getId()));
                 positionHeirarchyList.add(escalationHierarchy);
-                escalationForm.setEscalationHierarchyList(positionHeirarchyList);
+                escalationRequest.setEscalationHierarchyList(positionHeirarchyList);
                 model.addAttribute("mode", "noDataFound");
             }
         }
@@ -135,14 +135,14 @@ public class SearchEscalationController {
     }
 
     @PostMapping("update/{id}")
-    public String saveEscalationForm(@PathVariable Long id, EscalationForm escalationForm,
+    public String saveEscalationForm(@PathVariable Long id, EscalationRequest escalationRequest,
                                      Model model, RedirectAttributes redirectAttrs) {
         if (id == null) {
             model.addAttribute("warning", "escalation.pos.required");
             return ESCALATIONSEARCHVIEW;
         } else {
-            complaintEscalationService.updateEscalation(id, escalationForm);
-            redirectAttrs.addFlashAttribute("positionName", escalationForm.getPosition().getName());
+            complaintEscalationService.updateEscalation(id, escalationRequest);
+            redirectAttrs.addFlashAttribute("positionName", escalationRequest.getPosition().getName());
             redirectAttrs.addFlashAttribute(MESSAGE, "msg.escaltion.success");
             return "redirect:/complaint/escalation/search";
         }

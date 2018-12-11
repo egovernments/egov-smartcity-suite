@@ -50,9 +50,9 @@ package org.egov.pgr.web.controller.masters.escalation;
 
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.EscalationHierarchy;
-import org.egov.pgr.entity.contract.BulkEscalationGenerator;
-import org.egov.pgr.entity.contract.EscalationHelper;
-import org.egov.pgr.entity.contract.EscalationHelperAdaptor;
+import org.egov.pgr.entity.contract.BulkEscalationRequest;
+import org.egov.pgr.entity.contract.EscalationDTO;
+import org.egov.pgr.web.contracts.response.EscalationResponseAdaptor;
 import org.egov.pgr.service.ComplaintEscalationService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,8 +88,8 @@ public class BulkEscalationController {
     }
 
     @ModelAttribute
-    public BulkEscalationGenerator bulkEscalationGenerator() {
-        return new BulkEscalationGenerator();
+    public BulkEscalationRequest bulkEscalationGenerator() {
+        return new BulkEscalationRequest();
     }
 
     @GetMapping
@@ -99,25 +99,25 @@ public class BulkEscalationController {
 
     @GetMapping(value = "/", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String searchBulkEscalation(BulkEscalationGenerator bulkEscalationGenerator) {
+    public String searchBulkEscalation(BulkEscalationRequest bulkEscalationRequest) {
         List<EscalationHierarchy> escalationHierarchies = complaintEscalationService.getEscalationObjByComplaintTypeFromPosition(
-                bulkEscalationGenerator.getComplaintTypes(), bulkEscalationGenerator.getFromPosition());
+                bulkEscalationRequest.getComplaintTypes(), bulkEscalationRequest.getFromPosition());
         return new StringBuilder("{ \"data\":").append(toJSON(complaintEscalationService.getEscalationDetailByEscalationHierarchy(escalationHierarchies),
-                EscalationHelper.class, EscalationHelperAdaptor.class)).append("}").toString();
+                EscalationDTO.class, EscalationResponseAdaptor.class)).append("}").toString();
     }
 
     @PostMapping("update")
-    public String updateBulkEscalation(@Valid BulkEscalationGenerator bulkEscalationGenerator,
+    public String updateBulkEscalation(@Valid BulkEscalationRequest bulkEscalationRequest,
                                        BindingResult errors, RedirectAttributes redirectAttrs, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("message", "bulkescalation.unble.to.save");
             return BULKESCALATION;
         } else {
-            if (bulkEscalationGenerator.getFromPosition().equals(bulkEscalationGenerator.getToPosition())) {
+            if (bulkEscalationRequest.getFromPosition().equals(bulkEscalationRequest.getToPosition())) {
                 model.addAttribute("warning", "escalation.hierarchy.from.to.position.same");
                 return BULKESCALATION;
             }
-            complaintEscalationService.updateBulkEscalation(bulkEscalationGenerator);
+            complaintEscalationService.updateBulkEscalation(bulkEscalationRequest);
             redirectAttrs.addFlashAttribute("message", "msg.bulkescalation.success");
             return "redirect:/complaint/bulkescalation";
         }

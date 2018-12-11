@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,62 +45,22 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.pgr.entity.contract;
 
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.BoundaryType;
-import org.egov.pgr.entity.ComplaintType;
-import org.egov.pgr.entity.ComplaintTypeCategory;
-import org.egov.pims.commons.Position;
+package org.egov.pgr.config.scheduler;
 
-import java.util.List;
+import org.springframework.context.annotation.ConditionContext;
+import org.springframework.context.annotation.ConfigurationCondition;
+import org.springframework.core.type.AnnotatedTypeMetadata;
 
-public class BulkRouterGenerator {
+public class GrievanceSchedulerConfigCondition implements ConfigurationCondition {
 
-    private List<Boundary> boundaries;
-    private List<ComplaintType> complaintTypes;
-    private ComplaintTypeCategory complaintTypeCategory;
-    private BoundaryType boundaryType;
-    private Position position;
-
-    public List<Boundary> getBoundaries() {
-        return boundaries;
+    @Override
+    public ConfigurationPhase getConfigurationPhase() {
+        return ConfigurationPhase.REGISTER_BEAN;
     }
 
-    public void setBoundaries(final List<Boundary> boundaries) {
-        this.boundaries = boundaries;
+    @Override
+    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+        return context.getEnvironment().getProperty("pgr.scheduler.enabled", Boolean.class);
     }
-
-    public List<ComplaintType> getComplaintTypes() {
-        return complaintTypes;
-    }
-
-    public void setComplaintTypes(final List<ComplaintType> complaintTypes) {
-        this.complaintTypes = complaintTypes;
-    }
-
-    public ComplaintTypeCategory getComplaintTypeCategory() {
-        return complaintTypeCategory;
-    }
-
-    public void setComplaintTypeCategory(final ComplaintTypeCategory complaintTypeCategory) {
-        this.complaintTypeCategory = complaintTypeCategory;
-    }
-
-    public BoundaryType getBoundaryType() {
-        return boundaryType;
-    }
-
-    public void setBoundaryType(final BoundaryType boundaryType) {
-        this.boundaryType = boundaryType;
-    }
-
-    public Position getPosition() {
-        return position;
-    }
-
-    public void setPosition(final Position position) {
-        this.position = position;
-    }
-
 }

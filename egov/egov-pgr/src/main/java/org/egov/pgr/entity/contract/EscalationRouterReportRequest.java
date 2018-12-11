@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2018  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -48,42 +48,17 @@
 
 package org.egov.pgr.entity.contract;
 
-import org.hibernate.annotations.Immutable;
+import org.egov.infra.reporting.engine.ReportFormat;
+import org.egov.infra.web.support.search.DataTableSearchRequest;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+public class EscalationRouterReportRequest extends DataTableSearchRequest {
 
-@Entity
-@Immutable
-@Table(name = "pgr_router_escalation_view")
-public class EscalationRouterView {
-
-    @Id
-    private Long id;
-
-    @Column(name = "ctid")
     private Long complainttype;
-
     private Long categoryid;
-
-    @Column(name = "bndryid")
     private Long boundary;
-
-    @Column(name = "routerpos")
     private Long position;
+    private ReportFormat printFormat;
 
-    private Long esclvl1;
-    private Long esclvl2;
-    private Long esclvl3;
-    private String ctname;
-    private String categoryname;
-    private String bndryname;
-    private String routerposname;
-    private String esclvl1posname;
-    private String esclvl2posname;
-    private String esclvl3posname;
     private Boolean active;
 
     public Long getComplainttype() {
@@ -118,84 +93,12 @@ public class EscalationRouterView {
         this.position = position;
     }
 
-    public String getCtname() {
-        return ctname;
+    public ReportFormat getPrintFormat() {
+        return printFormat;
     }
 
-    public void setCtname(final String ctname) {
-        this.ctname = ctname;
-    }
-
-    public String getBndryname() {
-        return bndryname;
-    }
-
-    public void setBndryname(final String bndryname) {
-        this.bndryname = bndryname;
-    }
-
-    public String getRouterposname() {
-        return routerposname;
-    }
-
-    public void setRouterposname(final String routerposname) {
-        this.routerposname = routerposname;
-    }
-
-    public String getEsclvl1posname() {
-        return esclvl1posname;
-    }
-
-    public void setEsclvl1posname(final String esclvl1posname) {
-        this.esclvl1posname = esclvl1posname;
-    }
-
-    public String getEsclvl2posname() {
-        return esclvl2posname;
-    }
-
-    public void setEsclvl2posname(final String esclvl2posname) {
-        this.esclvl2posname = esclvl2posname;
-    }
-
-    public String getEsclvl3posname() {
-        return esclvl3posname;
-    }
-
-    public void setEsclvl3posname(final String esclvl3posname) {
-        this.esclvl3posname = esclvl3posname;
-    }
-
-    public Long getEsclvl1() {
-        return esclvl1;
-    }
-
-    public void setEsclvl1(final Long esclvl1) {
-        this.esclvl1 = esclvl1;
-    }
-
-    public Long getEsclvl2() {
-        return esclvl2;
-    }
-
-    public void setEsclvl2(final Long esclvl2) {
-        this.esclvl2 = esclvl2;
-    }
-
-    public Long getEsclvl3() {
-        return esclvl3;
-    }
-
-    public void setEsclvl3(final Long esclvl3) {
-        this.esclvl3 = esclvl3;
-    }
-
-    public String getCategoryname() {
-        return categoryname;
-    }
-
-    public void setCategoryname(final String categoryname) {
-        this.categoryname = categoryname;
+    public void setPrintFormat(final ReportFormat printFormat) {
+        this.printFormat = printFormat;
     }
 
     public Boolean getActive() {

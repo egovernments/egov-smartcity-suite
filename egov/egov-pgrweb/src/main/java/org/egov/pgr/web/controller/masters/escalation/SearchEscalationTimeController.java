@@ -49,7 +49,7 @@
 package org.egov.pgr.web.controller.masters.escalation;
 
 import org.egov.pgr.entity.Escalation;
-import org.egov.pgr.entity.contract.EscalationForm;
+import org.egov.pgr.entity.contract.EscalationRequest;
 import org.egov.pgr.service.ComplaintEscalationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -72,8 +72,8 @@ public class SearchEscalationTimeController {
     private ComplaintEscalationService escalationService;
 
     @ModelAttribute
-    public EscalationForm escalationForm() {
-        return new EscalationForm();
+    public EscalationRequest escalationForm() {
+        return new EscalationRequest();
     }
 
     @GetMapping
@@ -82,13 +82,13 @@ public class SearchEscalationTimeController {
     }
 
     @PostMapping
-    public String searchEscalationTimeForm(EscalationForm escalationForm, Model model) {
+    public String searchEscalationTimeForm(EscalationRequest escalationRequest, Model model) {
 
-        List<Escalation> escalationList = escalationService.getAllEscalationByComplaintTypeId(escalationForm.getComplaintType().getId());
+        List<Escalation> escalationList = escalationService.getAllEscalationByComplaintTypeId(escalationRequest.getComplaintType().getId());
         if (escalationList.isEmpty()) {
             model.addAttribute("mode", "noDataFound");
         } else {
-            escalationForm.setEscalationList((escalationList));
+            escalationRequest.setEscalationList((escalationList));
             model.addAttribute("mode", "dataFound");
         }
 
@@ -96,8 +96,8 @@ public class SearchEscalationTimeController {
     }
 
     @PostMapping("update")
-    public String updateEscalationTime(EscalationForm escalationForm, RedirectAttributes redirectAtt) {
-        escalationService.updateEscalationTime(escalationForm);
+    public String updateEscalationTime(EscalationRequest escalationRequest, RedirectAttributes redirectAtt) {
+        escalationService.updateEscalationTime(escalationRequest);
         redirectAtt.addFlashAttribute("message", "msg.escalate.time.success");
         return "redirect:/complaint/escalationtime";
     }

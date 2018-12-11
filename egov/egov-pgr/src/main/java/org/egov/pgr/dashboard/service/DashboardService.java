@@ -48,6 +48,7 @@
 
 package org.egov.pgr.dashboard.service;
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.pgr.dashboard.repository.DashboardRepository;
 import org.joda.time.DateTime;
@@ -81,21 +82,18 @@ import static org.egov.pgr.utils.constants.PGRConstants.DISPOSALPERC;
 import static org.egov.pgr.utils.constants.PGRConstants.WARDID;
 import static org.egov.pgr.utils.constants.PGRConstants.WARDNAME;
 
-@Transactional(readOnly = true)
 @Service
+@Transactional(readOnly = true)
 public class DashboardService {
 
-    private static final Map<String, String[]> COLOR_GRADIENTS = new HashMap<>();
-
-    static {
-        COLOR_GRADIENTS.put("#5B94CB", new String[]{"#00285F", "#1D568D", "#4B84BB", "#79B2E9", "#A7E0FF"});
-        COLOR_GRADIENTS.put("#938250", new String[]{"#584e30", "#665b38", "#756840", "#847548", "#9d8e61"});
-        COLOR_GRADIENTS.put("#f9f107", new String[]{"#BBB300", "#E9E100", "#FFFF25", "#FFFF53", "#FFFF79"});
-        COLOR_GRADIENTS.put("#6AC657", new String[]{"#005A00", "#0E6A00", "#2C8819", "#5AB647", "#88E475"});
-        COLOR_GRADIENTS.put("#4F54B8", new String[]{"#00004C", "#11167A", "#3F44A8", "#6D72D6", "#9BA0FF"});
-        COLOR_GRADIENTS.put("#B15D16", new String[]{"#450000", "#731F00", "#A14D06", "#CF7B34", "#FDA962"});
-        COLOR_GRADIENTS.put("#C00000", new String[]{"#540000", "#B00000", "#DE1E1E", "#FF4C4C", "#FF5454"});
-    }
+    private static final Map<String, String[]> COLOR_GRADIENTS = new ImmutableMap.Builder<String, String[]>()
+            .put("#5B94CB", new String[]{"#00285F", "#1D568D", "#4B84BB", "#79B2E9", "#A7E0FF"})
+            .put("#938250", new String[]{"#584e30", "#665b38", "#756840", "#847548", "#9d8e61"})
+            .put("#f9f107", new String[]{"#BBB300", "#E9E100", "#FFFF25", "#FFFF53", "#FFFF79"})
+            .put("#6AC657", new String[]{"#005A00", "#0E6A00", "#2C8819", "#5AB647", "#88E475"})
+            .put("#4F54B8", new String[]{"#00004C", "#11167A", "#3F44A8", "#6D72D6", "#9BA0FF"})
+            .put("#B15D16", new String[]{"#450000", "#731F00", "#A14D06", "#CF7B34", "#FDA962"})
+            .put("#C00000", new String[]{"#540000", "#B00000", "#DE1E1E", "#FF4C4C", "#FF5454"}).build();
 
     @Autowired
     private DashboardRepository dashboardRepository;

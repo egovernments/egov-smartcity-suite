@@ -61,7 +61,10 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHANUMERIC_UNDERSCORE_HYPHEN_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHANUMERIC_UNDERSCORE_HYPHEN_SPACE;
 import static org.egov.pgr.entity.Configuration.SEQ_CONFIGURATION;
 
 @Table(name = "egpgr_configuration")
@@ -81,6 +84,7 @@ public class Configuration extends AbstractAuditable {
     @NotBlank
     @SafeHtml
     @Length(max = 50)
+    @Pattern(regexp = ALPHANUMERIC_UNDERSCORE_HYPHEN_SPACE, message = INVALID_ALPHANUMERIC_UNDERSCORE_HYPHEN_SPACE)
     private String key;
 
     @NotBlank

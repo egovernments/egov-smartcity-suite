@@ -45,41 +45,41 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-
 package org.egov.pgr.entity.contract;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
-import org.egov.infra.web.support.ui.DataTable;
-import org.egov.pgr.entity.ComplaintRouter;
+import org.egov.pgr.entity.ComplaintType;
+import org.egov.pims.commons.Position;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
-import static org.egov.infra.utils.ApplicationConstant.NA;
+public class BulkEscalationRequest {
 
-public class ComplaintRouterResponseAdaptor implements DataTableJsonAdapter<ComplaintRouter> {
+    private List<ComplaintType> complaintTypes;
+    private Position fromPosition;
+    private Position toPosition;
 
-    @Override
-    public JsonElement serialize(final DataTable<ComplaintRouter> complaintRouterResponse, final Type type,
-                                 final JsonSerializationContext jsc) {
-        final List<ComplaintRouter> complaintRouterResult = complaintRouterResponse.getData();
-        final JsonArray complaintRouterResultData = new JsonArray();
-        complaintRouterResult.forEach(complaintRouter -> {
-            final JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("boundaryType", complaintRouter.getBoundary() != null ? complaintRouter.getBoundary().getBoundaryType().getName() : NA);
-            jsonObject.addProperty("boundary", complaintRouter.getBoundary() != null ? complaintRouter.getBoundary()
-                    .getName() : NA);
-            jsonObject.addProperty("complaintType", complaintRouter.getComplaintType() != null ? complaintRouter
-                    .getComplaintType().getName() : NA);
-            jsonObject.addProperty("position", complaintRouter.getPosition().getName());
-            jsonObject.addProperty("routerId", complaintRouter.getId());
-
-            complaintRouterResultData.add(jsonObject);
-        });
-        return enhance(complaintRouterResultData, complaintRouterResponse);
+    public List<ComplaintType> getComplaintTypes() {
+        return complaintTypes;
     }
+
+    public void setComplaintTypes(final List<ComplaintType> complaintTypes) {
+        this.complaintTypes = complaintTypes;
+    }
+
+    public Position getFromPosition() {
+        return fromPosition;
+    }
+
+    public void setFromPosition(final Position fromPosition) {
+        this.fromPosition = fromPosition;
+    }
+
+    public Position getToPosition() {
+        return toPosition;
+    }
+
+    public void setToPosition(final Position toPosition) {
+        this.toPosition = toPosition;
+    }
+
 }

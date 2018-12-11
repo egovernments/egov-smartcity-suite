@@ -51,7 +51,7 @@ package org.egov.pgr.web.controller.masters.type;
 import org.egov.infra.web.support.search.DataTableSearchRequest;
 import org.egov.infra.web.support.ui.DataTable;
 import org.egov.pgr.entity.ComplaintType;
-import org.egov.pgr.entity.contract.ComplaintTypeAdaptor;
+import org.egov.pgr.web.contracts.response.ComplaintTypeResponseAdaptor;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -81,7 +81,7 @@ public class ViewComplaintTypeController {
     @ResponseBody
     public String viewComplaintType(DataTableSearchRequest request) {
         return new DataTable<>(complaintTypeService.getComplaintType(request), request.draw())
-                .toJson(ComplaintTypeAdaptor.class);
+                .toJson(ComplaintTypeResponseAdaptor.class);
     }
 
     @GetMapping("/{code}")

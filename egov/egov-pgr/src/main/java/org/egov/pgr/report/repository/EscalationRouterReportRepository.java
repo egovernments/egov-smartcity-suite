@@ -48,7 +48,7 @@
 
 package org.egov.pgr.report.repository;
 
-import org.egov.pgr.entity.contract.EscalationRouterView;
+import org.egov.pgr.entity.views.EscalationRouterView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;

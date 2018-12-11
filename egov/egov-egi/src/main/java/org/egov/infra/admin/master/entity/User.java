@@ -100,6 +100,7 @@ import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.StringUtils.overlay;
 import static org.apache.commons.lang3.StringUtils.repeat;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_MOBILE_NUMBER;
 import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PERSON_NAME;
 import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PAN_NUMBER;
 import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PHONE_NUMBER;
@@ -107,7 +108,7 @@ import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_SA
 import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_USERNAME;
 import static org.egov.infra.validation.constants.ValidationRegex.PERSON_NAME;
 import static org.egov.infra.validation.constants.ValidationRegex.EMAIL;
-import static org.egov.infra.validation.constants.ValidationRegex.MOBILE_NUM;
+import static org.egov.infra.validation.constants.ValidationRegex.MOBILE_NUMBER;
 import static org.egov.infra.validation.constants.ValidationRegex.PAN_NUMBER;
 import static org.egov.infra.validation.constants.ValidationRegex.PHONE_NUMBER;
 import static org.egov.infra.validation.constants.ValidationRegex.SALUTATION;
@@ -168,9 +169,9 @@ public class User extends AbstractAuditable {
     private Gender gender;
 
     @SafeHtml
-    @Length(max = 15)
+    @Length(max = 10)
     @Audited
-    @Pattern(regexp = MOBILE_NUM)
+    @Pattern(regexp = MOBILE_NUMBER, message = INVALID_MOBILE_NUMBER)
     private String mobileNumber;
 
     @SafeHtml

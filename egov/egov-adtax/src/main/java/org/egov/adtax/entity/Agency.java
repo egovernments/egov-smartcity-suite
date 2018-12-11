@@ -74,7 +74,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.egov.infra.validation.constants.ValidationRegex.EMAIL;
-import static org.egov.infra.validation.constants.ValidationRegex.MOBILE_NUM;
+import static org.egov.infra.validation.constants.ValidationRegex.MOBILE_NUMBER;
 
 @Entity
 @Table(name = "EGADTAX_AGENCY")
@@ -107,7 +107,7 @@ public class Agency extends AbstractAuditable {
     private String emailId;
 
     @NotNull
-    @Pattern(regexp = MOBILE_NUM)
+    @Pattern(regexp = MOBILE_NUMBER)
     @Length(max = 15)
     @SafeHtml
     private String mobileNumber;

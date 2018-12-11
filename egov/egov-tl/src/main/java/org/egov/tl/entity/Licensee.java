@@ -98,7 +98,7 @@ public class Licensee extends AbstractAuditable {
     @SafeHtml
     @Length(min = 10, max = 10)
     @Column(name = "MOBILE_PHONENUMBER")
-    @Pattern(regexp = ValidationRegex.MOBILE_NUM)
+    @Pattern(regexp = ValidationRegex.MOBILE_NUMBER)
     private String mobilePhoneNumber;
 
     @SafeHtml

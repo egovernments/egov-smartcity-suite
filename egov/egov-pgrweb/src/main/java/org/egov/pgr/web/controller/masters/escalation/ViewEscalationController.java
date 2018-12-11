@@ -49,8 +49,8 @@
 package org.egov.pgr.web.controller.masters.escalation;
 
 import org.egov.pgr.entity.EscalationHierarchy;
-import org.egov.pgr.entity.contract.EscalationHelper;
-import org.egov.pgr.entity.contract.EscalationHelperAdaptor;
+import org.egov.pgr.entity.contract.EscalationDTO;
+import org.egov.pgr.web.contracts.response.EscalationResponseAdaptor;
 import org.egov.pgr.service.ComplaintEscalationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -85,6 +85,6 @@ public class ViewEscalationController {
     public String viewEscalation(@RequestParam Long positionId,
                                  @RequestParam Long complaintId) {
         return new StringBuilder("{ \"data\":").append(toJSON(complaintEscalationService.viewEscalation(positionId, complaintId),
-                EscalationHelper.class, EscalationHelperAdaptor.class)).append("}").toString();
+                EscalationDTO.class, EscalationResponseAdaptor.class)).append("}").toString();
     }
 }

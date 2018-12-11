@@ -57,7 +57,7 @@ import org.egov.pims.commons.Position;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EscalationForm {
+public class EscalationRequest {
     private ComplaintType complaintType;
     private List<Escalation> escalationList = new ArrayList<>();
     private List<EscalationHierarchy> escalationHierarchyList = new ArrayList<>();

@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,48 +46,32 @@
  *
  */
 
-package org.egov.pgr.entity.contract;
+package org.egov.pgr.web.contracts.response;
 
-import org.egov.infra.reporting.engine.ReportFormat;
-import org.egov.infra.web.support.search.DataTableSearchRequest;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import org.egov.pgr.entity.contract.EscalationDTO;
 
-public class ComplaintRouterSearchRequest extends DataTableSearchRequest {
+import java.lang.reflect.Type;
 
-    private Long complaintTypeId;
-    private Long boundaryTypeId;
-    private Long boundaryId;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.egov.infra.utils.ApplicationConstant.NA;
 
-    private ReportFormat printFormat;
+public class EscalationResponseAdaptor implements JsonSerializer<EscalationDTO> {
 
-    public Long getComplaintTypeId() {
-        return complaintTypeId;
-    }
-
-    public void setComplaintTypeId(final Long complaintTypeId) {
-        this.complaintTypeId = complaintTypeId;
-    }
-
-    public Long getBoundaryTypeId() {
-        return boundaryTypeId;
-    }
-
-    public void setBoundaryTypeId(final Long boundaryTypeId) {
-        this.boundaryTypeId = boundaryTypeId;
-    }
-
-    public Long getBoundaryId() {
-        return boundaryId;
-    }
-
-    public void setBoundaryId(final Long boundaryId) {
-        this.boundaryId = boundaryId;
-    }
-
-    public ReportFormat getPrintFormat() {
-        return printFormat;
-    }
-
-    public void setPrintFormat(ReportFormat printFormat) {
-        this.printFormat = printFormat;
+    @Override
+    public JsonElement serialize(EscalationDTO escalationDTO, Type type, JsonSerializationContext jsc) {
+        JsonObject jsonObject = new JsonObject();
+        if (escalationDTO != null) {
+            jsonObject.addProperty("positionFrom", escalationDTO.getFromPosition() == null ? NA : escalationDTO
+                    .getFromPosition().getName());
+            jsonObject.addProperty("grievanceType", escalationDTO.getComplaintType() == null ? EMPTY :
+                    escalationDTO.getComplaintType().getName());
+            jsonObject.addProperty("positionTo", escalationDTO.getToPosition() == null ? EMPTY : escalationDTO
+                    .getToPosition().getName());
+        }
+        return jsonObject;
     }
 }

@@ -46,27 +46,35 @@
  *
  */
 
-package org.egov.pgr.entity.contract;
+package org.egov.pgr.web.contracts.response;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
+import org.egov.infra.web.support.ui.DataTable;
+import org.egov.pgr.entity.Escalation;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
-public class EscalationHelperAdaptor implements JsonSerializer<EscalationHelper> {
-
+public class EscalationTimeResponseAdaptor implements DataTableJsonAdapter<Escalation> {
     @Override
-    public JsonElement serialize(EscalationHelper escalationHelper, Type type, JsonSerializationContext jsc) {
-        JsonObject jsonObject = new JsonObject();
-        if (escalationHelper != null) {
-            jsonObject.addProperty("positionFrom", escalationHelper.getFromPosition() == null ? "NA" : escalationHelper
-                    .getFromPosition().getName());
-            jsonObject.addProperty("grievanceType", escalationHelper.getComplaintType() == null ? "" : escalationHelper.getComplaintType().getName());
-            jsonObject.addProperty("positionTo", escalationHelper.getToPosition() == null ? "" : escalationHelper
-                    .getToPosition().getName());
-        }
-        return jsonObject;
+    public JsonElement serialize(final DataTable<Escalation> escalationResponse, final Type type,
+            final JsonSerializationContext jsc) {
+        final List<Escalation> escalationResult = escalationResponse.getData();
+        final JsonArray escalationDate = new JsonArray();
+        escalationResult.forEach(escalation -> {
+            final JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("complaintType",
+                    null != escalation.getComplaintType() ? escalation.getComplaintType().getName() : "NA");
+            jsonObject.addProperty("designation",
+                    null != escalation.getDesignation() ? escalation.getDesignation().getName() : "NA");
+            jsonObject.addProperty("noOfHours", null != escalation.getNoOfHrs() ? escalation.getNoOfHrs().toString() : "NA");
+
+            escalationDate.add(jsonObject);
+        });
+        return enhance(escalationDate, escalationResponse);
     }
 }

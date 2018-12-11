@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,66 +46,39 @@
  *
  */
 
-package org.egov.pgr.entity.contract;
+package org.egov.pgr.web.contracts.response;
 
-import org.egov.infra.reporting.engine.ReportFormat;
-import org.egov.infra.web.support.search.DataTableSearchRequest;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
+import org.egov.infra.web.support.ui.DataTable;
+import org.egov.pgr.entity.ComplaintRouter;
 
-public class EscalationRouterRequest extends DataTableSearchRequest {
+import java.lang.reflect.Type;
+import java.util.List;
 
-    private Long complainttype;
-    private Long categoryid;
-    private Long boundary;
-    private Long position;
-    private ReportFormat printFormat;
+import static org.egov.infra.utils.ApplicationConstant.NA;
 
-    private Boolean active;
+public class RouterResponseAdaptor implements DataTableJsonAdapter<ComplaintRouter> {
 
-    public Long getComplainttype() {
-        return complainttype;
-    }
-
-    public void setComplainttype(final Long complainttype) {
-        this.complainttype = complainttype;
-    }
-
-    public Long getCategoryid() {
-        return categoryid;
-    }
-
-    public void setCategoryid(final Long categoryid) {
-        this.categoryid = categoryid;
-    }
-
-    public Long getBoundary() {
-        return boundary;
-    }
-
-    public void setBoundary(final Long boundary) {
-        this.boundary = boundary;
-    }
-
-    public Long getPosition() {
-        return position;
-    }
-
-    public void setPosition(final Long position) {
-        this.position = position;
-    }
-
-    public ReportFormat getPrintFormat() {
-        return printFormat;
-    }
-
-    public void setPrintFormat(final ReportFormat printFormat) {
-        this.printFormat = printFormat;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
+    @Override
+    public JsonElement serialize(DataTable<ComplaintRouter> complaintRouterResponse, Type type, JsonSerializationContext jsc) {
+        List<ComplaintRouter> complaintRouterResult = complaintRouterResponse.getData();
+        JsonArray complaintRouterResultData = new JsonArray();
+        complaintRouterResult.forEach(complaintRouter -> {
+            JsonObject routerData = new JsonObject();
+            routerData.addProperty("boundaryType", complaintRouter.getBoundary() == null ? NA :
+                    complaintRouter.getBoundary().getBoundaryType().getName());
+            routerData.addProperty("boundary", complaintRouter.getBoundary() == null ? NA : complaintRouter.getBoundary()
+                    .getName());
+            routerData.addProperty("complaintType", complaintRouter.getComplaintType() == null ? NA : complaintRouter
+                    .getComplaintType().getName());
+            routerData.addProperty("position", complaintRouter.getPosition().getName());
+            routerData.addProperty("routerId", complaintRouter.getId());
+            complaintRouterResultData.add(routerData);
+        });
+        return enhance(complaintRouterResultData, complaintRouterResponse);
     }
 }

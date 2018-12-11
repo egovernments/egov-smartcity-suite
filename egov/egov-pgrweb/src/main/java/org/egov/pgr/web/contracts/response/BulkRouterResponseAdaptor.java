@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,28 +46,31 @@
  *
  */
 
-package org.egov.pgr.entity.contract;
+package org.egov.pgr.web.contracts.response;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.eis.entity.EmployeeView;
+import org.egov.pgr.entity.ComplaintRouter;
 
 import java.lang.reflect.Type;
 
-import static java.lang.String.format;
+import static org.egov.infra.utils.ApplicationConstant.NA;
 
-public class ProcessOwnerAdaptor implements JsonSerializer<EmployeeView> {
-
-    private static final String PROCESS_OWNER = "%s [%s]";
+public class BulkRouterResponseAdaptor implements JsonSerializer<ComplaintRouter> {
 
     @Override
-    public JsonElement serialize(EmployeeView employee, Type typeOfSrc, JsonSerializationContext context) {
-        JsonObject processOwner = new JsonObject();
-        processOwner.addProperty("name", format(PROCESS_OWNER, employee.getName(), employee.getPosition().getName()));
-        processOwner.addProperty("positionId", employee.getPosition().getId());
-        processOwner.addProperty("empId", employee.getEmployee().getId());
-        return processOwner;
+    public JsonElement serialize(ComplaintRouter compaintRouter, Type type, JsonSerializationContext jsc) {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("boundaryType", compaintRouter.getBoundary() == null ? NA :
+                compaintRouter.getBoundary().getBoundaryType().getName());
+        jsonObject.addProperty("boundary", compaintRouter.getBoundary() == null ? NA : compaintRouter.getBoundary().getName());
+        jsonObject.addProperty("complaintType", compaintRouter.getComplaintType() == null ? NA : compaintRouter
+                .getComplaintType().getName());
+        jsonObject.addProperty("position", compaintRouter.getPosition().getName());
+        jsonObject.addProperty("routerId", compaintRouter.getId());
+        return jsonObject;
     }
+
 }

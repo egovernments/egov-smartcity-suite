@@ -45,41 +45,49 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+
 package org.egov.pgr.entity.contract;
 
-import org.egov.pgr.entity.ComplaintType;
-import org.egov.pims.commons.Position;
+import org.egov.infra.reporting.engine.ReportFormat;
+import org.egov.infra.web.support.search.DataTableSearchRequest;
 
-import java.util.List;
+public class RouterSearchRequest extends DataTableSearchRequest {
 
-public class BulkEscalationGenerator {
+    private Long complaintTypeId;
+    private Long boundaryTypeId;
+    private Long boundaryId;
 
-    private List<ComplaintType> complaintTypes;
-    private Position fromPosition;
-    private Position toPosition;
+    private ReportFormat printFormat;
 
-    public List<ComplaintType> getComplaintTypes() {
-        return complaintTypes;
+    public Long getComplaintTypeId() {
+        return complaintTypeId;
     }
 
-    public void setComplaintTypes(final List<ComplaintType> complaintTypes) {
-        this.complaintTypes = complaintTypes;
+    public void setComplaintTypeId(final Long complaintTypeId) {
+        this.complaintTypeId = complaintTypeId;
     }
 
-    public Position getFromPosition() {
-        return fromPosition;
+    public Long getBoundaryTypeId() {
+        return boundaryTypeId;
     }
 
-    public void setFromPosition(final Position fromPosition) {
-        this.fromPosition = fromPosition;
+    public void setBoundaryTypeId(final Long boundaryTypeId) {
+        this.boundaryTypeId = boundaryTypeId;
     }
 
-    public Position getToPosition() {
-        return toPosition;
+    public Long getBoundaryId() {
+        return boundaryId;
     }
 
-    public void setToPosition(final Position toPosition) {
-        this.toPosition = toPosition;
+    public void setBoundaryId(final Long boundaryId) {
+        this.boundaryId = boundaryId;
     }
 
+    public ReportFormat getPrintFormat() {
+        return printFormat;
+    }
+
+    public void setPrintFormat(ReportFormat printFormat) {
+        this.printFormat = printFormat;
+    }
 }

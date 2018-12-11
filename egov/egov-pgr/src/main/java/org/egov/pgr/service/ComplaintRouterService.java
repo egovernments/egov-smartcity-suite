@@ -58,8 +58,8 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintRouter;
 import org.egov.pgr.entity.ComplaintType;
-import org.egov.pgr.entity.contract.BulkRouterGenerator;
-import org.egov.pgr.entity.contract.ComplaintRouterSearchRequest;
+import org.egov.pgr.entity.contract.BulkRouterRequest;
+import org.egov.pgr.entity.contract.RouterSearchRequest;
 import org.egov.pgr.repository.ComplaintRouterRepository;
 import org.egov.pgr.repository.specs.ComplaintRouterSpec;
 import org.egov.pims.commons.Position;
@@ -121,18 +121,18 @@ public class ComplaintRouterService {
     }
 
     @Transactional
-    public void createBulkRouter(BulkRouterGenerator bulkRouterGenerator) {
-        for (ComplaintType complaintType : bulkRouterGenerator.getComplaintTypes()) {
-            for (Boundary boundary : bulkRouterGenerator.getBoundaries()) {
+    public void createBulkRouter(BulkRouterRequest bulkRouterRequest) {
+        for (ComplaintType complaintType : bulkRouterRequest.getComplaintTypes()) {
+            for (Boundary boundary : bulkRouterRequest.getBoundaries()) {
                 ComplaintRouter router = new ComplaintRouter();
                 router.setComplaintType(complaintType);
                 router.setBoundary(boundary);
-                router.setPosition(bulkRouterGenerator.getPosition());
+                router.setPosition(bulkRouterRequest.getPosition());
                 ComplaintRouter existingRouter = getExistingRouter(router);
                 if (existingRouter == null) {
                     createComplaintRouter(router);
                 } else {
-                    existingRouter.setPosition(bulkRouterGenerator.getPosition());
+                    existingRouter.setPosition(bulkRouterRequest.getPosition());
                     updateComplaintRouter(existingRouter);
                 }
             }
@@ -160,7 +160,7 @@ public class ComplaintRouterService {
     }
 
     @ReadOnly
-    public Page<ComplaintRouter> getComplaintRouter(ComplaintRouterSearchRequest routerSearchRequest) {
+    public Page<ComplaintRouter> getComplaintRouter(RouterSearchRequest routerSearchRequest) {
         Pageable pageable = new PageRequest(routerSearchRequest.pageNumber(),
                 routerSearchRequest.pageSize(),
                 routerSearchRequest.orderDir(), routerSearchRequest.orderBy());
@@ -169,7 +169,7 @@ public class ComplaintRouterService {
     }
 
     @ReadOnly
-    public ReportOutput generateRouterReport(ComplaintRouterSearchRequest reportCriteria) {
+    public ReportOutput generateRouterReport(RouterSearchRequest reportCriteria) {
         ReportRequest reportRequest = new ReportRequest("pgr_routerView",
                 complaintRouterRepository.findAll(ComplaintRouterSpec.search(reportCriteria)));
         reportRequest.setReportFormat(reportCriteria.getPrintFormat());

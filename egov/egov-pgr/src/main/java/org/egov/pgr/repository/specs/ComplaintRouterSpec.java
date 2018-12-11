@@ -49,7 +49,7 @@
 package org.egov.pgr.repository.specs;
 
 import org.egov.pgr.entity.ComplaintRouter;
-import org.egov.pgr.entity.contract.ComplaintRouterSearchRequest;
+import org.egov.pgr.entity.contract.RouterSearchRequest;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.JoinType;
@@ -63,7 +63,7 @@ public final class ComplaintRouterSpec {
         // Due to static method
     }
 
-    public static Specification<ComplaintRouter> search(ComplaintRouterSearchRequest routerSearchRequest) {
+    public static Specification<ComplaintRouter> search(RouterSearchRequest routerSearchRequest) {
         return (root, query, builder) -> {
             root.join(COMPLAINTTYPE, JoinType.LEFT);
             Predicate predicate = builder.conjunction();

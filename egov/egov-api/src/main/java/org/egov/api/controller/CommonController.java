@@ -76,7 +76,7 @@ import java.util.Date;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.infra.validation.constants.ValidationRegex.MOBILE_NUM;
+import static org.egov.infra.validation.constants.ValidationRegex.MOBILE_NUMBER;
 
 /**
  * @author Sheik
@@ -263,7 +263,7 @@ public class CommonController extends ApiController {
         ApiResponse res = ApiResponse.newInstance();
         String mobileNo = request.getParameter("identity");
         try {
-            if (!mobileNo.matches(MOBILE_NUM)) {
+            if (!mobileNo.matches(MOBILE_NUMBER)) {
                 return res.error(getMessage("msg.invalid.mobileno"));
             }
             citizenService.sendOTPMessage(mobileNo);

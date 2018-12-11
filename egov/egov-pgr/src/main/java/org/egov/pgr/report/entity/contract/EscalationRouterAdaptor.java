@@ -54,7 +54,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.pgr.entity.contract.EscalationRouterView;
+import org.egov.pgr.entity.views.EscalationRouterView;
 
 import java.lang.reflect.Type;
 import java.util.List;

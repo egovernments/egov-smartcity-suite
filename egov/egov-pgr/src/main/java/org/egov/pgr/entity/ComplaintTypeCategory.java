@@ -65,8 +65,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
 import static org.egov.pgr.entity.ComplaintTypeCategory.SEQ_COMP_TYPE_CATEGORY;
 
 @Entity
@@ -85,10 +88,12 @@ public class ComplaintTypeCategory extends AbstractPersistable<Long> {
     @NotNull
     @SafeHtml
     @Length(min = 5, max = 100)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String name;
 
     @SafeHtml
     @Length(max = 200)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String localName;
 
     @SafeHtml

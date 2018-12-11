@@ -48,8 +48,8 @@
 
 package org.egov.pgr.repository.specs;
 
-import org.egov.pgr.entity.contract.EscalationRouterRequest;
-import org.egov.pgr.entity.contract.EscalationRouterView;
+import org.egov.pgr.entity.contract.EscalationRouterReportRequest;
+import org.egov.pgr.entity.views.EscalationRouterView;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -59,10 +59,10 @@ import javax.persistence.criteria.Root;
 
 public class EscalationRouterSpec implements Specification<EscalationRouterView> {
 
-    private final EscalationRouterRequest escalationRouterRequest;
+    private final EscalationRouterReportRequest escalationRouterReportRequest;
 
-    public EscalationRouterSpec(final EscalationRouterRequest escalationRouterRequest) {
-        this.escalationRouterRequest = escalationRouterRequest;
+    public EscalationRouterSpec(final EscalationRouterReportRequest escalationRouterReportRequest) {
+        this.escalationRouterReportRequest = escalationRouterReportRequest;
     }
 
     @Override
@@ -70,19 +70,19 @@ public class EscalationRouterSpec implements Specification<EscalationRouterView>
                                  final CriteriaBuilder builder) {
         final Predicate predicate = builder.conjunction();
 
-        if (escalationRouterRequest.getCategoryid() != null)
+        if (escalationRouterReportRequest.getCategoryid() != null)
             predicate.getExpressions()
-                    .add(builder.equal(root.get("categoryid"), escalationRouterRequest.getCategoryid()));
-        if (escalationRouterRequest.getComplainttype() != null)
+                    .add(builder.equal(root.get("categoryid"), escalationRouterReportRequest.getCategoryid()));
+        if (escalationRouterReportRequest.getComplainttype() != null)
             predicate.getExpressions()
-                    .add(builder.equal(root.get("complainttype"), escalationRouterRequest.getComplainttype()));
-        if (escalationRouterRequest.getBoundary() != null)
+                    .add(builder.equal(root.get("complainttype"), escalationRouterReportRequest.getComplainttype()));
+        if (escalationRouterReportRequest.getBoundary() != null)
             predicate.getExpressions()
-                    .add(builder.equal(root.get("boundary"), escalationRouterRequest.getBoundary()));
-        if (escalationRouterRequest.getPosition() != null)
+                    .add(builder.equal(root.get("boundary"), escalationRouterReportRequest.getBoundary()));
+        if (escalationRouterReportRequest.getPosition() != null)
             predicate.getExpressions()
-                    .add(builder.equal(root.get("position"), escalationRouterRequest.getPosition()));
-        if (escalationRouterRequest.getActive())
+                    .add(builder.equal(root.get("position"), escalationRouterReportRequest.getPosition()));
+        if (escalationRouterReportRequest.getActive())
             predicate.getExpressions().add(builder.equal(root.get("active"), true));
 
         return predicate;

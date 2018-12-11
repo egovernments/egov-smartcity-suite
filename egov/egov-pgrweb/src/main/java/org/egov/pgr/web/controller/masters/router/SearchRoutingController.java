@@ -54,8 +54,8 @@ import org.egov.infra.reporting.engine.ReportDisposition;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.web.support.ui.DataTable;
 import org.egov.pgr.entity.ComplaintRouter;
-import org.egov.pgr.entity.contract.ComplaintRouterResponseAdaptor;
-import org.egov.pgr.entity.contract.ComplaintRouterSearchRequest;
+import org.egov.pgr.web.contracts.response.RouterResponseAdaptor;
+import org.egov.pgr.entity.contract.RouterSearchRequest;
 import org.egov.pgr.service.ComplaintRouterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -109,14 +109,14 @@ public class SearchRoutingController {
 
     @GetMapping(produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String search(ComplaintRouterSearchRequest routerSearchRequest) {
+    public String search(RouterSearchRequest routerSearchRequest) {
         return new DataTable<>(complaintRouterService.getComplaintRouter(routerSearchRequest),
-                routerSearchRequest.draw()).toJson(ComplaintRouterResponseAdaptor.class);
+                routerSearchRequest.draw()).toJson(RouterResponseAdaptor.class);
     }
 
     @GetMapping("download")
     @ResponseBody
-    public ResponseEntity<InputStreamResource> downloadRouterView(ComplaintRouterSearchRequest reportCriteria) {
+    public ResponseEntity<InputStreamResource> downloadRouterView(RouterSearchRequest reportCriteria) {
         ReportOutput reportOutput = complaintRouterService.generateRouterReport(reportCriteria);
         reportOutput.setReportName(appendTimestamp("pgr_routerView"));
         reportOutput.setReportDisposition(ReportDisposition.ATTACHMENT);

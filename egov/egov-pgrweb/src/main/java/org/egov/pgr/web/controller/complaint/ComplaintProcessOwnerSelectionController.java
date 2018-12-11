@@ -55,7 +55,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.JsonUtils;
-import org.egov.pgr.entity.contract.ProcessOwnerAdaptor;
+import org.egov.pgr.web.contracts.response.ProcessOwnerResponseAdaptor;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.service.EisUtilService;
@@ -129,7 +129,7 @@ public class ComplaintProcessOwnerSelectionController {
                     .filter(employeeView -> (employeeView.getEmployee().hasAnyRole(RO_ROLE_NAME, GO_ROLE_NAME, GRO_ROLE_NAME))
                             && !currentUserName.equals(employeeView.getUserName()))
                     .collect(Collectors.toSet());
-            return JsonUtils.toJSON(processOwners, EmployeeView.class, ProcessOwnerAdaptor.class);
+            return JsonUtils.toJSON(processOwners, EmployeeView.class, ProcessOwnerResponseAdaptor.class);
         }
         return "[]";
     }

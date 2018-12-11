@@ -60,8 +60,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
 import static org.egov.pgr.integration.ivrs.entity.IVRSRating.SEQ_IVRS_RATING;
 
 @Entity
@@ -80,9 +84,11 @@ public class IVRSRating extends AbstractPersistable<Long> {
 
     @SafeHtml
     @Length(min = 1, max = 64)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String name;
 
     @NotNull
+    @Min(0)
     private Integer weight;
 
     @SafeHtml

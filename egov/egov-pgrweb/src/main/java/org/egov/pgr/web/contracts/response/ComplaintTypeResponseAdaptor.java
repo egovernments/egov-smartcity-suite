@@ -46,21 +46,42 @@
  *
  */
 
-package org.egov.pgr.config.conditions;
+package org.egov.pgr.web.contracts.response;
 
-import org.springframework.context.annotation.ConditionContext;
-import org.springframework.context.annotation.ConfigurationCondition;
-import org.springframework.core.type.AnnotatedTypeMetadata;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
+import org.egov.infra.web.support.ui.DataTable;
+import org.egov.pgr.entity.ComplaintType;
 
-public class GrievanceSchedulerConfigCondition implements ConfigurationCondition {
+import java.lang.reflect.Type;
+import java.util.List;
+
+import static org.egov.infra.utils.ApplicationConstant.NA;
+import static org.egov.infra.utils.StringUtils.defaultIfBlank;
+import static org.egov.infra.utils.StringUtils.toYesOrNo;
+
+public class ComplaintTypeResponseAdaptor implements DataTableJsonAdapter<ComplaintType> {
 
     @Override
-    public ConfigurationPhase getConfigurationPhase() {
-        return ConfigurationPhase.REGISTER_BEAN;
-    }
-
-    @Override
-    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        return context.getEnvironment().getProperty("pgr.scheduler.enabled", Boolean.class);
+    public JsonElement serialize(DataTable<ComplaintType> compaintTypeResponse, Type type, JsonSerializationContext jsc) {
+        List<ComplaintType> complaintTypeResult = compaintTypeResponse.getData();
+        JsonArray complaintTypeResultData = new JsonArray();
+        complaintTypeResult.forEach(complaintType -> {
+            JsonObject complaintTypeData = new JsonObject();
+            complaintTypeData.addProperty("name", complaintType.getName());
+            complaintTypeData.addProperty("category", complaintType.getCategory().getName());
+            complaintTypeData.addProperty("department", complaintType.getDepartment() == null ? NA : complaintType.getDepartment()
+                    .getName());
+            complaintTypeData.addProperty("code", complaintType.getCode());
+            complaintTypeData.addProperty("isActive", toYesOrNo(complaintType.getIsActive()));
+            complaintTypeData.addProperty("description", defaultIfBlank(complaintType.getDescription()));
+            complaintTypeData.addProperty("slahours", defaultIfBlank(complaintType.getSlaHours().toString()));
+            complaintTypeData.addProperty("hasfinancialImpact", toYesOrNo(complaintType.isHasFinancialImpact()));
+            complaintTypeResultData.add(complaintTypeData);
+        });
+        return enhance(complaintTypeResultData, compaintTypeResponse);
     }
 }

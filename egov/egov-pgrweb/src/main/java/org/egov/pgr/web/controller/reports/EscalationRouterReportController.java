@@ -51,8 +51,8 @@ package org.egov.pgr.web.controller.reports;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.pgr.entity.contract.EscalationRouterRequest;
-import org.egov.pgr.entity.contract.EscalationRouterView;
+import org.egov.pgr.entity.contract.EscalationRouterReportRequest;
+import org.egov.pgr.entity.views.EscalationRouterView;
 import org.egov.pgr.report.entity.contract.EscalationRouterAdaptor;
 import org.egov.pgr.report.service.EscalationRouterReportService;
 import org.egov.pgr.service.ComplaintTypeCategoryService;
@@ -101,15 +101,15 @@ public class EscalationRouterReportController {
 
     @PostMapping(produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String searchEscalationRouterReport(EscalationRouterRequest escalationRouterRequest) {
-        return new DataTable<>(escalationRouterReportService.pagedEscalationRouterReport(escalationRouterRequest),
-                escalationRouterRequest.draw())
+    public String searchEscalationRouterReport(EscalationRouterReportRequest escalationRouterReportRequest) {
+        return new DataTable<>(escalationRouterReportService.pagedEscalationRouterReport(escalationRouterReportRequest),
+                escalationRouterReportRequest.draw())
                 .toJson(EscalationRouterAdaptor.class);
     }
 
     @GetMapping("download")
     @ResponseBody
-    public ResponseEntity<InputStreamResource> downloadEscalationRouterReport(EscalationRouterRequest reportCriteria) {
+    public ResponseEntity<InputStreamResource> downloadEscalationRouterReport(EscalationRouterReportRequest reportCriteria) {
         ReportOutput reportOutput = escalationRouterReportService.generateEscalationRouterReport(reportCriteria);
         reportOutput.setReportName("escalation_router_report");
         return reportAsResponseEntity(reportOutput);

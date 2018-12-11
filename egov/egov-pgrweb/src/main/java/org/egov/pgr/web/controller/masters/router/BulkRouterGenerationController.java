@@ -51,8 +51,8 @@ import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.pgr.entity.ComplaintRouter;
 import org.egov.pgr.entity.ComplaintTypeCategory;
-import org.egov.pgr.entity.contract.BulkRouterGenerator;
-import org.egov.pgr.entity.contract.ComplaintRouterAdaptor;
+import org.egov.pgr.entity.contract.BulkRouterRequest;
+import org.egov.pgr.web.contracts.response.BulkRouterResponseAdaptor;
 import org.egov.pgr.service.ComplaintRouterService;
 import org.egov.pgr.service.ComplaintTypeCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,8 +96,8 @@ public class BulkRouterGenerationController {
     }
 
     @ModelAttribute
-    public BulkRouterGenerator bulkRouterGenerator() {
-        return new BulkRouterGenerator();
+    public BulkRouterRequest bulkRouterGenerator() {
+        return new BulkRouterRequest();
     }
 
     @GetMapping
@@ -107,22 +107,22 @@ public class BulkRouterGenerationController {
 
     @GetMapping(value = "/", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String search(BulkRouterGenerator bulkRouterGenerator) {
+    public String search(BulkRouterRequest bulkRouterRequest) {
         return new StringBuilder("{ \"data\":").append(toJSON(complaintRouterService.getRoutersByComplaintTypeBoundary(
-                bulkRouterGenerator.getComplaintTypes(),
-                bulkRouterGenerator.getBoundaries()),
-                ComplaintRouter.class, ComplaintRouterAdaptor.class)).append("}").toString();
+                bulkRouterRequest.getComplaintTypes(),
+                bulkRouterRequest.getBoundaries()),
+                ComplaintRouter.class, BulkRouterResponseAdaptor.class)).append("}").toString();
     }
 
     @PostMapping("create")
-    public String createComplaintBulkRouter(@Valid BulkRouterGenerator bulkRouterGenerator,
+    public String createComplaintBulkRouter(@Valid BulkRouterRequest bulkRouterRequest,
                                             RedirectAttributes redirectAttrs,
                                             BindingResult errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("message", "router.unble.to.save");
             return "bulkrouter";
         } else {
-            complaintRouterService.createBulkRouter(bulkRouterGenerator);
+            complaintRouterService.createBulkRouter(bulkRouterRequest);
             redirectAttrs.addFlashAttribute("message", "msg.bulkrouter.success");
             return "redirect:/complaint/bulkrouter";
         }

@@ -45,33 +45,62 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-
 package org.egov.pgr.entity.contract;
 
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.entity.ComplaintTypeCategory;
 import org.egov.pims.commons.Position;
 
-public class EscalationHelper {
-    private Position fromPosition;
-    private Position toPosition;
-    private ComplaintType complaintType;
-    
-    public Position getFromPosition() {
-        return fromPosition;
+import java.util.List;
+
+public class BulkRouterRequest {
+
+    private List<Boundary> boundaries;
+    private List<ComplaintType> complaintTypes;
+    private ComplaintTypeCategory complaintTypeCategory;
+    private BoundaryType boundaryType;
+    private Position position;
+
+    public List<Boundary> getBoundaries() {
+        return boundaries;
     }
-    public void setFromPosition(Position fromPosition) {
-        this.fromPosition = fromPosition;
+
+    public void setBoundaries(final List<Boundary> boundaries) {
+        this.boundaries = boundaries;
     }
-    public Position getToPosition() {
-        return toPosition;
+
+    public List<ComplaintType> getComplaintTypes() {
+        return complaintTypes;
     }
-    public void setToPosition(Position toPosition) {
-        this.toPosition = toPosition;
+
+    public void setComplaintTypes(final List<ComplaintType> complaintTypes) {
+        this.complaintTypes = complaintTypes;
     }
-    public ComplaintType getComplaintType() {
-        return complaintType;
+
+    public ComplaintTypeCategory getComplaintTypeCategory() {
+        return complaintTypeCategory;
     }
-    public void setComplaintType(ComplaintType complaintType) {
-        this.complaintType = complaintType;
+
+    public void setComplaintTypeCategory(final ComplaintTypeCategory complaintTypeCategory) {
+        this.complaintTypeCategory = complaintTypeCategory;
     }
+
+    public BoundaryType getBoundaryType() {
+        return boundaryType;
+    }
+
+    public void setBoundaryType(final BoundaryType boundaryType) {
+        this.boundaryType = boundaryType;
+    }
+
+    public Position getPosition() {
+        return position;
+    }
+
+    public void setPosition(final Position position) {
+        this.position = position;
+    }
+
 }

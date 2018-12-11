@@ -46,11 +46,10 @@
  *
  */
 
-package org.egov.pgr.config;
+package org.egov.pgr.config.scheduler;
 
 import org.egov.infra.config.scheduling.QuartzSchedulerConfiguration;
 import org.egov.infra.config.scheduling.SchedulerConfigCondition;
-import org.egov.pgr.config.conditions.GrievanceSchedulerConfigCondition;
 import org.egov.pgr.config.properties.GrievanceApplicationSettings;
 import org.egov.pgr.scheduler.jobs.ComplaintEscalationJob;
 import org.egov.pgr.scheduler.jobs.ComplaintIndexingJob;
@@ -99,18 +98,9 @@ public class GrievanceSchedulerConfiguration extends QuartzSchedulerConfiguratio
 
     @Bean
     public JobDetailFactoryBean complaintEscalationJobDetail() {
-        JobDetailFactoryBean escalationJobDetail = new JobDetailFactoryBean();
-        escalationJobDetail.setGroup("PGR_JOB_GROUP");
+        JobDetailFactoryBean escalationJobDetail = defaultJobDetailFactoryBean("complaintEscalationJob");
         escalationJobDetail.setName("PGR_ESCALATION_JOB");
-        escalationJobDetail.setDurability(true);
         escalationJobDetail.setJobClass(ComplaintEscalationJob.class);
-        escalationJobDetail.setRequestsRecovery(true);
-        Map<String, String> jobDetailMap = new HashMap<>();
-        jobDetailMap.put("jobBeanName", "complaintEscalationJob");
-        jobDetailMap.put("userName", "system");
-        jobDetailMap.put("cityDataRequired", "true");
-        jobDetailMap.put("moduleName", "pgr");
-        escalationJobDetail.setJobDataAsMap(jobDetailMap);
         return escalationJobDetail;
     }
 
@@ -131,18 +121,9 @@ public class GrievanceSchedulerConfiguration extends QuartzSchedulerConfiguratio
 
     @Bean
     public JobDetailFactoryBean complaintIndexingJobDetail() {
-        JobDetailFactoryBean complaintIndexingJobDetail = new JobDetailFactoryBean();
-        complaintIndexingJobDetail.setGroup("PGR_JOB_GROUP");
-        complaintIndexingJobDetail.setName("PGR_INDEX_JOB");
-        complaintIndexingJobDetail.setDurability(true);
+        JobDetailFactoryBean complaintIndexingJobDetail = defaultJobDetailFactoryBean("complaintIndexingJob");
         complaintIndexingJobDetail.setJobClass(ComplaintIndexingJob.class);
-        complaintIndexingJobDetail.setRequestsRecovery(true);
-        Map<String, String> jobDetailMap = new HashMap<>();
-        jobDetailMap.put("jobBeanName", "complaintIndexingJob");
-        jobDetailMap.put("userName", "system");
-        jobDetailMap.put("cityDataRequired", "true");
-        jobDetailMap.put("moduleName", "pgr");
-        complaintIndexingJobDetail.setJobDataAsMap(jobDetailMap);
+        complaintIndexingJobDetail.setName("PGR_INDEX_JOB");
         return complaintIndexingJobDetail;
     }
 
@@ -154,5 +135,19 @@ public class GrievanceSchedulerConfiguration extends QuartzSchedulerConfiguratio
         escalationCron.setName("PGR_INDEX_TRIGGER");
         escalationCron.setCronExpression(grievanceApplicationSettings.getValue("pgr.indexing.job.cron"));
         return escalationCron;
+    }
+
+    private JobDetailFactoryBean defaultJobDetailFactoryBean(String jobBeanName) {
+        JobDetailFactoryBean complaintIndexingJobDetail = new JobDetailFactoryBean();
+        complaintIndexingJobDetail.setGroup("PGR_JOB_GROUP");
+        complaintIndexingJobDetail.setDurability(true);
+        complaintIndexingJobDetail.setRequestsRecovery(true);
+        Map<String, String> jobDetailMap = new HashMap<>();
+        jobDetailMap.put("jobBeanName", jobBeanName);
+        jobDetailMap.put("userName", "system");
+        jobDetailMap.put("cityDataRequired", "true");
+        jobDetailMap.put("moduleName", "pgr");
+        complaintIndexingJobDetail.setJobDataAsMap(jobDetailMap);
+        return complaintIndexingJobDetail;
     }
 }
