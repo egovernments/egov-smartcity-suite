@@ -214,7 +214,7 @@ public class ManualReconcileHelper {
 		}
 		catch(Exception e)
 		{
-			LOGGER.error("Exp in getUnReconciledDrCr"+e.getMessage());
+			LOGGER.error("Exp in getUnReconciledDrCr" , e);
 			
 		}
 		return unreconMap;
@@ -294,7 +294,7 @@ public class ManualReconcileHelper {
 		}
 		catch(Exception e)
 		{
-			LOGGER.error("Exp in getUnReconciledCheques:"+e.getMessage());
+			LOGGER.error("Exp in getUnReconciledCheques:", e);
 			throw new ApplicationRuntimeException(e.getMessage());
 		}
 		

@@ -219,7 +219,7 @@ public class AutoReconcileHelper {
     public String upload() {
         try {
             insertQuery = persistenceService.getSession().createNativeQuery(insertsql);
-            final Bankaccount ba = (Bankaccount) persistenceService.find("from Bankaccount ba where id=?",
+            final Bankaccount ba = (Bankaccount) persistenceService.find("from Bankaccount ba where id=?1",
                     Long.valueOf(accountId));
             accNo = ba.getAccountnumber();
             final POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(bankStatmentInXls));
@@ -774,7 +774,7 @@ public class AutoReconcileHelper {
         } catch (final TaskFailedException e) {
             throw new ApplicationRuntimeException(e.getMessage());
         }
-        bankAccount = (Bankaccount) persistenceService.find("from Bankaccount ba where id=?", Long.valueOf(accountId));
+        bankAccount = (Bankaccount) persistenceService.find("from Bankaccount ba where id=?1", Long.valueOf(accountId));
         final String statmentsNotInBankBookStr = "select id,txDate,instrumentNo,debit,credit,narration,type,action as \"errorCode\",errorMessage from "
                 + TABLENAME
                 + " where accountId=:accountId and txdate>=:fromDate "

@@ -185,7 +185,7 @@ public class AutoReconciliationAction extends BaseFormAction {
         {
             branchList = persistenceService
                     .findAllBy(
-                            "select  bb from Bankbranch bb,Bankaccount ba where bb.bank.id=? and ba.bankbranch=bb and bb.isactive=true",
+                            "select  bb from Bankbranch bb,Bankaccount ba where bb.bank.id=?1 and ba.bankbranch=bb and bb.isactive=true",
                             bankId);
             dropdownData.put("branchList", branchList);
 
@@ -193,7 +193,7 @@ public class AutoReconciliationAction extends BaseFormAction {
         if (accountId != null)
         {
             final List<Bankaccount> accountList = getPersistenceService().findAllBy(
-                    "from Bankaccount ba where ba.bankbranch.id=? and isactive=true order by ba.chartofaccounts.glcode", branchId);
+                    "from Bankaccount ba where ba.bankbranch.id=?1 and isactive=true order by ba.chartofaccounts.glcode", branchId);
             dropdownData.put("accountList", accountList);
         }
       

@@ -133,7 +133,7 @@ public class BankReconciliationAction extends BaseFormAction {
 		if (branchId != null) {
 			branchList = persistenceService
 					.findAllBy(
-							"select  bb from Bankbranch bb,Bankaccount ba where bb.bank.id=? and ba.bankbranch=bb and bb.isactive=true",
+							"select  bb from Bankbranch bb,Bankaccount ba where bb.bank.id=?1 and ba.bankbranch=bb and bb.isactive=true",
 							bankId);
 			dropdownData.put("branchList", branchList);
 
@@ -141,7 +141,7 @@ public class BankReconciliationAction extends BaseFormAction {
 		if (accountId != null) {
 			final List<Bankaccount> accountList = getPersistenceService()
 					.findAllBy(
-							"from Bankaccount ba where ba.bankbranch.id=? and isactive=true order by ba.chartofaccounts.glcode",
+							"from Bankaccount ba where ba.bankbranch.id=?1 and isactive=true order by ba.chartofaccounts.glcode",
 							branchId);
 			dropdownData.put("accountList", accountList);
 		}
@@ -155,7 +155,7 @@ public class BankReconciliationAction extends BaseFormAction {
 		balanceAsPerStatement = parameters.get("bankStBalance")[0];
 
 		bankAccount = (Bankaccount) persistenceService.find(
-				"from Bankaccount where id=?", accountId.longValue());
+				"from Bankaccount where id=?1", accountId.longValue());
 		bank = bankAccount.getBankbranch().getBank().getName();
 		accountNum = bankAccount.getAccountnumber();
 		branch = bankAccount.getBankbranch().getBranchname();
