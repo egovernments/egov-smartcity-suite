@@ -66,6 +66,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.egov.infra.utils.ApplicationConstant.ADMIN_HIERARCHY_TYPE;
+
 @Controller
 public class GenericMasterAjaxController {
 
@@ -133,7 +135,7 @@ public class GenericMasterAjaxController {
     @GetMapping("/boundary/ward/by-locality")
     @ResponseBody
     public String wardsByLocality(@RequestParam Long locality) {
-        BoundaryType wardBoundaryType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName("Ward", "ADMINISTRATION");
+        BoundaryType wardBoundaryType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName("Ward", ADMIN_HIERARCHY_TYPE);
         List<Boundary> wards = crossHierarchyService.getParentBoundaryByChildBoundaryAndParentBoundaryType(locality, wardBoundaryType.getId());
         List<JsonObject> jsonObjects = new ArrayList<>();
         for (Boundary block : wards) {

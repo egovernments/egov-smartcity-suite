@@ -66,9 +66,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import static org.egov.infra.utils.StringUtils.appendTimestamp;
 import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
-import static org.egov.tl.utils.Constants.ADMIN_HIERARCHY;
+import static org.egov.infra.utils.ApplicationConstant.ADMIN_HIERARCHY_TYPE;
+import static org.egov.infra.utils.StringUtils.appendTimestamp;
 import static org.egov.tl.utils.Constants.ADMIN_WARD;
 import static org.egov.tl.utils.Constants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.tl.utils.Constants.REVENUE_WARD;
@@ -99,7 +99,7 @@ public class DCBReportController {
         model.addAttribute("revenueWards", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD,
                 REVENUE_HIERARCHY_TYPE));
         model.addAttribute("electionWards", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ADMIN_WARD,
-                ADMIN_HIERARCHY));
+                ADMIN_HIERARCHY_TYPE));
         return "dCBReport-search";
     }
 

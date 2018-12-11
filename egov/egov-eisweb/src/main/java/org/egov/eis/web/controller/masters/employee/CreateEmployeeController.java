@@ -75,6 +75,8 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Arrays;
 
+import static org.egov.infra.utils.ApplicationConstant.ADMIN_HIERARCHY_TYPE;
+
 @Controller
 @RequestMapping(value = "/employee")
 public class CreateEmployeeController {
@@ -158,7 +160,7 @@ public class CreateEmployeeController {
         model.addAttribute("functionaryList", employeeService.getAllFunctionaries());
         model.addAttribute("functionList", employeeService.getAllFunctions());
         model.addAttribute("gradeList", employeeService.getAllGrades());
-        model.addAttribute("boundaryType", boundaryTypeService.getBoundaryTypeByHierarchyTypeName("ADMINISTRATION"));
+        model.addAttribute("boundaryType", boundaryTypeService.getBoundaryTypeByHierarchyTypeName(ADMIN_HIERARCHY_TYPE));
     }
 
 }

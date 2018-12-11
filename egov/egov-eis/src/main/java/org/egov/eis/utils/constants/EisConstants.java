@@ -56,7 +56,6 @@ public class EisConstants {
     public static final String FROM_DATE = "01/04/2015";
     public static final String TO_DATE = "31/12/2099";
     public static final String BOUNDARY_TYPE_CITY = "City";
-    public static final String HIERARCHY_TYPE_ADMIN = "ADMINISTRATION";
     public static final Boolean IS_PRIMARY_TRUE = true;
     public static final String EMPLOYEE_INDEX_NAME = "employeemaster";
     public static final String EMPLOYEE_SANCTIONEDPOSTS_INDEX_NAME = "hrsanctionedposts";

@@ -96,13 +96,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import static org.egov.infra.utils.ApplicationConstant.ADMIN_HIERARCHY_TYPE;
+
 @Controller
 @RequestMapping(value = "/employeeMaster")
 public class CreateEmployeeDataEntryController {
-    private static final Logger LOGGER = Logger.getLogger(CreateEmployeeDataEntryController.class);
-
     public static final SimpleDateFormat DDMMYYYYFORMATS = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-
+    private static final Logger LOGGER = Logger.getLogger(CreateEmployeeDataEntryController.class);
     @Autowired
     private DepartmentService departmentService;
 
@@ -149,8 +149,8 @@ public class CreateEmployeeDataEntryController {
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public String createEmployee(@Valid @ModelAttribute final Employee employee, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, @RequestParam final MultipartFile file,
-            @RequestParam final String designationName, @RequestParam final Long deptId, final Model model) {
+                                 final RedirectAttributes redirectAttrs, @RequestParam final MultipartFile file,
+                                 @RequestParam final String designationName, @RequestParam final Long deptId, final Model model) {
 
         final Boolean codeExists = employeeService.validateEmployeeCode(employee);
         if (codeExists)
@@ -229,9 +229,9 @@ public class CreateEmployeeDataEntryController {
         final Jurisdiction jurisdiction = new Jurisdiction();
         jurisdiction.setEmployee(employee);
         jurisdiction.setBoundaryType(boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(
-                EisConstants.BOUNDARY_TYPE_CITY, EisConstants.HIERARCHY_TYPE_ADMIN));
+                EisConstants.BOUNDARY_TYPE_CITY, ADMIN_HIERARCHY_TYPE));
         jurisdiction.setBoundary(boundaryService.getBoundaryByBndryTypeNameAndHierarchyTypeName(
-                EisConstants.BOUNDARY_TYPE_CITY, EisConstants.HIERARCHY_TYPE_ADMIN));
+                EisConstants.BOUNDARY_TYPE_CITY, ADMIN_HIERARCHY_TYPE));
         jurisdictions.add(jurisdiction);
 
         employee.setAssignments(assignment);

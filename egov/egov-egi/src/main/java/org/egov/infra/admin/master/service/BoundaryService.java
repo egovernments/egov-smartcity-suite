@@ -84,6 +84,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.egov.infra.utils.ApplicationConstant.ADMIN_HIERARCHY_TYPE;
+
 @Service
 @Transactional(readOnly = true)
 public class BoundaryService {
@@ -221,7 +223,7 @@ public class BoundaryService {
     public List<Map<String, Object>> getBoundaryDataByNameLike(final String name) {
         final List<Map<String, Object>> list = new ArrayList<>();
 
-        crossHierarchyService.getChildBoundaryNameAndBndryTypeAndHierarchyType("Locality", "Location", "Administration",
+        crossHierarchyService.getChildBoundaryNameAndBndryTypeAndHierarchyType("Locality", "Location", ADMIN_HIERARCHY_TYPE,
                 '%' + name + '%').stream().forEach(location -> {
             final Map<String, Object> res = new HashMap<>();
             res.put("id", location.getId());
@@ -301,12 +303,12 @@ public class BoundaryService {
     public Optional<Boundary> getBoundaryByNumberAndType(Long boundaryNum, String boundaryTypeName) {
         if (boundaryNum != null && StringUtils.isNotBlank(boundaryTypeName)) {
             final BoundaryType boundaryType = boundaryTypeService
-                    .getBoundaryTypeByNameAndHierarchyTypeName(boundaryTypeName, "ADMINISTRATION");
+                    .getBoundaryTypeByNameAndHierarchyTypeName(boundaryTypeName, ADMIN_HIERARCHY_TYPE);
             final Boundary boundary = this.getBoundaryByTypeAndNo(boundaryType,
                     boundaryNum);
             if (boundary == null) {
                 final BoundaryType cityBoundaryType = boundaryTypeService
-                        .getBoundaryTypeByNameAndHierarchyTypeName("City", "ADMINISTRATION");
+                        .getBoundaryTypeByNameAndHierarchyTypeName("City", ADMIN_HIERARCHY_TYPE);
                 return Optional.ofNullable(this.getAllBoundariesByBoundaryTypeId(cityBoundaryType.getId()).get(0));
             }
             return Optional.of(boundary);

@@ -72,8 +72,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.Collections;
 import java.util.List;
 
+import static org.egov.infra.utils.ApplicationConstant.ADMIN_HIERARCHY_TYPE;
 import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.egov.tl.utils.Constants.ADMIN_HIERARCHY;
 import static org.egov.tl.utils.Constants.ADMIN_WARD;
 import static org.egov.tl.utils.Constants.LOCALITY;
 import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
@@ -113,7 +113,7 @@ public class DemandNoticeController {
         model.addAttribute("revenueWards", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD,
                 REVENUE_HIERARCHY_TYPE));
         model.addAttribute("adminWards", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ADMIN_WARD,
-                ADMIN_HIERARCHY));
+                ADMIN_HIERARCHY_TYPE));
         List<LicenseStatus> status = licenseStatusService.findAll();
         status.remove(licenseStatusService.getLicenseStatusByCode(STATUS_CANCELLED));
         model.addAttribute("statusList", status);

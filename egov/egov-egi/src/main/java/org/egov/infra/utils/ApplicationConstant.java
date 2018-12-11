@@ -119,6 +119,8 @@ public final class ApplicationConstant {
     public static final String NEW_LINE = System.lineSeparator();
     public static final String ANY_MIME_TYPE = "*/*";
 
+    public static final String ADMIN_HIERARCHY_TYPE = "ADMINISTRATION";
+
     private ApplicationConstant() {
     }
 }

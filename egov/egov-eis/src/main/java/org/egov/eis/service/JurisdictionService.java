@@ -47,12 +47,6 @@
  */
 package org.egov.eis.service;
 
-import static org.egov.eis.utils.constants.EisConstants.BOUNDARY_TYPE_CITY;
-import static org.egov.eis.utils.constants.EisConstants.HIERARCHY_TYPE_ADMIN;
-import static org.egov.eis.utils.constants.EisConstants.WARD;
-
-import java.util.List;
-
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.Jurisdiction;
 import org.egov.eis.repository.JurisdictionRepository;
@@ -60,6 +54,12 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import static org.egov.eis.utils.constants.EisConstants.BOUNDARY_TYPE_CITY;
+import static org.egov.eis.utils.constants.EisConstants.WARD;
+import static org.egov.infra.utils.ApplicationConstant.ADMIN_HIERARCHY_TYPE;
 
 @Service
 @Transactional(readOnly = true)
@@ -86,25 +86,25 @@ public class JurisdictionService {
     public void delete(final Jurisdiction jurisdiction) {
         jurisdictionRepository.delete(jurisdiction);
     }
-    
+
     public Jurisdiction getById(final Long id) {
         return jurisdictionRepository.findOne(id);
     }
-    
+
     @Transactional
-    public Employee removeDeletedJurisdictions(Employee employee,String removedJurisdictionIds) {
-        if(null!=removedJurisdictionIds)
-         for(String id : removedJurisdictionIds.split(",")){
-             employee.getJurisdictions().remove(jurisdictionRepository.findOne(Long.valueOf(id)));
-         }
-         return employee;
-     }
-    
+    public Employee removeDeletedJurisdictions(Employee employee, String removedJurisdictionIds) {
+        if (null != removedJurisdictionIds)
+            for (String id : removedJurisdictionIds.split(",")) {
+                employee.getJurisdictions().remove(jurisdictionRepository.findOne(Long.valueOf(id)));
+            }
+        return employee;
+    }
+
     public List<Boundary> getEmployeeJuridictions(Long employeeId) {
-        List<Boundary> wardBoundaries = jurisdictionRepository.getEmployeeBoundaries(employeeId, WARD, HIERARCHY_TYPE_ADMIN);
-        if(wardBoundaries.isEmpty())
-            wardBoundaries = jurisdictionRepository.getEmployeeBoundaries(employeeId, BOUNDARY_TYPE_CITY, HIERARCHY_TYPE_ADMIN);
+        List<Boundary> wardBoundaries = jurisdictionRepository.getEmployeeBoundaries(employeeId, WARD, ADMIN_HIERARCHY_TYPE);
+        if (wardBoundaries.isEmpty())
+            wardBoundaries = jurisdictionRepository.getEmployeeBoundaries(employeeId, BOUNDARY_TYPE_CITY, ADMIN_HIERARCHY_TYPE);
         return wardBoundaries;
-        
+
     }
 }

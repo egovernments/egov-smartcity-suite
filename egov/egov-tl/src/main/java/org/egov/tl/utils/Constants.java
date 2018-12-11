@@ -176,7 +176,6 @@ public final class Constants {
     public static final String AUTO = "Auto";
     public static final String RENEW_WITHOUT_FEE = "RENEWALWITHOUTFEE";
     public static final String COMPLETED = "Completed";
-    public static final String ADMIN_HIERARCHY = "ADMINISTRATION";
     public static final String ADMIN_WARD = "Ward";
     public static final String DISABLED_PAYMENT_MODES ="DISABLED_PAYMENT_MODES";
     public static final Map<String, String> OWNERSHIP_TYPE = new ImmutableMap.Builder<String, String>()
