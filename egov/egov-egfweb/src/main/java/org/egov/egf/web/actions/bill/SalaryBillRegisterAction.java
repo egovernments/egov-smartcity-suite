@@ -266,16 +266,16 @@ public class SalaryBillRegisterAction extends BaseFormAction {
 
     private void setValuesOnBillRegisterMis() {
         if (billregistermis.getEgDepartment() != null && billregistermis.getEgDepartment().getId() != null)
-            billregistermis.setEgDepartment((Department) persistenceService.find("from Department where id=?", billregistermis
+            billregistermis.setEgDepartment((Department) persistenceService.find("from Department where id=?1", billregistermis
                     .getEgDepartment().getId()));
         if (billregistermis.getFinancialyear() != null && billregistermis.getFinancialyear().getId() != null)
-            billregistermis.setFinancialyear((CFinancialYear) persistenceService.find("from CFinancialYear where id=?",
+            billregistermis.setFinancialyear((CFinancialYear) persistenceService.find("from CFinancialYear where id=?1",
                     billregistermis.getFinancialyear().getId()));
         if (billregistermis.getFieldid() != null && billregistermis.getFieldid().getId() != null)
-            billregistermis.setFieldid((Boundary) persistenceService.find("from Boundary where id=?", billregistermis
+            billregistermis.setFieldid((Boundary) persistenceService.find("from Boundary where id=?1", billregistermis
                     .getFieldid().getId()));
         if (billregistermis.getFunctionaryid() != null && billregistermis.getFunctionaryid().getId() != null)
-            billregistermis.setFunctionaryid((Functionary) persistenceService.find("from Functionary where id=?", billregistermis
+            billregistermis.setFunctionaryid((Functionary) persistenceService.find("from Functionary where id=?1", billregistermis
                     .getFunctionaryid().getId()));
         billregistermis.setLastupdatedtime(new Date());
     }
@@ -298,11 +298,11 @@ public class SalaryBillRegisterAction extends BaseFormAction {
     }
 
     public String view() {
-        setBillregister((EgBillregister) persistenceService.find("from EgBillregister where id=?", billregisterId));
+        setBillregister((EgBillregister) persistenceService.find("from EgBillregister where id=?1", billregisterId));
         billregistermis = getBillregister().getEgBillregistermis();
-        earningsList = persistenceService.findAllBy("from EgBilldetails where egBillregister.id=? and glcodeid in ("
+        earningsList = persistenceService.findAllBy("from EgBilldetails where egBillregister.id=?1 and glcodeid in ("
                 + getGlCodeIds(earningsCodes) + ")", billregisterId);
-        deductionsList = persistenceService.findAllBy("from EgBilldetails where egBillregister.id=? and glcodeid in ("
+        deductionsList = persistenceService.findAllBy("from EgBilldetails where egBillregister.id=?1 and glcodeid in ("
                 + getGlCodeIds(deductionsCodes) + ")", billregisterId);
         subledgerList = persistenceService.findAllBy("from EgBillPayeedetails where egBilldetailsId.id in ("
                 + getBillDetailsId(earningsList, deductionsList) + ")");

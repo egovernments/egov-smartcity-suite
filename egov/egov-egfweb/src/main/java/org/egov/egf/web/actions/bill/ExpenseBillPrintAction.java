@@ -115,7 +115,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
     private static final Logger LOGGER = Logger.getLogger(ExpenseBillPrintAction.class);
     private static final long serialVersionUID = 1L;
     private static final String PRINT = "print";
-    private static final String ACCDETAILTYPEQUERY = " from Accountdetailtype where id=?";
+    private static final String ACCDETAILTYPEQUERY = " from Accountdetailtype where id=?1";
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     private static final String jasperpath = "/reports/templates/expenseBillReport.jasper";
     private static final String subReportPath = "/reports/templates/budgetAppropriationDetail.jasper";
@@ -208,7 +208,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
 
     private void populateBill() {
         if (parameters.get("id") != null && !parameters.get("id")[0].isEmpty()) {
-            cbill = (EgBillregister) persistenceService.find("from EgBillregister where id=?",
+            cbill = (EgBillregister) persistenceService.find("from EgBillregister where id=?1",
                     Long.valueOf(parameters.get("id")[0]));
             billRegistermis = cbill.getEgBillregistermis();
         }
@@ -457,12 +457,12 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                 final VoucherDetails vd = new VoucherDetails();
                 final BigDecimal glcodeid = detail.getGlcodeid();
                 if (detail.getFunctionid() != null) {
-                    functionById = (CFunction) persistenceService.find("from CFunction where id=?",
+                    functionById = (CFunction) persistenceService.find("from CFunction where id=?1",
                             Long.valueOf(detail.getFunctionid().toString()));
                     setFunctionName(functionById.getName());
                     paramMap.put("functionName", functionById.getName());
                 }
-                final CChartOfAccounts coa = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id=?",
+                final CChartOfAccounts coa = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id=?1",
                         Long.valueOf(glcodeid.toString()));
                 if (budgetcheck && coa.getBudgetCheckReq() != null && coa.getBudgetCheckReq()) {
                     final List<BudgetGroup> budgetHeadListByGlcode = budgetDetailsDAO.getBudgetHeadByGlcode(coa);
@@ -487,7 +487,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                     try {
                         EntityType entity = null;
                         final Accountdetailtype detailType = (Accountdetailtype) persistenceService.find(
-                                "from Accountdetailtype where id=? order by name", payeedetail.getAccountDetailTypeId());
+                                "from Accountdetailtype where id=?1 order by name", payeedetail.getAccountDetailTypeId());
                         vd.setDetailTypeName(detailType.getName());
 
                         final Class<?> service = Class.forName(detailType.getFullQualifiedName());
@@ -498,11 +498,11 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                         dataType = method.getReturnType().getSimpleName();
                         if (dataType.equals("Long"))
                             entity = (EntityType) persistenceService.find(
-                                    "from " + detailTypeName + " where id=? order by name", payeedetail.getAccountDetailKeyId()
+                                    "from " + detailTypeName + " where id=?1 order by name", payeedetail.getAccountDetailKeyId()
                                             .longValue());
                         else
                             entity = (EntityType) persistenceService.find(
-                                    "from " + detailTypeName + " where id=? order by name", payeedetail.getAccountDetailKeyId());
+                                    "from " + detailTypeName + " where id=?1 order by name", payeedetail.getAccountDetailKeyId());
                         vd.setDetailKey(entity.getCode());
                         vd.setDetailName(entity.getName());
                     } catch (final Exception e) {
@@ -524,12 +524,12 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                 final VoucherDetails vd = new VoucherDetails();
                 final BigDecimal glcodeid = detail.getGlcodeid();
                 if (detail.getFunctionid() != null) {
-                    functionById = (CFunction) persistenceService.find("from CFunction where id=?",
+                    functionById = (CFunction) persistenceService.find("from CFunction where id=?1",
                             Long.valueOf(detail.getFunctionid().toString()));
                     setFunctionName(functionById.getName());
                     paramMap.put("functionName", functionById.getName());
                 }
-                final CChartOfAccounts coa = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id=?",
+                final CChartOfAccounts coa = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id=?1",
                         Long.valueOf(glcodeid.toString()));
                 if (budgetcheck && coa.getBudgetCheckReq() != null && coa.getBudgetCheckReq()) {
                         final List<BudgetGroup> budgetHeadListByGlcode = budgetDetailsDAO.getBudgetHeadByGlcode(coa);
@@ -555,7 +555,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                     try {
                         EntityType entity = null;
                         final Accountdetailtype detailType = (Accountdetailtype) persistenceService.find(
-                                "from Accountdetailtype where id=? order by name", payeedetail.getAccountDetailTypeId());
+                                "from Accountdetailtype where id=?1 order by name", payeedetail.getAccountDetailTypeId());
                         vd.setDetailTypeName(detailType.getName());
 
                         final Class<?> service = Class.forName(detailType.getFullQualifiedName());
@@ -566,11 +566,11 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                         dataType = method.getReturnType().getSimpleName();
                         if (dataType.equals("Long"))
                             entity = (EntityType) persistenceService.find(
-                                    "from " + detailTypeName + " where id=? order by name", payeedetail.getAccountDetailKeyId()
+                                    "from " + detailTypeName + " where id=?1 order by name", payeedetail.getAccountDetailKeyId()
                                             .longValue());
                         else
                             entity = (EntityType) persistenceService.find(
-                                    "from " + detailTypeName + " where id=? order by name", payeedetail.getAccountDetailKeyId());
+                                    "from " + detailTypeName + " where id=?1 order by name", payeedetail.getAccountDetailKeyId());
                         vd.setDetailKey(entity.getCode());
                         vd.setDetailName(entity.getName());
                     } catch (final Exception e) {

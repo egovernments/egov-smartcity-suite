@@ -223,9 +223,9 @@ public class ContingentBillAction extends BaseBillAction {
                 accountCodeByPurpose = chartOfAccountsHibernateDAO.getAccountCodeByPurpose(Integer
                         .valueOf(configValuesByModuleAndKey.get(i).getValue()));
             } catch (final NumberFormatException e) {
-                LOGGER.error("Inside getNetPayableCodes" + e.getMessage(), e);
+                LOGGER.error("Inside getNetPayableCodes" , e);
             } catch (final Exception e) {
-                LOGGER.error("inside getNetPayableCodes" + e.getMessage());
+                LOGGER.error("inside getNetPayableCodes" ,e);
             }
             for (final CChartOfAccounts coa : accountCodeByPurpose)
                 // defaultNetPayCode=coa;
@@ -281,7 +281,7 @@ public class ContingentBillAction extends BaseBillAction {
             LOGGER.debug("Contingent Bill Action  | update | start");
         Integer userId = -1;
         try {
-            bill = (EgBillregister) getPersistenceService().find(" from EgBillregister where id=?",
+            bill = (EgBillregister) getPersistenceService().find(" from EgBillregister where id=?1",
                     Long.valueOf(parameters.get("billRegisterId")[0]));
             if (null == bill.getEgBillregistermis().getSourcePath()) {
                 bill.getEgBillregistermis().setSourcePath(
@@ -355,7 +355,7 @@ public class ContingentBillAction extends BaseBillAction {
             String voucherDate = formatter1.format(voucherHeader.getVoucherDate());
             String cutOffDate1 = null;
             if (commonBean.getFunctionId() != null) {
-                CFunction function1 = (CFunction) getPersistenceService().find(" from CFunction where id=?",
+                CFunction function1 = (CFunction) getPersistenceService().find(" from CFunction where id=?1",
                         commonBean.getFunctionId().longValue());
 
                 voucherHeader.getVouchermis().setFunction(function1);
@@ -482,7 +482,7 @@ public class ContingentBillAction extends BaseBillAction {
             cancelBill();
         else
             try {
-                cbill = (EgBillregister) persistenceService.find("from EgBillregister where id=?", billRegisterId);
+                cbill = (EgBillregister) persistenceService.find("from EgBillregister where id=?1", billRegisterId);
                 if (cbill != null && cbill.getState() != null)
                     if (!validateOwner(cbill.getState()))
                         throw new ApplicationRuntimeException("Invalid Aceess");
@@ -502,7 +502,7 @@ public class ContingentBillAction extends BaseBillAction {
                 forwardBill(cbill);
 
             } catch (final ValidationException e) {
-                LOGGER.error("Inside catch block" + e.getMessage());
+                LOGGER.error("Inside catch block" , e);
                 beforeViewWF(cbill);
                 if (billDetailsTableSubledger == null)
                     billDetailsTableSubledger = new ArrayList<VoucherDetails>();
@@ -519,7 +519,7 @@ public class ContingentBillAction extends BaseBillAction {
     private void cancelBill() {
 
         EgBillregister cbill = null;
-        cbill = (EgBillregister) persistenceService.find("from Cbill where id=?", billRegisterId);
+        cbill = (EgBillregister) persistenceService.find("from Cbill where id=?1", billRegisterId);
         if (cbill != null && cbill.getState() != null)
             if (!validateOwner(cbill.getState()))
                 throw new ApplicationRuntimeException("Invalid Aceess");
@@ -596,11 +596,11 @@ public class ContingentBillAction extends BaseBillAction {
         if (billDetailsTableSubledger != null)
             if (commonBean.getSubledgerType() != null && commonBean.getSubledgerType() > 0) {
                 final Accountdetailtype detailType = (Accountdetailtype) persistenceService.find(
-                        "from Accountdetailtype where id=? order by name", commonBean.getSubledgerType());
+                        "from Accountdetailtype where id=?1 order by name", commonBean.getSubledgerType());
                 for (final VoucherDetails vd : billDetailsTableSubledger) {
                     vd.setAmount(vd.getDebitAmountDetail());
                     final CChartOfAccounts coa = (CChartOfAccounts) persistenceService.find(
-                            "from CChartOfAccounts where glcode=?",
+                            "from CChartOfAccounts where glcode=?1",
                             vd.getSubledgerCode());
                     vd.setGlcode(coa);
                     vd.setDetailType(detailType);
@@ -613,7 +613,7 @@ public class ContingentBillAction extends BaseBillAction {
     @SuppressWarnings("unchecked")
     private void recreateCheckList(final EgBillregister bill) {
         final List<EgChecklists> checkLists = persistenceService.findAllBy(
-                "from org.egov.infstr.models.EgChecklists where objectid=?",
+                "from org.egov.infstr.models.EgChecklists where objectid=?1",
                 billRegisterId);
         for (final EgChecklists chk : checkLists)
             persistenceService.delete(chk);
@@ -637,7 +637,7 @@ public class ContingentBillAction extends BaseBillAction {
                 // if(LOGGER.isDebugEnabled()) LOGGER.debug(" billDet "+ billDet.getId());
                 billDetItr.remove();
             } catch (final Exception e) {
-                LOGGER.error("Inside updateBill" + e.getMessage(), e);
+                LOGGER.error("Inside updateBill" , e);
 
             }
         persistenceService.getSession().flush();
@@ -682,7 +682,7 @@ public class ContingentBillAction extends BaseBillAction {
     @SkipValidation
     @Action(value = "/bill/contingentBill-beforeView")
     public String beforeView() throws ClassNotFoundException {
-        bill = egBillRegisterService.find("from EgBillregister where id=?", billRegisterId);
+        bill = egBillRegisterService.find("from EgBillregister where id=?1", billRegisterId);
         /*
          * if (cbill.getState() != null && cbill.getState().getValue() != null) if
          * ((cbill.getState().getValue().contains("REJECT") || cbill.getState().getValue().contains("reject")) && null !=
@@ -724,7 +724,7 @@ public class ContingentBillAction extends BaseBillAction {
         billDetailsTableSubledger = new ArrayList<VoucherDetails>();
         checkListsTable = new ArrayList<CheckListHelper>();
         // getNetPayableCodes();
-        final EgBillregister cbill = egBillRegisterService.find("from EgBillregister where id=?", billRegisterId);
+        final EgBillregister cbill = egBillRegisterService.find("from EgBillregister where id=?1", billRegisterId);
         getHeadersFromBill(cbill);
         billAmount = cbill.getBillamount();
         final Set<EgBilldetails> egBilldetailes = cbill.getEgBilldetailes();
@@ -732,7 +732,7 @@ public class ContingentBillAction extends BaseBillAction {
             // getAll Credits incuding net pay
             final VoucherDetails vd = new VoucherDetails();
             final BigDecimal glcodeid = detail.getGlcodeid();
-            final CChartOfAccounts coa = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id=?",
+            final CChartOfAccounts coa = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id=?1",
                     Long.valueOf(glcodeid.toString()));
             vd.setGlcodeDetail(coa.getGlcode());
             vd.setGlcodeIdDetail(coa.getId());
@@ -772,7 +772,7 @@ public class ContingentBillAction extends BaseBillAction {
                 subVd.setSubledgerCode(coa.getGlcode());
                 commonBean.setSubledgerType(payeedetail.getAccountDetailTypeId());
                 final Accountdetailtype detailType = (Accountdetailtype) persistenceService.find(
-                        "from Accountdetailtype where id=? order by name", payeedetail.getAccountDetailTypeId());
+                        "from Accountdetailtype where id=?1 order by name", payeedetail.getAccountDetailTypeId());
                 final String table = detailType.getFullQualifiedName();
                 final Class<?> service = Class.forName(table);
                 String tableName = service.getSimpleName();
@@ -785,13 +785,13 @@ public class ContingentBillAction extends BaseBillAction {
                     dataType = method.getReturnType().getSimpleName();
                     if (dataType.equals("Long"))
                         entity = (EntityType) persistenceService.find(
-                                "from " + tableName + " where id=? order by name", payeedetail.getAccountDetailKeyId()
+                                "from " + tableName + " where id=?1 order by name", payeedetail.getAccountDetailKeyId()
                                         .longValue());
                     else
                         entity = (EntityType) persistenceService.find(
-                                "from " + tableName + " where id=? order by name", payeedetail.getAccountDetailKeyId());
+                                "from " + tableName + " where id=?1 order by name", payeedetail.getAccountDetailKeyId());
                 } catch (final Exception e) {
-                    LOGGER.error("prepareForViewModifyReverse" + e.getMessage(), e);
+                    LOGGER.error("prepareForViewModifyReverse" , e);
                     throw new ApplicationRuntimeException(e.getMessage());
                 }
 
@@ -815,7 +815,7 @@ public class ContingentBillAction extends BaseBillAction {
         sanctionedMessge = sanctionedMessge.substring(0, sanctionedMessge.length() - 15);
         // persistenceService.setType(EgChecklists.class);
         final List<EgChecklists> checkLists = persistenceService.findAllBy(
-                "from org.egov.infstr.models.EgChecklists where objectid=?",
+                "from org.egov.infstr.models.EgChecklists where objectid=?1",
                 billRegisterId);
         for (final EgChecklists chk : checkLists) {
             final CheckListHelper chkHelper = new CheckListHelper();
@@ -890,7 +890,7 @@ public class ContingentBillAction extends BaseBillAction {
         try {
             super.execute();
         } catch (final Exception e) {
-            LOGGER.error("Inside execute" + e.getMessage(), e);
+            LOGGER.error("Inside execute" , e);
             throw new ApplicationRuntimeException(e.getMessage());
         }
         billDetailslist = new ArrayList<VoucherDetails>();
@@ -981,7 +981,7 @@ public class ContingentBillAction extends BaseBillAction {
             final String[] netGl = netGlCode.split("-");
 
             final CChartOfAccounts netCoa = (CChartOfAccounts) persistenceService
-                    .find("from CChartOfAccounts where glcode=?", netGl[0]);
+                    .find("from CChartOfAccounts where glcode=?1", netGl[0]);
             billdetails.setGlcodeid(BigDecimal.valueOf(netCoa.getId()));
             vd.setGlcodeIdDetail(netCoa.getId());
             if (isOneFunctionCenter())
@@ -1109,7 +1109,7 @@ public class ContingentBillAction extends BaseBillAction {
             final String[] netGl = netGlCode.split("-");
 
             final CChartOfAccounts netCoa = (CChartOfAccounts) persistenceService
-                    .find("from CChartOfAccounts where glcode=?", netGl[0]);
+                    .find("from CChartOfAccounts where glcode=?1", netGl[0]);
             billdetails.setGlcodeid(BigDecimal.valueOf(netCoa.getId()));
             vd.setGlcodeIdDetail(netCoa.getId());
             // commented - msahoo Function is not required against the liability codes in the Bill
@@ -1171,7 +1171,7 @@ public class ContingentBillAction extends BaseBillAction {
         bill.setNarration(voucherHeader.getDescription());
         mis.setNarration(voucherHeader.getDescription());
         // mis.setSourcePath("/EGF/bill/contingentBill!beforeView.action?billRegisterId=");
-        final EgBillSubType egBillSubType = (EgBillSubType) persistenceService.find("from EgBillSubType where id=?",
+        final EgBillSubType egBillSubType = (EgBillSubType) persistenceService.find("from EgBillSubType where id=?1",
                 commonBean.getBillSubType().longValue());
         mis.setEgBillSubType(egBillSubType);
         mis.setInwardSerialNumber(commonBean.getInwardSerialNumber());

@@ -127,16 +127,16 @@ public class BillViewAction extends BaseFormAction {
         Map<String, Object> subLedgerTemp = null;
         if (egBillRegister.getEgBilldetailes() != null && !egBillRegister.getEgBilldetailes().isEmpty()) {
             final List<EgBilldetails> billDetList = persistenceService.findAllBy(
-                    " from EgBilldetails where egBillregister.id=? ",
+                    " from EgBilldetails where egBillregister.id=?1 ",
                     egBillRegister.getId());
             for (final EgBilldetails billDetail : billDetList) {
-                final CChartOfAccounts coa = (CChartOfAccounts) persistenceService.find(" from CChartOfAccounts where id=?  ",
+                final CChartOfAccounts coa = (CChartOfAccounts) persistenceService.find(" from CChartOfAccounts where id=?1  ",
                         billDetail.getGlcodeid().longValue());
                 temp = new HashMap<>();
                 if (billDetail.getFunctionid() == null) {
                     temp.put(Constants.FUNCTION, "");
                 } else {
-                    final CFunction function = (CFunction) getPersistenceService().find("from CFunction where id=?",
+                    final CFunction function = (CFunction) getPersistenceService().find("from CFunction where id=?1",
                             billDetail.getFunctionid().longValue());
                     temp.put(Constants.FUNCTION, function.getName());
                 }
@@ -184,7 +184,7 @@ public class BillViewAction extends BaseFormAction {
     }
 
     public void setBillId(final long billId) {
-        egBillRegister = (EgBillregister) persistenceService.find(" from EgBillregister where id = ?", billId);
+        egBillRegister = (EgBillregister) persistenceService.find(" from EgBillregister where id = ?1", billId);
     }
 
 }
