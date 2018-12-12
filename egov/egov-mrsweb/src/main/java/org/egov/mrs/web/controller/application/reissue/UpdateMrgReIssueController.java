@@ -91,6 +91,7 @@ import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.FileStoreUtils;
@@ -135,6 +136,8 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
     private static final String PENDING_ACTIONS = "pendingActions";
     private static final String IS_EMPLOYEE = "isEmployee";
     private static final String APPROVAL_POSITION = "approvalPosition";
+    private static final String NOT_AUTHORIZED = "notAuthorized";
+    private static final String INVALID_APPROVER = "invalid.approver";
 
     @Autowired
     private ReIssueService reIssueService;
@@ -180,8 +183,10 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
 
     @RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
     public String showReIssueForm(@PathVariable final Long id, final Model model) {
-        final ReIssue reIssue = reIssueService.get(id);
-        
+    	User currentUser = securityUtils.getCurrentUser();
+    	final ReIssue reIssue = reIssueService.get(id);
+    	if (!registrationWorkflowService.isApplicationOwner(currentUser, reIssue))
+            return NOT_AUTHORIZED;
         prepareNewForm(reIssue, model);
         prepareWorkFlowForReIssue(reIssue, model);
         model.addAttribute("reIssue", reIssue);
@@ -346,8 +351,16 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
                 nextDesignation = request.getParameter("nextDesignation");
                 workflowContainer.setApproverPositionId(Long.valueOf(request.getParameter(APPROVAL_POSITION)));
                 reIssueService.forwardReIssue(id, reIssue, workflowContainer);
-                message = messageSource.getMessage("msg.forward.reissue",
-                        new String[] { approverName.concat("~").concat(nextDesignation), reIssue.getApplicationNo() }, null);
+				if (!reIssue.isValidApprover()) {
+					model.addAttribute("message", messageSource.getMessage(INVALID_APPROVER, new String[] {}, null));
+					prepareNewForm(reIssue, model);
+					prepareWorkFlowForReIssue(reIssue, model);
+					model.addAttribute("reIssue", reIssue);
+					return REISSUE_VIEW;
+				} else {
+					message = messageSource.getMessage("msg.forward.reissue", new String[] {
+							approverName.concat("~").concat(nextDesignation), reIssue.getApplicationNo() }, null);
+				}
             }
         }
         // On print certificate, output reIssue certificate

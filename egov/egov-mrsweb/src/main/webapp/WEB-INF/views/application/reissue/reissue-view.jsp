@@ -84,6 +84,7 @@
 			<input type="hidden" id="nextActn" value="${nextActn}" />
 			<input type="hidden" id="employeeAssgnNotValid"
 				value="${employeeAssgnNotValid}" />
+			<input type="hidden" id="message" value="${message}" />
 			<c:if
 				test="${reIssue.status.code =='CREATED' && !reIssue.feeCollected  && nextActn ne 'Junior/Senior Assistance approval pending'  && (nextActn ne 'Clerk Approval Pending' and nextActn ne 'Revenue Clerk Approval Pending')}">
 				<div data-collapsed="0">

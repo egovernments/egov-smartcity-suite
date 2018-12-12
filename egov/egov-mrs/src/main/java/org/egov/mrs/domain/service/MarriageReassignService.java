@@ -46,6 +46,8 @@
  *
  */
 package org.egov.mrs.domain.service;
+import static org.egov.mrs.application.MarriageConstants.CSC_OPERATOR_CREATED;
+import static org.egov.mrs.application.MarriageConstants.ADDITIONAL_RULE_REGISTRATION;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -63,6 +65,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
 import org.egov.mrs.domain.entity.MarriageReassignInfo;
@@ -163,5 +166,9 @@ public class MarriageReassignService {
             employeeWithPosition.putAll(employeeWithPositions);
         }
         return employeeWithPosition;
+    }
+    
+    public WorkFlowMatrix getMatrixForReassign(String type){
+    	return registrationWorkFlowService.getWfMatrix(type, ADDITIONAL_RULE_REGISTRATION, CSC_OPERATOR_CREATED, null);
     }
 }

@@ -102,11 +102,14 @@ import org.springframework.web.servlet.view.RedirectView;
 @RequestMapping(value = { "/registration" })
 public class NewRegistrationController extends MarriageRegistrationController {
 
-    private static final String IS_EMPLOYEE = "isEmployee";
+    private static final String REGISTRATION_FORM = "registration-form";
+	private static final String IS_EMPLOYEE = "isEmployee";
     private static final String ACKOWLEDGEMENT = "acknowledgement";
     private static final String MESSAGE = "message";
     private static final String APPROVAL_POSITION = "approvalPosition";
     private static final String MARRIAGE_REGISTRATION = "marriageRegistration";
+    private static final String NOTEXISTS_POSITION = "notexists.position";
+    private static final String INVALID_APPROVER = "invalid.approver";
     @Autowired
     protected AssignmentService assignmentService;
     @Autowired
@@ -148,7 +151,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
         marriageRegistration.setFeePaid(calculateMarriageFee(new Date()));
         model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
         prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);
-        return "registration-form";
+        return REGISTRATION_FORM;
     }
 
     private void prepareWorkFlowForNewMarriageRegistration(final MarriageRegistration registration, final Model model) {
@@ -207,32 +210,40 @@ public class NewRegistrationController extends MarriageRegistrationController {
                     .createRegistration(marriageRegistration, workflowContainer, loggedUserIsMeesevaUser, citizenPortalUser)
                     .getApplicationNo();
         }
-        message = messageSource.getMessage("msg.success.forward",
-                new String[] { approverName.concat("~").concat(nextDesignation), appNo }, null);
-        model.addAttribute(MESSAGE, message);
-        model.addAttribute("applnNo", appNo);
         model.addAttribute(IS_EMPLOYEE, isEmployee);
-        if (!isEmployee && !loggedUserIsMeesevaUser) {
-            redirectAttributes.addFlashAttribute(MESSAGE, message);
-            return "redirect:/registration/new-mrgregistration-ackowledgement/".concat(appNo);
-        } else if (loggedUserIsMeesevaUser) {
-            return "redirect:/registration/generate-meesevareceipt?transactionServiceNumber=".concat(marriageRegistration.getApplicationNo());
-        } else
-            return "registration-ack";
+		if (!marriageRegistration.isValidApprover()) {
+			model.addAttribute(MESSAGE, messageSource.getMessage(INVALID_APPROVER, new String[] {}, null));
+			model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
+			prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);
+			return REGISTRATION_FORM;
+		} else {
+			message = messageSource.getMessage("msg.success.forward",
+					new String[] { approverName.concat("~").concat(nextDesignation), appNo }, null);
+			model.addAttribute(MESSAGE, message);
+			model.addAttribute("applnNo", appNo);
+			if (!isEmployee && !loggedUserIsMeesevaUser) {
+				redirectAttributes.addFlashAttribute(MESSAGE, message);
+				return "redirect:/registration/new-mrgregistration-ackowledgement/".concat(appNo);
+			} else if (loggedUserIsMeesevaUser) {
+				return "redirect:/registration/generate-meesevareceipt?transactionServiceNumber="
+						.concat(marriageRegistration.getApplicationNo());
+			} else
+				return "registration-ack";
+		}
     }
 
     private String buildFormOnValidation(final MarriageRegistration marriageRegistration,
             final Boolean isEmployee, final Model model, final Boolean isAssignmentPresent) {
         model.addAttribute(IS_EMPLOYEE, isEmployee);
         if(!isAssignmentPresent)        
-            model.addAttribute(MESSAGE, messageSource.getMessage("notexists.position",
+            model.addAttribute(MESSAGE, messageSource.getMessage(NOTEXISTS_POSITION,
                 new String[] {}, null));
         else
             model.addAttribute(MESSAGE, "Validation failed");
         model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
         registrationWorkFlowService.validateAssignmentForCscUser(marriageRegistration, null, isEmployee);
         prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);
-        return "registration-form";
+        return REGISTRATION_FORM;
     }
 
     @RequestMapping(value = "/generate-meesevareceipt", method = RequestMethod.GET)

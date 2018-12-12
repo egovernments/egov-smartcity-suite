@@ -100,7 +100,6 @@ public class MrApplicant extends AbstractAuditable {
     private Integer ageInYearsAsOnMarriage;
 
     @NotNull
-    @Length(min = 1)
     @Column(name = "ageinmonths")
     private Integer ageInMonthsAsOnMarriage;
 
@@ -132,7 +131,6 @@ public class MrApplicant extends AbstractAuditable {
     @JoinColumn(name = "signatureFileStore")
     private FileStoreMapper signatureFileStore;
 
-    @NotNull
     @Valid
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "proofsattached")

@@ -75,6 +75,7 @@
 			<input type="hidden" id="employeeAssgnNotValid" value="${employeeAssgnNotValid}" />
 			<input type="hidden" id="feeCollected"
 				value="${marriageRegistration.feeCollected}" />
+			<input type="hidden" id="message" value="${message}" />
 			<input type="hidden" id="source" value="${source}"/>
 			<c:if
 				test="${marriageRegistration.status.code eq 'CREATED' && !marriageRegistration.feeCollected && nextActn  ne 'Junior/Senior Assistance approval pending'  && (pendingActions ne 'Clerk Approval Pending' and pendingActions ne 'Revenue Clerk Approval Pending')}">

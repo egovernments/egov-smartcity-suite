@@ -86,11 +86,9 @@ public class MarriageRegistration extends StateAware<Position> {
     @GeneratedValue(generator = SEQ_REGISTRATION, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
     @SafeHtml
     private String applicationNo;
 
-    @NotNull
     private Date applicationDate;
 
     @SafeHtml
@@ -235,12 +233,10 @@ public class MarriageRegistration extends StateAware<Position> {
     @JoinColumn(name = "datasheetFileStore")
     private FileStoreMapper datasheetFileStore;
 
-    @NotNull
     @SafeHtml
     @Column(name = "serialno", unique = true)
     private String serialNo;
     
-    @NotNull
     @SafeHtml
     private String pageNo;
 
@@ -251,6 +247,9 @@ public class MarriageRegistration extends StateAware<Position> {
     @SafeHtml
     @Length(max = 15)
     private String source;
+    
+    @Transient
+    private boolean validApprover = true;
 
     @Override
     public String getStateDetails() {
@@ -684,5 +683,13 @@ public class MarriageRegistration extends StateAware<Position> {
     public void setDatasheetFileStore(FileStoreMapper datasheetFileStore) {
         this.datasheetFileStore = datasheetFileStore;
     }
+
+	public boolean isValidApprover() {
+		return validApprover;
+	}
+
+	public void setValidApprover(boolean validApprover) {
+		this.validApprover = validApprover;
+	}
 
 }

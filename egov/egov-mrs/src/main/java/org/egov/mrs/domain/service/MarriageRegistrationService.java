@@ -303,29 +303,35 @@ public class MarriageRegistrationService {
     @Transactional
     public MarriageRegistration createRegistration(final MarriageRegistration registration,
                                                    final WorkflowContainer workflowContainer, final boolean loggedUserIsMeesevaUser, final boolean citizenPortalUser) {
-        if (org.apache.commons.lang.StringUtils.isBlank(registration.getApplicationNo()))
-            registration.setApplicationNo(marriageRegistrationApplicationNumberGenerator
-                    .getNextApplicationNumberForMarriageRegistration(registration));
         MarriageRegistration savedMarriageRegistration = null;
         setMarriageRegData(registration);
         registration.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CREATED.toString(),
                         MarriageConstants.MODULE_NAME));
-        if (loggedUserIsMeesevaUser)
-            createMeesevaMarriageReg(registration);
-        else if (citizenPortalUser) {
-            registration.setSource(Source.CITIZENPORTAL.name());
-            savedMarriageRegistration = registrationRepository.save(registration);
-        } else {
-            registration.setSource(Source.SYSTEM.name());
-            create(registration);
-        }
         workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
-        if (citizenPortalUser)
-            pushPortalMessage(savedMarriageRegistration);
-        marriageRegistrationUpdateIndexesService.updateIndexes(registration);
-        marriageSmsAndEmailService.sendSMS(registration, MarriageRegistration.RegistrationStatus.CREATED.toString());
-        marriageSmsAndEmailService.sendEmail(registration, MarriageRegistration.RegistrationStatus.CREATED.toString());
+        
+		if (registration.isValidApprover()) {
+			if (org.apache.commons.lang.StringUtils.isBlank(registration.getApplicationNo()))
+				registration.setApplicationNo(marriageRegistrationApplicationNumberGenerator
+						.getNextApplicationNumberForMarriageRegistration(registration));
+			if (loggedUserIsMeesevaUser)
+				createMeesevaMarriageReg(registration);
+			else if (citizenPortalUser) {
+				registration.setSource(Source.CITIZENPORTAL.name());
+				savedMarriageRegistration = registrationRepository.save(registration);
+			} else {
+				if (StringUtils.isBlank(registration.getSource()))
+					registration.setSource(Source.SYSTEM.name());
+				create(registration);
+			}
+			if (citizenPortalUser)
+				pushPortalMessage(savedMarriageRegistration);
+			marriageRegistrationUpdateIndexesService.updateIndexes(registration);
+			marriageSmsAndEmailService.sendSMS(registration,
+					MarriageRegistration.RegistrationStatus.CREATED.toString());
+			marriageSmsAndEmailService.sendEmail(registration,
+					MarriageRegistration.RegistrationStatus.CREATED.toString());
+		}
         return registration;
     }
 
@@ -384,12 +390,15 @@ public class MarriageRegistrationService {
                         MarriageConstants.MODULE_NAME));
 
         workflowService.transition(marriageRegistration, workflowContainer, marriageRegistration.getApprovalComent());
-        if (marriageRegistration.getSource() != null
-                && Source.CITIZENPORTAL.name().equalsIgnoreCase(marriageRegistration.getSource())
-                && getPortalInbox(marriageRegistration.getApplicationNo()) != null)
-            updatePortalMessage(marriageRegistration);
-        marriageRegistrationUpdateIndexesService.updateIndexes(marriageRegistration);
-        return update(marriageRegistration);
+		if (marriageRegistration.isValidApprover()) {
+			if (marriageRegistration.getSource() != null
+					&& Source.CITIZENPORTAL.name().equalsIgnoreCase(marriageRegistration.getSource())
+					&& getPortalInbox(marriageRegistration.getApplicationNo()) != null)
+				updatePortalMessage(marriageRegistration);
+			marriageRegistrationUpdateIndexesService.updateIndexes(marriageRegistration);
+			update(marriageRegistration);
+		}
+        return marriageRegistration;
     }
 
     private void updateRegistrationdata(final MarriageRegistration marriageRegistration) {

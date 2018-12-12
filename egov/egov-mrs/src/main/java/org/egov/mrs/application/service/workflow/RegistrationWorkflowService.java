@@ -68,6 +68,7 @@ import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_CMO
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_MHO_APPRVLPENDING;
 import static org.egov.mrs.application.MarriageConstants.WFSTATE_APPROVER_REJECTED;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -78,6 +79,7 @@ import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
+import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -143,11 +145,14 @@ public class RegistrationWorkflowService {
     private UserService userService;
     @Autowired
     private MarriageRegistrationService marriageRegistrationService;
+    
+    @Autowired
+    private EisCommonService eisCommonService;
 
     private enum WorkflowType {
         MarriageRegistration, ReIssue
     }
-
+    
     public void transition(final MarriageRegistration registration, final WorkflowContainer workflowContainer,
             final String approvalComent) {
 
@@ -158,22 +163,24 @@ public class RegistrationWorkflowService {
         String nextState = null;
         String nextAction = null;
         String currentState;
-        Assignment assignment = getWorkFlowInitiator(registration);
-
         final Boolean isCscOperator = isCscOperator(user);
         boolean loggedUserIsMeesevaUser = isMeesevaUser(user);
         boolean citizenPortalUser = isCitizenPortalUser(user);
+        Assignment assignment = getWorkFlowInitiator(registration);
 
         // In case of CSC Operator or online user or meeseva  will execute this block 
-        if (isCscOperator || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()) || loggedUserIsMeesevaUser||citizenPortalUser ) {
+        if (isCscOperator || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()) || loggedUserIsMeesevaUser||citizenPortalUser) {
             currentState = CSC_OPERATOR_CREATED;
             nextStateOwner = positionMasterService.getPositionById(workflowContainer.getApproverPositionId());
             if (nextStateOwner != null) {
                 final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(nextStateOwner.getId());
                 assignment = !assignmentList.isEmpty() ? assignmentList.get(0) : null;
             }
-            workflowMatrix = marriageRegistrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null, null,
-                    REGISTRATION_ADDNL_RULE, currentState, null);
+            workflowMatrix = getWfMatrix(WorkflowType.MarriageRegistration.name(), REGISTRATION_ADDNL_RULE, currentState, null);
+            if (!eisCommonService.isValidAppover(workflowMatrix, assignment.getPosition())) {
+            	registration.setValidApprover(false);
+                return;
+            }
             nextState = workflowMatrix.getNextState();
             nextAction = workflowMatrix.getNextAction();
             if(org.apache.commons.lang.StringUtils.isBlank(registration.getSource()) || !loggedUserIsMeesevaUser)
@@ -187,8 +194,11 @@ public class RegistrationWorkflowService {
 
         else if (workflowContainer == null) {
             nextStateOwner = assignmentService.getPrimaryAssignmentForUser(registration.getCreatedBy().getId()).getPosition();
-            workflowMatrix = marriageRegistrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null, null,
-                    REGISTRATION_ADDNL_RULE, registration.getCurrentState().getValue(), null);
+            workflowMatrix = getWfMatrix(WorkflowType.MarriageRegistration.name(), REGISTRATION_ADDNL_RULE, registration.getCurrentState().getValue(), null);
+            if (!eisCommonService.isValidAppover(workflowMatrix, nextStateOwner)) {
+            	registration.setValidApprover(false);
+                return;
+            }
             nextState = workflowMatrix.getNextState();
             nextAction = workflowMatrix.getNextAction();
         } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_FORWARD)) {
@@ -201,26 +211,19 @@ public class RegistrationWorkflowService {
                 approverAssign = assignmentService.getAssignmentsForPosition(workflowContainer.getApproverPositionId()).get(0);
             
             if (CMO_DESIG.equals(approverAssign.getDesignation().getName()))
-                workflowMatrix = marriageRegistrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null,
-                        null,
-                        REGISTRATION_ADDNL_RULE, CREATED, WFLOW_PENDINGACTION_CMO_APPRVLPENDING);
+            	workflowMatrix = getWfMatrix(WorkflowType.MarriageRegistration.name(), REGISTRATION_ADDNL_RULE, CREATED, WFLOW_PENDINGACTION_CMO_APPRVLPENDING);
             else if (MHO_DESIG.equals(approverAssign.getDesignation().getName()))
-                workflowMatrix = marriageRegistrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null,
-                        null,
-                        REGISTRATION_ADDNL_RULE, CREATED, WFLOW_PENDINGACTION_MHO_APPRVLPENDING);
+            	workflowMatrix = getWfMatrix(WorkflowType.MarriageRegistration.name(), REGISTRATION_ADDNL_RULE, CREATED, WFLOW_PENDINGACTION_MHO_APPRVLPENDING);
             else if (registration.getCurrentState() == null)
-                workflowMatrix = marriageRegistrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null,
-                        null,
-                        REGISTRATION_ADDNL_RULE, STATE_NEW, workflowContainer.getPendingActions());
+            	workflowMatrix = getWfMatrix(WorkflowType.MarriageRegistration.name(), REGISTRATION_ADDNL_RULE, STATE_NEW, workflowContainer.getPendingActions());
             else if (WFSTATE_APPROVER_REJECTED.equals(registration.getCurrentState().getValue()))
-                workflowMatrix = marriageRegistrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null,
-                        null,
-                        REGISTRATION_ADDNL_RULE, STATE_NEW, null);
+            	workflowMatrix = getWfMatrix(WorkflowType.MarriageRegistration.name(), REGISTRATION_ADDNL_RULE, STATE_NEW, null);
             else
-                workflowMatrix = marriageRegistrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null,
-                        null,
-                        REGISTRATION_ADDNL_RULE, registration.getCurrentState().getValue(),
-                        workflowContainer.getPendingActions());
+            	workflowMatrix = getWfMatrix(WorkflowType.MarriageRegistration.name(), REGISTRATION_ADDNL_RULE, registration.getCurrentState().getValue(), workflowContainer.getPendingActions());
+            if (!eisCommonService.isValidAppover(workflowMatrix, nextStateOwner)) {
+            	registration.setValidApprover(false);
+                return;
+            }
             nextState = workflowMatrix.getNextState();
             nextAction = workflowMatrix.getNextAction();
 
@@ -247,9 +250,8 @@ public class RegistrationWorkflowService {
             if (workflowContainer.getPendingActions()
                     .equalsIgnoreCase(WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN)){
                 nextStateOwner = registration.getCurrentState().getOwnerPosition();
-                workflowMatrix = marriageRegistrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null, null,
-                        REGISTRATION_ADDNL_RULE, registration.getCurrentState().getValue(),
-                        workflowContainer.getPendingActions());
+                workflowMatrix = getWfMatrix(WorkflowType.MarriageRegistration.name(), REGISTRATION_ADDNL_RULE, registration.getCurrentState().getValue(),
+                		workflowContainer.getPendingActions());
 
                 nextState = workflowMatrix.getNextState();
                 nextAction = workflowMatrix.getNextAction();}
@@ -295,8 +297,11 @@ public class RegistrationWorkflowService {
                 final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(nextStateOwner.getId());
                 assignment = !assignmentList.isEmpty() ? assignmentList.get(0) : null;
             }
-            workflowMatrix = marriageRegistrationWorkflowService.getWfMatrix(WorkflowType.ReIssue.name(), null, null,
-                    REGISTRATION_ADDNL_RULE, currentState, null);
+            workflowMatrix = getWfMatrix(WorkflowType.ReIssue.name(), REGISTRATION_ADDNL_RULE, currentState, null);
+            if (!eisCommonService.isValidAppover(workflowMatrix, assignment.getPosition())) {
+            	reIssue.setValidApprover(false);
+                return;
+            }
             nextState = workflowMatrix.getNextState();
             nextAction = workflowMatrix.getNextAction();
             if (citizenPortalUser)
@@ -306,8 +311,13 @@ public class RegistrationWorkflowService {
 
         } else if (workflowContainer == null) {
             nextStateOwner = assignment != null ? assignment.getPosition() : null;
-            workflowMatrix = reIssueWorkflowService.getWfMatrix(WorkflowType.ReIssue.name(), null, null,
-                    REGISTRATION_ADDNL_RULE, reIssue.getCurrentState().getValue(), null);
+            workflowMatrix = getWfMatrix(WorkflowType.ReIssue.name(), REGISTRATION_ADDNL_RULE, 
+            		reIssue.getCurrentState().getValue(), null);
+            if (!eisCommonService.isValidAppover(workflowMatrix, assignment.getPosition())) {
+            	reIssue.setValidApprover(false);
+                return;
+            }
+
             nextState = workflowMatrix.getNextState();
             nextAction = workflowMatrix.getNextAction();
         } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_FORWARD)) {
@@ -319,20 +329,22 @@ public class RegistrationWorkflowService {
             if (approverAssign == null)
                 approverAssign = assignmentService.getAssignmentsForPosition(workflowContainer.getApproverPositionId()).get(0);
             if (CMO_DESIG.equals(approverAssign.getDesignation().getName()))
-                workflowMatrix = marriageRegistrationWorkflowService.getWfMatrix(WorkflowType.ReIssue.name(), null,
-                        null,
-                        REGISTRATION_ADDNL_RULE, CREATED, WFLOW_PENDINGACTION_CMO_APPRVLPENDING);
+	            workflowMatrix = getWfMatrix(WorkflowType.ReIssue.name(), REGISTRATION_ADDNL_RULE, 
+	            		CREATED, WFLOW_PENDINGACTION_CMO_APPRVLPENDING);
             else if (MHO_DESIG.equals(approverAssign.getDesignation().getName()))
-                workflowMatrix = marriageRegistrationWorkflowService.getWfMatrix(WorkflowType.ReIssue.name(), null,
-                        null,
-                        REGISTRATION_ADDNL_RULE, CREATED, WFLOW_PENDINGACTION_MHO_APPRVLPENDING);
+	            workflowMatrix = getWfMatrix(WorkflowType.ReIssue.name(), REGISTRATION_ADDNL_RULE, 
+	            		CREATED, WFLOW_PENDINGACTION_MHO_APPRVLPENDING);
             else if (reIssue.getCurrentState() == null)
-                workflowMatrix = reIssueWorkflowService.getWfMatrix(WorkflowType.ReIssue.name(), null, null,
-                        REGISTRATION_ADDNL_RULE, STATE_NEW, workflowContainer.getPendingActions());
+	            workflowMatrix = getWfMatrix(WorkflowType.ReIssue.name(), REGISTRATION_ADDNL_RULE, 
+	            		STATE_NEW, workflowContainer.getPendingActions());
             else
-                workflowMatrix = reIssueWorkflowService.getWfMatrix(WorkflowType.ReIssue.name(), null, null,
-                        REGISTRATION_ADDNL_RULE, reIssue.getCurrentState().getValue(), workflowContainer.getPendingActions());
+	            workflowMatrix = getWfMatrix(WorkflowType.ReIssue.name(), REGISTRATION_ADDNL_RULE, 
+	            		reIssue.getCurrentState().getValue(), workflowContainer.getPendingActions());
 
+            if (!eisCommonService.isValidAppover(workflowMatrix, approverAssign.getPosition())) {
+            	reIssue.setValidApprover(false);
+                return;
+            }
             nextState = workflowMatrix.getNextState();
             nextAction = workflowMatrix.getNextAction();
 
@@ -354,8 +366,8 @@ public class RegistrationWorkflowService {
             if (workflowContainer.getPendingActions()
                     .equalsIgnoreCase(WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN)) {
                 nextStateOwner = reIssue.getCurrentState().getOwnerPosition();
-                workflowMatrix = reIssueWorkflowService.getWfMatrix(WorkflowType.ReIssue.name(), null, null,
-                        REGISTRATION_ADDNL_RULE, reIssue.getCurrentState().getValue(), workflowContainer.getPendingActions());
+                workflowMatrix = getWfMatrix(WorkflowType.ReIssue.name(), REGISTRATION_ADDNL_RULE, 
+                		reIssue.getCurrentState().getValue(), workflowContainer.getPendingActions());
 
                 nextState = workflowMatrix.getNextState();
                 nextAction = workflowMatrix.getNextAction();
@@ -532,16 +544,17 @@ public class RegistrationWorkflowService {
     }
 
     public Assignment getWorkFlowInitiator(final MarriageRegistration marriageRegistration) {
-        if (marriageRegistration != null)
-            if (marriageRegistration.getState() != null
+        if (marriageRegistration != null){
+        	if (marriageRegistration.getState() != null
                     && marriageRegistration.getState().getInitiatorPosition() != null) {
                 final List<Assignment> assignmentList = assignmentService
                         .getAssignmentsForPosition(marriageRegistration.getState().getInitiatorPosition().getId());
                 return !assignmentList.isEmpty() ? assignmentList.get(0) : null;
-            } else if (isEmployee(marriageRegistration.getCreatedBy())
+            } else if (marriageRegistration.getState() != null && isEmployee(marriageRegistration.getCreatedBy())
                     && !ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()))
                 return assignmentService.getPrimaryAssignmentForUser(marriageRegistration
                         .getCreatedBy().getId());
+        }
         return null;
     }
 
@@ -641,5 +654,15 @@ public class RegistrationWorkflowService {
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
                 MRS_DEPARTEMENT_REGISTRARAR);
         return !appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : null;
+    }
+    
+    public WorkFlowMatrix getWfMatrix(String type, String additionalRule, String currentState, String pendingActions){
+    	return marriageRegistrationWorkflowService.getWfMatrix(type, null, null,
+    			additionalRule, currentState, pendingActions);
+    }
+    
+    public Boolean isApplicationOwner(User currentUser, StateAware state) {
+        return positionMasterService.getPositionsForEmployee(currentUser.getId())
+                .contains(state.getCurrentState().getOwnerPosition());
     }
 }

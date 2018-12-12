@@ -56,8 +56,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.mrs.domain.entity.MarriageReassignInfo;
 import org.egov.mrs.domain.service.MarriageReassignService;
 import org.egov.pims.commons.Position;
@@ -81,6 +83,8 @@ public class MarriageReassignController extends GenericWorkFlowController {
     private static final String MARRIAGE_REASSIGN = "marriage-reassign";
 
     private static final String SUCCESSMESSAGE = "successMessage";
+    
+    private static final String INVALID_APPROVER = "invalid.approver";
 
     @Autowired
     private AssignmentService assignmentService;
@@ -93,6 +97,9 @@ public class MarriageReassignController extends GenericWorkFlowController {
 
     @Autowired
     protected ResourceBundleMessageSource messageSource;
+    
+    @Autowired
+    private EisCommonService eisCommonService;
 
     @ModelAttribute
     public MarriageReassignInfo reassign() {
@@ -126,16 +133,25 @@ public class MarriageReassignController extends GenericWorkFlowController {
         Long positionId = Long.valueOf(request.getParameter("approvalPosition"));
         Position position = positionMasterService.getPositionById(positionId);
         Assignment assignment = assignmentService.getAssignmentsForPosition(positionId).get(0);
-        String appNo = marriageReassignService.getStateObject(marriageReassignInfo, position);
-        if (StringUtils.isNotEmpty(appNo)) {
-            successMessage = new StringBuilder().append("Marriage application with reference number : ").append(appNo).append(" successfully re-assigned to ")
-            		.append(assignment.getEmployee().getName()).append("~").append(assignment.getDesignation().getName())
-            		.append(":").append(assignment.getDepartment().getCode()).toString();
-            model.addAttribute(SUCCESSMESSAGE, successMessage);
-        } else {
-            model.addAttribute(SUCCESSMESSAGE, "Reassign Failed!");
+        WorkFlowMatrix workflowMatrix = marriageReassignService.getMatrixForReassign(marriageReassignInfo.getStateType());
+		if (eisCommonService.isValidAppover(workflowMatrix, assignment.getPosition())) {
+			model.addAttribute("validationMessage", messageSource.getMessage(INVALID_APPROVER, new String[] {}, null));
+			Map<String, String> employeeWithPosition = marriageReassignService.employeePositionMap(
+					Boolean.parseBoolean(request.getParameter("mrsRegistrar")), request.getParameter("source"));
+			model.addAttribute("assignments", employeeWithPosition);
+			return MARRIAGE_REASSIGN;
+		} else {
+        	String appNo = marriageReassignService.getStateObject(marriageReassignInfo, position);
+            if (StringUtils.isNotEmpty(appNo)) {
+                successMessage = new StringBuilder().append("Marriage application with reference number : ").append(appNo).append(" successfully re-assigned to ")
+                		.append(assignment.getEmployee().getName()).append("~").append(assignment.getDesignation().getName())
+                		.append(":").append(assignment.getDepartment().getCode()).toString();
+                model.addAttribute(SUCCESSMESSAGE, successMessage);
+            } else {
+                model.addAttribute(SUCCESSMESSAGE, "Reassign Failed!");
+            }
+            return REASSIGN_SUCCESS;
         }
-        return REASSIGN_SUCCESS;
     }
 
 }

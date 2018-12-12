@@ -58,6 +58,11 @@ var isSubmitForm = false;
 	};
 
 	jQuery(document).ready(function(e) {
+		if ($('#validationMessage').val()) {
+			bootbox.alert($('#validationMessage').val());
+			return false;
+		}
+		
 		jQuery('form').submit(function(e) {
 			isSubmitForm = true;
 		});

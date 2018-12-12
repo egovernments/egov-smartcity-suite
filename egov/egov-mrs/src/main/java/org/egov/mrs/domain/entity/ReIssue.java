@@ -88,11 +88,9 @@ public class ReIssue extends StateAware<Position> {
     @GeneratedValue(generator = SEQ_REISSUE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
     @SafeHtml
     private String applicationNo;
 
-    @NotNull
     private Date applicationDate;
 
     private Date reIssueDate;
@@ -107,14 +105,10 @@ public class ReIssue extends StateAware<Position> {
     @JoinColumn(name = "registrationUnit")
     private MarriageRegistrationUnit marriageRegistrationUnit;
 
-    @NotNull
-    @Valid
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "applicant")
     private MrApplicant applicant;
 
-    @NotNull
-    @Valid
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "registration")
     private MarriageRegistration registration;
@@ -157,6 +151,9 @@ public class ReIssue extends StateAware<Position> {
     @OneToMany(mappedBy = "reIssue", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<MarriageCertificate> marriageCertificate = new ArrayList<>();
 
+    @Transient
+    private boolean validApprover = true;
+    
     @Override
     public String getStateDetails() {
         return "Marriage registration re-issue application no : " + applicationNo;
@@ -331,4 +328,11 @@ public class ReIssue extends StateAware<Position> {
         CREATED, APPROVED, REJECTED, CANCELLED, CERTIFICATEREISSUED, DIGITALSIGNED
     }
 
+    public boolean isValidApprover() {
+		return validApprover;
+	}
+
+	public void setValidApprover(boolean validApprover) {
+		this.validApprover = validApprover;
+	}
 }

@@ -46,61 +46,23 @@
   ~
   --%>
 
-
+<%@ page contentType="text/html" language="java"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-
-<div class="text-right" style="color: #ff0000">
-	<strong>${message}</strong>
+<div class="row printable">
+    <div class="col-md-12">
+        <div class="panel panel-primary" data-collapsed="0"
+             style="text-align: left">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <spring:message code="lbl.notAuthorized" />
+                </div>
+            </div>
+            <div class="panel-body">
+                <div align="center" style="color:red; font-size: 15px;">
+                    <spring:message code="unauthorized.user" />
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-
-<div class="panel-heading">
-	<div class="panel-title">
-		<spring:message code="lbl.reassign.title" />
-	</div>
-
-</div>
-<div class="panel-body">
-
-
-	<form:form name="reassign" id="reassign" modelAttribute="reassign">
-		<form:hidden path="applicationId" id="applicationId"
-			name="applicationId" value="${applicationId}" />
-		<input type="hidden" id="validationMessage" value="${validationMessage}" />
-		<form:hidden path="stateType" id="stateType" name="stateType"
-			value="${stateType}" />
-		<div class="row show-row" id="approverDetailHeading">
-			<div class="show-row form-group">
-				<label class="col-sm-3 control-label text-right"><spring:message
-						code="lbl.employee.select" /><span class="mandatory"></span></label>
-				<div class="col-sm-3 add-margin">
-					<form:select path="" data-first-option="false"
-						id="approvalPosition" name="approvalPosition"
-						cssClass="form-control" cssErrorClass="form-control error"
-						required="required">
-						<form:option value="">
-							<spring:message code="lbl.select" />
-						</form:option>
-						<form:options items="${assignments}" />
-					</form:select>
-				</div>
-			</div>
-		</div>
-		<div class="buttonbottom" align="center">
-			<form:button disabled="false" id="ReassignSubmit"
-				align="center" class="btn btn-primary" value="ReassignSubmit">
-				<c:out value="Reassign" />
-			</form:button>
-			<a href="javascript:void(0)" class="btn btn-default"
-				onclick="window.opener.closeChildWindow();"><spring:message
-					code="lbl.close" /></a>
-		</div>
-	</form:form>
-</div>
-
-<script
-	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
-<script src="<cdn:url value='/resources/js/app/reassign.js?rnd=${app_release_no}'/> "></script>

@@ -100,6 +100,7 @@ import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -143,6 +144,8 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
     private static final String MRG_REGISTRATION_EDIT = "registration-correction";
     private static final String MRG_REGISTRATION_EDIT_APPROVED = "registration-update-approved";
     private static final String MRG_REGISTRATION_SUCCESS = "registration-ack";
+    private static final String INVALID_APPROVER = "invalid.approver";
+    private static final String NOT_AUTHORIZED = "notAuthorized";
 
     @Autowired
     private FileStoreService fileStoreService;
@@ -170,9 +173,12 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
     @RequestMapping(value = "/update/{id}", method = GET)
     public String showRegistration(@PathVariable final Long id, final Model model) {
         final MarriageRegistration marriageRegistration = marriageRegistrationService.get(id);
+        User currentUser = securityUtils.getCurrentUser();
+        if (!registrationWorkflowService.isApplicationOwner(currentUser, marriageRegistration))
+            return NOT_AUTHORIZED;
         buildMrgRegistrationUpdateResult(marriageRegistration, model);
         model.addAttribute("source",marriageRegistration.getSource());
-        model.addAttribute("mrsRegistrar",securityUtils.getCurrentUser().hasRole(MARRIAGE_REGISTRAR));
+        model.addAttribute("mrsRegistrar",currentUser.hasRole(MARRIAGE_REGISTRAR));
         
         return MRG_REGISTRATION_EDIT;
     }
@@ -389,9 +395,15 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
                 nextDesignation = request.getParameter("nextDesignation");
                 workflowContainer.setApproverPositionId(Long.valueOf(request.getParameter(APPROVAL_POSITION)));
                 marriageRegistrationService.forwardRegistration(marriageRegistration, workflowContainer);
-                message = messageSource.getMessage("msg.forward.registration", new String[] {
-                        approverName.concat("~").concat(nextDesignation), marriageRegistration.getApplicationNo() },
-                        null);
+				if (!marriageRegistration.isValidApprover()) {
+					model.addAttribute("message", messageSource.getMessage(INVALID_APPROVER, new String[] {}, null));
+					model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
+					buildMrgRegistrationUpdateResult(marriageRegistration, model);
+					return MRG_REGISTRATION_EDIT;
+				} else
+					message = messageSource.getMessage("msg.forward.registration", new String[] {
+							approverName.concat("~").concat(nextDesignation), marriageRegistration.getApplicationNo() },
+							null);
             }
         }
         // On print certificate, output registration certificate

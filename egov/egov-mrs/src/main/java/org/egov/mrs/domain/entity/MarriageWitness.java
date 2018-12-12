@@ -56,6 +56,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -72,18 +73,16 @@ public class MarriageWitness extends AbstractAuditable {
     @Embedded
     private Name name;
 
-    @NotNull
     @SafeHtml
     @Length(max = 60)
     private String occupation;
 
-    @NotNull
     @SafeHtml
     @Length(max = 30)
     private String relationshipWithApplicant;
 
     @NotNull
-    @Length(min = 25)
+    @Min(25)
     private Integer age;
 
     @NotNull
@@ -119,7 +118,6 @@ public class MarriageWitness extends AbstractAuditable {
     private transient String encodedPhoto;
     private transient String encodedSignature;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "registration")
     private MarriageRegistration registration;

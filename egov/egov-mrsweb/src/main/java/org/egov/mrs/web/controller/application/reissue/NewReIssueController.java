@@ -107,6 +107,7 @@ public class NewReIssueController extends GenericWorkFlowController {
     private static final String APPROVAL_POSITION = "approvalPosition";
     private static final String MESSAGE = "message";
     private static final String ACKOWLEDGEMENT = "acknowledgement";
+    private static final String INVALID_APPROVER = "invalid.approver";
 
     @Autowired
     private ReIssueService reIssueService;
@@ -224,21 +225,27 @@ public class NewReIssueController extends GenericWorkFlowController {
             approverName = request.getParameter("approverName");
             nextDesignation = request.getParameter("nextDesignation");
         }
-        final String appNo = reIssueService.createReIssueApplication(reIssue, workflowContainer);
 
-        if (approverName != null)
-            message = messageSource.getMessage("msg.reissue.forward",
-                    new String[] { approverName.concat("~").concat(nextDesignation), appNo }, null);
-        model.addAttribute(MESSAGE, message);
+        final String appNo = reIssueService.createReIssueApplication(reIssue, workflowContainer).getApplicationNo();
+        
+		if (!reIssue.isValidApprover()) {
+			model.addAttribute(MESSAGE, messageSource.getMessage(INVALID_APPROVER, new String[] {}, null));
+			return buildFormOnValidation(reIssue, isEmployee, model);
+		} else {
+			if (approverName != null)
+				message = messageSource.getMessage("msg.reissue.forward",
+						new String[] { approverName.concat("~").concat(nextDesignation), appNo }, null);
+			model.addAttribute(MESSAGE, message);
 
-        model.addAttribute("ackNumber", appNo);
-        model.addAttribute("feepaid", reIssue.getFeePaid().doubleValue());
-        if (!isEmployee) {
-            redirectAttributes.addFlashAttribute(MESSAGE, message);
-            return "redirect:/reissue/reissue-certificate-ackowledgement/".concat(appNo);
+			model.addAttribute("ackNumber", appNo);
+			model.addAttribute("feepaid", reIssue.getFeePaid().doubleValue());
+			if (!isEmployee) {
+				redirectAttributes.addFlashAttribute(MESSAGE, message);
+				return "redirect:/reissue/reissue-certificate-ackowledgement/".concat(appNo);
 
-        } else
-            return "reissue-ack";
+			} else
+				return "reissue-ack";
+		}
     }
 
     private String buildFormOnValidation(final ReIssue reIssue, final Boolean isEmployee, final Model model) {
