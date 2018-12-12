@@ -85,10 +85,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -103,15 +101,15 @@ import java.util.stream.Stream;
 import static org.apache.commons.lang3.StringUtils.overlay;
 import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_MOBILE_NUMBER;
-import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PERSON_NAME;
 import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PAN_NUMBER;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PERSON_NAME;
 import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PHONE_NUMBER;
 import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_SALUTATION;
 import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_USERNAME;
-import static org.egov.infra.validation.constants.ValidationRegex.PERSON_NAME;
 import static org.egov.infra.validation.constants.ValidationRegex.EMAIL;
 import static org.egov.infra.validation.constants.ValidationRegex.MOBILE_NUMBER;
 import static org.egov.infra.validation.constants.ValidationRegex.PAN_NUMBER;
+import static org.egov.infra.validation.constants.ValidationRegex.PERSON_NAME;
 import static org.egov.infra.validation.constants.ValidationRegex.PHONE_NUMBER;
 import static org.egov.infra.validation.constants.ValidationRegex.SALUTATION;
 import static org.egov.infra.validation.constants.ValidationRegex.USERNAME;
@@ -209,11 +207,9 @@ public class User extends AbstractAuditable {
     private Set<Role> roles = new HashSet<>();
 
     @Temporal(TemporalType.DATE)
-    @Past
     private Date dob;
 
     @NotNull
-    @Future
     private Date pwdExpiryDate = new Date();
 
     @NotBlank
