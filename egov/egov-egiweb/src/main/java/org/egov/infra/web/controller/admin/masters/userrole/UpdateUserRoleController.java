@@ -48,10 +48,12 @@
 
 package org.egov.infra.web.controller.admin.masters.userrole;
 
+import org.egov.infra.admin.master.contracts.UserRole;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.mapper.BeanMapperConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -75,9 +77,12 @@ public class UpdateUserRoleController {
     @Autowired
     private RoleService roleService;
 
+    @Autowired
+    private BeanMapperConfiguration beanMapperConfiguration;
+
     @ModelAttribute
-    public User user(@PathVariable Long userId) {
-        return userService.getUserById(userId);
+    public UserRole userRole(@PathVariable String userId) {
+        return beanMapperConfiguration.map(userService.getUserByUID(userId), UserRole.class);
     }
 
     @ModelAttribute("roles")
@@ -91,15 +96,16 @@ public class UpdateUserRoleController {
     }
 
     @PostMapping
-    public String updateUserRoles(@Valid @ModelAttribute User user, BindingResult bindResult, RedirectAttributes redirectAttrs) {
-        if(user.hasAnyInternalRole())
+    public String updateUserRoles(@Valid @ModelAttribute UserRole userRole, BindingResult bindResult, RedirectAttributes redirectAttrs) {
+        if (userRole.hasAnyInternalRole())
             bindResult.rejectValue("roles", "err.internal.roles.found");
         if (bindResult.hasErrors())
             return "userrole-update";
-        userService.updateUser(user);
+
+        userService.updateUserRoles(userRole);
         redirectAttrs.addFlashAttribute("message", "msg.usr.role.update.success");
         redirectAttrs.addFlashAttribute("fromUpdate", true);
-        return "redirect:/userrole/view/" + user.getId();
+        return "redirect:/userrole/view/" + userRole.getUid();
     }
 
 }

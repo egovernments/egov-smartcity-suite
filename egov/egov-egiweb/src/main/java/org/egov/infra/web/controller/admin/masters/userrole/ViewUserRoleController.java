@@ -65,8 +65,8 @@ public class ViewUserRoleController {
     private UserService userService;
 
     @GetMapping
-    public String viewUserRoleByUserId(@PathVariable Long userId, Model model) {
-        User user = userService.getUserById(userId);
+    public String viewUserRoleByUserId(@PathVariable String userId, Model model) {
+        User user = userService.getUserByUID(userId);
         model.addAttribute("userName", new StringBuilder(10).append(user.getName()).append(" [ ")
                 .append(user.getUsername()).append(" ]").toString());
         model.addAttribute("roles", user.getRoles());

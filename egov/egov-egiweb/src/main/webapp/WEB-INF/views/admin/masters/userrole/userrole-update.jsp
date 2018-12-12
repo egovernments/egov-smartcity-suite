@@ -61,7 +61,7 @@
                     </div>
                 </c:if>
                 <form:form id="updateuserRoleForm" action="${user.id}" method="post"
-                           modelAttribute="user" commandName="user"
+                           modelAttribute="userRole"
                            class="form-horizontal form-groups-bordered">
 
                     <div class="panel panel-primary" data-collapsed="0">
@@ -69,12 +69,10 @@
                             <div class="panel-title">
                                 <strong><spring:message code="lbl.hdr.userrole.info"/> For :
                                     <span style="font-family: semibold;font-size: 16px;">
-                                    <c:out value="${user.name}"/> [<c:out value="${user.username}"/>]
+                                    <c:out value="${userRole.name}"/> [<c:out value="${userRole.username}"/>]
                                     </span></strong>
                             </div>
                         </div>
-                        <form:hidden path="id" id="id" value="${user.id}"/>
-                        <form:hidden path="username" id="username" value="${user.username}"/>
                         <div class="row">
                             <div class="col-md-12 text-center">
                                 <div class="panel-body">

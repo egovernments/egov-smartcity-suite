@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,58 +46,60 @@
  *
  */
 
-package org.egov.infra.web.controller.admin.masters.user;
+package org.egov.infra.admin.master.contracts;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.egov.infra.admin.master.entity.Role;
 
-import java.util.List;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
+public class UserRole {
 
-@Controller
-@RequestMapping("user")
-public class UserController {
+    @NotNull
+    private String uid;
 
-    @Autowired
-    private UserService userService;
+    @NotEmpty
+    private Set<Role> roles = new HashSet<>();
 
-    @GetMapping(value = "name-like/{name}", produces = APPLICATION_JSON_UTF8_VALUE)
-    @ResponseBody
-    public String getUserByName(@PathVariable String name) {
-        return toJson(userService.getUsersByNameLike(name));
+    private String name;
+
+    private String username;
+
+    public String getUid() {
+        return uid;
     }
 
-    @GetMapping(value = "employee-name-like/", produces = APPLICATION_JSON_UTF8_VALUE)
-    @ResponseBody
-    public String getEmployeesByName(@RequestParam String name) {
-        return toJson(userService.getAllEmployeeNameLike(name));
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
-    @GetMapping(value = "employee-username-like/", produces = APPLICATION_JSON_UTF8_VALUE)
-    @ResponseBody
-    public String getEmployeeRolesByUserName(@RequestParam String userName) {
-        return toJson(userService.getAllEmployeeUsernameLike(userName));
+    public String getName() {
+        return name;
     }
 
-    private String toJson(List<User> users) {
-        JsonArray userInfos = new JsonArray();
-        users.forEach(user -> {
-            JsonObject userInfo = new JsonObject();
-            userInfo.addProperty("name", user.getName());
-            userInfo.addProperty("userName", user.getUsername());
-            userInfo.addProperty("id", user.getUid());
-            userInfos.add(userInfo);
-        });
-        return userInfos.toString();
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    public boolean hasAnyInternalRole() {
+        return roles.stream().anyMatch(role -> role.isInternal());
     }
 }

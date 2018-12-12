@@ -60,6 +60,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
 @Controller
@@ -75,8 +76,8 @@ public class SearchUserRoleController {
     }
 
     @PostMapping("/search")
-    public String searchUserRoleByUserId(@RequestParam Long userId, Model model) {
-        if (userId == null || userId < 1) {
+    public String searchUserRoleByUserId(@RequestParam String userId, Model model) {
+        if (isBlank(userId)) {
             model.addAttribute("error", "invalid.user.entered");
             return "userrole-search";
         }
