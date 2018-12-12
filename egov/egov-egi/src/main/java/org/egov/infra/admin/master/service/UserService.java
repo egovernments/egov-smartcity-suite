@@ -48,6 +48,7 @@
 
 package org.egov.infra.admin.master.service;
 
+import org.egov.infra.admin.master.contracts.UserRole;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.UserRepository;
@@ -67,6 +68,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.egov.infra.config.core.ApplicationThreadLocals.getMunicipalityName;
 import static org.egov.infra.persistence.entity.enums.UserType.EMPLOYEE;
@@ -95,15 +97,23 @@ public class UserService {
     private MessageSource messageSource;
 
     @Transactional
+    public User createUser(User user) {
+        user.setUid(UUID.randomUUID().toString());
+        User savedUser = userRepository.save(user);
+        microserviceUtils.createUserMicroservice(user);
+        return savedUser;
+    }
+
+    @Transactional
     public User updateUser(User user) {
         return userRepository.saveAndFlush(user);
     }
 
     @Transactional
-    public User createUser(User user) {
-        User savedUser = userRepository.save(user);
-        microserviceUtils.createUserMicroservice(user);
-        return savedUser;
+    public User updateUserRoles(UserRole userRole) {
+        User user = getUserByUID(userRole.getUid());
+        user.setRoles(userRole.getRoles());
+        return userRepository.saveAndFlush(user);
     }
 
     @Transactional
@@ -131,6 +141,10 @@ public class UserService {
 
     public Set<Role> getRolesByUsernameAndType(String userName, UserType type) {
         return userRepository.findUserRolesByUserNameAndType(userName, type);
+    }
+
+    public User getUserByUID(String uid) {
+        return userRepository.findByUid(uid);
     }
 
     public User getUserById(Long id) {

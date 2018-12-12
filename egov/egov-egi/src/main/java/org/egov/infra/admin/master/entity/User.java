@@ -58,9 +58,11 @@ import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.joda.time.DateTime;
@@ -201,7 +203,8 @@ public class User extends AbstractAuditable {
     private boolean active;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "eg_userrole", joinColumns = @JoinColumn(name = "userid"), inverseJoinColumns = @JoinColumn(name = "roleid"))
+    @JoinTable(name = "eg_userrole", joinColumns = @JoinColumn(name = "userid"),
+            inverseJoinColumns = @JoinColumn(name = "roleid"))
     @Audited(targetAuditMode = NOT_AUDITED)
     @AuditJoinTable
     private Set<Role> roles = new HashSet<>();
@@ -226,6 +229,12 @@ public class User extends AbstractAuditable {
     private boolean accountLocked;
 
     private boolean useMultiFA;
+
+    @NotAudited
+    @NaturalId
+    @Column(nullable = false, unique = true, updatable = false)
+    @Length(max = 36)
+    private String uid;
 
     public User() {
         //Default constructor
@@ -448,6 +457,14 @@ public class User extends AbstractAuditable {
 
     public void setUseMultiFA(boolean useMultiFA) {
         this.useMultiFA = useMultiFA;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public void updateNextPwdExpiryDate(Integer passwordExpireInDays) {

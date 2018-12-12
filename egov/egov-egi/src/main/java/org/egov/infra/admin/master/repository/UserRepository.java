@@ -71,6 +71,9 @@ public interface UserRepository extends JpaRepository<User, Long>, RevisionRepos
     @QueryHints({@QueryHint(name = HINT_CACHEABLE, value = "true")})
     User findByUsername(String userName);
 
+    @QueryHints({@QueryHint(name = HINT_CACHEABLE, value = "true")})
+    User findByUid(String uid);
+
     List<User> findByNameContainingIgnoreCase(String userName);
 
     User findByEmailId(String emailId);
