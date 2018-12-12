@@ -48,7 +48,7 @@
 var openedWindows = [];
 $(document).ready(function () {
     // jQuery plugin to prevent double submission of forms
-    jQuery.fn.preventDoubleSubmission = function () {
+    $.fn.preventDoubleSubmission = function () {
         $(this).on('submit', function (e) {
             var $form = $(this);
 
@@ -62,6 +62,15 @@ $(document).ready(function () {
         });
         // Keep chainability
         return this;
+    };
+
+    $.fn.serializeObject = function () {
+        var obj = {};
+        $.each(this.serializeArray(), function (i, o) {
+            var n = o.name, v = o.value;
+            obj[n] = obj[n] === undefined ? v : $.isArray(obj[n]) ? obj[n].concat(v) : [obj[n], v];
+        });
+        return obj;
     };
 
     $('form').preventDoubleSubmission();
@@ -329,12 +338,10 @@ function typeaheadWithEventsHandling(typeaheadobj, hiddeneleid, dependentfield) 
                     deleted = '';
                 else
                     deleted = val.substr(position[0] - 1, 1);
-            }
-            else {
+            } else {
                 deleted = val.substring(position[0], position[1]);
             }
-        }
-        else if (e.which == 46) {
+        } else if (e.which == 46) {
             var val = $(this).val();
             if (position[0] == position[1]) {
 
@@ -342,8 +349,7 @@ function typeaheadWithEventsHandling(typeaheadobj, hiddeneleid, dependentfield) 
                     deleted = '';
                 else
                     deleted = val.substr(position[0], 1);
-            }
-            else {
+            } else {
                 deleted = val.substring(position[0], position[1]);
             }
         }
@@ -390,8 +396,7 @@ function disableRefresh(e) {
     if (e.ctrlKey) {
         if (key == 82 || key == 116)
             e.preventDefault();
-    }
-    else if (key == 116) {
+    } else if (key == 116) {
         e.preventDefault();
     }
 
