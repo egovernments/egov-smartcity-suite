@@ -47,6 +47,20 @@
  */
 
 $(document).ready(function () {
+    $.fn.preventDoubleSubmission = function () {
+        $(this).on('submit', function (e) {
+            var $form = $(this);
+            if ($form.data('submitted') === true) {
+                e.preventDefault();
+            } else {
+                $form.data('submitted', true);
+            }
+        });
+        return this;
+    };
+
+    $('form').preventDoubleSubmission();
+
     $('.menu-item').click(function (e) {
         $('.citizen-screens').hide();
         $('.hr-menu li').removeClass('active');
@@ -87,7 +101,6 @@ $(document).ready(function () {
     });
 
     $('#password-form').on('submit', function (e) {
-        e.preventDefault();
         $.ajax({
             url: '/egi/home/password/update',
             type: 'POST',

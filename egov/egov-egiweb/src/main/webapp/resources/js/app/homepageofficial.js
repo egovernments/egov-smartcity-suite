@@ -47,7 +47,7 @@
  */
 
 $(document).ready(function () {
-    jQuery.fn.preventDoubleSubmission = function () {
+    $.fn.preventDoubleSubmission = function () {
         $(this).on('submit', function (e) {
             var $form = $(this);
             if ($form.data('submitted') === true) {
