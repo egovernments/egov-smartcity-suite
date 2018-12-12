@@ -157,7 +157,7 @@ public class ConcurrenceReportAction extends BaseFormAction {
                 && parameters.get("bankAccount.id")[0] != null) {
             final Integer id = Integer.valueOf(parameters.get("bankAccount.id")[0]);
             bankAccount = (Bankaccount) persistenceService.find(
-                    "from Bankaccount where id=?", id);
+                    "from Bankaccount where id=?1", id);
             bankAccountExist = true;
             bankAccount.getBankbranch().getBank().getName();
         }
@@ -216,7 +216,7 @@ public class ConcurrenceReportAction extends BaseFormAction {
                     fundAmt = fundAmt.add(row.getAmount());
                 } else {
                     final Fund fundNm = (Fund) persistenceService.find(
-                            "from Fund where id=?", Integer.valueOf(fndIdPre));
+                            "from Fund where id=?1", Integer.valueOf(fndIdPre));
                     paymentHeaderListFnd.add(new ConcurrenceReportData(
                             new String(fundNm.getName()), fundAmt, "Total"));
                     grandTol = grandTol.add(fundAmt);
@@ -228,7 +228,7 @@ public class ConcurrenceReportAction extends BaseFormAction {
                 lastInd = paymentHeaderList.indexOf(row);
                 if (lastInd == size - 1) {
                     final Fund fundNm = (Fund) persistenceService.find(
-                            "from Fund where id=?", Integer.valueOf(fndIdPre));
+                            "from Fund where id=?1", Integer.valueOf(fndIdPre));
                     paymentHeaderListFnd.add(new ConcurrenceReportData(
                             new String(fundNm.getName()), fundAmt, "Total"));
                     grandTol = grandTol.add(fundAmt);

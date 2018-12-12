@@ -185,11 +185,11 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
         mode = "approve";
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(">>>>>>" + dishonourChqId);
-        dishonorChequeView = finDishonorChequeService.find(" from DishonorCheque where id=?", dishonourChqId);
+        dishonorChequeView = finDishonorChequeService.find(" from DishonorCheque where id=?1", dishonourChqId);
         for (final DishonorChequeDetails dc : dishonorChequeView.getDetails())
             if (dc.getFunctionId() != null)
             {
-                final CFunction function = (CFunction) persistenceService.find("from CFunction  where id=? ", dc.getFunctionId()
+                final CFunction function = (CFunction) persistenceService.find("from CFunction  where id=?1 ", dc.getFunctionId()
                         .longValue());
                 dc.setFunction(function);
             }
@@ -205,8 +205,8 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
             validActions = Arrays.asList("forward");
         else {
             final String validAction = (String) persistenceService.find(
-                    "select validActions from WorkFlowMatrix where objectType=? " +
-                            "and currentState =?", dishonorChequeView.getStateType(), dishonorChequeView.getCurrentState()
+                    "select validActions from WorkFlowMatrix where objectType=?1 " +
+                            "and currentState =?2", dishonorChequeView.getStateType(), dishonorChequeView.getCurrentState()
                             .getValue());
             if (null != validAction) {
                 final StringTokenizer strToken = new StringTokenizer(validAction, ",");
@@ -228,8 +228,8 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
     public String getNextAction() {
         String nextActionTemp = "";
         if (null != dishonorChequeView && null != dishonorChequeView.getId())
-            nextActionTemp = (String) persistenceService.find("select nextAction from WorkFlowMatrix where objectType=? " +
-                    " and currentState=?", dishonorChequeView.getStateType(), dishonorChequeView.getCurrentState().getValue());
+            nextActionTemp = (String) persistenceService.find("select nextAction from WorkFlowMatrix where objectType=?1 " +
+                    " and currentState=?2", dishonorChequeView.getStateType(), dishonorChequeView.getCurrentState().getValue());
         return nextActionTemp;
 
     }
@@ -237,7 +237,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
     public void populateWorkflowEntities() {
         approverDepartmentList = persistenceService.findAllBy("from Department order by deptName");
         eisCommonService.getEmployeeByUserId(ApplicationThreadLocals.getUserId());
-        desgnationList = persistenceService.findAllBy("from Designation where name=?", "ACCOUNTS OFFICER");
+        desgnationList = persistenceService.findAllBy("from Designation where name=?1", "ACCOUNTS OFFICER");
         addDropdownData("approverDepartmentList", approverDepartmentList);
         addDropdownData("desgnationList", desgnationList);
 
@@ -363,7 +363,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Completed  integrated system update.");
             } catch (final RuntimeException e) {
-                LOGGER.error("Error in updating integrated system  " + e.getMessage(), e);
+                LOGGER.error("Error in updating integrated system  " , e);
                 final List<ValidationError> errors = new ArrayList<ValidationError>();
                 errors.add(new ValidationError("exception", e.getMessage()));
                 throw new ValidationException(errors);
@@ -376,7 +376,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
                 ApplicationThreadLocals.getUserId().intValue();
             startChequeWorkflow(dishonorChequeView, actionNm,
                     null != parameters.get("approverComments") ? parameters.get("approverComments")[0] : null);
-            final EmployeeView nextUser = (EmployeeView) persistenceService.find("from EmployeeView where position.id=?", null/*
+            final EmployeeView nextUser = (EmployeeView) persistenceService.find("from EmployeeView where position.id=?1", null/*
              * phoenix
              * dishonorChequeView
              * .
@@ -405,9 +405,9 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
             returnValue = "viewMessage";
         } else if (actionNm.equalsIgnoreCase("reject")) {
             final InstrumentOtherDetails iob = (InstrumentOtherDetails) persistenceService
-                    .find("from InstrumentOtherDetails where instrumentHeaderId.id=?", dishonorChequeView.getInstrumentHeader()
+                    .find("from InstrumentOtherDetails where instrumentHeaderId.id=?1", dishonorChequeView.getInstrumentHeader()
                             .getId());
-            final User approverUser = (User) persistenceService.find("from User where id=?", iob.getPayinslipId().getCreatedBy()
+            final User approverUser = (User) persistenceService.find("from User where id=?1", iob.getPayinslipId().getCreatedBy()
                     .getId());
             eisService.getPrimaryPositionForUser(approverUser.getId(), new Date());
             // phoenix migration dishonorChequeView.setApproverPositionId(approvePos.getId());
@@ -506,7 +506,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
         BigDecimal total = new BigDecimal(0);
         List<DishonorChequeDetails> tempdetails = new ArrayList<DishonorChequeDetails>();
         dishonorChequeView.setDetails(new HashSet<DishonorChequeDetails>(tempdetails));
-        tempdetails = persistenceService.findAllBy(" from DishonorChequeDetails where header.id=? ", dishonorChequeView.getId());
+        tempdetails = persistenceService.findAllBy(" from DishonorChequeDetails where header.id=?1 ", dishonorChequeView.getId());
         for (final DishonorChequeDetails dishonordetails : tempdetails)
             if (null != dishonordetails.getDebitAmt() && dishonordetails.getDebitAmt().compareTo(BigDecimal.ZERO) > 0)
                 total = total.add(dishonordetails.getDebitAmt());
@@ -545,7 +545,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
         List<Object[]> slDetailsDebit = new ArrayList<Object[]>();
         StringBuffer reversalGlCodes = new StringBuffer();
         final List<DishonorChequeDetails> tempdetails = persistenceService.findAllBy(
-                "from DishonorChequeDetails where header.id=? ",
+                "from DishonorChequeDetails where header.id=?1 ",
                 dishonorChequeView.getId());
         for (final DishonorChequeDetails dishonordetails : tempdetails)
             reversalGlCodes = reversalGlCodes.append(dishonordetails.getGlcodeId().getGlcode()).append(',');
@@ -665,7 +665,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
     private List<HashMap<String, Object>> populateAccountDetails() {
         final List<HashMap<String, Object>> accountdetails = new ArrayList<HashMap<String, Object>>();
         final List<DishonorChequeDetails> tempdetails = persistenceService.findAllBy(
-                "from DishonorChequeDetails where header.id=? ",
+                "from DishonorChequeDetails where header.id=?1 ",
                 dishonorChequeView.getId());
         BigDecimal totalAmountDbt = BigDecimal.ZERO;
         BigDecimal totalAmountCrd = BigDecimal.ZERO;
@@ -679,7 +679,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
                     final String code = dishonordetails.getGlcodeId().getGlcode();
                     final Integer funct = dishonordetails.getFunctionId();
                     if (null != funct && funct > 0)
-                        glFunctionObj = (CFunction) persistenceService.find(" from CFunction fn where id=?", funct.longValue());
+                        glFunctionObj = (CFunction) persistenceService.find(" from CFunction fn where id=?1", funct.longValue());
                     if (amount.compareTo(BigDecimal.ZERO) != 0)
                         accountdetails.add(populateDetailMap(code, BigDecimal.ZERO, amount, glFunctionObj.getCode()));
 
@@ -806,22 +806,22 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
         if (null != dishonorChequeView.getOriginalVoucherHeader().getVouchermis().getDepartmentid())
             headerdetails.put(
                     VoucherConstant.DEPARTMENTCODE,
-                    ((Department) persistenceService.find("from Department where id=?", dishonorChequeView
+                    ((Department) persistenceService.find("from Department where id=?1", dishonorChequeView
                             .getOriginalVoucherHeader().getVouchermis().getDepartmentid().getId())).getCode());
         if (null != dishonorChequeView.getOriginalVoucherHeader().getFundId())
             headerdetails.put(
                     VoucherConstant.FUNDCODE,
-                    ((Fund) persistenceService.find("from Fund where id=?", dishonorChequeView.getOriginalVoucherHeader()
+                    ((Fund) persistenceService.find("from Fund where id=?1", dishonorChequeView.getOriginalVoucherHeader()
                             .getFundId().getId())).getCode());
         if (null != dishonorChequeView.getOriginalVoucherHeader().getVouchermis().getFundsource())
             headerdetails.put(
                     VoucherConstant.FUNDSOURCECODE,
-                    ((Fundsource) persistenceService.find("from Fundsource where id=?", dishonorChequeView
+                    ((Fundsource) persistenceService.find("from Fundsource where id=?1", dishonorChequeView
                             .getOriginalVoucherHeader().getVouchermis().getFundsource().getId())).getCode());
         if (null != dishonorChequeView.getOriginalVoucherHeader().getVouchermis().getFunction())
             headerdetails.put(
                     VoucherConstant.FUNCTIONCODE,
-                    ((CFunction) persistenceService.find("from CFunction where id=?", dishonorChequeView
+                    ((CFunction) persistenceService.find("from CFunction where id=?1", dishonorChequeView
                             .getOriginalVoucherHeader().getVouchermis().getFunction())).getCode());
         if (null != dishonorChequeView.getOriginalVoucherHeader().getVouchermis().getDivisionid())
             headerdetails.put(VoucherConstant.DIVISIONID, dishonorChequeView.getOriginalVoucherHeader().getVouchermis()

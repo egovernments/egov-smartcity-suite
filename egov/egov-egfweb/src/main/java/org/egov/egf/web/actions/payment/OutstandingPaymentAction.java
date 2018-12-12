@@ -157,7 +157,7 @@ public class OutstandingPaymentAction extends BaseFormAction {
             if (parameters.containsKey("asOnDate") && parameters.get("asOnDate")[0] != null)
                 setSelectedVhs("selectedVhs");
             final Integer id = Integer.valueOf(parameters.get("bankAccount.id")[0]);
-            bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?", id);
+            bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?1", id);
             // this is actually approval status
             final List<AppConfigValues> appConfig = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,
                     "VOUCHER_STATUS_TO_CHECK_BANK_BALANCE");
@@ -190,9 +190,9 @@ public class OutstandingPaymentAction extends BaseFormAction {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Ending app config check...");
             final StringBuffer query = new StringBuffer();
-            query.append("from Paymentheader where voucherheader.voucherDate<=? and voucherheader.status in ( " +
+            query.append("from Paymentheader where voucherheader.voucherDate<=?1 and voucherheader.status in ( " +
                     +FinancialConstants.CREATEDVOUCHERSTATUS + "," + FinancialConstants.PREAPPROVEDVOUCHERSTATUS
-                    + ") and bankaccount.id=? and" +
+                    + ") and bankaccount.id=?2 and" +
                     " state.type='Paymentheader'");
             if (condtitionalAppConfigIsPresent)
             {

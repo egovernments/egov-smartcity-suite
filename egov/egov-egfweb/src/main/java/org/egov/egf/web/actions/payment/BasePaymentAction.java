@@ -144,7 +144,7 @@ public class BasePaymentAction extends BaseVoucherAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting viewInboxItems..... ");
         String result = null;
-        final Paymentheader paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where id=?",
+        final Paymentheader paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where id=?1",
                 Long.valueOf(paymentid));
         if (!validateOwner(paymentheader.getState()))
             return INVALIDPAGE;
@@ -152,7 +152,7 @@ public class BasePaymentAction extends BaseVoucherAction {
         if (paymentheader.getVoucherheader().getName()
                 .equalsIgnoreCase(FinancialConstants.PAYMENTVOUCHER_NAME_ADVANCE)) {
             final EgAdvanceRequisition arf = (EgAdvanceRequisition) persistenceService.find(
-                    "from EgAdvanceRequisition where arftype = ? and egAdvanceReqMises.voucherheader = ?", ARF_TYPE,
+                    "from EgAdvanceRequisition where arftype = ?1 and egAdvanceReqMises.voucherheader = ?2", ARF_TYPE,
                     paymentheader.getVoucherheader());
             if (arf != null)
                 result = "contractoradvancepayment";

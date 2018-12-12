@@ -112,7 +112,7 @@ public class SearchAdvanceRequisitionForPaymentAction extends SearchFormAction {
         final StringBuffer query = new StringBuffer(700);
         final List<Object> paramList = new ArrayList<Object>();
         final HashMap<String, Object> queryAndParams = new HashMap<String, Object>();
-        query.append("from EgAdvanceRequisition arf where arf.arftype = ? and arf.status.code = ? and "
+        query.append("from EgAdvanceRequisition arf where arf.arftype = ?1 and arf.status.code = ?2 and "
                 +
                 " NOT EXISTS (select 1 from CVoucherHeader vh where vh.id=arf.egAdvanceReqMises.voucherheader.id and arf.egAdvanceReqMises.voucherheader.status<>4) ");
         paramList.add(ARF_TYPE);
@@ -124,13 +124,13 @@ public class SearchAdvanceRequisitionForPaymentAction extends SearchFormAction {
         }
 
         if (fromDate != null && toDate != null && getFieldErrors().isEmpty()) {
-            query.append(" and arf.advanceRequisitionDate between ? and ? ");
+            query.append(" and arf.advanceRequisitionDate between ?1 and ?2 ");
             paramList.add(fromDate);
             paramList.add(toDate);
         }
 
         if (departmentId != 0 && departmentId != -1) {
-            query.append(" and arf.egAdvanceReqMises.egDepartment.id = ? ");
+            query.append(" and arf.egAdvanceReqMises.egDepartment.id = ?1 ");
             paramList.add(departmentId);
         }
         // TODO - Order by Department and advanceRequisitionDate

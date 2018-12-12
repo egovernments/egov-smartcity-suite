@@ -130,7 +130,7 @@ public class PaymentReversalAction extends BaseVoucherAction {
 
     public String reverse() {
         if (paymentHeader.getId() != null) {
-            paymentHeader = (Paymentheader) persistenceService.find("from Paymentheader where id=?", paymentHeader.getId());
+            paymentHeader = (Paymentheader) persistenceService.find("from Paymentheader where id=?1", paymentHeader.getId());
             voucherHeader = paymentHeader.getVoucherheader();
         }
         return "reverse";
@@ -138,7 +138,7 @@ public class PaymentReversalAction extends BaseVoucherAction {
 
     public String saveReverse() {
         if (voucherHeader.getId() != null)
-            voucherHeader = (CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?", voucherHeader.getId());
+            voucherHeader = (CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?1", voucherHeader.getId());
         saveReverse(voucherHeader.getName(), "Receipt");
         message = getText("transaction.success") + voucherHeader.getVoucherNumber();
         return "reverse";
@@ -160,7 +160,7 @@ public class PaymentReversalAction extends BaseVoucherAction {
         final String query = formQuery(voucherHeaderList);
         if (voucherHeaderList != null && voucherHeaderList.size() > 0)
             if (bankAccount != null && bankAccount.getId() != null)
-                paymentHeaderList = persistenceService.findAllBy(query + " and bankaccount.id=?",
+                paymentHeaderList = persistenceService.findAllBy(query + " and bankaccount.id=?1",
                         bankAccount.getId());
             else
                 paymentHeaderList = persistenceService.findAllBy(query);

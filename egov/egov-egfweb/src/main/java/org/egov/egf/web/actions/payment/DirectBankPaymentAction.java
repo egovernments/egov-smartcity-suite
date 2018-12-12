@@ -368,7 +368,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                 .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, appconfigKey).get(0);
         final String purposeValue = appConfigValues.getValue();
         final CGeneralLedger netPay = (CGeneralLedger) persistenceService.find(
-                "from CGeneralLedger where voucherHeaderId.id=? and glcodeId.purposeId=?", voucherHeader.getId(),
+                "from CGeneralLedger where voucherHeaderId.id=?1 and glcodeId.purposeId=?2", voucherHeader.getId(),
                 purposeValue);
         if (netPay == null)
             throw new ValidationException(Arrays.asList(new ValidationError(
@@ -514,7 +514,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
 
     private void updateMiscBillDetail(final CVoucherHeader billVhId) {
         final Miscbilldetail miscbillDetail = (Miscbilldetail) persistenceService
-                .find(" from Miscbilldetail where payVoucherHeader=?", voucherHeader);
+                .find(" from Miscbilldetail where payVoucherHeader=?1", voucherHeader);
         miscbillDetail.setBillnumber(commonBean.getDocumentNumber());
         miscbillDetail.setBilldate(commonBean.getDocumentDate());
         miscbillDetail.setBillVoucherHeader(billVhId);
@@ -554,11 +554,11 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     private void prepareForViewModifyReverse() {
         final StringBuffer instrumentQuery = new StringBuffer(100);
         instrumentQuery
-                .append("select  distinct ih from InstrumentHeader ih join ih.instrumentVouchers iv where iv.voucherHeaderId.id=?")
+                .append("select  distinct ih from InstrumentHeader ih join ih.instrumentVouchers iv where iv.voucherHeaderId.id=?1")
                 .append(" order by ih.id");
         voucherHeader = persistenceService.getSession().load(CVoucherHeader.class,
                 voucherHeader.getId());
-        paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?",
+        paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?1",
                 voucherHeader);
         commonBean.setAmount(paymentheader.getPaymentAmount());
         commonBean.setAccountNumberId(paymentheader.getBankaccount().getId().toString());
@@ -569,7 +569,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         commonBean.setBankId(bankBranchId);
         commonBean.setModeOfPayment(paymentheader.getType());
         final Miscbilldetail miscbillDetail = (Miscbilldetail) persistenceService
-                .find(" from Miscbilldetail where payVoucherHeader=?", voucherHeader);
+                .find(" from Miscbilldetail where payVoucherHeader=?1", voucherHeader);
         commonBean.setDocumentNumber(miscbillDetail.getBillnumber());
         commonBean.setDocumentDate(miscbillDetail.getBilldate());
         commonBean.setPaidTo(miscbillDetail.getPaidto());
@@ -626,7 +626,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                     validateRTGS();
 
                 reCreateLedger();
-                paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?",
+                paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?1",
                         voucherHeader);
                 paymentService.updatePaymentHeader(paymentheader, voucherHeader,
                         Integer.valueOf(commonBean.getAccountNumberId()), commonBean.getModeOfPayment(),
@@ -968,7 +968,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     public String cancelPayment() {
         voucherHeader = persistenceService.getSession().load(CVoucherHeader.class,
                 voucherHeader.getId());
-        paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?",
+        paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?1",
                 voucherHeader);
         voucherHeader.setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
         // persistenceService.setType(CVoucherHeader.class);

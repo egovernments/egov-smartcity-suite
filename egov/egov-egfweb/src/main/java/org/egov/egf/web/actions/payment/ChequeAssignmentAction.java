@@ -413,18 +413,18 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             String appConfigKey = entry.getKey();
             String appConfigValue = entry.getValue();
             if (appConfigKey.equals("EB Voucher Property-Fund"))
-                voucherHeader.setFundId((Fund) persistenceService.find("from Fund where code = ?", appConfigValue));
+                voucherHeader.setFundId((Fund) persistenceService.find("from Fund where code = ?1", appConfigValue));
             else if (appConfigKey.equals("EB Voucher Property-Function"))
                 voucherHeader.getVouchermis().setFunction(
-                        (CFunction) persistenceService.find("from CFunction where code = ?", appConfigValue));
+                        (CFunction) persistenceService.find("from CFunction where code = ?1", appConfigValue));
             else if (appConfigKey.equals("EB Voucher Property-Department"))
                 voucherHeader.getVouchermis().setDepartmentid(
-                        (Department) persistenceService.find("from Department where deptCode = ?", appConfigValue));
+                        (Department) persistenceService.find("from Department where deptCode = ?1", appConfigValue));
             else if (appConfigKey.equals("EB Voucher Property-BankBranch"))
                 bank_branch = appConfigValue;
             else if (appConfigKey.equals("EB Voucher Property-BankAccount")) {
                 bank_account = appConfigValue;
-                final Bankaccount ba = (Bankaccount) persistenceService.find(" from Bankaccount where accountnumber=?",
+                final Bankaccount ba = (Bankaccount) persistenceService.find(" from Bankaccount where accountnumber=?1",
                         bank_account);
                 if (ba.getId() != null)
                     bankaccount = ba.getId().intValue();
@@ -482,9 +482,9 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             BankAccountRemittanceCOA bnkAccCOA = new BankAccountRemittanceCOA();
             if (accountNoAndRemittanceRtgsEntryMap.isEmpty()) {
                 rtgsEntry = new ArrayList<>();
-                bnkAcc = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
+                bnkAcc = (Bankaccount) persistenceService.find("from Bankaccount where id=?1",
                         Long.parseLong(chqAssgn.getBankAccountId().toString()));
-                coa = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id =?", new Long(chqAssgn
+                coa = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id =?1", new Long(chqAssgn
                         .getGlcodeId().toString()));
                 bnkAccCOA.setBankAccount(bnkAcc);
                 bnkAccCOA.setRemittanceCOA(coa);
@@ -508,9 +508,9 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                     accountNoAndRemittanceRtgsEntryMap.get(bnkAccCOA).add(chqAssgn);
                 } else {
                     rtgsEntry = new ArrayList<>();
-                    bnkAcc = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
+                    bnkAcc = (Bankaccount) persistenceService.find("from Bankaccount where id=?1",
                             Long.parseLong(chqAssgn.getBankAccountId().toString()));
-                    coa = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id =?", new Long(chqAssgn
+                    coa = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id =?1", new Long(chqAssgn
                             .getGlcodeId().toString()));
                     bnkAccCOA.setBankAccount(bnkAcc);
                     bnkAccCOA.setRemittanceCOA(coa);
@@ -522,13 +522,13 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         }
         getSession().put(ACCOUNT_NO_AND_RTGS_ENTRY_MAP, accountNoAndRemittanceRtgsEntryMap);
         if (0 != drawingOfficerId) {
-            final DrawingOfficer drawingOfficer = (DrawingOfficer) persistenceService.find("from DrawingOfficer where id =?",
+            final DrawingOfficer drawingOfficer = (DrawingOfficer) persistenceService.find("from DrawingOfficer where id =?1",
                     drawingOfficerId);
             drawingOfficerCode = drawingOfficer.getCode();
         }
         assignmentType = BILL_PAYMENT;
         if (!EMPTY.equals(parameters.get("recoveryId")[0])) {
-            final Recovery recovery = (Recovery) persistenceService.find("from Recovery where id=?",
+            final Recovery recovery = (Recovery) persistenceService.find("from Recovery where id=?1",
                     new Long(parameters.get("recoveryId")[0]));
             if (recovery.getChartofaccounts().getChartOfAccountDetails().isEmpty())
                 nonSubledger = true;
@@ -639,7 +639,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             // to set date
             if (accountNoAndRtgsEntryMap.isEmpty()) {
                 rtgsEntry = new ArrayList<>();
-                bnkAcc = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
+                bnkAcc = (Bankaccount) persistenceService.find("from Bankaccount where id=?1",
                         Long.parseLong(chqAssgn.getBankAccountId().toString()));
                 selBnkAcc = bnkAcc;
                 rtgsEntry.add(chqAssgn);
@@ -662,7 +662,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                     selBnkAcc = null;
                 } else {
                     rtgsEntry = new ArrayList<>();
-                    bnkAcc = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
+                    bnkAcc = (Bankaccount) persistenceService.find("from Bankaccount where id=?1",
                             Long.parseLong(chqAssgn.getBankAccountId().toString()));
                     selBnkAcc = bnkAcc;
                     rtgsEntry.add(chqAssgn);
@@ -693,7 +693,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             // to set date
             if (accountNoAndRtgsEntryMap.isEmpty()) {
                 rtgsEntry = new ArrayList<>();
-                bnkAcc = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
+                bnkAcc = (Bankaccount) persistenceService.find("from Bankaccount where id=?1",
                         Long.parseLong(chqAssgn.getBankAccountId().toString()));
                 selBnkAcc = bnkAcc;
                 rtgsEntry.add(chqAssgn);
@@ -716,7 +716,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                     selBnkAcc = null;
                 } else {
                     rtgsEntry = new ArrayList<>();
-                    bnkAcc = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
+                    bnkAcc = (Bankaccount) persistenceService.find("from Bankaccount where id=?1",
                             Long.parseLong(chqAssgn.getBankAccountId().toString()));
                     selBnkAcc = bnkAcc;
                     rtgsEntry.add(chqAssgn);
@@ -760,7 +760,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 if (department != null) {
                     final List<Object[]> yearCodes = persistenceService
                             .findAllBy(
-                                    "select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd  where ac.serialNo = fs.id and  bankAccountId=?"
+                                    "select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd  where ac.serialNo = fs.id and  bankAccountId=?1"
                                             + "and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where id = "
                                             + department + ")"
                                             + " order by serialNo desc ",
@@ -773,7 +773,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 } else if (departmentId != null) {
                     final List<Object[]> yearCodes = persistenceService
                             .findAllBy(
-                                    "select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd  where ac.serialNo = fs.id and  bankAccountId=?"
+                                    "select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd  where ac.serialNo = fs.id and  bankAccountId=?1"
                                             + "and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where id = "
                                             + departmentId + ")"
                                             + " order by serialNo desc ",
@@ -786,7 +786,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 } else {
                     final List<Object[]> yearCodes = persistenceService
                             .findAllBy(
-                                    "select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd  where ac.serialNo = fs.id and  bankAccountId=?"
+                                    "select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd  where ac.serialNo = fs.id and  bankAccountId=?1"
                                             + "and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where upper(name) = 'ACCOUNTS')"
                                             + " order by serialNo desc ",
                                     bankaccount);
@@ -910,7 +910,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     public String searchChequesOfRemittance() throws ApplicationException, ParseException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting searchChequesOfRemittance...");
-        final Recovery recovery = (Recovery) persistenceService.find("from Recovery where id=?", recoveryId);
+        final Recovery recovery = (Recovery) persistenceService.find("from Recovery where id=?1", recoveryId);
         voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
         voucherHeader.setName(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE);
         loadChequeSerialNo();
@@ -1001,7 +1001,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             chequePrintAvailableAt = EMPTY;
         Bankaccount bankAccount;
         if (bankaccount != null && bankaccount != 0) {
-            bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?", bankaccount.longValue());
+            bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?1", bankaccount.longValue());
             if (bankAccount.getChequeformat() != null) {
                 chequeFormat = bankAccount.getChequeformat().getId().toString();
             }
@@ -1289,7 +1289,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 Long.valueOf(parameters.get("instHeaderId")[0]));
         for (final InstrumentVoucher instrumentVoucher : instrumentHdr.getInstrumentVouchers()) {
             final Object[] obj = (Object[]) persistenceService
-                    .find(" select gld.detailTypeId.id,gld.detailKeyId,gld.amount from CGeneralLedgerDetail gld,CGeneralLedger gl where gl.id=gld.generalLedgerId.id and gl.voucherHeaderId=?",
+                    .find(" select gld.detailTypeId.id,gld.detailKeyId,gld.amount from CGeneralLedgerDetail gld,CGeneralLedger gl where gl.id=gld.generalLedgerId.id and gl.voucherHeaderId=?1",
                             instrumentVoucher.getVoucherHeaderId());
             if (obj != null) {
                 entity = paymentService.getEntity((Integer) obj[0], (Serializable) obj[1]);
@@ -1365,7 +1365,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             if (bank_branch != null && !bank_branch.equals("-1"))
                 addDropdownData(
                         BANKACCOUNT_LIST,
-                        persistenceService.findAllBy(" from Bankaccount where bankbranch.id=? and isactive=true ",
+                        persistenceService.findAllBy(" from Bankaccount where bankbranch.id=?1 and isactive=true ",
                                 Integer.valueOf(bank_branch.split("-")[1])));
             loadReasonsForSurrendaring();
             return beforeSearchForSurrender();
@@ -1375,27 +1375,27 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         try {
             List<Object> params = new LinkedList<>();
             if (isNotBlank(fromDate)) {
-                sql.append(" and iv.voucherHeaderId.voucherDate>=? ");
+                sql.append(" and iv.voucherHeaderId.voucherDate>=?1 ");
                 params.add(new Date(sdf.format(formatter.parse(fromDate))));
             }
             if (isNotBlank(toDate)) {
-                sql.append(" and iv.voucherHeaderId.voucherDate<=? ");
+                sql.append(" and iv.voucherHeaderId.voucherDate<=?1 ");
                 params.add(new Date(sdf.format(formatter.parse(toDate))));
             }
             if (bankaccount != null && bankaccount != -1) {
-                sql.append(" and  ih.bankAccountId.id=? ");
+                sql.append(" and  ih.bankAccountId.id=?1 ");
                 params.add(Long.valueOf(bankaccount));
             }
             if (isNotBlank(instrumentNumber)) {
-                sql.append(" and  ih.instrumentNumber=? ");
+                sql.append(" and  ih.instrumentNumber=?1 ");
                 params.add(instrumentNumber);
             }
             if (department != null && department != -1) {
-                sql.append(" and  iv.voucherHeaderId.vouchermis.departmentid.id=? ");
+                sql.append(" and  iv.voucherHeaderId.vouchermis.departmentid.id=?1 ");
                 params.add(Long.valueOf(department));
             }
             if (isNotBlank(voucherHeader.getVoucherNumber())) {
-                sql.append(" and  iv.voucherHeaderId.voucherNumber=? ");
+                sql.append(" and  iv.voucherHeaderId.voucherNumber=?1 ");
                 params.add(voucherHeader.getVoucherNumber());
             }
             final String mainQuery = new StringBuilder(500)
@@ -1446,7 +1446,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             if (bank_branch != null && !bank_branch.equals("-1"))
                 addDropdownData(
                         BANKACCOUNT_LIST,
-                        persistenceService.findAllBy(" from Bankaccount where bankbranch.id=? and isactive=true ",
+                        persistenceService.findAllBy(" from Bankaccount where bankbranch.id=?1 and isactive=true ",
                                 Integer.valueOf(bank_branch.split("-")[1])));
             loadReasonsForSurrendaring();
             return beforeSearchForRTGSSurrender();
@@ -1456,27 +1456,27 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         try {
             List<Object> params = new LinkedList<>();
             if (isNotBlank(fromDate)) {
-                sql.append(" and iv.voucherHeaderId.voucherDate>=? ");
+                sql.append(" and iv.voucherHeaderId.voucherDate>=?1 ");
                 params.add(sdf.format(formatter.parse(fromDate)));
             }
             if (isNotBlank(toDate)) {
-                sql.append(" and iv.voucherHeaderId.voucherDate<=? ");
+                sql.append(" and iv.voucherHeaderId.voucherDate<=?1 ");
                 params.add(sdf.format(formatter.parse(toDate)));
             }
             if (bankaccount != null && bankaccount != -1) {
-                sql.append(" and  ih.bankAccountId.id=? ");
+                sql.append(" and  ih.bankAccountId.id=?1 ");
                 params.add(bankaccount);
             }
             if (isNotBlank(instrumentNumber)) {
-                sql.append(" and  ih.transactionNumber=? ");
+                sql.append(" and  ih.transactionNumber=?1 ");
                 params.add(instrumentNumber);
             }
             if (department != null && department != -1) {
-                sql.append(" and  iv.voucherHeaderId.vouchermis.departmentid.id=? ");
+                sql.append(" and  iv.voucherHeaderId.vouchermis.departmentid.id=?1 ");
                 params.add(department);
             }
             if (isNotBlank(voucherHeader.getVoucherNumber())) {
-                sql.append(" and  iv.voucherHeaderId.voucherNumber=? ");
+                sql.append(" and  iv.voucherHeaderId.voucherNumber=?1 ");
                 params.add(voucherHeader.getVoucherNumber());
             }
             final String mainQuery = new StringBuilder(500)
@@ -1567,11 +1567,11 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     private void getheader() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting getheader...");
-        final Bankaccount account = (Bankaccount) persistenceService.find("from Bankaccount where id=?", bankaccount.longValue());
+        final Bankaccount account = (Bankaccount) persistenceService.find("from Bankaccount where id=?1", bankaccount.longValue());
         bank_account_dept = account.getBankbranch().getBank().getName() + "-" + account.getBankbranch().getBranchname()
                 + "-" + account.getAccountnumber();
         if (department != null && department != -1) {
-            final Department dept = (Department) persistenceService.find("from Department where id=?", department.longValue());
+            final Department dept = (Department) persistenceService.find("from Department where id=?1", department.longValue());
             bank_account_dept = bank_account_dept + "-" + dept.getName();
         }
         if (LOGGER.isDebugEnabled())
