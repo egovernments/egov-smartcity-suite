@@ -128,31 +128,50 @@ $(document).ready(function () {
 
     $('#routerSearch').click(function (e) {
         if ($('#bulkRouter').valid()) {
-            oTable = $('#bulk_router_table');
-            oTable.dataTable({
-                "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-                "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-                "autoWidth": false,
-                "bDestroy": true,
+            $('#bulk_router_table').DataTable({
+                aLengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                sDom: "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+                processing: true,
+                serverSide: true,
+                sort: true,
+                filter: true,
+                responsive: true,
+                destroy: true,
+                autoWidth: false,
                 ajax: {
                     url: "/pgr/complaint/bulkrouter/?" + $("#bulkRouter").serialize(),
-                    type: "GET",
+                    type: "POST",
+                    data: function (args) {
+                        return {"args": JSON.stringify(args)};
+                    },
+                    error: function (xhr) {
+                        try {
+                            showValidationMessage(xhr.responseJSON);
+                        } catch (e) {
+                            bootbox.alert("No data found! ");
+                        }
+                        $('#view-login-audit-tbl_wrapper').hide();
+                    }
                 },
-                "columns": [
+                columns: [
                     {
                         "mData": "complaintType",
+                        "name": "complaintType.name",
                         "sTitle": "Grievance Type"
                     },
                     {
                         "mData": "boundaryType",
+                        "sortable": false,
                         "sTitle": "Boundary Type"
                     },
                     {
                         "mData": "boundary",
+                        "name": "boundary.name",
                         "sTitle": "Boundary"
                     },
                     {
                         "mData": "position",
+                        "name": "position.name",
                         "sTitle": "Position"
                     },
                     {
@@ -171,11 +190,11 @@ $(document).ready(function () {
     $('#routersave').click(function (e) {
         if ($('#bulkRouter').valid()) {
             if ($("#bulk_router_table").dataTable().fnSettings().aoData.length == 0) {
-                document.forms["bulkRouter"].submit();
+                $("#bulkRouter").submit();
             } else {
                 bootbox.confirm("Existing Router Data will be overridden, Are you sure?", function (result) {
                     if (result) {
-                        document.forms["bulkRouter"].submit();
+                        $("#bulkRouter").submit();
                     }
                 });
             }

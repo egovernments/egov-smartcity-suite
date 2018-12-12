@@ -54,9 +54,9 @@ import org.egov.infra.reporting.engine.ReportDisposition;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.web.support.ui.DataTable;
 import org.egov.pgr.entity.ComplaintRouter;
-import org.egov.pgr.web.contracts.response.RouterResponseAdaptor;
 import org.egov.pgr.entity.contract.RouterSearchRequest;
 import org.egov.pgr.service.ComplaintRouterService;
+import org.egov.pgr.web.contracts.response.RouterResponseAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -69,15 +69,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
-import static org.egov.infra.utils.StringUtils.appendTimestamp;
 import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
+import static org.egov.infra.utils.ApplicationConstant.ADMIN_HIERARCHY_TYPE;
+import static org.egov.infra.utils.StringUtils.appendTimestamp;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
 @RequestMapping("/complaint/router/search")
 public class SearchRoutingController {
 
-    private static final String ADMINISTRATION = "ADMINISTRATION";
     private static final String ROUTER_SEARCH = "router-search";
 
     @Autowired
@@ -93,7 +93,7 @@ public class SearchRoutingController {
 
     @ModelAttribute("boundaryTypes")
     public List<BoundaryType> boundaryTypes() {
-        return boundaryTypeService.getBoundaryTypeByHierarchyTypeName(ADMINISTRATION);
+        return boundaryTypeService.getBoundaryTypeByHierarchyTypeName(ADMIN_HIERARCHY_TYPE);
     }
 
     @GetMapping("update")

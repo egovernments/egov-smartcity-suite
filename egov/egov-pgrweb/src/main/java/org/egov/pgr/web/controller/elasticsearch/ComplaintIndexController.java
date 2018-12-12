@@ -75,6 +75,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.utils.ApplicationConstant.ADMIN_HIERARCHY_TYPE;
 
 @RestController
 @RequestMapping(value = "/complaint/aggregate")
@@ -118,14 +119,14 @@ public class ComplaintIndexController {
     @RequestMapping(value = "/departments", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<JSONObject> getDepartments() {
         final List<Department> departments = departmentService.getAllDepartments();
-        final List<JSONObject> jsonList = new ArrayList<>();
+        final List<JSONObject> departmentJsonData = new ArrayList<>();
         for (final Department department : departments) {
-            final JSONObject jsonObject = new JSONObject();
-            jsonObject.put("name", department.getName());
-            jsonObject.put("code", department.getCode());
-            jsonList.add(jsonObject);
+            final JSONObject departmentData = new JSONObject();
+            departmentData.put("name", department.getName());
+            departmentData.put("code", department.getCode());
+            departmentJsonData.add(departmentData);
         }
-        return jsonList;
+        return departmentJsonData;
     }
 
     @RequestMapping(value = "/complainttypes", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -161,8 +162,8 @@ public class ComplaintIndexController {
 
     @RequestMapping(value = "/wards", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<JSONObject> getWards() {
-        final List<Boundary> boundaryList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward",
-                "ADMINISTRATION");
+        final List<Boundary> boundaryList = boundaryService
+                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward", ADMIN_HIERARCHY_TYPE);
         final List<JSONObject> jsonList = new ArrayList<>();
 
         for (final Boundary boundary : boundaryList) {
@@ -216,12 +217,7 @@ public class ComplaintIndexController {
     @RequestMapping(value = "/complaints", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ComplaintIndex> getFilteredComplaints(@RequestBody final ComplaintDashBoardRequest complaintRequest,
                                                       @RequestParam final String fieldName, @RequestParam final String fieldValue) {
-        if (StringUtils.isEmpty(complaintRequest.getSortField()))
-            complaintRequest.setSortField(CREATED_DATE);
-        if (StringUtils.isEmpty(complaintRequest.getSortDirection()))
-            complaintRequest.setSortDirection("DESC");
-        if (complaintRequest.getSize() == 0)
-            complaintRequest.setSize(10000);
+        setPaginationParams(complaintRequest);
         return complaintIndexService.getFilteredComplaints(complaintRequest, fieldName, fieldValue, null, null);
     }
 
@@ -239,12 +235,7 @@ public class ComplaintIndexController {
     public List<ComplaintIndex> getFilteredComplaintsForSLASlabs(@RequestBody final ComplaintDashBoardRequest complaintRequest,
                                                                  @RequestParam final String fieldName, @RequestParam final Integer lowerLimit,
                                                                  @RequestParam final Integer upperLimit) {
-        if (StringUtils.isEmpty(complaintRequest.getSortField()))
-            complaintRequest.setSortField(CREATED_DATE);
-        if (StringUtils.isEmpty(complaintRequest.getSortDirection()))
-            complaintRequest.setSortDirection("DESC");
-        if (complaintRequest.getSize() == 0)
-            complaintRequest.setSize(10000);
+        setPaginationParams(complaintRequest);
         return complaintIndexService.getFilteredComplaints(complaintRequest, fieldName, StringUtils.EMPTY, lowerLimit,
                 upperLimit);
     }
@@ -263,12 +254,16 @@ public class ComplaintIndexController {
     @RequestMapping(value = "/feedbackcomplaints", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ComplaintIndex> getFeedbackComplaints(@RequestBody final ComplaintDashBoardRequest complaintRequest,
                                                       @RequestParam final String fieldName, @RequestParam final String fieldValue) {
+        setPaginationParams(complaintRequest);
+        return complaintIndexService.getFeedbackComplaints(complaintRequest, fieldName, fieldValue);
+    }
+
+    private void setPaginationParams(ComplaintDashBoardRequest complaintRequest) {
         if (StringUtils.isEmpty(complaintRequest.getSortField()))
             complaintRequest.setSortField(CREATED_DATE);
         if (StringUtils.isEmpty(complaintRequest.getSortDirection()))
             complaintRequest.setSortDirection("DESC");
         if (complaintRequest.getSize() == 0)
             complaintRequest.setSize(10000);
-        return complaintIndexService.getFeedbackComplaints(complaintRequest, fieldName, fieldValue);
     }
 }

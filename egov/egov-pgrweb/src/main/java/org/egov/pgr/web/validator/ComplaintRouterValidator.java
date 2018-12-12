@@ -46,31 +46,29 @@
  *
  */
 
-package org.egov.pgr.web.contracts.response;
+package org.egov.pgr.web.validator;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.pgr.entity.ComplaintRouter;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 
-import java.lang.reflect.Type;
-
-import static org.egov.infra.utils.ApplicationConstant.NA;
-
-public class BulkRouterResponseAdaptor implements JsonSerializer<ComplaintRouter> {
+@Component
+public class ComplaintRouterValidator implements Validator {
 
     @Override
-    public JsonElement serialize(ComplaintRouter compaintRouter, Type type, JsonSerializationContext jsc) {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("boundaryType", compaintRouter.getBoundary() == null ? NA :
-                compaintRouter.getBoundary().getBoundaryType().getName());
-        jsonObject.addProperty("boundary", compaintRouter.getBoundary() == null ? NA : compaintRouter.getBoundary().getName());
-        jsonObject.addProperty("complaintType", compaintRouter.getComplaintType() == null ? NA : compaintRouter
-                .getComplaintType().getName());
-        jsonObject.addProperty("position", compaintRouter.getPosition().getName());
-        jsonObject.addProperty("routerId", compaintRouter.getId());
-        return jsonObject;
+    public boolean supports(Class<?> clazz) {
+        return ComplaintRouter.class.equals(clazz);
+    }
+
+    @Override
+    public void validate(Object target, Errors errors) {
+
+        ComplaintRouter complaintRouter = (ComplaintRouter) target;
+        Boundary routerBoundary = complaintRouter.getBoundary();
+        if (routerBoundary != null && "City".equalsIgnoreCase(routerBoundary.getBoundaryType().getName()))
+            errors.rejectValue("boundary", "msg.router.cannot.delete");
     }
 
 }

@@ -49,14 +49,14 @@ package org.egov.pgr.web.controller.masters.router;
 
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
-import org.egov.pgr.entity.ComplaintRouter;
+import org.egov.infra.web.support.ui.DataTable;
 import org.egov.pgr.entity.ComplaintTypeCategory;
 import org.egov.pgr.entity.contract.BulkRouterRequest;
-import org.egov.pgr.web.contracts.response.BulkRouterResponseAdaptor;
 import org.egov.pgr.service.ComplaintRouterService;
 import org.egov.pgr.service.ComplaintTypeCategoryService;
+import org.egov.pgr.web.contracts.response.RouterResponseAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -70,7 +70,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
 import java.util.List;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.egov.infra.utils.ApplicationConstant.ADMIN_HIERARCHY_TYPE;
+import static org.egov.infra.web.utils.WebUtils.bindErrorToMap;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
 @RequestMapping("/complaint/bulkrouter")
@@ -87,7 +89,7 @@ public class BulkRouterGenerationController {
 
     @ModelAttribute("boundaryTypes")
     public List<BoundaryType> boundaryTypes() {
-        return boundaryTypeService.getBoundaryTypeByHierarchyTypeName("ADMINISTRATION");
+        return boundaryTypeService.getBoundaryTypeByHierarchyTypeName(ADMIN_HIERARCHY_TYPE);
     }
 
     @ModelAttribute("categories")
@@ -96,7 +98,7 @@ public class BulkRouterGenerationController {
     }
 
     @ModelAttribute
-    public BulkRouterRequest bulkRouterGenerator() {
+    public BulkRouterRequest bulkRouterRequest() {
         return new BulkRouterRequest();
     }
 
@@ -105,26 +107,24 @@ public class BulkRouterGenerationController {
         return "bulkrouter";
     }
 
-    @GetMapping(value = "/", produces = MediaType.TEXT_PLAIN_VALUE)
+    @PostMapping(value = "/", produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String search(BulkRouterRequest bulkRouterRequest) {
-        return new StringBuilder("{ \"data\":").append(toJSON(complaintRouterService.getRoutersByComplaintTypeBoundary(
-                bulkRouterRequest.getComplaintTypes(),
-                bulkRouterRequest.getBoundaries()),
-                ComplaintRouter.class, BulkRouterResponseAdaptor.class)).append("}").toString();
+    public ResponseEntity search(@Valid @ModelAttribute BulkRouterRequest bulkRouterRequest, BindingResult binder) {
+        return binder.hasErrors() ?
+                ResponseEntity.badRequest().body(bindErrorToMap(binder)) :
+                ResponseEntity.ok(new DataTable(complaintRouterService.getRoutersByComplaintTypeBoundary(bulkRouterRequest),
+                        bulkRouterRequest.draw()).toJson(RouterResponseAdaptor.class));
     }
 
     @PostMapping("create")
-    public String createComplaintBulkRouter(@Valid BulkRouterRequest bulkRouterRequest,
-                                            RedirectAttributes redirectAttrs,
-                                            BindingResult errors, Model model) {
-        if (errors.hasErrors()) {
-            model.addAttribute("message", "router.unble.to.save");
+    public String createComplaintBulkRouter(@Valid BulkRouterRequest bulkRouterRequest, RedirectAttributes redirectAttrs,
+                                            BindingResult binding, Model model) {
+        if (binding.hasErrors()) {
+            model.addAttribute("message", "router.unable.to.save");
             return "bulkrouter";
-        } else {
-            complaintRouterService.createBulkRouter(bulkRouterRequest);
-            redirectAttrs.addFlashAttribute("message", "msg.bulkrouter.success");
-            return "redirect:/complaint/bulkrouter";
         }
+        complaintRouterService.createBulkRouter(bulkRouterRequest);
+        redirectAttrs.addFlashAttribute("message", "msg.bulkrouter.success");
+        return "redirect:/complaint/bulkrouter";
     }
 }

@@ -52,6 +52,7 @@ import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.pgr.entity.ComplaintRouter;
 import org.egov.pgr.service.ComplaintRouterService;
+import org.egov.pgr.web.validator.ComplaintRouterValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -64,6 +65,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.List;
+
+import static org.egov.infra.utils.ApplicationConstant.ADMIN_HIERARCHY_TYPE;
 
 @Controller
 @RequestMapping(value = "/complaint/router")
@@ -83,7 +86,7 @@ class UpdateRouterController {
 
     @ModelAttribute("boundaryTypes")
     public List<BoundaryType> boundaryTypes() {
-        return boundaryTypeService.getBoundaryTypeByHierarchyTypeName("ADMINISTRATION");
+        return boundaryTypeService.getBoundaryTypeByHierarchyTypeName(ADMIN_HIERARCHY_TYPE);
     }
 
     @ModelAttribute

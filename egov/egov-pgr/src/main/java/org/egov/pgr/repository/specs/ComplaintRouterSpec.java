@@ -49,6 +49,7 @@
 package org.egov.pgr.repository.specs;
 
 import org.egov.pgr.entity.ComplaintRouter;
+import org.egov.pgr.entity.contract.BulkRouterRequest;
 import org.egov.pgr.entity.contract.RouterSearchRequest;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -58,6 +59,7 @@ import javax.persistence.criteria.Predicate;
 public final class ComplaintRouterSpec {
 
     private static final String COMPLAINTTYPE = "complaintType";
+    private static final String BOUNDARY_FIELD = "boundary";
 
     private ComplaintRouterSpec() {
         // Due to static method
@@ -69,14 +71,30 @@ public final class ComplaintRouterSpec {
             Predicate predicate = builder.conjunction();
             if (routerSearchRequest.getBoundaryId() != null)
                 predicate.getExpressions()
-                        .add(builder.equal(root.get("boundary"), routerSearchRequest.getBoundaryId()));
+                        .add(builder.equal(root.get(BOUNDARY_FIELD), routerSearchRequest.getBoundaryId()));
             if (routerSearchRequest.getBoundaryTypeId() != null)
-                predicate.getExpressions().add(builder.equal(root.get("boundary").get("boundaryType"),
+                predicate.getExpressions().add(builder.equal(root.get(BOUNDARY_FIELD).get("boundaryType"),
                         routerSearchRequest.getBoundaryTypeId()));
             if (routerSearchRequest.getComplaintTypeId() != null)
                 predicate.getExpressions()
                         .add(builder.equal(root.get(COMPLAINTTYPE), routerSearchRequest.getComplaintTypeId()));
 
+            predicate.getExpressions().add(builder.or(builder.isNull(root.get(COMPLAINTTYPE)),
+                    builder.equal(root.get(COMPLAINTTYPE).get("isActive"), true)));
+            return predicate;
+        };
+    }
+
+    public static Specification<ComplaintRouter> searchBulk(BulkRouterRequest bulkRouterRequest) {
+        return (root, query, builder) -> {
+            root.join(COMPLAINTTYPE, JoinType.LEFT);
+            Predicate predicate = builder.conjunction();
+            if (!bulkRouterRequest.getBoundaries().isEmpty())
+                predicate.getExpressions()
+                        .add(root.get(BOUNDARY_FIELD).in(bulkRouterRequest.getBoundaries()));
+            if (!bulkRouterRequest.getComplaintTypes().isEmpty())
+                predicate.getExpressions()
+                        .add(root.get(COMPLAINTTYPE).in(bulkRouterRequest.getComplaintTypes()));
             predicate.getExpressions().add(builder.or(builder.isNull(root.get(COMPLAINTTYPE)),
                     builder.equal(root.get(COMPLAINTTYPE).get("isActive"), true)));
             return predicate;

@@ -65,6 +65,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
 import java.util.List;
 
+import static org.egov.infra.utils.ApplicationConstant.ADMIN_HIERARCHY_TYPE;
+
 @Controller
 @RequestMapping("/complaint/router/create")
 class CreateRouterController {
@@ -73,12 +75,13 @@ class CreateRouterController {
 
     @Autowired
     private BoundaryTypeService boundaryTypeService;
+
     @Autowired
     private ComplaintRouterService complaintRouterService;
 
     @ModelAttribute("boundaryTypes")
     public List<BoundaryType> boundaryTypes() {
-        return boundaryTypeService.getBoundaryTypeByHierarchyTypeName("ADMINISTRATION");
+        return boundaryTypeService.getBoundaryTypeByHierarchyTypeName(ADMIN_HIERARCHY_TYPE);
     }
 
     @ModelAttribute
@@ -98,11 +101,10 @@ class CreateRouterController {
         if (errors.hasErrors() || (complaintRouterService.validateRouter(complaintRouter))) {
             model.addAttribute("warning", "router.exists");
             return CREATE_ROUTER;
-        } else {
-            complaintRouterService.createComplaintRouter(complaintRouter);
-            redirectAttrs.addFlashAttribute("complaintRouter", complaintRouter);
-            redirectAttrs.addFlashAttribute("message", "msg.router.success");
-            return "redirect:/complaint/router/view/" + complaintRouter.getId();
         }
+        complaintRouterService.createComplaintRouter(complaintRouter);
+        redirectAttrs.addFlashAttribute("complaintRouter", complaintRouter);
+        redirectAttrs.addFlashAttribute("message", "msg.router.success");
+        return "redirect:/complaint/router/view/" + complaintRouter.getId();
     }
 }

@@ -75,6 +75,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.egov.infra.utils.ApplicationConstant.ADMIN_HIERARCHY_TYPE;
 
 @Service
 @Transactional(readOnly = true)
@@ -176,9 +177,12 @@ public class ComplaintRouterService {
         return reportService.createReport(reportRequest);
     }
 
-    public List<ComplaintRouter> getRoutersByComplaintTypeBoundary(List<ComplaintType> complaintTypes,
-                                                                   List<Boundary> boundaries) {
-        return complaintRouterRepository.findRoutersByComplaintTypesBoundaries(complaintTypes, boundaries);
+    public Page<ComplaintRouter> getRoutersByComplaintTypeBoundary(BulkRouterRequest bulkRouterRequest) {
+        Pageable pageable = new PageRequest(bulkRouterRequest.pageNumber(),
+                bulkRouterRequest.pageSize(),
+                bulkRouterRequest.orderDir(), bulkRouterRequest.orderBy());
+        return complaintRouterRepository
+                .findAll(ComplaintRouterSpec.searchBulk(bulkRouterRequest), pageable);
     }
 
     public ComplaintRouter getComplaintRouter(Complaint complaint) {
@@ -186,7 +190,7 @@ public class ComplaintRouterService {
         if (complaint.getLocation() == null) {
             complaintRouter = complaintRouterRepository.findByOnlyComplaintType(complaint.getComplaintType());
             if (complaintRouter == null)
-                complaintRouter = complaintRouterRepository.findCityAdminGrievanceOfficer("ADMINISTRATION");
+                complaintRouter = complaintRouterRepository.findCityAdminGrievanceOfficer(ADMIN_HIERARCHY_TYPE);
 
         } else {
             complaintRouter = complaintRouterRepository

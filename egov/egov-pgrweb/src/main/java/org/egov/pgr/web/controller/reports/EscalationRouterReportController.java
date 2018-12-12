@@ -71,6 +71,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.Collections;
 
 import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
+import static org.egov.infra.utils.ApplicationConstant.ADMIN_HIERARCHY_TYPE;
 
 @Controller
 @RequestMapping("/report/escalationrouter")
@@ -95,7 +96,7 @@ public class EscalationRouterReportController {
         model.addAttribute("categories", complaintTypeCategoryService.findAll());
         model.addAttribute("complaintTypes", Collections.emptyList());
         model.addAttribute("wardList",
-                boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward", "ADMINISTRATION"));
+                boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward", ADMIN_HIERARCHY_TYPE));
         return "routerescalation-report";
     }
 

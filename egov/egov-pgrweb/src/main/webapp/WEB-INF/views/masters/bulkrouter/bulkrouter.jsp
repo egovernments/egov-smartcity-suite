@@ -46,7 +46,7 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
@@ -57,7 +57,7 @@
             <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
         </c:if>
         <form:form id="bulkRouter" name="bulkRouter" method="post" class="form-horizontal form-groups-bordered"
-                   modelAttribute="bulkRouterGenerator" action="bulkrouter/create">
+                   modelAttribute="bulkRouterRequest" action="bulkrouter/create">
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading ">
                     <div class="panel-title">
@@ -66,7 +66,7 @@
                 </div>
                 <div class="panel-body custom-form">
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">
+                        <label class="col-sm-3 control-label" for="complaintTypeCategory">
                             <spring:message code="lbl.category"/><span class="mandatory"></span></label>
                         <div class="col-sm-6 add-margin">
                             <form:select path="complaintTypeCategory" id="complaintTypeCategory"
@@ -79,7 +79,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">
+                        <label class="col-sm-3 control-label" for="complaintTypes">
                             <spring:message code="lbl.complaintType"/><span class="mandatory"></span></label>
                         <div class="col-sm-6 add-margin">
                             <form:select style="overflow:auto;" multiple="true" path="complaintTypes"
@@ -90,7 +90,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">
+                        <label class="col-sm-3 control-label" for="boundaryType">
                             <spring:message code="lbl.router.boundaryType"/><span class="mandatory"></span></label>
                         <div class="col-sm-6 add-margin">
                             <form:select path="boundaryType" id="boundaryType"
@@ -103,7 +103,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">
+                        <label class="col-sm-3 control-label" for="boundaries">
                             <spring:message code="lbl.router.boundary"/><span class="mandatory"></span></label>
                         <div class="col-sm-6 add-margin">
                             <form:select multiple="true" path="boundaries" id="boundaries" cssClass="form-control"
@@ -113,7 +113,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">
+                        <label class="col-sm-3 control-label" for="position">
                             <spring:message code="lbl.router.position"/><span class="mandatory"></span></label>
                         <div class="col-sm-6">
                             <input id="position" type="text" class="form-control typeahead" placeholder=""
@@ -138,28 +138,20 @@
             <br>
             <div class="row hide data-save">
                 <div class="text-center">
-                    <button type="button" class="btn btn-primary" id="routersave"><spring:message
-                            code="lbl.save"/></button>
-                    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message
-                            code="lbl.close"/></a>
+                    <button type="button" class="btn btn-primary" id="routersave">
+                        <spring:message code="lbl.save"/>
+                    </button>
+                    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()">
+                        <spring:message code="lbl.close"/>
+                    </a>
                 </div>
             </div>
         </form:form>
     </div>
 </div>
-<link rel="stylesheet"
-      href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-<link rel="stylesheet"
-      href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
-<script type="text/javascript"
-        src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
-<script type="text/javascript"
-        src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-<script type="text/javascript"
-        src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
-<script type="text/javascript"
-        src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-<script type="text/javascript"
-        src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
-<script type="text/javascript"
-        src="<cdn:url  value='/resources/js/app/bulkrouter.js?rnd=${app_release_no}'/>"></script>
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+<script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js'  context='/egi'/>"></script>
+<script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js'  context='/egi'/>"></script>
+<script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js'  context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url  value='/resources/js/app/bulkrouter.js?rnd=${app_release_no}'/>"></script>

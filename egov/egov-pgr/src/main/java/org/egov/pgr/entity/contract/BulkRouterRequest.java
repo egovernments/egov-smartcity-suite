@@ -49,18 +49,26 @@ package org.egov.pgr.entity.contract;
 
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.web.support.search.DataTableSearchRequest;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ComplaintTypeCategory;
 import org.egov.pims.commons.Position;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
-public class BulkRouterRequest {
+public class BulkRouterRequest extends DataTableSearchRequest {
 
+    @NotEmpty
     private List<Boundary> boundaries;
+    @NotEmpty
     private List<ComplaintType> complaintTypes;
+    @NotNull
     private ComplaintTypeCategory complaintTypeCategory;
+    @NotNull
     private BoundaryType boundaryType;
+    @NotNull
     private Position position;
 
     public List<Boundary> getBoundaries() {
