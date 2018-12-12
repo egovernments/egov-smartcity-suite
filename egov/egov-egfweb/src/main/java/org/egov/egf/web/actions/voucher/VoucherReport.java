@@ -93,13 +93,13 @@ public class VoucherReport {
         //persistenceService.setType(CGeneralLedgerDetail.class);
         if (generalLedger != null) {
             final List<CGeneralLedgerDetail> generalLedgerDetail = persistenceService.findAllBy(
-                    "from CGeneralLedgerDetail where generalLedgerId.id=?",generalLedger.getId());
+                    "from CGeneralLedgerDetail where generalLedgerId.id=?1",generalLedger.getId());
             if (generalLedgerDetail.size() > 1)
                 return MULTIPLE;
             if (generalLedgerDetail.size() > 0) {
                 final Integer detailTypeId = generalLedgerDetail.get(0).getDetailTypeId().getId();
                 //persistenceService.setType(Accountdetailtype.class);
-                final List detailType = persistenceService.findAllBy("from Accountdetailtype where id=?", detailTypeId);
+                final List detailType = persistenceService.findAllBy("from Accountdetailtype where id=?1", detailTypeId);
                 egovCommon.setPersistenceService(persistenceService);
                 final Integer detailKeyId = generalLedgerDetail.get(0).getDetailKeyId();
                 EntityType entityType = null;
@@ -147,7 +147,7 @@ public class VoucherReport {
     private CGeneralLedger getGeneralLedger(final Integer voucherId, final CGeneralLedger voucherLineId) {
         //persistenceService.setType(CGeneralLedger.class);
     	return (CGeneralLedger) persistenceService.find(
-                "from CGeneralLedger where voucherHeaderId.id=? and glcode=? and voucherlineId=?", Long.valueOf(voucherId),
+                "from CGeneralLedger where voucherHeaderId.id=?1 and glcode=?2 and voucherlineId=?3", Long.valueOf(voucherId),
                 voucherLineId.getGlcode(),voucherLineId.getVoucherlineId());
     }
 

@@ -100,7 +100,7 @@ public class BaseRevenueAction extends BaseFormAction {
 
     public String beforeModify() {
         final StringBuffer query = new StringBuffer();
-        query.append("From Grant gr where gr.financialYear.id=? and gr.grantType=? and gr.department.id=?");
+        query.append("From Grant gr where gr.financialYear.id=?1 and gr.grantType=?2 and gr.department.id=?3");
         grantsList = persistenceService.findAllBy(query.toString(), grant.getFinancialYear().getId(), grant.getGrantType(),
                 grant.getDepartment().getId());
         if (mode.equals("edit"))

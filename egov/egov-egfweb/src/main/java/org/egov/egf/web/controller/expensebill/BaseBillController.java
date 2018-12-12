@@ -249,11 +249,11 @@ public abstract class BaseBillController extends BaseVoucherController {
 
                 dataType = method.getReturnType().getSimpleName();
                 if ("Long".equals(dataType))
-                    entity = (EntityType) persistenceService.find("from " + tableName + " where id=? order by name",
+                    entity = (EntityType) persistenceService.find("from " + tableName + " where id=?1 order by name",
                             payeeDetails.getAccountDetailKeyId()
                                     .longValue());
                 else
-                    entity = (EntityType) persistenceService.find("from " + tableName + " where id=? order by name",
+                    entity = (EntityType) persistenceService.find("from " + tableName + " where id=?1 order by name",
                             payeeDetails.getAccountDetailKeyId());
             } catch (final Exception e) {
                 throw new ApplicationRuntimeException(e.getMessage());

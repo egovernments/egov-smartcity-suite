@@ -267,7 +267,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
                 && null != voucherHeader.getVouchermis().getSchemeid())
             addDropdownData(
                     "subschemeList",
-                    getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive=true order by name",
+                    getPersistenceService().findAllBy("from SubScheme where scheme.id=?1 and isActive=true order by name",
                             voucherHeader.getVouchermis().getSchemeid().getId()));
     }
 
@@ -381,7 +381,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
                         voucherDetail.getSubledgerCode()).toString() : null; // Debit or Credit.
                 if (voucherDetail.getFunctionDetail() != null && !voucherDetail.getFunctionDetail().equalsIgnoreCase("")
                         && !voucherDetail.getFunctionDetail().equalsIgnoreCase("0")) {
-                    final CFunction function = (CFunction) persistenceService.find("from CFunction where id = ?",
+                    final CFunction function = (CFunction) persistenceService.find("from CFunction where id = ?1",
                             Long.parseLong(voucherDetail.getFunctionDetail()));
                     subledgertDetailMap.put(VoucherConstant.FUNCTIONCODE, function != null ? function.getCode() : "");
                 }
@@ -584,7 +584,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
                         addActionError(getText("journalvoucher.subledger.amtnotmatchinng", new String[] { map.get("glcode")
                                 .toString() }));
                     else {
-                        final CFunction function = (CFunction) persistenceService.find("from CFunction where id=?",
+                        final CFunction function = (CFunction) persistenceService.find("from CFunction where id=?1",
                                 Long.valueOf(functionId));
                         addActionError(getText("journalvoucher.subledger.amtnotmatchinngFunc", new String[] {
                                 map.get("glcode").toString(), function.getName() }));
@@ -612,7 +612,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
             final Integer branchId = Integer.valueOf(contraBean.getBankBranchId().substring(index1 + 1,
                     contraBean.getBankBranchId().length()));
             final List<Bankaccount> bankAccountList = getPersistenceService().findAllBy(
-                    "from Bankaccount ba where ba.bankbranch.id=? " +
+                    "from Bankaccount ba where ba.bankbranch.id=?1 " +
                             "  and isactive=true order by id", branchId);
             addDropdownData("accNumList", bankAccountList);
             if (LOGGER.isDebugEnabled())
@@ -627,7 +627,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
             final int index1 = bankBranchId.indexOf('-');
             final Integer branchId = Integer.valueOf(bankBranchId.substring(index1 + 1, bankBranchId.length()));
             final List<Bankaccount> bankAccountList = getPersistenceService().findAllBy(
-                    "from Bankaccount ba where ba.bankbranch.id=? " +
+                    "from Bankaccount ba where ba.bankbranch.id=?1 " +
                             "  and isactive=true order by id", branchId);
             addDropdownData("accNumList", bankAccountList);
             if (LOGGER.isDebugEnabled())
@@ -667,7 +667,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
                 LOGGER.debug("Bank branch list size :" + bankBranchList.size());
             addDropdownData("bankList", bankBranchList);
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown " ,
                     new HibernateException(e.getMessage()));
 
         }
@@ -810,7 +810,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
         try {
             voucherHeader.setVoucherDate(sdf.parse(sdf.format(currDate)));
         } catch (final ParseException e) {
-            LOGGER.error("Inside loadDefalutDates" + e.getMessage(), e);
+            LOGGER.error("Inside loadDefalutDates" , e);
             throw new ValidationException(Arrays.asList(new ValidationError("Exception while formatting voucher date",
                     "Transaction failed")));
         }

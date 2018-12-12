@@ -108,7 +108,7 @@ public class JournalVoucherAction extends BaseVoucherAction
     private Integer departmentId;
     private String wfitemstate;
     private VoucherHelper voucherHelper;
-    private static final String VOUCHERQUERY = " from CVoucherHeader where id=?";
+    private static final String VOUCHERQUERY = " from CVoucherHeader where id=?1";
     private static final String ACTIONNAME = "actionName";
     private SimpleWorkflowService<CVoucherHeader> voucherWorkflowService;
     private static final String VHID = "vhid";

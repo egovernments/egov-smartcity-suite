@@ -287,7 +287,7 @@ public class CancelVoucherAction extends BaseFormAction {
             final List<BigInteger> list = query1.list();
 
             for (final BigInteger b : list)
-                voucherList.add((CVoucherHeader) persistenceService.find("from CVoucherHeader  where id=?", b.longValue()));
+                voucherList.add((CVoucherHeader) persistenceService.find("from CVoucherHeader  where id=?1", b.longValue()));
         } else if (voucherHeader.getType().equalsIgnoreCase(FinancialConstants.STANDARD_VOUCHER_TYPE_CONTRA)) {
             contraVoucherQry = "from CVoucherHeader vh where vh.status =" + FinancialConstants.CREATEDVOUCHERSTATUS
                     + " and ( vh.isConfirmed != 1 or vh.isConfirmed is null) ";
@@ -328,7 +328,7 @@ public class CancelVoucherAction extends BaseFormAction {
         String voucherId = "";
         final Session session = persistenceService.getSession();
         for (int i = 0; i < selectedVhs.length; i++) {
-            voucherObj = (CVoucherHeader) persistenceService.find("from CVoucherHeader vh where vh.id=?", selectedVhs[i]);
+            voucherObj = (CVoucherHeader) persistenceService.find("from CVoucherHeader vh where vh.id=?1", selectedVhs[i]);
             final boolean value = cancelBillAndVoucher.canCancelVoucher(voucherObj);
 
             if (!value) {
@@ -406,7 +406,7 @@ public class CancelVoucherAction extends BaseFormAction {
                 + " where  id=:billId";
         String moduleType = "", description = "", billstatus = "";
         final EgBillregistermis billMis = (EgBillregistermis) persistenceService.find(
-                "from  EgBillregistermis  mis where voucherHeader.id=?", vhId);
+                "from  EgBillregistermis  mis where voucherHeader.id=?1", vhId);
 
         if (billMis != null && billMis.getEgBillregister().getState() == null) {
             if (LOGGER.isDebugEnabled())

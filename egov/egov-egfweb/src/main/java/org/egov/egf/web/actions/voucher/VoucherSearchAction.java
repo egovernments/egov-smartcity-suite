@@ -200,7 +200,7 @@ public class VoucherSearchAction extends BaseFormAction {
 
     public Map<String, String> getVoucherNameMap(final String type) {
         final List<Object> voucherNameList = getPersistenceService().findAllBy(
-                "select  distinct name from  CVoucherHeader where type=?", type);
+                "select  distinct name from  CVoucherHeader where type=?1", type);
         nameList = new LinkedHashMap<>();
 
         for (final Object voucherName : voucherNameList)
@@ -288,7 +288,7 @@ public class VoucherSearchAction extends BaseFormAction {
             for (final CVoucherHeader voucherheader : list) {
                 if (voucherheader.getState() != null) {
                     final EgBillregistermis billMis = (EgBillregistermis) persistenceService.find(
-                            "from EgBillregistermis where voucherHeader.id=?", voucherheader.getId());
+                            "from EgBillregistermis where voucherHeader.id=?1", voucherheader.getId());
                     if (billMis != null) {
                         /*
                          * bill state will be null if created from create JV screen and voucher is in end state
@@ -405,12 +405,12 @@ public class VoucherSearchAction extends BaseFormAction {
     }
 
     public String ajaxLoadSchemes() {
-        schemeList = persistenceService.findAllBy(" from Scheme where fund=?", voucherHeader.getFundId());
+        schemeList = persistenceService.findAllBy(" from Scheme where fund=?1", voucherHeader.getFundId());
         return "schemes";
     }
 
     public String ajaxLoadSubSchemes() {
-        schemeList = persistenceService.findAllBy(" from SubScheme where scheme=?", voucherHeader.getVouchermis()
+        schemeList = persistenceService.findAllBy(" from SubScheme where scheme=?1", voucherHeader.getVouchermis()
                 .getSchemeid());
         return "schemes";
     }
@@ -420,7 +420,7 @@ public class VoucherSearchAction extends BaseFormAction {
     }
 
     public void setSchemeId(final Integer schemeId) {
-        voucherHeader.getVouchermis().setSchemeid((Scheme) persistenceService.find(" from Scheme where id=?", schemeId));
+        voucherHeader.getVouchermis().setSchemeid((Scheme) persistenceService.find(" from Scheme where id=?1", schemeId));
     }
 
     public void setVoucherHeader(final CVoucherHeader voucherHeader) {

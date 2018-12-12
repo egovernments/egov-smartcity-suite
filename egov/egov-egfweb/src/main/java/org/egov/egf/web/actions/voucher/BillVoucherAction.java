@@ -150,7 +150,7 @@ public class BillVoucherAction extends BaseVoucherAction {
             final String statusid = getApprovalStatusForBills();
             query.append("from EgBillregister br where br.status.id in(")
                     .append(statusid)
-                    .append(")and ( br.egBillregistermis.voucherHeader is null or br.egBillregistermis.voucherHeader in (from CVoucherHeader vh where vh.status =? ))");
+                    .append(")and ( br.egBillregistermis.voucherHeader is null or br.egBillregistermis.voucherHeader in (from CVoucherHeader vh where vh.status =?1 ))");
             if (null != billNumber && StringUtils.isNotEmpty(billNumber))
                 query.append(" and br.billnumber='").append(billNumber).append("'");
             if (null != voucherHeader.getVouchermis().getDepartmentid())
@@ -190,7 +190,7 @@ public class BillVoucherAction extends BaseVoucherAction {
             if ("invalid".equals(s))
                 break;
             final WorkflowAction action = (WorkflowAction) getPersistenceService().find(
-                    " from WorkflowAction where type='CVoucherHeader' and name=?", s.toString());
+                    " from WorkflowAction where type='CVoucherHeader' and name=?1", s.toString());
             validButtons.add(action);
         }
         return validButtons;

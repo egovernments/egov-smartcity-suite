@@ -163,7 +163,7 @@ public class TransactionSummaryController {
                     transactionSummary.setFinancialyear(financialYearDAO.getFinancialYearById(transactionSummaryDto
                             .getFinancialyear().getId()));
 
-                    transactionSummary.setFunctionid((CFunction) persistenceService.find("from CFunction where id=?",
+                    transactionSummary.setFunctionid((CFunction) persistenceService.find("from CFunction where id=?1",
                             transactionSummaryDto.getFunctionid().getId()));
                     transactionSummary.setFund((Fund) fundHibernateDAO.fundById(transactionSummaryDto.getFund().getId(), false));
 

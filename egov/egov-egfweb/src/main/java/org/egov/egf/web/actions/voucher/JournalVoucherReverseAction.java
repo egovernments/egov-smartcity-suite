@@ -209,7 +209,7 @@ public class JournalVoucherReverseAction extends BaseVoucherAction {
 
     public Map<String, String> getVoucherNameMap(final String type) {
         final List<Object> voucherNameList = getPersistenceService().findAllBy(
-                "select  distinct name from  CVoucherHeader where type=?", type);
+                "select  distinct name from  CVoucherHeader where type=?1", type);
         nameList = new LinkedHashMap<String, String>();
 
         for (final Object voucherName : voucherNameList)

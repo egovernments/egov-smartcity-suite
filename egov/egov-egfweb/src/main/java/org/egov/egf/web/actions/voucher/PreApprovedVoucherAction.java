@@ -195,9 +195,9 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
     protected static final String VOUCHEREDIT = "voucheredit";
     private static final String VHID = "vhid";
     private static final String CGN = "cgn";
-    private static final String VOUCHERQUERY = " from CVoucherHeader where id=?";
-    private static final String VOUCHERQUERYBYCGN = " from CVoucherHeader where cgn=?";
-    private static final String ACCDETAILTYPEQUERY = " from Accountdetailtype where id=?";
+    private static final String VOUCHERQUERY = " from CVoucherHeader where id=?1";
+    private static final String VOUCHERQUERYBYCGN = " from CVoucherHeader where cgn=?1";
+    private static final String ACCDETAILTYPEQUERY = " from Accountdetailtype where id=?1";
     private static final String ACTIONNAME = "actionName";
     private String values = "", from = "";
     private String methodName = "";
@@ -247,12 +247,12 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
         if (isFieldMandatory("department"))
             preApprovedVoucherList = getPersistenceService()
                     .findAllBy(
-                            " from EgBillregister br where br.status=? and br.egBillregistermis.egDepartment.id=? and ( br.egBillregistermis.voucherHeader is null or br.egBillregistermis.voucherHeader in (from CVoucherHeader vh where vh.status =4 )) ",
+                            " from EgBillregister br where br.status=?1 and br.egBillregistermis.egDepartment.id=?2 and ( br.egBillregistermis.voucherHeader is null or br.egBillregistermis.voucherHeader in (from CVoucherHeader vh where vh.status =4 )) ",
                             egwStatus, getCurrentDepartment().getId());
         else
             preApprovedVoucherList = getPersistenceService()
                     .findAllBy(
-                            " from EgBillregister br where br.status=? and ( br.egBillregistermis.voucherHeader is null or br.egBillregistermis.voucherHeader in (from CVoucherHeader vh where vh.status =4 )) ",
+                            " from EgBillregister br where br.status=?1 and ( br.egBillregistermis.voucherHeader is null or br.egBillregistermis.voucherHeader in (from CVoucherHeader vh where vh.status =4 )) ",
                             egwStatus);
 
         if (LOGGER.isDebugEnabled())
@@ -273,7 +273,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
 
             }
         }
-        egBillregister = (EgBillregister) getPersistenceService().find(" from EgBillregister where id=?",
+        egBillregister = (EgBillregister) getPersistenceService().find(" from EgBillregister where id=?1",
                 Long.valueOf(parameters.get(BILLID)[0]));
         if(egBillregister.getEgBillregistermis().getVoucherHeader() != null && egBillregister.getEgBillregistermis().getVoucherHeader().getStatus() != FinancialConstants.CANCELLEDVOUCHERSTATUS)
             voucherHeader = egBillregister.getEgBillregistermis().getVoucherHeader();
@@ -468,7 +468,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
             else
                 result = "voucherview";
         billRegister = (EgBillregister) persistenceService.find(
-                "select mis.egBillregister from EgBillregistermis mis where mis.voucherHeader.id=?", voucherHeader.getId());
+                "select mis.egBillregister from EgBillregistermis mis where mis.voucherHeader.id=?1", voucherHeader.getId());
         
         return result;
     }
@@ -497,7 +497,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
 
         billDetails = new HashMap<String, Object>();
         if (parameters.get("from") != null && FinancialConstants.STANDARD_VOUCHER_TYPE_CONTRA.equals(parameters.get("from")[0])) {
-            contraVoucher = (ContraJournalVoucher) persistenceService.find(" from ContraJournalVoucher where id=?",
+            contraVoucher = (ContraJournalVoucher) persistenceService.find(" from ContraJournalVoucher where id=?1",
                     Long.valueOf(parameters.get(VHID)[0]));
             voucherHeader = contraVoucher.getVoucherHeaderId();
             from = FinancialConstants.STANDARD_VOUCHER_TYPE_CONTRA;
@@ -523,7 +523,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
                 "classpath:org/egov/infstr/beanfactory/applicationContext-egf.xml" });
         voucherHeader = (CVoucherHeader) persistenceService.find(VOUCHERQUERY, Long.valueOf(parameters.get(VHID)[0]));
         if (voucherHeader.getType().equals(FinancialConstants.STANDARD_VOUCHER_TYPE_CONTRA)) {
-            contraVoucher = (ContraJournalVoucher) persistenceService.find("from ContraJournalVoucher where id=?",
+            contraVoucher = (ContraJournalVoucher) persistenceService.find("from ContraJournalVoucher where id=?1",
                     Long.valueOf(parameters.get("contraId")[0]));
             final ContraService contraService = (ContraService) applicationContext.getBean("contraService");
             contraWorkflowService.transition(parameters.get(ACTIONNAME)[0], contraVoucher, parameters.get("comments")[0]);
@@ -745,7 +745,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
     public String saveAsWorkingCopy() throws ValidationException {
         methodName = "saveAsWorkingCopy";
         if (parameters.get(VHID)[0].equals("")) {
-            egBillregister = (EgBillregister) getPersistenceService().find(" from EgBillregister where id=?",
+            egBillregister = (EgBillregister) getPersistenceService().find(" from EgBillregister where id=?1",
                     Long.valueOf(parameters.get(BILLID)[0]));
             final boolean budgetcheck = voucherService.budgetaryCheck(egBillregister);
             if (budgetcheck) {
@@ -860,7 +860,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
                 val = voucherHeader.getDescription();
             else if ("billnumber".equals(name))
                 val = ((EgBillregister) getPersistenceService().find(
-                        " from EgBillregister br where br.egBillregistermis.voucherHeader=?", voucherHeader)).getBillnumber();
+                        " from EgBillregister br where br.egBillregistermis.voucherHeader=?1", voucherHeader)).getBillnumber();
         } else if (name.equals("fund") && egBillregister.getEgBillregistermis().getFund() != null)
             val = egBillregister.getEgBillregistermis().getFund().getName();
         else if (name.equals("fundsource") && egBillregister.getEgBillregistermis().getFundsource() != null)
@@ -899,7 +899,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
         final Map<String, Object> names = new HashMap<String, Object>();
         // to get the ledger.
         final List<CGeneralLedger> gllist = getPersistenceService().findAllBy(
-                " from CGeneralLedger where voucherHeaderId.id=? order by voucherlineId",
+                " from CGeneralLedger where voucherHeaderId.id=?1 order by voucherlineId",
                 Long.valueOf(voucherHeader.getId() + ""));
         Map<String, Object> temp = null;
         final List<Map<String, Object>> tempList = new ArrayList<Map<String, Object>>();
@@ -907,12 +907,12 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
             if (gl.getFunctionId() != null)
                 names.put(
                         gl.getGlcodeId().getGlcode(),
-                        ((CFunction) getPersistenceService().find(" from CFunction where id=?", Long.valueOf(gl.getFunctionId())))
+                        ((CFunction) getPersistenceService().find(" from CFunction where id=?1", Long.valueOf(gl.getFunctionId())))
                                 .getName());
 
             // get subledger.
             final List<CGeneralLedgerDetail> gldetailList = getPersistenceService().findAllBy(
-                    "from CGeneralLedgerDetail where generalLedgerId.id=?", gl.getId());
+                    "from CGeneralLedgerDetail where generalLedgerId.id=?1", gl.getId());
             if (gldetailList != null && !gldetailList.isEmpty()) {
                 for (final CGeneralLedgerDetail gldetail : gldetailList) {
                     if (chartOfAccountDetailService.getByGlcodeIdAndDetailTypeId(gl.getGlcodeId().getId(),
@@ -940,7 +940,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
         final List<Map<String, Object>> tempList = new ArrayList<Map<String, Object>>();
         final List<Map<String, Object>> payeeList = new ArrayList<Map<String, Object>>();
 
-        final List<EgBilldetails> egBillDetails = persistenceService.findAllBy("from EgBilldetails where  egBillregister.id=? ",
+        final List<EgBilldetails> egBillDetails = persistenceService.findAllBy("from EgBilldetails where  egBillregister.id=?1 ",
                 egBillregister.getId());
 
         for (final EgBilldetails billdetails : egBillDetails) {
@@ -948,9 +948,9 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
             if (billdetails.getFunctionid() != null)
                 temp.put(
                         Constants.FUNCTION,
-                        ((CFunction) getPersistenceService().find("from CFunction where id=?",
+                        ((CFunction) getPersistenceService().find("from CFunction where id=?1",
                                 Long.valueOf(billdetails.getFunctionid() + ""))).getName());
-            coa = (CChartOfAccounts) getPersistenceService().find("from CChartOfAccounts where id=?",
+            coa = (CChartOfAccounts) getPersistenceService().find("from CChartOfAccounts where id=?1",
                     Long.valueOf(billdetails.getGlcodeid() + ""));
             temp.put(Constants.GLCODE, coa.getGlcode());
             temp.put("accounthead", coa.getName());
@@ -993,18 +993,18 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
 
         if (voucherHeader != null) {
             final List<CGeneralLedger> gllist = getPersistenceService().findAllBy(
-                    " from CGeneralLedger where voucherHeaderId.id=? order by id asc", Long.valueOf(voucherHeader.getId() + ""));
+                    " from CGeneralLedger where voucherHeaderId.id=?1 order by id asc", Long.valueOf(voucherHeader.getId() + ""));
 
             for (final CGeneralLedger gl : gllist) {
                 temp = new HashMap<String, Object>();
                 if (gl.getFunctionId() != null) {
                     temp.put(
                             Constants.FUNCTION,
-                            ((CFunction) getPersistenceService().find("from CFunction where id=?",
+                            ((CFunction) getPersistenceService().find("from CFunction where id=?1",
                                     Long.valueOf(gl.getFunctionId()))).getName());
                     temp.put("functionid", gl.getFunctionId());
                 }
-                coa = (CChartOfAccounts) getPersistenceService().find("from CChartOfAccounts where glcode=?", gl.getGlcode());
+                coa = (CChartOfAccounts) getPersistenceService().find("from CChartOfAccounts where glcode=?1", gl.getGlcode());
                 temp.put("glcodeid", coa.getId());
                 glcodeIdList.add(coa.getId());
                 temp.put(Constants.GLCODE, coa.getGlcode());
@@ -1054,11 +1054,11 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
                 if (billdetails.getFunctionid() != null) {
                     temp.put(
                             Constants.FUNCTION,
-                            ((CFunction) getPersistenceService().find("from CFunction where id=?",
+                            ((CFunction) getPersistenceService().find("from CFunction where id=?1",
                                     Long.valueOf(billdetails.getFunctionid() + ""))).getName());
                     temp.put("functionid", billdetails.getFunctionid());
                 }
-                coa = (CChartOfAccounts) getPersistenceService().find("from CChartOfAccounts where id=?",
+                coa = (CChartOfAccounts) getPersistenceService().find("from CChartOfAccounts where id=?1",
                         Long.valueOf(billdetails.getGlcodeid() + ""));
                 temp.put("glcodeid", coa.getId());
                 glcodeIdList.add(coa.getId());
@@ -1199,13 +1199,13 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
         }
         if (adt.getTablename().equalsIgnoreCase("EG_EMPLOYEE")) {
             final PersonalInformation information = (PersonalInformation) getPersistenceService().find(
-                    " from PersonalInformation where employeeCode=? and isActive=true", code);
+                    " from PersonalInformation where employeeCode=?1 and isActive=true", code);
             if (information == null)
                 values = index + "~" + ERROR;
             else
                 values = index + "~" + information.getIdPersonalInformation() + "~" + information.getEmployeeFirstName();
         } else if (adt.getTablename().equalsIgnoreCase("RELATION")) {
-            final Relation relation = (Relation) getPersistenceService().find(" from Relation where code=? and isactive=true",
+            final Relation relation = (Relation) getPersistenceService().find(" from Relation where code=?1 and isactive=true",
                     code);
             if (relation == null)
                 values = index + "~" + ERROR;
@@ -1213,7 +1213,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
                 values = index + "~" + relation.getId() + "~" + relation.getName();
         } else if (adt.getTablename().equalsIgnoreCase("ACCOUNTENTITYMASTER")) {
             final AccountEntity accountEntity = (AccountEntity) getPersistenceService().find(
-                    " from AccountEntity where code=? and isactive=true ", code);
+                    " from AccountEntity where code=?1 and isactive=true ", code);
             if (accountEntity == null)
                 values = index + "~" + ERROR;
             else

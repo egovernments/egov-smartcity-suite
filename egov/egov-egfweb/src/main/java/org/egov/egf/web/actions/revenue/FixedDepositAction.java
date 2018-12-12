@@ -176,7 +176,7 @@ public class FixedDepositAction extends BaseFormAction {
 
         for (final FixedDeposit fd : fixedDepositList) {
             bankAccountListTemp = getPersistenceService().findAllBy(
-                    "from Bankaccount ba where ba.bankbranch.id=? and isactive=true order by ba.chartofaccounts.glcode",
+                    "from Bankaccount ba where ba.bankbranch.id=?1 and isactive=true order by ba.chartofaccounts.glcode",
                     fd.getBankBranch().getId());
             fd.setBankAccountList(bankAccountListTemp);
             if (fd.getReceiptAmount() == null)

@@ -130,7 +130,7 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
     private String methodName = "";
     private static final String VHID = "vhid";
     protected EisCommonService eisCommonService;
-    private static final String VOUCHERQUERY = " from CVoucherHeader where id=?";
+    private static final String VOUCHERQUERY = " from CVoucherHeader where id=?1";
     private String worksVoucherRestrictedDate;
     private FinancialYearDAO financialYearDAO;
 
@@ -340,7 +340,7 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
                 + " where  id=:billId";
         String moduleType = "", description = "", billstatus = "";
         final EgBillregistermis billMis = (EgBillregistermis) persistenceService.find(
-                "from  EgBillregistermis  mis where voucherHeader.id=?", vhId);
+                "from  EgBillregistermis  mis where voucherHeader.id=?1", vhId);
 
         if (billMis != null && billMis.getEgBillregister().getState() == null) {
             if (LOGGER.isDebugEnabled())
@@ -409,7 +409,7 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
             if ("invalid".equals(s))
                 break;
             final WorkflowAction action = (WorkflowAction) getPersistenceService().find(
-                    " from WorkflowAction where type='CVoucherHeader' and name=?", s.toString());
+                    " from WorkflowAction where type='CVoucherHeader' and name=?1", s.toString());
             validButtons.add(action);
         }
         return validButtons;

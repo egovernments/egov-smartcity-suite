@@ -110,7 +110,7 @@ public class JournalVoucherPrintAction extends BaseFormAction {
     List<WorkFlowHistoryItem> inboxHistory = new ArrayList<>();
     private CityService cityService;
     private BillsService billsManager;
-    private static final String ACCDETAILTYPEQUERY = " from Accountdetailtype where id=?";
+    private static final String ACCDETAILTYPEQUERY = " from Accountdetailtype where id=?1";
     private BudgetAppropriationService budgetAppropriationService;
     private @Autowired EgovCommon egovCommon;
 
@@ -172,7 +172,7 @@ public class JournalVoucherPrintAction extends BaseFormAction {
 
             final Long voucherId = Long.valueOf(parameters.get("id")[0]);
             final CVoucherHeader voucherHeader = (CVoucherHeader) persistenceService.find(
-                    "from CVoucherHeader where id =?", voucherId);
+                    "from CVoucherHeader where id =?1", voucherId);
             if (voucherHeader != null) {
                 voucher = voucherHeader;
                 generateVoucherReportList();
@@ -200,7 +200,7 @@ public class JournalVoucherPrintAction extends BaseFormAction {
 
     public String getFundName() {
         if (voucher != null && voucher.getFundId() != null) {
-            final Fund fund = (Fund) persistenceService.find("from Fund where id=? ", voucher.getFundId().getId());
+            final Fund fund = (Fund) persistenceService.find("from Fund where id=?1 ", voucher.getFundId().getId());
             return fund == null ? "" : fund.getName();
         }
         return "";
@@ -208,7 +208,7 @@ public class JournalVoucherPrintAction extends BaseFormAction {
 
     public String getDepartmentName() {
         if (voucher != null && voucher.getVouchermis() != null && voucher.getVouchermis().getDepartmentid() != null) {
-            final Department dept = (Department) persistenceService.find("from Department where id=? ", voucher
+            final Department dept = (Department) persistenceService.find("from Department where id=?1 ", voucher
                     .getVouchermis().getDepartmentid().getId());
             return dept == null ? "" : dept.getName();
         }
@@ -257,7 +257,7 @@ public class JournalVoucherPrintAction extends BaseFormAction {
         EgBillregistermis billRegistermis = null;
         if (voucher != null)
             billRegistermis = (EgBillregistermis) persistenceService.find(
-                "from EgBillregistermis where voucherHeader.id=?", voucher.getId());
+                "from EgBillregistermis where voucherHeader.id=?1", voucher.getId());
         final StringBuilder cityName = new StringBuilder(100);
         cityName.append(cityWebsite.getName().toUpperCase());
         paramMap.put("cityName", cityName.toString());
