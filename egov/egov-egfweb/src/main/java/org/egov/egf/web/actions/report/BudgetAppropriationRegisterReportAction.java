@@ -154,13 +154,13 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
         dropdownData.put("budgetGroupList", Collections.EMPTY_LIST);
         dropdownData.put("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
         if (department.getId() != null && department.getId() != -1)
-            department = (Department) persistenceService.find("from Department where id=?", department.getId());
+            department = (Department) persistenceService.find("from Department where id=?1", department.getId());
         if (function.getId() != null && function.getId() != -1)
-            function = (CFunction) persistenceService.find("from CFunction where id=?", function.getId());
+            function = (CFunction) persistenceService.find("from CFunction where id=?1", function.getId());
         if (fund.getId() != null && fund.getId() != -1)
-            fund = (Fund) persistenceService.find("from Fund where id=?", fund.getId());
+            fund = (Fund) persistenceService.find("from Fund where id=?1", fund.getId());
         if (budgetGroup.getId() != null && budgetGroup.getId() != -1)
-            budgetGroup = (BudgetGroup) persistenceService.find("from BudgetGroup where id=?", budgetGroup.getId());
+            budgetGroup = (BudgetGroup) persistenceService.find("from BudgetGroup where id=?1", budgetGroup.getId());
     }
 
     @ReadOnly
@@ -439,7 +439,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
             final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(Long.valueOf(financialYr.getId()));
 
             List<BudgetDetail> budgedDetailList = new ArrayList<BudgetDetail>();
-            String query = " from BudgetDetail bd where bd.budget.isbere=? and bd.budgetGroup=? and bd.budget.financialYear=? ";
+            String query = " from BudgetDetail bd where bd.budget.isbere=?1 and bd.budgetGroup=?2 and bd.budget.financialYear=?3 ";
             if (department.getId() != null && department.getId() != -1)
                 query = query + " and bd.executingDepartment.id=" + department.getId();
             if (function.getId() != null && function.getId() != -1)

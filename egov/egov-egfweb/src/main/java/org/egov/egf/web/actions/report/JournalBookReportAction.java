@@ -244,12 +244,12 @@ public class JournalBookReportAction extends BaseFormAction {
         Department dept = new Department();
         CFunction function = new CFunction();
         if (checkNullandEmpty(journalBookReport.getDept_name())) {
-            dept = (Department) persistenceService.find("from Department where  id = ?",
+            dept = (Department) persistenceService.find("from Department where  id = ?1",
                     Long.parseLong(journalBookReport.getDept_name()));
             heading = heading + " and Department : " + dept.getName();
         }
         if (checkNullandEmpty(journalBookReport.getFunctionId())) {
-            function = (CFunction) persistenceService.find("from CFunction where  id = ?",
+            function = (CFunction) persistenceService.find("from CFunction where  id = ?1",
                     Long.parseLong(journalBookReport.getFunctionId()));
             heading = heading + " and Financing Source :" + function.getName();
         }

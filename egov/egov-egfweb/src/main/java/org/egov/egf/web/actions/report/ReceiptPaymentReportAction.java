@@ -387,7 +387,7 @@ public class ReceiptPaymentReportAction extends BaseFormAction {
             header.append(" for the Financial Year " + receiptPayment.getFinancialYear().getFinYearRange());
         }
         if (receiptPayment.getFund() != null && receiptPayment.getFund().getId() != null && receiptPayment.getFund().getId() != 0) {
-            receiptPayment.setFund((Fund) getPersistenceService().find("from Fund where id=?", receiptPayment.getFund().getId()));
+            receiptPayment.setFund((Fund) getPersistenceService().find("from Fund where id=?1", receiptPayment.getFund().getId()));
             // receiptPayment.setFunds(list)
             header.append(" for " + receiptPayment.getFund().getName());
         } else {

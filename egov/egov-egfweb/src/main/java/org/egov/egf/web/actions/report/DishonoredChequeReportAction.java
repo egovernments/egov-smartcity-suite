@@ -156,7 +156,7 @@ public class DishonoredChequeReportAction extends BaseFormAction {
         if (checkNullandEmpty(dishonoredChequeReport.getEndDate()))
             heading = heading + " to " + dishonoredChequeReport.getEndDate();
         if (checkNullandEmpty(dishonoredChequeReport.getFundLst())) {
-            fund = (Fund) persistenceService.find("from Fund where  id = ?",
+            fund = (Fund) persistenceService.find("from Fund where  id = ?1",
                     Integer.parseInt(dishonoredChequeReport.getFundLst()));
             heading = heading + " and Fund :" + fund.getName();
         }

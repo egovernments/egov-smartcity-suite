@@ -133,31 +133,31 @@ public class AutoRemittanceSchedulerReportAction extends SearchFormAction {
                 "s.schJobName,s.lastRunDate, s.schType, s.glcode, s.status, s.remarks,s.id from RemittanceSchedulerLog as s ";
 
         if (schedulerType.equals("Auto")) {
-            dynQuery.append(" where  s.schType=?");
+            dynQuery.append(" where  s.schType=?1");
             paramList.add(FinancialConstants.REMITTANCE_SCHEDULER_SCHEDULAR_TYPE_AUTO);
         }
         else if (schedulerType.equals("Manual")) {
-            dynQuery.append(" where s.schType=?");
+            dynQuery.append(" where s.schType=?1");
             paramList.add(FinancialConstants.REMITTANCE_SCHEDULER_SCHEDULAR_TYPE_MANUAL);
         }
         else {
-            dynQuery.append(" where s.schType=? or s.schType=?");
+            dynQuery.append(" where s.schType=?1 or s.schType=?2");
             paramList.add(FinancialConstants.REMITTANCE_SCHEDULER_SCHEDULAR_TYPE_AUTO);
             paramList.add(FinancialConstants.REMITTANCE_SCHEDULER_SCHEDULAR_TYPE_MANUAL);
         }
 
         if (StringUtils.isNotEmpty(recoveryId)) {
-            dynQuery.append(" and  s.glcode=?");
+            dynQuery.append(" and  s.glcode=?1");
             paramList.add(recoveryId);
         }
 
         if (runDateFrom != null) {
-            dynQuery.append(" and  s.lastRunDate>=to_date(?,'dd/MM/yyyy')");
+            dynQuery.append(" and  s.lastRunDate>=to_date(?1,'dd/MM/yyyy')");
             paramList.add(DDMMYYYYFORMATS.format(runDateFrom));
         }
 
         if (runDateTo != null) {
-            dynQuery.append(" and  s.lastRunDate<=to_date(?,'dd/MM/yyyy')");
+            dynQuery.append(" and  s.lastRunDate<=to_date(?1,'dd/MM/yyyy')");
             paramList.add(DDMMYYYYFORMATS.format(runDateTo));
         }
 

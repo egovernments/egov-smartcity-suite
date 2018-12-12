@@ -569,7 +569,7 @@ public class BudgetVarianceReportAction extends BaseFormAction {
     public String getDepartmentName() {
         if (budgetDetail.getExecutingDepartment() != null && budgetDetail.getExecutingDepartment().getId() != null
                 && budgetDetail.getExecutingDepartment().getId() != -1) {
-            final Department department = (Department) persistenceService.find("from Department where id=?", budgetDetail
+            final Department department = (Department) persistenceService.find("from Department where id=?1", budgetDetail
                     .getExecutingDepartment().getId());
             return department.getName();
         }

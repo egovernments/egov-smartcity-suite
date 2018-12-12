@@ -292,7 +292,7 @@ public class VoucherStatusReportAction extends BaseFormAction {
                     && voucherHeader.getVouchermis().getSchemeid() != null
                     && voucherHeader.getVouchermis().getSchemeid().getId() != -1)
                 dropdownData.put("subSchemeList", persistenceService.findAllBy(
-                        "from SubScheme where isactive=true and scheme.id=?",
+                        "from SubScheme where isactive=true and scheme.id=?1",
                         voucherHeader.getVouchermis().getSchemeid().getId()));
             else
                 dropdownData.put("subSchemeList", Collections.emptyList());
@@ -300,7 +300,7 @@ public class VoucherStatusReportAction extends BaseFormAction {
 
     public Map<String, String> getVoucherNameMap(final String type) {
         final List<Object> voucherNameList = persistenceService.findAllBy(
-                "select  distinct name from  CVoucherHeader where type=?", type);
+                "select  distinct name from  CVoucherHeader where type=?1", type);
         nameMap = new LinkedHashMap<>();
 
         for (final Object voucherName : voucherNameList)
@@ -355,7 +355,7 @@ public class VoucherStatusReportAction extends BaseFormAction {
         if (vchrModuleId == null)
             return "Internal";
         else {
-            EgModules egModuleObj = (EgModules) persistenceService.find("from EgModules m where m.id=?", vchrModuleId);
+            EgModules egModuleObj = (EgModules) persistenceService.find("from EgModules m where m.id=?1", vchrModuleId);
             if (egModuleObj == null)
                 throw new ApplicationException("INCORRECT MODULE ID");
             else
@@ -441,7 +441,7 @@ public class VoucherStatusReportAction extends BaseFormAction {
             return dash;
         else if (voucherType.equalsIgnoreCase(FinancialConstants.STANDARD_VOUCHER_TYPE_CONTRA)) {
             final ContraJournalVoucher contraJV = (ContraJournalVoucher) persistenceService.find(
-                    "from ContraJournalVoucher cj where cj.voucherHeaderId=?", voucherHeader);
+                    "from ContraJournalVoucher cj where cj.voucherHeaderId=?1", voucherHeader);
             if (contraJV == null)
                 return dash;
             else
@@ -462,7 +462,7 @@ public class VoucherStatusReportAction extends BaseFormAction {
                 return getUserNameForPosition(voucherState.getOwnerPosition().getId().intValue());
         } else if (voucherType.equalsIgnoreCase(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT)) {
             final Paymentheader paymentHeader = (Paymentheader) persistenceService.find(
-                    "from Paymentheader ph where ph.voucherheader=?", voucherHeader);
+                    "from Paymentheader ph where ph.voucherheader=?1", voucherHeader);
             if (paymentHeader == null)
                 return dash;
             else
@@ -478,7 +478,7 @@ public class VoucherStatusReportAction extends BaseFormAction {
     }
 
     private String getUserNameForPosition(final Integer posId) {
-        final String query = "select emp.userName  from org.egov.eis.entity.EmployeeView emp where emp.position.id = ? ";
+        final String query = "select emp.userName  from org.egov.eis.entity.EmployeeView emp where emp.position.id = ?1 ";
         return (String) persistenceService.find(query, posId.longValue());
     }
 

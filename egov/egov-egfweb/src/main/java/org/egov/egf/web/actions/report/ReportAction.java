@@ -181,13 +181,13 @@ public class ReportAction extends BaseFormAction
 
     public String ajaxLoadSchemes()
     {
-        schemeList = persistenceService.findAllBy(" from Scheme where fund=?", reportSearch.getFund());
+        schemeList = persistenceService.findAllBy(" from Scheme where fund=?1", reportSearch.getFund());
         return "schemes";
     }
 
     public String ajaxLoadSubSchemes()
     {
-        schemeList = persistenceService.findAllBy(" from SubScheme where scheme=?", reportSearch.getScheme());
+        schemeList = persistenceService.findAllBy(" from SubScheme where scheme=?1", reportSearch.getScheme());
         return "schemes";
     }
 

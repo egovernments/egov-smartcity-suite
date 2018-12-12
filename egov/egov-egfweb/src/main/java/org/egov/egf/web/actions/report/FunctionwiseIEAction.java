@@ -344,7 +344,7 @@ public class FunctionwiseIEAction extends ReportAction
                 && reportSearch.getFunction().getId() != -1)
         {
             heading.append(" For the Function Code ");
-            final String code = (String) persistenceService.find("select code from CFunction where id=?", reportSearch
+            final String code = (String) persistenceService.find("select code from CFunction where id=?1", reportSearch
                     .getFunction()
                     .getId());
             heading.append(code);
@@ -356,7 +356,7 @@ public class FunctionwiseIEAction extends ReportAction
         if (reportSearch.getFund() != null && reportSearch.getFund().getId() != -1)
         {
             heading.append(" In Fund ");
-            final String name = (String) persistenceService.find("select name from Fund where id=?", reportSearch.getFund()
+            final String name = (String) persistenceService.find("select name from Fund where id=?1", reportSearch.getFund()
                     .getId());
             heading.append(name);
         }
@@ -509,14 +509,14 @@ public class FunctionwiseIEAction extends ReportAction
             if (!reportSearch.getStartDate().equals(""))
                 sdf.parse(reportSearch.getStartDate());
         } catch (final Exception e) {
-            LOGGER.error("ERROR" + e.getMessage(), e);
+            LOGGER.error("ERROR" , e);
             addFieldError("startDate", getMessage("report.startdate.invalid.format"));
         }
         try {
             if (!reportSearch.getEndDate().equals(""))
                 sdf.parse(reportSearch.getEndDate());
         } catch (final Exception e) {
-            LOGGER.error("ERROR" + e.getMessage(), e);
+            LOGGER.error("ERROR" , e);
             addFieldError("endDate", getMessage("report.enddate.invalid.format"));
         }
         super.validate();

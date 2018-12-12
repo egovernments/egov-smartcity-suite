@@ -148,7 +148,7 @@ public class ConsolidatedBudgetReportAction extends BaseFormAction {
     }
 
     public void populateData() {
-        financialYear = (CFinancialYear) persistenceService.find("from CFinancialYear where id=?", financialYear.getId());
+        financialYear = (CFinancialYear) persistenceService.find("from CFinancialYear where id=?1", financialYear.getId());
 
         prevFinYear = getFinancialYearDAO().getPreviousFinancialYearByDate(financialYear.getStartingDate());
         prevFinYearRange = prevFinYear.getFinYearRange();

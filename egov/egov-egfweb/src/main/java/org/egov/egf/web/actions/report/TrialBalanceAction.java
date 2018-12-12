@@ -487,7 +487,7 @@ public class TrialBalanceAction extends BaseFormAction {
 
         } catch (final Exception e)
         {
-            LOGGER.error("Error in getReport" + e.getMessage(), e);
+            LOGGER.error("Error in getReport" , e);
 
         }
 
@@ -979,7 +979,7 @@ public class TrialBalanceAction extends BaseFormAction {
         if (rb.getFundId() != null)
         {
             heading.append(" For ");
-            final String name = (String) persistenceService.find("select name from Fund where id=?", rb.getFundId());
+            final String name = (String) persistenceService.find("select name from Fund where id=?1", rb.getFundId());
             heading.append(name);
         } else
             heading.append(" For All Funds ");
@@ -1009,7 +1009,7 @@ public class TrialBalanceAction extends BaseFormAction {
         if (rb.getFunctionId() != null)
         {
             heading.append(" in ");
-            final String code = (String) persistenceService.find("select name from CFunction where id=?",
+            final String code = (String) persistenceService.find("select name from CFunction where id=?1",
                     Long.valueOf(rb.getFunctionId()));
             heading.append(code);
             rb.setFunctionName(code);
@@ -1017,15 +1017,15 @@ public class TrialBalanceAction extends BaseFormAction {
 
         if (rb.getDepartmentId() != null)
             heading.append(" For  "
-                    + (String) persistenceService.find("select name from Department where id=?",
+                    + (String) persistenceService.find("select name from Department where id=?1",
                             (rb.getDepartmentId()).longValue()));
 
         if (rb.getFunctionaryId() != null)
             heading.append(" For  "
-                    + (String) persistenceService.find("select name from Functionary where id=?", rb.getFunctionaryId()));
+                    + (String) persistenceService.find("select name from Functionary where id=?1", rb.getFunctionaryId()));
         if (rb.getDivisionId() != null)
             heading.append(" For  "
-                    + (String) persistenceService.find("select name from Boundary where id=?", rb.getDivisionId()));
+                    + (String) persistenceService.find("select name from Boundary where id=?1", rb.getDivisionId()));
         return heading.toString();
     }
 

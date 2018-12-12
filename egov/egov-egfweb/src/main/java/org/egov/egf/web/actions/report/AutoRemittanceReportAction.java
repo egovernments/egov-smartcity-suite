@@ -354,21 +354,21 @@ public class AutoRemittanceReportAction extends BaseFormAction {
             header.append(Constants.DDMMYYYYFORMAT2.format(paymentVoucherFromDate) + "  to  "
                     + Constants.DDMMYYYYFORMAT2.format(paymentVoucherToDate));
             final StringBuffer detailheader = new StringBuffer("Auto remittance payment report for ");
-            recovery = (Recovery) persistenceService.find("from Recovery  where id =?", recovery.getId());
+            recovery = (Recovery) persistenceService.find("from Recovery  where id =?1", recovery.getId());
             detailheader.append(recovery.getType() + " - " + recovery.getRecoveryName());
             paramMap.put("detailheader", detailheader.toString());
         }
         else
         {
             header.append(" Auto remittance payment report for ");
-            department = (Department) persistenceService.find("from Department where id=?", department.getId());
+            department = (Department) persistenceService.find("from Department where id=?1", department.getId());
             header.append(department.getName() + " department ");
         }
 
         paramMap.put("header", header.toString());
         if (null != recovery && null != recovery.getId() && recovery.getId() != -1)
         {
-            recovery = (Recovery) persistenceService.find("from Recovery  where id =?", recovery.getId());
+            recovery = (Recovery) persistenceService.find("from Recovery  where id =?1", recovery.getId());
             paramMap.put("remittanceCOA", recovery.getType());
         }
         if (null != paymentVoucherFromDate)
@@ -383,12 +383,12 @@ public class AutoRemittanceReportAction extends BaseFormAction {
         }
         if (null != fund && null != fund.getId() && fund.getId() != -1)
         {
-            fund = (Fund) persistenceService.find("from Fund where id=?", fund.getId());
+            fund = (Fund) persistenceService.find("from Fund where id=?1", fund.getId());
             paramMap.put("fund", fund.getName());
         }
         if (null != drawingOfficer && null != drawingOfficer.getId() && drawingOfficer.getId() != -1)
         {
-            drawingOfficer = (DrawingOfficer) persistenceService.find("from DrawingOfficer where id=?", drawingOfficer.getId());
+            drawingOfficer = (DrawingOfficer) persistenceService.find("from DrawingOfficer where id=?1", drawingOfficer.getId());
             paramMap.put("drawingOfficer", drawingOfficer.getName());
         }
         if (null != rtgsAssignedFromDate)
@@ -405,7 +405,7 @@ public class AutoRemittanceReportAction extends BaseFormAction {
             paramMap.put("rtgsNum", instrumentNumber);
         if (null != bank && null != bank.getId() && bank.getId() != -1)
         {
-            bank = (Bank) persistenceService.find("from Bank where id = ?", bank.getId());
+            bank = (Bank) persistenceService.find("from Bank where id = ?1", bank.getId());
             paramMap.put("bank", bank.getName());
         }
         if (null != supplierCode && !supplierCode.isEmpty())
@@ -414,13 +414,13 @@ public class AutoRemittanceReportAction extends BaseFormAction {
             paramMap.put("contractorName", contractorCode);
         if (null != bankbranch && null != bankbranch.getId() && bankbranch.getId() != -1)
         {
-            bankbranch = (Bankbranch) persistenceService.find("from Bankbranch where id =?", bankbranch.getId());
+            bankbranch = (Bankbranch) persistenceService.find("from Bankbranch where id =?1", bankbranch.getId());
             paramMap.put("bankBranch", bankbranch.getBranchname());
 
         }
         if (null != bankaccount && null != bankaccount.getId() && bankaccount.getId() != -1)
         {
-            bankaccount = (Bankaccount) persistenceService.find("from Bankaccount where id =?", bankbranch.getId());
+            bankaccount = (Bankaccount) persistenceService.find("from Bankaccount where id =?1", bankbranch.getId());
             paramMap.put("bankAccountNum", bankaccount.getAccountnumber());
         }
         final Date currentDate = new Date();

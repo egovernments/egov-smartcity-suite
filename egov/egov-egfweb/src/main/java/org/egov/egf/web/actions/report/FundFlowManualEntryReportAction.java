@@ -232,7 +232,7 @@ public class FundFlowManualEntryReportAction extends BaseFormAction {
         heading.append("Manual Entry Report for ");
         if (reportSearch.getBankAccount() != null && reportSearch.getBankAccount().getId() != null
                 && reportSearch.getBankAccount().getId() != 0) {
-            reportSearch.setBankAccount((Bankaccount) getPersistenceService().find("from Bankaccount where id=?",
+            reportSearch.setBankAccount((Bankaccount) getPersistenceService().find("from Bankaccount where id=?1",
                     Integer.parseInt(reportSearch.getBankAccount().getId().toString())));
             heading.append(" Bank Name -" + reportSearch.getBankAccount().getBankbranch().getBank().getName());
             heading.append(" Account Number-" + reportSearch.getBankAccount().getAccountnumber());

@@ -161,13 +161,13 @@ public class BankAdviceReportAction extends BaseFormAction {
                     "bankBranchList",
                     persistenceService
                             .findAllBy(
-                                    "select distinct bb from Bankbranch bb,Bankaccount ba where bb.bank.id=? and ba.bankbranch=bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bb.isactive=true",
+                                    "select distinct bb from Bankbranch bb,Bankaccount ba where bb.bank.id=?1 and ba.bankbranch=bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bb.isactive=true",
                                     bank.getId()));
         if (bankaccount == null)
             addDropdownData("bankAccountList", Collections.EMPTY_LIST);
         else
             addDropdownData("bankAccountList",
-                    persistenceService.findAllBy("from Bankaccount where bankbranch.id=? and isactive=true", bankbranch.getId()));
+                    persistenceService.findAllBy("from Bankaccount where bankbranch.id=?1 and isactive=true", bankbranch.getId()));
         if (instrumentnumber == null)
             addDropdownData("chequeNumberList", Collections.EMPTY_LIST);
         else {
@@ -179,7 +179,7 @@ public class BankAdviceReportAction extends BaseFormAction {
                                     +
                                     "SELECT ih.id, ih.instrumentNumber FROM InstrumentHeader ih, InstrumentVoucher iv, Paymentheader ph "
                                     +
-                                    "WHERE ih.isPayCheque ='1' AND ih.bankAccountId.id = ? AND ih.statusId.description in ('New')"
+                                    "WHERE ih.isPayCheque ='1' AND ih.bankAccountId.id = ?1 AND ih.statusId.description in ('New')"
                                     +
                                     " AND ih.statusId.moduletype='Instrument' AND iv.instrumentHeaderId = ih.id and ih.bankAccountId is not null "
                                     +
@@ -301,10 +301,10 @@ public class BankAdviceReportAction extends BaseFormAction {
                 "and ih.statusId.code in ('"
                 + FinancialConstants.INSTRUMENT_CREATED_STATUS + "', '"
                 + FinancialConstants.INSTRUMENT_RECONCILED_STATUS + "') " +
-                "and month(ih.transactionDate) = ? " +
-                "and year(ih.transactionDate) between  ? and ?";
+                "and month(ih.transactionDate) = ?1 " +
+                "and year(ih.transactionDate) between  ?1 and ?2";
 
-        final CFinancialYear financialYear = (CFinancialYear) persistenceService.find("from CFinancialYear where id = ?",
+        final CFinancialYear financialYear = (CFinancialYear) persistenceService.find("from CFinancialYear where id = ?1",
                 financialYearId);
 
         final Calendar calendar = Calendar.getInstance();
@@ -330,7 +330,7 @@ public class BankAdviceReportAction extends BaseFormAction {
         final List<BankAdviceReportInfo> subLedgerList = new ArrayList<BankAdviceReportInfo>();
 
         for (final Object[] obj : retList) {
-            final Accountdetailtype adt = (Accountdetailtype) persistenceService.find("from Accountdetailtype where id=?",
+            final Accountdetailtype adt = (Accountdetailtype) persistenceService.find("from Accountdetailtype where id=?1",
                     ((BigInteger) obj[0]).intValue());
 
             EntityType subDetail = null;
@@ -342,17 +342,17 @@ public class BankAdviceReportAction extends BaseFormAction {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("data Type = " + dataType);
                 if (dataType.equals("Long"))
-                    subDetail = (EntityType) persistenceService.find("from " + adt.getFullQualifiedName() + " where id=?",
+                    subDetail = (EntityType) persistenceService.find("from " + adt.getFullQualifiedName() + " where id=?1",
                             ((BigInteger) obj[1]).longValue());
                 else
-                    subDetail = (EntityType) persistenceService.find("from " + adt.getFullQualifiedName() + " where id=?",
+                    subDetail = (EntityType) persistenceService.find("from " + adt.getFullQualifiedName() + " where id=?1",
                             ((BigInteger) obj[1]).intValue());
 
             } catch (final ClassCastException e) {
                 LOGGER.error(e);
             } catch (final Exception e)
             {
-                LOGGER.error("Exception to get EntityType=" + e.getMessage());
+                LOGGER.error("Exception to get EntityType=" , e);
             }
             final BankAdviceReportInfo bankAdviceReportInfo = new BankAdviceReportInfo();
             bankAdviceReportInfo.setPartyName(subDetail.getName().toUpperCase());
@@ -435,17 +435,17 @@ public class BankAdviceReportAction extends BaseFormAction {
     }
 
     private String getBankName(final Integer bankId) {
-        final Bank bank = (Bank) persistenceService.find("from Bank where id=?", bankId);
+        final Bank bank = (Bank) persistenceService.find("from Bank where id=?1", bankId);
         return bank.getName();
     }
 
     private String getBankBranchName(final Integer bankBranchId) {
-        final Bankbranch bankBranch = (Bankbranch) persistenceService.find("from Bankbranch where id=?", bankBranchId);
+        final Bankbranch bankBranch = (Bankbranch) persistenceService.find("from Bankbranch where id=?1", bankBranchId);
         return bankBranch.getBranchname();
     }
 
     private String getBankAccountNumber(final Long bankAccountId) {
-        final Bankaccount bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?", bankAccountId);
+        final Bankaccount bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?1", bankAccountId);
         return bankAccount.getAccountnumber();
     }
 

@@ -151,19 +151,19 @@ public class BudgetProposalStatusReportAction extends BaseFormAction {
     public void departmentWise() {
         departmentList = persistenceService.findAllBy("from Department order by id");
         finYearId = financialYearDAO.getCurrYearFiscalId();
-        final CFinancialYear currYear = (CFinancialYear) persistenceService.find("from CFinancialYear where id=?",
+        final CFinancialYear currYear = (CFinancialYear) persistenceService.find("from CFinancialYear where id=?1",
                 Long.valueOf(finYearId));
         setTodayDate(new Date());
         for (final Department dept : departmentList) {
             final BudgetProposalStatus budgetProposalStatus = new BudgetProposalStatus();
             budgetProposalStatus.setDepartment(dept);
             final BudgetDetail budgetDetail = (BudgetDetail) persistenceService
-                    .find("from BudgetDetail where budget.financialYear.id=? and executingDepartment=? and budget.isbere='RE' and budget.state.value<>'END' and budgetGroup.accountType=?",
+                    .find("from BudgetDetail where budget.financialYear.id=?1 and executingDepartment=?2 and budget.isbere='RE' and budget.state.value<>'END' and budgetGroup.accountType=?3",
                             Long.valueOf(finYearId), dept, fundType + "_" + budgetType);
             if (budgetDetail != null && budgetDetail.getBudget() != null && budgetDetail.getBudget().getState() != null
                     && budgetDetail.getBudget().getState().getOwnerPosition() != null) {
                 final Assignment assignment = (Assignment) persistenceService.find(
-                        "from Assignment where isPrimary=? and position=?",
+                        "from Assignment where isPrimary=?1 and position=?2",
                         'Y', budgetDetail.getBudget().getState().getOwnerPosition());
                 if (assignment != null)
                     if (eisCommonService.isHod(assignment.getId()))
@@ -190,22 +190,22 @@ public class BudgetProposalStatusReportAction extends BaseFormAction {
     public void functionWise() {
         final String accountType = budgetDetailHelper.accountTypeForFunctionDeptMap(budgetType);
         functionList = persistenceService.findAllBy(
-                "select dfm.function from EgDepartmentFunctionMap dfm where dfm.department.id=? and dfm.budgetAccountType=? ",
+                "select dfm.function from EgDepartmentFunctionMap dfm where dfm.department.id=?1 and dfm.budgetAccountType=?2 ",
                 department.getId(), accountType);
         finYearId = financialYearDAO.getCurrYearFiscalId();
-        final CFinancialYear currYear = (CFinancialYear) persistenceService.find("from CFinancialYear where id=?",
+        final CFinancialYear currYear = (CFinancialYear) persistenceService.find("from CFinancialYear where id=?1",
                 Long.valueOf(finYearId));
-        final Department dept = (Department) persistenceService.find("from Department where id=?", department.getId());
+        final Department dept = (Department) persistenceService.find("from Department where id=?1", department.getId());
         setTodayDate(new Date());
         for (final CFunction func : functionList) {
             final BudgetProposalStatus budgetProposalStatus = new BudgetProposalStatus();
             budgetProposalStatus.setFunction(func);
             final BudgetDetail budgetDetail = (BudgetDetail) persistenceService
-                    .find("from BudgetDetail where budget.financialYear.id=? and executingDepartment.id=? and budget.isbere='RE' and budget.state.value<>'END' and state.value<>'END' and function=? and budgetGroup.accountType=?",
+                    .find("from BudgetDetail where budget.financialYear.id=?1 and executingDepartment.id=?2 and budget.isbere='RE' and budget.state.value<>'END' and state.value<>'END' and function=?3 and budgetGroup.accountType=?4",
                             Long.valueOf(finYearId), department.getId(), func, fundType + "_" + budgetType);
             if (budgetDetail != null && budgetDetail.getState() != null && budgetDetail.getState().getOwnerPosition() != null) {
                 final Assignment assignment = (Assignment) persistenceService.find(
-                        "from Assignment where isPrimary=? and position=?",
+                        "from Assignment where isPrimary=?1 and position=?2",
                         'Y', budgetDetail.getState().getOwnerPosition());
                 if (assignment != null)
                     if (assignment.getDesignation().getName().equals(asstAdminDesg)

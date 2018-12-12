@@ -486,12 +486,12 @@ public class DepartmentwiseExpenditureReportAction extends BaseFormAction {
         if (deptReport.getFinancialYearId() != null
                 && !(deptReport.getFinancialYearId().toString().equals("0") || deptReport.getFinancialYearId().equals(" ") || deptReport
                         .getFinancialYearId() == 0))
-            deptReport.setFinyearObj((CFinancialYear) getPersistenceService().find(" from CFinancialYear where id=?",
+            deptReport.setFinyearObj((CFinancialYear) getPersistenceService().find(" from CFinancialYear where id=?1",
                     deptReport.getFinancialYearId()));
         else
             deptReport.setFinyearObj(deService.getFinancialYearDAO().getFinancialYearByDate(deptReport.getFromDate()));
         if (deptReport.getFundId() != null && deptReport.getFundId() != 0)
-            deptReport.setFund((Fund) getPersistenceService().find("from Fund where id=?", deptReport.getFundId()));
+            deptReport.setFund((Fund) getPersistenceService().find("from Fund where id=?1", deptReport.getFundId()));
         if (deptReport.getReportType() != null && deptReport.getReportType().equals("Month")) {
             deptReport.setFromDate(deService.getStartDayOfMonth(deptReport));
             deptReport.setToDate(deService.getLastDayOfMonth(deptReport));

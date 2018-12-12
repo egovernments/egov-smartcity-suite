@@ -155,18 +155,18 @@ public class OpeningBalanceReportAction extends BaseFormAction {
         Fund fund = new Fund();
         Department dept = new Department();
         if (checkNullandEmpty(openingBalanceReport.getFinYear())) {
-            finYear = (CFinancialYear) persistenceService.find("from CFinancialYear where id = ?",
+            finYear = (CFinancialYear) persistenceService.find("from CFinancialYear where id = ?1",
                     Long.parseLong(openingBalanceReport.getFinYear()));
             heading = heading + finYear.getFinYearRange();
         }
         if (checkNullandEmpty(openingBalanceReport.getObFund_id())) {
             fund = (Fund) persistenceService
-                    .find("from Fund where id = ?", Integer.parseInt(openingBalanceReport.getObFund_id()));
+                    .find("from Fund where id = ?1", Integer.parseInt(openingBalanceReport.getObFund_id()));
             heading = heading + " under " + fund.getName();
         }
 
         if (checkNullandEmpty(openingBalanceReport.getDeptId())) {
-            dept = (Department) persistenceService.find("from Department where id = ?",
+            dept = (Department) persistenceService.find("from Department where id = ?1",
                     Long.parseLong(openingBalanceReport.getDeptId()));
             heading = heading + " and " + dept.getName() + " Department ";
         }

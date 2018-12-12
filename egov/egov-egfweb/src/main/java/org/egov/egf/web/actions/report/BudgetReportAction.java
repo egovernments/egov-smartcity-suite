@@ -165,11 +165,11 @@ public class BudgetReportAction extends BaseFormAction {
             final Long finYearId = budgetDetail.getBudget().getFinancialYear().getId();
             setBudgetList(getPersistenceService()
                     .findAllBy(
-                            "from Budget where isbere=? and financialYear.id=? and isPrimaryBudget=1 "
+                            "from Budget where isbere=?1 and financialYear.id=?2 and isPrimaryBudget=1 "
                                     +
-                                    "and isActiveBudget=1 and id not in (select parent from Budget where parent is not null and isbere=? and "
+                                    "and isActiveBudget=1 and id not in (select parent from Budget where parent is not null and isbere=?3 and "
                                     +
-                                    "financialYear.id=? and isPrimaryBudget=1) order by name", isbere, finYearId, isbere,
+                                    "financialYear.id=?4 and isPrimaryBudget=1) order by name", isbere, finYearId, isbere,
                                     finYearId));
         }
         return "budgets";
@@ -234,7 +234,7 @@ public class BudgetReportAction extends BaseFormAction {
     @ValidationErrorPage(value = "form")
     public String generateReport() {
         showResults = true;
-        final CFinancialYear finYear = budgetService.find("from Budget where id=?", budgetDetail.getBudget().getId())
+        final CFinancialYear finYear = budgetService.find("from Budget where id=?1", budgetDetail.getBudget().getId())
                 .getFinancialYear();
         List<BudgetDetail> currentYearBeList = new ArrayList<BudgetDetail>();
         List<BudgetDetail> nextYearBeList = new ArrayList<BudgetDetail>();
@@ -245,10 +245,10 @@ public class BudgetReportAction extends BaseFormAction {
             final CFinancialYear previousYear = budgetDetailHelper.getPreviousYearFor(finYear);
             if (previousYear != null) {
                 lastYearBe = budgetDetailService.findAllBy(
-                        "from BudgetDetail where budget.financialYear.id=? and budget.isPrimaryBudget=1 and " +
+                        "from BudgetDetail where budget.financialYear.id=?1 and budget.isPrimaryBudget=1 and " +
                                 "budget.isActiveBudget=1 and budget.isbere='BE'", previousYear.getId());
                 lastYearRe = budgetDetailService.findAllBy(
-                        "from BudgetDetail where budget.financialYear.id=? and budget.isPrimaryBudget=1 and " +
+                        "from BudgetDetail where budget.financialYear.id=?1 and budget.isPrimaryBudget=1 and " +
                                 "budget.isActiveBudget=1 and budget.isbere='RE'", previousYear.getId());
             }
         } else
@@ -363,7 +363,7 @@ public class BudgetReportAction extends BaseFormAction {
 
     private void populatePreviousYearActuals(final List<BudgetDetail> budgetDetails, CFinancialYear financialYear) {
         if (financialYear != null && financialYear.getId() != null)
-            financialYear = (CFinancialYear) persistenceService.find("from CFinancialYear where id=?", financialYear.getId());
+            financialYear = (CFinancialYear) persistenceService.find("from CFinancialYear where id=?1", financialYear.getId());
         Map<String, Object> paramMap;
         for (final BudgetDetail detail : budgetDetails) {
             paramMap = budgetDetailHelper.constructParamMap(getValueStack(), detail);

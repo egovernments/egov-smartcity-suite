@@ -232,7 +232,7 @@ public class DayBookReportAction extends BaseFormAction {
         String heading = "Day Book report from " + dayBookReport.getStartDate() + " to " + dayBookReport.getEndDate();
         Fund fund = new Fund();
         if (checkNullandEmpty(dayBookReport.getFundId())) {
-            fund = (Fund) persistenceService.find("from Fund where id = ?", Integer.parseInt(dayBookReport.getFundId()));
+            fund = (Fund) persistenceService.find("from Fund where id = ?1", Integer.parseInt(dayBookReport.getFundId()));
             heading = heading + " under " + fund.getName() + " ";
         }
         return heading;

@@ -208,7 +208,7 @@ public class RtgsIssueRegisterReportAction extends ReportAction {
         String newToDate = "";
         String reportRundate = "";
         fundAndBankHeading = "RTGS Register for "
-                + persistenceService.find("select name from Fund where id = ?", Integer.parseInt(parameters.get("fundId")[0]))
+                + persistenceService.find("select name from Fund where id = ?1", Integer.parseInt(parameters.get("fundId")[0]))
                         .toString();
 
         if (null != parameters.get("rtgsAssignedFromDate")[0] && !parameters.get("rtgsAssignedFromDate")[0].equalsIgnoreCase(""))
@@ -375,7 +375,7 @@ public class RtgsIssueRegisterReportAction extends ReportAction {
             {
                 final List<EntityType> subDetail = new ArrayList<EntityType>();
                 final Accountdetailtype detailType = (Accountdetailtype) persistenceService.find(
-                        "from Accountdetailtype where id=? order by name", keyGroup);
+                        "from Accountdetailtype where id=?1 order by name", keyGroup);
                 final String table = detailType.getFullQualifiedName();
                 final Class<?> service = Class.forName(table);
                 String simpleName = service.getSimpleName();
@@ -429,7 +429,7 @@ public class RtgsIssueRegisterReportAction extends ReportAction {
                 LOGGER.error(e);
             } catch (final Exception e)
             {
-                LOGGER.error("Exception to get EntityType=" + e.getMessage());
+                LOGGER.error("Exception to get EntityType=" , e);
             }
         List<EntityType> subDetail = new ArrayList<EntityType>();
 

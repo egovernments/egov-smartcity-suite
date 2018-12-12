@@ -367,20 +367,20 @@ public class LoanGrantReportAction extends LoanGrantBaseAction {
             reportByStr = "Loan OutStainding Report for ";
         if (schemeId != null)
         {
-            final String schemeName = (String) persistenceService.find("select name from Scheme where id=?", getSchemeId());
+            final String schemeName = (String) persistenceService.find("select name from Scheme where id=?1", getSchemeId());
             paramMap.put("reportBy", reportByStr + schemeName);
             paramMap.put("schemeName", schemeName);
         }
         if (getSubSchemeId() != null)
         {
-            final String subSchemeName = (String) persistenceService.find("select name from SubScheme where id=?",
+            final String subSchemeName = (String) persistenceService.find("select name from SubScheme where id=?1",
                     getSubSchemeId());
             paramMap.put("reportBy", reportByStr + subSchemeName);
             paramMap.put("subSchemeName", subSchemeName);
         }
         if (fundId != null)
         {
-            final String fundName = (String) persistenceService.find("select name from Fund where id=?", fundId);
+            final String fundName = (String) persistenceService.find("select name from Fund where id=?1", fundId);
             paramMap.put("fundName", fundName);
         }
         paramMap.put("fromDate", fromDate);

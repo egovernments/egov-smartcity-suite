@@ -341,7 +341,7 @@ public class BillRegisterReportAction extends SearchFormAction {
                                             miscbilldetail.getPayVoucherHeader().getVoucherNumber());
                                     paidAmount = paidAmount.add(miscbilldetail.getPaidamount()).setScale(2,BigDecimal.ROUND_HALF_EVEN);
                                     final Paymentheader paymentMode = (Paymentheader) persistenceService.find(
-                                            "from Paymentheader where voucherheader=?", miscbilldetail.getPayVoucherHeader());
+                                            "from Paymentheader where voucherheader=?1", miscbilldetail.getPayVoucherHeader());
                                     if (!paymentMode.getType().equals(FinancialConstants.MODEOFPAYMENT_RTGS)) {
                                         final Query qry = persistenceService.getSession().createQuery(
                                                 "from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId and" +
@@ -419,7 +419,7 @@ public class BillRegisterReportAction extends SearchFormAction {
                                     paidAmount = miscbilldetail.getPaidamount().setScale(2,BigDecimal.ROUND_HALF_EVEN);
                                     payMentVoucherNumber.append(miscbilldetail.getPayVoucherHeader().getVoucherNumber());
                                     final Paymentheader paymentMode = (Paymentheader) persistenceService.find(
-                                            "from Paymentheader where voucherheader=?", miscbilldetail.getPayVoucherHeader());
+                                            "from Paymentheader where voucherheader=?1", miscbilldetail.getPayVoucherHeader());
                                     if (!paymentMode.getType().equals(FinancialConstants.MODEOFPAYMENT_RTGS)) {
                                         // List<InstrumentVoucher>
                                         // instrumentVoucherList=(List<InstrumentVoucher>)persistenceService.findAllBy(" from InstrumentVoucher where voucherHeaderId=?",

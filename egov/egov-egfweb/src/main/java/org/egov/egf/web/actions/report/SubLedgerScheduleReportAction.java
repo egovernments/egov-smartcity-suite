@@ -169,9 +169,9 @@ public class SubLedgerScheduleReportAction extends BaseFormAction {
         Fund fund = new Fund();
         if (checkNullandEmpty(subLedgerScheduleReport.getGlcode())
                 && checkNullandEmpty(subLedgerScheduleReport.getGlcode())) {
-            glCode = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where glcode = ?",
+            glCode = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where glcode = ?1",
                     subLedgerScheduleReport.getGlcode());
-            fund = (Fund) persistenceService.find("from Fund where id = ?",
+            fund = (Fund) persistenceService.find("from Fund where id = ?1",
                     Integer.parseInt(subLedgerScheduleReport.getFund_id()));
         }
         heading = "Sub Ledger Schedule Report for " + glCode.getGlcode() + " - " + glCode.getName() + " for "

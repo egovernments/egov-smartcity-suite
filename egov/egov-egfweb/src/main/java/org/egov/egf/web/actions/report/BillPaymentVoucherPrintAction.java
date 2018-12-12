@@ -103,7 +103,7 @@ import java.util.Map;
 public class BillPaymentVoucherPrintAction extends BaseFormAction {
     public static final String PRINT = "print";
     private static final long serialVersionUID = 1L;
-    private static final String ACCDETAILTYPEQUERY = " from Accountdetailtype where id=?";
+    private static final String ACCDETAILTYPEQUERY = " from Accountdetailtype where id=?1";
     private static final String JASPERPATH = "/reports/templates/billPaymentVoucherReport.jasper";
     private static final String MULTIPLE = "MULTIPLE";
 
@@ -276,7 +276,7 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
                 voucher = paymentHeader.getVoucherheader();
                 if (voucher != null) {
                     final List<InstrumentVoucher> instrumentVoucherList = persistenceService.findAllBy(
-                            "from InstrumentVoucher where voucherHeaderId.id=?", voucher.getId());
+                            "from InstrumentVoucher where voucherHeaderId.id=?1", voucher.getId());
                     if (instrumentVoucherList != null && !instrumentVoucherList.isEmpty()) {
                         final InstrumentHeader instrumentHeader = instrumentVoucherList.get(0).getInstrumentHeaderId();
                         rtgsRefNo = instrumentHeader.getTransactionNumber();
@@ -289,7 +289,7 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
                                 .concat(bankAccount.getBankbranch().getBranchname());
                         bankAccountNumber = bankAccount.getAccountnumber();
                     }
-                    miscBillDetailList = persistenceService.findAllBy("from Miscbilldetail where payVoucherHeader.id=?",
+                    miscBillDetailList = persistenceService.findAllBy("from Miscbilldetail where payVoucherHeader.id=?1",
                             voucher.getId());
                 }
                 return;
@@ -301,7 +301,7 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
                 excludeChequeStatusses.add(FinancialConstants.INSTRUMENT_SURRENDERED_FOR_REASSIGN_STATUS);
                 excludeChequeStatusses.add(FinancialConstants.INSTRUMENT_SURRENDERED_STATUS);
                 final List<InstrumentVoucher> instrumentVoucherList = persistenceService.findAllBy(
-                        "from InstrumentVoucher where voucherHeaderId.id=?", voucher.getId());
+                        "from InstrumentVoucher where voucherHeaderId.id=?1", voucher.getId());
                 if (instrumentVoucherList != null && !instrumentVoucherList.isEmpty())
                     for (final InstrumentVoucher instrumentVoucher : instrumentVoucherList)
                         try {
@@ -333,7 +333,7 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
                         && instrumentHeader != null && instrumentHeader.getPayTo() != null)
                     cashModePartyName = instrumentHeader.getPayTo();
             }
-            miscBillDetailList = persistenceService.findAllBy("from Miscbilldetail where payVoucherHeader.id=?", voucher.getId());
+            miscBillDetailList = persistenceService.findAllBy("from Miscbilldetail where payVoucherHeader.id=?1", voucher.getId());
         }
         Collections.sort(chequeNoList);
         chequeNumber = "";
@@ -357,7 +357,7 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
 
     private boolean isInstrumentMultiVoucherMapped(final Long instrumentHeaderId) {
         final List<InstrumentVoucher> instrumentVoucherList = persistenceService.findAllBy(
-                "from InstrumentVoucher where instrumentHeaderId.id=?", instrumentHeaderId);
+                "from InstrumentVoucher where instrumentHeaderId.id=?1", instrumentHeaderId);
         boolean rep = false;
         if (!instrumentVoucherList.isEmpty()) {
             final Long voucherId = instrumentVoucherList.get(0).getVoucherHeaderId().getId();

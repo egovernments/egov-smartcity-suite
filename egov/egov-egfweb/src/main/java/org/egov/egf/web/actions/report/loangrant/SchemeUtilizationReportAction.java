@@ -155,7 +155,7 @@ public class SchemeUtilizationReportAction extends LoanGrantBaseAction {
 
         // used to identify subschemes
         String temp = "";
-        final String pcQryStr = "from " + table + " where  id=?";
+        final String pcQryStr = "from " + table + " where  id=?1";
         BigDecimal grandTotal = BigDecimal.ZERO;
         // sub scheme wise total
         final Map<String, BigDecimal> ssTotalMap = new LinkedHashMap<String, BigDecimal>();
@@ -314,20 +314,20 @@ public class SchemeUtilizationReportAction extends LoanGrantBaseAction {
 
         if (schemeId != null)
         {
-            final String schemeName = (String) persistenceService.find("select name from Scheme where id=?", getSchemeId());
+            final String schemeName = (String) persistenceService.find("select name from Scheme where id=?1", getSchemeId());
             paramMap.put("reportBy", "Scheme Utilization Report for " + schemeName);
             paramMap.put("schemeName", schemeName);
         }
         if (getSubSchemeId() != null)
         {
-            final String subSchemeName = (String) persistenceService.find("select name from SubScheme where id=?",
+            final String subSchemeName = (String) persistenceService.find("select name from SubScheme where id=?1",
                     getSubSchemeId());
             paramMap.put("reportBy", "Scheme Utilization Report for " + subSchemeName);
             paramMap.put("subSchemeName", subSchemeName);
         }
         if (fundId != null)
         {
-            final String fundName = (String) persistenceService.find("select name from Fund where id=?", fundId);
+            final String fundName = (String) persistenceService.find("select name from Fund where id=?1", fundId);
             paramMap.put("fundName", fundName);
         }
         paramMap.put("fromDate", fromDate);

@@ -232,13 +232,13 @@ public class BalanceSheetReportAction extends BaseFormAction {
     protected void setRelatedEntitesOn() {
         setTodayDate(new Date());
         if (balanceSheet.getFinancialYear() != null && balanceSheet.getFinancialYear().getId() != null)
-            balanceSheet.setFinancialYear((CFinancialYear) getPersistenceService().find("from CFinancialYear where id=?",
+            balanceSheet.setFinancialYear((CFinancialYear) getPersistenceService().find("from CFinancialYear where id=?1",
                     balanceSheet.getFinancialYear().getId()));
         if (balanceSheet.getDepartment() != null && balanceSheet.getDepartment().getId() != null
                 && balanceSheet.getDepartment().getId() != 0) {
-            balanceSheet.setDepartment((Department) getPersistenceService().find("from Department where id=?",
+            balanceSheet.setDepartment((Department) getPersistenceService().find("from Department where id=?1",
                     balanceSheet.getDepartment().getId()));
-            persistenceService.find("from Department where id=?", balanceSheet.getDepartment()
+            persistenceService.find("from Department where id=?1", balanceSheet.getDepartment()
                     .getId());
             header.append(" in " + balanceSheet.getDepartment().getName());
         } else
@@ -249,12 +249,12 @@ public class BalanceSheetReportAction extends BaseFormAction {
             header.append(" in " + balanceSheet.getField().getName());
         }*/
         if (balanceSheet.getFund() != null && balanceSheet.getFund().getId() != null && balanceSheet.getFund().getId() != 0) {
-            balanceSheet.setFund((Fund) getPersistenceService().find("from Fund where id=?", balanceSheet.getFund().getId()));
+            balanceSheet.setFund((Fund) getPersistenceService().find("from Fund where id=?1", balanceSheet.getFund().getId()));
             header.append(" for " + balanceSheet.getFund().getName());
         }
         if (balanceSheet.getFunction() != null && balanceSheet.getFunction().getId() != null
                 && balanceSheet.getFunction().getId() != 0) {
-            balanceSheet.setFunction((CFunction) getPersistenceService().find("from CFunction where id=?",
+            balanceSheet.setFunction((CFunction) getPersistenceService().find("from CFunction where id=?1",
                     balanceSheet.getFunction().getId()));
             header.append(" for " + balanceSheet.getFunction().getName());
         }

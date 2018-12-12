@@ -163,7 +163,7 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("----Inside generateReport---- ");
 
-        accountNumber = (Bankaccount) persistenceService.find("from Bankaccount where id=?", accountNumber.getId());
+        accountNumber = (Bankaccount) persistenceService.find("from Bankaccount where id=?1", accountNumber.getId());
         if (accountNumber.getChequeformat() != null && !accountNumber.getChequeformat().equals("")) {
             chequeFormat = accountNumber.getChequeformat().getId().toString();
         }
@@ -377,7 +377,7 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
     }
 
     protected Map<String, Object> getParamMap() {
-        accountNumber = (Bankaccount) persistenceService.find("from Bankaccount where id=?", accountNumber.getId());
+        accountNumber = (Bankaccount) persistenceService.find("from Bankaccount where id=?1", accountNumber.getId());
         final Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("bank", getFormattedBankName());
         paramMap.put("accountNumber", accountNumber.getAccountnumber());
@@ -385,7 +385,7 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
         paramMap.put("toDate", Constants.DDMMYYYYFORMAT1.format(toDate));
         paramMap.put("ulbName", ulbName);
         if (department != null && department.getId() != null && department.getId() != 0) {
-            final Department dept = (Department) persistenceService.find("from Department where id=?",
+            final Department dept = (Department) persistenceService.find("from Department where id=?1",
                     department.getId());
             paramMap.put("departmentName", dept.getName());
         }
@@ -394,8 +394,8 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
 
     public String getFormattedBankName() {
         final String[] bankData = bank.split("-");
-        final Bank bank = (Bank) persistenceService.find("from Bank where id=?", Integer.valueOf(bankData[0]));
-        final Bankbranch bankBranch = (Bankbranch) persistenceService.find("from Bankbranch where id=?",
+        final Bank bank = (Bank) persistenceService.find("from Bank where id=?1", Integer.valueOf(bankData[0]));
+        final Bankbranch bankBranch = (Bankbranch) persistenceService.find("from Bankbranch where id=?1",
                 Integer.valueOf(bankData[1]));
         String name = "";
         if (bank != null && bankBranch != null)

@@ -261,7 +261,7 @@ public class BankBookReportAction extends BaseFormAction {
                 return "results";
             }
             setTodayDate(new Date());
-            bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
+            bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?1",
                     Long.valueOf(parameters.get("bankAccount.id")[0]));
             final List<BankBookEntry> results = getResults(bankAccount.getChartofaccounts().getGlcode());
             final Map<String, BankBookEntry> voucherNumberAndEntryMap = new HashMap<String, BankBookEntry>();
@@ -686,14 +686,14 @@ public class BankBookReportAction extends BaseFormAction {
 
         if (fundId != null && fundId.getId() != null && fundId.getId() != -1) {
             query.append(" and vh.fundId=").append(fundId.getId().toString());
-            final Fund fnd = (Fund) persistenceService.find("from Fund where id=?", fundId.getId());
+            final Fund fnd = (Fund) persistenceService.find("from Fund where id=?1", fundId.getId());
             header.append(" for " + fnd.getName());
         }
 
         if (getVouchermis() != null && getVouchermis().getDepartmentid() != null
                 && getVouchermis().getDepartmentid().getId() != null && getVouchermis().getDepartmentid().getId() != -1) {
             query.append(" and vmis.DEPARTMENTID=").append(getVouchermis().getDepartmentid().getId().toString());
-            final Department dept = (Department) persistenceService.find("from Department where id=?", getVouchermis()
+            final Department dept = (Department) persistenceService.find("from Department where id=?1", getVouchermis()
                     .getDepartmentid().getId());
             header.append(" in " + dept.getName() + " ");
         }
@@ -720,7 +720,7 @@ public class BankBookReportAction extends BaseFormAction {
         if (getVouchermis() != null && getVouchermis().getFunction() != null
                 && getVouchermis().getFunction().getId() != null && getVouchermis().getFunction().getId() != -1) {
             query.append(" and vmis.functionid=").append(getVouchermis().getFunction().getId());
-            final CFunction func = (CFunction) persistenceService.find("from CFunction where id=?", getVouchermis()
+            final CFunction func = (CFunction) persistenceService.find("from CFunction where id=?1", getVouchermis()
                     .getFunction().getId());
             header.append(" in " + func.getName() + " ");
         }
@@ -879,7 +879,7 @@ public class BankBookReportAction extends BaseFormAction {
     public String showChequeDetails() {
         if (voucherId != null)
             chequeDetails = persistenceService.findAllBy(
-                    "select iv.instrumentHeaderId from InstrumentVoucher iv where iv.voucherHeaderId.id=?", voucherId);
+                    "select iv.instrumentHeaderId from InstrumentVoucher iv where iv.voucherHeaderId.id=?1", voucherId);
         return "chequeDetails";
     }
 

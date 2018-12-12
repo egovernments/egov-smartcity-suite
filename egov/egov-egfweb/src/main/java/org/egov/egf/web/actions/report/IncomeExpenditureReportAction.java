@@ -190,13 +190,13 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
         setTodayDate(new Date());
         if (incomeExpenditureStatement.getFund() != null && incomeExpenditureStatement.getFund().getId() != null
                 && incomeExpenditureStatement.getFund().getId() != 0) {
-            incomeExpenditureStatement.setFund((Fund) getPersistenceService().find("from Fund where id=?",
+            incomeExpenditureStatement.setFund((Fund) getPersistenceService().find("from Fund where id=?1",
                     incomeExpenditureStatement.getFund().getId()));
             heading.append(" in " + incomeExpenditureStatement.getFund().getName());
         }
         if (incomeExpenditureStatement.getDepartment() != null && incomeExpenditureStatement.getDepartment().getId() != null
                 && incomeExpenditureStatement.getDepartment().getId() != 0) {
-            incomeExpenditureStatement.setDepartment((Department) getPersistenceService().find("from Department where id=?",
+            incomeExpenditureStatement.setDepartment((Department) getPersistenceService().find("from Department where id=?1",
                     incomeExpenditureStatement.getDepartment().getId()));
             heading.append(" in " + incomeExpenditureStatement.getDepartment().getName() + " Department");
         } else
@@ -205,25 +205,25 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
                 && incomeExpenditureStatement.getFinancialYear().getId() != null
                 && incomeExpenditureStatement.getFinancialYear().getId() != 0) {
             incomeExpenditureStatement.setFinancialYear((CFinancialYear) getPersistenceService().find(
-                    "from CFinancialYear where id=?", incomeExpenditureStatement.getFinancialYear().getId()));
+                    "from CFinancialYear where id=?1", incomeExpenditureStatement.getFinancialYear().getId()));
             heading.append(" for the Financial Year " + incomeExpenditureStatement.getFinancialYear().getFinYearRange());
         }
         if (incomeExpenditureStatement.getFunction() != null && incomeExpenditureStatement.getFunction().getId() != null
                 && incomeExpenditureStatement.getFunction().getId() != 0) {
-            incomeExpenditureStatement.setFunction((CFunction) getPersistenceService().find("from CFunction where id=?",
+            incomeExpenditureStatement.setFunction((CFunction) getPersistenceService().find("from CFunction where id=?1",
                     incomeExpenditureStatement.getFunction().getId()));
             heading.append(" in Function Code " + incomeExpenditureStatement.getFunction().getName());
         }
         if (incomeExpenditureStatement.getField() != null && incomeExpenditureStatement.getField().getId() != null
                 && incomeExpenditureStatement.getField().getId() != 0) {
-            incomeExpenditureStatement.setField((Boundary) getPersistenceService().find("from Boundary where id=?",
+            incomeExpenditureStatement.setField((Boundary) getPersistenceService().find("from Boundary where id=?1",
                     incomeExpenditureStatement.getField().getId()));
             heading.append(" in the field value" + incomeExpenditureStatement.getField().getName());
         }
 
         if (incomeExpenditureStatement.getFunctionary() != null && incomeExpenditureStatement.getFunctionary().getId() != null
                 && incomeExpenditureStatement.getFunctionary().getId() != 0) {
-            incomeExpenditureStatement.setFunctionary((Functionary) getPersistenceService().find("from Functionary where id=?",
+            incomeExpenditureStatement.setFunctionary((Functionary) getPersistenceService().find("from Functionary where id=?1",
                     incomeExpenditureStatement.getFunctionary().getId()));
             heading.append(" and " + incomeExpenditureStatement.getFunctionary().getName() + " Functionary");
         }
