@@ -328,7 +328,7 @@ public abstract class BaseBudgetDetailAction extends GenericWorkFlowAction {
 
     private void setAsOnDateOnSelectedBudget() {
         if (budgetDetail.getBudget() != null && budgetDetail.getBudget().getId() != null) {
-            final Budget selectedBudget = (Budget) getPersistenceService().find("from Budget where id=?",
+            final Budget selectedBudget = (Budget) getPersistenceService().find("from Budget where id=?1",
                     budgetDetail.getBudget().getId());
             selectedBudget.setAsOnDate(getAsOnDate());
             budgetService.update(selectedBudget);
@@ -543,7 +543,7 @@ public abstract class BaseBudgetDetailAction extends GenericWorkFlowAction {
     }
 
     protected User getUser() {
-        return (User) persistenceService.find("from User where id=?", ApplicationThreadLocals.getUserId());
+        return (User) persistenceService.find("from User where id=?1", ApplicationThreadLocals.getUserId());
     }
 
     protected Position getPosition() {
@@ -594,7 +594,7 @@ public abstract class BaseBudgetDetailAction extends GenericWorkFlowAction {
     protected void getDetailsFilterdBy() {
         final StringBuilder mainQry = new StringBuilder(100);
 
-        mainQry.append("from BudgetDetail where budget.id=? and status.code = 'NEW' order by function.name,budgetGroup.name ");
+        mainQry.append("from BudgetDetail where budget.id=?1 and status.code = 'NEW' order by function.name,budgetGroup.name ");
         if (budgetDetail.getBudget() != null && budgetDetail.getBudget().getId() != 0)
             savedbudgetDetailList = budgetDetailService.findAllBy(mainQry.toString(), budgetDetail.getBudget().getId());
 
@@ -611,7 +611,7 @@ public abstract class BaseBudgetDetailAction extends GenericWorkFlowAction {
         }
         final Budget referenceBudgetFor = budgetService.getReferenceBudgetFor(savedbudgetDetailList.get(0).getBudget());
         if (referenceBudgetFor != null) {
-            final List<BudgetDetail> result = budgetDetailService.findAllBy("from BudgetDetail where budget.id=?",
+            final List<BudgetDetail> result = budgetDetailService.findAllBy("from BudgetDetail where budget.id=?1",
                     referenceBudgetFor.getId());
 
             if (!savedbudgetDetailList.isEmpty())
@@ -734,7 +734,7 @@ public abstract class BaseBudgetDetailAction extends GenericWorkFlowAction {
 
     public String ajaxLoadSubSchemes() {
         subSchemes = getPersistenceService()
-                .findAllBy("from SubScheme where scheme.id=? and isActive=true order by name", schemeId);
+                .findAllBy("from SubScheme where scheme.id=?1 and isActive=true order by name", schemeId);
         return Constants.SUBSCHEMES;
     }
 

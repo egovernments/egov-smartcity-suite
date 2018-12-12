@@ -353,7 +353,7 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         boolean reAppForNewBudgetCreated = false;
         BudgetReAppropriationMisc misc = null;
         if (financialYear != null && financialYear.getId() != 0)
-            financialYear = (CFinancialYear) persistenceService.find("from CFinancialYear where id=?", financialYear.getId());
+            financialYear = (CFinancialYear) persistenceService.find("from CFinancialYear where id=?1", financialYear.getId());
         try {
             misc = budgetReAppropriationService.createBudgetReAppropriationMisc(parameters.get(ACTIONNAME)[0] + "|" + userId,
                     beRe, financialYear, appropriationMisc, getPosition());
@@ -515,7 +515,7 @@ public class BudgetReAppropriationAction extends BaseFormAction {
             return budgetService
                     .findAllBy(
                             "from Budget where id not in (select parent from Budget where parent is not null) and isactivebudget = true and status.moduletype='BUDGET' and status.code='"
-                                    + finalStatus + "' and financialYear.id=? and isbere=? order by name",
+                                    + finalStatus + "' and financialYear.id=?1 and isbere=?2 order by name",
                             id, beRe);
         return new ArrayList();
     }

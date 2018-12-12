@@ -261,7 +261,7 @@ public class BudgetReportAction extends BaseFormAction {
     @Action(value = "/budget/budgetReport-ajaxGenerateFunctionWiseHtml")
     public String ajaxGenerateFunctionWiseHtml() throws IOException {
         if (topBudget != null && topBudget.getId() != null)
-            topBudget = budgetService.find("from Budget where id=?", topBudget.getId());
+            topBudget = budgetService.find("from Budget where id=?1", topBudget.getId());
         if (departmentBudget)
             workFlowstateCondn = " and (bd.status.code='Approved')";
 
@@ -613,18 +613,18 @@ public class BudgetReportAction extends BaseFormAction {
 
         if (budgetDetail.getId() != null)
         {
-            budgetDetail = budgetDetailService.find("from BudgetDetail where id=?", budgetDetail.getId());
+            budgetDetail = budgetDetailService.find("from BudgetDetail where id=?1", budgetDetail.getId());
             topBudget = budgetDetail.getBudget();
             budgetReport.setFinancialYear(budgetDetail.getBudget().getFinancialYear());
             budgetDetailList = budgetDetailService.findAllBy(
-                    "from BudgetDetail where budget.id=? and state.value=? and function=?", budgetDetail.getBudget().getId(),
+                    "from BudgetDetail where budget.id=?1 and state.value=?2 and function=?3", budgetDetail.getBudget().getId(),
                     "END", budgetDetail.getFunction());
         } else if (budgetDetail.getBudget().getId() != null)
         {
-            topBudget = budgetService.find("from Budget where id=?", budgetDetail.getBudget().getId());
+            topBudget = budgetService.find("from Budget where id=?1", budgetDetail.getBudget().getId());
             budgetReport.setFinancialYear(topBudget.getFinancialYear());
             budgetDetailList = budgetDetailService.findAllBy(
-                    "from BudgetDetail where budget=? and( state.value=? or state.owner=?)", topBudget, "END", pos);
+                    "from BudgetDetail where budget=?1 and( state.value=?2 or state.owner=?3)", topBudget, "END", pos);
         }
 
         // budgetDetailList =
@@ -798,7 +798,7 @@ public class BudgetReportAction extends BaseFormAction {
                                 + ""
                                 + floatingColumn
                                 + ",bd.executingDepartment.id,bd.function.id,bd.budgetGroup.minCode.type,bd.id from BudgetDetail bd where "
-                                + "bd.budget.financialYear=? and bd.budget.state in (from org.egov.infra.workflow.entity.State where type='Budget' and value='"
+                                + "bd.budget.financialYear=?1 and bd.budget.state in (from org.egov.infra.workflow.entity.State where type='Budget' and value='"
                                 + finalStatus
                                 + "' ) "
                                 + miscQuery
@@ -827,7 +827,7 @@ public class BudgetReportAction extends BaseFormAction {
                                 + majorCodeLength
                                 + ") ,"
                                 + floatingColumn
-                                + ",bd.executingDepartment.id,bd.function.id,bd.budgetGroup.majorCode.type,bd.id from BudgetDetail bd where bd.budget.financialYear=? and bd.budget.state in (from org.egov.infra.workflow.entity.State where type='Budget' and value='"
+                                + ",bd.executingDepartment.id,bd.function.id,bd.budgetGroup.majorCode.type,bd.id from BudgetDetail bd where bd.budget.financialYear=?1 and bd.budget.state in (from org.egov.infra.workflow.entity.State where type='Budget' and value='"
                                 + finalStatus
                                 + "' )  and bd.budget.isbere='"
                                 + isBERE
@@ -864,7 +864,7 @@ public class BudgetReportAction extends BaseFormAction {
                                 + ""
                                 + floatingColumn
                                 + ",bd.executingDepartment.id,bd.function.id,bd.budgetGroup.minCode.type,bd.id from BudgetDetail bd where "
-                                + "bd.budget.financialYear=? and( bd.state.value ='END'  or bd.state.owner=?) and bd.budget=?"
+                                + "bd.budget.financialYear=?1 and( bd.state.value ='END'  or bd.state.owner=?2) and bd.budget=?3"
                                 +
                                 miscQuery
                                 + " and bd.budget.isbere='"
@@ -1179,11 +1179,11 @@ public class BudgetReportAction extends BaseFormAction {
         if (budgetReport.getDepartment() == null || budgetReport.getDepartment().getId() == null)
             budgetReport.setDepartment(null);
         else
-            budgetReport.setDepartment((Department) getPersistenceService().find("from Department where id=?",
+            budgetReport.setDepartment((Department) getPersistenceService().find("from Department where id=?1",
                     budgetReport.getDepartment().getId()));
 
         if (budgetReport.getFinancialYear() != null)
-            budgetReport.setFinancialYear((CFinancialYear) getPersistenceService().find("from CFinancialYear where id=?",
+            budgetReport.setFinancialYear((CFinancialYear) getPersistenceService().find("from CFinancialYear where id=?1",
                     budgetReport.getFinancialYear().getId()));
     }
 
@@ -1196,7 +1196,7 @@ public class BudgetReportAction extends BaseFormAction {
     protected String getBudgetType(final String finalStatus) {
         String isBeRe = "BE";
         final Budget budget = (Budget) persistenceService
-                .find("from Budget where financialYear.id=? and parent is null and isPrimaryBudget=true and isActiveBudget=true and isBeRe='RE' and status.code='"
+                .find("from Budget where financialYear.id=?1 and parent is null and isPrimaryBudget=true and isActiveBudget=true and isBeRe='RE' and status.code='"
                         + finalStatus + "' ", budgetReport.getFinancialYear().getId());
         if (budget != null)
             isBeRe = "RE";
@@ -1944,7 +1944,7 @@ public class BudgetReportAction extends BaseFormAction {
         if (option.equalsIgnoreCase("previous")) {
             cal.setTime(budgetReport.getFinancialYear().getStartingDate());
             cal.add(Calendar.DATE, -1);
-            finYear = (CFinancialYear) persistenceService.find("from CFinancialYear c where c.endingDate=?", cal.getTime());
+            finYear = (CFinancialYear) persistenceService.find("from CFinancialYear c where c.endingDate=?1", cal.getTime());
             if (finYear == null)
                 throw new ValidationException(Arrays.asList(new ValidationError("next.financial.year.not.defined",
                         "Previous financial year not defined")));
@@ -1953,7 +1953,7 @@ public class BudgetReportAction extends BaseFormAction {
 
             cal.setTime(budgetReport.getFinancialYear().getEndingDate());
             cal.add(Calendar.DATE, 1);
-            finYear = (CFinancialYear) persistenceService.find("from CFinancialYear c where c.startingDate=?", cal.getTime());
+            finYear = (CFinancialYear) persistenceService.find("from CFinancialYear c where c.startingDate=?1", cal.getTime());
             if (finYear == null)
                 throw new ValidationException(Arrays.asList(new ValidationError("next.financial.year.not.defined",
                         "Next financial year not defined")));
@@ -1995,14 +1995,14 @@ public class BudgetReportAction extends BaseFormAction {
     private Long getFinYearForRE() {
         final Long finId = budgetReport.getFinancialYear().getId();
         final Long budgetCount = (Long) persistenceService.find(
-                "select count(*) from Budget b where b.financialYear.id=? and b.isbere='RE'", finId);
+                "select count(*) from Budget b where b.financialYear.id=?1 and b.isbere='RE'", finId);
         if (budgetCount == 0) {
             final Date startingDate = budgetReport.getFinancialYear().getStartingDate();
             final Calendar cal = Calendar.getInstance();
             cal.setTime(startingDate);
             cal.add(Calendar.DATE, -1);
             final CFinancialYear prevFinyear = (CFinancialYear) persistenceService.find(
-                    "from CFinancialYear c where c.endingDate=?",
+                    "from CFinancialYear c where c.endingDate=?1",
                     cal.getTime());
             if (prevFinyear == null)
                 throw new ValidationException(Arrays.asList(new ValidationError("next.financial.year.not.defined",

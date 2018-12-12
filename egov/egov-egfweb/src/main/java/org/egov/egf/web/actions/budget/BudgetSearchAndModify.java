@@ -175,13 +175,13 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
 
         if (parameters.get("budgetDetail.id")[0] != null) {
 
-            budgetDetail = (BudgetDetail) persistenceService.find("from BudgetDetail where id=?",
+            budgetDetail = (BudgetDetail) persistenceService.find("from BudgetDetail where id=?1",
                     Long.valueOf(parameters.get("budgetDetail.id")[0]));
             setTopBudget(budgetDetail.getBudget());
             comments = topBudget.getState().getExtraInfo();
         }
         // if u want only selected function centre filter here by owner
-        final String query = " from BudgetDetail bd where bd.budget=? and bd.function=" + budgetDetail.getFunction().getId()
+        final String query = " from BudgetDetail bd where bd.budget=?1 and bd.function=" + budgetDetail.getFunction().getId()
                 + "  order by bd.function.name,bd.budgetGroup.name";
         savedbudgetDetailList = budgetDetailService.findAllBy(query, topBudget);
         re = checkRe(topBudget);
@@ -223,7 +223,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
         Budget budget = null;
         Budget b = null;
         if (parameters.get("budget.id") != null) {
-            budget = budgetService.find(" from Budget where id=?", Long.valueOf(parameters.get("budget.id")[0]));
+            budget = budgetService.find(" from Budget where id=?1", Long.valueOf(parameters.get("budget.id")[0]));
             setTopBudget(budget);
         }
         if ("forward".equalsIgnoreCase(parameters.get("actionName")[0]) || parameters.get("actionName")[0].contains("approve"))
@@ -243,7 +243,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
                 b = detail.getBudget();
             }
             if (b != null && b.getId() != null) {
-                b = budgetService.find("from Budget where id=?", b.getId());
+                b = budgetService.find("from Budget where id=?1", b.getId());
                 if (b.getCurrentState() != null)
                     // need to fix phoenix migration b.getCurrentState().setText1(comments);
                     budgetService.persist(b);
@@ -253,7 +253,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
         setBudgetDetail((BudgetDetail) session().get(Constants.SEARCH_CRITERIA_KEY));
         // Report block
         {
-            final Long count = (Long) persistenceService.find("select count(*) from Budget where materializedPath like ?",
+            final Long count = (Long) persistenceService.find("select count(*) from Budget where materializedPath like ?1",
                     topBudget.getMaterializedPath() + ".%");
             // if()
             // financialYear=topBudget.getFinancialYear();
@@ -332,7 +332,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
 
                 detail.transition().progressWithStateCopy().withStateValue("END").withOwner(positionByUserId).withComments(comment);
                 budgetDetailService.persist(detail);
-                final BudgetDetail detailBE = (BudgetDetail) persistenceService.find("from BudgetDetail where id=?",
+                final BudgetDetail detailBE = (BudgetDetail) persistenceService.find("from BudgetDetail where id=?1",
                         detail.getNextYrId());
                 if (consolidatedScreen)
                     detailBE.setApprovedAmount(detail.getNextYrapprovedAmount().multiply(BigDecimal.valueOf(1000)));
@@ -357,7 +357,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
 
                 detail.transition().progressWithStateCopy().withStateValue("Forwarded by " + name).withOwner(positionByUserId).withComments(comment);
                 budgetDetailService.persist(detail);
-                final BudgetDetail detailBE = (BudgetDetail) persistenceService.find("from BudgetDetail where id=?",
+                final BudgetDetail detailBE = (BudgetDetail) persistenceService.find("from BudgetDetail where id=?1",
                         detail.getNextYrId());
                 // detailBE.setOriginalAmount(detail.getOriginalAmount());
                 if (consolidatedScreen)
@@ -377,7 +377,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
             getTopBudget().transition().progressWithStateCopy().withStateValue("Forwarded by " + name).withOwner(positionByUserId)
                     .withComments(comments);
         // add logic for BE approval also
-        final Budget beBudget = budgetService.find("from Budget where referenceBudget=?", getTopBudget());
+        final Budget beBudget = budgetService.find("from Budget where referenceBudget=?1", getTopBudget());
         if (beBudget.getState().getOwnerPosition() != null
                 && beBudget.getState().getOwnerPosition().getId() != positionByUserId.getId())
             beBudget.transition().progressWithStateCopy().withStateValue("Forwarded by " + name).withOwner(positionByUserId).withComments(comments);
@@ -434,7 +434,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
     private List<BudgetDetail> getAllApprovedBudgetDetails(final Budget budget) {
         return budgetDetailService
                 .findAllBy(
-                        "from BudgetDetail where budget=? and (state.value='END' or state.owner=?) order by function.name,budgetGroup.name ",
+                        "from BudgetDetail where budget=?1 and (state.value='END' or state.owner=?2) order by function.name,budgetGroup.name ",
                         budget, getPosition());
     }
 
@@ -500,7 +500,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
             final Date startingDate = financialYear2.getStartingDate();
             final Date lastyear = subtractYear(startingDate);
             final CFinancialYear lastFinYear = (CFinancialYear) persistenceService.find(
-                    "from CFinancialYear where startingDate=? and isActive=true", lastyear);
+                    "from CFinancialYear where startingDate=?1 and isActive=true", lastyear);
             if (lastFinYear != null)
                 finyearId = lastFinYear.getId();
 
@@ -537,9 +537,9 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
         final CFinancialYear lastFinancialYearByDate = getFinancialYearDAO().getPreviousFinancialYearByDate(
                 financialYear.getStartingDate());
         final CFinancialYear beforeLastFinancialYearByDate = null;// getFinancialYearDAO().getTwoPreviousYearByDate(financialYear.getStartingDate());
-        lastYearTopBudget = budgetService.find(" from Budget where financialYear.id=? and parent is null  and isbere=?",
+        lastYearTopBudget = budgetService.find(" from Budget where financialYear.id=?1 and parent is null  and isbere=?2",
                 lastFinancialYearByDate.getId(), topBudget.getIsbere());
-        beforeLastYearTopBudget = budgetService.find("from Budget where financialYear.id=? and parent is null  and isbere=?",
+        beforeLastYearTopBudget = budgetService.find("from Budget where financialYear.id=?1 and parent is null  and isbere=?2",
                 beforeLastFinancialYearByDate.getId(), topBudget.getIsbere());
 
         if (lastYearTopBudget != null)
@@ -606,7 +606,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
         if (!savedbudgetDetailList.isEmpty())
             for (final BudgetDetail budgetDetail : savedbudgetDetailList) {
                 final BudgetDetail nextYrbudgetDetail = (BudgetDetail) persistenceService.find(
-                        "from BudgetDetail where uniqueNo=? and budget.referenceBudget=?", budgetDetail.getUniqueNo(),
+                        "from BudgetDetail where uniqueNo=?1 and budget.referenceBudget=?2", budgetDetail.getUniqueNo(),
                         budgetDetail.getBudget());
                 budgetDetail.setNextYrId(nextYrbudgetDetail.getId());
                 budgetDetail.setNextYroriginalAmount(nextYrbudgetDetail.getOriginalAmount());
@@ -652,7 +652,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
                 final String rootPath = mPath.substring(0, start);
                 if (LOGGER.isInfoEnabled())
                     LOGGER.info("meterialized path for root the Budget" + "   " + rootPath);
-                final Budget rootBudget = budgetService.find("from Budget where materializedPath=?", rootPath);
+                final Budget rootBudget = budgetService.find("from Budget where materializedPath=?1", rootPath);
                 if (rootBudget == null)
                     throw new ApplicationRuntimeException("Materialized path is incorrect please verify for " + rootPath);
                 else if (rootBudget.getIsPrimaryBudget() && rootBudget.getIsActiveBudget())

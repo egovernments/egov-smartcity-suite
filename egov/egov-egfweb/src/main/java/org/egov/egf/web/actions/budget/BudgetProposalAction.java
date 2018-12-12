@@ -251,7 +251,7 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("starting modifyDetailList...");
         if (parameters.get(BUDGET_DETAIL_BUDGET_ID)[0] != null) {
-            budgetDetail = (BudgetDetail) persistenceService.find("from BudgetDetail where budget.id=?",
+            budgetDetail = (BudgetDetail) persistenceService.find("from BudgetDetail where budget.id=?1",
                     Long.valueOf(parameters.get(BUDGET_DETAIL_BUDGET_ID)[0]));
             setTopBudget(budgetDetail.getBudget());
         }
@@ -279,7 +279,7 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Starting modifyBudgetDetailList..............");
         if (parameters.get(BUDGET_DETAIL_BUDGET_ID)[0] != null) {
-            budgetDetail = (BudgetDetail) persistenceService.find("from BudgetDetail where budget.id=?",
+            budgetDetail = (BudgetDetail) persistenceService.find("from BudgetDetail where budget.id=?1",
                     Long.valueOf(parameters.get(BUDGET_DETAIL_BUDGET_ID)[0]));
             setTopBudget(budgetDetail.getBudget());
         }
@@ -291,7 +291,7 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
     private void populateBudgetDetailReport() {
         loadToMasterDataMap();
         if (budgetDetail.getBudget().getId() != null)
-            budgetDetail = (BudgetDetail) persistenceService.find("from BudgetDetail where budget.id=?",
+            budgetDetail = (BudgetDetail) persistenceService.find("from BudgetDetail where budget.id=?1",
                     Long.valueOf(parameters.get(BUDGET_DETAIL_BUDGET_ID)[0]));
         consolidatedScreen = budgetDetailService.toBeConsolidated();
         hod = isHOD();
@@ -414,7 +414,7 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Starting budgetDetailApprove()..............");
 
-        final String query = " from BudgetDetail bd where bd.budget=? and (state.value='END' or state.ownerPosition=?) and bd.function="
+        final String query = " from BudgetDetail bd where bd.budget=?1 and (state.value='END' or state.ownerPosition=?2) and bd.function="
                 + budgetDetail.getFunction().getId() + "  order by bd.function.name,bd.budgetGroup.name";
         savedbudgetDetailList = budgetDetailService.findAllBy(query, topBudget, getPosition());
 
@@ -431,7 +431,7 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Starting budgetApprove..............");
         final List<CFunction> functionList = persistenceService.findAllBy(
-                "select distinct f from BudgetDetail bd inner join bd.function as f  where budget=? order by f.name ",
+                "select distinct f from BudgetDetail bd inner join bd.function as f  where budget=?1 order by f.name ",
                 topBudget);
         populateMajorCodewiseDataAcrossFunction();
         int i = 0;
@@ -441,7 +441,7 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
                 LOGGER.info("Starting budgetDetailApprove...for functin ....centre......." + function.getName()
                         + "     count " + ++i);
             budgetDetail = (BudgetDetail) persistenceService.find(
-                    "from BudgetDetail where budget=? and function=? order by budgetGroup.name", topBudget, function);
+                    "from BudgetDetail where budget=?1 and function=?2 order by budgetGroup.name", topBudget, function);
             budgetDetailApprove();
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("Finished budgetDetailApprove...for functin ....centre......." + function.getName());
@@ -798,7 +798,7 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
         if (!savedbudgetDetailList.isEmpty())
             for (final BudgetDetail budgetDetail : savedbudgetDetailList) {
                 final BudgetDetail nextYrbudgetDetail = (BudgetDetail) persistenceService.find(
-                        "from BudgetDetail where uniqueNo=? and budget.referenceBudget=?", budgetDetail.getUniqueNo(),
+                        "from BudgetDetail where uniqueNo=?1 and budget.referenceBudget=?2", budgetDetail.getUniqueNo(),
                         budgetDetail.getBudget());
                 budgetDetail.setNextYroriginalAmount(nextYrbudgetDetail.getOriginalAmount());
                 budgetDetail.setNextYrapprovedAmount(nextYrbudgetDetail.getApprovedAmount());
@@ -921,7 +921,7 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
         for (final BudgetProposalBean bpBean : bpBeanList) {
             if (bpBean == null || bpBean.getId() == null)
                 continue;
-            budgetDetail = budgetDetailService.find("from BudgetDetail where id=?", bpBean.getId());
+            budgetDetail = budgetDetailService.find("from BudgetDetail where id=?1", bpBean.getId());
             break;
         }
         final List<Assignment> assignment = assignmentService.findAllAssignmentsByHODDeptAndDates(
@@ -961,7 +961,7 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
 
     public String modifyList() {
         if (budgetDetail.getBudget().getId() != null)
-            topBudget = budgetService.find("from Budget where id=?", budgetDetail.getBudget().getId());
+            topBudget = budgetService.find("from Budget where id=?1", budgetDetail.getBudget().getId());
         consolidatedScreen = budgetDetailService.toBeConsolidated();
         if (isHOD())
             allfunctionsArrived = validateForAllFunctionsMappedForDept(topBudget, getPosition());
@@ -976,7 +976,7 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
         if (empAssignment.getDesignation().getName().equalsIgnoreCase("assistant")) {
             asstFMU = true;
             final BudgetDetail approvedBd = (BudgetDetail) persistenceService
-                    .find(" from  BudgetDetail where budget=? and approvedAmount>0 ", topBudget);
+                    .find(" from  BudgetDetail where budget=?1 and approvedAmount>0 ", topBudget);
             if (approvedBd != null) {
             } else {
             }
@@ -993,7 +993,7 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
     }
 
     private boolean validateForAllFunctionsMappedForDept(final Budget topBudget, final Position position) {
-        final BudgetDetail bd = budgetDetailService.find("from BudgetDetail  where budget.id=?", topBudget.getId());
+        final BudgetDetail bd = budgetDetailService.find("from BudgetDetail  where budget.id=?1", topBudget.getId());
         final String Query = "select distinct(f.name) as functionid from eg_dept_functionmap m,function f where departmentid="
                 + bd.getExecutingDepartment().getId() + " and f.id= m.functionid and m.budgetaccount_Type='"
                 + budgetDetailHelper.accountTypeForFunctionDeptMap(topBudget.getName()) + "'" + " EXCEPT "
@@ -1037,10 +1037,10 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
         State state;
         if (factor.equalsIgnoreCase(bigThousand.toString()))
             state = (State) persistenceService.find(
-                    "select b.state from Budget b where b.id =(select bd.budget.id from BudgetDetail bd where bd.id=?) ",
+                    "select b.state from Budget b where b.id =(select bd.budget.id from BudgetDetail bd where bd.id=?1) ",
                     validId);
         else
-            state = (State) persistenceService.find("select bd.state from BudgetDetail bd where bd.id=? ", validId);
+            state = (State) persistenceService.find("select bd.state from BudgetDetail bd where bd.id=?1 ", validId);
         if (state != null && positionsForUser.contains(state.getOwnerPosition())) {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Valid Owner :return true");

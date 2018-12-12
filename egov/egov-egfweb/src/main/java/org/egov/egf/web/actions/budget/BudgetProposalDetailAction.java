@@ -192,7 +192,7 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
     public void populateSavedbudgetDetailListFor(final Budget budget) {
         if (budget != null && budget.getId() != null)
             savedbudgetDetailList = budgetDetailService.findAllBy(
-                    "from BudgetDetail where budget.id=? order by function.name,budgetGroup.name", budget.getId());
+                    "from BudgetDetail where budget.id=?1 order by function.name,budgetGroup.name", budget.getId());
     }
 
     @Override
@@ -200,12 +200,12 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
         if (bd != null) {
             // find all RE for the functin
             final List<BudgetDetail> findAllBy = budgetDetailService.findAllBy(
-                    "from BudgetDetail where budget=? and function.id=? order by function.name,budgetGroup.name",
+                    "from BudgetDetail where budget=?1 and function.id=?2 order by function.name,budgetGroup.name",
                     bd.getBudget(), bd.getFunction().getId());
             savedbudgetDetailList = findAllBy;
             // find all next year be for the function
             savedbudgetDetailList.addAll(budgetDetailService.findAllBy(
-                    "from BudgetDetail where budget=(select bd from Budget bd where bd.referenceBudget=?) and function.id=? order by function.name,budgetGroup.name",
+                    "from BudgetDetail where budget=(select bd from Budget bd where bd.referenceBudget=?1) and function.id=?2 order by function.name,budgetGroup.name",
                     bd.getBudget(), bd.getFunction().getId()));
         }
     }
@@ -213,7 +213,7 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
     public String ajaxLoadBudgetDetailList() {
         final Long id = (Long) request.get("id");
         if (!Long.valueOf(0).equals(id)) {
-            savedbudgetDetailList = budgetDetailService.findAllBy("from BudgetDetail where budget.id=?", id);
+            savedbudgetDetailList = budgetDetailService.findAllBy("from BudgetDetail where budget.id=?1", id);
             final Budget budget = budgetService.findById(id, false);
             re = budgetService.hasReForYear(budget.getFinancialYear().getId());
             budgetDetail.setBudget(budget);
@@ -312,7 +312,7 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
         final String functionLists = "functionList";
         if (getBudgetDetail() != null && getBudgetDetail().getBudget() != null
                 && getBudgetDetail().getExecutingDepartment() != null) {
-            final Budget budget = budgetService.find("from Budget where id=?", getBudgetDetail().getBudget().getId());
+            final Budget budget = budgetService.find("from Budget where id=?1", getBudgetDetail().getBudget().getId());
             final String budgetName = budget.getName();
 
             final Integer deptId = getBudgetDetail().getExecutingDepartment().getId().intValue();
@@ -385,7 +385,7 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
             return;
         final Budget referenceBudgetFor = budgetService.getReferenceBudgetFor(savedbudgetDetailList.get(0).getBudget());
         if (referenceBudgetFor != null) {
-            final List<BudgetDetail> result = budgetDetailService.findAllBy("from BudgetDetail where budget.id=?",
+            final List<BudgetDetail> result = budgetDetailService.findAllBy("from BudgetDetail where budget.id=?1",
                     referenceBudgetFor.getId());
             for (final BudgetDetail budgetDetail : savedbudgetDetailList)
                 for (final BudgetDetail row : result)
@@ -400,7 +400,7 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
         beAmounts = new ArrayList<BigDecimal>(savedbudgetDetailList.size());
         final Budget referenceBudgetFor = budgetService.getReferenceBudgetFor(savedbudgetDetailList.get(0).getBudget());
         if (referenceBudgetFor != null) {
-            final List<BudgetDetail> result = budgetDetailService.findAllBy("from BudgetDetail where budget.id=?",
+            final List<BudgetDetail> result = budgetDetailService.findAllBy("from BudgetDetail where budget.id=?1",
                     referenceBudgetFor.getId());
             for (final BudgetDetail budgetDetail : savedbudgetDetailList)
                 for (final BudgetDetail row : result)

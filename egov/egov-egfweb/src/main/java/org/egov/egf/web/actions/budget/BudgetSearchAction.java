@@ -316,15 +316,15 @@ public class BudgetSearchAction extends BaseFormAction {
             persistenceService.getSession().refresh(budgetDetail.getBudget());
 
             if (budgetDetail.getBudget().getFinancialYear() == null)
-                budgetDetail.setBudget(budgetService.find("from Budget where id=?", budgetDetail.getBudget().getId()));
+                budgetDetail.setBudget(budgetService.find("from Budget where id=?1", budgetDetail.getBudget().getId()));
             financialYear = budgetDetail.getBudget().getFinancialYear().getId();
             if (isApproveAction == true)
                 budgetList.add(budgetService.find(
-                        "select budget from Budget budget  join budget.state as state where budget.id=? and state.owner=? ",
+                        "select budget from Budget budget  join budget.state as state where budget.id=?1 and state.owner=?2 ",
                         budgetDetail.getBudget().getId(), getPosition()));
             else
                 budgetList.add(budgetService.find(
-                        "select budget from Budget budget  join budget.state as state where budget.id=? and state.value=? ",
+                        "select budget from Budget budget  join budget.state as state where budget.id=?1 and state.value=?2 ",
                         budgetDetail.getBudget().getId(), "NEW"));
 
         } else {
@@ -436,7 +436,7 @@ public class BudgetSearchAction extends BaseFormAction {
          */
         Budget budget = budgetDetail.getBudget();
         if (budget != null && budget.getId() != null) {
-            budget = (Budget) persistenceService.find("from Budget where id=?", budget.getId());
+            budget = (Budget) persistenceService.find("from Budget where id=?1", budget.getId());
             currentfinYearRange = budget.getFinancialYear().getFinYearRange();
             computePreviousYearRange();
             computeTwopreviousYearRange();
@@ -567,7 +567,7 @@ public class BudgetSearchAction extends BaseFormAction {
     }
 
     protected User getUser() {
-        final User user = (User) persistenceService.find("from User where id_user=?", ApplicationThreadLocals.getUserId());
+        final User user = (User) persistenceService.find("from User where id_user=?1", ApplicationThreadLocals.getUserId());
         return user;
     }
 

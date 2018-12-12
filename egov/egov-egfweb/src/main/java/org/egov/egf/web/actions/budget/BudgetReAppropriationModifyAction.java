@@ -406,7 +406,7 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
             return "approvalList";
         miscId = budgetReAppropriation.getReAppropriationMisc().getId();
         final BudgetReAppropriationMisc misc = (BudgetReAppropriationMisc) persistenceService.find(
-                "from BudgetReAppropriationMisc where id=?", budgetReAppropriation.getReAppropriationMisc().getId());
+                "from BudgetReAppropriationMisc where id=?1", budgetReAppropriation.getReAppropriationMisc().getId());
         if (!validateOwner(misc.getState()))
             throw new ApplicationRuntimeException("Invalid Access");
         workFlowItem = misc;
@@ -479,10 +479,10 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
     public String performAction() {
         if (miscId != null) {
             BudgetReAppropriationMisc misc = (BudgetReAppropriationMisc) persistenceService.find(
-                    "from BudgetReAppropriationMisc where id=?", miscId);
+                    "from BudgetReAppropriationMisc where id=?1", miscId);
             if (misc != null) {
                 final List<BudgetReAppropriation> reApps = budgetReAppropriationService.findAllBy(
-                        "from BudgetReAppropriation where reAppropriationMisc.id=?", misc.getId());
+                        "from BudgetReAppropriation where reAppropriationMisc.id=?1", misc.getId());
                 actionName = actionName.replace(",", "").replace(" ", "").trim();
                 setEnablingAmounts(misc);
                 if (actionName != null && "forward".equalsIgnoreCase(actionName.trim()) || actionName.contains("approv")
