@@ -323,10 +323,10 @@ public class ContraBTBActionHelper {
             CVoucherHeader voucher,
             final ContraJournalVoucher contraVoucher, ContraBean contraBean) {
         try {
-            final Fund toFund = (Fund) persistenceService.find("from Fund where id=?", contraBean.getToFundId());
+            final Fund toFund = (Fund) persistenceService.find("from Fund where id=?1", contraBean.getToFundId());
             Department toDepartment = new Department();
             if (contraBean.getToDepartment() != null && !contraBean.getToDepartment().equals("-1"))
-                toDepartment = (Department) persistenceService.find("from Department where id=?", contraBean.getToDepartment()
+                toDepartment = (Department) persistenceService.find("from Department where id=?1", contraBean.getToDepartment()
                         .longValue());
             // validateInterFundAccount(voucherHeader.getFundId(),toFund);
             final HashMap<String, Object> headerDetails = createHeaderAndMisDetails(voucher);
@@ -334,7 +334,7 @@ public class ContraBTBActionHelper {
             headerDetails.put(VoucherConstant.VOUCHERNAME,
                     FinancialConstants.CONTRAVOUCHER_NAME_INTERFUND);
             if (voucher.getFundId().getCode().equalsIgnoreCase("03")) {
-                final Department department = (Department) persistenceService.find("from Department where code=?", "Z");
+                final Department department = (Department) persistenceService.find("from Department where code=?1", "Z");
                 headerDetails.remove(VoucherConstant.DEPARTMENTCODE);
                 headerDetails.put(VoucherConstant.DEPARTMENTCODE, department.getCode());
             }
@@ -380,7 +380,7 @@ public class ContraBTBActionHelper {
                     .getName());
             headerDetails.put(VoucherConstant.FUNDCODE, toFund.getCode());
             if (toFund.getCode().equalsIgnoreCase("03")) {
-                final Department department = (Department) persistenceService.find("from Department where code=?", "Z");
+                final Department department = (Department) persistenceService.find("from Department where code=?1", "Z");
                 headerDetails.remove(VoucherConstant.DEPARTMENTCODE);
                 headerDetails.put(VoucherConstant.DEPARTMENTCODE, department.getCode());
             } else {
@@ -473,7 +473,7 @@ public class ContraBTBActionHelper {
                     .put(VoucherConstant.SOURCEPATH,
                             "/EGF/contra/contraBTB-beforeView.action?voucherHeader.id=");
             if (voucher.getFundId().getCode().equalsIgnoreCase("03")) {
-                final Department department = (Department) persistenceService.find("from Department where code=?", "Z");
+                final Department department = (Department) persistenceService.find("from Department where code=?1", "Z");
                 headerDetails.remove(VoucherConstant.DEPARTMENTCODE);
                 headerDetails.put(VoucherConstant.DEPARTMENTCODE, department.getCode());
             }
@@ -575,7 +575,7 @@ public class ContraBTBActionHelper {
     }
 
     private ContraJournalVoucher getHibObjectsFromContraBean(final ContraBean contraBean, final ContraJournalVoucher contraVoucher) {
-        final String bankQry = "from Bankaccount where id=?";
+        final String bankQry = "from Bankaccount where id=?1";
         if (contraBean != null && contraBean.getFromBankAccountId() != null && !contraBean.getFromBankAccountId().equals("-1"))
             contraVoucher.setFromBankAccountId((Bankaccount) persistenceService.find(bankQry,
                     Long.valueOf(contraBean.getFromBankAccountId())));

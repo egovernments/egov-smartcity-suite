@@ -180,8 +180,8 @@ public class ContraCTBAction extends BaseVoucherAction
                     voucherHeader = voucherService.updateVoucherHeader(voucherHeader, voucherTypeBean);
                     final InstrumentVoucher iVoucher = (InstrumentVoucher) persistenceService.find(
                             "from InstrumentVoucher where " +
-                                    "voucherHeaderId=?", voucherHeader);
-                    final Bankaccount bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
+                                    "voucherHeaderId=?1", voucherHeader);
+                    final Bankaccount bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?1",
                             Integer.valueOf(contraBean.getAccountNumberId()));
                     final InstrumentHeader instrHeader = iVoucher.getInstrumentHeaderId();
                     if (LOGGER.isInfoEnabled())
@@ -198,7 +198,7 @@ public class ContraCTBAction extends BaseVoucherAction
                     }
 
                     final InstrumentOtherDetails iOther = (InstrumentOtherDetails) persistenceService.find(
-                            "from InstrumentOtherDetails where instrumentHeaderId=?",
+                            "from InstrumentOtherDetails where instrumentHeaderId=?1",
                             instrHeader);
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("cash deposit amount : = " + instrHeader.getInstrumentAmount());
@@ -217,7 +217,7 @@ public class ContraCTBAction extends BaseVoucherAction
                     final List<InstrumentHeader> instrumentList = instrumentService
                             .addToInstrument(createInstruments(contraBean));
                     persistenceService.getSession().flush();
-                    final Bankaccount bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
+                    final Bankaccount bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?1",
                             Integer.valueOf(contraBean.getAccountNumberId()));
                     final Map valuesMap = contraService.prepareForUpdateInstrumentDeposit(bankAccount.getChartofaccounts()
                             .getGlcode());
@@ -258,7 +258,7 @@ public class ContraCTBAction extends BaseVoucherAction
         iMap.put("Is pay cheque", FinancialConstants.IS_PAYCHECK_ZERO);
         iMap.put("Instrument type", FinancialConstants.INSTRUMENT_TYPE_CASH);
         iMap.put("Instrument amount", Double.valueOf(cBean.getAmount().toString()));
-        final Bankaccount bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
+        final Bankaccount bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?1",
                 Integer.valueOf(cBean.getAccountNumberId()));
 
         iMap.put("Bank code", bankAccount.getBankbranch().getBank().getCode());

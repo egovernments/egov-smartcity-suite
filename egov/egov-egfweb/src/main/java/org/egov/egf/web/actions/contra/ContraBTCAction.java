@@ -189,7 +189,7 @@ public class ContraBTCAction extends BaseVoucherAction {
                     return NEW;
 
             } catch (final ValidationException e) {
-                LOGGER.error("Validation error" + e.getMessage(), e);
+                LOGGER.error("Validation error" , e);
                 addActionMessage(getText(e.getErrors().get(0).getMessage()));
                 return NEW;
             }
@@ -237,9 +237,9 @@ public class ContraBTCAction extends BaseVoucherAction {
 
     private void populateData() {
         voucherHeader = (CVoucherHeader) persistenceService.find(
-                "from CVoucherHeader where id=?", voucherHeader.getId());
+                "from CVoucherHeader where id=?1", voucherHeader.getId());
         final ContraJournalVoucher contraVoucher = (ContraJournalVoucher) persistenceService
-                .find("from ContraJournalVoucher where voucherHeaderId.id=?",
+                .find("from ContraJournalVoucher where voucherHeaderId.id=?1",
                         voucherHeader.getId());
         contraBean.setAccountNumberId(contraVoucher.getFromBankAccountId()
                 .getId().toString());
@@ -321,7 +321,7 @@ public class ContraBTCAction extends BaseVoucherAction {
                     .getVoucherDate(), Long.valueOf(contraBean
                             .getAccountNumberId()));
         } catch (final ValidationException e) {
-            LOGGER.error("Error in retriving" + e.getMessage(), e);
+            LOGGER.error("Error in retriving" , e);
             accountBalance = BigDecimal.valueOf(-1);
         }
         return accountBalance;
@@ -391,7 +391,7 @@ public class ContraBTCAction extends BaseVoucherAction {
         try {
             dt = Constants.DDMMYYYYFORMAT2.parse(contraBean.getChequeDate());
         } catch (final ParseException e) {
-            LOGGER.error("Parse Error" + e.getMessage(), e);
+            LOGGER.error("Parse Error" , e);
             throw new ApplicationRuntimeException(e.getMessage());
         }
         iMap.put("Instrument date", dt);
@@ -411,7 +411,7 @@ public class ContraBTCAction extends BaseVoucherAction {
 
     private Bankaccount getBank(final Integer id) {
         return (Bankaccount) persistenceService.find(
-                "from Bankaccount where id=?", id);
+                "from Bankaccount where id=?1", id);
     }
 
     ContraJournalVoucher saveContraJournalVoucher(
@@ -433,7 +433,7 @@ public class ContraBTCAction extends BaseVoucherAction {
 
     Bankaccount getCashBankAccount() {
         return (Bankaccount) persistenceService.find(
-                "from Bankaccount where chartofaccounts.glcode=?", contraBean
+                "from Bankaccount where chartofaccounts.glcode=?1", contraBean
                 .getCashInHand());
     }
 
@@ -447,7 +447,7 @@ public class ContraBTCAction extends BaseVoucherAction {
                         .getVoucherDate(), Long.valueOf(parameters
                                 .get("accountNumberId")[0]));
             } catch (final Exception e) {
-                LOGGER.error("Error in retriving balance" + e.getMessage(), e);
+                LOGGER.error("Error in retriving balance" , e);
                 availableBalance = BigDecimal.valueOf(-1);
             }
         return "availableBalance";
@@ -620,7 +620,7 @@ public class ContraBTCAction extends BaseVoucherAction {
     @Action(value = "/contra/contraBTC-edit")
     public String edit() {
         final ContraJournalVoucher contraVoucher = (ContraJournalVoucher) persistenceService
-                .find("from ContraJournalVoucher where voucherHeaderId.id=?",
+                .find("from ContraJournalVoucher where voucherHeaderId.id=?1",
                         voucherHeader.getId());
         instrumentHeader = contraVoucher.getInstrumentHeaderId();
         if (validateInputData())
@@ -629,7 +629,7 @@ public class ContraBTCAction extends BaseVoucherAction {
                         voucherHeader, "Contra");
                 final InstrumentVoucher instrumentVoucher = (InstrumentVoucher) persistenceService
                         .find(
-                                "from InstrumentVoucher where voucherHeaderId.id=?",
+                                "from InstrumentVoucher where voucherHeaderId.id=?1",
                                 oldVoucher.getId());
                 if (instrumentVoucher == null)
                     throw new ValidationException(
