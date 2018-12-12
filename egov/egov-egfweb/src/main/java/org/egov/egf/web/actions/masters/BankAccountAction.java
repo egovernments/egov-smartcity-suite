@@ -166,7 +166,7 @@ public class BankAccountAction extends JQueryGridActionSupport {
                 "subminorvalue", "", "AccountCode");
         glCode = glCode.substring(0, Integer.parseInt(subminorvalue));
         glCode = (String) persistenceService
-                .find("select glcode from CChartOfAccounts where glcode like ? || '%' order by glcode desc",
+                .find("select glcode from CChartOfAccounts where glcode like ?1 || '%' order by glcode desc",
                         glCode);
         final String zero = EGovConfig.getProperty("egf_config.xml",
                 "zerofill", "", "AccountCode");

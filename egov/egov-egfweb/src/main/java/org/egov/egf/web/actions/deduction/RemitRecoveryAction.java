@@ -724,7 +724,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
     private BigDecimal calculateEarlierPayment(final EgRemittanceDetail remitDtl) {
         final BigDecimal sum = (BigDecimal) persistenceService.find(
                 "select sum(egr.remittedamt) from EgRemittanceDetail egr where "
-                        + " egr.egRemittanceGldtl=?1  and egr.egRemittance.voucherheader.status  NOT in (?,?)",
+                        + " egr.egRemittanceGldtl=?1  and egr.egRemittance.voucherheader.status  NOT in (?2,?3)",
                 remitDtl.getEgRemittanceGldtl(), FinancialConstants.CANCELLEDVOUCHERSTATUS,
                 FinancialConstants.REVERSEDVOUCHERSTATUS);
         if (sum == null)

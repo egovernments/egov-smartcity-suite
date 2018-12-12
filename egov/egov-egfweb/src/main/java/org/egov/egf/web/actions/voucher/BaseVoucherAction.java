@@ -262,7 +262,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     protected void loadSchemeSubscheme() {
         if (headerFields.contains("scheme") && null != voucherHeader.getFundId())
             addDropdownData("schemeList", getPersistenceService()
-                    .findAllBy("from Scheme where fund=?", voucherHeader.getFundId()));
+                    .findAllBy("from Scheme where fund=?1", voucherHeader.getFundId()));
         if (headerFields.contains("subscheme") && voucherHeader.getVouchermis() != null
                 && null != voucherHeader.getVouchermis().getSchemeid())
             addDropdownData(
@@ -500,7 +500,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
         for (final VoucherDetails voucherDetails : billDetailslist) {
             final CChartOfAccountDetail chartOfAccountDetail = (CChartOfAccountDetail) getPersistenceService().find(
                     " from CChartOfAccountDetail" +
-                            " where glCodeId=(select id from CChartOfAccounts where glcode=?)", voucherDetails.getGlcodeDetail());
+                            " where glCodeId=(select id from CChartOfAccounts where glcode=?1)", voucherDetails.getGlcodeDetail());
             if (null != chartOfAccountDetail) {
                 accountDetailMap = new HashMap<>();
                 if (repeatedglCodes.contains(voucherDetails.getGlcodeIdDetail().toString()))

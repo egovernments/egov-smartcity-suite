@@ -294,12 +294,12 @@ public class PaymentAction extends BasePaymentAction {
                 final String[] strArray = typeOfAccount.split(",");
                 addDropdownData("bankbranchList",
                         persistenceService.findAllBy(
-                                "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=?1 and isactive = true and type in (?,?) ) and br.isactive=true and br.bank.isactive = true order by br.bank.name asc",
+                                "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=?1 and isactive = true and type in (?2,?3) ) and br.isactive=true and br.bank.isactive = true order by br.bank.name asc",
                                 fund, BankAccountType.valueOf(strArray[0]), BankAccountType.valueOf(strArray[1])));
             } else
                 addDropdownData("bankbranchList",
                         persistenceService.findAllBy(
-                                "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=?1 and isactive = true and type in (?) ) and br.isactive=true and br.bank.isactive = true order by br.bank.name asc",
+                                "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=?1 and isactive = true and type in (?2) ) and br.isactive=true and br.bank.isactive = true order by br.bank.name asc",
                                 fund, typeOfAccount));
         } else
             addDropdownData("bankbranchList",
@@ -547,9 +547,9 @@ public class PaymentAction extends BasePaymentAction {
                                                                                                    // financial
                                                                                                    // expense
                                                                                                    // bills
-            final String cBillSql = cBillmainquery + " and bill.status in (?) " + sql.toString()
+            final String cBillSql = cBillmainquery + " and bill.status in (?1) " + sql.toString()
                     + " order by bill.billdate desc";
-            final String cBillSql1 = cBillmainquery1 + " and bill.status in (?) " + sql.toString()
+            final String cBillSql1 = cBillmainquery1 + " and bill.status in (?1) " + sql.toString()
                     + " order by bill.billdate desc";
             contingentBillList = getPersistenceService()
                     .findPageBy(cBillSql, 1, 500, FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, egwStatus)
@@ -635,9 +635,9 @@ public class PaymentAction extends BasePaymentAction {
         final EgwStatus egwStatus1 = egwStatusHibernateDAO.getStatusByModuleAndCode("SBILL", "Approved"); // for
                                                                                                           // external
                                                                                                           // systems
-        final String sBillSql = mainquery + " and bill.status in (?,?) " + sql.toString()
+        final String sBillSql = mainquery + " and bill.status in (?1,?2) " + sql.toString()
                 + " order by bill.billdate desc";
-        final String sBillSql1 = mainquery1 + " and bill.status in (?,?) " + sql.toString()
+        final String sBillSql1 = mainquery1 + " and bill.status in (?1,?2) " + sql.toString()
                 + " order by bill.billdate desc";
         salaryBillList = getPersistenceService().findAllBy(sBillSql, FinancialConstants.STANDARD_EXPENDITURETYPE_SALARY,
                 egwStatus, egwStatus1);
@@ -667,9 +667,9 @@ public class PaymentAction extends BasePaymentAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting pensionBills...");
         final EgwStatus egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode("PENSIONBILL", "Approved");
-        final String pBillSql = mainquery + " and bill.status in (?) " + sql.toString()
+        final String pBillSql = mainquery + " and bill.status in (?1) " + sql.toString()
                 + " order by bill.billdate desc";
-        final String pBillSql1 = mainquery1 + " and bill.status in (?) " + sql.toString()
+        final String pBillSql1 = mainquery1 + " and bill.status in (?1) " + sql.toString()
                 + " order by bill.billdate desc";
         pensionBillList = getPersistenceService().findAllBy(pBillSql,
                 FinancialConstants.STANDARD_EXPENDITURETYPE_PENSION, egwStatus);
@@ -735,9 +735,9 @@ public class PaymentAction extends BasePaymentAction {
         final EgwStatus egwStatus1 = egwStatusHibernateDAO.getStatusByModuleAndCode("CBILL", "APPROVED"); // for
                                                                                                           // external
                                                                                                           // systems
-        final String tnebBillSql = tnebSqlMainquery + " and bill.status in (?,?) " + sql.toString()
+        final String tnebBillSql = tnebSqlMainquery + " and bill.status in (?1,?2) " + sql.toString()
                 + " order by bill.billdate desc";
-        final String tnebBillSql1 = tnebSqlMainquery1 + " and bill.status in (?,?) " + sql.toString()
+        final String tnebBillSql1 = tnebSqlMainquery1 + " and bill.status in (?1,?2) " + sql.toString()
                 + " order by bill.billdate desc";
         contingentBillList = getPersistenceService().findPageBy(tnebBillSql, 1, 500,
                 FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, egwStatus, egwStatus1).getList();

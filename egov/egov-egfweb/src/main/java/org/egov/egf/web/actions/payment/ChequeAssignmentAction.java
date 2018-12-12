@@ -1404,7 +1404,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                     .append("and ih.instrumentType=it.id and ( it.type = 'cheque' or it.type = 'cash' ) and ")
                     .append("iv.voucherHeaderId.status=0  and iv.voucherHeaderId.type='")
                     .append(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT).append("'  ")
-                    .append(sql).append(" and ih.statusId.id in (?)  order by iv.voucherHeaderId.voucherDate").toString();
+                    .append(sql).append(" and ih.statusId.id in (?1)  order by iv.voucherHeaderId.voucherDate").toString();
             final EgwStatus created = instrumentService.getStatusId(FinancialConstants.INSTRUMENT_CREATED_STATUS);
             params.add(created.getId());
             instrumentHeaderList = persistenceService.findAllBy(mainQuery, params.toArray());
@@ -1484,7 +1484,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                     .append("where iv.instrumentHeaderId.id =ih.id and ih.transactionNumber is not null and ih.instrumentType=it.id ")
                     .append("and it.type = 'advice' and   iv.voucherHeaderId.status=0  and iv.voucherHeaderId.type='")
                     .append(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT).append("' ").append(sql)
-                    .append(" and ih.statusId.id in (?)  order by iv.voucherHeaderId.voucherDate").toString();
+                    .append(" and ih.statusId.id in (?1)  order by iv.voucherHeaderId.voucherDate").toString();
             final EgwStatus created = instrumentService.getStatusId(FinancialConstants.INSTRUMENT_CREATED_STATUS);
             params.add(created.getId());
             instrumentHeaderList = persistenceService.findAllBy(mainQuery, params.toArray());

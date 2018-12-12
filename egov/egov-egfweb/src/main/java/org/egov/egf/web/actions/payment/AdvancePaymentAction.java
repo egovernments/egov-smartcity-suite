@@ -147,7 +147,7 @@ public class AdvancePaymentAction extends BasePaymentAction {
     public void prepare() {
         super.prepare();
         if (advanceRequisitionId != null) {
-            advanceRequisition = (EgAdvanceRequisition) persistenceService.find("from EgAdvanceRequisition where id=?",
+            advanceRequisition = (EgAdvanceRequisition) persistenceService.find("from EgAdvanceRequisition where id=?1",
                     advanceRequisitionId);
             populateFund();
             loadBankBranch(fund);
@@ -189,7 +189,7 @@ public class AdvancePaymentAction extends BasePaymentAction {
                 "bankBranchList",
                 persistenceService
                         .findAllBy(
-                                "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=?1 and isactive = true and type in (?,?) ) "
+                                "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=?1 and isactive = true and type in (?2,?3) ) "
                                         + " and br.isactive=true and br.bank.isactive = true order by br.bank.name asc",
                                 fund, FinancialConstants.TYPEOFACCOUNT_PAYMENTS,
                                 FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS));
@@ -326,7 +326,7 @@ public class AdvancePaymentAction extends BasePaymentAction {
 
     private void populateBankAccounts(final Integer bankBranchId, final Integer fundId) {
         addDropdownData("accountNumberList", persistenceService.findAllBy(
-                "from Bankaccount ba where ba.bankbranch.id=?1 and ba.fund.id=?2 and ba.type in (?,?) "
+                "from Bankaccount ba where ba.bankbranch.id=?1 and ba.fund.id=?2 and ba.type in (?3,?4) "
                         + "and ba.isactive=true order by ba.chartofaccounts.glcode", bankBranchId, fundId,
                 FinancialConstants.TYPEOFACCOUNT_PAYMENTS, FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS));
     }

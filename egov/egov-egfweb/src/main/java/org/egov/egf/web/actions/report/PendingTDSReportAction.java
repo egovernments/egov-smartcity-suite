@@ -312,7 +312,7 @@ public class PendingTDSReportAction extends BaseFormAction {
             if (entry.getEgRemittance().getVoucherheader() != null)
                 tds.setPaymentVoucherNumber(entry.getEgRemittance().getVoucherheader().getVoucherNumber());
             final List<InstrumentVoucher> ivList = persistenceService.findAllBy("from InstrumentVoucher where" +
-                    " instrumentHeaderId.statusId.description in(?,?,?) and voucherHeaderId=?1"
+                    " instrumentHeaderId.statusId.description in(?1,?2,?3) and voucherHeaderId=?4"
                     , FinancialConstants.INSTRUMENT_DEPOSITED_STATUS, FinancialConstants.INSTRUMENT_CREATED_STATUS,
                     FinancialConstants.INSTRUMENT_RECONCILED_STATUS, entry.getEgRemittance().getVoucherheader());
             boolean isMultiple = false;
@@ -370,7 +370,7 @@ public class PendingTDSReportAction extends BaseFormAction {
                 if (entry.getEgRemittance().getVoucherheader() != null)
                     tds.setPaymentVoucherNumber(entry.getEgRemittance().getVoucherheader().getVoucherNumber());
                 final List<InstrumentVoucher> ivList = persistenceService.findAllBy("from InstrumentVoucher where" +
-                        " instrumentHeaderId.statusId.description in(?,?,?) and voucherHeaderId=?1"
+                        " instrumentHeaderId.statusId.description in(?1,?2,?3) and voucherHeaderId=?4"
                         , FinancialConstants.INSTRUMENT_DEPOSITED_STATUS, FinancialConstants.INSTRUMENT_CREATED_STATUS,
                         FinancialConstants.INSTRUMENT_RECONCILED_STATUS, entry.getEgRemittance().getVoucherheader());
                 boolean isMultiple = false;
@@ -397,7 +397,7 @@ public class PendingTDSReportAction extends BaseFormAction {
      */
     @ReadOnly
     private void populateSummaryData() {
-        recovery = (Recovery) persistenceService.find("from Recovery where id=?", recovery.getId());
+        recovery = (Recovery) persistenceService.find("from Recovery where id=?1", recovery.getId());
         type = recovery.getType();
         String deptQuery = "";
         String partyNameQuery = "";

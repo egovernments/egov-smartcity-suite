@@ -692,7 +692,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
                     final String code = dishonordetails.getGlcodeId().getGlcode();
                     final Integer funct = dishonordetails.getFunctionId();
                     if (null != funct && funct > 0)
-                        glFunctionObj = (CFunction) persistenceService.find(" from CFunction fn where id=?", funct.longValue());
+                        glFunctionObj = (CFunction) persistenceService.find(" from CFunction fn where id=?1", funct.longValue());
                     if (null != amount && amount.compareTo(BigDecimal.ZERO) != 0)
                     {
                         accountdetails.add(populateDetailMap(code, BigDecimal.ZERO, amount, glFunctionObj.getCode()));

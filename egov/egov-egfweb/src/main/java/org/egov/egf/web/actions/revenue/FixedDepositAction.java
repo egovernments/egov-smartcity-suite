@@ -308,8 +308,8 @@ public class FixedDepositAction extends BaseFormAction {
         final List<Object> dataSource = new ArrayList<Object>();
         for (final FixedDeposit row : fixedDepositList) {
 
-            row.setBankBranch((Bankbranch) persistenceService.find("from Bankbranch where id=?", row.getBankBranch().getId()));
-            row.setBankAccount((Bankaccount) persistenceService.find("from Bankaccount where id=?", row.getBankAccount().getId()));
+            row.setBankBranch((Bankbranch) persistenceService.find("from Bankbranch where id=?1", row.getBankBranch().getId()));
+            row.setBankAccount((Bankaccount) persistenceService.find("from Bankaccount where id=?1", row.getBankAccount().getId()));
 
             dataSource.add(row);
         }
@@ -324,8 +324,8 @@ public class FixedDepositAction extends BaseFormAction {
         final List<Object> dataSource = new ArrayList<Object>();
         for (final FixedDeposit row : fixedDepositList) {
             // row.setBankAccountList(bankAccountListTemp);
-            row.setBankBranch((Bankbranch) persistenceService.find("from Bankbranch where id=?", row.getBankBranch().getId()));
-            row.setBankAccount((Bankaccount) persistenceService.find("from Bankaccount where id=?", row.getBankAccount().getId()));
+            row.setBankBranch((Bankbranch) persistenceService.find("from Bankbranch where id=?1", row.getBankBranch().getId()));
+            row.setBankAccount((Bankaccount) persistenceService.find("from Bankaccount where id=?1", row.getBankAccount().getId()));
             dataSource.add(row);
         }
         setInputStream(reportHelper.exportXls(getInputStream(), jasperpath,
