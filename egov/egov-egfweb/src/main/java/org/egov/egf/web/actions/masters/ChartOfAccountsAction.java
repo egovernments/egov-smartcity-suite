@@ -168,7 +168,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
         populateCodeLength();
         parentForDetailedCode = getAppConfigValueFor("EGF", "parent_for_detailcode");
         populateGlCodeLengths();
-        allChartOfAccounts = chartOfAccountsService.findAllBy("from CChartOfAccounts where classification=?",
+        allChartOfAccounts = chartOfAccountsService.findAllBy("from CChartOfAccounts where classification=?1",
                 Long.valueOf(parentForDetailedCode));
         if (model != null)
             if (accountcodePurpose != null && accountcodePurpose.getId() != null)
@@ -202,7 +202,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     }
 
     private EgfAccountcodePurpose getPurposeCode(final Integer id) {
-        return (EgfAccountcodePurpose) persistenceService.find("from EgfAccountcodePurpose where id=?", id);
+        return (EgfAccountcodePurpose) persistenceService.find("from EgfAccountcodePurpose where id=?1", id);
     }
 
     private void populateChartOfAccounts() {
@@ -291,7 +291,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     private void populateAccountDetailType() {
         //persistenceService.setType(Accountdetailtype.class);
         for (final String row : accountDetailTypeList)
-            accountDetailType.add((Accountdetailtype) persistenceService.find("from Accountdetailtype where id=?",
+            accountDetailType.add((Accountdetailtype) persistenceService.find("from Accountdetailtype where id=?1",
                     Integer.valueOf(row)));
     }
 
@@ -485,7 +485,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     }
 
     private Long findNextGlCode(final CChartOfAccounts parentCoa) {
-        final String glcode = (String) persistenceService.find("select max(glcode) from CChartOfAccounts where parentId=?",
+        final String glcode = (String) persistenceService.find("select max(glcode) from CChartOfAccounts where parentId=?1",
                 parentCoa.getId());
         return glcode != null ? Long.valueOf(glcode) : null;
     }
@@ -529,7 +529,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
             addActionMessage(getText("chartOfAccount.invalid.glcode"));
             return NEW;
         }
-        final CChartOfAccounts coa = chartOfAccountsService.find("from CChartOfAccounts where glcode=?",
+        final CChartOfAccounts coa = chartOfAccountsService.find("from CChartOfAccounts where glcode=?1",
                 generatedGlcode.concat(newGlcode));
         if (coa != null) {
             addActionMessage(getText("chartOfAccount.glcode.already.exists"));
@@ -608,7 +608,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     @Action(value = "/masters/chartOfAccounts-modifySearch")
     public String modifySearch() throws Exception {
         if (glCode != null) {
-            model = chartOfAccountsService.find("from CChartOfAccounts where classification=4 and glcode=?",
+            model = chartOfAccountsService.find("from CChartOfAccounts where classification=4 and glcode=?1",
                     glCode.split("-")[0]);
             if (model == null) {
                 addActionMessage(getText("charOfAccount.no.record"));
@@ -628,7 +628,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     @Action(value = "/masters/chartOfAccounts-viewSearch")
     public String viewSearch() throws Exception {
         if (glCode != null) {
-            model = chartOfAccountsService.find("from CChartOfAccounts where classification=4 and glcode=?",
+            model = chartOfAccountsService.find("from CChartOfAccounts where classification=4 and glcode=?1",
                     glCode.split("-")[0]);
             if (model == null) {
                 addActionMessage(getText("charOfAccount.no.record"));
@@ -655,7 +655,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     @Action(value = "/masters/chartOfAccounts-create")
     public String create() throws Exception {
         if (glCode != null) {
-            final CChartOfAccounts parent = chartOfAccountsService.find("from CChartOfAccounts where glcode=?",
+            final CChartOfAccounts parent = chartOfAccountsService.find("from CChartOfAccounts where glcode=?1",
                     glCode.split("-")[0]);
             if (parent == null) {
                 addActionMessage(getText("chartOfAccount.no.data"));
@@ -665,7 +665,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
                 addActionMessage(getText("chartOfAccount.invalid.glcode"));
                 return "detailed";
             }
-            final CChartOfAccounts coa = chartOfAccountsService.find("from CChartOfAccounts where glcode=?",
+            final CChartOfAccounts coa = chartOfAccountsService.find("from CChartOfAccounts where glcode=?1",
                     generatedGlcode.concat(newGlcode));
             if (coa != null) {
                 addActionMessage(getText("chartOfAccount.glcode.already.exists"));
@@ -711,7 +711,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     public String ajaxNextGlCode() {
         final String parentGlcode = parameters.get("parentGlcode")[0];
         if (parentGlcode != null || !StringUtils.isBlank(parentGlcode)) {
-            final CChartOfAccounts coa = chartOfAccountsService.find("from CChartOfAccounts where glcode=?", parentGlcode);
+            final CChartOfAccounts coa = chartOfAccountsService.find("from CChartOfAccounts where glcode=?1", parentGlcode);
             final Long glCode = findNextGlCode(coa);
             if (glCode == null) {
                 populateGlcode(coa.getClassification());

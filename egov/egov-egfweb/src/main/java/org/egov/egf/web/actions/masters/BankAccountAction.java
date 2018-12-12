@@ -140,7 +140,7 @@ public class BankAccountAction extends JQueryGridActionSupport {
                     glCode = request.getParameter("glcode");
                     validateGlCode(glCode);
                     CChartOfAccounts COA = chartOfAccountsService
-                            .find("select coa from CChartOfAccounts coa where coa.glcode = ?",
+                            .find("select coa from CChartOfAccounts coa where coa.glcode = ?1",
                                     glCode);
                     bankAccount.setChartofaccounts(COA);
                 }
@@ -160,7 +160,7 @@ public class BankAccountAction extends JQueryGridActionSupport {
         Long glcode;
         Long tempCode = 0L;
         glCode = (String) persistenceService
-                .find("select glcode from CChartOfAccounts where id=?) order by glcode desc",
+                .find("select glcode from CChartOfAccounts where id=?1) order by glcode desc",
                         Long.parseLong(accID));
         final String subminorvalue = EGovConfig.getProperty("egf_config.xml",
                 "subminorvalue", "", "AccountCode");
@@ -204,7 +204,7 @@ public class BankAccountAction extends JQueryGridActionSupport {
 
     private void validateGlCode(String glCode) {
         CChartOfAccounts COA = chartOfAccountsService.find(
-                "select coa from CChartOfAccounts coa where coa.glcode = ?",
+                "select coa from CChartOfAccounts coa where coa.glcode = ?1",
                 glCode);
         Bankaccount account = null;
         AccountCodePurpose purpose = null;
@@ -212,7 +212,7 @@ public class BankAccountAction extends JQueryGridActionSupport {
             throw new ApplicationRuntimeException("Given glcode does not exist");
         if (glCode != null) {
             CGeneralLedger glList = (CGeneralLedger) persistenceService
-                    .find("select gl from CGeneralLedger gl where gl.glcodeId.glcode=? and gl.voucherHeaderId.status not in (4) ",
+                    .find("select gl from CGeneralLedger gl where gl.glcodeId.glcode=?1 and gl.voucherHeaderId.status not in (4) ",
                             glCode);
             if (glList != null)
                 throw new ApplicationRuntimeException(
@@ -221,7 +221,7 @@ public class BankAccountAction extends JQueryGridActionSupport {
         }
         if (COA != null) {
             account = bankAccountService
-                    .find("select ba from Bankaccount ba where ba.chartofaccounts.glcode = ?",
+                    .find("select ba from Bankaccount ba where ba.chartofaccounts.glcode = ?1",
                             glCode);
             if (account != null)
                 throw new ApplicationRuntimeException(
@@ -245,7 +245,7 @@ public class BankAccountAction extends JQueryGridActionSupport {
         }
         if (COA.getPurposeId() != null) {
             purpose = (AccountCodePurpose) persistenceService
-                    .find("select purpose from AccountCodePurpose purpose where purpose.id = ?",
+                    .find("select purpose from AccountCodePurpose purpose where purpose.id = ?1",
                             COA.getPurposeId());
             if (purpose != null
                     && !purpose.getName().contains("Bank Account Codes"))
@@ -296,7 +296,7 @@ public class BankAccountAction extends JQueryGridActionSupport {
 
     public String getAccountType(String glCode) {
         String name = (String) persistenceService
-                .find("select name from CChartOfAccounts where id=(select parentId from CChartOfAccounts where glcode = ?)",
+                .find("select name from CChartOfAccounts where id=(select parentId from CChartOfAccounts where glcode = ?1)",
                         glCode);
         return name;
     }
@@ -326,7 +326,7 @@ public class BankAccountAction extends JQueryGridActionSupport {
                         : bankaccount.getType().name());
                 jsonObject.put("active", bankaccount.getIsactive() ? "Y" : "N");
                 glCode = (String) persistenceService
-                        .find("select glcode from CChartOfAccounts where id=(select chartofaccounts.id from Bankaccount where accountnumber = ?)",
+                        .find("select glcode from CChartOfAccounts where id=(select chartofaccounts.id from Bankaccount where accountnumber = ?1)",
                                 bankaccount.getAccountnumber());
                 jsonObject.put("glcode", glCode);
                 jsonObject.put("accounttype", getAccountType(glCode));

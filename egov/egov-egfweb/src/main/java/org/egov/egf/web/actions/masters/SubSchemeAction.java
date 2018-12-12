@@ -193,7 +193,7 @@ public class SubSchemeAction extends BaseFormAction {
     @Action(value = "/masters/subScheme-beforeEdit")
     public String beforeEdit()
     {
-        subScheme = (SubScheme) persistenceService.find("from SubScheme where id=?", subScheme.getId());
+        subScheme = (SubScheme) persistenceService.find("from SubScheme where id=?1", subScheme.getId());
         if (subScheme!=null && subScheme.getIsactive())
         	isactive = true;
         return NEW;
@@ -238,7 +238,7 @@ public class SubSchemeAction extends BaseFormAction {
     @SkipValidation
     @Action(value = "/masters/subScheme-viewSubScheme")
     public String viewSubScheme() {
-        subScheme = (SubScheme) persistenceService.find("from SubScheme where id=?", subScheme.getId());
+        subScheme = (SubScheme) persistenceService.find("from SubScheme where id=?1", subScheme.getId());
         showMode = "view";
         return VIEW;
     }
@@ -261,7 +261,7 @@ public class SubSchemeAction extends BaseFormAction {
             dropdownData.put("schemeList", Collections.emptyList());
         if (schemeId != -1)
             dropdownData.put("subSchemeList",
-                    persistenceService.findAllBy("from SubScheme where isactive=true and scheme.id=?", schemeId));
+                    persistenceService.findAllBy("from SubScheme where isactive=true and scheme.id=?1", schemeId));
         else
             dropdownData.put("subSchemeList", Collections.emptyList());
 
@@ -275,16 +275,16 @@ public class SubSchemeAction extends BaseFormAction {
         
         if (uniqueCode) {
             if (!subScheme.getCode().equals("") && subScheme.getId() != null)
-            	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where code=? and id!=?",
+            	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where code=?1 and id!=?2",
                 		subScheme.getCode().toLowerCase(), subScheme.getId());
             else if (!subScheme.getCode().equals(""))
-            	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where code=?", subScheme.getCode().toLowerCase());
+            	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where code=?1", subScheme.getCode().toLowerCase());
             uniqueCode = false;
         } else if (!subScheme.getName().equals("") && subScheme.getId() != null)
-        	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where name=? and id!=?", subScheme.getName().toLowerCase(),
+        	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where name=?1 and id!=?2", subScheme.getName().toLowerCase(),
             		subScheme.getId());
         else if (!subScheme.getName().equals(""))
-        	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where name=?", subScheme.getName().toLowerCase());
+        	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where name=?1", subScheme.getName().toLowerCase());
         if (subScheme_validate != null)
             isDuplicate = true;
         

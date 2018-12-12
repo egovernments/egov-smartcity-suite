@@ -167,7 +167,7 @@ public class BankBranchAction extends JQueryGridActionSupport {
     private boolean checkBankAccountsExists() {
         Bankbranch branch = null;
         if (id != null)
-            branch = bankBranchService.find("from Bankbranch where id=?", id);
+            branch = bankBranchService.find("from Bankbranch where id=?1", id);
         return branch != null && branch.isAccountsExist();
     }
 
@@ -175,9 +175,9 @@ public class BankBranchAction extends JQueryGridActionSupport {
         boolean isUnique = true;
         final String branchMICR = ServletActionContext.getRequest().getParameter("branchMICR");
         if (branchMICR != null && id != null)
-            isUnique = null == bankBranchService.find("from Bankbranch where branchMICR=? and id!=?", branchMICR, id);
+            isUnique = null == bankBranchService.find("from Bankbranch where branchMICR=?1 and id!=?2", branchMICR, id);
         else if (branchMICR != null)
-            isUnique = null == bankBranchService.find("from Bankbranch where branchMICR=?", branchMICR);
+            isUnique = null == bankBranchService.find("from Bankbranch where branchMICR=?1", branchMICR);
         return isUnique;
     }
 

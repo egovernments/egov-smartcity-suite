@@ -318,7 +318,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
             LOGGER.debug("RemitRecoveryAction | remit | start");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("RemitRecoveryAction | remit | size before filter" + listRemitBean.size());
-        final Recovery recov = (Recovery) persistenceService.find("from Recovery where id=?",
+        final Recovery recov = (Recovery) persistenceService.find("from Recovery where id=?1",
                 remittanceBean.getRecoveryId());
         if (recov != null)
             remittedTo = recov.getRemitted();
@@ -354,7 +354,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
             voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
             voucherHeader.setName(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE);
             final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
-            recovery = (Recovery) persistenceService.find("from Recovery where id=?", remittanceBean.getRecoveryId());
+            recovery = (Recovery) persistenceService.find("from Recovery where id=?1", remittanceBean.getRecoveryId());
             populateWorkflowBean();
             paymentheader = paymentActionHelper.createRemittancePayment(paymentheader, voucherHeader,
                     Integer.valueOf(commonBean.getAccountNumberId()), getModeOfPayment(),
@@ -454,7 +454,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
         } else
             paymentid = parameters.get(PAYMENTID)[0];
         if (paymentheader == null && paymentid != null)
-            paymentheader = paymentService.find("from Paymentheader where id=?", Long.valueOf(paymentid));
+            paymentheader = paymentService.find("from Paymentheader where id=?1", Long.valueOf(paymentid));
         if (paymentheader == null)
             paymentheader = new Paymentheader();
 
@@ -465,7 +465,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
     @SkipValidation
     @Action(value = "/deduction/remitRecovery-sendForApproval")
     public String sendForApproval() {
-        paymentheader = paymentService.find("from Paymentheader where id=?", Long.valueOf(paymentid));
+        paymentheader = paymentService.find("from Paymentheader where id=?1", Long.valueOf(paymentid));
         populateWorkflowBean();
         paymentheader = paymentActionHelper.sendForApproval(paymentheader, workflowBean);
 
@@ -490,7 +490,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
     @SkipValidation
     @Action(value = "/deduction/remitRecovery-viewInboxItem")
     public String viewInboxItem() {
-        paymentheader = paymentService.find("from Paymentheader where id=?", Long.valueOf(paymentid));
+        paymentheader = paymentService.find("from Paymentheader where id=?1", Long.valueOf(paymentid));
         /*
          * if (paymentheader.getState().getValue() != null && !paymentheader.getState().getValue().isEmpty() &&
          * paymentheader.getState().getValue().contains("Reject")) {
@@ -522,13 +522,13 @@ public class RemitRecoveryAction extends BasePaymentAction {
             voucherHeader = voucherService.updateVoucherHeader(voucherHeader);
             reCreateLedger();
             updateRemittanceDetail();
-            paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?",
+            paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?1",
                     voucherHeader);
             paymentService.updatePaymentHeader(paymentheader, voucherHeader,
                     Integer.valueOf(commonBean.getAccountNumberId()), getModeOfPayment(),
                     remittanceBean.getTotalAmount());
             final Miscbilldetail miscbillDetail = (Miscbilldetail) persistenceService
-                    .find(" from Miscbilldetail where payVoucherHeader=?", voucherHeader);
+                    .find(" from Miscbilldetail where payVoucherHeader=?1", voucherHeader);
             miscbillDetail.setPaidto(remittedTo);
             // persistenceService.setType(Miscbilldetail.class);
             persistenceService.persist(miscbillDetail);
@@ -550,7 +550,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
     private void updateRemittanceDetail() {
         for (final RemittanceBean rbean : listRemitBean) {
             final EgRemittanceDetail egrDetail = (EgRemittanceDetail) persistenceService
-                    .find("from EgRemittanceDetail where id=?", rbean.getRemittanceId());
+                    .find("from EgRemittanceDetail where id=?1", rbean.getRemittanceId());
             egrDetail.setRemittedamt(rbean.getPartialAmount());
             // persistenceService.setType(EgRemittanceDetail.class);
             persistenceService.persist(egrDetail);
@@ -574,14 +574,14 @@ public class RemitRecoveryAction extends BasePaymentAction {
             detailMap = new HashMap<String, Object>();
             detailMap.put(VoucherConstant.CREDITAMOUNT, remittanceBean.getTotalAmount().toString());
             detailMap.put(VoucherConstant.DEBITAMOUNT, ZERO);
-            final Bankaccount account = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
+            final Bankaccount account = (Bankaccount) persistenceService.find("from Bankaccount where id=?1",
                     Integer.valueOf(commonBean.getAccountNumberId()));
             detailMap.put(VoucherConstant.GLCODE, account.getChartofaccounts().getGlcode());
             accountdetails.add(detailMap);
             detailMap = new HashMap<String, Object>();
             detailMap.put(VoucherConstant.CREDITAMOUNT, ZERO);
             detailMap.put(VoucherConstant.DEBITAMOUNT, remittanceBean.getTotalAmount().toString());
-            recovery = (Recovery) persistenceService.find("from Recovery where id=?", remittanceBean.getRecoveryId());
+            recovery = (Recovery) persistenceService.find("from Recovery where id=?1", remittanceBean.getRecoveryId());
             detailMap.put(VoucherConstant.GLCODE, recovery.getChartofaccounts().getGlcode());
             accountdetails.add(detailMap);
             subledgerDetails = addSubledgerGroupBy(subledgerDetails, recovery.getChartofaccounts().getGlcode());
@@ -619,15 +619,15 @@ public class RemitRecoveryAction extends BasePaymentAction {
     private void prepareForViewModifyReverse() {
         final StringBuffer instrumentQuery = new StringBuffer(100);
         instrumentQuery
-                .append("select  distinct ih from InstrumentHeader ih join ih.instrumentVouchers iv where iv.voucherHeaderId.id=?")
+                .append("select  distinct ih from InstrumentHeader ih join ih.instrumentVouchers iv where iv.voucherHeaderId.id=?1")
                 .append(" order by ih.id");
         remittanceBean = new RemittanceBean();
-        voucherHeader = (CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?",
+        voucherHeader = (CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?1",
                 voucherHeader.getId());
-        paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?",
+        paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?1",
                 voucherHeader);
         final Miscbilldetail miscBill = (Miscbilldetail) persistenceService
-                .find("from Miscbilldetail where payVoucherHeader=?", voucherHeader);
+                .find("from Miscbilldetail where payVoucherHeader=?1", voucherHeader);
         remittedTo = miscBill.getPaidto();
         commonBean.setAmount(paymentheader.getPaymentAmount());
         commonBean.setAccountNumberId(paymentheader.getBankaccount().getId().toString());
@@ -657,7 +657,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
     private void getRemittanceFromVoucher() {
         listRemitBean = new ArrayList<RemittanceBean>();
 
-        final List<EgRemittance> remitList = persistenceService.findAllBy("from EgRemittance where voucherheader=?",
+        final List<EgRemittance> remitList = persistenceService.findAllBy("from EgRemittance where voucherheader=?1",
                 voucherHeader);
         for (final EgRemittance remit : remitList) {
             RemittanceBean rbean = null;
@@ -724,7 +724,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
     private BigDecimal calculateEarlierPayment(final EgRemittanceDetail remitDtl) {
         final BigDecimal sum = (BigDecimal) persistenceService.find(
                 "select sum(egr.remittedamt) from EgRemittanceDetail egr where "
-                        + " egr.egRemittanceGldtl=?  and egr.egRemittance.voucherheader.status  NOT in (?,?)",
+                        + " egr.egRemittanceGldtl=?1  and egr.egRemittance.voucherheader.status  NOT in (?,?)",
                 remitDtl.getEgRemittanceGldtl(), FinancialConstants.CANCELLEDVOUCHERSTATUS,
                 FinancialConstants.REVERSEDVOUCHERSTATUS);
         if (sum == null)
@@ -775,7 +775,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
             bankaccount = paymentheader.getBankaccount();
         else if (commonBean.getAccountNumberId() != null && !commonBean.getAccountNumberId().equals("-1")
                 && !commonBean.getAccountNumberId().equals(""))
-            bankaccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
+            bankaccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?1",
                     Long.valueOf(commonBean.getAccountNumberId()));
         if (bankaccount.getBankbranch().getId() != null)
             addDropdownData("accNumList",

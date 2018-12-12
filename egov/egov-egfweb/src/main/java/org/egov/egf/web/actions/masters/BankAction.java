@@ -114,7 +114,7 @@ public class BankAction extends BaseFormAction {
                 addDropdownData("bankList", bankService.findAll("name"));
                 return SEARCH;
             } else {
-                bank = bankService.find("FROM Bank WHERE name = ?", bank.getName());
+                bank = bankService.find("FROM Bank WHERE name = ?1", bank.getName());
                 if (bank == null)
                     return SEARCH;
                 else {
@@ -179,17 +179,17 @@ public class BankAction extends BaseFormAction {
     }
 
     private void checkUniqueBankCode() {
-        final Bank bank = bankService.find("from Bank where lower(code)=?", this.bank.getCode().toLowerCase());
+        final Bank bank = bankService.find("from Bank where lower(code)=?1", this.bank.getCode().toLowerCase());
         writeToAjaxResponse(String.valueOf(bank == null));
     }
 
     private void checkUniqueBankName() {
-        final Bank bank = bankService.find("from Bank where lower(name)=?", this.bank.getName().toLowerCase());
+        final Bank bank = bankService.find("from Bank where lower(name)=?1", this.bank.getName().toLowerCase());
         writeToAjaxResponse(String.valueOf(bank == null));
     }
 
     private void populateBankNames() {
-        final JSONArray jsonArray = new JSONArray(persistenceService.findAllBy("select name FROM Bank WHERE lower(name) like ?",
+        final JSONArray jsonArray = new JSONArray(persistenceService.findAllBy("select name FROM Bank WHERE lower(name) like ?1",
                 StringUtils.lowerCase(term + "%")));
         writeToAjaxResponse(jsonArray.toString());
     }
@@ -209,7 +209,7 @@ public class BankAction extends BaseFormAction {
     }
 
     public String getFundsJSON() {
-        final List<Object[]> funds = persistenceService.findAllBy("SELECT id, name FROM Fund WHERE isactive=?", true);
+        final List<Object[]> funds = persistenceService.findAllBy("SELECT id, name FROM Fund WHERE isactive=?1", true);
         final StringBuilder fundJson = new StringBuilder(":;");
         for (final Object[] fund : funds)
             fundJson.append(fund[0]).append(":").append(fund[1]).append(";");

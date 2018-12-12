@@ -133,10 +133,10 @@ public class ContractTypeAction extends BaseFormAction {
                     return NEW;
                 }
             if (typeOfWork.getParentid() != null && typeOfWork.getParentid().getId() != null)
-                parentTypeOfWk = (EgwTypeOfWork) persistenceService.find("from EgwTypeOfWork where id=?", typeOfWork
+                parentTypeOfWk = (EgwTypeOfWork) persistenceService.find("from EgwTypeOfWork where id=?1", typeOfWork
                         .getParentid().getId());
             if (typeOfWork.getEgPartytype() != null && typeOfWork.getEgPartytype().getId() != null)
-                appliedParty = (EgPartytype) persistenceService.find("from EgPartytype where id=?", typeOfWork.getEgPartytype()
+                appliedParty = (EgPartytype) persistenceService.find("from EgPartytype where id=?1", typeOfWork.getEgPartytype()
                         .getId());
             typeOfWork.setParentid(parentTypeOfWk);
             typeOfWork.setEgPartytype(appliedParty);
@@ -163,7 +163,7 @@ public class ContractTypeAction extends BaseFormAction {
     @Action(value = "/masters/contractType-edit")
     public String edit() {
         try {
-            final EgwTypeOfWork typeOfWkOld = (EgwTypeOfWork) persistenceService.find("from EgwTypeOfWork where id=?",
+            final EgwTypeOfWork typeOfWkOld = (EgwTypeOfWork) persistenceService.find("from EgwTypeOfWork where id=?1",
                     typeOfWork.getId());
 
             if (typeOfWork.getCode() != null)
@@ -174,10 +174,10 @@ public class ContractTypeAction extends BaseFormAction {
             typeOfWkOld.setCode(typeOfWork.getCode());
             typeOfWkOld.setDescription(typeOfWork.getDescription());
             if (typeOfWork.getParentid() != null && typeOfWork.getParentid().getId() != null)
-                parentTypeOfWk = (EgwTypeOfWork) persistenceService.find("from EgwTypeOfWork where id=?", typeOfWork
+                parentTypeOfWk = (EgwTypeOfWork) persistenceService.find("from EgwTypeOfWork where id=?1", typeOfWork
                         .getParentid().getId());
             if (typeOfWork.getEgPartytype() != null && typeOfWork.getEgPartytype().getId() != null)
-                appliedParty = (EgPartytype) persistenceService.find("from EgPartytype where id=?", typeOfWork.getEgPartytype()
+                appliedParty = (EgPartytype) persistenceService.find("from EgPartytype where id=?1", typeOfWork.getEgPartytype()
                         .getId());
             typeOfWkOld.setParentid(parentTypeOfWk);
             typeOfWkOld.setEgPartytype(appliedParty);
@@ -225,7 +225,7 @@ public class ContractTypeAction extends BaseFormAction {
     @SkipValidation
     @Action(value = "/masters/contractType-beforeModify")
     public String beforeModify() {
-        typeOfWork = (EgwTypeOfWork) persistenceService.find("from EgwTypeOfWork where id=?", typeOfWork.getId());
+        typeOfWork = (EgwTypeOfWork) persistenceService.find("from EgwTypeOfWork where id=?1", typeOfWork.getId());
         return EDIT;
     }
 
@@ -233,10 +233,10 @@ public class ContractTypeAction extends BaseFormAction {
     public boolean getCheckCode() {
         EgwTypeOfWork tow = null;
         if (!typeOfWork.getCode().equals("") && typeOfWork.getId() != null)
-            tow = (EgwTypeOfWork) persistenceService.find("from EgwTypeOfWork where code=? and id!=?",
+            tow = (EgwTypeOfWork) persistenceService.find("from EgwTypeOfWork where code=?1 and id!=?2",
                     typeOfWork.getCode(), typeOfWork.getId());
         else if (!typeOfWork.getCode().equals(""))
-            tow = (EgwTypeOfWork) persistenceService.find("from EgwTypeOfWork where code=?",
+            tow = (EgwTypeOfWork) persistenceService.find("from EgwTypeOfWork where code=?1",
                     typeOfWork.getCode());
         if (tow != null)
             duplicateCode = true;

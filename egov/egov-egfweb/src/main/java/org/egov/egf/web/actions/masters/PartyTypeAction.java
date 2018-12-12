@@ -122,7 +122,7 @@ public class PartyTypeAction extends BaseFormAction {
         try {
             if (partyType.getEgPartytype() != null && partyType.getEgPartytype().getId() != null)
                 parentParty = (EgPartytype) persistenceService
-                .find("from EgPartytype where id=?", partyType.getEgPartytype().getId());
+                .find("from EgPartytype where id=?1", partyType.getEgPartytype().getId());
             partyType.setEgPartytype(parentParty);
             partyType.setCode(partyType.getCode());
             partyType.setDescription(partyType.getDescription());
@@ -146,14 +146,14 @@ public class PartyTypeAction extends BaseFormAction {
     public String edit() {
         validatemandatoryFields();
         try {
-            final EgPartytype partyOld = (EgPartytype) persistenceService.find("from EgPartytype where id=?", partyType.getId());
+            final EgPartytype partyOld = (EgPartytype) persistenceService.find("from EgPartytype where id=?1", partyType.getId());
 
             partyOld.setCode(partyType.getCode());
 
             partyOld.setDescription(partyType.getDescription());
             if (partyType.getEgPartytype() != null && partyType.getEgPartytype().getId() != null)
                 parentParty = (EgPartytype) persistenceService
-                .find("from EgPartytype where id=?", partyType.getEgPartytype().getId());
+                .find("from EgPartytype where id=?1", partyType.getEgPartytype().getId());
             partyOld.setEgPartytype(parentParty);
 
             setPartyType(partyOld);
@@ -196,7 +196,7 @@ public class PartyTypeAction extends BaseFormAction {
     @SkipValidation
     @Action(value = "/masters/partyType-beforeModify")
     public String beforeModify() {
-        partyType = (EgPartytype) persistenceService.find("from EgPartytype where id=?", partyType.getId());
+        partyType = (EgPartytype) persistenceService.find("from EgPartytype where id=?1", partyType.getId());
 
         return EDIT;
     }
@@ -219,10 +219,10 @@ public class PartyTypeAction extends BaseFormAction {
         EgPartytype pt = null;
         boolean isDuplicate = false;
         if (!partyType.getCode().equals("") && partyType.getId() != null)
-            pt = (EgPartytype) persistenceService.find("from EgPartytype where code=? and id!=?",
+            pt = (EgPartytype) persistenceService.find("from EgPartytype where code=?1 and id!=?2",
                     partyType.getCode(), partyType.getId());
         else if (!partyType.getCode().equals(""))
-            pt = (EgPartytype) persistenceService.find("from EgPartytype where code=?",
+            pt = (EgPartytype) persistenceService.find("from EgPartytype where code=?1",
                     partyType.getCode());
         if (pt != null)
             isDuplicate = true;

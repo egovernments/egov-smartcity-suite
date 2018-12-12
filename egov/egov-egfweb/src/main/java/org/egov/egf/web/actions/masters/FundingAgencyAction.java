@@ -151,7 +151,7 @@ public class FundingAgencyAction extends BaseFormAction {
     @SkipValidation
     @Action(value = "/masters/fundingAgency-beforeEdit")
     public String beforeEdit() {
-        fundingAgency = (FundingAgency) persistenceService.find("from FundingAgency where id=?", fundingAgency.getId());
+        fundingAgency = (FundingAgency) persistenceService.find("from FundingAgency where id=?1", fundingAgency.getId());
 
         return EDIT;
     }
@@ -167,7 +167,7 @@ public class FundingAgencyAction extends BaseFormAction {
         final Accountdetailtype adt = (Accountdetailtype) persistenceService
                 .find("From Accountdetailtype where name='FundingAgency'");
         final Accountdetailkey ac = (Accountdetailkey) persistenceService.find(
-                "from Accountdetailkey where accountdetailtype=? and detailkey=?", adt, fundingAgency.getId().intValue());
+                "from Accountdetailkey where accountdetailtype=? and detailkey=?2", adt, fundingAgency.getId().intValue());
         ac.setDetailname(fundingAgency.getName());
         //persistenceService.setType(Accountdetailkey.class);
         persistenceService.persist(ac);
@@ -214,10 +214,10 @@ public class FundingAgencyAction extends BaseFormAction {
         FundingAgency fa = null;
         boolean isDuplicate = false;
         if (!fundingAgency.getCode().equals("") && fundingAgency.getId() != null)
-            fa = (FundingAgency) persistenceService.find("from FundingAgency where code=? and id!=?",
+            fa = (FundingAgency) persistenceService.find("from FundingAgency where code=?1 and id!=?2",
                     fundingAgency.getCode(), fundingAgency.getId());
         else if (!fundingAgency.getCode().equals(""))
-            fa = (FundingAgency) persistenceService.find("from FundingAgency where code=?", fundingAgency.getCode());
+            fa = (FundingAgency) persistenceService.find("from FundingAgency where code=?1", fundingAgency.getCode());
         if (fa != null)
             isDuplicate = true;
         return isDuplicate;
