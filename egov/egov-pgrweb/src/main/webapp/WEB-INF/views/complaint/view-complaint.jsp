@@ -164,7 +164,7 @@
                             <div class="col-md-12 col-sm-12 col-xs-12 add-margin down-file view-content" id="links">
                                 <div style="width: 100%" class="row">
                                     <div class="col-md-6 col-sm-6 col-xs-6">
-                                        <div class="text-center"><spring:message code="lbl.citizen.upload"/></div>
+                                        <div class="text-center"><spring:message code="lbl.before"/></div>
                                         <c:forEach items="${complaint.supportDocsOrderById()}" var="file">
                                             <fmt:formatDate value="${file.createdDate}" var="fileCreatedDate" pattern="dd/MMM/yyyy HH:mm a"/>
                                             <c:if test="${file.createdDate.time - complaint.createdDate.time < 60000}">
@@ -188,7 +188,7 @@
                                         </c:forEach>
                                     </div>
                                     <div class="col-md-6 col-sm-6 col-xs-6">
-                                        <div class="text-center"><spring:message code="lbl.emp.upload"/></div>
+                                        <div class="text-center"><spring:message code="lbl.after"/></div>
                                         <c:forEach items="${complaint.supportDocsOrderById()}" var="file">
                                             <fmt:formatDate value="${file.createdDate}" var="fileCreatedDate" pattern="dd/MMM/yyyy HH:mm a"/>
                                             <c:if test="${file.createdDate.time - complaint.createdDate.time > 60000}">
