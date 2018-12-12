@@ -61,12 +61,12 @@
                 </div>
             </div>
             <div class="panel-body custom-form">
-                <form:form role="form" action="edit" modelAttribute="user" commandName="user" id="user" cssClass="form-horizontal form-groups-bordered">
+                <form:form role="form" action="edit" modelAttribute="userProfile" id="user" cssClass="form-horizontal form-groups-bordered">
                     <div class="form-group">
                         <label class="col-sm-3 control-label"><spring:message code="lbl.fullname"/>
                             <span class="mandatory set-mandatory"></span>
                         </label>
-                        <div class="col-sm-2 col-md-1 add-margin">
+                        <div class="col-sm-3 col-md-1 add-margin">
                             <form:select class="form-control" id="salutation" path="salutation" required="required">
                                 <form:option value=""></form:option>
                                 <form:option value="Mr"><spring:message code="lbl.mr"/></form:option>
@@ -91,7 +91,7 @@
 
                     <div class="form-group">
                         <label class="col-sm-3 control-label"><spring:message code="lbl.mobile"/><span class="mandatory set-mandatory"></span></label>
-                        <div class="col-sm-2 add-margin">
+                        <div class="col-sm-3 add-margin">
                             <div class="input-group">
                                 <span class="input-group-addon">+91</span>
                                 <form:input path="mobileNumber" cssClass="form-control" data-inputmask="'mask': '9999999999'" id="mobileNumber" placeholder="Mobile Number" maxlength="10" disabled="true" required="required"/>
@@ -112,7 +112,7 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label"><spring:message code="lbl.alt.contct.no"/></label>
 
-                        <div class="col-sm-2 add-margin">
+                        <div class="col-sm-3 add-margin">
                             <form:input path="altContactNumber" cssClass="form-control" data-inputmask="'mask': '9999999999'" id="altContactNumber" placeholder="8080808080" maxlength="10"/>
                         </div>
 
@@ -122,6 +122,7 @@
 
                         <div class="col-sm-3 add-margin">
                             <form:input path="dob" cssClass="form-control datepicker" data-inputmask="'mask': 'd/m/y'" id="dob" placeholder="24/01/1992"/>
+                            <form:errors path="dob" cssClass="add-margin error-msg"/>
                         </div>
                     </div>
 
@@ -129,7 +130,7 @@
 
                         <label class="col-sm-3 control-label"><spring:message code="lbl.pan"/></label>
 
-                        <div class="col-sm-2 add-margin">
+                        <div class="col-sm-3 add-margin">
                             <form:input path="pan" cssClass="form-control" placeholder="AHWPU1117T" maxlength="10"/>
                             <form:errors path="pan" cssClass="add-margin error-msg"/>
                         </div>
@@ -137,7 +138,7 @@
                         <label class="col-sm-2 control-label"><spring:message code="lbl.preferred.lang"/></label>
                         <div class="col-sm-3 add-margin">
                             <form:select class="form-control" id="locale" path="locale">
-                                <form:option value=""></form:option>
+                                <form:option value=""><spring:message code="lbl.select"/></form:option>
                                 <form:option value="en_IN"><spring:message code="lbl.eng"/></form:option>
                                 <form:option value="hi_IN"><spring:message code="lbl.hindi"/></form:option>
                             </form:select>

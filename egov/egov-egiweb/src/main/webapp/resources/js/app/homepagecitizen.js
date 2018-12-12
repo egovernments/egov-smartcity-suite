@@ -46,96 +46,97 @@
  *
  */
 
-$(document).ready(function()
-{	
-	$('.menu-item').click(function(e)
-	{
-		$('.citizen-screens').hide();
-		$('.hr-menu li').removeClass('active');
-		$(this).parent().addClass('active');
-		$($(this).data('show-screen')).show();
-	});
-	
-	$("#sortby_drop li a").click(function(){
-		$("#sortby_drop > .btn > span > b").html($(this).html());
-	});
-	
-	$('.tabs-style-topline nav li').click(function(){
-		if($(this).attr('data-section') == "newrequest")
-		{
-			if($(this).attr('data-newreq-section') == '#section-newrequest-1')
-			{
-				$('.tabs-style-topline nav li').removeClass('tab-current-newreq');
-				$('.content-wrap section').removeClass('content-current-newreq');
-				$(this).addClass('tab-current-newreq');
-				$($(this).attr('data-newreq-section')).addClass('content-current-newreq');
-			}
-			
-		}else if($(this).attr('data-section') == "myaccount")
-		{
-			$('.tabs-style-topline nav li').removeClass('tab-current-myacc');
-			$('.content-wrap section').removeClass('content-current-myacc');
-			$(this).addClass('tab-current-myacc');
-			$($(this).attr('data-myaccount-section')).addClass('content-current-myacc');
-		}
-	});
-	
-	$('.check-password').blur(function(){
-		if(($('#new-pass').val()!="") && ($('#retype-pass').val()!=""))
-		{
-			if ($('#new-pass').val() === $('#retype-pass').val()) {
-				
-				}else{
-				$('.password-error').show();
-				$('#retype-pass').addClass('error');
-			}
-		}
-	});
-	
-	$('#password-form').on('submit', function(e){
-	       e.preventDefault();
-	       $.ajax({
-               url: '/egi/home/password/update',
-               type: 'GET',
-               data: {'currentPwd': $("#old-pass").val(), 'newPwd':$("#new-pass").val(),'retypeNewPwd':$("#retype-pass").val()},
-               success: function(data) {
-               	var msg = "";
-               	if (data == "SUCCESS") {
-               		msg = "Your password has been updated."
-               	} else if (data == "NEWPWD_UNMATCH") {
-               		msg = "New password you have entered does not match with retyped password."
-               	} else if (data == "CURRPWD_UNMATCH") {
-               		msg = "Old password you have entered is incorrect."
-               	} 
-               	bootbox.alert(msg);
-               },
-               error: function() {
-               	bootbox.alert("Internal server error occurred, please try after sometime.");
-               }, complete : function() {
-               	$('.change-password, .loader-class').modal('hide');
-               }
-       }); 
-	});
-	
-	
-	$(".ico-menu").bind('mouseover', function () {
-		$(this).addClass('open');
-	});
-	
-	$(".ico-menu").bind('mouseout', function () { 
-		$(this).removeClass('open');
-	});
-	
-	$('a[data-open-popup]').click(function(event){
-		event.preventDefault();
-		popupCenter($(this).attr('href'), 'myPop1',940,600);
-	});
-	
-	function popupCenter(url, title, w, h) {
-		var left = (screen.width/2)-(w/2);
-		var top = (screen.height/2)-(h/2);
-		return window.open(url, title, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width='+w+', height='+h+', top='+top+', left='+left);
-	} 
-	
-	
+$(document).ready(function () {
+    $('.menu-item').click(function (e) {
+        $('.citizen-screens').hide();
+        $('.hr-menu li').removeClass('active');
+        $(this).parent().addClass('active');
+        $($(this).data('show-screen')).show();
+    });
+
+    $("#sortby_drop li a").click(function () {
+        $("#sortby_drop > .btn > span > b").html($(this).html());
+    });
+
+    $('.tabs-style-topline nav li').click(function () {
+        if ($(this).attr('data-section') == "newrequest") {
+            if ($(this).attr('data-newreq-section') == '#section-newrequest-1') {
+                $('.tabs-style-topline nav li').removeClass('tab-current-newreq');
+                $('.content-wrap section').removeClass('content-current-newreq');
+                $(this).addClass('tab-current-newreq');
+                $($(this).attr('data-newreq-section')).addClass('content-current-newreq');
+            }
+
+        } else if ($(this).attr('data-section') == "myaccount") {
+            $('.tabs-style-topline nav li').removeClass('tab-current-myacc');
+            $('.content-wrap section').removeClass('content-current-myacc');
+            $(this).addClass('tab-current-myacc');
+            $($(this).attr('data-myaccount-section')).addClass('content-current-myacc');
+        }
+    });
+
+    $('.check-password').blur(function () {
+        if (($('#new-pass').val() != "") && ($('#retype-pass').val() != "")) {
+            if ($('#new-pass').val() === $('#retype-pass').val()) {
+
+            } else {
+                $('.password-error').show();
+                $('#retype-pass').addClass('error');
+            }
+        }
+    });
+
+    $('#password-form').on('submit', function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: '/egi/home/password/update',
+            type: 'POST',
+            data: {
+                'currentPwd': $("#old-pass").val(),
+                'newPwd': $("#new-pass").val(),
+                'retypeNewPwd': $("#retype-pass").val()
+            },
+            success: function (data) {
+                var msg = "";
+                if (data == "SUCCESS") {
+                    msg = "Your password has been updated."
+                } else if (data == "NEWPWD_UNMATCH") {
+                    msg = "New password you have entered does not match with retyped password."
+                } else if (data == "CURRPWD_UNMATCH") {
+                    msg = "Old password you have entered is incorrect."
+                } else if (data == "NEWPWD_INVALID") {
+                    msg = $('.password-error-msg').html();
+                } else if (data == 'NEW_AND_CURR_PWD_SAME') {
+                    msg = "New Password cannot be same as your Old Password, try a different one.";
+                }
+                bootbox.alert(msg);
+            },
+            error: function () {
+                bootbox.alert("Internal server error occurred, please try after sometime.");
+            }, complete: function () {
+                $('.change-password, .loader-class').modal('hide');
+            }
+        });
+    });
+
+    $(".ico-menu").bind('mouseover', function () {
+        $(this).addClass('open');
+    });
+
+    $(".ico-menu").bind('mouseout', function () {
+        $(this).removeClass('open');
+    });
+
+    $('a[data-open-popup]').click(function (event) {
+        event.preventDefault();
+        popupCenter($(this).attr('href'), 'myPop1', 940, 600);
+    });
+
+    function popupCenter(url, title, w, h) {
+        var left = (screen.width / 2) - (w / 2);
+        var top = (screen.height / 2) - (h / 2);
+        return window.open(url, title, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=' + w + ', height=' + h + ', top=' + top + ', left=' + left);
+    }
+
+
 });

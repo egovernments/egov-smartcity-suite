@@ -48,11 +48,13 @@
 
 package org.egov.infra.web.controller;
 
+import org.egov.infra.admin.common.contracts.UserProfile;
 import org.egov.infra.admin.common.entity.Favourites;
 import org.egov.infra.admin.common.service.FavouritesService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.mapper.BeanMapperConfiguration;
 import org.egov.infra.validation.ValidatorUtils;
 import org.egov.infra.web.contract.request.FeedbackRequest;
 import org.egov.infra.web.contract.request.PasswordChangeRequest;
@@ -66,11 +68,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -124,6 +125,9 @@ public class HomeController {
     @Autowired
     private ValidatorUtils validatorUtils;
 
+    @Autowired
+    private BeanMapperConfiguration beanMapperConfiguration;
+
     @Value("${employee.portal.access.role}")
     private String portalAccessibleRole;
 
@@ -141,16 +145,6 @@ public class HomeController {
 
     @Value("${dev.mode}")
     private boolean devMode;
-
-    @ModelAttribute("user")
-    public User user() {
-        return unproxy(userService.getCurrentUser());
-    }
-
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.setDisallowedFields("id", "username", "mobileNumber", "type");
-    }
 
     @GetMapping
     public ModelAndView showHome(HttpServletRequest request, HttpServletResponse response, ModelMap modelData) {
@@ -219,21 +213,25 @@ public class HomeController {
             return ResponseEntity.badRequest().body(WebUtils.bindErrorToMap(bindResult));
         } else {
             cityService.sentFeedBackMail(cityService.getContactEmail(), feedbackRequest.getSubject(),
-                    format(FEEDBACK_MSG_FORMAT, feedbackRequest.getMessage(), "Regards", user().getName()));
+                    format(FEEDBACK_MSG_FORMAT, feedbackRequest.getMessage(), "Regards", userService.getCurrentUser().getName()));
             return ResponseEntity.ok(RESP_SUCCESS);
         }
     }
 
     @GetMapping(PROFILE_EDIT)
-    public String editProfile() {
+    public String editProfile(Model model) {
+        model.addAttribute("userProfile", beanMapperConfiguration.map(userService.getCurrentUser(), UserProfile.class));
         return PROFILE_EDIT_VIEW;
     }
 
     @PostMapping(PROFILE_EDIT)
-    public String saveProfile(@Valid @ModelAttribute User user, BindingResult binder, HttpServletRequest request,
+    public String saveProfile(@Valid @ModelAttribute UserProfile userProfile, BindingResult binder, HttpServletRequest request,
                               HttpServletResponse response, RedirectAttributes redirAttrib) {
         if (binder.hasErrors())
             return PROFILE_EDIT_VIEW;
+        User user = unproxy(userService.getCurrentUser());
+        userProfile.setMobileNumber(user.getMobileNumber());
+        beanMapperConfiguration.map(userProfile, user);
         userService.updateUser(user);
         setUserLocale(user, request, response);
         redirAttrib.addFlashAttribute("message", "msg.profile.update.success");

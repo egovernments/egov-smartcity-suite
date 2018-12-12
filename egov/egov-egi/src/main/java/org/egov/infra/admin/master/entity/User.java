@@ -85,8 +85,10 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -207,9 +209,11 @@ public class User extends AbstractAuditable {
     private Set<Role> roles = new HashSet<>();
 
     @Temporal(TemporalType.DATE)
+    @Past
     private Date dob;
 
     @NotNull
+    @Future
     private Date pwdExpiryDate = new Date();
 
     @NotBlank
