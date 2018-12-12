@@ -206,7 +206,7 @@ function enableUrl(obj) {
 		<s:set var="serviceCodeInitVal" value="%{code}"></s:set>
 		<tr>
 		    <td></td>
-			<egov:uniquecheck id="CodeUnique" fields="['Value']" url='/service/serviceDetails-codeUniqueCheck.action'
+			<egov:uniquecheck id="CodeUnique" fields="['Value']" url='service/serviceDetails-codeUniqueCheck.action'
 			 key='service.code.already.exists' />
 			<td class="bluebox"> <s:text name="service.create.code"></s:text><span class="mandatory1">*</span></td>
 			<td class="bluebox"><s:textfield name="code" cssClass="form-control patternvalidation" data-pattern="alphanumericwithspace" id="serviceCode" maxlength="12"
