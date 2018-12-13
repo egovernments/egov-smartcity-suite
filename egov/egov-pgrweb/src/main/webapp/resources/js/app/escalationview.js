@@ -142,7 +142,7 @@ $(document)
                     },
                     queryTokenizer: Bloodhound.tokenizers.whitespace,
                     remote: {
-                        url: '/pgr/complaint/complaintTypes?complaintTypeName=%QUERY',
+                        url: '/pgr/complainttype/by-name?complaintTypeName=%QUERY',
                         filter: function (data) {
                             return $.map(data, function (ct) {
                                 return {
@@ -282,11 +282,11 @@ function calltypeahead(currentIndex) {
         var departmentId = $("#" + departmentElmId + " option:selected").val();
         currentIndex = departmentElmId.replace('approvalDepartment', '');
         $.ajax({
-            url: "/pgr/ajax-designationsByDepartment",
+            url: "/eis/designation/by-department",
             type: "GET",
             dataType: "json",
             data: {
-                approvalDepartment: departmentId
+                department: departmentId
             },
             async: "false",
             success: function (response) {
@@ -307,12 +307,12 @@ function calltypeahead(currentIndex) {
     $(".approvalDesignation" + currentIndex).change(function () {
         if (desgn.val() != null) {
             $.ajax({
-                url: "/pgr/ajax-positionsByDepartmentAndDesignation",
+                url: "/eis/position/by-dept-and-desig",
                 type: "GET",
                 dataType: "json",
                 data: {
-                    approvalDepartment: $(".approvalDepartment" + currentIndex + " option:selected").val(),
-                    approvalDesignation: $(".approvalDesignation" + currentIndex + " option:selected").val()
+                    department: $(".approvalDepartment" + currentIndex + " option:selected").val(),
+                    designation: $(".approvalDesignation" + currentIndex + " option:selected").val()
                 },
                 async: false,
                 success: function (response) {

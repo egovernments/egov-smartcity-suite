@@ -77,14 +77,8 @@ var tableContainer;
     	if(DateValidation($('#start_date').val(), $('#end_date').val())){
     		
     		if( validateEmail($('#ct-email').val())) { 
-    			var urlStr="";
-            	if($('#currentLoggedUser').val()=='anonymous'){
-               		urlStr="/pgr/complaint/citizen/anonymous/search";
-            	}
-            	else{
-            		urlStr="/pgr/complaint/search";
-            	}
-            	
+    			var urlStr ="/pgr/complaint/search";
+
             	$.post(urlStr,$('#searchComplaintForm').serialize())
             	.done(function (searchResult) {
 

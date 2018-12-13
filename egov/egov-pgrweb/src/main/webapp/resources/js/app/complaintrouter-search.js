@@ -53,7 +53,7 @@ $(document).ready(function () {
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: '/pgr/complaint/complaintTypes?complaintTypeName=%QUERY',
+            url: '/pgr/complainttype/by-name?complaintTypeName=%QUERY',
             filter: function (data) {
                 return $.map(data, function (ct) {
                     return {

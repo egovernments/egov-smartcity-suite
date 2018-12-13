@@ -53,13 +53,13 @@ import org.egov.infra.utils.FileStoreUtils;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ComplaintTypeCategory;
+import org.egov.pgr.entity.ReceivingCenter;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintTypeCategoryService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.service.ConfigurationService;
 import org.egov.pgr.service.ReceivingCenterService;
 import org.egov.pgr.service.ReceivingModeService;
-import org.egov.pgr.utils.constants.PGRConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -67,12 +67,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.utils.ApplicationConstant.ADMIN_HIERARCHY_TYPE;
+import static org.egov.pgr.utils.constants.PGRConstants.MODULE_NAME;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
 public class GenericComplaintController {
@@ -128,7 +132,36 @@ public class GenericComplaintController {
     @GetMapping(value = "/complaint/downloadfile/{fileStoreId}", produces = "*/*")
     @ResponseBody
     public ResponseEntity<InputStreamResource> download(@PathVariable String fileStoreId) {
-        return fileStoreUtils.fileAsResponseEntity(fileStoreId, PGRConstants.MODULE_NAME, false);
+        return fileStoreUtils.fileAsResponseEntity(fileStoreId, MODULE_NAME, false);
+    }
+
+    @GetMapping("/complaint/crn-required")
+    @ResponseBody
+    public boolean checkCRNRequired(@RequestParam Long receivingCenterId) {
+        ReceivingCenter receivingCenter = receivingCenterService.findByRCenterId(receivingCenterId);
+        return receivingCenter == null || receivingCenter.isCrnRequired();
+    }
+
+    @GetMapping(value = "/complaint/locations", produces = TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String getAllLocationJSON(@RequestParam String locationName) {
+        StringBuilder locationJSONData = new StringBuilder(100);
+        locationJSONData.append("[");
+        crossHierarchyService
+                .getChildBoundaryNameAndBndryTypeAndHierarchyType("Locality", "Location", ADMIN_HIERARCHY_TYPE, "%" + locationName + "%")
+                .stream()
+                .filter(ch -> ch.getParent().isActive() && ch.getChild().isActive())
+                .forEach(location ->
+                        locationJSONData.append("{\"name\":\"")
+                                .append(location.getChild().getName()).append(" - ").append(location.getParent().getName())
+                                .append("\",\"id\":").append(location.getId()).append("},")
+                );
+
+        if (locationJSONData.lastIndexOf(",") != -1)
+            locationJSONData.deleteCharAt(locationJSONData.lastIndexOf(","));
+
+        locationJSONData.append("]");
+        return locationJSONData.toString();
     }
 
     protected void setReceivingMode(Complaint complaint, String receivingModeCode) {

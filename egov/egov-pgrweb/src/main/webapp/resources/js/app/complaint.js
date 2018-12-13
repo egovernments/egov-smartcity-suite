@@ -58,7 +58,7 @@ $(document).ready(
             },
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             remote: {
-                url: 'complaintTypes?complaintTypeName=%QUERY',
+                url: '/pgr/complainttype/by-name?complaintTypeName=%QUERY',
                 filter: function (data) {
                     if (data != '') {
                         return $.map(data, function (ct) {
@@ -102,7 +102,7 @@ $(document).ready(
             } else {
                 $.ajax({
                         type: "GET",
-                        url: "complainttypes-by-category",
+                        url: "/pgr/complainttype/by-category",
                         cache: true,
                         data: {
                             'categoryId': this.value
@@ -126,7 +126,7 @@ $(document).ready(
             },
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             remote: {
-                url: 'locations?locationName=%QUERY',
+                url: '/pgr/complaint/locations?locationName=%QUERY',
                 filter: function (data) {
                     if (data != '') {
                         return $.map(data, function (cl) {
@@ -328,7 +328,7 @@ $("#receivingCenter").change(function () {
     } else {
         $.ajax({
             type: "GET",
-            url: "isCrnRequired",
+            url: "/pgr/complaint/crn-required",
             cache: true,
             data: {
                 'receivingCenterId': this.value

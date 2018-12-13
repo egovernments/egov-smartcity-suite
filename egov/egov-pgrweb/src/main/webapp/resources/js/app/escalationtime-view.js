@@ -107,7 +107,7 @@ $(document).ready(function () {
             },
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             remote: {
-                url: '/pgr/complaint/complaintTypes?complaintTypeName=%QUERY',
+                url: '/pgr/complainttype/by-name?complaintTypeName=%QUERY',
                 filter: function (data) {
                     return $.map(data, function (ct) {
                         return {
@@ -139,7 +139,7 @@ $(document).ready(function () {
             },
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             remote: {
-                url: '/pgr/complaint/escalationTime/ajax-approvalDesignations?designationName=%QUERY',
+                url: '/eis/designation/by-name?designationName=%QUERY',
                 filter: function (data) {
                     return $.map(data, function (ct) {
                         return {

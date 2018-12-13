@@ -49,21 +49,16 @@
 package org.egov.pgr.web.controller.complaint;
 
 import org.egov.eis.entity.EmployeeView;
-import org.egov.eis.service.DesignationService;
-import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.JsonUtils;
 import org.egov.pgr.web.contracts.response.ProcessOwnerResponseAdaptor;
-import org.egov.pims.commons.Designation;
-import org.egov.pims.commons.Position;
 import org.egov.pims.service.EisUtilService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -83,12 +78,6 @@ public class ComplaintProcessOwnerSelectionController {
     private EisUtilService eisService;
 
     @Autowired
-    private DesignationService designationService;
-
-    @Autowired
-    private PositionMasterService positionMasterService;
-
-    @Autowired
     private CrossHierarchyService crossHierarchyService;
 
     @Autowired
@@ -100,22 +89,7 @@ public class ComplaintProcessOwnerSelectionController {
         return crossHierarchyService.getActiveChildBoundariesByParentId(id);
     }
 
-    @GetMapping(value = {"/ajax-approvalDesignations", "/ajax-designationsByDepartment"},
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public List<Designation> getDesignations(
-            @ModelAttribute("designations") @RequestParam Long approvalDepartment) {
-        return designationService.getAllDesignationByDepartment(approvalDepartment);
-    }
-
-    @GetMapping(value = "/ajax-positionsByDepartmentAndDesignation", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public List<Position> getPositionByDepartmentAndDesignation(@RequestParam Long approvalDepartment,
-                                                                @RequestParam Long approvalDesignation) {
-        return positionMasterService.getPositionsByDepartmentAndDesignationId(approvalDepartment, approvalDesignation);
-    }
-
-    @GetMapping(value = "/ajax-approvalPositions", produces = MediaType.TEXT_PLAIN_VALUE)
+    @GetMapping(value = "/grievance/process-owners", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String getPositions(@RequestParam Integer approvalDepartment, @RequestParam Integer approvalDesignation) {
         if (approvalDepartment > 0 && approvalDesignation > 0) {

@@ -358,7 +358,7 @@ jQuery(document).ready(function ($) {
             },
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             remote: {
-                url: '/pgr/complaint/complaintTypes?complaintTypeName=%QUERY',
+                url: '/pgr/complainttype/by-name?complaintTypeName=%QUERY',
                 filter: function (data) {
                     // Map the remote source JSON array to a
                     // JavaScript object array

@@ -53,7 +53,7 @@ $(document).ready(function () {
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: '/pgr/complaint/router/complaintTypes?complaintTypeName=%QUERY',
+            url: '/pgr/complainttype/by-name?complaintTypeName=%QUERY',
             filter: function (data) {
                 return $.map(data, function (ct) {
                     return {
@@ -83,7 +83,7 @@ $(document).ready(function () {
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: '/pgr/complaint/router/position?positionName=%QUERY',
+            url: '/eis/position/by-name?positionName=%QUERY',
             dataType: "json",
             filter: function (data) {
                 return $.map(data, function (pos) {

@@ -89,7 +89,7 @@ $('#complaintTypeCategory').change(function () {
     $('#complaintId').find('option:gt(0)').remove();
     $.ajax({
         type: "GET",
-        url: "/pgr/complaint/citizen/anonymous/complainttypes-by-category",
+        url: "/pgr/complainttype/by-category",
         cache: true,
         data: {
             'categoryId': this.value

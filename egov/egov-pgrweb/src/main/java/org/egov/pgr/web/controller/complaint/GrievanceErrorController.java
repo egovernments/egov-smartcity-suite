@@ -52,5 +52,5 @@ import org.egov.infra.web.spring.controller.AbstractErrorController;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class ComplaintErrorController extends AbstractErrorController {
+public class GrievanceErrorController extends AbstractErrorController {
 }

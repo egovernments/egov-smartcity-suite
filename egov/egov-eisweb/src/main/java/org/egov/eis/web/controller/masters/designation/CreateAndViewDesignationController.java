@@ -52,12 +52,15 @@ import org.egov.eis.service.DesignationService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.DesignationAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -68,13 +71,14 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Controller
 @RequestMapping("/designation")
 public class CreateAndViewDesignationController {
 
-    private final DesignationService designationService;
     public static final String CONTENTTYPE_JSON = "application/json";
+    private final DesignationService designationService;
 
     @Autowired
     public CreateAndViewDesignationController(final DesignationService designationService) {
@@ -94,7 +98,7 @@ public class CreateAndViewDesignationController {
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public String createDesignation(@Valid @ModelAttribute final Designation designation, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final Model model) {
+                                    final RedirectAttributes redirectAttrs, final Model model) {
         if (errors.hasErrors())
             return "designation-form";
         designationService.createDesignation(designation);
@@ -104,8 +108,9 @@ public class CreateAndViewDesignationController {
     }
 
     @RequestMapping(value = "ajax/result", method = RequestMethod.GET)
-    public @ResponseBody void springPaginationDataTables(final HttpServletRequest request,
-            final HttpServletResponse response) throws IOException {
+    @ResponseBody
+    public void springPaginationDataTables(final HttpServletRequest request,
+                                    final HttpServletResponse response) throws IOException {
         final List<Designation> designationList = designationService.getAllDesignations();
         final StringBuilder designationJSONData = new StringBuilder("{\"data\":").append(toJSON(designationList, Designation.class, DesignationAdaptor.class))
                 .append("}");
@@ -113,4 +118,15 @@ public class CreateAndViewDesignationController {
         IOUtils.write(designationJSONData, response.getWriter());
     }
 
+    @GetMapping(value = "/by-department", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<Designation> getDesignations(@RequestParam Long department) {
+        return designationService.getAllDesignationByDepartment(department);
+    }
+
+    @GetMapping(value = "/by-name", produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<Designation> getAllDesignationsByName(@RequestParam String designationName) {
+        return designationService.getAllDesignationsByNameLike(designationName);
+    }
 }

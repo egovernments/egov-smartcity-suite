@@ -96,10 +96,10 @@ $(document).ready(function () {
         resetCurrentOwner();
         if ($('#approvalDepartment').val() != '') {
             $.ajax({
-                url: "/pgr/ajax-approvalDesignations",
+                url: "/eis/designation/by-department",
                 type: "GET",
                 data: {
-                    approvalDepartment: $('#approvalDepartment').val()
+                    department: $('#approvalDepartment').val()
                 },
                 dataType: "json",
                 success: function (response) {
@@ -121,7 +121,7 @@ $(document).ready(function () {
         resetCurrentOwner();
         if ($('#approvalDesignation').val() != '') {
             $.ajax({
-                url: "/pgr/ajax-approvalPositions",
+                url: "/pgr/grievance/process-owners",
                 type: "GET",
                 data: {
                     approvalDesignation: $('#approvalDesignation').val(),

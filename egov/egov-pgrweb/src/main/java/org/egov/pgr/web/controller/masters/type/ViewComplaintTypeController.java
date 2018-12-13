@@ -51,8 +51,8 @@ package org.egov.pgr.web.controller.masters.type;
 import org.egov.infra.web.support.search.DataTableSearchRequest;
 import org.egov.infra.web.support.ui.DataTable;
 import org.egov.pgr.entity.ComplaintType;
-import org.egov.pgr.web.contracts.response.ComplaintTypeResponseAdaptor;
 import org.egov.pgr.service.ComplaintTypeService;
+import org.egov.pgr.web.contracts.response.ComplaintTypeResponseAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -60,35 +60,56 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
-@RequestMapping("/complainttype/view")
+@RequestMapping("/complainttype")
 public class ViewComplaintTypeController {
 
     @Autowired
     private ComplaintTypeService complaintTypeService;
 
 
-    @GetMapping
+    @GetMapping("view")
     public String viewComplaintTypeForm() {
         return "view-complaintType";
     }
 
-    @GetMapping(value = "/", produces = TEXT_PLAIN_VALUE)
+    @GetMapping(value = "view/", produces = TEXT_PLAIN_VALUE)
     @ResponseBody
     public String viewComplaintType(DataTableSearchRequest request) {
         return new DataTable<>(complaintTypeService.getComplaintType(request), request.draw())
                 .toJson(ComplaintTypeResponseAdaptor.class);
     }
 
-    @GetMapping("/{code}")
-    public String viewComplaintTypeDetails(@PathVariable String code,
-                                           @ModelAttribute ComplaintType complaintType,
-                                           Model model) {
+    @GetMapping("view/{code}")
+    public String viewComplaintTypeDetails(@PathVariable String code, @ModelAttribute ComplaintType complaintType, Model model) {
         model.addAttribute("complaintType", complaintTypeService.findByCode(code));
         return "complainttype-success";
+    }
+
+
+    @GetMapping("by-department")
+    @ResponseBody
+    public List<ComplaintType> getComplaintTypesByDepartment(@RequestParam Long departmentId) {
+        return complaintTypeService.getComplaintTypeByDepartmentId(departmentId);
+    }
+
+    @GetMapping(value = "by-name", produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<ComplaintType> getActiveComplaintTypesByName(@RequestParam String complaintTypeName) {
+        return complaintTypeService.findAllActiveByNameLike(complaintTypeName);
+    }
+
+    @GetMapping(value = "by-category", produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<ComplaintType> complaintTypesByCategory(@RequestParam Long categoryId) {
+        return complaintTypeService.findActiveComplaintTypesByCategory(categoryId);
     }
 }

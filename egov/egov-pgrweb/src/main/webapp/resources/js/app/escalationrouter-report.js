@@ -51,7 +51,7 @@ $(document).ready(function () {
 
     $('#category').change(function () {
         $.ajax({
-            url: "../complaint/officials/complainttypes-by-category",
+            url: "/pgr/complainttype/by-category",
             type: "GET",
             data: {
                 categoryId: $('#category').val()

@@ -62,6 +62,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -223,5 +224,12 @@ public class SearchPositionController {
         model.addAttribute("positions", positionList);
 
         return "position-search";
+    }
+
+    @GetMapping(value = "by-dept-and-desig", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<Position> getPositionByDepartmentAndDesignation(@RequestParam Long department,
+                                                                @RequestParam Long designation) {
+        return positionMasterService.getPositionsByDepartmentAndDesignationId(department, designation);
     }
 }

@@ -66,8 +66,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -77,8 +78,6 @@ import java.util.List;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.egov.pgr.utils.constants.PGRConstants.GO_ROLE_NAME;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 public class ComplaintSearchController {
@@ -154,13 +153,13 @@ public class ComplaintSearchController {
         return ApplicationThreadLocals.getCityName();
     }
 
-    @RequestMapping(method = GET, value = {"/complaint/search", "/complaint/citizen/anonymous/search"})
+    @GetMapping("/complaint/search")
     public String showSearch(HttpServletRequest request, Model model) {
         model.addAttribute("isMore", Boolean.parseBoolean(request.getParameter("isMore")));
         return "complaint-search";
     }
 
-    @RequestMapping(method = POST, value = {"/complaint/search", "/complaint/citizen/anonymous/search"})
+    @PostMapping("/complaint/search")
     @ResponseBody
     public Iterable<ComplaintIndex> searchComplaints(@Valid @ModelAttribute ComplaintSearchRequest searchRequest,
                                                      BindingResult errors) {

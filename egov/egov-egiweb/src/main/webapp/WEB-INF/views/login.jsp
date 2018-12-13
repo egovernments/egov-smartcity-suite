@@ -131,7 +131,7 @@
                     </a>
                 </div>
                 <div class="col-md-12 community-card">
-                    <a href="/pgr/complaint/citizen/anonymous/search?isMore=true" target="_blank">
+                    <a href="/pgr/complaint/search?isMore=true" target="_blank">
                         <div class="rounded-circle"><i class="fa fa-search c"></i>
                         </div>
                         &nbsp;

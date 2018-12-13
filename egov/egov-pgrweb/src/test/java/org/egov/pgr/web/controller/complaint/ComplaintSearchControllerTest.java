@@ -127,7 +127,7 @@ public class ComplaintSearchControllerTest extends AbstractContextControllerTest
 
     @Test
     public void shouldRetrieveSearchPage() throws Exception {
-        mockMvc.perform(get("/complaint/citizen/anonymous/search")).andExpect(view().name("complaint-search"))
+        mockMvc.perform(get("/complaint/search")).andExpect(view().name("complaint-search"))
                 .andExpect(status().isOk());
     }
 

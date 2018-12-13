@@ -48,16 +48,9 @@
 
 package org.egov.pgr.web.controller.complaint;
 
-import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EmployeeViewService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.CrossHierarchyService;
-import org.egov.pgr.entity.ComplaintType;
-import org.egov.pgr.entity.ReceivingCenter;
-import org.egov.pgr.service.ComplaintTypeService;
-import org.egov.pgr.service.ReceivingCenterService;
-import org.egov.pims.commons.Designation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -77,76 +70,7 @@ public class GenericComplaintAjaxController {
     private BoundaryService boundaryService;
 
     @Autowired
-    private DesignationService designationService;
-
-    @Autowired
-    private CrossHierarchyService crossHierarchyService;
-
-    @Autowired
-    private ReceivingCenterService receivingCenterService;
-
-    @Autowired
-    private ComplaintTypeService complaintTypeService;
-
-    @Autowired
     private EmployeeViewService employeeViewService;
-
-    @GetMapping(value = {"/complaint/citizen/complaintTypes", "/complaint/citizen/anonymous/complaintTypes",
-            "/complaint/officials/complaintTypes", "/complaint/router/complaintTypes",
-            "/complaint/escalationTime/complaintTypes"}, produces = APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public List<ComplaintType> getAllActiveComplaintTypesByNameLike(@RequestParam String complaintTypeName) {
-        return complaintTypeService.findAllActiveByNameLike(complaintTypeName);
-    }
-
-    @GetMapping(value = {"/complaint/citizen/complainttypes-by-category", "/complaint/citizen/anonymous/complainttypes-by-category",
-            "/complaint/officials/complainttypes-by-category", "/grievance/thirdparty/complainttypes-by-category"}, produces = APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public List<ComplaintType> complaintTypesByCategory(@RequestParam Long categoryId) {
-        return complaintTypeService.findActiveComplaintTypesByCategory(categoryId);
-    }
-
-    @GetMapping(value = "/complaint/complaintTypes", produces = APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public List<ComplaintType> getAllComplaintTypesByNameLike(@RequestParam String complaintTypeName) {
-        return complaintTypeService.findAllActiveByNameLike(complaintTypeName);
-    }
-
-    @GetMapping(value = "/complaint/escalationTime/ajax-approvalDesignations", produces = APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public List<Designation> getAllDesignationsByName(@RequestParam String designationName) {
-        return designationService.getAllDesignationsByNameLike(designationName);
-    }
-
-    @GetMapping(value = {"/complaint/officials/isCrnRequired", "/grievance/thirdparty/isCrnRequired"})
-    @ResponseBody
-    public boolean isCrnRequired(@RequestParam Long receivingCenterId) {
-        ReceivingCenter receivingCenter = receivingCenterService.findByRCenterId(receivingCenterId);
-        return receivingCenter == null || receivingCenter.isCrnRequired();
-    }
-
-    @GetMapping(value = {"/complaint/citizen/locations", "/complaint/citizen/anonymous/locations",
-            "/complaint/officials/locations", "/grievance/thirdparty/locations"}, produces = TEXT_PLAIN_VALUE)
-    @ResponseBody
-    public String getAllLocationJSON(@RequestParam String locationName) {
-        StringBuilder locationJSONData = new StringBuilder();
-        locationJSONData.append("[");
-        crossHierarchyService
-                .getChildBoundaryNameAndBndryTypeAndHierarchyType("Locality", "Location", "Administration", "%" + locationName + "%")
-                .stream()
-                .filter(ch -> ch.getParent().isActive() && ch.getChild().isActive())
-                .forEach(location ->
-                        locationJSONData.append("{\"name\":\"")
-                                .append(location.getChild().getName()).append(" - ").append(location.getParent().getName())
-                                .append("\",\"id\":").append(location.getId()).append("},")
-                );
-
-        if (locationJSONData.lastIndexOf(",") != -1)
-            locationJSONData.deleteCharAt(locationJSONData.lastIndexOf(","));
-
-        locationJSONData.append("]");
-        return locationJSONData.toString();
-    }
 
     @GetMapping(value = {"/complaint/router/position", "/complaint/escalation/position"}, produces = TEXT_PLAIN_VALUE)
     @ResponseBody
