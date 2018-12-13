@@ -81,8 +81,11 @@ public class AjaxDishonoredAction extends BaseFormAction {
         if (bankBranchId != "-1" && bankBranchId != null && bankBranchId != "") {
             final String id[] = bankBranchId.split("-");
             final String branchId = id[1];
-            bankAccountList = persistenceService.findAllBy("select ba from Bankaccount ba "
-                    + "where ba.bankbranch.id=?1 and ba.isactive=true order by ba.id", Integer.parseInt(branchId));
+            final StringBuilder finalQuery = new StringBuilder("select ba from Bankaccount ba")
+                    .append("where ba.bankbranch.id=?1 and ba.isactive=true order by ba.id")
+                    .append(",")
+                    .append(Integer.parseInt(branchId));
+            bankAccountList = persistenceService.findAllBy(finalQuery.toString());
         }
         else
             bankAccountList = Collections.emptyList();

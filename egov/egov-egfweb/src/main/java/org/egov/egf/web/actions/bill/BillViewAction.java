@@ -151,7 +151,7 @@ public class BillViewAction extends BaseFormAction {
 
                 for (final EgBillPayeedetails payeeDetails : billDetail.getEgBillPaydetailes()) {
                     final Accountdetailtype detailtype = (Accountdetailtype) persistenceService.find(
-                            " from Accountdetailtype where id=?", payeeDetails.getAccountDetailTypeId());
+                            " from Accountdetailtype where id=?1", payeeDetails.getAccountDetailTypeId());
                     subLedgerTemp = new HashMap<>();
                     try {
                         subLedgerTemp = getAccountDetails(detailtype, payeeDetails.getAccountDetailKeyId(), subLedgerTemp);

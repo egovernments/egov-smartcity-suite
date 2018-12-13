@@ -78,6 +78,8 @@ import org.egov.model.bills.EgBillregistermis;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.query.Query;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -191,8 +193,7 @@ public class BillRegisterSearchAction extends BaseFormAction {
         .append(
                 "select br.expendituretype , br.billtype ,br.billnumber , br.billdate , br.billamount , br.passedamount ,egwstatus.description,billmis.sourcePath,")
                 .append(" br.id ,br.status.id,egwstatus.description ,br.state.id,br.lastModifiedBy.id ")
-                .append(
-                        " from EgBillregister br, EgBillregistermis billmis , EgwStatus egwstatus where   billmis.egBillregister.id = br.id and egwstatus.id = br.status.id  ")
+                .append(" from EgBillregister br, EgBillregistermis billmis , EgwStatus egwstatus where   billmis.egBillregister.id = br.id and egwstatus.id = br.status.id  ")
                         .append(" and br.expendituretype=?").append(
                                 VoucherHelper
                                 .getBillDateQuery(billDateFrom, billDateTo))
@@ -299,9 +300,12 @@ public class BillRegisterSearchAction extends BaseFormAction {
     }
 
     public EgwStatus getStatusId(final String moduleType, final Integer statusid) {
-        final String statusQury = "from EgwStatus where upper(moduletype)=upper('" + moduleType + "') and  id=" + statusid;
-        // "upper(description)=upper('"+ statusString + "')";
-        final EgwStatus egwStatus = (EgwStatus) persistenceService.find(statusQury);
+        StringBuffer statusQuery = new StringBuffer();
+        statusQuery = statusQuery.append("from EgwStatus where upper(moduletype)=upper(:moduleType) and id=:statusId");
+        final Query query = persistenceService.getSession().createQuery(statusQuery.toString())
+                .setParameter("moduleType", moduleType, StringType.INSTANCE)
+                .setParameter("statusId",statusid, IntegerType.INSTANCE);
+        final EgwStatus egwStatus = (EgwStatus) persistenceService.find(query.toString());
         return egwStatus;
 
     }
