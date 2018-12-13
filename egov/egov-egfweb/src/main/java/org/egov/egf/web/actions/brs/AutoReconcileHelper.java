@@ -78,6 +78,7 @@ import org.hibernate.query.Query;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -470,9 +471,15 @@ public class AutoReconcileHelper {
 
         final List<AutoReconcileBean> detailList = getStatmentsForProcessing(BRS_TRANSACTION_TYPE_CHEQUE);
 
-        final String statusQury = "select id from EgwStatus where upper(moduletype)=upper('instrument') and  upper(description)=upper('"
-                + FinancialConstants.INSTRUMENT_RECONCILED_STATUS + "')";
-        statusId = (Integer) persistenceService.find(statusQury);
+
+        StringBuilder statusQury = new StringBuilder();
+        statusQury = statusQury.append("select id from EgwStatus where upper(moduletype)=upper(:instrument) and")
+                .append("upper(description)=upper(:description)");
+        final Query query = persistenceService.getSession().createQuery(statusQury.toString())
+                        .setParameter("instrument","instrument")
+                        .setParameter("description",FinancialConstants.INSTRUMENT_RECONCILED_STATUS , StringType.INSTANCE);
+
+        statusId = (Integer) persistenceService.find(query.toString());
         final Long instrumentTypeId = getInstrumentType(FinancialConstants.INSTRUMENT_TYPE_CHEQUE);
         final Long instrumentTypeDDId = getInstrumentType(FinancialConstants.INSTRUMENT_TYPE_DD);
         // where instrumentheaderid= (select id.....) is used to fetch only one record may be double submit or two instrument
