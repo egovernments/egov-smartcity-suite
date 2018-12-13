@@ -78,7 +78,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 public abstract class StateAware<T extends OwnerGroup> extends AbstractAuditable {
     private static final long serialVersionUID = 5776408218810221246L;
 
-    @ManyToOne(targetEntity = State.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = State.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "STATE_ID")
     @Valid
     private State<T> state;

@@ -50,7 +50,9 @@ package org.egov.tl.web.validator.closure;
 
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.pims.commons.Position;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.service.LicenseClosureProcessflowService;
 import org.egov.tl.service.LicenseService;
@@ -76,6 +78,9 @@ public class UpdateLicenseClosureValidator extends LicenseClosureValidator {
     @Autowired
     private LicenseService licenseService;
 
+    @Autowired
+    private PositionMasterService positionMasterService;
+
     @Override
     public void validate(Object target, Errors errors) {
         super.validate(target, errors);
@@ -84,6 +89,7 @@ public class UpdateLicenseClosureValidator extends LicenseClosureValidator {
         if (licenseService.validateMandatoryDocument(license)) {
             errors.reject("validate.supportDocs");
         }
+        validateApprover(license,errors);
     }
 
     public boolean closureInProgress(TradeLicense license, RedirectAttributes redirectAttributes) {
@@ -102,6 +108,15 @@ public class UpdateLicenseClosureValidator extends LicenseClosureValidator {
             return true;
         }
         return false;
+    }
+
+    public void validateApprover(TradeLicense license, Errors errors){
+        WorkFlowMatrix workFlowMatrix = licenseClosureProcessflowService.getWorkFlowMatrix(license);
+        Position nextPosition = positionMasterService.getPositionById(license.getWorkflowContainer().getApproverPositionId());
+        if (nextPosition == null || (workFlowMatrix != null
+                && !workFlowMatrix.getNextDesignation().contains(nextPosition.getDeptDesig().getDesignation().getName()))) {
+            errors.reject("error.invalid.approver");
+        }
     }
 
 }

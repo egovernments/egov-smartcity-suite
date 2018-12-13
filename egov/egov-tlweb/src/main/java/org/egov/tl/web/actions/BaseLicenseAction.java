@@ -201,6 +201,11 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
                 addActionMessage(this.getText(WF_ITEM_PROCESSED));
                 return MESSAGE;
             }
+            Position nextPosition = positionMasterService.getPositionById(workflowBean.getApproverPositionId());
+            if (nextPosition == null || !nextPosition.getDeptDesig().getDesignation().getName().equals(wfmatrix.getNextDesignation())) {
+                addActionMessage(this.getText("error.invalid.approver"));
+                return MESSAGE;
+            }
             if (GENERATE_PROVISIONAL_CERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
                 reportId = reportViewerUtil
                         .addReportToTempCache(tradeLicenseService.generateLicenseCertificate(license(), true));
@@ -219,6 +224,12 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
                 WorkFlowMatrix wfmatrix = tradeLicenseService.getWorkFlowMatrixApi(license(), workflowBean);
                 if (!license().getCurrentState().getValue().equals(wfmatrix.getCurrentState())) {
                     addActionMessage(this.getText(WF_ITEM_PROCESSED));
+                    return MESSAGE;
+                }
+                Position nextPosition = positionMasterService.getPositionById(workflowBean.getApproverPositionId());
+                if (nextPosition == null || !nextPosition.getDeptDesig().getDesignation().getName()
+                        .equals(wfmatrix.getNextDesignation())) {
+                    addActionMessage(this.getText("error.invalid.approver"));
                     return MESSAGE;
                 }
             }

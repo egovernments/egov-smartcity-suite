@@ -45,7 +45,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-
+$(document).ready(function () {
 
 $('#approvalDepartment').change(function () {
     $('#approvaldesignation').find('option:gt(0)').remove();
@@ -97,7 +97,7 @@ $('#approverPositionId').change(function () {
 });
 
 
-$(document).ready(function () {
+
     $(".buttonsubmit").click(function () {
         var name = $(this).val();
         if (name == 'Reassign') {

@@ -69,7 +69,7 @@
                     </div>
                 </div>
                 <div align="center">
-                    <form:errors path="" cssClass="alert alert-warning" id="formerror"/>
+                    <form:errors path="" cssClass="error-msg" />
                     </br>
                 </div>
                 <ul class="nav nav-tabs" id="settingstab">
