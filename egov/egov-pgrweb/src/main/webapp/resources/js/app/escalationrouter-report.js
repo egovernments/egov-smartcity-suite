@@ -77,7 +77,7 @@ $(document).ready(function () {
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: '/pgr/complaint/router/position?positionName=%QUERY',
+            url: '/eis/employee/position/by-code-or-name-or-position?name=%QUERY',
             dataType: "json",
             filter: function (data) {
                 return $.map(data, function (pos) {

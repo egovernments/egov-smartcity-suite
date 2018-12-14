@@ -91,8 +91,8 @@ import static org.egov.pgr.utils.constants.PGRConstants.LOCATION_ATTRIB;
 import static org.egov.pgr.utils.constants.PGRConstants.MODULE_NAME;
 
 @Controller
-@RequestMapping(value = "/complaint/update/{crnNo}")
-public class ComplaintUpdationController {
+@RequestMapping(value = "/grievance/update/{crnNo}")
+public class GrievanceUpdateController {
 
     private static final String COMPLAINT_UPDATE_SUCCESS = "update-success";
     private static final String COMPLAINT_EDIT = "complaint-edit";

@@ -46,53 +46,55 @@
  *
  */
 
-$(document).ready(function () {
+package org.egov.pgr.web.controller.complaint;
 
-    $('#pendinggrievancelist').dataTable({
-        "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-        "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-        "autoWidth": false,
-        "bDestroy": true,
-        "ajax": {
-            url: "/pgr/grievance/pending",
-            type: "POST"
-        },
-        "fnCreatedRow": function (row, data, index) {
-            $('td', row).eq(0).html(index + 1);
-        },
-        "columns": [
-            {
-                "sTitle": "S.No",
-                "mData": null,
-                "bSortable": false
-            }, {
-                "mData": "grievanceNumber",
-                "sTitle": "Complaint Number",
-                "render": function (data, type, row) {
-                    return '<a href="javascript:void(0);" onclick="window.open(\'/pgr/grievance/update/'
-                        + data
-                        + '\',\'\', \'width=800, height=600,scrollbars=yes\');" data-hiddenele="selecteduserid" data-eleval="'
-                        + data + '">' + data + '</a>';
-                }
-            }, {
-                "mData": "complaintType",
-                "sTitle": "Complaint Type"
-            }, {
-                "mData": "department",
-                "sTitle": "Department"
-            }, {
-                "mData": "location",
-                "sTitle": "Location"
-            }, {
-                "mData": "status",
-                "sTitle": "Status"
-            }, {
-                "mData": "regDate",
-                "sTitle": "Registration Date"
-            }, {
-                "mData": "dueDate",
-                "sTitle": "Due Date"
-            }]
-    });
-});
+import org.egov.eis.entity.EmployeeView;
+import org.egov.infra.admin.master.service.CrossHierarchyService;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.JsonUtils;
+import org.egov.pgr.web.contracts.response.ProcessOwnerResponseAdaptor;
+import org.egov.pims.service.EisUtilService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.egov.pgr.utils.constants.PGRConstants.GO_ROLE_NAME;
+import static org.egov.pgr.utils.constants.PGRConstants.GRO_ROLE_NAME;
+import static org.egov.pgr.utils.constants.PGRConstants.RO_ROLE_NAME;
+
+@Controller
+public class GrievanceProcessOwnerSelectionController {
+
+    @Autowired
+    private EisUtilService eisService;
+
+    @Autowired
+    private SecurityUtils securityUtils;
+
+    @GetMapping(value = "/grievance/process-owners", produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String getPositions(@RequestParam Integer approvalDepartment, @RequestParam Integer approvalDesignation) {
+        if (approvalDepartment > 0 && approvalDesignation > 0) {
+            HashMap<String, String> paramMap = new HashMap<>();
+            paramMap.put("departmentId", String.valueOf(approvalDepartment));
+            paramMap.put("designationId", String.valueOf(approvalDesignation));
+            List<EmployeeView> employeeViewData = eisService.getEmployeeInfoList(paramMap);
+            String currentUserName = securityUtils.getCurrentUser().getUsername();
+            Set<EmployeeView> processOwners = employeeViewData
+                    .stream()
+                    .filter(employeeView -> (employeeView.getEmployee().hasAnyRole(RO_ROLE_NAME, GO_ROLE_NAME, GRO_ROLE_NAME))
+                            && !currentUserName.equals(employeeView.getUserName()))
+                    .collect(Collectors.toSet());
+            return JsonUtils.toJSON(processOwners, EmployeeView.class, ProcessOwnerResponseAdaptor.class);
+        }
+        return "[]";
+    }
+}

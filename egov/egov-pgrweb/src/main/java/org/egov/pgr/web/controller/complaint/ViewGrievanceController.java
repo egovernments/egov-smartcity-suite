@@ -61,7 +61,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Controller
-public class ViewComplaintController {
+public class ViewGrievanceController {
 
     @Autowired
     private ComplaintService complaintService;
@@ -69,7 +69,7 @@ public class ViewComplaintController {
     @Autowired
     private ComplaintHistoryService complaintHistoryService;
 
-    @GetMapping("/complaint/view/{crnNo}")
+    @GetMapping("/grievance/view/{crnNo}")
     public String viewComplaints(@PathVariable String crnNo, Model model) {
         Complaint complaint = complaintService.getComplaintByCRN(crnNo);
         if (complaint == null) {

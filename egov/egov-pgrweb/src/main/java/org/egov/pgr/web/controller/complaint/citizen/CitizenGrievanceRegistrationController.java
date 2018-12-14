@@ -46,53 +46,41 @@
  *
  */
 
-$(document).ready(function () {
+package org.egov.pgr.web.controller.complaint.citizen;
 
-    $('#pendinggrievancelist').dataTable({
-        "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-        "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-        "autoWidth": false,
-        "bDestroy": true,
-        "ajax": {
-            url: "/pgr/grievance/pending",
-            type: "POST"
-        },
-        "fnCreatedRow": function (row, data, index) {
-            $('td', row).eq(0).html(index + 1);
-        },
-        "columns": [
-            {
-                "sTitle": "S.No",
-                "mData": null,
-                "bSortable": false
-            }, {
-                "mData": "grievanceNumber",
-                "sTitle": "Complaint Number",
-                "render": function (data, type, row) {
-                    return '<a href="javascript:void(0);" onclick="window.open(\'/pgr/grievance/update/'
-                        + data
-                        + '\',\'\', \'width=800, height=600,scrollbars=yes\');" data-hiddenele="selecteduserid" data-eleval="'
-                        + data + '">' + data + '</a>';
-                }
-            }, {
-                "mData": "complaintType",
-                "sTitle": "Complaint Type"
-            }, {
-                "mData": "department",
-                "sTitle": "Department"
-            }, {
-                "mData": "location",
-                "sTitle": "Location"
-            }, {
-                "mData": "status",
-                "sTitle": "Status"
-            }, {
-                "mData": "regDate",
-                "sTitle": "Registration Date"
-            }, {
-                "mData": "dueDate",
-                "sTitle": "Due Date"
-            }]
-    });
-});
+import org.egov.pgr.entity.Complaint;
+import org.egov.pgr.web.controller.complaint.GenericGrievanceController;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
+
+import static org.egov.pgr.utils.constants.PGRConstants.CITIZEN_PORTAL_MODE;
+
+@Controller
+@RequestMapping(value = "/grievance/register/by-citizen")
+public class CitizenGrievanceRegistrationController extends GenericGrievanceController {
+
+    private static final String CITIZEN_COMPLAINT_REGISTRATION_FORM = "complaint/citizen/registration-form";
+
+    @GetMapping
+    public String showComplaintRegistrationForm(@ModelAttribute Complaint complaint) {
+        setReceivingMode(complaint, CITIZEN_PORTAL_MODE);
+        return CITIZEN_COMPLAINT_REGISTRATION_FORM;
+    }
+
+    @PostMapping
+    public String registerComplaint(@Valid @ModelAttribute Complaint complaint, BindingResult resultBinder,
+                                    RedirectAttributes redirectAttributes, @RequestParam("files") MultipartFile[] files, Model model) {
+
+        return validateAndRegister(complaint, redirectAttributes, files, model, resultBinder, CITIZEN_COMPLAINT_REGISTRATION_FORM);
+    }
+}

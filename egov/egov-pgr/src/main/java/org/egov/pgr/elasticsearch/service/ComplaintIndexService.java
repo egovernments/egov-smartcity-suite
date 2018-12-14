@@ -57,6 +57,7 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.es.CityIndexService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.mapper.BeanMapperConfiguration;
+import org.egov.infra.exception.ApplicationValidationException;
 import org.egov.infra.utils.DateUtils;
 import org.egov.pgr.elasticsearch.entity.ComplaintIndex;
 import org.egov.pgr.elasticsearch.entity.contract.ComplaintDashBoardRequest;
@@ -165,7 +166,7 @@ public class ComplaintIndexService {
     private static final String GROUP_FIELDWISE_OPEN_AND_CLOSED_COUNT = "groupFieldWiseOpenAndClosedCount";
     private static final String WARDWISE = "wardwise";
     private static final String DEPARTMENTWISE = "departmentwise";
-    private static final String PGR_COMPLAINT_VIEW_URL = "%s/pgr/complaint/view/%s";
+    private static final String PGR_COMPLAINT_VIEW_URL = "%s/pgr/grievance/view/%s";
     private static final String EXCLUDE_ZERO = "excludeZero";
     private static final String CITY_NAME = "cityName";
     private static final String CITY_DISTRICT_NAME = "cityDistrictName";
@@ -279,6 +280,8 @@ public class ComplaintIndexService {
     public void updateComplaintIndex(final Complaint complaint) {
         // fetch the complaint from index and then update the new fields
         ComplaintIndex complaintIndex = complaintIndexRepository.findByCrnAndCityCode(complaint.getCrn(), getCityCode());
+        if(complaintIndex == null)
+            throw new ApplicationValidationException("PGR.ES.01");
         final String status = complaintIndex.getComplaintStatusName();
         beanMapperConfiguration.map(complaint, complaintIndex);
 

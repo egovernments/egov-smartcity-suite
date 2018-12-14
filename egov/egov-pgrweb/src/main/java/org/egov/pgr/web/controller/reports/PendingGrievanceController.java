@@ -48,7 +48,6 @@
 
 package org.egov.pgr.web.controller.reports;
 
-import org.apache.commons.io.IOUtils;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.report.entity.contract.PendingGrievanceAdaptor;
 import org.egov.pgr.service.ComplaintService;
@@ -56,45 +55,37 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-
 import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
-@RequestMapping("/pending")
+@RequestMapping("/grievance/pending")
 public class PendingGrievanceController {
 
-    private final ComplaintService complaintService;
-
     @Autowired
-    public PendingGrievanceController(final ComplaintService complaintService) {
-        this.complaintService = complaintService;
-    }
+    private ComplaintService complaintService;
 
     @ModelAttribute
     public Complaint complaint() {
         return new Complaint();
     }
 
-    @GetMapping("grievance-list")
-    public String complaintTypeViewForm() {
+    @GetMapping
+    public String pendingGrievanceViewForm() {
         return "grievance-list";
 
     }
 
-    @GetMapping(value = "ajax-grievancelist", produces = APPLICATION_JSON_VALUE)
+    @PostMapping(produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public void getPendingGrievances(HttpServletResponse response) throws IOException {
-        IOUtils.write(
-                new StringBuilder("{ \"data\":")
-                        .append(
-                                toJSON(complaintService.getPendingGrievances(), Complaint.class, PendingGrievanceAdaptor.class))
-                        .append("}").toString(),
-                response.getWriter());
+    public String pendingGrievances() {
+        return new StringBuilder("{ \"data\":")
+                .append(
+                        toJSON(complaintService.getPendingGrievances(), Complaint.class, PendingGrievanceAdaptor.class))
+                .append("}").toString();
     }
 }

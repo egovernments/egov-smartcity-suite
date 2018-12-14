@@ -55,7 +55,7 @@
 <link rel="stylesheet" href="<cdn:url  value='/resources/css/or-divider.css?rnd=${app_release_no}'/>">
 <div class="row">
     <div class="col-md-12">
-        <form:form role="form" action="register" modelAttribute="complaint" id="complaintform"
+        <form:form role="form" modelAttribute="complaint" id="complaintform"
                    cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">

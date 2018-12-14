@@ -51,7 +51,7 @@ $(document).ready(function (e) {
 
     $('#location').change(function () {
         $.ajax({
-            url: "/pgr/ajax-getChildLocation",
+            url: "/egi/boundary/child/by-parent",
             type: "GET",
             data: {
                 id: $('#location').val()

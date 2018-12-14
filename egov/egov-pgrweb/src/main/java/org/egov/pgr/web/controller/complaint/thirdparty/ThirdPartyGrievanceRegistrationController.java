@@ -48,10 +48,9 @@
 
 package org.egov.pgr.web.controller.complaint.thirdparty;
 
-import org.egov.infra.admin.master.entity.CrossHierarchy;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ReceivingCenter;
-import org.egov.pgr.web.controller.complaint.GenericComplaintController;
+import org.egov.pgr.web.controller.complaint.GenericGrievanceController;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -64,15 +63,13 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import javax.validation.ValidationException;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.egov.pgr.utils.constants.PGRConstants.MODULE_NAME;
 
 @Controller
-@RequestMapping("/grievance/thirdparty/")
-public class GrievanceRegistrationController extends GenericComplaintController {
+@RequestMapping("/grievance/register/by-thirdparty")
+public class ThirdPartyGrievanceRegistrationController extends GenericGrievanceController {
     private static final String GRIEVANCE_REGISTRATION_FORM = "grievance-registration-form";
 
     @ModelAttribute("receivingCenters")
@@ -80,42 +77,17 @@ public class GrievanceRegistrationController extends GenericComplaintController 
         return receivingCenterService.findAll();
     }
 
-    @GetMapping("show-reg-form")
-    public String showRegistrationForm(@ModelAttribute final Complaint complaint,
-                                       @RequestParam(required = false) String source) {
+    @GetMapping
+    public String showRegistrationForm(@ModelAttribute Complaint complaint, @RequestParam String source) {
         setReceivingMode(complaint, source);
         return GRIEVANCE_REGISTRATION_FORM;
     }
 
-    @PostMapping("register-grievance")
-    public String registerComplaint(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder,
-                                    final RedirectAttributes redirectAttributes, @RequestParam("files") final MultipartFile[] files, final Model model) {
-        if (null != complaint.getCrossHierarchyId()) {
-            final CrossHierarchy crosshierarchy = crossHierarchyService.findById(complaint.getCrossHierarchyId());
-            complaint.setLocation(crosshierarchy.getParent());
-            complaint.setChildLocation(crosshierarchy.getChild());
-        }
-        if (complaint.getLocation() == null && (complaint.getLat() == 0 || complaint.getLng() == 0))
-            resultBinder.rejectValue("location", "location.required");
-
+    @PostMapping
+    public String registerComplaint(@Valid @ModelAttribute Complaint complaint, BindingResult resultBinder,
+                                    RedirectAttributes redirectAttributes, @RequestParam("files") MultipartFile[] files, Model model) {
         if (isBlank(complaint.getComplainant().getMobile()))
             resultBinder.rejectValue("complainant.mobile", "mobile.ismandatory");
-
-        if (resultBinder.hasErrors()) {
-            if (null != complaint.getCrossHierarchyId())
-                model.addAttribute("crossHierarchyLocation",
-                        complaint.getChildLocation().getName() + " - " + complaint.getLocation().getName());
-            return GRIEVANCE_REGISTRATION_FORM;
-        }
-
-        try {
-            complaint.setSupportDocs(fileStoreUtils.addToFileStoreWithImageCompression(MODULE_NAME, files));
-            complaintService.createComplaint(complaint);
-        } catch (final ValidationException e) {
-            resultBinder.rejectValue("location", e.getMessage());
-            return GRIEVANCE_REGISTRATION_FORM;
-        }
-        redirectAttributes.addFlashAttribute("complaint", complaint);
-        return "redirect:/complaint/reg-success/" + complaint.getCrn();
+        return validateAndRegister(complaint, redirectAttributes, files, model, resultBinder, GRIEVANCE_REGISTRATION_FORM);
     }
 }

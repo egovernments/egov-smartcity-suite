@@ -78,7 +78,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * @author elzan
  */
-public class ComplaintSearchControllerTest extends AbstractContextControllerTest<ComplaintSearchController> {
+public class ComplaintSearchControllerTest extends AbstractContextControllerTest<GrievanceSearchController> {
 
     private MockMvc mockMvc;
     @Mock
@@ -101,12 +101,12 @@ public class ComplaintSearchControllerTest extends AbstractContextControllerTest
     private ReceivingModeService receivingModeService;
 
     @InjectMocks
-    private ComplaintSearchController complaintSearchController;
+    private GrievanceSearchController grievanceSearchController;
 
     @Override
-    protected ComplaintSearchController initController() {
+    protected GrievanceSearchController initController() {
         initMocks(this);
-        return complaintSearchController;
+        return grievanceSearchController;
     }
 
     @Before
@@ -127,7 +127,7 @@ public class ComplaintSearchControllerTest extends AbstractContextControllerTest
 
     @Test
     public void shouldRetrieveSearchPage() throws Exception {
-        mockMvc.perform(get("/complaint/search")).andExpect(view().name("complaint-search"))
+        mockMvc.perform(get("/grievance/search")).andExpect(view().name("complaint-search"))
                 .andExpect(status().isOk());
     }
 

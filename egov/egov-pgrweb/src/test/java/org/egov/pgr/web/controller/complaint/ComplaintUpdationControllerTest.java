@@ -92,7 +92,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-public class ComplaintUpdationControllerTest extends AbstractContextControllerTest<ComplaintUpdationController> {
+public class ComplaintUpdationControllerTest extends AbstractContextControllerTest<GrievanceUpdateController> {
     @Mock
     private ComplaintStatusMappingService complaintStatusMappingService;
     @Mock
@@ -128,12 +128,12 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
     private ComplaintType complaintType;
 
     @InjectMocks
-    private ComplaintUpdationController complaintUpdationController;
+    private GrievanceUpdateController grievanceUpdateController;
 
     @Override
-    protected ComplaintUpdationController initController() {
+    protected GrievanceUpdateController initController() {
         initMocks(this);
-        return complaintUpdationController;
+        return grievanceUpdateController;
     }
 
     @Before
@@ -173,7 +173,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         complaint = new Complaint();
         complaint.setComplaintType(complaintType);
         complaint.setDetails("Already Registered complaint");
-        mockMvc.perform(get("/complaint/update/CRN-123")).andExpect(view().name("redirect:/error/404")).andReturn();
+        mockMvc.perform(get("/grievance/update/CRN-123")).andExpect(view().name("redirect:/error/404")).andReturn();
     }
 
     @Test
@@ -183,7 +183,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         complaint.setDetails("Already Registered complaint");
         when(complaintService.getComplaintByCRN("CRN-123")).thenReturn(complaint);
         when(securityUtils.currentUserIsEmployee()).thenReturn(true);
-        final MvcResult result = mockMvc.perform(get("/complaint/update/CRN-123")).andExpect(view().name("complaint-edit"))
+        final MvcResult result = mockMvc.perform(get("/grievance/update/CRN-123")).andExpect(view().name("complaint-edit"))
                 .andExpect(model().attributeExists("complaint")).andReturn();
 
         final Complaint existing = (Complaint) result.getModelAndView().getModelMap().get("complaint");
@@ -200,7 +200,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         id = 2L;
         when(complaintService.getComplaintByCRN("CRN-124")).thenReturn(complaint);
         when(securityUtils.currentUserIsEmployee()).thenReturn(true);
-        final MvcResult result = mockMvc.perform(get("/complaint/update/CRN-124")).andExpect(status().isOk())
+        final MvcResult result = mockMvc.perform(get("/grievance/update/CRN-124")).andExpect(status().isOk())
                 .andExpect(view().name("complaint-edit")).andExpect(model().attributeExists("complaint")).andReturn();
 
         final Complaint existing = (Complaint) result.getModelAndView().getModelMap().get("complaint");
@@ -225,7 +225,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         final List<Boundary> wards = new ArrayList<>();
         when(boundaryService.getChildBoundariesByBoundaryId(ward.getId())).thenReturn(wards);
         when(securityUtils.currentUserIsEmployee()).thenReturn(true);
-        final MvcResult result = mockMvc.perform(get("/complaint/update/CRN-124")).andExpect(status().isOk())
+        final MvcResult result = mockMvc.perform(get("/grievance/update/CRN-124")).andExpect(status().isOk())
                 .andExpect(view().name("complaint-edit")).andExpect(model().attributeExists("complaint")).andReturn();
 
         final Complaint existing = (Complaint) result.getModelAndView().getModelMap().get("complaint");
@@ -242,7 +242,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         id = 2L;
         when(complaintService.getComplaintByCRN("CRN-124")).thenReturn(complaint);
         when(complaint1.getCrn()).thenReturn("CRN-124");
-        mockMvc.perform(fileUpload("/complaint/update/CRN-124").param("crn", "CRN-124").param("complaintStatus", "2")).andDo(print())
+        mockMvc.perform(fileUpload("/grievance/update/CRN-124").param("crn", "CRN-124").param("complaintStatus", "2")).andDo(print())
                 .andExpect(status().isOk()).andReturn();
 
     }
@@ -259,7 +259,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         when(complaintService.getComplaintByCRN("CRN-124")).thenReturn(complaint1);
         when(complaint1.getId()).thenReturn(2L);
         when(complaintTypeService.load(id)).thenReturn(complaintType);
-        mockMvc.perform(fileUpload("/complaint/update/CRN-124").param("id", "2").param("complaintStatus", "2").param("complaintType", "2"))
+        mockMvc.perform(fileUpload("/grievance/update/CRN-124").param("id", "2").param("complaintStatus", "2").param("complaintType", "2"))
                 .andExpect(status().isOk()).andReturn();
 
     }

@@ -57,7 +57,7 @@
 <div class="row">
     <div class="col-md-12" style="position:relative;">
         <div class="tour-section" data-toggle="tooltip" title="Click for demo!"><i class="fa fa-question" aria-hidden="true"></i></div>
-        <form:form role="form" action="register" modelAttribute="complaint" id="complaintform"
+        <form:form role="form" modelAttribute="complaint" id="complaintform"
                    cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">

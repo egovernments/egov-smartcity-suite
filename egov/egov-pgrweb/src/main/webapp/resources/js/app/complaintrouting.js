@@ -83,7 +83,7 @@ $(document).ready(function () {
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: '/eis/position/by-name?positionName=%QUERY',
+            url: '/eis/employee/position/by-code-or-name-or-position?name=%QUERY',
             dataType: "json",
             filter: function (data) {
                 return $.map(data, function (pos) {
@@ -124,9 +124,9 @@ $(document).ready(function () {
                 },
                 queryTokenizer: Bloodhound.tokenizers.whitespace,
                 remote: {
-                    url: '/pgr/complaint/router/boundaries-by-type?boundaryName=%QUERY&boundaryTypeId=' + b_id,
+                    url: '/egi/boundary/by-name-and-type?boundaryName=%QUERY&boundaryTypeId=' + b_id,
                     filter: function (data) {
-                        return $.map(data, function (boundList) {
+                        return $.map(JSON.parse(data), function (boundList) {
                             return {
                                 name: boundList.name,
                                 value: boundList.id

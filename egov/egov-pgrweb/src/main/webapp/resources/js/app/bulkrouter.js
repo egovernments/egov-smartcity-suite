@@ -74,7 +74,7 @@ $(document).ready(function () {
         } else {
             $.ajax({
                 type: "GET",
-                url: "/egi/boundary/search/by-boundarytype",
+                url: "/egi/boundary/by-boundarytype",
                 cache: true,
                 data: {'boundaryTypeId': this.value}
             }).done(function (response) {
@@ -99,7 +99,7 @@ $(document).ready(function () {
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: '/pgr/complaint/router/position?positionName=%QUERY',
+            url: '/eis/employee/position/by-code-or-name-or-position?name=%QUERY',
             dataType: "json",
             filter: function (data) {
                 return $.map(data, function (pos) {

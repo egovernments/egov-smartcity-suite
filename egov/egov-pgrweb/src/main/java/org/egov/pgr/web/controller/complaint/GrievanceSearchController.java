@@ -69,6 +69,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -80,7 +81,8 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.egov.pgr.utils.constants.PGRConstants.GO_ROLE_NAME;
 
 @Controller
-public class ComplaintSearchController {
+@RequestMapping("/grievance/search")
+public class GrievanceSearchController {
 
     @Autowired
     private ComplaintStatusService complaintStatusService;
@@ -153,13 +155,13 @@ public class ComplaintSearchController {
         return ApplicationThreadLocals.getCityName();
     }
 
-    @GetMapping("/complaint/search")
+    @GetMapping
     public String showSearch(HttpServletRequest request, Model model) {
         model.addAttribute("isMore", Boolean.parseBoolean(request.getParameter("isMore")));
         return "complaint-search";
     }
 
-    @PostMapping("/complaint/search")
+    @PostMapping
     @ResponseBody
     public Iterable<ComplaintIndex> searchComplaints(@Valid @ModelAttribute ComplaintSearchRequest searchRequest,
                                                      BindingResult errors) {

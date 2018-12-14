@@ -48,6 +48,7 @@
 
 package org.egov.pgr.web.controller.complaint;
 
+import org.egov.infra.admin.master.entity.CrossHierarchy;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.pgr.entity.Complaint;
@@ -64,13 +65,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.ValidationException;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -79,7 +85,8 @@ import static org.egov.pgr.utils.constants.PGRConstants.MODULE_NAME;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
-public class GenericComplaintController {
+public class GenericGrievanceController {
+    private static final String LOCATION = "location";
 
     @Autowired
     protected ComplaintTypeService complaintTypeService;
@@ -129,7 +136,7 @@ public class GenericComplaintController {
 
     }
 
-    @GetMapping(value = "/complaint/downloadfile/{fileStoreId}", produces = "*/*")
+    @GetMapping(value = "/grievance/attachment/{fileStoreId}", produces = "*/*")
     @ResponseBody
     public ResponseEntity<InputStreamResource> download(@PathVariable String fileStoreId) {
         return fileStoreUtils.fileAsResponseEntity(fileStoreId, MODULE_NAME, false);
@@ -168,4 +175,31 @@ public class GenericComplaintController {
         complaint.setReceivingMode(receivingModeService.getReceivingModeByCode(receivingModeCode));
     }
 
+    protected String validateAndRegister(Complaint complaint, RedirectAttributes redirectAttributes,
+                                         MultipartFile[] files, Model model, BindingResult resultBinder, String registrationPage) {
+        if (complaint.getCrossHierarchyId() != null) {
+            CrossHierarchy crosshierarchy = crossHierarchyService.findById(complaint.getCrossHierarchyId());
+            complaint.setLocation(crosshierarchy.getParent());
+            complaint.setChildLocation(crosshierarchy.getChild());
+        }
+        if (complaint.getLocation() == null && (complaint.getLat() == 0 || complaint.getLng() == 0))
+            resultBinder.rejectValue(LOCATION, "location.required");
+
+        if (resultBinder.hasErrors()) {
+            if (complaint.getCrossHierarchyId() != null)
+                model.addAttribute("crossHierarchyLocation",
+                        complaint.getChildLocation().getName() + " - " + complaint.getLocation().getName());
+            return registrationPage;
+        }
+
+        try {
+            complaint.setSupportDocs(fileStoreUtils.addToFileStoreWithImageCompression(MODULE_NAME, files));
+            complaintService.createComplaint(complaint);
+        } catch (ValidationException e) {
+            resultBinder.rejectValue(LOCATION, e.getMessage());
+            return registrationPage;
+        }
+        redirectAttributes.addFlashAttribute("complaint", complaint);
+        return "redirect:/complaint/reg-success/" + complaint.getCrn();
+    }
 }

@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,54 +45,65 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.pgr.web.controller.complaint.citizen;
 
-$(document).ready(function () {
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.pgr.service.ComplaintService;
+import org.egov.pgr.service.ComplaintTypeCategoryService;
+import org.egov.pgr.service.ComplaintTypeService;
+import org.egov.pgr.service.ConfigurationService;
+import org.egov.pgr.service.ReceivingModeService;
+import org.egov.pgr.web.controller.AbstractContextControllerTest;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.test.web.servlet.MockMvc;
 
-    $('#pendinggrievancelist').dataTable({
-        "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-        "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-        "autoWidth": false,
-        "bDestroy": true,
-        "ajax": {
-            url: "/pgr/grievance/pending",
-            type: "POST"
-        },
-        "fnCreatedRow": function (row, data, index) {
-            $('td', row).eq(0).html(index + 1);
-        },
-        "columns": [
-            {
-                "sTitle": "S.No",
-                "mData": null,
-                "bSortable": false
-            }, {
-                "mData": "grievanceNumber",
-                "sTitle": "Complaint Number",
-                "render": function (data, type, row) {
-                    return '<a href="javascript:void(0);" onclick="window.open(\'/pgr/grievance/update/'
-                        + data
-                        + '\',\'\', \'width=800, height=600,scrollbars=yes\');" data-hiddenele="selecteduserid" data-eleval="'
-                        + data + '">' + data + '</a>';
-                }
-            }, {
-                "mData": "complaintType",
-                "sTitle": "Complaint Type"
-            }, {
-                "mData": "department",
-                "sTitle": "Department"
-            }, {
-                "mData": "location",
-                "sTitle": "Location"
-            }, {
-                "mData": "status",
-                "sTitle": "Status"
-            }, {
-                "mData": "regDate",
-                "sTitle": "Registration Date"
-            }, {
-                "mData": "dueDate",
-                "sTitle": "Due Date"
-            }]
-    });
-});
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+public class AnonymousComplaintRegistrationControllerTest extends AbstractContextControllerTest<AnonymousGrievanceRegistrationController> {
+
+    @Mock
+    User user;
+    MockMvc mockMvc;
+    @Mock
+    private ComplaintService complaintService;
+    @Mock
+    private ComplaintTypeService complaintTypeService;
+    @Mock
+    private ComplaintTypeCategoryService complaintTypeCategoryService;
+    @Mock
+    private ReceivingModeService receivingModeService;
+    @Mock
+    private SecurityUtils securityUtils;
+    @Mock
+    private ConfigurationService configurationService;
+
+    @InjectMocks
+    private AnonymousGrievanceRegistrationController controller;
+
+    @Before
+    public void before() {
+        when(securityUtils.getCurrentUser()).thenReturn(user);
+        mockMvc = mvcBuilder.build();
+    }
+
+    @Test
+    public void assertAnonymousRegistrationPageViewReturns() throws Exception {
+        mockMvc.perform(get("/grievance/register/by-anonymous"))
+                .andExpect(view().name("complaint/citizen/anonymous-registration-form"))
+                .andExpect(status().isOk());
+    }
+
+    @Override
+    protected AnonymousGrievanceRegistrationController initController() {
+        initMocks(this);
+        return controller;
+    }
+}

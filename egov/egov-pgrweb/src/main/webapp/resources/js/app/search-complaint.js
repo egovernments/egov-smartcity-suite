@@ -77,7 +77,7 @@ var tableContainer;
     	if(DateValidation($('#start_date').val(), $('#end_date').val())){
     		
     		if( validateEmail($('#ct-email').val())) { 
-    			var urlStr ="/pgr/complaint/search";
+    			var urlStr ="/pgr/grievance/search";
 
             	$.post(urlStr,$('#searchComplaintForm').serialize())
             	.done(function (searchResult) {
@@ -144,11 +144,11 @@ var tableContainer;
 		var CurrentPosition=$('#employeeposition').val();
 		var isgorole= $('#isgorole').val();
 		if(((currentStatus == 'COMPLETED' && isgorole == 'false') || currentStatus == 'REJECTED'|| currentStatus == 'WITHDRAWN') && CurrentPosition != "0")
-			window.open("/pgr/complaint/view/"+crn);
+			window.open("/pgr/grievance/view/"+crn);
 		else if (currentOwner == CurrentPosition || isgorole == 'true')
-			window.open("/pgr/complaint/update/"+crn);
+			window.open("/pgr/grievance/update/"+crn);
 		else
-			window.open("/pgr/complaint/view/"+crn);
+			window.open("/pgr/grievance/view/"+crn);
 	});
 	
     $("#when_date").change(function () {

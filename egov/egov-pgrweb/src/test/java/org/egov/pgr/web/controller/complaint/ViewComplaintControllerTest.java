@@ -65,7 +65,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-public class ViewComplaintControllerTest extends AbstractContextControllerTest<ViewComplaintController> {
+public class ViewComplaintControllerTest extends AbstractContextControllerTest<ViewGrievanceController> {
 
     public String crnNo;
     private MockMvc mockMvc;
@@ -76,7 +76,7 @@ public class ViewComplaintControllerTest extends AbstractContextControllerTest<V
     private ComplaintHistoryService complaintHistoryService;
 
     @InjectMocks
-    private ViewComplaintController viewComplaintController;
+    private ViewGrievanceController viewGrievanceController;
 
     @Before
     public void before() {
@@ -96,14 +96,14 @@ public class ViewComplaintControllerTest extends AbstractContextControllerTest<V
     }
 
     @Override
-    protected ViewComplaintController initController() {
+    protected ViewGrievanceController initController() {
         initMocks(this);
-        return viewComplaintController;
+        return viewGrievanceController;
     }
 
     @Test
     public void getViewComplaintResult() throws Exception {
-        this.mockMvc.perform(get("/complaint/view/" + crnNo))
+        this.mockMvc.perform(get("/grievance/view/" + crnNo))
                 .andExpect(view().name("view-complaint"))
                 .andExpect(status().isOk());
 

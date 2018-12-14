@@ -74,7 +74,7 @@ $(document).ready(function () {
         var compnum = $('#compsearchtxt').val();
         if (compnum !== "") {
             $('.search-error-msg').addClass('display-hide');
-            window.open("/pgr/complaint/search?crn=" + compnum, "_blank");
+            window.open("/pgr/grievance/search?crn=" + compnum, "_blank");
         } else {
             $('.search-error-msg').removeClass('display-hide');
         }

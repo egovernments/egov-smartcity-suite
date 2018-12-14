@@ -429,7 +429,7 @@ function callAjaxByComplaintDetail() {
                     "sTitle": "Complaint Number",
                     "name": "crn",
                     "render": function (data, type, row) {
-                        return '<a href="javascript:void(0);" onclick="window.open(\'/pgr/complaint/view/'
+                        return '<a href="javascript:void(0);" onclick="window.open(\'/pgr/grievance/view/'
                             + data
                             + '\',\'\', \'width=800, height=600\');" data-hiddenele="selecteduserid" data-eleval="'
                             + data + '">' + data + '</a>';

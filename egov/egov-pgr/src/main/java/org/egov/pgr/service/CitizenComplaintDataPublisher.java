@@ -66,7 +66,7 @@ import static org.egov.pgr.utils.constants.PGRConstants.MODULE_NAME;
 @Service
 public class CitizenComplaintDataPublisher {
 
-    private static final String COMPLAINT_UPDATE_URL = "/pgr/complaint/update/%s";
+    private static final String COMPLAINT_UPDATE_URL = "/pgr/grievance/update/%s";
 
     @Autowired
     private ModuleService moduleService;

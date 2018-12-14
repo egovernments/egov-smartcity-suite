@@ -122,7 +122,7 @@
                     </a>
                 </div>
                 <div class="col-md-12 community-card">
-                    <a href="/pgr/complaint/citizen/anonymous/show-reg-form" target="_blank">
+                    <a href="/pgr/grievance/register/by-anonymous" target="_blank">
                         <div class="rounded-circle"><i class="fa fa-pencil b"></i></div>&nbsp;
                         <div class="label-font">
                             <spring:message code="lbl.reg.comp"/><br>
@@ -131,7 +131,7 @@
                     </a>
                 </div>
                 <div class="col-md-12 community-card">
-                    <a href="/pgr/complaint/search?isMore=true" target="_blank">
+                    <a href="/pgr/grievance/search?isMore=true" target="_blank">
                         <div class="rounded-circle"><i class="fa fa-search c"></i>
                         </div>
                         &nbsp;

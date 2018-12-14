@@ -72,7 +72,7 @@ $(document).ready(function () {
     $('#ct-sel-jurisd').change(function () {
         console.log("came jursidiction" + $('#ct-sel-jurisd').val());
         $.ajax({
-            url: "/pgr/ajax-getChildLocation",
+            url: "/egi/boundary/child/by-parent",
             type: "GET",
             data: {
                 id: $('#ct-sel-jurisd').val()

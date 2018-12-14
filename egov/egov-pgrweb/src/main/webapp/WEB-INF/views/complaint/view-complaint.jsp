@@ -171,14 +171,14 @@
                                                 <div class="holder">
                                                     <c:choose>
                                                         <c:when test="${file.contentType.contains('image')}">
-                                                            <a href="/pgr/complaint/downloadfile/${file.fileStoreId}"
+                                                            <a href="/pgr/grievance/attachment/${file.fileStoreId}"
                                                                data-gallery> <img class="img-width add-margin"
-                                                                                  src="/pgr/complaint/downloadfile/${file.fileStoreId}"/></a>
+                                                                                  src="/pgr/grievance/attachment/${file.fileStoreId}"/></a>
                                                         </c:when>
                                                         <c:otherwise>
                                                             <video class="img-width add-margin" controls="controls"
-                                                                   src="/pgr/complaint/downloadfile/${file.fileStoreId}">
-                                                                <source src="/pgr/complaint/downloadfile/${file.fileStoreId}"
+                                                                   src="/pgr/grievance/attachment/${file.fileStoreId}">
+                                                                <source src="/pgr/grievance/attachment/${file.fileStoreId}"
                                                                         type="${file.contentType}"/>
                                                             </video>
                                                         </c:otherwise>
@@ -195,14 +195,14 @@
                                                 <div class="holder">
                                                     <c:choose>
                                                         <c:when test="${file.contentType.contains('image')}">
-                                                            <a href="/pgr/complaint/downloadfile/${file.fileStoreId}"
+                                                            <a href="/pgr/grievance/attachment/${file.fileStoreId}"
                                                                data-gallery> <img class="img-width add-margin"
-                                                                                  src="/pgr/complaint/downloadfile/${file.fileStoreId}"/></a>
+                                                                                  src="/pgr/grievance/attachment/${file.fileStoreId}"/></a>
                                                         </c:when>
                                                         <c:otherwise>
                                                             <video class="img-width add-margin" controls="controls"
-                                                                   src="/pgr/complaint/downloadfile/${file.fileStoreId}">
-                                                                <source src="/pgr/complaint/downloadfile/${file.fileStoreId}"
+                                                                   src="/pgr/grievance/attachment/${file.fileStoreId}">
+                                                                <source src="/pgr/grievance/attachment/${file.fileStoreId}"
                                                                         type="${file.contentType}"/>
                                                             </video>
                                                         </c:otherwise>

@@ -46,65 +46,55 @@
  *
  */
 
-package org.egov.pgr.web.controller.complaint;
+package org.egov.pgr.web.controller.complaint.officials;
 
-import org.egov.eis.entity.EmployeeView;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.service.CrossHierarchyService;
-import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.JsonUtils;
-import org.egov.pgr.web.contracts.response.ProcessOwnerResponseAdaptor;
-import org.egov.pims.service.EisUtilService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.egov.pgr.entity.Complaint;
+import org.egov.pgr.entity.ReceivingCenter;
+import org.egov.pgr.entity.ReceivingMode;
+import org.egov.pgr.web.controller.complaint.GenericGrievanceController;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.HashMap;
+import javax.validation.Valid;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import static org.egov.pgr.utils.constants.PGRConstants.GO_ROLE_NAME;
-import static org.egov.pgr.utils.constants.PGRConstants.GRO_ROLE_NAME;
-import static org.egov.pgr.utils.constants.PGRConstants.RO_ROLE_NAME;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Controller
-public class ComplaintProcessOwnerSelectionController {
+@RequestMapping(value = "/grievance/register/by-officials")
+public class OfficialsGrievanceRegistrationController extends GenericGrievanceController {
 
-    @Autowired
-    private EisUtilService eisService;
 
-    @Autowired
-    private CrossHierarchyService crossHierarchyService;
+    private static final String OFFICIALS_COMPLAINT_REGISTRATION_FORM = "complaint/officials/registration-form";
 
-    @Autowired
-    private SecurityUtils securityUtils;
-
-    @GetMapping(value = "/ajax-getChildLocation", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public List<Boundary> getChildBoundariesById(@RequestParam Long id) {
-        return crossHierarchyService.getActiveChildBoundariesByParentId(id);
+    @ModelAttribute("receivingCenters")
+    public List<ReceivingCenter> receivingCenters() {
+        return receivingCenterService.findAll();
     }
 
-    @GetMapping(value = "/grievance/process-owners", produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseBody
-    public String getPositions(@RequestParam Integer approvalDepartment, @RequestParam Integer approvalDesignation) {
-        if (approvalDepartment > 0 && approvalDesignation > 0) {
-            HashMap<String, String> paramMap = new HashMap<>();
-            paramMap.put("departmentId", String.valueOf(approvalDepartment));
-            paramMap.put("designationId", String.valueOf(approvalDesignation));
-            List<EmployeeView> employeeViewData = eisService.getEmployeeInfoList(paramMap);
-            String currentUserName = securityUtils.getCurrentUser().getUsername();
-            Set<EmployeeView> processOwners = employeeViewData
-                    .stream()
-                    .filter(employeeView -> (employeeView.getEmployee().hasAnyRole(RO_ROLE_NAME, GO_ROLE_NAME, GRO_ROLE_NAME))
-                            && !currentUserName.equals(employeeView.getUserName()))
-                    .collect(Collectors.toSet());
-            return JsonUtils.toJSON(processOwners, EmployeeView.class, ProcessOwnerResponseAdaptor.class);
-        }
-        return "[]";
+    @ModelAttribute("receivingModes")
+    public List<ReceivingMode> receivingModes() {
+        return receivingModeService.getVisibleReceivingModes();
+    }
+
+    @GetMapping
+    public String showComplaintRegistrationForm(@ModelAttribute Complaint complaint) {
+        return OFFICIALS_COMPLAINT_REGISTRATION_FORM;
+    }
+
+    @PostMapping
+    public String registerComplaint(@Valid @ModelAttribute Complaint complaint, BindingResult resultBinder,
+                                    RedirectAttributes redirectAttributes, @RequestParam("files") MultipartFile[] files, Model model) {
+        if (isBlank(complaint.getComplainant().getMobile()))
+            resultBinder.rejectValue("complainant.mobile", "mobile.ismandatory");
+        return validateAndRegister(complaint, redirectAttributes, files, model, resultBinder, OFFICIALS_COMPLAINT_REGISTRATION_FORM);
     }
 }
