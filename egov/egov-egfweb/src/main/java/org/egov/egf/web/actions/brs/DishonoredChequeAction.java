@@ -155,11 +155,13 @@ public class DishonoredChequeAction extends SearchFormAction {
         }
         final String searchQuery = receiptService.getReceiptHeaderforDishonor(instrumentMode, accountCodes, bankId, chequeNo,
                 chqDDDate.toString());
-        final String srchQry = "select rpt.id as receiptheaderid,ih.id as instrumentheaderid,rpt.receiptnumber as receiptnumber,rpt.receiptdate as receiptdate,ih.instrumentnumber as instrumentnumber,"
-                + "ih.instrumentdate as instrumentdate,ih.instrumentamount as instrumentamount,b.name as bankname,ba.accountnumber as accountnumber,ih.payto as payto,status.description as description "
-                + searchQuery + " ORDER BY rpt.receiptnumber, rpt.receiptdate ";
-        final String countQry = "select count(distinct rpt) " + searchQuery + "";
-        return new SearchQuerySQL(srchQry, countQry, null);
+        StringBuilder srchQry = new StringBuilder();
+        srchQry = srchQry.append("select rpt.id as receiptheaderid,ih.id as instrumentheaderid,rpt.receiptnumber as receiptnumber,rpt.receiptdate as receiptdate,ih.instrumentnumber as instrumentnumber,")
+                .append("ih.instrumentdate as instrumentdate,ih.instrumentamount as instrumentamount,b.name as bankname,ba.accountnumber as accountnumber,ih.payto as payto,status.description as description ")
+                .append(searchQuery)
+                .append(" ORDER BY rpt.receiptnumber, rpt.receiptdate ");
+        StringBuilder countQry = new StringBuilder("select count(distinct rpt) ").append(searchQuery);
+        return new SearchQuerySQL(srchQry.toString(), countQry.toString(), null);
 
     }
 
