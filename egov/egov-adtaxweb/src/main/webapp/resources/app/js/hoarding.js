@@ -331,7 +331,7 @@ $(document).ready(function () {
 
             $('#block').html("");
             $.each(JSON.parse(response), function (j, block) {
-                $('#block').append("<option value='" + block.blockId + "'>" + block.blockName + "</option>");
+                $('#block').append("<option value='" + block.id + "'>" + block.name + "</option>");
             });
         })
             .fail(function (response1) {

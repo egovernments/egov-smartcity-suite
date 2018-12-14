@@ -75,8 +75,8 @@ $(document).ready(function() {
 								"<option value='-1'>Select</option>");
 						jQuery.each(JSON.parse(response), function(j, block) {
 							jQuery('#block').append(
-									"<option value='" + block.blockId + "'>"
-											+ block.blockName + "</option>");
+									"<option value='" + block.id + "'>"
+											+ block.name + "</option>");
 						});
 					},
 					error : function(response) {

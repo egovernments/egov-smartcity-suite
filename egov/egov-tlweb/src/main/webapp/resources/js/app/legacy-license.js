@@ -206,7 +206,7 @@ $('#boundary').change(function () {
             $.each(JSON.parse(response), function (key, boundary) {
                 $('#adminWard').append('<option '
                     + (boundary.wardId === $('#adminWard').data('selected-id') ? 'selected="selected"' : "")
-                    + 'value="' + boundary.wardId + '">' + boundary.wardName + '</option>');
+                    + 'value="' + boundary.id + '">' + boundary.name + '</option>');
             });
             $('#adminWard').removeAttr('data-selected-id');
         });

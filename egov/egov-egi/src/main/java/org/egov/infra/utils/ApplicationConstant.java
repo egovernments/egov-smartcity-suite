@@ -120,6 +120,9 @@ public final class ApplicationConstant {
     public static final String ANY_MIME_TYPE = "*/*";
 
     public static final String ADMIN_HIERARCHY_TYPE = "ADMINISTRATION";
+    public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
+    public static final String BLOCK_BOUNDARY_TYPE = "Block";
+    public static final String WARD_BOUNDARY_TYPE = "Ward";
 
     private ApplicationConstant() {
     }

@@ -84,7 +84,7 @@ $(document).ready(function () {
                 data: {'locality': this.value}
             }).done(function (response) {
                 $.each(JSON.parse(response), function (key, boundary) {
-                    $('#adminWard').append('<option value="' + boundary.wardId + '">' + boundary.wardName + '</option>');
+                    $('#adminWard').append('<option value="' + boundary.id + '">' + boundary.name + '</option>');
                 });
 
                 if (adminWard != "") {

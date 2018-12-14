@@ -164,7 +164,7 @@ $('#ward').change(function(){
 			jQuery('#block').html("");
 			jQuery('#block').append("<option value=''>Select</option>");
 			jQuery.each(JSON.parse(response), function(index, value) {
-				jQuery('#block').append($('<option>').text(value.blockName).attr('value', value.blockId));
+				jQuery('#block').append($('<option>').text(value.name).attr('value', value.id));
 			});
 		}, 
 		error: function (response) {

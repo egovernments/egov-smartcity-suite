@@ -73,7 +73,7 @@ $(".boundary-auto").change(function () {
     if ($("#boundaryType").val() !== '') {
         $.ajax({
             type: "GET",
-            url: "/egi/boundary/search/by-boundarytype",
+            url: "/egi/boundary/by-boundarytype",
             data: {'boundaryTypeId': $("#boundaryType").val()},
             dataType: "json",
             success: function (response) {

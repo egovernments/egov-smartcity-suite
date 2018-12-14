@@ -48,10 +48,15 @@
 
 package org.egov.infra.web.controller.admin.masters.boundary;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.egov.infra.admin.master.contracts.BoundarySearchRequest;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.BoundaryTypeService;
+import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.egov.infra.web.support.json.adapter.BoundaryAdapter;
 import org.egov.infra.web.support.json.adapter.BoundaryDatatableAdapter;
@@ -68,16 +73,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Collections.emptyList;
+import static org.egov.infra.utils.ApplicationConstant.ADMIN_HIERARCHY_TYPE;
+import static org.egov.infra.utils.ApplicationConstant.BLOCK_BOUNDARY_TYPE;
+import static org.egov.infra.utils.ApplicationConstant.REVENUE_HIERARCHY_TYPE;
+import static org.egov.infra.utils.ApplicationConstant.WARD_BOUNDARY_TYPE;
 import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
-@RequestMapping("boundary/search")
+@RequestMapping("boundary")
 public class SearchBoundaryController {
+
 
     @Autowired
     private HierarchyTypeService hierarchyTypeService;
@@ -85,17 +98,24 @@ public class SearchBoundaryController {
     @Autowired
     private BoundaryService boundaryService;
 
+    @Autowired
+    private BoundaryTypeService boundaryTypeService;
+
+    @Autowired
+    private CrossHierarchyService crossHierarchyService;
+
+
     @ModelAttribute("hierarchyTypes")
     public List<HierarchyType> hierarchyTypes() {
         return hierarchyTypeService.getAllHierarchyTypes();
     }
 
-    @GetMapping
+    @GetMapping("search")
     public String showBoundarySearchForm() {
         return "boundary-search";
     }
 
-    @PostMapping(produces = TEXT_PLAIN_VALUE)
+    @PostMapping(value = "search", produces = TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchBoundary(@Valid BoundarySearchRequest searchRequest, BindingResult bindResult) {
         return new DataTable<>(bindResult.hasErrors() ? new PageImpl<>(emptyList())
@@ -115,5 +135,79 @@ public class SearchBoundaryController {
     public String boundaryByBoundaryType(@RequestParam Long boundaryTypeId) {
         return toJSON(boundaryService
                 .getActiveBoundariesByBoundaryTypeId(boundaryTypeId), Boundary.class, BoundaryAdapter.class);
+    }
+
+    @GetMapping("block/by-locality")
+    @ResponseBody
+    public String blockByLocality(@RequestParam Long locality) {
+        BoundaryType blockType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(BLOCK_BOUNDARY_TYPE, REVENUE_HIERARCHY_TYPE);
+        List<Boundary> blocks = crossHierarchyService.getParentBoundaryByChildBoundaryAndParentBoundaryType(locality, blockType.getId());
+        List<Boundary> streets = boundaryService.getActiveChildBoundariesByBoundaryId(locality);
+        List<JsonObject> wardJsonObjs = new ArrayList<>();
+        List<Long> boundaries = new ArrayList<>();
+        for (Boundary block : blocks) {
+            Boundary ward = block.getParent();
+            JsonObject jsonObject = new JsonObject();
+            if (!boundaries.contains(ward.getId())) {
+                jsonObject.addProperty("wardId", ward.getId());
+                jsonObject.addProperty("wardName", ward.getName());
+            }
+            jsonObject.addProperty("blockId", block.getId());
+            jsonObject.addProperty("blockName", block.getName());
+            wardJsonObjs.add(jsonObject);
+            boundaries.add(ward.getId());
+        }
+        List<JsonObject> streetJsonObjs = new ArrayList<>();
+        for (Boundary street : streets) {
+            JsonObject streetObj = new JsonObject();
+            streetObj.addProperty("streetId", street.getId());
+            streetObj.addProperty("streetName", street.getName());
+            streetJsonObjs.add(streetObj);
+        }
+        Map<String, List<JsonObject>> map = new HashMap<>();
+        map.put("boundaries", wardJsonObjs);
+        map.put("streets", streetJsonObjs);
+        JsonObject blockJSON = new JsonObject();
+        blockJSON.add("results", new Gson().toJsonTree(map));
+        return blockJSON.toString();
+    }
+
+    @GetMapping("block/by-ward")
+    @ResponseBody
+    public String blockByWard(@RequestParam Long wardId) {
+        return boundaryJsonData(boundaryService.getActiveChildBoundariesByBoundaryId(wardId));
+    }
+
+    @GetMapping("ward/by-locality")
+    @ResponseBody
+    public String wardsByLocality(@RequestParam Long locality) {
+        BoundaryType wardBoundaryType = boundaryTypeService
+                .getBoundaryTypeByNameAndHierarchyTypeName(WARD_BOUNDARY_TYPE, ADMIN_HIERARCHY_TYPE);
+        return boundaryJsonData(crossHierarchyService
+                .getParentBoundaryByChildBoundaryAndParentBoundaryType(locality, wardBoundaryType.getId()));
+    }
+
+    @GetMapping("by-name-and-type")
+    @ResponseBody
+    public String getBoundariesByType(@RequestParam String boundaryName, @RequestParam Long boundaryTypeId) {
+        return boundaryJsonData(boundaryService
+                .getBondariesByNameAndTypeOrderByBoundaryNumAsc("%" + boundaryName + "%", boundaryTypeId));
+    }
+
+    @GetMapping(value = "child/by-parent")
+    @ResponseBody
+    public String getChildBoundariesById(@RequestParam Long parentId) {
+        return boundaryJsonData(crossHierarchyService.getActiveChildBoundariesByParentId(parentId));
+    }
+
+    private String boundaryJsonData(List<Boundary> boundaries) {
+        List<JsonObject> boundaryJson = new ArrayList<>();
+        for (Boundary boundary : boundaries) {
+            JsonObject boundaryData = new JsonObject();
+            boundaryData.addProperty("id", boundary.getId());
+            boundaryData.addProperty("name", boundary.getName());
+            boundaryJson.add(boundaryData);
+        }
+        return boundaryJson.toString();
     }
 }
