@@ -60,14 +60,14 @@ import java.util.List;
 
 /**
  * Generic WorkFlow Action. Can be extended by any action class that intends to provide Work flow functionality.
- * 
+ *
  * @author subhash
  */
 public abstract class GenericWorkFlowAction extends BaseFormAction {
 
+    public static final String FORWARD = "Forward";
     private static final long serialVersionUID = 1L;
-    public final static String FORWARD = "Forward";
-    protected CustomizedWorkFlowService customizedWorkFlowService;
+    protected transient CustomizedWorkFlowService customizedWorkFlowService;
     protected String workFlowAction;
     protected String approverComments;
     protected String currentState;
@@ -89,13 +89,13 @@ public abstract class GenericWorkFlowAction extends BaseFormAction {
         super.prepare();
         addDropdownData("approverDepartmentList",
                 this.persistenceService.findAllBy("from Department order by name"));
-        addDropdownData("approverList", Collections.EMPTY_LIST);
-        addDropdownData("designationList", Collections.EMPTY_LIST);
+        addDropdownData("approverList", Collections.emptyList());
+        addDropdownData("designationList", Collections.emptyList());
     }
 
     /**
      * Implementations must override this method based on their object's value that needs to be used in workflow
-     * 
+     *
      * @return the value that needs to be compared in the Amount rule table against FromAmount and ToAmount
      */
 
@@ -103,9 +103,13 @@ public abstract class GenericWorkFlowAction extends BaseFormAction {
         return null;
     }
 
+    public void setAmountRule(BigDecimal amountRule) {
+        this.amountRule = amountRule;
+    }
+
     /**
      * Implementations must override this method to get additional rule for workflow.
-     * 
+     *
      * @return the value that needs to be compared in the matrix table against Additional rule
      */
 
@@ -113,14 +117,22 @@ public abstract class GenericWorkFlowAction extends BaseFormAction {
         return null;
     }
 
+    public void setAdditionalRule(String additionalRule) {
+        this.additionalRule = additionalRule;
+    }
+
     /**
      * Implementations must override this method to achieve department wise workflow.
-     * 
+     *
      * @return the value that needs to be compared in the matrix table against Department.
      */
 
     protected String getWorkFlowDepartment() {
         return null;
+    }
+
+    public void setWorkFlowDepartment(String workFlowDepartment) {
+        this.workFlowDepartment = workFlowDepartment;
     }
 
     /**
@@ -130,15 +142,15 @@ public abstract class GenericWorkFlowAction extends BaseFormAction {
     public List<String> getValidActions() {
         List<String> validActions = Collections.emptyList();
         if (null == getModel() || null == getModel().getId() || getModel().getCurrentState() == null || getModel().getCurrentState().getValue().endsWith("NEW")
-                ||(getModel() != null && getModel().getCurrentState() != null ? getModel().getCurrentState().getValue()
-                        .equals("Closed")
-                        || getModel().getCurrentState().getValue().equals("END") : false)){
-           
+                || (getModel() != null && getModel().getCurrentState() != null ? getModel().getCurrentState().getValue()
+                .equals("Closed")
+                || getModel().getCurrentState().getValue().equals("END") : false)) {
+
             validActions = Arrays.asList(FORWARD);
         } else {
             if (getModel().getCurrentState() != null) {
                 validActions = this.customizedWorkFlowService.getNextValidActions(getModel()
-                        .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                                .getStateType(), getWorkFlowDepartment(), getAmountRule(),
                         getAdditionalRule(), getModel().getCurrentState().getValue(),
                         getPendingActions(), getModel().getCreatedDate());
             }
@@ -173,23 +185,17 @@ public abstract class GenericWorkFlowAction extends BaseFormAction {
     }
 
     /**
-     * Used to Set actionValue that will be used to call workflow script.
-     * 
-     * @param workFlowAction
-     */
-
-    public void setWorkFlowAction(final String workFlowAction) {
-        this.workFlowAction = workFlowAction;
-    }
-
-    /**
      * This parameter is used to get matrix object Implementations must override this method to get pendingActions
-     * 
+     *
      * @return the value needs to be compared against matrix table pendingActions
      */
 
     protected String getPendingActions() {
         return null;
+    }
+
+    public void setPendingActions(String pendingActions) {
+        this.pendingActions = pendingActions;
     }
 
     public String getApproverComments() {
@@ -252,20 +258,17 @@ public abstract class GenericWorkFlowAction extends BaseFormAction {
         return workFlowAction;
     }
 
-    public void setAdditionalRule(String additionalRule) {
-        this.additionalRule = additionalRule;
+    /**
+     * Used to Set actionValue that will be used to call workflow script.
+     *
+     * @param workFlowAction
+     */
+
+    public void setWorkFlowAction(final String workFlowAction) {
+        this.workFlowAction = workFlowAction;
     }
 
-    public void setAmountRule(BigDecimal amountRule) {
-        this.amountRule = amountRule;
+    public boolean validateButtons() {
+        return getWorkFlowAction() != null && !getValidActions().contains(getWorkFlowAction());
     }
-
-    public void setWorkFlowDepartment(String workFlowDepartment) {
-        this.workFlowDepartment = workFlowDepartment;
-    }
-
-    public void setPendingActions(String pendingActions) {
-        this.pendingActions = pendingActions;
-    }
-
 }

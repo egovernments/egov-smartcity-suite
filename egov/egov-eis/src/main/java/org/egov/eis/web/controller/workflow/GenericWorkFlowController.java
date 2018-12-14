@@ -136,4 +136,8 @@ public abstract class GenericWorkFlowController {
         return validActions;
     }
 
+    public boolean validateButtons(StateAware model, WorkflowContainer workflowContainer) {
+        return workflowContainer.getWorkFlowAction() != null
+                && !getValidActions(model, workflowContainer).contains(workflowContainer.getWorkFlowAction());
+    }
 }

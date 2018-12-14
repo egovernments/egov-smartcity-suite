@@ -197,6 +197,10 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         }
         if (SIGNWORKFLOWACTION.equals(workFlowAction) && !this.isDigitalSignatureEnabled())
             throw new ValidationException("error.digisign.disabled", "error.digisign.disabled");
+        if (validateButtons()) {
+            addActionMessage(this.getText("error.invalid.workflowaction"));
+            return MESSAGE;
+        }
         return super.approve();
     }
 

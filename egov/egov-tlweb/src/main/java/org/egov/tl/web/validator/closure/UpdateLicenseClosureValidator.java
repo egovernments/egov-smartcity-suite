@@ -64,6 +64,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 
 import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
+import static org.egov.tl.utils.Constants.BUTTONFORWARD;
 import static org.egov.tl.utils.Constants.MESSAGE;
 
 @Component
@@ -89,7 +90,7 @@ public class UpdateLicenseClosureValidator extends LicenseClosureValidator {
         if (licenseService.validateMandatoryDocument(license)) {
             errors.reject("validate.supportDocs");
         }
-        validateApprover(license,errors);
+        validateApprover(license, errors);
     }
 
     public boolean closureInProgress(TradeLicense license, RedirectAttributes redirectAttributes) {
@@ -110,13 +111,15 @@ public class UpdateLicenseClosureValidator extends LicenseClosureValidator {
         return false;
     }
 
-    public void validateApprover(TradeLicense license, Errors errors){
+    public void validateApprover(TradeLicense license, Errors errors) {
         WorkFlowMatrix workFlowMatrix = licenseClosureProcessflowService.getWorkFlowMatrix(license);
-        Position nextPosition = positionMasterService.getPositionById(license.getWorkflowContainer().getApproverPositionId());
-        if (nextPosition == null || (workFlowMatrix != null
-                && !workFlowMatrix.getNextDesignation().contains(nextPosition.getDeptDesig().getDesignation().getName()))) {
-            errors.reject("error.invalid.approver");
+        Long approverPositionId = license.getWorkflowContainer().getApproverPositionId();
+        if (BUTTONFORWARD.equals(license.getWorkflowContainer().getWorkFlowAction()) && approverPositionId != null) {
+            Position nextPosition = positionMasterService.getPositionById(approverPositionId);
+            if (nextPosition == null || (workFlowMatrix != null
+                    && !workFlowMatrix.getNextDesignation().contains(nextPosition.getDeptDesig().getDesignation().getName()))) {
+                errors.reject("error.invalid.approver");
+            }
         }
     }
-
 }
