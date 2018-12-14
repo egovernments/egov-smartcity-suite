@@ -66,8 +66,8 @@ INSERT INTO eg_roleaction (roleid, actionid) SELECT roles.roleid,actions.id FROM
 (SELECT id FROM eg_action WHERE name='GRIEVANCE_REGISTER_CHECK_CRN_REQUIRED') actions 
 ON CONFLICT (roleid, actionid) DO NOTHING;  
 
-DELETE FROM "generic-bak".eg_roleaction 
-WHERE actionid IN (SELECT id FROM "generic-bak".eg_action 
+DELETE FROM eg_roleaction
+WHERE actionid IN (SELECT id FROM eg_action
                    WHERE name = 'THIRDPARTY_GRIEVANCE_CRN_REQUIRED_CHECK');
                                         
 UPDATE eg_feature_action 
