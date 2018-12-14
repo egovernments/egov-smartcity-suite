@@ -46,11 +46,9 @@
  *
  */
 
-package org.egov.pgr.web.controller.complaint;
+package org.egov.eis.web.controller.masters.employee;
 
 import org.egov.eis.service.EmployeeViewService;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.service.BoundaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -58,28 +56,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Date;
-import java.util.List;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
-public class GenericComplaintAjaxController {
-
-    @Autowired
-    private BoundaryService boundaryService;
+public class EmployeeViewController {
 
     @Autowired
     private EmployeeViewService employeeViewService;
 
-    @GetMapping(value = {"/complaint/router/position", "/complaint/escalation/position"}, produces = TEXT_PLAIN_VALUE)
+    @GetMapping(value = "/employee/position/by-code-or-name-or-position", produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String getAllPositionByNameLike(@RequestParam String positionName) {
+    public String getAllPositionByNameLike(@RequestParam String name) {
         StringBuilder positionUser = new StringBuilder();
         positionUser.append("[");
-        String likePositionName = "%" + positionName.toUpperCase() + "%";
+        name = "%" + name.toUpperCase() + "%";
         employeeViewService
-                .getEmployeeByNameOrCodeOrPositionLike(likePositionName, likePositionName, likePositionName, new Date())
+                .getEmployeeByNameOrCodeOrPositionLike(name, name, name, new Date())
                 .stream()
                 .forEach(employee ->
                         positionUser.append("{\"name\":\"")
@@ -91,15 +84,5 @@ public class GenericComplaintAjaxController {
             positionUser.deleteCharAt(positionUser.lastIndexOf(","));
         positionUser.append("]");
         return positionUser.toString();
-
     }
-
-    @GetMapping(value = {"/complaint/router/boundaries-by-type", "/complaint/escalation/boundaries-by-type"},
-            produces = APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public List<Boundary> getBoundariesByType(@RequestParam String boundaryName,
-                                              @RequestParam Long boundaryTypeId) {
-        return boundaryService.getBondariesByNameAndTypeOrderByBoundaryNumAsc("%" + boundaryName + "%", boundaryTypeId);
-    }
-
 }
