@@ -95,3 +95,10 @@ FROM (SELECT id FROM eg_role WHERE name='PUBLIC') roles,
      (SELECT id FROM eg_action WHERE name in ('GRIEVANCE_VIEW_IMAGE_DOWNLOAD',
                                               'GRIEVANCE_VIEW')) actions
 ON CONFLICT (roleid, actionid) DO NOTHING;
+
+UPDATE EG_ACTION SET url='/grievance/update/', name='GRIEVANCE_UPDATE' WHERE name='GRIEVANCE_UPDATE_CITIZEN';
+
+INSERT INTO EG_ROLEACTION (roleid,actionid) SELECT roles.id, actions.id
+FROM (SELECT id FROM eg_role WHERE name='CITIZEN') roles,
+     (SELECT id FROM eg_action WHERE name  = 'GRIEVANCE_SEARCH') actions
+ON CONFLICT (roleid, actionid) DO NOTHING;
