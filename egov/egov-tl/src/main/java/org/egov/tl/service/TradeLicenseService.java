@@ -368,12 +368,13 @@ public class TradeLicenseService {
     }
 
     private Map<Installment, BigDecimal> calculatePenalty(TradeLicense license, EgDemand demand) {
-        Date licenseDate = license.isNewApplication() ? license.getCommencementDate()
-                : license.getDemand().getEgInstallmentMaster().getFromDate();
+        boolean isNewApplication = license.isNewApplication();
         Date currentDate = new Date();
         Map<Installment, BigDecimal> installmentPenalty = new HashMap<>();
         for (EgDemandDetails demandDetails : demand.getEgDemandDetails()) {
             if (!DEMAND_REASON_CATEGORY_PENALTY.equals(demandDetails.getReasonCategory())) {
+                Date licenseDate = isNewApplication ? license.getCommencementDate() :
+                        demandDetails.getEgDemandReason().getEgInstallmentMaster().getFromDate();
                 installmentPenalty.put(demandDetails.getEgDemandReason().getEgInstallmentMaster(),
                         penaltyRatesService.calculatePenalty(license, licenseDate, currentDate, demandDetails.getAmount()));
             }
