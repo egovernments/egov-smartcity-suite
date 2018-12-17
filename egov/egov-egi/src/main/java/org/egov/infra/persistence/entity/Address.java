@@ -70,7 +70,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.joining;
 import static org.egov.infra.persistence.entity.Address.SEQ_ADDRESS;
 
 @Entity
@@ -289,29 +291,9 @@ public abstract class Address extends AbstractPersistable<Long> {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        if (StringUtils.isNotBlank(houseNoBldgApt))
-            builder.append(StringUtils.trim(houseNoBldgApt)).append(", ");
-        if (StringUtils.isNotBlank(areaLocalitySector))
-            builder.append(StringUtils.trim(areaLocalitySector)).append(", ");
-        if (StringUtils.isNotBlank(streetRoadLine))
-            builder.append(StringUtils.trim(streetRoadLine)).append(", ");
-        if (StringUtils.isNotBlank(landmark))
-            builder.append(StringUtils.trim(landmark)).append(", ");
-        if (StringUtils.isNotBlank(cityTownVillage))
-            builder.append(StringUtils.trim(cityTownVillage)).append(", ");
-        if (StringUtils.isNotBlank(postOffice))
-            builder.append(StringUtils.trim(postOffice)).append(", ");
-        if (StringUtils.isNotBlank(subdistrict))
-            builder.append(StringUtils.trim(subdistrict)).append(", ");
-        if (StringUtils.isNotBlank(district))
-            builder.append(StringUtils.trim(district)).append(", ");
-        if (StringUtils.isNotBlank(state))
-            builder.append(StringUtils.trim(state)).append(", ");
-        if (StringUtils.isNotBlank(country))
-            builder.append(StringUtils.trim(country)).append(", ");
-        if (StringUtils.isNotBlank(pinCode))
-            builder.append("PIN : ").append(pinCode);
-        return builder.toString();
+        return Stream
+                .of(houseNoBldgApt, areaLocalitySector, streetRoadLine, landmark,
+                        cityTownVillage, postOffice, subdistrict, district, state, country, pinCode)
+                .filter(StringUtils::isNotBlank).collect(joining(",\n"));
     }
 }

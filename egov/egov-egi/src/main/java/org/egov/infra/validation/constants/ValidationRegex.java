@@ -79,4 +79,5 @@ public class ValidationRegex {
     public static final String SALUTATION = "^(Mrs?|Miss)$";
     public static final String PERSON_NAME = "^([a-zA-Z]+([.\\sa-zA-Z]+))$";
     public static final String USERNAME = "^(?:[\\w+( \\w+)*]{2,64}|[[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*]{2,100}@(?:[a-zA-Z0-9-]{1,22}+\\.)+[a-zA-Z]{2,6})$";
+    public static final String ADDRESS = "^(\\w*\\s*[\\#\\-\\,\\/\\.\\(\\)\\&\\:\\']*)+$";
 }

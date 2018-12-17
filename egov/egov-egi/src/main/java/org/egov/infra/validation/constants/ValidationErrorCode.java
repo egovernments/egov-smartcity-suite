@@ -64,6 +64,7 @@ public final class ValidationErrorCode {
     public static final String INVALID_USERNAME = "{invalid.username}";
     public static final String INVALID_ALPHABETS = "{invalid.pattern.alphabet}";
     public static final String INVALID_FILE_NAME = "{invalid.file.name}";
+    public static final String INVALID_ADDRESS = "{invalid.address}";
 
     private ValidationErrorCode() {
         //only static fields
