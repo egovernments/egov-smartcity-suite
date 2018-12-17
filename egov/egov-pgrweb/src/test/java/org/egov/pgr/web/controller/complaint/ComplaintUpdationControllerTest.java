@@ -183,6 +183,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         complaint.setDetails("Already Registered complaint");
         when(complaintService.getComplaintByCRN("CRN-123")).thenReturn(complaint);
         when(securityUtils.currentUserIsEmployee()).thenReturn(true);
+        when(complaintProcessFlowService.authorizedToUpdate(complaint)).thenReturn(true);
         final MvcResult result = mockMvc.perform(get("/grievance/update/CRN-123")).andExpect(view().name("complaint-edit"))
                 .andExpect(model().attributeExists("complaint")).andReturn();
 
@@ -200,6 +201,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         id = 2L;
         when(complaintService.getComplaintByCRN("CRN-124")).thenReturn(complaint);
         when(securityUtils.currentUserIsEmployee()).thenReturn(true);
+        when(complaintProcessFlowService.authorizedToUpdate(complaint)).thenReturn(true);
         final MvcResult result = mockMvc.perform(get("/grievance/update/CRN-124")).andExpect(status().isOk())
                 .andExpect(view().name("complaint-edit")).andExpect(model().attributeExists("complaint")).andReturn();
 
@@ -225,6 +227,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         final List<Boundary> wards = new ArrayList<>();
         when(boundaryService.getChildBoundariesByBoundaryId(ward.getId())).thenReturn(wards);
         when(securityUtils.currentUserIsEmployee()).thenReturn(true);
+        when(complaintProcessFlowService.authorizedToUpdate(complaint)).thenReturn(true);
         final MvcResult result = mockMvc.perform(get("/grievance/update/CRN-124")).andExpect(status().isOk())
                 .andExpect(view().name("complaint-edit")).andExpect(model().attributeExists("complaint")).andReturn();
 

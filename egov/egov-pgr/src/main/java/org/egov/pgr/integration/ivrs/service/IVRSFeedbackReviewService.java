@@ -56,7 +56,7 @@ import org.egov.pgr.integration.ivrs.entity.IVRSFeedbackReviewHistory;
 import org.egov.pgr.integration.ivrs.repository.IVRSFeedbackReviewRepository;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusService;
-import org.egov.pgr.service.ConfigurationService;
+import org.egov.pgr.service.GrievanceConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,7 +81,7 @@ public class IVRSFeedbackReviewService {
     private ComplaintStatusService complaintStatusService;
 
     @Autowired
-    private ConfigurationService configurationService;
+    private GrievanceConfigurationService grievanceConfigurationService;
 
     @Autowired
     private IVRSFeedbackReviewRepository ivrsFeedbackReviewRepository;
@@ -109,7 +109,7 @@ public class IVRSFeedbackReviewService {
         IVRSFeedbackReason newReason = feedbackReview.getFeedbackReason();
         boolean tobeReopened = false;
         if (newReason.isToBeReopened()
-                && feedbackReview.getReopenCount() < Long.valueOf(configurationService.getValueByKey("IVRS_REOPEN_COUNT"))) {
+                && feedbackReview.getReopenCount() < Long.valueOf(grievanceConfigurationService.getValueByKey("IVRS_REOPEN_COUNT"))) {
             tobeReopened = true;
         }
         entityManager.detach(feedbackReview);

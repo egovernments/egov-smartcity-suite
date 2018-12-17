@@ -59,6 +59,7 @@ import org.egov.pgr.elasticsearch.entity.contract.ComplaintSearchRequest;
 import org.egov.pgr.elasticsearch.service.ComplaintIndexService;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.service.ComplaintProcessFlowService;
 import org.egov.pgr.service.ComplaintStatusService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.service.ReceivingModeService;
@@ -78,7 +79,6 @@ import java.util.List;
 
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.egov.pgr.utils.constants.PGRConstants.GO_ROLE_NAME;
 
 @Controller
 @RequestMapping("/grievance/search")
@@ -104,6 +104,9 @@ public class GrievanceSearchController {
 
     @Autowired
     private ReceivingModeService receivingModeService;
+
+    @Autowired
+    private ComplaintProcessFlowService complaintProcessFlowService;
 
     @ModelAttribute("complaintTypedropdown")
     public List<ComplaintType> complaintTypes() {
@@ -131,10 +134,9 @@ public class GrievanceSearchController {
         return user != null ? user.getUsername() : EMPTY;
     }
 
-    @ModelAttribute("isGrievanceOfficer")
-    public Boolean validateForGo() {
-        User currentUser = securityUtils.getCurrentUser();
-        return currentUser != null && currentUser.hasRole(GO_ROLE_NAME);
+    @ModelAttribute("hasEditPrivilege")
+    public Boolean hasEditPrivilege() {
+        return complaintProcessFlowService.userRoleAuthorizedToUpdate(securityUtils.getCurrentUser());
     }
 
     @ModelAttribute("employeeposition")

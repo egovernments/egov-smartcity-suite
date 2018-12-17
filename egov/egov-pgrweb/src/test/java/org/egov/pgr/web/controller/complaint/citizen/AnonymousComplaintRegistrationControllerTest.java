@@ -52,7 +52,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintTypeCategoryService;
 import org.egov.pgr.service.ComplaintTypeService;
-import org.egov.pgr.service.ConfigurationService;
+import org.egov.pgr.service.GrievanceConfigurationService;
 import org.egov.pgr.service.ReceivingModeService;
 import org.egov.pgr.web.controller.AbstractContextControllerTest;
 import org.junit.Before;
@@ -83,7 +83,7 @@ public class AnonymousComplaintRegistrationControllerTest extends AbstractContex
     @Mock
     private SecurityUtils securityUtils;
     @Mock
-    private ConfigurationService configurationService;
+    private GrievanceConfigurationService grievanceConfigurationService;
 
     @InjectMocks
     private AnonymousGrievanceRegistrationController controller;

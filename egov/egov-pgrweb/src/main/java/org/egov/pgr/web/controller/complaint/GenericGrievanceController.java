@@ -58,7 +58,7 @@ import org.egov.pgr.entity.ReceivingCenter;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintTypeCategoryService;
 import org.egov.pgr.service.ComplaintTypeService;
-import org.egov.pgr.service.ConfigurationService;
+import org.egov.pgr.service.GrievanceConfigurationService;
 import org.egov.pgr.service.ReceivingCenterService;
 import org.egov.pgr.service.ReceivingModeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,11 +110,11 @@ public class GenericGrievanceController {
     protected FileStoreUtils fileStoreUtils;
 
     @Autowired
-    protected ConfigurationService configurationService;
+    protected GrievanceConfigurationService grievanceConfigurationService;
 
     @ModelAttribute("useAutoCompleteComplaintType")
     public boolean useAutoCompleteComplaintType() {
-        return configurationService.useAutoCompleteForComplaintType();
+        return grievanceConfigurationService.useAutoCompleteForComplaintType();
     }
 
     @ModelAttribute("categories")

@@ -92,10 +92,13 @@ public interface UserRepository extends JpaRepository<User, Long>, RevisionRepos
     @Query("select distinct usr from User usr, IN (usr.roles) role where role.name = :roleName ")
     Set<User> findUsersByRoleName(@Param("roleName") String roleName);
 
+    @Query("select distinct usr from User usr, IN (usr.roles) role where role.name IN (:roleName)")
+    Set<User> findUsersByRoleNames(@Param("roleName") String [] roleName);
+
     @Query("select distinct usr from User usr, IN (usr.roles) role where role.name = :roleName and usr.username = :usrName ")
     List<User> findUsersByUserAndRoleName(@Param("usrName") String userName, @Param("roleName") String roleName);
 
-    @Query(" select count(*) from User usr where usr.username like :name||'%' ")
+    @Query(" select count(id) from User usr where usr.username like :name||'%' ")
     Integer getUserSerialNumberByName(@Param("name") final String name);
 
     User findByNameAndMobileNumberAndGender(String name, String mobileNumber, Gender gender);

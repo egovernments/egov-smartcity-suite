@@ -55,15 +55,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.egov.infra.utils.ApplicationConstant.COMMA;
+
 @Service
 @Transactional(readOnly = true)
-public class ConfigurationService {
+public class GrievanceConfigurationService {
 
     private static final String DEFAULT_RESOLUTION_TIME_KEY = "DEFAULT_RESOLUTION_SLA_IN_HOURS";
     private static final String DEFAULT_COMPLAINT_PRIORITY = "DEFAULT_COMPLAINT_PRIORITY";
     private static final String USE_AUTO_COMPLETE_FOR_COMPLAINT_TYPE = "USE_AUTO_COMPLETE_FOR_COMPLAINT_TYPE";
     private static final String ASSIGN_REOPENED_COMPLAINT_BASEDON_ROUTER_POSITION = "ASSIGN_REOPENED_COMPLAINT_BASEDON_ROUTER_POSITION";
     private static final String SEND_MESSAGE_ON_ESCALATION = "SEND_MESSAGE_ON_ESCALATION";
+    private static final String GRIEVANCE_UPDATE_PRIVILEGED_ROLES_KEY = "GRIEVANCE_UPDATE_PRIVILEGED_ROLES";
 
     @Autowired
     private ConfigurationRepository configurationRepository;
@@ -89,6 +92,10 @@ public class ConfigurationService {
 
     public boolean sendMessageOnEscalation() {
         return Boolean.valueOf(getValueByKey(SEND_MESSAGE_ON_ESCALATION));
+    }
+
+    public String[] updateAllowedRoles() {
+        return getValueByKey(GRIEVANCE_UPDATE_PRIVILEGED_ROLES_KEY).split(COMMA);
     }
 
     public String getValueByKey(String key) {

@@ -50,11 +50,13 @@ package org.egov.pgr.web.controller.complaint;
 
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.service.ComplaintProcessFlowService;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusService;
 import org.egov.pgr.service.ComplaintTypeService;
@@ -69,6 +71,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.egov.infra.persistence.entity.enums.UserType.CITIZEN;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -100,6 +103,9 @@ public class ComplaintSearchControllerTest extends AbstractContextControllerTest
     @Mock
     private ReceivingModeService receivingModeService;
 
+    @Mock
+    private ComplaintProcessFlowService complaintProcessFlowService;
+
     @InjectMocks
     private GrievanceSearchController grievanceSearchController;
 
@@ -123,6 +129,8 @@ public class ComplaintSearchControllerTest extends AbstractContextControllerTest
 
         final List complaintTypeList = new ArrayList<ComplaintType>();
         when(complaintTypeService.findActiveComplaintTypes()).thenReturn(complaintTypeList);
+
+        when(complaintProcessFlowService.userRoleAuthorizedToUpdate(new User(CITIZEN))).thenReturn(true);
     }
 
     @Test

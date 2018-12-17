@@ -78,7 +78,7 @@ public class CitizenComplaintDataPublisher {
     private SecurityUtils securityUtils;
 
     @Autowired
-    private ConfigurationService configurationService;
+    private GrievanceConfigurationService grievanceConfigurationService;
 
     public void onRegistration(Complaint complaint) {
         Integer slaHours = complaint.getComplaintType().getSlaHours();
@@ -96,7 +96,7 @@ public class CitizenComplaintDataPublisher {
                 messageHeader, detailedMessage.toString(), String.format(COMPLAINT_UPDATE_URL, complaint.getCrn()),
                 false, complaint.getStatus().getName(),
                 DateUtils.addHours(new Date(), slaHours == null ?
-                        configurationService.getDefaultComplaintResolutionTime() : slaHours), complaint.getState(),
+                        grievanceConfigurationService.getDefaultComplaintResolutionTime() : slaHours), complaint.getState(),
                 Arrays.asList(securityUtils.getCurrentUser()));
 
         portalInboxService.pushInboxMessage(portalInboxBuilder.build());

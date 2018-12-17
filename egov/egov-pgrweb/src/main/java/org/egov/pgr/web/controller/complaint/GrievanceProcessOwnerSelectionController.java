@@ -49,11 +49,9 @@
 package org.egov.pgr.web.controller.complaint;
 
 import org.egov.eis.entity.EmployeeView;
-import org.egov.infra.admin.master.service.CrossHierarchyService;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.JsonUtils;
+import org.egov.pgr.service.ComplaintProcessFlowService;
 import org.egov.pgr.web.contracts.response.ProcessOwnerResponseAdaptor;
-import org.egov.pims.service.EisUtilService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -61,40 +59,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static org.egov.pgr.utils.constants.PGRConstants.GO_ROLE_NAME;
-import static org.egov.pgr.utils.constants.PGRConstants.GRO_ROLE_NAME;
-import static org.egov.pgr.utils.constants.PGRConstants.RO_ROLE_NAME;
-
 @Controller
 public class GrievanceProcessOwnerSelectionController {
 
     @Autowired
-    private EisUtilService eisService;
-
-    @Autowired
-    private SecurityUtils securityUtils;
+    private ComplaintProcessFlowService complaintProcessFlowService;
 
     @GetMapping(value = "/grievance/process-owners", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String getPositions(@RequestParam Integer approvalDepartment, @RequestParam Integer approvalDesignation) {
-        if (approvalDepartment > 0 && approvalDesignation > 0) {
-            HashMap<String, String> paramMap = new HashMap<>();
-            paramMap.put("departmentId", String.valueOf(approvalDepartment));
-            paramMap.put("designationId", String.valueOf(approvalDesignation));
-            List<EmployeeView> employeeViewData = eisService.getEmployeeInfoList(paramMap);
-            String currentUserName = securityUtils.getCurrentUser().getUsername();
-            Set<EmployeeView> processOwners = employeeViewData
-                    .stream()
-                    .filter(employeeView -> (employeeView.getEmployee().hasAnyRole(RO_ROLE_NAME, GO_ROLE_NAME, GRO_ROLE_NAME))
-                            && !currentUserName.equals(employeeView.getUserName()))
-                    .collect(Collectors.toSet());
-            return JsonUtils.toJSON(processOwners, EmployeeView.class, ProcessOwnerResponseAdaptor.class);
-        }
+    public String getPositions(@RequestParam Long approvalDepartment, @RequestParam Long approvalDesignation) {
+        if (approvalDepartment > 0 && approvalDesignation > 0)
+            return JsonUtils.toJSON(complaintProcessFlowService.validProcessOwners(approvalDepartment, approvalDesignation),
+                    EmployeeView.class, ProcessOwnerResponseAdaptor.class);
         return "[]";
     }
 }

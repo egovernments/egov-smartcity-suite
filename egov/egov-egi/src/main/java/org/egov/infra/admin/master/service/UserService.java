@@ -187,6 +187,10 @@ public class UserService {
         return userRepository.findUsersByRoleName(roleName);
     }
 
+    public Set<User> getUsersByRoleNames(String [] roleName) {
+        return userRepository.findUsersByRoleNames(roleName);
+    }
+
     public List<User> getAllEmployeeNameLike(String name) {
         return userRepository.findByNameContainingIgnoreCaseAndTypeAndActiveTrue(name, EMPLOYEE);
     }

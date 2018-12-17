@@ -79,7 +79,7 @@
 						<input type="hidden" name="currentLoggedUser" class="form-control" id="currentLoggedUser"
 							 value="${currentLoggedUser}"/>
 						<input type="hidden" name="currentUlb" class="form-control" id="currentUlb" value="${currentUlb}"/>
-						<input type="hidden" name="isgorole" class="form-control" id="isgorole" value="${isGrievanceOfficer}"/>
+						<input type="hidden" name="hasEditPrivilege" class="form-control" id="hasEditPrivilege" value="${hasEditPrivilege}"/>
 					</div>
 					<div class="form-group">
 						<div class="col-md-3 add-margin">

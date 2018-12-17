@@ -142,10 +142,10 @@ var tableContainer;
 		var currentOwner=tableContainer1.fnGetData(this,7);
 		var currentStatus=tableContainer1.fnGetData(this,4);
 		var CurrentPosition=$('#employeeposition').val();
-		var isgorole= $('#isgorole').val();
-		if(((currentStatus == 'COMPLETED' && isgorole == 'false') || currentStatus == 'REJECTED'|| currentStatus == 'WITHDRAWN') && CurrentPosition != "0")
+		var hasEditPrivilege= $('#hasEditPrivilege').val();
+		if(((currentStatus == 'COMPLETED' && hasEditPrivilege == 'false') || currentStatus == 'REJECTED'|| currentStatus == 'WITHDRAWN') && CurrentPosition != "0")
 			window.open("/pgr/grievance/view/"+crn);
-		else if (currentOwner == CurrentPosition || isgorole == 'true')
+		else if (currentOwner == CurrentPosition || hasEditPrivilege == 'true')
 			window.open("/pgr/grievance/update/"+crn);
 		else
 			window.open("/pgr/grievance/view/"+crn);

@@ -49,22 +49,32 @@
 package org.egov.pgr.service;
 
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.workflow.service.OwnerGroupService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pims.commons.Position;
+import org.egov.pims.service.EisUtilService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
+import static org.egov.infra.security.utils.SecurityUtils.currentUserIsAnonymous;
 import static org.egov.pgr.utils.constants.PGRConstants.DELIMITER_COLON;
 import static org.egov.pgr.utils.constants.PGRConstants.GO_ROLE_NAME;
+import static org.egov.pgr.utils.constants.PGRConstants.GRO_ROLE_NAME;
+import static org.egov.pgr.utils.constants.PGRConstants.RO_ROLE_NAME;
 
 @Service
 public class ComplaintProcessFlowService {
@@ -93,7 +103,13 @@ public class ComplaintProcessFlowService {
     private UserService userService;
 
     @Autowired
-    private ConfigurationService configurationService;
+    private GrievanceConfigurationService grievanceConfigurationService;
+
+    @Autowired
+    private OwnerGroupService<Position> ownerGroupService;
+
+    @Autowired
+    private EisUtilService eisService;
 
     public void onRegistration(Complaint complaint) {
         Position assignee = complaintRouterService.getComplaintAssignee(complaint);
@@ -118,7 +134,7 @@ public class ComplaintProcessFlowService {
             complaint.resolvedNow(true);
             if (securityUtils.currentUserIsEmployee())
                 complaint.setCurrentOwner(currentUser);
-            if (!currentUser.hasRole(GO_ROLE_NAME)) {
+            if (!userRoleAuthorizedToUpdate(currentUser)) {
                 complaint.transition()
                         .end()
                         .withComments(complaint.approverComment())
@@ -155,7 +171,7 @@ public class ComplaintProcessFlowService {
         } else if (complaint.reopened()) {
             Position nextAssignee = complaint.getState().getOwnerPosition();
             complaint.setCompletionDate(null);
-            if (configurationService.assignReopenedComplaintBasedOnRouterPosition())
+            if (grievanceConfigurationService.assignReopenedComplaintBasedOnRouterPosition())
                 nextAssignee = complaintRouterService.getComplaintAssignee(complaint);
             complaint.transition()
                     .reopen()
@@ -177,11 +193,38 @@ public class ComplaintProcessFlowService {
                 forwardSkippablePositionService.isSkippablePosition(complaint.currentAssignee());
     }
 
+    public boolean authorizedToUpdate(Complaint complaint) {
+        User currentUser = securityUtils.getCurrentUser();
+        return !currentUserIsAnonymous() && securityUtils.currentUserIsCitizen()
+                ? complaint.getCreatedBy().equals(currentUser)
+                : userRoleAuthorizedToUpdate(currentUser)
+                || this.ownerGroupService.getOwnerGroupsByUserId(getUserId())
+                .stream()
+                .anyMatch(position -> position.equals(complaint.getState().getOwnerPosition()));
+    }
+
+    public boolean userRoleAuthorizedToUpdate(User user) {
+        return user.hasAnyRole(grievanceConfigurationService.updateAllowedRoles());
+    }
+
+    public Set<EmployeeView> validProcessOwners(Long department, Long designation) {
+        String currentUserName = securityUtils.getCurrentUser().getUsername();
+        HashMap<String, String> params = new HashMap<>();
+        params.put("departmentId", String.valueOf(department));
+        params.put("designationId", String.valueOf(designation));
+        return eisService.getEmployeeInfoList(params)
+                .stream()
+                .filter(employeeView -> (employeeView.getEmployee().hasAnyRole(RO_ROLE_NAME, GO_ROLE_NAME, GRO_ROLE_NAME))
+                        && !currentUserName.equals(employeeView.getUserName()))
+                .collect(Collectors.toSet());
+    }
+
     private void assignCurrentOwner(Complaint complaint) {
         List<Assignment> assignments = assignmentService.getAssignmentsForPosition(complaint.getAssignee().getId(), new Date());
         complaint.setCurrentOwner(assignments.isEmpty() ? null : assignments.get(0).getEmployee());
         if (complaint.getCurrentOwner() == null) {
-            Iterator<User> grievanceOfficers = userService.getUsersByRoleName(GO_ROLE_NAME).iterator();
+            Iterator<User> grievanceOfficers = userService
+                    .getUsersByRoleNames(grievanceConfigurationService.updateAllowedRoles()).iterator();
             if (grievanceOfficers.hasNext())
                 complaint.setCurrentOwner(grievanceOfficers.next());
         }

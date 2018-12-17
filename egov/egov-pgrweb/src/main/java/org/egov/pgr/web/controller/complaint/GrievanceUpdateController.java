@@ -143,14 +143,12 @@ public class GrievanceUpdateController {
     public String edit(@ModelAttribute Complaint complaint, Model model) {
         if (complaint == null) {
             return "redirect:/error/404";
+        } else if (complaintProcessFlowService.authorizedToUpdate(complaint)) {
+            prepareUpdateView(complaint, model);
+            return securityUtils.currentUserIsCitizen() ? COMPLAINT_CITIZEN_EDIT : COMPLAINT_EDIT;
         } else {
-            if (securityUtils.currentUserIsEmployee() || securityUtils.getCurrentUser().equals(complaint.getCreatedBy()))
-                prepareUpdateView(complaint, model);
-            else
-                return "redirect:/error/403";
+            return "redirect:/error/403";
         }
-
-        return securityUtils.currentUserIsCitizen() ? COMPLAINT_CITIZEN_EDIT : COMPLAINT_EDIT;
     }
 
     @PostMapping

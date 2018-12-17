@@ -114,7 +114,7 @@ public class ComplaintEscalationService {
     private ComplaintRepository complaintRepository;
 
     @Autowired
-    private ConfigurationService configurationService;
+    private GrievanceConfigurationService grievanceConfigurationService;
 
     @Autowired
     private EscalationHierarchyService escalationHierarchyService;
@@ -161,7 +161,7 @@ public class ComplaintEscalationService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, timeout = 1500)
     public void escalateComplaint() {
-        boolean sendMessage = configurationService.sendMessageOnEscalation();
+        boolean sendMessage = grievanceConfigurationService.sendMessageOnEscalation();
         getComplaintsEligibleForEscalation()
                 .stream()
                 .filter(Complaint::transitionInprogress)
@@ -223,7 +223,7 @@ public class ComplaintEscalationService {
 
     public Integer getResolutionSLAHrs(Long designationId, Long complaintTypeId) {
         Escalation escalation = escalationRepository.findByDesignationAndComplaintType(designationId, complaintTypeId);
-        return escalation == null ? configurationService.getDefaultComplaintResolutionTime() : escalation.getNoOfHrs();
+        return escalation == null ? grievanceConfigurationService.getDefaultComplaintResolutionTime() : escalation.getNoOfHrs();
     }
 
     @Transactional

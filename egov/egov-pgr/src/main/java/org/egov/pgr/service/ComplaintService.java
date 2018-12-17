@@ -129,7 +129,7 @@ public class ComplaintService {
     private ComplaintIndexService complaintIndexService;
 
     @Autowired
-    private ConfigurationService configurationService;
+    private GrievanceConfigurationService grievanceConfigurationService;
 
     @Autowired
     private ComplaintNotificationService complaintNotificationService;
@@ -169,7 +169,7 @@ public class ComplaintService {
         else
             complaint.setDepartment(complaint.getAssignee().getDeptDesig().getDepartment());
         if (complaint.getPriority() == null)
-            complaint.setPriority(configurationService.getDefaultComplaintPriority());
+            complaint.setPriority(grievanceConfigurationService.getDefaultComplaintPriority());
 
         complaintRepository.saveAndFlush(complaint);
         applicationEventPublisher.publishEvent(new ComplaintCreateEvent(complaint));
