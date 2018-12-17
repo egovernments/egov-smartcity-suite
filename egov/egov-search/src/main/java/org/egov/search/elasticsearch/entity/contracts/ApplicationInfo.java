@@ -45,36 +45,137 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.search.elasticsearch.entity.contracts;
 
-package org.egov.search.elasticsearch.entity.bean;
+import org.apache.commons.lang3.StringUtils;
 
-public class ServiceGroupDetails {
+public class ApplicationInfo {
 
+    private String appDate;
+    private String appNo;
+    private String service;
+    private String applicantName;
+    private String applicantAddress;
+    private String appStatus;
+    private String source;
+    private int sla;
     private String serviceGroup;
-    private long totalReceived = 0;
-    private long totalOpen = 0;
+    private String pendingWith;
+    private int age;
+    private String ulbName;
+    private String url = StringUtils.EMPTY;
+    private String cityCode=StringUtils.EMPTY;
+
+    public String getAppDate() {
+        return appDate;
+    }
+
+    public void setAppDate(String appDate) {
+        this.appDate = appDate;
+    }
+
+    public String getAppNo() {
+        return appNo;
+    }
+
+    public void setAppNo(String appNo) {
+        this.appNo = appNo;
+    }
+
+    public String getService() {
+        return service;
+    }
+
+    public void setService(String service) {
+        this.service = service;
+    }
+
+    public String getApplicantName() {
+        return applicantName;
+    }
+
+    public void setApplicantName(String applicantName) {
+        this.applicantName = applicantName;
+    }
+
+    public String getApplicantAddress() {
+        return applicantAddress;
+    }
+
+    public void setApplicantAddress(String applicantAddress) {
+        this.applicantAddress = applicantAddress;
+    }
+
+    public String getAppStatus() {
+        return appStatus;
+    }
+
+    public void setAppStatus(String appStatus) {
+        this.appStatus = appStatus;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public int getSla() {
+        return sla;
+    }
+
+    public void setSla(int sla) {
+        this.sla = sla;
+    }
 
     public String getServiceGroup() {
         return serviceGroup;
     }
 
-    public void setServiceGroup(final String serviceGroup) {
+    public void setServiceGroup(String serviceGroup) {
         this.serviceGroup = serviceGroup;
     }
 
-    public long getTotalReceived() {
-        return totalReceived;
+    public int getAge() {
+        return age;
     }
 
-    public void setTotalReceived(final long totalReceived) {
-        this.totalReceived = totalReceived;
+    public void setAge(int age) {
+        this.age = age;
     }
 
-    public long getTotalOpen() {
-        return totalOpen;
+    public String getPendingWith() {
+        return pendingWith;
     }
 
-    public void setTotalOpen(final long totalOpen) {
-        this.totalOpen = totalOpen;
+    public void setPendingWith(String pendingWith) {
+        this.pendingWith = pendingWith;
     }
+
+    public String getUlbName() {
+        return ulbName;
+    }
+
+    public void setUlbName(String ulbName) {
+        this.ulbName = ulbName;
+    }
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getCityCode() {
+        return cityCode;
+    }
+
+    public void setCityCode(String cityCode) {
+        this.cityCode = cityCode;
+    }
+
+
 }

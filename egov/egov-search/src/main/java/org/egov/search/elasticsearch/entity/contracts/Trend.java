@@ -46,26 +46,44 @@
  *
  */
 
-package org.egov.search.elasticsearch.entity.bean;
+package org.egov.search.elasticsearch.entity.contracts;
 
-public class ServiceDetails {
-    private String serviceName;
-    private long beyondSLA = 0;
+public class Trend {
 
-    public String getServiceName() {
-        return serviceName;
+    private String month;
+    private long totalReceived = 0;
+    private long totalClosed = 0;
+    private long totalOpen = 0;
+
+    public String getMonth() {
+        return month;
     }
 
-    public void setServiceName(final String serviceName) {
-        this.serviceName = serviceName;
+    public void setMonth(String month) {
+        this.month = month;
     }
 
-    public long getBeyondSLA() {
-        return beyondSLA;
+    public long getTotalReceived() {
+        return totalReceived;
     }
 
-    public void setBeyondSLA(final long beyondSLA) {
-        this.beyondSLA = beyondSLA;
+    public void setTotalReceived(long totalReceived) {
+        this.totalReceived = totalReceived;
     }
 
+    public long getTotalClosed() {
+        return totalClosed;
+    }
+
+    public void setTotalClosed(long totalClosed) {
+        this.totalClosed = totalClosed;
+    }
+
+    public long getTotalOpen() {
+        return totalOpen;
+    }
+
+    public void setTotalOpen(long totalOpen) {
+        this.totalOpen = totalOpen;
+    }
 }

@@ -46,44 +46,20 @@
  *
  */
 
-package org.egov.search.elasticsearch.entity.bean;
+package org.egov.search.elasticsearch.entity.contracts;
 
-public class Trend {
+import java.util.List;
 
-    private String month;
-    private long totalReceived = 0;
-    private long totalClosed = 0;
-    private long totalOpen = 0;
+public class ServiceGroupTrend extends Trend {
 
-    public String getMonth() {
-        return month;
+    private List<ServiceGroupDetails> serviceGroupDetails;
+
+    public List<ServiceGroupDetails> getServiceGroupDetails() {
+        return serviceGroupDetails;
     }
 
-    public void setMonth(String month) {
-        this.month = month;
+    public void setServiceGroupDetails(final List<ServiceGroupDetails> serviceGroupDetails) {
+        this.serviceGroupDetails = serviceGroupDetails;
     }
 
-    public long getTotalReceived() {
-        return totalReceived;
-    }
-
-    public void setTotalReceived(long totalReceived) {
-        this.totalReceived = totalReceived;
-    }
-
-    public long getTotalClosed() {
-        return totalClosed;
-    }
-
-    public void setTotalClosed(long totalClosed) {
-        this.totalClosed = totalClosed;
-    }
-
-    public long getTotalOpen() {
-        return totalOpen;
-    }
-
-    public void setTotalOpen(long totalOpen) {
-        this.totalOpen = totalOpen;
-    }
 }

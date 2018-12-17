@@ -46,20 +46,26 @@
  *
  */
 
-package org.egov.search.elasticsearch.entity.bean;
+package org.egov.search.elasticsearch.entity.contracts;
 
-import java.util.List;
+public class ServiceDetails {
+    private String serviceName;
+    private long beyondSLA = 0;
 
-public class ServiceGroupTrend extends Trend {
-
-    private List<ServiceGroupDetails> serviceGroupDetails;
-
-    public List<ServiceGroupDetails> getServiceGroupDetails() {
-        return serviceGroupDetails;
+    public String getServiceName() {
+        return serviceName;
     }
 
-    public void setServiceGroupDetails(final List<ServiceGroupDetails> serviceGroupDetails) {
-        this.serviceGroupDetails = serviceGroupDetails;
+    public void setServiceName(final String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    public long getBeyondSLA() {
+        return beyondSLA;
+    }
+
+    public void setBeyondSLA(final long beyondSLA) {
+        this.beyondSLA = beyondSLA;
     }
 
 }

@@ -47,9 +47,9 @@
  */
 package org.egov.dashboard.web.controller;
 
-import org.egov.search.elasticsearch.entity.bean.ApplicationIndexRequest;
-import org.egov.search.elasticsearch.entity.bean.ApplicationIndexResponse;
-import org.egov.search.elasticsearch.entity.bean.ApplicationInfo;
+import org.egov.search.elasticsearch.entity.contracts.ApplicationIndexRequest;
+import org.egov.search.elasticsearch.entity.contracts.ApplicationIndexResponse;
+import org.egov.search.elasticsearch.entity.contracts.ApplicationInfo;
 import org.egov.search.elasticsearch.service.es.ApplicationDocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

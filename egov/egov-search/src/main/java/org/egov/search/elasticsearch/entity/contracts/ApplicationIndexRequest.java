@@ -46,7 +46,7 @@
  *
  */
 
-package org.egov.search.elasticsearch.entity.bean;
+package org.egov.search.elasticsearch.entity.contracts;
 
 public class ApplicationIndexRequest {
 

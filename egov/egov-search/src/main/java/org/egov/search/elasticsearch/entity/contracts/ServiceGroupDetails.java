@@ -46,53 +46,35 @@
  *
  */
 
-package org.egov.search.elasticsearch.entity.bean;
+package org.egov.search.elasticsearch.entity.contracts;
 
-public class SourceTrend extends Trend {
-    private long totalCsc;
-    private long totalMeeseva;
-    private long totalOnline;
-    private long totalUlb;
-    private long totalOthers;
+public class ServiceGroupDetails {
 
-    public long getTotalCsc() {
-        return totalCsc;
+    private String serviceGroup;
+    private long totalReceived = 0;
+    private long totalOpen = 0;
+
+    public String getServiceGroup() {
+        return serviceGroup;
     }
 
-    public void setTotalCsc(final long totalCsc) {
-        this.totalCsc = totalCsc;
+    public void setServiceGroup(final String serviceGroup) {
+        this.serviceGroup = serviceGroup;
     }
 
-    public long getTotalMeeseva() {
-        return totalMeeseva;
+    public long getTotalReceived() {
+        return totalReceived;
     }
 
-    public void setTotalMeeseva(final long totalMeeseva) {
-        this.totalMeeseva = totalMeeseva;
+    public void setTotalReceived(final long totalReceived) {
+        this.totalReceived = totalReceived;
     }
 
-    public long getTotalOnline() {
-        return totalOnline;
+    public long getTotalOpen() {
+        return totalOpen;
     }
 
-    public void setTotalOnline(final long totalOnline) {
-        this.totalOnline = totalOnline;
+    public void setTotalOpen(final long totalOpen) {
+        this.totalOpen = totalOpen;
     }
-
-    public long getTotalUlb() {
-        return totalUlb;
-    }
-
-    public void setTotalUlb(final long totalUlb) {
-        this.totalUlb = totalUlb;
-    }
-
-    public long getTotalOthers() {
-        return totalOthers;
-    }
-
-    public void setTotalOthers(final long totalOthers) {
-        this.totalOthers = totalOthers;
-    }
-
 }
