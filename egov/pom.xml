@@ -299,6 +299,7 @@
         <module>egov-eventnotification</module>
         <module>egov-eventnotificationweb</module>
         <module>egov-pushbox</module>
+        <module>egov-search</module>
     </modules>
 
     <dependencyManagement>

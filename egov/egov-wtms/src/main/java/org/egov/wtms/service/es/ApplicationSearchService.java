@@ -47,7 +47,7 @@
  */
 package org.egov.wtms.service.es;
 
-import org.egov.infra.elasticsearch.entity.ApplicationIndex;
+import org.egov.search.elasticsearch.entity.ApplicationIndex;
 import org.egov.wtms.repository.es.ApplicationSearchRepository;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;

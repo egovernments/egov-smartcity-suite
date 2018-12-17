@@ -50,8 +50,8 @@ package org.egov.wtms.web.controller.es;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.elasticsearch.entity.ApplicationIndex;
-import org.egov.infra.elasticsearch.entity.es.ApplicationDocument;
+import org.egov.search.elasticsearch.entity.ApplicationIndex;
+import org.egov.search.elasticsearch.entity.es.ApplicationDocument;
 import org.egov.wtms.entity.es.ApplicationSearchRequest;
 import org.egov.wtms.service.es.ApplicationSearchService;
 import org.egov.wtms.utils.WaterTaxUtils;

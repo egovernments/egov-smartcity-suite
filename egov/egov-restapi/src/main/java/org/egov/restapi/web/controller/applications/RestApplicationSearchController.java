@@ -55,9 +55,9 @@ import java.util.List;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.elasticsearch.entity.ApplicationIndex;
-import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
-import org.egov.infra.elasticsearch.service.ApplicationIndexService;
+import org.egov.search.elasticsearch.entity.ApplicationIndex;
+import org.egov.search.elasticsearch.entity.enums.ApprovalStatus;
+import org.egov.search.elasticsearch.service.ApplicationIndexService;
 import org.egov.restapi.web.contracts.applications.ApplicationSearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

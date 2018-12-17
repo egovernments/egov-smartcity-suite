@@ -113,7 +113,7 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
-import static org.egov.infra.elasticsearch.utils.ElasticSearchUtils.fixEmptyPage;
+import static org.egov.search.elasticsearch.utils.ElasticSearchUtils.fixEmptyPage;
 import static org.egov.infra.utils.ApplicationConstant.NA;
 import static org.egov.infra.utils.DateUtils.startOfToday;
 import static org.egov.pgr.utils.constants.PGRConstants.*;

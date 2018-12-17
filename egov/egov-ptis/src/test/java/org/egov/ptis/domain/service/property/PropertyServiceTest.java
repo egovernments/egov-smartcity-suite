@@ -57,7 +57,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.elasticsearch.service.ApplicationIndexService;
+import org.egov.search.elasticsearch.service.ApplicationIndexService;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.utils.ApplicationNumberGenerator;
