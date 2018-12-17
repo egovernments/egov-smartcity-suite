@@ -65,9 +65,13 @@ import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ADDRESS;
 import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_MOBILE_NUMBER;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PERSON_NAME;
+import static org.egov.infra.validation.constants.ValidationRegex.ADDRESS;
 import static org.egov.infra.validation.constants.ValidationRegex.EMAIL;
 import static org.egov.infra.validation.constants.ValidationRegex.MOBILE_NUMBER;
+import static org.egov.infra.validation.constants.ValidationRegex.PERSON_NAME;
 import static org.egov.pgr.entity.Complainant.SEQ_COMPLAINANT;
 
 @Entity
@@ -85,6 +89,7 @@ public class Complainant extends AbstractPersistable<Long> {
 
     @Length(max = 150)
     @SafeHtml
+    @Pattern(regexp = PERSON_NAME, message = INVALID_PERSON_NAME)
     private String name;
 
     @Length(max = 10)
@@ -103,6 +108,7 @@ public class Complainant extends AbstractPersistable<Long> {
 
     @Length(max = 256)
     @SafeHtml
+    @Pattern(regexp = ADDRESS, message = INVALID_ADDRESS)
     private String address;
 
     @Override
