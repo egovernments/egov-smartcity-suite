@@ -84,7 +84,7 @@ import org.egov.pgr.entity.ComplaintTypeCategory;
 import org.egov.pgr.entity.ReceivingMode;
 import org.egov.pgr.entity.enums.CitizenFeedback;
 import org.egov.pgr.service.ComplaintHistoryService;
-import org.egov.pgr.service.ComplaintProcessFlowService;
+import org.egov.pgr.service.GrievanceProcessFlowService;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusMappingService;
 import org.egov.pgr.service.ComplaintStatusService;
@@ -195,7 +195,7 @@ public class ComplaintController extends ApiController {
     private PriorityService priorityService;
 
     @Autowired
-    private ComplaintProcessFlowService complaintProcessFlowService;
+    private GrievanceProcessFlowService grievanceProcessFlowService;
 
     @Autowired
     private ComplaintIndexService complaintIndexService;
@@ -441,7 +441,7 @@ public class ComplaintController extends ApiController {
 
             //this condition is only applicable for employee
             if (securityUtils.getCurrentUser().getType().equals(UserType.EMPLOYEE))
-                isSkippableForward = complaintProcessFlowService.canSendToPreviousAssignee(complaint);
+                isSkippableForward = grievanceProcessFlowService.canSendToPreviousAssignee(complaint);
 
             if (complaint == null)
                 return getResponseHandler().error("no complaint information");

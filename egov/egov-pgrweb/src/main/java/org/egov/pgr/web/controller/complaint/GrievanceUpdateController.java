@@ -57,7 +57,7 @@ import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.enums.CitizenFeedback;
 import org.egov.pgr.service.ComplaintHistoryService;
 import org.egov.pgr.service.ComplaintNotificationService;
-import org.egov.pgr.service.ComplaintProcessFlowService;
+import org.egov.pgr.service.GrievanceProcessFlowService;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusMappingService;
 import org.egov.pgr.service.ComplaintTypeService;
@@ -129,7 +129,7 @@ public class GrievanceUpdateController {
     private ComplaintNotificationService complaintNotificationService;
 
     @Autowired
-    private ComplaintProcessFlowService complaintProcessFlowService;
+    private GrievanceProcessFlowService grievanceProcessFlowService;
 
     @Autowired
     private ComplaintValidator complaintValidator;
@@ -143,7 +143,7 @@ public class GrievanceUpdateController {
     public String edit(@ModelAttribute Complaint complaint, Model model) {
         if (complaint == null) {
             return "redirect:/error/404";
-        } else if (complaintProcessFlowService.authorizedToUpdate(complaint)) {
+        } else if (grievanceProcessFlowService.authorizedToUpdate(complaint)) {
             prepareUpdateView(complaint, model);
             return securityUtils.currentUserIsCitizen() ? COMPLAINT_CITIZEN_EDIT : COMPLAINT_EDIT;
         } else {
@@ -187,7 +187,7 @@ public class GrievanceUpdateController {
     private void prepareUpdateView(@ModelAttribute final Complaint complaint, final Model model) {
         model.addAttribute(COMPLAINT_ATTRIB, complaint);
         model.addAttribute("complaintHistory", complaintHistoryService.getComplaintHistory(complaint));
-        model.addAttribute("skippableForward", complaintProcessFlowService.canSendToPreviousAssignee(complaint));
+        model.addAttribute("skippableForward", grievanceProcessFlowService.canSendToPreviousAssignee(complaint));
         model.addAttribute("status", complaintStatusMappingService.getStatusByRoleAndCurrentStatus(securityUtils.getCurrentUser().getRoles(), complaint.getStatus()));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("complaintType", complaintTypeService.findActiveComplaintTypes());

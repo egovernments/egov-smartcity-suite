@@ -56,7 +56,7 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
-import org.egov.pgr.service.ComplaintProcessFlowService;
+import org.egov.pgr.service.GrievanceProcessFlowService;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusService;
 import org.egov.pgr.service.ComplaintTypeService;
@@ -104,7 +104,7 @@ public class ComplaintSearchControllerTest extends AbstractContextControllerTest
     private ReceivingModeService receivingModeService;
 
     @Mock
-    private ComplaintProcessFlowService complaintProcessFlowService;
+    private GrievanceProcessFlowService grievanceProcessFlowService;
 
     @InjectMocks
     private GrievanceSearchController grievanceSearchController;
@@ -130,7 +130,7 @@ public class ComplaintSearchControllerTest extends AbstractContextControllerTest
         final List complaintTypeList = new ArrayList<ComplaintType>();
         when(complaintTypeService.findActiveComplaintTypes()).thenReturn(complaintTypeList);
 
-        when(complaintProcessFlowService.userRoleAuthorizedToUpdate(new User(CITIZEN))).thenReturn(true);
+        when(grievanceProcessFlowService.userRoleAuthorizedToUpdate(new User(CITIZEN))).thenReturn(true);
     }
 
     @Test

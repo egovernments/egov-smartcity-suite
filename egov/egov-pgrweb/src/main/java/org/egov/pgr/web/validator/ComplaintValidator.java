@@ -49,7 +49,7 @@
 package org.egov.pgr.web.validator;
 
 import org.egov.pgr.entity.Complaint;
-import org.egov.pgr.service.ComplaintProcessFlowService;
+import org.egov.pgr.service.GrievanceProcessFlowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -65,7 +65,7 @@ import static org.egov.pgr.utils.constants.PGRConstants.LOCATION_ATTRIB;
 public class ComplaintValidator implements Validator {
 
     @Autowired
-    private ComplaintProcessFlowService complaintProcessFlowService;
+    private GrievanceProcessFlowService grievanceProcessFlowService;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -81,7 +81,7 @@ public class ComplaintValidator implements Validator {
 
         Complaint complaint = (Complaint) target;
 
-        if (!complaintProcessFlowService.authorizedToUpdate(complaint)) {
+        if (!grievanceProcessFlowService.authorizedToUpdate(complaint)) {
             errors.reject("update.not.allowed");
         }
 

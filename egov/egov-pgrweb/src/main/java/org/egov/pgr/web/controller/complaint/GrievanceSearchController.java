@@ -59,7 +59,7 @@ import org.egov.pgr.elasticsearch.entity.contract.ComplaintSearchRequest;
 import org.egov.pgr.elasticsearch.service.ComplaintIndexService;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
-import org.egov.pgr.service.ComplaintProcessFlowService;
+import org.egov.pgr.service.GrievanceProcessFlowService;
 import org.egov.pgr.service.ComplaintStatusService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.service.ReceivingModeService;
@@ -106,7 +106,7 @@ public class GrievanceSearchController {
     private ReceivingModeService receivingModeService;
 
     @Autowired
-    private ComplaintProcessFlowService complaintProcessFlowService;
+    private GrievanceProcessFlowService grievanceProcessFlowService;
 
     @ModelAttribute("complaintTypedropdown")
     public List<ComplaintType> complaintTypes() {
@@ -136,7 +136,7 @@ public class GrievanceSearchController {
 
     @ModelAttribute("hasEditPrivilege")
     public Boolean hasEditPrivilege() {
-        return complaintProcessFlowService.userRoleAuthorizedToUpdate(securityUtils.getCurrentUser());
+        return grievanceProcessFlowService.userRoleAuthorizedToUpdate(securityUtils.getCurrentUser());
     }
 
     @ModelAttribute("employeeposition")

@@ -135,7 +135,7 @@ public class ComplaintService {
     private ComplaintNotificationService complaintNotificationService;
 
     @Autowired
-    private ComplaintProcessFlowService complaintProcessFlowService;
+    private GrievanceProcessFlowService grievanceProcessFlowService;
 
     @Autowired
     private CitizenComplaintDataPublisher citizenComplaintDataPublisher;
@@ -163,7 +163,7 @@ public class ComplaintService {
             if (location != null)
                 complaint.setLocation(location);
         }
-        complaintProcessFlowService.onRegistration(complaint);
+        grievanceProcessFlowService.onRegistration(complaint);
         if (complaint.getComplaintType().getDepartment() != null)
             complaint.setDepartment(complaint.getComplaintType().getDepartment());
         else
@@ -183,7 +183,7 @@ public class ComplaintService {
     @Transactional
     public Complaint updateComplaint(Complaint complaint) {
         if (complaint.inprogress() || complaint.reopened())
-            complaintProcessFlowService.onUpdation(complaint);
+            grievanceProcessFlowService.onUpdation(complaint);
         if (complaint.getComplaintType().getDepartment() == null)
             complaint.setDepartment(complaint.getAssignee().getDeptDesig().getDepartment());
         else

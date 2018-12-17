@@ -50,7 +50,7 @@ package org.egov.pgr.web.controller.complaint;
 
 import org.egov.eis.entity.EmployeeView;
 import org.egov.infra.utils.JsonUtils;
-import org.egov.pgr.service.ComplaintProcessFlowService;
+import org.egov.pgr.service.GrievanceProcessFlowService;
 import org.egov.pgr.web.contracts.response.ProcessOwnerResponseAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -63,13 +63,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class GrievanceProcessOwnerSelectionController {
 
     @Autowired
-    private ComplaintProcessFlowService complaintProcessFlowService;
+    private GrievanceProcessFlowService grievanceProcessFlowService;
 
     @GetMapping(value = "/grievance/process-owners", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String getPositions(@RequestParam Long approvalDepartment, @RequestParam Long approvalDesignation) {
         if (approvalDepartment > 0 && approvalDesignation > 0)
-            return JsonUtils.toJSON(complaintProcessFlowService.validProcessOwners(approvalDepartment, approvalDesignation),
+            return JsonUtils.toJSON(grievanceProcessFlowService.authorizedProcessOwners(approvalDepartment, approvalDesignation),
                     EmployeeView.class, ProcessOwnerResponseAdaptor.class);
         return "[]";
     }

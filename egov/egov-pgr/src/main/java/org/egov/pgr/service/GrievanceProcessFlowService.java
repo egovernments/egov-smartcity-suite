@@ -54,6 +54,7 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationValidationException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.service.OwnerGroupService;
 import org.egov.pgr.entity.Complaint;
@@ -77,7 +78,7 @@ import static org.egov.pgr.utils.constants.PGRConstants.GRO_ROLE_NAME;
 import static org.egov.pgr.utils.constants.PGRConstants.RO_ROLE_NAME;
 
 @Service
-public class ComplaintProcessFlowService {
+public class GrievanceProcessFlowService {
 
     private static final String GRIEVANCE_REG_COMMENT = "Grievance registered with CRN : %s";
 
@@ -122,7 +123,7 @@ public class ComplaintProcessFlowService {
                 .withOwner(assignee);
         complaint.setAssignee(assignee);
         complaint.setEscalationDate(escalationService.getExpiryDate(complaint));
-        assignCurrentOwner(complaint);
+        assignProcessOwner(complaint);
     }
 
     public void onUpdation(Complaint complaint) {
@@ -149,7 +150,7 @@ public class ComplaintProcessFlowService {
                         .withOwner(complaint.getState().getOwnerPosition());
             }
         } else if (!complaint.transitionCompleted() && complaint.hasNextOwner()) {
-            Position owner = positionMasterService.getPositionById(complaint.nextOwnerId());
+            Position owner = validateAndGetProcessOwner(complaint.nextOwnerId());
             complaint.setAssignee(owner);
             complaint.transition()
                     .progressWithStateCopy()
@@ -161,7 +162,7 @@ public class ComplaintProcessFlowService {
             Position nextAssignee = complaint.previousAssignee();
             complaint.setDepartment(nextAssignee.getDeptDesig().getDepartment());
             complaint.setAssignee(nextAssignee);
-            assignCurrentOwner(complaint);
+            assignProcessOwner(complaint);
             complaint.transition()
                     .progressWithStateCopy()
                     .withComments(complaint.approverComment())
@@ -207,7 +208,7 @@ public class ComplaintProcessFlowService {
         return user.hasAnyRole(grievanceConfigurationService.updateAllowedRoles());
     }
 
-    public Set<EmployeeView> validProcessOwners(Long department, Long designation) {
+    public Set<EmployeeView> authorizedProcessOwners(Long department, Long designation) {
         String currentUserName = securityUtils.getCurrentUser().getUsername();
         HashMap<String, String> params = new HashMap<>();
         params.put("departmentId", String.valueOf(department));
@@ -219,7 +220,7 @@ public class ComplaintProcessFlowService {
                 .collect(Collectors.toSet());
     }
 
-    private void assignCurrentOwner(Complaint complaint) {
+    private void assignProcessOwner(Complaint complaint) {
         List<Assignment> assignments = assignmentService.getAssignmentsForPosition(complaint.getAssignee().getId(), new Date());
         complaint.setCurrentOwner(assignments.isEmpty() ? null : assignments.get(0).getEmployee());
         if (complaint.getCurrentOwner() == null) {
@@ -228,5 +229,15 @@ public class ComplaintProcessFlowService {
             if (grievanceOfficers.hasNext())
                 complaint.setCurrentOwner(grievanceOfficers.next());
         }
+    }
+
+    private Position validateAndGetProcessOwner(Long ownerId) {
+        Position owner = positionMasterService.getPositionById(ownerId);
+        if (owner != null) {
+            User user = eisService.getUserForPosition(ownerId, new Date());
+            if (user != null && user.hasAnyRole(RO_ROLE_NAME, GO_ROLE_NAME, GRO_ROLE_NAME))
+                return owner;
+        }
+        throw new ApplicationValidationException("PGR.003");
     }
 }
