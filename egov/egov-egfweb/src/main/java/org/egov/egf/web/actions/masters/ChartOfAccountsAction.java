@@ -323,10 +323,12 @@ public class ChartOfAccountsAction extends BaseFormAction {
     }
 
     boolean hasReference(final Integer id, final String glCode) {
-        final NativeQuery query = persistenceService.getSession().createNativeQuery(
-                "select * from chartofaccounts c,generalledger gl,generalledgerdetail gd " +
-                        "where c.glcode='" + glCode + "' and gl.glcodeid=c.id and gd.generalledgerid=gl.id and gd.DETAILTYPEID="
-                        + id);
+        StringBuilder queryString = new StringBuilder("select * from chartofaccounts c,generalledger gl,generalledgerdetail gd ")
+                .append("where c.glcode='")
+                .append(glCode)
+                .append("' and gl.glcodeid=c.id and gd.generalledgerid=gl.id and gd.DETAILTYPEID=")
+                .append(id);
+        final NativeQuery query = persistenceService.getSession().createNativeQuery(queryString.toString());
         final List list = query.list();
         if (list != null && list.size() > 0)
             return true;
@@ -336,10 +338,12 @@ public class ChartOfAccountsAction extends BaseFormAction {
     boolean validAddtition(final String glCode) {
         boolean flag=true;
         final StringBuffer strQuery = new StringBuffer();
-        strQuery.append("select bd.billid from  eg_billdetails bd, chartofaccounts coa,  eg_billregistermis brm where coa.glcode = '"
-                + glCode + "' and bd.glcodeid = coa.id and brm.billid = bd.billid and brm.voucherheaderid is null ");
-        strQuery.append(" intersect SELECT br.id FROM eg_billregister br, eg_billdetails bd, chartofaccounts coa,egw_status  sts WHERE coa.glcode = '"
-                + glCode + "' AND bd.glcodeid = coa.id AND br.id= bd.billid AND br.statusid=sts.id ");
+        strQuery.append("select bd.billid from  eg_billdetails bd, chartofaccounts coa,  eg_billregistermis brm where coa.glcode = '")
+                .append(glCode)
+                .append( "' and bd.glcodeid = coa.id and brm.billid = bd.billid and brm.voucherheaderid is null ");
+        strQuery.append(" intersect SELECT br.id FROM eg_billregister br, eg_billdetails bd, chartofaccounts coa,egw_status  sts WHERE coa.glcode = '")
+                .append(glCode)
+                .append("' AND bd.glcodeid = coa.id AND br.id= bd.billid AND br.statusid=sts.id ");
         strQuery.append(" and sts.id not in (select id from egw_status where upper(moduletype) like '%BILL%' and upper(description) like '%CANCELLED%') ");
         final NativeQuery query = persistenceService.getSession().createNativeQuery(strQuery.toString());
         final List list = query.list();

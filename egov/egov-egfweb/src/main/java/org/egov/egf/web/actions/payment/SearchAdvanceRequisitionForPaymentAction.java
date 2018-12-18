@@ -112,14 +112,13 @@ public class SearchAdvanceRequisitionForPaymentAction extends SearchFormAction {
         final StringBuffer query = new StringBuffer(700);
         final List<Object> paramList = new ArrayList<Object>();
         final HashMap<String, Object> queryAndParams = new HashMap<String, Object>();
-        query.append("from EgAdvanceRequisition arf where arf.arftype = ?1 and arf.status.code = ?2 and "
-                +
-                " NOT EXISTS (select 1 from CVoucherHeader vh where vh.id=arf.egAdvanceReqMises.voucherheader.id and arf.egAdvanceReqMises.voucherheader.status<>4) ");
+        query.append("from EgAdvanceRequisition arf where arf.arftype = ?1 and arf.status.code = ?2 and ")
+                .append(" NOT EXISTS (select 1 from CVoucherHeader vh where vh.id=arf.egAdvanceReqMises.voucherheader.id and arf.egAdvanceReqMises.voucherheader.status<>4) ");
         paramList.add(ARF_TYPE);
         paramList.add(ARF_STATUS_APPROVED);
 
         if (StringUtils.isNotBlank(arfNumber)) {
-            query.append(" and UPPER(arf.advanceRequisitionNumber) like '%'||?||'%'");
+            query.append(" and UPPER(arf.advanceRequisitionNumber) like '%'||?1||'%'");
             paramList.add(StringUtils.trim(arfNumber).toUpperCase());
         }
 

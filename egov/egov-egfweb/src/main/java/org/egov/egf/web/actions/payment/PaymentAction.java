@@ -453,19 +453,19 @@ public class PaymentAction extends BasePaymentAction {
          * "  or(select count(*) from Miscbilldetail where payVoucherHeader.status!=4 and billVoucherHeader in " +
          * " (select voucherHeader from EgBillregistermis where egBillregister.id = bill.id ) )=0 ) " ;
          */
-        final String mainquery = "from EgBillregister bill where bill.expendituretype=?1 and bill.egBillregistermis.voucherHeader.status=0 "
-                + " and bill.passedamount > (select SUM(misc.paidamount) from Miscbilldetail misc where misc.billVoucherHeader = bill.egBillregistermis.voucherHeader "
-                + " and misc.payVoucherHeader.status in (0,5))";
+        final StringBuilder mainquery = new StringBuilder("from EgBillregister bill where bill.expendituretype=?1 and bill.egBillregistermis.voucherHeader.status=0 ")
+                .append(" and bill.passedamount > (select SUM(misc.paidamount) from Miscbilldetail misc where misc.billVoucherHeader = bill.egBillregistermis.voucherHeader ")
+                .append(" and misc.payVoucherHeader.status in (0,5))");
 
-        final String mainquery1 = "from EgBillregister bill where bill.expendituretype=?1 and bill.egBillregistermis.voucherHeader.status=0 "
-                + " and bill.egBillregistermis.voucherHeader NOT IN (select misc.billVoucherHeader from Miscbilldetail misc where misc.billVoucherHeader is not null and misc.payVoucherHeader.status <> 4)";
+        final StringBuilder mainquery1 = new StringBuilder("from EgBillregister bill where bill.expendituretype=?1 and bill.egBillregistermis.voucherHeader.status=0 ")
+               .append(" and bill.egBillregistermis.voucherHeader NOT IN (select misc.billVoucherHeader from Miscbilldetail misc where misc.billVoucherHeader is not null and misc.payVoucherHeader.status <> 4)");
 
         if (disableExpenditureType == true && enablePensionType == false
                 || expType != null && !expType.equals("-1") && expType.equals("Salary"))
-            return salaryBills(sql, mainquery, mainquery1);
+            return salaryBills(sql, mainquery.toString(), mainquery1.toString());
         if (disableExpenditureType == true && enablePensionType == true
                 || expType != null && !expType.equals("-1") && expType.equals("Pension"))
-            return pensionBills(sql, mainquery, mainquery1);
+            return pensionBills(sql, mainquery.toString(), mainquery1.toString());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("start purchase bill");
         if (expType == null || expType.equals("-1") || expType.equals("Purchase")) {
@@ -477,8 +477,8 @@ public class PaymentAction extends BasePaymentAction {
             else
                 statusCheck = " and bill.status in (" + egwStatus.getId() + "," + egwStatus1.getId() + ") ";
 
-            final String supplierBillSql = mainquery + statusCheck + sql.toString() + " order by bill.billdate desc";
-            final String supplierBillSql1 = mainquery1 + statusCheck + sql.toString() + " order by bill.billdate desc";
+            final String supplierBillSql = mainquery.toString() + statusCheck + sql.toString() + " order by bill.billdate desc";
+            final String supplierBillSql1 = mainquery1.toString() + statusCheck + sql.toString() + " order by bill.billdate desc";
             supplierBillList = getPersistenceService().findPageBy(supplierBillSql, 1, 500, "Purchase").getList();
             if (supplierBillList != null)
                 supplierBillList
@@ -509,8 +509,8 @@ public class PaymentAction extends BasePaymentAction {
             else
                 statusCheck = " and bill.status in (" + egwStatus.getId() + "," + egwStatus1.getId() + ") ";
 
-            final String contractorBillSql = mainquery + statusCheck + sql.toString() + " order by bill.billdate desc";
-            final String contractorBillSql1 = mainquery1 + statusCheck + sql.toString()
+            final String contractorBillSql = mainquery.toString() + statusCheck + sql.toString() + " order by bill.billdate desc";
+            final String contractorBillSql1 = mainquery1.toString() + statusCheck + sql.toString()
                     + " order by bill.billdate desc";
             contractorBillList = getPersistenceService().findPageBy(contractorBillSql, 1, 500, "Works").getList();
             if (contractorBillList != null)
@@ -532,24 +532,24 @@ public class PaymentAction extends BasePaymentAction {
         if (expType == null || expType.equals("-1")
                 || expType.equals(FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT)) {
 
-            final String cBillmainquery = "from EgBillregister bill left join fetch bill.egBillregistermis.egBillSubType egBillSubType where (egBillSubType is null or egBillSubType.name not in ('"
-                    + FinancialConstants.BILLSUBTYPE_TNEBBILL
-                    + "')) and bill.expendituretype=?1 and bill.egBillregistermis.voucherHeader.status=0 "
-                    + " and bill.passedamount > (select SUM(misc.paidamount) from Miscbilldetail misc where misc.billVoucherHeader = bill.egBillregistermis.voucherHeader "
-                    + " and misc.payVoucherHeader.status in (0,5))";
+            final StringBuilder cBillmainquery = new StringBuilder("from EgBillregister bill left join fetch bill.egBillregistermis.egBillSubType egBillSubType where (egBillSubType is null or egBillSubType.name not in ('")
+                    .append(FinancialConstants.BILLSUBTYPE_TNEBBILL)
+                    .append("')) and bill.expendituretype=?1 and bill.egBillregistermis.voucherHeader.status=0 ")
+                    .append(" and bill.passedamount > (select SUM(misc.paidamount) from Miscbilldetail misc where misc.billVoucherHeader = bill.egBillregistermis.voucherHeader ")
+                    .append(" and misc.payVoucherHeader.status in (0,5))");
 
-            final String cBillmainquery1 = "from EgBillregister bill left join fetch bill.egBillregistermis.egBillSubType egBillSubType where (egBillSubType is null or egBillSubType.name not in ('"
-                    + FinancialConstants.BILLSUBTYPE_TNEBBILL
-                    + "')) and bill.expendituretype=?1 and bill.egBillregistermis.voucherHeader.status=0 "
-                    + " and bill.egBillregistermis.voucherHeader NOT IN (select misc.billVoucherHeader from Miscbilldetail misc where misc.billVoucherHeader is not null and misc.payVoucherHeader.status <> 4)";
+            final StringBuilder cBillmainquery1 = new StringBuilder("from EgBillregister bill left join fetch bill.egBillregistermis.egBillSubType egBillSubType where (egBillSubType is null or egBillSubType.name not in ('")
+                    .append(FinancialConstants.BILLSUBTYPE_TNEBBILL)
+                    .append("')) and bill.expendituretype=?1 and bill.egBillregistermis.voucherHeader.status=0 ")
+                    .append(" and bill.egBillregistermis.voucherHeader NOT IN (select misc.billVoucherHeader from Miscbilldetail misc where misc.billVoucherHeader is not null and misc.payVoucherHeader.status <> 4)");
 
             egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode("EXPENSEBILL", "Approved"); // for
                                                                                                    // financial
                                                                                                    // expense
                                                                                                    // bills
-            final String cBillSql = cBillmainquery + " and bill.status in (?1) " + sql.toString()
+            final String cBillSql = cBillmainquery.toString() + " and bill.status in (?1) " + sql.toString()
                     + " order by bill.billdate desc";
-            final String cBillSql1 = cBillmainquery1 + " and bill.status in (?1) " + sql.toString()
+            final String cBillSql1 = cBillmainquery1.toString() + " and bill.status in (?1) " + sql.toString()
                     + " order by bill.billdate desc";
             contingentBillList = getPersistenceService()
                     .findPageBy(cBillSql, 1, 500, FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, egwStatus)
@@ -635,17 +635,21 @@ public class PaymentAction extends BasePaymentAction {
         final EgwStatus egwStatus1 = egwStatusHibernateDAO.getStatusByModuleAndCode("SBILL", "Approved"); // for
                                                                                                           // external
                                                                                                           // systems
-        final String sBillSql = mainquery + " and bill.status in (?1,?2) " + sql.toString()
-                + " order by bill.billdate desc";
-        final String sBillSql1 = mainquery1 + " and bill.status in (?1,?2) " + sql.toString()
-                + " order by bill.billdate desc";
-        salaryBillList = getPersistenceService().findAllBy(sBillSql, FinancialConstants.STANDARD_EXPENDITURETYPE_SALARY,
+        final StringBuilder sBillSql = new StringBuilder(mainquery)
+                    .append(" and bill.status in (?1,?2) ")
+                    .append(sql.toString())
+                    .append(" order by bill.billdate desc");
+        final StringBuilder sBillSql1 = new StringBuilder(mainquery1)
+                    .append(" and bill.status in (?1,?2) ")
+                    .append(sql.toString())
+                    .append(" order by bill.billdate desc");
+        salaryBillList = getPersistenceService().findAllBy(sBillSql.toString(), FinancialConstants.STANDARD_EXPENDITURETYPE_SALARY,
                 egwStatus, egwStatus1);
         if (salaryBillList != null)
-            salaryBillList.addAll(getPersistenceService().findAllBy(sBillSql1,
+            salaryBillList.addAll(getPersistenceService().findAllBy(sBillSql1.toString(),
                     FinancialConstants.STANDARD_EXPENDITURETYPE_SALARY, egwStatus, egwStatus1));
         else
-            salaryBillList = getPersistenceService().findAllBy(sBillSql1,
+            salaryBillList = getPersistenceService().findAllBy(sBillSql1.toString(),
                     FinancialConstants.STANDARD_EXPENDITURETYPE_SALARY, egwStatus, egwStatus1);
         final Set<EgBillregister> tempBillList = new LinkedHashSet<EgBillregister>(salaryBillList);
         salaryBillList.clear();
@@ -667,17 +671,21 @@ public class PaymentAction extends BasePaymentAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting pensionBills...");
         final EgwStatus egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode("PENSIONBILL", "Approved");
-        final String pBillSql = mainquery + " and bill.status in (?1) " + sql.toString()
-                + " order by bill.billdate desc";
-        final String pBillSql1 = mainquery1 + " and bill.status in (?1) " + sql.toString()
-                + " order by bill.billdate desc";
-        pensionBillList = getPersistenceService().findAllBy(pBillSql,
+        final StringBuilder pBillSql = new StringBuilder(mainquery)
+                    .append(" and bill.status in (?1) ")
+                    .append(sql.toString())
+                    .append(" order by bill.billdate desc");
+        final StringBuilder pBillSql1 = new StringBuilder(mainquery1)
+                    .append(" and bill.status in (?1) ")
+                    .append(sql.toString())
+                    .append(" order by bill.billdate desc");
+        pensionBillList = getPersistenceService().findAllBy(pBillSql.toString(),
                 FinancialConstants.STANDARD_EXPENDITURETYPE_PENSION, egwStatus);
         if (pensionBillList != null)
-            pensionBillList.addAll(getPersistenceService().findAllBy(pBillSql1,
+            pensionBillList.addAll(getPersistenceService().findAllBy(pBillSql1.toString(),
                     FinancialConstants.STANDARD_EXPENDITURETYPE_PENSION, egwStatus));
         else
-            pensionBillList = getPersistenceService().findAllBy(pBillSql1,
+            pensionBillList = getPersistenceService().findAllBy(pBillSql1.toString(),
                     FinancialConstants.STANDARD_EXPENDITURETYPE_PENSION, egwStatus);
         final Set<EgBillregister> tempBillList = new LinkedHashSet<EgBillregister>(pensionBillList);
         pensionBillList.clear();
@@ -714,12 +722,12 @@ public class PaymentAction extends BasePaymentAction {
         if (voucherHeader.getVouchermis().getFunction() != null)
             sql.append(" and bill.egBillregistermis.function=" + voucherHeader.getVouchermis().getFunction().getId());
 
-        final String tnebSqlMainquery = "select bill from EgBillregister bill , EBDetails ebd   where  bill.id = ebd.egBillregister.id and bill.expendituretype=?1 and bill.egBillregistermis.voucherHeader.status=0 "
-                + " and bill.passedamount > (select SUM(misc.paidamount) from Miscbilldetail misc where misc.billVoucherHeader = bill.egBillregistermis.voucherHeader "
-                + " and misc.payVoucherHeader.status in (0,5))";
+        final StringBuilder tnebSqlMainquery = new StringBuilder("select bill from EgBillregister bill , EBDetails ebd   where  bill.id = ebd.egBillregister.id and bill.expendituretype=?1 and bill.egBillregistermis.voucherHeader.status=0 ")
+                .append(" and bill.passedamount > (select SUM(misc.paidamount) from Miscbilldetail misc where misc.billVoucherHeader = bill.egBillregistermis.voucherHeader ")
+                .append(" and misc.payVoucherHeader.status in (0,5))");
 
-        final String tnebSqlMainquery1 = "select bill from EgBillregister bill , EBDetails ebd  where  bill.id = ebd.egBillregister.id and bill.expendituretype=?1 and bill.egBillregistermis.voucherHeader.status=0 "
-                + " and bill.egBillregistermis.voucherHeader NOT IN (select misc.billVoucherHeader from Miscbilldetail misc where misc.billVoucherHeader is not null and misc.payVoucherHeader.status <> 4)";
+        final StringBuilder tnebSqlMainquery1 = new StringBuilder("select bill from EgBillregister bill , EBDetails ebd  where  bill.id = ebd.egBillregister.id and bill.expendituretype=?1 and bill.egBillregistermis.voucherHeader.status=0 ")
+                .append(" and bill.egBillregistermis.voucherHeader NOT IN (select misc.billVoucherHeader from Miscbilldetail misc where misc.billVoucherHeader is not null and misc.payVoucherHeader.status <> 4)");
         if (billSubType != null && !billSubType.equalsIgnoreCase(""))
             sql.append(" and bill.egBillregistermis.egBillSubType.name='" + billSubType + "'");
         if (region != null && !region.equalsIgnoreCase(""))
@@ -735,17 +743,18 @@ public class PaymentAction extends BasePaymentAction {
         final EgwStatus egwStatus1 = egwStatusHibernateDAO.getStatusByModuleAndCode("CBILL", "APPROVED"); // for
                                                                                                           // external
                                                                                                           // systems
-        final String tnebBillSql = tnebSqlMainquery + " and bill.status in (?1,?2) " + sql.toString()
-                + " order by bill.billdate desc";
-        final String tnebBillSql1 = tnebSqlMainquery1 + " and bill.status in (?1,?2) " + sql.toString()
-                + " order by bill.billdate desc";
-        contingentBillList = getPersistenceService().findPageBy(tnebBillSql, 1, 500,
+        final StringBuilder tnebBillSql = new StringBuilder(tnebSqlMainquery.toString())
+        .append(" and bill.status in (?1,?2) ").append(sql.toString())
+                .append(" order by bill.billdate desc");
+        final StringBuilder tnebBillSql1 = new StringBuilder(tnebSqlMainquery1.toString()).append(" and bill.status in (?1,?2) ").append(sql.toString())
+                .append(" order by bill.billdate desc");
+        contingentBillList = getPersistenceService().findPageBy(tnebBillSql.toString(), 1, 500,
                 FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, egwStatus, egwStatus1).getList();
         if (contingentBillList != null)
-            contingentBillList.addAll(getPersistenceService().findPageBy(tnebBillSql1, 1, 500,
+            contingentBillList.addAll(getPersistenceService().findPageBy(tnebBillSql1.toString(), 1, 500,
                     FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, egwStatus, egwStatus1).getList());
         else
-            contingentBillList = getPersistenceService().findPageBy(tnebBillSql1, 1, 500,
+            contingentBillList = getPersistenceService().findPageBy(tnebBillSql1.toString(), 1, 500,
                     FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, egwStatus, egwStatus1).getList();
         final Set<EgBillregister> tempBillList = new LinkedHashSet<EgBillregister>(contingentBillList);
         contingentBillList.clear();
@@ -1225,11 +1234,12 @@ public class PaymentAction extends BasePaymentAction {
             sql.append(" and ph.voucherheader.vouchermis.divisionid.id="
                     + voucherHeader.getVouchermis().getDivisionid().getId());
 
-        paymentheaderList = getPersistenceService().findAllBy(
-                " from Paymentheader ph where ph.voucherheader.status=0 and (ph.voucherheader.isConfirmed=null or ph.voucherheader.isConfirmed=0) "
-                        + sql.toString()
-                        + "  and ph.voucherheader.id not in (select iv.voucherHeaderId.id from InstrumentVoucher iv where iv.instrumentHeaderId in (from InstrumentHeader ih where ih.statusId.id in ("
-                        + statusId + ") ))");
+        StringBuilder queryString = new StringBuilder(" from Paymentheader ph where ph.voucherheader.status=0 and (ph.voucherheader.isConfirmed=null or ph.voucherheader.isConfirmed=0) ")
+                .append(sql.toString())
+                .append("  and ph.voucherheader.id not in (select iv.voucherHeaderId.id from InstrumentVoucher iv where iv.instrumentHeaderId in (from InstrumentHeader ih where ih.statusId.id in (")
+                .append(statusId)
+                .append(") ))");
+        paymentheaderList = getPersistenceService().findAllBy(queryString.toString());
         action = LIST;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed list...");

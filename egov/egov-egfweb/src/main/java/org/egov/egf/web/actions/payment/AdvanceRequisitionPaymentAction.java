@@ -219,16 +219,18 @@ public class AdvanceRequisitionPaymentAction extends BaseVoucherAction {
 
     private void populateBanks() {
         if (bankaccount.getId() != null)
-            addDropdownData("bankList", persistenceService.findAllBy("from Bankbranch bb where " +
-                    "bb.isactive=true and bb.bank.isactive=true order by bb.bank.name"));
+            addDropdownData("bankList", persistenceService.findAllBy("from Bankbranch bb where bb.isactive=true and bb.bank.isactive=true order by bb.bank.name"));
     }
 
     private void populateBankAccounts() {
+        StringBuilder queryString = new StringBuilder("from Bankaccount ba where ba.bankbranch.id=?1 and ba.fund.id=?2 ")
+                .append("and ba.isactive=true order by ba.chartofaccounts.glcode")
+                .append(",")
+                .append(bankaccount.getBankbranch().getId())
+                .append(",")
+                .append(bankaccount.getFund().getId());
         if (bankaccount.getId() != null)
-            addDropdownData("accNumList", persistenceService.findAllBy(
-                    "from Bankaccount ba where ba.bankbranch.id=?1 and ba.fund.id=?2 " +
-                            "and ba.isactive=true order by ba.chartofaccounts.glcode", bankaccount.getBankbranch().getId(),
-                            bankaccount.getFund().getId()));
+            addDropdownData("accNumList", persistenceService.findAllBy(queryString.toString()));
     }
 
     void loadApproverUser() {

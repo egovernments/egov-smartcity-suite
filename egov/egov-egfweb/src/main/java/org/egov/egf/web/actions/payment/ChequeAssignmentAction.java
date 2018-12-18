@@ -542,14 +542,15 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     @Action(value = "/payment/chequeAssignment-getReceiptDetails")
     public String getReceiptDetails() {
         Query query = null;
+        StringBuilder queryString = new StringBuilder("select  vh.id as voucherid ,vh.voucherNumber as voucherNumber ,")
+                .append(" redtl.remittedamt as receiptAmount,redtl.remittedamt as deductedAmount")
+                .append(" FROM voucherheader vh,eg_remittance re,eg_remittance_detail redtl,generalledger gl")
+                .append(" WHERE re.paymentvhid = ")
+                .append(paymentId)
+                .append(" AND re.id = redtl.remittanceid AND redtl.generalledgerid = gl.id AND gl.voucherheaderid =  ")
+                .append("  vh.id group by vh.id,vh.voucherNumber,redtl.remittedamt order by vh.voucherNumber");
         query = persistenceService.getSession()
-                .createNativeQuery(
-                        "select  vh.id as voucherid ,vh.voucherNumber as voucherNumber ," +
-                                " redtl.remittedamt as receiptAmount,redtl.remittedamt as deductedAmount" +
-                                " FROM voucherheader vh,eg_remittance re,eg_remittance_detail redtl,generalledger gl" +
-                                " WHERE re.paymentvhid = " + paymentId
-                                + " AND re.id = redtl.remittanceid AND redtl.generalledgerid = gl.id AND gl.voucherheaderid =  " +
-                                "  vh.id group by vh.id,vh.voucherNumber,redtl.remittedamt order by vh.voucherNumber")
+                .createNativeQuery(queryString.toString())
                 .addScalar("voucherid").addScalar("voucherNumber")
                 .addScalar("receiptAmount").addScalar("deductedAmount")
                 .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
@@ -758,38 +759,39 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         try {
             if (bankaccount != null) {
                 if (department != null) {
-                    final List<Object[]> yearCodes = persistenceService
-                            .findAllBy(
-                                    "select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd  where ac.serialNo = fs.id and  bankAccountId=?1"
-                                            + "and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where id = "
-                                            + department + ")"
-                                            + " order by serialNo desc ",
-                                    bankaccount);
+                    StringBuilder query = new StringBuilder("select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd  where ac.serialNo = fs.id and  bankAccountId=?1")
+                                            .append("and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where id = ")
+                                            .append(department)
+                                            .append(" order by serialNo desc ")
+                                            .append(",")
+                                            .append(bankaccount);
+                    final List<Object[]> yearCodes = persistenceService.findAllBy(query.toString());
 
                     if (yearCodes != null) {
                         for (final Object[] s : yearCodes)
                             chequeSlNoMap.put(s[0], s[1]);
                     }
                 } else if (departmentId != null) {
-                    final List<Object[]> yearCodes = persistenceService
-                            .findAllBy(
-                                    "select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd  where ac.serialNo = fs.id and  bankAccountId=?1"
-                                            + "and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where id = "
-                                            + departmentId + ")"
-                                            + " order by serialNo desc ",
-                                    bankaccount);
+                    StringBuilder queryString = new StringBuilder("select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd  where ac.serialNo = fs.id and  bankAccountId=?1")
+                            .append("and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where id = ")
+                            .append(departmentId)
+                            .append(" order by serialNo desc ")
+                            .append(",")
+                            .append(bankaccount);
+                    final List<Object[]> yearCodes = persistenceService.findAllBy(queryString.toString());
 
                     if (yearCodes != null) {
                         for (final Object[] s : yearCodes)
                             chequeSlNoMap.put(s[0], s[1]);
                     }
                 } else {
+                    StringBuilder query1 = new StringBuilder("select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd  where ac.serialNo = fs.id and  bankAccountId=?1")
+                            .append("and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where upper(name) = 'ACCOUNTS')")
+                            .append(" order by serialNo desc ")
+                            .append(",")
+                            .append(bankaccount);
                     final List<Object[]> yearCodes = persistenceService
-                            .findAllBy(
-                                    "select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd  where ac.serialNo = fs.id and  bankAccountId=?1"
-                                            + "and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where upper(name) = 'ACCOUNTS')"
-                                            + " order by serialNo desc ",
-                                    bankaccount);
+                            .findAllBy(query1.toString());
 
                     if (yearCodes != null) {
                         for (final Object[] s : yearCodes)

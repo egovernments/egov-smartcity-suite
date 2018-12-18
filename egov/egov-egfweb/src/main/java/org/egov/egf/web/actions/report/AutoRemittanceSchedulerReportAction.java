@@ -127,10 +127,8 @@ public class AutoRemittanceSchedulerReportAction extends SearchFormAction {
 
     private String getSearchQuery() {
         paramList = new ArrayList<Object>();
-        String queryBeginning = " ";
-        queryBeginning = "select distinct (SELECT COUNT(sp.schId)  from RemittanceSchedulePayment sp  WHERE sp.schId = s.id) AS COUNT, "
-                +
-                "s.schJobName,s.lastRunDate, s.schType, s.glcode, s.status, s.remarks,s.id from RemittanceSchedulerLog as s ";
+        StringBuilder queryBeginning = new StringBuilder("select distinct (SELECT COUNT(sp.schId)  from RemittanceSchedulePayment sp  WHERE sp.schId = s.id) AS COUNT, ")
+                .append("s.schJobName,s.lastRunDate, s.schType, s.glcode, s.status, s.remarks,s.id from RemittanceSchedulerLog as s ");
 
         if (schedulerType.equals("Auto")) {
             dynQuery.append(" where  s.schType=?1");
@@ -162,7 +160,7 @@ public class AutoRemittanceSchedulerReportAction extends SearchFormAction {
         }
 
         dynQuery.append(" order by lastRunDate desc");
-        return queryBeginning + dynQuery.toString();
+        return queryBeginning.toString() + dynQuery.toString();
     }
 
     public String searchList() {

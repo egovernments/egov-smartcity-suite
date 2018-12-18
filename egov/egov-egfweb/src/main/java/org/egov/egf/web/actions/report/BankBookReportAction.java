@@ -533,14 +533,13 @@ public class BankBookReportAction extends BaseFormAction {
     }
 
     private void getInstrumentsByVoucherIds() {
-        String mainQuery = "";
-        mainQuery = "SELECT vh2.id,ih2.instrumentnumber,es2.code,ih2.id as instrumentHeaderId ,ih2.instrumentdate, ih2.transactionnumber, ih2.transactiondate";
+        StringBuilder mainQuery = new StringBuilder("SELECT vh2.id,ih2.instrumentnumber,es2.code,ih2.id as instrumentHeaderId ,ih2.instrumentdate, ih2.transactionnumber, ih2.transactiondate");
         getInstrumentsByVoucherIdsQuery = " FROM VOUCHERHEADER vh2,egf_instrumentvoucher iv2 ,egf_instrumentheader ih2 ,egw_status es2 WHERE vh2.id = iv2.voucherheaderid AND iv2.instrumentheaderid=ih2.id"
                 +
                 " AND ih2.id_status = es2.id AND vh2.id in (select vh.id as vhId" + queryFrom + ")";
-        mainQuery = mainQuery + getInstrumentsByVoucherIdsQuery;
+        mainQuery = mainQuery.append(getInstrumentsByVoucherIdsQuery);
 
-        final List<Object[]> objs = persistenceService.getSession().createNativeQuery(mainQuery).list();
+        final List<Object[]> objs = persistenceService.getSession().createNativeQuery(mainQuery.toString()).list();
 
         for (final Object[] obj : objs)
             if (voucherIdAndInstrumentMap.containsKey(getLongValue(obj[0])))
@@ -553,17 +552,13 @@ public class BankBookReportAction extends BaseFormAction {
     }
 
     private void getInstrumentVouchersByInstrumentHeaderIds() {
+        StringBuilder queryString = new StringBuilder("SELECT ih.id,vh1.id as voucherHeaderId")
+                .append(" FROM VOUCHERHEADER vh1,egf_instrumentvoucher iv ,egf_instrumentheader ih,egw_status es1 WHERE vh1.id = iv.voucherheaderid AND iv.instrumentheaderid=ih.id")
+                .append(" AND ih.id_status = es1.id AND ih.id in (select ih2.id as instrHeaderId ")
+                .append(getInstrumentsByVoucherIdsQuery)
+                .append(")");
 
-        final List<Object[]> objs = persistenceService
-                .getSession()
-                .createNativeQuery(
-                        "SELECT ih.id,vh1.id as voucherHeaderId"
-                                +
-                                " FROM VOUCHERHEADER vh1,egf_instrumentvoucher iv ,egf_instrumentheader ih,egw_status es1 WHERE vh1.id = iv.voucherheaderid AND iv.instrumentheaderid=ih.id"
-                                +
-                                " AND ih.id_status = es1.id AND ih.id in (select ih2.id as instrHeaderId "
-                                + getInstrumentsByVoucherIdsQuery + ")")
-                .list();
+        final List<Object[]> objs = persistenceService.getSession().createNativeQuery(queryString.toString()).list();
 
         for (final Object[] obj : objs)
             if (InstrumentHeaderIdsAndInstrumentVouchersMap.containsKey(getLongValue(obj[0])))
@@ -640,15 +635,17 @@ public class BankBookReportAction extends BaseFormAction {
         final String miscQuery = getMiscQuery();
         String OrderBy = "";
         final String voucherStatusToExclude = getAppConfigValueFor("EGF", "statusexcludeReport");
-        final String query1 = "SELECT distinct vh.id as voucherId,vh.voucherDate AS voucherDate, vh.voucherNumber AS voucherNumber,"
-                +
-                " gl.glcode||' - '||case when gl.debitAmount  = 0 then (case (gl.creditamount) when 0 then gl.creditAmount||'.00cr' when floor(gl.creditamount) then gl.creditAmount||'.00cr' else  gl.creditAmount||'cr'  end ) else (case (gl.debitamount) when 0 then gl.debitamount||'.00dr' when floor(gl.debitamount)  then gl.debitamount||'.00dr' else  gl.debitamount||'dr' 	 end ) end"
-                +
-                " AS particulars,case when gl1.debitAmount = 0 then gl1.creditamount else gl1.debitAmount end AS amount, case when gl1.debitAmount = 0 then 'Payment' else 'Receipt' end AS type,"
-                +
-                " case when (case when ch.instrumentnumber is NULL then ch.transactionnumber else ch.instrumentnumber  ||' , ' ||TO_CHAR(case when ch.instrumentdate is NULL THEN ch.transactiondate else ch.instrumentdate end,'dd/mm/yyyy') end )  is NULL then case when ch.instrumentnumber is NULL then ch.transactionnumber else ch.instrumentnumber end ||' , ' ||TO_CHAR(case when ch.instrumentdate is NULL then ch.transactiondate else ch.instrumentdate end,'dd/mm/yyyy') end"
-                +
-                " AS chequeDetail,gl.glcode as glCode,ch.description as instrumentStatus  ";
+        StringBuilder query1 = new StringBuilder("SELECT distinct vh.id as voucherId,vh.voucherDate AS voucherDate, vh.voucherNumber AS voucherNumber,")
+                .append(" gl.glcode||' - '||case when gl.debitAmount  = 0 then (case (gl.creditamount) when 0 then gl.creditAmount||'.00cr' ")
+                .append("when floor(gl.creditamount) then gl.creditAmount||'.00cr' else  gl.creditAmount||'cr'  end ) else (case (gl.debitamount) ")
+                .append("when 0 then gl.debitamount||'.00dr' when floor(gl.debitamount)  then gl.debitamount||'.00dr' else  gl.debitamount||'dr' end ) end")
+                .append(" AS particulars,case when gl1.debitAmount = 0 then gl1.creditamount else gl1.debitAmount end AS amount, case ")
+                .append("when gl1.debitAmount = 0 then 'Payment' else 'Receipt' end AS type,")
+                .append(" case when (case when ch.instrumentnumber is NULL then ch.transactionnumber else ch.instrumentnumber  ||' , ' ||TO_CHAR(")
+                .append("case when ch.instrumentdate is NULL THEN ch.transactiondate else ch.instrumentdate end,'dd/mm/yyyy') end )  is NULL then ")
+                .append("case when ch.instrumentnumber is NULL then ch.transactionnumber else ch.instrumentnumber end ||' , ' ||TO_CHAR(")
+                .append("case when ch.instrumentdate is NULL then ch.transactiondate else ch.instrumentdate end,'dd/mm/yyyy') end")
+                .append(" AS chequeDetail,gl.glcode as glCode,ch.description as instrumentStatus ");
         queryFrom = " FROM generalLedger gl,generalLedger gl1"
                 +
                 ",vouchermis vmis, VOUCHERHEADER vh left outer join (select iv.voucherheaderid,ih.instrumentnumber,ih.instrumentdate,"
@@ -664,9 +661,9 @@ public class BankBookReportAction extends BaseFormAction {
                 + voucherStatusToExclude + ") " + miscQuery + " ";
         OrderBy = "order by voucherdate,vouchernumber";
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Main query :" + query1 + queryFrom + OrderBy);
+            LOGGER.debug("Main query :" + query1.toString() + queryFrom + OrderBy);
 
-        final Query query = persistenceService.getSession().createNativeQuery(query1 + queryFrom + OrderBy)
+        final Query query = persistenceService.getSession().createNativeQuery(query1.toString() + queryFrom + OrderBy)
                 .addScalar("voucherId", new BigDecimalType())
                 .addScalar("voucherDate")
                 .addScalar("voucherNumber")

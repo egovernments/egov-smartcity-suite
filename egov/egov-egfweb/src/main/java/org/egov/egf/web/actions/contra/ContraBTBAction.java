@@ -1197,7 +1197,7 @@ public class ContraBTBAction extends BaseVoucherAction {
                 final List exludeStatusList = getExcludeStatusListForInstruments();
                 final InstrumentVoucher instrumentVoucher2 = (InstrumentVoucher) persistenceService
                         .find(
-                                "from InstrumentVoucher iv where iv.instrumentHeaderId.statusId not in (?) and voucherHeaderId.id=?1",
+                                "from InstrumentVoucher iv where iv.instrumentHeaderId.statusId not in (?1) and voucherHeaderId.id=?2",
                                 exludeStatusList.get(0), voucherHeader2.getId());
 
                 final InstrumentHeader oldInstrumentHeader2 = instrumentVoucher2
@@ -1477,12 +1477,13 @@ public class ContraBTBAction extends BaseVoucherAction {
         typeOfAccount.split(",");
         final Map<String, Object> bankBrmap = new LinkedHashMap();
         if (fundId != null) {
-            final List<Object[]> bankBranch = persistenceService
-                    .findAllBy(
-                            "select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),bankBranch.branchname) as bankbranchname "
-                                    + " FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount "
-                                    + " where  bank.isactive=true  and bankBranch.isactive=true and bankaccount.isactive=true and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id"
-                                    + " and bankaccount.fund.id=?1", fundId);
+            StringBuilder queryString = new StringBuilder("select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),bankBranch.branchname) as bankbranchname ")
+                                            .append(" FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount ")
+                                            .append(" where  bank.isactive=true  and bankBranch.isactive=true and bankaccount.isactive=true and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id")
+                                            .append(" and bankaccount.fund.id=?1")
+                                            .append(",")
+                                            .append(fundId);
+            final List<Object[]> bankBranch = persistenceService.findAllBy(queryString.toString());
             for (final Object[] element : bankBranch)
                 bankBrmap.put(element[0].toString(), element[1].toString());
         }
@@ -1696,7 +1697,7 @@ public class ContraBTBAction extends BaseVoucherAction {
         final List exludeStatusList = getExcludeStatusListForInstruments();
         final InstrumentVoucher instrumentVoucher = (InstrumentVoucher) persistenceService
                 .find(
-                        "from InstrumentVoucher iv where iv.instrumentHeaderId.statusId not in (?) and  voucherHeaderId=?1",
+                        "from InstrumentVoucher iv where iv.instrumentHeaderId.statusId not in (?1) and  voucherHeaderId=?2",
                         exludeStatusList.get(0), voucherHeader);
         if (instrumentVoucher == null) {
             LOGGER

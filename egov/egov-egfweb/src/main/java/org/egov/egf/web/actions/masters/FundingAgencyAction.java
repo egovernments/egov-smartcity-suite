@@ -167,7 +167,7 @@ public class FundingAgencyAction extends BaseFormAction {
         final Accountdetailtype adt = (Accountdetailtype) persistenceService
                 .find("From Accountdetailtype where name='FundingAgency'");
         final Accountdetailkey ac = (Accountdetailkey) persistenceService.find(
-                "from Accountdetailkey where accountdetailtype=? and detailkey=?2", adt, fundingAgency.getId().intValue());
+                "from Accountdetailkey where accountdetailtype=?1 and detailkey=?2", adt, fundingAgency.getId().intValue());
         ac.setDetailname(fundingAgency.getName());
         //persistenceService.setType(Accountdetailkey.class);
         persistenceService.persist(ac);

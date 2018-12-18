@@ -185,14 +185,15 @@ public class AdvancePaymentAction extends BasePaymentAction {
     }
 
     private void loadBankBranch(final Fund fund) {
-        addDropdownData(
-                "bankBranchList",
-                persistenceService
-                        .findAllBy(
-                                "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=?1 and isactive = true and type in (?2,?3) ) "
-                                        + " and br.isactive=true and br.bank.isactive = true order by br.bank.name asc",
-                                fund, FinancialConstants.TYPEOFACCOUNT_PAYMENTS,
-                                FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS));
+        StringBuilder queryString = new StringBuilder("from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=?1 and isactive = true and type in (?2,?3) ) ")
+                .append(" and br.isactive=true and br.bank.isactive = true order by br.bank.name asc")
+                .append(",")
+                .append(fund)
+                .append(",")
+                .append(FinancialConstants.TYPEOFACCOUNT_PAYMENTS)
+                .append(",")
+                .append(FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS);
+        addDropdownData("bankBranchList", persistenceService.findAllBy(queryString.toString()));
     }
 
     @ValidationErrorPage(value = NEW)
@@ -325,10 +326,17 @@ public class AdvancePaymentAction extends BasePaymentAction {
     }
 
     private void populateBankAccounts(final Integer bankBranchId, final Integer fundId) {
-        addDropdownData("accountNumberList", persistenceService.findAllBy(
-                "from Bankaccount ba where ba.bankbranch.id=?1 and ba.fund.id=?2 and ba.type in (?3,?4) "
-                        + "and ba.isactive=true order by ba.chartofaccounts.glcode", bankBranchId, fundId,
-                FinancialConstants.TYPEOFACCOUNT_PAYMENTS, FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS));
+        StringBuilder queryString = new StringBuilder("from Bankaccount ba where ba.bankbranch.id=?1 and ba.fund.id=?2 and ba.type in (?3,?4) ")
+                .append("and ba.isactive=true order by ba.chartofaccounts.glcode")
+                .append(",")
+                .append(bankBranchId)
+                .append(",")
+                .append(fundId)
+                .append(",")
+                .append(FinancialConstants.TYPEOFACCOUNT_PAYMENTS)
+                .append(",")
+                .append(FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS);
+        addDropdownData("accountNumberList", persistenceService.findAllBy(queryString.toString()));
     }
 
     @SuppressWarnings("unchecked")

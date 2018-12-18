@@ -186,30 +186,31 @@ public class BankEntriesNotInBankBookAction extends BasePaymentAction {
     }
 
     private String getQuery() {
-        String query = "", subQuery = "";
+        StringBuilder query = new StringBuilder();
+        StringBuilder subQuery = new StringBuilder();
         if (bankaccount != null)
-            subQuery = subQuery + "and be.bankaccountid = " + bankaccount;
+            subQuery = subQuery.append("and be.bankaccountid = ").append(bankaccount);
         if (voucherHeader.getVouchermis().getDepartmentid() != null)
-            subQuery = subQuery + "and bemis.departmentid = " + voucherHeader.getVouchermis().getDepartmentid().getId();
+            subQuery = subQuery.append("and bemis.departmentid = ").append(voucherHeader.getVouchermis().getDepartmentid().getId());
         if (voucherHeader.getFundId() != null)
-            subQuery = subQuery + "and bemis.fundid = " + voucherHeader.getFundId().getId();
+            subQuery = subQuery.append("and bemis.fundid = ").append(voucherHeader.getFundId().getId());
         if (voucherHeader.getVouchermis().getSchemeid() != null)
-            subQuery = subQuery + "and bemis.schemeid = " + voucherHeader.getVouchermis().getSchemeid().getId();
+            subQuery = subQuery.append("and bemis.schemeid = ").append(voucherHeader.getVouchermis().getSchemeid().getId());
         if (voucherHeader.getVouchermis().getSubschemeid() != null)
-            subQuery = subQuery + "and bemis.subschemeid = " + voucherHeader.getVouchermis().getSubschemeid().getId();
+            subQuery = subQuery.append("and bemis.subschemeid = ").append(voucherHeader.getVouchermis().getSubschemeid().getId());
         if (voucherHeader.getVouchermis().getFundsource() != null)
-            subQuery = subQuery + "and bemis.fundsourceid = " + voucherHeader.getVouchermis().getFundsource().getId();
+            subQuery = subQuery.append("and bemis.fundsourceid = ").append(voucherHeader.getVouchermis().getFundsource().getId());
         if (voucherHeader.getVouchermis().getDivisionid() != null)
-            subQuery = subQuery + "and bemis.divisionid = " + voucherHeader.getVouchermis().getDivisionid().getId();
+            subQuery = subQuery.append("and bemis.divisionid = ").append(voucherHeader.getVouchermis().getDivisionid().getId());
         if (voucherHeader.getVouchermis().getFunctionary() != null)
-            subQuery = subQuery + "and bemis.functionaryid = " + voucherHeader.getVouchermis().getFunctionary().getId();
+            subQuery = subQuery.append("and bemis.functionaryid = ").append(voucherHeader.getVouchermis().getFunctionary().getId());
         if (voucherHeader.getVouchermis().getFunction() != null)
-            subQuery = subQuery + "and bemis.functionid = " + voucherHeader.getVouchermis().getFunction().getId();
+            subQuery = subQuery.append("and bemis.functionid = ").append(voucherHeader.getVouchermis().getFunction().getId());
 
-        query = "select be.id as beId,be.refno as refnum,be.type as type,be.txndate as date,be.txnamount as amount,be.glcodeid as glcodeDetail,be.remarks as remarks "
-                + " from bankentries be,bankentries_mis bemis where be.voucherheaderid is null and be.id = bemis.bankentriesid "
-                + subQuery;
-        return query;
+        query = query.append("select be.id as beId,be.refno as refnum,be.type as type,be.txndate as date,be.txnamount as amount,be.glcodeid as glcodeDetail,be.remarks as remarks ")
+                .append(" from bankentries be,bankentries_mis bemis where be.voucherheaderid is null and be.id = bemis.bankentriesid ")
+                .append(subQuery.toString());
+        return query.toString();
 
     }
 
