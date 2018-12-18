@@ -75,8 +75,7 @@ public class ReceiptPaymentService {
 
     public List<ReceiptPayment> search(ReceiptPayment receiptPayment) {
 
-
-        StringBuilder queryStr = new StringBuilder(500);
+        StringBuilder queryStr = new StringBuilder();
         queryStr = prepareQuery(receiptPayment, queryStr);
         Query query = getResulQuery(receiptPayment, queryStr);
         List<Object[]> list = query.getResultList();
@@ -152,38 +151,34 @@ public class ReceiptPaymentService {
             financialYear = cFinancialYearService.findOne(receiptPayment.getFinancialYear().getId());
         }
         if (receiptPayment.getFund() != null) {
-            queryStr.append(" and v.fundid =:fundId ");
-
+            queryStr.append(" and v.fundid = :fundId ");
         }
         if (financialYear != null && receiptPayment.getPeriod().toString().equalsIgnoreCase("YEARLY")) {
-            queryStr.append(" and v.voucherDate >=:startDate and v.voucherDate <=:endDate ");
+            queryStr.append(" and v.voucherDate >= :startDate and v.voucherDate <= :endDate ");
             receiptPayment.setFromDate(financialYear.getStartingDate());
             receiptPayment.setToDate(financialYear.getEndingDate());
 
         } else if (receiptPayment.getFromDate() != null && receiptPayment.getToDate() != null) {
-            queryStr.append(" and v.voucherDate >=:startDate and v.voucherDate <=:endDate ");
+            queryStr.append(" and v.voucherDate >= :startDate and v.voucherDate <= :endDate ");
         }
-
 
         return queryStr;
     }
 
     private Query getResulQuery(ReceiptPayment receiptPayment, StringBuilder queryStr) {
 
+        StringBuilder query = new StringBuilder();
 
-        StringBuilder query = new StringBuilder(500);
-
-        query.append("select rp.glcode,rp.name,rp.debitAmount ,rp.creditAmount from (select  ")
-                .append("g.glcode as glcode,c.name as name ,0 as debitAmount,")
-                .append("sum(g.creditAmount) as creditAmount from GeneralLedger g")
-                .append(",VoucherHeader v,ChartofAccounts c where g.voucherHeaderId=v.id")
+        query.append("select rp.glcode, rp.name, rp.debitAmount, rp.creditAmount")
+                .append(" from (select g.glcode as glcode, c.name as name, 0 as debitAmount, sum(g.creditAmount) as creditAmount")
+                .append(" from GeneralLedger g, VoucherHeader v, ChartofAccounts c where g.voucherHeaderId = v.id")
                 .append(" and v.status not in(4,5) ").append(queryStr)
-                .append(" and v.type='Receipt' and c.id=g.glcodeId  and c.majorcode!='450'  group by g.glcode,c.name ");
+                .append(" and v.type = 'Receipt' and c.id = g.glcodeId and c.majorcode != '450' group by g.glcode, c.name ");
         query.append(" union select  g.glcode as glcode,c.name as name ,sum(g.debitAmount) as debitAmount,")
                 .append("0 as creditAmount from GeneralLedger g")
-                .append(",VoucherHeader v,ChartofAccounts c where g.voucherHeaderId=v.id")
+                .append(",VoucherHeader v,ChartofAccounts c where g.voucherHeaderId = v.id")
                 .append(" and v.status not in(4,5)").append(queryStr)
-                .append("and v.type='Payment' and c.id=g.glcodeId  and c.majorcode!='450' group by g.glcode,c.name) as rp order by rp.glcode");
+                .append("and v.type = 'Payment' and c.id = g.glcodeId  and c.majorcode != '450' group by g.glcode, c.name) as rp order by rp.glcode");
 
         return entityManager.createNativeQuery(query.toString())
                 .setParameter("fundId", receiptPayment.getFund().getId())
@@ -193,23 +188,25 @@ public class ReceiptPaymentService {
 
     private Query getOpeningBalance(ReceiptPayment receiptPayment) {
         StringBuilder query = new StringBuilder(500);
-        query.append("select sum(openingdebitbalance-openingcreditbalance) as openingBalance from transactionsummary where glcodeid " +
-                "in(select id from chartofaccounts where majorcode ='450') and financialyearid=:financialyearId and fundid=:fundId");
+        query.append("select sum(openingdebitbalance-openingcreditbalance) as openingBalance")
+                .append(" from transactionsummary")
+                .append(" where glcodeid in (select id from chartofaccounts where majorcode ='450') and financialyearid = :financialyearId and fundid = :fundId");
 
         return entityManager.createNativeQuery(query.toString())
-                .setParameter("financialyearId", receiptPayment.getFinancialYear().getId()).setParameter("fundId", receiptPayment.getFund().getId());
+                .setParameter("financialyearId", receiptPayment.getFinancialYear().getId())
+                .setParameter("fundId", receiptPayment.getFund().getId());
     }
 
     private Query openingBalanceTillFromDate(ReceiptPayment receiptPayment) {
         StringBuilder query = new StringBuilder(500);
         CFinancialYear fin = cFinancialYearService.findOne(receiptPayment.getFinancialYear().getId());
-        query.append("select sum(g.debitamount-g.creditamount) as amount from generalledger g ,voucherheader v,chartofaccounts c where v.id=g.voucherheaderid")
-                .append(" and v.status not in (4,5) and v.voucherdate >=:finStartDate and  v.voucherdate <=:fromDate and")
-                .append(" c.id=g.glcodeid and g.glcode in(select cc.glcode from chartofaccounts cc where cc.majorcode ='450')");
+        query.append("select sum(g.debitamount-g.creditamount) as amount")
+                .append(" from generalledger g, voucherheader v, chartofaccounts c")
+                .append(" where v.id = g.voucherheaderid and v.status not in (4,5) and v.voucherdate >= :finStartDate and  v.voucherdate <= :fromDate and")
+                .append(" c.id = g.glcodeid and g.glcode in (select cc.glcode from chartofaccounts cc where cc.majorcode = '450')");
 
         return entityManager.createNativeQuery(query.toString())
-                .setParameter("finStartDate", fin.getStartingDate()).setParameter("fromDate", receiptPayment.getFromDate());
-
+                .setParameter("finStartDate", fin.getStartingDate())
+                .setParameter("fromDate", receiptPayment.getFromDate());
     }
-
 }

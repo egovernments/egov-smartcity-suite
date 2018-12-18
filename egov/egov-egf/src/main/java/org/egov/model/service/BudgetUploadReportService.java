@@ -112,7 +112,8 @@ public class BudgetUploadReportService {
                           final Integer fundId, final Long functionId,
                           final Long deptId) {
 
-        String subQuery = "", reMaterializedPathQuery = "", beMaterializedPathQuery = "";
+        StringBuilder subQuery = new StringBuilder("");
+        String reMaterializedPathQuery = "", beMaterializedPathQuery = "";
         Map<String, Object> params = new HashMap<>();
         if (reMaterializedPath != null) {
             reMaterializedPathQuery = " and bd.materializedpath like :reMaterializedPath";
@@ -123,28 +124,34 @@ public class BudgetUploadReportService {
             params.put("beMaterializedPath", beMaterializedPath);
         }
         if (fundId != null) {
-            subQuery = subQuery + " and bd.fund = :fundId";
+            subQuery.append(" and bd.fund = :fundId");
             params.put("fundId", fundId);
         }
         if (deptId != null) {
-            subQuery = subQuery + " and bd.executing_department  = :deptId";
+            subQuery.append(" and bd.executing_department  = :deptId");
             params.put("deptId", deptId);
         }
         if (functionId != null) {
-            subQuery = subQuery + " and bd.function = :functionId";
+            subQuery.append(" and bd.function = :functionId");
             params.put("functionId", functionId);
         }
 
-        StringBuilder queryStr = new StringBuilder("SELECT budgetuploadreport.fundCode ,budgetuploadreport.functionCode,budgetuploadreport.glCode,budgetuploadreport.deptCode,sum(budgetuploadreport.approvedReAmount) as approvedReAmount,sum(budgetuploadreport.planningReAmount) as planningReAmount,sum(budgetuploadreport.approvedBeAmount) as approvedBeAmount,sum(budgetuploadreport.planningBeAmount) as planningBeAmount FROM ")
-                .append("(SELECT f.code AS fundCode,fn.code  AS functionCode,bg.name AS glCode,dept.code  AS deptCode,bd.approvedamount AS approvedReAmount,bd.budgetavailable AS planningReAmount,0 AS approvedBeAmount,0 AS planningBeAmount  FROM egf_budgetdetail bd , egf_budgetgroup bg , fund f, ")
-                .append("function fn,eg_department dept,chartofaccounts coa,egw_status st WHERE bd.status  = st.id  AND st.moduletype  = 'BUDGETDETAIL' AND st.code  = 'Created' AND bd.budgetgroup = bg.id  AND bg.mincode = coa.id ")
+        StringBuilder queryStr = new StringBuilder("SELECT budgetuploadreport.fundCode, budgetuploadreport.functionCode, budgetuploadreport.glCode, budgetuploadreport.deptCode,")
+                .append(" sum(budgetuploadreport.approvedReAmount) as approvedReAmount, sum(budgetuploadreport.planningReAmount) as planningReAmount,")
+                .append(" sum(budgetuploadreport.approvedBeAmount) as approvedBeAmount, sum(budgetuploadreport.planningBeAmount) as planningBeAmount")
+                .append(" FROM (SELECT f.code AS fundCode, fn.code AS functionCode, bg.name AS glCode, dept.code AS deptCode, bd.approvedamount AS approvedReAmount,")
+                .append(" bd.budgetavailable AS planningReAmount, 0 AS approvedBeAmount, 0 AS planningBeAmount ")
+                .append(" FROM egf_budgetdetail bd, egf_budgetgroup bg ,fund f, function fn, eg_department dept, chartofaccounts coa, egw_status st")
+                .append(" WHERE bd.status  = st.id  AND st.moduletype  = 'BUDGETDETAIL' AND st.code  = 'Created' AND bd.budgetgroup = bg.id  AND bg.mincode = coa.id ")
                 .append("AND bd.fund = f.id AND bd.function  = fn.id AND bd.executing_department = dept.id ")
                 .append(subQuery)
                 .append(" ")
                 .append(reMaterializedPathQuery)
                 .append(" UNION SELECT f.code  AS fundCode,fn.code AS functionCode,bg.name AS glCode, ")
-                .append("dept.code  AS deptCode,0 AS approvedReAmount,0 AS planningReAmount,bd.approvedamount AS approvedBeAmount,bd.budgetavailable AS planningBeAmount FROM egf_budgetdetail bd ,egf_budgetgroup bg ,fund f,function fn, eg_department dept,chartofaccounts coa,egw_status st WHERE bd.status = st.id ")
-                .append("AND st.moduletype = 'BUDGETDETAIL' AND st.code   = 'Created' AND bd.budgetgroup  = bg.id AND bg.mincode  = coa.id AND bd.fund  = f.id AND bd.function = fn.id AND bd.executing_department = dept.id ")
+                .append("dept.code  AS deptCode,0 AS approvedReAmount,0 AS planningReAmount,bd.approvedamount AS approvedBeAmount,bd.budgetavailable AS planningBeAmount")
+                .append(" FROM egf_budgetdetail bd ,egf_budgetgroup bg ,fund f,function fn, eg_department dept,chartofaccounts coa,egw_status st")
+                .append(" WHERE bd.status = st.id AND st.moduletype = 'BUDGETDETAIL' AND st.code   = 'Created' AND bd.budgetgroup  = bg.id AND bg.mincode  = coa.id AND bd.fund  = f.id")
+                .append(" AND bd.function = fn.id AND bd.executing_department = dept.id ")
                 .append(subQuery)
                 .append(" ")
                 .append(beMaterializedPathQuery)

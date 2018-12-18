@@ -70,28 +70,26 @@ import org.egov.model.budget.BudgetReAppropriationMisc;
 import org.egov.pims.commons.Position;
 import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.Constants;
+import org.hibernate.query.Query;
+import org.hibernate.type.LongType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.script.ScriptContext;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class BudgetReAppropriationService extends PersistenceService<BudgetReAppropriation, Long> {
 
     private static final Logger LOGGER = Logger.getLogger(BudgetReAppropriationService.class);
-
+    protected WorkflowService<BudgetDetail> budgetDetailWorkflowService;
+    @Autowired
+    protected ScriptService scriptService;
     WorkflowService<BudgetReAppropriationMisc> miscWorkflowService;
     @Autowired
     @Qualifier("budgetDetailService")
     private BudgetDetailService budgetDetailService;
-
-    protected WorkflowService<BudgetDetail> budgetDetailWorkflowService;
     @Autowired
     private BudgetDetailConfig budgetDetailConfig;
     @Autowired
@@ -103,8 +101,6 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
     private AppConfigValueService appConfigValuesService;
     @Autowired
     private BudgetDetailsHibernateDAO budgetDetailsDAO;
-    @Autowired
-    protected ScriptService scriptService;
     @Autowired
     @Qualifier("budgetReAppropriationMiscService")
     private BudgetReAppropriationMiscService budgetReAppropriationMiscService;
@@ -151,7 +147,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
     public boolean checkRowEmpty(final BudgetReAppropriationView appropriation) {
         if ((appropriation.getBudget() == null || appropriation.getBudget().getId() == 0)
                 && (appropriation.getBudgetDetail().getBudgetGroup() == null || appropriation.getBudgetDetail().getBudgetGroup()
-                        .getId() == 0)
+                .getId() == 0)
                 && isMandatoryGridFieldEmpty(appropriation))
             return true;
         return false;
@@ -216,37 +212,37 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
             if (Constants.FUNCTION.equalsIgnoreCase(entry)
                     && budgetDetailConfig.getMandatoryFields().contains(Constants.FUNCTION)
                     && (appropriation.getBudgetDetail().getFunction() == null || appropriation.getBudgetDetail().getFunction()
-                            .getId() == 0))
+                    .getId() == 0))
                 return true;
             if (Constants.EXECUTING_DEPARTMENT.equalsIgnoreCase(entry)
                     && budgetDetailConfig.getMandatoryFields().contains(Constants.EXECUTING_DEPARTMENT)
                     && (appropriation.getBudgetDetail().getExecutingDepartment() == null || appropriation.getBudgetDetail()
-                            .getExecutingDepartment().getId() == 0))
+                    .getExecutingDepartment().getId() == 0))
                 return true;
             if (Constants.FUND.equalsIgnoreCase(entry)
                     && budgetDetailConfig.getMandatoryFields().contains(Constants.FUND)
                     && (appropriation.getBudgetDetail().getExecutingDepartment() == null || appropriation.getBudgetDetail()
-                            .getExecutingDepartment().getId() == 0))
+                    .getExecutingDepartment().getId() == 0))
                 return true;
             if (Constants.SCHEME.equalsIgnoreCase(entry)
                     && budgetDetailConfig.getMandatoryFields().contains(Constants.SCHEME)
                     && (appropriation.getBudgetDetail().getScheme() == null || appropriation.getBudgetDetail().getScheme()
-                            .getId() == 0))
+                    .getId() == 0))
                 return true;
             if (Constants.SUB_SCHEME.equalsIgnoreCase(entry)
                     && budgetDetailConfig.getMandatoryFields().contains(Constants.SUB_SCHEME)
                     && (appropriation.getBudgetDetail().getSubScheme() == null || appropriation.getBudgetDetail().getSubScheme()
-                            .getId() == 0))
+                    .getId() == 0))
                 return true;
             if (Constants.BOUNDARY.equalsIgnoreCase(entry)
                     && budgetDetailConfig.getMandatoryFields().contains(Constants.BOUNDARY)
                     && (appropriation.getBudgetDetail().getBoundary() == null || appropriation.getBudgetDetail().getBoundary()
-                            .getBndryId() == 0))
+                    .getBndryId() == 0))
                 return true;
             if (Constants.FUNCTIONARY.equalsIgnoreCase(entry)
                     && budgetDetailConfig.getMandatoryFields().contains(Constants.FUNCTIONARY)
                     && (appropriation.getBudgetDetail().getFunctionary() == null || appropriation.getBudgetDetail()
-                            .getFunctionary().getId() == 0))
+                    .getFunctionary().getId() == 0))
                 return true;
             if (Constants.FUND.equalsIgnoreCase(entry)
                     && budgetDetailConfig.getMandatoryFields().contains(Constants.FUND)
@@ -271,7 +267,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
     }
 
     public void validateDuplicates(final List<BudgetReAppropriationView> budgetReAppropriationList,
-            final BudgetReAppropriationView appropriation) {
+                                   final BudgetReAppropriationView appropriation) {
         for (final BudgetReAppropriationView budgetReAppropriationView : budgetReAppropriationList)
             if (appropriation.getBudgetDetail().compareTo(budgetReAppropriationView.getBudgetDetail()))
                 throw new ValidationException(
@@ -293,8 +289,9 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
     /**
      * This api checks whether the amount being deducted is greater than the budget available. If it is greater, a validation
      * exception is thrown.
+     *
      * @param reAppropriation - The budget reappropriation being created.(This could be the addition or the deduction
-     * reappropriation)
+     *                        reappropriation)
      * @return
      */
     public void validateDeductionAmount(final BudgetReAppropriation appropriation) {
@@ -362,8 +359,8 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
 
     @Transactional
     public BudgetReAppropriationMisc createReAppropriationMisc(final String actionName,
-            final BudgetReAppropriationMisc appropriationMisc,
-            final BudgetDetail detail, final Position position) {
+                                                               final BudgetReAppropriationMisc appropriationMisc,
+                                                               final BudgetDetail detail, final Position position) {
         BudgetReAppropriationMisc misc = new BudgetReAppropriationMisc();
         misc.setReAppropriationDate(appropriationMisc.getReAppropriationDate());
         misc.setRemarks(appropriationMisc.getRemarks());
@@ -388,12 +385,12 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
 
     public BudgetReAppropriation findBySequenceNumberAndBudgetDetail(final String sequenceNumber, final Long budgetDetailId) {
         return (BudgetReAppropriation) persistenceService.find(
-                "from BudgetReAppropriation b where b.reAppropriationMisc.sequenceNumber=? and b.budgetDetail.id=?",
+                "from BudgetReAppropriation b where b.reAppropriationMisc.sequenceNumber=?1 and b.budgetDetail.id=?2",
                 sequenceNumber, budgetDetailId);
     }
 
     public BudgetReAppropriationMisc performActionOnMisc(final String action, final BudgetReAppropriationMisc reApp,
-            final String comment) {
+                                                         final String comment) {
         final BudgetReAppropriationMisc misc = miscWorkflowService.transition(action, reApp, comment);
         getSession().flush();
         return misc;
@@ -403,8 +400,9 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
      * This api updates the budget available amount for which the budget reappropriation is being done. The budget available is
      * calculated as, budget available = budget available + (additional amount * multiplication factor) for addition and budget
      * available = budget available - (deduction amount * multiplication factor) for deduction
+     *
      * @param reAppropriation - The budget reappropriation being created.(This could be the addition or the deduction
-     * reappropriation)
+     *                        reappropriation)
      * @return
      */
     @Transactional
@@ -412,7 +410,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
         getSession().flush();
         // BigDecimal multiplicationFactor = new
         // BigDecimal(Double.parseDouble(getAppConfigFor("EGF","planning_budget_multiplication_factor")));
-        final BudgetDetail budgetDetail = budgetDetailService.find("from BudgetDetail where id=?", reAppropriation
+        final BudgetDetail budgetDetail = budgetDetailService.find("from BudgetDetail where id=?1", reAppropriation
                 .getBudgetDetail().getId());
         BigDecimal budgetAvailable = budgetDetail.getBudgetAvailable() == null ? BigDecimal.ZERO : budgetDetail
                 .getBudgetAvailable();
@@ -456,31 +454,50 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
     }
 
     public List<BudgetReAppropriation> getNonApprovedReAppByUser(final Long userId, final BudgetDetail budgetDetail,
-            final CFinancialYear financialYear) {
+                                                                 final CFinancialYear financialYear) {
         StringBuffer query = new StringBuffer();
-        query.append("from BudgetReAppropriation where state.value='NEW' and createdBy.id=" + userId
-                + " and budgetDetail.budget.financialYear.id=" + financialYear.getId());
+        Map<String, Object> params = new HashMap<>();
+        query.append("from BudgetReAppropriation where state.value='NEW' and createdBy.id = :createdBy and budgetDetail.budget.financialYear.id = :fyId");
         if (budgetDetail.getExecutingDepartment() != null && budgetDetail.getExecutingDepartment().getId() != null
-                && budgetDetail.getExecutingDepartment().getId() != 0)
-            query.append(" and budgetDetail.executingDepartment.id=" + budgetDetail.getExecutingDepartment().getId());
-        if (budgetDetail.getFund() != null && budgetDetail.getFund().getId() != null && budgetDetail.getFund().getId() != 0)
-            query.append(" and budgetDetail.fund.id=" + budgetDetail.getFund().getId());
+                && budgetDetail.getExecutingDepartment().getId() != 0) {
+            query.append(" and budgetDetail.executingDepartment.id = :execDeptId");
+            params.put("execDeptId", budgetDetail.getExecutingDepartment().getId());
+        }
+        if (budgetDetail.getFund() != null && budgetDetail.getFund().getId() != null && budgetDetail.getFund().getId() != 0) {
+            query.append(" and budgetDetail.fund.id = :fundId");
+            params.put("fundId", budgetDetail.getFund().getId());
+        }
         if (budgetDetail.getFunction() != null && budgetDetail.getFunction().getId() != null
-                && budgetDetail.getFunction().getId() != 0)
-            query.append(" and budgetDetail.function.id=" + budgetDetail.getFunction().getId());
+                && budgetDetail.getFunction().getId() != 0) {
+            query.append(" and budgetDetail.function.id = :functionId");
+            params.put("functionId", budgetDetail.getFunction().getId());
+
+        }
         if (budgetDetail.getFunctionary() != null && budgetDetail.getFunctionary().getId() != null
-                && budgetDetail.getFunctionary().getId() != 0)
-            query.append(" and budgetDetail.functionary.id=" + budgetDetail.getFunctionary().getId());
-        if (budgetDetail.getScheme() != null && budgetDetail.getScheme().getId() != null && budgetDetail.getScheme().getId() != 0)
-            query.append(" and budgetDetail.scheme.id=" + budgetDetail.getScheme().getId());
+                && budgetDetail.getFunctionary().getId() != 0) {
+            query.append(" and budgetDetail.functionary.id = :functionaryId");
+            params.put("functionaryId", budgetDetail.getFunctionary().getId());
+        }
+        if (budgetDetail.getScheme() != null && budgetDetail.getScheme().getId() != null && budgetDetail.getScheme().getId() != 0) {
+            query.append(" and budgetDetail.scheme.id = :schemeId");
+            params.put("schemeId", budgetDetail.getScheme().getId());
+        }
         if (budgetDetail.getSubScheme() != null && budgetDetail.getSubScheme().getId() != null
-                && budgetDetail.getSubScheme().getId() != 0)
-            query.append(" and budgetDetail.subScheme.id=" + budgetDetail.getSubScheme().getId());
+                && budgetDetail.getSubScheme().getId() != 0) {
+            query.append(" and budgetDetail.subScheme.id = :subSchemeId");
+            params.put("subSchemeId", budgetDetail.getSubScheme().getId());
+        }
         if (budgetDetail.getBoundary() != null && budgetDetail.getBoundary().getId() != null
-                && budgetDetail.getBoundary().getId() != 0)
-            query.append(" and budgetDetail.boundary.id=" + budgetDetail.getBoundary().getId());
-        query = query.append(" order by budgetDetail.budgetGroup ");
-        return findAllBy(query.toString());
+                && budgetDetail.getBoundary().getId() != 0) {
+            query.append(" and budgetDetail.boundary.id = :boundaryId");
+            params.put("boundaryId", budgetDetail.getBoundary().getId());
+        }
+        query.append(" order by budgetDetail.budgetGroup ");
+        Query qry = persistenceService.getSession().createQuery(query.toString())
+                .setParameter("createdBy", userId, LongType.INSTANCE)
+                .setParameter("fyId", financialYear.getId(), LongType.INSTANCE);
+        params.entrySet().forEach(entry -> qry.setParameter(entry.getKey(), entry.getValue()));
+        return qry.list();
     }
 
     public void setBudgetDetailsDAO(final BudgetDetailsHibernateDAO budgetDetailsDAO) {
@@ -489,9 +506,9 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
 
     @Transactional
     public boolean createReAppropriation(final String actionName,
-            final List<BudgetReAppropriationView> budgetReAppropriationList,
-            final Position position, final CFinancialYear financialYear, final String beRe, final BudgetReAppropriationMisc misc,
-            final String asOnDate) {
+                                         final List<BudgetReAppropriationView> budgetReAppropriationList,
+                                         final Position position, final CFinancialYear financialYear, final String beRe, final BudgetReAppropriationMisc misc,
+                                         final String asOnDate) {
         try {
             if (budgetReAppropriationList.isEmpty()
                     || !rowsToAddForExistingDetails(budgetReAppropriationList))
@@ -503,12 +520,10 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
                 saveAndStartWorkFlowForExistingdetails(actionName, appropriation, position, financialYear, beRe, misc, asOnDate);
                 addedList.add(appropriation);
             }
-        } catch (final ValidationException e)
-        {
+        } catch (final ValidationException e) {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
                     e.getErrors().get(0).getMessage())));
-        } catch (final Exception e)
-        {
+        } catch (final Exception e) {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
                     e.getMessage())));
         }
@@ -517,8 +532,8 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
 
     @Transactional
     public void saveAndStartWorkFlowForExistingdetails(final String actionName, final BudgetReAppropriationView reAppView,
-            final Position position, final CFinancialYear financialYear, final String beRe, final BudgetReAppropriationMisc misc,
-            final String asOnDate) {
+                                                       final Position position, final CFinancialYear financialYear, final String beRe, final BudgetReAppropriationMisc misc,
+                                                       final String asOnDate) {
         final BudgetReAppropriation appropriation = new BudgetReAppropriation();
         EgwStatus status = egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL", "Approved");
         reAppView.getBudgetDetail().setStatus(status);
@@ -554,7 +569,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
 
     @Transactional
     public BudgetReAppropriationMisc createBudgetReAppropriationMisc(final String actionName, final String beRe,
-            final CFinancialYear financialYear, final BudgetReAppropriationMisc appropriationMisc, final Position position) {
+                                                                     final CFinancialYear financialYear, final BudgetReAppropriationMisc appropriationMisc, final Position position) {
         final Budget budget = new Budget();
         budget.setIsbere(beRe);
         budget.setFinancialYear(financialYear);
@@ -565,8 +580,8 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
 
     @Transactional
     public boolean createReAppropriationForNewBudgetDetail(final String actionName,
-            final List<BudgetReAppropriationView> newBudgetReAppropriationList, final Position position,
-            final BudgetReAppropriationMisc misc) {
+                                                           final List<BudgetReAppropriationView> newBudgetReAppropriationList, final Position position,
+                                                           final BudgetReAppropriationMisc misc) {
         try {
             BudgetDetail detail = null;
             if (newBudgetReAppropriationList.isEmpty()
@@ -592,12 +607,10 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
             } catch (final Exception e) {
                 throw new ValidationException(Arrays.asList(new ValidationError("budgetDetail.duplicate", "budgetdetail.exists")));
             }
-        } catch (final ValidationException e)
-        {
+        } catch (final ValidationException e) {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
                     e.getErrors().get(0).getMessage())));
-        } catch (final Exception e)
-        {
+        } catch (final Exception e) {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
                     e.getMessage())));
         }
@@ -606,7 +619,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
 
     @Transactional
     public void saveAndStartWorkFlowForNewDetail(final String actionName, final BudgetDetail detail,
-            final BudgetReAppropriationView appropriation, final Position position, final BudgetReAppropriationMisc misc) {
+                                                 final BudgetReAppropriationView appropriation, final Position position, final BudgetReAppropriationMisc misc) {
         final BudgetReAppropriation reAppropriation = new BudgetReAppropriation();
         detail.setPlanningPercent(appropriation.getPlanningPercent());
         detail.setBudgetAvailable(appropriation.getDeltaAmount().multiply(detail.getPlanningPercent())

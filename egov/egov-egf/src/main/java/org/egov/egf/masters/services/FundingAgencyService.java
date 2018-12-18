@@ -58,7 +58,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author mani Service class for FundingAgency Object
  */
 @Transactional(readOnly = true)
@@ -71,13 +70,14 @@ public class FundingAgencyService extends PersistenceService<FundingAgency, Inte
     public FundingAgencyService(Class<FundingAgency> type) {
         super(type);
     }
+
     /**
      * since it is mapped to only one AccountDetailType -creditor it ignores the input parameter
      */
     @Override
     public List<EntityType> getAllActiveEntities(final Integer accountDetailTypeId) {
         final List<EntityType> entities = new ArrayList<EntityType>();
-        entities.addAll(findAllBy("from FundingAgency r where r.isActive=?1", true));
+        entities.addAll(findAllBy("from FundingAgency r where r.isActive = ?1", true));
         return entities;
     }
 
@@ -86,8 +86,8 @@ public class FundingAgencyService extends PersistenceService<FundingAgency, Inte
     public List<EntityType> filterActiveEntities(String filterKey, final int maxRecords, final Integer accountDetailTypeId) {
         final Integer pageSize = maxRecords > 0 ? maxRecords : null;
         final List<EntityType> entities = new ArrayList<EntityType>();
-        filterKey = "%" + filterKey + "%";
-        final String qry = "from FundingAgency r where upper(code) like upper(?1) or upper(name) like upper(?2) and r.isActive=?3 order by code,name";
+        filterKey = "%".concat(filterKey).concat("%");
+        final String qry = "from FundingAgency r where upper(code) like upper(?1) or upper(name) like upper(?2) and r.isActive=?3 order by code, name";
         entities.addAll(findPageBy(qry, 0, pageSize, filterKey, filterKey, true).getList());
         return entities;
     }
@@ -101,21 +101,17 @@ public class FundingAgencyService extends PersistenceService<FundingAgency, Inte
      */
     @Override
     public List<FundingAgency> validateEntityForRTGS(final List<Long> idsList) throws ValidationException {
-
         return null;
-
     }
 
     @Override
     public List<FundingAgency> getEntitiesById(final List<Long> idsList) throws ValidationException {
-
         return null;
     }
 
     @Override
     public List getAssetCodesForProjectCode(final Integer accountdetailkey)
             throws ValidationException {
-
         return null;
     }
 

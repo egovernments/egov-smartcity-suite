@@ -52,7 +52,6 @@ package org.egov.payment.dao;
 import org.egov.commons.CVoucherHeader;
 import org.egov.model.payment.Paymentheader;
 import org.hibernate.Session;
-import org.hibernate.query.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -101,8 +100,8 @@ public class PaymentheaderHibernateDAO {
 
 
     public List<Paymentheader> getPaymentheaderByVoucherHeader(final CVoucherHeader voucherHeader) {
-        final Query qry = getCurrentSession().createQuery("from Paymentheader where voucherheader =:voucherHeader");
-        qry.setParameter("voucherHeader", voucherHeader);
-        return qry.list();
+        return getCurrentSession().createQuery("from Paymentheader where voucherheader = :voucherHeader")
+                .setParameter("voucherHeader", voucherHeader)
+                .list();
     }
 }

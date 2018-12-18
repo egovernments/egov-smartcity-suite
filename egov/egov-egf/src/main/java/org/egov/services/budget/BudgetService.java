@@ -63,13 +63,16 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.utils.EGovConfig;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
+import org.egov.utils.EGovConfig;
 import org.hibernate.query.Query;
+import org.hibernate.type.DateType;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,28 +84,23 @@ import java.util.List;
 
 /**
  * @author Manikanta
- *
  */
 public class BudgetService extends PersistenceService<Budget, Long> {
     private static final Logger LOGGER = Logger.getLogger(BudgetService.class);
-    
+
     @Autowired
     protected EisCommonService eisCommonService;
     protected WorkflowService<Budget> budgetWorkflowService;
     @Autowired
     @Qualifier("workflowService")
     protected SimpleWorkflowService<BudgetDetail> budgetDetailWorkflowService;
-    
+
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
-
-    public void setEisCommonService(final EisCommonService eisCommonService) {
-        this.eisCommonService = eisCommonService;
-    }
 
     public BudgetService() {
         super(Budget.class);
@@ -112,31 +110,34 @@ public class BudgetService extends PersistenceService<Budget, Long> {
         super(type);
     }
 
+    public void setEisCommonService(final EisCommonService eisCommonService) {
+        this.eisCommonService = eisCommonService;
+    }
+
     public Budget getByName(final String name) {
-        return find("from Budget b where b.name = ?", name);
+        return find("from Budget b where b.name = ?1", name);
     }
 
     public User getUser() {
-        return (User) ((PersistenceService) this).find(" from User where id=?", ApplicationThreadLocals.getUserId());
+        return (User) ((PersistenceService) this).find(" from User where id=?1", ApplicationThreadLocals.getUserId());
     }
 
-    public Position getPositionForEmployee(final Employee emp) throws ApplicationRuntimeException
-    {
+    public Position getPositionForEmployee(final Employee emp) throws ApplicationRuntimeException {
         return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getId());
     }
 
     /**
      * return the department of any one budget detail will work for only leaf budget not for non leaf budgets
+     *
      * @param budget
      * @return Department
      * @throws ApplicationRuntimeException
      */
-    public Department getDepartmentForBudget(final Budget budget) throws ApplicationRuntimeException
-    {
+    public Department getDepartmentForBudget(final Budget budget) throws ApplicationRuntimeException {
 
         Department dept = null;
         final List<BudgetDetail> detailList = ((PersistenceService) this).findAllBy(
-                "from  BudgetDetail budgetDetail where budgetDetail.budget=?", budget);
+                "from  BudgetDetail budgetDetail where budgetDetail.budget=?1", budget);
         if (detailList.isEmpty() || detailList.size() == 0)
             throw new ApplicationRuntimeException("Details not found for the Budget" + budget.getName());
         else if (detailList.get(0).getExecutingDepartment() == null)
@@ -148,19 +149,18 @@ public class BudgetService extends PersistenceService<Budget, Long> {
 
     /**
      * returns department of the employee from assignment for the current date
+     *
      * @param emp
      * @return department
      */
-    public Department depertmentForEmployee(final Employee emp)
-    {
+    public Department depertmentForEmployee(final Employee emp) {
         Department dept = null;
         final Date currDate = new Date();
         try {
             final Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(emp.getId(), currDate);
             dept = empAssignment.getDepartment();
             return dept;
-        } catch (final NullPointerException ne)
-        {
+        } catch (final NullPointerException ne) {
             throw new ApplicationRuntimeException(ne.getMessage());
         } catch (final Exception e) {
             throw new ApplicationRuntimeException("Error while getting Department fort the employee" + emp.getName());
@@ -168,34 +168,31 @@ public class BudgetService extends PersistenceService<Budget, Long> {
     }
 
     public boolean hasReForYear(final Long financialYear) {
-        return checkForRe("from  Budget where financialYear.id=? and isbere='RE' and isActiveBudget=true", financialYear);
+        return checkForRe("from  Budget where financialYear.id=?1 and isbere='RE' and isActiveBudget=true", financialYear);
     }
 
     public boolean hasApprovedBeForYear(final Long financialYear) {
         return checkForRe(
-                "from  Budget where financialYear.id=? and isbere='BE' and isActiveBudget=true and parent is null and isPrimaryBudget=true and status.code='Approved'",
+                "from  Budget where financialYear.id=?1 and isbere='BE' and isActiveBudget=true and parent is null and isPrimaryBudget=true and status.code='Approved'",
                 financialYear);
     }
 
     public boolean hasApprovedReForYear(final Long financialYear) {
         return checkForRe(
-                "from  Budget where financialYear.id=? and isbere='RE' and isActiveBudget=true and parent is null and isPrimaryBudget=true and status.code='Approved'",
+                "from  Budget where financialYear.id=?1 and isbere='RE' and isActiveBudget=true and parent is null and isPrimaryBudget=true and status.code='Approved'",
                 financialYear);
     }
 
     /**
-     *
      * @param financialYear
      * @return boolean Finds out whether RE is created and Approved for the given date
      */
     public boolean hasApprovedReAsonDate(final Long finYearId, final Date budgetApprovedDate) {
         final Query qry = getSession()
-                .createQuery(
-                        "select name from  Budget where financialYear.id=:finYearId and isbere='RE' "
-                                +
-                                "and isActiveBudget=true and parent is null and isPrimaryBudget=true and status.code='Approved' and to_date(state.createdDate)<=:budgetApprovedDate");
-        qry.setParameter("finYearId", finYearId);
-        qry.setParameter("budgetApprovedDate", budgetApprovedDate);
+                .createQuery(new StringBuilder("select name from  Budget where financialYear.id=:finYearId and isbere='RE' and isActiveBudget=true and parent is null")
+                        .append(" and isPrimaryBudget=true and status.code='Approved' and to_date(state.createdDate)<=:budgetApprovedDate").toString());
+        qry.setParameter("finYearId", finYearId, LongType.INSTANCE);
+        qry.setParameter("budgetApprovedDate", budgetApprovedDate, DateType.INSTANCE);
         final String approvedBudgetName = (String) qry.uniqueResult();
         return approvedBudgetName == null ? false : true;
     }
@@ -209,13 +206,13 @@ public class BudgetService extends PersistenceService<Budget, Long> {
 
     /**
      * finds all the child budget tree for approval or rejection
+     *
      * @param b
      * @param position
      * @return
      */
     public List<Budget> moveBudgetTree(final Budget b, final Position position) {
-        final List<Budget> budgetsList = findAllBy("from Budget b where b.materializedPath like '" + b.getMaterializedPath()
-                + ".%'");
+        final List<Budget> budgetsList = findAllBy("from Budget b where b.materializedPath like ?1", b.getMaterializedPath().concat(".%'"));
         return budgetsList;
     }
 
@@ -242,10 +239,10 @@ public class BudgetService extends PersistenceService<Budget, Long> {
 
     public boolean canForwardParent(final Position position, final Budget b) {
         final Budget treeBudget = b;
-        final List<Budget> totalCountList = findAllBy("from Budget where parent=? and isActiveBudget=?", treeBudget.getParent(),
+        final List<Budget> totalCountList = findAllBy("from Budget where parent=?1 and isActiveBudget=?2", treeBudget.getParent(),
                 true);
         // can forward the budget even though one of the child is not in the state of forwarding if isActiveBudget is set as false
-        final List<Budget> budgetList = findAllBy("from Budget where state.owner=? and parent.id=? and isActiveBudget=?",
+        final List<Budget> budgetList = findAllBy("from Budget where state.owner=?1 and parent.id=?2 and isActiveBudget=?3",
                 position,
                 treeBudget.getParent().getId(), true);
         if (totalCountList.size() == budgetList.size()) {
@@ -260,17 +257,14 @@ public class BudgetService extends PersistenceService<Budget, Long> {
     }
 
     /**
-     *
      * @param bgroupList
      * @return List of CChartOfAccounts objects associated with each BudgetGroup object in the list , null if no CChartOfAccounts
      * objects are associated with any BudgetGroup object in the list.
      * @throws ValidationException
-     *
      */
 
     @SuppressWarnings("unchecked")
-    public List<CChartOfAccounts> getAccountCodeForBudgetHead(final List<BudgetGroup> bgroupList) throws ValidationException
-    {
+    public List<CChartOfAccounts> getAccountCodeForBudgetHead(final List<BudgetGroup> bgroupList) throws ValidationException {
 
         if (bgroupList == null)
             throw new ValidationException(Arrays.asList(new ValidationError("BudgetGroup List is Null",
@@ -287,45 +281,38 @@ public class BudgetService extends PersistenceService<Budget, Long> {
         final String multipleZeros = new String("00000000000000000000");
         final String multipleNines = new String("99999999999999999999");
         for (final BudgetGroup bdgtgrp : bgroupList)
-            if (((PersistenceService) this).find("from BudgetGroup where id = ? ", bdgtgrp.getId()) == null)
+            if (((PersistenceService) this).find("from BudgetGroup where id = ?1 ", bdgtgrp.getId()) == null)
                 throw new ValidationException(Arrays.asList(new ValidationError("BudgetGroup with id:" + bdgtgrp.getId()
                         + " and name:" + bdgtgrp.getName() + " does not exist ", "BudgetGroup with id:" + bdgtgrp.getId()
                         + " and name:" + bdgtgrp.getName() + " does not exist ")));
         List<CChartOfAccounts> clist;
-        for (final BudgetGroup bdgtgrp : bgroupList)
-        {
-            if (bdgtgrp.getMajorCode() == null)
-            {
+        for (final BudgetGroup bdgtgrp : bgroupList) {
+            if (bdgtgrp.getMajorCode() == null) {
                 maxCode = bdgtgrp.getMaxCode();
                 minCode = bdgtgrp.getMinCode();
                 if (maxCode != null && minCode != null) {
                     maxGlcodeStr = maxCode.getGlcode();
                     minGlcodeStr = minCode.getGlcode();
-                    if (maxpossibleGlcodeLength == maxGlcodeStr.length())
-                    {
+                    if (maxpossibleGlcodeLength == maxGlcodeStr.length()) {
                         glcodeFrom = minGlcodeStr;
                         glcodeTo = maxGlcodeStr;
-                    }
-                    else
-                    {
+                    } else {
                         glcodeFrom = minGlcodeStr + multipleZeros.substring(0, maxpossibleGlcodeLength - minGlcodeStr.length());
                         glcodeTo = maxGlcodeStr + multipleNines.substring(0, maxpossibleGlcodeLength - maxGlcodeStr.length());
                     }
                     final String query = new String(
-                            "from  CChartOfAccounts coa where cast(coa.glcode,long) between ? and ? and coa.classification = ?  and coa.isActiveForPosting=? ");
+                            "from  CChartOfAccounts coa where cast(coa.glcode,long) between ?1 and ?2 and coa.classification = ?3  and coa.isActiveForPosting=?4 ");
                     clist = ((PersistenceService) this).findAllBy(query, Long.parseLong(glcodeFrom),
                             Long.parseLong(glcodeTo), Long.valueOf(4), Long.valueOf(1));
 
-                }
-                else
+                } else
                     throw new ValidationException(Arrays.asList(new ValidationError(
                             "Maxcode or Mincode is null also Majorcode is null for BudgetGroup:" + bdgtgrp.getName(),
                             "maxcode.or.mincode.is.null.and.majorcode.is.null.for.budgetgroup:" + bdgtgrp.getName())));
             } else
                 clist = ((PersistenceService) this).findAllBy(
-                        "from  CChartOfAccounts coa where coa.glcode like '" + bdgtgrp.getMajorCode().getGlcode().toString()
-                                + "%' and coa.classification = ? and coa.isActiveForPosting= ? ", Long.valueOf(4),
-                        Long.valueOf(1));
+                        "from  CChartOfAccounts coa where coa.glcode like ?1 and coa.classification = ?2 and coa.isActiveForPosting= ?3 ",
+                        bdgtgrp.getMajorCode().getGlcode().toString().concat("%"), Long.valueOf(4), Long.valueOf(1));
             if (clist != null && clist.size() != 0)
                 coaList.addAll(clist);
         }
@@ -354,7 +341,7 @@ public class BudgetService extends PersistenceService<Budget, Long> {
     public Budget getReferenceBudgetFor(final Budget budget) {
         Budget refBudget = null;
         try {
-            refBudget = find("from Budget where referenceBudget.id=?", budget.getId());
+            refBudget = find("from Budget where referenceBudget.id=?1", budget.getId());
         } catch (final Exception e) {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
         }
@@ -363,7 +350,7 @@ public class BudgetService extends PersistenceService<Budget, Long> {
 
     public boolean isLeaf(final Budget budget) {
         final List<Budget> budgetList = findAllBy(
-                "from Budget where financialYear.id=? and id in (select parent from Budget where financialYear.id=? and parent.id=?)",
+                "from Budget where financialYear.id=?1 and id in (select parent from Budget where financialYear.id=?2 and parent.id=?3)",
                 budget.getFinancialYear().getId(), budget.getFinancialYear().getId(), budget.getId());
         return budgetList == null || budgetList.isEmpty();
     }
@@ -394,8 +381,9 @@ public class BudgetService extends PersistenceService<Budget, Long> {
         persistenceService
                 .getSession()
                 .createNativeQuery(
-                        "update egf_budget set status = :approvedStatus where status =:createdStatus and  materializedPath like'"
-                                + materializedPath + "%'").setLong("approvedStatus", approvedStatus.getId())
-                .setLong("createdStatus", createdStatus.getId()).executeUpdate();
+                        "update egf_budget set status = :approvedStatus where status =:createdStatus and  materializedPath like :mPath")
+                .setParameter("mPath", materializedPath.concat("%"), StringType.INSTANCE)
+                .setParameter("approvedStatus", approvedStatus.getId(), LongType.INSTANCE)
+                .setParameter("createdStatus", createdStatus.getId(), LongType.INSTANCE).executeUpdate();
     }
 }

@@ -55,6 +55,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.budget.Budget;
 import org.egov.services.budget.BudgetDetailService;
 import org.egov.utils.FinancialConstants;
+import org.hibernate.type.IntegerType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -87,7 +88,8 @@ public class BudgetApprovalService {
     public List<Long> financialYear() {
         final String query = "select bd.financialYear.id from Budget bd where bd.isbere='RE' and bd.status.id=:statusId";
         final List<Long> budgetDetailsList = persistenceService.getSession().createQuery(query)
-                .setParameter("statusId", getBudgetStatus(FinancialConstants.BUDGET, "Created").getId()).list();
+                .setParameter("statusId", getBudgetStatus(FinancialConstants.BUDGET, "Created").getId(), IntegerType.INSTANCE)
+                .list();
         return budgetDetailsList;
     }
 
