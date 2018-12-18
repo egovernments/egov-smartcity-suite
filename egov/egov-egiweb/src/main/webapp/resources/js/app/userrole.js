@@ -60,7 +60,7 @@ $(document).ready(
                         return {
                             name: u.name + " [" + u.userName + "]",
                             userName: u.userName,
-                            value: u.id
+                            value: u.uid
                         };
                     });
                 }

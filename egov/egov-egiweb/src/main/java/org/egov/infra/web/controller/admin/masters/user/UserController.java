@@ -95,7 +95,8 @@ public class UserController {
             JsonObject userInfo = new JsonObject();
             userInfo.addProperty("name", user.getName());
             userInfo.addProperty("userName", user.getUsername());
-            userInfo.addProperty("id", user.getUid());
+            userInfo.addProperty("id", user.getId());
+            userInfo.addProperty("uid", user.getUid());
             userInfos.add(userInfo);
         });
         return userInfos.toString();
