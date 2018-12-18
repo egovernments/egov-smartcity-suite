@@ -372,7 +372,8 @@ public class TradeLicenseService {
         Date currentDate = new Date();
         Map<Installment, BigDecimal> installmentPenalty = new HashMap<>();
         for (EgDemandDetails demandDetails : demand.getEgDemandDetails()) {
-            if (!DEMAND_REASON_CATEGORY_PENALTY.equals(demandDetails.getReasonCategory())) {
+            if (!DEMAND_REASON_CATEGORY_PENALTY.equals(demandDetails.getReasonCategory())
+                    && demandDetails.getBalance().signum() == 1) {
                 Date licenseDate = isNewApplication ? license.getCommencementDate() :
                         demandDetails.getEgDemandReason().getEgInstallmentMaster().getFromDate();
                 installmentPenalty.put(demandDetails.getEgDemandReason().getEgInstallmentMaster(),
