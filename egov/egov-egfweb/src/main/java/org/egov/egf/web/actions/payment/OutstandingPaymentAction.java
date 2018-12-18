@@ -67,6 +67,7 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.query.Query;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -190,11 +191,8 @@ public class OutstandingPaymentAction extends BaseFormAction {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Ending app config check...");
             final StringBuffer query = new StringBuffer();
-            query.append("from Paymentheader where voucherheader.voucherDate<=?1 and voucherheader.status in ( ")
-                    .append(FinancialConstants.CREATEDVOUCHERSTATUS)
-                    .append(",")
-                    .append(FinancialConstants.PREAPPROVEDVOUCHERSTATUS)
-                    .append(") and bankaccount.id=?2 and")
+            query.append("from Paymentheader where voucherheader.voucherDate<=?1 and voucherheader.status in (?2,?3) ")
+                    .append(" and bankaccount.id=?4 and")
                     .append(" state.type='Paymentheader'");
             if (condtitionalAppConfigIsPresent)
             {
@@ -203,14 +201,16 @@ public class OutstandingPaymentAction extends BaseFormAction {
                 query.append(" and state.owner in (").append(ownerIdList).append(") order by state.createdDate desc ");
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("In condtitionalAppConfigIsPresent - qry" + query.toString());
-                paymentHeaderList.addAll(persistenceService.findPageBy(query.toString(), 1, 100, getAsOnDate(), id).getList());
+                paymentHeaderList.addAll(persistenceService.findPageBy(query.toString(), 1, 100, getAsOnDate(),
+                        FinancialConstants.CREATEDVOUCHERSTATUS,FinancialConstants.PREAPPROVEDVOUCHERSTATUS, id).getList());
             }
             else
             {
                 query.append(" and state.value like '").append(stateWithoutCondition).append("' order by state.createdDate desc ");
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("In ELSE - qry" + query.toString());
-                paymentHeaderList.addAll(persistenceService.findPageBy(query.toString(), 1, 100, getAsOnDate(), id).getList());
+                paymentHeaderList.addAll(persistenceService.findPageBy(query.toString(), 1, 100, getAsOnDate(),
+                        FinancialConstants.CREATEDVOUCHERSTATUS,FinancialConstants.PREAPPROVEDVOUCHERSTATUS,id).getList());
             }
             bankBalance = egovCommon.getBankBalanceAvailableforPayment(getAsOnDate(), id);
 
@@ -223,15 +223,14 @@ public class OutstandingPaymentAction extends BaseFormAction {
     private String getCommaSeperatedListForDesignationNameAndFunctionaryName(final String designationName,
             final String functionaryName)
     {
-        final StringBuilder qrySQL = new StringBuilder("select pos_id from eg_eis_employeeinfo empinfo, eg_designation desg, functionary func   ")
+        final StringBuilder qrySQL = new StringBuilder("select pos_id from eg_eis_employeeinfo empinfo, eg_designation desg, functionary func ")
                 .append(" where empinfo.functionary_id=func.id and empinfo.DESIGNATIONID=desg.DESIGNATIONID ")
-                .append(" and empinfo.isactive=true   ")
-                .append(" and desg.DESIGNATION_NAME like '")
-                .append(designationName)
-                .append("' and func.NAME like '")
-                .append(functionaryName)
-                .append("' ");
-        final Query query = persistenceService.getSession().createNativeQuery(qrySQL.toString());
+                .append(" and empinfo.isactive=true ")
+                .append(" and desg.DESIGNATION_NAME like :designationName")
+                .append(" and func.NAME like :functionaryName");
+        final Query query = persistenceService.getSession().createNativeQuery(qrySQL.toString())
+                .setParameter("designationName", designationName, StringType.INSTANCE)
+                .setParameter("functionaryName", functionaryName, StringType.INSTANCE);
         final List<BigDecimal> result = query.list();
         if (result == null || result.isEmpty())
             throw new ValidationException("", "No employee with functionary -" + functionaryName + " and designation - "

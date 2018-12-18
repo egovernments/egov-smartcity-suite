@@ -167,6 +167,7 @@ public class BankEntriesNotInBankBookAction extends BasePaymentAction {
                 .addScalar("glcodeDetail", StringType.INSTANCE)
                 .addScalar("beId", LongType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(BankEntriesNotInBankBook.class));
+        query.setParameter("bankaccount", bankaccount, StringType.INSTANCE);
         bankEntriesNotInBankBookList = query.list();
         List<BankEntriesNotInBankBook> tempList = new ArrayList<BankEntriesNotInBankBook>();
         for (BankEntriesNotInBankBook bean : bankEntriesNotInBankBookList)
@@ -189,7 +190,7 @@ public class BankEntriesNotInBankBookAction extends BasePaymentAction {
         StringBuilder query = new StringBuilder();
         StringBuilder subQuery = new StringBuilder();
         if (bankaccount != null)
-            subQuery = subQuery.append("and be.bankaccountid = ").append(bankaccount);
+            subQuery = subQuery.append("and be.bankaccountid =:bankaccount ");
         if (voucherHeader.getVouchermis().getDepartmentid() != null)
             subQuery = subQuery.append("and bemis.departmentid = ").append(voucherHeader.getVouchermis().getDepartmentid().getId());
         if (voucherHeader.getFundId() != null)

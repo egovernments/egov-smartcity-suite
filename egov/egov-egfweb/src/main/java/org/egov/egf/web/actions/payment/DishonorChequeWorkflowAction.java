@@ -553,23 +553,17 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
         reversalGlCodesStr = reversalGlCodes.substring(0, reversalGlCodes.length() - 1);
         new StringBuffer();
         StringBuilder queryString = new StringBuilder("select distinct gl.glcode, gd.detailTypeId.id, gd.detailKeyId,SUM(gd.amount)")
-                .append(" from CGeneralLedger gl, CGeneralLedgerDetail gd where gl.voucherHeaderId in(")
-                .append(dishonorChequeView.getOriginalVoucherHeader().getId())
-                .append(")" )
-                .append(" and gl.id = gd.generalLedgerId.id and gl.debitAmount >0 and gl.glcode in (")
-                .append(reversalGlCodesStr)
-                .append(") group by gl.glcode, gd.detailTypeId.id, gd.detailKeyId");
+                .append(" from CGeneralLedger gl, CGeneralLedgerDetail gd where gl.voucherHeaderId in(?1)")
+                .append(" and gl.id = gd.generalLedgerId.id and gl.debitAmount >0 and gl.glcode in (?2) ")
+                .append(" group by gl.glcode, gd.detailTypeId.id, gd.detailKeyId");
         // dishonCheqForm.setGlcodeChList(glCode);
-        slDetailsCredit = persistenceService.findAllBy(queryString.toString());
+        slDetailsCredit = persistenceService.findAllBy(queryString.toString(),dishonorChequeView.getOriginalVoucherHeader().getId(),reversalGlCodesStr);
         StringBuilder query = new StringBuilder("select distinct gl.glcode, gd.detailTypeId.id, gd.detailKeyId,SUM(gd.amount)")
-                .append(" from CGeneralLedger gl, CGeneralLedgerDetail gd where gl.voucherHeaderId in(")
-                .append(dishonorChequeView.getOriginalVoucherHeader().getId())
-                .append(")")
-                .append(" and gl.id = gd.generalLedgerId.id and gl.creditAmount >0 and gl.glcode in (")
-                .append(reversalGlCodesStr)
-                .append(") group by gl.glcode, gd.detailTypeId.id, gd.detailKeyId");
+                .append(" from CGeneralLedger gl, CGeneralLedgerDetail gd where gl.voucherHeaderId in(?1)")
+                .append(" and gl.id = gd.generalLedgerId.id and gl.creditAmount >0 and gl.glcode in (?2)")
+                .append(" group by gl.glcode, gd.detailTypeId.id, gd.detailKeyId");
 
-        slDetailsDebit = persistenceService.findAllBy(query.toString());
+        slDetailsDebit = persistenceService.findAllBy(query.toString(),dishonorChequeView.getOriginalVoucherHeader().getId(),reversalGlCodesStr);
         LOGGER.debug("Debit Side Subledger list size is " + slDetailsDebit.size());
         LOGGER.debug("Credit Side Subledger list size is " + slDetailsCredit.size());
 

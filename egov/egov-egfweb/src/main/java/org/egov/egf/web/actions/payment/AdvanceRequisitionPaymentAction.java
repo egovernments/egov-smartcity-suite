@@ -224,13 +224,9 @@ public class AdvanceRequisitionPaymentAction extends BaseVoucherAction {
 
     private void populateBankAccounts() {
         StringBuilder queryString = new StringBuilder("from Bankaccount ba where ba.bankbranch.id=?1 and ba.fund.id=?2 ")
-                .append("and ba.isactive=true order by ba.chartofaccounts.glcode")
-                .append(",")
-                .append(bankaccount.getBankbranch().getId())
-                .append(",")
-                .append(bankaccount.getFund().getId());
+                .append("and ba.isactive=true order by ba.chartofaccounts.glcode");
         if (bankaccount.getId() != null)
-            addDropdownData("accNumList", persistenceService.findAllBy(queryString.toString()));
+            addDropdownData("accNumList", persistenceService.findAllBy(queryString.toString(),bankaccount.getBankbranch().getId(),bankaccount.getFund().getId()));
     }
 
     void loadApproverUser() {

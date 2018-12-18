@@ -532,16 +532,18 @@ public class PaymentAction extends BasePaymentAction {
         if (expType == null || expType.equals("-1")
                 || expType.equals(FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT)) {
 
-            final StringBuilder cBillmainquery = new StringBuilder("from EgBillregister bill left join fetch bill.egBillregistermis.egBillSubType egBillSubType where (egBillSubType is null or egBillSubType.name not in ('")
-                    .append(FinancialConstants.BILLSUBTYPE_TNEBBILL)
-                    .append("')) and bill.expendituretype=?1 and bill.egBillregistermis.voucherHeader.status=0 ")
-                    .append(" and bill.passedamount > (select SUM(misc.paidamount) from Miscbilldetail misc where misc.billVoucherHeader = bill.egBillregistermis.voucherHeader ")
+            final StringBuilder cBillmainquery = new StringBuilder("from EgBillregister bill left join fetch bill.egBillregistermis.egBillSubType egBillSubType")
+                    .append(" where (egBillSubType is null or egBillSubType.name not in (?1)) ")
+                    .append("and bill.expendituretype=?2 and bill.egBillregistermis.voucherHeader.status=0 ")
+                    .append(" and bill.passedamount > (select SUM(misc.paidamount) from Miscbilldetail misc where ")
+                    .append(" misc.billVoucherHeader = bill.egBillregistermis.voucherHeader ")
                     .append(" and misc.payVoucherHeader.status in (0,5))");
 
-            final StringBuilder cBillmainquery1 = new StringBuilder("from EgBillregister bill left join fetch bill.egBillregistermis.egBillSubType egBillSubType where (egBillSubType is null or egBillSubType.name not in ('")
-                    .append(FinancialConstants.BILLSUBTYPE_TNEBBILL)
-                    .append("')) and bill.expendituretype=?1 and bill.egBillregistermis.voucherHeader.status=0 ")
-                    .append(" and bill.egBillregistermis.voucherHeader NOT IN (select misc.billVoucherHeader from Miscbilldetail misc where misc.billVoucherHeader is not null and misc.payVoucherHeader.status <> 4)");
+            final StringBuilder cBillmainquery1 = new StringBuilder("from EgBillregister bill left join fetch bill.egBillregistermis.egBillSubType egBillSubType ")
+                    .append(" where (egBillSubType is null or egBillSubType.name not in (?1))")
+                    .append(" and bill.expendituretype=?2 and bill.egBillregistermis.voucherHeader.status=0 ")
+                    .append(" and bill.egBillregistermis.voucherHeader NOT IN (select misc.billVoucherHeader from Miscbilldetail misc where ")
+                    .append(" misc.billVoucherHeader is not null and misc.payVoucherHeader.status <> 4)");
 
             egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode("EXPENSEBILL", "Approved"); // for
                                                                                                    // financial
@@ -552,14 +554,14 @@ public class PaymentAction extends BasePaymentAction {
             final String cBillSql1 = cBillmainquery1.toString() + " and bill.status in (?1) " + sql.toString()
                     + " order by bill.billdate desc";
             contingentBillList = getPersistenceService()
-                    .findPageBy(cBillSql, 1, 500, FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, egwStatus)
-                    .getList();
+                    .findPageBy(cBillSql, 1, 500,FinancialConstants.BILLSUBTYPE_TNEBBILL,
+                            FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, egwStatus).getList();
             if (contingentBillList != null)
                 contingentBillList.addAll(getPersistenceService().findPageBy(cBillSql1, 1, 500,
-                        FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, egwStatus).getList());
+                        FinancialConstants.BILLSUBTYPE_TNEBBILL,FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, egwStatus).getList());
             else
                 contingentBillList = getPersistenceService().findPageBy(cBillSql1, 1, 500,
-                        FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, egwStatus).getList();
+                        FinancialConstants.BILLSUBTYPE_TNEBBILL,FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, egwStatus).getList();
             final Set<EgBillregister> tempBillList = new LinkedHashSet<EgBillregister>(contingentBillList);
             contingentBillList.clear();
             contingentBillList.addAll(tempBillList);
@@ -722,12 +724,17 @@ public class PaymentAction extends BasePaymentAction {
         if (voucherHeader.getVouchermis().getFunction() != null)
             sql.append(" and bill.egBillregistermis.function=" + voucherHeader.getVouchermis().getFunction().getId());
 
-        final StringBuilder tnebSqlMainquery = new StringBuilder("select bill from EgBillregister bill , EBDetails ebd   where  bill.id = ebd.egBillregister.id and bill.expendituretype=?1 and bill.egBillregistermis.voucherHeader.status=0 ")
-                .append(" and bill.passedamount > (select SUM(misc.paidamount) from Miscbilldetail misc where misc.billVoucherHeader = bill.egBillregistermis.voucherHeader ")
+        final StringBuilder tnebSqlMainquery = new StringBuilder("select bill from EgBillregister bill , EBDetails ebd  where bill.id = ebd.egBillregister.id ")
+                .append(" and bill.expendituretype=?1 and bill.egBillregistermis.voucherHeader.status=0 ")
+                .append(" and bill.passedamount > (select SUM(misc.paidamount) from Miscbilldetail misc ")
+                .append(" where misc.billVoucherHeader = bill.egBillregistermis.voucherHeader ")
                 .append(" and misc.payVoucherHeader.status in (0,5))");
 
-        final StringBuilder tnebSqlMainquery1 = new StringBuilder("select bill from EgBillregister bill , EBDetails ebd  where  bill.id = ebd.egBillregister.id and bill.expendituretype=?1 and bill.egBillregistermis.voucherHeader.status=0 ")
-                .append(" and bill.egBillregistermis.voucherHeader NOT IN (select misc.billVoucherHeader from Miscbilldetail misc where misc.billVoucherHeader is not null and misc.payVoucherHeader.status <> 4)");
+        final StringBuilder tnebSqlMainquery1 = new StringBuilder("select bill from EgBillregister bill , EBDetails ebd  ")
+                .append(" where  bill.id = ebd.egBillregister.id and bill.expendituretype=?1 and bill.egBillregistermis.voucherHeader.status=0 ")
+                .append(" and bill.egBillregistermis.voucherHeader NOT IN (select misc.billVoucherHeader from Miscbilldetail misc ")
+                .append(" where misc.billVoucherHeader is not null and misc.payVoucherHeader.status <> 4)");
+
         if (billSubType != null && !billSubType.equalsIgnoreCase(""))
             sql.append(" and bill.egBillregistermis.egBillSubType.name='" + billSubType + "'");
         if (region != null && !region.equalsIgnoreCase(""))
@@ -1234,12 +1241,12 @@ public class PaymentAction extends BasePaymentAction {
             sql.append(" and ph.voucherheader.vouchermis.divisionid.id="
                     + voucherHeader.getVouchermis().getDivisionid().getId());
 
-        StringBuilder queryString = new StringBuilder(" from Paymentheader ph where ph.voucherheader.status=0 and (ph.voucherheader.isConfirmed=null or ph.voucherheader.isConfirmed=0) ")
+        StringBuilder queryString = new StringBuilder(" from Paymentheader ph where ph.voucherheader.status=0 and (ph.voucherheader.isConfirmed=null ")
+                .append(" or ph.voucherheader.isConfirmed=0) ")
                 .append(sql.toString())
-                .append("  and ph.voucherheader.id not in (select iv.voucherHeaderId.id from InstrumentVoucher iv where iv.instrumentHeaderId in (from InstrumentHeader ih where ih.statusId.id in (")
-                .append(statusId)
-                .append(") ))");
-        paymentheaderList = getPersistenceService().findAllBy(queryString.toString());
+                .append(" and ph.voucherheader.id not in (select iv.voucherHeaderId.id from InstrumentVoucher iv ")
+                .append(" where iv.instrumentHeaderId in (from InstrumentHeader ih where ih.statusId.id in (?1) ) ))");
+        paymentheaderList = getPersistenceService().findAllBy(queryString.toString(),statusId);
         action = LIST;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed list...");
@@ -1261,8 +1268,7 @@ public class PaymentAction extends BasePaymentAction {
                     .substring(Integer.valueOf(FinancialConstants.VOUCHERNO_TYPE_LENGTH,
                             paymentheader.getVoucherheader().getVoucherNumber().length()));
         }
-        addDropdownData("bankaccountList",
-                persistenceService.findAllBy(" from Bankaccount where bankbranch.id=?1 and isactive=true ",
+        addDropdownData("bankaccountList",persistenceService.findAllBy(" from Bankaccount where bankbranch.id=?1 and isactive=true ",
                         paymentheader.getBankaccount().getBankbranch().getId()));
         // addDropdownData("bankbranchList",
         // persistenceService.findAllBy("from Bankbranch br where br.id in

@@ -176,14 +176,9 @@ public class BankAdviceReportAction extends BaseFormAction {
             StringBuilder queryString = new StringBuilder("SELECT ih.id, ih.instrumentNumber FROM InstrumentHeader ih, InstrumentVoucher iv, Paymentheader ph ")
                     .append("WHERE ih.isPayCheque ='1' AND ih.bankAccountId.id = ?1 AND ih.statusId.description in ('New')")
                     .append(" AND ih.statusId.moduletype='Instrument' AND iv.instrumentHeaderId = ih.id and ih.bankAccountId is not null ")
-                    .append("AND iv.voucherHeaderId = ph.voucherheader AND ph.bankaccount = ih.bankAccountId AND ph.type = '")
-                    .append(FinancialConstants.MODEOFPAYMENT_RTGS )
-                    .append("' ")
-                    .append("GROUP BY ih.instrumentNumber,ih.id")
-                    .append(",")
-                    .append(bankaccount.getId());
-            resultList = getPersistenceService()
-                    .findAllBy(queryString.toString());
+                    .append("AND iv.voucherHeaderId = ph.voucherheader AND ph.bankaccount = ih.bankAccountId AND ph.type =?2 ")
+                    .append("GROUP BY ih.instrumentNumber,ih.id");
+            resultList = getPersistenceService().findAllBy(queryString.toString(),bankaccount.getId(),FinancialConstants.MODEOFPAYMENT_RTGS );
             for (final Object[] obj : resultList) {
                 InstrumentHeader ih = new InstrumentHeader();
                 ih = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?1", (Long) obj[0]);
@@ -230,12 +225,12 @@ public class BankAdviceReportAction extends BaseFormAction {
                 .append(" group by gld.detailtypeid ,gld.detailkeyid  ");
 
         final Query WithNetPayableSubledgerQuery = persistenceService.getSession().createNativeQuery(query.toString());
-        WithNetPayableSubledgerQuery.setParameter(0, instrumentHeader.getId());
+        WithNetPayableSubledgerQuery.setParameter(1, instrumentHeader.getId());
 
         // Get without subledger one
         final Query getDebitsideSubledgerQuery = persistenceService.getSession().createNativeQuery(withNoSubledgerQry.toString());
-        getDebitsideSubledgerQuery.setParameter(0, instrumentHeader.getId());
         getDebitsideSubledgerQuery.setParameter(1, instrumentHeader.getId());
+        getDebitsideSubledgerQuery.setParameter(2, instrumentHeader.getId());
 
         final List<Object[]> retList = WithNetPayableSubledgerQuery.list();
         retList.addAll(getDebitsideSubledgerQuery.list());
@@ -290,11 +285,9 @@ public class BankAdviceReportAction extends BaseFormAction {
                 .append("and d.egBillregister = br ")
                 .append("and br.billnumber = mbd.billnumber ")
                 .append("and mbd.payVoucherHeader = iv.voucherHeaderId ")
-                .append("and ih.statusId.code in ('")
-                .append(FinancialConstants.INSTRUMENT_CREATED_STATUS + "', '")
-                .append(FinancialConstants.INSTRUMENT_RECONCILED_STATUS + "') ")
-                .append("and month(ih.transactionDate) = ?1 ")
-                .append("and year(ih.transactionDate) between  ?2 and ?3");
+                .append("and ih.statusId.code in ('?1,?2') ")
+                .append("and month(ih.transactionDate) = ?3 ")
+                .append("and year(ih.transactionDate) between  ?4 and ?5");
 
         final CFinancialYear financialYear = (CFinancialYear) persistenceService.find("from CFinancialYear where id = ?1",
                 financialYearId);
@@ -307,7 +300,8 @@ public class BankAdviceReportAction extends BaseFormAction {
         calendar.setTime(financialYear.getEndingDate());
         final Integer endingYear = calendar.get(Calendar.YEAR);
 
-        instrumentHeaderList = persistenceService.findAllBy(query.toString(), month, startingYear, endingYear);
+        instrumentHeaderList = persistenceService.findAllBy(query.toString(),FinancialConstants.INSTRUMENT_CREATED_STATUS,
+                FinancialConstants.INSTRUMENT_RECONCILED_STATUS, month, startingYear, endingYear);
         mode = "search";
         monthMap = DateUtils.getAllMonths();
         heading = "List of RTGS Bank advice generated for ";

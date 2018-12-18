@@ -1466,8 +1466,7 @@ public class ContraBTBAction extends BaseVoucherAction {
         if (branchId != null)
             // as per 1781 story
             accountNumbersList = persistenceService
-                    .findAllBy(
-                            "from Bankaccount account where account.bankbranch.id=?1 and account.fund.id=?2  and account.isactive=true ",
+                    .findAllBy("from Bankaccount account where account.bankbranch.id=?1 and account.fund.id=?2  and account.isactive=true ",
                             branchId, fundId);
         return accountNumbersList;
     }
@@ -1480,10 +1479,8 @@ public class ContraBTBAction extends BaseVoucherAction {
             StringBuilder queryString = new StringBuilder("select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),bankBranch.branchname) as bankbranchname ")
                                             .append(" FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount ")
                                             .append(" where  bank.isactive=true  and bankBranch.isactive=true and bankaccount.isactive=true and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id")
-                                            .append(" and bankaccount.fund.id=?1")
-                                            .append(",")
-                                            .append(fundId);
-            final List<Object[]> bankBranch = persistenceService.findAllBy(queryString.toString());
+                                            .append(" and bankaccount.fund.id=?1");
+            final List<Object[]> bankBranch = persistenceService.findAllBy(queryString.toString(),fundId);
             for (final Object[] element : bankBranch)
                 bankBrmap.put(element[0].toString(), element[1].toString());
         }
