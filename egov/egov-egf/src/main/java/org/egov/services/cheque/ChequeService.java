@@ -100,8 +100,10 @@ public class ChequeService extends PersistenceService<AccountCheques, Long> {
         final Bankaccount bankaccount = getBankaccount(accId);
         final Department department = getDepartment(allotId);
 
-        final String chqQuery = "select ac from AccountCheques ac, ChequeDeptMapping cd where ac.id=cd.accountCheque.id and ac.bankAccountId=?1 and cd.allotedTo=?2  and (ac.isExhausted is null or ac.isExhausted=0)  order by ac.id";
-        final List<AccountCheques> chqList = findAllBy(chqQuery, bankaccount, department);
+        final StringBuilder chqQuery = new StringBuilder("select ac ")
+                .append("from AccountCheques ac, ChequeDeptMapping cd")
+                .append(" where ac.id=cd.accountCheque.id and ac.bankAccountId=?1 and cd.allotedTo=?2  and (ac.isExhausted is null or ac.isExhausted=0)  order by ac.id");
+        final List<AccountCheques> chqList = findAllBy(chqQuery.toString(), bankaccount, department);
         if (chqList == null || chqList.size() == 0)
             throw new ValidationException(Arrays.asList(new ValidationError("No cheques available", "No cheques available")));
         AccountCheques chq = chqList.get(i);
