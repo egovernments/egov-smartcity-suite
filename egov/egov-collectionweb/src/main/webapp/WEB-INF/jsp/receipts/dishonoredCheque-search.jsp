@@ -237,12 +237,13 @@
 			</div>
 			<br />
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 				<tr>
 					<td class="greybox"></td>
 					<td class="greybox"><s:text name="dishonorcheque.bankbranch" />:</td>
 					<td class="greybox"><s:select name="bankBranchId"
 							id="bankBranchId" list="dropdownData.bankBranchList"
-							headerKey="-1" headerValue="---Choose---"
+							headerKey="-1" headerValue="%{getText('dropdown.select')}"
 							listKey="bank.id + '-' + id"
 							listValue="bank.name + ' ' + branchname"
 							onchange="getAccountNumbers(this.value);" value="%{bankBranchId}" />
@@ -254,7 +255,7 @@
 							name="dishonorcheque.accountnumber" />:</td>
 					<td class="greybox"><s:select name="accountNumber"
 							id="accountNumber" list="dropdownData.accountNumberList"
-							headerKey="-1" headerValue="---Choose---" listKey="id"
+							headerKey="-1" headerValue="%{getText('dropdown.select')}" listKey="id"
 							listValue='name' value="%{accountNumber}" /></td>
 				</tr>
 
@@ -262,7 +263,7 @@
 					<td class="bluebox"></td>
 					<td class="bluebox"><s:text
 							name="dishonorcheque.instrumentmode" />:<span class="mandatory1">*</span></td>
-					<td class="bluebox"><s:select headerValue="--Select--"
+					<td class="bluebox"><s:select headerValue="%{getText('dropdown.select')}"
 							headerKey="-1" list="instrumentModesMap" listKey="key"
 							id="instrumentMode" listValue="value" label="instrumentMode"
 							name="instrumentMode" /></td>

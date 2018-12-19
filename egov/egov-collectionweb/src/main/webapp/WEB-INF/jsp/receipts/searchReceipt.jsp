@@ -389,7 +389,7 @@ function onChangeServiceClass(obj)
 </div>
 <div class="subheadsmallnew"><span class="subheadnew"><s:text name="searchreceipts.criteria"/></span></div>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-
+<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 	    <tr>
 	      <td width="4%" class="bluebox">&nbsp;</td>
 	      <td class="bluebox"><s:text name="service.master.classification"/> <span class="mandatory"></td>

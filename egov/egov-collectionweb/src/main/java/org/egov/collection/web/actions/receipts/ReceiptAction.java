@@ -59,6 +59,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -79,6 +82,7 @@ import org.egov.collection.integration.pgi.PaymentRequest;
 import org.egov.collection.integration.services.DebitAccountHeadDetailsService;
 import org.egov.collection.service.CollectionService;
 import org.egov.collection.service.ReceiptHeaderService;
+import org.egov.collection.service.ServiceDetailsService;
 import org.egov.collection.utils.CollectionCommon;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.collection.utils.FinancialsUtil;
@@ -122,6 +126,8 @@ import org.egov.infstr.models.ServiceCategory;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
+import org.hibernate.Session;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
@@ -253,10 +259,13 @@ public class ReceiptAction extends BaseFormAction {
     private Boolean receiptBulkUpload = Boolean.FALSE;
 
     private PersistenceService<ServiceCategory, Long> serviceCategoryService;
-
-    private PersistenceService<ServiceDetails, Long> serviceDetailsService;
+    @Autowired
+    private ServiceDetailsService serviceDetailsService;
 
     private Long serviceId;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     private FundHibernateDAO fundDAO;
@@ -318,13 +327,18 @@ public class ReceiptAction extends BaseFormAction {
 
                 setFundName(fund.getName());
 
-                final Department dept = (Department) getPersistenceService().findByNamedQuery(
-                        CollectionConstants.QUERY_DEPARTMENT_BY_CODE, collDetails.getDepartmentCode());
+                final Department dept = getCurrentSession().createNamedQuery(
+                        CollectionConstants.QUERY_DEPARTMENT_BY_CODE, Department.class)
+                        .setParameter(1, collDetails.getDepartmentCode(), StringType.INSTANCE).getSingleResult();
                 if (dept == null)
                     addActionError(getText("billreceipt.improperbilldata.missingdepartment"));
 
-                final ServiceDetails service = (ServiceDetails) getPersistenceService().findByNamedQuery(
-                        CollectionConstants.QUERY_SERVICE_BY_CODE, collDetails.getServiceCode());
+                final ServiceDetails service = getCurrentSession().createNamedQuery(
+                        CollectionConstants.QUERY_SERVICE_BY_CODE, ServiceDetails.class)
+                        .setParameter(1, collDetails.getServiceCode(), StringType.INSTANCE).getSingleResult();
+                if (service == null)
+                    addActionError(getText("billreceipt.improperbilldata.missingservice"));
+
                 setServiceName(service.getName());
                 setCollectionModesNotAllowed(collDetails.getCollectionModesNotAllowed());
                 setOverrideAccountHeads(collDetails.getOverrideAccountHeadsAllowed());
@@ -474,10 +488,12 @@ public class ReceiptAction extends BaseFormAction {
             payeename = collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                     CollectionConstants.APPCONFIG_VALUE_PAYEEFORMISCRECEIPTS);
 
-        ServiceDetails service = (ServiceDetails) getPersistenceService().findByNamedQuery(
-                CollectionConstants.QUERY_SERVICE_BY_CODE, CollectionConstants.SERVICE_CODE_COLLECTIONS);
+        ServiceDetails service = getCurrentSession().createNamedQuery(
+                CollectionConstants.QUERY_SERVICE_BY_CODE, ServiceDetails.class)
+                .setParameter(1, CollectionConstants.SERVICE_CODE_COLLECTIONS, StringType.INSTANCE).getSingleResult();
+
         if (null != serviceId && serviceId != -1)
-            service = serviceDetailsService.findById(serviceId, false);
+            service = getCurrentSession().find(ServiceDetails.class, serviceId);
         receiptHeader.setPartPaymentAllowed(false);
         receiptHeader.setService(service);
         final Fund fund = fundDAO.fundById(receiptMisc.getFund().getId(), false);
@@ -1835,9 +1851,6 @@ public class ReceiptAction extends BaseFormAction {
         this.instrumenttotal = instrumenttotal;
     }
 
-    public void setServiceDetailsService(final PersistenceService<ServiceDetails, Long> serviceDetailsService) {
-        this.serviceDetailsService = serviceDetailsService;
-    }
 
     public List<InstrumentHeader> getInstrumentProxyList() {
         return instrumentProxyList;
@@ -1949,6 +1962,10 @@ public class ReceiptAction extends BaseFormAction {
 
     public void setIsReceiptCancelEnable(Boolean isReceiptCancelEnable) {
         this.isReceiptCancelEnable = isReceiptCancelEnable;
+    }
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
     }
 
 }

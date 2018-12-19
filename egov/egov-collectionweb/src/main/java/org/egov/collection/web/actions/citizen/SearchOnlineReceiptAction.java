@@ -47,6 +47,16 @@
  */
 package org.egov.collection.web.actions.citizen;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TemporalType;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -54,14 +64,13 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
+import org.egov.commons.EgwStatus;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infstr.models.ServiceCategory;
 import org.egov.infstr.models.ServiceDetails;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
+import org.hibernate.type.StringType;
 
 @ParentPackage("egov")
 @Results({
@@ -75,8 +84,10 @@ public class SearchOnlineReceiptAction extends BaseFormAction {
     private Date fromDate;
     private Date toDate;
     private Integer searchTransactionStatus = -1;
-    private List<OnlinePayment> results = new ArrayList<OnlinePayment>(0);
-    private String target = "new";
+    private List<OnlinePayment> results = new ArrayList<>(0);
+    private String target = NEW;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public Object getModel() {
@@ -103,8 +114,10 @@ public class SearchOnlineReceiptAction extends BaseFormAction {
     public void prepare() {
         super.prepare();
         setupDropdownDataExcluding();
-        addDropdownData("serviceTypeList", persistenceService.findAllByNamedQuery(
-                CollectionConstants.QUERY_SERVICE_CATEGORY_FOR_TYPE, CollectionConstants.SERVICE_TYPE_BILLING, Boolean.TRUE));
+        addDropdownData("serviceTypeList", getCurrentSession().createNamedQuery(
+                CollectionConstants.QUERY_SERVICE_CATEGORY_FOR_TYPE, ServiceCategory.class)
+                .setParameter(1, CollectionConstants.SERVICE_TYPE_BILLING)
+                .setParameter(2, Boolean.TRUE).getResultList());
     }
 
     @Override
@@ -114,65 +127,89 @@ public class SearchOnlineReceiptAction extends BaseFormAction {
     }
 
     public List getOnlineReceiptStatuses() {
-        return persistenceService.findAllByNamedQuery(
-                CollectionConstants.QUERY_ALL_STATUSES_FOR_MODULE,
-                OnlinePayment.class.getSimpleName());
+        return getCurrentSession().createNamedQuery(CollectionConstants.QUERY_ALL_STATUSES_FOR_MODULE, EgwStatus.class)
+                .setParameter(1, CollectionConstants.MODULE_NAME_ONLINEPAYMENT, StringType.INSTANCE).getResultList();
     }
 
     public List getOnlineReceiptTransitionStatuses() {
-        final List<String> statusCodes = new ArrayList<String>();
+        final List<String> statusCodes = new ArrayList<>();
         statusCodes.add(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_SUCCESS);
         statusCodes.add(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_TO_BE_REFUNDED);
         statusCodes.add(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_REFUNDED);
-        return persistenceService.findAllByNamedQuery(
-                CollectionConstants.QUERY_STATUSES_FOR_MODULE_AND_CODES,
-                OnlinePayment.class.getSimpleName(), statusCodes);
+        return getCurrentSession().createNamedQuery(CollectionConstants.QUERY_STATUSES_FOR_MODULE_AND_CODES, EgwStatus.class)
+                .setParameter(1, CollectionConstants.MODULE_NAME_ONLINEPAYMENT, StringType.INSTANCE)
+                .setParameter("param_1", statusCodes).getResultList();
     }
 
     @Action(value = "/citizen/searchOnlineReceipt-search")
     public String search() {
+        Query query = getCurrentSession().createQuery(prepareQuery());
+        setQueryParameters(query);
+        results = query.list();
+        target = "searchresult";
+        return SUCCESS;
+    }
+
+    private String prepareQuery() {
         final StringBuilder queryString = new StringBuilder(
                 " select distinct onlinePayment from org.egov.collection.entity.OnlinePayment onlinePayment");
         final StringBuilder criteria = new StringBuilder();
-        final StringBuilder joinString = new StringBuilder();
-        final StringBuilder whereString = new StringBuilder();// " order by receipt.createdDate desc");
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final ArrayList<Object> params = new ArrayList<>();
         if (getReferenceId() != null) {
-            criteria.append("onlinePayment.receiptHeader.id = ? ");
+            criteria.append("onlinePayment.receiptHeader.id =:receiptId ");
             params.add(getReferenceId());
         }
         if (getSearchTransactionStatus() != -1) {
-            criteria.append(getJoinOperand(criteria)).append(" onlinePayment.status.id = ? ");
+            criteria.append(getJoinOperand(criteria)).append(" onlinePayment.status.id =:statusId ");
             params.add(getSearchTransactionStatus());
         }
         if (getFromDate() != null) {
-            criteria.append(getJoinOperand(criteria)).append(" onlinePayment.createdDate >= ? ");
+            criteria.append(getJoinOperand(criteria)).append(" onlinePayment.createdDate >=date(:fromDate)");
             params.add(fromDate);
         }
         if (getToDate() != null) {
-            criteria.append(getJoinOperand(criteria)).append(" onlinePayment.createdDate <= ? ");
+            criteria.append(getJoinOperand(criteria)).append(" onlinePayment.createdDate <=date(:toDate) ");
             final Calendar newTodate = Calendar.getInstance();
             newTodate.setTime(toDate);
             newTodate.add(Calendar.DATE, 1);
             params.add(newTodate.getTime());
         }
         if (getServiceTypeId() != -1) {
-            criteria.append(getJoinOperand(criteria)).append(" onlinePayment.receiptHeader.service.serviceCategory.id = ? ");
+            criteria.append(getJoinOperand(criteria))
+                    .append(" onlinePayment.receiptHeader.service.serviceCategory.id =:serviceTypeId ");
             params.add(getServiceTypeId());
         }
+        queryString.append(StringUtils.isBlank(criteria.toString()) ? CollectionConstants.BLANK : " where ").append(criteria).append(" order by id desc");
+        return queryString.toString();
+    }
 
-        queryString.append(StringUtils.isBlank(joinString.toString()) ? "" : joinString);
-        queryString.append(StringUtils.isBlank(criteria.toString()) ? "" : " where ").append(criteria);
-        queryString.append(whereString);
+    private void setQueryParameters(Query query) {
 
-        results = getPersistenceService().findAllBy(queryString.toString(), params.toArray());
+        if (getReferenceId() != null)
+            query.setParameter("receiptId", getReferenceId());
 
-        target = "searchresult";
-        return SUCCESS;
+        if (getSearchTransactionStatus() != -1)
+            query.setParameter("statusId", getSearchTransactionStatus());
+
+        if (getFromDate() != null)
+            query.setParameter("fromDate", fromDate, TemporalType.DATE);
+
+        if (getToDate() != null) {
+            final Calendar newTodate = Calendar.getInstance();
+            newTodate.setTime(toDate);
+            newTodate.add(Calendar.DATE, 1);
+            query.setParameter("toDate", newTodate.getTime(), TemporalType.DATE);
+        }
+        if (getServiceTypeId() != -1)
+            query.setParameter("serviceTypeId", getServiceTypeId());
     }
 
     private String getJoinOperand(final StringBuilder criteria) {
-        return StringUtils.isBlank(criteria.toString()) ? "" : " and ";
+        return StringUtils.isBlank(criteria.toString()) ? CollectionConstants.BLANK : " and ";
+    }
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
     }
 
     public List<OnlinePayment> getResults() {

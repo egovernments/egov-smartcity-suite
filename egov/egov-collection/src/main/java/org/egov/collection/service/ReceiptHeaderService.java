@@ -95,6 +95,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
@@ -1030,7 +1031,19 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     public void perform(final ReceiptHeader receiptHeader, final String wfState, final String newStatusCode,
             final String nextAction, final Position ownerPosition, final String remarks) {
         receiptHeader.setStatus(collectionsUtil.getReceiptStatusForCode(newStatusCode));
-
+        // Validate state owner position and current user position.
+        Position loggedInUserposition;
+        if (!collectionsUtil.isEmployee(this.securityUtils.getCurrentUser()))
+            loggedInUserposition = collectionsUtil.getPositionByDeptDesgAndBoundary(receiptHeader.getReceiptMisc().getBoundary());
+        else
+            loggedInUserposition = collectionsUtil.getPositionOfUser(this.securityUtils.getCurrentUser());
+        // Validate
+        if (loggedInUserposition != null && receiptHeader.getState() != null
+                && receiptHeader.getState().getOwnerPosition().getName().equals(loggedInUserposition.getName())) {
+            throw new ValidationException(
+                    Arrays.asList(new ValidationError("Current user is not the owner of the selected workflow inbox item",
+                            "Current user is not the owner of the selected workflow inbox item")));
+        }
         if (receiptHeader.getStatus().getCode().equals(CollectionConstants.RECEIPT_STATUS_CODE_APPROVED))
             // Receipt approved. end workflow for this receipt.
             receiptHeader
@@ -1070,29 +1083,30 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         return instrumentHeaderSet;
     }
 
-    public String getReceiptHeaderforDishonor(final Long mode, final Long bankAccId, final Long bankId,
+    public String getReceiptHeaderforDishonor(final String instrumentType, final Long bankAccId, final Long bankId,
             final String chequeDDNo, final String chqueDDDate) {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("FROM egcl_collectionheader rpt,egcl_collectioninstrument ci,egf_instrumentheader ih,egw_status status,bank b,"
-                + "bankbranch bb,bankaccount ba WHERE rpt.id = ci.collectionheader AND ci.instrumentheader = ih.id AND status.id = ih.id_status "
-                + "AND b.id = bb.bankid AND bb.id = ba.branchid AND ba.id = ih.bankaccountid AND ih.instrumenttype = '"
-                + mode
-                + "' AND ((ih.ispaycheque ='0' AND status.moduletype ='"
-                + CollectionConstants.MODULE_NAME_INSTRUMENTHEADER
-                + "'"
-                + "AND status.description = '"
-                + CollectionConstants.INSTRUMENT_DEPOSITED_STATUS + "'))");
+        final StringBuilder queryString = new StringBuilder();
+        queryString.append(
+                "FROM egcl_collectionheader rpt,egcl_collectioninstrument ci,egf_instrumentheader ih, egf_instrumenttype it,egw_status status,bank b,")
+                .append("bankbranch bb,bankaccount ba WHERE rpt.id = ci.collectionheader AND ci.instrumentheader = ih.id and ih.instrumenttype =it.id AND status.id = ih.id_status ")
+                .append("AND b.id = bb.bankid AND bb.id = ba.branchid AND ba.id = ih.bankaccountid AND it.type = '")
+                .append(instrumentType)
+                .append("' AND ((ih.ispaycheque ='0' AND status.moduletype ='")
+                .append(CollectionConstants.MODULE_NAME_INSTRUMENTHEADER)
+                .append("'")
+                .append("AND status.description = '")
+                .append(CollectionConstants.INSTRUMENT_DEPOSITED_STATUS + "'))");
 
         if (bankAccId != null && bankAccId != -1)
-            sb.append(" AND ih.bankaccountid=" + bankAccId + "");
+            queryString.append(" AND ih.bankaccountid=" + bankAccId);
         if ((bankAccId == null || bankAccId == -1) && bankId != null && bankId != 0)
-            sb.append(" AND ih.bankid=" + bankId + "");
-        if (!"".equals(chequeDDNo) && chequeDDNo != null)
-            sb.append(" AND ih.instrumentnumber=trim('" + chequeDDNo + "') ");
-        if (!"".equals(chqueDDDate) && chqueDDDate != null)
-            sb.append(" AND ih.instrumentdate = '" + chqueDDDate + "' ");
+            queryString.append(" AND ih.bankid=" + bankId);
+        if (StringUtils.isNotBlank(chequeDDNo))
+            queryString.append(" AND ih.instrumentnumber=trim('" + chequeDDNo + "') ");
+        if (StringUtils.isNotBlank(chqueDDDate))
+            queryString.append(" AND ih.instrumentdate = '" + chqueDDDate + "' ");
 
-        return sb.toString();
+        return queryString.toString();
     }
 
     /**

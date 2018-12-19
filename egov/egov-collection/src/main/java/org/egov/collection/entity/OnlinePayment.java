@@ -50,6 +50,7 @@ package org.egov.collection.entity;
 import org.egov.commons.EgwStatus;
 import org.egov.infstr.models.BaseModel;
 import org.egov.infstr.models.ServiceDetails;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -65,10 +66,13 @@ public class OnlinePayment extends BaseModel {
     private ReceiptHeader receiptHeader;
     private EgwStatus status;
     private ServiceDetails service;
+    @SafeHtml
     private String transactionNumber;
     private BigDecimal transactionAmount;
     private Date transactionDate;
+    @SafeHtml
     private String authorisationStatusCode;
+    @SafeHtml
     private String remarks;
 
     public OnlinePayment() {

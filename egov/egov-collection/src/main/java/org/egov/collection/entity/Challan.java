@@ -47,14 +47,15 @@
  */
 package org.egov.collection.entity;
 
+import java.util.Date;
+
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.entity.Auditable;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.pims.commons.Position;
-
-import java.util.Date;
+import org.hibernate.validator.constraints.SafeHtml;
 
 public class Challan extends StateAware<Position> implements Auditable {
 
@@ -66,8 +67,10 @@ public class Challan extends StateAware<Position> implements Auditable {
     private Date challanDate;
     private Date validUpto;
     private ServiceDetails service;
+    @SafeHtml
     private String reasonForCancellation;
     private CVoucherHeader voucherHeader;
+    @SafeHtml
     private String oldChallanNumber;
 
     public ReceiptHeader getReceiptHeader() {

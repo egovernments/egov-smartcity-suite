@@ -57,6 +57,7 @@ import org.egov.collection.integration.models.PaymentInfoSearchRequest;
 import org.egov.collection.integration.models.RestAggregatePaymentInfo;
 import org.egov.collection.integration.models.RestReceiptInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
+import org.egov.collection.service.ServiceDetailsService;
 import org.egov.commons.Bank;
 import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -109,7 +110,7 @@ public class RestPaymentReportConroller {
     ApplicationContext applicationContext;
 
     @Autowired
-    private PersistenceService<ServiceDetails, Long> serviceDetailsService;
+    private ServiceDetailsService serviceDetailsService;
 
     @RequestMapping(value = "/reconciliation/paymentdetails/transaction", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public String searchPaymentByTransactionId(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest,

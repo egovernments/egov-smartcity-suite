@@ -425,7 +425,7 @@ public class DishonorChequeService implements FinancialIntegrationService {
         headerdetails.put(VoucherConstant.VOUCHERDATE, voucherHeader.getVoucherDate());
         headerdetails.put(
                 VoucherConstant.DESCRIPTION,
-                " Reversal Voucher Entry for receipt number " + voucherHeader.getVoucherNumber() + ", Cheque Number "
+                " Reversal Voucher Entry for Voucher number " + voucherHeader.getVoucherNumber() + ", Cheque Number "
                         + instrumentHeader.getInstrumentNumber() + " Cheque Dated :"
                         + instrumentHeader.getInstrumentDate());
 

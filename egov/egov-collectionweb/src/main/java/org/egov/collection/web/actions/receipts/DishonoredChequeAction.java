@@ -51,13 +51,15 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -65,6 +67,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.displaytag.pagination.PaginatedList;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.DishonoredChequeBean;
 import org.egov.collection.entity.ReceiptVoucher;
@@ -72,14 +75,14 @@ import org.egov.collection.integration.services.DishonorChequeService;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.commons.dao.BankBranchHibernateDAO;
 import org.egov.commons.dao.BankaccountHibernateDAO;
+import org.egov.infra.persistence.utils.Page;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infra.web.struts.actions.SearchFormAction;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.EgovPaginatedList;
-import org.egov.infstr.search.SearchQuery;
-import org.egov.infstr.search.SearchQuerySQL;
-import org.egov.model.instrument.InstrumentType;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({ @Result(name = DishonoredChequeAction.SEARCH, location = "dishonoredCheque-search.jsp"),
@@ -87,11 +90,10 @@ import org.springframework.beans.factory.annotation.Autowired;
         @Result(name = "process", location = "dishonoredCheque-process.jsp"),
         @Result(name = "accountList", location = "dishonoredCheque-accountList.jsp") })
 @ParentPackage("egov")
-public class DishonoredChequeAction extends SearchFormAction {
+public class DishonoredChequeAction extends BaseFormAction {
 
     private static final long serialVersionUID = 2871716607884152080L;
     private static final Logger LOGGER = Logger.getLogger(DishonoredChequeAction.class);
-    protected DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     public static final String SEARCH = "search";
     private List bankBranchList;
     @Autowired
@@ -124,10 +126,14 @@ public class DishonoredChequeAction extends SearchFormAction {
     @Autowired
     private DishonorChequeService dishonorChequeService;
     private BigDecimal reversalAmount;
+    private PaginatedList searchResult;
+    @PersistenceContext
+    private EntityManager entityManager;
+    private int pageNum = CollectionConstants.PAGENUM;
+    private int pageSize = CollectionConstants.PAGESIZE;
 
     @Override
     public Object getModel() {
-
         return null;
     }
 
@@ -135,9 +141,9 @@ public class DishonoredChequeAction extends SearchFormAction {
     public void prepare() {
         super.prepare();
         addDropdownData(CollectionConstants.DROPDOWN_DATA_BANKBRANCH_LIST, bankBranchHibernateDAO.getAllBankBranchs());
-        addDropdownData(CollectionConstants.DROPDOWN_DATA_ACCOUNT_NO_LIST, Collections.EMPTY_LIST);
-        addDropdownData(CollectionConstants.DROPDOWN_DATA_DISHONOR_REASONS_LIST, persistenceService.getSession()
-                .createNativeQuery("select * from egf_instrument_dishonor_reason").list());
+        addDropdownData(CollectionConstants.DROPDOWN_DATA_ACCOUNT_NO_LIST, Collections.emptyList());
+        addDropdownData(CollectionConstants.DROPDOWN_DATA_DISHONOR_REASONS_LIST,
+                entityManager.createNativeQuery("select * from egf_instrument_dishonor_reason").getResultList());
         instrumentModesMap = CollectionConstants.INSTRUMENT_MODES_MAP;
     }
 
@@ -154,12 +160,11 @@ public class DishonoredChequeAction extends SearchFormAction {
             else
                 accountNumberList = bankaccountHibernateDAO.getBankAccountByBankBranch(branchId.intValue());
         } catch (final Exception ex) {
-            LOGGER.error("Exception Encountered!!!" + ex.getMessage(), ex);
+            LOGGER.error("Exception Encountered while getting account numbers!!!" + ex.getMessage(), ex);
         }
         return "accountList";
     }
 
-    @Override
     @SkipValidation
     @Action(value = "/receipts/dishonoredCheque-search")
     public String search() {
@@ -169,31 +174,32 @@ public class DishonoredChequeAction extends SearchFormAction {
     @Action(value = "/receipts/dishonoredCheque-list")
     public String list() throws Exception {
         setPageSize(30);
-        super.search();
+        dishonoredChequeSearchResult();
         prepareResults();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("DishonoredChequeAction | list | End");
         return SEARCH;
     }
 
-    @Override
-    public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
-
+    public void dishonoredChequeSearchResult() {
         Long bankId = null;
         if (isNotBlank(bankBranchId) && !bankBranchId.equals("-1")) {
-            final String id[] = bankBranchId.split("-");
+            final String id[] = bankBranchId.split(CollectionConstants.SEPARATOR_HYPHEN);
             bankId = Long.parseLong(id[0]);
         }
-        final InstrumentType instType = (InstrumentType) getPersistenceService().find(
-                "from InstrumentType where type=?1", instrumentMode);
-        final String searchQuery = receiptHeaderService.getReceiptHeaderforDishonor(instType.getId(), accountNumber,
+        final String fromWhereQueryString = receiptHeaderService.getReceiptHeaderforDishonor(instrumentMode, accountNumber,
                 bankId, chequeNumber, chequeDate.toString());
-        final String srchQry = "select rpt.id as receiptheaderid,ih.id as instrumentheaderid,rpt.receiptnumber as receiptnumber,rpt.receiptdate as receiptdate,ih.instrumentnumber as instrumentnumber,"
-                + "ih.instrumentdate as instrumentdate,ih.instrumentamount as instrumentamount,b.name as bankname,ba.accountnumber as accountnumber,ih.payto as payto,status.description as description "
-                + searchQuery + " ORDER BY rpt.receiptnumber, rpt.receiptdate ";
-        final String countQry = "select count(distinct rpt) " + searchQuery + "";
-        return new SearchQuerySQL(srchQry, countQry, null);
+        final StringBuilder searchQueryString = new StringBuilder(
+                "select rpt.id as receiptheaderid,ih.id as instrumentheaderid,rpt.receiptnumber as receiptnumber,rpt.receiptdate as receiptdate,ih.instrumentnumber as instrumentnumber,")
+                        .append("ih.instrumentdate as instrumentdate,ih.instrumentamount as instrumentamount,b.name as bankname,ba.accountnumber as accountnumber,ih.payto as payto,status.description as description ")
+                        .append(fromWhereQueryString).append(" ORDER BY rpt.receiptnumber, rpt.receiptdate ");
+        final StringBuilder countQryString = new StringBuilder("select count(distinct rpt) ").append(fromWhereQueryString);
 
+        Query dishonoredChequeQuery = getCurrentSession().createSQLQuery(searchQueryString.toString());
+        Page dishonoreChequePage = new Page<>(dishonoredChequeQuery, getPage(), getPageSize());
+        final Query dishonoredChequeCountQuery = getCurrentSession().createSQLQuery(countQryString.toString());
+        searchResult = new EgovPaginatedList(dishonoreChequePage,
+                Integer.parseInt(dishonoredChequeCountQuery.list().get(0).toString()));
     }
 
     @ValidationErrorPage(value = "process")
@@ -213,13 +219,13 @@ public class DishonoredChequeAction extends SearchFormAction {
 
             dishonorChequeService.createDishonorCheque(chequeForm);
         } catch (final ValidationException e) {
-            LOGGER.error("Error in DishonorCheque >>>>", e);
-            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            LOGGER.error("Error in Create DishonorCheque >>>>", e);
+            final List<ValidationError> errors = new ArrayList<>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
-            LOGGER.error("Error in DishonorCheque >>>>", e);
-            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            LOGGER.error("Error in  create DishonorCheque >>>>", e);
+            final List<ValidationError> errors = new ArrayList<>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);
         }
@@ -236,13 +242,19 @@ public class DishonoredChequeAction extends SearchFormAction {
 
     public List<DishonoredChequeBean> populateDishonorChequeBean(final List<Object[]> list) {
         Long receiptId;
-        List<DishonoredChequeBean> dishonoredChequeList = new ArrayList<DishonoredChequeBean>();
+        List<DishonoredChequeBean> dishonoredChequeList = new ArrayList<>();
         for (final Object[] object : list) {
             receiptId = getLongValue(object[0]);
             final DishonoredChequeBean chequeBean = new DishonoredChequeBean();
-            final ReceiptVoucher receiptVoucher = (ReceiptVoucher) persistenceService.findByNamedQuery(
-                    CollectionConstants.QUERY_RECEIPT_VOUCHER_BY_RECEIPTID, receiptId);
-            if (receiptVoucher != null) {
+            ReceiptVoucher receiptVoucher = null;
+            try {
+                receiptVoucher = entityManager
+                        .createNamedQuery(CollectionConstants.QUERY_RECEIPT_VOUCHER_BY_RECEIPTID, ReceiptVoucher.class)
+                        .setParameter(1, receiptId).getSingleResult();
+            } catch (NoResultException nre) {
+                LOGGER.info("Receipt voucher doesn't exists.");
+            }
+            if (receiptVoucher != null && receiptVoucher.getVoucherheader() != null) {
                 chequeBean.setVoucherHeaderId(receiptVoucher.getVoucherheader().getId());
                 chequeBean.setVoucherNumber(receiptVoucher.getVoucherheader().getVoucherNumber());
             }
@@ -284,25 +296,30 @@ public class DishonoredChequeAction extends SearchFormAction {
         StringBuilder queryString = new StringBuilder("");
         queryString.append(selectQueryString).append(fromQueryString).append(" where rh.id in(").append(receiptHeaderIds)
                 .append(")");
-        reversalAmount = (BigDecimal) persistenceService
-                .find("select sum(instrumentAmount) from InstrumentHeader where id in (" + instHeaderIds + ")");
+        reversalAmount = (BigDecimal) entityManager
+                .createQuery("select sum(instrumentAmount) from InstrumentHeader where id in (" + instHeaderIds + ")")
+                .getSingleResult();
         StringBuilder creditGlcodeQueryString = new StringBuilder(queryString).append(" and rd.dramount<>0 and rd.cramount=0 ")
                 .append(" and accounthead.glcode not in (select glcode from CChartOfAccounts where purposeId in (select id from AccountCodePurpose where name='Cheque In Hand')) ")
                 .append(groupOrderString);
-        glCodescredit = persistenceService
-                .findAllBy(creditGlcodeQueryString.toString());
+        glCodescredit = entityManager.createQuery(creditGlcodeQueryString.toString()).getResultList();
 
         StringBuilder debitGlcodeQueryString = new StringBuilder(queryString).append("and rd.cramount<>0 and rd.dramount=0 ")
                 .append(groupOrderString);
-        glCodes = persistenceService
-                .findAllBy(debitGlcodeQueryString.toString());
+        glCodes = entityManager.createQuery(debitGlcodeQueryString.toString()).getResultList();
         glCodes.addAll(glCodescredit);
 
         StringBuilder reversalGlCodesStr = new StringBuilder("");
         for (final Object[] rd : glCodes) {
             final DishonoredChequeBean detail = new DishonoredChequeBean();
-            final ReceiptVoucher receiptVoucher = (ReceiptVoucher) persistenceService.findByNamedQuery(
-                    CollectionConstants.QUERY_RECEIPT_VOUCHER_BY_RECEIPTID, getLongValue(rd[0]));
+            ReceiptVoucher receiptVoucher = null;
+            try {
+                receiptVoucher = entityManager.createNamedQuery(
+                        CollectionConstants.QUERY_RECEIPT_VOUCHER_BY_RECEIPTID, ReceiptVoucher.class)
+                        .setParameter(1, getLongValue(rd[0])).getSingleResult();
+            } catch (NoResultException nre) {
+                LOGGER.info("Receipt voucher doesn't exists.");
+            }
             if (receiptVoucher != null) {
                 detail.setVoucherHeaderId(receiptVoucher.getVoucherheader().getId());
             }
@@ -327,11 +344,17 @@ public class DishonoredChequeAction extends SearchFormAction {
                         .append(instHeaderIds).append(") and rd.dramount<>0 and rd.cramount=0   ")
                         .append(" and accounthead.glcode in (select glcode from CChartOfAccounts where purposeId in (select id from AccountCodePurpose where name='Cheque In Hand')) ")
                         .append(" group by rh.id ,accounthead.id,accounthead.glcode,accounthead.name,function.id order by accounthead");
-        remittanceDetailsCredit = persistenceService.findAllBy(creditRemittanceDetails.toString());
+        remittanceDetailsCredit = entityManager.createQuery(creditRemittanceDetails.toString()).getResultList();
         for (final Object[] rd : remittanceDetailsCredit) {
             final DishonoredChequeBean detail = new DishonoredChequeBean();
-            final ReceiptVoucher receiptVoucher = (ReceiptVoucher) persistenceService.findByNamedQuery(
-                    CollectionConstants.QUERY_RECEIPT_VOUCHER_BY_RECEIPTID, getLongValue(rd[0]));
+            ReceiptVoucher receiptVoucher = null;
+            try {
+                receiptVoucher = entityManager
+                        .createNamedQuery(CollectionConstants.QUERY_RECEIPT_VOUCHER_BY_RECEIPTID, ReceiptVoucher.class)
+                        .setParameter(1, getLongValue(rd[0])).getSingleResult();
+            } catch (NoResultException nre) {
+                LOGGER.info("Receipt voucher doesn't exists.");
+            }
             if (receiptVoucher != null) {
                 detail.setVoucherHeaderId(receiptVoucher.getVoucherheader().getId());
             }
@@ -352,20 +375,19 @@ public class DishonoredChequeAction extends SearchFormAction {
                         .append(" bankbranch bb,bankaccount ba where rpt.id = ci.collectionheader AND ci.instrumentheader = ih.id AND status.id = ih.id_status ")
                         .append(" AND b.id = bb.bankid AND bb.id = ba.branchid AND ba.id = ih.bankaccountid and ih.id in  (")
                         .append(instHeaderIds).append(")");
-        instrumentDetails = persistenceService
-                .getSession()
+        instrumentDetails = entityManager
                 .createNativeQuery(instrumentDetailsQueryString.toString())
-                .list();
+                .getResultList();
         dishonoredChequeDisplayList = populateDishonorChequeBean(instrumentDetails);
     }
 
     protected String getStringValue(final Object object) {
-        return object != null ? object.toString() : "";
+        return object != null ? object.toString() : CollectionConstants.BLANK;
     }
 
     protected String getDateValue(final Object object) {
 
-        return object != null ? formatter.format((Date) object) : "";
+        return object != null ? CollectionConstants.DATEFORMATTER_DD_MM_YYYY.format((Date) object) : CollectionConstants.BLANK;
     }
 
     protected Long getLongValue(final Object object) {
@@ -557,4 +579,27 @@ public class DishonoredChequeAction extends SearchFormAction {
         this.receiptHeaderIds = receiptHeaderIds;
     }
 
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
+
+    public void setPage(final int pageNum) {
+        this.pageNum = pageNum;
+    }
+
+    public int getPage() {
+        return pageNum;
+    }
+
+    public void setPageSize(final int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public PaginatedList getSearchResult() {
+        return searchResult;
+    }
 }

@@ -134,9 +134,7 @@
 			value="org.egov.infstr.models.ServiceCategory" />
 	</bean>
 
-	<bean id="serviceDetailsService" parent="abstractPersistenceService">
-		<constructor-arg name="type"
-			value="org.egov.infstr.models.ServiceDetails" />
+	<bean class="org.egov.collection.service.ServiceDetailsService" id="serviceDetailsService" >
 	</bean>
 
 	<bean id="remittancePersistService" parent="abstractPersistenceService"

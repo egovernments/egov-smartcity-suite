@@ -47,13 +47,12 @@
  */
 package org.egov.collection.entity;
 
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CVoucherHeader;
-import org.egov.commons.EgwStatus;
-import org.egov.infra.workflow.entity.StateAware;
-import org.egov.model.instrument.InstrumentHeader;
-import org.egov.pims.commons.Position;
-import org.hibernate.validator.constraints.Length;
+import static org.egov.collection.entity.CollectionDishonorCheque.SEQ_EGCL_DISHONORCHEQUE;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -67,12 +66,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
-import static org.egov.collection.entity.CollectionDishonorCheque.SEQ_EGCL_DISHONORCHEQUE;
+import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CVoucherHeader;
+import org.egov.commons.EgwStatus;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.model.instrument.InstrumentHeader;
+import org.egov.pims.commons.Position;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGCL_DISHONORCHEQUE")
@@ -106,11 +108,16 @@ public class CollectionDishonorCheque extends StateAware<Position> {
 
     private Date transactionDate;
 
+    @SafeHtml
     @Length(max = 20)
     private String bankReferenceNumber;
 
+    @SafeHtml
+    @Length(max = 50)
     private String instrumentDishonorReason;
 
+    @SafeHtml
+    @Length(max = 50)
     private String bankreason;
 
     @ManyToOne
@@ -245,6 +252,5 @@ public class CollectionDishonorCheque extends StateAware<Position> {
     public String myLinkId() {
         return getId().toString();
     }
-
 
 }

@@ -219,7 +219,7 @@ function transitionStates(){
 	document.searchOnlineReceiptForm.submit();
 }
 
-</script> 
+</script>   
 </head>
 <body onLoad="onBodyLoad();" >
 
@@ -235,7 +235,7 @@ function transitionStates(){
 </div>
 <div class="subheadsmallnew"><span class="subheadnew"><s:text name="searchOnlineReceipts.criteria"/></span></div>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-
+<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 	    <tr>
 	      <td width="4%" class="bluebox2">&nbsp;</td>
 	      <td width="21%" class="bluebox2"><s:text name="searchOnlineReceipts.criteria.servicetype"/></td>

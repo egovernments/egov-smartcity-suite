@@ -47,6 +47,19 @@
  */
 package org.egov.collection.web.actions.receipts;
 
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -64,6 +77,7 @@ import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
 import org.egov.collection.integration.services.DebitAccountHeadDetailsService;
 import org.egov.collection.service.ChallanService;
 import org.egov.collection.service.ReceiptHeaderService;
+import org.egov.collection.service.ServiceDetailsService;
 import org.egov.collection.utils.CollectionCommon;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.collection.utils.FinancialsUtil;
@@ -102,19 +116,6 @@ import org.egov.pims.commons.Position;
 import org.hibernate.StaleObjectStateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ChallanAction.NEW, location = "challan-new.jsp"),
@@ -229,7 +230,8 @@ public class ChallanAction extends BaseFormAction {
 
     private PersistenceService<ServiceCategory, Long> serviceCategoryService;
 
-    private PersistenceService<ServiceDetails, Long> serviceDetailsService;
+    @Autowired
+    private ServiceDetailsService serviceDetailsService;
 
     @Autowired
     private BankHibernateDAO bankDAO;
@@ -705,7 +707,7 @@ public class ChallanAction extends BaseFormAction {
      */
     private void populateAndPersistChallanReceipt() {
 
-        if (voucherNumber != null && !"".equals(voucherNumber)) {
+        if (org.apache.commons.lang.StringUtils.isNotBlank(voucherNumber)) {
             final CVoucherHeader voucherHeader = (CVoucherHeader) persistenceService.findByNamedQuery(
                     CollectionConstants.QUERY_VOUCHERHEADER_BY_VOUCHERNUMBER, voucherNumber);
 
@@ -1423,9 +1425,6 @@ public class ChallanAction extends BaseFormAction {
         this.serviceCategoryService = serviceCategoryService;
     }
 
-    public void setServiceDetailsService(final PersistenceService<ServiceDetails, Long> serviceDetailsService) {
-        this.serviceDetailsService = serviceDetailsService;
-    }
 
     public void setChallanWorkflowService(final SimpleWorkflowService<Challan> challanWorkflowService) {
         this.challanWorkflowService = challanWorkflowService;

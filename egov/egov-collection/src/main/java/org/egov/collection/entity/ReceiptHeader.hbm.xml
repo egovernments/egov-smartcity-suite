@@ -102,7 +102,7 @@
 			<column name="COLLECTIONTYPE" length="1" />
 		</property>
 		<property name="reasonForCancellation" type="string">
-			<column name="REASONFORCANCELLATION" length="50" />
+			<column name="REASONFORCANCELLATION" length="250" />
 		</property>
 		<property name="createdDate" column="CREATEDDATE" type="timestamp"/>
 		<property name="lastModifiedDate" column="LASTMODIFIEDDATE" type="timestamp" />

@@ -97,6 +97,7 @@ function warningInfo()
 	<div class="subheadnew"><s:text name="cancelreceipt.title"/></div>
 	<s:iterator value="%{receipts}">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 			<s:hidden label="oldReceiptId" id="oldReceiptId" name="oldReceiptId" value="%{id}"/>
 			<s:hidden label="cancelreceiptno" id="cancelreceiptno" name="cancelreceiptno" value="%{receiptnumber}"/>
 			<%-- <s:hidden label="payeeDetailsId" id="payeeDetailsId" name="payeeDetailsId" value="%{receiptPayeeDetails.id}"/> --%>

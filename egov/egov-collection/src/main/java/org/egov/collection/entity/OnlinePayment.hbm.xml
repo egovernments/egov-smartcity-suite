@@ -87,11 +87,11 @@
 		</many-to-one>
 		
 		<property name="authorisationStatusCode" type="string">
-			<column name="AUTHORISATION_STATUSCODE" precision="22" scale="0" />
+			<column name="AUTHORISATION_STATUSCODE" length="50" />
 		</property>
 		
 		<property name="remarks" type="string">
-			<column name="REMARKS" precision="22" scale="0" />
+			<column name="REMARKS" length="256" />
 		</property>
 		
 		

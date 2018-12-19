@@ -54,6 +54,7 @@ import java.util.Set;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
+import org.hibernate.validator.constraints.SafeHtml;
 
 public class ReceiptDetail implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
@@ -77,6 +78,7 @@ public class ReceiptDetail implements java.io.Serializable {
     /**
      * A <code>String</code> representing the glcode description sent from billing system
      */
+    @SafeHtml
     private String description;
     private CFunction function;
 
@@ -89,6 +91,7 @@ public class ReceiptDetail implements java.io.Serializable {
 
     private CFinancialYear financialYear;
 
+    @SafeHtml
     private String purpose;
 
     private Long groupId;

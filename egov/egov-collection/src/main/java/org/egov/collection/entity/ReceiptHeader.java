@@ -66,6 +66,7 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.pims.commons.Position;
+import org.hibernate.validator.constraints.SafeHtml;
 
 public class ReceiptHeader extends StateAware<Position> implements Auditable {
     private static final long serialVersionUID = 1L;
@@ -74,14 +75,18 @@ public class ReceiptHeader extends StateAware<Position> implements Auditable {
     private ReceiptHeader receiptHeader;
     private Set<ReceiptHeader> receiptHeaders = new HashSet<>();
 
+    @SafeHtml
     private String referencenumber;
     private Date referencedate;
+    @SafeHtml
     private String consumerCode;
     /* The details of associated bill that billing application has sent */
+    @SafeHtml
     private String referenceDesc;
     private char receipttype;
     private String receiptnumber;
     private Date receiptdate;
+    @SafeHtml
     private String manualreceiptnumber;
     private Date manualreceiptdate;
     private Boolean isModifiable;
@@ -95,12 +100,15 @@ public class ReceiptHeader extends StateAware<Position> implements Auditable {
     private Location location;
     private Boolean isReconciled;
     private EgwStatus status;
+    @SafeHtml
     private String reasonForCancellation;
+    @SafeHtml
     private String paidBy;
     private Boolean overrideAccountHeads;
     private Boolean partPaymentAllowed;
     private Boolean callbackForApportioning;
     private String collModesNotAllwd;
+    @SafeHtml
     private String displayMsg;
     private BigDecimal totalAmount;
     private BigDecimal minimumAmount;
@@ -109,13 +117,17 @@ public class ReceiptHeader extends StateAware<Position> implements Auditable {
     private String voucherNum;
     private OnlinePayment onlinePayment;
     private Challan challan;
+    @SafeHtml
     private String payeeName;
+    @SafeHtml
     private String payeeAddress;
     private String workflowUserName = "NA";
     private String instrumentsAsString;
     private String source;
     private String remittanceReferenceNumber;
+    @SafeHtml
     private String payeeEmail;
+    @SafeHtml
     private String consumerType;
     private Long version;
 

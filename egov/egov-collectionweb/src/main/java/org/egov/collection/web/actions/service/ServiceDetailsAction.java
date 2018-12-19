@@ -58,6 +58,9 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -65,6 +68,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.service.ServiceDetailsService;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccountDetail;
@@ -87,40 +91,44 @@ import org.egov.infstr.models.ServiceAccountDetails;
 import org.egov.infstr.models.ServiceCategory;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.models.ServiceSubledgerInfo;
-import org.egov.infstr.services.PersistenceService;
-import org.hibernate.query.Query;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ServiceDetailsAction.NEW, location = "serviceDetails-new.jsp"),
-        @Result(name = "list", location = "serviceDetails-list.jsp"),
+        @Result(name = ServiceDetailsAction.LIST, location = "serviceDetails-list.jsp"),
         @Result(name = ServiceDetailsAction.BEFORECREATE, location = "serviceDetails-beforeCreate.jsp"),
-        @Result(name = "codeUniqueCheck", location = "serviceDetails-codeUniqueCheck.jsp"),
+        @Result(name = ServiceDetailsAction.CODEUNIQUECHECK, location = "serviceDetails-codeUniqueCheck.jsp"),
         @Result(name = ServiceDetailsAction.MESSAGE, location = "serviceDetails-message.jsp"),
-        @Result(name = "view", location = "serviceDetails-view.jsp"),
-        @Result(name = "SUCCESS", location = "serviceDetails-view.jsp"),
+        @Result(name = ServiceDetailsAction.VIEW, location = "serviceDetails-view.jsp"),
+        @Result(name = ServiceDetailsAction.SUCCESS, location = "serviceDetails-view.jsp"),
         @Result(name = ServiceDetailsAction.BEFOREMODIFY, location = "serviceDetails-beforeModify.jsp"), })
 public class ServiceDetailsAction extends BaseFormAction {
 
     private static final Logger LOGGER = Logger.getLogger(ServiceDetailsAction.class);
     private static final long serialVersionUID = 1L;
-    private PersistenceService<ServiceCategory, Long> serviceCategoryService;
-    private PersistenceService<ServiceDetails, Long> serviceDetailsService;
     private ServiceDetails serviceDetails = new ServiceDetails();
     protected static final String BEFORECREATE = "beforeCreate";
     protected static final String BEFOREMODIFY = "beforeModify";
+    protected static final String LIST = "list";
     protected static final String MESSAGE = "message";
+    protected static final String CODEUNIQUECHECK = "codeUniqueCheck";
     private List<ServiceAccountDetails> accountDetails = new ArrayList<>(0);
     private List<ServiceSubledgerInfo> subledgerDetails = new ArrayList<>(0);
     private List<Long> departmentList = new ArrayList<>();
     private List<ServiceDetails> serviceList;
     private Boolean isVoucherApproved = Boolean.FALSE;
-    @Autowired
-    private DepartmentService departmentService;
     private Long serviceCategoryId;
     protected List<String> headerFields;
     protected List<String> mandatoryFields;
+    private SortedMap<String, String> serviceTypeMap = new TreeMap<>();
+    private String deptId;
+    private EgovCommon egovCommon;
+    private Boolean isVoucherOnReceiptAndStatusDisplay = Boolean.FALSE;
+
+    @Autowired
+    private DepartmentService departmentService;
     @Autowired
     private CollectionsUtil collectionsUtil;
     @Autowired
@@ -129,10 +137,11 @@ public class ServiceDetailsAction extends BaseFormAction {
     private ChartOfAccountsDAO chartOfAccountsDAO;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
-    private SortedMap<String, String> serviceTypeMap = new TreeMap<>();
-    private String deptId;
-    private EgovCommon egovCommon;
-    private Boolean isVoucherOnReceiptAndStatusDisplay = Boolean.FALSE;
+    @PersistenceContext
+    private EntityManager entityManager;
+ 
+    @Autowired
+    private ServiceDetailsService serviceDetailsService;
 
     public ServiceDetailsAction() {
         addRelatedEntity("serviceCategory", ServiceCategory.class);
@@ -148,21 +157,21 @@ public class ServiceDetailsAction extends BaseFormAction {
     @Action(value = "/service/serviceDetails-newform")
     public String newform() {
         addDropdownData("serviceCategoryList",
-                serviceCategoryService.findAllByNamedQuery(CollectionConstants.QUERY_ACTIVE_SERVICE_CATEGORY));
+                entityManager.createNamedQuery(CollectionConstants.QUERY_ACTIVE_SERVICE_CATEGORY).getResultList());
         return NEW;
     }
 
     @Override
     @Action(value = "/service/serviceDetails")
     public String execute() {
-        return SUCCESS;
+        return com.opensymphony.xwork2.Action.SUCCESS;
     }
 
     @Override
     public void prepare() {
         super.prepare();
         if (null != parameters.get("serviceId") && StringUtils.isNotEmpty(parameters.get("serviceId")[0])) {
-            serviceDetails = serviceDetailsService.findById(Long.valueOf(parameters.get("serviceId")[0]), false);
+            serviceDetails = entityManager.find(ServiceDetails.class, new Long(parameters.get("serviceId")[0]));
             accountDetails.addAll(serviceDetails.getServiceAccountDtls());
             for (final ServiceAccountDetails account : serviceDetails.getServiceAccountDtls())
                 subledgerDetails.addAll(account.getSubledgerDetails());
@@ -186,12 +195,12 @@ public class ServiceDetailsAction extends BaseFormAction {
                 setDeptId(department.getId().toString());
             }
         } else if (null != serviceDetails.getServiceCategory() && null != serviceDetails.getServiceCategory().getCode()) {
-            final ServiceCategory category = serviceCategoryService.findById(serviceDetails.getServiceCategory()
-                    .getId(), false);
+            final ServiceCategory category = entityManager.find(ServiceCategory.class,
+                    serviceDetails.getServiceCategory().getId());
             setServiceCategoryId(serviceDetails.getServiceCategory().getId());
             serviceDetails.setServiceCategory(category);
         } else if (null != serviceCategoryId) {
-            final ServiceCategory category = serviceCategoryService.findById(serviceCategoryId, false);
+            final ServiceCategory category = entityManager.find(ServiceCategory.class, serviceCategoryId);
             serviceDetails.setServiceCategory(category);
         }
         headerFields = new ArrayList<>(0);
@@ -201,19 +210,19 @@ public class ServiceDetailsAction extends BaseFormAction {
 
         if (headerFields.contains(CollectionConstants.DEPARTMENT))
             addDropdownData("departmentList",
-                    persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_DEPARTMENTS));
+                    entityManager.createNamedQuery(CollectionConstants.QUERY_ALL_DEPARTMENTS).getResultList());
         if (headerFields.contains(CollectionConstants.FUNCTIONARY))
             addDropdownData("functionaryList",
-                    persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_FUNCTIONARY));
+                    entityManager.createNamedQuery(CollectionConstants.QUERY_ALL_FUNCTIONARY).getResultList());
         if (headerFields.contains(CollectionConstants.FUND))
             addDropdownData("fundList", collectionsUtil.getAllFunds());
         if (headerFields.contains(CollectionConstants.FUNCTION))
             addDropdownData("functionList", functionDAO.getAllActiveFunctions());
         if (headerFields.contains(CollectionConstants.FIELD))
-            addDropdownData("fieldList", persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_FIELD));
+            addDropdownData("fieldList", entityManager.createNamedQuery(CollectionConstants.QUERY_ALL_FIELD).getResultList());
         if (headerFields.contains(CollectionConstants.FUNDSOURCE))
             addDropdownData("fundsourceList",
-                    persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_FUNDSOURCE));
+                    entityManager.createNamedQuery(CollectionConstants.QUERY_ALL_FUNDSOURCE).getResultList());
         serviceTypeMap.putAll(CollectionConstants.SERVICE_TYPE_CLASSIFICATION);
         serviceTypeMap.remove(CollectionConstants.SERVICE_TYPE_PAYMENT);
         serviceTypeMap.remove(CollectionConstants.SERVICE_TYPE_BILLING);
@@ -252,7 +261,7 @@ public class ServiceDetailsAction extends BaseFormAction {
     @Action(value = "/service/serviceDetails-view")
     public String view() {
         serviceTypeMap.putAll(CollectionConstants.SERVICE_TYPE_CLASSIFICATION);
-        return "view";
+        return BaseFormAction.VIEW;
     }
 
     @ValidationErrorPage(value = BEFOREMODIFY)
@@ -277,22 +286,6 @@ public class ServiceDetailsAction extends BaseFormAction {
     @ValidationErrorPage(value = BEFOREMODIFY)
     @Action(value = "/service/serviceDetails-modify")
     public String modify() {
-        final List<ServiceAccountDetails> accountList = getPersistenceService().getSession()
-                .createCriteria(ServiceAccountDetails.class)
-                .add(Restrictions.eq("serviceDetails.id", serviceDetails.getId())).list();
-
-        for (final ServiceAccountDetails serviceAccountDetails : accountList) {
-
-            final Query qry = getPersistenceService().getSession().createQuery(
-                    "delete from ServiceSubledgerInfo where serviceAccountDetail.id=:accountId");
-            qry.setLong("accountId", serviceAccountDetails.getId());
-            qry.executeUpdate();
-        }
-
-        final Query qry = getPersistenceService().getSession().createQuery(
-                "delete from ServiceAccountDetails where serviceDetails.id=:serviceId");
-        qry.setLong("serviceId", serviceDetails.getId());
-        qry.executeUpdate();
         insertOrUpdateService();
         if (hasActionErrors())
             return BEFOREMODIFY;
@@ -336,9 +329,10 @@ public class ServiceDetailsAction extends BaseFormAction {
                 if (subledger.getServiceAccountDetail().getGlCodeId().getId().equals(account.getGlCodeId().getId())) {
 
                     final ServiceSubledgerInfo subledgerInfo = new ServiceSubledgerInfo();
-                    final Accountdetailtype accdetailtype = (Accountdetailtype) getPersistenceService()
-                            .findByNamedQuery(CollectionConstants.QUERY_ACCOUNTDETAILTYPE_BY_ID,
-                                    subledger.getDetailType().getId());
+                    final Accountdetailtype accdetailtype = entityManager
+                            .createNamedQuery(CollectionConstants.QUERY_ACCOUNTDETAILTYPE_BY_ID,
+                                    Accountdetailtype.class)
+                            .setParameter(1, subledger.getDetailType()).getSingleResult();
                     subledgerInfo.setDetailType(accdetailtype);
                     subledgerInfo.setDetailKeyId(subledger.getDetailKeyId());
                     subledgerInfo.setAmount(subledger.getAmount());
@@ -391,7 +385,7 @@ public class ServiceDetailsAction extends BaseFormAction {
     }
 
     private boolean validateSubledger() {
-        final Map<String, BigDecimal> accountDetailAmount = new HashMap<String, BigDecimal>(0);
+        final Map<String, BigDecimal> accountDetailAmount = new HashMap<>(0);
         for (final ServiceAccountDetails account : accountDetails) {
             final Set<CChartOfAccountDetail> chartOfAccountDetail = chartOfAccountsHibernateDAO
                     .getCChartOfAccountsByGlCode(account.getGlCodeId().getGlcode()).getChartOfAccountDetails();
@@ -399,7 +393,7 @@ public class ServiceDetailsAction extends BaseFormAction {
                 accountDetailAmount.put(account.getGlCodeId().getGlcode(), account.getAmount());
         }
 
-        final Map<String, BigDecimal> subledgerAmount = new HashMap<String, BigDecimal>(0);
+        final Map<String, BigDecimal> subledgerAmount = new HashMap<>(0);
 
         for (final ServiceSubledgerInfo subledger : subledgerDetails)
             if (null == subledger.getDetailType() || null == subledger.getDetailType().getId()
@@ -466,8 +460,9 @@ public class ServiceDetailsAction extends BaseFormAction {
 
     public boolean getCodeCheck() {
         boolean codeExistsOrNot = false;
-        final ServiceDetails service = serviceDetailsService.findByNamedQuery(
-                CollectionConstants.QUERY_SERVICE_BY_CODE, serviceDetails.getCode());
+        final ServiceDetails service = entityManager
+                .createNamedQuery(CollectionConstants.QUERY_SERVICE_BY_CODE, ServiceDetails.class)
+                .setParameter(1, serviceDetails.getCode()).getSingleResult();
         if (null != service)
             codeExistsOrNot = true;
         return codeExistsOrNot;
@@ -497,10 +492,7 @@ public class ServiceDetailsAction extends BaseFormAction {
         this.subledgerDetails = subledgerDetails;
     }
 
-    public void setServiceDetailsService(final PersistenceService<ServiceDetails, Long> serviceDetailsService) {
-        this.serviceDetailsService = serviceDetailsService;
-    }
-
+ 
     public List<Long> getDepartmentList() {
         return departmentList;
     }
@@ -511,10 +503,6 @@ public class ServiceDetailsAction extends BaseFormAction {
 
     public List<ServiceDetails> getServiceList() {
         return serviceList;
-    }
-
-    public void setServiceCategoryService(final PersistenceService<ServiceCategory, Long> serviceCategoryService) {
-        this.serviceCategoryService = serviceCategoryService;
     }
 
     public Long getServiceCategoryId() {
@@ -567,5 +555,9 @@ public class ServiceDetailsAction extends BaseFormAction {
 
     public void setIsVoucherOnReceiptAndStatusDisplay(Boolean isVoucherOnReceiptAndStatusDisplay) {
         this.isVoucherOnReceiptAndStatusDisplay = isVoucherOnReceiptAndStatusDisplay;
+    }
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
     }
 }

@@ -60,6 +60,7 @@ import org.egov.collection.entity.CollectionBankRemittanceReport;
 import org.egov.collection.entity.CollectionRemittanceReportResult;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.entity.Remittance;
+import org.egov.collection.service.ServiceDetailsService;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.collection.web.actions.receipts.AjaxBankRemittanceAction;
 import org.egov.commons.dao.BankBranchHibernateDAO;
@@ -118,7 +119,8 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
     private BankaccountHibernateDAO bankAccountHibernateDAO;
     @Autowired
     private BankBranchHibernateDAO bankbranchDAO;
-    private PersistenceService<ServiceDetails, Long> serviceDetailsService;
+    @Autowired
+    private ServiceDetailsService serviceDetailsService;
     @Autowired
     private CollectionsUtil collectionsUtil;
     @Autowired
@@ -312,7 +314,4 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
         this.bankBranchId = bankBranchId;
     }
 
-    public void setServiceDetailsService(final PersistenceService<ServiceDetails, Long> serviceDetailsService) {
-        this.serviceDetailsService = serviceDetailsService;
-    }
 }
