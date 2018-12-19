@@ -90,7 +90,7 @@
     </div>
     <div class="row add-border">
         <div class="col-xs-3 add-margin"><s:text name='license.ownerShipType.lbl'/></div>
-        <div class="col-xs-3 add-margin view-content"><s:property value="%{ownershipType}"/></div>
+        <div class="col-xs-3 add-margin view-content"><s:property value="%{ownershipType.displayName}"/></div>
         <div class="col-xs-3 add-margin"><s:text name='license.address'/></div>
         <div class="col-xs-3 add-margin view-content"><s:property value="%{address}"/></div>
     </div>

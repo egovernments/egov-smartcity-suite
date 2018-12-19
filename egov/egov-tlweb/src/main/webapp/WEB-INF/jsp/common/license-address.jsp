@@ -87,7 +87,7 @@
     <div class="col-sm-3 add-margin">
         <s:select headerKey="-1" headerValue="%{getText('default.select')}" name="ownershipType"
                   id="ownershipType" listKey="key" listValue="value"
-                  list="ownerShipTypeMap" cssClass="form-control" value="%{ownershipType}" required="true"/>
+                  list="ownerShipTypeMap" cssClass="form-control" value="%{ownershipType.name}" required="true"/>
         <div id="ownership_error" class="error-msg" style="display:none;" align="left"></div>
     </div>
 </div>

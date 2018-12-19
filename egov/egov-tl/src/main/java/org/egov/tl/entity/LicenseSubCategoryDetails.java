@@ -67,17 +67,18 @@ import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 import static javax.persistence.FetchType.LAZY;
+import static org.egov.tl.entity.LicenseSubCategoryDetails.SEQ_SUBCATEGORY_DETAIL;
 
 @Entity
 @Table(name = "egtl_subcategory_details")
-@SequenceGenerator(name = LicenseSubCategoryDetails.SEQUENCE, sequenceName = LicenseSubCategoryDetails.SEQUENCE, allocationSize = 1)
+@SequenceGenerator(name = SEQ_SUBCATEGORY_DETAIL, sequenceName = SEQ_SUBCATEGORY_DETAIL, allocationSize = 1)
 public class LicenseSubCategoryDetails extends AbstractPersistable<Long> {
 
-    protected static final String SEQUENCE = "SEQ_egtl_subcategory_details";
+    protected static final String SEQ_SUBCATEGORY_DETAIL = "SEQ_egtl_subcategory_details";
     private static final long serialVersionUID = 5084451633368214374L;
 
     @Id
-    @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_SUBCATEGORY_DETAIL, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @JsonIgnore

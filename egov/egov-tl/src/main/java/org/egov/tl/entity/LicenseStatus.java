@@ -49,8 +49,9 @@
 package org.egov.tl.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.annotations.Immutable;
 import org.hibernate.validator.constraints.Length;
-import javax.validation.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -59,32 +60,47 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
+
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_MASTER_DATA_CODE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.MASTER_DATA_CODE;
 
 @Entity
 @Table(name = "EGTL_MSTR_STATUS")
-@SequenceGenerator(name = LicenseStatus.SEQUENCE, sequenceName = LicenseStatus.SEQUENCE, allocationSize = 1)
+@SequenceGenerator(name = LicenseStatus.SEQ_STATUS, sequenceName = LicenseStatus.SEQ_STATUS, allocationSize = 1)
+@Immutable
 public class LicenseStatus extends AbstractPersistable<Long> {
 
-    public static final String SEQUENCE = "SEQ_EGTL_MSTR_STATUS";
+    public static final String SEQ_STATUS = "SEQ_EGTL_MSTR_STATUS";
     private static final long serialVersionUID = 22395010799520683L;
 
     @Id
-    @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_STATUS, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotBlank
-    @Length(min = 1, max = 256)
+    @Length(max = 256)
+    @SafeHtml
     @Column(name = "STATUS_NAME")
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String name;
 
+    @NotBlank
     @Length(max = 32)
+    @SafeHtml
     @Column(name = "CODE")
+    @Pattern(regexp = MASTER_DATA_CODE, message = INVALID_MASTER_DATA_CODE)
     private String statusCode;
 
     @Column(name = "IS_ACTIVE")
     private boolean active;
 
     @Column(name = "ORDER_ID")
+    @Positive
     private Integer orderId;
 
     public Long getId() {

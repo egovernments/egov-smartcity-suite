@@ -50,40 +50,49 @@ package org.egov.tl.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.annotations.Immutable;
 import org.hibernate.validator.constraints.Length;
-import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.util.Objects;
+
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_MASTER_DATA_CODE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.MASTER_DATA_CODE;
+import static org.egov.tl.entity.LicenseAppType.SEQ_APP_TYPE;
 
 @Entity
 @Table(name = "EGTL_MSTR_APP_TYPE")
 @Unique(fields = {"name", "code"}, enableDfltMsg = true)
-@SequenceGenerator(name = LicenseAppType.SEQUENCE, sequenceName = LicenseAppType.SEQUENCE, allocationSize = 1)
+@SequenceGenerator(name = SEQ_APP_TYPE, sequenceName = SEQ_APP_TYPE, allocationSize = 1)
+@Immutable
 public class LicenseAppType extends AbstractAuditable {
-    public static final String SEQUENCE = "SEQ_EGTL_MSTR_APP_TYPE";
+    protected static final String SEQ_APP_TYPE = "SEQ_EGTL_MSTR_APP_TYPE";
     private static final long serialVersionUID = 6937736396204496999L;
 
     @Id
-    @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_APP_TYPE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotBlank
     @Length(max = 50)
     @SafeHtml
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String name;
 
     @NotBlank
     @SafeHtml
     @Length(max = 10)
-    @Column(updatable = false)
+    @Pattern(regexp = MASTER_DATA_CODE, message = INVALID_MASTER_DATA_CODE)
     private String code;
 
     private boolean display;

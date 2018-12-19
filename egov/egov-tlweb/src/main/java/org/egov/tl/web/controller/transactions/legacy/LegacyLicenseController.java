@@ -54,6 +54,7 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.NatureOfBusiness;
+import org.egov.tl.entity.enums.OwnershipType;
 import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.LegacyLicenseService;
 import org.egov.tl.service.LicenseCategoryService;
@@ -70,7 +71,6 @@ import java.util.Map;
 import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 import static org.egov.tl.utils.Constants.LOCALITY;
 import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
-import static org.egov.tl.utils.Constants.OWNERSHIP_TYPE;
 
 @Controller
 public class LegacyLicenseController extends GenericWorkFlowController {
@@ -100,7 +100,7 @@ public class LegacyLicenseController extends GenericWorkFlowController {
 
     @ModelAttribute("ownershipType")
     public Map<String, String> ownership() {
-        return OWNERSHIP_TYPE;
+        return OwnershipType.allValues();
     }
 
     @ModelAttribute("natureOfBusiness")

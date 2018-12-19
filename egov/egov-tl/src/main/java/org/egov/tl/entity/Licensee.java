@@ -49,13 +49,9 @@
 package org.egov.tl.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.validation.constants.ValidationRegex;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.validator.constraints.Length;
-
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
@@ -68,59 +64,74 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ADDRESS;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_MOBILE_NUMBER;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_NUMERIC;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PERSON_NAME;
+import static org.egov.infra.validation.constants.ValidationRegex.ADDRESS;
+import static org.egov.infra.validation.constants.ValidationRegex.EMAIL;
+import static org.egov.infra.validation.constants.ValidationRegex.MOBILE_NUMBER;
+import static org.egov.infra.validation.constants.ValidationRegex.NUMERIC;
+import static org.egov.infra.validation.constants.ValidationRegex.PERSON_NAME;
+import static org.egov.tl.entity.Licensee.SEQ_LICENSEE;
 
 @Entity
 @Table(name = "EGTL_LICENSEE")
 @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
-@SequenceGenerator(name = Licensee.SEQUENCE, sequenceName = Licensee.SEQUENCE, allocationSize = 1)
+@SequenceGenerator(name = SEQ_LICENSEE, sequenceName = SEQ_LICENSEE, allocationSize = 1)
 public class Licensee extends AbstractAuditable {
-    protected static final String SEQUENCE = "SEQ_EGTL_LICENSEE";
+    protected static final String SEQ_LICENSEE = "SEQ_EGTL_LICENSEE";
     private static final long serialVersionUID = 6723590685484215531L;
 
     @Id
-    @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_LICENSEE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotBlank
     @Length(max = 256)
     @SafeHtml
     @Column(name = "APPLICANT_NAME")
+    @Pattern(regexp = PERSON_NAME, message = INVALID_PERSON_NAME)
     private String applicantName;
 
     @NotBlank
     @SafeHtml
     @Length(max = 256)
     @Column(name = "FATHER_SPOUSE_NAME")
+    @Pattern(regexp = PERSON_NAME, message = INVALID_PERSON_NAME)
     private String fatherOrSpouseName;
 
-    @NotBlank
     @SafeHtml
     @Length(min = 10, max = 10)
     @Column(name = "MOBILE_PHONENUMBER")
-    @Pattern(regexp = ValidationRegex.MOBILE_NUMBER)
+    @Pattern(regexp = MOBILE_NUMBER, message = INVALID_MOBILE_NUMBER)
     private String mobilePhoneNumber;
 
     @SafeHtml
-    @Length(max = 16)
+    @Length(max = 12)
     @Column(name = "UNIQUEID")
+    @Pattern(regexp = NUMERIC, message = INVALID_NUMERIC)
     private String uid;
 
     @NotBlank
     @SafeHtml
     @Length(max = 64)
     @Column(name = "EMAIL_ID")
-    @Email(regexp = ValidationRegex.EMAIL)
+    @Email(regexp = EMAIL)
     private String emailId;
 
     @NotBlank
     @Length(max = 250)
     @SafeHtml
-    @Column(name = "ADDRESS")
+    @Pattern(regexp = ADDRESS, message = INVALID_ADDRESS)
     private String address;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ID_LICENSE")
+    @JoinColumn(name = "ID_LICENSE", updatable = false)
     private TradeLicense license;
 
     @Override

@@ -189,7 +189,7 @@
                                                 <spring:message code='license.ownerShipType.lbl'/>
                                             </div>
                                             <div class="col-xs-3 add-margin view-content">
-                                                    ${tradeLicense.ownershipType}
+                                                    ${tradeLicense.ownershipType.displayName}
                                             </div>
                                             <div class="col-xs-3 add-margin">
                                                 <spring:message code='license.address'/>

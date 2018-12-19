@@ -66,7 +66,7 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.entity.WorkflowBean;
+import org.egov.tl.entity.contracts.WorkflowBean;
 import org.egov.tl.entity.contracts.LicenseStateInfo;
 import org.egov.tl.utils.LicenseUtils;
 import org.joda.time.DateTime;

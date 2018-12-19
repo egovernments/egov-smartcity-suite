@@ -88,7 +88,7 @@ import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.LicenseSubCategoryDetails;
 import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.entity.WorkflowBean;
+import org.egov.tl.entity.contracts.WorkflowBean;
 import org.egov.tl.entity.contracts.DemandNoticeForm;
 import org.egov.tl.entity.contracts.OnlineSearchForm;
 import org.egov.tl.entity.contracts.SearchForm;

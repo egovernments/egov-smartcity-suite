@@ -51,9 +51,26 @@ package org.egov.tl.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,37 +78,43 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.egov.tl.entity.LicenseDocument.SEQ_EGTL_DOCUMENT;
+import static org.egov.tl.entity.LicenseDocument.SEQ_SUPPORT_DOCUMENT;
 
 @Entity
 @Table(name = "egtl_document")
-@SequenceGenerator(name = SEQ_EGTL_DOCUMENT, sequenceName = SEQ_EGTL_DOCUMENT, allocationSize = 1)
+@SequenceGenerator(name = SEQ_SUPPORT_DOCUMENT, sequenceName = SEQ_SUPPORT_DOCUMENT, allocationSize = 1)
 public class LicenseDocument extends AbstractAuditable {
 
-    public static final String SEQ_EGTL_DOCUMENT = "seq_egtl_document";
+    protected static final String SEQ_SUPPORT_DOCUMENT = "seq_egtl_document";
     private static final long serialVersionUID = 7655384098687964458L;
+
     @Id
-    @GeneratedValue(generator = SEQ_EGTL_DOCUMENT, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_SUPPORT_DOCUMENT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "type")
+    @JoinColumn(name = "type", updatable = false)
     private LicenseDocumentType type;
 
+    @SafeHtml
+    @Length(max = 50)
     private String description;
 
     @Temporal(TemporalType.DATE)
+    @NotNull
     private Date docDate;
 
     private boolean enclosed;
 
     @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinTable(name = "egtl_document_files", joinColumns = @JoinColumn(name = "document"), inverseJoinColumns = @JoinColumn(name = "filestore"))
+    @JoinTable(name = "egtl_document_files", joinColumns = @JoinColumn(name = "document"),
+            inverseJoinColumns = @JoinColumn(name = "filestore"))
     private Set<FileStoreMapper> files = new HashSet<>();
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "license")
+    @JoinColumn(name = "license", updatable = false)
     private TradeLicense license;
 
     @Transient

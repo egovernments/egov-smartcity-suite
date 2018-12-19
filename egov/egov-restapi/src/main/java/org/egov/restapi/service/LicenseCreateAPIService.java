@@ -55,7 +55,7 @@ import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.restapi.web.contracts.tradelicense.LicenseCreateRequest;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.Licensee;
-import org.egov.tl.entity.WorkflowBean;
+import org.egov.tl.entity.contracts.WorkflowBean;
 import org.egov.tl.repository.LicenseCategoryRepository;
 import org.egov.tl.repository.LicenseSubCategoryRepository;
 import org.egov.tl.repository.NatureOfBusinessRepository;

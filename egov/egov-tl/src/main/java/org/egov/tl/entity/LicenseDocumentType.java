@@ -51,7 +51,6 @@ package org.egov.tl.entity;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 import org.hibernate.validator.constraints.Length;
-import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
@@ -62,25 +61,34 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_NAME_WITH_SPECIAL_CHARS;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.NAME_WITH_SPECIAL_CHARS;
+import static org.egov.tl.entity.LicenseDocumentType.SEQ_DOCUMENT_TYPE;
 
 @Entity
 @Table(name = "egtl_document_type")
-@SequenceGenerator(name = LicenseDocumentType.SEQUENCE, sequenceName = LicenseDocumentType.SEQUENCE, allocationSize = 1)
-@CompositeUnique(fields = {"name", "applicationType"}, enableDfltMsg = true, checkForNull = true, message = "{license.document.exist}")
+@SequenceGenerator(name = SEQ_DOCUMENT_TYPE, sequenceName = SEQ_DOCUMENT_TYPE, allocationSize = 1)
+@CompositeUnique(fields = {"name", "applicationType"}, enableDfltMsg = true,
+        checkForNull = true, message = "{license.document.exist}")
 public class LicenseDocumentType extends AbstractPersistable<Long> {
 
-    protected static final String SEQUENCE = "seq_egtl_document_type";
-
+    protected static final String SEQ_DOCUMENT_TYPE = "seq_egtl_document_type";
     private static final long serialVersionUID = -4917193602014054096L;
 
     @Id
-    @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_DOCUMENT_TYPE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotBlank
     @Length(max = 50)
     @SafeHtml
+    @Pattern(regexp = NAME_WITH_SPECIAL_CHARS, message = INVALID_NAME_WITH_SPECIAL_CHARS)
     private String name;
 
     private boolean mandatory;

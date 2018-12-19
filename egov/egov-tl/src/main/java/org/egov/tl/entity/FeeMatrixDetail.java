@@ -66,20 +66,22 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+import static org.egov.tl.entity.FeeMatrixDetail.SEQ_FEEMATRIX_DETAIL;
+
 @Entity
 @Table(name = "egtl_feematrix_detail")
-@SequenceGenerator(name = FeeMatrixDetail.SEQ, sequenceName = FeeMatrixDetail.SEQ, allocationSize = 1)
+@SequenceGenerator(name = SEQ_FEEMATRIX_DETAIL, sequenceName = SEQ_FEEMATRIX_DETAIL, allocationSize = 1)
 @Audited
 public class FeeMatrixDetail extends AbstractPersistable<Long> {
-    public static final String SEQ = "seq_egtl_feematrix_detail";
+    protected static final String SEQ_FEEMATRIX_DETAIL = "seq_egtl_feematrix_detail";
     private static final long serialVersionUID = -1477850420070873621L;
 
     @Id
-    @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_FEEMATRIX_DETAIL, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "feeMatrix")
+    @JoinColumn(name = "feeMatrix", updatable = false)
     private FeeMatrix feeMatrix;
 
     @NotNull

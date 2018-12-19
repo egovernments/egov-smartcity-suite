@@ -60,18 +60,20 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.contracts.LicenseStateInfo;
+import org.egov.tl.entity.enums.OwnershipType;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.validator.constraints.Length;
-import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -86,6 +88,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.math.BigDecimal;
@@ -167,11 +170,10 @@ public class TradeLicense extends StateAware<Position> {
     @NotAudited
     private String remarks;
 
-    @SafeHtml
-    @NotBlank
-    @Length(max = 120)
     @Column(name = "OWNERSHIP_TYPE")
-    private String ownershipType;
+    @NotNull
+    @Enumerated(EnumType.ORDINAL)
+    private OwnershipType ownershipType;
 
     @SafeHtml
     @NotBlank
@@ -251,6 +253,7 @@ public class TradeLicense extends StateAware<Position> {
     @Valid
     @OneToOne(mappedBy = "license", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Audited(targetAuditMode = RelationTargetAuditMode.AUDITED)
+    @NotNull
     private Licensee licensee;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -294,11 +297,14 @@ public class TradeLicense extends StateAware<Position> {
     private boolean closed;
 
     @SafeHtml
+    @Length(max = 25)
     private String applicationSource;
 
     @NotAudited
     @NaturalId
     @Column(nullable = false, unique = true, updatable = false)
+    @Length(max = 36)
+    @SafeHtml
     private String uid;
 
     @Transient
@@ -466,11 +472,11 @@ public class TradeLicense extends StateAware<Position> {
         this.category = category;
     }
 
-    public String getOwnershipType() {
+    public OwnershipType getOwnershipType() {
         return ownershipType;
     }
 
-    public void setOwnershipType(final String ownershipType) {
+    public void setOwnershipType(final OwnershipType ownershipType) {
         this.ownershipType = ownershipType;
     }
 

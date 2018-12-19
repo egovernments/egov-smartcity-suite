@@ -49,8 +49,9 @@
 package org.egov.tl.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.annotations.Immutable;
 import org.hibernate.validator.constraints.Length;
-import javax.validation.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -58,26 +59,39 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.util.Objects;
+
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_MASTER_DATA_CODE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.MASTER_DATA_CODE;
+import static org.egov.tl.entity.FeeType.SEQ_FEE_TYPE;
 
 @Entity
 @Table(name = "egtl_mstr_fee_type")
-@SequenceGenerator(name = FeeType.SEQ, sequenceName = FeeType.SEQ, allocationSize = 1)
+@SequenceGenerator(name = SEQ_FEE_TYPE, sequenceName = SEQ_FEE_TYPE, allocationSize = 1)
+@Immutable
 public class FeeType extends AbstractAuditable {
 
-    public static final String SEQ = "seq_egtl_mstr_fee_type";
+    protected static final String SEQ_FEE_TYPE = "seq_egtl_mstr_fee_type";
     private static final long serialVersionUID = -766315755023031686L;
 
     @Id
-    @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_FEE_TYPE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotBlank
     @Length(max = 32)
+    @SafeHtml
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String name;
 
     @NotBlank
     @Length(max = 12)
+    @SafeHtml
+    @Pattern(regexp = MASTER_DATA_CODE, message = INVALID_MASTER_DATA_CODE)
     private String code;
 
     @Override

@@ -52,6 +52,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.tl.entity.enums.ProcessStatus;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -64,28 +66,40 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
+
+import static org.egov.tl.entity.DemandGenerationLogDetail.SEQ_DEMANDGENERATIONLOGDETAIL;
 
 @Entity
 @Table(name = "egtl_demandgenerationlogdetail")
-@SequenceGenerator(name = DemandGenerationLogDetail.SEQ, sequenceName = DemandGenerationLogDetail.SEQ, allocationSize = 1)
+@SequenceGenerator(name = SEQ_DEMANDGENERATIONLOGDETAIL, sequenceName = SEQ_DEMANDGENERATIONLOGDETAIL, allocationSize = 1)
 @JsonIgnoreProperties({"createdBy", "lastModifiedBy"})
 public class DemandGenerationLogDetail extends AbstractPersistable<Long> {
 
-    protected static final String SEQ = "seq_egtl_demandgenerationlogdetail";
+    protected static final String SEQ_DEMANDGENERATIONLOGDETAIL = "seq_egtl_demandgenerationlogdetail";
     private static final long serialVersionUID = 3192204759105538672L;
 
     @Id
-    @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_DEMANDGENERATIONLOGDETAIL, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @SafeHtml
+    @NotBlank
+    @Length(max = 50)
     private String licenseNumber;
 
+    @NotNull
     private Long licenseId;
 
     @Enumerated(EnumType.STRING)
+    @NotNull
     private ProcessStatus status;
 
+    @SafeHtml
+    @NotBlank
+    @Length(max = 1000)
     private String detail;
 
     @ManyToOne(fetch = FetchType.LAZY)

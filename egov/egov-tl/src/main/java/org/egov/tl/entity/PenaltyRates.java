@@ -57,27 +57,35 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+
+import static org.egov.tl.entity.PenaltyRates.SEQ_PENALTYRATES;
 
 @Entity
 @Table(name = "egtl_penaltyrates")
-@SequenceGenerator(name = PenaltyRates.SEQ, sequenceName = PenaltyRates.SEQ, allocationSize = 1)
+@SequenceGenerator(name = SEQ_PENALTYRATES, sequenceName = SEQ_PENALTYRATES, allocationSize = 1)
 public class PenaltyRates extends AbstractAuditable {
 
-    public static final String SEQ = "SEQ_EGTL_PENALTYRATES";
+    protected static final String SEQ_PENALTYRATES = "SEQ_EGTL_PENALTYRATES";
     private static final long serialVersionUID = 1329581042965327280L;
 
     @Id
-    @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_PENALTYRATES, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @NotNull
     private Long fromRange;
 
+    @NotNull
     private Long toRange;
 
+    @Positive
     private Double rate;
 
     @ManyToOne
-    @JoinColumn(name = "licenseAppType")
+    @JoinColumn(name = "licenseAppType", updatable = false)
+    @NotNull
     private LicenseAppType licenseAppType;
 
     @Override

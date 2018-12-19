@@ -51,7 +51,6 @@ package org.egov.tl.entity;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
-import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
@@ -61,30 +60,40 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.util.Objects;
+
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_UNDERSCORE_HYPHEN_SPACE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_MASTER_DATA_CODE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_UNDERSCORE_HYPHEN_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.MASTER_DATA_CODE;
+import static org.egov.tl.entity.UnitOfMeasurement.SEQ_UOM;
 
 @Entity
 @Table(name = "EGTL_MSTR_UNITOFMEASURE")
-@SequenceGenerator(name = UnitOfMeasurement.SEQUENCE, sequenceName = UnitOfMeasurement.SEQUENCE, allocationSize = 1)
+@SequenceGenerator(name = SEQ_UOM, sequenceName = SEQ_UOM, allocationSize = 1)
 @Unique(fields = {"name", "code"}, enableDfltMsg = true)
 public class UnitOfMeasurement extends AbstractAuditable {
 
-    protected static final String SEQUENCE = "SEQ_EGTL_MSTR_UNITOFMEASURE";
+    protected static final String SEQ_UOM = "SEQ_EGTL_MSTR_UNITOFMEASURE";
     private static final long serialVersionUID = -3990672464573945978L;
 
     @Id
-    @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_UOM, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotBlank
     @Length(max = 50)
     @SafeHtml
+    @Pattern(regexp = ALPHABETS_UNDERSCORE_HYPHEN_SPACE, message = INVALID_ALPHABETS_UNDERSCORE_HYPHEN_SPACE)
     private String name;
 
     @NotBlank
     @Length(max = 5)
     @SafeHtml
     @Column(updatable = false)
+    @Pattern(regexp = MASTER_DATA_CODE, message = INVALID_MASTER_DATA_CODE)
     private String code;
 
     private boolean active;

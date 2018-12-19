@@ -49,12 +49,13 @@
 package org.egov.restapi.web.contracts.tradelicense;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.egov.tl.entity.enums.OwnershipType;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
-import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
@@ -94,10 +95,8 @@ public class LicenseCreateRequest {
     @Length(max = 256, message = "Trade Title accepts maximum 256 characters")
     private String tradeTitle;
 
-    @SafeHtml(message = "Invalid Ownership Type")
-    @NotBlank(message = "Ownership Type is required")
-    @Length(max = 256, message = "Ownership Type accepts maximum 120 characters")
-    private String ownershipType;
+    @NotNull(message = "Ownership Type is required")
+    private OwnershipType ownershipType;
 
     @SafeHtml(message = "Invalid Assessment Number")
     @Length(max = 64, message = "Assessment Number accepts maximum 64 characters")
@@ -204,11 +203,11 @@ public class LicenseCreateRequest {
         this.tradeTitle = tradeTitle;
     }
 
-    public String getOwnershipType() {
+    public OwnershipType getOwnershipType() {
         return ownershipType;
     }
 
-    public void setOwnershipType(String ownershipType) {
+    public void setOwnershipType(OwnershipType ownershipType) {
         this.ownershipType = ownershipType;
     }
 

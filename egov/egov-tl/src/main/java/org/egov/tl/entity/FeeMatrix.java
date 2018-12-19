@@ -59,7 +59,6 @@ import org.hibernate.envers.RelationTargetAuditMode;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -70,7 +69,6 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -78,65 +76,69 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.TemporalType.TIMESTAMP;
+import static org.egov.tl.entity.FeeMatrix.SEQ_FEEMATRIX;
+
 @Entity
 @Table(name = "egtl_feematrix")
-@SequenceGenerator(name = FeeMatrix.SEQ, sequenceName = FeeMatrix.SEQ, allocationSize = 1)
+@SequenceGenerator(name = SEQ_FEEMATRIX, sequenceName = SEQ_FEEMATRIX, allocationSize = 1)
 @CompareDates(fromDate = "effectiveFrom", toDate = "effectiveTo", message = "{feematrix.effective.date.range}")
 @UniqueDateOverlap(fromField = "effectiveFrom", toField = "effectiveTo", uniqueFields =
         {"natureOfBusiness", "licenseCategory", "subCategory", "licenseAppType", "feeType"},
         message = "{feematrix.exist}")
 @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class FeeMatrix extends AbstractAuditable {
-    public static final String SEQ = "seq_egtl_feematrix";
+    protected static final String SEQ_FEEMATRIX = "seq_egtl_feematrix";
     private static final long serialVersionUID = 3119126267277124321L;
 
     @Id
-    @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_FEEMATRIX, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "natureOfBusiness", updatable = false)
     private NatureOfBusiness natureOfBusiness;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "licenseCategory", updatable = false)
     private LicenseCategory licenseCategory;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "subCategory", updatable = false)
     private LicenseSubCategory subCategory;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "licenseAppType", updatable = false)
     private LicenseAppType licenseAppType;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "feeType", updatable = false)
     private FeeType feeType;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "financialYear", updatable = false)
     private CFinancialYear financialYear;
 
     @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TIMESTAMP)
     @Column(updatable = false)
     private Date effectiveFrom;
 
     @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TIMESTAMP)
     private Date effectiveTo;
 
     @Valid
     @OrderBy("uomFrom")
     @OneToMany(mappedBy = "feeMatrix", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
-            fetch = FetchType.LAZY, orphanRemoval = true)
+            fetch = LAZY, orphanRemoval = true)
     @AuditMappedBy(mappedBy = "feeMatrix")
     private List<FeeMatrixDetail> feeMatrixDetail = new ArrayList<>();
 

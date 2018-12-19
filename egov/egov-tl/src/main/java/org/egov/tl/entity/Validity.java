@@ -64,26 +64,29 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import static org.egov.tl.entity.Validity.SEQ_VALIDITY;
+
 @Entity
 @Table(name = "egtl_validity")
-@SequenceGenerator(name = Validity.SEQ, sequenceName = Validity.SEQ, allocationSize = 1)
+@SequenceGenerator(name = SEQ_VALIDITY, sequenceName = SEQ_VALIDITY, allocationSize = 1)
 @CompositeUnique(fields = {"natureOfBusiness", "licenseCategory"}, enableDfltMsg = true, checkForNull = true,
         message = "{license.validity.exist}")
 public class Validity extends AbstractAuditable {
-    public static final String SEQ = "seq_egtl_validity";
+    protected static final String SEQ_VALIDITY = "seq_egtl_validity";
     private static final long serialVersionUID = -6303436329433049423L;
 
     @Id
-    @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_VALIDITY, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "natureOfBusiness", nullable = false)
+    @JoinColumn(name = "natureOfBusiness", nullable = false, updatable = false)
     private NatureOfBusiness natureOfBusiness;
 
     @ManyToOne
-    @JoinColumn(name = "licenseCategory")
+    @JoinColumn(name = "licenseCategory", updatable = false)
+    @NotNull
     private LicenseCategory licenseCategory;
 
     @Min(0)

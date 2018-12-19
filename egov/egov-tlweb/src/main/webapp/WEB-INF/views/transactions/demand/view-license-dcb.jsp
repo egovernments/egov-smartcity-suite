@@ -108,7 +108,7 @@
                     <spring:message code="license.ownerShipType.lbl"/>:
                 </div>
             </td>
-            <td style='font-weight:bold'><c:out value="${license.ownershipType}"/></td>
+            <td style='font-weight:bold'><c:out value="${license.ownershipType.displayName}"/></td>
             <td>
                 <div align="left">
                     <spring:message code="lbl.trade.name"/>:

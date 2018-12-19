@@ -51,6 +51,8 @@ package org.egov.tl.entity;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.tl.entity.enums.ProcessStatus;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -63,32 +65,43 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import static org.egov.tl.entity.DemandGenerationLog.SEQ_DEMANDGENERATIONLOG;
+
 @Entity
 @Table(name = "egtl_demandgenerationlog")
-@SequenceGenerator(name = DemandGenerationLog.SEQ, sequenceName = DemandGenerationLog.SEQ, allocationSize = 1)
+@SequenceGenerator(name = SEQ_DEMANDGENERATIONLOG, sequenceName = SEQ_DEMANDGENERATIONLOG, allocationSize = 1)
 @Unique(fields = "installmentYear", enableDfltMsg = true)
 public class DemandGenerationLog extends AbstractAuditable {
 
-    protected static final String SEQ = "seq_egtl_demandgenerationlog";
+    protected static final String SEQ_DEMANDGENERATIONLOG = "seq_egtl_demandgenerationlog";
     private static final long serialVersionUID = 3323170307345697375L;
 
     @Id
-    @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_DEMANDGENERATIONLOG, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @NotEmpty
+    @Length(max = 32)
+    @SafeHtml
     private String installmentYear;
 
     @Enumerated(EnumType.STRING)
+    @NotNull
     private ProcessStatus executionStatus;
 
     @Enumerated(EnumType.STRING)
+    @NotNull
     private ProcessStatus demandGenerationStatus;
 
     @OneToMany(mappedBy = "demandGenerationLog", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Valid
     private Set<DemandGenerationLogDetail> details = new HashSet<>();
 
     protected DemandGenerationLog() {

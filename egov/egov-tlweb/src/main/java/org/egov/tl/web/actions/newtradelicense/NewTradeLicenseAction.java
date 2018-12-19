@@ -63,7 +63,8 @@ import org.egov.pims.commons.Position;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.Licensee;
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.entity.WorkflowBean;
+import org.egov.tl.entity.contracts.WorkflowBean;
+import org.egov.tl.entity.enums.OwnershipType;
 import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.LicenseService;
 import org.egov.tl.service.LicenseSubCategoryService;
@@ -256,7 +257,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         if (license() != null && license().getId() != null)
             tradeLicense = tradeLicenseService.getLicenseById(license().getId());
         documentTypes = licenseDocumentTypeService.getDocumentTypesForNewApplication();
-        setOwnerShipTypeMap(OWNERSHIP_TYPE);
+        setOwnerShipTypeMap(OwnershipType.allValues());
         final List<Boundary> localityList = boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY, LOCATION_HIERARCHY_TYPE);
         addDropdownData("localityList", localityList);

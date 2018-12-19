@@ -50,40 +50,49 @@ package org.egov.tl.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.annotations.Immutable;
 import org.hibernate.validator.constraints.Length;
-import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.util.Objects;
+
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_MASTER_DATA_CODE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_NAME_WITH_EXTRA_SPECIAL_CHARS;
+import static org.egov.infra.validation.constants.ValidationRegex.MASTER_DATA_CODE;
+import static org.egov.infra.validation.constants.ValidationRegex.NAME_WITH_EXTRA_SPECIAL_CHARS;
+import static org.egov.tl.entity.LicenseCategory.SEQ_CATEGORY;
 
 @Entity
 @Table(name = "EGTL_MSTR_CATEGORY")
 @Unique(fields = {"name", "code"}, enableDfltMsg = true)
-@SequenceGenerator(name = LicenseCategory.SEQUENCE, sequenceName = LicenseCategory.SEQUENCE, allocationSize = 1)
+@SequenceGenerator(name = SEQ_CATEGORY, sequenceName = SEQ_CATEGORY, allocationSize = 1)
+@Immutable
 public class LicenseCategory extends AbstractAuditable {
-    protected static final String SEQUENCE = "SEQ_EGTL_MSTR_CATEGORY";
+    protected static final String SEQ_CATEGORY = "SEQ_EGTL_MSTR_CATEGORY";
     private static final long serialVersionUID = 2997222319085575846L;
 
     @Id
-    @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_CATEGORY, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotBlank
     @Length(max = 150)
     @SafeHtml
+    @Pattern(regexp = NAME_WITH_EXTRA_SPECIAL_CHARS, message = INVALID_NAME_WITH_EXTRA_SPECIAL_CHARS)
     private String name;
 
     @NotBlank
     @Length(max = 5)
     @SafeHtml
-    @Column(updatable = false)
+    @Pattern(regexp = MASTER_DATA_CODE, message = INVALID_MASTER_DATA_CODE)
     private String code;
 
     public String getName() {

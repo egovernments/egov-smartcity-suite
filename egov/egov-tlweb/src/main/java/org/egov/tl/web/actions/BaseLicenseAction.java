@@ -75,7 +75,7 @@ import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.entity.WorkflowBean;
+import org.egov.tl.entity.contracts.WorkflowBean;
 import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.LicenseApplicationService;
 import org.egov.tl.service.LicenseConfigurationService;

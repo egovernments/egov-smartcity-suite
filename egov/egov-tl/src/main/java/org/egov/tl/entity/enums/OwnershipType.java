@@ -46,77 +46,32 @@
  *
  */
 
-package org.egov.tl.entity;
+package org.egov.tl.entity.enums;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.annotations.Immutable;
-import org.hibernate.validator.constraints.Length;
-import javax.validation.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.constraints.Pattern;
-import java.util.Objects;
+public enum OwnershipType {
 
-import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
-import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
-import static org.egov.tl.entity.NatureOfBusiness.SEQ_BUSINESS_NATURE;
-
-@Entity
-@Table(name = "EGTL_MSTR_BUSINESS_NATURE")
-@SequenceGenerator(name = SEQ_BUSINESS_NATURE, sequenceName = SEQ_BUSINESS_NATURE, allocationSize = 1)
-@Unique(fields = "name", enableDfltMsg = true)
-@Immutable
-public class NatureOfBusiness extends AbstractPersistable<Long> {
-    protected static final String SEQ_BUSINESS_NATURE = "SEQ_EGTL_MSTR_BUSINESS_NATURE";
-    private static final long serialVersionUID = 5631753833454331638L;
-
-    @Id
-    @GeneratedValue(generator = SEQ_BUSINESS_NATURE, strategy = GenerationType.SEQUENCE)
-    private Long id;
-
-    @NotBlank
-    @Length(max = 25)
-    @SafeHtml
-    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
+    OWN("Own"), RENTED("Rented"), STATE_GOVERNMENT("State Government"), CENTRAL_GOVERNMENT("Central Government"), ULB("ULB");
     private String name;
 
-    @Override
-    public Long getId() {
-        return this.id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
+    OwnershipType(String name) {
         this.name = name;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!(obj instanceof NatureOfBusiness))
-            return false;
-        NatureOfBusiness that = (NatureOfBusiness) obj;
-        return Objects.equals(getName(), that.getName());
+    public static Map<String, String> allValues() {
+        return Stream.of(OwnershipType.values())
+                .collect(Collectors.toMap(OwnershipType::name, OwnershipType::toString));
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(getName());
+    public String toString() {
+        return this.name;
+    }
+
+    public String getDisplayName() {
+        return toString();
     }
 }

@@ -48,10 +48,6 @@
 
 package org.egov.tl.utils;
 
-import com.google.common.collect.ImmutableMap;
-
-import java.util.Map;
-
 public final class Constants {
 
     public static final String TL_FILE_STORE_DIR = "TL";
@@ -87,11 +83,7 @@ public final class Constants {
     public static final String TRADELICENSEMODULE = "TRADELICENSE";
     public static final String WARD = "WARD";
     public static final String BEFORE_RENEWAL = "beforeRenew";
-    public static final String OWNERSHIP_TYPE_OWN = "Own";
-    public static final String OWNERSHIP_TYPE_RENTED = "Rented";
-    public static final String OWNERSHIP_TYPE_STATEGOVERNMENT = "State Government";
-    public static final String OWNERSHIP_TYPE_CENTRALGOVERNMENT = "Central Government";
-    public static final String OWNERSHIP_TYPE_ULB = "ULB";
+
     public static final String LOCALITY = "locality";
     public static final String LOCATION_HIERARCHY_TYPE = "LOCATION";
     public static final String LICENSE_BILLNO_SEQ = "SEQ_BILLNO_";
@@ -148,9 +140,6 @@ public final class Constants {
     public static final String CSCOPERATOR = "CSC Operator";
     public static final String PRINTACK = "printAck";
     public static final String PUBLIC_HEALTH_DEPT_CODE = "PHS";
-    public static final String JA_DESIGNATION = "Junior Assistant";
-    public static final String RC_DESIGNATION = "Revenue Clerk";
-    public static final String SA_DESIGNATION = "Senior Assistant";
     public static final String SA_DESIGNATION_CODE = "SASST";
     public static final String JA_DESIGNATION_CODE = "JASST";
     public static final String BILL_TYPE_AUTO = "AUTO";
@@ -177,11 +166,7 @@ public final class Constants {
     public static final String RENEW_WITHOUT_FEE = "RENEWALWITHOUTFEE";
     public static final String COMPLETED = "Completed";
     public static final String ADMIN_WARD = "Ward";
-    public static final String DISABLED_PAYMENT_MODES ="DISABLED_PAYMENT_MODES";
-    public static final Map<String, String> OWNERSHIP_TYPE = new ImmutableMap.Builder<String, String>()
-            .put(OWNERSHIP_TYPE_OWN, OWNERSHIP_TYPE_OWN).put(OWNERSHIP_TYPE_RENTED, OWNERSHIP_TYPE_RENTED)
-            .put(OWNERSHIP_TYPE_ULB, OWNERSHIP_TYPE_ULB).put(OWNERSHIP_TYPE_STATEGOVERNMENT, OWNERSHIP_TYPE_STATEGOVERNMENT)
-            .put(OWNERSHIP_TYPE_CENTRALGOVERNMENT, OWNERSHIP_TYPE_CENTRALGOVERNMENT).build();
+    public static final String DISABLED_PAYMENT_MODES = "DISABLED_PAYMENT_MODES";
 
     private Constants() {
         // only invariants

@@ -50,6 +50,9 @@ package org.egov.tl.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.annotations.Immutable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -57,14 +60,19 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.util.Objects;
 
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHANUMERIC_UNDERSCORE_HYPHEN_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHANUMERIC_UNDERSCORE_HYPHEN_SPACE;
 import static org.egov.tl.entity.LicenseConfiguration.SEQ_CONFIGURATION;
 
 @Table(name = "egtl_configuration")
 @Entity
 @Unique(fields = "key", enableDfltMsg = true)
 @SequenceGenerator(name = SEQ_CONFIGURATION, sequenceName = SEQ_CONFIGURATION, allocationSize = 1)
+@Immutable
 public class LicenseConfiguration extends AbstractAuditable {
 
     protected static final String SEQ_CONFIGURATION = "SEQ_EGTL_CONFIGURATION";
@@ -73,8 +81,20 @@ public class LicenseConfiguration extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_CONFIGURATION, strategy = GenerationType.SEQUENCE)
     private Long id;
+
+    @NotBlank
+    @SafeHtml
+    @Length(max = 50)
+    @Pattern(regexp = ALPHANUMERIC_UNDERSCORE_HYPHEN_SPACE, message = INVALID_ALPHANUMERIC_UNDERSCORE_HYPHEN_SPACE)
     private String key;
+
+    @NotBlank
+    @SafeHtml
+    @Length(max = 100)
     private String value;
+
+    @SafeHtml
+    @Length(max = 200)
     private String description;
 
     @Override

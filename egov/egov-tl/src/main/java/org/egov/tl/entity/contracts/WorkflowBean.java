@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,30 +46,51 @@
  *
  */
 
-package org.egov.tl.entity;
+package org.egov.tl.entity.contracts;
 
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.pims.commons.Designation;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import java.util.List;
 
 public class WorkflowBean {
+
+    @SafeHtml
     private String actionName;
+
+    @SafeHtml
     private String additionaRule;
+
+    @SafeHtml
     private String actionState;
-    private List<User> appoverUserList;
-    private Long approverUserId;
-    private String approverComments;
-    private Integer departmentId;
-    private List<Department> departmentList;
-    private Integer designationId;
-    private List<Designation> designationList;
-    private String workFlowAction;
-    private Long approverPositionId;
+
+    @SafeHtml
     private String currentState;
+
+    @SafeHtml
     private String currentDesignation;
+
+    @SafeHtml
     private String disabledFields;
+
+    @SafeHtml
+    private String approverComments;
+
+    @SafeHtml
+    private String workFlowAction;
+
+    private Long approverUserId;
+    private Integer departmentId;
+    private Integer designationId;
+
+    private List<User> appoverUserList;
+    private List<Department> departmentList;
+    private List<Designation> designationList;
+
+
+    private Long approverPositionId;
 
     public String getActionName() {
         return actionName;
