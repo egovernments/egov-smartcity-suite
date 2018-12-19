@@ -55,6 +55,7 @@ public final class ValidationErrorCode {
     public static final String INVALID_ALPHABETS_UNDERSCORE_HYPHEN_SPACE = "{invalid.pattern.alphabets.with.underscore.hyphen.space}";
     public static final String INVALID_ALPHANUMERIC_UNDERSCORE_HYPHEN_SPACE = "{invalid.pattern.alphanumeric.with.underscore.hyphen.space}";
     public static final String INVALID_ALPHANUMERIC_WITH_SPECIAL_CHARS = "{invalid.pattern.alphanumeric.with.special.chars}";
+    public static final String INVALID_NAME_WITH_EXTRA_SPECIAL_CHARS="{invalid.pattern.name.with.extra.special.chars}";
     public static final String INVALID_PHONE_NUMBER = "{invalid.phone.number}";
     public static final String INVALID_MOBILE_NUMBER = "{invalid.mobile.number}";
     public static final String INVALID_ALPHANUMERIC_WITH_SPACE = "{invalid.pattern.alphanumeric.with.space}";
@@ -65,6 +66,7 @@ public final class ValidationErrorCode {
     public static final String INVALID_ALPHABETS = "{invalid.pattern.alphabet}";
     public static final String INVALID_FILE_NAME = "{invalid.file.name}";
     public static final String INVALID_ADDRESS = "{invalid.address}";
+    public static final String INVALID_NUMERIC = "{invalid.numeric}";
 
     private ValidationErrorCode() {
         //only static fields

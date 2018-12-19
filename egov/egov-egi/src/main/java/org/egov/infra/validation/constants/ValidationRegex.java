@@ -73,6 +73,7 @@ public class ValidationRegex {
     public static final String UNSIGNED_NUMERIC = "^\\d*\\.?\\d*$";
     public static final String MASTER_DATA_CODE = "[\\w-]+";
     public static final String NAME_WITH_SPECIAL_CHARS = "[\\w\\s()/-]+";
+    public static final String NAME_WITH_EXTRA_SPECIAL_CHARS = "[\\w\\s()/-&,.]+";
     public static final String ALPHABETS_UNDERSCORE_HYPHEN_SPACE = "[A-Za-z\\s_-]+";
     public static final String ALPHANUMERIC_UNDERSCORE_HYPHEN_SPACE = "[\\w\\s-]+";
     public static final String ALPHANUMERIC_WITH_SPECIAL_CHARS = "[\\w-&\\s:,/.()@#]+";
