@@ -129,6 +129,10 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @ValidationErrorPage(NEW)
     @Action(value = "/newtradelicense/newTradeLicense-create")
     public String create() {
+        if (validateButtons()) {
+            addActionMessage(this.getText(INVALID_WORKFLOWACTION));
+            return MESSAGE;
+        }
         supportDocumentsValidation();
         return super.create(tradeLicense);
     }
@@ -198,7 +202,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         if (SIGNWORKFLOWACTION.equals(workFlowAction) && !this.isDigitalSignatureEnabled())
             throw new ValidationException("error.digisign.disabled", "error.digisign.disabled");
         if (validateButtons()) {
-            addActionMessage(this.getText("error.invalid.workflowaction"));
+            addActionMessage(this.getText(INVALID_WORKFLOWACTION));
             return MESSAGE;
         }
         return super.approve();
@@ -232,6 +236,10 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @ValidationErrorPageExt(action = BEFORE_RENEWAL, makeCall = true, toMethod = "prepareRenew")
     @Action(value = "/newtradelicense/newTradeLicense-renewal")
     public String renew() {
+        if (validateButtons()) {
+            addActionMessage(this.getText(INVALID_WORKFLOWACTION));
+            return MESSAGE;
+        }
         supportDocumentsValidation();
         return super.renew();
     }

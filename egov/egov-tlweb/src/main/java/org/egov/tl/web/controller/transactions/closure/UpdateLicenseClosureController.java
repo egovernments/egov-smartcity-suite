@@ -47,9 +47,7 @@
  */
 package org.egov.tl.web.controller.transactions.closure;
 
-import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.workflow.entity.StateAware;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.service.LicenseConfigurationService;
 import org.egov.tl.web.validator.closure.UpdateLicenseClosureValidator;
@@ -162,11 +160,5 @@ public class UpdateLicenseClosureController extends LicenseClosureProcessflowCon
                 : new StringBuilder(80).append("redirect:/license/closure/digisign-transition?applicationNumbers=")
                 .append(license.getApplicationNumber()).append("&fileStoreIds=")
                 .append(license.getDigiSignedCertFileStoreId()).toString();
-    }
-
-
-    private void validateButtons(StateAware model, WorkflowContainer workflowContainer, BindingResult bindingResult) {
-        if (super.validateButtons(model, workflowContainer))
-            bindingResult.reject("error.invalid.workflowaction");
     }
 }

@@ -88,6 +88,7 @@ public class CreateLicenseClosureController extends LicenseClosureProcessflowCon
     public String createClosure(@Valid @ModelAttribute TradeLicense tradeLicense, BindingResult bindingResult,
                                 RedirectAttributes redirectAttributes) {
         createLicenseClosureValidator.validate(tradeLicense, bindingResult);
+        validateButtons(tradeLicense, tradeLicense.getWorkflowContainer(), bindingResult);
         if (bindingResult.hasErrors())
             return LICENSECLOSURE;
         if (tradeLicense.transitionInprogress()) {

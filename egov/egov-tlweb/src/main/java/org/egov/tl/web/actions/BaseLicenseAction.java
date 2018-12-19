@@ -121,7 +121,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     private static final String MESSAGE = "message";
     private static final String VALIDATE_SUPPORT_DOCUMENT = "error.support.docs";
     private static final String LICENSE_REJECT = "license.rejected";
-
+    protected static final String INVALID_WORKFLOWACTION ="error.invalid.workflowaction";
     protected transient TradeLicense tradeLicense = new TradeLicense();
     protected transient String roleName;
     protected transient String reportId;
@@ -201,10 +201,12 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
                 addActionMessage(this.getText(WF_ITEM_PROCESSED));
                 return MESSAGE;
             }
-            Position nextPosition = positionMasterService.getPositionById(workflowBean.getApproverPositionId());
-            if (nextPosition == null || !nextPosition.getDeptDesig().getDesignation().getName().equals(wfmatrix.getNextDesignation())) {
-                addActionMessage(this.getText("error.invalid.approver"));
-                return MESSAGE;
+            if(workflowBean.getApproverPositionId() != null && workflowBean.getApproverPositionId() != -1) {
+                Position nextPosition = positionMasterService.getPositionById(workflowBean.getApproverPositionId());
+                if (nextPosition == null || !wfmatrix.getNextDesignation().contains(nextPosition.getDeptDesig().getDesignation().getName())) {
+                    addActionMessage(this.getText("error.invalid.approver"));
+                    return MESSAGE;
+                }
             }
             if (GENERATE_PROVISIONAL_CERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
                 reportId = reportViewerUtil
