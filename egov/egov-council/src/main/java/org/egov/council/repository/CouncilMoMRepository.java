@@ -49,10 +49,15 @@ package org.egov.council.repository;
 
 import org.egov.council.entity.MeetingMOM;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CouncilMoMRepository extends JpaRepository<MeetingMOM, Long> {
 
     MeetingMOM findByResolutionNumber(String resolutionNumber);
+    
+    @Query("select mom from MeetingMOM mom where mom.resolutionNumber = :resolutionNumber and mom.preamble.id != :preambleId ")
+    MeetingMOM findByResolutionNumberAndPreamble(@Param("resolutionNumber") String resolutionNumber, @Param("preambleId") Long preambleId);
 }

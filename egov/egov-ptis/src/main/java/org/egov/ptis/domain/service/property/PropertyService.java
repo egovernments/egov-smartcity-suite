@@ -266,9 +266,6 @@ public class PropertyService {
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
     @Autowired
-    @Qualifier("documentTypePersistenceService")
-    private PersistenceService<DocumentType, Long> documentTypePersistenceService;
-    @Autowired
     @Qualifier("fileStoreService")
     private FileStoreService fileStoreService;
     @Autowired
@@ -1921,14 +1918,14 @@ public class PropertyService {
                     final FileStoreMapper fileStore = fileStoreService.store(file,
                             document.getUploadsFileName().get(fileCount),
                             document.getUploadsContentType().get(fileCount++), FILESTORE_MODULE_NAME);
+                    basicPropertyService.applyAuditing(fileStore);
                     document.getFiles().add(fileStore);
                     if (document.getId() != null && document.getType() != null)
-                        document.setType(
-                                documentTypePersistenceService.load(document.getType().getId(), DocumentType.class));
+                        document.setType(entityManager.find(DocumentType.class, document.getType().getId()));
                 }
             }
             if (document.getType() != null)
-                document.setType(documentTypePersistenceService.load(document.getType().getId(), DocumentType.class));
+                document.setType(entityManager.find(DocumentType.class, document.getType().getId()));
         });
     }
 

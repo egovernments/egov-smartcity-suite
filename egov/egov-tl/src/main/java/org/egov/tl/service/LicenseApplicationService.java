@@ -75,7 +75,6 @@ import static org.egov.tl.utils.Constants.SIGNWORKFLOWACTION;
 import static org.egov.tl.utils.Constants.STATUS_ACTIVE;
 
 @Service
-@Transactional(readOnly = true)
 public class LicenseApplicationService extends TradeLicenseService {
 
     @Autowired

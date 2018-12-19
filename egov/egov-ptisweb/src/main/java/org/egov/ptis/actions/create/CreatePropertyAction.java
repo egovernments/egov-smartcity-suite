@@ -1429,7 +1429,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             showCalculateTaxButton();
         if (propTypeMstr != null
                 && propTypeMstr.getCode().equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT)
-                && propertyDepartmentId == null)
+                && propertyDepartmentId == null && property.getId() != null)
             addActionError(getText("mandatory.property.department"));
         if (upicNo == null || "".equals(upicNo))
             validateDocumentDetails(getDocumentTypeDetails());

@@ -50,6 +50,7 @@ package org.egov.tl.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.annotations.Immutable;
 import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -66,6 +67,7 @@ import java.util.Objects;
 @Table(name = "EGTL_MSTR_BUSINESS_NATURE")
 @SequenceGenerator(name = NatureOfBusiness.SEQUENCE, sequenceName = NatureOfBusiness.SEQUENCE, allocationSize = 1)
 @Unique(fields = "name", enableDfltMsg = true)
+@Immutable
 public class NatureOfBusiness extends AbstractPersistable<Long> {
     protected static final String SEQUENCE = "SEQ_EGTL_MSTR_BUSINESS_NATURE";
     private static final long serialVersionUID = 5631753833454331638L;

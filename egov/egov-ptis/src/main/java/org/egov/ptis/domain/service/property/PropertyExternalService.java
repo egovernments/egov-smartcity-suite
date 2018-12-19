@@ -364,7 +364,7 @@ public class PropertyExternalService {
         BasicProperty basicProperty = basicPropertyDAO
                 .getAllBasicPropertyByPropertyID(assessmentDetail.getPropertyID());
         final ErrorDetails errorDetails = new ErrorDetails();
-        if (null != basicProperty) {
+		if (null != basicProperty && null != basicProperty.getProperty()) {
             assessmentDetail.setStatus(basicProperty.isActive());
             if (status.equals(BasicPropertyStatus.ACTIVE)) {
                 if (basicProperty.isActive()) {
