@@ -389,6 +389,12 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @ValidationErrorPage(value = NEW)
     @Action(value = "/save")
     public String save() {
+        if (propertyTaxCommonUtils.isUnderMutationWorkflow(basicproperty)) {
+            final List<String> msgParams = new ArrayList<>();
+            msgParams.add("Transfer of Ownership");
+            wfErrorMsg = getText("wf.pending.msg", msgParams);
+            return TARGET_WORKFLOW_ERROR;
+        }
         transitionWorkFlow(propertyMutation);
         propertyMutation.setSource(propertyTaxCommonUtils.setSourceOfProperty(securityUtils.getCurrentUser(),
                 ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())));

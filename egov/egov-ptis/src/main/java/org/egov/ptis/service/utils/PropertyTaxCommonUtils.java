@@ -846,4 +846,15 @@ public class PropertyTaxCommonUtils {
         		id = (BigInteger) list.get(0);
     	return id;
     }
+    
+    public boolean isUnderMutationWorkflow(final BasicProperty basicProperty) {
+        boolean underWorkFlow = false;
+        if (basicProperty.getPropertyMutations() != null)
+            for (final PropertyMutation propertyMutation : basicProperty.getPropertyMutations()) {
+                underWorkFlow = WF_STATE_CLOSED.equalsIgnoreCase(propertyMutation.getState().getValue()) ? false : true;
+                if (underWorkFlow)
+                    break;
+            }
+        return underWorkFlow;
+    }
 }
