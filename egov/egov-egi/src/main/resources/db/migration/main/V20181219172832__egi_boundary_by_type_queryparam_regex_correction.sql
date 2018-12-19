@@ -1,0 +1,1 @@
+UPDATE eg_action SET queryparamregex='^boundaryTypeId=\d+$' WHERE name='ADMIN_BOUNDARY_BY_BOUNDARY_TYPE';
