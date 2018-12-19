@@ -204,28 +204,22 @@ public class BudgetAppropriationReportAction extends BaseFormAction {
 			functionQry = "  and bd.function="
 					+ budgetRep.getBudgetDetail().getFunction().getId();
 
-		queryString = queryString
-				.append("select dept.name as department,funct.name as function ,fnd.name as fund ,"
-						+ " bg.name  as budgetHead,bmisc.sequence_number as budgetAppropriationNo,bmisc.reappropriation_date as appropriationDate,"
-						+ " bd.approvedamount as actualAmount,br.addition_amount as additionAmount,br.deduction_amount as deductionAmount"
-						+ " from egf_budget B,egf_budget_reappropriation br,egf_budgetdetail bd,egf_budgetgroup bg,egf_reappropriation_misc bmisc"
-						+ ", eg_department dept,fund fnd , function funct"
-						+ "  where  bd.id =br.budgetdetail and bd.budgetgroup=bg.id and br.REAPPROPRIATION_MISC=bmisc.id and bd.budget=b.id "
-						+ " and funct.id=bd.function and fnd.id=bd.fund and dept.id= bd.EXECUTING_DEPARTMENT "
-						+ deptQry
-						+ fundQry
-						+ functionQry
-						+ " and bmisc.reappropriation_date between '"
-						+ YYYY_MM_DD_FORMAT.format(getFromDate())
-						+ "' and '"
-						+ YYYY_MM_DD_FORMAT.format(getToDate())
-						+ "'"
-						+ "  and bd.MATERIALIZEDPATH like ''||(select budinn.MATERIALIZEDPATH ||'%' from egf_budget budinn where budinn.id="
-						+ budgetRep.getBudgetDetail().getBudget().getId()
-						+ ")||''");
-		return queryString
-				.append("  order by fnd.id,dept.id,funct.id,bmisc.reappropriation_date");
+		queryString = queryString.append("select dept.name as department,funct.name as function ,fnd.name as fund ,")
+						.append(" bg.name  as budgetHead,bmisc.sequence_number as budgetAppropriationNo,bmisc.reappropriation_date as appropriationDate,")
+						.append(" bd.approvedamount as actualAmount,br.addition_amount as additionAmount,br.deduction_amount as deductionAmount")
+						.append(" from egf_budget B,egf_budget_reappropriation br,egf_budgetdetail bd,egf_budgetgroup bg,egf_reappropriation_misc bmisc")
+						.append(", eg_department dept,fund fnd , function funct")
+						.append("  where  bd.id =br.budgetdetail and bd.budgetgroup=bg.id and br.REAPPROPRIATION_MISC=bmisc.id and bd.budget=b.id ")
+						.append(" and funct.id=bd.function and fnd.id=bd.fund and dept.id= bd.EXECUTING_DEPARTMENT ")
+						.append(deptQry)
+						.append(fundQry)
+						.append(functionQry)
+						.append(" and bmisc.reappropriation_date between ':fromDate")
+						.append("' and ':toDate' ")
+						.append("  and bd.MATERIALIZEDPATH like ''||(select budinn.MATERIALIZEDPATH ||'%' from egf_budget budinn where budinn.id=:budgetDetails")
+						.append( ")||''");
 
+		return queryString.append(" order by fnd.id,dept.id,funct.id,bmisc.reappropriation_date");
 	}
 
 	private Query generateQuery() {
@@ -237,6 +231,9 @@ public class BudgetAppropriationReportAction extends BaseFormAction {
 				.addScalar("appropriationDate").addScalar("actualAmount")
 				.addScalar("additionAmount", BigDecimalType.INSTANCE)
 				.addScalar("deductionAmount", BigDecimalType.INSTANCE);
+		query.setParameter("fromDate",YYYY_MM_DD_FORMAT.format(getFromDate()))
+				.setParameter("toDate",YYYY_MM_DD_FORMAT.format(getToDate()))
+				.setParameter("budgetDetails",budgetRep.getBudgetDetail().getBudget().getId());
 		return query;
 	}
 

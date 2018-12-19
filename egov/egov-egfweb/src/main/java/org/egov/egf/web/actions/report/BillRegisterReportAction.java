@@ -181,10 +181,10 @@ public class BillRegisterReportAction extends SearchFormAction {
 
         
 
-        getRemiitPaymentVoucherQry.append("select  distinct rm from EgRemittance rm join rm.egRemittanceDetail rdtl  " +
-                "where rdtl.egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherNumber =?1" +
-                "and rdtl.egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.status!=?2" +
-                " and rm.voucherheader.status!=?3")
+        getRemiitPaymentVoucherQry.append("select  distinct rm from EgRemittance rm join rm.egRemittanceDetail rdtl  ")
+                .append(" where rdtl.egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherNumber =?1")
+                .append(" and rdtl.egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.status!=?2" )
+                .append(" and rm.voucherheader.status!=?3")
                 .append(" order by rm.voucherheader.id");
 
     }
@@ -322,8 +322,7 @@ public class BillRegisterReportAction extends SearchFormAction {
                 billRegReport.setBillDate(DDMMYYYYFORMATS.format((Date) object[6]));
                 if (!StringUtils.isEmpty(billRegReport.getVoucherNumber())) {
                     final List<Miscbilldetail> miscBillList = persistenceService.findAllBy(
-                            " from Miscbilldetail mis where mis.billnumber=?1 " +
-                                    " and mis.billVoucherHeader.voucherNumber=?2", billRegReport.getBillNumber(),
+                            " from Miscbilldetail mis where mis.billnumber=?1 and mis.billVoucherHeader.voucherNumber=?2", billRegReport.getBillNumber(),
                                     billRegReport.getVoucherNumber());
                     if (null != miscBillList && miscBillList.size() > 0) {
                         BigDecimal paidAmount = null;

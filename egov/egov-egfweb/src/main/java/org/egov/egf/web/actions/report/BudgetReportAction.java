@@ -163,14 +163,10 @@ public class BudgetReportAction extends BaseFormAction {
         final String isbere = budgetDetail.getBudget().getIsbere();
         if (budgetDetail.getBudget() != null && budgetDetail.getBudget().getFinancialYear() != null && isbere != null) {
             final Long finYearId = budgetDetail.getBudget().getFinancialYear().getId();
-            setBudgetList(getPersistenceService()
-                    .findAllBy(
-                            "from Budget where isbere=?1 and financialYear.id=?2 and isPrimaryBudget=1 "
-                                    +
-                                    "and isActiveBudget=1 and id not in (select parent from Budget where parent is not null and isbere=?3 and "
-                                    +
-                                    "financialYear.id=?4 and isPrimaryBudget=1) order by name", isbere, finYearId, isbere,
-                                    finYearId));
+            StringBuilder queryString = new StringBuilder("from Budget where isbere=?1 and financialYear.id=?2 and isPrimaryBudget=1 ")
+                                            .append("and isActiveBudget=1 and id not in (select parent from Budget where parent is not null and isbere=?3 and ")
+                                            .append("financialYear.id=?4 and isPrimaryBudget=1) order by name");
+            setBudgetList(getPersistenceService().findAllBy(queryString.toString(), isbere, finYearId, isbere,finYearId));
         }
         return "budgets";
     }

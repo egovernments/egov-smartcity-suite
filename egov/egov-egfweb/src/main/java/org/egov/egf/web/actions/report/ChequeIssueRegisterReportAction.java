@@ -181,22 +181,22 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
         for (final AppConfigValues appConfigVal : printAvailConfig)
             chequePrintAvailableAt = appConfigVal.getValue();
 
-        final Query query = persistenceService
-                .getSession()
-                .createNativeQuery(
-                        "select ih.instrumentnumber as chequeNumber,ih.instrumentdate as chequeDate,"
-                                + "ih.instrumentamount as chequeAmount,vh.vouchernumber as voucherNumber,vh.id as vhId,ih.serialno as serialNo,vh.voucherdate as voucherDate,vh.name as voucherName,ih.payto as payTo,mbd.billnumber as billNumber,"
-                                + "mbd.billDate as billDate,vh.type as type,es.DESCRIPTION as chequeStatus,ih.id as instrumentheaderid from egf_instrumentHeader ih,egf_instrumentvoucher iv,EGW_STATUS es,"
-                                + "voucherheader vh left outer join miscbilldetail mbd on  vh.id=mbd.PAYVHID ,vouchermis vmis where ih.instrumentDate <'"
-                                + getFormattedDate(getNextDate(toDate))
-                                + "' and ih.instrumentDate>='"
-                                + getFormattedDate(fromDate)
-                                + "' and ih.isPayCheque='1' "
-                                + "and ih.INSTRUMENTTYPE=(select id from egf_instrumenttype where TYPE='cheque' ) and vh.status not in ("
-                                + getExcludeVoucherStatues() + ") and vh.id=iv.voucherheaderid and  bankAccountId="
-                                + accountNumber.getId() + " and ih.id=iv.instrumentheaderid and ih.id_status=es.id "
-                                + " and vmis.voucherheaderid=vh.id " + createQuery()
-                                + " order by ih.instrumentDate,ih.instrumentNumber ")
+        StringBuilder queryString = new StringBuilder("select ih.instrumentnumber as chequeNumber,ih.instrumentdate as chequeDate,")
+                .append(" ih.instrumentamount as chequeAmount,vh.vouchernumber as voucherNumber,vh.id as vhId,ih.serialno as serialNo,vh.voucherdate as voucherDate,")
+                .append(" vh.name as voucherName,ih.payto as payTo,mbd.billnumber as billNumber,")
+                .append(" mbd.billDate as billDate,vh.type as type,es.DESCRIPTION as chequeStatus,ih.id as instrumentheaderid from egf_instrumentHeader ih,")
+                .append(" egf_instrumentvoucher iv,EGW_STATUS es,")
+                .append(" voucherheader vh left outer join miscbilldetail mbd on  vh.id=mbd.PAYVHID ,vouchermis vmis where ih.instrumentDate <':toDate' ")
+                .append(" and ih.instrumentDate>=':fromDate' ")
+                .append(" and ih.isPayCheque='1' ")
+                .append(" and ih.INSTRUMENTTYPE=(select id from egf_instrumenttype where TYPE='cheque' ) and vh.status not in (:voucherStatus)")
+                .append(" and vh.id=iv.voucherheaderid and  bankAccountId=:bankAccountId")
+                .append(" and ih.id=iv.instrumentheaderid and ih.id_status=es.id ")
+                .append(" and vmis.voucherheaderid=vh.id ")
+                .append(createQuery())
+                .append(" order by ih.instrumentDate,ih.instrumentNumber ");
+
+        final Query query = persistenceService.getSession().createNativeQuery(queryString.toString())
                 .addScalar("chequeNumber").addScalar("chequeDate", StandardBasicTypes.DATE)
                 .addScalar("chequeAmount", BigDecimalType.INSTANCE).addScalar("voucherNumber")
                 .addScalar("voucherDate", StandardBasicTypes.DATE).addScalar("voucherName").addScalar("payTo")
@@ -204,6 +204,11 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
                 .addScalar("vhId", BigDecimalType.INSTANCE).addScalar("serialNo", LongType.INSTANCE)
                 .addScalar("chequeStatus").addScalar("instrumentHeaderId", LongType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(ChequeIssueRegisterDisplay.class));
+
+        query.setParameter("toDate",getFormattedDate(getNextDate(toDate)))
+                .setParameter("fromDate",getFormattedDate(fromDate))
+                .setParameter("voucherStatus",getExcludeVoucherStatues())
+                .setParameter("bankAccountId",accountNumber.getId());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Search query" + query.getQueryString());
         chequeIssueRegisterList = query.list();
