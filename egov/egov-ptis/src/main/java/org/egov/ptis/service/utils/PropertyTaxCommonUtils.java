@@ -437,7 +437,7 @@ public class PropertyTaxCommonUtils {
     }
 
     public String formatAmount(BigDecimal tax) {
-        tax = tax.setScale(0, RoundingMode.CEILING);
+        tax = tax.setScale(0, BigDecimal.ROUND_HALF_UP);
         return NumberUtil.formatNumber(tax);
     }
 
