@@ -152,6 +152,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private static final String PROPERTY_MODIFY_REJECT_FAILURE = "property.modify.reject.failure";
     public static final String TAXDUE = "taxdue";
     public static final String STRUCTURED = "structured";
+    private static final String POSITION_EXPIRED = "position.expired";
 
     @Autowired
     protected transient AssignmentService assignmentService;
@@ -395,9 +396,15 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             propertyMutation.setMutationReason(transferOwnerService.getPropertyTransferReasonsByCode(MUTATION_REASON_CODE_SALE));
         }
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
-        if (!loggedUserIsMeesevaUser)
+        if (!loggedUserIsMeesevaUser){
+            final Position position = propertyMutation.getState().getOwnerPosition() != null
+                    ? propertyMutation.getState().getOwnerPosition() : propertyMutation.getState().getPreviousOwner();
+            if (position != null && assignmentService.getAssignmentsForPosition(position.getId(), new Date()).isEmpty()){
+                addActionError(getText(POSITION_EXPIRED));
+                return NEW;
+            }
             transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation);
-        else {
+        }else {
             final HashMap<String, String> meesevaParams = new HashMap<>();
             meesevaParams.put("APPLICATIONNUMBER", propertyMutation.getMeesevaApplicationNumber());
             propertyMutation.setApplicationNo(propertyMutation.getMeesevaApplicationNumber());
@@ -810,7 +817,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             if (assignment == null && propertyService.getUserPositionByZone(basicproperty, false) == null)
                 addActionError(getText("notexists.position"));
         }
-        super.validate();
+       super.validate();
     }
 
     private void validateDecreeDetails() {
