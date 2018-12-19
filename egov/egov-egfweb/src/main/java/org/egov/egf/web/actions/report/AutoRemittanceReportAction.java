@@ -316,10 +316,9 @@ public class AutoRemittanceReportAction extends BaseFormAction {
         {
             final StringBuffer finyearQuery = new StringBuffer();
             final Date currentDate = new Date();
-            finyearQuery.append("from CFinancialYear where  startingDate <= '")
-                    .append(Constants.DDMMYYYYFORMAT1.format(currentDate)).append("' AND endingDate >='")
-                    .append(Constants.DDMMYYYYFORMAT1.format(currentDate)).append("'");
-            final CFinancialYear financialyear = (CFinancialYear) persistenceService.find(finyearQuery.toString());
+            finyearQuery.append("from CFinancialYear where  startingDate <=?1 ").append(" AND endingDate >=?2 ");
+            final CFinancialYear financialyear = (CFinancialYear) persistenceService.find(finyearQuery.toString(),Constants.DDMMYYYYFORMAT1.format(currentDate),
+                    Constants.DDMMYYYYFORMAT1.format(currentDate));
             if (null == paymentVoucherFromDate)
                 paymentVoucherFromDate = financialyear.getStartingDate();
             if (null == paymentVoucherToDate)
