@@ -397,8 +397,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         }
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
         if (!loggedUserIsMeesevaUser){
-            final Position position = propertyMutation.getState().getOwnerPosition() != null
-                    ? propertyMutation.getState().getOwnerPosition() : propertyMutation.getState().getPreviousOwner();
+            final Position position = propertyMutation.getState().getOwnerPosition() == null
+                    ? propertyMutation.getState().getPreviousOwner() : propertyMutation.getState().getOwnerPosition();
             if (position != null && assignmentService.getAssignmentsForPosition(position.getId(), new Date()).isEmpty()){
                 addActionError(getText(POSITION_EXPIRED));
                 return NEW;
