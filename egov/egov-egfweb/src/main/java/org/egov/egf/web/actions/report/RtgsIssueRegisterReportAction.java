@@ -312,44 +312,35 @@ public class RtgsIssueRegisterReportAction extends ReportAction {
             if (null != parameters.get("bankaccount.id")[0] && !parameters.get("bankaccount.id")[0].equals("-1")
                     && !parameters.get("bankaccount.id")[0].equalsIgnoreCase("")) {
                 phQry = " AND ph.bankaccountnumberid=" + parameters.get("bankaccount.id")[0];
-                instrumentHeaderQry = instrumentHeaderQry.append(" and   ih.bankaccountid ="
+                instrumentHeaderQry = instrumentHeaderQry.append(" and ih.bankaccountid ="
                         + parameters.get("bankaccount.id")[0]);
             }
             if (null != parameters.get("instrumentnumber")[0] && !parameters.get("instrumentnumber")[0].equalsIgnoreCase(""))
                 instrumentHeaderQry = instrumentHeaderQry.append(" and   ih.transactionnumber ='"
                         + parameters.get("instrumentnumber")[0] + "'");
             if (null != parameters.get("fundId")[0] && !parameters.get("fundId")[0].equalsIgnoreCase(""))
-                fundQry = " AND vh.fundId            =" + parameters.get("fundId")[0];
+                fundQry = " AND vh.fundId=" + parameters.get("fundId")[0];
 
-            queryString = queryString
-                    .append(" SELECT ih.id as ihId , ih.transactionnumber as rtgsNumber,  ih.transactiondate as rtgsDate, vh.id as vhId,  vh.vouchernumber as paymentNumber,"
-                            +
-                            " to_char(vh.voucherdate,'dd/mm/yyyy') as paymentDate,   gld.detailtypeid as dtId,  gld.detailkeyid as dkId,   gld.amount as paymentAmount,"
-                            +
-                            " dept.name as department,   stat.description as status,b.name as bank,branch.branchname as bankBranch, ba.accountnumber as accountNumber FROM Paymentheader ph, voucherheader vh,vouchermis vmis,bankaccount ba,bankbranch branch,bank b,generalledger gl,generalledgerdetail gld,"
-                            +
-                            " egf_instrumentvoucher iv,  egf_instrumentheader ih,  eg_department dept ,egw_status stat WHERE "
-                            +
-                            " ph.voucherheaderid   =vh.id AND vmis.voucherheaderid = vh.id "
-                            + bankQry.toString()
-                            + "  AND ih.bankaccountid = ba.id and branch.id = ba.branchid and branch.bankid = b.id and vh.status = 0 "
-                            +
-                            fundQry
-                            + phQry
-                            + " and stat.id= ih.id_status "
-                            +
-                            " AND dept.id = vmis.departmentid "
-                            + deptQry
-                            + "  and lower(ph.type)=lower('rtgs') "
-                            + instrumentHeaderQry.toString()
-                            +
-                            " AND IV.VOUCHERHEADERID  IS NOT NULL AND iv.voucherheaderid   =vh.id AND ih.instrumentnumber IS NULL "
-                            +
-                            " AND ih.id = iv.instrumentheaderid "
-                            +
-                            " AND vh.type   = 'Payment' and gl.voucherheaderid = vh.id and gld.generalledgerid = gl.id GROUP BY ih.id , ih.transactionnumber,"
-                            +
-                            " ih.transactiondate, vh.id,  vh.vouchernumber,vh.voucherDate, vmis.departmentid,  dept.name, b.name,branch.branchname,ba.accountnumber,stat.description,gld.detailtypeid,gld.detailkeyid,gld.amount ORDER BY b.name,branch.branchname,ba.accountnumber,ih.transactiondate,ih.transactionnumber,dept.name");
+            queryString = queryString.append(" SELECT ih.id as ihId , ih.transactionnumber as rtgsNumber,  ih.transactiondate as rtgsDate, vh.id as vhId, ")
+                            .append(" vh.vouchernumber as paymentNumber, to_char(vh.voucherdate,'dd/mm/yyyy') as paymentDate, gld.detailtypeid as dtId, ")
+                            .append(" gld.detailkeyid as dkId,   gld.amount as paymentAmount, dept.name as department, stat.description as status,b.name as bank, ")
+                            .append(" branch.branchname as bankBranch, ba.accountnumber as accountNumber FROM Paymentheader ph, voucherheader vh,vouchermis vmis, ")
+                            .append(" bankaccount ba,bankbranch branch,bank b,generalledger gl,generalledgerdetail gld, egf_instrumentvoucher iv,  ")
+                            .append(" egf_instrumentheader ih,  eg_department dept ,egw_status stat WHERE ph.voucherheaderid =vh.id AND vmis.voucherheaderid = vh.id ")
+                            .append(bankQry.toString())
+                            .append(" AND ih.bankaccountid = ba.id and branch.id = ba.branchid and branch.bankid = b.id and vh.status = 0 ")
+                            .append(fundQry)
+                            .append(phQry)
+                            .append(" and stat.id= ih.id_status AND dept.id = vmis.departmentid ")
+                            .append(deptQry)
+                            .append(" and lower(ph.type)=lower('rtgs') ")
+                            .append(instrumentHeaderQry.toString())
+                            .append(" AND IV.VOUCHERHEADERID  IS NOT NULL AND iv.voucherheaderid   =vh.id AND ih.instrumentnumber IS NULL ")
+                            .append(" AND ih.id = iv.instrumentheaderid ")
+                            .append(" AND vh.type   = 'Payment' and gl.voucherheaderid = vh.id and gld.generalledgerid = gl.id GROUP BY ih.id , ih.transactionnumber,")
+                            .append(" ih.transactiondate, vh.id,  vh.vouchernumber,vh.voucherDate, vmis.departmentid,dept.name, b.name,branch.branchname,")
+                            .append(" ba.accountnumber,stat.description,gld.detailtypeid,gld.detailkeyid,gld.amount ORDER BY b.name,branch.branchname,")
+                            .append(" ba.accountnumber,ih.transactiondate,ih.transactionnumber,dept.name");
         } catch (ParseException e) {
 
         }

@@ -382,7 +382,7 @@ public class ReceiptPaymentReportAction extends BaseFormAction {
     protected void setRelatedEntitesOn() {
         setTodayDate(new Date());
         if (receiptPayment.getFinancialYear() != null && receiptPayment.getFinancialYear().getId() != null) {
-            receiptPayment.setFinancialYear((CFinancialYear) getPersistenceService().find("from CFinancialYear where id=?",
+            receiptPayment.setFinancialYear((CFinancialYear) getPersistenceService().find("from CFinancialYear where id=?1",
                     receiptPayment.getFinancialYear().getId()));
             header.append(" for the Financial Year " + receiptPayment.getFinancialYear().getFinYearRange());
         }

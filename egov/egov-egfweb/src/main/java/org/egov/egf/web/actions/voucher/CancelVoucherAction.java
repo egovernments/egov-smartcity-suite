@@ -78,6 +78,7 @@ import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.query.Query;
 import org.hibernate.Session;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -185,7 +186,9 @@ public class CancelVoucherAction extends BaseFormAction {
 
     @SuppressWarnings("unchecked")
     private List<CVoucherHeader> getVouchersForCancellation() {
-        String voucheerWithNoPayment, allPayment, noChequePaymentQry;
+        StringBuffer voucheerWithNoPayment= new StringBuffer();
+        StringBuffer allPayment = new StringBuffer();
+        StringBuffer noChequePaymentQry = new StringBuffer();
         String contraVoucherQry;
         String filterQry = "";
         final boolean validateFinancialYearForPosting = voucherSearchUtil.validateFinancialYearForPosting(fromDate, toDate);
@@ -209,42 +212,41 @@ public class CancelVoucherAction extends BaseFormAction {
             LOGGER.debug("......Searching voucher for cancelllation...");
         if (voucherHeader.getType().equalsIgnoreCase(FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL)) {
             // Voucher for which payment is not generated
-            voucheerWithNoPayment = " from CVoucherHeader vh where vh not in ( select billVoucherHeader from Miscbilldetail) and vh.status in ("
-                    + FinancialConstants.CREATEDVOUCHERSTATUS + ")  and (vh.isConfirmed != 1 or vh.isConfirmed is null)";
+            voucheerWithNoPayment = voucheerWithNoPayment.append(" from CVoucherHeader vh where vh not in ( select billVoucherHeader from Miscbilldetail) ")
+                                    .append(" and vh.status in (:createStatus) and (vh.isConfirmed != 1 or vh.isConfirmed is null)");
             // Filters vouchers for which payments are generated and are in cancelled state
-            allPayment = "select distinct(vh) from  Miscbilldetail misc left join misc.billVoucherHeader vh where misc.billVoucherHeader is not null"
-                    + " and (vh.isConfirmed != 1  or  vh.isConfirmed  is null )and vh.status in ("
-                    + FinancialConstants.CREATEDVOUCHERSTATUS + ")";
+            allPayment = allPayment.append("select distinct(vh) from  Miscbilldetail misc left join misc.billVoucherHeader vh where misc.billVoucherHeader is not null"
+                    + " and (vh.isConfirmed != 1  or  vh.isConfirmed  is null )and vh.status in (:createStatus)" );
 
-            Query noPayQuery = persistenceService.getSession().createQuery(voucheerWithNoPayment.concat(filterQry));
+            Query noPayQuery = persistenceService.getSession().createQuery(voucheerWithNoPayment.toString().concat(filterQry))
+                    .setParameter("createStatus",FinancialConstants.CREATEDVOUCHERSTATUS,StringType.INSTANCE);
             params.entrySet().forEach(entry -> noPayQuery.setParameter(entry.getKey(), entry.getValue()));
             voucherList.addAll(noPayQuery.list());
 
-            Query allPayQuery = persistenceService.getSession().createQuery(allPayment.concat(filterQry));
+            Query allPayQuery = persistenceService.getSession().createQuery(allPayment.toString().concat(filterQry))
+                    .setParameter("createStatus",FinancialConstants.CREATEDVOUCHERSTATUS,StringType.INSTANCE);
             params.entrySet().forEach(entry -> allPayQuery.setParameter(entry.getKey(), entry.getValue()));
             voucherList.addAll(allPayQuery.list());
 
             // editModeQuery3 :-check for voucher for for which payments are active 0,5 this will be removed from above two list
-            final String editModeQuery3 = " select misc.billVoucherHeader.id from CVoucherHeader ph, Miscbilldetail misc,CVoucherHeader vh  where "
-                    + " misc.payVoucherHeader=ph and   misc.billVoucherHeader is not null and misc.billVoucherHeader=vh "
-                    + " and ph.status  in ("
-                    + FinancialConstants.CREATEDVOUCHERSTATUS
-                    + ","
-                    + FinancialConstants.PREAPPROVEDVOUCHERSTATUS
-                    + ") and (vh.isConfirmed != 1 or  vh.isConfirmed is null) ";
-            Query query3 = persistenceService.getSession().createQuery(editModeQuery3.concat(filterQry));
+            final StringBuffer editModeQuery3 = new StringBuffer(" select misc.billVoucherHeader.id from CVoucherHeader ph, Miscbilldetail misc,CVoucherHeader vh  where ")
+                    .append(" misc.payVoucherHeader=ph and   misc.billVoucherHeader is not null and misc.billVoucherHeader=vh ")
+                    .append(" and ph.status  in (:createdVoucherStatus , :preApprovedStatus) ")
+                    .append(" and (vh.isConfirmed != 1 or  vh.isConfirmed is null) ");
+            Query query3 = persistenceService.getSession().createQuery(editModeQuery3.toString().concat(filterQry))
+                    .setParameter("createdVoucherStatus",FinancialConstants.CREATEDVOUCHERSTATUS, StringType.INSTANCE)
+                    .setParameter("preApprovedStatus",FinancialConstants.PREAPPROVEDVOUCHERSTATUS,StringType.INSTANCE);
             params.entrySet().forEach(entry -> query3.setParameter(entry.getKey(), entry.getValue()));
             final List<Long> vouchersHavingActivePayments = query3.list();
 
             // If remittance payment is there and are in cancelled state
-            final String uncancelledRemittances = " SELECT distinct(vh.id) FROM EgRemittanceDetail r, EgRemittanceGldtl rgd, Generalledgerdetail gld, "
-                    + " CGeneralLedger gl, EgRemittance rd, CVoucherHeader vh ,Vouchermis billmis, CVoucherHeader remittedvh  WHERE "
-                    + " r.egRemittanceGldtl=rgd AND rgd.generalledgerdetail=gld AND gld.generalledger=gl AND r.egRemittance=rd AND"
-                    + " rd.voucherheader=remittedvh AND gl.voucherHeaderId =vh  AND "
-                    + " remittedvh =billmis.voucherheaderid and remittedvh.status!="
-                    + FinancialConstants.CANCELLEDVOUCHERSTATUS
-                    + " ";
-            Query uncancelledRemQuery = persistenceService.getSession().createQuery(uncancelledRemittances.concat(queryString).concat(userCond));
+            final StringBuffer uncancelledRemittances = new StringBuffer(" SELECT distinct(vh.id) FROM EgRemittanceDetail r, EgRemittanceGldtl rgd, Generalledgerdetail gld, ")
+                    .append(" CGeneralLedger gl, EgRemittance rd, CVoucherHeader vh ,Vouchermis billmis, CVoucherHeader remittedvh  WHERE ")
+                    .append(" r.egRemittanceGldtl=rgd AND rgd.generalledgerdetail=gld AND gld.generalledger=gl AND r.egRemittance=rd AND")
+                    .append(" rd.voucherheader=remittedvh AND gl.voucherHeaderId =vh  AND ")
+                    .append(" remittedvh =billmis.voucherheaderid and remittedvh.status!=:cancelledStatus");
+            Query uncancelledRemQuery = persistenceService.getSession().createQuery(uncancelledRemittances.toString().concat(queryString).concat(userCond))
+                    .setParameter("cancelledStatus",FinancialConstants.CANCELLEDVOUCHERSTATUS,StringType.INSTANCE);
             params.entrySet().forEach(entry -> uncancelledRemQuery.setParameter(entry.getKey(), entry.getValue()));
             final List<Long> remittanceBillVhIdList = uncancelledRemQuery.list();
 
@@ -271,35 +273,32 @@ public class CancelVoucherAction extends BaseFormAction {
             } else
                 filterQuerySql = queryString;
             // BPVs for which no Cheque is issued
-            noChequePaymentQry = "from CVoucherHeader vh where vh.status not in ("
-                    + FinancialConstants.PREAPPROVEDVOUCHERSTATUS
-                    + ","
-                    + FinancialConstants.CANCELLEDVOUCHERSTATUS
-                    +
-                    ")  "
-                    + queryString
-                    + "  and not Exists(select 'true' from InstrumentVoucher iv where iv.voucherHeaderId=vh.id) order by vh.voucherNumber)";
-            Query noChkPayQry = persistenceService.getSession().createQuery(noChequePaymentQry);
+            noChequePaymentQry = noChequePaymentQry.append("from CVoucherHeader vh where vh.status not in (:preApprovedStatus , :cancelledStatus )")
+                        .append(queryString)
+                        .append("  and not Exists(select 'true' from InstrumentVoucher iv where iv.voucherHeaderId=vh.id) order by vh.voucherNumber)");
+            Query noChkPayQry = persistenceService.getSession().createQuery(noChequePaymentQry.toString())
+                    .setParameter("preApprovedStatus",FinancialConstants.PREAPPROVEDVOUCHERSTATUS,StringType.INSTANCE)
+                    .setParameter("cancelledStatus",FinancialConstants.CANCELLEDVOUCHERSTATUS,StringType.INSTANCE);
             params.entrySet().forEach(entry -> noChkPayQry.setParameter(entry.getKey(), entry.getValue()));
             voucherList.addAll(noChkPayQry.list());
 
+            StringBuffer queryString1 = new StringBuffer("SELECT distinct vh.id FROM egw_status status")
+                    .append(misTab)
+                    .append(", voucherheader vh ")
+                    .append(" LEFT JOIN EGF_INSTRUMENTVOUCHER IV ON VH.ID=IV.VOUCHERHEADERID")
+                    .append(" LEFT JOIN EGF_INSTRUMENTHEADER IH ON IV.INSTRUMENTHEADERID=IH.ID INNER JOIN (SELECT MAX(iv1.instrumentheaderid) AS maxihid,")
+                    .append(" iv1.voucherheaderid AS iv1vhid FROM egf_instrumentvoucher iv1 GROUP BY iv1.voucherheaderid)as INST ON maxihid=IH.ID ")
+                    .append(" WHERE	IV.VOUCHERHEADERID  IS NOT NULL	AND status.description IN (':instrumentCancelledStatus' , ':instrumentSurrenderedStatus', ")
+                    .append(" ':instrumentSurrReassignStatus' and status.id=ih.id_status and vh.status not in (:preApprovedStatus , :cancelledVoucStatus ) ")
+                    .append(VoucherMisJoin).append(filterQuerySql);
             // Query for cancelling BPVs for which cheque is assigned and cancelled
             final Query query1 = persistenceService.getSession()
-                    .createNativeQuery(
-                            "SELECT distinct vh.id FROM egw_status status"
-                                    + misTab
-                                    + ", voucherheader vh 	"
-                                    + " LEFT JOIN EGF_INSTRUMENTVOUCHER IV ON VH.ID=IV.VOUCHERHEADERID"
-                                    + "	LEFT JOIN EGF_INSTRUMENTHEADER IH ON IV.INSTRUMENTHEADERID=IH.ID INNER JOIN (SELECT MAX(iv1.instrumentheaderid) AS maxihid,"
-                                    + " iv1.voucherheaderid               AS iv1vhid   FROM egf_instrumentvoucher iv1 GROUP BY iv1.voucherheaderid)as INST ON maxihid=IH.ID "
-                                    + " WHERE	IV.VOUCHERHEADERID  IS NOT NULL	AND status.description   IN ('"
-                                    + FinancialConstants.INSTRUMENT_CANCELLED_STATUS + "','" +
-                                    FinancialConstants.INSTRUMENT_SURRENDERED_STATUS + "','"
-                                    + FinancialConstants.INSTRUMENT_SURRENDERED_FOR_REASSIGN_STATUS + "')"
-                                    + " and status.id=ih.id_status and vh.status not in ("
-                                    + FinancialConstants.PREAPPROVEDVOUCHERSTATUS + ","
-                                    + FinancialConstants.CANCELLEDVOUCHERSTATUS +
-                                    ") " + VoucherMisJoin + filterQuerySql);
+                    .createNativeQuery(queryString1.toString())
+                    .setParameter("instrumentCancelledStatus",FinancialConstants.INSTRUMENT_CANCELLED_STATUS,StringType.INSTANCE)
+                    .setParameter("instrumentSurrenderedStatus",FinancialConstants.INSTRUMENT_SURRENDERED_STATUS,StringType.INSTANCE)
+                    .setParameter("instrumentSurrReassignStatus",FinancialConstants.INSTRUMENT_SURRENDERED_FOR_REASSIGN_STATUS,StringType.INSTANCE)
+                    .setParameter("preApprovedStatus",FinancialConstants.PREAPPROVEDVOUCHERSTATUS,StringType.INSTANCE)
+                    .setParameter("cancelledVoucStatus",FinancialConstants.CANCELLEDVOUCHERSTATUS,StringType.INSTANCE);
             params.entrySet().forEach(entry -> query1.setParameter(entry.getKey(), entry.getValue()));
             final List<BigInteger> list = query1.list();
 
@@ -431,8 +430,8 @@ public class CancelVoucherAction extends BaseFormAction {
                 LOGGER.debug("....Cancelling Bill Associated with the Voucher....");
             billQuery
                     .append("select bill.expendituretype,bill.id,bill.state.id from CVoucherHeader vh,EgBillregister bill ,EgBillregistermis mis")
-                    .append(" where vh.id=mis.voucherHeader and bill.id=mis.egBillregister and vh.id=" + vhId);
-            final Object[] bill = (Object[]) persistenceService.find(billQuery.toString()); // bill[0] contains expendituretype
+                    .append(" where vh.id=mis.voucherHeader and bill.id=mis.egBillregister and vh.id=?1 ");
+            final Object[] bill = (Object[]) persistenceService.find(billQuery.toString(),vhId); // bill[0] contains expendituretype
                                                                                             // and
             // bill[1] contaons billid
 

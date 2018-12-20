@@ -352,117 +352,117 @@ public class TrialBalanceAction extends BaseFormAction {
             defaultStatusExclude = listAppConfVal.get(0).getValue();
         else
             throw new ApplicationRuntimeException("Exlcude statusses not  are not defined for Reports");
-        final String query = " SELECT gl.glcode AS \"accCode\" ,coa.name AS \"accName\" ,vh.fundid AS \"fundId\",(SUM(debitamount)+SUM((SELECT case when SUM(OPENINGDEBITBALANCE)  is null  then 0 else SUM(OPENINGDEBITBALANCE) end FROM transactionsummary WHERE"
-                + " financialyearid=(SELECT id FROM financialyear WHERE startingdate<=:toDate AND endingdate>=:toDate)"
-                + " AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=gl.glcode) AND fundid=vh.fundid"
-                + fundcondition
-                + tsDeptCond
-                + tsfunctionaryCond
-                + tsFunctionIdCond
-                + tsFieldIdCond
-                + "))/COUNT(*))-"
-                + " (SUM(creditamount)+SUM((SELECT  case when SUM(OPENINGCREDITBALANCE)  is null  then 0 else SUM(OPENINGCREDITBALANCE) end FROM"
-                + " transactionsummary WHERE financialyearid=(SELECT id FROM financialyear  WHERE startingdate<=:toDate AND endingdate>=:toDate)"
-                + " AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=gl.glcode) AND fundid=vh.fundid"
-                + fundcondition
-                + tsDeptCond
-                + tsfunctionaryCond
-                + tsFunctionIdCond
-                + tsFieldIdCond
-                + "))/COUNT(*) ) as \"amount\" "
-                + " FROM generalledger gl,chartofaccounts   coa,voucherheader vh "
-                + voucherMisTable
-                + " WHERE coa.glcode=gl.glcode AND gl.voucherheaderid=vh.id"
-                + misClause
-                + " AND vh.status not in ("
-                + defaultStatusExclude
-                + ") "
-                + " AND  vh.voucherdate<=:toDate AND vh.voucherdate>=(SELECT startingdate FROM financialyear WHERE  startingdate<=:toDate AND   endingdate>=:toDate) "
-                + fundcondition
-                + " "
-                + misDeptCond
-                + functionaryCond
-                + functionIdCond
-                + fieldIdCond
-                + " GROUP BY gl.glcode,coa.name,vh.fundid    HAVING (SUM(debitamount)>0 OR SUM(creditamount)>0)    And"
-                + " (SUM(debitamount)+SUM((SELECT case when SUM(OPENINGDEBITBALANCE) IS NULL then 0 else SUM(OPENINGDEBITBALANCE) end FROM"
-                + " transactionsummary WHERE  financialyearid=(SELECT id FROM financialyear       WHERE startingdate <=:toDate"
-                + " AND endingdate >=:toDate) AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=gl.glcode) "
-                + fundcondition
-                + tsDeptCond
-                + tsfunctionaryCond
-                + tsFunctionIdCond
-                + tsFieldIdCond
-                + "))/COUNT(*))-"
-                + " (SUM(creditamount)+SUM((SELECT  case when SUM(OPENINGCREDITBALANCE) IS NULL then 0 else SUM(OPENINGCREDITBALANCE) end FROM"
-                + " transactionsummary WHERE financialyearid=(SELECT id FROM financialyear    WHERE startingdate<=:toDate AND endingdate>=:toDate) "
-                + " AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=gl.glcode)  "
-                + fundcondition
-                + tsDeptCond
-                + tsfunctionaryCond
-                + tsFunctionIdCond
-                + tsFieldIdCond
-                + "))/COUNT(*) )<>0"
-                + " union"
-                + " SELECT coa.glcode AS \"accCode\" ,coa.name AS \"accName\" , fu.id as \"fundId\", SUM((SELECT case when SUM(OPENINGDEBITBALANCE) IS NULL then 0 else SUM(OPENINGDEBITBALANCE) end "
-                + " FROM transactionsummary WHERE financialyearid=(SELECT id FROM financialyear WHERE  startingdate<=:toDate AND endingdate>=:toDate)"
-                + " AND glcodeid =(SELECT id FROM chartofaccounts WHERE  glcode=coa.glcode) AND fundid= (select id from fund where id=fu.id)"
-                + " "
-                + fundcondition
-                + tsDeptCond
-                + tsfunctionaryCond
-                + tsFunctionIdCond
-                + tsFieldIdCond
-                + ")) - SUM((SELECT  case when SUM(OPENINGCREDITBALANCE) IS NULL then 0 else SUM(OPENINGCREDITBALANCE) end as \"amount\" FROM transactionsummary WHERE"
-                + " financialyearid=(SELECT id FROM financialyear       WHERE startingdate<=:toDate AND endingdate>=:toDate) AND glcodeid =(SELECT id FROM chartofaccounts"
-                + " WHERE glcode=coa.glcode)AND fundid= (select id from fund where id=fu.id)"
-                + fundcondition
-                + tsDeptCond
-                + tsfunctionaryCond
-                + tsFunctionIdCond
-                + tsFieldIdCond
-                + ")) "
-                + " FROM chartofaccounts  coa, fund fu  WHERE  fu.id IN(SELECT fundid from transactionsummary WHERE financialyearid = (SELECT id FROM financialyear WHERE startingdate<=:toDate "
-                + " AND endingdate>=:toDate) "
-                + fundcondition
-                + tsDeptCond
-                + tsfunctionaryCond
-                + tsFunctionIdCond
-                + tsFieldIdCond
-                + " AND glcodeid =(SELECT id   FROM chartofaccounts WHERE  glcode=coa.glcode) ) AND coa.id NOT IN(SELECT glcodeid FROM generalledger gl,voucherheader vh "
-                + voucherMisTable
-                + " WHERE "
-                + " vh.status not in ("
-                + defaultStatusExclude
-                + ") "
-                + misClause
-                + misDeptCond
-                + functionaryCond
-                + functionIdCond
-                + fieldIdCond
-                + " AND vh.id=gl.voucherheaderid AND vh.fundid=fu.id AND vh.voucherdate<=:toDate AND vh.voucherdate>=(SELECT startingdate FROM financialyear WHERE  startingdate<=:toDate AND   endingdate>=:toDate) "
-                + fundcondition
-                + ")"
-                + " GROUP BY coa.glcode,coa.name, fu.id"
-                + " HAVING((SUM((SELECT case when SUM(OPENINGDEBITBALANCE) IS NULL then 0 else SUM(OPENINGDEBITBALANCE) end FROM transactionsummary WHERE"
-                + " financialyearid=(SELECT id FROM financialyear       WHERE startingdate<=:toDate AND endingdate>=:toDate) AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=coa.glcode) "
-                + fundcondition
-                + tsDeptCond
-                + tsfunctionaryCond
-                + tsFunctionIdCond
-                + tsFieldIdCond
-                + " )) >0 )"
-                + " OR (SUM((SELECT  case when SUM(OPENINGCREDITBALANCE) IS NULL then 0 else SUM(OPENINGCREDITBALANCE) end FROM transactionsummary WHERE financialyearid=(SELECT id FROM financialyear WHERE startingdate<=:toDate AND endingdate>=:toDate)"
-                + " AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=coa.glcode)     "
-                + fundcondition
-                + tsDeptCond
-                + tsfunctionaryCond + tsFunctionIdCond + tsFieldIdCond + "))>0 ))  ORDER BY \"accCode\"";
+        final StringBuffer query = new StringBuffer(" SELECT gl.glcode AS \"accCode\" ,coa.name AS \"accName\" ,vh.fundid AS \"fundId\",(SUM(debitamount)+SUM((SELECT case when SUM(OPENINGDEBITBALANCE)  is null  then 0 else SUM(OPENINGDEBITBALANCE) end FROM transactionsummary WHERE")
+                .append(" financialyearid=(SELECT id FROM financialyear WHERE startingdate<=:toDate AND endingdate>=:toDate)")
+                .append(" AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=gl.glcode) AND fundid=vh.fundid")
+                .append(fundcondition)
+                .append(tsDeptCond)
+                .append(tsfunctionaryCond)
+                .append(tsFunctionIdCond)
+                .append(tsFieldIdCond)
+                .append("))/COUNT(*))-")
+                .append(" (SUM(creditamount)+SUM((SELECT  case when SUM(OPENINGCREDITBALANCE)  is null  then 0 else SUM(OPENINGCREDITBALANCE) end FROM")
+                .append(" transactionsummary WHERE financialyearid=(SELECT id FROM financialyear  WHERE startingdate<=:toDate AND endingdate>=:toDate)")
+                .append(" AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=gl.glcode) AND fundid=vh.fundid")
+                .append(fundcondition)
+                .append(tsDeptCond)
+                .append(tsfunctionaryCond)
+                .append(tsFunctionIdCond)
+                .append(tsFieldIdCond)
+                .append("))/COUNT(*) ) as \"amount\" ")
+                .append(" FROM generalledger gl,chartofaccounts   coa,voucherheader vh ")
+                .append(voucherMisTable)
+                .append(" WHERE coa.glcode=gl.glcode AND gl.voucherheaderid=vh.id")
+                .append(misClause)
+                .append(" AND vh.status not in (")
+                .append(defaultStatusExclude)
+                .append(") ")
+                .append(" AND  vh.voucherdate<=:toDate AND vh.voucherdate>=(SELECT startingdate FROM financialyear WHERE  startingdate<=:toDate AND   endingdate>=:toDate) ")
+                .append(fundcondition)
+                .append( " ")
+                .append(misDeptCond)
+                .append(functionaryCond)
+                .append(functionIdCond)
+                .append(fieldIdCond)
+                .append(" GROUP BY gl.glcode,coa.name,vh.fundid    HAVING (SUM(debitamount)>0 OR SUM(creditamount)>0) And")
+                .append(" (SUM(debitamount)+SUM((SELECT case when SUM(OPENINGDEBITBALANCE) IS NULL then 0 else SUM(OPENINGDEBITBALANCE) end FROM")
+                .append(" transactionsummary WHERE  financialyearid=(SELECT id FROM financialyear WHERE startingdate <=:toDate")
+                .append(" AND endingdate >=:toDate) AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=gl.glcode) ")
+                .append(fundcondition)
+                .append(tsDeptCond)
+                .append(tsfunctionaryCond)
+                .append(tsFunctionIdCond)
+                .append(tsFieldIdCond)
+                .append("))/COUNT(*))-")
+                .append(" (SUM(creditamount)+SUM((SELECT  case when SUM(OPENINGCREDITBALANCE) IS NULL then 0 else SUM(OPENINGCREDITBALANCE) end FROM")
+                .append(" transactionsummary WHERE financialyearid=(SELECT id FROM financialyear    WHERE startingdate<=:toDate AND endingdate>=:toDate) ")
+                .append(" AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=gl.glcode)  ")
+                .append(fundcondition)
+                .append(tsDeptCond)
+                .append(tsfunctionaryCond)
+                .append(tsFunctionIdCond)
+                .append(tsFieldIdCond)
+                .append("))/COUNT(*) )<>0")
+                .append(" union")
+                .append(" SELECT coa.glcode AS \"accCode\" ,coa.name AS \"accName\" , fu.id as \"fundId\", SUM((SELECT case when SUM(OPENINGDEBITBALANCE) IS NULL then 0 else SUM(OPENINGDEBITBALANCE) end ")
+                .append(" FROM transactionsummary WHERE financialyearid=(SELECT id FROM financialyear WHERE  startingdate<=:toDate AND endingdate>=:toDate)")
+                .append(" AND glcodeid =(SELECT id FROM chartofaccounts WHERE  glcode=coa.glcode) AND fundid= (select id from fund where id=fu.id)")
+                .append(" ")
+                .append(fundcondition)
+                .append(tsDeptCond)
+                .append(tsfunctionaryCond)
+                .append(tsFunctionIdCond)
+                .append(tsFieldIdCond)
+                .append(")) - SUM((SELECT  case when SUM(OPENINGCREDITBALANCE) IS NULL then 0 else SUM(OPENINGCREDITBALANCE) end as \"amount\" FROM transactionsummary WHERE")
+                .append(" financialyearid=(SELECT id FROM financialyear WHERE startingdate<=:toDate AND endingdate>=:toDate) AND glcodeid =(SELECT id FROM chartofaccounts")
+                .append(" WHERE glcode=coa.glcode)AND fundid= (select id from fund where id=fu.id)")
+                .append(fundcondition)
+                .append(tsDeptCond)
+                .append(tsfunctionaryCond)
+                .append(tsFunctionIdCond)
+                .append(tsFieldIdCond)
+                .append(")) ")
+                .append(" FROM chartofaccounts  coa, fund fu  WHERE  fu.id IN(SELECT fundid from transactionsummary WHERE financialyearid = (SELECT id FROM financialyear WHERE startingdate<=:toDate ")
+                .append(" AND endingdate>=:toDate) ")
+                .append(fundcondition)
+                .append(tsDeptCond)
+                .append(tsfunctionaryCond)
+                .append(tsFunctionIdCond)
+                .append(tsFieldIdCond)
+                .append(" AND glcodeid =(SELECT id FROM chartofaccounts WHERE  glcode=coa.glcode) ) AND coa.id NOT IN(SELECT glcodeid FROM generalledger gl,voucherheader vh ")
+                .append(voucherMisTable)
+                .append(" WHERE ")
+                .append(" vh.status not in (")
+                .append(defaultStatusExclude)
+                .append(") ")
+                .append(misClause)
+                .append(misDeptCond)
+                .append(functionaryCond)
+                .append(functionIdCond)
+                .append(fieldIdCond)
+                .append(" AND vh.id=gl.voucherheaderid AND vh.fundid=fu.id AND vh.voucherdate<=:toDate AND vh.voucherdate>=(SELECT startingdate FROM financialyear WHERE  startingdate<=:toDate AND   endingdate>=:toDate) ")
+                .append(fundcondition)
+                .append( ")")
+                .append(" GROUP BY coa.glcode,coa.name, fu.id")
+                .append(" HAVING((SUM((SELECT case when SUM(OPENINGDEBITBALANCE) IS NULL then 0 else SUM(OPENINGDEBITBALANCE) end FROM transactionsummary WHERE")
+                .append(" financialyearid=(SELECT id FROM financialyear WHERE startingdate<=:toDate AND endingdate>=:toDate) AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=coa.glcode) ")
+                .append(fundcondition)
+                .append(tsDeptCond)
+                .append(tsfunctionaryCond)
+                .append(tsFunctionIdCond)
+                .append(tsFieldIdCond)
+                .append(" )) >0 )")
+                .append( " OR (SUM((SELECT  case when SUM(OPENINGCREDITBALANCE) IS NULL then 0 else SUM(OPENINGCREDITBALANCE) end FROM transactionsummary WHERE financialyearid=(SELECT id FROM financialyear WHERE startingdate<=:toDate AND endingdate>=:toDate)")
+                .append(" AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=coa.glcode) ")
+                .append(fundcondition)
+                .append(tsDeptCond)
+                .append(tsfunctionaryCond + tsFunctionIdCond + tsFieldIdCond + "))>0 ))  ORDER BY \"accCode\"");
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("&&&query  " + query);
+            LOGGER.debug("&&&query  " + query.toString());
         try
         {
             new Double(0);
-            final NativeQuery NativeQuery = persistenceService.getSession().createNativeQuery(query);
+            final NativeQuery NativeQuery = persistenceService.getSession().createNativeQuery(query.toString());
             NativeQuery.addScalar("accCode")
                     .addScalar("accName")
                     .addScalar("fundId", StringType.INSTANCE)
@@ -663,17 +663,19 @@ public class TrialBalanceAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("get Opening balance for all account codes");
         // get Opening balance for all account codes
-        final String openingBalanceStr = "SELECT coa.glcode AS accCode ,coa.name  AS accName, SUM(ts.openingcreditbalance) as creditOPB,"
-                +
-                "sum(ts.openingdebitbalance) as debitOPB" +
-                " FROM transactionsummary ts,chartofaccounts coa,financialyear fy " +
-                " WHERE ts.glcodeid=coa.id  AND ts.financialyearid=fy.id and ts.FundId=:fundId " +
-                tsDeptCond + tsfunctionaryCond + tsFunctionIdCond + tsdivisionIdCond +
-                " AND fy.startingdate<=:fromDate AND fy.endingdate>=:toDate " +
-                " GROUP BY ts.glcodeid,coa.glcode,coa.name ORDER BY coa.glcode ASC";
+        final StringBuffer openingBalanceStr = new StringBuffer("SELECT coa.glcode AS accCode ,coa.name  AS accName, SUM(ts.openingcreditbalance) as creditOPB,")
+                .append("sum(ts.openingdebitbalance) as debitOPB" )
+                .append(" FROM transactionsummary ts,chartofaccounts coa,financialyear fy ")
+                .append(" WHERE ts.glcodeid=coa.id  AND ts.financialyearid=fy.id and ts.FundId=:fundId ")
+                .append(tsDeptCond)
+                .append(tsfunctionaryCond)
+                .append(tsFunctionIdCond)
+                .append(tsdivisionIdCond)
+                .append(" AND fy.startingdate<=:fromDate AND fy.endingdate>=:toDate ")
+                .append(" GROUP BY ts.glcodeid,coa.glcode,coa.name ORDER BY coa.glcode ASC");
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Query Str" + openingBalanceStr);
-        final Query openingBalanceQry = persistenceService.getSession().createNativeQuery(openingBalanceStr)
+            LOGGER.debug("Query Str" + openingBalanceStr.toString());
+        final Query openingBalanceQry = persistenceService.getSession().createNativeQuery(openingBalanceStr.toString())
                 .addScalar("accCode")
                 .addScalar("accName")
                 .addScalar("creditOPB", BigDecimalType.INSTANCE)
@@ -694,7 +696,7 @@ public class TrialBalanceAction extends BaseFormAction {
         openingBalanceQry.setDate("toDate", rb.getToDate());
         final List<TrialBalanceBean> openingBalanceList = openingBalanceQry.list();
         if (LOGGER.isInfoEnabled())
-            LOGGER.info("Opening balance query ---->" + openingBalanceQry);
+            LOGGER.info("Opening balance query ---->" + openingBalanceQry.toString());
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("get Opening balance for all account codes reulted in " + openingBalanceList.size());
@@ -702,20 +704,22 @@ public class TrialBalanceAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("get till date balance for all account codes");
         // get till date balance for all account codes
-        final String tillDateOPBStr = "SELECT coa.glcode AS accCode ,coa.name  AS accName, SUM(gl.creditAmount) as tillDateCreditOPB,sum(gl.debitAmount) as tillDateDebitOPB"
-                +
-                " FROM generalledger  gl,chartofaccounts coa,financialyear fy,Voucherheader vh "
-                + voucherMisTable
-                +
-                " WHERE gl.glcodeid=coa.id and vh.id=gl.voucherheaderid  and vh.fundid=:fundId "
-                + misClause
-                + misDeptCond
-                + functionaryCond + functionIdCond + misdivisionIdCond +
-                " AND vh.voucherdate>=fy.startingdate AND vh.voucherdate<=:fromDateMinus1 " +
-                " AND fy.startingdate<=:fromDate AND fy.endingdate>=:toDate" +
-                " AND vh.status not in (" + defaultStatusExclude + ")" +
-                " GROUP BY gl.glcodeid,coa.glcode,coa.name ORDER BY coa.glcode ASC";
-        final Query tillDateOPBQry = persistenceService.getSession().createNativeQuery(tillDateOPBStr)
+        final StringBuffer tillDateOPBStr = new StringBuffer("SELECT coa.glcode AS accCode ,coa.name  AS accName, SUM(gl.creditAmount) as tillDateCreditOPB,sum(gl.debitAmount) as tillDateDebitOPB")
+                .append(" FROM generalledger  gl,chartofaccounts coa,financialyear fy,Voucherheader vh ")
+                .append(voucherMisTable)
+                .append( " WHERE gl.glcodeid=coa.id and vh.id=gl.voucherheaderid  and vh.fundid=:fundId ")
+                .append(misClause)
+                .append(misDeptCond)
+                .append(functionaryCond)
+                .append(functionIdCond)
+                .append(misdivisionIdCond )
+                .append(" AND vh.voucherdate>=fy.startingdate AND vh.voucherdate<=:fromDateMinus1 ")
+                .append(" AND fy.startingdate<=:fromDate AND fy.endingdate>=:toDate")
+                .append(" AND vh.status not in (" )
+                .append(defaultStatusExclude)
+                .append(")")
+                .append(" GROUP BY gl.glcodeid,coa.glcode,coa.name ORDER BY coa.glcode ASC");
+        final Query tillDateOPBQry = persistenceService.getSession().createNativeQuery(tillDateOPBStr.toString())
                 .addScalar("accCode")
                 .addScalar("accName")
                 .addScalar("tillDateCreditOPB", BigDecimalType.INSTANCE)
@@ -745,20 +749,22 @@ public class TrialBalanceAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("get current debit and credit sum for all account codes  ");
         // get current debit and credit sum for all account codes
-        final String currentDebitCreditStr = "SELECT coa.glcode AS accCode ,coa.name  AS accName, SUM(gl.creditAmount) as creditAmount,sum(gl.debitAmount) as debitAmount"
-                +
-                " FROM generalledger gl,chartofaccounts coa,financialyear fy,Voucherheader vh "
-                + voucherMisTable
-                +
-                " WHERE gl.glcodeid=coa.id and vh.id= gl.voucherheaderid AND  vh.fundid=:fundId "
-                + misClause
-                + misDeptCond
-                + functionaryCond + functionIdCond + misdivisionIdCond +
-                " AND vh.voucherdate>=:fromDate AND vh.voucherdate<=:toDate " +
-                " AND fy.startingdate<=:fromDate AND fy.endingdate>=:toDate" +
-                " AND vh.status not in (" + defaultStatusExclude + ") " +
-                " GROUP BY gl.glcodeid,coa.glcode,coa.name ORDER BY coa.glcode ASC";
-        final Query currentDebitCreditQry = persistenceService.getSession().createNativeQuery(currentDebitCreditStr)
+        final StringBuffer currentDebitCreditStr = new StringBuffer("SELECT coa.glcode AS accCode ,coa.name  AS accName, SUM(gl.creditAmount) as creditAmount,sum(gl.debitAmount) as debitAmount")
+                .append(" FROM generalledger gl,chartofaccounts coa,financialyear fy,Voucherheader vh ")
+                .append(voucherMisTable)
+                .append(" WHERE gl.glcodeid=coa.id and vh.id= gl.voucherheaderid AND  vh.fundid=:fundId ")
+                .append(misClause)
+                .append(misDeptCond)
+                .append(functionaryCond)
+                .append(functionIdCond)
+                .append(misdivisionIdCond)
+                .append(" AND vh.voucherdate>=:fromDate AND vh.voucherdate<=:toDate ")
+                .append(" AND fy.startingdate<=:fromDate AND fy.endingdate>=:toDate")
+                .append(" AND vh.status not in (")
+                .append(defaultStatusExclude)
+                .append(") ")
+                .append(" GROUP BY gl.glcodeid,coa.glcode,coa.name ORDER BY coa.glcode ASC");
+        final Query currentDebitCreditQry = persistenceService.getSession().createNativeQuery(currentDebitCreditStr.toString())
                 .addScalar("accCode")
                 .addScalar("accName")
                 .addScalar("creditAmount", BigDecimalType.INSTANCE)
