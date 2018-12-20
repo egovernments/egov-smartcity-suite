@@ -79,7 +79,7 @@ public class MBDetails extends BaseModel {
     private double amtForCurrQuantity;
     private double cumlvAmtForCurrCumlvQuantity;
     private Date mbdetailsDate;
-    @OptionalPattern(regex = ValidationRegex.ALPHANUMERIC_WITHSLASHES, message = "mbdetails.ordernumber")
+    @OptionalPattern(regex = ValidationRegex.ALPHANUMERIC_WITH_SLASH, message = "mbdetails.ordernumber")
     private String OrderNumber;
     // -------------------------------------------------------------------
     private double totalEstQuantity; // Added for RE
