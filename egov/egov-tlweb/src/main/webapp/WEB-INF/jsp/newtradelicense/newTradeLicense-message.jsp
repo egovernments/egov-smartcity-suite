@@ -57,7 +57,6 @@
     <s:if test="%{hasErrors()}">
         <div class="alert alert-danger view-content">
             <s:actionerror/>
-            <s:fielderror/>
         </div>
     </s:if>
     <s:if test="%{hasActionMessages()}">

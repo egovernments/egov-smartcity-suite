@@ -67,10 +67,6 @@
                     showMessage('fatherorSpouse_error', '<s:text name="newlicense.fatherorspousename.null" />');
                     $('#fatherOrSpouseName').focus();
                     return false;
-                } else if (document.getElementById("emailId").value.trim() == '' || document.getElementById("emailId").value == null || !isValidEmailAddress(document.getElementById("emailId").value)) {
-                    showMessage('email_error', '<s:text name="newlicense.email.null" />');
-                    $('#emailId').focus();
-                    return false;
                 } else if (document.getElementById("licenseeAddress").value.trim() == '' || document.getElementById("licenseeAddress").value == null) {
                     showMessage('licenseeAddress_error', '<s:text name="newlicense.licenseeaddress.null" />');
                     $('#licenseeAddress').focus();
@@ -178,15 +174,6 @@
                 }
                 else if (mobileno.length == 10)
                     $('#mobileError').hide();
-            });
-            $("#emailId").change(function () {
-                if (document.getElementById("emailId").value.trim() == '' || document.getElementById("emailId").value == null || !isValidEmailAddress(document.getElementById("emailId").value)) {
-                    showMessage('email_error', '<s:text name="newlicense.email.null" />');
-                    $("#emailId").focus();
-                    return false;
-                }
-                else if (!document.getElementById("emailId").value.trim() == '' || !document.getElementById("emailId").value == null || isValidEmailAddress(document.getElementById("emailId").value))
-                    $('#email_error').hide();
             });
         })
 
@@ -368,7 +355,6 @@
         <s:if test="%{hasErrors()}">
             <div class="text-center error-msg" align="center" style="font-size: 14px;">
                 <s:actionerror/>
-                <s:fielderror/>
             </div>
         </s:if>
         <s:if test="%{hasActionMessages()}">

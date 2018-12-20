@@ -73,11 +73,12 @@
                 <input type="file" name="licenseDocument[${stat.index}].uploads" id="uploadFile${stat.index}"
                        value="${licenseDocument[stat.index].uploads}" class="file-ellipsis upload-file"
                        data-accepts="${allowedFileExt}" data-size="${maxFileSize}"/>
-                <form:errors path="licenseDocument[%{#stat.index}].files" cssClass="add-margin error-msg"/>
+                <s:fielderror fieldName="model.licenseDocument[%{#stat.index}].files" cssClass="error-msg"/>
             </div>
             <div class="col-sm-3">
                 <textarea name="licenseDocument[${stat.index}].description" class="form-control"
                           value="${licenseDocument[stat.index].description}"></textarea>
+                <s:fielderror fieldName="model.licenseDocument[%{#stat.index}].description" cssClass="error-msg"/>
             </div>
         </div>
     </s:iterator>
@@ -108,6 +109,7 @@
         .find(".more-less")
         .toggleClass('fa-chevron-down fa-chevron-up ');
 }
+
 $('.panel-group').on('hidden.bs.collapse', toggleIcon);
 $('.panel-group').on('shown.bs.collapse', toggleIcon);
 </script>

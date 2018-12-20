@@ -60,7 +60,6 @@
 <s:if test="%{hasErrors()}">
     <div class="errorstyle">
         <s:actionerror/>
-        <s:fielderror/>
     </div>
 </s:if>
 <iframe src="/tl/reportViewer?reportId=<s:property value='reportId'/>" width="98%"

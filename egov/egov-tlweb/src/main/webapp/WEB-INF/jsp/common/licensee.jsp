@@ -57,12 +57,14 @@
         <s:textfield name="licensee.applicantName" id="applicantName" maxlength="250" cssClass="form-control patternvalidation"
                      required="true" data-pattern="alphabetwithspace"/>
         <div id="applicantname_error" class="error-msg" style="display:none;" align="left"></div>
+        <s:fielderror fieldName="model.licensee.applicantName" cssClass="error-msg"/>
     </div>
     <label class="col-sm-2 control-label text-right"><s:text name='licensee.fatherorspousename'/><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <s:textfield name="licensee.fatherOrSpouseName" maxlength="250" id="fatherOrSpouseName" cssClass="form-control patternvalidation"
                      required="true" data-pattern="alphabetwithspace"/>
         <div id="fatherorSpouse_error" class="error-msg" style="display:none;" align="left"></div>
+        <s:fielderror fieldName="model.licensee.fatherOrSpouseName" cssClass="error-msg"/>
     </div>
 </div>
 <div class="row">
@@ -74,6 +76,7 @@
                          cssClass="form-control patternvalidation" data-pattern="number"/>
         </div>
         <div class="error-msg hide" id="mobileError">Should be 10 digits</div>
+        <s:fielderror fieldName="model.licensee.mobilePhoneNumber" cssClass="error-msg"/>
     </div>
     <label class="col-sm-2 control-label text-right"><s:text name='licensee.emailId'/><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin" style="margin-bottom:15px;">
@@ -87,6 +90,7 @@
     <div class="col-sm-5 add-margin">
         <s:textarea name="licensee.address" id="licenseeAddress" required="true" maxlength="250" cssClass="form-control" rows="3"/>
         <div id="licenseeAddress_error" class="error-msg" style="display:none;" align="left"></div>
+        <s:fielderror fieldName="model.licensee.address" cssClass="error-msg"/>
     </div>
 </div>
 

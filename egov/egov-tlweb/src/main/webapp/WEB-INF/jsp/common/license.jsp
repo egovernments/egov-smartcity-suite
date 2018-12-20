@@ -71,6 +71,7 @@
         <s:textfield name="nameOfEstablishment" cssClass="form-control newpatternvalidation" id="nameOfEstablishment"
                      value="%{nameOfEstablishment}" maxlength="250" onBlur="checkLength(this,250)" required="true"/>
         <div id="nameOfEstablishment_error" class="error-msg" style="display:none;" align="left"></div>
+        <s:fielderror fieldName="model.nameOfEstablishment" cssClass="error-msg"/>
     </div>
 
     <label class="col-sm-2 control-label text-right"><s:text name='license.tradeType.lbl'/><span
@@ -81,6 +82,7 @@
                   value="%{natureOfBusiness.id}"
                   required="true" class="form-control"/>
         <div id="natureOfBusiness_error" class="error-msg" style="display:none;" align="left"></div>
+        <s:fielderror fieldName="model.natureOfBusiness" cssClass="error-msg"/>
     </div>
 </div>
 <div class="form-group">
@@ -91,6 +93,7 @@
                   headerKey="-1" headerValue="%{getText('default.select')}" value="%{category.id}" required="true"
                   class="form-control"/>
         <div id="category_error" class="error-msg" style="display:none;" align="left"></div>
+        <s:fielderror fieldName="model.category" cssClass="error-msg"/>
     </div>
 
     <label class="col-sm-2 control-label text-right"><s:text name='license.subCategory.lbl'/><span
@@ -101,6 +104,7 @@
                   headerKey="-1" headerValue="%{getText('default.select')}" value="%{tradeName.id}"
                   class="form-control select2"/>
         <div id="subCategory_error" class="error-msg" style="display:none;" align="left"></div>
+        <s:fielderror fieldName="model.tradeName" cssClass="error-msg"/>
     </div>
 </div>
 
@@ -112,6 +116,7 @@
                      cssClass="form-control patternvalidation"
                      required="true" data-pattern="number"/>
         <div id="tradeArea_weight_error" class="error-msg" style="display:none;" align="left"></div>
+        <s:fielderror fieldName="model.tradeArea_weight" cssClass="error-msg"/>
     </div>
     <label class="col-sm-2 control-label text-right"><s:text name='license.uom.lbl'/><span
             class="mandatory"></span></label>
@@ -120,6 +125,7 @@
                      value="%{tradeName.licenseSubCategoryDetails.iterator.next.uom.name}" readOnly="true"
                      required="true" class="form-control"/>
         <div id="uom_error" class="error-msg" style="display:none;" align="left"></div>
+        <s:fielderror fieldName="model.uom" cssClass="error-msg"/>
     </div>
 </div>
 
@@ -130,9 +136,11 @@
         <s:date name="commencementDate" format="dd/MM/yyyy" var="commencementDateFrmttd"/>
         <s:textfield name="commencementDate" cssClass="form-control datepicker" required="true" id="startDate"
                      maxlength="10" value="%{commencementDateFrmttd}"/>
+        <s:fielderror fieldName="model.commencementDate" cssClass="error-msg"/>
     </div>
     <label class="col-sm-2 control-label text-right"><s:text name='license.remarks'/></label>
     <div class="col-sm-3 add-margin">
         <s:textarea name="remarks" id="remarks" value="%{remarks}" maxlength="512" class="form-control" rows="3"/>
+        <s:fielderror fieldName="model.remarks" cssClass="error-msg"/>
     </div>
 </div>

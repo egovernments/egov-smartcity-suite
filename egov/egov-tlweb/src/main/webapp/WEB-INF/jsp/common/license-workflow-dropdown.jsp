@@ -236,6 +236,7 @@
         </label>
         <div class="col-sm-8 add-margin">
             <s:textarea id="approverComments" name="approverComments" class="form-control"></s:textarea>
+            <s:fielderror fieldName="model.approverComments" cssClass="error-msg"/>
         </div>
     </div>
 </div>

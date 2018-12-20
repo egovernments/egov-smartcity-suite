@@ -57,7 +57,6 @@
         <s:if test="%{hasErrors()}">
             <div align="center" class="error-msg">
                 <s:actionerror/>
-                <s:fielderror/>
             </div>
         </s:if>
         <s:if test="%{hasActionMessages()}">
@@ -122,6 +121,7 @@
                                       listKey="id" listValue="name" headerKey=""
                                       headerValue="%{getText('default.select')}" required="true"
                                       value="%{boundary.id}" class="form-control"/>
+                            <s:fielderror fieldName="model.boundary" cssClass="error-msg"/>
                         </div>
                         <label class="col-sm-2 control-label text-right"><s:text
                                 name='license.division'/><span class="mandatory"></span></label>
@@ -130,6 +130,7 @@
                                     required="true">
                                 <option value=""><s:text name='default.select'/></option>
                             </select>
+                            <s:fielderror fieldName="model.parentBoundary" cssClass="error-msg"/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -139,6 +140,7 @@
                             <select name="adminWard" id="adminWard" class="form-control">
                                 <option value=""><s:text name='default.select'/></option>
                             </select>
+                            <s:fielderror fieldName="model.adminWard" cssClass="error-msg"/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -152,6 +154,7 @@
                             <egov:ajaxdropdown id="populateSubCategory" fields="['Text','Value']"
                                                dropdownId='subCategory'
                                                url='domain/commonTradeLicenseAjax-populateSubCategory.action'/>
+                            <s:fielderror fieldName="model.category" cssClass="error-msg"/>
                         </div>
 
                         <label class="col-sm-2 control-label text-right"><s:text
@@ -161,6 +164,7 @@
                                       listKey="id" listValue="name" headerKey="-1"
                                       headerValue="%{getText('default.select')}" value="%{tradeName.id}"
                                       class="form-control select2"/>
+                            <s:fielderror fieldName="model.tradeName" cssClass="error-msg"/>
                         </div>
                     </div>
 
@@ -171,6 +175,7 @@
                             <s:textfield name="uom" maxlength="8" id="uom"
                                          value="%{tradeName.licenseSubCategoryDetails.iterator.next.uom.name}"
                                          readOnly="true" class="form-control"/>
+                            <s:fielderror fieldName="model.uom" cssClass="error-msg"/>
                         </div>
                         <label class="col-sm-2 control-label text-right"><s:text
                                 name='license.premises.lbl'/><span class="mandatory"></span></label>
@@ -179,6 +184,7 @@
                                          value="%{tradeArea_weight}"
                                          cssClass="form-control patternvalidation"
                                          data-pattern="number"/>
+                            <s:fielderror fieldName="model.tradeArea_weight" cssClass="error-msg"/>
                         </div>
                     </div>
                 </div>

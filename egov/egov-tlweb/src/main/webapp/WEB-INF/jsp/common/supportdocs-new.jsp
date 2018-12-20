@@ -65,9 +65,9 @@
 
                 <span class="docname"><s:property value="name"/></span>
                 <c:if test="${mode!=('editForReject')}">
-                <s:if test="mandatory">
-                    <span class="mandatory"></span>
-                </s:if>
+                    <s:if test="mandatory">
+                        <span class="mandatory"></span>
+                    </s:if>
                 </c:if>
                 <s:hidden name="licenseDocument[%{#stat.index}].type.id" value="%{id}"/>
                 <s:hidden name="licenseDocument[%{#stat.index}].type.name" value="%{name}"/>
@@ -77,11 +77,12 @@
                 <input type="file" name="licenseDocument[${stat.index}].uploads" id="uploadFile${stat.index}"
                        value="${licenseDocument[stat.index].uploads}" class="file-ellipsis upload-file"
                        data-accepts="${allowedFileExt}" data-size="${maxFileSize}"/>
-                <form:errors path="licenseDocument[%{#stat.index}].files" cssClass="add-margin error-msg"/>
+                <s:fielderror fieldName="model.licenseDocument[%{#stat.index}].files" cssClass="error-msg"/>
             </div>
             <div class="col-sm-3">
                 <s:textarea name="licenseDocument[%{#stat.index}].description" cssClass="form-control supportdocs"
                             value="%{licenseDocument[#stat.index].description}"/>
+                <s:fielderror fieldName="model.licenseDocument[%{#stat.index}].description" cssClass="error-msg"/>
             </div>
         </div>
     </s:iterator>
@@ -112,6 +113,7 @@
         .find(".more-less")
         .toggleClass('fa-chevron-down fa-chevron-up ');
 }
+
 $('.panel-group').on('hidden.bs.collapse', toggleIcon);
 $('.panel-group').on('shown.bs.collapse', toggleIcon);
 </script>

@@ -67,12 +67,14 @@
                   listKey="id" listValue="name" headerKey="" headerValue="%{getText('default.select')}" required="true"
                   value="%{boundary.id}" class="form-control"/>
         <div id="locality_error" class="error-msg" style="display:none;" align="left"></div>
+        <s:fielderror fieldName="model.boundary" cssClass="error-msg"/>
     </div>
     <label class="col-sm-2 control-label text-right"><s:text name='license.division'/><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <select name="parentBoundary" id="parentBoundary" class="form-control" required="true">
             <option value=""><s:text name='default.select'/></option>
         </select>
+        <s:fielderror fieldName="model.parentBoundary" cssClass="error-msg"/>
     </div>
 </div>
 <div class="form-group">
@@ -81,6 +83,7 @@
         <select name="adminWard" id="adminWard" class="form-control">
             <option value=""><s:text name='default.select'/></option>
         </select>
+        <s:fielderror fieldName="model.adminWard" cssClass="error-msg"/>
     </div>
     <label class="col-sm-2 control-label text-right"><s:text name='license.ownerShipType.lbl'/><span
             class="mandatory"></span></label>
@@ -89,6 +92,7 @@
                   id="ownershipType" listKey="key" listValue="value"
                   list="ownerShipTypeMap" cssClass="form-control" value="%{ownershipType.name}" required="true"/>
         <div id="ownership_error" class="error-msg" style="display:none;" align="left"></div>
+        <s:fielderror fieldName="model.ownershipType" cssClass="error-msg"/>
     </div>
 </div>
 <div class="form-group">
@@ -97,6 +101,7 @@
     <div class="col-sm-5 add-margin">
         <s:textarea name="address" id="address" maxlength="250" onblur="checkLength(this,250)" class="form-control" rows="3" required="true"/>
         <div id="address_error" class="error-msg" style="display:none;" align="left"></div>
+        <s:fielderror fieldName="model.address" cssClass="error-msg"/>
     </div>
 </div>
 <div class="form-group">
@@ -119,6 +124,7 @@
             <s:date name="agreementDate" format="dd/MM/yyyy" var="agreementDateFrmttd"/>
             <s:textfield name="agreementDate" cssClass="form-control datepicker" data-date-end-date="0d"
                          id="agreementDate" maxlength="10" value="%{agreementDateFrmttd}"/>
+            <s:fielderror fieldName="model.agreementDate" cssClass="error-msg"/>
         </div>
 
         <label class="col-sm-2 control-label text-right"><s:text name='license.agreementDocNo.lbl'/><span
@@ -126,6 +132,7 @@
         <div class="col-sm-3 add-margin">
             <s:textfield name="agreementDocNo" maxlength="50" id="agreementDocNo" value="%{agreementDocNo}"
                          cssClass="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash"/>
+            <s:fielderror fieldName="model.agreementDocNo" cssClass="error-msg"/>
         </div>
     </div>
 </div>

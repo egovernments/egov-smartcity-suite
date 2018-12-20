@@ -63,7 +63,6 @@
 <s:if test="%{hasErrors()}">
     <div class="error-msg">
         <s:actionerror/>
-        <s:fielderror/>
     </div>
 </s:if>
 
