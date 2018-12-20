@@ -132,8 +132,7 @@ public class DepartmentwiseExpenditureReportAction extends BaseFormAction {
         persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
         addDropdownData("fundDropDownList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
-        addDropdownData("financialYearList", getPersistenceService().findAllBy("from CFinancialYear where isActive=true " +
-                "  and startingDate >='01-Apr-2010' order by finYearRange desc  "));
+        addDropdownData("financialYearList", getPersistenceService().findAllBy("from CFinancialYear where isActive=true and startingDate >='01-Apr-2010' order by finYearRange desc  "));
     }
 
     @Override

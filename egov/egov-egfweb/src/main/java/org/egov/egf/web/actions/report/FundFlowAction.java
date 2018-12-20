@@ -69,7 +69,10 @@ import org.egov.services.report.FundFlowService;
 import org.hibernate.query.Query;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.DateType;
+import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -435,13 +438,15 @@ public class FundFlowAction extends BaseFormAction {
     public String create() {
         // merge two list to get sigle without duplicates
         final StringBuffer alreadyExistsQryStr = new StringBuffer(100);
-        alreadyExistsQryStr
-        .append("select openingBalance From egf_fundflow ff,bankaccount ba where ba.id=ff.bankaccountid and to_date(reportdate)='"
-                + sqlformat.format(asOnDate) + "' ");
-        if (fund != null && fund != -1)
-            alreadyExistsQryStr.append("and ba.fundId=" + fund + " ");
-        final Query alreadyExistsQry = persistenceService.getSession()
-                .createNativeQuery(alreadyExistsQryStr.toString());
+        alreadyExistsQryStr.append("select openingBalance From egf_fundflow ff,bankaccount ba where ba.id=ff.bankaccountid and to_date(reportdate)=':asOnDate' ");
+        if (fund != null && fund != -1) {
+            alreadyExistsQryStr.append("and ba.fundId=:fund ");
+        }
+        final Query alreadyExistsQry = persistenceService.getSession().createNativeQuery(alreadyExistsQryStr.toString())
+                .setParameter("asOnDate",sqlformat.format(asOnDate),StringType.INSTANCE);
+        if (fund != null && fund != -1){
+            alreadyExistsQry.setParameter("fund",fund, StringType.INSTANCE);
+        }
         final List existsList = alreadyExistsQry.list();
         if (existsList.size() > 0)
             throw new ValidationException(
@@ -601,26 +606,26 @@ public class FundFlowAction extends BaseFormAction {
                                 "parser exception")));
             }
             final StringBuffer openingBalanceQryStr = new StringBuffer(100);
-            openingBalanceQryStr
-            .append("select ba.id as bankAccountId,ba.accountnumber as accountNumber,ff.openingBalance+ff.currentReceipt as openingBalance from egf_fundflow ff,bankaccount ba   "
-                    + "   where ff.bankaccountid=ba.id ");
+            openingBalanceQryStr.append("select ba.id as bankAccountId,ba.accountnumber as accountNumber,ff.openingBalance+ff.currentReceipt as openingBalance")
+                        .append(" from egf_fundflow ff,bankaccount ba ")
+                        .append(" where ff.bankaccountid=ba.id ");
             if (fundId != null && fundId != -1)
-                openingBalanceQryStr.append("and ba.fundid=" + fundId);
-            openingBalanceQryStr.append(" and to_date(reportdate)='"
-                    + sqlformat.format(reportDate) + "'");
+                openingBalanceQryStr.append("and ba.fundid=:fundId ");
+                openingBalanceQryStr.append(" and to_date(reportdate)=':reportDate' ");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("getting Opening Balance for " + reportDate
-                        + "    sqlformat.format(reportDate)"
+                        + " sqlformat.format(reportDate)"
                         + sqlformat.format(reportDate));
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(" Opening Balance Qry "
                         + openingBalanceQryStr.toString());
-            final Query openingBalanceQry = persistenceService.getSession()
-                    .createNativeQuery(openingBalanceQryStr.toString()).addScalar(
-                            "bankAccountId").addScalar("accountNumber")
-                            .addScalar("openingBalance").setResultTransformer(
-                                    Transformers.aliasToBean(FundFlowBean.class));
+            final Query openingBalanceQry = persistenceService.getSession().createNativeQuery(openingBalanceQryStr.toString())
+                            .addScalar("bankAccountId").addScalar("accountNumber")
+                            .addScalar("openingBalance").setResultTransformer(Transformers.aliasToBean(FundFlowBean.class));
+
+            openingBalanceQry.setParameter("fundId",fundId)
+                             .setParameter("reportDate",sqlformat.format(reportDate));
             openingBalnaceList = openingBalanceQry.list();
             i++;
             if (i >= 100) {
@@ -657,18 +662,23 @@ public class FundFlowAction extends BaseFormAction {
     private List<FundFlowBean> getCurrentDayOpeningBalance(final Date asOnDate2, final Long fund2) {
 
         final StringBuffer currentOpbAndRcptQryStr = new StringBuffer(100);
-        currentOpbAndRcptQryStr
-        .append("select ff.openingBalance as openingBalance,ff.currentreceipt as currentReceipt,ff.id as id ,ba.accountNumber as accountNumber,ff.bankAccountId as bankAccountId From egf_fundflow ff,bankaccount ba where ba.id=ff.bankaccountid and to_date(reportdate)='"
-                + sqlformat.format(asOnDate2) + "' ");
+        currentOpbAndRcptQryStr.append("select ff.openingBalance as openingBalance,ff.currentreceipt as currentReceipt,ff.id as id , ")
+                        .append(" ba.accountNumber as accountNumber,ff.bankAccountId as bankAccountId From egf_fundflow ff,bankaccount ba ")
+                        .append(" where ba.id=ff.bankaccountid and to_date(reportdate)=':asOnDate2' ");
         if (fund2 != null && fund2 != -1)
-            currentOpbAndRcptQryStr.append(" and ba.fundId=" + fund2 + " ");
+            currentOpbAndRcptQryStr.append(" and ba.fundId=:fund2 ");
 
         final Query currentOpbAndRcptQry = persistenceService.getSession()
-                .createNativeQuery(currentOpbAndRcptQryStr.toString()).addScalar(
-                        "openingBalance").addScalar("currentReceipt")
-                        .addScalar("id", LongType.INSTANCE).addScalar("accountNumber")
-                        .addScalar("bankAccountId").setResultTransformer(
-                                Transformers.aliasToBean(FundFlowBean.class));
+                .createNativeQuery(currentOpbAndRcptQryStr.toString()).addScalar("openingBalance")
+                        .addScalar("currentReceipt")
+                        .addScalar("id", LongType.INSTANCE)
+                        .addScalar("accountNumber")
+                        .addScalar("bankAccountId").setResultTransformer(Transformers.aliasToBean(FundFlowBean.class));
+        currentOpbAndRcptQry.setParameter("asOnDate2",sqlformat.format(asOnDate2));
+        if (fund2 != null && fund2 != -1) {
+            currentOpbAndRcptQry.setParameter("fund2", fund2, StringType.INSTANCE);
+        }
+
         return currentOpbAndRcptQry.list();
 
     }
