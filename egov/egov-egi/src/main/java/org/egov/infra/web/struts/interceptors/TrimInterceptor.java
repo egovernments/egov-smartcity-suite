@@ -50,31 +50,30 @@ package org.egov.infra.web.struts.interceptors;
 
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
-import org.apache.struts2.StrutsStatics;
 import org.apache.struts2.dispatcher.HttpParameters;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.egov.infra.security.utils.VirtualSanitizer.sanitize;
+import static org.apache.struts2.StrutsStatics.HTTP_REQUEST;
 
-public class TrimInterceptor extends AbstractInterceptor implements StrutsStatics {
+public class TrimInterceptor extends AbstractInterceptor {
 
     private static final long serialVersionUID = 1L;
 
     @Override
-    public String intercept(final ActionInvocation invocation) throws Exception {
+    public String intercept(ActionInvocation invocation) throws Exception {
         HttpServletRequest request = (HttpServletRequest) invocation.getInvocationContext().get(HTTP_REQUEST);
         Map<String, String[]> trimmedParameter = new HashMap<>();
-        for (String requestParam : invocation.getInvocationContext().getParameters().toMap().keySet()) {
-            String[] values = request.getParameterValues(requestParam);
+        for (String fieldName : invocation.getInvocationContext().getParameters().keySet()) {
+            String[] values = request.getParameterValues(fieldName);
             if (values != null) {
-                for (int i = 0; i < values.length; i++) {
-                    values[i] = sanitize(values[i].trim());
+                for (int index = 0; index < values.length; index++) {
+                    values[index] = values[index].trim();
                 }
             }
-            trimmedParameter.put(requestParam, values);
+            trimmedParameter.put(fieldName, values);
         }
         invocation.getInvocationContext().setParameters(HttpParameters.create(trimmedParameter).build());
         return invocation.invoke();

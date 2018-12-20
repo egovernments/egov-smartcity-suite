@@ -46,29 +46,61 @@
  *
  */
 
-package org.egov.infra.web.security.filter;
+package org.egov.infra.security.utils;
 
-import javax.servlet.Filter;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationException;
+import org.owasp.validator.html.AntiSamy;
+import org.owasp.validator.html.CleanResults;
+import org.owasp.validator.html.Policy;
+import org.owasp.validator.html.PolicyException;
+import org.owasp.validator.html.ScanException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 /**
- * Filter which handles possible XSS attack
+ * VirtualSanitizer.java This class used to sanitise user input from possible XSS attacks.
  **/
-public class XSSFilter implements Filter {
+public final class XSSValidator {
 
-	@Override
-	public void init(final javax.servlet.FilterConfig filterConfig) throws ServletException {
-	}
+    private static final Logger LOG = LoggerFactory.getLogger(XSSValidator.class);
+    private static Policy policy;
+    private static AntiSamy antiSamy;
 
-	@Override
-	public void destroy() {
-	}
+    private XSSValidator() {
+        //static methods only
+    }
 
-	@Override
-	public void doFilter(final javax.servlet.ServletRequest request, final javax.servlet.ServletResponse response, final javax.servlet.FilterChain filterChain) throws IOException, ServletException {
-		final XSSRequestWrapper xssRequest = new XSSRequestWrapper((HttpServletRequest) request);
-		filterChain.doFilter(xssRequest, response);
-	}
+    private static AntiSamy getAntiSamy() throws PolicyException {
+        if (antiSamy == null) {
+            policy = getPolicy("antisamy-myspace-1.4.3.xml");
+            antiSamy = new AntiSamy();
+        }
+        return antiSamy;
+    }
+
+    private static Policy getPolicy(String name) throws PolicyException {
+        return Policy.getInstance(XSSValidator.class.getResource(name));
+    }
+
+    public static String validate(String field, String input) {
+        try {
+            if (isBlank(input)) {
+                return input;
+            }
+            CleanResults cr = getAntiSamy().scan(input, policy);
+            if (!cr.getErrorMessages().isEmpty()) {
+                if (LOG.isWarnEnabled())
+                    LOG.warn(cr.getErrorMessages().toString());
+                throw new ValidationException(field, "Invalid, contains unsafe value");
+            }
+            return input;
+        } catch (PolicyException | ScanException exp) {
+            LOG.warn(exp.getMessage());
+            throw new ApplicationRuntimeException("Error occurred while validating inputs", exp);
+        }
+
+    }
 }

@@ -58,81 +58,93 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageForward;
 
+import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.stream.Stream;
+
+import static org.apache.struts2.StrutsStatics.HTTP_REQUEST;
+import static org.egov.infra.security.utils.XSSValidator.validate;
 
 public class ValidationInterceptor extends AbstractInterceptor {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Override
-	public String intercept(final ActionInvocation invocation) throws Exception {
-		String form = "edit";
-		Method actionMethod = null;
-		final Object action = invocation.getAction();
-		boolean isInvokeAndForward = false;
-		try {
-			final String method = invocation.getProxy().getMethod();
-			if ("create".equals(method)) {
-				form = "new";
-			}
-			final Method m = action.getClass().getMethod(method);
+    @Override
+    public String intercept(ActionInvocation invocation) throws Exception {
+        String form = "edit";
+        Method actionMethod = null;
+        Object action = invocation.getAction();
+        boolean isInvokeAndForward = false;
+        try {
+            String method = invocation.getProxy().getMethod();
+            if ("create".equals(method)) {
+                form = "new";
+            }
+            Method m = action.getClass().getMethod(method);
 
-			if (m.isAnnotationPresent(ValidationErrorPage.class)) {
-				form = m.getAnnotation(ValidationErrorPage.class).value();
-			} else if (m.isAnnotationPresent(ValidationErrorPageExt.class)) {
-				final ValidationErrorPageExt validationErrorPageExt = m.getAnnotation(ValidationErrorPageExt.class);
-				form = validationErrorPageExt.action();
-				if (validationErrorPageExt.makeCall()) {
-					actionMethod = action.getClass().getMethod(validationErrorPageExt.toMethod());
-				}
-			} else if (m.isAnnotationPresent(ValidationErrorPageForward.class)) {
-				final ValidationErrorPageForward forwarder = m.getAnnotation(ValidationErrorPageForward.class);
-				actionMethod = action.getClass().getDeclaredMethod(forwarder.forwarderMethod());
-				isInvokeAndForward = true;
-			}
-			final ValidationAware validationAwareAction = (ValidationAware) invocation.getAction();
-			if (validationAwareAction.hasErrors()) {
-				if (isInvokeAndForward) {
-					return (String) actionMethod.invoke(action);
-				} else {
-					this.invokeActionMethod(actionMethod, action);
-					return form;
-				}
-			}
-			return invocation.invoke();
-		} catch (final ValidationException e) {
-			if (BaseFormAction.class.isAssignableFrom(invocation.getAction().getClass())) {
-				this.transformValidationErrors(invocation, e);
-				if (isInvokeAndForward) {
-					return (String) actionMethod.invoke(action);
-				} else {
-					this.invokeActionMethod(actionMethod, action);
-					return form;
-				}
-			}
-			throw e;
-		}
-	}
+            if (m.isAnnotationPresent(ValidationErrorPage.class)) {
+                form = m.getAnnotation(ValidationErrorPage.class).value();
+            } else if (m.isAnnotationPresent(ValidationErrorPageExt.class)) {
+                ValidationErrorPageExt validationErrorPageExt = m.getAnnotation(ValidationErrorPageExt.class);
+                form = validationErrorPageExt.action();
+                if (validationErrorPageExt.makeCall()) {
+                    actionMethod = action.getClass().getMethod(validationErrorPageExt.toMethod());
+                }
+            } else if (m.isAnnotationPresent(ValidationErrorPageForward.class)) {
+                ValidationErrorPageForward forwarder = m.getAnnotation(ValidationErrorPageForward.class);
+                actionMethod = action.getClass().getDeclaredMethod(forwarder.forwarderMethod());
+                isInvokeAndForward = true;
+            }
 
-	private void invokeActionMethod(final Method actionMethod, final Object action) throws IllegalAccessException, InvocationTargetException, RuntimeException {
-		if (actionMethod != null) {
-			actionMethod.setAccessible(true);
-			actionMethod.invoke(action);
-		}
-	}
+            HttpServletRequest request = (HttpServletRequest) invocation.getInvocationContext().get(HTTP_REQUEST);
+            invocation.getInvocationContext().getParameters().keySet().stream().forEach(fieldName ->
+                    Stream.of(request.getParameterValues(fieldName)).forEach(value -> validate(fieldName, value))
+            );
 
-	private void transformValidationErrors(final ActionInvocation invocation, final ValidationException e) {
-		final BaseFormAction action = (BaseFormAction) invocation.getAction();
-		final List<ValidationError> errors = e.getErrors();
-		for (final ValidationError error : errors) {
-			if (error.getArgs() == null || error.getArgs().length == 0) {
-				action.addFieldError("model." + error.getKey(), action.getText(error.getMessage(), error.getMessage()));
-			} else {
-				action.addFieldError("model." + error.getKey(), action.getText(error.getMessage(), error.getMessage(), error.getArgs()));
-			}
-		}
-	}
+            ValidationAware validationAwareAction = (ValidationAware) invocation.getAction();
+            if (validationAwareAction.hasErrors()) {
+                if (isInvokeAndForward) {
+                    return (String) actionMethod.invoke(action);
+                } else {
+                    this.invokeActionMethod(actionMethod, action);
+                    return form;
+                }
+            }
+            return invocation.invoke();
+        } catch (ValidationException e) {
+            if (BaseFormAction.class.isAssignableFrom(invocation.getAction().getClass())) {
+                this.transformValidationErrors(invocation, e);
+                if (isInvokeAndForward) {
+                    return (String) actionMethod.invoke(action);
+                } else {
+                    this.invokeActionMethod(actionMethod, action);
+                    return form;
+                }
+            }
+            throw e;
+        }
+    }
+
+    private void invokeActionMethod(Method actionMethod, Object action) throws IllegalAccessException,
+            InvocationTargetException {
+        if (actionMethod != null) {
+            actionMethod.setAccessible(true);
+            actionMethod.invoke(action);
+        }
+    }
+
+    private void transformValidationErrors(ActionInvocation invocation, ValidationException e) {
+        BaseFormAction action = (BaseFormAction) invocation.getAction();
+        List<ValidationError> errors = e.getErrors();
+        for (ValidationError error : errors) {
+            if (error.getArgs() == null || error.getArgs().length == 0) {
+                action.addFieldError("model." + error.getKey(), action.getText(error.getMessage(), error.getMessage()));
+            } else {
+                action.addFieldError("model." + error.getKey(), action.getText(error.getMessage(), error.getMessage(), error.getArgs()));
+            }
+        }
+    }
 
 }

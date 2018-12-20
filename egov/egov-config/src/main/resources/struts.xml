@@ -92,7 +92,6 @@
 		<interceptors>
 			<interceptor name="egov-validator" class="org.egov.infra.web.struts.interceptors.ValidationInterceptor" />
 			<interceptor name="egov-trim" class="org.egov.infra.web.struts.interceptors.TrimInterceptor" />
-			<interceptor name="egov-exception" class="org.egov.infra.web.struts.interceptors.ExceptionInterceptor" />
 			<interceptor name="egov-cahecontrol" class="org.egov.infra.web.struts.interceptors.CacheControlInterceptor"/>
 			<interceptor-stack name="egov-interceptors">
 				<!-- 
@@ -100,10 +99,6 @@
 				<interceptor-ref name="token">
 					<param name="includeMethods">saveOrupdate,save,create,approve,forward,moveEstimate,createFile,saveFile,saveAsDraft,createFileNotification</param>
 				</interceptor-ref> -->
-				<interceptor-ref name="egov-exception">
-					<param name="logEnabled">true</param>
-					<param name="logLevel">ERROR</param>
-				</interceptor-ref>
 				<interceptor-ref name="alias" />
 				<interceptor-ref name="params"/>
 				<interceptor-ref name="servletConfig" />
