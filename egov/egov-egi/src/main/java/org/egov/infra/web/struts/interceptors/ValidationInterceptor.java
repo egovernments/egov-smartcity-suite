@@ -99,9 +99,11 @@ public class ValidationInterceptor extends AbstractInterceptor {
             }
 
             HttpServletRequest request = (HttpServletRequest) invocation.getInvocationContext().get(HTTP_REQUEST);
-            invocation.getInvocationContext().getParameters().keySet().stream().forEach(fieldName ->
-                    Stream.of(request.getParameterValues(fieldName)).forEach(value -> validate(fieldName, value))
-            );
+            invocation.getInvocationContext().getParameters().keySet().stream().forEach(fieldName -> {
+                String[] paramValues = request.getParameterValues(fieldName);
+                if (paramValues != null)
+                    Stream.of(paramValues).forEach(value -> validate(fieldName, value));
+            });
 
             ValidationAware validationAwareAction = (ValidationAware) invocation.getAction();
             if (validationAwareAction.hasErrors()) {
