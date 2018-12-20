@@ -51,6 +51,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -87,7 +88,7 @@ public class CouncilAgenda extends StateAware<Position> {
     @JoinColumn(name = "committeeType")
     private CommitteeType committeeType;
 
-
+    @SafeHtml
     @Column(name = "agendaNumber")
     private String agendaNumber;
 
@@ -110,11 +111,11 @@ public class CouncilAgenda extends StateAware<Position> {
     @OrderBy("order")
     private List<CouncilAgendaDetails> councilAgendaDetailsForUpdate = new ArrayList<>();
 
-    public Long getId() {
+	public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+	public void setId(Long id) {
         this.id = id;
     }
 

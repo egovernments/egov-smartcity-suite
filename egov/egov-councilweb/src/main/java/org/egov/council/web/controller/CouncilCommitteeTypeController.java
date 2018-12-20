@@ -147,7 +147,7 @@ public class CouncilCommitteeTypeController {
         committeeTypeService.create(committeeType);
         redirectAttrs.addFlashAttribute("message",
                 messageSource.getMessage("msg.councilCommitteeType.success", null, null));
-        return "redirect:/committeetype/result/" + committeeType.getId();
+        return "redirect:/committeetype/result/".concat(committeeType.getId().toString());
     }
 
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
@@ -227,7 +227,7 @@ public class CouncilCommitteeTypeController {
         committeeTypeService.update(committeeType);
         redirectAttrs.addFlashAttribute("message",
                 messageSource.getMessage("msg.councilCommitteeType.success", null, null));
-        return "redirect:/committeetype/result/" + committeeType.getId();
+        return "redirect:/committeetype/result/".concat(committeeType.getId().toString());
     }
 
     private void setCommitteeMembers(final CommitteeType committeeType, List<CommitteeMembers> committeeMembersList) {

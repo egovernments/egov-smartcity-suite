@@ -61,6 +61,7 @@ import javax.persistence.Table;
 
 import org.egov.works.models.masters.Contractor;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egcncl_preamble_bidder")
@@ -80,7 +81,8 @@ public class CouncilPreambleBidderDetails {
     @ManyToOne
     @JoinColumn(name = "bidder", nullable = false)
     private Contractor bidder;
-
+    
+    @SafeHtml
     @Length(max = 100)
     private String tenderType;
 
@@ -89,10 +91,12 @@ public class CouncilPreambleBidderDetails {
     @JoinColumn(name = "quotedAmount")
     private BigDecimal quotedAmount;
 
+    @SafeHtml
     private String position;
 
     private Boolean isAwarded;
     
+    @SafeHtml
     private String code;
 
     public Long getId() {

@@ -109,7 +109,7 @@ public class CouncilDesignationController {
         councilDesignationService.create(councilDesignation);
         redirectAttrs.addFlashAttribute("message",
                 messageSource.getMessage("msg.councilDesignation.success", null, null));
-        return "redirect:/councildesignation/result/" + councilDesignation.getId();
+        return "redirect:/councildesignation/result/".concat(councilDesignation.getId().toString());
     }
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
@@ -129,7 +129,7 @@ public class CouncilDesignationController {
         councilDesignationService.update(councilDesignation);
         redirectAttrs.addFlashAttribute("message",
                 messageSource.getMessage("msg.councilDesignation.success", null, null));
-        return "redirect:/councildesignation/result/" + councilDesignation.getId();
+        return "redirect:/councildesignation/result/".concat(councilDesignation.getId().toString());
     }
 
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
@@ -156,7 +156,7 @@ public class CouncilDesignationController {
 
     @RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String ajaxsearch(@PathVariable("mode") final String mode, Model model,
+    public String ajaxsearch(@PathVariable("mode") final String mode, Model model, 
             @ModelAttribute final CouncilDesignation councilDesignation) {
         List<CouncilDesignation> searchResultList = councilDesignationService.search(councilDesignation);
         return new StringBuilder("{ \"data\":")

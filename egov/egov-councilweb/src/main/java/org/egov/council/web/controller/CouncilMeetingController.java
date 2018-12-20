@@ -258,7 +258,7 @@ public class CouncilMeetingController {
         councilSmsAndEmailService.sendEmail(councilMeeting, null,
                 councilReportService.generatePDFForAgendaDetails(councilMeeting));
         redirectAttrs.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.councilMeeting.success", null, null));
-        return REDIRECT_COUNCILMEETING_RESULT + councilMeeting.getId();
+        return REDIRECT_COUNCILMEETING_RESULT.concat(councilMeeting.getId().toString());
     }
 
     private void validateCouncilMeeting(BindingResult errors) {
@@ -288,7 +288,7 @@ public class CouncilMeetingController {
         }
         councilMeetingService.update(councilMeeting);
         redirectAttrs.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.councilMeeting.success", null, null));
-        return REDIRECT_COUNCILMEETING_RESULT + councilMeeting.getId();
+        return REDIRECT_COUNCILMEETING_RESULT.concat(councilMeeting.getId().toString());
     }
     
     @RequestMapping(value = "/update", params = "cancel", method = RequestMethod.POST)
@@ -341,7 +341,7 @@ public class CouncilMeetingController {
 
     @RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String ajaxsearch(@PathVariable("mode") final String mode, Model model,
+    public String ajaxsearch(@PathVariable("mode") final String mode, Model model, 
                              @ModelAttribute final CouncilMeeting councilMeeting) {
         if (null != mode && !"".equals(mode)) {
             List<CouncilMeeting> searchResultList;
@@ -360,7 +360,7 @@ public class CouncilMeetingController {
 
     @RequestMapping(value = "/searchmeeting-tocreatemom", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String searchMeetingAndToCreateMOM(Model model,
+    public String searchMeetingAndToCreateMOM(Model model, 
                                               @ModelAttribute final CouncilMeeting councilMeeting) {
         List<CouncilMeeting> searchResultList = councilMeetingService.searchMeetingToCreateMOM(councilMeeting);
         return new StringBuilder(DATA).append(toJSON(searchResultList, CouncilMeeting.class, CouncilMeetingJsonAdaptor.class))
@@ -479,12 +479,12 @@ public class CouncilMeetingController {
         deleteAtteandance(councilMeeting);
         setAttendanceDetails(councilMeeting);
         if (errors.hasErrors()) {
-            return "redirect:councilmeeting/attend/search/edit/" + councilMeeting.getId();
+            return "redirect:councilmeeting/attend/search/edit/".concat(councilMeeting.getId().toString());
         }
         buildAttendanceDetailsForMeeting(councilMeeting);
         councilMeetingService.update(councilMeeting);
         redirectAttrs.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.councilMeeting.attendance.success", null, null));
-        return "redirect:result/" + councilMeeting.getId();
+        return "redirect:result/".concat(councilMeeting.getId().toString());
     }
 
     private void setAttendanceDetails(final CouncilMeeting councilMeeting) {
@@ -509,13 +509,13 @@ public class CouncilMeetingController {
             setAttendanceDetails(councilMeeting);
         }
         if (errors.hasErrors()) {
-            return "redirect:councilmeeting/attend/search/edit/" + councilMeeting.getId();
+            return "redirect:councilmeeting/attend/search/edit/".concat(councilMeeting.getId().toString());
         }
         buildAttendanceDetailsForMeeting(councilMeeting);
         councilMeeting.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(MEETING_MODULENAME, ATTENDANCEFINALIZED));
         councilMeetingService.update(councilMeeting);
         redirectAttrs.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.councilMeeting.attendance.success", null, null));
-        return "redirect:result/" + councilMeeting.getId();
+        return "redirect:result/".concat(councilMeeting.getId().toString());
     }
 
     private void buildAttendanceDetailsForMeeting(final CouncilMeeting councilMeeting) {

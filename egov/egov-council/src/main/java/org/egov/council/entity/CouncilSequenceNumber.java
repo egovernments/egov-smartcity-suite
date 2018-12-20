@@ -48,6 +48,7 @@
 package org.egov.council.entity;
 
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -70,15 +71,19 @@ public class CouncilSequenceNumber {
     @GeneratedValue(generator = SEQ_COUNCILSEQUENCENAME, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @SafeHtml
     @Column(name = "preambleSeqNumber", unique = true)
     private String preambleSeqNumber;
 
+    @SafeHtml
     @Column(name = "agendaSeqNumber", unique = true)
     private String agendaSeqNumber;
 
+    @SafeHtml
     @Column(name = "resolutionSeqNumber", unique = true)
     private String resolutionSeqNumber;
     
+    @SafeHtml
     @Column(name = "meetingSeqNumber", unique = true)
     private String meetingSeqNumber;
     

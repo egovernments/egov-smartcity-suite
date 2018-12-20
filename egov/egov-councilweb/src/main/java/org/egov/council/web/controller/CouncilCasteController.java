@@ -103,7 +103,7 @@ public class CouncilCasteController {
         }
         councilCasteService.create(councilCaste);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.councilCaste.success", null, null));
-        return "redirect:/councilcaste/result/" + councilCaste.getId();
+        return "redirect:/councilcaste/result/".concat(councilCaste.getId().toString());
     }
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
@@ -122,7 +122,7 @@ public class CouncilCasteController {
         }
         councilCasteService.update(councilCaste);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.councilCaste.success", null, null));
-        return "redirect:/councilcaste/result/" + councilCaste.getId();
+        return "redirect:/councilcaste/result/".concat(councilCaste.getId().toString());
     }
 
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)

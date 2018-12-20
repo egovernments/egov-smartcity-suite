@@ -157,13 +157,13 @@ public class CouncilMemberController {
                 councilMember.setPhoto(fileStoreService.store(attachments.getInputStream(),
                         attachments.getOriginalFilename(), attachments.getContentType(), MODULE_NAME));
             } catch (IOException e) {
-                LOGGER.error("Error in loading Employee photo" + e.getMessage(), e);
+                LOGGER.error("Error in loading Employee photo", e);
             }
         }
         councilMemberService.create(councilMember);
         councilMemberIndexService.createCouncilMemberIndex(councilMember);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.councilMember.success", null, null));
-        return "redirect:/councilmember/result/" + councilMember.getId();
+        return "redirect:/councilmember/result/".concat(councilMember.getId().toString());
     }
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
@@ -190,13 +190,13 @@ public class CouncilMemberController {
                 councilMember.setPhoto(fileStoreService.store(attachments.getInputStream(),
                         attachments.getOriginalFilename(), attachments.getContentType(), MODULE_NAME));
             } catch (IOException e) {
-                LOGGER.error("Error in loading Employee photo" + e.getMessage(), e);
+                LOGGER.error("Error in loading Employee photo" ,e);
             }
         }
         councilMemberService.update(councilMember);
         councilMemberIndexService.createCouncilMemberIndex(councilMember);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.councilMember.success", null, null));
-        return "redirect:/councilmember/result/" + councilMember.getId();
+        return "redirect:/councilmember/result/".concat(councilMember.getId().toString());
     }
 
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
@@ -227,7 +227,7 @@ public class CouncilMemberController {
     @RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String ajaxsearch(@PathVariable("mode") final String mode, Model model,
-                             @ModelAttribute final CouncilMember councilMember) {
+    		 @ModelAttribute final CouncilMember councilMember) {
         List<CouncilMember> searchResultList = councilMemberService.search(councilMember);
         return new StringBuilder("{ \"data\":")
                 .append(toJSON(searchResultList, CouncilMember.class, CouncilMemberJsonAdaptor.class)).append("}")

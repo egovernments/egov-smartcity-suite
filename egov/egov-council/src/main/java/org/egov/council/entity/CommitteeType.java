@@ -51,6 +51,7 @@ package org.egov.council.entity;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -80,10 +81,12 @@ public class CommitteeType extends AbstractAuditable {
     Long id;
 
     @NotNull
+    @SafeHtml
     @Length(min = 2, max = 100)
     private String name;
 
     @NotNull
+    @SafeHtml
     @Length(max = 20)
     @Column(name = "code", updatable = false)
     private String code;

@@ -50,12 +50,11 @@ package org.egov.council.web.controller;
 import static org.egov.council.utils.constants.CouncilConstants.getMeetingTimings;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
+import javax.validation.Valid;
 import org.apache.commons.lang.StringUtils;
 import org.egov.council.entity.CommitteeType;
 import org.egov.council.entity.CouncilAgendaDetails;
@@ -128,7 +127,7 @@ public class CouncilDataEntryController {
 
     @RequestMapping(value = "/savedataentry", method = RequestMethod.POST)
     public String update(
-            @ModelAttribute final MeetingMOM meetingMOM,
+    		@Valid @ModelAttribute final MeetingMOM meetingMOM,
             final BindingResult errors, final Model model,
             final RedirectAttributes redirectAttrs) throws ParseException {
 

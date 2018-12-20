@@ -227,7 +227,7 @@ public class CouncilPreambleController extends GenericWorkFlowController {
                         attachments.getContentType(),
                         CouncilConstants.MODULE_NAME));
             } catch (IOException e) {
-                LOGGER.error("Error in loading documents" + e.getMessage(), e);
+                LOGGER.error("Error in loading documents", e);
             }
         }
         if (isAutoPreambleNoGenEnabled()){
@@ -267,7 +267,7 @@ public class CouncilPreambleController extends GenericWorkFlowController {
                         councilPreamble.getPreambleNumber()},
                 null);
         redirectAttrs.addFlashAttribute(MESSAGE2, message);
-        return REDIRECT_COUNCILPREAMBLE_RESULT + councilPreamble.getId();
+        return REDIRECT_COUNCILPREAMBLE_RESULT.concat(councilPreamble.getId().toString());
     }
 
     @RequestMapping(value = "/downloadfile/{fileStoreId}")
@@ -330,7 +330,7 @@ public class CouncilPreambleController extends GenericWorkFlowController {
                         CouncilConstants.MODULE_NAME));
             } catch (IOException e) {
                 LOGGER.error(
-                        "Error in loading Employee photo" + e.getMessage(), e);
+                        "Error in loading Employee photo", e);
             }
         }
         
@@ -377,7 +377,7 @@ public class CouncilPreambleController extends GenericWorkFlowController {
             }
             redirectAttrs.addFlashAttribute(MESSAGE2, message);
         }
-        return REDIRECT_COUNCILPREAMBLE_RESULT + councilPreamble.getId();
+        return REDIRECT_COUNCILPREAMBLE_RESULT.concat(councilPreamble.getId().toString());
     }
 
     @RequestMapping(value = "/updateimplimentaionstatus/{id}", method = RequestMethod.GET)
@@ -406,7 +406,7 @@ public class CouncilPreambleController extends GenericWorkFlowController {
             councilPreambleService.updateImplementationStatus(councilPreamble);
         }
         redirectAttrs.addFlashAttribute(MESSAGE2, messageSource.getMessage("msg.councilPreamble.update", null, null));
-        return REDIRECT_COUNCILPREAMBLE_RESULT + councilPreamble.getId();
+        return REDIRECT_COUNCILPREAMBLE_RESULT.concat(councilPreamble.getId().toString());
     }
 
     private String getMessage(String messageLabel,String designation,String approver,

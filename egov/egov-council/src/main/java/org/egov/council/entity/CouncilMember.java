@@ -55,6 +55,7 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.CascadeType;
@@ -117,15 +118,16 @@ public class CouncilMember extends AbstractAuditable {
 
     private Date oathDate;
 
-
+    @SafeHtml
     @Length(max = 15)
     private String mobileNumber;
 
-
+    @SafeHtml
     @Length(max = 52)
     private String emailId;
 
     @NotNull
+    @SafeHtml
     @Length(min = 2, max = 100)
     private String name;
 
@@ -134,6 +136,7 @@ public class CouncilMember extends AbstractAuditable {
     private CouncilMemberStatus status = CouncilMemberStatus.ACTIVE;
 
     @NotNull
+    @SafeHtml
     private String residentialAddress;
 
 
@@ -147,6 +150,7 @@ public class CouncilMember extends AbstractAuditable {
     @JoinColumn(name = "filestoreid")
     private FileStoreMapper photo;
     
+    @SafeHtml
     private String category;
     
     private Date dateOfJoining;
@@ -167,11 +171,11 @@ public class CouncilMember extends AbstractAuditable {
         this.attachments = attachments;
     }
 
-    public Long getId() {
+	public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+	public void setId(Long id) {
         this.id = id;
     }
 

@@ -52,6 +52,7 @@ import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -86,7 +87,8 @@ public class CouncilAgendaDetails extends AbstractAuditable {
     @JoinColumn(name = "agenda", nullable = false)
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private CouncilAgenda agenda;
-
+    
+    @SafeHtml
     @Column(name = "itemnumber")
     @Audited
     private String itemNumber;
@@ -100,11 +102,11 @@ public class CouncilAgendaDetails extends AbstractAuditable {
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private CouncilPreamble preamble;
 
-    public Long getId() {
+	public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+	public void setId(Long id) {
         this.id = id;
     }
 

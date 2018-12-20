@@ -197,7 +197,7 @@ public class CouncilAgendaController {
 
         redirectAttrs.addFlashAttribute(MESSAGE,
                 messageSource.getMessage("msg.agenda.success", null, null));
-        return "redirect:/agenda/result/" + councilAgenda.getId();
+        return "redirect:/agenda/result/".concat(councilAgenda.getId().toString());
     }
 
     private Long buildCouncilAgendaDetails(final CouncilAgenda councilAgenda,
@@ -259,7 +259,7 @@ public class CouncilAgendaController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String update(@ModelAttribute final CouncilAgenda councilAgenda,
+    public String update(@Valid @ModelAttribute final CouncilAgenda councilAgenda,
             final Model model, final BindingResult errors,
             final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors()) {
@@ -294,7 +294,7 @@ public class CouncilAgendaController {
                                                                          // STATUS
         redirectAttrs.addFlashAttribute(MESSAGE,
                 messageSource.getMessage("msg.agenda.success", null, null));
-        return "redirect:/agenda/result/" + councilAgenda.getId();
+        return "redirect:/agenda/result/".concat(councilAgenda.getId().toString());
     }
 
     @RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)

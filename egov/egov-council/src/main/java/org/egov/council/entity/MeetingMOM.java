@@ -48,6 +48,7 @@
 package org.egov.council.entity;
 
 import org.egov.commons.EgwStatus;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.CascadeType;
@@ -86,6 +87,7 @@ public class MeetingMOM implements Serializable {
     @JoinColumn(name = "preamble", nullable = false)
     private CouncilPreamble preamble;
 
+    @SafeHtml
     @Column(name = "resolutionDetail")
     private String resolutionDetail;
 
@@ -93,8 +95,11 @@ public class MeetingMOM implements Serializable {
     @JoinColumn(name = "resolutionStatus")
     private EgwStatus resolutionStatus;
 
+    @SafeHtml
     @Column(name = "itemnumber")
     private String itemNumber;
+    
+    @SafeHtml
     @Column(name = "resolutionNumber")
     private String resolutionNumber;
     

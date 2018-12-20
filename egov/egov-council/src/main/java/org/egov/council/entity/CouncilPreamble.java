@@ -80,6 +80,7 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.multipart.MultipartFile;
 
 @Entity
@@ -97,7 +98,8 @@ public class CouncilPreamble extends StateAware<Position> {
     @ManyToOne
     @JoinColumn(name = "department", nullable = false)
     private Department department;
-
+    
+    @SafeHtml
     @Column(name = "preambleNumber", unique = true)
     @Length(max = 25)
     private String preambleNumber;
@@ -105,6 +107,7 @@ public class CouncilPreamble extends StateAware<Position> {
     private BigDecimal sanctionAmount;
 
     @NotNull
+    @SafeHtml
     @Length(max = 10000)
     @JoinColumn(name = "gistOfPreamble")
     private String gistOfPreamble;
@@ -134,6 +137,7 @@ public class CouncilPreamble extends StateAware<Position> {
     @Enumerated(EnumType.ORDINAL)
     private PreambleType type;
     
+    @SafeHtml
     @Length(max = 256)
     private String referenceNumber;
     
@@ -141,6 +145,7 @@ public class CouncilPreamble extends StateAware<Position> {
     @JoinColumn(name = "preamble_type")
     private PreambleTypeEnum typeOfPreamble; 
     
+    @SafeHtml
     @Length(max = 10000)
     @JoinColumn(name = "addtionalGistOfPreamble")
     private String addtionalGistOfPreamble;
@@ -164,6 +169,7 @@ public class CouncilPreamble extends StateAware<Position> {
     private Long approvalPosition;
     
     @Column
+    @SafeHtml
     private String statusMessage;
 
     @Override

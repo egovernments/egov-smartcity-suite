@@ -292,7 +292,7 @@ public class CouncilMomController {
 
         redirectAttrs.addFlashAttribute(MESSAGE, messageSource.getMessage(
                 "msg.councilMeeting.success", null, null));
-        return "redirect:/councilmom/result/" + councilMeeting.getId();
+        return "redirect:/councilmom/result/".concat(councilMeeting.getId().toString());
     }
 
     @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
@@ -490,7 +490,7 @@ public class CouncilMomController {
         councilMeetingIndexService.createCouncilMeetingIndex(councilMeeting);
         councilSmsAndEmailService.sendSms(councilMeeting, null);
         councilSmsAndEmailService.sendEmail(councilMeeting, null, reportOutput);
-        return "forward:/councilmeeting/generateresolution/" + councilMeeting.getId();
+        return "forward:/councilmeeting/generateresolution/".concat(councilMeeting.getId().toString());
     }
 
     private byte[] generateMomPdfByPassingMeeting(final CouncilMeeting councilMeeting) {

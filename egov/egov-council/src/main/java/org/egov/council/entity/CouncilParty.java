@@ -51,6 +51,7 @@ package org.egov.council.entity;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -76,10 +77,12 @@ public class CouncilParty extends AbstractAuditable {
     private Long id;
 
     @NotNull
+    @SafeHtml
     @Length(min = 2, max = 100)
     private String name;
 
     @NotNull
+    @SafeHtml
     @Length(max = 20)
     @Column(name = "code", updatable = false)
     private String code;
@@ -87,11 +90,11 @@ public class CouncilParty extends AbstractAuditable {
     @NotNull
     private Boolean isActive;
 
-    public Long getId() {
+	public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+	public void setId(Long id) {
         this.id = id;
     }
 

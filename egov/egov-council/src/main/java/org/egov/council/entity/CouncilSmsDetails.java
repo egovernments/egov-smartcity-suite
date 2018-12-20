@@ -49,6 +49,7 @@ package org.egov.council.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -76,6 +77,7 @@ public class CouncilSmsDetails extends AbstractAuditable {
 	@GeneratedValue(generator = SEQ_SMSDETAILS, strategy = GenerationType.SEQUENCE)
 	private Long id;
 
+	@SafeHtml
 	@Length(max = 500)
 	@Column(name = "smscontent")
 	private String smsContent;

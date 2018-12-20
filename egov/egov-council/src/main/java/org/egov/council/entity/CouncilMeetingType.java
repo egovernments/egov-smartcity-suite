@@ -61,6 +61,7 @@ import javax.validation.constraints.NotNull;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Unique(fields = { "name" }, enableDfltMsg = true)
@@ -75,10 +76,12 @@ public class CouncilMeetingType extends AbstractAuditable {
     private Long id;
 
     @NotNull
+    @SafeHtml
     @Length(min = 2, max = 100)
     private String name;
 
     @NotNull
+    @SafeHtml
     @Length(max = 20)
     @Column(name = "code", updatable = false)
     private String code;
@@ -86,11 +89,11 @@ public class CouncilMeetingType extends AbstractAuditable {
     @NotNull
     private Boolean isActive;
 
-    public Long getId() {
+	public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+	public void setId(Long id) {
         this.id = id;
     }
 

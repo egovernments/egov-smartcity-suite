@@ -53,6 +53,7 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
@@ -83,7 +84,8 @@ public class CouncilMeeting extends StateAware<Position> {
     @ManyToOne
     @JoinColumn(name = "meetingType")
     private CouncilMeetingType meetingType;
-
+    
+    @SafeHtml
     @Column(name = "meetingNumber")
     private String meetingNumber;
 
@@ -91,9 +93,11 @@ public class CouncilMeeting extends StateAware<Position> {
     @Column(name = "meetingDate")
     private Date meetingDate;
 
+    @SafeHtml
     @Column(name = "meetingTime")
     private String meetingTime;
 
+    @SafeHtml
     @Size(min = 5, max = 100)
     @Column(name = "meetingLocation")
     private String meetingLocation;
@@ -128,11 +132,11 @@ public class CouncilMeeting extends StateAware<Position> {
 
     private transient MultipartFile[] files;
 
-    public Long getId() {
+	public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+	public void setId(Long id) {
         this.id = id;
     }
 
