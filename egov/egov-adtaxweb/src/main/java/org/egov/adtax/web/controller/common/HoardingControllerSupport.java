@@ -179,9 +179,9 @@ public class HoardingControllerSupport extends GenericWorkFlowController {
         int index = 0;
         for (final HoardingDocument document : advertisementPermitDetail.getAdvertisement().getDocuments()) {
             if (document.getDoctype().isMandatory() && document.getAttachments()[0].getSize() == 0)
-                resultBinder.rejectValue(STR_ADVERTISEMENT_DOCUMENTS + index + STR_ATTACHMENTS, HOARDING_DOC_MANDATORY);
+                resultBinder.rejectValue(STR_ADVERTISEMENT_DOCUMENTS.concat(String.valueOf(index)).concat(STR_ATTACHMENTS), HOARDING_DOC_MANDATORY);
             else if (document.isEnclosed() && document.getAttachments()[0].getSize() == 0)
-                resultBinder.rejectValue(STR_ADVERTISEMENT_DOCUMENTS + index + STR_ATTACHMENTS, HOARDING_DOC_NOT_ENCLOSED);
+                resultBinder.rejectValue(STR_ADVERTISEMENT_DOCUMENTS.concat(String.valueOf(index)).concat(STR_ATTACHMENTS), HOARDING_DOC_NOT_ENCLOSED);
             index++;
         }
     }
@@ -192,10 +192,10 @@ public class HoardingControllerSupport extends GenericWorkFlowController {
         for (final HoardingDocument document : advertisementPermitDetail.getAdvertisement().getDocuments()) {
             if (document.getDoctype().isMandatory() && document.getFiles().isEmpty()
                     && document.getAttachments()[0].getSize() == 0) {
-                resultBinder.rejectValue(STR_ADVERTISEMENT_DOCUMENTS + index + STR_ATTACHMENTS, HOARDING_DOC_MANDATORY);
+                resultBinder.rejectValue(STR_ADVERTISEMENT_DOCUMENTS.concat(String.valueOf(index)).concat(STR_ATTACHMENTS), HOARDING_DOC_MANDATORY);
                 redirAttrib.addFlashAttribute("message", HOARDING_DOC_NOT_ENCLOSED);
             } else if (document.isEnclosed() && document.getFiles().isEmpty() && document.getAttachments()[0].getSize() == 0) {
-                resultBinder.rejectValue(STR_ADVERTISEMENT_DOCUMENTS + index + STR_ATTACHMENTS, HOARDING_DOC_NOT_ENCLOSED);
+                resultBinder.rejectValue(STR_ADVERTISEMENT_DOCUMENTS.concat(String.valueOf(index)).concat(STR_ATTACHMENTS), HOARDING_DOC_NOT_ENCLOSED);
                 redirAttrib.addFlashAttribute("message", HOARDING_DOC_NOT_ENCLOSED);
             }
             index++;

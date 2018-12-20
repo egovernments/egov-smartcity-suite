@@ -125,7 +125,7 @@ public class SubCategoryController {
         subCategoryService.createSubCategory(subCategory);
         redirectAttrs.addFlashAttribute("subCategory", subCategory);
         redirectAttrs.addFlashAttribute("message", "message.subcategory.create");
-        return "redirect:/subcategory/success/" + subCategory.getId();
+        return "redirect:/subcategory/success/".concat(subCategory.getId().toString());
     }
 
     @RequestMapping(value = "/success/{id}", method = GET)
@@ -139,9 +139,8 @@ public class SubCategoryController {
     public void searchSubcategory(final Model model, @ModelAttribute final SubCategory subCategory, @RequestParam final String category,
                                   @RequestParam final String description, final HttpServletResponse response) throws IOException {
         List<SubCategorySearch> subCategoryJson = subCategoryService.getSubcategory(Long.valueOf(category), description != null ? Long.valueOf(description) : null);
-        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
-                .toJson(subCategoryJson)
-                + "}", response.getWriter());
+        IOUtils.write("{ \"data\":".concat(new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
+                .toJson(subCategoryJson)).concat("}"), response.getWriter());
     }
 
 }

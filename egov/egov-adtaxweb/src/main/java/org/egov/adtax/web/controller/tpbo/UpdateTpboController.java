@@ -70,7 +70,7 @@ public class UpdateTpboController {
 
     @RequestMapping(value = "/updateTpbo/{id}", method = GET)
     public String update(@PathVariable final Long id) {
-        return "redirect:/tpbo/update/" + id;
+        return "redirect:/tpbo/update/".concat(id.toString());
     }
 
     @RequestMapping(value = "/update/{id}", method = GET)

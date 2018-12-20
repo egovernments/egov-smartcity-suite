@@ -88,13 +88,13 @@ public class UpdateCategoryController {
         hoardingCategoryService.updateHoardingCategory(hoardingCategory);
         redirectAttrs.addFlashAttribute("hoardingCategory", hoardingCategory);
         redirectAttrs.addFlashAttribute("message", "message.category.update"); 
-        return "redirect:/category/success/" + hoardingCategory.getId();
+        return "redirect:/category/success/".concat(hoardingCategory.getId().toString());
     }
     
     
     @RequestMapping(value = "/updateCategory/{id}", method = GET)
     public String update(@PathVariable final Long id) {
-        return "redirect:/category/update/" + id;
+        return "redirect:/category/update/".concat(id.toString());
     }
 
     
@@ -108,6 +108,6 @@ public class UpdateCategoryController {
     public String view(@ModelAttribute final HoardingCategory hoardingCategory, final BindingResult errors) {
         if (errors.hasErrors())
             return "category-search";
-        return "redirect:/category/success/" + hoardingCategory.getId();
+        return "redirect:/category/success/".concat(hoardingCategory.getId().toString());
     }
 }

@@ -137,7 +137,7 @@ public class UpdateLegacyAdvertisementController extends HoardingControllerSuppo
             String message = messageSource.getMessage("hoarding.update.success",
                     new String[] { advertisementPermitDetail.getApplicationNumber() }, null);
             redirAttrib.addFlashAttribute(STR_MESSAGE, message);
-            return "redirect:/hoarding/success/" + advertisementPermitDetail.getId();
+            return "redirect:/hoarding/success/".concat(advertisementPermitDetail.getId().toString());
         } catch (final HoardingValidationError e) {
             resultBinder.rejectValue(e.fieldName(), e.errorCode());
             return STR_HOARDING_UPDATE_LEGACY;

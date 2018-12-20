@@ -108,7 +108,7 @@ public class GenerateDemandHoardingController extends GenericController {
             AdvertisementBatchDemandGenerate advBatchDmdGenerate = new AdvertisementBatchDemandGenerate();
             advBatchDmdGenerate.setActive(true);
             advBatchDmdGenerate.setInstallment(installment);
-            advBatchDmdGenerate.setJobName("Generate Demand For " + installment.getFinYearRange() + new Date());
+            advBatchDmdGenerate.setJobName("Generate Demand For ".concat(installment.getFinYearRange()) + new Date());
             advertisementBatchDemandGenService.createAdvertisementBatchDemandGenerate(advBatchDmdGenerate);
         }
 

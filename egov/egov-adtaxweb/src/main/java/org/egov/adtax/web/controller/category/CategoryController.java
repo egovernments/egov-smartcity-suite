@@ -103,7 +103,7 @@ public class CategoryController {
         hoardingCategoryService.createHoardingCategory(hoardingCategory);
         redirectAttrs.addFlashAttribute("hoardingCategory", hoardingCategory);
         redirectAttrs.addFlashAttribute("message", "message.category.create");
-        return "redirect:/category/success/" + hoardingCategory.getId();
+        return "redirect:/category/success/".concat(hoardingCategory.getId().toString());
     }
 
     @RequestMapping(value = "/success/{name}", method = GET)

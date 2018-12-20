@@ -103,7 +103,7 @@ public class AgencyController {
         agencyService.createAgency(agency);
         redirectAttrs.addFlashAttribute("agency", agency);
         redirectAttrs.addFlashAttribute("message", "message.agency.create");
-        return "redirect:/agency/success/" + agency.getCode();
+        return "redirect:/agency/success/".concat(agency.getCode());
     }
 
     @RequestMapping(value = "/success/{code}", method = GET)
@@ -121,7 +121,7 @@ public class AgencyController {
     public String search(@ModelAttribute final Agency agency, final BindingResult errors) {
         if (errors.hasErrors())
             return "agency-search";
-        return "redirect:/agency/update/" + agency.getCode();
+        return "redirect:/agency/update/".concat(agency.getCode());
     }
 
     @RequestMapping(value = "agencies", method = GET, produces = APPLICATION_JSON_VALUE)

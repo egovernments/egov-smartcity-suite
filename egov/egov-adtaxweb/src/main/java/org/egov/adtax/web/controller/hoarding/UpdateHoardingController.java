@@ -174,7 +174,7 @@ public class UpdateHoardingController extends HoardingControllerSupport {
                 workFlowAction = request.getParameter("workFlowAction");
 
             if (AdvertisementTaxConstants.WF_DEMANDNOTICE_BUTTON.equalsIgnoreCase(workFlowAction))
-                return "redirect:/advertisement/demandNotice?pathVar=" + advertisementPermitDetail.getId();
+                return "redirect:/advertisement/demandNotice?pathVar=".concat(advertisementPermitDetail.getId().toString());
             else {
                 updateHoardingDocuments(advertisementPermitDetail);
 

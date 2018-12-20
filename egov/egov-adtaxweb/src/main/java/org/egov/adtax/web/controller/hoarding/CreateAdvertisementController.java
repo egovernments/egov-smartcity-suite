@@ -202,11 +202,11 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
         if (isEmployee && advertisementPermitDetail != null) {
             result = createAdvertisementOnApproverCheck(advertisementPermitDetail, redirAttrib, currentuser,
                     requestDetails, model);
-            return result != null ? result : "redirect:/hoarding/success/" + advertisementPermitDetail.getId();
+            return result != null ? result : "redirect:/hoarding/success/".concat(advertisementPermitDetail.getId().toString());
         } else if (isActiveApprover && advertisementPermitDetail != null) {
             result = createAdvertisementOnApproverCheck(advertisementPermitDetail, redirAttrib,
                     currentuser, requestDetails, model);
-            return result != null ? result : "redirect:/hoarding/showack/" + advertisementPermitDetail.getId();
+            return result != null ? result : "redirect:/hoarding/showack/".concat(advertisementPermitDetail.getId().toString());
         } else {
             model.addAttribute("message", NOTEXISTS_POSITION);
             buildCreateHoardingForm(advertisementPermitDetail, model);

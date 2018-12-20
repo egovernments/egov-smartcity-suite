@@ -229,7 +229,7 @@ public class AdvertisementRenewalController extends HoardingControllerSupport {
                             renewalPermitDetail.getApplicationNumber() },
                     null);
             redirAttrib.addFlashAttribute(MESSAGE, message);
-            return "redirect:/hoarding/success/" + renewalPermitDetail.getId();
+            return "redirect:/hoarding/success/".concat(renewalPermitDetail.getId().toString());
         } catch (final HoardingValidationError e) {
             resultBinder.rejectValue(e.fieldName(), e.errorCode());
             return RENEWAL_NEWFORM;

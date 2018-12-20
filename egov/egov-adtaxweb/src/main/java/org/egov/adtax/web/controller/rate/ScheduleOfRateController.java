@@ -220,7 +220,7 @@ public class ScheduleOfRateController {
         }
         redirectAttrs.addFlashAttribute(STR_AGENCY, rate);
         redirectAttrs.addFlashAttribute(STR_MESSAGE, "message.scheduleofrate.create");
-        return "redirect:/rates/success/" + rate.getId();
+        return "redirect:/rates/success/".concat(rate.getId().toString());
 
     }
 

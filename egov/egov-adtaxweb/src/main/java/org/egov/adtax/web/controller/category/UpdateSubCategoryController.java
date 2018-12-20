@@ -98,13 +98,13 @@ public class UpdateSubCategoryController {
         subCategoryService.updateSubCategory(subCategory);
         redirectAttrs.addFlashAttribute("subCategory", subCategory);
         redirectAttrs.addFlashAttribute("message", "message.subcategory.update"); 
-        return "redirect:/subcategory/success/" + subCategory.getId();
+        return "redirect:/subcategory/success/".concat(subCategory.getId().toString());
     }
     
     
     @RequestMapping(value = "/updateSubCategory/{id}", method = GET)
     public String update(@PathVariable final Long id) {
-        return "redirect:/subcategory/update/" + id;
+        return "redirect:/subcategory/update/".concat(id.toString());
     }
 
     
@@ -118,6 +118,6 @@ public class UpdateSubCategoryController {
     public String view(@ModelAttribute final SubCategory subCategory, final BindingResult errors) {
         if (errors.hasErrors())
             return "subcategory-search";
-        return "redirect:/subcategory/success/" + subCategory.getId();
+        return "redirect:/subcategory/success/".concat(subCategory.getId().toString());
     }
 }

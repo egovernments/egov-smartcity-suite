@@ -82,7 +82,7 @@ public class UpdateAgencyController {
 
     @RequestMapping(value = "/updateAgency/{code}", method = GET)
     public String update(@PathVariable final String code) {
-        return "redirect:/agency/update/" + code;
+        return "redirect:/agency/update/".concat(code);
     }
 
     @RequestMapping(value = "/update/{code}", method = POST)
@@ -93,7 +93,7 @@ public class UpdateAgencyController {
         agencyService.updateAgency(agency);
         redirectAttrs.addFlashAttribute("agency", agency);
         redirectAttrs.addFlashAttribute("message", "message.agency.update");
-        return "redirect:/agency/success/" + agency.getCode();
+        return "redirect:/agency/success/".concat(agency.getCode());
     }
 
     @RequestMapping(value = "/update/{code}", method = GET)
@@ -106,6 +106,6 @@ public class UpdateAgencyController {
     public String view(@ModelAttribute final Agency agency, final BindingResult errors) {
         if (errors.hasErrors())
             return "agency-search";
-        return "redirect:/agency/success/" + agency.getCode();
+        return "redirect:/agency/success/".concat(agency.getCode());
     }
 }

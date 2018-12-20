@@ -133,7 +133,7 @@ public class CreateLegacyAdvertisementController extends HoardingControllerSuppo
                         advertisementPermitDetailObj.getApplicationNumber(), advertisementPermitDetailObj.getPermissionNumber() },
                 null);
         redirAttrib.addFlashAttribute("message", message);
-        return "redirect:/hoarding/success/" + advertisementPermitDetailObj.getId();
+        return "redirect:/hoarding/success/".concat(advertisementPermitDetailObj.getId().toString());
     }
 
     @RequestMapping(value = "/checkUnique-advertisementNo", method = GET, produces = APPLICATION_JSON_VALUE)
