@@ -70,7 +70,8 @@ public interface MeterCostRepository extends JpaRepository<MeterCost, Long> {
     @Query("select metercost from WaterConnectionDetails conndetails inner join MeterCost metercost on conndetails.pipeSize=metercost.pipeSize where conndetails.applicationNumber=:applicationNumber and metercost.pipeSize.id=:pipeSizeId and metercost.active=true")
     List<MeterCost> getMeterListByPipeSizeAndApplicationnumber(@Param("pipeSizeId") Long pipeSizeId,
             @Param("applicationNumber") String applicationNumber);
-
-    List<MeterCost> findByPipeSize_IdAndActiveTrue(Long PipeSizeId);
+    
+    @Query("select m from MeterCost m where m.active=true and m.pipeSize.id=:pipeSizeId")
+    List<MeterCost> findByPipeSizeIdAndActiveTrue(@Param("pipeSizeId") Long pipeSizeId);
 
 }
