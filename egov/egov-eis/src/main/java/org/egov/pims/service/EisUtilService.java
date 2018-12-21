@@ -152,7 +152,7 @@ public class EisUtilService implements OwnerGroupService<Position> {
             mainStr += " and ((emp.toDate is null and emp.fromDate<= ?2) or (emp.fromDate <= ?3 and emp.toDate >= ?4))";
             user = (User) persistenceService.find(mainStr, positionId, givenDate, givenDate, givenDate);
         } catch (Exception e) {
-            LOGGER.error("Exception while getting the getUserForPosition=" + e.getMessage());
+            LOGGER.error("Exception while getting the getUserForPosition", e);
             throw new ApplicationRuntimeException(e.getMessage(), e);
 
         }

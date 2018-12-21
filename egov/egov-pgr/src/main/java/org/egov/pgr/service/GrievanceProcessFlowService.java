@@ -51,6 +51,7 @@ package org.egov.pgr.service;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
@@ -111,6 +112,9 @@ public class GrievanceProcessFlowService {
 
     @Autowired
     private EisUtilService eisService;
+
+    @Autowired
+    private EisCommonService eisCommonService;
 
     public void onRegistration(Complaint complaint) {
         Position assignee = complaintRouterService.getComplaintAssignee(complaint);
@@ -234,7 +238,7 @@ public class GrievanceProcessFlowService {
     private Position validateAndGetProcessOwner(Long ownerId) {
         Position owner = positionMasterService.getPositionById(ownerId);
         if (owner != null) {
-            User user = eisService.getUserForPosition(ownerId, new Date());
+            User user = eisCommonService.getUserForPosition(ownerId, new Date());
             if (user != null && user.hasAnyRole(RO_ROLE_NAME, GO_ROLE_NAME, GRO_ROLE_NAME))
                 return owner;
         }
