@@ -98,6 +98,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.StringUtils.overlay;
@@ -465,6 +466,10 @@ public class User extends AbstractAuditable {
 
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public void generateUID() {
+        this.setUid(UUID.randomUUID().toString());
     }
 
     public void updateNextPwdExpiryDate(Integer passwordExpireInDays) {

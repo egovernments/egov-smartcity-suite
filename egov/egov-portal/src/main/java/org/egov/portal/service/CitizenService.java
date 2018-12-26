@@ -105,6 +105,7 @@ public class CitizenService {
         citizen.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
         citizen.setPassword(passwordEncoder.encode(citizen.getPassword()));
         citizen.setActive(true);
+        citizen.generateUID();
         citizenRepository.saveAndFlush(citizen);
         notificationService.sendSMS(citizen.getMobileNumber(), getMessage("citizen.reg.sms"));
         notificationService.sendEmail(citizen.getEmailId(), getMessage("citizen.reg.mail.subject"),

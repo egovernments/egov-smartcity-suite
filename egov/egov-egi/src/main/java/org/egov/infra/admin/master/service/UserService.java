@@ -98,7 +98,7 @@ public class UserService {
 
     @Transactional
     public User createUser(User user) {
-        user.setUid(UUID.randomUUID().toString());
+        user.generateUID();
         User savedUser = userRepository.save(user);
         microserviceUtils.createUserMicroservice(user);
         return savedUser;
