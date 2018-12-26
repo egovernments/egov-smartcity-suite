@@ -47,7 +47,6 @@
  */
 package org.egov.ptis.web.controller.aadharseeding;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -64,9 +63,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import org.egov.ptis.bean.aadharseeding.AadhaarDetails;
@@ -91,10 +90,8 @@ public class AadharSeedingController {
     @GetMapping(value = "/result", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchProperties(AadharSeedingRequest aadharSeedingRequest) {
-        List<String[]> aadharSeeding = aadharSeedingService.prepareOutput(aadharSeedingRequest);
-        List<AadharSearchResult> searchResultList = new ArrayList<>();
-        aadharSeedingService.preparejasonData(aadharSeeding, searchResultList);
-        return "{ \"data\":"+new GsonBuilder().create().toJson(searchResultList)+"}";
+        List<AadharSearchResult> aadharSeeding = aadharSeedingService.prepareOutput(aadharSeedingRequest);
+        return "{ \"data\":"+new GsonBuilder().create().toJson(aadharSeeding)+"}";
     }
 
     @GetMapping(value = "/peoplehubdata/{aadharNumber}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -111,7 +108,7 @@ public class AadharSeedingController {
         return "aadharseedingupdate-form";
     }
     
-    @RequestMapping(value = "/aadhardataupdateform/{assessmentNo}/{status}", method = RequestMethod.POST)
+    @PostMapping(value = "/aadhardataupdateform/{assessmentNo}/{status}")
     public String saveAadharSeeding(@ModelAttribute final AadharSeedingRequest aadharSeedingRequest){
         aadharSeedingService.saveSeedingDetails(aadharSeedingRequest);
         final String successMsg = "Aadhar Details Updated and sent to Commissioner for Approval";
@@ -125,7 +122,7 @@ public class AadharSeedingController {
         return "aadharseeding-approvalform";
     }
     
-    @RequestMapping(value = "/aadhardataapprovalform", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/aadhardataapprovalform", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String updateDetails(@RequestBody String  assessmentList){
         aadharSeedingService.approveAadharSeeding(assessmentList);

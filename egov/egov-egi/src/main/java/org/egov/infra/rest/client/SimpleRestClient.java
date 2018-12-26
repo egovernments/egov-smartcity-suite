@@ -72,7 +72,7 @@ public class SimpleRestClient {
             return IOUtils.toString(HttpClientBuilder.create().build()
                     .execute(new HttpGet(restUrl)).getEntity().getContent(), UTF_8);
         } catch (UnsupportedOperationException | IOException e) {
-            LOG.error("Error occurred while rest response from url {}", restUrl, e);
+            LOG.warn("Error occurred while rest response from url {}", restUrl, e);
             return "500";
         }
 

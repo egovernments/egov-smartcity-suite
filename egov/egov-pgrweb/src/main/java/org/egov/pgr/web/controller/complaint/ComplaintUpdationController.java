@@ -51,7 +51,6 @@ package org.egov.pgr.web.controller.complaint;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.pgr.entity.Complaint;
@@ -81,6 +80,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Collections;
 
+import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.pgr.utils.constants.PGRConstants.APPROVAL_COMMENT_ATTRIB;
 import static org.egov.pgr.utils.constants.PGRConstants.APPROVAL_POSITION_ATTRIB;
@@ -93,7 +94,7 @@ import static org.egov.pgr.utils.constants.PGRConstants.MODULE_NAME;
 @RequestMapping(value = "/complaint/update/{crnNo}")
 public class ComplaintUpdationController {
 
-    private static final String COMPLAINT_UPDATE_SUCCESS = "/update-success";
+    private static final String COMPLAINT_UPDATE_SUCCESS = "update-success";
     private static final String COMPLAINT_EDIT = "complaint-edit";
     private static final String COMPLAINT_CITIZEN_EDIT = "complaint-citizen-edit";
 
@@ -134,10 +135,60 @@ public class ComplaintUpdationController {
     private ComplaintValidator complaintValidator;
 
     @ModelAttribute
-    public void getComplaint(@PathVariable String crnNo, Model model) {
-        Complaint complaint = complaintService.getComplaintByCRN(crnNo);
+    public Complaint complaint(@PathVariable String crnNo) {
+        return complaintService.getComplaintByCRN(crnNo);
+    }
+
+    @GetMapping
+    public String edit(@ModelAttribute Complaint complaint, Model model) {
+        if (complaint == null) {
+            return "redirect:/error/404";
+        } else {
+            if (securityUtils.currentUserIsEmployee() || securityUtils.getCurrentUser().equals(complaint.getCreatedBy()))
+                prepareUpdateView(complaint, model);
+            else
+                return "redirect:/error/403";
+        }
+
+        return securityUtils.currentUserIsCitizen() ? COMPLAINT_CITIZEN_EDIT : COMPLAINT_EDIT;
+    }
+
+    @PostMapping
+    public String update(@Valid @ModelAttribute Complaint complaint, BindingResult errors,
+                         RedirectAttributes redirectAttrs, Model model, HttpServletRequest request,
+                         @RequestParam("files") MultipartFile[] files) {
+        complaintValidator.validate(complaint, errors, request);
+        if (errors.hasErrors()) {
+            prepareUpdateView(complaint, model);
+            return securityUtils.currentUserIsCitizen() ? COMPLAINT_CITIZEN_EDIT : COMPLAINT_EDIT;
+        }
+
+        Long approvalPosition = 0L;
+        String approvalComment = EMPTY;
+        if (isNotBlank(request.getParameter(APPROVAL_COMMENT_ATTRIB)))
+            approvalComment = request.getParameter(APPROVAL_COMMENT_ATTRIB);
+        if (isNotBlank(request.getParameter(APPROVAL_POSITION_ATTRIB)))
+            approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION_ATTRIB));
+        if (isNotBlank(request.getParameter(CITIZEN_RATING_ATTRIB)))
+            complaint.setCitizenFeedback(CitizenFeedback.values()[Integer.valueOf(request.getParameter(CITIZEN_RATING_ATTRIB))]);
+        if (!securityUtils.currentUserIsCitizen() && files != null)
+            complaint.getSupportDocs().addAll(fileStoreUtils.addToFileStore(files, MODULE_NAME, false));
+        complaint.sendToPreviousOwner(false);
+        complaint.approverComment(approvalComment);
+        complaint.nextOwnerId(approvalPosition);
+        complaintService.updateComplaint(complaint);
+        redirectAttrs.addFlashAttribute(COMPLAINT_ATTRIB, complaint);
+        return format("redirect:%s/%s", complaint.getCrn(), COMPLAINT_UPDATE_SUCCESS);
+    }
+
+    @GetMapping(COMPLAINT_UPDATE_SUCCESS)
+    public ModelAndView successView(@ModelAttribute Complaint complaint) {
+        return new ModelAndView("update-success", COMPLAINT_ATTRIB, complaint);
+    }
+
+    private void prepareUpdateView(@ModelAttribute final Complaint complaint, final Model model) {
         model.addAttribute(COMPLAINT_ATTRIB, complaint);
-        model.addAttribute("complaintHistory", complaintHistoryService.getHistory(complaint));
+        model.addAttribute("complaintHistory", complaintHistoryService.getComplaintHistory(complaint));
         model.addAttribute("skippableForward", complaintProcessFlowService.canSendToPreviousAssignee(complaint));
         model.addAttribute("status", complaintStatusMappingService.getStatusByRoleAndCurrentStatus(securityUtils.getCurrentUser().getRoles(), complaint.getStatus()));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
@@ -161,51 +212,11 @@ public class ComplaintUpdationController {
                             complaint.getLocation().getBoundaryType().getHierarchyType().getName(),
                             complaint.getLocation().getName()));
         }
-        if (null != complaint.getComplaintType()) {
+        if (complaint.getComplaintType() != null) {
             model.addAttribute("mailSubject", "Grievance regarding " + complaint.getComplaintType().getName());
             model.addAttribute("mailBody", complaintNotificationService.getEmailBody(complaint));
         }
         if (complaint.getStatus() != null)
             model.addAttribute("complaintStatus", complaint.getStatus().getName());
     }
-
-    @GetMapping
-    public String edit() {
-        return securityUtils.currentUserIsCitizen() ? COMPLAINT_CITIZEN_EDIT : COMPLAINT_EDIT;
-    }
-
-    @PostMapping
-    public String update(@Valid @ModelAttribute Complaint complaint, BindingResult errors,
-                         RedirectAttributes redirectAttrs, HttpServletRequest request,
-                         @RequestParam("files") MultipartFile[] files) {
-        complaintValidator.validate(complaint, errors, request);
-
-        Long approvalPosition = 0L;
-        String approvalComent = "";
-        String result;
-        if (isNotBlank(request.getParameter(APPROVAL_COMMENT_ATTRIB)))
-            approvalComent = request.getParameter(APPROVAL_COMMENT_ATTRIB);
-        if (isNotBlank(request.getParameter(APPROVAL_POSITION_ATTRIB)))
-            approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION_ATTRIB));
-        if (isNotBlank(request.getParameter(CITIZEN_RATING_ATTRIB)))
-            complaint.setCitizenFeedback(CitizenFeedback.values()[Integer.valueOf(request.getParameter(CITIZEN_RATING_ATTRIB))]);
-        if (!errors.hasErrors()) {
-            if (!securityUtils.currentUserType().equals(UserType.CITIZEN) && files != null)
-                complaint.getSupportDocs().addAll(fileStoreUtils.addToFileStore(files, MODULE_NAME, false));
-            complaint.sendToPreviousOwner(false);
-            complaint.approverComment(approvalComent);
-            complaint.nextOwnerId(approvalPosition);
-            complaintService.updateComplaint(complaint);
-            redirectAttrs.addFlashAttribute(COMPLAINT_ATTRIB, complaint);
-            result = "redirect:" + complaint.getCrn() + COMPLAINT_UPDATE_SUCCESS;
-        } else
-            result = securityUtils.currentUserType().equals(UserType.CITIZEN) ? COMPLAINT_CITIZEN_EDIT : COMPLAINT_EDIT;
-        return result;
-    }
-
-    @GetMapping(COMPLAINT_UPDATE_SUCCESS)
-    public ModelAndView successView(@ModelAttribute Complaint complaint) {
-        return new ModelAndView("update-success", COMPLAINT_ATTRIB, complaint);
-    }
-
 }

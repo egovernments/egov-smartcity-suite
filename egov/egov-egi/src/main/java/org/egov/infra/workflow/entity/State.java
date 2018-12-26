@@ -56,6 +56,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -69,6 +70,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.HashSet;
@@ -153,6 +156,10 @@ public class State<T extends OwnerGroup> extends AbstractAuditable {
     @ManyToOne(targetEntity = State.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "previousStateRef")
     private State<T> previousStateRef;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column
+    private Date sla;
 
     protected State() {
         //Explicit state initialization not allowed
@@ -317,8 +324,15 @@ public class State<T extends OwnerGroup> extends AbstractAuditable {
         return JsonUtils.fromJSON(getExtraInfo(), type);
     }
 
+    public Date getSla() {
+        return sla;
+    }
+
+    public void setSla(Date sla) {
+        this.sla = sla;
+    }
+
     public enum StateStatus {
         STARTED, INPROGRESS, ENDED
     }
-
 }

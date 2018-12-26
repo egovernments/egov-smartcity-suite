@@ -52,8 +52,6 @@ import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.entity.SewerageConnection;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -64,37 +62,34 @@ public interface SewerageApplicationDetailsRepository extends JpaRepository<Sewe
 
     SewerageApplicationDetails findByApplicationNumber(String applicationNumber);
 
-    SewerageApplicationDetails findByApplicationNumberAndConnection_Status(String applicationNumber,
-            SewerageConnectionStatus connectionStatus);
+    SewerageApplicationDetails findByApplicationNumberAndConnectionStatus(String applicationNumber,
+                                                                          SewerageConnectionStatus connectionStatus);
 
     List<SewerageApplicationDetails> findAllByApplicationDateOrderByApplicationNumberAsc(Date applicationDate);
 
-    List<SewerageApplicationDetails> findAllByApplicationDateAndConnection_StatusOrderByApplicationNumberAsc(
+    List<SewerageApplicationDetails> findAllByApplicationDateAndConnectionStatusOrderByApplicationNumberAsc(
             Date applicationDate, SewerageConnectionStatus connectionStatus);
 
     List<SewerageApplicationDetails> findAllByApplicationTypeOrderByApplicationNumberAsc(SewerageApplicationType applicationType);
 
-    List<SewerageApplicationDetails> findAllByApplicationTypeAndConnection_StatusOrderByApplicationNumberAsc(
+    List<SewerageApplicationDetails> findAllByApplicationTypeAndConnectionStatusOrderByApplicationNumberAsc(
             SewerageApplicationType applicationType, SewerageConnectionStatus connectionStatus);
 
-    SewerageApplicationDetails findByConnection_ShscNumberAndConnection_Status(String shscNumber,
-            SewerageConnectionStatus connectionStatus);
+    SewerageApplicationDetails findByConnectionShscNumberAndConnectionStatus(String shscNumber,
+                                                                             SewerageConnectionStatus connectionStatus);
 
-    List<SewerageApplicationDetails> findByConnection_ShscNumber(String shscNumber);
+    List<SewerageApplicationDetails> findByConnectionShscNumber(String shscNumber);
 
     SewerageApplicationDetails findByConnection(SewerageConnection sewerageConnection);
 
-    SewerageApplicationDetails findByConnectionAndConnection_Status(SewerageConnection sewerageConnection,
-            SewerageConnectionStatus connectionStatus);
+    SewerageApplicationDetails findByConnectionAndConnectionStatus(SewerageConnection sewerageConnection,
+                                                                   SewerageConnectionStatus connectionStatus);
 
-    @Query("select scd from SewerageApplicationDetails scd where scd.isActive = true and scd.connectionDetail.propertyIdentifier =:propertyIdentifier order by scd.id desc")
-    List<SewerageApplicationDetails> getSewerageConnectionDetailsByPropertyID(
-            @Param("propertyIdentifier") String propertyIdentifier); 
-    
-    @Query("select scd from SewerageApplicationDetails scd where scd.isActive='t' and scd.connection.shscNumber =:shscNumber")
-    SewerageApplicationDetails getActiveSewerageApplicationByShscNumber(@Param("shscNumber") String shscNumber); 
-    
-    @Query("select scd from SewerageApplicationDetails scd where scd.connection.shscNumber =:shscNumber and scd.isActive='f' and upper(scd.status.code) not in ('CANCELLED','SANCTIONED')")
-    SewerageApplicationDetails getSewerageApplicationInWorkFlow(@Param("shscNumber") String shscNumber);
+    List<SewerageApplicationDetails> findByIsActiveTrueAndConnectionDetailPropertyIdentifierOrderByIdDesc(String propertyIdentifier);
 
+    SewerageApplicationDetails findByConnectionShscNumberAndIsActiveTrue(String shscNumber);
+
+    SewerageApplicationDetails findByConnectionShscNumberAndIsActiveFalseAndStatusCodeNotIn(String shscNumber, List<String> statusList);
+
+    SewerageApplicationDetails findFirstByConnectionDetailPropertyIdentifierAndStatusCodeNotInOrderByLastModifiedDateDesc(String propertyIdentifier, List<String> statusCodes);
 }

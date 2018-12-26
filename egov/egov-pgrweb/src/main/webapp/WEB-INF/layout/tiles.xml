@@ -83,7 +83,7 @@
 
     <definition name="complaint-type" extends="base_layout">
         <put-attribute name="page-title" value="title.complaintType" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/complaint-type.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/complainttype/complaint-type.jsp"/>
     </definition>
 
     <definition name="complaint-edit" extends="base_layout">
@@ -99,7 +99,7 @@
     </definition>
 
     <definition name="update-success" extends="base_layout">
-        <put-attribute name="page-title" value="title.complaintType" cascade="true"/>
+        <put-attribute name="page-title" value="title.complaintUpdate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/complaint/complaint-update-success.jsp"/>
     </definition>
 
@@ -125,46 +125,46 @@
 
     <definition name="view-complaintType" extends="base_layout">
         <put-attribute name="page-title" value="title.viewComplaintType" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/view-complaintType.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/complainttype/complaint-type-view.jsp"/>
     </definition>
 
     <definition name="complaintType-list" extends="base_layout">
         <put-attribute name="page-title" value="title.complaintType" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/complaintType-list.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/complainttype/complaint-type-list.jsp"/>
     </definition>
 
     <definition name="complainttype-success" extends="base_layout">
         <put-attribute name="page-title" value="title.complaintType" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/complaintType-success.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/complainttype/complaint-type-success.jsp"/>
     </definition>
 
     <definition name="router-create" extends="base_layout">
         <put-attribute name="page-title" value="title.router" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/router-create.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/router/router-create.jsp"/>
     </definition>
 
     <definition name="router-search" extends="base_layout">
         <put-attribute name="page-title" value="title.router" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/router-search.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/router/router-search.jsp"/>
     </definition>
 
     <definition name="router-view" extends="base_layout">
         <put-attribute name="page-title" value="title.router" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/router-view.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/router/router-view.jsp"/>
     </definition>
 
     <definition name="router-updateSearch" extends="base_layout">
         <put-attribute name="page-title" value="title.router" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/router-updateSearch.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/router/router-update-search.jsp"/>
     </definition>
 
     <definition name="escalationtime-search" extends="base_layout">
         <put-attribute name="page-title" value="title.escalationTime" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/escalationTime/escalationtime-search.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/escalation/escalationtime-search.jsp"/>
     </definition>
     <definition name="escalationtime-view" extends="base_layout">
         <put-attribute name="page-title" value="title.escalationTime" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/escalationTime/escalationtime-view.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/escalation/escalationtime-view.jsp"/>
     </definition>
     <definition name="escalation-search" extends="base_layout">
         <put-attribute name="page-title" value="title.escalation" cascade="true"/>
@@ -187,17 +187,17 @@
 
     <definition name="complainttype-category-create" extends="base_layout">
         <put-attribute name="page-title" value="lbl.create.comptype.category" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/complainttypecategory-create.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/category/complainttypecategory-create.jsp"/>
     </definition>
 
     <definition name="complainttype-category-search" extends="base_layout">
         <put-attribute name="page-title" value="lbl.search.comptype.category" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/complainttypecategory-search.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/category/complainttypecategory-search.jsp"/>
     </definition>
 
     <definition name="complainttype-category-update" extends="base_layout">
         <put-attribute name="page-title" value="lbl.update.comptype.category" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/complainttypecategory-update.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/category/complainttypecategory-update.jsp"/>
     </definition>
 
     <definition name="bulkrouter" extends="base_layout">

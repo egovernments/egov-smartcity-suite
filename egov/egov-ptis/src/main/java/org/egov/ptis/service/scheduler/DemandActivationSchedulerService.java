@@ -60,7 +60,9 @@ import org.egov.ptis.scheduler.DemandActivationJob;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -68,7 +70,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-@Service
+@Service("demandActivationSchedulerService")
 @Transactional(readOnly = true)
 public class DemandActivationSchedulerService {
 
@@ -84,25 +86,30 @@ public class DemandActivationSchedulerService {
 
     @PersistenceContext
     private EntityManager entityManager;
+    
+    @Autowired
+    private TransactionTemplate transactionTemplate;
 
-    @Transactional
     public void demandActivation() {
 
         final Long currentTimeMillis = System.currentTimeMillis();
         String assessmentNo = null;
         final List<Ptdemand> properties = getInactiveDemandNotObjectedProperties();
-        BasicProperty basicProperty;
 
-        for (final Ptdemand demand : properties)
-            try {
-                basicProperty = demand.getEgptProperty().getBasicProperty();
-                // adjustAdvancePayment(demand); -- as of now we do not have
-                // rules to adjust advances
-                assessmentNo = basicProperty != null ? basicProperty.getUpicNo() : null;
-                activateDemand(basicProperty);
-            } catch (final Exception e) {
-                LOGGER.error("Error while activating the demand for " + assessmentNo, e);
-            }
+		for (final Ptdemand demand : properties) {
+			final BasicProperty basicProperty = demand.getEgptProperty().getBasicProperty();
+			assessmentNo = basicProperty != null ? basicProperty.getUpicNo() : null;
+			final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
+			txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+			try {
+				txTemplate.execute(result -> {
+					activateDemand(basicProperty);
+					return Boolean.TRUE;
+				});
+			} catch (final Exception e) {
+				LOGGER.error("Error while activating the demand for " + assessmentNo, e);
+			}
+		}
 
         LOGGER.info("Demand activation for " + properties.size() + " properties is completed in "
                 + (System.currentTimeMillis() - currentTimeMillis) / 1000 + " sec(s)");
@@ -115,11 +122,9 @@ public class DemandActivationSchedulerService {
     private void activateDemand(final BasicProperty basicProperty) {
         LOGGER.debug("Entered into activateDemand");
 
-        final PropertyImpl inactiveProperty = basicProperty.getInactiveProperty();
-
-        inactiveProperty.setStatus(PropertyTaxConstants.STATUS_ISACTIVE);
-        inactiveProperty.setRemarks(getRemarksByCityGrade(inactiveProperty));
-        inactiveProperty.setLastModifiedDate(new Date());
+        basicProperty.getInactiveProperty().setStatus(PropertyTaxConstants.STATUS_ISACTIVE);
+        basicProperty.getInactiveProperty().setRemarks(getRemarksByCityGrade(basicProperty.getInactiveProperty()));
+        basicProperty.getInactiveProperty().setLastModifiedDate(new Date());
         basicPropertyService.merge(basicProperty);
 
         LOGGER.debug("Exiting from activateDemand");
@@ -146,7 +151,8 @@ public class DemandActivationSchedulerService {
                 .setString("bpStatus", PropertyTaxConstants.STATUS_OBJECTED_STR)
                 .setParameter("pastDate", dateEffectiveDaysPast)
                 .setString("noticeType", PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE)
-                .setEntity("currInstallment", propertyTaxCommonUtils.getCurrentInstallment()).list();
+                .setEntity("currInstallment", propertyTaxCommonUtils.getCurrentInstallment())
+                .setMaxResults(50).list();
 
         LOGGER.debug("Exting from getQueryString");
         return properties;
@@ -175,5 +181,13 @@ public class DemandActivationSchedulerService {
                 : STR_REMARKS_DEMAND_ACTIVATION_MNCP_AND_NP;
         return inactiveProperty.getRemarks() == null ? remarks
                 : inactiveProperty.getRemarks().concat(", ").concat(remarks);
+    }
+    
+    public TransactionTemplate getTransactionTemplate() {
+        return transactionTemplate;
+    }
+
+    public void setTransactionTemplate(final TransactionTemplate transactionTemplate) {
+        this.transactionTemplate = transactionTemplate;
     }
 }

@@ -45,58 +45,22 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.tl.web.controller.transactions;
+package org.egov.ptis.bean.aadharseeding;
 
-import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.tl.service.TradeLicenseService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.CacheControl;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-import java.io.ByteArrayInputStream;
+@Entity
+@Table(name = "egpt_bhudhar_exempted_localities")
+public class BhudharExemptedLocalities {
 
-import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
-import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION;
-import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION_ATTACH;
-import static org.egov.infra.utils.DateUtils.currentDateToFileNameFormat;
-import static org.egov.infra.utils.StringUtils.append;
+    @Id
+    private Long id;
 
+    private Long boundaryNum;
 
-@Controller
-@RequestMapping(value = "/license/generate/closure-notice")
-public class ClosureNoticeController {
-
-    @Autowired
-    @Qualifier("tradeLicenseService")
-    private TradeLicenseService tradeLicenseService;
-
-    @GetMapping
-    public String searchClosureNotice() {
-        return "search-closure-notice";
-    }
-
-    @GetMapping("/")
-    @ResponseBody
-    public ResponseEntity<InputStreamResource> closureNotice(@RequestParam String reportFormat) {
-
-        ReportOutput reportOutput = tradeLicenseService.generateClosureNotice(reportFormat);
-        if (reportFormat.equalsIgnoreCase("print"))
-            return reportAsResponseEntity(reportOutput);
-        return ResponseEntity
-                .ok()
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .cacheControl(CacheControl.noCache())
-                .contentLength(reportOutput.getReportOutputData().length)
-                .header(CONTENT_DISPOSITION, String.format(CONTENT_DISPOSITION_ATTACH,
-                        append("tl_closure_notice_", currentDateToFileNameFormat()) + ".zip"))
-                .body(new InputStreamResource(new ByteArrayInputStream(reportOutput.getReportOutputData())));
+    public Long getBoundaryNum() {
+        return boundaryNum;
     }
 }

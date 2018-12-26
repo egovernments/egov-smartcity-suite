@@ -94,9 +94,11 @@ import org.egov.restapi.model.OwnershipCategoryDetails;
 import org.egov.restapi.model.PropertyTaxBoundaryDetails;
 import org.egov.restapi.util.JsonConvertor;
 import org.egov.restapi.util.ValidationUtil;
+import org.egov.restapi.web.security.oauth2.utils.TokenServiceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -114,9 +116,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class AssessmentController {
 
     @Autowired
+    private TokenServiceUtils tokenServiceUtils;
+    
+    @Autowired
     private PropertyExternalService propertyExternalService;
+    
     @Autowired
     private ValidationUtil validationUtil;
+    
     @Autowired
     private PropertyTaxReportService propertyTaxReportService;
 
@@ -142,9 +149,42 @@ public class AssessmentController {
      * @throws IOException
      */
     @RequestMapping(value = "/v1.0/property/paypropertytax", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public String paySecuredPropertyTax(@RequestBody String payPropertyTaxDetails, final HttpServletRequest request)
+    public String paySecuredPropertyTax(@RequestBody String payPropertyTaxDetails, final HttpServletRequest request,
+            final OAuth2Authentication authentication)
             throws IOException {
-        return payPropertyTax(payPropertyTaxDetails, request);
+        String responseJson;
+        try {
+            PayPropertyTaxDetails payPropTaxDetails = (PayPropertyTaxDetails) getObjectFromJSONRequest(
+                    payPropertyTaxDetails, PayPropertyTaxDetails.class);
+            String propertyType = propertyExternalService.getPropertyType(payPropTaxDetails.getAssessmentNo());
+            ErrorDetails errorDetails = validationUtil.validatePaymentDetails(payPropTaxDetails, false, propertyType);
+            if (null != errorDetails)
+                responseJson = JsonConvertor.convert(errorDetails);
+            else {
+                Object source = tokenServiceUtils.getSource(authentication);
+                payPropTaxDetails.setSource(source != null ? source.toString() : "");
+                ReceiptDetails receiptDetails = propertyExternalService.payPropertyTax(payPropTaxDetails, propertyType);
+                responseJson = JsonConvertor.convert(receiptDetails);
+            }
+        } catch (ValidationException e) {
+            List<ErrorDetails> errorList = new ArrayList<>();
+            List<ValidationError> errors = e.getErrors();
+            for (ValidationError ve : errors) {
+                ErrorDetails er = new ErrorDetails();
+                er.setErrorCode(ve.getKey());
+                er.setErrorMessage(ve.getMessage());
+                errorList.add(er);
+            }
+            responseJson = JsonConvertor.convert(errorList);
+        } catch (Exception e) {
+            List<ErrorDetails> errorList = new ArrayList<>();
+            ErrorDetails er = new ErrorDetails();
+            er.setErrorCode(e.getMessage());
+            er.setErrorMessage(e.getMessage());
+            errorList.add(er);
+            responseJson = JsonConvertor.convert(errorList);
+        }
+        return responseJson;
     }
     
     /**

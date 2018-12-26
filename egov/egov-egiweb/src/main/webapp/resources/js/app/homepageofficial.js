@@ -68,7 +68,7 @@ $(document).ready(function () {
         e.preventDefault();
         $.ajax({
             url: 'home/feedback/sent',
-            type: 'GET',
+            type: 'POST',
             data: {'subject': $("#subject").val(), 'message': $("#comment").val()},
             success: function (data) {
                 bootbox.alert("Your feedback successfully submitted.");
@@ -86,7 +86,7 @@ $(document).ready(function () {
         e.preventDefault();
         $.ajax({
             url: 'home/password/update',
-            type: 'GET',
+            type: 'POST',
             data: {
                 'currentPwd': $("#old-pass").val(),
                 'newPwd': $("#new-pass").val(),
@@ -134,7 +134,7 @@ $(document).ready(function () {
         historyTableContainer = $("#historyTable");
         historyTableContainer.DataTable({
             "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-6 col-xs-12'i>" +
-            "<'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+                "<'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
             "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
             "autoWidth": false,
             "paging": false,
@@ -147,6 +147,7 @@ $(document).ready(function () {
                 "url": "inbox/history?stateId=" + tableContainer1.dataTable().fnGetData($(this).parent().parent(), 7),
                 "dataSrc": ""
             },
+
             "columns": [
                 {"data": "date", "width": "20%"},
                 {"data": "sender", "width": "15%"},
@@ -449,6 +450,9 @@ function worklist() {
             "url": "inbox",
             "dataSrc": ""
         },
+        "createdRow": function (row, data) {
+            $(row).css('background-color', data.withinSla ? "#FFFFFF" : "#FEB9B9");
+        },
         "deferRender": true,
         "columns": [
             {"data": "date", "width": "15%"},
@@ -553,7 +557,7 @@ function drafts() {
     tableContainer1 = $("#official_drafts");
     tableContainer1.DataTable({
         "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-5 col-xs-12'i>" +
-        "<'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
+            "<'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
         "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
         "bDestroy": true,
         "aaSorting": [],
@@ -561,6 +565,9 @@ function drafts() {
         "ajax": {
             "url": "inbox/draft",
             "dataSrc": ""
+        },
+        "createdRow": function (row, data) {
+            $(row).css('background-color', data.withinSla ? "#FFFFFF" : "#FEB9B9");
         },
         "deferRender": true,
         "columns": [
@@ -590,7 +597,7 @@ function notifications() {
     tableContainer1 = $("#official_notify");
     tableContainer1.DataTable({
         "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-5 col-xs-12'i>" +
-        "<'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
+            "<'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
         "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
         "bDestroy": true,
         /* Disable initial sort */
@@ -604,12 +611,15 @@ function worklistwrtnow(json) {
     tableContainer1 = $("#official_inbox");
     tableContainer1.DataTable({
         "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-5 col-xs-12'i>" +
-        "<'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
+            "<'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
         "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
         "bDestroy": true,
         "aaSorting": [],
         "autoWidth": false,
         "data": json,
+        "createdRow": function (row, data) {
+            $(row).css('background-color', data.withinSla ? "#FFFFFF" : "#FEB9B9");
+        },
         "columns": [
             {"data": "date", "width": "15%"},
             {"data": "sender", "width": "15%"},

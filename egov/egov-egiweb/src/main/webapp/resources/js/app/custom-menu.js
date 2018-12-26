@@ -187,7 +187,7 @@ $(document).ready(function () {
 
     function removeFromFavourites(actionId) {
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: "home/favourite/remove",
             data: {'actionId': actionId}
         }).done(function (value) {

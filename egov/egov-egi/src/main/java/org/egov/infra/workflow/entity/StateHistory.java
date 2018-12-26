@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -52,6 +52,8 @@ import org.egov.infra.admin.master.entity.User;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -108,18 +110,31 @@ public class StateHistory<T extends OwnerGroup> implements Serializable {
     private User ownerUser;
 
     private String senderName;
+
     private String nextAction;
+
     private String comments;
+
     private String natureOfTask;
+
     private String extraInfo;
+
     private Date dateInfo;
+
     private Date extraDateInfo;
 
     @ManyToOne(targetEntity = OwnerGroup.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "INITIATOR_POS")
     private T initiatorPosition;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date sla;
+
+    @Enumerated(EnumType.ORDINAL)
+    private State.StateStatus status;
+
     StateHistory() {
+        //Default constructor for jpa
     }
 
     public StateHistory(State<T> state) {
@@ -139,6 +154,8 @@ public class StateHistory<T extends OwnerGroup> implements Serializable {
         extraDateInfo = state.getExtraDateInfo();
         natureOfTask = state.getNatureOfTask();
         initiatorPosition = state.getInitiatorPosition();
+        sla = state.getSla();
+        status = state.getStatus();
     }
 
     public State getState() {
@@ -277,4 +294,41 @@ public class StateHistory<T extends OwnerGroup> implements Serializable {
         this.initiatorPosition = initiatorPosition;
     }
 
+    public Date getSla() {
+        return sla;
+    }
+
+    public void setSla(Date sla) {
+        this.sla = sla;
+    }
+
+    public State.StateStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(State.StateStatus status) {
+        this.status = status;
+    }
+
+    public State<T> asState() {
+        State<T> historyState = new State();
+        historyState.setCreatedBy(getCreatedBy());
+        historyState.setCreatedDate(getCreatedDate());
+        historyState.setLastModifiedBy(getLastModifiedBy());
+        historyState.setLastModifiedDate(getLastModifiedDate());
+        historyState.setValue(getValue());
+        historyState.setOwnerPosition(getOwnerPosition());
+        historyState.setOwnerUser(getOwnerUser());
+        historyState.setSenderName(getSenderName());
+        historyState.setNextAction(getNextAction());
+        historyState.setComments(getComments());
+        historyState.setExtraInfo(getExtraInfo());
+        historyState.setDateInfo(getDateInfo());
+        historyState.setExtraDateInfo(getExtraDateInfo());
+        historyState.setNatureOfTask(getNatureOfTask());
+        historyState.setInitiatorPosition(getInitiatorPosition());
+        historyState.setSla(getSla());
+        historyState.setStatus(getStatus());
+        return historyState;
+    }
 }

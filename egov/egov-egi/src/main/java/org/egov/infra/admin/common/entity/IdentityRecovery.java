@@ -50,6 +50,7 @@ package org.egov.infra.admin.common.entity;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.NotBlank;
 import org.joda.time.DateTime;
 
@@ -64,11 +65,13 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
+import java.util.Objects;
 
 import static org.egov.infra.admin.common.entity.IdentityRecovery.SEQ_IDENTITYRECOVERY;
 
 @Entity
 @Table(name = "eg_identityrecovery")
+@Unique(fields = "token", enableDfltMsg = true)
 @SequenceGenerator(name = SEQ_IDENTITYRECOVERY, sequenceName = SEQ_IDENTITYRECOVERY, allocationSize = 1)
 public class IdentityRecovery extends AbstractPersistable<Long> {
 
@@ -120,4 +123,18 @@ public class IdentityRecovery extends AbstractPersistable<Long> {
         this.expiry = expiry;
     }
 
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof IdentityRecovery))
+            return false;
+        IdentityRecovery that = (IdentityRecovery) other;
+        return Objects.equals(getToken(), that.getToken());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getToken());
+    }
 }

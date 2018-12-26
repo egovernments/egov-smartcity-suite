@@ -64,12 +64,9 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -84,10 +81,8 @@ import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.FeeMatrixDetail;
-import org.egov.tl.entity.LicenseDemand;
 import org.egov.tl.entity.LicenseDocument;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.LicenseSubCategoryDetails;
@@ -97,7 +92,6 @@ import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.entity.contracts.DemandNoticeForm;
 import org.egov.tl.entity.contracts.OnlineSearchForm;
 import org.egov.tl.entity.contracts.SearchForm;
-import org.egov.tl.entity.enums.RateType;
 import org.egov.tl.repository.LicenseDocumentTypeRepository;
 import org.egov.tl.repository.LicenseRepository;
 import org.egov.tl.repository.SearchTradeRepository;
@@ -126,7 +120,6 @@ import javax.persistence.PersistenceContext;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -135,19 +128,23 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.math.BigDecimal.ZERO;
+import static java.math.RoundingMode.HALF_UP;
 import static org.apache.commons.lang.StringEscapeUtils.escapeXml;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.demand.utils.DemandConstants.DEMAND_REASON_CATEGORY_FEE;
+import static org.egov.demand.utils.DemandConstants.DEMAND_REASON_CATEGORY_PENALTY;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getMunicipalityName;
 import static org.egov.infra.reporting.engine.ReportFormat.PDF;
 import static org.egov.infra.reporting.util.ReportUtil.CONTENT_TYPES;
+import static org.egov.infra.utils.ApplicationConstant.N;
 import static org.egov.infra.utils.ApplicationConstant.NA;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
@@ -167,9 +164,7 @@ public class TradeLicenseService {
     private static final String CURRENT = "current";
     private static final String PENALTY = "penalty";
     private static final String ERROR_WF_INITIATOR_NOT_DEFINED = "error.wf.initiator.not.defined";
-    private static final String ERROR_WF_NEXT_OWNER_NOT_FOUND = "error.wf.next.owner.not.found";
-    private static final String NEW_STATE = "NEW";
-    private static final String REVENUE_CLERK_JA_APPROVED = "Revenue Clerk/JA Approved";
+    private static final String ERROR_MSG_NO_ASSIGNMENT = "No officials assigned to process this application";
 
     @PersistenceContext
     protected EntityManager entityManager;
@@ -237,12 +232,10 @@ public class TradeLicenseService {
 
     @Autowired
     protected TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
-
+    @Autowired
+    protected LicenseUtils licenseUtils;
     @Autowired
     private PenaltyRatesService penaltyRatesService;
-
-    @Autowired
-    private DepartmentService departmentService;
 
     @Autowired
     private SubCategoryDetailsService subCategoryDetailsService;
@@ -251,16 +244,7 @@ public class TradeLicenseService {
     private FeeTypeService feeTypeService;
 
     @Autowired
-    private LicenseCitizenPortalService licenseCitizenPortalService;
-
-    @Autowired
-    private ModuleService moduleService;
-
-    @Autowired
     private ReportService reportService;
-
-    @Autowired
-    private LicenseUtils licenseUtils;
 
     @Autowired
     private SearchTradeRepository searchTradeRepository;
@@ -271,288 +255,241 @@ public class TradeLicenseService {
     @Autowired
     private EisCommonService eisCommonService;
 
-    public Module getModuleName() {
-        return moduleService.getModuleByName(TRADE_LICENSE);
-    }
-
     public TradeLicense getLicenseById(Long id) {
         return this.licenseRepository.findOne(id);
     }
 
-    private List<Assignment> getAssignments() {
-        Department nextAssigneeDept = departmentService.getDepartmentByCode(PUBLIC_HEALTH_DEPT_CODE);
-        Designation nextAssigneeDesig = designationService.getDesignationByName(JA_DESIGNATION);
-        List<Assignment> assignmentList = getAssignmentsForDeptAndDesignation(nextAssigneeDept, nextAssigneeDesig);
-        if (assignmentList.isEmpty()) {
-            nextAssigneeDesig = Optional.ofNullable(designationService.getDesignationByName(SA_DESIGNATION)).
-                    orElseThrow(() -> new ValidationException(ERROR_WF_INITIATOR_NOT_DEFINED, ERROR_WF_INITIATOR_NOT_DEFINED));
-            assignmentList = getAssignmentsForDeptAndDesignation(nextAssigneeDept, nextAssigneeDesig);
-        }
-        if (assignmentList.isEmpty()) {
-            nextAssigneeDesig = Optional.ofNullable(designationService.getDesignationByName(RC_DESIGNATION)).
-                    orElseThrow(() -> new ValidationException(ERROR_WF_INITIATOR_NOT_DEFINED, ERROR_WF_INITIATOR_NOT_DEFINED));
-            assignmentList = getAssignmentsForDeptAndDesignation(nextAssigneeDept, nextAssigneeDesig);
-        }
-        return assignmentList;
-    }
-
-    private List<Assignment> getAssignmentsForDeptAndDesignation(Department nextAssigneeDept, Designation nextAssigneeDesig) {
-        return assignmentService.
-                findAllAssignmentsByDeptDesigAndDates(nextAssigneeDept.getId(), nextAssigneeDesig.getId(), new Date());
-    }
-
     public void raiseNewDemand(TradeLicense license) {
-        final LicenseDemand ld = new LicenseDemand();
-        final Module moduleName = this.getModuleName();
-        final Installment installment = this.installmentDao.getInsatllmentByModuleForGivenDate(moduleName,
-                license.getCommencementDate());
-        ld.setIsHistory("N");
-        ld.setEgInstallmentMaster(installment);
-        ld.setLicense(license);
-        ld.setIsLateRenewal('0');
-        ld.setCreateDate(new Date());
-        ld.setModifiedDate(new Date());
-        final List<FeeMatrixDetail> feeMatrixDetails = this.feeMatrixService.getLicenseFeeDetails(license,
-                license.getCommencementDate());
-        for (final FeeMatrixDetail fm : feeMatrixDetails) {
-            final EgDemandReasonMaster reasonMaster = this.demandGenericDao
-                    .getDemandReasonMasterByCode(fm.getFeeMatrix().getFeeType().getName(), moduleName);
-            final EgDemandReason reason = this.demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(reasonMaster, installment, moduleName);
-            if (fm.getFeeMatrix().getFeeType().getName().contains("Late"))
-                continue;
-
-            if (reason != null) {
-                BigDecimal tradeAmt = calculateAmountByRateType(license, fm);
-                ld.getEgDemandDetails().add(EgDemandDetails.fromReasonAndAmounts(tradeAmt, reason, ZERO));
+        Module moduleName = licenseUtils.getModule();
+        Date currentDate = new Date();
+        Date commencementDate = license.getCommencementDate();
+        Installment installment = this.installmentDao.getInsatllmentByModuleForGivenDate(moduleName, commencementDate);
+        EgDemand demand = new EgDemand();
+        demand.setIsHistory(N.toString());
+        demand.setEgInstallmentMaster(installment);
+        demand.setCreateDate(currentDate);
+        demand.setModifiedDate(currentDate);
+        List<FeeMatrixDetail> feeMatrixDetails = feeMatrixService.getLicenseFeeDetails(license, commencementDate);
+        for (FeeMatrixDetail feeMatrixDetail : feeMatrixDetails) {
+            EgDemandReasonMaster reasonMaster = demandGenericDao
+                    .getDemandReasonMasterByCode(feeMatrixDetail.getFeeMatrix().getFeeType().getName(), moduleName);
+            EgDemandReason demandReason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(reasonMaster, installment, moduleName);
+            if (demandReason != null) {
+                BigDecimal tradeAmt = calculateFeeByRateType(license, feeMatrixDetail);
+                demand.getEgDemandDetails().add(EgDemandDetails.fromReasonAndAmounts(tradeAmt, demandReason, ZERO));
             }
         }
-
-        calcPenaltyDemandDetails(license, ld);
-        ld.recalculateBaseDemand();
-        license.setLicenseDemand(ld);
+        applyPenalty(license, demand);
+        license.setDemand(demand);
+        license.recalculateBaseDemand();
     }
 
-    private BigDecimal calculateAmountByRateType(TradeLicense license, FeeMatrixDetail feeMatrixDetail) {
-        Long feeTypeId = feeTypeService.findByName(LICENSE_FEE_TYPE).getId();
-        LicenseSubCategoryDetails licenseSubCategoryDetails = subCategoryDetailsService.getSubcategoryDetailBySubcategoryAndFeeType(license.getTradeName().getId(), feeTypeId);
-        BigDecimal amt = ZERO;
-        if (licenseSubCategoryDetails != null) {
-            if (RateType.FLAT_BY_RANGE.equals(licenseSubCategoryDetails.getRateType()))
-                amt = feeMatrixDetail.getAmount();
-            else if (RateType.PERCENTAGE.equals(licenseSubCategoryDetails.getRateType()))
-                amt = license.getTradeArea_weight().multiply(feeMatrixDetail.getAmount())
-                        .divide(BigDecimal.valueOf(100));
-            else if (RateType.UNIT_BY_RANGE.equals(licenseSubCategoryDetails.getRateType()))
-                amt = license.getTradeArea_weight().multiply(feeMatrixDetail.getAmount());
+    private BigDecimal calculateFeeByRateType(TradeLicense license, FeeMatrixDetail feeMatrixDetail) {
+        List<LicenseSubCategoryDetails> licenseSubCategoryDetails = subCategoryDetailsService
+                .getSubcategoryDetailBySubcategoryAndFeeType(license.getTradeName(), feeTypeService.findAll());
+        BigDecimal licenseFee = ZERO;
+        for (LicenseSubCategoryDetails subCategoryDetail : licenseSubCategoryDetails) {
+            switch (subCategoryDetail.getRateType()) {
+                case FLAT_BY_RANGE:
+                    licenseFee = licenseFee.add(feeMatrixDetail.getAmount());
+                    break;
+                case PERCENTAGE:
+                    licenseFee = licenseFee.add(license.getTradeArea_weight()
+                            .multiply(feeMatrixDetail.getAmount())
+                            .divide(BigDecimal.valueOf(100)));
+                    break;
+                case UNIT_BY_RANGE:
+                    licenseFee = licenseFee.add(license.getTradeArea_weight()
+                            .multiply(feeMatrixDetail.getAmount()));
+                    break;
+            }
         }
-        return amt;
+        return licenseFee;
     }
 
-    public TradeLicense updateDemandForChangeTradeArea(TradeLicense license) {
-        final LicenseDemand licenseDemand = license.getLicenseDemand();
-        Date date = new Date();
-        final Set<EgDemandDetails> demandDetails = licenseDemand.getEgDemandDetails();
-        final Date licenseDate = license.isNewApplication() ? license.getCommencementDate()
-                : license.getLicenseDemand().getEgInstallmentMaster().getFromDate();
-        final List<FeeMatrixDetail> feeList = this.feeMatrixService.getLicenseFeeDetails(license, licenseDate);
-        for (final EgDemandDetails dmd : demandDetails)
-            for (final FeeMatrixDetail fm : feeList)
-                if (licenseDemand.getEgInstallmentMaster().equals(dmd.getEgDemandReason().getEgInstallmentMaster()) &&
-                        dmd.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                                .equalsIgnoreCase(fm.getFeeMatrix().getFeeType().getName())) {
-                    BigDecimal tradeAmt = calculateAmountByRateType(license, fm);
-                    dmd.setAmount(tradeAmt);
-                    dmd.setModifiedDate(date);
-                }
-        calcPenaltyDemandDetails(license, licenseDemand);
-        licenseDemand.recalculateBaseDemand();
+    public TradeLicense updateDemandForTradeAreaChange(TradeLicense license) {
+        EgDemand licenseDemand = license.getCurrentDemand();
+        List<EgDemandDetails> demandDetails = licenseDemand.getEgDemandDetails().stream()
+                .filter(egDemandDetails -> licenseDemand.getEgInstallmentMaster()
+                        .equals(egDemandDetails.getEgDemandReason().getEgInstallmentMaster()))
+                .collect(Collectors.toList());
+        BigDecimal latestFeePaid = demandDetails.stream()
+                .filter(egDemandDetails -> DEMAND_REASON_CATEGORY_FEE.equals(egDemandDetails.getReasonCategory()))
+                .map(EgDemandDetails::getAmtCollected)
+                .reduce(ZERO, BigDecimal::add);
+
+        Date licenseDate = license.isNewApplication() ? license.getCommencementDate()
+                : license.getDemand().getEgInstallmentMaster().getFromDate();
+        List<FeeMatrixDetail> feeMatrixDetails = this.feeMatrixService.getLicenseFeeDetails(license, licenseDate);
+        BigDecimal totalAmount = ZERO;
+        for (FeeMatrixDetail feeMatrixDetail : feeMatrixDetails) {
+            BigDecimal tradeAmt = calculateFeeByRateType(license, feeMatrixDetail);
+            totalAmount = totalAmount.add(tradeAmt);
+        }
+
+        if (totalAmount.compareTo(latestFeePaid) > 0) {
+            recalculateDemand(feeMatrixDetails, license);
+        } else {
+            Date currentDate = new Date();
+            for (EgDemandDetails demandDetail : demandDetails) {
+                demandDetail.setAmount(demandDetail.getAmtCollected());
+                demandDetail.setModifiedDate(currentDate);
+            }
+            license.recalculateBaseDemand();
+        }
         return license;
 
     }
 
-    public void calcPenaltyDemandDetails(TradeLicense license, EgDemand demand) {
-        Map<Installment, BigDecimal> installmentPenalty = new HashMap<>();
-        Map<Installment, EgDemandDetails> penaltyDetails = getInstallmentWisePenaltyDemandDetails(demand);
-        Map<Installment, EgDemandDetails> demandDetails = getInstallmentWiseLicenseDemandDetails(demand);
-        if (license.isNewApplication())
-            installmentPenalty = getCalculatedPenalty(license, license.getCommencementDate(), new Date(), demand);
-        else if (license.isReNewApplication())
-            installmentPenalty = getCalculatedPenalty(license, null, new Date(), demand);
-        for (final Map.Entry<Installment, BigDecimal> penalty : installmentPenalty.entrySet()) {
-            EgDemandDetails penaltyDemandDetail = penaltyDetails.get(penalty.getKey());
-            EgDemandDetails licenseDemandDetail = demandDetails.get(penalty.getKey());
-            if (penalty.getValue().signum() > 0) {
-                if (penaltyDemandDetail != null && licenseDemandDetail.getBalance().signum() > 0)
-                    penaltyDemandDetail.setAmount(penalty.getValue().setScale(0, RoundingMode.HALF_UP));
-                else if (licenseDemandDetail.getBalance().signum() > 0) {
-                    penaltyDemandDetail = insertPenaltyDmdDetail(penalty.getKey(), penalty.getValue().setScale(0, RoundingMode.HALF_UP));
-                    if (penaltyDemandDetail != null)
-                        demand.getEgDemandDetails().add(penaltyDemandDetail);
-                }
-            } else if (penalty.getValue().signum() == 0 && penaltyDemandDetail != null) {
-                penaltyDemandDetail.setAmount(penalty.getValue().setScale(0, RoundingMode.HALF_UP));
+    public void applyPenalty(TradeLicense license, EgDemand demand) {
+        Map<Installment, EgDemandDetails> penaltyDemandDetails = getInstallmentWiseDemandDetails(demand, DEMAND_REASON_CATEGORY_PENALTY);
+        Map<Installment, EgDemandDetails> licenseDemandDetails = getInstallmentWiseDemandDetails(demand, DEMAND_REASON_CATEGORY_FEE);
+        for (Map.Entry<Installment, BigDecimal> penalty : calculatePenalty(license, demand).entrySet()) {
+            EgDemandDetails penaltyDemandDetail = penaltyDemandDetails.get(penalty.getKey());
+            EgDemandDetails licenseDemandDetail = licenseDemandDetails.get(penalty.getKey());
+            if (penaltyDemandDetail != null && penalty.getValue().compareTo(penaltyDemandDetail.getAmtCollected()) >= 0) {
+                penaltyDemandDetail.setAmount(penalty.getValue().setScale(0, HALF_UP));
+            } else if (penaltyDemandDetail == null && penalty.getValue().signum() > 0
+                    && licenseDemandDetail.getBalance().signum() > 0) {
+                penaltyDemandDetail = getPenaltyDemandDetail(penalty.getKey(), penalty.getValue().setScale(0, HALF_UP));
+                if (penaltyDemandDetail != null)
+                    demand.getEgDemandDetails().add(penaltyDemandDetail);
             }
         }
     }
 
-    private Map<Installment, EgDemandDetails> getInstallmentWisePenaltyDemandDetails(final EgDemand currentDemand) {
-        final Map<Installment, EgDemandDetails> penaltyDemandDetails = new TreeMap<>();
-        if (currentDemand != null)
-            for (final EgDemandDetails dmdDet : currentDemand.getEgDemandDetails())
-                if (dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(PENALTY_DMD_REASON_CODE))
-                    penaltyDemandDetails.put(dmdDet.getEgDemandReason().getEgInstallmentMaster(), dmdDet);
+    private Map<Installment, EgDemandDetails> getInstallmentWiseDemandDetails(EgDemand currentDemand, String reasonCategory) {
+        Map<Installment, EgDemandDetails> installmentwiseDemandDetails = new TreeMap<>();
+        for (EgDemandDetails demandDetails : currentDemand.getEgDemandDetails())
+            if (reasonCategory.equals(demandDetails.getReasonCategory()))
+                installmentwiseDemandDetails.put(demandDetails.getEgDemandReason().getEgInstallmentMaster(), demandDetails);
 
-        return penaltyDemandDetails;
+        return installmentwiseDemandDetails;
     }
 
-    private Map<Installment, EgDemandDetails> getInstallmentWiseLicenseDemandDetails(final EgDemand currentDemand) {
-        final Map<Installment, EgDemandDetails> demandDetails = new TreeMap<>();
-        if (currentDemand != null)
-            for (final EgDemandDetails dmdDet : currentDemand.getEgDemandDetails())
-                if (!dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(PENALTY_DMD_REASON_CODE))
-                    demandDetails.put(dmdDet.getEgDemandReason().getEgInstallmentMaster(), dmdDet);
-
-        return demandDetails;
-    }
-
-    private Map<Installment, BigDecimal> getCalculatedPenalty(TradeLicense license, Date fromDate, Date collectionDate,
-                                                              EgDemand demand) {
-        final Map<Installment, BigDecimal> installmentPenalty = new HashMap<>();
-        for (final EgDemandDetails demandDetails : demand.getEgDemandDetails()) {
-            if (!demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(PENALTY_DMD_REASON_CODE)
-                    && demandDetails.getAmount().subtract(demandDetails.getAmtCollected()).signum() >= 0) {
-                if (fromDate == null) {
-                    installmentPenalty.put(demandDetails.getEgDemandReason().getEgInstallmentMaster(),
-                            penaltyRatesService.calculatePenalty(license, demandDetails.getEgDemandReason().getEgInstallmentMaster().getFromDate(),
-                                    collectionDate, demandDetails.getAmount()));
-                } else {
-                    installmentPenalty.put(demandDetails.getEgDemandReason().getEgInstallmentMaster(),
-                            penaltyRatesService.calculatePenalty(license, fromDate, collectionDate, demandDetails.getAmount()));
-                }
+    private Map<Installment, BigDecimal> calculatePenalty(TradeLicense license, EgDemand demand) {
+        boolean isNewApplication = license.isNewApplication();
+        Date currentDate = new Date();
+        Map<Installment, BigDecimal> installmentPenalty = new HashMap<>();
+        for (EgDemandDetails demandDetails : demand.getEgDemandDetails()) {
+            if (!DEMAND_REASON_CATEGORY_PENALTY.equals(demandDetails.getReasonCategory())
+                    && demandDetails.getBalance().signum() == 1) {
+                Date licenseDate = isNewApplication ? license.getCommencementDate() :
+                        demandDetails.getEgDemandReason().getEgInstallmentMaster().getFromDate();
+                installmentPenalty.put(demandDetails.getEgDemandReason().getEgInstallmentMaster(),
+                        penaltyRatesService.calculatePenalty(license, licenseDate, currentDate, demandDetails.getAmount()));
             }
         }
         return installmentPenalty;
     }
 
-    private EgDemandDetails insertPenaltyDmdDetail(Installment inst, BigDecimal penaltyAmount) {
+    private EgDemandDetails getPenaltyDemandDetail(Installment inst, BigDecimal penaltyAmount) {
         EgDemandDetails demandDetail = null;
         if (penaltyAmount != null && penaltyAmount.compareTo(ZERO) > 0) {
-            Module module = getModuleName();
-            final EgDemandReasonMaster egDemandReasonMaster = demandGenericDao.getDemandReasonMasterByCode(
-                    PENALTY_DMD_REASON_CODE,
-                    module);
-            if (egDemandReasonMaster == null)
-                throw new ApplicationRuntimeException(" Penalty Demand reason Master is null in method  insertPenalty");
+            Module module = licenseUtils.getModule();
+            EgDemandReasonMaster demandReasonMaster = demandGenericDao.getDemandReasonMasterByCode(PENALTY_DMD_REASON_CODE, module);
+            if (demandReasonMaster == null)
+                throw new ApplicationRuntimeException("Penalty demand reason master is null in method insertPenalty");
 
-            final EgDemandReason egDemandReason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
-                    egDemandReasonMaster, inst, module);
+            EgDemandReason demandReason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
+                    demandReasonMaster, inst, module);
+            if (demandReason == null)
+                throw new ApplicationRuntimeException("Penalty demand reason is null in method  insertPenalty");
 
-            if (egDemandReason == null)
-                throw new ApplicationRuntimeException(" Penalty Demand reason is null in method  insertPenalty ");
-
-            demandDetail = createDemandDetails(egDemandReason, ZERO, penaltyAmount);
+            demandDetail = EgDemandDetails.fromReasonAndAmounts(penaltyAmount, demandReason, ZERO);
         }
         return demandDetail;
     }
 
-    private EgDemandDetails createDemandDetails(final EgDemandReason egDemandReason, final BigDecimal amtCollected,
-                                                final BigDecimal dmdAmount) {
-        return EgDemandDetails.fromReasonAndAmounts(dmdAmount, egDemandReason, amtCollected);
-    }
-
-    public void recalculateDemand(final List<FeeMatrixDetail> feeList, TradeLicense license) {
-        final LicenseDemand licenseDemand = license.getCurrentDemand();
+    public void recalculateDemand(List<FeeMatrixDetail> feeMatrixDetails, TradeLicense license) {
+        EgDemand demand = license.getCurrentDemand();
+        Date currentDate = new Date();
         // Recalculating current demand detail according to fee matrix
-        for (final EgDemandDetails dmd : licenseDemand.getEgDemandDetails())
-            for (final FeeMatrixDetail fm : feeList)
-                if (licenseDemand.getEgInstallmentMaster().equals(dmd.getEgDemandReason().getEgInstallmentMaster()) &&
-                        dmd.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                                .equalsIgnoreCase(fm.getFeeMatrix().getFeeType().getName())) {
-                    BigDecimal tradeAmt = calculateAmountByRateType(license, fm);
-                    dmd.setAmount(tradeAmt.setScale(0, RoundingMode.HALF_UP));
+        for (EgDemandDetails demandDetail : demand.getEgDemandDetails())
+            for (FeeMatrixDetail feeMatrixDetail : feeMatrixDetails)
+                if (demand.getEgInstallmentMaster().equals(demandDetail.getEgDemandReason().getEgInstallmentMaster()) &&
+                        demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                                .equalsIgnoreCase(feeMatrixDetail.getFeeMatrix().getFeeType().getName())) {
+                    BigDecimal tradeAmount = calculateFeeByRateType(license, feeMatrixDetail);
+                    demandDetail.setAmount(tradeAmount.setScale(0, HALF_UP));
+                    demandDetail.setModifiedDate(currentDate);
                 }
-        calcPenaltyDemandDetails(license, licenseDemand);
-        licenseDemand.recalculateBaseDemand();
+        applyPenalty(license, demand);
+        license.recalculateBaseDemand();
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void raiseDemand(TradeLicense licenze, final Module module, final Installment installment) {
+    public void raiseDemand(Long licenseId, Module module, Installment installment) {
         // Refetching license in this txn to avoid lazy initialization issue
-        TradeLicense license = licenseRepository.findOne(licenze.getId());
-        Map<EgDemandReason, EgDemandDetails> reasonWiseDemandDetails = getReasonWiseDemandDetails(license.getLicenseDemand());
+        TradeLicense license = licenseRepository.findOne(licenseId);
+        Map<EgDemandReason, EgDemandDetails> reasonWiseDemandDetails = new HashMap<>();
+        for (EgDemandDetails demandDetail : license.getDemand().getEgDemandDetails())
+            if (DEMAND_REASON_CATEGORY_FEE.equals(demandDetail.getReasonCategory()))
+                reasonWiseDemandDetails.put(demandDetail.getEgDemandReason(), demandDetail);
+
         license.setLicenseAppType(licenseAppTypeService.getLicenseAppTypeByCode(RENEW_APPTYPE_CODE));
         for (FeeMatrixDetail feeMatrixDetail : feeMatrixService.getLicenseFeeDetails(license, installment.getFromDate())) {
             String feeType = feeMatrixDetail.getFeeMatrix().getFeeType().getName();
-            if (feeType.contains("Late"))
-                continue;
-            EgDemandReason reason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
+            EgDemandReason demandReason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
                     demandGenericDao.getDemandReasonMasterByCode(feeType, module), installment, module);
-            if (reason == null)
-                throw new ValidationException("TL-007", "Demand reason missing for " + feeType);
-            EgDemandDetails licenseDemandDetail = reasonWiseDemandDetails.get(reason);
-            BigDecimal tradeAmt = calculateAmountByRateType(license, feeMatrixDetail);
+            if (demandReason == null)
+                throw new ValidationException("TL-007", "Demand demandReason missing for " + feeType);
+            EgDemandDetails licenseDemandDetail = reasonWiseDemandDetails.get(demandReason);
+            BigDecimal tradeAmt = calculateFeeByRateType(license, feeMatrixDetail);
             if (licenseDemandDetail == null)
-                license.getLicenseDemand().getEgDemandDetails()
-                        .add(EgDemandDetails.fromReasonAndAmounts(tradeAmt, reason, ZERO));
+                license.getDemand().getEgDemandDetails().add(EgDemandDetails.fromReasonAndAmounts(tradeAmt, demandReason, ZERO));
             else if (licenseDemandDetail.getBalance().compareTo(ZERO) != 0)
                 licenseDemandDetail.setAmount(tradeAmt);
             if (license.getCurrentDemand().getEgInstallmentMaster().getInstallmentYear().before(installment.getInstallmentYear()))
-                license.getLicenseDemand().setEgInstallmentMaster(installment);
+                license.getDemand().setEgInstallmentMaster(installment);
 
         }
-        license.getLicenseDemand().recalculateBaseDemand();
+        license.recalculateBaseDemand();
         licenseRepository.save(license);
     }
 
-    public Map<EgDemandReason, EgDemandDetails> getReasonWiseDemandDetails(final EgDemand currentDemand) {
-        final Map<EgDemandReason, EgDemandDetails> reasonWiseDemandDetails = new HashMap<>();
-        if (currentDemand != null)
-            for (final EgDemandDetails demandDetail : currentDemand.getEgDemandDetails())
-                if (LICENSE_FEE_TYPE.equals(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
-                    reasonWiseDemandDetails.put(demandDetail.getEgDemandReason(), demandDetail);
-        return reasonWiseDemandDetails;
-    }
-
-    public void transitionWorkFlow(TradeLicense license, final WorkflowBean workflowBean) {
+    public void transitionWorkFlow(TradeLicense license, WorkflowBean workflowBean) {
         DateTime currentDate = new DateTime();
         User user = this.securityUtils.getCurrentUser();
+        String senderName = user.getUsername() + DELIMITER_COLON + user.getName();
         if (BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             Position initiatorPosition = license.getCurrentState().getInitiatorPosition();
             List<Position> userPositions = positionMasterService.getPositionsForEmployee(securityUtils.getCurrentUser().getId());
             if (userPositions.contains(initiatorPosition) && ("Rejected".equals(license.getState().getValue())
                     || "License Created".equals(license.getState().getValue())))
-                license.transition().end().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
+                license.transition().end()
+                        .withSenderName(senderName)
                         .withComments(workflowBean.getApproverComments())
                         .withDateInfo(currentDate.toDate());
             else {
-                final String stateValue = WORKFLOW_STATE_REJECTED;
-                license.transition().progressWithStateCopy().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
+                license.transition().progressWithStateCopy()
+                        .withSenderName(senderName)
                         .withComments(workflowBean.getApproverComments())
-                        .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                        .withStateValue(WORKFLOW_STATE_REJECTED)
+                        .withDateInfo(currentDate.toDate())
                         .withOwner(initiatorPosition)
                         .withNextAction(WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING);
             }
 
         } else if (GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-            final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
+            WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                     null, workflowBean.getAdditionaRule(), license.getCurrentState().getValue(), null);
-            license.transition().end().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
+            license.transition().end()
+                    .withSenderName(senderName)
                     .withComments(workflowBean.getApproverComments())
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
                     .withOwner(license.getCurrentState().getInitiatorPosition())
                     .withNextAction(wfmatrix.getNextAction());
         } else {
             if (!license.hasState()) {
-                Position wfInitiator;
-                List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId());
-                if (assignments.isEmpty()) {
-                    throw new ValidationException(ERROR_WF_INITIATOR_NOT_DEFINED, "No officials assigned to process this application");
-                } else {
-                    wfInitiator = assignments.get(0).getPosition();
-                }
-                final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
-                        null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
-                license.transition().start().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
+                Position wfInitiator = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId())
+                        .stream().findFirst()
+                        .orElseThrow(() -> new ValidationException(ERROR_WF_INITIATOR_NOT_DEFINED, ERROR_MSG_NO_ASSIGNMENT))
+                        .getPosition();
+                WorkFlowMatrix wfmatrix = getWorkFlowMatrixApi(license, workflowBean);
+                license.transition().start()
+                        .withSLA(licenseUtils.getSlaForAppType(license.getLicenseAppType()))
+                        .withSenderName(senderName)
                         .withComments(workflowBean.getApproverComments())
                         .withNatureOfTask(license.getLicenseAppType().getName())
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(wfInitiator)
@@ -564,7 +501,7 @@ public class TradeLicenseService {
                 if (APPLICATION_STATUS_APPROVED_CODE.equals(license.getEgwStatus().getCode())) {
                     if (licenseConfigurationService.digitalSignEnabled())
                         license.transition().progressWithStateCopy()
-                                .withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
+                                .withSenderName(senderName)
                                 .withComments(workflowBean.getApproverComments())
                                 .withStateValue(WF_ACTION_DIGI_SIGN_COMMISSION_NO_COLLECTION)
                                 .withDateInfo(currentDate.toDate())
@@ -572,17 +509,17 @@ public class TradeLicenseService {
                                 .withNextAction(WF_ACTION_DIGI_PENDING);
                     else
                         license.transition().progressWithStateCopy()
-                                .withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
+                                .withSenderName(senderName)
                                 .withComments(workflowBean.getApproverComments())
                                 .withStateValue(WF_COMMISSIONER_APPRVD_WITHOUT_COLLECTION)
                                 .withDateInfo(currentDate.toDate())
                                 .withOwner(license.getCurrentState().getInitiatorPosition())
                                 .withNextAction(WF_CERTIFICATE_GEN_PENDING);
                 } else if (APPLICATION_STATUS_SECONDCOLLECTION_CODE.equals(license.getEgwStatus().getCode())) {
-                    final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
+                    WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                             null, workflowBean.getAdditionaRule(), license.getCurrentState().getValue(), null);
                     license.transition().progressWithStateCopy()
-                            .withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
+                            .withSenderName(senderName)
                             .withComments(workflowBean.getApproverComments())
                             .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
                             .withOwner(commissioner)
@@ -593,10 +530,10 @@ public class TradeLicenseService {
                 Position pos = null;
                 if (workflowBean.getApproverPositionId() != null && workflowBean.getApproverPositionId() > 0)
                     pos = positionMasterService.getPositionById(workflowBean.getApproverPositionId());
-                final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
+                WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                         null, workflowBean.getAdditionaRule(), license.getCurrentState().getValue(), null);
                 license.transition().progressWithStateCopy()
-                        .withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
+                        .withSenderName(senderName)
                         .withComments(workflowBean.getApproverComments())
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
                         .withOwner(pos)
@@ -621,18 +558,19 @@ public class TradeLicenseService {
     }
 
     public void processAndStoreDocument(TradeLicense license) {
+        Date currentDate = new Date();
         license.getDocuments().forEach(document -> {
             document.setType(licenseDocumentTypeRepository.findOne(document.getType().getId()));
             if (!(document.getUploads().isEmpty() || document.getUploadsFileName().isEmpty())) {
                 int fileCount = 0;
-                for (final File file : document.getUploads()) {
-                    final FileStoreMapper fileStore = this.fileStoreService.store(file,
+                for (File file : document.getUploads()) {
+                    FileStoreMapper fileStore = this.fileStoreService.store(file,
                             document.getUploadsFileName().get(fileCount),
-                            document.getUploadsContentType().get(fileCount++), "EGTL");
+                            document.getUploadsContentType().get(fileCount++), TL_FILE_STORE_DIR);
                     document.getFiles().add(fileStore);
                 }
                 document.setEnclosed(true);
-                document.setDocDate(new Date());
+                document.setDocDate(currentDate);
             } else if (document.getType().isMandatory() && document.getFiles().isEmpty() && document.getId() == null) {
                 document.getFiles().clear();
                 throw new ValidationException("TL-004", "TL-004", document.getType().getName());
@@ -645,20 +583,21 @@ public class TradeLicenseService {
         return natureOfBusinessService.getNatureOfBusinesses();
     }
 
-    public TradeLicense getLicenseByLicenseNumber(final String licenseNumber) {
+    @SuppressWarnings("unused")
+    public TradeLicense getLicenseByLicenseNumber(String licenseNumber) {
         return this.licenseRepository.findByLicenseNumber(licenseNumber);
     }
 
-    public TradeLicense getLicenseByApplicationNumber(final String applicationNumber) {
+    public TradeLicense getLicenseByApplicationNumber(String applicationNumber) {
         return this.licenseRepository.findByApplicationNumber(applicationNumber);
     }
 
     public Map<String, Map<String, BigDecimal>> getOutstandingFee(TradeLicense license) {
-        final Map<String, Map<String, BigDecimal>> outstandingFee = new HashMap<>();
-        final LicenseDemand licenseDemand = license.getCurrentDemand();
-        for (final EgDemandDetails demandDetail : licenseDemand.getEgDemandDetails()) {
-            final String demandReason = demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster();
-            final Installment installmentYear = demandDetail.getEgDemandReason().getEgInstallmentMaster();
+        Map<String, Map<String, BigDecimal>> outstandingFee = new HashMap<>();
+        EgDemand egDemand = license.getCurrentDemand();
+        for (EgDemandDetails demandDetail : egDemand.getEgDemandDetails()) {
+            String demandReason = demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster();
+            Installment installmentYear = demandDetail.getEgDemandReason().getEgInstallmentMaster();
             Map<String, BigDecimal> feeByTypes;
             if (outstandingFee.containsKey(demandReason))
                 feeByTypes = outstandingFee.get(demandReason);
@@ -667,8 +606,8 @@ public class TradeLicenseService {
                 feeByTypes.put(ARREAR, ZERO);
                 feeByTypes.put(CURRENT, ZERO);
             }
-            final BigDecimal demandAmount = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
-            if (installmentYear.equals(licenseDemand.getEgInstallmentMaster()))
+            BigDecimal demandAmount = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
+            if (installmentYear.equals(egDemand.getEgInstallmentMaster()))
                 feeByTypes.put(CURRENT, demandAmount);
             else
                 feeByTypes.put(ARREAR, feeByTypes.get(ARREAR).add(demandAmount));
@@ -678,38 +617,21 @@ public class TradeLicenseService {
 
     }
 
-    /**
-     * This method will return arrears, current tax and penalty on arrears tax.
-     *
-     * @param license
-     * @param currentInstallment
-     * @param previousInstallment
-     * @return
-     */
-    public Map<String, Map<String, BigDecimal>> getOutstandingFeeForDemandNotice(TradeLicense license,
-                                                                                 final Installment currentInstallment, final Installment previousInstallment) {
-        final Map<String, Map<String, BigDecimal>> outstandingFee = new HashMap<>();
+    public Map<String, BigDecimal> getOutstandingFeeForDemandNotice(TradeLicense license,
+                                                                    Installment currentInstallment, Installment previousInstallment) {
 
-        final LicenseDemand licenseDemand = license.getCurrentDemand();
+        EgDemand egDemand = license.getCurrentDemand();
         // 31st december will be considered as cutoff date for penalty calculation.
-        final Date endDateOfPreviousFinancialYear = new DateTime(previousInstallment.getFromDate()).withMonthOfYear(12)
+        Date endDateOfPreviousFinancialYear = new DateTime(previousInstallment.getFromDate()).withMonthOfYear(12)
                 .withDayOfMonth(31).toDate();
-
-        for (final EgDemandDetails demandDetail : licenseDemand.getEgDemandDetails()) {
-            final String demandReason = demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster();
-            final Installment installmentYear = demandDetail.getEgDemandReason().getEgInstallmentMaster();
-            Map<String, BigDecimal> feeByTypes;
-            if (!demandReason.equalsIgnoreCase(PENALTY_DMD_REASON_CODE)) {
-                if (outstandingFee.containsKey(demandReason))
-                    feeByTypes = outstandingFee.get(demandReason);
-                else {
-                    feeByTypes = new HashMap<>();
-                    feeByTypes.put(ARREAR, ZERO);
-                    feeByTypes.put(CURRENT, ZERO);
-                    feeByTypes.put(PENALTY, ZERO);
-                }
-                final BigDecimal demandAmount = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
-
+        Map<String, BigDecimal> feeByTypes = new HashMap<>();
+        feeByTypes.put(ARREAR, ZERO);
+        feeByTypes.put(CURRENT, ZERO);
+        feeByTypes.put(PENALTY, ZERO);
+        for (EgDemandDetails demandDetail : egDemand.getEgDemandDetails()) {
+            Installment installmentYear = demandDetail.getEgDemandReason().getEgInstallmentMaster();
+            if (!DEMAND_REASON_CATEGORY_PENALTY.equalsIgnoreCase(demandDetail.getReasonCategory())) {
+                BigDecimal demandAmount = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
                 if (demandAmount.compareTo(BigDecimal.valueOf(0)) > 0)
                     if (installmentYear.equals(currentInstallment))
                         feeByTypes.put(CURRENT, feeByTypes.get(CURRENT).add(demandAmount));
@@ -717,184 +639,19 @@ public class TradeLicenseService {
                         feeByTypes.put(ARREAR, feeByTypes.get(ARREAR).add(demandAmount));
                         // Calculate penalty by passing installment startdate and end of dec 31st date of previous installment
                         // dates using penalty master.
-                        final BigDecimal penaltyAmt = penaltyRatesService.calculatePenalty(license, installmentYear.getFromDate(),
+                        BigDecimal penaltyAmt = penaltyRatesService.calculatePenalty(license, installmentYear.getFromDate(),
                                 endDateOfPreviousFinancialYear, demandAmount);
                         feeByTypes.put(PENALTY, feeByTypes.get(PENALTY).add(penaltyAmt));
                     }
-                outstandingFee.put(demandReason, feeByTypes);
             }
         }
-
-        return outstandingFee;
-
-    }
-
-    public BigDecimal calculateFeeAmount(final TradeLicense license) {
-        final Date licenseDate = license.isNewApplication() ? license.getCommencementDate()
-                : license.getLicenseDemand().getEgInstallmentMaster().getFromDate();
-        final List<FeeMatrixDetail> feeList = this.feeMatrixService.getLicenseFeeDetails(license, licenseDate);
-        BigDecimal totalAmount = ZERO;
-        for (final FeeMatrixDetail fm : feeList) {
-            BigDecimal tradeAmt = calculateAmountByRateType(license, fm);
-            totalAmount = totalAmount.add(tradeAmt);
-        }
-        return totalAmount;
-    }
-
-    public BigDecimal recalculateLicenseFee(final LicenseDemand licenseDemand) {
-        BigDecimal licenseFee = ZERO;
-        for (final EgDemandDetails demandDetail : licenseDemand.getEgDemandDetails())
-            if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().equals(LICENSE_FEE_TYPE)
-                    && licenseDemand.getEgInstallmentMaster().equals(demandDetail.getEgDemandReason().getEgInstallmentMaster()))
-                licenseFee = licenseFee.add(demandDetail.getAmtCollected());
-        return licenseFee;
-    }
-
-    @Transactional
-    public TradeLicense saveClosure(TradeLicense license, final WorkflowBean workflowBean) {
-        if (license.hasState() && !license.getState().isEnded())
-            throw new ValidationException("lic.appl.wf.validation", "Cannot initiate Closure process, application under processing");
-        license.setNewWorkflow(false);
-        Position position = null;
-        if (workflowBean.getApproverPositionId() != null) {
-            position = positionMasterService.getPositionById(workflowBean.getApproverPositionId());
-        }
-        if (license.getState() == null || license.hasState() && license.getState().isEnded()) {
-            final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
-                    null, workflowBean.getAdditionaRule(), NEW_STATE, null);
-            final List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(this.securityUtils.getCurrentUser().getId());
-            if (securityUtils.currentUserIsEmployee()) {
-                Position wfInitiator = null;
-                if (license.getState() == null || license.transitionCompleted()) {
-                    if (!assignments.isEmpty())
-                        wfInitiator = assignments.get(0).getPosition();
-                    else
-                        throw new ValidationException(ERROR_WF_NEXT_OWNER_NOT_FOUND, "No employee assigned to process Closure application", "Closure");
-                }
-                if (license.hasState()) {
-                    license.transition().startNext();
-                } else {
-                    license.transition().start();
-                }
-                User currentUser = this.securityUtils.getCurrentUser();
-                license.transition()
-                        .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
-                        .withComments(workflowBean.getApproverComments()).withNatureOfTask(license.getLicenseAppType().getName())
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(position)
-                        .withNextAction(wfmatrix.getNextAction()).withInitiator(wfInitiator).withExtraInfo(license.getLicenseAppType().getName());
-            } else
-                closureWfWithOperator(license);
-            if (!currentUserIsMeeseva())
-                license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
-            license.setEgwStatus(egwStatusHibernateDAO
-                    .getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
-            license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
-            license.setLicenseAppType(licenseAppTypeService.getClosureLicenseApplicationType());
-            tradeLicenseSmsAndEmailService.sendLicenseClosureMessage(license, workflowBean.getWorkFlowAction());
-
-        }
-        this.licenseRepository.save(license);
-        if (securityUtils.currentUserIsCitizen())
-            licenseCitizenPortalService.onCreate(license);
-        licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
-        return license;
-    }
-
-    @Transactional
-    public void cancelLicenseWorkflow(TradeLicense license, final WorkflowBean workflowBean) {
-        final User currentUser = this.securityUtils.getCurrentUser();
-        Position owner = null;
-        if (workflowBean.getApproverPositionId() != null)
-            owner = positionMasterService.getPositionById(workflowBean.getApproverPositionId());
-        final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
-                null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
-        if (workflowBean.getWorkFlowAction() != null && workflowBean.getWorkFlowAction().contains(BUTTONREJECT))
-            if (WORKFLOW_STATE_REJECTED.equals(license.getState().getValue())) {
-                license.setEgwStatus(egwStatusHibernateDAO
-                        .getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_GENECERT_CODE));
-                license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACTIVE));
-                license.setActive(true);
-                if (license.getState().getExtraInfo() != null)
-                    license.setLicenseAppType(licenseAppTypeService.getLicenseAppTypeByName(license.getState().getExtraInfo()));
-                license.transition().end().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
-                        .withComments(workflowBean.getApproverComments())
-                        .withDateInfo(new DateTime().toDate());
-            } else {
-                license.setEgwStatus(egwStatusHibernateDAO
-                        .getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
-                license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
-                final String stateValue = WORKFLOW_STATE_REJECTED;
-                license.transition().progressWithStateCopy()
-                        .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
-                        .withComments(workflowBean.getApproverComments())
-                        .withStateValue(stateValue).withDateInfo(new DateTime().toDate())
-                        .withOwner(license.getState().getInitiatorPosition()).withNextAction("SI/SS Approval Pending");
-
-            }
-        else if (NEW_STATE.equals(license.getState().getValue())) {
-            final WorkFlowMatrix newwfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
-                    null, workflowBean.getAdditionaRule(), NEW_STATE, null);
-            license.transition().progressWithStateCopy()
-                    .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
-                    .withComments(workflowBean.getApproverComments())
-                    .withStateValue(newwfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(owner)
-                    .withNextAction(newwfmatrix.getNextAction());
-            license.setEgwStatus(egwStatusHibernateDAO
-                    .getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
-            license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
-        } else if (REVENUE_CLERK_JA_APPROVED.equals(license.getState().getValue()) ||
-                WORKFLOW_STATE_REJECTED.equals(license.getState().getValue())) {
-            license.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
-            license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_UNDERWORKFLOW));
-            license.transition().progressWithStateCopy()
-                    .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
-                    .withComments(workflowBean.getApproverComments())
-                    .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(owner)
-                    .withNextAction(wfmatrix.getNextAction());
-        }
-
-        this.licenseRepository.save(license);
-        licenseCitizenPortalService.onUpdate(license);
-        licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
-    }
-
-    private void closureWfWithOperator(TradeLicense license) {
-        final String currentUserRoles = securityUtils.getCurrentUser().getRoles().toString();
-        String comment = "";
-        if (currentUserRoles.contains(CSCOPERATOR))
-            comment = "CSC Operator Initiated";
-        else if (currentUserRoles.contains("PUBLIC"))
-            comment = "Citizen applied for closure";
-        else if (currentUserRoles.contains(MEESEVAOPERATOR))
-            comment = "Meeseva Operator Initiated";
-        List<Assignment> assignmentList = getAssignments();
-        if (assignmentList.isEmpty()) {
-            throw new ValidationException(ERROR_WF_INITIATOR_NOT_DEFINED, ERROR_WF_INITIATOR_NOT_DEFINED);
-        } else {
-            final Assignment wfAssignment = assignmentList.get(0);
-            if (license.hasState()) {
-                license.transition().startNext();
-            } else {
-                license.transition().start();
-            }
-            license.transition().withSenderName(
-                    wfAssignment.getEmployee().getUsername() + DELIMITER_COLON + wfAssignment.getEmployee().getName())
-                    .withComments(comment).withNatureOfTask(license.getLicenseAppType().getName())
-                    .withStateValue(NEW_STATE).withDateInfo(new Date()).withOwner(wfAssignment.getPosition())
-                    .withNextAction("SI/SS Approval Pending").withInitiator(wfAssignment.getPosition()).withExtraInfo(license.getLicenseAppType().getName());
-            license.setEgwStatus(
-                    egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
-        }
+        return feeByTypes;
     }
 
     public List<Long> getLicenseIdsForDemandGeneration(CFinancialYear financialYear) {
-        Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(),
+        Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(licenseUtils.getModule(),
                 financialYear.getStartingDate());
         return licenseRepository.findLicenseIdsForDemandGeneration(installment.getFromDate());
-    }
-
-    public TradeLicense closureWithMeeseva(TradeLicense license, WorkflowBean wfBean) {
-        return saveClosure(license, wfBean);
     }
 
     public Boolean currentUserIsMeeseva() {
@@ -903,18 +660,19 @@ public class TradeLicenseService {
 
     @Transactional
     public void digitalSignTransition(String applicationNumber) {
-        final User user = securityUtils.getCurrentUser();
+        User user = securityUtils.getCurrentUser();
         if (isNotBlank(applicationNumber)) {
             TradeLicense license = licenseRepository.findByApplicationNumber(applicationNumber);
-            final DateTime currentDate = new DateTime();
+            DateTime currentDate = new DateTime();
             license.setEgwStatus(egwStatusHibernateDAO
                     .getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_APPROVED_CODE));
-            license.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
+            license.transition().progressWithStateCopy()
+                    .withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(WF_DIGI_SIGNED)
                     .withStateValue(WF_DIGI_SIGNED)
                     .withDateInfo(currentDate.toDate())
                     .withOwner(license.getCurrentState().getInitiatorPosition())
-                    .withNextAction("");
+                    .withNextAction(EMPTY);
             license.setCertificateFileId(license.getDigiSignedCertFileStoreId());
             licenseRepository.save(license);
             tradeLicenseSmsAndEmailService.sendSMsAndEmailOnDigitalSign(license);
@@ -925,16 +683,13 @@ public class TradeLicenseService {
 
     @Transactional
     public void save(TradeLicense license) {
-        final BigDecimal currentDemandAmount = recalculateLicenseFee(license.getCurrentDemand());
-        final BigDecimal feematrixDmdAmt = calculateFeeAmount(license);
-        if (feematrixDmdAmt.compareTo(currentDemandAmount) >= 0)
-            updateDemandForChangeTradeArea(license);
+        updateDemandForTradeAreaChange(license);
         processAndStoreDocument(license);
         licenseRepository.save(license);
     }
 
     @Transactional
-    public void updateTradeLicense(final TradeLicense license, final WorkflowBean workflowBean) {
+    public void updateTradeLicense(TradeLicense license, WorkflowBean workflowBean) {
         processAndStoreDocument(license);
         licenseRepository.save(license);
         tradeLicenseSmsAndEmailService.sendSmsAndEmail(license, workflowBean.getWorkFlowAction());
@@ -942,7 +697,7 @@ public class TradeLicenseService {
     }
 
 
-    public void updateStatusInWorkFlowProgress(TradeLicense license, final String workFlowAction) {
+    public void updateStatusInWorkFlowProgress(TradeLicense license, String workFlowAction) {
 
         List<Position> userPositions = positionMasterService.getPositionsForEmployee(securityUtils.getCurrentUser().getId());
         if (BUTTONAPPROVE.equals(workFlowAction)) {
@@ -985,12 +740,9 @@ public class TradeLicenseService {
                 license.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_REJECTED));
                 license.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_REJECTED));
             }
-        if (license.hasState() && license.getState().getValue().contains(WF_REVENUECLERK_APPROVED)) {
-            final BigDecimal currentDemandAmount = recalculateLicenseFee(license.getCurrentDemand());
-            final BigDecimal recalDemandAmount = calculateFeeAmount(license);
-            if (recalDemandAmount.compareTo(currentDemandAmount) >= 0)
-                updateDemandForChangeTradeArea(license);
-        }
+        if (license.hasState() && license.getState().getValue().contains(WF_REVENUECLERK_APPROVED))
+            updateDemandForTradeAreaChange(license);
+
     }
 
     public ReportOutput generateLicenseCertificate(TradeLicense license, boolean isProvisional) {
@@ -1007,7 +759,7 @@ public class TradeLicenseService {
 
     private Map<String, Object> getReportParamsForCertificate(TradeLicense license, boolean isProvisional) {
 
-        final Map<String, Object> reportParams = new HashMap<>();
+        Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("applicationnumber", license.getApplicationNumber());
         reportParams.put("applicantName", license.getLicensee().getApplicantName());
         reportParams.put("licencenumber", license.getLicenseNumber());
@@ -1022,47 +774,34 @@ public class TradeLicenseService {
         reportParams.put("appType", license.isNewApplication() ? "New Trade" : "Renewal");
         reportParams.put("currentDate", currentDateToDefaultDateFormat());
         reportParams.put("carporationulbType", getMunicipalityName().contains("Corporation"));
-        Optional<EgDemandDetails> demandDetails = license.getCurrentDemand().getEgDemandDetails().stream()
+        EgDemandDetails demandDetails = license.getCurrentDemand().getEgDemandDetails().stream()
                 .sorted(Comparator.comparing(EgDemandDetails::getInstallmentEndDate).reversed())
-                .filter(demandDetail -> demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().equals(LICENSE_FEE_TYPE))
-                .filter(demandDetail -> demandDetail.getAmtCollected().doubleValue() > 0)
-                .findFirst();
-        BigDecimal amtPaid;
-        String installmentYear;
-        if (demandDetails.isPresent()) {
-            amtPaid = demandDetails.get().getAmtCollected();
-            installmentYear = toYearFormat(demandDetails.get().getInstallmentStartDate()) + "-" +
-                    toYearFormat(demandDetails.get().getInstallmentEndDate());
-        } else {
-            throw new ValidationException("License Fee is not paid", "License Fee is not paid");
-        }
-
+                .filter(demandDetail -> demandDetail.getReasonCategory().equals(DEMAND_REASON_CATEGORY_FEE)
+                        && demandDetail.getAmtCollected().doubleValue() > 0)
+                .findFirst()
+                .orElseThrow(() -> new ValidationException("License Fee is not paid", "License Fee is not paid"));
+        String installmentYear = toYearFormat(demandDetails.getInstallmentStartDate()) + "-" +
+                toYearFormat(demandDetails.getInstallmentEndDate());
         reportParams.put("installMentYear", installmentYear);
         reportParams.put("applicationdate", getDefaultFormattedDate(license.getApplicationDate()));
         reportParams.put("demandUpdateDate", getDefaultFormattedDate(license.getCurrentDemand().getModifiedDate()));
-        reportParams.put("demandTotalamt", amtPaid);
-
-        User approver;
-        if (isProvisional || license.getApprovedBy() == null) {
-            approver = licenseUtils.getCommissionerAssignment().getEmployee();
-        } else {
-            approver = license.getApprovedBy();
-        }
+        reportParams.put("demandTotalamt", demandDetails.getAmtCollected());
+        User approver = isProvisional || license.getApprovedBy() == null
+                ? licenseUtils.getCommissionerAssignment().getEmployee() : license.getApprovedBy();
         ByteArrayInputStream commissionerSign = new ByteArrayInputStream(
                 approver == null || approver.getSignature() == null ? new byte[0] : approver.getSignature());
         reportParams.put("commissionerSign", commissionerSign);
 
         if (isProvisional)
             reportParams.put("certificateType", "provisional");
-        else {
-            reportParams.put("qrCode", license.qrCode(installmentYear, amtPaid));
-        }
+        else
+            reportParams.put("qrCode", license.qrCode(installmentYear, demandDetails.getAmtCollected()));
 
         return reportParams;
     }
 
     @ReadOnly
-    public List<String> getTradeLicenseForGivenParam(final String paramValue, final String paramType) {
+    public List<String> getTradeLicenseForGivenParam(String paramValue, String paramType) {
         List<String> licenseList = new ArrayList<>();
         if (isNotBlank(paramValue) && isNotBlank(paramType)) {
             if (SEARCH_BY_APPNO.equals(paramType))
@@ -1091,21 +830,22 @@ public class TradeLicenseService {
     }
 
     @ReadOnly
-    public Page<SearchForm> searchTradeLicense(final SearchForm searchForm) {
+    public Page<SearchForm> searchTradeLicense(SearchForm searchForm) {
         Pageable pageable = new PageRequest(searchForm.pageNumber(),
                 searchForm.pageSize(), searchForm.orderDir(), searchForm.orderBy());
         User currentUser = securityUtils.getCurrentUser();
         Page<TradeLicense> licenses = searchTradeRepository.findAll(SearchTradeSpec.searchTrade(searchForm), pageable);
         List<SearchForm> searchResults = new ArrayList<>();
+        String[] feeCollectorRoles = licenseConfigurationService.getFeeCollectorRoles();
         licenses.forEach(license ->
-                searchResults.add(new SearchForm(license, currentUser, getOwnerName(license), licenseConfigurationService.getFeeCollectorRoles()))
+                searchResults.add(new SearchForm(license, currentUser, getProcessOwnerName(license), feeCollectorRoles))
         );
         return new PageImpl<>(searchResults, pageable, licenses.getTotalElements());
     }
 
     @ReadOnly
-    public List<OnlineSearchForm> onlineSearchTradeLicense(final OnlineSearchForm searchForm) {
-        final Criteria searchCriteria = entityManager.unwrap(Session.class).createCriteria(TradeLicense.class);
+    public List<OnlineSearchForm> onlineSearchTradeLicense(OnlineSearchForm searchForm) {
+        Criteria searchCriteria = entityManager.unwrap(Session.class).createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat")
                 .createAlias("tradeName", "subcat").createAlias("status", "licstatus");
         if (isNotBlank(searchForm.getApplicationNumber()))
@@ -1131,7 +871,7 @@ public class TradeLicenseService {
     public BigDecimal[] getDemandColl(TradeLicense license) {
         BigDecimal[] dmdColl = new BigDecimal[3];
         Arrays.fill(dmdColl, ZERO);
-        final Installment latestInstallment = this.installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(),
+        Installment latestInstallment = this.installmentDao.getInsatllmentByModuleForGivenDate(licenseUtils.getModule(),
                 new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate());
         license.getCurrentDemand().getEgDemandDetails().stream().forEach(egDemandDetails -> {
                     if (latestInstallment.equals(egDemandDetails.getEgDemandReason().getEgInstallmentMaster())) {
@@ -1147,11 +887,11 @@ public class TradeLicenseService {
     }
 
     @ReadOnly
-    public List<DemandNoticeForm> getLicenseDemandNotices(final DemandNoticeForm demandNoticeForm) {
-        final Criteria searchCriteria = entityManager.unwrap(Session.class).createCriteria(TradeLicense.class);
+    public List<DemandNoticeForm> getLicenseDemandNotices(DemandNoticeForm demandNoticeForm) {
+        Criteria searchCriteria = entityManager.unwrap(Session.class).createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat").createAlias("tradeName", "subcat")
                 .createAlias("status", "licstatus").createAlias("natureOfBusiness", "nob")
-                .createAlias("licenseDemand", "licDemand").createAlias("licenseAppType", "appType")
+                .createAlias("demand", "licDemand").createAlias("licenseAppType", "appType")
                 .add(Restrictions.ne("appType.code", CLOSURE_APPTYPE_CODE));
         if (isNotBlank(demandNoticeForm.getLicenseNumber()))
             searchCriteria.add(Restrictions.eq("licenseNumber", demandNoticeForm.getLicenseNumber()).ignoreCase());
@@ -1180,25 +920,23 @@ public class TradeLicenseService {
                 .add(Restrictions.eq("nob.name", PERMANENT_NATUREOFBUSINESS))
                 .add(Restrictions.gtProperty("licDemand.baseDemand", "licDemand.amtCollected"))
                 .addOrder(Order.asc("id"));
-        final List<DemandNoticeForm> finalList = new LinkedList<>();
-
-        for (final TradeLicense license : (List<TradeLicense>) searchCriteria.list()) {
-            LicenseDemand licenseDemand = license.getCurrentDemand();
-            if (licenseDemand != null) {
-                Installment currentInstallment = licenseDemand.getEgInstallmentMaster();
+        List<DemandNoticeForm> demandNotices = new LinkedList<>();
+        Module tradeLicenseModule = licenseUtils.getModule();
+        for (TradeLicense license : (List<TradeLicense>) searchCriteria.list()) {
+            EgDemand egDemand = license.getCurrentDemand();
+            if (egDemand != null) {
+                Installment currentInstallment = egDemand.getEgInstallmentMaster();
                 List<Installment> previousInstallment = installmentDao
-                        .fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(
-                                licenseUtils.getModule(TRADE_LICENSE), currentInstallment.getToDate(), 1);
-                Map<String, Map<String, BigDecimal>> outstandingFees = getOutstandingFeeForDemandNotice(license,
+                        .fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(tradeLicenseModule, currentInstallment.getToDate(), 1);
+                Map<String, BigDecimal> licenseFees = getOutstandingFeeForDemandNotice(license,
                         currentInstallment, previousInstallment.get(0));
-                Map<String, BigDecimal> licenseFees = outstandingFees.get(LICENSE_FEE_TYPE);
-                finalList.add(new DemandNoticeForm(license, licenseFees, getOwnerName(license)));
+                demandNotices.add(new DemandNoticeForm(license, licenseFees, getProcessOwnerName(license)));
             }
         }
-        return finalList;
+        return demandNotices;
     }
 
-    public String getOwnerName(TradeLicense license) {
+    public String getProcessOwnerName(TradeLicense license) {
         String ownerName = NA;
         if (license.getState() != null && license.currentAssignee() != null) {
             List<Assignment> assignmentList = assignmentService
@@ -1211,46 +949,33 @@ public class TradeLicenseService {
 
     }
 
-    public List<HashMap<String, Object>> populateHistory(final TradeLicense tradeLicense) {
-        final List<HashMap<String, Object>> processHistoryDetails = new ArrayList<>();
+    public List<HashMap<String, Object>> populateHistory(TradeLicense tradeLicense) {
+        List<HashMap<String, Object>> processHistoryDetails = new ArrayList<>();
         if (tradeLicense.hasState()) {
-            State<Position> state = tradeLicense.getCurrentState();
-            final HashMap<String, Object> currentStateDetail = new HashMap<>();
-            currentStateDetail.put("date", state.getLastModifiedDate());
-            currentStateDetail.put("updatedBy", state.getSenderName().contains(DELIMITER_COLON)
-                    ? state.getSenderName().split(DELIMITER_COLON)[1] :state.getSenderName());
-            currentStateDetail.put("status", state.isEnded() ? "Completed" : state.getValue());
-            currentStateDetail.put("comments", defaultString(state.getComments()));
-            User ownerUser = state.getOwnerUser();
-            Position ownerPosition = state.getOwnerPosition();
-            if (ownerPosition != null) {
-                User usr = eisCommonService.getUserForPosition(ownerPosition.getId(), state.getLastModifiedDate());
-                currentStateDetail.put("user", usr == null ? NA : usr.getName());
-            } else
-                currentStateDetail.put("user", ownerUser == null ? NA : ownerUser.getName());
-
-            processHistoryDetails.add(currentStateDetail);
-            state.getHistory().stream().sorted(Comparator.comparing(StateHistory<Position>::getLastModifiedDate).reversed()).
-                    forEach(sh -> processHistoryDetails.add(constructHistory(sh)));
+            State<Position> currentState = tradeLicense.getCurrentState();
+            processHistoryDetails.add(constructHistory(currentState));
+            currentState.getHistory().stream()
+                    .sorted(Comparator.comparing(StateHistory<Position>::getLastModifiedDate).reversed()).
+                    forEach(historyState -> processHistoryDetails.add(constructHistory(historyState.asState())));
         }
         return processHistoryDetails;
     }
 
-    private HashMap<String, Object> constructHistory(StateHistory<Position> stateHistory) {
-        final HashMap<String, Object> processHistory = new HashMap<>();
-        processHistory.put("date", stateHistory.getLastModifiedDate());
-        processHistory.put("updatedBy", stateHistory.getSenderName().contains(DELIMITER_COLON)
-                ? stateHistory.getSenderName().split(DELIMITER_COLON)[1] : stateHistory.getSenderName());
-        processHistory.put("status", stateHistory.getValue());
-        processHistory.put("comments", defaultString(stateHistory.getComments()));
-        Position ownerPosition = stateHistory.getOwnerPosition();
-        User ownerUser = stateHistory.getOwnerUser();
-        if (ownerPosition != null) {
-            User userPos = eisCommonService.getUserForPosition(ownerPosition.getId(), stateHistory.getLastModifiedDate());
+    private HashMap<String, Object> constructHistory(State<Position> state) {
+        HashMap<String, Object> processHistory = new HashMap<>();
+        processHistory.put("date", state.getLastModifiedDate());
+        processHistory.put("updatedBy", state.getSenderName().contains(DELIMITER_COLON)
+                ? state.getSenderName().split(DELIMITER_COLON)[1] : state.getSenderName());
+        processHistory.put("status", state.isEnded() ? "Completed" : state.getValue());
+        processHistory.put("comments", defaultString(state.getComments()));
+        Position ownerPosition = state.getOwnerPosition();
+        User ownerUser = state.getOwnerUser();
+        if (ownerPosition == null) {
+            processHistory.put("user", ownerUser == null ? NA : ownerUser.getName());
+        } else {
+            User userPos = eisCommonService.getUserForPosition(ownerPosition.getId(), state.getLastModifiedDate());
             processHistory.put("user", userPos == null ? NA : userPos.getName());
-        } else
-            processHistory.put("user",
-                    ownerUser == null ? NA : ownerUser.getName());
+        }
         return processHistory;
     }
 
@@ -1318,7 +1043,7 @@ public class TradeLicenseService {
             reportOutput = reportService.createReport(
                     new ReportRequest("tl_closure_notice", licenses, reportParams));
         }
-        if (reportFormat.equalsIgnoreCase("zip"))
+        if ("zip".equalsIgnoreCase(reportFormat))
             reportOutput.setReportOutputData(toByteArray(addFilesToZip(byteArrayToFile(reportOutput.getReportOutputData(),
                     "tl_closure_notice_", ".pdf").toFile())));
         return reportOutput;
@@ -1332,5 +1057,9 @@ public class TradeLicenseService {
 
     public TradeLicense getLicenseByUID(String uid) {
         return licenseRepository.findByUid(uid);
+    }
+
+    public TradeLicense getLicenseByDemand(EgDemand demand) {
+        return licenseRepository.findByDemand(demand);
     }
 }

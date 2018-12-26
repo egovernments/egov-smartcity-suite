@@ -79,6 +79,7 @@ public class MutationRegistrationDetails extends AbstractPersistable<Long> {
     private String sroName;
     private BigDecimal documentValue;
     private String documentLink;
+    private String remarks;
     
     public String getTypeOfTransfer() {
         return typeOfTransfer;
@@ -197,5 +198,11 @@ public class MutationRegistrationDetails extends AbstractPersistable<Long> {
     public void setDocumentLink(String documentLink) {
         this.documentLink = documentLink;
     }
+	public String getRemarks() {
+		return remarks;
+	}
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
 
 }

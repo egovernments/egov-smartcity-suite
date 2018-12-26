@@ -56,7 +56,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -68,6 +67,9 @@ import java.util.List;
 @Controller
 @RequestMapping(value = "/login")
 public class LoginController {
+
+    private static final String PASSWORD_RESET_PATH = "password/reset";
+    private static final String TOKEN = "token";
 
     @Autowired
     private IdentityRecoveryService identityRecoveryService;
@@ -85,38 +87,42 @@ public class LoginController {
     public String sendPasswordRecoveryURL(@RequestParam String identity,
                                           @RequestParam String originURL,
                                           @RequestParam boolean byOTP,
-                                          final RedirectAttributes redirectAttrib) {
-        redirectAttrib.addAttribute("recovered", identityRecoveryService.generateAndSendUserPasswordRecovery(identity,
-                originURL + "/egi/login/password/reset?token=", byOTP));
-        redirectAttrib.addAttribute("byOTP", byOTP);
+                                          RedirectAttributes redirectAttrib) {
+        redirectAttrib.addAttribute("recovered", identityRecoveryService
+                .generateAndSendUserPasswordRecovery(identity, originURL + "/egi/login/password/reset?token=", byOTP));
+        redirectAttrib.addAttribute("byOTP", true);
         return "redirect:/login/secure";
     }
 
-    @GetMapping(value = "password/reset", params = "token")
-    public String viewPasswordReset(@RequestParam final String token, Model model) {
+    @PostMapping(value = PASSWORD_RESET_PATH, params = TOKEN)
+    public String viewPasswordReset(@RequestParam String token, Model model) {
         model.addAttribute("valid", identityRecoveryService.tokenValid(token));
-        return "password/reset";
+        return PASSWORD_RESET_PATH;
     }
 
-    @PostMapping(value = "password/reset")
-    public String validateAndSendNewPassword(@RequestParam final String token, @RequestParam final String newPassword,
-                                             @RequestParam final String confirmPwd, final RedirectAttributes redirectAttrib) {
+    @PostMapping(value = PASSWORD_RESET_PATH, params = {TOKEN, "newPassword", "confirmPwd"})
+    public String validateAndSendNewPassword(@RequestParam String token, @RequestParam String newPassword,
+                                             @RequestParam String confirmPwd, Model model) {
         if (!newPassword.equals(confirmPwd)) {
-            redirectAttrib.addAttribute("error", "err.login.pwd.mismatch");
-            return "redirect:/login/password/reset?token=" + token;
+            model.addAttribute("error", "err.login.pwd.mismatch");
+            model.addAttribute(TOKEN, token);
+            model.addAttribute("valid", identityRecoveryService.tokenValid(token));
+            return PASSWORD_RESET_PATH;
         }
 
         if (!validatorUtils.isValidPassword(newPassword)) {
-            redirectAttrib.addAttribute("error", "usr.pwd.strength.msg." + passwordStrength);
-            return "redirect:/login/password/reset?token=" + token;
+            model.addAttribute("error", "usr.pwd.strength.msg." + passwordStrength);
+            model.addAttribute(TOKEN, token);
+            model.addAttribute("valid", identityRecoveryService.tokenValid(token));
+            return PASSWORD_RESET_PATH;
         }
 
         return "redirect:/login/secure?reset=" + identityRecoveryService.validateAndResetPassword(token, newPassword);
     }
 
-    @GetMapping("requiredlocations")
+    @PostMapping("requiredlocations")
     @ResponseBody
-    public List<Location> requiredLocations(@RequestParam final String username) {
+    public List<Location> requiredLocations(@RequestParam String username) {
         return locationService.getLocationRequiredByUserName(username);
     }
 }

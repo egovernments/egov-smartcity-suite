@@ -295,7 +295,7 @@ public class BillServiceTest extends AbstractContextControllerTest<BillService> 
     @Test
     public void shouldValidateBillRegister() {
         errors = billService.validateBillRegister(billRegister);
-        assertEquals(0, errors.size());
+        assertEquals(1, errors.size());
     }
 
     @Test
@@ -331,7 +331,7 @@ public class BillServiceTest extends AbstractContextControllerTest<BillService> 
         when(financialYearHibernateDAO.getFinancialYearByDate(Matchers.any()))
                 .thenThrow(new ApplicationRuntimeException("Financial Year is not active For Posting."));
         errors = billService.validateBillRegister(billRegister);
-        assertEquals(2, errors.size());
+        assertEquals(3, errors.size());
     }
 
     @Test
@@ -339,7 +339,7 @@ public class BillServiceTest extends AbstractContextControllerTest<BillService> 
         billRegister.setNameOfWork("Building Contruction\n'");
         when(projectCodeService.findActiveProjectCodeByCode(Matchers.anyString())).thenReturn(null);
         errors = billService.validateBillRegister(billRegister);
-        assertEquals(1, errors.size());
+        assertEquals(2, errors.size());
     }
 
     @Test
@@ -347,21 +347,21 @@ public class BillServiceTest extends AbstractContextControllerTest<BillService> 
         billRegister.getBillDetails().clear();
         billRegister.getBillPayeeDetails().clear();
         errors = billService.validateBillRegister(billRegister);
-        assertEquals(2, errors.size());
+        assertEquals(3, errors.size());
     }
 
     @Test
     public void shouldGiveErrorsIfInvalidGlcode() {
         when(chartOfAccountsService.getByGlCode(Matchers.anyString())).thenReturn(null);
         errors = billService.validateBillRegister(billRegister);
-        assertEquals(4, errors.size());
+        assertEquals(5, errors.size());
     }
 
     @Test
     public void shouldGiveErrorsIfInvalidDetailGlcode() {
         chartOfAccount1.setClassification(1l);
         errors = billService.validateBillRegister(billRegister);
-        assertEquals(2, errors.size());
+        assertEquals(3, errors.size());
     }
 
     @Test
@@ -369,7 +369,7 @@ public class BillServiceTest extends AbstractContextControllerTest<BillService> 
         billRegister.getBillDetails().get(0).setDebitAmount(new BigDecimal(-1000));
         billRegister.getBillDetails().get(1).setCreditAmount(new BigDecimal(-1000));
         errors = billService.validateBillRegister(billRegister);
-        assertEquals(4, errors.size());
+        assertEquals(5, errors.size());
     }
 
     @Test
@@ -380,6 +380,6 @@ public class BillServiceTest extends AbstractContextControllerTest<BillService> 
         billRegister.getBillPayeeDetails().get(0).setCreditAmount(null);
         billRegister.getBillPayeeDetails().get(0).setDebitAmount(null);
         errors = billService.validateBillRegister(billRegister);
-        assertEquals(4, errors.size());
+        assertEquals(5, errors.size());
     }
 }

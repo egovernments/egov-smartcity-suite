@@ -48,6 +48,7 @@
 
 package org.egov.tl.repository;
 
+import org.egov.demand.model.EgDemand;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.TradeLicense;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -89,7 +90,7 @@ public interface LicenseRepository extends JpaRepository<TradeLicense, Long> {
     List<String> findAllMobilePhoneNumberLike(@Param("mobilePhoneNumber") String mobilePhoneNumber);
 
     @Query("select l.id from TradeLicense l where l.natureOfBusiness.name='Permanent' " +
-            "and l.isActive=true and l.licenseDemand.egInstallmentMaster.fromDate < :installmentFromDate ")
+            "and l.isActive=true and l.demand.egInstallmentMaster.fromDate < :installmentFromDate ")
     List<Long> findLicenseIdsForDemandGeneration(@Param("installmentFromDate") Date installmentFromDate);
 
     List<TradeLicense> findByLicenseAppTypeIdAndStateNextActionAndStateOwnerPositionIn(Long licenseAppTypeId,
@@ -98,4 +99,6 @@ public interface LicenseRepository extends JpaRepository<TradeLicense, Long> {
     List<TradeLicense> findByStateNextActionAndStateOwnerPositionIn(String nextAction, List<Position> ownerPosition);
 
     TradeLicense findByUid(String uid);
+
+    TradeLicense findByDemand(EgDemand demand);
 }

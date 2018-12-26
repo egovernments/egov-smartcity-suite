@@ -110,9 +110,7 @@
     </div>
     <label class="col-sm-2 control-label text-right"><spring:message code='license.uom.lbl'/><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
-        <form:input path="tradeName.licenseSubCategoryDetails[0].uom.name" id="uom" value="${tradeName.licenseSubCategoryDetails[0].uom.name}"
-                    required="true" readOnly="true" class="form-control"/>
-        <form:errors path="tradeName.licenseSubCategoryDetails[0].uom.name" cssClass="error-msg"/>
+        <form:label path="tradeName.licenseSubCategoryDetails[0].uom.name" id="uom" cssClass="form-control">${tradeLicense.tradeName.licenseSubCategoryDetails[0].uom.name}</form:label>
     </div>
 </div>
 

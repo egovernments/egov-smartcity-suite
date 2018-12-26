@@ -48,6 +48,28 @@
 
 package org.egov.wtms.web.controller.application;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.commons.entity.Source.CITIZENPORTAL;
+import static org.egov.commons.entity.Source.CSC;
+import static org.egov.commons.entity.Source.MEESEVA;
+import static org.egov.commons.entity.Source.ONLINE;
+import static org.egov.commons.entity.Source.SURVEY;
+import static org.egov.commons.entity.Source.SYSTEM;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CREATED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED_CHARGES_REASON_CODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULETYPE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.ValidationException;
+
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -66,6 +88,7 @@ import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
+import org.egov.wtms.web.validator.RegularisedConnectionValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -79,27 +102,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.ValidationException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.egov.commons.entity.Source.CITIZENPORTAL;
-import static org.egov.commons.entity.Source.CSC;
-import static org.egov.commons.entity.Source.MEESEVA;
-import static org.egov.commons.entity.Source.ONLINE;
-import static org.egov.commons.entity.Source.SURVEY;
-import static org.egov.commons.entity.Source.SYSTEM;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CREATED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED_CHARGES_REASON_CODE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULETYPE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
-import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
-
 @Controller
 @RequestMapping(value = "/application")
 public class RegularisedConnectionController extends GenericConnectionController {
@@ -110,6 +112,8 @@ public class RegularisedConnectionController extends GenericConnectionController
     private static final String VALIDIFPTDUEEXISTS = "validateIfPTDueExists";
     private static final String APPROVALPOSITION = "approvalPosition";
     private static final String CONNECTION_PROPERTYID = "connection.propertyIdentifier";
+    private static final String REGULARISE_CONN_FORM = "regulariseconnection-form";
+
     @Autowired
     private SecurityUtils securityUtils;
 
@@ -128,23 +132,26 @@ public class RegularisedConnectionController extends GenericConnectionController
     @Autowired
     private ReportGenerationService reportGenerationService;
 
+    @Autowired
+    private RegularisedConnectionValidator regularisedConnectionValidator;
+
     @GetMapping("/regulariseconnection/new")
-    public String regulariseConnApplication(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
-                                            HttpServletRequest request, Model model) {
+    public String regulariseConnApplication(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
+            final HttpServletRequest request, final Model model) {
         return loadApplicationFormDetails(waterConnectionDetails, request, model);
     }
 
-    public String loadApplicationFormDetails(WaterConnectionDetails waterConnectionDetails,
-                                             HttpServletRequest request, Model model) {
-
-        waterConnectionDetails.setApplicationDate(new Date());
+    public String loadApplicationFormDetails(final WaterConnectionDetails waterConnectionDetails,
+            final HttpServletRequest request, final Model model) {
+        if (waterConnectionDetails.getApplicationDate() == null)
+            waterConnectionDetails.setApplicationDate(new Date());
         waterConnectionDetails.setApplicationType(applicationTypeService.findByCode(REGULARIZE_CONNECTION));
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.INPROGRESS);
         model.addAttribute("allowIfPTDueExists", waterTaxUtils.isConnectionAllowedIfPTDuePresent());
-        WorkflowContainer workFlowContainer = new WorkflowContainer();
+        final WorkflowContainer workFlowContainer = new WorkflowContainer();
         prepareWorkflow(model, waterConnectionDetails, workFlowContainer);
 
-        User currentUser = securityUtils.getCurrentUser();
+        final User currentUser = securityUtils.getCurrentUser();
         model.addAttribute(CURRENTUSER, waterTaxUtils.getCurrentUserRole(currentUser));
         model.addAttribute(STATETYPE, waterConnectionDetails.getClass().getSimpleName());
         model.addAttribute(ADDITIONALRULE, waterConnectionDetails.getApplicationType().getCode());
@@ -154,50 +161,61 @@ public class RegularisedConnectionController extends GenericConnectionController
         model.addAttribute("isAnonymousUser", waterTaxUtils.isAnonymousUser(currentUser));
         if (waterTaxUtils.isMeesevaUser(currentUser))
             waterConnectionDetails.setApplicationNumber(request.getParameter("applicationNo"));
-        return "regulariseconnection-form";
+        return REGULARISE_CONN_FORM;
     }
 
     @PostMapping("/regulariseconnection/new")
-    public String createRegulariseConnApplication(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
-                                                  HttpServletRequest request, BindingResult errors, Model model) {
-        return createRegularisedConnection(waterConnectionDetails, null, errors, model, request);
+    public String createRegulariseConnApplication(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
+            final HttpServletRequest request, final BindingResult errors, final Model model) {
+        return createReglnConnection(waterConnectionDetails, null, errors, model, request);
     }
 
     @GetMapping("/regulariseconnection-form/{id}")
-    public String getApplicationForm(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
-                                     @PathVariable String id, Model model, HttpServletRequest request) {
+    public String getApplicationForm(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
+            @PathVariable final String id, final Model model, final HttpServletRequest request) {
         RegularisedConnection regularisedConnection = null;
         if (isNotBlank(id))
             regularisedConnection = regularisedConnectionService.findById(Long.valueOf(id));
-        if (regularisedConnection != null)
+        if (regularisedConnection != null) {
+            waterConnectionDetails.setApplicationDate(regularisedConnection.getApplicationDate());
             model.addAttribute("propertyId", regularisedConnection.getPropertyIdentifier());
+        }
         return loadApplicationFormDetails(waterConnectionDetails, request, model);
     }
 
     @PostMapping("/regulariseconnection-form/{id}")
-    public String createRegularisedConnection(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
-                                              @PathVariable Long id, BindingResult errors, Model model,
-                                              HttpServletRequest request) {
+    public String createReglnConnection(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
+            @PathVariable final Long id, final BindingResult errors, final Model model,
+            final HttpServletRequest request) {
 
-        User currentUser = securityUtils.getCurrentUser();
-        boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(currentUser);
-        boolean isCSCOperator = waterTaxUtils.isCSCoperator(currentUser);
-        boolean isAnonymousUser = waterTaxUtils.isAnonymousUser(currentUser);
-        boolean loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(currentUser);
+        if (regularisedConnectionValidator.validateRegularizationApplication(id)) {
+            model.addAttribute("message", "msg.application.already.exist");
+            model.addAttribute("mode", "error");
+            return REGULARISE_CONN_FORM;
+        }
+
+        final User currentUser = securityUtils.getCurrentUser();
+        final boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(currentUser);
+        final boolean isCSCOperator = waterTaxUtils.isCSCoperator(currentUser);
+        final boolean isAnonymousUser = waterTaxUtils.isAnonymousUser(currentUser);
+        final boolean loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(currentUser);
         if (!isCSCOperator && !citizenPortalUser && !loggedUserIsMeesevaUser && !isAnonymousUser) {
-            boolean isJuniorAsstOrSeniorAsst = waterTaxUtils.isLoggedInUserJuniorOrSeniorAssistant(currentUser.getId());
+            final boolean isJuniorAsstOrSeniorAsst = waterTaxUtils.isLoggedInUserJuniorOrSeniorAssistant(currentUser.getId());
             if (!isJuniorAsstOrSeniorAsst)
                 throw new ValidationException("err.creator.application");
         }
+
         RegularisedConnection connection = null;
         if (id != null)
             connection = regularisedConnectionService.findById(id);
+
         if (connection != null) {
             waterConnectionDetails.setApplicationDate(connection.getApplicationDate());
             waterConnectionDetails.setApplicationNumber(connection.getApplicationNumber());
             if ("SURVEY".equals(connection.getSource()))
                 waterConnectionDetails.setSource(SURVEY);
         }
+
         else if (isCSCOperator)
             waterConnectionDetails.setSource(CSC);
         else if (citizenPortalUser)
@@ -209,12 +227,12 @@ public class RegularisedConnectionController extends GenericConnectionController
 
         if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType()))
             waterConnectionDetailsService.validateWaterRateAndDonationHeader(waterConnectionDetails);
-        List<ApplicationDocuments> applicationDocuments = new ArrayList<>();
-        String documentsRequired = waterTaxUtils.documentRequiredForBPLCategory();
-        int i = 0;
+        final List<ApplicationDocuments> applicationDocuments = new ArrayList<>();
+        final String documentsRequired = waterTaxUtils.documentRequiredForBPLCategory();
+        final int index = 0;
         if (!waterConnectionDetails.getApplicationDocs().isEmpty())
-            for (ApplicationDocuments applicationDocument : waterConnectionDetails.getApplicationDocs())
-                newConnectionService.validateDocuments(applicationDocuments, applicationDocument, i, errors,
+            for (final ApplicationDocuments applicationDocument : waterConnectionDetails.getApplicationDocs())
+                newConnectionService.validateDocuments(applicationDocuments, applicationDocument, index, errors,
                         waterConnectionDetails.getCategory().getId(), documentsRequired);
 
         if (waterConnectionDetails.getState() == null)
@@ -234,14 +252,14 @@ public class RegularisedConnectionController extends GenericConnectionController
         if (isNotBlank(request.getParameter(APPROVALPOSITION)))
             approvalPosition = Long.valueOf(request.getParameter(APPROVALPOSITION));
 
-        boolean applicationByOthers = waterTaxUtils.getCurrentUserRole(currentUser);
+        final boolean applicationByOthers = waterTaxUtils.getCurrentUserRole(currentUser);
         if (applicationByOthers || citizenPortalUser || isAnonymousUser) {
-            Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(
+            final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(
                     waterConnectionDetails.getConnection().getPropertyIdentifier());
 
             if (userPosition == null) {
                 model.addAttribute(VALIDIFPTDUEEXISTS, waterTaxUtils.isConnectionAllowedIfPTDuePresent());
-                WorkflowContainer workflowContainer = new WorkflowContainer();
+                final WorkflowContainer workflowContainer = new WorkflowContainer();
                 prepareWorkflow(model, waterConnectionDetails, workflowContainer);
                 model.addAttribute(ADDITIONALRULE, waterConnectionDetails.getApplicationType().getCode());
                 model.addAttribute("approvalPosOnValidate", request.getParameter(APPROVALPOSITION));
@@ -261,7 +279,7 @@ public class RegularisedConnectionController extends GenericConnectionController
             waterConnectionDetails.setSource(waterTaxUtils.setSourceOfConnection(currentUser));
 
         if (loggedUserIsMeesevaUser) {
-            HashMap<String, String> meesevaParams = new HashMap<>();
+            final HashMap<String, String> meesevaParams = new HashMap<>();
             meesevaParams.put("APPLICATIONNUMBER", waterConnectionDetails.getMeesevaApplicationNumber());
             if (waterConnectionDetails.getApplicationNumber() == null) {
                 waterConnectionDetails.setApplicationNumber(waterConnectionDetails.getMeesevaApplicationNumber());
@@ -280,11 +298,11 @@ public class RegularisedConnectionController extends GenericConnectionController
             return "redirect:/application/citizeenAcknowledgement?pathVars=" + waterConnectionDetails.getApplicationNumber();
     }
 
-    public String loadApplicationForm(WaterConnectionDetails waterConnectionDetails, Model model,
-                                      HttpServletRequest request) {
+    public String loadApplicationForm(final WaterConnectionDetails waterConnectionDetails, final Model model,
+            final HttpServletRequest request) {
         waterConnectionDetails.setApplicationDate(new Date());
         model.addAttribute(VALIDIFPTDUEEXISTS, waterTaxUtils.isConnectionAllowedIfPTDuePresent());
-        WorkflowContainer workflowContainer = new WorkflowContainer();
+        final WorkflowContainer workflowContainer = new WorkflowContainer();
         workflowContainer.setAdditionalRule(waterConnectionDetails.getApplicationType().getCode());
         prepareWorkflow(model, waterConnectionDetails, workflowContainer);
         model.addAttribute(ADDITIONALRULE, waterConnectionDetails.getApplicationType().getCode());
@@ -293,36 +311,41 @@ public class RegularisedConnectionController extends GenericConnectionController
         model.addAttribute("typeOfConnection", REGULARIZE_CONNECTION);
         model.addAttribute(STATETYPE, waterConnectionDetails.getClass().getSimpleName());
         model.addAttribute("documentName", waterTaxUtils.documentRequiredForBPLCategory());
-        return "regulariseconnection-form";
+        return REGULARISE_CONN_FORM;
     }
 
     @GetMapping(value = "/regulariseconnection/demandnote-view/{applicationNumber}", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
-    public ResponseEntity<InputStreamResource> viewDemandNote(@PathVariable String applicationNumber) {
+    public ResponseEntity<InputStreamResource> viewDemandNote(@PathVariable final String applicationNumber) {
 
-        WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
-        if (waterConnectionDetails == null) {
+        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                .findByApplicationNumber(applicationNumber);
+        if (waterConnectionDetails == null)
             throw new ApplicationRuntimeException("err.application.not.exist");
-        }
-        EgDemand demand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        final EgDemand demand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
         boolean isDemandPresent = false;
-        for (EgDemandDetails demandDetails : demand.getEgDemandDetails())
+        for (final EgDemandDetails demandDetails : demand.getEgDemandDetails())
             if (WATERTAXREASONCODE.equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode())
-                    || METERED_CHARGES_REASON_CODE.equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                    || METERED_CHARGES_REASON_CODE
+                            .equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
                 isDemandPresent = true;
         if (!isDemandPresent)
             throw new ValidationException("err.demand.not.present");
-        return ReportUtil.reportAsResponseEntity(reportGenerationService.generateRegulariseConnDemandNote(waterConnectionDetails));
+        return ReportUtil
+                .reportAsResponseEntity(reportGenerationService.generateRegulariseConnDemandNote(waterConnectionDetails));
     }
 
     @GetMapping(value = "/regulariseconnection/proceedings-view/{applicationNumber}", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
-    public ResponseEntity<InputStreamResource> viewProceedings(@PathVariable("applicationNumber") String applicationNumber) {
+    public ResponseEntity<InputStreamResource> viewProceedings(
+            @PathVariable("applicationNumber") final String applicationNumber) {
 
-        WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
+        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                .findByApplicationNumber(applicationNumber);
         if (waterConnectionDetails == null)
             throw new ApplicationRuntimeException("err.application.not.exist");
-        return ReportUtil.reportAsResponseEntity(reportGenerationService.generateRegulariseConnProceedings(waterConnectionDetails));
+        return ReportUtil
+                .reportAsResponseEntity(reportGenerationService.generateRegulariseConnProceedings(waterConnectionDetails));
     }
 
 }

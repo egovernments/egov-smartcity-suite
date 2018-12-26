@@ -89,26 +89,28 @@ public class ViewConnectionController {
 
     @GetMapping(value = "/view/{applicationNumber}")
     public String view(@PathVariable String applicationNumber, Model model) {
-        WaterConnectionDetails details = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(applicationNumber,
+        WaterConnectionDetails connectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(
+                applicationNumber,
                 ConnectionStatus.ACTIVE);
-        if (details == null)
-            details = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(applicationNumber,
+        if (connectionDetails == null)
+            connectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(applicationNumber,
                     ConnectionStatus.CLOSED);
-        if (details == null)
-            details = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(applicationNumber);
+        if (connectionDetails == null)
+            connectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(applicationNumber);
         model.addAttribute("applicationDocList",
-                waterConnectionDetailsService.getApplicationDocForExceptClosureAndReConnection(details));
-        model.addAttribute("waterConnectionDetails", details);
+                waterConnectionDetailsService.getApplicationDocForExceptClosureAndReConnection(connectionDetails));
+        model.addAttribute("waterConnectionDetails", connectionDetails);
         model.addAttribute("connectionType",
-                waterConnectionDetailsService.getConnectionTypesMap().get(details.getConnectionType().name()));
-        model.addAttribute("feeDetails", connectionDemandService.getSplitFee(details));
+                waterConnectionDetailsService.getConnectionTypesMap().get(connectionDetails.getConnectionType().name()));
+        model.addAttribute("feeDetails", connectionDemandService.getSplitFee(connectionDetails));
         model.addAttribute("checkOperator", waterTaxUtils.checkCollectionOperatorRole());
         model.addAttribute("citizenRole", waterTaxUtils.getCitizenUserRole());
-        final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getWaterTaxDueAmount(details);
+        final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getWaterTaxDueAmount(connectionDetails);
         model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
-        BigDecimal estimationAmount = estimationChargesPaymentService.getEstimationDueAmount(details);
+        BigDecimal estimationAmount = estimationChargesPaymentService.getEstimationDueAmount(connectionDetails);
         model.addAttribute("estimationAmount", estimationAmount.signum() >= 0 ? estimationAmount : BigDecimal.ZERO);
         model.addAttribute("mode", "search");
+        model.addAttribute("applicationHistory", waterConnectionDetailsService.getHistory(connectionDetails));
         model.addAttribute("citizenPortal", waterTaxUtils.isCitizenPortalUser(getUserId() == null
                 ? securityUtils.getCurrentUser() : userService.getUserById(getUserId())));
         return "application-view";

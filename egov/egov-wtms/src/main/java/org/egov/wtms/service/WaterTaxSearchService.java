@@ -48,6 +48,24 @@
 
 package org.egov.wtms.service;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityName;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
+import static org.egov.ptis.constants.PropertyTaxConstants.WATER_TAX_INDEX_NAME;
+import static org.egov.wtms.masters.entity.enums.ConnectionStatus.DISCONNECTED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ACTIVE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CHANGEOFUSE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTIONTYPE_METERED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_OPERATOR;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.END;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -65,23 +83,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.egov.infra.config.core.ApplicationThreadLocals.getCityName;
-import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
-import static org.egov.ptis.constants.PropertyTaxConstants.WATER_TAX_INDEX_NAME;
-import static org.egov.wtms.masters.entity.enums.ConnectionStatus.DISCONNECTED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.ACTIVE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CHANGEOFUSE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTIONTYPE_METERED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_OPERATOR;
 
 @Service
 public class WaterTaxSearchService {
@@ -166,7 +167,8 @@ public class WaterTaxSearchService {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
                 .filter(QueryBuilders.termQuery("cityName", getCityName()));
         if (isNotBlank(searchRequest.getApplicantName()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerName", searchRequest.getApplicantName()));
+            boolQuery = boolQuery.filter(
+                    QueryBuilders.wildcardQuery("consumerName", "*".concat(searchRequest.getApplicantName()).concat("*")));
         if (isNotBlank(searchRequest.getConsumerCode()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerCode", searchRequest.getConsumerCode()));
         if (isNotBlank(searchRequest.getOldConsumerNumber()))
@@ -223,11 +225,11 @@ public class WaterTaxSearchService {
         } else if (ADDNLCONNECTION.equals(connection.getApplicationCode())) {
             addAdditionalConnectionActions(connection, collectionOperatorRole, cscUser, ulbOperator, adminRole, connectionActions);
         } else if (NEWCONNECTION.equals(connection.getApplicationCode())) {
-            addNewConnectionActions(connection, collectionOperatorRole, cscUser, ulbOperator, adminRole, connectionActions);
+            addNewConnectionActions(connection, collectionOperatorRole, cscUser, ulbOperator, connectionActions);
         } else if (CHANGEOFUSE.equals(connection.getApplicationCode()) && ACTIVE.equals(connection.getStatus())) {
-            addChangeOfUseActions(connection, collectionOperatorRole, cscUser, ulbOperator, adminRole, connectionActions);
+            addChangeOfUseActions(connection, collectionOperatorRole, ulbOperator, connectionActions);
         } else if (RECONNECTION.equals(connection.getApplicationCode()) && ACTIVE.equals(connection.getStatus())) {
-            addReconnectionActions(connection, collectionOperatorRole, cscUser, ulbOperator, adminRole, connectionActions);
+            addReconnectionActions(connection, collectionOperatorRole, ulbOperator, connectionActions);
         } else if (CLOSINGCONNECTION.equals(connection.getApplicationCode())) {
             addClosingConnectionActions(connection, cscUser, ulbOperator, collectionOperatorRole, connectionActions);
         } else if (REGULARIZE_CONNECTION.equals(connection.getApplicationCode()) && ACTIVE.equals(connection.getStatus())) {
@@ -271,8 +273,7 @@ public class WaterTaxSearchService {
     }
 
     private void addNewConnectionActions(WaterChargeDocument connection, boolean collectionOperatorRole,
-                                         boolean cscUser, boolean ulbOperator, boolean adminRole,
-                                         List<String> connectionActions) {
+                                         boolean cscUser, boolean ulbOperator, List<String> connectionActions) {
         if (ACTIVE.equals(connection.getStatus())) {
             if (ulbOperator) {
                 getMeteredActions(connectionActions, connection, ulbOperator, collectionOperatorRole);
@@ -284,7 +285,7 @@ public class WaterTaxSearchService {
                 connectionActions.add(VIEW_WATER_CONNECTION);
                 connectionActions.add(CHANGE_OF_USE);
                 connectionActions.add(ADDITIONAL_CONNECTION);
-            } else if (adminRole) {
+            } else {
                 connectionActions.add(VIEW_DCB_SCREEN);
                 connectionActions.add(VIEW_WATER_CONNECTION);
             }
@@ -295,18 +296,19 @@ public class WaterTaxSearchService {
     }
 
     private void addChangeOfUseActions(WaterChargeDocument connection, boolean collectionOperatorRole,
-                                       boolean cscUser, boolean ulbOperator, boolean adminRole, List<String> connectionActions) {
+            boolean ulbOperator, List<String> connectionActions) {
         if (collectionOperatorRole && connection.getWaterTaxDue() > 0) {
-            connectionActions.add(connection.getWaterTaxDue() > 0 ? COLLECT_CHARGES : VIEW_DCB_SCREEN);
-        } else if (cscUser || (connection.getLegacy() && adminRole)) {
-            connectionActions.add(VIEW_DCB_SCREEN);
-            connectionActions.add(VIEW_WATER_CONNECTION);
+            connectionActions.add(connection.getWaterTaxDue() > 0 ? COLLECT_CHARGES : VIEW_DCB_SCREEN);       
         } else if (CONNECTIONTYPE_METERED.equals(connection.getConnectionType()) && ulbOperator) {
             connectionActions.add(ENTER_METER_READING);
             addActionsForChangeOFUse(connection, collectionOperatorRole, connectionActions);
         } else if (!CONNECTIONTYPE_METERED.equals(connection.getConnectionType()) && ulbOperator) {
             addActionsForChangeOFUse(connection, collectionOperatorRole, connectionActions);
         }
+        else {
+            connectionActions.add(VIEW_DCB_SCREEN);
+            connectionActions.add(VIEW_WATER_CONNECTION);
+        } 
     }
 
     private void addActionsForChangeOFUse(WaterChargeDocument connection, boolean collectionOperatorRole, List<String> connectionActions) {
@@ -318,7 +320,7 @@ public class WaterTaxSearchService {
 
     private void addClosingConnectionActions(WaterChargeDocument connection, boolean cscUser,
                                              boolean ulbOperator, boolean collectionOperatorRole, List<String> connectionActions) {
-        if ((cscUser || ulbOperator) && CLOSED.equals(connection.getStatus())) {
+        if ((cscUser || ulbOperator) && (CLOSED.equals(connection.getStatus()) || END.equals(connection.getStatus()))) {
             connectionActions.add(VIEW_WATER_CONNECTION);
             connectionActions.add(DOWNLOAD_CLOSURE_PROCEEDING);
             if (TEMP_CLOSURE_TYPE.equals(connection.getClosureType())) {
@@ -330,9 +332,7 @@ public class WaterTaxSearchService {
     }
 
     private void addReconnectionActions(WaterChargeDocument connection, boolean collectionOperatorRole,
-                                        boolean cscUser, boolean ulbOperator, boolean adminRole,
-                                        List<String> connectionActions) {
-
+            boolean ulbOperator, List<String> connectionActions) {
         if (ulbOperator && CONNECTIONTYPE_METERED.equals(connection.getConnectionType())) {
             connectionActions.add(VIEW_DCB_SCREEN);
             connectionActions.add(VIEW_WATER_CONNECTION);
@@ -349,7 +349,7 @@ public class WaterTaxSearchService {
             }
         } else if (collectionOperatorRole && connection.getWaterTaxDue() > 0) {
             connectionActions.add(COLLECT_CHARGES);
-        } else if (cscUser || ulbOperator || adminRole) {
+        } else {
             connectionActions.add(VIEW_DCB_SCREEN);
             connectionActions.add(VIEW_WATER_CONNECTION);
             connectionActions.add(DOWNLOAD_RECONNEC_PROCEEDING);
@@ -366,6 +366,9 @@ public class WaterTaxSearchService {
             if (collectionOperatorRole && connection.getWaterTaxDue() >= 0) {
                 connectionActions.add(COLLECT_CHARGES);
                 connectionActions.add(VIEW_DCB_SCREEN);
+            } else {
+                connectionActions.add(VIEW_DCB_SCREEN);
+                connectionActions.add(VIEW_WATER_CONNECTION);
             }
         }
     }
@@ -379,6 +382,10 @@ public class WaterTaxSearchService {
             }
             if (collectionOperatorRole && connection.getWaterTaxDue() >= 0)
                 connectionActions.add(COLLECT_CHARGES);
+            else {
+                connectionActions.add(VIEW_DCB_SCREEN);
+                connectionActions.add(VIEW_WATER_CONNECTION);
+            }
         }
     }
 

@@ -184,10 +184,10 @@ public class CalculatePropertyTaxService {
                 else if (miscTax.getTaxName() == DEMANDRSN_CODE_PRIMARY_SERVICE_CHARGES)
                     serviceCharges = serviceCharges.add(miscTax.getTotalCalculatedTax());
 
-        BigDecimal totalTax = genTax.setScale(0, RoundingMode.CEILING).add(unAuthPenalty.setScale(0, RoundingMode.CEILING))
-                .add(eduTax.setScale(0, RoundingMode.CEILING)).add(vacLandTax.setScale(0, RoundingMode.CEILING))
-                .add(libCess.setScale(0, RoundingMode.CEILING)).add(sewrageTax.setScale(0, RoundingMode.CEILING))
-                .add(serviceCharges.setScale(0, RoundingMode.CEILING));
+        BigDecimal totalTax = genTax.setScale(0, BigDecimal.ROUND_HALF_UP).add(unAuthPenalty.setScale(0, BigDecimal.ROUND_HALF_UP))
+                .add(eduTax.setScale(0, BigDecimal.ROUND_HALF_UP)).add(vacLandTax.setScale(0, BigDecimal.ROUND_HALF_UP))
+                .add(libCess.setScale(0, BigDecimal.ROUND_HALF_UP)).add(sewrageTax.setScale(0, BigDecimal.ROUND_HALF_UP))
+                .add(serviceCharges.setScale(0, BigDecimal.ROUND_HALF_UP));
 
         setTaxDetailsToMap(propTypeMstr, taxDetails, annualValue, totalTax, genTax, libCess, eduTax, unAuthPenalty,
                 vacLandTax, sewrageTax, serviceCharges);

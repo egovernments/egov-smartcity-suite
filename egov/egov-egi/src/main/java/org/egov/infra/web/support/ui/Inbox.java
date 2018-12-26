@@ -54,16 +54,21 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.entity.WorkflowType;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
+import static org.egov.infra.utils.DateUtils.now;
 import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
 import static org.egov.infra.utils.StringUtils.escapeSpecialChars;
 
-public class Inbox {
+public class Inbox implements Serializable {
+
+    private static final long serialVersionUID = -6153234400275233899L;
+
     private String id;
     private String sender;
     private String date;
@@ -74,6 +79,7 @@ public class Inbox {
     private String moduleName;
     private Date createdDate;
     private boolean draft;
+    private Date sla;
 
     public Inbox() {
         //Default constructor for external inbox integration
@@ -92,6 +98,7 @@ public class Inbox {
         this.moduleName = workflowType.getModule().getDisplayName();
         this.createdDate = state.getCreatedDate();
         this.draft = state.isNew() && state.getCreatedBy().getId().equals(getUserId());
+        this.sla = state.getSla();
     }
 
     private Inbox(StateHistory stateHistory, WorkflowType workflowType) {
@@ -195,5 +202,9 @@ public class Inbox {
 
     public void setDraft(final boolean draft) {
         this.draft = draft;
+    }
+
+    public boolean isWithinSla() {
+        return this.sla == null || sla.after(now());
     }
 }

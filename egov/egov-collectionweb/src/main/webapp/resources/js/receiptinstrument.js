@@ -184,8 +184,8 @@ function clearChequeDDDetails() {
 		}
 	}
 
-	for (var z = 5; z < len; z++) {
-		table.deleteRow(5);
+	for (var z = 4; z < len; z++) {
+		table.deleteRow(4);
 	}
 }
 
@@ -205,6 +205,7 @@ function clearBankDetails() {
 // 'chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow'
 function addChequeGrid(tableId, trId2, trId3, trId4, obj, trId5) {
 	document.getElementById("error_area").innerHTML = "";
+	dom.get("error_area").style.display = "none";
 	var chequetable = document.getElementById('chequegrid');
 	var chequetablelen1 = chequetable.rows.length;
 
@@ -390,6 +391,49 @@ function loadchequedetails() {
 		}
 	}
 }
+function displayChequeDDInstrumentTypeDetails(){
+	var table=document.getElementById('chequegrid');
+	var len=table.rows.length;
+	
+	 var chequeAllowed=document.getElementById("chequeAllowed").value;
+     var ddAllowed=document.getElementById("ddAllowed").value;
+
+	for(var j=0;j<len;j++)
+	{
+	    //clear instrument type
+	    if(getControlInBranch(table.rows[j],'instrumentType')!=null ){
+	    	if(chequeAllowed=='true' && ddAllowed=='false'){
+	    		getControlInBranch(table.rows[j],'instrumentType').value="cheque";
+	    		
+	    		getControlInBranch(table.rows[j],'instrumenttypecheque').checked=true;
+	    		getControlInBranch(table.rows[j],'instrumenttypedd').checked=false;
+	    		
+	    		getControlInBranch(table.rows[j],'instrumenttypecheque').disabled=true;
+	    		getControlInBranch(table.rows[j],'instrumenttypedd').disabled=true;
+	    	}
+	    	if(chequeAllowed=='false' && ddAllowed=='true'){
+	    		getControlInBranch(table.rows[j],'instrumentType').value="dd";
+	    		
+	    		getControlInBranch(table.rows[j],'instrumenttypecheque').checked=false;
+	    		getControlInBranch(table.rows[j],'instrumenttypedd').checked=true;
+	    		
+	    		getControlInBranch(table.rows[j],'instrumenttypecheque').disabled=true;
+	    		
+	    		getControlInBranch(table.rows[j],'instrumenttypedd').disabled=true;
+	    	}
+	    }
+    }
+	if(chequeAllowed=='true' && ddAllowed=='false')
+	{
+		document.getElementById('chequeradiobuttonspan').style.display = "block";
+		document.getElementById('ddradiobuttonspan').style.display = "none";
+	}
+	else if(chequeAllowed=='false' && ddAllowed=='true')
+	{
+		document.getElementById('ddradiobuttonspan').style.display = "block";
+		document.getElementById('chequeradiobuttonspan').style.display = "none";
+	}
+}
 
 // This function is called to display the payt modes at the time of body load
 // and
@@ -397,8 +441,8 @@ function loadchequedetails() {
 function displayPaytModes() {
 	var cashAllowed = document.getElementById("cashAllowed").value;
 	var cardAllowed = document.getElementById("cardAllowed").value;
-	// var chequeAllowed=document.getElementById("chequeAllowed").value;
-	// var ddAllowed=document.getElementById("ddAllowed").value;
+	var chequeAllowed=document.getElementById("chequeAllowed").value;
+	var ddAllowed=document.getElementById("ddAllowed").value;
 	var chequeDDAllowed = isChequeDDAllowed();
 	var bankAllowed = document.getElementById("bankAllowed").value;
 	var onlineAllowed = document.getElementById("onlineAllowed").value;
@@ -407,7 +451,6 @@ function displayPaytModes() {
 	if (cashAllowed == 'true') {
 		// display cash radio button, set it as checked and display cash details
 		document.getElementById('cashradiobuttonspan').style.display = "block";
-
 		document.getElementById('cashradiobutton').checked = true;
 		document.getElementById('cashdetails').style.display = 'table-row';
 		document.getElementById('instrumentTypeCashOrCard').value = "cash";
@@ -429,6 +472,7 @@ function displayPaytModes() {
 	if (chequeDDAllowed == 'true') {
 		// display cheque DD radio button
 		document.getElementById('chequeradiobuttonspan').style.display = "block";
+		displayChequeDDInstrumentTypeDetails();
 	} else {
 		// do not display cheque/DD radio button
 		document.getElementById('chequeradiobuttonspan').style.display = "none";
@@ -453,10 +497,16 @@ function displayPaytModes() {
 	// if cash is not allowed and cheque is allowed, set cheque as the default
 	// payt
 	if (chequeDDAllowed == 'true' && cashAllowed == 'false') {
+		if (chequeAllowed == 'true') {
 		document.getElementById('chequeradiobutton').checked = true;
+		}   
+		else if(ddAllowed == 'true'){
+			document.getElementById('ddradiobutton').checked = true;
+		}
 		document.getElementById('chequeDDdetails').style.display = 'table-row';
 		document.getElementById('cashdetails').style.display = "none";
 		document.getElementById('instrumentTypeCashOrCard').value = "";
+		displayChequeDDInstrumentTypeDetails();
 	}
 	// if cash, cheque/DD are not allowed and card is allowed, set card as the
 	// default payt

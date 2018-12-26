@@ -84,7 +84,9 @@ import static org.egov.adtax.entity.AdvertisementPermitDetail.SEQ_ADTAX_APPLICAT
 public class AdvertisementPermitDetail extends StateAware<Position> {
 
     public static final String SEQ_ADTAX_APPLICATION = "SEQ_EGADTAX_PERMITDETAILS";
+    
     private static final long serialVersionUID = 845357231248646624L;
+    
     @Id
     @GeneratedValue(generator = SEQ_ADTAX_APPLICATION, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -151,16 +153,22 @@ public class AdvertisementPermitDetail extends StateAware<Position> {
     private UnitOfMeasure unitOfMeasure;
 
     private Double measurement;
+    
     private Double length;
+    
     private Double width;
+    
     private Double breadth;
+    
     private Double totalHeight;
 
-    private String deactivation_remarks;
+    @Column(name = "deactivation_remarks")
+    private String deactivationRemarks;
 
-    private Date deactivation_date;
+    @Column(name = "deactivation_date")
+    private Date deactivationDate;
 
-    private String Source;
+    private String source;
 
     @Enumerated(EnumType.ORDINAL)
     private AdvertisementApplicationType applicationtype;
@@ -380,28 +388,28 @@ public class AdvertisementPermitDetail extends StateAware<Position> {
         this.approvalComent = approvalComent;
     }
 
-    public String getDeactivation_remarks() {
-        return deactivation_remarks;
+    public String getDeactivationRemarks() {
+        return deactivationRemarks;
     }
 
-    public void setDeactivation_remarks(String deactivation_remarks) {
-        this.deactivation_remarks = deactivation_remarks;
+    public void setDeactivationRemarks(String deactivationRemarks) {
+        this.deactivationRemarks = deactivationRemarks;
     }
 
-    public Date getDeactivation_date() {
-        return deactivation_date;
+    public Date getDeactivationDate() {
+        return deactivationDate;
     }
 
-    public void setDeactivation_date(Date deactivation_date) {
-        this.deactivation_date = deactivation_date;
+    public void setDeactivationDate(Date deactivationDate) {
+        this.deactivationDate = deactivationDate;
     }
 
     public String getSource() {
-        return Source;
+        return source;
     }
 
     public void setSource(String source) {
-        Source = source;
+        this.source = source;
     }
 
     public AdvertisementApplicationType getApplicationtype() {

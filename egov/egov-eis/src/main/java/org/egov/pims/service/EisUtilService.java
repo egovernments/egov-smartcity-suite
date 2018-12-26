@@ -70,11 +70,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service("eisService")
 @Transactional(readOnly = true)
@@ -138,24 +134,6 @@ public class EisUtilService implements OwnerGroupService<Position> {
 
         }
         return position;
-
-    }
-
-    public User getUserForPosition(Long positionId, Date date) {
-        User user;
-        try {
-            String mainStr = "select emp.userMaster from EmployeeView emp where emp.position.id = ?";
-
-            Date givenDate = date == null ? new Date() : date;
-
-            mainStr += " and ((emp.toDate is null and emp.fromDate<= ?) or (emp.fromDate <= ? and emp.toDate >= ?))";
-            user = (User) persistenceService.find(mainStr, positionId, givenDate, givenDate, givenDate);
-        } catch (Exception e) {
-            LOGGER.error("Exception while getting the getUserForPosition=" + e.getMessage());
-            throw new ApplicationRuntimeException(e.getMessage(), e);
-
-        }
-        return user;
 
     }
 

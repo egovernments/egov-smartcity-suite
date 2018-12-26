@@ -65,6 +65,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.NO_OF_INSTALLMENTS
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_CONNECTION_CHARGE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_DONATION_CHARGE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.YEARLY;
 
@@ -129,7 +130,8 @@ public class WaterEstimationChargesPaymentService {
         if (currentDemand != null)
             for (EgDemandDetails demandDetails : currentDemand.getEgDemandDetails()) {
                 if (!demandCodes.contains(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
-                    estimationAmount = estimationAmount.add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()));
+                    estimationAmount = estimationAmount.add(demandDetails.getAmount().subtract(demandDetails.getAmtRebate()
+                            .add(demandDetails.getAmtCollected())));
                 }
             }
         return estimationAmount;
@@ -164,9 +166,10 @@ public class WaterEstimationChargesPaymentService {
             BigDecimal estimationAmount = getEstimationAmount(connectionDetails);
             BigDecimal estimationDueAmount = getEstimationDueAmount(connectionDetails);
             BigDecimal estimationInstAmount = estimationAmount.divide(noOfInstallment, ROUND_HALF_UP).setScale(0, ROUND_HALF_UP);
-            if (CATEGORY_BPL.equalsIgnoreCase(connectionDetails.getCategory().getName())
-                    || REGULARIZE_CONNECTION.equals(connectionDetails.getApplicationType().getCode()))
+            if (REGULARIZE_CONNECTION.equals(connectionDetails.getApplicationType().getCode()))
                 waterConnectionBillable.getCurrentDemand().setMinAmtPayable(estimationAmount);
+            else if (CATEGORY_BPL.equalsIgnoreCase(connectionDetails.getCategory().getName()))
+                waterConnectionBillable.getCurrentDemand().setMinAmtPayable(setBPLMinimumAmount(connectionDetails));
             else if (estimationDueAmount.compareTo(estimationInstAmount) > 0)
                 waterConnectionBillable.getCurrentDemand().setMinAmtPayable(estimationInstAmount);
             else
@@ -193,5 +196,15 @@ public class WaterEstimationChargesPaymentService {
                 }
             }
         return estimationAmount;
+    }
+    
+    public BigDecimal setBPLMinimumAmount(WaterConnectionDetails waterConnectionDetails) {
+        EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        if(currentDemand!=null)
+            for(EgDemandDetails demandDetail: currentDemand.getEgDemandDetails()) {
+                if(WATERTAX_DONATION_CHARGE.equalsIgnoreCase(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                    return demandDetail.getAmount();
+            }
+        return ZERO;
     }
 }

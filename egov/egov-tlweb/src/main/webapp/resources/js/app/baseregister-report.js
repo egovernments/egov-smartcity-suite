@@ -167,15 +167,15 @@ function onSubmitEvent(event) {
                     "sTitle": "Old License No."
                 }, {
                     "data": "tradetitle",
-                    "name": "tradetitle",
+                    "name": "tradeTitle",
                     "sTitle": "Trade Title"
                 }, {
                     "data": "category",
-                    "name": "categoryname",
+                    "name": "categoryName",
                     "sTitle": "Category"
                 }, {
                     "data": "subcategory",
-                    "name": "subcategoryname",
+                    "name": "subCategoryName",
                     "sTitle": "Subcategory"
                 }, {
                     "data": "owner",
@@ -187,59 +187,59 @@ function onSubmitEvent(event) {
                     "sTitle": "Owner MobileNo"
                 }, {
                     "data": "assessmentno",
-                    "name": "assessmentno",
+                    "name": "assessmentNo",
                     "sTitle": "Assessment No"
                 }, {
                     "data": "revenueWard",
-                    "name": "revenueward",
+                    "name": "wardName",
                     "sTitle": "Revenue Ward"
-                },{
+                }, {
                     "data": "electionWard",
-                    "name": "electionward",
+                    "name": "adminWardName",
                     "sTitle": "Election Ward"
                 }, {
                     "data": "localityname",
-                    "name": "localityname",
+                    "name": "localityName",
                     "sTitle": "Locality"
                 }, {
                     "data": "tradeaddress",
-                    "name": "tradeaddress",
+                    "name": "tradeAddress",
                     "sTitle": "Trade Address"
                 }, {
                     "data": "commencementdate",
-                    "name": "commencementdate",
+                    "name": "commencementDate",
                     "sTitle": "Commencement Date"
                 }, {
                     "data": "status",
-                    "name": "statusname",
+                    "name": "statusName",
                     "sTitle": "Status"
                 }, {
                     "data": "unitofmeasure",
-                    "name": "uom",
+                    "name": "unitOfMeasure",
                     "sTitle": "UOM"
                 }, {
                     "data": "tradearea",
-                    "name": "tradewt",
+                    "name": "tradeWt",
                     "sTitle": "Unit value"
                 }, {
                     "data": "rate",
-                    "name": "rateval",
+                    "name": "rateVal",
                     "sTitle": "Rate"
                 }, {
                     "data": "arrearlicfee",
-                    "name": "arrearlicensefee",
+                    "name": "arrearLicenseFee",
                     "sTitle": "License Fee(Arrears)"
                 }, {
                     "data": "arrearpenaltyfee",
-                    "name": "arrearpenaltyfee",
+                    "name": "arrearPenaltyFee",
                     "sTitle": "Penalty(Arrears)"
                 }, {
                     "data": "curlicfee",
-                    "name": "curlicensefee",
+                    "name": "curLicenseFee",
                     "sTitle": "License Fee(Current)"
                 }, {
                     "data": "curpenaltyfee",
-                    "name": "curpenaltyfee",
+                    "name": "curPenaltyFee",
                     "sTitle": "Penalty(Current)"
                 }],
             "aaSorting": [[0, 'asc']],

@@ -46,39 +46,35 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ page contentType="text/html" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<style>
+body {
+	font-family: regular !important;
+	font-size: 14px;
+}
+</style>
 <div class="row">
 	<div class="col-md-12">
-		<form:form  id="complaintRouterSuccess" method ="post" 
-		 class="form-horizontal form-groups-bordered" modelAttribute="complaintRouter" >
-		 		
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-						<strong><spring:message code="${routerHeading}"/></strong>
-					</div>
-				</div> 
-                <div class="panel-body">
-					<div class="row add-border">
-						<div class="col-md-9 col-xs-6 add-margin" id="ct-name">
-							<strong><spring:message code="${message}"/></strong>
-						</div>
-					</div>
+		<div class="panel panel-primary" data-collapsed="0"
+			style="text-align: left">
+			<div class="panel-heading">
+				<div class="panel-title">
+					<spring:message code="lbl.validation.error" text="Validation Error" />
 				</div>
 			</div>
-			<div class="row">
-				<div class="text-center">
-					<button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()">
-			       		<spring:message code="lbl.close"/>
-			       </button>
+			<div class="panel-body"
+				style="text-align: center; color: red; font-size: 20px">
+				<div class="mandatory" style="text-align: center;">
+					<spring:message code="${errorMsg}" />
 				</div>
 			</div>
-		</form:form>
+		</div>
+		<div class="buttonbottom" align="center">
+					<input type="button" name="button2" id="button2" value="Close"
+						class="btn btn-default" onclick="window.close();" />
+				</div>
 	</div>
-</div>
-
-<script src="<cdn:url  value='/resources/js/app/complaintroutingsuccess.js?rnd=${app_release_no}'/>"></script>

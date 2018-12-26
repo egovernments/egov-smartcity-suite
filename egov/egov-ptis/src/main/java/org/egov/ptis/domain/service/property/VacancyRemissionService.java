@@ -181,7 +181,7 @@ public class VacancyRemissionService {
     private PTBillServiceImpl ptBillServiceImpl;
 
     public VacancyRemission getApprovedVacancyRemissionForProperty(final String upicNo) {
-        return vacancyRemissionRepository.findByUpicNo(upicNo);
+        return vacancyRemissionRepository.findByUpicNo(upicNo).get(0);
     }
 
     public VacancyRemission getLatestRejectAckGeneratedVacancyRemissionForProperty(final String upicNo) {
@@ -315,7 +315,8 @@ public class VacancyRemissionService {
                 vacancyRemission.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
                         .withOwner(pos).withNextAction(nextAction).withNatureOfTask(NATURE_VACANCY_REMISSION)
-                        .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
+                        .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
+                        .withSLA(propertyService.getSlaValue(APPLICATION_TYPE_VACANCY_REMISSION));
                 vacancyRemission.getBasicProperty().setUnderWorkflow(true);
             } else {
                 wfmatrix = vacancyRemissionWorkflowService.getWfMatrix(vacancyRemission.getStateType(), null, null,
@@ -473,11 +474,11 @@ public class VacancyRemissionService {
             assignment = assignmentService.getPrimaryAssignmentForUser(vacancyRemission.getCreatedBy().getId());
         else {
             if (vacancyRemission.getState().getInitiatorPosition() == null)
-                assignment = assignmentService.getPrimaryAssignmentForPositon(
-                        vacancyRemission.getStateHistory().get(0).getOwnerPosition().getId());
+                assignment = assignmentService.getAssignmentsForPosition(
+                        vacancyRemission.getStateHistory().get(0).getOwnerPosition().getId()).get(0);
             else
-                assignment = assignmentService.getPrimaryAssignmentForPositon(
-                        vacancyRemission.getState().getInitiatorPosition().getId());
+                assignment = assignmentService.getAssignmentsForPosition(
+                        vacancyRemission.getState().getInitiatorPosition().getId()).get(0);
         }
         initiatorName = assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
         return initiatorName;

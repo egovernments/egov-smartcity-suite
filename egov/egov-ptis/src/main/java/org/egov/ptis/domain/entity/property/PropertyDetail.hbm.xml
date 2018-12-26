@@ -109,8 +109,6 @@
 		<property name="cornerPlot" column="IS_CORNERPLOT" />
 		<property name="comZone" column="IS_COMZONE" />
 
-		<property name="manualAlv" column="MANUAL_ALV" />
-		<property name="occupierName" column="OCCUPIER_NAME" />
 		<property name="lift" column="lift" type="boolean" />
 		<property name="toilets" column="toilets" type="boolean" />
 		<property name="waterTap" column="watertap" type="boolean" />

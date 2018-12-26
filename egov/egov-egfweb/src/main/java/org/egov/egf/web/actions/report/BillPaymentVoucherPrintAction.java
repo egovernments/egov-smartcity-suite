@@ -110,7 +110,7 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
     private String chequeNumber = "";
     private transient InstrumentHeader instrumentHeader = null;
     private String cashModePartyName = "";                // Also used as a flag to check if the mode of payment is Cash
-    private String chequeDate = "";
+    private String chequeDate = "N/A";
     private String rtgsRefNo = "";
     private String rtgsDate = "";
     private String paymentMode = "";
@@ -147,13 +147,23 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
         }
 
         paramMap.put("amountInWords", getAmountInWords());
-        paramMap.put("chequeNumber", chequeNumber);
+        if(StringUtils.isNotEmpty(chequeNumber)){
+            paramMap.put("chequeNumber", chequeNumber);
+        }else{
+            paramMap.put("chequeNumber", "N/A");
+        }
+
         paramMap.put("chequeDate", chequeDate);
         paramMap.put("rtgsRefNo", rtgsRefNo);
         paramMap.put("paymentMode", paymentMode);
         paramMap.put("rtgsDate", rtgsDate);
         paramMap.put("ulbName", ReportUtil.getCityName());
-        paramMap.put("narration", getPaymentNarration());
+        if(StringUtils.isNotBlank(getPaymentNarration()) || StringUtils.isNotEmpty(getPaymentNarration())){
+            paramMap.put("narration", getPaymentNarration());
+        }else{
+            paramMap.put("narration", "N/A");
+        }
+
 
         return paramMap;
     }

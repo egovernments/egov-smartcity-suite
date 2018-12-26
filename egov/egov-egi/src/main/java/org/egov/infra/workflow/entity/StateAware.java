@@ -57,6 +57,7 @@ import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.infra.workflow.entity.contract.StateInfoBuilder;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
+import org.joda.time.LocalDateTime;
 
 import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
@@ -334,6 +335,20 @@ public abstract class StateAware<T extends OwnerGroup> extends AbstractAuditable
             return this;
         }
 
+        public final Transition withSLA(Date slaDate) {
+            checkTransitionStatus();
+            state.setSla(slaDate);
+            return this;
+        }
+
+        public final Transition withSLA(int slaDays) {
+            return withSLA(new LocalDateTime().plusDays(slaDays).toDate());
+        }
+
+        public final Transition withSLAHours(int slaHours) {
+            return withSLA(new LocalDateTime().plusHours(slaHours).toDate());
+        }
+
         private void resetState() {
             state.setComments(EMPTY);
             state.setDateInfo(null);
@@ -346,6 +361,7 @@ public abstract class StateAware<T extends OwnerGroup> extends AbstractAuditable
             state.setOwnerUser(null);
             state.setOwnerPosition(null);
             state.setInitiatorPosition(null);
+            state.setSla(null);
         }
 
     }

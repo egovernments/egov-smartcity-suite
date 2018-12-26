@@ -76,7 +76,6 @@ import org.mockito.Mock;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.util.NestedServletException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -169,12 +168,12 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
 
     }
 
-    @Test(expected = NestedServletException.class)
+    @Test
     public void editWithInvalidComplaintId() throws Exception {
         complaint = new Complaint();
         complaint.setComplaintType(complaintType);
         complaint.setDetails("Already Registered complaint");
-        mockMvc.perform(get("/complaint/update/CRN-123")).andReturn();
+        mockMvc.perform(get("/complaint/update/CRN-123")).andExpect(view().name("redirect:/error/404")).andReturn();
     }
 
     @Test
@@ -183,8 +182,8 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         complaint.setComplaintType(complaintType);
         complaint.setDetails("Already Registered complaint");
         when(complaintService.getComplaintByCRN("CRN-123")).thenReturn(complaint);
-        when(securityUtils.currentUserIsCitizen()).thenReturn(true);
-        final MvcResult result = mockMvc.perform(get("/complaint/update/CRN-123")).andExpect(view().name("complaint-citizen-edit"))
+        when(securityUtils.currentUserIsEmployee()).thenReturn(true);
+        final MvcResult result = mockMvc.perform(get("/complaint/update/CRN-123")).andExpect(view().name("complaint-edit"))
                 .andExpect(model().attributeExists("complaint")).andReturn();
 
         final Complaint existing = (Complaint) result.getModelAndView().getModelMap().get("complaint");
@@ -200,9 +199,9 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         complaint.setDetails("Already Registered complaint");
         id = 2L;
         when(complaintService.getComplaintByCRN("CRN-124")).thenReturn(complaint);
-        when(securityUtils.currentUserIsCitizen()).thenReturn(true);
+        when(securityUtils.currentUserIsEmployee()).thenReturn(true);
         final MvcResult result = mockMvc.perform(get("/complaint/update/CRN-124")).andExpect(status().isOk())
-                .andExpect(view().name("complaint-citizen-edit")).andExpect(model().attributeExists("complaint")).andReturn();
+                .andExpect(view().name("complaint-edit")).andExpect(model().attributeExists("complaint")).andReturn();
 
         final Complaint existing = (Complaint) result.getModelAndView().getModelMap().get("complaint");
         assertEquals(complaint.getDetails(), existing.getDetails());
@@ -223,11 +222,11 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         complaint.setLocation(ward);
         id = 2L;
         when(complaintService.getComplaintByCRN("CRN-124")).thenReturn(complaint);
-        final List<Boundary> wards = new ArrayList<Boundary>();
+        final List<Boundary> wards = new ArrayList<>();
         when(boundaryService.getChildBoundariesByBoundaryId(ward.getId())).thenReturn(wards);
-        when(securityUtils.currentUserIsCitizen()).thenReturn(true);
+        when(securityUtils.currentUserIsEmployee()).thenReturn(true);
         final MvcResult result = mockMvc.perform(get("/complaint/update/CRN-124")).andExpect(status().isOk())
-                .andExpect(view().name("complaint-citizen-edit")).andExpect(model().attributeExists("complaint")).andReturn();
+                .andExpect(view().name("complaint-edit")).andExpect(model().attributeExists("complaint")).andReturn();
 
         final Complaint existing = (Complaint) result.getModelAndView().getModelMap().get("complaint");
         assertEquals(complaint.getDetails(), existing.getDetails());

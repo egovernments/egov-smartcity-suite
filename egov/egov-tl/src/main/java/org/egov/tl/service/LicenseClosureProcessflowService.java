@@ -60,6 +60,7 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.contracts.LicenseStateInfo;
+import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -100,6 +101,9 @@ public class LicenseClosureProcessflowService {
     private SimpleWorkflowService<TradeLicense> licenseWorkflowService;
 
     @Autowired
+    private LicenseUtils licenseUtils;
+
+    @Autowired
     private LicenseAppTypeService licenseAppTypeService;
 
     public void startClosureProcessflow(TradeLicense license) {
@@ -128,6 +132,7 @@ public class LicenseClosureProcessflowService {
             license.transition().startNext();
 
         license.transition()
+                .withSLA(licenseUtils.getSlaForAppType(licenseAppTypeService.getClosureLicenseApplicationType()))
                 .withSenderName(currentUser.getName())
                 .withComments(license.getWorkflowContainer().getApproverComments())
                 .withStateValue(workflowMatrix.getNextState())
@@ -151,10 +156,12 @@ public class LicenseClosureProcessflowService {
 
         if (!license.hasState())
             license.transition().start();
+
         else
             license.transition().startNext();
 
         license.transition()
+                .withSLA(licenseUtils.getSlaForAppType(licenseAppTypeService.getClosureLicenseApplicationType()))
                 .withSenderName(securityUtils.getCurrentUser().getName())
                 .withComments(license.getWorkflowContainer().getApproverComments())
                 .withStateValue(workflowMatrix.getNextState())

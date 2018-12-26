@@ -54,6 +54,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.AssignmentAdaptor;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
 import org.egov.pims.commons.Designation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -149,6 +150,25 @@ public class AjaxWorkFlowController {
         List<Designation> designationList = designationService.getDesignationsByNames(customizedWorkFlowService.getNextDesignations(type,
                 departmentRule, null, additionalRule, currentState,
                 pendingAction, new Date(), currentDesignation));
+        if (designationList.isEmpty())
+            designationList = designationService.getAllDesignationByDepartment(approvalDepartment, new Date());
+        return designationList;
+
+    }
+    
+    @RequestMapping(value = "/ajaxWorkFlow-getDesignationsByObjectTypeAndDesignationAndDate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<Designation> getDesignationsByObjectTypeAndDesignationAndDate(
+            @ModelAttribute("designations") @RequestParam final String departmentRule, @RequestParam final String currentState,
+            @RequestParam final String type,
+            @RequestParam final String amountRule, @RequestParam final String additionalRule,
+            @RequestParam final String pendingAction, @RequestParam final Long approvalDepartment,
+            @RequestParam final String currentDesignation, @RequestParam final String date) {
+
+        List<Designation> designationList = designationService
+                .getDesignationsByNames(customizedWorkFlowService.getNextDesignations(type,
+                        departmentRule, null, additionalRule, currentState,
+                        pendingAction, DateUtils.getDate(date, "yyyy-MM-dd"), currentDesignation));
         if (designationList.isEmpty())
             designationList = designationService.getAllDesignationByDepartment(approvalDepartment, new Date());
         return designationList;

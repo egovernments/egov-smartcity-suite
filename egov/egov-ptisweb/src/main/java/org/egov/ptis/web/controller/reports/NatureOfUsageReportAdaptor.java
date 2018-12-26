@@ -72,7 +72,8 @@ public class NatureOfUsageReportAdaptor implements JsonSerializer<NatureOfUsageR
         jsonObject.addProperty("mobileNumber", natureOfUsageResult.getMobileNumber());
         jsonObject.addProperty("doorNumber", natureOfUsageResult.getDoorNumber());
         jsonObject.addProperty("address", natureOfUsageResult.getAddress());
-        jsonObject.addProperty("halfYearTax", natureOfUsageResult.getHalfYearTax());
+        jsonObject.addProperty("fullYearTax", natureOfUsageResult.getFullYearTax());
+        jsonObject.addProperty("usageName", natureOfUsageResult.getUsageName());
         return jsonObject;
     }
 

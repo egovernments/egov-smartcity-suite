@@ -102,7 +102,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.BILLTYPE_MANUAL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.COLLECTION_STRING_SERVICE_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CURRENTYEAR_FIRST_HALF;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CURRENTYEAR_SECOND_HALF;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.DEMANDISHISTORY;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.DEMAND_ISHISTORY_N;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.DEMANDRSN_CODE_ADVANCE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.DEMANDRSN_REASON_ADVANCE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.DEMAND_REASON_ORDER_MAP;
@@ -185,7 +185,7 @@ public class ConnectionBillService extends BillServiceInterface {
             Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
 
             if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDebit().equalsIgnoreCase("N")
-                    && demandDetail.getAmount().compareTo(demandDetail.getAmtCollected()) > 0) {
+                    && (demandDetail.getAmount().subtract(demandDetail.getAmtRebate())).compareTo(demandDetail.getAmtCollected()) > 0) {
                 EgBillDetails billdetail = new EgBillDetails();
                 if (demandDetail.getAmount() != null) {
                     billdetail.setDrAmount(ZERO);
@@ -461,8 +461,8 @@ public class ConnectionBillService extends BillServiceInterface {
                 .setString("consumerCode", consumerCode)
                 .setString("billType", BILLTYPE_MANUAL)
                 .setString("connectionType", NON_METERED)
-                .setString("isDemandHistory", DEMANDISHISTORY)
-                .setString("isCancelled", DEMANDISHISTORY)
+                .setString("isDemandHistory", DEMAND_ISHISTORY_N)
+                .setString("isCancelled", DEMAND_ISHISTORY_N)
                 .setString("serviceCode", COLLECTION_STRING_SERVICE_CODE)
                 .setString("moduleType", MODULETYPE)
                 .setString("connectionStatus", ACTIVE)

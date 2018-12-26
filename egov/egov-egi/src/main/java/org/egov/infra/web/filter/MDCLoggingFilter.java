@@ -48,8 +48,6 @@
 
 package org.egov.infra.web.filter;
 
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.web.utils.WebUtils;
 import org.slf4j.MDC;
 
 import javax.servlet.Filter;
@@ -60,17 +58,16 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.io.IOException;
 
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityName;
+import static org.egov.infra.utils.ApplicationConstant.MDC_ULBCODE_KEY;
+
 public class MDCLoggingFilter implements Filter {
 
-    private static final String ULBCODE = "ulbcode";
-    private static final String APPNAME = "appname";
-
     @Override
-    public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
         try {
-            MDC.put(ULBCODE, ApplicationThreadLocals.getCityName());
-            MDC.put(APPNAME, WebUtils.currentContextPath(request).toUpperCase());
+            MDC.put(MDC_ULBCODE_KEY, getCityName());
             chain.doFilter(request, response);
         } finally {
             MDC.clear();
@@ -78,7 +75,7 @@ public class MDCLoggingFilter implements Filter {
     }
 
     @Override
-    public void init(final FilterConfig filterConfig) throws ServletException {
+    public void init(final FilterConfig filterConfig) {
         //Do nothing
     }
 

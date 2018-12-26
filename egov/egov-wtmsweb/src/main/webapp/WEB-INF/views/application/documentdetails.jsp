@@ -57,69 +57,93 @@
 	<spring:message code="lbl.encloseddocuments"/> - <spring:message code="lbl.checklist"/>
 	</div>
 </div>
-
-<div class="form-group view-content header-color hidden-xs">
-	<div class="col-sm-3 text-center"><spring:message code="lbl.documentname"/></div>											
-	<div class="col-sm-3 text-center"><spring:message code="lbl.documentnumber"/> (<span class="mandatory"></span> )</div>										
-	<div class="col-sm-3 text-center"><spring:message code="lbl.documentdate"/> (<span class="mandatory"></span> )</div>
-	<div class="col-sm-3 text-center"><spring:message code="lbl.attachdocument"/>(<span class="mandatory"></span> )</div>																							
+<input type="hidden" name="documentList" id="documentList" value="${documentNamesList}"/>
+<div class="row">
+	<div class="col-md-12">
+		<table class="table table-bordered table-hover multiheadertbl sorted-table" id="documentListTable">
+			<thead>
+				<tr>
+				<th width="1%"></th>
+				<th width="5%"><spring:message code="lbl.documentname"/></th>
+				<th width="5%"><spring:message code="lbl.documentnumber"/></th>
+				<th width="5%"><spring:message code="lbl.documentdate"/></th>
+				<th width="5%"><spring:message code="lbl.attachdocument"/></th>
+				</tr>
+			</thead>
+			<tbody>
+				<c:forEach var="docs" items="${documentNamesList}" varStatus="status">
+					<form:hidden id="applicationDocs${status.index}documentNames.id" path="applicationDocs[${status.index}].documentNames.id" value="${docs.id}" /> 
+					<form:hidden id="applicationDocs${status.index}documentNames" path="applicationDocs[${status.index}].documentNames.required" value="${docs.required}" /> 
+					<form:hidden id="applicationDocs${status.index}documentNames.documentName" path="applicationDocs[${status.index}].documentNames.documentName" value="${docs.documentName}" /> 
+					
+				<tr>
+					<c:choose>
+						<c:when test="${docs.required}">
+							<td>
+								<input type="checkbox" class="check_box" checked disabled/> 
+							</td>
+						</c:when>
+						<c:otherwise>
+							<td>
+								<input type="checkbox" class="check_box" disabled/> 
+							</td>
+						</c:otherwise>		
+					</c:choose> 
+					<td>
+						<div class="row add-border">
+						<div class="col-md-12 add-margin">
+							<c:out value="${docs.documentName}" />
+						</div>
+						</div>
+					</td>
+					<c:choose>
+						<c:when test="${docs.required}">
+							<td>
+								<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="applicationDocs${status.index}documentNumber" path="applicationDocs[${status.index}].documentNumber" minlength="3" maxlength="50" required="required" />
+							</td>
+						</c:when>
+						<c:otherwise>
+							<td>
+								<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="applicationDocs${status.index}documentNumber" path="applicationDocs[${status.index}].documentNumber" minlength="3" maxlength="50" />
+							</td>						
+						</c:otherwise>		
+					</c:choose> 
+					<form:errors path="applicationDocs[${status.index}].documentNumber" cssClass="add-margin error-msg" />
+					<c:choose>
+						<c:when test="${docs.required}">
+							<td>
+								<form:input class="form-control datepicker" data-date-end-date="0d" id="applicationDocs${status.index}documentDate" path="applicationDocs[${status.index}].documentDate" required="required"/>
+							</td>
+						</c:when>
+						<c:otherwise>
+							<td>
+								<form:input class="form-control datepicker" data-date-end-date="0d" id="applicationDocs${status.index}documentDate" path="applicationDocs[${status.index}].documentDate" />
+							</td>
+						</c:otherwise>		
+					</c:choose> 
+					<form:errors path="applicationDocs[${status.index}].documentDate" cssClass="add-margin error-msg" />
+					<c:choose>
+						<c:when test="${docs.required}">
+							<td>
+								<input type="file" id="file${status.index}id" name="applicationDocs[${status.index}].files" class="file-ellipsis upload-file" required="required">
+							</td>
+						</c:when>
+						<c:otherwise>
+							<td>
+								<input type="file" id="file${status.index}id" name="applicationDocs[${status.index}].files" class="file-ellipsis upload-file">
+							</td>
+						</c:otherwise>		
+					</c:choose> 
+						<form:errors path="applicationDocs[${status.index}].files" cssClass="add-margin error-msg" />
+					<div class="add-margin error-msg text-left display-hide" >
+						<font size="2"><spring:message code="lbl.mesg.document"/></font>
+					</div>
+				</tr>
+				</c:forEach>
+			</tbody>
+		</table>
+	</div>
 </div>
-
-<c:forEach var="docs" items="${documentNamesList}" varStatus="status">	
-
-<div class="form-group">	
- 	<div class="col-sm-3 add-margin check-text text-center">
-		<c:choose>
-			<c:when test="${docs.required}">
-				<input type="checkbox" checked disabled>&nbsp;<c:out value="${docs.documentName}" /> 
-			</c:when>
-			<c:otherwise>
-				<input type="checkbox" disabled>&nbsp;<c:out value="${docs.documentName}"/> 
-			</c:otherwise>		
-		</c:choose> 
-		<form:hidden id="applicationDocs${status.index}documentNames.id" path="applicationDocs[${status.index}].documentNames.id" value="${docs.id}" /> 
-		<form:hidden id="applicationDocs${status.index}documentNames" path="applicationDocs[${status.index}].documentNames.required" value="${docs.required}" /> 
-		<form:hidden id="applicationDocs${status.index}documentNames.documentName" path="applicationDocs[${status.index}].documentNames.documentName" value="${docs.documentName}" /> 
-	</div>
-	<div class="col-sm-3 add-margin text-center">
-		<c:choose>
-			<c:when test="${docs.required}">
-				<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="applicationDocs${status.index}documentNumber" path="applicationDocs[${status.index}].documentNumber" minlength="3" maxlength="50" required="required" />
-			</c:when>
-			<c:otherwise>
-				<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="applicationDocs${status.index}documentNumber" path="applicationDocs[${status.index}].documentNumber" minlength="3" maxlength="50" />
-			</c:otherwise>		
-		</c:choose> 
-		<form:errors path="applicationDocs[${status.index}].documentNumber" cssClass="add-margin error-msg" />
-	</div>
-	<div class="col-sm-3 add-margin text-center">
-		<c:choose>
-			<c:when test="${docs.required}">
-				<form:input class="form-control datepicker" data-date-end-date="0d" id="applicationDocs${status.index}documentDate" path="applicationDocs[${status.index}].documentDate" required="required"/>
-			</c:when>
-			<c:otherwise>
-				<form:input class="form-control datepicker" data-date-end-date="0d" id="applicationDocs${status.index}documentDate" path="applicationDocs[${status.index}].documentDate" />
-			</c:otherwise>		
-		</c:choose> 
-			<form:errors path="applicationDocs[${status.index}].documentDate" cssClass="add-margin error-msg" />
-	</div>
-	<div class="col-sm-3 add-margin text-center">
-		<c:choose>
-			<c:when test="${docs.required}">
-				<input type="file" id="file${status.index}id" name="applicationDocs[${status.index}].files" class="file-ellipsis upload-file" required="required">
-			</c:when>
-			<c:otherwise>
-				<input type="file" id="file${status.index}id" name="applicationDocs[${status.index}].files" class="file-ellipsis upload-file">
-			</c:otherwise>		
-		</c:choose> 
-		<form:errors path="applicationDocs[${status.index}].files" cssClass="add-margin error-msg" />
-		<div class="add-margin error-msg text-left" ><font size="2">
-								<spring:message code="lbl.mesg.document"/>	
-								</font></div>
-	</div> 
-	
-</div>
-</c:forEach> 
 </c:when>
 </c:choose>
 

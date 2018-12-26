@@ -91,7 +91,7 @@ body
 								<spring:message code="lbl.exemption.reason" />
 								<span class="mandatory"></span>
 							</div>
-							<div class="col-sm-3 add-margin text-right">
+							<div class="col-sm-2 add-margin">
 								<form:select path="taxExemptedReason" id="taxExemptedReason"
 									name="taxExemptedReason" cssClass="form-control">
 									<form:option value="">
@@ -101,6 +101,31 @@ body
 										itemLabel="name" />
 								</form:select>
 							</div>
+							<c:if test="${!isExempted}">
+							<label class="col-sm-3"> <spring:message
+									code="lbl.exemption.effective.date" /> <span class="mandatory"></span>
+							</label>
+							<c:choose>
+							<c:when test="${userDesignation.endsWith('Assistant') || userDesignation == 'UD Revenue Inspector'}">
+								<div class="col-sm-2 add-margin">
+									<form:input path="exemptionDate" type="text"
+										class="form-control datepicker" data-date-end-date="0d" 
+										required="required" />
+									<form:errors path="exemptionDate"
+										cssClass="add-margin error-msg" />
+								</div>
+							</c:when>
+							<c:otherwise>
+								<div class="col-sm-2 add-margin">
+								<form:input path="exemptionDate" type="text"
+									class="form-control datepicker today" data-date-end-date="0d" 
+									required="required" />
+								<form:errors path="exemptionDate"
+									cssClass="add-margin error-msg" />
+							</div>
+							</c:otherwise>
+							</c:choose>
+							</c:if>
 						</div>
 						<c:if test="${userDesignation == 'UD Revenue Inspector'}">
 						<div class="row">

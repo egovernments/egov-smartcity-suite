@@ -47,6 +47,7 @@
  */
 package org.egov.collection.config.properties;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -62,6 +63,7 @@ import org.springframework.core.env.Environment;
         "classpath:config/collection-override-${env}.properties" }, ignoreResourceNotFound = true)
 public class CollectionApplicationProperties {
 
+    private static final String HOASUFFIX = ".sbimops.hoa";
     @Autowired
     private Environment environment;
 
@@ -133,12 +135,11 @@ public class CollectionApplicationProperties {
         return environment.getProperty(key);
     }
 
-    public String sbimopsHoa(final String cityCode) {
-        return environment.getProperty(cityCode.concat(".sbimops.hoa"));
-    }
-
     public String sbimopsHoa(final String cityCode, final String serviceCode) {
-        return environment.getProperty(cityCode.concat(serviceCode).concat(".sbimops.hoa"));
+        if (StringUtils.isNotBlank(environment.getProperty(cityCode.concat(".").concat(serviceCode).concat(HOASUFFIX))))
+            return environment.getProperty(cityCode.concat(".").concat(serviceCode).concat(HOASUFFIX));
+        else
+            return environment.getProperty(cityCode.concat(HOASUFFIX));
     }
 
     public String sbimopsReconcileUrl() {
@@ -212,4 +213,9 @@ public class CollectionApplicationProperties {
     public String mobilePaymentServiceCode() {
         return environment.getProperty("mobile.paymentservice.code");
     }
+
+    public String getValidateReceiptCancelUrl(final String serviceCode) {
+        return environment.getProperty(serviceCode.concat(".validate.receiptcancel.url"));
+    }
+
 }

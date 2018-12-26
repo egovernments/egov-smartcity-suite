@@ -200,7 +200,7 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
     <listener>
-        <listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
+        <listener-class>org.egov.infra.web.listener.MDCLoggingCorrelationIDAssigner</listener-class>
     </listener>
     <!-- Listeners Ends Servlet Declaration Starts -->
     <servlet>

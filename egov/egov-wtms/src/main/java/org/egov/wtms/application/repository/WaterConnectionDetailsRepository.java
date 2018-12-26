@@ -110,19 +110,12 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
     WaterConnectionDetails findByApplicationNumberAndInstallment(@Param("installment") Installment installment,
             @Param("applicationNumber") String applicationNumber);
 
-    // TODO - Need to re-check this query once closure of connection is
-    // implemented. I.e. Whether we allow to close additional
-    // TODO - .. connections also when closure of Primary connection happens.
-    // Fixme Later : We are assuming that there will be only one primary
-    // connection for given property ID other than INACTIVE and CLOSED status
-    // removed "CLOSED" cos not allowing to create NEW Connection if any records
-    // with closed Connectionstatus
     @Query("select wcd from WaterConnectionDetails wcd where wcd.connection.parentConnection is null and wcd.connectionStatus not in ('INACTIVE') and wcd.connection.propertyIdentifier =:propertyIdentifier")
-    List<WaterConnectionDetails> getPrimaryConnectionDetailsByPropertyID(
+    List<WaterConnectionDetails> getAllPrimaryConnectionDetailsByPropertyID(
             @Param("propertyIdentifier") String propertyIdentifier);
 
-    @Query("select wcd from WaterConnectionDetails wcd where wcd.connection.parentConnection is null and wcd.connectionStatus in ('ACTIVE') and wcd.connection.propertyIdentifier =:propertyIdentifier) order by wcd.applicationDate asc ")
-    WaterConnectionDetails getPrimaryConnectionDetailsByPropertyAssessmentNumber(
+    @Query("select wcd from WaterConnectionDetails wcd where wcd.connection.parentConnection is null and wcd.connectionStatus in ('ACTIVE') and wcd.connection.propertyIdentifier =:propertyIdentifier order by wcd.applicationDate asc ")
+    WaterConnectionDetails getActivePrimaryConnectionDetailsByPropertyID(
             @Param("propertyIdentifier") String propertyIdentifier);
 
     @Query("select wcd from WaterConnectionDetails wcd where wcd.applicationType.code not in ('NEWCONNECTION') and  wcd.connectionStatus not in ('INACTIVE') and wcd.connection.propertyIdentifier =:propertyIdentifier")

@@ -456,17 +456,14 @@ public class OnlineReceiptAction extends BaseFormAction {
                 setOverrideAccountHeads(collDetails.getOverrideAccountHeadsAllowed());
                 setPartPaymentAllowed(collDetails.getPartPaymentAllowed());
                 setCallbackForApportioning(collDetails.getCallbackForApportioning());
-                totalAmountToBeCollected = BigDecimal.valueOf(0);
+                totalAmountToBeCollected = BigDecimal.ZERO;
 
                 receiptHeader = collectionCommon.initialiseReceiptModelWithBillInfo(collDetails, fund, dept);
                 setRefNumber(receiptHeader.getReferencenumber());
                 totalAmountToBeCollected = totalAmountToBeCollected.add(receiptHeader.getTotalAmountToBeCollected());
-                for (final ReceiptDetail rDetails : receiptHeader.getReceiptDetails())
-                    rDetails.getCramountToBePaid().setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT,
-                            BigDecimal.ROUND_UP);
                 setReceiptDetailList(new ArrayList<>(receiptHeader.getReceiptDetails()));
 
-                if (totalAmountToBeCollected.compareTo(BigDecimal.ZERO) == -1) {
+                if (totalAmountToBeCollected.compareTo(BigDecimal.ZERO) < 0) {
                     addActionError(getText("billreceipt.totalamountlessthanzero.error"));
                     LOGGER.info(getText("billreceipt.totalamountlessthanzero.error"));
                 } else

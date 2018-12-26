@@ -67,12 +67,12 @@ import java.util.List;
 public class InstallmentwiseDCBReportRepositoryImpl implements InstallmentwiseDCBReportRepositoryCustom {
 
     public static final String ACTIVE = "active";
-    public static final String LICENSEID = "licenseid";
+    public static final String LICENSEID = "licenseId";
     private static final String INSTALLMENT = "installment";
-    private static final String CURRENTDEMAND = "currentdemand";
-    private static final String LICENSENUMBER = "licensenumber";
-    private static final String CURRENTCOLLECTION = "currentcollection";
-    private static final String CURRENTBALANCE = "currentbalance";
+    private static final String CURRENTDEMAND = "currentDemand";
+    private static final String LICENSENUMBER = "licenseNumber";
+    private static final String CURRENTCOLLECTION = "currentCollection";
+    private static final String CURRENTBALANCE = "currentBalance";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -122,7 +122,7 @@ public class InstallmentwiseDCBReportRepositoryImpl implements InstallmentwiseDC
                                 .when(criteriaBuilder.lessThan(root.get(INSTALLMENT), financialYearStartDate),
                                         root.get(CURRENTDEMAND))
                                 .otherwise(0.0)),
-                        0).alias("arreardemand"),
+                        0).alias("arrearDemand"),
                 criteriaBuilder.coalesce(criteriaBuilder.sum(criteriaBuilder.<Number>selectCase()
                                 .when(criteriaBuilder.equal(root.get(INSTALLMENT), financialYearStartDate),
                                         root.get(CURRENTDEMAND))
@@ -145,7 +145,7 @@ public class InstallmentwiseDCBReportRepositoryImpl implements InstallmentwiseDC
                                 .when(criteriaBuilder.lessThan(root.get(INSTALLMENT), financialYearStartDate),
                                         root.get(CURRENTCOLLECTION))
                                 .otherwise(0.0)),
-                        0).alias("arrearcoll"),
+                        0).alias("arrearCollection"),
 
                 criteriaBuilder.coalesce(criteriaBuilder.sum(criteriaBuilder.<Number>selectCase()
                                 .when(criteriaBuilder.equal(root.get(INSTALLMENT), financialYearStartDate),
@@ -168,7 +168,7 @@ public class InstallmentwiseDCBReportRepositoryImpl implements InstallmentwiseDC
                                 .when(criteriaBuilder.lessThan(root.get(INSTALLMENT), financialYearStartDate),
                                         root.get(CURRENTBALANCE))
                                 .otherwise(0.0)),
-                        0).alias("arrearbalance"),
+                        0).alias("arrearBalance"),
 
                 criteriaBuilder.coalesce(criteriaBuilder.sum(criteriaBuilder.<Number>selectCase()
                                 .when(criteriaBuilder.equal(root.get(INSTALLMENT), financialYearStartDate),
@@ -218,17 +218,17 @@ public class InstallmentwiseDCBReportRepositoryImpl implements InstallmentwiseDC
                                 .when(criteriaBuilder.lessThan(root.get(INSTALLMENT), financialYearStartDate),
                                         root.get(CURRENTDEMAND))
                                 .otherwise(0.0)),
-                        0).alias("arreardemand"),
+                        0).alias("arrearDemand"),
                 criteriaBuilder.coalesce(criteriaBuilder.sum(criteriaBuilder.<Number>selectCase()
                                 .when(criteriaBuilder.lessThan(root.get(INSTALLMENT), financialYearStartDate),
                                         root.get(CURRENTCOLLECTION))
                                 .otherwise(0.0)),
-                        0).alias("arrearcollection"),
+                        0).alias("arrearCollection"),
                 criteriaBuilder.coalesce(criteriaBuilder.sum(criteriaBuilder.<Number>selectCase()
                                 .when(criteriaBuilder.lessThan(root.get(INSTALLMENT), financialYearStartDate),
                                         root.get(CURRENTBALANCE))
                                 .otherwise(0.0)),
-                        0).alias("arrearbalance"))
+                        0).alias("arrearBalance"))
                 .where(predicatecondition(criteriaBuilder, root, installmentWiseDCBRequest, financialYearStartDate)
                         .toArray(new Predicate[]{}))
                 .groupBy(root.get(LICENSEID), root.get(LICENSENUMBER), root.get(ACTIVE));
@@ -250,8 +250,8 @@ public class InstallmentwiseDCBReportRepositoryImpl implements InstallmentwiseDC
                                                InstallmentWiseDCBRequest installmentWiseDCBRequest,
                                                Date financialYearStartDate) {
         final List<Predicate> predicates = new ArrayList<>();
-        if (installmentWiseDCBRequest.getLicensenumber() != null)
-            predicates.add(criteriaBuilder.equal(root.get(LICENSENUMBER), installmentWiseDCBRequest.getLicensenumber()));
+        if (installmentWiseDCBRequest.getLicenseNumber() != null)
+            predicates.add(criteriaBuilder.equal(root.get(LICENSENUMBER), installmentWiseDCBRequest.getLicenseNumber()));
         if (installmentWiseDCBRequest.getActiveLicense() > 0)
             predicates.add(criteriaBuilder.equal(root.get(ACTIVE), installmentWiseDCBRequest.getActiveLicense() == 1));
 

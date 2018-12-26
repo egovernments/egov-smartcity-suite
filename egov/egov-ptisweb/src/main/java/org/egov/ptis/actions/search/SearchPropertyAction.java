@@ -452,7 +452,7 @@ public class SearchPropertyAction extends SearchFormAction {
                 return APPLICATION_TYPE_MEESEVA_RP;
 
         if (APPLICATION_TYPE_EDIT_DEMAND.equals(applicationType)) {
-            if (basicProperty.isUnderWorkflow() && !isUnderMutationWorkflow(basicProperty)) {
+            if (basicProperty.isUnderWorkflow() && !propertyTaxCommonUtils.isUnderMutationWorkflow(basicProperty)) {
                 addActionError(getText("error.underworkflow"));
                 return COMMON_FORM;
             }
@@ -507,17 +507,6 @@ public class SearchPropertyAction extends SearchFormAction {
         } else
             return applicationType;
 
-    }
-
-    private boolean isUnderMutationWorkflow(final BasicProperty basicProperty) {
-        boolean underWorkFlow = false;
-        if (basicProperty.getPropertyMutations() != null)
-            for (final PropertyMutation propertyMutation : basicProperty.getPropertyMutations()) {
-                underWorkFlow = WF_STATE_CLOSED.equalsIgnoreCase(propertyMutation.getState().getValue()) ? false : true;
-                if (underWorkFlow)
-                    break;
-            }
-        return underWorkFlow;
     }
 
     private boolean validateAssessmentForEditDemand(final BasicProperty basicProperty) {

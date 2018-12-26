@@ -49,6 +49,7 @@ package org.egov.mrs.domain.service;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -58,7 +59,6 @@ import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -142,18 +142,26 @@ public class MarriageReassignService {
             designationStr = registrationWorkFlowService.getDesignationForCscOperatorWorkFlow();
             departmentStr = registrationWorkFlowService.getDepartmentForCscOperatorWorkFlow();
         }
-        Department dept = departmentService.getDepartmentByName(departmentStr.split(",")[0]);
-        List<Long> desigList = designationService.getDesignationsByNames(Arrays.asList(designationStr.toUpperCase().split(",")))
-                .stream()
-                .map(Designation::getId).collect(Collectors.toList());
-        List<Assignment> assignments = assignmentService.findByDepartmentDesignationsAndGivenDate(dept.getId(),
-                desigList, new Date());
-        assignments.removeAll(assignmentService.getAllAssignmentsByEmpId(ApplicationThreadLocals.getUserId()));
-        return assignments
-                .stream()
-                .collect(Collectors.toMap(assignment -> assignment.getPosition().getId().toString(),
-                        assignment -> new StringBuffer().append(assignment.getEmployee().getName())
-                                .append("-").append(assignment.getPosition().getName()).toString(),
-                        (posId1, posId2) -> posId1));
+        final String[] departments = departmentStr.split(",");
+        Map<String, String> employeeWithPosition = new HashMap<>();
+        for (String department : departments) {
+            Map<String, String> employeeWithPositions;
+            List<Long> desigList = designationService
+                    .getDesignationsByNames(Arrays.asList(designationStr.toUpperCase().split(",")))
+                    .stream()
+                    .map(Designation::getId).collect(Collectors.toList());
+            List<Assignment> assignments = assignmentService.findByDepartmentDesignationsAndGivenDate(
+                    departmentService.getDepartmentByName(department).getId(),
+                    desigList, new Date());
+            assignments.removeAll(assignmentService.getAllAssignmentsByEmpId(ApplicationThreadLocals.getUserId()));
+            employeeWithPositions = assignments
+                    .stream()
+                    .collect(Collectors.toMap(assignment -> assignment.getPosition().getId().toString(),
+                            assignment -> new StringBuffer().append(assignment.getEmployee().getName())
+                                    .append("-").append(assignment.getPosition().getName()).toString(),
+                            (posId1, posId2) -> posId1));
+            employeeWithPosition.putAll(employeeWithPositions);
+        }
+        return employeeWithPosition;
     }
 }

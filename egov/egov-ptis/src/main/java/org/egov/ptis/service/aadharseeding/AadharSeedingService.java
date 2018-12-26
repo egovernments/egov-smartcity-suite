@@ -51,9 +51,21 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.CIVILCOURTDECREE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_REASON_CODE_PARTISION;
+import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_REASON_CODE_SALE;
+import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_REASON_CODE_TITLEDEED;
+import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_REASON_CODE_REGISTERED;
+import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_REASON_CODE_SUCCESSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_REASON_CODE_RENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_REASON_CODE_UNREGISTEREDWILL;
+import static org.egov.ptis.constants.PropertyTaxConstants.DOCTYPEBYMUTATIONREASON;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -80,8 +92,10 @@ import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.repository.aadharseeding.AadharSeedingRepository;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
@@ -114,6 +128,9 @@ public class AadharSeedingService extends GenericWorkFlowController {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     @Autowired
     @Qualifier("workflowService")
@@ -138,39 +155,46 @@ public class AadharSeedingService extends GenericWorkFlowController {
         model.addAttribute("electionWardId", electionWards);
     }
 
-    public List<String[]> prepareOutput(AadharSeedingRequest aadharSeedingRequest) {
+    public List<AadharSearchResult> prepareOutput(AadharSeedingRequest aadharSeedingRequest) {
         List<String[]> aadharSeeding = getQueryResult(aadharSeedingRequest);
         List<AadharSearchResult> asrList = new ArrayList<>();
         for (Object[] str : aadharSeeding) {
             AadharSearchResult arsObj = new AadharSearchResult();
             arsObj.setAddress(str[3].toString());
             arsObj.setAssessmentNo(str[0].toString());
-            arsObj.setDoorNo(str[2].toString());
-            arsObj.setOwnerName(str[1].toString());
+            arsObj.setDoorNo(str[2] == null ? "NA" : str[2].toString());
+            arsObj.setOwnerName(str[1] == null ? "NA" : str[1].toString());
             asrList.add(arsObj);
         }
-        return aadharSeeding;
+        return asrList;
     }
 
     @SuppressWarnings("unchecked")
     public List<String[]> getQueryResult(AadharSeedingRequest aadharSeedingRequest) {
-        String searchQry = "";
-        String baseQry = "select mv.propertyId, mv.ownerName, mv.houseNo, mv.propertyAddress from PropertyMaterlizeView mv "
-                + "where mv.basicPropertyID in(select p.basicProperty from PropertyImpl p where p.source='SURVEY' and "
-                + "p.propertyDetail.structure=false and p.status in('A','I') and p.id not in(select m.property from PropertyMutation m "
-                + "where m.state.status <> 2)) and mv.basicPropertyID not in(select basicProperty from AadharSeeding)";
-        String wherClause = "";
-        String orderBy = " order by mv.propertyId";
+        StringBuilder baseQry = new StringBuilder();
+        StringBuilder orderBy = new StringBuilder();
+        baseQry = baseQry
+                .append("select mv.propertyId, mv.ownerName, mv.houseNo, mv.propertyAddress from PropertyMaterlizeView mv ")
+                .append("where mv.latitude is not null and mv.longitude is not null and mv.sitalArea > 10 and mv.basicPropertyID not in")
+                .append("(select basicPropertyID from PropertyMaterlizeView where usage <>'VACANTLAND' and totalBuiltUpArea <= 0) ")
+                .append("and mv.basicPropertyID in(select p.basicProperty from PropertyImpl p where ")
+                .append("p.propertyDetail.structure=false and p.status in('A','I') and p.id not in(select m.property from PropertyMutation m ")
+                .append("where m.state.status <> 2) and p.basicProperty not in(select psv.referenceBasicProperty from PropertyStatusValues psv ")
+                .append("where psv.referenceBasicProperty is not null and psv.referenceBasicProperty.underWorkflow = true)) and ")
+                .append("mv.basicPropertyID not in(select basicProperty from AadharSeeding where status <> 'CANCELED') and mv.locality not in(select id from")
+                .append(" Boundary b where b.boundaryNum in(select boundaryNum from BhudharExemptedLocalities))");
+        final StringBuilder wherClause = new StringBuilder();
+        orderBy = orderBy.append(" order by mv.propertyId");
         if (isNotBlank(aadharSeedingRequest.getAssessmentNo()))
-            wherClause = " and mv.propertyId= '" + aadharSeedingRequest.getAssessmentNo() + "'";
+            wherClause.append(" and mv.propertyId= '" + aadharSeedingRequest.getAssessmentNo() + "'");
         if (isNotBlank(aadharSeedingRequest.getDoorNo()))
-            wherClause = " and mv.houseNo like '" + aadharSeedingRequest.getDoorNo() + ""+ "%'";
+            wherClause.append(" and mv.houseNo like '" + aadharSeedingRequest.getDoorNo() + "" + "%'");
         if (aadharSeedingRequest.getElectionWardId() != null)
-            wherClause = " and mv.electionWard.id=" + aadharSeedingRequest.getElectionWardId();
+            wherClause.append(" and mv.electionWard.id=" + aadharSeedingRequest.getElectionWardId());
         if (aadharSeedingRequest.getWardId() != null)
-            wherClause = " and mv.ward.id=" + aadharSeedingRequest.getWardId();
-        searchQry = baseQry + wherClause + orderBy;
-        return entityManager.unwrap(Session.class).createQuery(searchQry).list();
+            wherClause.append(" and mv.ward.id=" + aadharSeedingRequest.getWardId());
+        StringBuilder searchQry = baseQry.append(wherClause).append(orderBy);
+        return entityManager.unwrap(Session.class).createQuery(searchQry.toString()).setMaxResults(500).list();
     }
 
     public void addPropertyDetailstoModel(final Model model, final String assessmentNo, final String status) {
@@ -190,16 +214,17 @@ public class AadharSeedingService extends GenericWorkFlowController {
         formData.setLongitude(basicProperty.getLongitude());
         formData.setExtentOfSite(BigDecimal.valueOf(basicProperty.getProperty().getPropertyDetail().getSitalArea() == null ? 0
                 : basicProperty.getProperty().getPropertyDetail().getSitalArea().getArea()));
-        formData.setPlinthArea(BigDecimal.valueOf(basicProperty.getProperty().getPropertyDetail().getTotalBuiltupArea() == null ? 0
-                : basicProperty.getProperty().getPropertyDetail().getTotalBuiltupArea().getArea()));
-		formData.setPropertyType(basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getType());
-		setDocumentDetails(basicProperty, formData);
-		formData.setSurveyNumber(basicProperty.getProperty().getPropertyDetail().getSurveyNumber());
+        formData.setPlinthArea(
+                BigDecimal.valueOf(basicProperty.getProperty().getPropertyDetail().getTotalBuiltupArea() == null ? 0
+                        : basicProperty.getProperty().getPropertyDetail().getTotalBuiltupArea().getArea()));
+        formData.setPropertyType(basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getType());
+        setDocumentDetails(basicProperty, formData);
+        formData.setSurveyNumber(basicProperty.getProperty().getPropertyDetail().getSurveyNumber());
         formData.setAddress(basicProperty.getAddress().toString());
         formData.setPropertyOwnerInfo(basicProperty.getPropertyOwnerInfo());
         if (status.equals(UPDATED)) {
             AadharSeeding aadharSeeding = aadharSeedingRepository
-                    .getAadharSeedingByBasicProperty((BasicPropertyImpl) basicProperty);
+                    .getNonCanceledAadharSeeding((BasicPropertyImpl) basicProperty);
             List<PropertyOwnerInfo> ownerList = new ArrayList<>();
             PropertyOwnerInfo propertyOwnerInfo;
             for (AadharSeedingDetails aadharSeedingDetails : aadharSeeding.getAadharSeedingDetails()) {
@@ -221,10 +246,11 @@ public class AadharSeedingService extends GenericWorkFlowController {
         WorkFlowMatrix wfmatrix;
         BasicPropertyImpl basicProperty = (BasicPropertyImpl) basicPropertyDAO
                 .getBasicPropertyByPropertyID(aadharSeedingRequest.getAssessmentNo());
-        if (aadharSeedingRepository.getAadharSeedingByBasicProperty(basicProperty) == null) {
+        if (aadharSeedingRepository.getNonCanceledAadharSeeding(basicProperty) == null) {
             AadharSeeding aadharSeeding = new AadharSeeding();
             List<AadharSeedingDetails> detailsList = new ArrayList<>();
-            aadharSeeding.setBasicProperty(basicProperty);
+            aadharSeeding.setBasicProperty(
+                    (BasicPropertyImpl) basicPropertyDAO.getBasicPropertyByPropertyID(aadharSeedingRequest.getAssessmentNo()));
             aadharSeeding.setStatus(UPDATED);
             aadharSeeding.setFlag(false);
             wfmatrix = propertyWorkflowService.getWfMatrix("AadharSeeding", null,
@@ -252,18 +278,21 @@ public class AadharSeedingService extends GenericWorkFlowController {
     }
 
     @Transactional
-    public void approveAadharSeeding(String assessmentList) {
+    public void approveAadharSeeding(final String assessmentList) {
         JSONObject obj = new JSONObject(assessmentList.trim());
         JSONArray jsonArr = new JSONArray(obj.get("info").toString());
-        List<String> assessments = new ArrayList<>();
+        Map<String, String> assessments = new HashMap<>();
         for (int i = 0; i < jsonArr.length(); i++) {
             final org.json.JSONObject jsonObj = jsonArr.getJSONObject(i);
-            assessments.add(jsonObj.get("propertyId").toString());
+            assessments.put(jsonObj.get("propertyId").toString(), jsonObj.get("mode").toString());
         }
-        for (String assessmentNo : assessments) {
-            BasicPropertyImpl basicProperty = (BasicPropertyImpl) basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-            AadharSeeding aadharSeeding = aadharSeedingRepository.getAadharSeedingByBasicProperty(basicProperty);
-            aadharSeeding.setStatus("APPROVED");
+        for (Map.Entry<String, String> entry : assessments.entrySet()) {
+            BasicPropertyImpl basicProperty = (BasicPropertyImpl) basicPropertyDAO.getBasicPropertyByPropertyID(entry.getKey());
+            AadharSeeding aadharSeeding = aadharSeedingRepository.getNonCanceledAadharSeeding(basicProperty);
+            if (entry.getValue().equals("reject"))
+                aadharSeeding.setStatus("CANCELED");
+            else
+                aadharSeeding.setStatus("APPROVED");
             WorkFlowMatrix wfmatrix;
             wfmatrix = propertyWorkflowService.getWfMatrix("AadharSeeding", null,
                     null, "AADHAR SEEDING", "AadharSeeding:Updated", null);
@@ -281,17 +310,6 @@ public class AadharSeedingService extends GenericWorkFlowController {
                 .withDateInfo(currentDate.toDate()).withNextAction(wfmatrix.getNextAction());
     }
 
-    public void preparejasonData(List<String[]> aadharSeeding, List<AadharSearchResult> searchResultList) {
-        for (Object[] obj : aadharSeeding) {
-            AadharSearchResult resultObj = new AadharSearchResult();
-            resultObj.setAddress(obj[3].toString());
-            resultObj.setAssessmentNo(obj[0].toString());
-            resultObj.setDoorNo(obj[2].toString());
-            resultObj.setOwnerName(obj[1].toString());
-            searchResultList.add(resultObj);
-        }
-    }
-
     public List<AadharSearchResult> getProperties() {
         List<AadharSeeding> seedingResult = aadharSeedingRepository.findAllByStatus(UPDATED);
         List<AadharSearchResult> resultList = new ArrayList<>();
@@ -306,22 +324,41 @@ public class AadharSeedingService extends GenericWorkFlowController {
         }
         return resultList;
     }
-    
-    private void setDocumentDetails(BasicProperty basicProperty, AadharSeedingRequest formData) {
-		final Query getdocumentsQuery = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
-		getdocumentsQuery.setParameter("basicProperty", basicProperty.getId());
 
-		List<DocumentTypeDetails> documentTypeDetails = (List<DocumentTypeDetails>) getdocumentsQuery.getResultList();
-		if (documentTypeDetails.isEmpty()) {
-			formData.setDocNo(StringUtils.isBlank(basicProperty.getRegdDocNo()) ? "N/A" : basicProperty.getRegdDocNo());
-			formData.setDocDate(basicProperty.getRegdDocDate() == null ? null : basicProperty.getRegdDocDate());
-			formData.setDocType("N/A");
-		} else {
-			formData.setDocNo(StringUtils.isBlank(documentTypeDetails.get(0).getDocumentNo()) ? "N/A"
-					: documentTypeDetails.get(0).getDocumentNo());
-			formData.setDocDate(documentTypeDetails.get(0).getDocumentDate());
-			formData.setDocType(StringUtils.isBlank(documentTypeDetails.get(0).getDocumentName()) ? "N/A"
-					: documentTypeDetails.get(0).getDocumentName());
-		}
-	}
+    private void setDocumentDetails(BasicProperty basicProperty, AadharSeedingRequest formData) {
+        final Query getdocumentsQuery = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
+        getdocumentsQuery.setParameter("basicProperty", basicProperty.getId());
+        List<DocumentTypeDetails> documentTypeDetails = (List<DocumentTypeDetails>) getdocumentsQuery.getResultList();
+        PropertyMutation mutation = propertyTaxCommonUtils.getLatestApprovedMutationForAssessmentNo(basicProperty.getUpicNo());
+        if (mutation != null) {
+            if (mutation.getMutationReason().getCode().equals(CIVILCOURTDECREE)) {
+                formData.setDocNo(StringUtils.isBlank(mutation.getDecreeNumber()) ? "N/A" : mutation.getDecreeNumber());
+                formData.setDocDate(mutation.getDecreeDate());
+                formData.setDocumentType(DOCTYPEBYMUTATIONREASON.get(mutation.getMutationReason().getCode()));
+            } else if (mutation.getType().equals(ADDTIONAL_RULE_FULL_TRANSFER)) {
+                formData.setDocNo(mutation.getMutationRegistrationDetails().getDocumentNo());
+                formData.setDocDate(mutation.getMutationRegistrationDetails().getDocumentDate());
+                formData.setDocumentType(DOCTYPEBYMUTATIONREASON.get(mutation.getMutationReason().getCode()));
+            } else if (Arrays.asList(MUTATION_REASON_CODE_PARTISION, MUTATION_REASON_CODE_SALE, MUTATION_REASON_CODE_TITLEDEED,
+                    MUTATION_REASON_CODE_REGISTERED, MUTATION_REASON_CODE_SUCCESSION, MUTATION_REASON_CODE_RENT,
+                    MUTATION_REASON_CODE_UNREGISTEREDWILL).contains(mutation.getMutationReason().getCode())) {
+                formData.setDocNo(mutation.getDeedNo());
+                formData.setDocDate(mutation.getDeedDate());
+                formData.setDocumentType(DOCTYPEBYMUTATIONREASON.get(mutation.getMutationReason().getCode()));
+            }
+        } else if (!documentTypeDetails.isEmpty()) {
+            formData.setDocNo(StringUtils.isBlank(documentTypeDetails.get(0).getDocumentNo()) ? "N/A"
+                    : documentTypeDetails.get(0).getDocumentNo());
+            formData.setDocDate(
+                    documentTypeDetails.get(0).getDocumentDate() == null ? null : documentTypeDetails.get(0).getDocumentDate());
+            formData.setDocumentType(StringUtils.isBlank(documentTypeDetails.get(0).getDocumentName()) ? "N/A"
+                    : documentTypeDetails.get(0).getDocumentName());
+        } else {
+            formData.setDocNo(StringUtils.isBlank(basicProperty.getRegdDocNo()) ? "N/A"
+                    : basicProperty.getRegdDocNo());
+            formData.setDocDate(
+                    basicProperty.getRegdDocDate());
+            formData.setDocumentType("N/A");
+        }
+    }
 }

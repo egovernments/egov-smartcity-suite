@@ -189,6 +189,7 @@ $(document).ready(function() {
 							$('#report-footer').show();
 						}
 						if (data.length > 0) {
+							updateTotalFooter(1,api);
 							updateTotalFooter(2, api);
 							updateTotalFooter(3, api);
 							updateTotalFooter(4, api);
@@ -197,13 +198,12 @@ $(document).ready(function() {
 							updateTotalFooter(7, api);
 							updateTotalFooter(8, api);
 							updateTotalFooter(9, api);
-							updateTotalFooter(10, api);
-							
+							updateTotalFooter(10, api);					
 
 						}
 					},
 					"aoColumnDefs" : [ {
-						"aTargets" : [ 2, 3, 4, 5, 6, 7, 8, 9, 10 ],
+						"aTargets" : [1,2, 3, 4, 5, 6, 7, 8, 9, 10 ],
 						"mRender" : function(data, type, full) {
 							return formatNumberInr(data);
 						}

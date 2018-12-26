@@ -241,22 +241,23 @@ public class SewerageDCBReporService {
             BoundaryType boundaryType;
             final List<Boundary> boundaryList = new ArrayList<>();
             dcbResult = new DCBReportWardwiseResult();
-            for (final SewerageApplicationDetails appDetails : entry.getValue())
+            dcbResult.setRevenueWard(entry.getKey());
+            boundaryType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(BOUNDARYTYPE_WARD,
+                    HIERARCHYTYPE_REVENUE);
+            boundaryList.addAll(boundaryService.getBondariesByNameAndTypeOrderByBoundaryNumAsc(entry.getKey(),
+                    boundaryType.getId()));
+            if (!boundaryList.isEmpty())
+                boundary = boundaryList.get(0);
+            if (boundary != null)
+                dcbResult.setWardId(boundary.getId());
+            for (final SewerageApplicationDetails appDetails : entry.getValue()) {
+               
                 if (appDetails != null && appDetails.getCurrentDemand() != null
                         && appDetails.getCurrentDemand().getEgDemandDetails() != null) {
                     dcbResult.setNoofassessments(entry.getValue().size());
                     for (final EgDemandDetails demandDetails : appDetails.getCurrentDemand().getEgDemandDetails()) {
-                        dcbResult.setRevenueWard(entry.getKey());
                         if (null != propertyType)
                             dcbResult.setPropertyType(propertyType);
-                        boundaryType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(BOUNDARYTYPE_WARD,
-                                HIERARCHYTYPE_REVENUE);
-                        boundaryList.addAll(boundaryService.getBondariesByNameAndTypeOrderByBoundaryNumAsc(entry.getKey(),
-                                boundaryType.getId()));
-                        if (!boundaryList.isEmpty())
-                            boundary = boundaryList.get(0);
-                        if (boundary != null)
-                            dcbResult.setWardId(boundary.getId());
                         final DCBReportWardwiseResult rateResult = dcbReportMap.get(entry.getKey());
                         if (rateResult == null) {
                             dcbResult.setInstallmentYearDescription(
@@ -269,13 +270,14 @@ public class SewerageDCBReporService {
                             buildArrearAndCurrentDemandTax(dcbResult, demandDetails);
 
                         }
-                        dcbResult.setTotal_demand(dcbResult.getArr_demand().add(dcbResult.getCurr_demand()));
+                        dcbResult.setTotal_demand(dcbResult.getArr_demand().add(dcbResult.getCurr_demand()).setScale(2,BigDecimal.ROUND_HALF_UP));
                         dcbResult.setTotal_collection(dcbResult.getArr_collection().add(dcbResult.getCurr_collection()));
                         dcbResult.setTotal_balance(dcbResult.getArr_balance().add(dcbResult.getCurr_balance()));
 
                         dcbReportMap.put(entry.getKey(), dcbResult);
                     }
                 }
+            }
             dcbMap.put(entry.getKey(), dcbResult);
 
         }

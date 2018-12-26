@@ -151,12 +151,12 @@ public class DemandGenerationLog extends AbstractAuditable {
         if (!(other instanceof DemandGenerationLog))
             return false;
         DemandGenerationLog that = (DemandGenerationLog) other;
-        return Objects.equals(installmentYear, that.installmentYear);
+        return Objects.equals(getInstallmentYear(), that.getInstallmentYear());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(installmentYear);
+        return Objects.hash(getInstallmentYear());
     }
 
 }

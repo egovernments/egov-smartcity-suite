@@ -79,92 +79,94 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/application/execute-update")
 public class UpdateWaterConnectionExecutionController {
 
-    private static final String ERR_WATER_RATES_NOT_DEFINED = "WaterRatesNotDefined";
+	private static final String ERR_WATER_RATES_NOT_DEFINED = "WaterRatesNotDefined";
 
-    @Autowired
-    private WaterConnectionDetailsService waterConnectionDetailsService;
+	@Autowired
+	private WaterConnectionDetailsService waterConnectionDetailsService;
 
-    @Autowired
-    private BoundaryService boundaryService;
+	@Autowired
+	private BoundaryService boundaryService;
 
-    @Autowired
-    private ApplicationTypeService applicationTypeService;
+	@Autowired
+	private ApplicationTypeService applicationTypeService;
 
-    @Autowired
-    private MeterCostService meterCostService;
+	@Autowired
+	private MeterCostService meterCostService;
 
-    @GetMapping(value = "/search")
-    public String getSearchScreen(final Model model) {
-        model.addAttribute("executeWaterApplicationDetails", new WaterConnExecutionDetails());
-        model.addAttribute("applicationTypeList", applicationTypeService.getActiveApplicationTypes());
-        model.addAttribute("revenueWardList",
-                boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD, REVENUE_HIERARCHY_TYPE));
-        return "execute-update-search";
-    }
+	@GetMapping(value = "/search")
+	public String getSearchScreen(final Model model) {
+		model.addAttribute("executeWaterApplicationDetails", new WaterConnExecutionDetails());
+		model.addAttribute("applicationTypeList", applicationTypeService.getActiveApplicationTypes());
+		model.addAttribute("revenueWardList", boundaryService
+				.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD, REVENUE_HIERARCHY_TYPE));
+		return "execute-update-search";
+	}
 
-    @GetMapping(value = "/search-form")
-    public String getSearchForm(final Model model) {
-        model.addAttribute("executeWaterApplicationDetails", new WaterConnExecutionDetails());
-        model.addAttribute("applicationTypeList", applicationTypeService.getActiveApplicationTypes());
-        model.addAttribute("revenueWardList",
-                boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD, REVENUE_HIERARCHY_TYPE));
-        return "execute-search-screen";
-    }
+	@GetMapping(value = "/search-form")
+	public String getSearchForm(final Model model) {
+		model.addAttribute("executeWaterApplicationDetails", new WaterConnExecutionDetails());
+		model.addAttribute("applicationTypeList", applicationTypeService.getActiveApplicationTypes());
+		model.addAttribute("revenueWardList", boundaryService
+				.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD, REVENUE_HIERARCHY_TYPE));
+		return "execute-search-screen";
+	}
 
-    @ModelAttribute
-    public WaterConnExecutionDetails executeWaterApplicationDetails() {
-        return new WaterConnExecutionDetails();
-    }
+	@ModelAttribute
+	public WaterConnExecutionDetails executeWaterApplicationDetails() {
+		return new WaterConnExecutionDetails();
+	}
 
-    @PostMapping(value = "/search", produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseBody
-    public String searchResult(final WaterConnExecutionDetails executeWaterApplicationDetails) {
-        final List<Object[]> detailList = waterConnectionDetailsService.getApplicationResultList(executeWaterApplicationDetails);
-        return new StringBuilder(" { \"data\" : ")
-                .append(toJSON(waterConnectionDetailsService.getConnExecutionObjectList(detailList),
-                        WaterConnExecutionDetails.class,
-                        ExecuteWaterConnectionAdaptor.class))
-                .append("}")
-                .toString();
-    }
+	@PostMapping(value = "/search", produces = MediaType.TEXT_PLAIN_VALUE)
+	@ResponseBody
+	public String searchResult(final WaterConnExecutionDetails executeWaterApplicationDetails) {
+		final List<Object[]> detailList = waterConnectionDetailsService
+				.getApplicationResultList(executeWaterApplicationDetails);
+		return new StringBuilder(" { \"data\" : ")
+				.append(toJSON(waterConnectionDetailsService.getConnExecutionObjectList(detailList),
+						WaterConnExecutionDetails.class, ExecuteWaterConnectionAdaptor.class))
+				.append("}").toString();
+	}
 
-    @PostMapping(value = "/search-form", produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseBody
-    public String getMeteredApplicationSearchResult(final WaterConnExecutionDetails executeWaterApplicationDetails) {
-        final List<Object[]> detailList = waterConnectionDetailsService.getMeteredApplicationList(executeWaterApplicationDetails);
-        return new StringBuilder(" { \"data\" : ")
-                .append(toJSON(waterConnectionDetailsService.getConnExecutionObjectList(detailList),
-                        WaterConnExecutionDetails.class,
-                        ExecuteWaterConnectionAdaptor.class))
-                .append("}")
-                .toString();
-    }
+	@PostMapping(value = "/search-form", produces = MediaType.TEXT_PLAIN_VALUE)
+	@ResponseBody
+	public String getMeteredApplicationSearchResult(final WaterConnExecutionDetails executeWaterApplicationDetails) {
+		final List<Object[]> detailList = waterConnectionDetailsService
+				.getMeteredApplicationList(executeWaterApplicationDetails);
+		return new StringBuilder(" { \"data\" : ")
+				.append(toJSON(waterConnectionDetailsService.getConnExecutionObjectList(detailList),
+						WaterConnExecutionDetails.class, ExecuteWaterConnectionAdaptor.class))
+				.append("}").toString();
+	}
 
-    @PostMapping(value = "/result", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public String getSearchResult(@RequestBody final WaterConnectionExecutionResponse waterApplicationDetails) {
-        final List<WaterConnectionDetails> connectionDetailsList = new ArrayList<>();
-        final String validationStatus = waterConnectionDetailsService.validateInput(waterApplicationDetails,
-                connectionDetailsList);
-        if (ERR_WATER_RATES_NOT_DEFINED.equalsIgnoreCase(validationStatus))
-            return ERR_WATER_RATES_NOT_DEFINED;
-        final Boolean updateStatus = waterConnectionDetailsService.updateStatus(connectionDetailsList);
-        return waterConnectionDetailsService.getResultStatus(waterApplicationDetails, validationStatus, updateStatus);
-    }
+	@PostMapping(value = "/result", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public String getSearchResult(@RequestBody final WaterConnectionExecutionResponse waterApplicationDetails) {
+		final List<WaterConnectionDetails> connectionDetailsList = new ArrayList<>();
+		final String validationStatus = waterConnectionDetailsService.validateInput(waterApplicationDetails,
+				connectionDetailsList);
+		if (ERR_WATER_RATES_NOT_DEFINED.equalsIgnoreCase(validationStatus))
+			return ERR_WATER_RATES_NOT_DEFINED;
+		final Boolean updateStatus = waterConnectionDetailsService.updateStatus(connectionDetailsList);
+		return waterConnectionDetailsService.getResultStatus(waterApplicationDetails, validationStatus, updateStatus);
+	}
 
-    @GetMapping(value = "/search-result", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public List<MeterCost> getMeterDetails() {
-        return meterCostService.getActiveMeterCostList();
-    }
+	@PostMapping(value = "/search-meter", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<MeterCost> getMeterDetails(
+			@RequestBody final WaterConnectionExecutionResponse waterApplicationDetails) {
+		return meterCostService.getActiveMeterCostList(
+				waterApplicationDetails.getExecuteWaterApplicationDetails()[0].getPipeSizeId().longValue(),
+				waterApplicationDetails.getExecuteWaterApplicationDetails()[0].getApplicationNumber().trim());
+	}
 
-    @PostMapping(value = "/search-result", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public String updateMeterDetails(@RequestBody final WaterConnectionExecutionResponse executeWaterApplicationDetails) {
-        final List<WaterConnectionDetails> applicationList = new ArrayList<>();
-        final String validationResult = waterConnectionDetailsService.validateMeterDetails(executeWaterApplicationDetails,
-                applicationList);
-        final Boolean status = waterConnectionDetailsService.updateMeterDetails(applicationList);
-        return waterConnectionDetailsService.getResultStatus(executeWaterApplicationDetails, validationResult, status);
-    }
+	@PostMapping(value = "/search-result", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public String updateMeterDetails(
+			@RequestBody final WaterConnectionExecutionResponse executeWaterApplicationDetails) {
+		final List<WaterConnectionDetails> applicationList = new ArrayList<>();
+		final String validationResult = waterConnectionDetailsService
+				.validateMeterDetails(executeWaterApplicationDetails, applicationList);
+		final Boolean status = waterConnectionDetailsService.updateMeterDetails(applicationList);
+		return waterConnectionDetailsService.getResultStatus(executeWaterApplicationDetails, validationResult, status);
+	}
 }

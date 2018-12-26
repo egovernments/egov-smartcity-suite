@@ -48,6 +48,7 @@
 
 package org.egov.pgr.web.controller.masters.router;
 
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.pgr.entity.ComplaintRouter;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -57,17 +58,17 @@ import org.springframework.validation.Validator;
 public class ComplaintRouterValidator implements Validator {
 
     @Override
-    public boolean supports(final Class<?> clazz) {
+    public boolean supports(Class<?> clazz) {
         return ComplaintRouter.class.equals(clazz);
     }
 
     @Override
-    public void validate(final Object target, final Errors errors) {
+    public void validate(Object target, Errors errors) {
 
-        final ComplaintRouter complaintRouter = (ComplaintRouter) target;
-
-        if (complaintRouter.getBoundary() != null && "City".equalsIgnoreCase(complaintRouter.getBoundary().getBoundaryType().getName()))
-            errors.rejectValue("boundary", "Invalid Boundary");
+        ComplaintRouter complaintRouter = (ComplaintRouter) target;
+        Boundary routerBoundary = complaintRouter.getBoundary();
+        if (routerBoundary != null && "City".equalsIgnoreCase(routerBoundary.getBoundaryType().getName()))
+            errors.rejectValue("boundary", "msg.router.cannot.delete");
     }
 
 }

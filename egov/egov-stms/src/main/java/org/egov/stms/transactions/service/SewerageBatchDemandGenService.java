@@ -92,13 +92,14 @@ public class SewerageBatchDemandGenService {
     }
 
     public List<SewerageTaxBatchDemandGenerate> findActiveBatchDemands() {
-        return sewerageTaxBatchDemandGenRepository.findActiveBatchDemands();
+        return sewerageTaxBatchDemandGenRepository.findByActiveTrueOrderByCreatedDate();
     }
 
     @Transactional
     public SewerageTaxBatchDemandGenerate createSewerageTaxBatchDemandGenerate(final SewerageTaxBatchDemandGenerate advBatchDmd) {
         return sewerageTaxBatchDemandGenRepository.save(advBatchDmd);
     }
+
     @Transactional
     public SewerageTaxBatchDemandGenerate updateSewerageTaxBatchDemandGenerate(final SewerageTaxBatchDemandGenerate advBatchDmd) {
         return sewerageTaxBatchDemandGenRepository.save(advBatchDmd);
@@ -151,22 +152,24 @@ public class SewerageBatchDemandGenService {
                             sewerageApplnsDetails, previousInstallment, sewerageDmdGenerationInstallment);
 
                 }
+
+                sewerageDmdGen.setActive(false);
+                sewerageDmdGen.setTotalRecords(
+                        (recordsResult != null && recordsResult.length > 0 && recordsResult[0] != null) ? recordsResult[0] : 0);
+                sewerageDmdGen.setSuccessfullRecords(
+                        (recordsResult != null && recordsResult.length >= 2 && recordsResult[1] != null) ? recordsResult[1] : 0);
+                sewerageDmdGen.setFailureRecords(
+                        (recordsResult != null && recordsResult.length >= 3 && recordsResult[2] != null) ? recordsResult[2] : 0);
+
+                final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
+                txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+
+                txTemplate.execute(result -> {
+                    updateSewerageTaxBatchDemandGenerate(sewerageDmdGen);
+                    return Boolean.TRUE;
+                });
             }
-            sewerageDmdGen.setActive(false);
-            sewerageDmdGen.setTotalRecords(
-                    (recordsResult != null && recordsResult.length > 0 && recordsResult[0] != null) ? recordsResult[0] : 0);
-            sewerageDmdGen.setSuccessfullRecords(
-                    (recordsResult != null && recordsResult.length >= 2 && recordsResult[1] != null) ? recordsResult[1] : 0);
-            sewerageDmdGen.setFailureRecords(
-                    (recordsResult != null && recordsResult.length >= 3 && recordsResult[2] != null) ? recordsResult[2] : 0);
 
-            final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
-            txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-
-            txTemplate.execute(result -> {
-                updateSewerageTaxBatchDemandGenerate(sewerageDmdGen);
-                return Boolean.TRUE;
-            });
         }
 
         return (recordsResult != null && recordsResult.length >= 2 && recordsResult[1] != null) ? recordsResult[1] : 0;

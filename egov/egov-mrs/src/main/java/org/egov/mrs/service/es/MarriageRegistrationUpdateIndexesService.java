@@ -166,7 +166,7 @@ public class MarriageRegistrationUpdateIndexesService {
                     .withStatus(marriageRegistration.getStatus().getDescription()).withUrl(
                             String.format(url))
                     .withApplicantAddress(marriageRegistration.getHusband().getContactInfo().getResidenceAddress())
-                    .withOwnername(user != null ? user.getUsername() + "::" + user.getName() : "")
+                    .withOwnername(user != null ? user.getUsername() + "::" + user.getName().trim() : "")
                     .withChannel(marriageRegistration.getSource() == null ? Source.SYSTEM.toString()
                             : marriageRegistration.getSource())
                     .withMobileNumber(marriageRegistration.getHusband().getContactInfo().getMobileNo())

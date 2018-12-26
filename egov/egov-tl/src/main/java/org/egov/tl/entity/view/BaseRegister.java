@@ -236,12 +236,12 @@ public class BaseRegister implements Serializable {
         return commencementDate;
     }
 
-    public void setCommencementDate(final String commencementDate) {
-        this.commencementDate = commencementDate;
-    }
-
     public void setCommencementDate(Date commencementDate) {
         this.commencementDate = DateUtils.getDefaultFormattedDate(commencementDate);
+    }
+
+    public void setCommencementDate(final String commencementDate) {
+        this.commencementDate = commencementDate;
     }
 
     public String getStatusName() {

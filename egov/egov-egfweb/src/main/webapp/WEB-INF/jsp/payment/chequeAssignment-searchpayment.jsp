@@ -116,8 +116,8 @@
 								id="voucherHeaderId"
 								name="chequeAssignmentList[%{#s.index}].voucherHeaderId"
 								value="%{voucherHeaderId}" /> <s:checkbox
-								name="chequeAssignmentList[%{#s.index}].isSelected"
-								id="isSelected%{#s.index}" onclick="update(this)" /></td>
+								name="chequeAssignmentList[%{#s.index}].isSelected" class="case"
+								id="isSelected%{#s.index}" onclick="update(this);selectAllCheckboxMark();" /></td>
 						<td align="left" style="text-align: center"
 							class="blueborderfortdnew" />
 						<s:property value="#s.index+1" />
@@ -189,7 +189,7 @@
 									name="chequeDate" var="tempChequeDate" format="dd/MM/yyyy" />
 								<s:textfield id="chequeDate%{#s.index}"
 									name="chequeAssignmentList[%{#s.index}].chequeDate"
-									value="%{tempChequeDate}" data-date-end-date="0d"
+									value="%{tempChequeDate}" data-date-end-date="0d" onchange="validateChequeDateForChequeMode();"
 									onkeyup="DateFormat(this,this.value,event,false,'3')"
 									placeholder="DD/MM/YYYY" class="form-control datepicker"
 									data-inputmask="'mask': 'd/m/y'" /></td>
@@ -277,7 +277,7 @@
 						<s:if test="%{paymentMode=='cash'}">
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.infavourof" /><span
-								class="mandatory1">*</span> <s:textfield id="inFavourOf"
+								class="mandatory1">*</span> <s:textfield id="inFavourOf" onkeyup="isSpecialChar()"
 									name="inFavourOf" value="%{inFavourOf}" maxlength="50" /></td>
 						</s:if>
 					</tr>
@@ -311,7 +311,7 @@
 			
 			function validate()
 			{
-				
+
 				resetSelectedRowsId();
 				var result=true;
 				if(dom.get('departmentid') && dom.get('departmentid').options[dom.get('departmentid').selectedIndex].value==-1)
@@ -346,7 +346,7 @@
 					return false;
 				}
 				
-					result= validateChequeDateForNonChequeMode();  
+					result= validateChequeDateForNonChequeMode();
 				</s:if> 
 				<s:if test="%{paymentMode=='cheque'}">
 					 result=validateChequeDateForChequeMode();
@@ -360,12 +360,35 @@
 						disableforCash();
 						
 						}
-				dom.get('departmentid').disabled=false;  
-				document.forms[0].action='${pageContext.request.contextPath}/payment/chequeAssignment-create.action';
-		    	document.forms[0].submit();
-				
+
+				if(result){
+                    dom.get('departmentid').disabled=false;
+                    document.forms[0].action='${pageContext.request.contextPath}/payment/chequeAssignment-create.action';
+                    document.forms[0].submit();
+				}
 				return result;   
 			}
+    function selectAllCheckboxMark(){
+        var length = 0;
+        var count = 0;
+        <s:if test="%{chequeAssignmentList!=null}">
+        length = <s:property value ="%{chequeAssignmentList.size()}"/>;
+        </s:if>
+
+        var totalCount = document.getElementsByClassName('case').length;
+        var inputElems=document.getElementsByClassName("case");
+
+        for (var i = 0; i < inputElems.length; i++) {
+            if (inputElems[i].type === "checkbox" && inputElems[i].checked === true){
+                count++;
+            }
+        }
+        if(totalCount == count){
+            document.getElementById("selectall").checked = true;
+        }else{
+            document.getElementById("selectall").checked = false;
+        }
+    }
 		function validateForRtgsMode(){
 				var noOfSelectedRows=document.getElementById('selectedRows').value;
 				//bootbox.alert("sizseled"+noOfSelectedRows);
@@ -422,18 +445,24 @@
 						flag =  false;
 					});
 				}
+                var inFavourEntered = document.getElementById('inFavourOf').value;
+                if(inFavourEntered.trim() == ""){
+                    bootbox.alert('Invalid In Favour Of');
+                    flag =  false;
+                }
 				for(var index=0;index<chequeSize;index++){
 					var paymentDate= document.getElementsByName("chequeAssignmentList["+index+"].tempPaymentDate")[0].value; 
 					if(document.getElementById('isSelected'+index).checked){
 						chkCount++;
 						//bootbox.alert(document.getElementById('isSelected'+index).checked);
 						if( compareDate(paymentDate,chequeDate) == -1){     
-						  //  bootbox.alert(paymentDate+"----"+chequeDate);      
+						  //  bootbox.alert(paymentDate+"----"+chequeDate);
 							bootbox.alert('Cheque Date cannot be less than payment Date', function() {
-								document.getElementById('chequeDt').value='';
-								document.getElementById('chequeDt').focus();
-								flag =  false;
+
 							});
+                            document.getElementById('chequeDt').value='';
+                            document.getElementById('chequeDt').focus();
+                            flag =  false;
 						 }
 						if(chkCount==noOfSelectedRows){ break;}
 					}
@@ -721,6 +750,11 @@
 						}
 					}
 					 
+			}
+			function isSpecialChar(){
+				var inFavourEntered = document.getElementById('inFavourOf').value;
+				var replacedInFavour = inFavourEntered.replace(/[`~!@#$%^&*()_|+\-=��?;:><'",.<>\{\}\[\]\\\/]/gi, '');
+				document.getElementById('inFavourOf').value = replacedInFavour;
 			}
 		</script>
 	<%-- 	<s:if test="%{isFieldMandatory('department')}">

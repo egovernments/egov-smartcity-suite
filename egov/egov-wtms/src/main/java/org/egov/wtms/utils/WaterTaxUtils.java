@@ -47,6 +47,7 @@
  */
 package org.egov.wtms.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
@@ -94,6 +95,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -101,25 +103,39 @@ import java.util.Optional;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static java.util.Collections.EMPTY_LIST;
+import static org.egov.commons.entity.Source.CSC;
 import static org.egov.commons.entity.Source.MEESEVA;
+import static org.egov.commons.entity.Source.ONLINE;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
 import static org.egov.infra.utils.StringUtils.EMPTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDITIONALCONNECTIONALLOWEDIFPTDUE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPCONFIGVALUEOFENABLED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNPENDING;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_FEEPAID;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_RECONNCTIONINPROGRESS;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_RECONNDIGSIGNPENDING;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPROVEWORKFLOWACTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.BOUNDARY_TYPE_CITY;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CHANGEOFUSE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTIONALLOWEDIFPTDUE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.DEPUTY_ENGINEER_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.DOCUMENTREQUIREDFORBPL;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.JUNIOR_OR_SENIOR_ASSISTANT_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MULTIPLENEWCONNECTIONFORPID;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTIONALLOWEDIFPTDUE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REASSIGNMENT;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_ADMIN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_APPROVERROLE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_CITIZEN;
@@ -130,8 +146,12 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_SUPERUSER;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_ULBOPERATOR;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SENDEMAILFORWATERTAX;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SENDSMSFORWATERTAX;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNWORKFLOWACTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SUPERINTENDING_ENGINEER_DESIGNATION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.USERNAME_ANONYMOUS;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXWORKFLOWDEPARTEMENT;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_PREVIEW_BUTTON;
 import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 
 @Service
@@ -204,6 +224,15 @@ public class WaterTaxUtils {
             loggedInUserDesignation = loggedInUserAssign.isEmpty()
                     ? EMPTY : loggedInUserAssign.get(0).getDesignation().getName();
         }
+        return loggedInUserDesignation;
+    }
+
+    public String currentUserDesignation(Long ownerPosition) {
+        String loggedInUserDesignation = EMPTY;
+        List<Assignment> loggedInUserAssign;
+        loggedInUserAssign = assignmentService.getAssignmentsForPosition(ownerPosition, new Date());
+        if (!loggedInUserAssign.isEmpty())
+            loggedInUserDesignation = loggedInUserAssign.get(0).getDesignation().getName();
         return loggedInUserDesignation;
     }
 
@@ -576,7 +605,7 @@ public class WaterTaxUtils {
         List<WaterDemandConnection> waterDemandConnectionList = waterDemandConnectionService
                 .findByWaterConnectionDetails(waterConnectionDetails);
         for (WaterDemandConnection waterDemandConnection : waterDemandConnectionList)
-            if (waterDemandConnection.getDemand().getIsHistory().equalsIgnoreCase(WaterTaxConstants.DEMANDISHISTORY)) {
+            if (waterDemandConnection.getDemand().getIsHistory().equalsIgnoreCase(WaterTaxConstants.DEMAND_ISHISTORY_N)) {
                 waterdemandConnection = waterDemandConnection;
                 break;
             }
@@ -726,4 +755,55 @@ public class WaterTaxUtils {
         return roles.isPresent() ? roles.get().getName() : EMPTY;
     }
 
+    public boolean currentUserIsApprover(String currentUserDesignation) {
+        return COMMISSIONER_DESGN.equalsIgnoreCase(currentUserDesignation)
+                || DEPUTY_ENGINEER_DESIGN.equalsIgnoreCase(currentUserDesignation)
+                || EXECUTIVE_ENGINEER_DESIGN.equalsIgnoreCase(currentUserDesignation)
+                || MUNICIPAL_ENGINEER_DESIGN.equalsIgnoreCase(currentUserDesignation)
+                || SUPERIENTEND_ENGINEER_DESIGN.equalsIgnoreCase(currentUserDesignation)
+                || SUPERINTENDING_ENGINEER_DESIGNATION.equalsIgnoreCase(currentUserDesignation);
+    }
+
+    public boolean isConnectionInProgress(String connectionStatus) {
+        return Arrays.asList(APPLICATION_STATUS_FEEPAID, APPLICATION_STATUS_DIGITALSIGNPENDING, APPLICATION_STATUS_CLOSERDIGSIGNPENDING,
+                APPLICATION_STATUS_RECONNDIGSIGNPENDING, APPLICATION_STATUS_RECONNCTIONINPROGRESS, APPLICATION_STATUS_CLOSERINPROGRESS)
+                .contains(connectionStatus);
+    }
+
+    public boolean currentUserIsCommissionerAndConnectionInProgress(WaterConnectionDetails waterConnectionDetails) {
+        return COMMISSIONER_DESGN.equals(loggedInUserDesignation(waterConnectionDetails))
+                && isConnectionInProgress(waterConnectionDetails.getStatus().getCode());
+    }
+
+    public boolean isSanctionDetailsEnabled(WaterConnectionDetails waterConnectionDetails) {
+        return currentUserIsApprover(loggedInUserDesignation(waterConnectionDetails))
+                && (waterConnectionDetails.getApprovalNumber() == null
+                || !APPLICATION_STATUS_DIGITALSIGNPENDING.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()));
+    }
+
+    public void setConnectionSource(WaterConnectionDetails connectionDetails) {
+        User currentUser = securityUtils.getCurrentUser();
+
+        if (isAnonymousUser(currentUser))
+            connectionDetails.setSource(ONLINE);
+        else if (isCSCoperator(currentUser))
+            connectionDetails.setSource(CSC);
+        else if (isCitizenPortalUser(currentUser) && (connectionDetails.getSource() == null
+                || StringUtils.isBlank(connectionDetails.getSource().toString())))
+            connectionDetails.setSource(setSourceOfConnection(currentUser));
+        else if (isMeesevaUser(currentUser)) {
+            connectionDetails.setSource(MEESEVA);
+            if (connectionDetails.getMeesevaApplicationNumber() != null)
+                connectionDetails.setApplicationNumber(connectionDetails.getMeesevaApplicationNumber());
+        } else
+            connectionDetails.setSource(Source.SYSTEM);
+    }
+
+    public boolean validateWorkflow(String workFlowAction) {
+        return Arrays.asList(APPROVEWORKFLOWACTION, SIGNWORKFLOWACTION, WF_PREVIEW_BUTTON).contains(workFlowAction);
+    }
+
+    public boolean checkWithApplicationType(String appTypeCode) {
+        return Arrays.asList(NEWCONNECTION, ADDNLCONNECTION, CHANGEOFUSE, REGULARIZE_CONNECTION).contains(appTypeCode);
+    }
 }

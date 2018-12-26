@@ -459,6 +459,11 @@ public class ValidationUtil {
                         final BasicProperty basicProperty = basicPropertyDAO
                                 .getBasicPropertyByPropertyID(createPropDetails.getAssessmentNumber());
                         zoneNo = basicProperty.getPropertyID().getZone().getBoundaryNum().toString();
+                        if(!propertyExternalService.isBoundaryActive(zoneNo, ZONE,
+                                REVENUE_HIERARCHY_TYPE)) {
+                            errorDetails.setErrorCode(INACTIVE_ZONE_CODE);
+                            errorDetails.setErrorMessage(INACTIVE_ZONE_REQ_MSG);
+                        }
                     }
                     if (propertyExternalService.isActiveUnitRateExists(floorDetails, zoneNo,
                             floorDetails.getNatureOfUsageCode(), floorDetails.getBuildClassificationCode())) {
@@ -1139,7 +1144,7 @@ public class ValidationUtil {
         return errorDetails;
     }
 
-    public ErrorDetails validateTaxCalculatorRequest(final TaxCalculatorRequest taxCalculatorRequest) {
+    public ErrorDetails validateTaxCalculatorRequest(final TaxCalculatorRequest taxCalculatorRequest) throws ParseException {
         ErrorDetails errorDetails = null;
         final BasicProperty basicProperty = basicPropertyDAO
                 .getBasicPropertyForUpicNoOrOldUpicNo(taxCalculatorRequest.getAssessmentNo(), null);
@@ -1159,8 +1164,16 @@ public class ValidationUtil {
                     return errorDetails;
                 }
                 errorDetails = validateFloorDetailsForTaxCalculation(taxCalculatorRequest.getFloorDetails());
-                if (errorDetails != null && StringUtils.isNotBlank(errorDetails.getErrorCode()))
+                if (StringUtils.isNotBlank(errorDetails.getErrorCode()))
                     return errorDetails;
+            }
+            if (propertyExternalService.isActiveUnitRateExists(taxCalculatorRequest.getFloorDetails().get(0),
+                    basicProperty.getPropertyID().getZone().getBoundaryNum().toString(),
+                    taxCalculatorRequest.getFloorDetails().get(0).getNatureOfUsageCode(),
+                    taxCalculatorRequest.getFloorDetails().get(0).getBuildClassificationCode())) {
+                errorDetails.setErrorCode(INACTIVE_UNIT_RATES_CODE);
+                errorDetails.setErrorMessage(INACTIVE_UNIT_RATES_REQ_MSG);
+                return errorDetails;
             }
         }
         return errorDetails;

@@ -263,10 +263,12 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
             final Object[] ddObject = (Object[]) object;
             final BigDecimal dmdAmt = new BigDecimal((Double) ddObject[2]);
             BigDecimal collAmt = BigDecimal.ZERO;
-            if (ddObject[2] != null)
+            BigDecimal rebateAmt = BigDecimal.ZERO;
+            if (ddObject[3] != null)
                 collAmt = new BigDecimal((Double) ddObject[3]);
-            balance = balance.add(dmdAmt.subtract(collAmt));
-
+            if (ddObject[4] != null)
+                rebateAmt = new BigDecimal((Double) ddObject[4]);
+            balance = balance.add(dmdAmt.subtract(rebateAmt.add(collAmt)));
         }
         return balance;
     }

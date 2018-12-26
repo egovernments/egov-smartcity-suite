@@ -49,7 +49,6 @@
 package org.egov.tl.utils;
 
 import org.egov.commons.dao.InstallmentDao;
-import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
@@ -60,7 +59,6 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 
 @Service
 public class LicenseNumberUtils {
@@ -75,7 +73,7 @@ public class LicenseNumberUtils {
     private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Autowired
-    private ModuleService moduleService;
+    private LicenseUtils licenseUtils;
 
     @Autowired
     private InstallmentDao installmentDao;
@@ -90,7 +88,7 @@ public class LicenseNumberUtils {
 
     public String generateBillNumber() {
         String currentInstallmentYear = DateUtils.toYearFormat(installmentDao.getInsatllmentByModuleForGivenDate(
-                moduleService.getModuleByName(TRADE_LICENSE), new Date()).getInstallmentYear());
+                licenseUtils.getModule(), new Date()).getInstallmentYear());
         String sequenceName = Constants.LICENSE_BILLNO_SEQ + currentInstallmentYear;
         return String.format("%s%06d", EMPTY, genericSequenceNumberGenerator.getNextSequence(sequenceName));
     }

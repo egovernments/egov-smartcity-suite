@@ -52,12 +52,16 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -92,21 +96,6 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
     private static final String SBIMOPS_HOA_FORMAT = "%-19sVN";
     private static final String REQUEST_CONTENT_TYPE = "application/json";
 
-    // SBIMOPS payment gateway variables
-    public static final String SBIMOPS_DEPTCODE = "deptcode";
-    public static final String SBIMOPS_DDCODE = "ddocode";
-    public static final String SBIMOPS_HOA = "hoa";
-    public static final String SBIMOPS_DEPTTRANSID = "depttransid";
-    public static final String SBIMOPS_REMITTER_NAME = "remittersname";
-    public static final String SBIMOPS_TAMOUNT = "tamount";
-    public static final String SBIMOPS_MD = "MD";
-    public static final String SBIMOPS_DRU = "dru";
-    public static final String SBIMOPS_BANKSTATUS = "bankstatus";
-    public static final String SBIMOPS_BANK_DATE = "bankdate";
-    public static final String SBIMOPS_BANK_AMOUNT = "bankamount";
-    public static final String SBIMOPS_BANK_NAME = "bankname";
-    public static final String SBIMOPS_UAMOUNT = "uamount";
-
     public static final String SBIMOPS_DC = "DC";
     public static final String SBIMOPS_DTID = "DTID";
     public static final String SBIMOPS_RN = "RN";
@@ -119,12 +108,14 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
     public static final String SBIMOPS_STATUS = "Status";
 
     // SBIMOPS reconciliation parameters name
+    public static final String SBIMOPS_DEPTCODE = "DEPTCODE";
     public static final String SBIMOPS_DEPTTID = "DEPTTID";
     public static final String SBIMOPS_ROW = "ROW";
     public static final String SBIMOPS_RECORDSET = "RECORDSET";
     public static final String SBIMOPS_CFMSID = "CFMSID";
     public static final String SBIMOPS_TAMT = "TAMT";
     public static final String SBIMOPS_BNKDT = "BNKDT";
+    private static final String UTF8 = "UTF-8";
 
     public static final String MESSAGEKEY_SBIMOPS_DC = "sbimops.department.code";
 
@@ -150,46 +141,71 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
     public PaymentRequest createPaymentRequest(final ServiceDetails paymentServiceDetails, final ReceiptHeader receiptHeader) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" Inside SbimopsAdaptor-createPaymentRequest ");
+        final String billServiceCode = receiptHeader.getService().getCode();
         final DefaultPaymentRequest sbiPaymentRequest = new DefaultPaymentRequest();
-        sbiPaymentRequest.setParameter(SBIMOPS_DC,
+        final LinkedHashMap<String, String> requestParameterMap = new LinkedHashMap<>();
+        requestParameterMap.put(SBIMOPS_DC,
                 collectionApplicationProperties.sbimopsDepartmentcode(MESSAGEKEY_SBIMOPS_DC));
         StringBuilder transactionId = new StringBuilder(receiptHeader.getId().toString())
                 .append(CollectionConstants.SEPARATOR_HYPHEN)
                 .append(receiptHeader.getConsumerCode().replace("-", "").replace("/", ""));
-        sbiPaymentRequest.setParameter(SBIMOPS_DTID, transactionId.toString());
-        sbiPaymentRequest.setParameter(SBIMOPS_RN, receiptHeader.getPayeeName());
-        sbiPaymentRequest.setParameter(SBIMOPS_RID, receiptHeader.getConsumerCode());
-        sbiPaymentRequest.setParameter(SBIMOPS_TA, receiptHeader.getTotalAmount());
+        requestParameterMap.put(SBIMOPS_DTID, transactionId.toString());
+        requestParameterMap.put(SBIMOPS_RN, receiptHeader.getPayeeName());
+        requestParameterMap.put(SBIMOPS_RID, receiptHeader.getConsumerCode());
+        requestParameterMap.put(SBIMOPS_TA, receiptHeader.getTotalAmount().toString());
         final StringBuilder chStringBuilder = new StringBuilder((String.format(SBIMOPS_HOA_FORMAT,
-                collectionApplicationProperties.sbimopsHoa(ApplicationThreadLocals.getCityCode()))).replace(' ', '0'));
+                collectionApplicationProperties.sbimopsHoa(ApplicationThreadLocals.getCityCode(), billServiceCode))).replace(' ',
+                        '0'));
         chStringBuilder.append(CollectionConstants.SEPARATOR_COMMA)
                 .append(collectionApplicationProperties.sbimopsDdocode(ApplicationThreadLocals.getCityCode()).toString())
                 .append(CollectionConstants.SEPARATOR_COMMA)
-                .append(collectionApplicationProperties.sbimopsServiceCode(receiptHeader.getService().getCode()))
+                .append(collectionApplicationProperties.sbimopsServiceCode(billServiceCode))
                 .append(CollectionConstants.SEPARATOR_COMMA)
                 .append(receiptHeader.getTotalAmount().toString());
-        sbiPaymentRequest.setParameter(SBIMOPS_CH, chStringBuilder.toString());
+        requestParameterMap.put(SBIMOPS_CH, chStringBuilder.toString());
         final StringBuilder returnUrl = new StringBuilder(paymentServiceDetails.getCallBackurl());
         returnUrl.append("?paymentServiceId=").append(paymentServiceDetails.getId());
-        sbiPaymentRequest.setParameter(SBIMOPS_RURL, returnUrl.toString());
-
-        sbiPaymentRequest.setParameter(CollectionConstants.ONLINEPAYMENT_INVOKE_URL, paymentServiceDetails.getServiceUrl());
-        final Map<String, Object> requestParameters = sbiPaymentRequest.getRequestParameters();
-        LOGGER.info(SBIMOPS_DC + "=" + requestParameters.get(SBIMOPS_DC) + "|" +
-                SBIMOPS_DTID + "=" + requestParameters.get(SBIMOPS_DTID) + "|" +
-                SBIMOPS_RN + "=" + requestParameters.get(SBIMOPS_RN) + "|" +
-                SBIMOPS_RID + "=" + requestParameters.get(SBIMOPS_RID) + "|" +
-                SBIMOPS_TA + "=" + requestParameters.get(SBIMOPS_TA)
+        requestParameterMap.put(SBIMOPS_RURL, returnUrl.toString());
+        final StringBuilder requestURL = new StringBuilder(paymentServiceDetails.getServiceUrl()).append("?");
+        appendQueryFields(requestURL, requestParameterMap);
+        LOGGER.info(SBIMOPS_DC + "=" + requestParameterMap.get(SBIMOPS_DC) + "|" +
+                SBIMOPS_DTID + "=" + requestParameterMap.get(SBIMOPS_DTID) + "|" +
+                SBIMOPS_RN + "=" + requestParameterMap.get(SBIMOPS_RN) + "|" +
+                SBIMOPS_RID + "=" + requestParameterMap.get(SBIMOPS_RID) + "|" +
+                SBIMOPS_TA + "=" + requestParameterMap.get(SBIMOPS_TA)
                 + "|" +
-                SBIMOPS_CH + "=" + requestParameters.get(SBIMOPS_CH)
+                SBIMOPS_CH + "=" + requestParameterMap.get(SBIMOPS_CH)
                 + "|" +
-                SBIMOPS_RURL + "=" + requestParameters.get(SBIMOPS_RURL) + "|" +
+                SBIMOPS_RURL + "=" + requestParameterMap.get(SBIMOPS_RURL) + "|" +
                 CollectionConstants.ONLINEPAYMENT_INVOKE_URL + "="
-                + requestParameters.get(CollectionConstants.ONLINEPAYMENT_INVOKE_URL));
+                + requestParameterMap.get(CollectionConstants.ONLINEPAYMENT_INVOKE_URL));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("End SbimopsAdaptor-createPaymentRequest");
-
+        sbiPaymentRequest.setParameter(CollectionConstants.ONLINEPAYMENT_INVOKE_URL, requestURL);
+        LOGGER.info("SBIMOPS request URL:" + sbiPaymentRequest.getRequestParameters());
         return sbiPaymentRequest;
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private void appendQueryFields(final StringBuilder requestURL, final LinkedHashMap<String, String> fields) {
+        final List fieldNames = new ArrayList(fields.keySet());
+        final Iterator itr = fieldNames.iterator();
+        while (itr.hasNext()) {
+            final String fieldName = (String) itr.next();
+            final String fieldValue = fields.get(fieldName);
+            if (fieldValue != null && fieldValue.length() > 0)
+                // append the URL parameters
+                try {
+                requestURL.append(URLEncoder.encode(fieldName, UTF8));
+                requestURL.append('=');
+                requestURL.append(URLEncoder.encode(fieldValue, UTF8));
+                } catch (final UnsupportedEncodingException e) {
+                LOGGER.error("Error appending QueryFields", e);
+                throw new ApplicationRuntimeException(e.getMessage());
+                }
+            if (itr.hasNext())
+                requestURL.append('&');
+        }
     }
 
     @Override
@@ -211,6 +227,10 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
             }
 
             sbiPaymentResponse.setAuthStatus(getTransactionStatus(responseMap.get(SBIMOPS_STATUS)));
+            if (isNotBlank(sbiPaymentResponse.getAuthStatus()) &&
+                    sbiPaymentResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_FAILED)
+                    && (!responseMap.get(SBIMOPS_STATUS).equals("F")))
+                LOGGER.error("CFMSFAILED TRANSACTION RESPONSE: " + response);
             sbiPaymentResponse.setErrorDescription(responseMap.get(SBIMOPS_STATUS));
             final String[] consumercodeTransactionId = responseMap.get(SBIMOPS_DTID)
                     .split(CollectionConstants.SEPARATOR_HYPHEN);
@@ -254,32 +274,28 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
             LOGGER.info("Sbimops reconciliation response is null");
             throw new ApplicationRuntimeException("SBIMOPS reconciliation response is null.");
         } else {
-            if (LOGGER.isInfoEnabled())
-                LOGGER.info("Sbimops reconciliation transaction response : " + response);
             final Map<String, String> responseParameterMap = prepareResponseMap(response);
+            if (LOGGER.isInfoEnabled())
+                LOGGER.info("Sbimops reconciliation transaction response : " + responseParameterMap.toString());
             sbimopsResponse.setAdditionalInfo6(onlinePayment.getReceiptHeader().getConsumerCode().replace("-", "")
                     .replace("/", ""));
             sbimopsResponse.setReceiptId(onlinePayment.getReceiptHeader().getId().toString());
             final String transactionStatus = responseParameterMap.get(SBIMOPS_STATUS.toUpperCase());
             sbimopsResponse.setAuthStatus(getTransactionStatus(transactionStatus));
             sbimopsResponse.setErrorDescription(transactionStatus);
+
+            if (isNotBlank(sbimopsResponse.getAuthStatus()) &&
+                    sbimopsResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_FAILED)
+                    && (!responseParameterMap.get(SBIMOPS_STATUS.toUpperCase()).equals("F"))) {
+                LOGGER.error("Request for failed transaction response:" + prepeareReconciliationRequest(onlinePayment));
+                LOGGER.error("CFMSFAILED TRANSACTION RESPONSE: " + responseParameterMap.toString());
+            }
             if (sbimopsResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS)) {
                 sbimopsResponse
                         .setTxnAmount(new BigDecimal(Double.valueOf(responseParameterMap.get(SBIMOPS_TAMT))));
                 sbimopsResponse.setTxnReferenceNo(responseParameterMap.get(SBIMOPS_CFMSID).toString());
-                final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
-                Date transDate = null;
-                try {
-                    transDate = simpleDateFormat.parse(responseParameterMap.get(SBIMOPS_BNKDT).toString());
-                    sbimopsResponse.setTxnDate(transDate);
-                } catch (final ParseException e) {
-                    LOGGER.error(
-                            "Error in parsing transaction date ["
-                                    + responseParameterMap.get(SBIMOPS_BNKDT)
-                                    + "]",
-                            e);
-                    throw new ApplicationRuntimeException(".transactiondate.parse.error", e);
-                }
+                // CFMS is not sending the bank transaction date. Setting receipt date as transaction date.
+                sbimopsResponse.setTxnDate(onlinePayment.getReceiptHeader().getReceiptDate());
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("End SbimopsAdaptor-parsePaymentResponse");
             }
@@ -314,7 +330,7 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
             response = (CloseableHttpResponse) client.execute(httpPost);
         } catch (IOException e) {
             LOGGER.error(
-                    "SBIMOPS reconciliation, error while sending the request for SBIMOPS reconciliation");
+                    "SBIMOPS reconciliation, error while sending the request for SBIMOPS reconciliation", e);
             throw new ApplicationRuntimeException(
                     "SBIMOPS reconciliation, error while sending the request for SBIMOPS reconciliation", e);
         }
@@ -369,7 +385,7 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
                 return responseSbimopsMap;
             }
         } catch (IOException e) {
-            LOGGER.error("SBIMOPS reconciliation, error while reading the response content");
+            LOGGER.error("SBIMOPS reconciliation, error while reading the response content", e);
             throw new ApplicationRuntimeException(" SBIMOPS reconciliation, error while reading the response content", e);
         }
     }

@@ -152,7 +152,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
         demandActivationCron.setJobDetail(demandActivationJobDetail().getObject());
         demandActivationCron.setGroup("PTIS_TRIGGER_GROUP");
         demandActivationCron.setName("PTIS_DEMAND_ACTIVATION_TRIGGER");
-        demandActivationCron.setCronExpression("0 15 0 * * ?");
+        demandActivationCron.setCronExpression("0 */30 3-4 * * ?");
         demandActivationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
         return demandActivationCron;
     }

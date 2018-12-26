@@ -65,17 +65,19 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 import javax.annotation.Resource;
 import java.util.List;
 
+import static java.lang.String.format;
+import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.egov.infra.utils.ApplicationConstant.MDC_APPNAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.MDC_UID_KEY;
+import static org.egov.infra.utils.ApplicationConstant.MDC_ULBCODE_KEY;
+import static org.egov.infra.utils.ApplicationConstant.SYSTEM_USERNAME;
 
-/**
- * An abstract base class wrapper for {@link QuartzJobBean} and implements {@link GenericJob}. A class which extends this will be
- * eligible for doing Quartz Jobs. Those classes required Statefulness (Threadsafety) so need to annotate class
- * with @DisallowConcurrentExecution. This class also wrap up wiring of some of the common settings and beans.
- **/
 public abstract class AbstractQuartzJob extends QuartzJobBean implements GenericJob {
 
-    private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractQuartzJob.class);
+    private static final long serialVersionUID = -3575280953294411371L;
+    private static final String APPNAME_FORMAT = "%s-%s";
 
     @Resource(name = "cities")
     private transient List<String> cities;
@@ -95,10 +97,10 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
     @Override
     protected void executeInternal(JobExecutionContext jobCtx) throws JobExecutionException {
         try {
-            MDC.put("appname", String.format("%s-%s", moduleName, jobCtx.getJobDetail().getKey().getName()));
+            MDC.put(MDC_APPNAME_KEY, format(APPNAME_FORMAT, moduleName, jobCtx.getJobDetail().getKey().getName()));
             for (String tenant : this.cities) {
-                MDC.put("ulbcode", tenant);
-
+                MDC.put(MDC_ULBCODE_KEY, tenant);
+                MDC.put(MDC_UID_KEY, randomUUID().toString());
                 this.prepareThreadLocal(tenant);
                 this.executeJob();
             }
@@ -111,12 +113,12 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
         }
     }
 
-    public void setModuleName(final String moduleName) {
+    public void setModuleName(String moduleName) {
         this.moduleName = moduleName;
     }
 
     public void setUserName(String userName) {
-        this.userName = defaultIfBlank(userName, "system");
+        this.userName = defaultIfBlank(userName, SYSTEM_USERNAME);
     }
 
     public void setCityDataRequired(boolean cityDataRequired) {

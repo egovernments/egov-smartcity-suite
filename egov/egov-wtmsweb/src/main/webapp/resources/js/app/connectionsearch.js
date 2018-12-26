@@ -56,6 +56,9 @@ jQuery(document).ready(function ($) {
     $('#searchapprvedapplication').click(function () {
         if ($('#citizenRole').val() == 'true') {
             if ($('#consumerCode').val() || $('#propertyid').val() || $('#applicantName').val() || $('#doorno').val()) {
+            	if($('#applicantName').val() && $('#applicantName').val().length < 3)
+            		bootbox.alert("Please Enter atleast 3 characters of Assessee name");
+            	else
                 submitButton();
             } else {
                 bootbox.alert("Please fill atleast one search criteria.");

@@ -203,8 +203,17 @@
 							<label><spring:message code="lbl.surveyNumber" /></label>
 						</div>
 						<div class="col-xs-3 add-margin view-content">
-							<strong><c:out
-									value="${aadharSeedingUpdate.surveyNumber}" default="N/A" /> </strong>
+							<c:choose>
+								<c:when test="${aadharSeedingUpdate.surveyNumber.isEmpty()}">
+								<strong>N/A</strong>
+								</c:when>
+								<c:otherwise>
+									<strong><c:out
+											value="${!aadharSeedingUpdate.surveyNumber.isEmpty()}" default="N/A" />
+									</strong>
+
+								</c:otherwise>
+								</c:choose>
 						</div>
 					</div>
 					<div class="row add-border">
@@ -231,7 +240,7 @@
 							<label><spring:message code="lbl.docType" /></label>
 						</div>
 						<div class="col-xs-3 add-margin view-content">
-							<strong><c:out value="${aadharSeedingUpdate.docType}"
+							<strong><c:out value="${aadharSeedingUpdate.documentType}"
 									default="N/A" /> </strong>
 						</div>
 					</div>
@@ -484,7 +493,7 @@
 				<div class="text-center">
 					<c:if test="${aadharSeedingDetails == null}">
 						<button type="submit" class="btn btn-primary add-margin"
-							id="submitform">
+							id="submitform" disabled="disabled">
 							<spring:message code="lbl.update" />
 						</button>
 					</c:if>
@@ -581,11 +590,11 @@
 										source)
 
 								$('#submitform').attr('disabled', false);
-							} else {
+							}  else {
 								bootbox
 										.alert("There is no Data found with the Aadhar Number!");
 								$('#submitform').attr('disabled', true);
-							}
+							} 
 						});
 	}
 	window.onunload = refreshParent;

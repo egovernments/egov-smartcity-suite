@@ -539,7 +539,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         if (JUNIOR_ASSISTANT.equals(loggedInUserDesignation) || SENIOR_ASSISTANT.equals(loggedInUserDesignation))
             loggedInUserDesignation = null;
 
-        final String nature = getNatureOfTasks().get(getAdditionalRule());
+        final String nature = NATUREOFTASKBYADDITIONALRULE.get(getAdditionalRule());
 
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction))
             transitionReject(property, wfInitiator, approverDesignation, loggedInUserDesignation);
@@ -629,7 +629,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             property.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approverComments).withStateValue(wfmatrix.getNextState())
                     .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
-                    .withNatureOfTask(nature).withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
+                    .withNatureOfTask(nature).withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
+                    .withSLA(propertyService.getSlaValue(APPLICATIONTYPEBYNATUREOFTASK.get(nature)));
         } else if (property.getCurrentState().getNextAction().equalsIgnoreCase(END))
             property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approverComments).withDateInfo(currentDate.toDate()).withNextAction(null)
@@ -720,18 +721,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         }
         return designation;
     }
-
-    private Map<String, String> getNatureOfTasks() {
-        final Map<String, String> natureOfTasks = new HashMap<>();
-        natureOfTasks.put(NEW_ASSESSMENT, NATURE_NEW_ASSESSMENT);
-        natureOfTasks.put(ADDTIONAL_RULE_ALTER_ASSESSMENT, NATURE_ALTERATION);
-        natureOfTasks.put(ADDTIONAL_RULE_BIFURCATE_ASSESSMENT, NATURE_BIFURCATION);
-        natureOfTasks.put(DEMOLITION, APPLICATION_TYPE_DEMOLITION);
-        natureOfTasks.put(EXEMPTION, NATURE_TAX_EXEMPTION);
-        natureOfTasks.put(AMALGAMATION, APPLICATION_TYPE_AMALGAMATION);
-        return natureOfTasks;
-    }
-
+    
     public void validateApproverDetails() {
         if (WFLOW_ACTION_STEP_FORWARD.equals(workFlowAction) || WFLOW_ACTION_STEP_SAVE.equals(workFlowAction))
             if (null != approverPositionId && approverPositionId == -1)
@@ -821,7 +811,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     emailBody = getText("msg.grpreject.email", args);
 
                 }
-            } else if (propertyState.getNextAction().equalsIgnoreCase(WF_STATE_DIGITAL_SIGNATURE_PENDING)) {
+            } else if (propertyState.getNextAction() != null
+                    && propertyState.getNextAction().equalsIgnoreCase(WF_STATE_DIGITAL_SIGNATURE_PENDING)) {
                 args.add(property.getBasicProperty().getUpicNo());
                 final Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
                 final Installment installmentFirstHalf = installmentMap.get(CURRENTYEAR_FIRST_HALF);
@@ -1016,7 +1007,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 	public void enableActionsForGIS(final PropertyImpl property, final List<DocumentType> documentTypes) {
 		String appConfigValue = propertyTaxCommonUtils.getAppConfigValue(APPCONFIG_GIS_THIRDPARTY_CHECKBOX_REQUIRED,
 				PTMODULENAME);
-		if (property.getState().getNextAction().endsWith(WF_STATE_COMMISSIONER_APPROVAL_PENDING)
+		if (StringUtils.isNotBlank(property.getState().getNextAction()) && property.getState().getNextAction().endsWith(WF_STATE_COMMISSIONER_APPROVAL_PENDING)
 				&& property.getSurveyVariance().compareTo(BigDecimal.TEN) > 0) {
 			showCheckboxForGIS = true;
 			if (property.isThirdPartyVerified())

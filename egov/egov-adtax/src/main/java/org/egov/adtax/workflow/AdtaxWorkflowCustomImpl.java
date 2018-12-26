@@ -56,6 +56,7 @@ import org.egov.adtax.autonumber.AdvertisementPermitNumberGenerator;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
 import org.egov.adtax.service.AdvertisementDemandService;
+import org.egov.adtax.service.AdvertisementService;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -103,6 +104,8 @@ public abstract class AdtaxWorkflowCustomImpl implements AdtaxWorkflowCustom {
 
     @Autowired
     private AdvertisementWorkFlowService advertisementWorkFlowService;
+    @Autowired
+    private AdvertisementService advertisementService;
 
     @Autowired
     public AdtaxWorkflowCustomImpl() {
@@ -137,6 +140,7 @@ public abstract class AdtaxWorkflowCustomImpl implements AdtaxWorkflowCustom {
                 advertisementPermitDetail.setSource(AdvertisementTaxConstants.ONLINE_SOURCE);
             
             advertisementPermitDetail.transition().start()
+                    .withSLA(advertisementService.calculateDueDate(advertisementPermitDetail))
                     .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
                     .withComments(approvalComent).withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
@@ -147,6 +151,7 @@ public abstract class AdtaxWorkflowCustomImpl implements AdtaxWorkflowCustom {
                     null, additionalRule, AdvertisementTaxConstants.WF_NEW_STATE, null);
             advertisementPermitDetail.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
             advertisementPermitDetail.transition().start()
+                    .withSLA(advertisementService.calculateDueDate(advertisementPermitDetail))
                     .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
                     .withComments(approvalComent).withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)

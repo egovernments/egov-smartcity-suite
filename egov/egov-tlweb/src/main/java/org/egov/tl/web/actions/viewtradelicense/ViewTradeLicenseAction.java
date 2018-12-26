@@ -52,68 +52,28 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.egov.eis.entity.Assignment;
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
-import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.entity.WorkflowBean;
-import org.egov.tl.service.LicenseClosureService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.egov.infra.reporting.engine.ReportFormat.PDF;
-import static org.egov.infra.reporting.util.ReportUtil.CONTENT_TYPES;
-import static org.egov.infra.utils.ApplicationConstant.CITIZEN_ROLE_NAME;
-import static org.egov.infra.utils.ApplicationConstant.PUBLIC_ROLE_NAME;
-import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
-import static org.egov.tl.utils.Constants.BUTTONFORWARD;
-import static org.egov.tl.utils.Constants.BUTTONREJECT;
-import static org.egov.tl.utils.Constants.CSCOPERATOR;
-import static org.egov.tl.utils.Constants.MEESEVAOPERATOR;
-import static org.egov.tl.utils.Constants.MEESEVA_RESULT_ACK;
 import static org.egov.tl.utils.Constants.MESSAGE;
 import static org.egov.tl.utils.Constants.REPORT_PAGE;
-import static org.egov.tl.utils.Constants.TL_FILE_STORE_DIR;
 
 @ParentPackage("egov")
 @Results({@Result(name = REPORT_PAGE, location = "viewTradeLicense-report.jsp"),
         @Result(name = MESSAGE, location = "viewTradeLicense-message.jsp"),
-        @Result(name = "closure", location = "viewTradeLicense-closure.jsp"),
         @Result(name = "digisigncertificate", type = "redirect", location = "/tradelicense/download/digisign-certificate",
-                params = {"file", "${digiSignedFile}", "applnum", "${applNum}"}),
-        @Result(name = "closureEndorsementNotice", type = "redirect", location = "/license/closure/digisign-transition",
-                params = {"fileStoreIds", "${fileStoreIds}", "applicationNumbers", "${applicationNo}"}),
-        @Result(name = "closureEndorsementDigiSign", location = "closure-endorsementnotice-digitalsigned.jsp")
+                params = {"file", "${digiSignedFile}", "applnum", "${applNum}"})
 })
 public class ViewTradeLicenseAction extends BaseLicenseAction {
     private static final long serialVersionUID = 1L;
     private static final String MODEL_ID = "model.id";
 
     private Long licenseId;
-    private String url;
-    private Boolean enableState;
     private String digiSignedFile;
     private String applNum;
-
-    @Autowired
-    private transient LicenseClosureService licenseClosureService;
-
-    @Autowired
-    @Qualifier("fileStoreService")
-    private transient FileStoreService fileStoreService;
 
     @Override
     public TradeLicense getModel() {
@@ -152,8 +112,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction {
             setApplNum(license().getApplicationNumber());
             return "digisigncertificate";
         } else {
-            reportId = reportViewerUtil
-                    .addReportToTempCache(tradeLicenseService.generateLicenseCertificate(license(), false));
+            reportId = reportViewerUtil.addReportToTempCache(tradeLicenseService.generateLicenseCertificate(license(), false));
             return REPORT_PAGE;
         }
     }
@@ -174,137 +133,12 @@ public class ViewTradeLicenseAction extends BaseLicenseAction {
         }
     }
 
-    @Action(value = "/viewtradelicense/showclosureform")
-    @ValidationErrorPage(MESSAGE)
-    public String showClosureForm() {
-        prepareClosureForm();
-        setUrl("viewtradelicense/saveclosure.action?model.id=");
-        if (tradeLicense.hasState() && !tradeLicense.transitionCompleted()) {
-            throw new ValidationException(WF_INPROGRESS_ERROR_CODE,
-                    format(WF_INPROGRESS_ERROR_MSG_FORMAT, tradeLicense.getLicenseAppType().getName()));
-        }
-        return "closure";
-    }
-
-    public void prepareClosureForm() {
-        if (license() != null && license().getId() != null)
-            tradeLicense = tradeLicenseService.getLicenseById(license().getId());
-        if (tradeLicense.hasState() && tradeLicense.getCurrentState().getValue().equalsIgnoreCase("SI/SS Approved"))
-            setEnableState(true);
-    }
-
-    @Action(value = "/viewtradelicense/viewTradeLicense-closure")
-    public String viewClosure() {
-        prepareClosureForm();
-        setUrl("viewtradelicense/viewTradeLicense-cancelLicense.action?model.id=");
-        licenseHistory = tradeLicenseService.populateHistory(tradeLicense);
-        return "closure";
-    }
-
-    @ValidationErrorPageExt(action = "closure", makeCall = true, toMethod = "prepareClosureForm")
-    @Action(value = "/viewtradelicense/saveclosure")
-    public String saveClosure() {
-        populateWorkflowBean();
-        if (getLicenseId() != null) {
-            tradeLicense = tradeLicenseService.getLicenseById(getLicenseId());
-            if (tradeLicenseService.currentUserIsMeeseva()) {
-                tradeLicense.setApplicationNumber(getApplicationNo());
-                tradeLicenseService.closureWithMeeseva(tradeLicense, workflowBean);
-            } else
-                tradeLicenseService.saveClosure(tradeLicense, workflowBean);
-        }
-        if (hasCSCPublicRole())
-            addActionMessage(this.getText("license.closure.initiated"));
-        else if (BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-            List<Assignment> assignments = assignmentService.getAssignmentsForPosition(workflowBean.getApproverPositionId());
-            String nextDesgn = !assignments.isEmpty() ? assignments.get(0).getDesignation().getName() : "";
-            final String userName = !assignments.isEmpty() ? assignments.get(0).getEmployee().getName() : "";
-            addActionMessage(this.getText("license.closure.sent") + " " + nextDesgn + " - " + userName);
-        }
-        return tradeLicenseService.currentUserIsMeeseva() ? MEESEVA_RESULT_ACK : "message";
-    }
-
-    @Action(value = "/viewtradelicense/viewTradeLicense-cancelLicense")
-    public String updateLicenseClosure() {
-        populateWorkflowBean();
-        if (getLicenseId() != null) {
-            tradeLicense = tradeLicenseService.getLicenseById(getLicenseId());
-            WorkFlowMatrix wfmatrix = tradeLicenseService.getWorkFlowMatrixApi(license(), workflowBean);
-            if (!license().getCurrentState().getValue().equals(wfmatrix.getCurrentState())) {
-                addActionMessage(this.getText("wf.item.processed"));
-                return MESSAGE;
-            }
-            if (BUTTONAPPROVE.equals(workflowBean.getWorkFlowAction()))
-                return approveClosureWithDigiSign(tradeLicense);
-            tradeLicenseService.cancelLicenseWorkflow(tradeLicense, workflowBean);
-            if (BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-                List<Assignment> assignments = assignmentService.getAssignmentsForPosition(workflowBean.getApproverPositionId());
-                String nextDesgn = !assignments.isEmpty() ? assignments.get(0).getDesignation().getName() : "";
-                final String userName = !assignments.isEmpty() ? assignments.get(0).getEmployee().getName() : "";
-                addActionMessage(this.getText("license.closure.sent") + " " + nextDesgn + " - " + userName);
-            } else if (BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-                if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED)) {
-                    List<Assignment> assignments = assignmentService.getAssignmentsForPosition(license().getState().getInitiatorPosition().getId());
-                    final String userName = !assignments.isEmpty() ? assignments.get(0).getEmployee().getName() : "";
-                    addActionMessage(this.getText("license.closure.rejectedfirst") + (" " + license().getState().getInitiatorPosition().getDeptDesig().getDesignation().getName() + " - ") + " " + userName);
-                } else addActionMessage(this.getText("license.closure.rejected") + " " + license().getLicenseNumber());
-            } else
-                addActionMessage(this.getText("license.closure.msg") + license().getLicenseNumber());
-        }
-        return MESSAGE;
-    }
-
-    private String approveClosureWithDigiSign(TradeLicense license) {
-        FileStoreMapper fileStore = fileStoreService
-                .store(licenseClosureService.generateClosureEndorsementNotice(license).asInputStream(),
-                        license.generateCertificateFileName() + ".pdf", CONTENT_TYPES.get(PDF), TL_FILE_STORE_DIR);
-        license.setDigiSignedCertFileStoreId(fileStore.getFileStoreId());
-        licenseClosureService.update(license);
-        fileStoreIds = license.getDigiSignedCertFileStoreId();
-        ulbCode = ApplicationThreadLocals.getCityCode();
-        applicationNo = license.getApplicationNumber();
-        return this.isDigitalSignatureEnabled() ? "closureEndorsementDigiSign" : "closureEndorsementNotice";
-    }
-
-    @Override
-    public String getAdditionalRule() {
-        return Constants.CLOSURE_ADDITIONAL_RULE;
-    }
-
-    public WorkflowBean getWorkflowBean() {
-        return workflowBean;
-    }
-
-    public void setWorkflowBean(final WorkflowBean workflowBean) {
-        this.workflowBean = workflowBean;
-    }
-
     public Long getLicenseId() {
         return licenseId;
     }
 
     public void setLicenseId(Long licenseId) {
         this.licenseId = licenseId;
-    }
-
-    public Boolean hasCSCPublicRole() {
-        return securityUtils.getCurrentUser().hasAnyRole(CSCOPERATOR, MEESEVAOPERATOR, PUBLIC_ROLE_NAME, CITIZEN_ROLE_NAME);
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public Boolean getEnableState() {
-        return enableState;
-    }
-
-    public void setEnableState(Boolean enableState) {
-        this.enableState = enableState;
     }
 
     public String getDigiSignedFile() {
@@ -323,20 +157,4 @@ public class ViewTradeLicenseAction extends BaseLicenseAction {
         this.applNum = applNum;
     }
 
-    @Override
-    public List<String> getValidActions() {
-        List<String> validActions = new ArrayList<>();
-        if (null == getModel() || null == getModel().getId() || getModel().getCurrentState() == null
-                || (getModel() != null && getModel().getCurrentState() != null ? getModel().getCurrentState().isEnded() : false)) {
-            validActions = Arrays.asList(FORWARD);
-        } else if (getModel().getCurrentState() != null) {
-            validActions.addAll(this.customizedWorkFlowService.getNextValidActions(getModel()
-                            .getStateType(), getWorkFlowDepartment(), getAmountRule(),
-                    getAdditionalRule(), getModel().getCurrentState().getValue(),
-                    getPendingActions(), getModel().getCreatedDate()));
-            validActions.removeIf(validAction -> "Reassign".equals(validAction) && getModel().getState().getCreatedBy().getId().equals(ApplicationThreadLocals.getUserId()));
-        }
-
-        return validActions;
-    }
 }

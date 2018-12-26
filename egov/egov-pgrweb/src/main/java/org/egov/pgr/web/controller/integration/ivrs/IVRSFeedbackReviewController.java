@@ -104,7 +104,7 @@ public class IVRSFeedbackReviewController {
                                          @ModelAttribute IVRSFeedbackReview ivrsFeedbackReview,
                                          Model model) {
         IVRSFeedback complaintFeedback = ivrsFeedbackService.getComplaintByCRN(crn);
-        model.addAttribute("complaintHistory", complaintHistoryService.getHistory(complaintFeedback.getComplaint()));
+        model.addAttribute("complaintHistory", complaintHistoryService.getComplaintHistory(complaintFeedback.getComplaint()));
         model.addAttribute("complaint", complaintFeedback.getComplaint());
         model.addAttribute("rating", complaintFeedback.getIvrsRating());
         return FEEDBACKREVIEW;

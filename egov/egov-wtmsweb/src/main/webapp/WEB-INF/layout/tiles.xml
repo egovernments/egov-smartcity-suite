@@ -77,7 +77,7 @@
         <put-attribute name="body" value="/WEB-INF/views/application/application-success.jsp"/>
     </definition>
     <definition name="applicationSearch-newForm" extends="base_layout">
-        <put-attribute name="page-title" value="title.AppliactionSearch" cascade="true"/>
+        <put-attribute name="page-title" value="title.application.search" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/elasticSearch/applicationSearch-newForm.jsp"/>
     </definition>
     <definition name="waterTaxSearch-newForm" extends="base_layout">
@@ -462,7 +462,7 @@
         <put-attribute name="body" value="/WEB-INF/views/reports/search-donation.jsp"></put-attribute>
     </definition>
     <definition name="execute-update-search" extends="base_layout">
-    	<put-attribute name="page-title" value="title.AppliactionSearch" cascade="true"></put-attribute>
+    	<put-attribute name="page-title" value="title.application.search" cascade="true"></put-attribute>
     	<put-attribute name="body" value="/WEB-INF/views/application/execute-update-search.jsp"></put-attribute>
     </definition>
     <definition name="regulariseconnection-form" extends="base_layout">
@@ -470,7 +470,7 @@
         <put-attribute name="body" value="/WEB-INF/views/application/regulariseconnection-form.jsp"/>
     </definition>
      <definition name="execute-search-screen" extends="base_layout">
-    	<put-attribute name="page-title" value="title.AppliactionSearch" cascade="true"></put-attribute>
+    	<put-attribute name="page-title" value="title.application.search" cascade="true"></put-attribute>
     	<put-attribute name="body" value="/WEB-INF/views/application/execute-search-screen.jsp"></put-attribute>
     </definition>
      <definition name="upload-document" extends="base_layout">
@@ -494,5 +494,15 @@
     <definition name="estimationpayment-verificationform" extends="base_layout">
         <put-attribute name="page-title" value="title.watertaxSearch" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/transaction/payment/estimationpayment-verificaitonform.jsp"/>
+    </definition>
+
+    <definition name="material-demand-search-form" extends="base_layout">
+    	<put-attribute name="page-title" value="title.application.search" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/application/material-demand-search.jsp"/>
+    </definition>
+    
+    <definition name="material-demand-view-application" extends="base_layout">
+    	<put-attribute name="page-title" value="title.update.application" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/application/material-demand-view-application.jsp"></put-attribute>
     </definition>
 </tiles-definitions>

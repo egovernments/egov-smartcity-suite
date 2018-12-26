@@ -71,6 +71,7 @@
 		<property name="applicationTax" column="APPLICATION_TAX" type="java.math.BigDecimal" />
 		<property name="approvedTax" column="APPROVED_TAX" type="java.math.BigDecimal" />
 		<property name="systemTax" column="SYSTEM_TAX" type="java.math.BigDecimal" />
+		<property name="uploadDocumentStatus" column="UPLOAD_DOC_STATUS" />
 		
 		<bag name="gisAuditDetails" cascade="all-delete-orphan" table="EGPT_GIS_AUD_DETAILS"
 			inverse="true" order-by="id">

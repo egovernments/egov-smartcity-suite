@@ -52,6 +52,8 @@ jQuery(document).ready(function() {
 
 $('#metered-search-result-table').on('click', 'td button', function() {
 	var row = jQuery(this).closest('tr');
+	var myObj = {};
+	var $tr = jQuery(this).closest('tr');
 	
 	var table = $("#metered-search-result-table").DataTable();
 	var rowData = table.row( $(this).parents('tr') ).data();
@@ -61,20 +63,24 @@ $('#metered-search-result-table').on('click', 'td button', function() {
 		$(".display-success-msg").hide();
 		var resultObject = {};
 		var jsonObject = [];
+
 		resultObject = {
-				"id" : ""+rowData['id'],
-				"applicationNumber" : "" + rowData['applicationNumber']
-		}
+				"applicationNumber" : "" +rowData['applicationNumber'], 
+				"pipeSizeId" : ""+rowData['pipesizeid']
+				}
+		
 		jsonObject.push(resultObject);
 		$(".applnNumber").html(rowData['applicationNumber']);
-		var obj = {"executeMeterApplicationDetails" : jsonObject}
+		var obj = {"executeWaterApplicationDetails" : jsonObject}
 		var o = JSON.stringify(obj);
 		var result = [];
 		$("#meterMake").find('option:gt(0)').remove();
 		$.ajax({
-			url : "/wtms/application/execute-update/search-result",
-			type : "GET",
+			
+			url : "/wtms/application/execute-update/search-meter",
+			type : "POST",
 			dataType : "json",
+			data : o,
 			cache : false,
 			contentType : "application/json ; charset=utf-8",
 			success : function(data) {
@@ -136,7 +142,7 @@ $('#search').on('click', function() {
 	        	{  
 	        	  "class" : "text-center",
 	        	  "data" : "id",
-	        	  "title" : '<input type="checkbox" id="global_checkbox" class="check_box" onclick="checkbox_change(this);"/>',
+	        	  "title" : '<input type="checkbox" id="global_checkbox" class="checkbox" onclick="checkbox_change(this);"/>',
 	        	  "render" : function(data, type, full, meta) {
 	        		  return '<input type="checkbox"  class="check_box" name="id" value="'
 						+ $('<div/>').text(data).html()
@@ -150,6 +156,7 @@ $('#search').on('click', function() {
 	        			return '<a onclick="openpopup(\'/wtms/application/view/'+row.applicationNumber+'\')" href="javascript:void(0);">'+data+'</a>';
 	        		}
 	        	},
+	        	{ "data":"pipesizeid", "class":"text-center", "visible":false, "title":"Pipe Size"},
 	        	{ "data":"consumerNumber", "class":"text-center", "title":"Consumer Number"},
 	        	{ "data":"ownerName", "class":"text-center", "title":"Owner Name"},
 	        	{ "data":"address", "class":"text-center", "title":"Address"},
@@ -169,16 +176,13 @@ $('#search').on('click', function() {
 	        		"class":"text-center", 
 	        		"title":"Connection Execution Date",
 	        		"render" : function(data, type, full, meta) {
-	        			return '<input class="form-control datepicker execDate" data-date-end-date="0d" id="executiondate" />';
+	        			return '<input class="form-control datepicker execDate" data-date-end-date="0d" id="executiondate" readonly="readonly"/>';
 	        		}
 	        	 
 	        	}
 	        	
 	        ],
 	        columnDefs:[{orderable:false,targets:[0]}],
-	        "initComplete": function(settings, json) {
-	            reinitialiseDatePicker();
-	          }
 		});
 		
 		$('.updation').show();
@@ -188,13 +192,14 @@ else
 	return false;
 });
 
-function reinitialiseDatePicker() {
+$('#search-result-table').on('draw.dt', function () {
 	jQuery(".datepicker").datepicker({
 		format : "dd/mm/yyyy",
 		autoclose : true
 	});
-}
+});
 
+ 
 function checkbox_change(obj){
 	if($(obj).is(':checked')) {
 		$('#search-result-table')
@@ -216,6 +221,11 @@ $('#update').on('click', function(){
 	
 	$('.check_box:checked').each(function() {
 		var $tr = jQuery(this).closest('tr');
+		if($tr.find('.execDate').val()=="" || $tr.find('.execDate').val()==undefined) {
+			bootbox.alert("Execution date is not entered. Please check once.");
+			isError =true;
+			return false;
+		}
 		var currentDate = formatCurrentDate();
 		    var validDate = compareDate($tr.find('.execDate').val(), currentDate);
 		    if(validDate==-1) {
@@ -225,7 +235,8 @@ $('#update').on('click', function(){
 		    }
 			myObj = { "id" : ""+$tr.find('.check_box').val(),
 					"executionDate" : "" + $tr.find('.execDate').val(),
-					"applicationNumber" : "" + $tr.find('applicationNumber').val()
+					"applicationNumber" : "" +$tr.find("td:eq(1)")[0].innerText,
+					"pipeSizeId" : "" +$tr.find("td:eq(2)")[0].innerText
 			}
 			
 			jsonObj.push(myObj);
@@ -277,7 +288,14 @@ $('#update').on('click', function(){
 					bootbox.alert(" Execution date can not be greater than current date");
 					return false;
 				}
-				
+				else if(response.includes("Application Process Time not defined")) {
+					bootbox.alert(" Application process time is not defined for this application type and category. Please define using create application process time master and then update execution date.")
+					return false;
+				}
+				else {
+					bootbox.alert("water connection update failed");
+					return false;
+				}
 			},
 			error : function(response) {
 				bootbox.alert("water connection update failed");
@@ -366,6 +384,7 @@ $('#searchApplication').on('click', function() {
         			return '<a onclick="openpopup(\'/wtms/application/view/'+row.applicationNumber+'\')" href="javascript:void(0);">'+data+'</a>';
         		}
         	},
+        	{ "data":"pipesizeid", "visible":false,"title":"Pipe Size"},
         	{ "data":"consumerNumber", "class":"text-center", "title":"Consumer Number"},
         	{ "data":"ownerName", "class":"text-center", "title":"Owner Name"},
         	{ "data":"address", "class":"text-center", "title":"Address"},

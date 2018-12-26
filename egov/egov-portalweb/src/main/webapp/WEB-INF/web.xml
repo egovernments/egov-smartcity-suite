@@ -70,6 +70,10 @@
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
+    <listener>
+        <listener-class>org.egov.infra.web.listener.MDCLoggingCorrelationIDAssigner</listener-class>
+    </listener>
+
     <filter>
         <filter-name>CacheControlFilter</filter-name>
         <filter-class>org.egov.infra.web.filter.CacheControlFilter</filter-class>

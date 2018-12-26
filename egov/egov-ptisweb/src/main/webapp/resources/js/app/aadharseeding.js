@@ -122,7 +122,13 @@ jQuery(document)
 												});
 									});
 				});
-
+$(document).ready(function(){
+    if(localStorage.getItem("status") == "OK")
+    {
+    	bootbox.alert("Aadhar Seeding Approved/Rejected for the selected Assessments successfully!");
+        localStorage.clear();
+    }
+});
 function setHiddenValueByLink(obj) {
 	window.open("../aadharseeding/aadhardataupdateform/" + obj.innerHTML
 			+ '/CREATED', '', "_self");
@@ -154,7 +160,8 @@ $('#updateBtn').on(
 						myObj = {
 							"propertyId" : ""
 									+ $(this).parent().parent().find('td')
-											.eq(1).text().trim()
+											.eq(1).text().trim(),
+							"mode" : "approve"				
 						}
 						jsonObj.push(myObj);
 					});
@@ -174,6 +181,45 @@ $('#updateBtn').on(
 					cache : false,
 					contentType : "application/json; charset=utf-8",
 					success : function() {
+						localStorage.setItem("status","OK")
+						window.location.reload()
+					}
+				});
+			}
+		});
+
+$('#rejectBtn').on(
+		'click',
+		function() {
+			var jsonObj = [];
+			var myObj = {};
+			jQuery('.check_box:checked').each(
+					function() {
+						myObj = {
+							"propertyId" : ""
+									+ $(this).parent().parent().find('td')
+											.eq(1).text().trim(),
+							"mode" : "reject"					
+						}
+						jsonObj.push(myObj);
+					});
+			if(jQuery.isEmptyObject(jsonObj)){
+				bootbox
+				.alert("Please select the records to Update!");
+			}
+			else{
+				var obj = {
+						"info" : jsonObj
+					}
+				var o = JSON.stringify(obj);
+				jQuery.ajax({
+					url : "/ptis/aadharseeding/aadhardataapprovalform",
+					type : "POST",
+					data : JSON.stringify(o),
+					cache : false,
+					contentType : "application/json; charset=utf-8",
+					success : function() {
+						localStorage.setItem("status","OK")
 						window.location.reload()
 					}
 				});

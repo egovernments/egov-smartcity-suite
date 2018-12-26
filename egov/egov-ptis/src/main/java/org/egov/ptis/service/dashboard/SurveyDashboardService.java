@@ -116,6 +116,7 @@ public class SurveyDashboardService {
     private static final String GIS_TAX = "gisTax";
     private static final String NA = "N/A";
     private static final String LOCALITY_NAME="localityName";
+    private static final String CLOSED = "Closed";
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
@@ -302,8 +303,16 @@ public class SurveyDashboardService {
                         .subAggregation(AggregationBuilders.sum("approvedTotal").field(APPROVED_TAX)))
                 .execute().actionGet();
         SearchResponse cancelledResponse = elasticsearchTemplate.getClient().prepareSearch(PROPERTYSURVEYDETAILS_INDEX).setSize(0)
-                .setQuery(prepareQuery(surveyRequest).filter(QueryBuilders.matchQuery(APPLICATION_STATUS, "Closed"))
+                .setQuery(prepareQuery(surveyRequest).filter(QueryBuilders.matchQuery(APPLICATION_STATUS, CLOSED))
                         .filter(QueryBuilders.matchQuery(STATUS_IS_CANCELLED, true)))
+                .addAggregation(aggregationBuilder).execute().actionGet();
+        SearchResponse closedResponse = elasticsearchTemplate.getClient().prepareSearch(PROPERTYSURVEYDETAILS_INDEX).setSize(0)
+                .setQuery(prepareQuery(surveyRequest).filter(QueryBuilders.matchQuery(APPLICATION_STATUS, CLOSED)))
+                .addAggregation(aggregationBuilder).execute().actionGet();
+        SearchResponse wfResponse = elasticsearchTemplate.getClient().prepareSearch(PROPERTYSURVEYDETAILS_INDEX).setSize(0)
+                .setQuery(prepareQuery(surveyRequest).must(QueryBuilders.matchQuery(STATUS_IS_CANCELLED, false))
+                        .must(QueryBuilders.matchQuery(STATUS_IS_APPROVED, false))
+                        .mustNot(QueryBuilders.matchQuery(APPLICATION_STATUS, CLOSED)))
                 .addAggregation(aggregationBuilder).execute().actionGet();
 
         SearchResponse taxesResponse = elasticsearchTemplate.getClient().prepareSearch(PROPERTYSURVEYDETAILS_INDEX).setSize(0)
@@ -326,6 +335,16 @@ public class SurveyDashboardService {
         Map<String, Long> cancelledApplicationsMap = new ConcurrentHashMap<>();
         for (Bucket bucket : cancelledAggr.getBuckets())
             cancelledApplicationsMap.put(bucket.getKeyAsString(), bucket.getDocCount());
+        
+        Terms closedAggr = closedResponse.getAggregations().get(AGGREGATIONWISE);
+        Map<String, Long> closedApplicationsMap = new ConcurrentHashMap<>();
+        for (Bucket bucket : closedAggr.getBuckets())
+            closedApplicationsMap.put(bucket.getKeyAsString(), bucket.getDocCount());
+
+        Terms wfAggr = wfResponse.getAggregations().get(AGGREGATIONWISE);
+        Map<String, Long> wfApplicationsMap = new ConcurrentHashMap<>();
+        for (Bucket bucket : wfAggr.getBuckets())
+            wfApplicationsMap.put(bucket.getKeyAsString(), bucket.getDocCount());
 
         Map<String, List<BigDecimal>> taxMap = getTaxDetails(taxesResponse);
 
@@ -336,7 +355,7 @@ public class SurveyDashboardService {
         }
 
         responseList = setSurveyResponse(surveyRequest, aggregationField, response, completedApplicationsMap, totalMap,
-                wardWiseBillCollectors, cancelledApplicationsMap, taxMap);
+                wardWiseBillCollectors, cancelledApplicationsMap, taxMap, closedApplicationsMap, wfApplicationsMap);
         return responseList;
     }
 
@@ -390,7 +409,9 @@ public class SurveyDashboardService {
             SearchResponse response, Map<String, Long> completedApplicationsMap,
             Map<String, List<Map<String, BigDecimal>>> approvedTotalMap,
             Map<String, BillCollectorIndex> wardWiseBillCollectors, Map<String, Long> cancelledApplicationsMap,
-            Map<String, List<BigDecimal>> taxMap) {
+            Map<String, List<BigDecimal>> taxMap,
+            Map<String, Long>closedApplicationsMap,
+            Map<String, Long>wfApplicationsMap) {
         SurveyResponse surveyResponse;
         List<SurveyResponse> responseList = new ArrayList<>();
         Terms ulbTerms = response.getAggregations().get(AGGREGATIONWISE);
@@ -407,6 +428,11 @@ public class SurveyDashboardService {
             surveyResponse.setTotalReceived(bucket.getDocCount());
             if (cancelledApplicationsMap.get(bucket.getKeyAsString()) != null)
                 surveyResponse.setTotalCancelled(cancelledApplicationsMap.get(bucket.getKeyAsString()));
+            if (closedApplicationsMap.get(bucket.getKeyAsString()) != null)
+                surveyResponse.setTotalClosed(closedApplicationsMap.get(bucket.getKeyAsString()));
+            
+            if (wfApplicationsMap.get(bucket.getKeyAsString()) != null)
+                surveyResponse.setTotalPending(wfApplicationsMap.get(bucket.getKeyAsString()));
             verfTerms = bucket.getAggregations().get("verificationDone");
             for (Bucket verfBucket : verfTerms.getBuckets()) {
                 if (verfBucket.getKeyAsNumber().intValue() == 1)
@@ -471,8 +497,6 @@ public class SurveyDashboardService {
         }
         if (completedApplicationsMap.get(name) != null)
             surveyResponse.setTotalCompleted(completedApplicationsMap.get(name));
-        surveyResponse.setTotalPending(
-                surveyResponse.getTotalReceived() - surveyResponse.getTotalCompleted() - surveyResponse.getTotalCancelled());
         if (approvedTotalMap.containsKey(name)) {
             approvedSysTax = approvedTotalMap.get(name).get(0).get("approvedSystemTax");
             approvedTotalTax = approvedTotalMap.get(name).get(1).get("totalApprovedTax");

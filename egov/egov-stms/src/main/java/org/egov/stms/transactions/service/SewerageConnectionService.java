@@ -58,6 +58,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
 import org.egov.stms.masters.service.DocumentTypeMasterService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.entity.SewerageApplicationDetailsDocument;
@@ -80,13 +81,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class SewerageConnectionService {
 
     private final SewerageConnectionRepository sewerageConnectionRepository;
-
-    @Autowired
-    private DocumentTypeMasterService documentTypeMasterService;
-
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
+    @Autowired
+    private DocumentTypeMasterService documentTypeMasterService;
 
     @Autowired
     public SewerageConnectionService(final SewerageConnectionRepository sewerageConnectionRepository) {
@@ -114,14 +113,9 @@ public class SewerageConnectionService {
         return sewerageConnectionRepository.findAll(pageable);
     }
 
-    public List<SewerageConnection> findByPropertyIdentifier(final String propertyIdentifier) {
-        // TODO : commented as part of design change. propertyIdentifier moved
-        // to connectiondetail
-        // return
-        // sewerageConnectionRepository.findByPropertyIdentifier(propertyIdentifier);
-        return null;
+    public SewerageConnection findByShscNumberAndStatusList(String shscNumber, List<SewerageConnectionStatus> statusList) {
+        return sewerageConnectionRepository.findByShscNumberAndStatusIn(shscNumber, statusList);
     }
-
 
     public List<SewerageApplicationDetailsDocument> processAndStoreApplicationDocuments(
             final SewerageApplicationDetails sewerageApplicationDetails) {
@@ -259,10 +253,10 @@ public class SewerageConnectionService {
         }
     }*/
 
-    
+
     @SuppressWarnings("null")
     public void validateDocuments(final List<SewerageApplicationDetailsDocument> applicationDocs,
-            final SewerageApplicationDetailsDocument applicationDocument, final int i, final BindingResult resultBinder) {
+                                  final SewerageApplicationDetailsDocument applicationDocument, final int i, final BindingResult resultBinder) {
 
         if (applicationDocument != null && applicationDocument.getDocumentTypeMaster().isMandatory()) {
 

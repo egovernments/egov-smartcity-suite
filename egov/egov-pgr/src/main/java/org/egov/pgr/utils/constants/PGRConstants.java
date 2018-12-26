@@ -50,7 +50,6 @@ package org.egov.pgr.utils.constants;
 
 public final class PGRConstants {
     public static final String MODULE_NAME = "PGR";
-    public static final String EG_OBJECT_TYPE_COMPLAINT = "Complaint";
     public static final String RO_ROLE_NAME = "Redressal Officer";
     public static final String GO_ROLE_NAME = "Grievance Officer";
     public static final String GRO_ROLE_NAME = "Grievance Routing Officer";
@@ -68,15 +67,6 @@ public final class PGRConstants {
     public static final String DASHBOARD_GROUPING_ALL_FUNCTIONARY = "allfunctionary";
     public static final String DELIMITER_COLON = "::";
     public static final String NOASSIGNMENT = "NO ASSIGNMENT";
-
-    public static final String DATE = "date";
-    public static final String COMMENT = "comments";
-    public static final String UPDATEDBY = "updatedBy";
-    public static final String UPDATEDUSERTYPE = "updatedUserType";
-    public static final String USERTYPE = "usertype";
-    public static final String USER = "user";
-    public static final String STATUS = "status";
-    public static final String DEPT = "department";
 
     //Dashboard
     public static final String DISPOSALPERC = "disposalPerc";
@@ -101,14 +91,13 @@ public final class PGRConstants {
     public static final String COMPLAINT_CLOSED = "CLOSED";
     public static final String COMPLAINT_WITHDRAWN = "WITHDRAWN";
     public static final String COMPLAINT_REOPENED = "REOPENED";
+    public static final String COMPLAINT_ESCALATED = "ESCALATED";
 
     public static final String[] PENDING_STATUS = {COMPLAINT_REGISTERED, "FORWARDED", "PROCESSING", "NOTCOMPLETED", COMPLAINT_REOPENED};
     public static final String[] COMPLETED_STATUS = {COMPLAINT_COMPLETED, COMPLAINT_WITHDRAWN, COMPLAINT_CLOSED};
     public static final String[] REJECTED_STATUS = {COMPLAINT_REJECTED};
     public static final String[] RESOLVED_STATUS = {COMPLAINT_COMPLETED, COMPLAINT_WITHDRAWN, COMPLAINT_CLOSED, COMPLAINT_REJECTED};
     public static final String DEFAULT_RECEIVING_MODE = "WEBSITE";
-    public static final String SYSTEMUSER = "SYSTEM";
-    public static final String ESCALATEDSTATUS = "ESCALATED";
     public static final String COMPLAINT_ATTRIB = "complaint";
     public static final String CITIZEN_RATING_ATTRIB = "citizenRating";
     public static final String APPROVAL_COMMENT_ATTRIB = "approvalComent";

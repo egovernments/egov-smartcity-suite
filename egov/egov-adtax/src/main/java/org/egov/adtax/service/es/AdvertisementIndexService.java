@@ -102,9 +102,6 @@ public class AdvertisementIndexService {
                 cityWebsite.getName(), cityWebsite.getCode(), advertisementPermitDetail.getCreatedDate(),
                 cityWebsite.getDistrictName(), cityWebsite.getRegionName(),
                 cityWebsite.getGrade());
-        /*
-         * AdvertisementIndex advertisementSearch = new AdvertisementIndex();
-         */
         advertisementSearch.setId(cityWebsite.getCode().concat("-").concat(advertisementPermitDetail.getApplicationNumber()));
         advertisementSearch.setAddress(advertisementPermitDetail.getAdvertisement().getAddress() != null
                 ? advertisementPermitDetail.getAdvertisement().getAddress() : "");
@@ -257,8 +254,8 @@ public class AdvertisementIndexService {
         // Deactivation
         if (advertisementPermitDetail.getAdvertisement().getStatus().name().equalsIgnoreCase("INACTIVE")) {
 
-            advertisementSearch.setDeactivationDate(advertisementPermitDetail.getDeactivation_date());
-            advertisementSearch.setDeactivationRemarks(advertisementPermitDetail.getDeactivation_remarks());
+            advertisementSearch.setDeactivationDate(advertisementPermitDetail.getDeactivationDate());
+            advertisementSearch.setDeactivationRemarks(advertisementPermitDetail.getDeactivationRemarks());
         }
         advertisementIndexRepository.save(advertisementSearch);
         return advertisementSearch;

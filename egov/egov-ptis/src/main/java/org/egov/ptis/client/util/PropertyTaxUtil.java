@@ -194,6 +194,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
  * @author malathi
  */
 public class PropertyTaxUtil {
+    private static final String UPIC_NO = "upicNo";
     private static final String DD_MM_YYYY = "dd/MM/yyyy";
     private static final String INSTALLMENT = "installment";
     private static final String PROPERTY = "property";
@@ -745,7 +746,7 @@ public class PropertyTaxUtil {
                                 + "where p.basicProperty.active = true " + "and p.basicProperty.upicNo = :upicNo "
                                 + "and (p.remarks is null or p.remarks <> :propertyMigrationRemarks) "
                                 + "and pd.effective_date is not null")
-                .setString("upicNo", propertyId)
+                .setString(UPIC_NO, propertyId)
                 .setString("propertyMigrationRemarks", PropertyTaxConstants.STR_MIGRATED_REMARKS).list();
 
         Date earliestModificationDate = null;
@@ -777,7 +778,6 @@ public class PropertyTaxUtil {
         }
         return waterTaxEffectiveDate;
     }
-
 
     public Map<String, Map<Installment, BigDecimal>> prepareReasonWiseDenandAndCollection(final Property property,
             final Installment currentInstallment) {
@@ -831,7 +831,7 @@ public class PropertyTaxUtil {
     @SuppressWarnings("unchecked")
     public Map<String, Map<String, BigDecimal>> prepareDemandDetForView(final Property property,
             final Installment currentInstallment) {
-        final Map<String, Map<String, BigDecimal>> DCBDetails = new TreeMap<>();
+        final Map<String, Map<String, BigDecimal>> dCBDetails = new TreeMap<>();
         final Map<String, BigDecimal> firstHalfReasonDemandDetails = new HashMap<>();
         final Map<String, BigDecimal> secondHalfReasonDemandDetails = new HashMap<>();
         final Map<String, BigDecimal> arrearDemandDetails = new HashMap<>();
@@ -885,10 +885,10 @@ public class PropertyTaxUtil {
         firstHalfReasonDemandDetails.put(CURR_FIRSTHALF_COLL_STR, totalCurrentCollection);
         secondHalfReasonDemandDetails.put(CURR_SECONDHALF_DMD_STR, totalNextInstDemand);
         secondHalfReasonDemandDetails.put(CURR_SECONDHALF_COLL_STR, totalNextInstCollection);
-        DCBDetails.put(CURRENTYEAR_FIRST_HALF, firstHalfReasonDemandDetails);
-        DCBDetails.put(CURRENTYEAR_SECOND_HALF, secondHalfReasonDemandDetails);
-        DCBDetails.put(ARREARS, arrearDemandDetails);
-        return DCBDetails;
+        dCBDetails.put(CURRENTYEAR_FIRST_HALF, firstHalfReasonDemandDetails);
+        dCBDetails.put(CURRENTYEAR_SECOND_HALF, secondHalfReasonDemandDetails);
+        dCBDetails.put(ARREARS, arrearDemandDetails);
+        return dCBDetails;
     }
 
     @SuppressWarnings("unchecked")
@@ -897,7 +897,8 @@ public class PropertyTaxUtil {
                 + "where bp.upicNo = :upicNo and bp.active = true " + "and (p.remarks = null or p.remarks <> :remarks) "
                 + "order by p.createdDate";
         final List<Property> allProperties = entityManager.unwrap(Session.class).createQuery(query)
-                .setString("upicNo", basicProperty.getUpicNo()).setString("remarks", PropertyTaxConstants.STR_MIGRATED_REMARKS).list();
+                .setString(UPIC_NO, basicProperty.getUpicNo()).setString("remarks", PropertyTaxConstants.STR_MIGRATED_REMARKS)
+                .list();
         new ArrayList<Property>();
         final List<String> mutationsCodes = Arrays.asList("NEW", "MODIFY");
         Property property = null;
@@ -1200,12 +1201,11 @@ public class PropertyTaxUtil {
                 + "where bp.active = true " + "and (p.status = 'W' or p.status = 'I' or p.status = 'A') "
                 + "and p = :property " + "and ptd.egInstallmentMaster = :installment";
 
-        List<Ptdemand> ptDemandList = new ArrayList<>();
-		ptDemandList = entityManager.unwrap(Session.class).createQuery(query).setEntity("property", property)
-				.setEntity("installment", dmdInstallment).list();
-        Ptdemand ptDemand=new Ptdemand();
-        if(!ptDemandList.isEmpty()){
-        	ptDemand=ptDemandList.get(0);
+        List<Ptdemand> ptDemandList = entityManager.unwrap(Session.class).createQuery(query).setEntity("property", property)
+                .setEntity("installment", dmdInstallment).list();
+        Ptdemand ptDemand = new Ptdemand();
+        if (!ptDemandList.isEmpty()) {
+            ptDemand = ptDemandList.get(0);
         }
 
         for (final EgDemandDetails dmdDet : ptDemand.getEgDemandDetails()) {
@@ -1247,7 +1247,7 @@ public class PropertyTaxUtil {
             final VacancyRemission vacancyRemission = remissionList.get(remissionList.size() - 1);
             if (vacancyRemission != null)
                 if (vacancyRemission.getStatus().equalsIgnoreCase(PropertyTaxConstants.VR_STATUS_APPROVED)) {
-                        vrFlag = true;
+                    vrFlag = true;
                 } else if (vacancyRemission.getStatus().equalsIgnoreCase(
                         PropertyTaxConstants.VR_STATUS_REJECTION_ACK_GENERATED))
                     vrFlag = true;
@@ -1257,10 +1257,8 @@ public class PropertyTaxUtil {
 
     public boolean enableMonthlyUpdate(final String upicNo) {
         boolean monthlyUpdateFlag = false;
-        final VacancyRemission vacancyRemission = (VacancyRemission) persistenceService
-                .find("select vr from VacancyRemission vr where vr.basicProperty.upicNo=? and vr.status = 'APPROVED'",
-                        upicNo);
-        if (vacancyRemission != null)
+        final VacancyRemission vacancyRemission = getLatestApprovedVR(upicNo);
+        if (vacancyRemission != null) {
             if (vacancyRemission.getVacancyRemissionDetails().isEmpty()
                     && DateUtils.noOfMonthsBetween(vacancyRemission.getVacancyFromDate(), new Date()) == 1)
                 monthlyUpdateFlag = true;
@@ -1274,18 +1272,24 @@ public class PropertyTaxUtil {
                 if (detailsSize % 5 == 0 && vacancyRemission.getVacancyToDate().compareTo(new Date()) > 0)
                     monthlyUpdateFlag = false;
             }
+        }
         return monthlyUpdateFlag;
+    }
+
+    private VacancyRemission getLatestApprovedVR(final String upicNo) {
+        final String query = "from VacancyRemission vr where vr.basicProperty.upicNo= :upicNo and vr.status = 'APPROVED' order by createdDate desc";
+        final List<VacancyRemission> vacancyRemissions = entityManager.unwrap(Session.class).createQuery(query)
+                .setParameter(UPIC_NO, upicNo).list();
+        return (vacancyRemissions != null && !vacancyRemissions.isEmpty()) ? vacancyRemissions.get(0) : null;
     }
 
     public boolean enableVRApproval(final String upicNo) {
         boolean vrApprovalFlag = false;
-        final VacancyRemission vacancyRemission = (VacancyRemission) persistenceService
-                .find("select vr from VacancyRemission vr where vr.basicProperty.upicNo=? and vr.status = 'APPROVED'",
-                        upicNo);
-        if (vacancyRemission != null && !vacancyRemission.getVacancyRemissionDetails().isEmpty()){
-                final int detailsSize = vacancyRemission.getVacancyRemissionDetails().size();
-                if (detailsSize % 6 == 0)
-                    vrApprovalFlag = true;
+        VacancyRemission vacancyRemission = getLatestApprovedVR(upicNo);
+        if (vacancyRemission != null && !vacancyRemission.getVacancyRemissionDetails().isEmpty()) {
+            final int detailsSize = vacancyRemission.getVacancyRemissionDetails().size();
+            if (detailsSize % 6 == 0)
+                vrApprovalFlag = true;
         }
         return vrApprovalFlag;
     }
@@ -1313,7 +1317,7 @@ public class PropertyTaxUtil {
      */
     public Date getLowestInstallmentForProperty(final Property property) {
         final String query = "select demandDetails.egDemandReason from Ptdemand ptd,EgDemandDetails demandDetails where ptd.egptProperty = :property "
-                + " and ptd.id = demandDetails.egDemand.id ";
+                + " and ptd.id = demandDetails.egDemand.id order by demandDetails.egDemandReason.egInstallmentMaster.fromDate";
         final List<EgDemandReason> egDemandReason = persistenceService.getSession().createQuery(query.toString())
                 .setEntity(PROPERTY, property).list();
         return null != egDemandReason && !egDemandReason.isEmpty() ? egDemandReason.get(0).getEgInstallmentMaster()
@@ -1496,8 +1500,8 @@ public class PropertyTaxUtil {
                             .equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES)
                     && !dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode()
                             .equalsIgnoreCase(DEMANDRSN_CODE_ADVANCE))
-                    taxDetailsMap.put(dmdDet.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(),
-                            dmdDet.getAmount());
+                taxDetailsMap.put(dmdDet.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(),
+                        dmdDet.getAmount());
         return taxDetailsMap;
     }
 
@@ -1576,7 +1580,7 @@ public class PropertyTaxUtil {
         reportParams.put(CITY_NAME, city.getName());
         if (!(Arrays.asList(REVISION_PETETION, VACANCY_REMISSION, GENERAL_REVISION_PETETION_APPTYPE)).contains(applicationType))
             reportParams.put(ACK_NO, basicProperty.getWFProperty().getApplicationNo());
-        else 
+        else
             reportParams.put(ACK_NO, applicationNo);
         reportParams.put(SERVICE_TYPE, serviceType);
         reportInput = new ReportRequest("MainCitizenCharterAcknowledgement", reportParams, reportParams);
@@ -1630,8 +1634,8 @@ public class PropertyTaxUtil {
     }
 
     /**
-     * API returns the percentage of tax difference between GIS survey tax and application tax Current second half taxes, exluding
-     * UAC penalty will be considered for the comparison
+     * API returns the percentage of tax difference between GIS survey tax and application tax Current second half taxes,
+     * excluding UAC penalty will be considered for the comparison
      * @param propertyImpl
      * @return BigDecimal
      */
@@ -1645,8 +1649,11 @@ public class PropertyTaxUtil {
         if (gisProperty != null) {
             Ptdemand gisPtdemand = gisProperty.getPtDemandSet().iterator().next();
             if (gisPtdemand != null) {
+                Map<String, Installment> gisPropYearInstMap = getInstallmentsForCurrYear(
+                        gisPtdemand.getEgInstallmentMaster().getFromDate());
                 for (EgDemandDetails demandDetails : gisPtdemand.getEgDemandDetails()) {
-                    if (gisPtdemand.getEgInstallmentMaster().getFromDate().equals(demandDetails.getInstallmentStartDate())
+                    if (gisPropYearInstMap.get(CURRENTYEAR_SECOND_HALF).getFromDate()
+                            .equals(demandDetails.getInstallmentStartDate())
                             &&
                             !PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY
                                     .equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))

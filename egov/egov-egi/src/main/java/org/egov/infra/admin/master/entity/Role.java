@@ -127,12 +127,12 @@ public class Role extends AbstractAuditable {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o)
+    public boolean equals(Object other) {
+        if (this == other)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (other == null || getClass() != other.getClass())
             return false;
-        final Role role = (Role) o;
+        Role role = (Role) other;
         return Objects.equals(getName(), role.getName());
     }
 

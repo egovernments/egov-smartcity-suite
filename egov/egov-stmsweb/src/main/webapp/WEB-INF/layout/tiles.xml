@@ -376,4 +376,10 @@
         <put-attribute name="body"
                        value="/WEB-INF/views/transactions/sewerageExecution-search.jsp"/>
     </definition>
+     <definition name="search-application" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.application.search"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/search/search-application.jsp"/>
+    </definition>
 </tiles-definitions>

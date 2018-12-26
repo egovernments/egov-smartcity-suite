@@ -63,6 +63,8 @@ import javax.imageio.stream.ImageOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.Optional;
@@ -93,23 +95,26 @@ public final class ImageUtils {
         return compressImage(imageFile.getInputStream(), imageFile.getOriginalFilename(), true);
     }
 
-    public static File compressImage(final InputStream imageStream, String imageFileName, boolean closeStream) throws IOException {
-        File compressedImage = Paths.get(imageFileName).toFile();
-        try (final ImageOutputStream imageOutput = createImageOutputStream(compressedImage)) {
+    public static File compressImage(InputStream imageStream, String imageFileName, boolean closeStream) throws IOException {
+        Path compressedImage = Paths.get(imageFileName);
+        try (ImageOutputStream imageOutput = createImageOutputStream(compressedImage.toFile())) {
             ImageWriter writer = getImageWritersByFormatName(defaultString(getExtension(imageFileName), JPG_FORMAT_NAME)).next();
             writer.setOutput(imageOutput);
             ImageWriteParam writeParam = writer.getDefaultWriteParam();
             if (writeParam.canWriteCompressed()) {
                 writeParam.setCompressionMode(MODE_EXPLICIT);
                 writeParam.setCompressionType(writeParam.getCompressionTypes()[0]);
-                writeParam.setCompressionQuality(0.05F);
+                writeParam.setCompressionQuality(1F);
+                writer.write(null, new IIOImage(read(imageStream), null, null), writeParam);
+            } else {
+                Files.deleteIfExists(compressedImage);
+                Files.copy(imageStream, compressedImage);
             }
-            writer.write(null, new IIOImage(read(imageStream), null, null), writeParam);
             writer.dispose();
             if (closeStream)
                 imageStream.close();
         }
-        return compressedImage;
+        return compressedImage.toFile();
     }
 
     public static double[] findGeoCoordinates(File jpegImage) {

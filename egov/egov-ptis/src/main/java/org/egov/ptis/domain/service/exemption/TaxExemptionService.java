@@ -50,18 +50,20 @@ package org.egov.ptis.domain.service.exemption;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Installment;
+import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
-import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
@@ -70,6 +72,7 @@ import org.egov.portal.entity.PortalInbox;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
+import org.egov.ptis.domain.dao.property.PropertyHibernateDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -96,12 +99,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -113,13 +118,15 @@ import static java.lang.Boolean.FALSE;
 import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 @Service
-@Transactional
 public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> {
 
+    private static final String NO_DUE = "noDue";
+    private static final String DUE = "due";
+    private static final String NO_DEMAND = "noDemand";
     private static final Logger LOGGER = LoggerFactory.getLogger(TaxExemptionService.class);
     @PersistenceContext
     private EntityManager entityManager;
-    
+
     @Autowired
     private PropertyService propertyService;
 
@@ -162,7 +169,16 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
     @Autowired
     private VacancyRemissionRepository vacancyRemissionRepository;
-    
+
+    @Autowired
+    private ModuleService moduleDao;
+
+    @Autowired
+    private InstallmentHibDao installmentDao;
+
+    @Autowired
+    private PropertyHibernateDAO propertyDAO;
+
     Property property = null;
 
     public TaxExemptionService() {
@@ -177,7 +193,6 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
     public BasicProperty saveProperty(final Property newProperty, final Property oldProperty, final Character status,
             final String approvalComment, final String workFlowAction, final Long approvalPosition,
             final String taxExemptedReason, final Boolean propertyByEmployee, final String additionalRule) {
-
         TaxExemptionReason taxExemptionReason = null;
         final BasicProperty basicProperty = oldProperty.getBasicProperty();
         final PropertyDetail propertyDetail = oldProperty.getPropertyDetail();
@@ -187,27 +202,18 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         propertyModel.setStatus(status);
         if (propertyModel.getApplicationNo() == null)
             propertyModel.setApplicationNo(applicationNumberGenerator.generate());
-
         final Map<String, Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
         final Installment installmentFirstHalf = yearwiseInstMap.get(CURRENTYEAR_FIRST_HALF);
-        final Installment installmentSecondHalf = yearwiseInstMap.get(CURRENTYEAR_SECOND_HALF);
         Date effectiveDate = null;
+
         if (SOURCE_ONLINE.equalsIgnoreCase(propertyModel.getSource()) && ApplicationThreadLocals.getUserId() == null)
             ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
-        /*
-         * While converting an exempted property to non-exempted property, effective date will be the installment from date of the
-         * current installment. Else, effective date will be the starting date of the next installment
-         */
-        if (DateUtils.between(new Date(), installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate())) {
-            if (StringUtils.isNotBlank(taxExemptedReason) && !taxExemptedReason.equals("-1"))
-                effectiveDate = installmentSecondHalf.getFromDate();
-            else
-                effectiveDate = installmentFirstHalf.getFromDate();
-        } else if (StringUtils.isNotBlank(taxExemptedReason) && !taxExemptedReason.equals("-1"))
-            effectiveDate = org.apache.commons.lang3.time.DateUtils.addYears(installmentFirstHalf.getFromDate(), 1);
+        
+        if (StringUtils.isBlank(taxExemptedReason))
+            effectiveDate = getEffectiveInst(new Date()).getFromDate();
         else
-            effectiveDate = installmentSecondHalf.getFromDate();
-
+            effectiveDate = getExemptionEffectivedDate(newProperty.getExemptionDate());
+         
         if (!propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode()
                 .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             propertyService.getLowestDtOfCompFloorWise(propertyDetail.getFloorDetails());
@@ -374,7 +380,8 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
                         .withComments(approvarComments).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(new Date()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(NATURE_TAX_EXEMPTION)
-                        .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
+                        .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
+                        .withSLA(propertyService.getSlaValue(APPLICATION_TYPE_TAX_EXEMTION));
             } else if (property.getCurrentState().getNextAction().equalsIgnoreCase("END"))
                 property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvarComments).withDateInfo(currentDate.toDate()).withNextAction(null)
@@ -592,4 +599,68 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         return transactionType;
     }
 
+    public String getTaxDues(final HttpServletRequest request, final Model model,
+            BasicProperty basicProperty, Date effectiveDate) {
+        BigDecimal currentPropertyTax = BigDecimal.ZERO;
+        BigDecimal currentCollection = BigDecimal.ZERO;
+        BigDecimal currentPropertyTaxDue = BigDecimal.ZERO;
+        BigDecimal arrearPropertyTaxDue = BigDecimal.ZERO;
+        boolean isDemandExist = false;
+        final Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+        Installment effectiveInst = getEffectiveInst(effectiveDate);
+
+        final Ptdemand currDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(basicProperty.getActiveProperty());
+        List dmdCollList = new ArrayList();
+        Installment installment = null;
+        Integer instId = null;
+        BigDecimal demand;
+        BigDecimal collection;
+        if (currDemand != null)
+            dmdCollList = propertyDAO.getDmdCollAmtInstWise(currDemand);
+        for (final Object object : dmdCollList) {
+            final Object[] listObj = (Object[]) object;
+            instId = Integer.valueOf(listObj[0].toString());
+            demand = listObj[1] == null ? BigDecimal.ZERO : new BigDecimal((Double) listObj[1]);
+            collection = listObj[2] == null ? BigDecimal.ZERO : new BigDecimal((Double) listObj[2]);
+
+            installment = installmentDao.findById(instId, false);
+            if (installment.getFromDate().before(effectiveInst.getFromDate())) {
+                if (installmentMap.get(CURRENTYEAR_FIRST_HALF).equals(installment)
+                        || installmentMap.get(CURRENTYEAR_SECOND_HALF).equals(installment)) {
+                    currentPropertyTax = currentPropertyTax.add(demand);
+                    currentCollection = currentCollection.add(collection);
+                    currentPropertyTaxDue = currentPropertyTax.subtract(currentCollection);
+                } else {
+                    arrearPropertyTaxDue = arrearPropertyTaxDue.add(demand).subtract(collection);
+                }
+                isDemandExist = true;
+            }
+        }
+        if (!isDemandExist) {
+            return NO_DEMAND;
+        }
+        final BigDecimal currentWaterTaxDue = getWaterTaxDues(basicProperty.getUpicNo(), request);
+        model.addAttribute("assessementNo", basicProperty.getUpicNo());
+        model.addAttribute("ownerName", basicProperty.getFullOwnerName());
+        model.addAttribute("doorNo", basicProperty.getAddress().getHouseNoBldgApt());
+        model.addAttribute("currentPropertyTax", currentPropertyTax);
+        model.addAttribute("currentPropertyTaxDue", currentPropertyTaxDue);
+        model.addAttribute("arrearPropertyTaxDue", arrearPropertyTaxDue);
+        model.addAttribute("currentWaterTaxDue", currentWaterTaxDue);
+        if (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0) {
+            model.addAttribute("taxDuesErrorMsg", "Above tax dues must be payed before initiating "
+                    + APPLICATION_TYPE_TAX_EXEMTION);
+            return DUE;
+        }
+        return NO_DUE;
+    }
+
+    private Installment getEffectiveInst(Date effectiveDate) {
+        final Module module = moduleDao.getModuleByName(PTMODULENAME);
+        return installmentDao.getInsatllmentByModuleForGivenDate(module, effectiveDate);
+    }
+
+    public Date getExemptionEffectivedDate(final Date effectiveDate) {
+        return new DateTime(getEffectiveInst(effectiveDate).getToDate()).plusDays(1).toDate();
+    }
 }

@@ -50,7 +50,6 @@ package org.egov.tl.service;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.egov.infra.admin.master.entity.Module;
-import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.portal.entity.PortalInboxBuilder;
 import org.egov.portal.service.PortalInboxService;
@@ -63,14 +62,10 @@ import java.util.Arrays;
 import java.util.Date;
 
 import static java.lang.String.format;
-import static org.egov.tl.utils.Constants.TRADE_LICENSE;
-
 
 @Service
 public class LicenseCitizenPortalService {
     private static final String APPLICATION_VIEW_URL = "/tl/license/show/%s";
-    @Autowired
-    private ModuleService moduleService;
     @Autowired
     private PortalInboxService portalInboxService;
     @Autowired
@@ -79,7 +74,7 @@ public class LicenseCitizenPortalService {
     private LicenseUtils licenseUtils;
 
     public void onCreate(TradeLicense tradeLicense) {
-        final Module module = moduleService.getModuleByName(TRADE_LICENSE);
+        final Module module = licenseUtils.getModule();
         final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,
                 tradeLicense.getState().getNatureOfTask(),
                 tradeLicense.getApplicationNumber(), tradeLicense.getLicenseNumber() != null ? tradeLicense.getLicenseNumber() : tradeLicense.getApplicationNumber(),
@@ -100,7 +95,7 @@ public class LicenseCitizenPortalService {
     }
 
     public void onUpdate(TradeLicense tradeLicense) {
-        portalInboxService.updateInboxMessage(tradeLicense.getApplicationNumber(), moduleService.getModuleByName(TRADE_LICENSE).getId(),
+        portalInboxService.updateInboxMessage(tradeLicense.getApplicationNumber(), licenseUtils.getModule().getId(),
                 tradeLicense.getStatus().getName(), tradeLicense.transitionCompleted(), null, tradeLicense.getState(), tradeLicense.getCreatedBy(),
                 tradeLicense.getLicenseNumber() != null ? tradeLicense.getLicenseNumber() : tradeLicense.getApplicationNumber(),
                 format(APPLICATION_VIEW_URL, tradeLicense.getUid()));

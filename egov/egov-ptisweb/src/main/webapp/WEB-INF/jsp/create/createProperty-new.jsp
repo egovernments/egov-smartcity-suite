@@ -170,6 +170,7 @@
 
 		jQuery('#calculateTax').click( function () {
 			jQuery.ajax({url:"/ptis/create/createProperty-calculateTax.action",
+				type: 'POST',
 				data : jQuery("form").serialize(),
     			cache:false,
     			beforeSend: function(){

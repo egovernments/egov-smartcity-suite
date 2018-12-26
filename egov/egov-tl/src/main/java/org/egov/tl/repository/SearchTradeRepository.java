@@ -61,7 +61,7 @@ import java.util.List;
 @Repository
 public interface SearchTradeRepository extends JpaRepository<TradeLicense, Long>, JpaSpecificationExecutor<TradeLicense> {
 
-    @Query("select license from TradeLicense license where license.licenseDemand in (select deatils.egDemand  from " +
+    @Query("select license from TradeLicense license where license.demand in (select deatils.egDemand  from " +
             "EgDemandDetails deatils where deatils.egDemandReason in (select reason.id from EgDemandReason reason where " +
             "reason.egInstallmentMaster<= (select installment.id from Installment installment where installment.fromDate < :currentDate " +
             "and installment.toDate >= :currentDate and  installment.module=(select egmod.id from Module egmod where egmod.name='Trade License')))" +

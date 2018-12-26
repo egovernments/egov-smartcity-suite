@@ -133,7 +133,7 @@
 				<tr>
 					<td class="bluebox"><s:text name="bill.search.functionary" /></td>
 					<td class="bluebox"><s:property
-							value="egBillregistermis.functionaryid.name" /></td>
+							value="egBillregistermis.function.name" /></td>
 					<td class="bluebox">&nbsp</td>
 					<td class="bluebox">&nbsp</td>
 				</tr>

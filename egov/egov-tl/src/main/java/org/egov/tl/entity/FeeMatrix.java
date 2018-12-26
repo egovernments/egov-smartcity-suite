@@ -229,17 +229,17 @@ public class FeeMatrix extends AbstractAuditable {
         if (!(obj instanceof FeeMatrix))
             return false;
         FeeMatrix feeMatrix = (FeeMatrix) obj;
-        return Objects.equals(natureOfBusiness.getId(), feeMatrix.natureOfBusiness.getId()) &&
-                Objects.equals(licenseCategory.getId(), feeMatrix.licenseCategory.getId()) &&
-                Objects.equals(subCategory.getId(), feeMatrix.subCategory.getId()) &&
-                Objects.equals(licenseAppType.getId(), feeMatrix.licenseAppType.getId()) &&
-                Objects.equals(feeType.getId(), feeMatrix.feeType.getId()) &&
-                Objects.equals(financialYear.getId(), feeMatrix.financialYear.getId());
+        return Objects.equals(getNatureOfBusiness().getId(), feeMatrix.getNatureOfBusiness().getId()) &&
+                Objects.equals(getLicenseCategory().getId(), feeMatrix.getLicenseCategory().getId()) &&
+                Objects.equals(getSubCategory().getId(), feeMatrix.getSubCategory().getId()) &&
+                Objects.equals(getLicenseAppType().getId(), feeMatrix.getLicenseAppType().getId()) &&
+                Objects.equals(getFeeType().getId(), feeMatrix.getFeeType().getId()) &&
+                Objects.equals(getFinancialYear().getId(), feeMatrix.getFinancialYear().getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(natureOfBusiness.getId(), licenseCategory.getId(), subCategory.getId(),
-                licenseAppType.getId(), feeType.getId(), financialYear.getId());
+        return Objects.hash(getNatureOfBusiness().getId(), getLicenseCategory().getId(), getSubCategory().getId(),
+                getLicenseAppType().getId(), getFeeType().getId(), getFinancialYear().getId());
     }
 }

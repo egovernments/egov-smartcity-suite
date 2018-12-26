@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -47,9 +47,19 @@
   --%>
 
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<div class="alert alert-danger" role="alert">
-	<i class="fa fa-exclamation-triangle error-symbol"></i>
-	<hr/>
-	<p style="color:#000;font-size:17px"><spring:message code="error.404"/></p>
-	<hr/>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<div class="alert alert-warning" role="alert">
+    <i class="fa fa-exclamation-triangle error-symbol"></i>
+    <hr/>
+    <p style="color:#000;font-size:17px">
+        <c:choose>
+            <c:when test="${not empty error}">
+                <spring:message code="${error}"/>
+            </c:when>
+            <c:otherwise>
+                <spring:message code="error.404"/>
+            </c:otherwise>
+        </c:choose>
+    </p>
+    <hr/>
 </div>

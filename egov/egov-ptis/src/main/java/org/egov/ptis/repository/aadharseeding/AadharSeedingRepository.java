@@ -52,11 +52,13 @@ import java.util.List;
 import org.egov.ptis.bean.aadharseeding.AadharSeeding;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface AadharSeedingRepository extends JpaRepository<AadharSeeding, Long> {
 
     List<AadharSeeding> findAllByStatus(String status);
-
-    AadharSeeding getAadharSeedingByBasicProperty(BasicPropertyImpl basicProperty);
-
+    
+    @Query(value = "from AadharSeeding where basicProperty = :basicProperty and status <> 'CANCELED'")
+    AadharSeeding getNonCanceledAadharSeeding(@Param("basicProperty") BasicPropertyImpl basicProperty);
 }

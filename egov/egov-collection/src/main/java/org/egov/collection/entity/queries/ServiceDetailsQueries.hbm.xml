@@ -186,4 +186,6 @@
     <query name="getCOAByInstrumentTypeAndService">
     <![CDATA[select c from CChartOfAccounts c,ServiceInstrumentAccounts sia,InstrumentType it where sia.chartOfAccounts.id=c.id and sia.instrumentType.id=it.id and it.type=? and sia.serviceDetails.id=?]]></query>
     
+     <query name="getCOAByInstrumentTypeAndServiceAndBillservice">
+    <![CDATA[select c from CChartOfAccounts c,ServiceInstrumentAccounts sia,InstrumentType it where sia.chartOfAccounts.id=c.id and sia.instrumentType.id=it.id and it.type=? and sia.serviceDetails.id=? and sia.billServiceDetails.id=?]]></query>
 </hibernate-mapping>

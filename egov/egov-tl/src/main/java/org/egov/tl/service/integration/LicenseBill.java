@@ -79,6 +79,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
     private Module module;
     private EgBillType billType;
     private String transanctionReferenceNumber;
+    private String collModesNotAllowed;
 
     public TradeLicense getLicense() {
         return license;
@@ -132,7 +133,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public List<EgDemand> getAllDemands() {
-        return Arrays.asList(license.getLicenseDemand());
+        return Arrays.asList(license.getDemand());
 
     }
 
@@ -242,7 +243,11 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public String getCollModesNotAllowed() {
-        return EMPTY;
+        return collModesNotAllowed;
+    }
+
+    public void setCollModesNotAllowed(String collModesNotAllowed) {
+        this.collModesNotAllowed = collModesNotAllowed;
     }
 
     @Override
@@ -302,5 +307,4 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
     public void setTransanctionReferenceNumber(String transanctionReferenceNumber) {
         this.transanctionReferenceNumber = transanctionReferenceNumber;
     }
-
 }

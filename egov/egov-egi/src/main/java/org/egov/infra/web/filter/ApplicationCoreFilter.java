@@ -52,6 +52,7 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.security.authentication.userdetail.CurrentUser;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.web.utils.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -68,21 +69,15 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Optional;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.security.utils.SecurityConstants.IP_ADDRESS;
 import static org.egov.infra.security.utils.SecurityConstants.USER_AGENT;
-import static org.egov.infra.security.utils.SecurityConstants.USER_AGENT_HEADER;
-import static org.egov.infra.security.utils.SecurityConstants.X_FORWARDED_FOR_HEADER;
 import static org.egov.infra.security.utils.SecurityUtils.getCurrentAuthentication;
 import static org.egov.infra.utils.ApplicationConstant.APP_RELEASE_ATTRIB_NAME;
 import static org.egov.infra.utils.ApplicationConstant.CDN_ATTRIB_NAME;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CODE_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_NAME_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_NAME_KEY;
-import static org.egov.infra.utils.ApplicationConstant.COMMA;
 import static org.egov.infra.utils.ApplicationConstant.TENANTID_KEY;
-import static org.egov.infra.utils.ApplicationConstant.UNKNOWN;
 import static org.egov.infra.utils.ApplicationConstant.USERID_KEY;
 
 public class ApplicationCoreFilter implements Filter {
@@ -143,15 +138,8 @@ public class ApplicationCoreFilter implements Filter {
 
     private void prepareRequestOriginDetails(HttpSession session, HttpServletRequest request) {
         if (session.getAttribute(IP_ADDRESS) == null) {
-            String ipAddress = request.getRemoteAddr();
-            String proxiedIPAddress = request.getHeader(X_FORWARDED_FOR_HEADER);
-            if (isNotBlank(proxiedIPAddress)) {
-                String[] ipAddresses = proxiedIPAddress.split(COMMA);
-                ipAddress = ipAddresses[ipAddresses.length - 1].trim();
-            }
-            String userAgent = request.getHeader(USER_AGENT_HEADER);
-            session.setAttribute(IP_ADDRESS, ipAddress);
-            session.setAttribute(USER_AGENT, isBlank(userAgent) ? UNKNOWN : userAgent);
+            session.setAttribute(IP_ADDRESS, WebUtils.extractOriginIPAddress(request));
+            session.setAttribute(USER_AGENT, WebUtils.extractUserAgent(request));
         }
     }
 
@@ -161,7 +149,7 @@ public class ApplicationCoreFilter implements Filter {
     }
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
         //Nothing to be initialized
     }
 }

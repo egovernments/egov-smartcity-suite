@@ -130,11 +130,15 @@
 	src="<cdn:url value='/resources/app/js/showMoreorLessContent.js?rnd=${app_release_no}'/>"></script>
 <script>
 	$('#buttonSubmit').click(function(e) {
-		var place = $('#meetingLocation').val().trim();		
+		var place = $('#meetingLocation').val().trim();	
+		place=place.replace(/\s\s+/g, ' ');
 		if ($('#meetingLocation').val() != '' && place.length < 5) {
 			$('#meetingLocation').val('');
 			bootbox.alert("Meeting place should have atleast 5 characters");
 		}
+		 if($('#meetingLocation').val() != ''){
+				$('#meetingLocation').val(place);
+	     }		
 		if ($('form').valid()) {
 		} else {
 			e.preventDefault();

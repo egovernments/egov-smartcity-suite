@@ -72,7 +72,7 @@ function getSumOfRecords() {
         type: 'GET',
         async: false,
         data: {
-            licensenumber: $('#licensenumber').val(),
+            licenseNumber: $('#licensenumber').val(),
             installment: $('#financialyear').val(),
             activeLicense: $('#activeLicense').val()
         },
@@ -140,7 +140,7 @@ function searchInstallmentwiseDCB(event) {
                 data: function (args) {
                     return {
                         "args": JSON.stringify(args),
-                        "licensenumber": $('#licensenumber').val(),
+                        "licenseNumber": $('#licensenumber').val(),
                         "installment": $('#financialyear').val(),
                         'activeLicense': $('#activeLicense').val()
                     }
@@ -150,8 +150,8 @@ function searchInstallmentwiseDCB(event) {
                 {
                     "data": function (row, type, set, meta) {
                         return {
-                            name: row.licensenumber,
-                            id: row.licenseid
+                            name: row.licenseNumber,
+                            id: row.licenseId
                         };
                     },
                     "render": function (data, type, row) {
@@ -159,7 +159,7 @@ function searchInstallmentwiseDCB(event) {
                             + data.id + '">' + data.name + '</a>';
                     },
                     "sTitle": "License No.",
-                    "name": "licensenumber",
+                    "name": "licenseNumber",
                     "width": 10
                 }, {
                     "data": "active",
@@ -206,7 +206,7 @@ function searchInstallmentwiseDCB(event) {
                     "sTitle": "Current"
                 }, {
                     "data": "total_balance",
-                    "name": "currentbalance",
+                    "name": "currentBalance",
                     "sTitle": "Total"
                 }],
             "footerCallback": function (row, data, start, end, display) {

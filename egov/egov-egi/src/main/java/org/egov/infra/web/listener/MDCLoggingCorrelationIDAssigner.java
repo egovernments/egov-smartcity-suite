@@ -46,70 +46,28 @@
  *
  */
 
-package org.egov.tl.entity;
+package org.egov.infra.web.listener;
 
-import org.egov.demand.model.EgDemand;
-import org.egov.demand.model.EgDemandDetails;
+import org.slf4j.MDC;
 
-import java.util.Date;
-import java.util.Objects;
+import javax.servlet.ServletRequestEvent;
+import javax.servlet.ServletRequestListener;
 
-import static java.math.BigDecimal.ZERO;
+import static java.util.UUID.randomUUID;
+import static org.egov.infra.utils.ApplicationConstant.MDC_APPNAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.MDC_UID_KEY;
+import static org.egov.infra.web.utils.WebUtils.currentContextPath;
 
-public class LicenseDemand extends EgDemand {
-    private static final long serialVersionUID = -8850906441323607906L;
-    private TradeLicense license;
-    private Date renewalDate;
-    private char isLateRenewal;
+public class MDCLoggingCorrelationIDAssigner implements ServletRequestListener {
 
-    public TradeLicense getLicense() {
-        return license;
-    }
-
-    public void setLicense(final TradeLicense license) {
-        this.license = license;
-    }
-
-    public Date getRenewalDate() {
-        return renewalDate;
-    }
-
-    public void setRenewalDate(final Date renewalDate) {
-        this.renewalDate = renewalDate;
-    }
-
-    public char getIsLateRenewal() {
-        return isLateRenewal;
-    }
-
-    public void setIsLateRenewal(final char isLateRenewal) {
-        this.isLateRenewal = isLateRenewal;
-    }
-
-    public void recalculateBaseDemand() {
-        this.setAmtCollected(ZERO);
-        this.setBaseDemand(ZERO);
-        this.setModifiedDate(new Date());
-        for (final EgDemandDetails demandDetail : this.getEgDemandDetails()) {
-            this.setAmtCollected(this.getAmtCollected().add(demandDetail.getAmtCollected()));
-            this.setBaseDemand(this.getBaseDemand().add(demandDetail.getAmount()));
-        }
+    @Override
+    public void requestInitialized(ServletRequestEvent sre) {
+        MDC.put(MDC_UID_KEY, randomUUID().toString());
+        MDC.put(MDC_APPNAME_KEY, currentContextPath(sre.getServletRequest()).toUpperCase());
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj)
-            return true;
-        if (!(obj instanceof LicenseDemand))
-            return false;
-        if (!super.equals(obj))
-            return false;
-        final LicenseDemand that = (LicenseDemand) obj;
-        return Objects.equals(getLicense(), that.getLicense());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), getLicense());
+    public void requestDestroyed(ServletRequestEvent sre) {
+        MDC.clear();
     }
 }

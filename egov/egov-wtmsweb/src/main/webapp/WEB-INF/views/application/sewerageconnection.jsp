@@ -78,7 +78,7 @@
 			<form:errors path="sewerageApplicationDetails.connectionDetail.noOfClosetsResidential" cssClass="add-margin error-msg" />		
 		</div>
 	<label class="col-sm-3 control-label text-right" hidden="true" id="lblNonResidential"><spring:message
-			code="lbl.nonresidential" /><span class="mandatory"></label> 
+			code="lbl.nonresidential" /><span class="mandatory"></span></label>
 		<div class="col-sm-3 add-margin" hidden="true" id="valNonResidential">
 			<form:input class="form-control patternvalidation propertyTypeValidate" data-pattern="number" maxlength="3" id="noOfClosetsNonResidential"  path="sewerageApplicationDetails.connectionDetail.noOfClosetsNonResidential"  />
 			<form:errors path="sewerageApplicationDetails.connectionDetail.noOfClosetsNonResidential" cssClass="add-margin error-msg" />		

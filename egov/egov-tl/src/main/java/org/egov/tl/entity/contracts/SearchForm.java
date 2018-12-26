@@ -164,7 +164,7 @@ public class SearchForm extends DataTableSearchRequest {
 
     private void demandGenerationOption(List<String> licenseActions, TradeLicense license) {
         Date nextYearInstallment = new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate();
-        Date currentYearInstallment = license.getLicenseDemand().getEgInstallmentMaster().getToDate();
+        Date currentYearInstallment = license.getDemand().getEgInstallmentMaster().getToDate();
         if (license.isNewPermanentApplication() && !license.isLegacyWithNoState() && license.getIsActive()
                 && currentYearInstallment.before(nextYearInstallment))
             licenseActions.add("Generate Demand");

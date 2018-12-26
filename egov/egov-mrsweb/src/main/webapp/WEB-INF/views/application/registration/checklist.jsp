@@ -79,7 +79,7 @@
 	<div class="form-group">	
 		<div class="col-sm-1"></div>
 		<form:hidden id="documents[${status.index}].id" path="documents[${status.index}].id" value="${doc.id}" /> 
-		<div class="col-sm-4 add-margin text-right">
+		<div class="col-sm-4 add-margin text-right val-mandatory">
 			<c:out value="${doc.name}"></c:out><c:if test="${doc.mandatory}"><span class="mandatory"></span></c:if>
 		</div> 
 		<div class="col-sm-2 add-margin text-center">
@@ -252,7 +252,7 @@
 	</div> --%>
 	
 	<div class="form-group">
-		<label class="col-sm-5 control-label text-left view-content">
+		<label class="col-sm-5 control-label text-left view-content val-mandatory">
 			<spring:message code="lbl.proof.of.age"/><span class="mandatory"></span><br>
 			<spring:message code="lbl.proof.note"/>
 		</label>
@@ -389,7 +389,7 @@
 	</div>
 	 --%>
 	<div class="form-group">
-		<label class="col-sm-5 control-label text-left view-content">
+		<label class="col-sm-5 control-label text-left view-content val-mandatory">
 			<spring:message code="lbl.proof.of.residence"/><span class="mandatory"></span><br>
 			<spring:message code="lbl.proof.note"/>
 		</label>

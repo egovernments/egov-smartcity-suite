@@ -65,6 +65,7 @@ import org.egov.collection.entity.CollectionSummaryReport;
 import org.egov.collection.entity.CollectionSummaryReportResult;
 import org.egov.collection.entity.OnlinePaymentResult;
 import org.egov.infra.config.core.EnvironmentSettings;
+import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -94,7 +95,7 @@ public class CollectionReportService {
     }
 
     public SQLQuery getOnlinePaymentReportData(final String districtName, final String ulbName, final String fromDate,
-            final String toDate, final String transactionId) {
+            final String toDate, final String transactionId) throws ApplicationException {
         final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
         final StringBuilder queryStr = new StringBuilder(500);
         queryStr.append("select * from ").append(environmentSettings.statewideSchemaName())
@@ -124,7 +125,8 @@ public class CollectionReportService {
             if (StringUtils.isNotBlank(toDate))
                 query.setDate("toDate", dateFormatter.parse(toDate));
         } catch (final ParseException e) {
-            LOGGER.error("Exception parsing Date" + e.getMessage());
+            LOGGER.error("Exception parsing Date", e);
+            throw new ApplicationException("Exception parsing Date", e);
         }
         if (StringUtils.isNotBlank(transactionId))
             query.setString("transactionnumber", "%" + transactionId + "%");

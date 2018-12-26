@@ -56,6 +56,7 @@ import static org.egov.wtms.masters.entity.enums.ConnectionStatus.HOLDING;
 import static org.egov.wtms.masters.entity.enums.ConnectionStatus.INPROGRESS;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CATEGORY_BPL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PERMENENTCLOSECODE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -85,235 +86,239 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional(readOnly = true)
 public class NewConnectionService {
 
-    private static final String ERROR_REQUIRED = "err.required";
-    private static final String CONNECTION_PROPERTYID = "connection.propertyIdentifier";
+	private static final String ERROR_REQUIRED = "err.required";
+	private static final String CONNECTION_PROPERTYID = "connection.propertyIdentifier";
 
-    @Autowired
-    private WaterConnectionDetailsService waterConnectionDetailsService;
+	@Autowired
+	private WaterConnectionDetailsService waterConnectionDetailsService;
 
-    @Autowired
-    @Qualifier("parentMessageSource")
-    private MessageSource wcmsMessageSource;
+	@Autowired
+	@Qualifier("parentMessageSource")
+	private MessageSource wcmsMessageSource;
 
-    @Autowired
-    private WaterTaxUtils waterTaxUtils;
+	@Autowired
+	private WaterTaxUtils waterTaxUtils;
 
-    @Autowired
-    private PropertyExtnUtils propertyExtnUtils;
+	@Autowired
+	private PropertyExtnUtils propertyExtnUtils;
 
-    @Autowired
-    private ConnectionDetailService connectionDetailService;
+	@Autowired
+	private ConnectionDetailService connectionDetailService;
 
-    @Autowired
-    private ConnectionCategoryService connectionCategoryService;
+	@Autowired
+	private ConnectionCategoryService connectionCategoryService;
 
-    @Autowired
-    private WaterConnectionService waterConnectionService;
+	@Autowired
+	private WaterConnectionService waterConnectionService;
 
-    public String checkConnectionPresentForProperty(final String propertyID) {
-        String validationMessage = EMPTY;
-        /**
-         * Validate only if configuration value is 'NO' for multiple new connection per property allowed or not. If configuration
-         * value is 'YES' then multiple new connections are allowed. This will impact on the Additional connection feature.
-         **/
-        if (!waterTaxUtils.isMultipleNewConnectionAllowedForPID()) {
-            List<WaterConnectionDetails> connectionDetailList = waterConnectionDetailsService
-                    .getPrimaryConnectionDetailsByPropertyIdentifier(propertyID);
-            WaterConnectionDetails waterConnectionDetails = null;
-            if (!connectionDetailList.isEmpty())
-                waterConnectionDetails = connectionDetailList.get(0);
-            if (waterConnectionDetails == null)
-                return validationMessage;
-            else if (ACTIVE.equals(waterConnectionDetails.getConnectionStatus()))
-                validationMessage = wcmsMessageSource.getMessage("err.validate.newconnection.active", new String[] {
-                        waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
-            else if (INPROGRESS.equals(waterConnectionDetails.getConnectionStatus()))
-                validationMessage = wcmsMessageSource.getMessage("err.validate.waterconnection.application.inprogress",
-                        new String[] { waterConnectionDetails.getApplicationType().getName(),
-                                propertyID, waterConnectionDetails.getApplicationNumber() },
-                        null);
-            else if (DISCONNECTED.equals(waterConnectionDetails.getConnectionStatus()))
-                validationMessage = wcmsMessageSource
-                        .getMessage("err.validate.newconnection.disconnected", new String[] {
-                                waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
-            else if (CLOSED.equals(waterConnectionDetails.getConnectionStatus()))
-                validationMessage = wcmsMessageSource
-                        .getMessage("err.validate.newconnection.closed", new String[] {
-                                waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
-            else if (HOLDING.equals(waterConnectionDetails.getConnectionStatus()))
-                validationMessage = wcmsMessageSource.getMessage("err.validate.newconnection.holding", new String[] {
-                        waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
-        }
-        return validationMessage;
-    }
+	public String checkConnectionPresentForProperty(final String propertyID) {
+		String validationMessage = EMPTY;
+		/**
+		 * Validate only if configuration value is 'NO' for multiple new
+		 * connection per property allowed or not. If configuration value is
+		 * 'YES' then multiple new connections are allowed. This will impact on
+		 * the Additional connection feature.
+		 **/
+		if (!waterTaxUtils.isMultipleNewConnectionAllowedForPID()) {
+			List<WaterConnectionDetails> connectionDetailList = waterConnectionDetailsService
+					.getPrimaryConnectionDetailsByPropertyIdentifier(propertyID);
+			WaterConnectionDetails waterConnectionDetails = null;
+			if (!connectionDetailList.isEmpty())
+				waterConnectionDetails = connectionDetailList.get(0);
+			if (waterConnectionDetails == null)
+				return validationMessage;
+			else if (ACTIVE.equals(waterConnectionDetails.getConnectionStatus()))
+				validationMessage = wcmsMessageSource.getMessage("err.validate.newconnection.active",
+						new String[] { waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
+			else if (INPROGRESS.equals(waterConnectionDetails.getConnectionStatus()))
+				validationMessage = wcmsMessageSource.getMessage("err.validate.waterconnection.application.inprogress",
+						new String[] { waterConnectionDetails.getApplicationType().getName(), propertyID,
+								waterConnectionDetails.getApplicationNumber() },
+						null);
+			else if (DISCONNECTED.equals(waterConnectionDetails.getConnectionStatus()))
+				validationMessage = wcmsMessageSource.getMessage("err.validate.newconnection.disconnected",
+						new String[] { waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
+			else if (CLOSED.equals(waterConnectionDetails.getConnectionStatus())
+					&& !PERMENENTCLOSECODE.equalsIgnoreCase(waterConnectionDetails.getCloseConnectionType()))
+				validationMessage = wcmsMessageSource.getMessage("err.validate.newconnection.closed",
+						new String[] { waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
+			else if (HOLDING.equals(waterConnectionDetails.getConnectionStatus()))
+				validationMessage = wcmsMessageSource.getMessage("err.validate.newconnection.holding",
+						new String[] { waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
+		}
+		return validationMessage;
+	}
 
-    public String checkValidPropertyAssessmentNumber(final String asessmentNumber) {
-        String errorMessage = "";
-        final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(asessmentNumber,
-                PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
-        errorMessage = validateProperty(assessmentDetails);
-        if (errorMessage.isEmpty())
-            errorMessage = validatePTDue(asessmentNumber, assessmentDetails);
-        return errorMessage;
-    }
+	public String checkValidPropertyAssessmentNumber(final String asessmentNumber) {
+		String errorMessage = "";
+		final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(asessmentNumber,
+				PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
+		errorMessage = validateProperty(assessmentDetails);
+		if (errorMessage.isEmpty())
+			errorMessage = validatePTDue(asessmentNumber, assessmentDetails);
+		return errorMessage;
+	}
 
-    public String checkValidPropertyForDataEntry(final String asessmentNumber) {
-        String errorMessage = "";
-        final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(asessmentNumber,
-                PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
-        errorMessage = validateProperty(assessmentDetails);
-        return errorMessage;
-    }
+	public String checkValidPropertyForDataEntry(final String asessmentNumber) {
+		String errorMessage = "";
+		final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(asessmentNumber,
+				PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
+		errorMessage = validateProperty(assessmentDetails);
+		return errorMessage;
+	}
 
-    /**
-     * @param assessmentDetails
-     * @return ErrorMessage If PropertyId is Not Valid
-     */
-    private String validateProperty(final AssessmentDetails assessmentDetails) {
-        String errorMessage = "";
-        if (assessmentDetails.getErrorDetails() != null && assessmentDetails.getErrorDetails().getErrorCode() != null)
-            errorMessage = assessmentDetails.getErrorDetails().getErrorMessage();
-        return errorMessage;
-    }
+	/**
+	 * @param assessmentDetails
+	 * @return ErrorMessage If PropertyId is Not Valid
+	 */
+	public String validateProperty(final AssessmentDetails assessmentDetails) {
+		String errorMessage = "";
+		if (assessmentDetails.getErrorDetails() != null && assessmentDetails.getErrorDetails().getErrorCode() != null)
+			errorMessage = assessmentDetails.getErrorDetails().getErrorMessage();
+		return errorMessage;
+	}
 
-    private String validatePTDue(final String asessmentNumber, final AssessmentDetails assessmentDetails) {
-        String errorMessage = "";
-        if (assessmentDetails.getPropertyDetails() != null
-                && assessmentDetails.getPropertyDetails().getTaxDue() != null
-                && assessmentDetails.getPropertyDetails().getTaxDue().doubleValue() > 0
-                && !waterTaxUtils.isNewConnectionAllowedIfPTDuePresent())
+	private String validatePTDue(final String asessmentNumber, final AssessmentDetails assessmentDetails) {
+		String errorMessage = "";
+		if (assessmentDetails.getPropertyDetails() != null && assessmentDetails.getPropertyDetails().getTaxDue() != null
+				&& assessmentDetails.getPropertyDetails().getTaxDue().doubleValue() > 0
+				&& !waterTaxUtils.isNewConnectionAllowedIfPTDuePresent())
 
-            /**
-             * If property tax due present and configuration value is 'NO' then restrict not to allow new water tap connection
-             * application. If configuration value is 'YES' then new water tap connection can be created even though there is
-             * Property Tax Due present.
-             **/
-            errorMessage = wcmsMessageSource.getMessage("err.validate.property.taxdue", new String[] {
-                    assessmentDetails.getPropertyDetails().getTaxDue().toString(), asessmentNumber, "new" }, null);
-        return errorMessage;
-    }
+			/**
+			 * If property tax due present and configuration value is 'NO' then
+			 * restrict not to allow new water tap connection application. If
+			 * configuration value is 'YES' then new water tap connection can be
+			 * created even though there is Property Tax Due present.
+			 **/
+			errorMessage = wcmsMessageSource.getMessage(
+					"err.validate.property.taxdue", new String[] {
+							assessmentDetails.getPropertyDetails().getTaxDue().toString(), asessmentNumber, "new" },
+					null);
+		return errorMessage;
+	}
 
-    public void validateDocuments(final List<ApplicationDocuments> applicationDocs,
-            final ApplicationDocuments applicationDocument, final int i, final BindingResult resultBinder,
-            final Long categoryId, final String documentRequired) {
+	public void validateDocuments(final List<ApplicationDocuments> applicationDocs,
+			final ApplicationDocuments applicationDocument, final int index, final BindingResult resultBinder,
+			final Long categoryId, final String documentRequired) {
 
-        final ConnectionCategory connectionCategory = connectionCategoryService.findOne(categoryId);
-        if (connectionCategory != null && documentRequired != null
-                && connectionCategory.getName().equalsIgnoreCase(CATEGORY_BPL)
-                && documentRequired.equalsIgnoreCase(applicationDocument.getDocumentNames().getDocumentName())
-                && applicationDocument.getDocumentNames().isRequired())
-            validateDocumentsForBPLCategory(applicationDocs, applicationDocument, resultBinder, i);
-        else {
-            validateDocumentsRequired(applicationDocument, resultBinder, i);
-            if (connectionDetailService.validApplicationDocument(applicationDocument))
-                applicationDocs.add(applicationDocument);
-        }
-    }
+		final ConnectionCategory connectionCategory = connectionCategoryService.findOne(categoryId);
+		if (connectionCategory != null && documentRequired != null
+				&& connectionCategory.getName().equalsIgnoreCase(CATEGORY_BPL)
+				&& documentRequired.equalsIgnoreCase(applicationDocument.getDocumentNames().getDocumentName())
+				&& applicationDocument.getDocumentNames().isRequired())
+			validateDocumentsForBPLCategory(applicationDocs, applicationDocument, resultBinder, index);
+		else {
+			validateDocumentsRequired(applicationDocument, resultBinder, index);
+			if (connectionDetailService.validApplicationDocument(applicationDocument))
+				applicationDocs.add(applicationDocument);
+		}
+	}
 
-    public void validateDocumentsRequired(final ApplicationDocuments applicationDocument, final BindingResult resultBinder,
-            final int i) {
-        if (applicationDocument.getDocumentNumber() == null && applicationDocument.getDocumentDate() != null) {
-            final String fieldError = "applicationDocs[" + i + "].documentNumber";
-            resultBinder.rejectValue(fieldError, "documentNumber.required");
-        }
-        if (applicationDocument.getDocumentNumber() != null && applicationDocument.getDocumentDate() == null) {
-            final String fieldError = "applicationDocs[" + i + "].documentDate";
-            resultBinder.rejectValue(fieldError, "documentDate.required");
-        }
-        if (applicationDocument.getDocumentNumber() != null && applicationDocument.getDocumentDate() != null) {
-            Iterator<MultipartFile> stream = null;
-            if (applicationDocument.getFiles()[0].getSize() > 0)
-                stream = Arrays.asList(applicationDocument.getFiles()).stream().filter(file -> !file.isEmpty())
-                        .iterator();
-            if (stream == null) {
-                final String fieldError = "applicationDocs[" + i + "].files";
-                resultBinder.rejectValue(fieldError, "files.required");
-            }
-        }
-    }
+	public void validateDocumentsRequired(final ApplicationDocuments applicationDocument,
+			final BindingResult resultBinder, final int index) {
+		if (applicationDocument.getDocumentNumber() == null && applicationDocument.getDocumentDate() != null) {
+			final String fieldError = "applicationDocs[" + index + "].documentNumber";
+			resultBinder.rejectValue(fieldError, "documentNumber.required");
+		}
+		if (applicationDocument.getDocumentNumber() != null && applicationDocument.getDocumentDate() == null) {
+			final String fieldError = "applicationDocs[" + index + "].documentDate";
+			resultBinder.rejectValue(fieldError, "documentDate.required");
+		}
+		if (applicationDocument.getDocumentNumber() != null && applicationDocument.getDocumentDate() != null) {
+			Iterator<MultipartFile> stream = null;
+			if (applicationDocument.getFiles()[0].getSize() > 0)
+				stream = Arrays.asList(applicationDocument.getFiles()).stream().filter(file -> !file.isEmpty())
+						.iterator();
+			if (stream == null) {
+				final String fieldError = "applicationDocs[" + index + "].files";
+				resultBinder.rejectValue(fieldError, "files.required");
+			}
+		}
+	}
 
-    public void validateDocumentsForBPLCategory(final List<ApplicationDocuments> applicationDocs,
-            final ApplicationDocuments applicationDocument, final BindingResult resultBinder, final int i) {
-        if (applicationDocument.getDocumentNumber() == null) {
-            final String fieldError = "applicationDocs[" + i + "].documentNumber";
-            resultBinder.rejectValue(fieldError, "documentNumber.required");
-        }
-        if (applicationDocument.getDocumentDate() == null) {
-            final String fieldError = "applicationDocs[" + i + "].documentDate";
-            resultBinder.rejectValue(fieldError, "documentDate.required");
-        }
+	public void validateDocumentsForBPLCategory(final List<ApplicationDocuments> applicationDocs,
+			final ApplicationDocuments applicationDocument, final BindingResult resultBinder, final int index) {
+		if (applicationDocument.getDocumentNumber() == null) {
+			final String fieldError = "applicationDocs[" + index + "].documentNumber";
+			resultBinder.rejectValue(fieldError, "documentNumber.required");
+		}
+		if (applicationDocument.getDocumentDate() == null) {
+			final String fieldError = "applicationDocs[" + index + "].documentDate";
+			resultBinder.rejectValue(fieldError, "documentDate.required");
+		}
 
-        Iterator<MultipartFile> stream;
-        if (applicationDocument.getFiles()[0].getSize() > 0) {
-            stream = Arrays.asList(applicationDocument.getFiles()).stream().filter(file -> !file.isEmpty())
-                    .iterator();
+		Iterator<MultipartFile> stream;
+		if (applicationDocument.getFiles()[0].getSize() > 0) {
+			stream = Arrays.asList(applicationDocument.getFiles()).stream().filter(file -> !file.isEmpty()).iterator();
 
-            if (stream != null && connectionDetailService.validApplicationDocument(applicationDocument))
-                applicationDocs.add(applicationDocument);
-        } else {
-            final String fieldError = "applicationDocs[" + i + "].files";
-            resultBinder.rejectValue(fieldError, "files.required");
-        }
-    }
+			if (stream != null && connectionDetailService.validApplicationDocument(applicationDocument))
+				applicationDocs.add(applicationDocument);
+		} else {
+			final String fieldError = "applicationDocs[" + index + "].files";
+			resultBinder.rejectValue(fieldError, "files.required");
+		}
+	}
 
-    public void validateExisting(final WaterConnectionDetails waterConnectionDetails, final BindingResult errors) {
-        if (waterConnectionDetails.getConnection() != null) {
-            List<WaterConnection> waterConnectionList = new ArrayList<>();
-            if (waterConnectionDetails.getConnection().getOldConsumerNumber() != null)
-                waterConnectionList = waterConnectionService
-                        .findByOldConsumerNumber(waterConnectionDetails.getConnection().getOldConsumerNumber());
-            if (!waterConnectionList.isEmpty())
-                errors.rejectValue("connection.oldConsumerNumber", "err.oldConsumerCode.already.exists");
-        }
-        if (waterConnectionDetails.getConnectionType() != null
-                && waterConnectionDetails.getConnectionType() == ConnectionType.METERED)
-            validateMeterConnectionDetails(waterConnectionDetails, errors);
-    }
+	public void validateExisting(final WaterConnectionDetails waterConnectionDetails, final BindingResult errors) {
+		if (waterConnectionDetails.getConnection() != null) {
+			List<WaterConnection> waterConnectionList = new ArrayList<>();
+			if (waterConnectionDetails.getConnection().getOldConsumerNumber() != null)
+				waterConnectionList = waterConnectionService
+						.findByOldConsumerNumber(waterConnectionDetails.getConnection().getOldConsumerNumber());
+			if (!waterConnectionList.isEmpty())
+				errors.rejectValue("connection.oldConsumerNumber", "err.oldConsumerCode.already.exists");
+		}
+		if (waterConnectionDetails.getConnectionType() != null
+				&& waterConnectionDetails.getConnectionType() == ConnectionType.METERED)
+			validateMeterConnectionDetails(waterConnectionDetails, errors);
+	}
 
-    public void validateMeterConnectionDetails(final WaterConnectionDetails waterConnectionDetails, final BindingResult errors) {
-        if (waterConnectionDetails.getExecutionDate() == null)
-            errors.rejectValue("executionDate", ERROR_REQUIRED);
-        if (waterConnectionDetails.getExistingConnection().getMeterNo() == null)
-            errors.rejectValue("existingConnection.meterNo", ERROR_REQUIRED);
-        if (waterConnectionDetails.getExistingConnection().getPreviousReading() == null)
-            errors.rejectValue("existingConnection.previousReading", ERROR_REQUIRED);
-        if (waterConnectionDetails.getExistingConnection().getReadingDate() == null)
-            errors.rejectValue("existingConnection.readingDate", ERROR_REQUIRED);
-        if (waterConnectionDetails.getExistingConnection().getCurrentReading() == null)
-            errors.rejectValue("existingConnection.currentReading", ERROR_REQUIRED);
-    }
+	public void validateMeterConnectionDetails(final WaterConnectionDetails waterConnectionDetails,
+			final BindingResult errors) {
+		if (waterConnectionDetails.getExecutionDate() == null)
+			errors.rejectValue("executionDate", ERROR_REQUIRED);
+		if (waterConnectionDetails.getExistingConnection().getMeterNo() == null)
+			errors.rejectValue("existingConnection.meterNo", ERROR_REQUIRED);
+		if (waterConnectionDetails.getExistingConnection().getPreviousReading() == null)
+			errors.rejectValue("existingConnection.previousReading", ERROR_REQUIRED);
+		if (waterConnectionDetails.getExistingConnection().getReadingDate() == null)
+			errors.rejectValue("existingConnection.readingDate", ERROR_REQUIRED);
+		if (waterConnectionDetails.getExistingConnection().getCurrentReading() == null)
+			errors.rejectValue("existingConnection.currentReading", ERROR_REQUIRED);
+	}
 
-    public void validatePropertyIDForDataEntry(final WaterConnectionDetails waterConnectionDetails,
-            final BindingResult errors) {
-        if (waterConnectionDetails.getConnection() != null
-                && waterConnectionDetails.getConnection().getPropertyIdentifier() != null
-                && !"".equals(waterConnectionDetails.getConnection().getPropertyIdentifier())) {
-            String errorMessage = checkValidPropertyForDataEntry(waterConnectionDetails.getConnection().getPropertyIdentifier());
-            if (errorMessage != null && !"".equals(errorMessage))
-                errors.rejectValue(CONNECTION_PROPERTYID, errorMessage, errorMessage);
-            if (waterConnectionDetails.getId() == null && waterConnectionDetails.getApplicationType().getCode()
-                    .equalsIgnoreCase(NEWCONNECTION))
-                errorMessage = checkConnectionPresentForProperty(
-                        waterConnectionDetails.getConnection().getPropertyIdentifier());
-            if (errorMessage != null && !"".equals(errorMessage))
-                errors.rejectValue(CONNECTION_PROPERTYID, errorMessage, errorMessage);
-        }
-    }
+	public void validatePropertyIDForDataEntry(final WaterConnectionDetails waterConnectionDetails,
+			final BindingResult errors) {
+		if (waterConnectionDetails.getConnection() != null
+				&& waterConnectionDetails.getConnection().getPropertyIdentifier() != null
+				&& !"".equals(waterConnectionDetails.getConnection().getPropertyIdentifier())) {
+			String errorMessage = checkValidPropertyForDataEntry(
+					waterConnectionDetails.getConnection().getPropertyIdentifier());
+			if (errorMessage != null && !"".equals(errorMessage))
+				errors.rejectValue(CONNECTION_PROPERTYID, errorMessage, errorMessage);
+			if (waterConnectionDetails.getId() == null
+					&& waterConnectionDetails.getApplicationType().getCode().equalsIgnoreCase(NEWCONNECTION))
+				errorMessage = checkConnectionPresentForProperty(
+						waterConnectionDetails.getConnection().getPropertyIdentifier());
+			if (errorMessage != null && !"".equals(errorMessage))
+				errors.rejectValue(CONNECTION_PROPERTYID, errorMessage, errorMessage);
+		}
+	}
 
-    public void validatePropertyID(final WaterConnectionDetails waterConnectionDetails, final BindingResult errors) {
-        if (waterConnectionDetails.getConnection() != null
-                && isNotBlank(waterConnectionDetails.getConnection().getPropertyIdentifier())) {
-            String errorMessage = checkValidPropertyAssessmentNumber(
-                    waterConnectionDetails.getConnection().getPropertyIdentifier());
-            if (isNotBlank(errorMessage))
-                errors.rejectValue(CONNECTION_PROPERTYID, errorMessage, errorMessage);
-            else {
-                errorMessage = checkConnectionPresentForProperty(
-                        waterConnectionDetails.getConnection().getPropertyIdentifier());
-                if (isNotBlank(errorMessage))
-                    errors.rejectValue(CONNECTION_PROPERTYID, errorMessage, errorMessage);
-            }
-        }
-    }
+	public void validatePropertyID(final WaterConnectionDetails waterConnectionDetails, final BindingResult errors) {
+		if (waterConnectionDetails.getConnection() != null
+				&& isNotBlank(waterConnectionDetails.getConnection().getPropertyIdentifier())) {
+			String errorMessage = checkValidPropertyAssessmentNumber(
+					waterConnectionDetails.getConnection().getPropertyIdentifier());
+			if (isNotBlank(errorMessage))
+				errors.rejectValue(CONNECTION_PROPERTYID, errorMessage, errorMessage);
+			else {
+				errorMessage = checkConnectionPresentForProperty(
+						waterConnectionDetails.getConnection().getPropertyIdentifier());
+				if (isNotBlank(errorMessage))
+					errors.rejectValue(CONNECTION_PROPERTYID, errorMessage, errorMessage);
+			}
+		}
+	}
 
 }

@@ -59,6 +59,7 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import java.util.Objects;
 
 import static org.egov.infra.admin.common.entity.Favourites.SEQ_FAVOURITES;
 
@@ -126,52 +127,18 @@ public class Favourites extends AbstractPersistable<Long> {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (actionId == null ? 0 : actionId.hashCode());
-        result = prime * result + (contextRoot == null ? 0 : contextRoot.hashCode());
-        result = prime * result + (id == null ? 0 : id.hashCode());
-        result = prime * result + (name == null ? 0 : name.hashCode());
-        result = prime * result + (userId == null ? 0 : userId.hashCode());
-        return result;
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof Favourites))
+            return false;
+        Favourites that = (Favourites) other;
+        return Objects.equals(getUserId(), that.getUserId()) &&
+                Objects.equals(getActionId(), that.getActionId());
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final Favourites other = (Favourites) obj;
-        if (actionId == null) {
-            if (other.actionId != null)
-                return false;
-        } else if (!actionId.equals(other.actionId))
-            return false;
-        if (contextRoot == null) {
-            if (other.contextRoot != null)
-                return false;
-        } else if (!contextRoot.equals(other.contextRoot))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        if (userId == null) {
-            if (other.userId != null)
-                return false;
-        } else if (!userId.equals(other.userId))
-            return false;
-        return true;
+    public int hashCode() {
+        return Objects.hash(getUserId(), getActionId());
     }
-
 }

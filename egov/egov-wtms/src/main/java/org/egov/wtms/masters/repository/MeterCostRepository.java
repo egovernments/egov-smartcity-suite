@@ -52,6 +52,8 @@ import java.util.List;
 import org.egov.wtms.masters.entity.MeterCost;
 import org.egov.wtms.masters.entity.PipeSize;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -64,4 +66,12 @@ public interface MeterCostRepository extends JpaRepository<MeterCost, Long> {
     List<MeterCost> findByActiveTrueOrderByMeterMakeAsc();
 
     MeterCost findByMeterMakeAndPipeSize(String meterMake, PipeSize pipeSize);
+
+    @Query("select metercost from WaterConnectionDetails conndetails inner join MeterCost metercost on conndetails.pipeSize=metercost.pipeSize where conndetails.applicationNumber=:applicationNumber and metercost.pipeSize.id=:pipeSizeId and metercost.active=true")
+    List<MeterCost> getMeterListByPipeSizeAndApplicationnumber(@Param("pipeSizeId") Long pipeSizeId,
+            @Param("applicationNumber") String applicationNumber);
+    
+    @Query("select m from MeterCost m where m.active=true and m.pipeSize.id=:pipeSizeId")
+    List<MeterCost> findByPipeSizeIdAndActiveTrue(@Param("pipeSizeId") Long pipeSizeId);
+
 }

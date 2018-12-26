@@ -49,6 +49,7 @@ package org.egov.wtms.masters.service;
 
 import java.util.List;
 
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.wtms.masters.entity.MeterCost;
 import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.repository.MeterCostRepository;
@@ -111,7 +112,14 @@ public class MeterCostService {
         return meterCostRepository.findByMeterMakeAndPipeSize(meterMake, pipeSize);
     }
 
-    public List<MeterCost> getActiveMeterCostList() {
-        return meterCostRepository.findByActiveTrueOrderByMeterMakeAsc();
+    public List<MeterCost> getActiveMeterCostList(Long pipeSizeId, String applicationNumber) {
+        return meterCostRepository.getMeterListByPipeSizeAndApplicationnumber(pipeSizeId, applicationNumber);
     }
+
+    public void validateMeterMakeForPipesize(Long PipeSizeId) {
+    	List<MeterCost> meterCostList = meterCostRepository.findByPipeSizeIdAndActiveTrue(PipeSizeId);
+        if (meterCostList.isEmpty())
+            throw new ApplicationRuntimeException("err.metermake.not.defined");
+    }
+
 }

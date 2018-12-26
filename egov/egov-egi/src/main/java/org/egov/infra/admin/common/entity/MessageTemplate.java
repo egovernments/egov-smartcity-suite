@@ -49,6 +49,7 @@
 package org.egov.infra.admin.common.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
@@ -58,11 +59,13 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.util.Locale;
+import java.util.Objects;
 
 import static org.egov.infra.admin.common.entity.MessageTemplate.SEQ_MESSAGETEMPLATE;
 
 @Entity
 @Table(name = "eg_messagetemplate")
+@Unique(fields = "templateName", enableDfltMsg = true)
 @Cacheable
 @SequenceGenerator(name = SEQ_MESSAGETEMPLATE, sequenceName = SEQ_MESSAGETEMPLATE, allocationSize = 1)
 public class MessageTemplate extends AbstractPersistable<Long> {
@@ -106,5 +109,20 @@ public class MessageTemplate extends AbstractPersistable<Long> {
 
     public void setLocale(final String locale) {
         this.locale = locale;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof MessageTemplate))
+            return false;
+        MessageTemplate that = (MessageTemplate) other;
+        return Objects.equals(getTemplateName(), that.getTemplateName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getTemplateName());
     }
 }

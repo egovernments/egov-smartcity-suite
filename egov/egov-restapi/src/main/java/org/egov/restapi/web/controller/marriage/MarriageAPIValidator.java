@@ -48,10 +48,8 @@
 package org.egov.restapi.web.controller.marriage;
 
 import static org.egov.mrs.application.MarriageConstants.MAX_SIZE;
-import static org.egov.mrs.application.MarriageConstants.REGISTER_NO_OF_DAYS;
 import static org.egov.mrs.application.MarriageConstants.getMarriageVenues;
 
-import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -60,10 +58,10 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.repository.BoundaryRepository;
 import org.egov.infra.admin.master.repository.BoundaryTypeRepository;
+import org.egov.infra.utils.StringUtils;
 import org.egov.mrs.masters.service.ReligionService;
 import org.egov.restapi.web.contracts.marriageregistration.MarriageDocumentUpload;
 import org.egov.restapi.web.contracts.marriageregistration.MarriageRegistrationRequest;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -96,7 +94,6 @@ public class MarriageAPIValidator implements Validator {
         final MarriageRegistrationRequest marriageRegistrationRequest = (MarriageRegistrationRequest) target;     
         validateBrideGroomInformation(marriageRegistrationRequest,errors);
         validateBrideInformation(marriageRegistrationRequest,errors);
-        validateDateOfMarriage(marriageRegistrationRequest,errors);
 
         if (marriageRegistrationRequest.getLocality() != null) {
             BoundaryType locality = boundaryTypeRepository.findByNameAndHierarchyTypeName("Locality", "LOCATION");
@@ -104,6 +101,26 @@ public class MarriageAPIValidator implements Validator {
                     marriageRegistrationRequest.getLocality());
             if (childBoundary == null)
                 errors.rejectValue("locality", "Invalid Locality", "Invalid Locality");
+        }
+
+        if (marriageRegistrationRequest.getHusbandName() != null
+                && StringUtils.isBlank(marriageRegistrationRequest.getHusbandName().getFirstName())) {
+            errors.rejectValue("husbandName.firstName", "Husband firstName cannot be empty", "Husband firstName cannot be empty");
+        } else if (!isCorrectNamePattern(new String[] { marriageRegistrationRequest.getHusbandName().getFirstName(),
+                marriageRegistrationRequest.getHusbandName().getMiddleName(),
+                marriageRegistrationRequest.getHusbandName().getLastName() })) {
+            errors.rejectValue("husbandName", "Husband firstName/MiddleName/LastName must contain alphabets only",
+                    "Husband firstName/MiddleName/LastName must contain alphabets only");
+        }
+
+        if (marriageRegistrationRequest.getWifeName() != null
+                && StringUtils.isBlank(marriageRegistrationRequest.getWifeName().getFirstName())) {
+            errors.rejectValue("wifeName.firstName", "Wife firstName cannot be empty", "Wife firstName cannot be empty");
+        } else if (!isCorrectNamePattern(new String[] { marriageRegistrationRequest.getWifeName().getFirstName(),
+                marriageRegistrationRequest.getWifeName().getMiddleName(),
+                marriageRegistrationRequest.getWifeName().getLastName() })) {
+            errors.rejectValue("wifeName", "Wife firstName/MiddleName/LastName must contain alphabets only",
+                    "Wife firstName/MiddleName/LastName must contain alphabets only");
         }
 
         if (marriageRegistrationRequest.getHusbandreligion() != null
@@ -132,6 +149,20 @@ public class MarriageAPIValidator implements Validator {
 
     }
     
+    public boolean isCorrectNamePattern(String[] applicantNames) {
+        for (String applicantName : applicantNames) {
+            if (!StringUtils.isBlank(applicantName)) {
+                CharSequence inputStr = applicantName;
+                Pattern namePattern = Pattern.compile("^[a-zA-Z\\s]*$", Pattern.CASE_INSENSITIVE);
+                matcher = namePattern.matcher(inputStr);
+                if (!matcher.matches())
+                    return false;
+            }
+        }
+        return true;
+
+    }
+
     private void validateBrideGroomInformation(final MarriageRegistrationRequest registration, final Errors errors) {
         if (registration.getHusbnadAgeInYearsAsOnMarriage() != null
                 && registration.getHusbnadAgeInYearsAsOnMarriage() < 21)
@@ -168,14 +199,6 @@ public class MarriageAPIValidator implements Validator {
             if (!matcher.matches() || marriageRegistrationRequest.getWifeContactInfo().getMobileNo().length() != 10)
                 errors.rejectValue("husbandContactInfo.mobileNo", "Invalid MobileNo. for BrideGroom",
                         "Invalid MobileNo. for BrideGroom");
-        }
-    }
-
-    private void validateDateOfMarriage(final MarriageRegistrationRequest marriageRegistrationRequest, final Errors errors) {
-        if (!new DateTime(new Date()).isBefore(new DateTime(marriageRegistrationRequest.getDateOfMarriage()).plusDays(Integer
-                .parseInt(REGISTER_NO_OF_DAYS) + 1))) {
-            errors.rejectValue("dateOfMarriage", "Invalid marriage date",
-                    "Application will not be accepted beyond 90 days from the date of marriage");
         }
     }
 

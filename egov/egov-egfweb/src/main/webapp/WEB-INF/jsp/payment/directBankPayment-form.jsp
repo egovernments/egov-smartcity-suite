@@ -124,7 +124,7 @@
 	<td class="greybox"><s:text name="document.number" /><span
 		class="greybox"><span class="mandatory1">*</span></span></td>
 	<td class="greybox"><s:textfield name="commonBean.documentNumber"
-			id="commonBean.documentNumber" size="25" maxlength="50"/></td>
+			id="commonBean.documentNumber" size="25" maxlength="50" onkeyup="isSpecialChar();" onchange="isSpecialChar();" /></td>
 	<td class="greybox"><s:text name="document.date" /><span
 		class="greybox"><span class="mandatory1">*</span></span></td>
 	<s:date name='commonBean.documentDate' var="commonBean.documentDateId"
@@ -225,4 +225,10 @@
 	</div>
 </div>
 
-
+<script type="application/javascript">
+    function isSpecialChar(){
+        var documentNoEntered = document.getElementById('commonBean.documentNumber').value;
+        var replacedDocNo = documentNoEntered.replace(/[!$%^&*()_+|~=`{}\[\]":'\;<>?,.@#]/gi, '');
+        document.getElementById('commonBean.documentNumber').value = replacedDocNo;
+    }
+</script>

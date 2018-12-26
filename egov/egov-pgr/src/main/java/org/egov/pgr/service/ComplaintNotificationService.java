@@ -118,21 +118,15 @@ public class ComplaintNotificationService {
     }
 
     public void officialSmsOnRegistration(Complaint complaint) {
-        Position owner = complaint.getState().getOwnerPosition();
-        if (owner != null) {
-            List<Assignment> assignments = assignmentService.getAssignmentsForPosition(owner.getId(), new Date());
-            if (!assignments.isEmpty()) {
-                User user = assignments.get(0).getEmployee();
-                if (user != null) {
-                    String smsMsg = getMessage(
-                            COMPLAINT_OFFICIAL_REGISTERED_SMS_MSG_KEY,
-                            complaint.getComplaintType().getName(), complaint.getLocation().getName(),
-                            complaint.getComplainant().getName(),
-                            complaint.getComplainant().getMobile()
-                    );
-                    notificationService.sendSMS(user.getMobileNumber(), smsMsg);
-                }
-            }
+        User currentOwner = complaint.getCurrentOwner();
+        if (currentOwner != null) {
+            String smsMsg = getMessage(
+                    COMPLAINT_OFFICIAL_REGISTERED_SMS_MSG_KEY,
+                    complaint.getComplaintType().getName(), complaint.getLocation().getName(),
+                    complaint.getComplainant().getName(),
+                    complaint.getComplainant().getMobile()
+            );
+            notificationService.sendSMS(currentOwner.getMobileNumber(), smsMsg);
         }
     }
 

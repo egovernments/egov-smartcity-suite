@@ -157,12 +157,12 @@ public class DishonorChequeService implements FinancialIntegrationService {
             else
                 createDishonorChequeWithoutVoucher(chequeForm, instrumentHeader);
         } catch (final ValidationException e) {
-            LOGGER.error("Error in DishonorCheque >>>>" + e);
+            LOGGER.error("Error in DishonorCheque >>>>", e);
             final List<ValidationError> errors = new ArrayList<>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
-            LOGGER.error("Error in DishonorCheque >>>>" + e);
+            LOGGER.error("Error in DishonorCheque >>>>", e);
             final List<ValidationError> errors = new ArrayList<>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);
@@ -281,12 +281,12 @@ public class DishonorChequeService implements FinancialIntegrationService {
             persistenceService.applyAuditing(dishonorChq);
             persistenceService.persist(dishonorChq);
         } catch (final ValidationException e) {
-            LOGGER.error("Error in DishonorCheque >>>>" + e.getMessage());
+            LOGGER.error("Error in DishonorCheque >>>>", e);
             final List<ValidationError> errors = new ArrayList<>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
-            LOGGER.error("Error in DishonorCheque >>>>" + e.getMessage());
+            LOGGER.error("Error in DishonorCheque >>>>" + e);
             final List<ValidationError> errors = new ArrayList<>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);
@@ -296,7 +296,7 @@ public class DishonorChequeService implements FinancialIntegrationService {
 
     public CollectionDishonorChequeDetails populateDischonourChequedetails(final DishonoredChequeBean chequeForm,
             final CollectionDishonorCheque dishonorChq, final String[] receiptGeneralLedger)
-                    throws NumberFormatException {
+            throws NumberFormatException {
         CollectionDishonorChequeDetails dishonourChqDetails = new CollectionDishonorChequeDetails();
         CollectionDishonorChequeSubLedgerDetails dishonourChqSLDetails;
         ReceiptDetail ledger = new ReceiptDetail();
@@ -352,12 +352,12 @@ public class DishonorChequeService implements FinancialIntegrationService {
                 updateCollectionsOnInstrumentDishonor(Long.valueOf(instHeadId));
 
         } catch (final ValidationException e) {
-            LOGGER.error("Error in DishonorCheque >>>>" + e);
+            LOGGER.error("Error in DishonorCheque >>>>", e);
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
-            LOGGER.error("Error in DishonorCheque >>>>" + e);
+            LOGGER.error("Error in DishonorCheque >>>>", e);
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);
@@ -401,12 +401,12 @@ public class DishonorChequeService implements FinancialIntegrationService {
             voucherHeaderService.applyAuditing(reversalVoucher);
             voucherHeaderService.persist(reversalVoucher);
         } catch (final ValidationException e) {
-            LOGGER.error("Error in DishonorCheque >>>>" + e);
+            LOGGER.error("Error in DishonorCheque >>>>", e);
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
-            LOGGER.error("Error in DishonorCheque >>>>" + e);
+            LOGGER.error("Error in DishonorCheque >>>>", e);
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);

@@ -198,8 +198,8 @@ public class DeactivateAdvertisementController extends GenericController {
                 .findById(id);
 
         if (existingRateObject != null) {
-            existingRateObject.setDeactivation_remarks(advertisementPermitDetailStatus.getDeactivation_remarks());
-            existingRateObject.setDeactivation_date(advertisementPermitDetailStatus.getDeactivation_date());
+            existingRateObject.setDeactivationRemarks(advertisementPermitDetailStatus.getDeactivationRemarks());
+            existingRateObject.setDeactivationDate(advertisementPermitDetailStatus.getDeactivationDate());
             existingRateObject.getAdvertisement().setStatus(AdvertisementStatus.INACTIVE);
             advertisementPermitDetailService.updateAdvertisementPermitDetail(existingRateObject);
         }

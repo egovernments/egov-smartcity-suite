@@ -225,6 +225,7 @@
     <bean id="bhudharDataSharingService" parent="abstractPersistenceService" scope="prototype">
          <constructor-arg name="type" value="org.egov.ptis.bean.aadharseeding.AadharSeeding" />
 	</bean>
-   
-    <!-- Collection Integration Service Bean Ends-->
+	
+	 <!-- Collection Integration Service Bean Ends-->
+	
 </beans>

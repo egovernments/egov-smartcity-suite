@@ -68,8 +68,9 @@
 			<span class="mandatory1">*</span>
 		</div></td>
 	<td class="bluebox"><s:textfield name="voucherTypeBean.partyName"
-			id="voucherTypeBean.partyName" onchange="isSpecialChar(this)" onblur="isSpecialChar(this)"
-			value="%{voucherTypeBean.partyName}" /></td>
+			id="voucherTypeBean.partyName" onchange="isSpecialChar(this);" onblur="isSpecialChar(this);removeSpecialChar(this);"
+             onkeypress="return replaceSpecialChar(event);"
+			 value="%{voucherTypeBean.partyName}" /></td>
 </tr>
 <tr>
 	<td style="width: 5%"></td>
@@ -159,6 +160,30 @@ function onChangeVSubType(){
 		document.getElementById('partyNameDivId').style.display='inline';
 	}
 	
-}    
-  
+}
+function replaceSpecialChar(e) {
+    var k;
+    document.all ? k = e.keyCode : k = e.which;
+    return ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8 || k == 32 || (k >= 48 && k <= 57));
+}
+function isSpecialChar(Obj){
+    var vType = document.getElementById('vType').value;
+    var pattern=/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi;
+    var partyNameEntered = document.getElementById('voucherTypeBean.partyName').value;
+    if(partyNameEntered.trim().length == 0 && (vType != 'JVGeneral' || vType != '-1')){
+        document.getElementById('lblError').innerHTML = "Only empty spaces are not allowed";
+        document.getElementById('voucherTypeBean.partyName').focus();
+        return false;
+    }else{
+        if(document.getElementById('voucherTypeBean.partyName').value.match(pattern)){
+            var replacedNumber = partyNameEntered.replace(/[`~!@#$%^&*()_|+\-=��?;:><'",.<>\{\}\[\]\\\/]/gi, '');
+            document.getElementById('voucherTypeBean.partyName').value = replacedNumber;
+            return false;
+        }else{
+            document.getElementById('lblError').innerHTML = "";
+        }
+    }
+
+}
+
 </script>

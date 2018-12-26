@@ -67,7 +67,6 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportFormat;
-import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.SearchFormAction;
@@ -115,6 +114,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SURVEY_COMPARISON;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @ParentPackage("egov")
 @Namespace("/reports")
@@ -194,7 +194,7 @@ public class SearchNoticesAction extends SearchFormAction {
         if (noticeType != "-1") {
             reportHeader = reportHeader + ", NoticeType: " + noticeType;
         }
-        if (!ownerName.isEmpty()) {
+        if (isNotBlank(ownerName)) {
             reportHeader = reportHeader + ", OwnerName: " + ownerName;
         }
         if (zoneId != -1) {
@@ -206,7 +206,7 @@ public class SearchNoticesAction extends SearchFormAction {
         if (!propertyType.equalsIgnoreCase("-1")) {
             reportHeader = reportHeader + ", PropertyType: " + getPropType(propertyType);
         }
-        if (!noticeNumber.isEmpty()) {
+        if (isNotBlank(noticeNumber)) {
             reportHeader = reportHeader + ", noticeNum: " + noticeNumber;
         }
         if (noticeFromDate != null) {
@@ -215,10 +215,10 @@ public class SearchNoticesAction extends SearchFormAction {
         if (noticeToDate != null) {
             reportHeader = reportHeader + ", noticeDateTo: " + noticeToDate;
         }
-        if (!indexNumber.isEmpty()) {
+        if (isNotBlank(indexNumber)) {
             reportHeader = reportHeader + PROPERTY_ID + indexNumber;
         }
-        if (!houseNumber.isEmpty()) {
+        if (isNotBlank(houseNumber)) {
             reportHeader = reportHeader + ", HouseNo: " + houseNumber;
         }
         target = "searchresult";
@@ -238,7 +238,7 @@ public class SearchNoticesAction extends SearchFormAction {
     @Action(value = "/searchNotices-citizenSearch")
     public String searchNotice() {
 
-        if (!indexNumber.isEmpty()) {
+        if (isNotBlank(indexNumber)) {
             reportHeader = reportHeader + PROPERTY_ID + indexNumber;
             setIndexNumber(indexNumber);
 
@@ -512,7 +512,7 @@ public class SearchNoticesAction extends SearchFormAction {
             criteriaString = criteriaString.append(" and notice.basicProperty.id=bp.id ");
         else
             criteriaString = criteriaString.append(" and bp.upicNo=pmv.propertyId");
-        if (StringUtils.isNotBlank(ownerName)) {
+        if (isNotBlank(ownerName)) {
             criteriaString.append(" and pmv.ownerName like ?");
             params.add("%" + ownerName + "%");
         }
@@ -528,7 +528,7 @@ public class SearchNoticesAction extends SearchFormAction {
             criteriaString.append(" and pmv.propTypeMstrID.id = ?");
             params.add(Long.parseLong(propertyType));
         }
-        if (StringUtils.isNotBlank(noticeNumber)) {
+        if (isNotBlank(noticeNumber)) {
             criteriaString.append(" and notice.noticeNo = ?");
             params.add(noticeNumber);
         }
@@ -543,14 +543,14 @@ public class SearchNoticesAction extends SearchFormAction {
             criteriaString.append(" and notice.noticeDate <= ?");
             params.add(nextDate.getTime());
         }
-        if (StringUtils.isNotBlank(indexNumber)) {
+        if (isNotBlank(indexNumber)) {
         	if(NOTICE_TYPE_SURVEY_COMPARISON.equalsIgnoreCase(noticeType))
         		criteriaString.append(" and bp.upicNo = ?");
         	else
         		criteriaString.append(" and pmv.propertyId = ?");
             params.add(indexNumber);
         }
-        if (StringUtils.isNotBlank(houseNumber)) {
+        if (isNotBlank(houseNumber)) {
             criteriaString.append(" and bp.address.houseNoBldgApt like ?");
             params.add(houseNumber);
         }
@@ -746,7 +746,7 @@ public class SearchNoticesAction extends SearchFormAction {
     @Action(value = "/searchnotice-result")
     public String getNotices() {
 
-        if (!indexNumber.isEmpty()) {
+        if (isNotBlank(indexNumber)) {
             reportHeader = reportHeader + PROPERTY_ID + indexNumber;
             setIndexNumber(indexNumber);
 
@@ -756,7 +756,7 @@ public class SearchNoticesAction extends SearchFormAction {
             setApplicationNo(applicationNo);
             List<CitizenNoticeBean> citizenNoticeList = new LinkedList<>();
             CitizenNoticeBean noticeBean = getNoticeByApplicationNo(applicationNo);
-            if (!StringUtils.isBlank(noticeBean.getNotice())) {
+            if (isNotBlank(noticeBean.getNotice())) {
                 citizenNoticeList.add(noticeBean);
                 setCitizenNotices(citizenNoticeList);
             }

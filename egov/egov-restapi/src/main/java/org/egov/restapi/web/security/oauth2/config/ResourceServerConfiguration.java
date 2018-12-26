@@ -49,17 +49,16 @@ package org.egov.restapi.web.security.oauth2.config;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.JsonParseException;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.StringUtils;
 import org.egov.restapi.web.security.oauth2.entity.SecuredResource;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
@@ -78,10 +77,10 @@ import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHand
 @EnableResourceServer
 public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
 
+    private static final Logger LOGGER = Logger.getLogger(ResourceServerConfiguration.class);
+    private static final String APIS_CONFIG = "config/restapi-secured-apis-config.json";
+    private static final String APIS_CONFIG_OVERRIDE = "config/restapi-secured-apis-config-override.json";
     private static final String RESOURCE_ID = "egov-restapi";
-
-    @Value("classpath:secured-apis-config.json")
-    private Resource resource;
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) {
@@ -116,8 +115,17 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         final ObjectMapper mapper = new ObjectMapper();
         mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
         mapper.configure(SerializationConfig.Feature.AUTO_DETECT_FIELDS, true);
-        return mapper.readValue(resource.getInputStream(),
+        return mapper.readValue(getResourcesConfig().getInputStream(),
                 SecuredResource.class);
+    }
+
+    private Resource getResourcesConfig() {
+        Resource res = new ClassPathResource(APIS_CONFIG_OVERRIDE);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Overridden config present:" + res.exists());
+        if (!res.exists())
+            res = new ClassPathResource(APIS_CONFIG);
+        return res;
     }
 
 }

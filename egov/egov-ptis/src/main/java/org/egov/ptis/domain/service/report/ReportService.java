@@ -850,7 +850,7 @@ public class ReportService {
     public List<NatureOfUsageResult> getNatureOfUsageReportList(final HttpServletRequest request) {
         final StringBuilder query = new StringBuilder();
         query.append(
-                "select distinct pi.upicno \"assessmentNumber\", pi.ownersname \"ownerName\", pi.mobileno \"mobileNumber\", pi.houseno \"doorNumber\", pi.address \"address\", cast(pi.AGGREGATE_CURRENT_FIRSTHALF_DEMAND as numeric) \"halfYearTax\" from egpt_mv_propertyInfo pi ");
+                "select distinct pi.upicno \"assessmentNumber\", pi.ownersname \"ownerName\", pi.mobileno \"mobileNumber\", pi.houseno \"doorNumber\", pi.address \"address\", cast((pi.AGGREGATE_CURRENT_FIRSTHALF_DEMAND + pi.AGGREGATE_CURRENT_SECONDHALF_DEMAND) as numeric) \"fullYearTax\", fd.natureofusage \"usageName\" from egpt_mv_propertyInfo pi ");
         final StringBuilder whereQuery = new StringBuilder(" where pi.upicno is not null and pi.isactive = true ");
         final String natureOfUsage = request.getParameter("natureOfUsage");
         final String ward = request.getParameter("ward");
@@ -863,6 +863,10 @@ public class ReportService {
             query.append(",EGPT_MV_CURRENT_FLOOR_DETAIL fd ");
             whereQuery.append(" and fd.basicpropertyid = pi.basicpropertyid and fd.natureofusage = :natureOfUsage");
             params.put("natureOfUsage", propertyUsage.getUsageName());
+        }
+        else {
+        	query.append(",EGPT_MV_CURRENT_FLOOR_DETAIL fd ");
+            whereQuery.append(" and fd.basicpropertyid = pi.basicpropertyid");
         }
         if (StringUtils.isNotBlank(ward) && !"-1".equals(ward)) {
             final Boundary wardBndry = boundaryService.getBoundaryById(Long.valueOf(ward));

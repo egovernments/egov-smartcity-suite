@@ -58,7 +58,7 @@
   				<div class="panel panel-primary" data-collapsed="0">
   					<div class="panel-heading">
   						<div cass="panel-title">
-  							<spring:message code="title.AppliactionSearch"></spring:message>
+  							<spring:message code="title.application.search"></spring:message>
   						</div>
   					</div>
   					<div class="panel-body">

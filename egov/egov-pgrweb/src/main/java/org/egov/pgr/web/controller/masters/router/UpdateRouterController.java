@@ -54,7 +54,6 @@ import org.egov.pgr.entity.ComplaintRouter;
 import org.egov.pgr.service.ComplaintRouterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -88,7 +87,7 @@ class UpdateRouterController {
     }
 
     @ModelAttribute
-    public ComplaintRouter complaintRouter(@PathVariable final Long id) {
+    public ComplaintRouter complaintRouter(@PathVariable Long id) {
         return complaintRouterService.getRouterById(id);
     }
 
@@ -103,8 +102,7 @@ class UpdateRouterController {
     }
 
     @PostMapping("update/{id}")
-    public String update(@Valid ComplaintRouter complaintRouter,
-                         BindingResult errors, RedirectAttributes redirectAttrs) {
+    public String update(@Valid ComplaintRouter complaintRouter, BindingResult errors, RedirectAttributes redirectAttrs) {
         if (errors.hasErrors())
             return ROUTER_UPDATE;
 
@@ -115,12 +113,9 @@ class UpdateRouterController {
     }
 
     @PostMapping("delete/{id}")
-    public String delete(@Valid ComplaintRouter complaintRouter,
-                         BindingResult errors, Model model,
-                         RedirectAttributes redirectAttrs) {
+    public String delete(@Valid ComplaintRouter complaintRouter, BindingResult errors, RedirectAttributes redirectAttrs) {
         complaintRouterValidator.validate(complaintRouter, errors);
         if (errors.hasErrors()) {
-            model.addAttribute(MESSAGE, "msg.router.cannot.delete");
             return ROUTER_UPDATE;
         } else {
             complaintRouterService.deleteComplaintRouter(complaintRouter);

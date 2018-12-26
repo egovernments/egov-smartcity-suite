@@ -187,8 +187,12 @@ public class CouncilDataEntryController {
      */
     @RequestMapping(value = "/checkUnique-resolutionNo", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    public boolean uniqueResolutionNumber(@RequestParam final String resolutionNumber) {
-        MeetingMOM meetingMOM = councilMeetingService.findByResolutionNumber(resolutionNumber);
+    public boolean uniqueResolutionNumber(@RequestParam final String resolutionNumber, @RequestParam Long preambleId) {
+        MeetingMOM meetingMOM;
+        if(preambleId != null)
+        	meetingMOM = councilMeetingService.findByResolutionNumberAndPreamble(resolutionNumber, preambleId);
+        else
+        	meetingMOM = councilMeetingService.findByResolutionNumber(resolutionNumber);
         return meetingMOM != null ? false : true;
     }
     

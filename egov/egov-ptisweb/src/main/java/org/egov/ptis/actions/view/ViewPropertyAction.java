@@ -47,33 +47,7 @@
  */
 package org.egov.ptis.actions.view;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -96,7 +70,6 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.StateAware;
@@ -272,10 +245,6 @@ public class ViewPropertyAction extends BaseFormAction {
                 viewMap.put("ARV", BigDecimal.ZERO);
 
             propertyTaxUtil.setPersistenceService(persistenceService);
-            if (null != basicProperty.getUpicNo()) {
-                viewMap.put("enableVacancyRemission", propertyTaxUtil.enableVacancyRemission(basicProperty.getUpicNo()));
-                viewMap.put("enableMonthlyUpdate", propertyTaxUtil.enableMonthlyUpdate(basicProperty.getUpicNo()));
-            }
             PropertyStatusValues statusValues = propertyTaxCommonUtils.getPropStatusValues(basicProperty);
             if (null != statusValues && null != statusValues.getReferenceBasicProperty())
                 viewMap.put("parentProps", statusValues.getReferenceBasicProperty().getUpicNo());
@@ -359,6 +328,18 @@ public class ViewPropertyAction extends BaseFormAction {
                 setHistoryMap(propService.populateHistory(propertyMutation));
                 property = (PropertyImpl) propertyMutation.getProperty();
                 property.setDocuments(propertyMutation.getDocuments());
+                if (propertyMutation.getMutationReason().getType().equals(ADDTIONAL_RULE_FULL_TRANSFER)) {
+                    viewMap.put(DOCUMENTNO, propertyMutation.getMutationRegistrationDetails().getDocumentNo());
+                    viewMap.put(DOCUMENTDATE, propertyMutation.getMutationRegistrationDetails().getDocumentDate());
+                }
+                else if (propertyMutation.getMutationReason().getCode().equals(CIVILCOURTDECREE)) {
+                    viewMap.put(DOCUMENTNO, propertyMutation.getDecreeNumber());
+                    viewMap.put(DOCUMENTDATE, propertyMutation.getDecreeDate());
+                }
+                else {
+                    viewMap.put(DOCUMENTNO, propertyMutation.getDeedNo());
+                    viewMap.put(DOCUMENTDATE, propertyMutation.getDeedDate());
+                }
             } else if (appType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION)) {
                 final VacancyRemission vacancyRemission= vacancyRemissionRepository.getVRByApplicationNo(appNo);
                 setBasicProperty(vacancyRemission.getBasicProperty());
@@ -383,7 +364,6 @@ public class ViewPropertyAction extends BaseFormAction {
 			viewMap.put(DOCUMENTNO, documentTypeDetails.getDocumentNo());
 			viewMap.put(DOCUMENTDATE, documentTypeDetails.getDocumentDate());
 		} catch (Exception e) {
-			LOGGER.error("No Document type details present for Basicproperty " + e);
 			viewMap.put(DOCUMENTNO,
 					basicProperty.getRegdDocNo() != null ? basicProperty.getRegdDocNo() : StringUtils.EMPTY);
 			viewMap.put(DOCUMENTDATE, basicProperty.getRegdDocDate() != null ? basicProperty.getRegdDocDate() : null);

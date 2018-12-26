@@ -628,22 +628,14 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      */
     public void endReceiptWorkFlowOnCancellation(final ReceiptHeader receiptHeaderToBeCancelled) {
         // End work-flow for the cancelled receipt
-        Position position;
-        if (!collectionsUtil.isEmployee(receiptHeaderToBeCancelled.getCreatedBy()))
-            position = collectionsUtil.getPositionByDeptDesgAndBoundary(receiptHeaderToBeCancelled.getReceiptMisc()
-                    .getBoundary());
-        else
-            position = collectionsUtil.getPositionOfUser(receiptHeaderToBeCancelled.getCreatedBy());
-
-        if (position != null)
-            receiptHeaderToBeCancelled
-                    .transition()
-                    .end()
-                    .withSenderName(
-                            receiptHeaderToBeCancelled.getCreatedBy().getUsername() + "::"
-                                    + receiptHeaderToBeCancelled.getCreatedBy().getName())
-                    .withComments("Receipt Cancelled - Workflow ends").withStateValue(CollectionConstants.WF_STATE_END)
-                    .withOwner(position).withDateInfo(new Date());
+        receiptHeaderToBeCancelled
+                .transition()
+                .end()
+                .withSenderName(
+                        receiptHeaderToBeCancelled.getCreatedBy().getUsername() + "::"
+                                + receiptHeaderToBeCancelled.getCreatedBy().getName())
+                .withComments("Receipt Cancelled - Workflow ends").withStateValue(CollectionConstants.WF_STATE_END)
+                .withDateInfo(new Date());
     }
 
     /**

@@ -74,8 +74,9 @@
 				<div class="form-group">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.accountnumber" /> <span class="mandatory"></span> </label>
 					<div class="col-sm-3 add-margin">
-						<form:input path="accountnumber" class="form-control text-left patternvalidation" 
-						onkeypress="return replaceSpecialChar(event)" data-pattern="alphanumeric" maxlength="50" required="required" />
+						<form:input path="accountnumber" class="form-control text-left patternvalidation"
+						onkeypress="return replaceSpecialChar(event);" onchange = "validateAccountNumber();" onkeyup="validateAccountNumber();"  data-pattern="alphanumeric" maxlength="50" required="required" />
+						<p id="invalidAccNumberErr" style="color:red;display:none;">Enter atleast one number</p>
 						<form:errors path="accountnumber" cssClass="error-msg" />
 					</div>
 					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.fund" /> <span class="mandatory"></span></label>
@@ -145,9 +146,27 @@
 	</div>
 </div>
 <script type="text/javascript" >
+	var bankAccountId = '${bankaccount.id}';
+	if(bankAccountId != "" && bankAccountId != null){
+        document.getElementById("accounttype").disabled = true;
+	}else{
+        document.getElementById("accounttype").disabled = false;
+	}
 	function replaceSpecialChar(e) {
 	    var k;
 	    document.all ? k = e.keyCode : k = e.which;
 	    return ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8 || k == 32 || (k >= 48 && k <= 57));
+	}
+	function validateAccountNumber(){
+	    var accountNumber = document.getElementById("accountnumber").value;
+        filter = /^(?:.*[0-9].*)[a-z0-9]*$/i;
+        if (filter.test(accountNumber)) {
+            document.getElementById("invalidAccNumberErr").style.display = "none";
+            document.getElementById("buttonSubmit").disabled = false;
+        }else{
+            document.getElementById("invalidAccNumberErr").style.display = "block";
+            document.getElementById("buttonSubmit").disabled = true;
+            return false;
+        }
 	}
 </script>

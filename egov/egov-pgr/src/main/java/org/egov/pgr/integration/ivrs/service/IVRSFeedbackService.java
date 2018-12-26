@@ -53,6 +53,7 @@ import org.egov.pgr.elasticsearch.service.ComplaintIndexService;
 import org.egov.pgr.elasticsearch.service.ComplaintIndexUpdateService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.enums.CitizenFeedback;
+import org.egov.pgr.event.model.ComplaintUpdateEvent;
 import org.egov.pgr.integration.ivrs.entity.IVRSFeedback;
 import org.egov.pgr.integration.ivrs.entity.IVRSRating;
 import org.egov.pgr.integration.ivrs.entity.contract.IVRSFeedbackSearchRequest;
@@ -62,6 +63,7 @@ import org.egov.pgr.integration.ivrs.repository.IVRSRatingRepository;
 import org.egov.pgr.integration.ivrs.repository.specs.IVRSFeedbackReviewSearchSpec;
 import org.egov.pgr.repository.ComplaintRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -88,6 +90,9 @@ public class IVRSFeedbackService {
     @Autowired
     private ComplaintIndexUpdateService complaintIndexUpdateService;
 
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
+
     @Transactional
     public IVRSFeedback createFeedback(IVRSFeedbackUpdateRequest request) {
         Complaint complaint = complaintRepository.findByCrn(request.getCrn());
@@ -105,6 +110,7 @@ public class IVRSFeedbackService {
         complaintRepository.saveAndFlush(complaint);
         complaintIndexService.updateComplaintIndex(complaint);
         complaintIndexUpdateService.updateIndexOnFeedback(ivrsFeedback);
+        applicationEventPublisher.publishEvent(new ComplaintUpdateEvent(complaint));
         return ivrsFeedback;
     }
 

@@ -102,8 +102,8 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
     private static final String ANONYMOUS_CREATED = "Anonymous  Created";
 
     private static final String THIRD_PARTY_OPERATOR_CREATED = "Third Party operator created";
-    
-    private static final String CITIZEN_CREATED=  "Citizen created";
+
+    private static final String CITIZEN_CREATED = "Citizen created";
 
     private static final String NEW = "NEW";
 
@@ -122,15 +122,16 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
     @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<SewerageApplicationDetails> sewerageApplicationWorkflowService;
+
     @Autowired
     public ApplicationWorkflowCustomImpl() {
 
     }
-    
+
     @Override
     public void createCommonWorkflowTransition(final SewerageApplicationDetails sewerageApplicationDetails,
-            final Long approvalPosition, final String approvalComent, final String additionalRule,
-            final String workFlowAction) {
+                                               final Long approvalPosition, final String approvalComent, final String additionalRule,
+                                               final String workFlowAction) {
         if (LOG.isDebugEnabled())
             LOG.debug(" Create WorkFlow Transition Started  ...");
         final User user = securityUtils.getCurrentUser();
@@ -139,31 +140,31 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         Assignment wfInitiator = null;
         String currState = StringUtils.EMPTY;
         WorkFlowMatrix wfmatrix = null;
-        
-        String natureOfwork =  sewerageApplicationDetails.getApplicationType().getName();
+
+        String natureOfwork = sewerageApplicationDetails.getApplicationType().getName();
 
         if (null != sewerageApplicationDetails.getId()) {
             wfInitiator = sewerageWorkflowService.getWorkFlowInitiator(sewerageApplicationDetails);
         }
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
             // rejection in b.w workflow, send application to the creator
-                final String stateValue = WF_STATE_REJECTED;
-                
-                if (sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
-                    wfmatrix = sewerageApplicationWorkflowService.getWfMatrix( 
-                            sewerageApplicationDetails.getStateType(), null, null, additionalRule, stateValue,
-                            WFPA_REJECTED_INSPECTIONFEE_COLLECTION);
-                    //throw new ValidationException(new ValidationException() );
-                } else {    //pick workflowmatrix without inspecitonfee
-                    wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(
-                         sewerageApplicationDetails.getStateType(), null, null, additionalRule, stateValue, WF_STATE_REJECTED);
-                } 
-                sewerageApplicationDetails.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent)
-                        .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator.getPosition()).withNextAction("Application Rejected")
-                        .withNatureOfTask(natureOfwork);
-        } else if(WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workFlowAction)){
+            final String stateValue = WF_STATE_REJECTED;
+
+            if (sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
+                wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(
+                        sewerageApplicationDetails.getStateType(), null, null, additionalRule, stateValue,
+                        WFPA_REJECTED_INSPECTIONFEE_COLLECTION);
+                //throw new ValidationException(new ValidationException() );
+            } else {    //pick workflowmatrix without inspecitonfee
+                wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(
+                        sewerageApplicationDetails.getStateType(), null, null, additionalRule, stateValue, WF_STATE_REJECTED);
+            }
+            sewerageApplicationDetails.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
+                    .withComments(approvalComent)
+                    .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                    .withOwner(wfInitiator.getPosition()).withNextAction("Application Rejected")
+                    .withNatureOfTask(natureOfwork);
+        } else if (WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workFlowAction)) {
             // Incase of reject / cancel from the creator, end the workflow
             sewerageApplicationDetails.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
@@ -175,7 +176,9 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
 
             Boolean cscOperatorLoggedIn = sewerageWorkflowService.isCscOperator(user);
             Boolean citizenPortalUser = sewerageWorkflowService.isCitizenPortalUser(user);
-            if (null == sewerageApplicationDetails.getState() && (cscOperatorLoggedIn || citizenPortalUser || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getUsername()))) {
+            if (null == sewerageApplicationDetails.getState()
+                    && (cscOperatorLoggedIn || citizenPortalUser
+                    || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getUsername()))) {
                 if (cscOperatorLoggedIn)
                     currState = THIRD_PARTY_OPERATOR_CREATED;
                 else if (citizenPortalUser && sewerageApplicationDetails.getState() == null)
@@ -189,28 +192,22 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 if (citizenPortalUser) {
                     if (sewerageApplicationDetails.getCurrentDemand() != null
                             && !sewerageDemandService
-                                    .checkAnyTaxIsPendingToCollect(sewerageApplicationDetails.getCurrentDemand()))
-                        sewerageApplicationDetails.transition().start()
-                                .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
-                                .withComments(approvalComent)
-                                .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
-                                .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
-                                .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
+                            .checkAnyTaxIsPendingToCollect(sewerageApplicationDetails.getCurrentDemand()))
+                        sewerageApplicationDetails.transition().start().withOwner(pos).withInitiator(pos);
+
                     else
-                        sewerageApplicationDetails.transition().start()
-                                .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
-                                .withComments(approvalComent)
-                                .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
-                                .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(user)
-                                .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
-                }
-                else
-                sewerageApplicationDetails.transition().start()
-                        .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
-                        .withComments(approvalComent).withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
-            } else if (null == sewerageApplicationDetails.getState()){    // New Entry
+                        sewerageApplicationDetails.transition().start().withOwner(pos).withInitiator(pos);
+                } else
+                    sewerageApplicationDetails.transition().start().withOwner(pos).withInitiator(pos);
+                sewerageApplicationDetails.transition()
+                        .withSLA(sewerageTaxUtils.getSlaAppConfigValues(sewerageApplicationDetails.getApplicationType()))
+                        .withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent)
+                        .withStateValue(wfmatrix.getNextState())
+                        .withDateInfo(new Date())
+                        .withNextAction(wfmatrix.getNextAction())
+                        .withNatureOfTask(natureOfwork);
+            } else if (null == sewerageApplicationDetails.getState()) {    // New Entry
                 // If Inspection is configured, pick with inspection fee workflowmatrix by passing pendingaction
                 if (sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
                     wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(
@@ -221,15 +218,21 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                             sewerageApplicationDetails.getStateType(), null, null, additionalRule, currState, null);
                 }
                 sewerageApplicationDetails.transition().start()
-                        .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
+                        .withSLA(sewerageTaxUtils.getSlaAppConfigValues(sewerageApplicationDetails.getApplicationType()))
+                        .withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent)
+                        .withStateValue(wfmatrix.getNextState())
+                        .withDateInfo(new Date())
+                        .withOwner(pos)
+                        .withInitiator(sewerageWorkflowService.getWorkFlowInitiator(sewerageApplicationDetails).getPosition())
+                        .withNextAction(wfmatrix.getNextAction())
+                        .withNatureOfTask(natureOfwork);
             } else if (sewerageApplicationDetails.getState() != null
                     && (NEW.equalsIgnoreCase(sewerageApplicationDetails.getState().getValue())
-                            && APPLICATION_STATUS_COLLECTINSPECTIONFEE
-                                    .equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()))
+                    && APPLICATION_STATUS_COLLECTINSPECTIONFEE
+                    .equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()))
                     &&
-                    (sewerageWorkflowService.isCscOperator(sewerageApplicationDetails.getCreatedBy()) || ANONYMOUS_USER.equalsIgnoreCase(sewerageApplicationDetails.getCreatedBy().getUsername())||
+                    (sewerageWorkflowService.isCscOperator(sewerageApplicationDetails.getCreatedBy()) || ANONYMOUS_USER.equalsIgnoreCase(sewerageApplicationDetails.getCreatedBy().getUsername()) ||
                             sewerageWorkflowService.isCitizenPortalUser(sewerageApplicationDetails.getCreatedBy()))) {
                 if (sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
                     wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(
@@ -247,7 +250,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
 
             } // End workflow on executive engineer approval 
             else if (APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)
-                    && (WF_STATE_PAYMENTDONE.equalsIgnoreCase(sewerageApplicationDetails.getState().getValue())||WF_STATE_EE_APPROVED.equalsIgnoreCase(sewerageApplicationDetails.getState().getValue()))) {
+                    && (WF_STATE_PAYMENTDONE.equalsIgnoreCase(sewerageApplicationDetails.getState().getValue()) || WF_STATE_EE_APPROVED.equalsIgnoreCase(sewerageApplicationDetails.getState().getValue()))) {
                 sewerageApplicationDetails.transition().end()
                         .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
                         .withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
@@ -270,21 +273,20 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 sewerageApplicationDetails.transition().end()
                         .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
                         .withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
-            }
-            else if(WF_STATE_DEPUTY_EXE_APPROVED.equalsIgnoreCase(sewerageApplicationDetails.getState().getValue())
-                    && (NEWSEWERAGECONNECTION.equalsIgnoreCase(additionalRule)|| CHANGEINCLOSETS.equalsIgnoreCase(additionalRule))){
+            } else if (WF_STATE_DEPUTY_EXE_APPROVED.equalsIgnoreCase(sewerageApplicationDetails.getState().getValue())
+                    && (NEWSEWERAGECONNECTION.equalsIgnoreCase(additionalRule) || CHANGEINCLOSETS.equalsIgnoreCase(additionalRule))) {
                 wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(
                         sewerageApplicationDetails.getStateType(), null, null, additionalRule, sewerageApplicationDetails.getCurrentState().getValue(), null);
                 sewerageApplicationDetails.transition().progressWithStateCopy()
-                .withSenderName(user.getUsername() + "::" + user.getName())
-                .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
-                .withDateInfo(currentDate.toDate()).withOwner(user).withNextAction(wfmatrix.getNextAction())
-                .withNatureOfTask(natureOfwork);
-                
+                        .withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
+                        .withDateInfo(currentDate.toDate()).withOwner(user).withNextAction(wfmatrix.getNextAction())
+                        .withNatureOfTask(natureOfwork);
+
             }
-            
+
             // TODO : Need to check this usecase. 
-            else if (null != approvalComent && "Receipt Cancelled".equalsIgnoreCase(approvalComent)) {  
+            else if (null != approvalComent && "Receipt Cancelled".equalsIgnoreCase(approvalComent)) {
                 wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
                         null, null, additionalRule, WF_STATE_ASSISTANT_APPROVED, null);
                 sewerageApplicationDetails.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
@@ -292,133 +294,148 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(natureOfwork);
             } else {
-                String pendingActions=null;
-                
-                if (sewerageApplicationDetails.getCurrentState().getValue().equalsIgnoreCase(WF_STATE_REJECTED)){
-                    if(sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
-                        pendingActions = WFPA_REJECTED_INSPECTIONFEE_COLLECTION ; 
+                String pendingActions = null;
+
+                if (sewerageApplicationDetails.getCurrentState().getValue().equalsIgnoreCase(WF_STATE_REJECTED)) {
+                    if (sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
+                        pendingActions = WFPA_REJECTED_INSPECTIONFEE_COLLECTION;
                     } else {
-                        pendingActions = WF_STATE_REJECTED ; 
-                    } 
+                        pendingActions = WF_STATE_REJECTED;
+                    }
                     wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
                             null, null, additionalRule, sewerageApplicationDetails.getCurrentState().getValue(), pendingActions);
-                    
+
                     String nextState = null;
-                    if(sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
-                        if(sewerageApplicationDetails.getCurrentDemand().getAmtCollected().compareTo(BigDecimal.ZERO) == 0)
-                            nextState=WF_STATE_INSPECTIONFEE_PENDING;
+                    if (sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
+                        if (sewerageApplicationDetails.getCurrentDemand().getAmtCollected().compareTo(BigDecimal.ZERO) == 0)
+                            nextState = WF_STATE_INSPECTIONFEE_PENDING;
                         else
-                            nextState=WF_STATE_INSPECTIONFEE_COLLECTED;
+                            nextState = WF_STATE_INSPECTIONFEE_COLLECTED;
                     } else
-                        nextState= wfmatrix.getNextState();
-                    
+                        nextState = wfmatrix.getNextState();
+
                     sewerageApplicationDetails.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
-                    .withComments(approvalComent).withStateValue(nextState)
-                    .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
-                    .withNatureOfTask(natureOfwork);
-                    
-                }  else{ 
-                        wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
-                        null, null, additionalRule, sewerageApplicationDetails.getCurrentState().getValue(), pendingActions);
-                
-                        sewerageApplicationDetails.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
-                        .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
-                        .withNatureOfTask(natureOfwork);
+                            .withComments(approvalComent).withStateValue(nextState)
+                            .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
+                            .withNatureOfTask(natureOfwork);
+
+                } else {
+                    wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
+                            null, null, additionalRule, sewerageApplicationDetails.getCurrentState().getValue(), pendingActions);
+
+                    sewerageApplicationDetails.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
+                            .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
+                            .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
+                            .withNatureOfTask(natureOfwork);
                 }
-            }  
+            }
         }
         if (LOG.isDebugEnabled())
             LOG.debug(" WorkFlow Transition Completed  ...");
     }
-    
+
     @Override
     public void createCloseConnectionWorkflowTransition(final SewerageApplicationDetails sewerageApplicationDetails,
-            final Long approvalPosition, final String approvalComent, final String additionalRule,
-             String workFlowAction) {
+                                                        final Long approvalPosition, final String approvalComent, final String additionalRule,
+                                                        String workFlowAction) {
         if (LOG.isDebugEnabled())
-            LOG.debug(" Create WorkFlow Transition Started  ..."); 
+            LOG.debug(" Create WorkFlow Transition Started  ...");
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
         Position pos = null;
         Assignment wfInitiator = null;
         String currState = StringUtils.EMPTY;
         WorkFlowMatrix wfmatrix = null;
-        
-        String natureOfwork =  sewerageApplicationDetails.getApplicationType().getName();
+
+        String natureOfwork = sewerageApplicationDetails.getApplicationType().getName();
 
         if (null != sewerageApplicationDetails.getId()) {
             wfInitiator = sewerageWorkflowService.getWorkFlowInitiator(sewerageApplicationDetails);
         }
-            if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
-                // rejection in b.w workflow, send application to the creator
-                    final String stateValue = WF_STATE_REJECTED;
-                    wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(
-                         sewerageApplicationDetails.getStateType(), null, null, additionalRule, stateValue, WF_STATE_REJECTED);
-                    sewerageApplicationDetails.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
-                            .withComments(approvalComent)
-                            .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                            .withOwner(wfInitiator.getPosition()).withNextAction("Application Rejected")
-                            .withNatureOfTask(natureOfwork);
-            } else if(WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workFlowAction)){
-                // Incase of reject / cancel from the creator, end the workflow
-                sewerageApplicationDetails.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
-            } else {
-                if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
-                    pos = positionMasterService.getPositionById(approvalPosition);
-                else
-                    pos = wfInitiator.getPosition();
-                
-                 // New Entry
-                if (null == sewerageApplicationDetails.getState()) { 
-                    wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(
-                            sewerageApplicationDetails.getStateType(), null, null, additionalRule, currState, null);
-                    sewerageApplicationDetails.transition().start()
-                            .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
-                            .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
-                            .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
-                }  
-                // close connection on executive engineer approval
-            else if ((WF_STATE_DEPUTY_EXE_APPROVED.equalsIgnoreCase(sewerageApplicationDetails.getState().getValue())||
+        if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
+            // rejection in b.w workflow, send application to the creator
+            final String stateValue = WF_STATE_REJECTED;
+            wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(
+                    sewerageApplicationDetails.getStateType(), null, null, additionalRule, stateValue, WF_STATE_REJECTED);
+            sewerageApplicationDetails.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
+                    .withComments(approvalComent)
+                    .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                    .withOwner(wfInitiator.getPosition()).withNextAction("Application Rejected")
+                    .withNatureOfTask(natureOfwork);
+        } else if (WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workFlowAction)) {
+            // Incase of reject / cancel from the creator, end the workflow
+            sewerageApplicationDetails.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
+                    .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
+        } else {
+            if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
+                pos = positionMasterService.getPositionById(approvalPosition);
+            else
+                pos = wfInitiator.getPosition();
+
+            // New Entry
+            if (null == sewerageApplicationDetails.getState()) {
+                wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(
+                        sewerageApplicationDetails.getStateType(), null, null, additionalRule, currState, null);
+                sewerageApplicationDetails.transition().start()
+                        .withSLA(sewerageTaxUtils.getSlaAppConfigValues(sewerageApplicationDetails.getApplicationType()))
+                        .withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent)
+                        .withStateValue(wfmatrix.getNextState())
+                        .withDateInfo(new Date())
+                        .withOwner(pos)
+                        .withInitiator(sewerageWorkflowService.getWorkFlowInitiator(sewerageApplicationDetails).getPosition())
+                        .withNextAction(wfmatrix.getNextAction())
+                        .withNatureOfTask(natureOfwork);
+            }
+            // close connection on executive engineer approval
+            else if ((WF_STATE_DEPUTY_EXE_APPROVED.equalsIgnoreCase(sewerageApplicationDetails.getState().getValue()) ||
                     WF_STATE_EE_APPROVED.equalsIgnoreCase(sewerageApplicationDetails.getState().getValue()))
-                    && APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction) ) {
+                    && APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)) {
                 sewerageApplicationDetails.transition().end()
                         .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
                         .withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
-                }
-                // End workflow on execute connection
-                else if (WF_STATE_CONNECTION_CLOSE_BUTTON.equalsIgnoreCase(workFlowAction)) {
-                    wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
-                            null, null, additionalRule, sewerageApplicationDetails.getCurrentState().getValue(), WF_STATE_CLOSECONNECTION_NOTICEGENERATION_PENDING);
-                    if (wfmatrix.getNextAction().equalsIgnoreCase("END"))
-                        sewerageApplicationDetails.transition().end()
-                                .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
-                                .withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
-                } 
-                else {
-                    String pendingActions=null;
-                    if (sewerageApplicationDetails.getCurrentState().getValue().equalsIgnoreCase(WF_STATE_REJECTED)){
-                        pendingActions = WF_STATE_REJECTED ; 
-                        wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
-                                null, null, additionalRule, sewerageApplicationDetails.getCurrentState().getValue(), pendingActions);
-                        String nextState = wfmatrix.getNextState();
-                        sewerageApplicationDetails.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent).withStateValue(nextState)
-                        .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
-                        .withNatureOfTask(natureOfwork);
-                        
-                    }  else { 
-                            wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
-                            null, null, additionalRule, sewerageApplicationDetails.getCurrentState().getValue(), pendingActions);
-                            sewerageApplicationDetails.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
-                            .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
-                            .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
-                            .withNatureOfTask(natureOfwork);
-                    }
-                }  
             }
-            if (LOG.isDebugEnabled())
-                LOG.debug(" WorkFlow Transition Completed  ...");
+            // End workflow on execute connection
+            else if (WF_STATE_CONNECTION_CLOSE_BUTTON.equalsIgnoreCase(workFlowAction)) {
+                wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
+                        null, null, additionalRule, sewerageApplicationDetails.getCurrentState().getValue(), WF_STATE_CLOSECONNECTION_NOTICEGENERATION_PENDING);
+                if (wfmatrix.getNextAction().equalsIgnoreCase("END"))
+                    sewerageApplicationDetails.transition().end()
+                            .withSenderName(user.getUsername() + "::" + user.getName())
+                            .withComments(approvalComent)
+                            .withDateInfo(currentDate.toDate())
+                            .withNatureOfTask(natureOfwork);
+            } else {
+                String pendingActions = null;
+                if (sewerageApplicationDetails.getCurrentState().getValue().equalsIgnoreCase(WF_STATE_REJECTED)) {
+                    pendingActions = WF_STATE_REJECTED;
+                    wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
+                            null, null, additionalRule, sewerageApplicationDetails.getCurrentState().getValue(), pendingActions);
+                    String nextState = wfmatrix.getNextState();
+                    sewerageApplicationDetails.transition().progressWithStateCopy()
+                            .withSenderName(user.getUsername() + "::" + user.getName())
+                            .withComments(approvalComent)
+                            .withStateValue(nextState)
+                            .withDateInfo(currentDate.toDate())
+                            .withOwner(pos)
+                            .withNextAction(wfmatrix.getNextAction())
+                            .withNatureOfTask(natureOfwork);
+
+                } else {
+                    wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
+                            null, null, additionalRule, sewerageApplicationDetails.getCurrentState().getValue(), pendingActions);
+                    sewerageApplicationDetails.transition().progressWithStateCopy()
+                            .withSenderName(user.getUsername() + "::" + user.getName())
+                            .withComments(approvalComent)
+                            .withStateValue(wfmatrix.getNextState())
+                            .withDateInfo(currentDate.toDate())
+                            .withOwner(pos)
+                            .withNextAction(wfmatrix.getNextAction())
+                            .withNatureOfTask(natureOfwork);
+                }
+            }
         }
+        if (LOG.isDebugEnabled())
+            LOG.debug(" WorkFlow Transition Completed  ...");
+    }
 }

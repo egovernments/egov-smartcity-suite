@@ -78,16 +78,15 @@ import org.egov.demand.model.EgdmCollectedReceipt;
 import org.egov.demand.utils.DemandConstants;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.services.PersistenceService;
-import org.egov.tl.entity.LicenseDemand;
+import org.egov.tl.entity.FeeType;
 import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.LicenseApplicationService;
 import org.egov.tl.service.LicenseCitizenPortalService;
 import org.egov.tl.service.LicenseConfigurationService;
@@ -121,6 +120,8 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import static java.math.BigDecimal.ZERO;
+import static org.egov.demand.utils.DemandConstants.DEMAND_REASON_CATEGORY_FEE;
+import static org.egov.demand.utils.DemandConstants.DEMAND_REASON_CATEGORY_PENALTY;
 import static org.egov.tl.utils.Constants.*;
 
 @Service("TLCollectionsInterface")
@@ -135,9 +136,6 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     @Autowired
     @Qualifier("tradeLicenseWorkflowService")
     protected SimpleWorkflowService tradeLicenseWorkflowService;
-
-    @Autowired
-    protected ModuleService moduleService;
 
     @Autowired
     protected SecurityUtils securityUtils;
@@ -164,10 +162,6 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     protected InstallmentDao installmentDao;
 
     @Autowired
-    @Qualifier("entityQueryService")
-    protected PersistenceService entityQueryService;
-
-    @Autowired
     protected LicenseUtils licenseUtils;
 
     @Autowired
@@ -192,15 +186,19 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     @Autowired
     protected LicenseConfigurationService licenseConfigurationService;
 
+    @Autowired
+    protected FeeTypeService feeTypeService;
+
     @Transactional
     public String createLicenseBillXML(TradeLicense license) {
         LicenseBill licenseBill = new LicenseBill();
         licenseBill.setLicense(license);
         licenseBill.setModuleName(TRADE_LICENSE);
         licenseBill.setServiceCode(TL_SERVICE_CODE);
-        licenseBill.setModule(licenseUtils.getModule(TRADE_LICENSE));
+        licenseBill.setModule(licenseUtils.getModule());
         licenseBill.setBillType(egBillDao.getBillTypeByCode(BILL_TYPE_AUTO));
         licenseBill.setDepartmentCode(licenseConfigurationService.getDepartmentCodeForBillGenerate());
+        licenseBill.setCollModesNotAllowed(licenseConfigurationService.getValueByKey(DISABLED_PAYMENT_MODES));
         licenseBill.setUserId(ApplicationThreadLocals.getUserId() == null ?
                 securityUtils.getCurrentUser().getId() : ApplicationThreadLocals.getUserId());
         licenseBill.setReferenceNumber(licenseNumberUtils.generateBillNumber());
@@ -217,11 +215,11 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         final Date currentDate = new Date();
         final Map installmentWise = new HashMap<Installment, List<EgDemandDetails>>();
         final Set<Installment> sortedInstallmentSet = new TreeSet<>();
-        Module module = moduleService.getModuleByName(TRADE_LICENSE);
+        Module module = licenseUtils.getModule();
         getCurrentInstallment(module);
         final List<EgDemandDetails> orderedDetailsList = new ArrayList<>();
-        licenseApplicationService.calcPenaltyDemandDetails(license, demand);
-        license.getLicenseDemand().recalculateBaseDemand();
+        licenseApplicationService.applyPenalty(license, demand);
+        license.recalculateBaseDemand();
         for (final EgDemandDetails demandDetail : demand.getEgDemandDetails()) {
             final Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
             if (installmentWise.get(installment) == null) {
@@ -324,7 +322,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             final EgBill bill = egBillDao.findById(Long.valueOf(billReceiptInfoImpl.getBillReferenceNum()), false);
             final EgDemand demand = bill.getEgDemand();
             if (billReceipt.getEvent().equals(EVENT_RECEIPT_CREATED)) {
-                final LicenseDemand ld = (LicenseDemand) entityQueryService.load(demand.getId(), LicenseDemand.class);
+                final TradeLicense tradeLicense = licenseApplicationService.getLicenseByDemand(demand);
                 final Map<String, Map<String, EgDemandDetails>> installmentWiseDemandDetailsByReason = new HashMap<>();
                 Map<String, EgDemandDetails> demandDetailByReason;
                 EgDemandReason dmdRsn;
@@ -362,19 +360,18 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                                     , reason, instDesc, billReceipt.getReceiptNum(), rcptAccInfo.getCrAmount());
                     }
 
-                if (ld.getLicense().hasState()) {
-                    if (ld.getLicense().transitionCompleted())
+                if (tradeLicense.hasState()) {
+                    if (tradeLicense.transitionCompleted())
                         throw new ValidationException("TL-008", "License application may be already cancelled");
-                    if (!ld.getLicense().isNewWorkflow())
-                        updateWorkflowState(ld.getLicense());
-                    else {
-                        ld.getLicense().setCollectionPending(false);
-                        licenseApplicationService.collectionTransition(ld.getLicense());
-                    }
+                    if (tradeLicense.isNewWorkflow()) {
+                        tradeLicense.setCollectionPending(false);
+                        licenseApplicationService.collectionTransition(tradeLicense);
+                    } else
+                        updateWorkflowState(tradeLicense);
                 }
-                licenseCitizenPortalService.onUpdate(ld.getLicense());
-                licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(ld.getLicense());
-                tradeLicenseSmsAndEmailService.sendSMsAndEmailOnCollection(ld.getLicense(), billReceipt.getTotalAmount());
+                licenseCitizenPortalService.onUpdate(tradeLicense);
+                licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(tradeLicense);
+                tradeLicenseSmsAndEmailService.sendSMsAndEmailOnCollection(tradeLicense, billReceipt.getTotalAmount());
             } else if (billReceipt.getEvent().equals(EVENT_RECEIPT_CANCELLED))
                 reconcileCollForRcptCancel(demand, billReceipt);
             else if (billReceipt.getEvent().equals(EVENT_INSTRUMENT_BOUNCED))
@@ -503,7 +500,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         EgDemandDetails dmdDet;
         final EgDemandDetails penaltyDmdDet = getDemandDetail(demand, "CHEQUE BOUNCE PENALTY");
         if (penaltyDmdDet == null)
-            dmdDet = insertPenalty(chqBouncePenalty, moduleService.getModuleByName(TRADE_LICENSE));
+            dmdDet = insertPenalty(chqBouncePenalty, licenseUtils.getModule());
         else {
             BigDecimal existDmdDetAmt = penaltyDmdDet.getAmount();
             existDmdDetAmt = existDmdDetAmt == null || existDmdDetAmt.compareTo(ZERO) == 0 ? ZERO
@@ -813,21 +810,23 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         BigDecimal currentInstallmentAmount = ZERO;
         BigDecimal arrearAmount = ZERO;
         BigDecimal latePaymentCharges = ZERO;
-        final LicenseDemand ld = (LicenseDemand) entityQueryService.load(egBill.getEgDemand().getId(), LicenseDemand.class);
-        Installment currentInstallment = ld.getEgInstallmentMaster();
+        final TradeLicense tradeLicense = licenseApplicationService.getLicenseByDemand(egBill.getEgDemand());
+        Installment currentInstallment = tradeLicense.getDemand().getEgInstallmentMaster();
+        List<String> feeTypes = feeTypeService.findAll().stream().map(FeeType::getName).collect(Collectors.toList());
         for (final EgBillDetails billdetail : billDetails)
             if (billdetail.getCrAmount() != null && billdetail.getCrAmount().compareTo(ZERO) > 0) {
                 final String[] desc = billdetail.getDescription().split("-", 2);
                 final String dmdReason = desc[0].trim();
                 final String installment = desc[1].trim();
-                if (LICENSE_FEE_TYPE.equals(dmdReason) && installment.equals(currentInstallment.getDescription()))
+                if (feeTypes.contains(dmdReason) && installment.equals(currentInstallment.getDescription()))
                     currentInstallmentAmount = currentInstallmentAmount.add(billdetail.getCrAmount());
                 else if (PENALTY_DMD_REASON_CODE.equals(dmdReason))
                     latePaymentCharges = latePaymentCharges.add(billdetail.getCrAmount());
                 else
                     arrearAmount = arrearAmount.add(billdetail.getCrAmount());
             }
-        List<EgBillDetails> filteredBillDetails = billDetails.stream().filter(bd -> bd.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().equals(LICENSE_FEE_TYPE)).
+        List<EgBillDetails> filteredBillDetails = billDetails.stream().filter(bd -> bd.getEgDemandReason()
+                .getEgDemandReasonMaster().getEgReasonCategory().getCode().equals(DEMAND_REASON_CATEGORY_FEE)).
                 sorted(Comparator.comparing(EgBillDetails::getOrderNo)).collect(Collectors.toList());
         Integer billDetailsSize = filteredBillDetails.size();
         if (!filteredBillDetails.isEmpty() && filteredBillDetails.size() == 1) {
@@ -838,7 +837,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             receiptAmountInfo.setInstallmentTo(formatter.format(filteredBillDetails.get(billDetailsSize - 1).getInstallmentEndDate()));
         }
 
-        String revenueWard = ld.getLicense().getParentBoundary() != null ? ld.getLicense().getParentBoundary().getName() : "NA";
+        String revenueWard = tradeLicense.getParentBoundary() == null ? "NA" : tradeLicense.getParentBoundary().getName();
         receiptAmountInfo.setArrearsAmount(arrearAmount);
         receiptAmountInfo.setCurrentInstallmentAmount(currentInstallmentAmount);
         receiptAmountInfo.setLatePaymentCharges(latePaymentCharges);
@@ -848,8 +847,8 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
 
     public Map<String, Map<String, BigDecimal>> getPaymentFee(final TradeLicense license) {
         final Map<String, Map<String, BigDecimal>> outstandingFee = new LinkedHashMap<>();
-        final LicenseDemand licenseDemand = license.getCurrentDemand();
-        licenseDemand.getEgDemandDetails()
+        final EgDemand egDemand = license.getCurrentDemand();
+        egDemand.getEgDemandDetails()
                 .stream()
                 .sorted(Comparator.comparing(EgDemandDetails::getInstallmentStartDate))
                 .forEach(demandDetail -> {
@@ -858,7 +857,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                             String demandReason = demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster();
                             Installment installmentYear = demandDetail.getEgDemandReason().getEgInstallmentMaster();
                             Map<String, BigDecimal> feeByTypes;
-                            if (!PENALTY_DMD_REASON_CODE.equals(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
+                            if (!DEMAND_REASON_CATEGORY_PENALTY.equals(demandDetail.getReasonCategory())
                                     && demandDetail.getAmount().subtract(demandDetail.getAmtCollected()).signum() == 1) {
                                 if (outstandingFee.containsKey(installmentYear.getDescription()))
                                     feeByTypes = outstandingFee.get(installmentYear.getDescription());
@@ -871,22 +870,23 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                                 BigDecimal penaltyAmt = penaltyRatesService.calculatePenalty(license, fromDate, new Date(),
                                         demandDetail.getAmount());
                                 if (penaltyAmt.compareTo(ZERO) > 0)
-                                    feeByTypes.put("Penalty", penaltyAmt.setScale(0, RoundingMode.HALF_UP));
+                                    feeByTypes.put(PENALTY_DMD_REASON_CODE, penaltyAmt.setScale(0, RoundingMode.HALF_UP));
                                 outstandingFee.put(installmentYear.getDescription(), feeByTypes);
                             }
                         }
                 );
-        recalculatePenaltyAmt(outstandingFee, licenseDemand);
+        recalculatePenaltyAmt(outstandingFee, egDemand);
         return outstandingFee;
     }
 
-    private void recalculatePenaltyAmt(Map<String, Map<String, BigDecimal>> outstandingFee, LicenseDemand licenseDemand) {
-        for (final EgDemandDetails demandDetails : licenseDemand.getEgDemandDetails()) {
+    private void recalculatePenaltyAmt(Map<String, Map<String, BigDecimal>> outstandingFee, EgDemand egDemand) {
+        for (final EgDemandDetails demandDetails : egDemand.getEgDemandDetails()) {
             final Installment installmentYear = demandDetails.getEgDemandReason().getEgInstallmentMaster();
-            if (PENALTY_DMD_REASON_CODE.equals(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
+            if (DEMAND_REASON_CATEGORY_PENALTY.equals(demandDetails.getReasonCategory())) {
                 Map<String, BigDecimal> feeType = outstandingFee.get(installmentYear.getDescription());
                 if (feeType != null && feeType.containsKey(PENALTY_DMD_REASON_CODE)) {
-                    feeType.put("Penalty", feeType.get(PENALTY_DMD_REASON_CODE).subtract(demandDetails.getAmtCollected()));
+                    feeType.put(PENALTY_DMD_REASON_CODE, feeType.get(PENALTY_DMD_REASON_CODE)
+                            .subtract(demandDetails.getAmtCollected()).setScale(0, RoundingMode.HALF_UP));
                     outstandingFee.put(installmentYear.getDescription(), feeType);
                 }
             }

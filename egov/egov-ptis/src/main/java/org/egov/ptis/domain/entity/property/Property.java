@@ -119,7 +119,11 @@ public interface Property extends Auditable {
     Date getEffectiveDate();
 
     void setEffectiveDate(Date date);
-
+    
+    Date getExemptionDate();
+    
+    void setExemptionDate(Date date);
+    
     Set<Ptdemand> getPtDemandSet();
 
     void setPtDemandSet(Set<Ptdemand> ptDemandSet);

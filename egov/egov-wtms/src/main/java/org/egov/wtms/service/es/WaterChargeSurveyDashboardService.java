@@ -110,6 +110,7 @@ public class WaterChargeSurveyDashboardService {
     private static final String WORKORDER_DATE = "workOrderDate";
     private static final String EXECUTION_DATE = "executionDate";
     private static final String APPLICATION_DATE = "applicationDate";
+    private static final String INACTIVE_CONNECTION="cancelledConnection";
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
@@ -129,7 +130,8 @@ public class WaterChargeSurveyDashboardService {
                 .subAggregation(AggregationBuilders.sum(BPL_SANCTION_ISSUED).field(BPL_SANCTION_ISSUED))
                 .subAggregation(AggregationBuilders.sum(NONBPL_SANCTION_ISSUED).field(NONBPL_SANCTION_ISSUED))
                 .subAggregation(AggregationBuilders.sum(BPL_EXECUTED).field(BPL_EXECUTED))
-                .subAggregation(AggregationBuilders.sum(NON_BPL_EXECUTED).field(NON_BPL_EXECUTED));
+                .subAggregation(AggregationBuilders.sum(NON_BPL_EXECUTED).field(NON_BPL_EXECUTED))
+                .subAggregation(AggregationBuilders.sum(INACTIVE_CONNECTION).field(INACTIVE_CONNECTION));
 
 
         SearchResponse response = elasticsearchTemplate.getClient().prepareSearch(WATER_CHARGES_SCHEME_INDEX).setSize(0)
@@ -184,7 +186,8 @@ public class WaterChargeSurveyDashboardService {
             surveyResponse.setConnectionExecuted(getConnectionExecutedCount(bucket));
             double applicationReceived = surveyResponse.getApplicaitonReceived().getTotalConnection();
             double totalSanctionIssued = surveyResponse.getSanctionOrderIssued().getTotalConnection();
-            surveyResponse.setPendingSanction(applicationReceived - totalSanctionIssued);
+            Sum inActiveConnection = bucket.getAggregations().get(INACTIVE_CONNECTION);
+            surveyResponse.setPendingSanction(applicationReceived - (totalSanctionIssued + inActiveConnection.getValue()));
             surveyResponse.setPendingExecution(totalSanctionIssued - surveyResponse.getConnectionExecuted().getTotalConnection());
             responseList.add(surveyResponse);
         }
@@ -287,6 +290,8 @@ public class WaterChargeSurveyDashboardService {
             boolQuery = YES.equals(request.getPendingSanction())
                     ? boolQuery().must(matchQuery(SANCTION_ISSUED, FALSE))
                     : boolQuery().must(matchQuery(SANCTION_ISSUED, TRUE)).must(matchQuery(CONNECTION_EXECUTED, FALSE));
+            if (YES.equals(request.getPendingSanction()))
+                boolQuery = boolQuery.mustNot(matchQuery("connectionStatus", "INACTIVE"));
         } else {
             boolQuery = YES.equals(request.getBpl())
                     ? boolQuery().must(matchQuery(CONNECTION_CATEGORY, CATEGORY_BPL))

@@ -54,7 +54,6 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.pims.commons.Position;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
@@ -90,6 +89,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_REGISTERED_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
@@ -100,6 +100,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_FULL_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_REGISTERED_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_SURVEY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
@@ -236,9 +238,13 @@ public class DigitalSignatureWorkflowController {
     private void updatePropertyMutation(final PropertyMutation propertyMutation) {
         final BasicProperty basicProperty = propertyMutation.getBasicProperty();
         transition(propertyMutation);
-        propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
+        propertyService.updateIndexes(propertyMutation, propertyMutation.getType()
+                .equalsIgnoreCase(ADDTIONAL_RULE_REGISTERED_TRANSFER)
+                        ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER);
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(propertyMutation.getSource()))
-            propertyService.updatePortal(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
+            propertyService.updatePortal(propertyMutation, propertyMutation.getType()
+                    .equalsIgnoreCase(ADDTIONAL_RULE_REGISTERED_TRANSFER)
+                    ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER);
         basicPropertyService.persist(basicProperty);
         propertyTaxCommonUtils.buildMailAndSMS(propertyMutation);
     }
@@ -299,7 +305,9 @@ public class DigitalSignatureWorkflowController {
             for (final Amalgamation amalProp : property.getBasicProperty().getAmalgamations())
                 amalProp.getAmalgamatedProperty().setUnderWorkflow(false);
         property.transition().end().withOwner(property.getCurrentState().getOwnerPosition()).withNextAction(null);
-        property.getBasicProperty().setUnderWorkflow(false);
+        if (propertyService.isLatestPropertyMutationClosed(property.getBasicProperty().getUpicNo())) {
+            property.getBasicProperty().setUnderWorkflow(false);
+        }
         return applicationType;
     }
 

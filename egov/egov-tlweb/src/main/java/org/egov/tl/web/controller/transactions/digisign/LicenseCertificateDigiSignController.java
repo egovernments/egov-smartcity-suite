@@ -131,13 +131,13 @@ public class LicenseCertificateDigiSignController {
     public String bulkDigitalSignature(@RequestParam List<Long> licenseIds, Model model) {
 
         List<TradeLicense> licenses = licenseCertificateDigiSignService.generateLicenseCertificateForDigiSign(licenseIds);
-        List<String> fileStoreIds = licenses.parallelStream()
+        List<String> fileStoreIds = licenses.stream()
                 .map(TradeLicense::getDigiSignedCertFileStoreId).collect(Collectors.toList());
-        List<String> applicaitonNumbers = licenses.parallelStream()
+        List<String> applicationNumbers = licenses.stream()
                 .map(TradeLicense::getApplicationNumber).collect(Collectors.toList());
 
         model.addAttribute("fileStoreIds", String.join(",", fileStoreIds));
-        model.addAttribute("applicationNo", String.join(",", applicaitonNumbers));
+        model.addAttribute("applicationNo", String.join(",", applicationNumbers));
         model.addAttribute("ulbCode", ApplicationThreadLocals.getCityCode());
         return "license-bulk-digisign-forward";
     }

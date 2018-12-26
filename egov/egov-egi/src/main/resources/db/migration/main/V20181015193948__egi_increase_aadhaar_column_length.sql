@@ -1,0 +1,1 @@
+alter table eg_user alter column aadhaarnumber type varchar(64);

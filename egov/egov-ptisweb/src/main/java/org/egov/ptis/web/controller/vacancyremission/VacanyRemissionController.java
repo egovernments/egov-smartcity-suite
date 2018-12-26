@@ -109,7 +109,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_VACANCY_REMISSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION_FOR_SPRING;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
 
@@ -117,6 +117,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
 @RequestMapping(value = { "/vacancyremission" })
 public class VacanyRemissionController extends GenericWorkFlowController {
 
+    private static final String APPROVAL_POSITION = "approvalPosition";
     private static final String STATE_TYPE = "stateType";
     private static final String VACANCY_REMISSION = "VACANCY_REMISSION";
     private static final String VACANCYREMISSION_FORM = "vacancyRemission-form";
@@ -179,15 +180,15 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                         && !propertyTaxCommonUtils.isEligibleInitiator(loggedInUser.getId())
                         && !citizenPortalUser) {
                 model.addAttribute(ERROR_MSG, "msg.initiator.noteligible");
-                return PROPERTY_VALIDATION;
+                return PROPERTY_VALIDATION_FOR_SPRING;
             }
             if (basicProperty.getActiveProperty().getPropertyDetail().isStructure()) {
                 model.addAttribute(ERROR_MSG, "error.superstruc.prop.notallowed");
-                return PROPERTY_VALIDATION;
+                return PROPERTY_VALIDATION_FOR_SPRING;
             }
             if (vacancyRemissionService.isUnderWtmsWF(basicProperty.getUpicNo(), request)) {
                 model.addAttribute(ERROR_MSG, "msg.under.wtms.wf.vr");
-                return PROPERTY_VALIDATION;
+                return PROPERTY_VALIDATION_FOR_SPRING;
             }
             if (property != null)
                 // When called from common search
@@ -196,13 +197,13 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                     if (property.getPropertyDetail().getPropertyTypeMaster().getCode()
                             .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
                         model.addAttribute(ERROR_MSG, "msg.vlt.error");
-                        return PROPERTY_VALIDATION;
+                        return PROPERTY_VALIDATION_FOR_SPRING;
                     } else if (property.getIsExemptedFromTax()) {
                         model.addAttribute(ERROR_MSG, "msg.property.exempted");
-                        return PROPERTY_VALIDATION;
+                        return PROPERTY_VALIDATION_FOR_SPRING;
                     } else if (basicProperty.isUnderWorkflow()) {
                         model.addAttribute(ERROR_MSG,"msg.under.workflow");
-                        return PROPERTY_VALIDATION;
+                        return PROPERTY_VALIDATION_FOR_SPRING;
                     } else {
                         final List<VacancyRemission> remissionList = vacancyRemissionService
                                 .getAllVacancyRemissionByUpicNo(basicProperty.getUpicNo());
@@ -222,7 +223,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                                 else if (vacancyRemission.getStatus().equalsIgnoreCase(
                                         PropertyTaxConstants.VR_STATUS_WORKFLOW)) {
                                     model.addAttribute(ERROR_MSG, "msg.under.workflow");
-                                    return PROPERTY_VALIDATION;
+                                    return PROPERTY_VALIDATION_FOR_SPRING;
                                 }
                         }
                         if (remissionList.isEmpty() || enableVacancyRemission) {
@@ -279,7 +280,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                 	boolean hasChildPropertyUnderWorkflow = propertyTaxUtil.checkForParentUsedInBifurcation(basicProperty.getUpicNo());
                     if(hasChildPropertyUnderWorkflow){
                     	model.addAttribute(ERROR_MSG, "Cannot proceed as this property is used in Bifurcation, which is under workflow");
-                        return PROPERTY_VALIDATION;
+                        return PROPERTY_VALIDATION_FOR_SPRING;
                     }
                     final Map<String, BigDecimal> propertyTaxDetails = propertyService
                             .getCurrentPropertyTaxDetails(basicProperty.getActiveProperty());
@@ -357,8 +358,8 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                 approvalComent = request.getParameter("approvalComent");
             if (request.getParameter("workFlowAction") != null)
                 workFlowAction = request.getParameter("workFlowAction");
-            if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
-                approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+            if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
+                approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
             
             if(!vacancyRemission.getDocuments().isEmpty()){
                 documents.addAll(vacancyRemission.getDocuments());

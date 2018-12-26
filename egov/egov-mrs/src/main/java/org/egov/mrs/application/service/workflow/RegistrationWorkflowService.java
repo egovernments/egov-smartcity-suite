@@ -95,6 +95,7 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
+import org.egov.mrs.domain.service.MarriageRegistrationService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,6 +141,8 @@ public class RegistrationWorkflowService {
     private DepartmentService departmentService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private MarriageRegistrationService marriageRegistrationService;
 
     private enum WorkflowType {
         MarriageRegistration, ReIssue
@@ -372,6 +375,9 @@ public class RegistrationWorkflowService {
             final Position nextStateOwner, final String nextState, final String nextAction, final Assignment assignment) {
         if (itemInWorkflow.getState() == null)
             itemInWorkflow.transition().start()
+                    .withSLA(MarriageConstants.STATETYPE_REGISTRATION.equalsIgnoreCase(itemInWorkflow.getStateType())
+                            ? marriageRegistrationService.calculateDueDateForMrgReg()
+                            : marriageRegistrationService.calculateDueDateForMrgReIssue())
                     .withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvalComent)
                     .withStateValue(nextState)
@@ -584,7 +590,6 @@ public class RegistrationWorkflowService {
     public void onCreateRegistrationAPI(MarriageRegistration marriageRegistration) {
         Position assignee = null;
         WorkFlowMatrix wfmatrix = null;
-        User nextOwner = null;
         wfmatrix = marriageRegistrationWorkflowService.getWfMatrix(marriageRegistration.getStateType(), null, null,
                 null,
                 MarriageConstants.WFSTATE_MARRIAGEAPI_NEW, null);
@@ -597,17 +602,19 @@ public class RegistrationWorkflowService {
                         "No Commisioner is configured to receive Marriage regitration");
             assignee = assignment.get(0).getPosition();
         } else {
-            nextOwner = users.iterator().next();
-            if (nextOwner != null) {
-                List<Position> assigneePositions = positionMasterService.getPositionsForEmployee(nextOwner.getId(), new Date());
-                if (assigneePositions.isEmpty())
-                    throw new ApplicationRuntimeException("No position defined for Marriage Registrar role");
-                else
-                    assignee = assigneePositions.iterator().next();
+            List<Position> assigneePositions = new ArrayList<>();
+            for (User nextOwner : users) {
+                assigneePositions = positionMasterService.getPositionsForEmployee(nextOwner.getId(), new Date());
+                if (!assigneePositions.isEmpty()) {
+                    assignee = assigneePositions.get(0);
+                    break;
+                }
             }
+            if (assigneePositions.isEmpty())
+                throw new ApplicationRuntimeException("No position defined for Marriage Registrar role");
         }
         marriageRegistration.transition()
-                .start()
+                .start().withSLA(marriageRegistrationService.calculateDueDateForMrgReg())
                 .withStateValue(MarriageConstants.WFSTATE_CLRK_APPROVED)
                 .withOwner(assignee).withNextAction(wfmatrix.getNextAction()).withDateInfo(new Date())
                 .withNatureOfTask("Marriage Registration :: New Registration").withInitiator(assignee);

@@ -55,7 +55,9 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="row">
 	<div class="col-md-12"> 
-		<div class="text-right error-msg" style="font-size:14px;"><spring:message code="lbl.application.date"/> : <fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.applicationDate}" /></div>
+		<c:if test="${mode!='error'}">
+			<div class="text-right error-msg" style="font-size:14px;"><spring:message code="lbl.application.date"/> : <fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.applicationDate}" /></div>
+		</c:if>
 		<form:form role="form" action="" method="post"
 			modelAttribute="waterConnectionDetails" id="waterConnectionForm"
 			cssClass="form-horizontal form-groups-bordered"
@@ -68,14 +70,26 @@
 			<input type="hidden" id="citizenPortalUser" name="citizenPortalUser" value="${citizenPortalUser}"/>
 			<input type="hidden" id="isAnonymousUser" name="isAnonymousUser" value="${isAnonymousUser}"/>
 			<input type="hidden" id="propertyId" name="propertyId" value="${propertyId}"/>
+			<input type="hidden" id="mode" name="mode" value="${mode}"/>
 			<form:hidden id="mode" path=""  value="${mode}"/>
 			<form:hidden path="legacy" id="legacy" value="false"/>
 			<input type="hidden" name="allowIfPTDueExists" id="allowIfPTDueExists" value="${allowIfPTDueExists}"> 
 			<input type="hidden" name="validateIfPTDueExists" id="validateIfPTDueExists" value="${validateIfPTDueExists}"> 
 			<input type="hidden" name="approvalPosOnValidate" id="approvalPosOnValidate" value="${approvalPosOnValidate}"> 
 						<input type="hidden" name="noJAORSAMessage" id="noJAORSAMessage" value="${noJAORSAMessage}">
+						<input type="hidden" id="date" name="date" value="${waterConnectionDetails.applicationDate}" />
 			
 			<form:hidden id="documentName" path="" value="${documentName}"/>
+			
+			<c:choose>
+				<c:when test="${not empty message}">
+					<div class="text-center">
+						<div class="alert alert-danger alert-center">
+							<spring:message code="${message}"></spring:message>
+						</div>
+					</div>
+				</c:when>
+				<c:otherwise>
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -93,6 +107,8 @@
 				<div class="buttonbottom" align="center">
 					<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 				</div>
+			</c:otherwise>
+			</c:choose>
          </form:form>
 	</div>
 </div>

@@ -60,6 +60,7 @@ import org.egov.stms.entity.es.SewerageIndex;
 import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
 import org.egov.stms.service.es.SeweragePaginationService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
+import org.egov.stms.transactions.entity.SewerageConnection;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
 import org.egov.stms.transactions.service.SewerageConnectionService;
 import org.egov.stms.transactions.service.SewerageThirdPartyServices;
@@ -80,6 +81,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
@@ -126,7 +128,7 @@ public class ApplicationSewerageSearchController {
 
     @RequestMapping(value = "/view/{consumernumber}/{assessmentnumber}", method = RequestMethod.GET)
     public ModelAndView view(@PathVariable final String consumernumber, @PathVariable final String assessmentnumber,
-            final Model model, final ModelMap modelMap, final HttpServletRequest request) {
+                             final Model model, final ModelMap modelMap, final HttpServletRequest request) {
         SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
                 .findByApplicationNumber(consumernumber);
         final AssessmentDetails propertyOwnerDetails = sewerageThirdPartyServices.getPropertyDetails(assessmentnumber,
@@ -147,10 +149,10 @@ public class ApplicationSewerageSearchController {
         if (cityWebsite != null)
             searchRequest.setUlbName(cityWebsite.getName());
         if (searchRequest.getShscNumber() != null) {
-            SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
-                    .findByConnectionShscNumberAndConnectionStatus(searchRequest.getShscNumber(),
-                            SewerageConnectionStatus.ACTIVE);
-            searchRequest.setLegacy(sewerageApplicationDetails.getConnection().getLegacy());
+            SewerageConnection sewerageConnection = sewerageConnectionService
+                    .findByShscNumberAndStatusList(searchRequest.getShscNumber(),
+                            Arrays.asList(SewerageConnectionStatus.INPROGRESS, SewerageConnectionStatus.ACTIVE, SewerageConnectionStatus.CLOSED));
+            searchRequest.setLegacy(sewerageConnection.getLegacy());
         }
         final List<SewerageSearchResult> searchResultFomatted = new ArrayList<>();
         final Pageable pageable = new PageRequest(searchRequest.pageNumber(),

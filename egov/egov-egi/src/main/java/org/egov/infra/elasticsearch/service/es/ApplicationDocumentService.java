@@ -717,7 +717,7 @@ public class ApplicationDocumentService {
 
         for (Map.Entry<String, Long> entry : totalRcvdApplications.entrySet()) {
             applicationDetails = new ApplicationDetails();
-            name = entry.getKey();
+            name = entry.getKey().trim();
             if (DISTRICT_NAME.equalsIgnoreCase(aggregationField) || CITY_NAME.equalsIgnoreCase(aggregationField)
                     || APPLICATION_TYPE.equalsIgnoreCase(aggregationField) || OWNER_NAME.equalsIgnoreCase(aggregationField))
                 detailsForAggregationField = getDetailsForAggregationType(applicationIndexRequest, fromDate, toDate, name,

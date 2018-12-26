@@ -52,10 +52,19 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <style>
     .symbol-filled {
         color: gold;
+    }
+
+    .holder {
+        display: inline;
+    }
+
+    .holder img {
+        max-height: 500px;
+        max-width: 500px;
+        object-fit: cover;
     }
 </style>
 <c:if test="${not empty message}">
@@ -152,24 +161,58 @@
 
                     <c:choose>
                         <c:when test="${!complaint.getSupportDocs().isEmpty()}">
-                            <c:forEach items="${complaint.supportDocsOrderById()}" var="file">
-                                <div class="col-md-4 col-sm-6 col-xs-12 add-margin down-file view-content" id="links">
-                                    <c:choose>
-                                        <c:when test="${file.contentType.contains('image')}">
-                                            <a href="/pgr/complaint/downloadfile/${file.fileStoreId}"
-                                               data-gallery> <img class="img-width add-margin"
-                                                                  src="/pgr/complaint/downloadfile/${file.fileStoreId}"/></a>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <video class="img-width add-margin" controls="controls"
-                                                   src="/pgr/complaint/downloadfile/${file.fileStoreId}">
-                                                <source src="/pgr/complaint/downloadfile/${file.fileStoreId}"
-                                                        type="${file.contentType}"/>
-                                            </video>
-                                        </c:otherwise>
-                                    </c:choose>
+                            <div class="col-md-12 col-sm-12 col-xs-12 add-margin down-file view-content" id="links">
+                                <div style="width: 100%" class="row">
+                                    <div class="col-md-6 col-sm-6 col-xs-6">
+                                        <div class="text-center"><spring:message code="lbl.before"/></div>
+                                        <c:forEach items="${complaint.supportDocsOrderById()}" var="file">
+                                            <fmt:formatDate value="${file.createdDate}" var="fileCreatedDate" pattern="dd/MMM/yyyy HH:mm a"/>
+                                            <c:if test="${file.createdDate.time - complaint.createdDate.time < 60000}">
+                                                <div class="holder">
+                                                    <c:choose>
+                                                        <c:when test="${file.contentType.contains('image')}">
+                                                            <a href="/pgr/complaint/downloadfile/${file.fileStoreId}"
+                                                               data-gallery> <img class="img-width add-margin"
+                                                                                  src="/pgr/complaint/downloadfile/${file.fileStoreId}"/></a>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <video class="img-width add-margin" controls="controls"
+                                                                   src="/pgr/complaint/downloadfile/${file.fileStoreId}">
+                                                                <source src="/pgr/complaint/downloadfile/${file.fileStoreId}"
+                                                                        type="${file.contentType}"/>
+                                                            </video>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </div>
+                                            </c:if>
+                                        </c:forEach>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 col-xs-6">
+                                        <div class="text-center"><spring:message code="lbl.after"/></div>
+                                        <c:forEach items="${complaint.supportDocsOrderById()}" var="file">
+                                            <fmt:formatDate value="${file.createdDate}" var="fileCreatedDate" pattern="dd/MMM/yyyy HH:mm a"/>
+                                            <c:if test="${file.createdDate.time - complaint.createdDate.time > 60000}">
+                                                <div class="holder">
+                                                    <c:choose>
+                                                        <c:when test="${file.contentType.contains('image')}">
+                                                            <a href="/pgr/complaint/downloadfile/${file.fileStoreId}"
+                                                               data-gallery> <img class="img-width add-margin"
+                                                                                  src="/pgr/complaint/downloadfile/${file.fileStoreId}"/></a>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <video class="img-width add-margin" controls="controls"
+                                                                   src="/pgr/complaint/downloadfile/${file.fileStoreId}">
+                                                                <source src="/pgr/complaint/downloadfile/${file.fileStoreId}"
+                                                                        type="${file.contentType}"/>
+                                                            </video>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </div>
+                                            </c:if>
+                                        </c:forEach>
+                                    </div>
                                 </div>
-                            </c:forEach>
+                            </div>
                         </c:when>
                         <c:otherwise>
                             <div class="col-md-4 col-sm-6 col-xs-12 add-margin down-file view-content" id="links">
@@ -245,41 +288,48 @@
                         <i class="fa fa-angle-down" id="toggle-his-icon"></i>
                     </div>
                 </div>
-                <div class="panel-body history-slide">
-                    <div class="row hidden-xs visible-sm visible-md visible-lg view-content header-color">
-                        <div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.date"/></div>
-                        <div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.updated.by"/></div>
-                        <div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.status"/></div>
-                        <div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.curr.owner"/></div>
-                        <div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.department"/></div>
-                        <div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.comments"/></div>
-                    </div>
+                <div class="panel-body history-slide table-responsive">
                     <c:choose>
                         <c:when test="${!complaintHistory.isEmpty()}">
-                            <c:forEach items="${complaintHistory}" var="history">
-                                <div class="row  add-border">
-                                    <div class="col-sm-2 col-xs-12 add-margin">
-                                        <fmt:formatDate value="${history.date}" var="historyDate"
-                                                        pattern="E dd/MMM/yyyy HH:mm a"/>
-                                        <c:out value="${historyDate}"/>
-                                    </div>
-                                    <div class="col-sm-2 col-xs-12 add-margin">
-                                        <c:out value="${history.updatedBy}"/>
-                                    </div>
-                                    <div class="col-sm-2 col-xs-12 add-margin">
-                                        <c:out value="${history.status}"/>
-                                    </div>
-                                    <div class="col-sm-2 col-xs-12 add-margin">
-                                        <c:out value="${history.user}"/>
-                                    </div>
-                                    <div class="col-sm-2 col-xs-12 add-margin">
-                                        <c:out value="${history.department}"/>
-                                    </div>
-                                    <div class="col-sm-2 col-xs-12 add-margin">
-                                        <c:out value="${history.comments}"/>&nbsp;
-                                    </div>
-                                </div>
-                            </c:forEach>
+                            <table class="table table-bordered nowrap" style="width:100%">
+                                <thead>
+                                <tr>
+                                    <th class="text-center"><spring:message code="lbl.updated.on"/></th>
+                                    <th class="text-center"><spring:message code="lbl.updated.by"/></th>
+                                    <th class="text-center"><spring:message code="lbl.status"/></th>
+                                    <th class="text-center"><spring:message code="lbl.curr.owner"/></th>
+                                    <th class="text-center"><spring:message code="lbl.department"/></th>
+                                    <th class="text-center"><spring:message code="lbl.comments"/></th>
+                                </tr>
+                                </thead>
+
+
+                                <tbody>
+                                <c:forEach items="${complaintHistory}" var="history">
+                                    <tr>
+                                        <td>
+                                            <fmt:formatDate value="${history.date}" var="historyDate" pattern="E dd/MMM/yyyy hh:mm a"/>
+                                            <c:out value="${historyDate}"/>
+                                        </td>
+                                        <td>
+                                            <c:out value="${history.updatedBy}"/>
+                                        </td>
+                                        <td>
+                                            <c:out value="${history.status}"/>
+                                        </td>
+                                        <td>
+                                            <c:out value="${history.user}"/>
+                                        </td>
+                                        <td>
+                                            <c:out value="${history.department}"/>
+                                        </td>
+                                        <td>
+                                            <c:out value="${history.comments}" default="N/A"/>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                                </tbody>
+                            </table>
                         </c:when>
                         <c:otherwise>
                             <div class="col-md-3 col-xs-6 add-margin"><spring:message code="msg.history.not.found"/></div>

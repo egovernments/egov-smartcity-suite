@@ -197,6 +197,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
+import org.springframework.transaction.annotation.Transactional;
 
 public class PropertyExternalService {
     private static final String PROP_SERVICE = "propService";
@@ -345,7 +346,7 @@ public class PropertyExternalService {
         BasicProperty basicProperty = basicPropertyDAO
                 .getAllBasicPropertyByPropertyID(assessmentDetail.getPropertyID());
         final ErrorDetails errorDetails = new ErrorDetails();
-        if (null != basicProperty) {
+		if (null != basicProperty && null != basicProperty.getProperty()) {
             assessmentDetail.setStatus(basicProperty.isActive());
             if (status.equals(BasicPropertyStatus.ACTIVE)) {
                 if (basicProperty.isActive()) {
@@ -1185,6 +1186,7 @@ public class PropertyExternalService {
         return mstrCodeNamePairDetailsList;
     }
 
+    @Transactional
     public NewPropertyDetails createNewProperty(ViewPropertyDetails viewpropertyDetails) throws ParseException {
 
         NewPropertyDetails newPropertyDetails = null;
@@ -1241,10 +1243,10 @@ public class PropertyExternalService {
         surveyBean.setGisTax(gisTax);
         surveyBean.setApplicationTax(gisTax);
         surveyBean.setAgeOfCompletion(propService.getSlaValue(APPLICATION_TYPE_NEW_ASSESSENT));
-        surveyService.updateSurveyIndex(APPLICATION_TYPE_NEW_ASSESSENT, surveyBean);
 
         basicProperty = basicPropertyService.persist(basicProperty);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
+        surveyService.updateSurveyIndex(APPLICATION_TYPE_NEW_ASSESSENT, surveyBean);
         saveDocumentTypeDetails(basicProperty, viewpropertyDetails);
         if (null != basicProperty) {
             newPropertyDetails = new NewPropertyDetails();
@@ -2351,6 +2353,7 @@ public class PropertyExternalService {
      * @return NewPropertyDetails
      * @throws ParseException
      */
+    @Transactional
     public NewPropertyDetails updateProperty(ViewPropertyDetails viewPropertyDetails) throws ParseException {
         NewPropertyDetails newPropertyDetails = null;
         BigDecimal activeTax = BigDecimal.ZERO;
@@ -2384,9 +2387,15 @@ public class PropertyExternalService {
         basicProperty.addProperty(gisProperty);
 
         basicPropertyService.applyAuditing(gisPtdemand.getDmdCalculations());
-
         transitionWorkFlow(property, propService, PROPERTY_MODE_MODIFY);
         basicPropertyService.applyAuditing(property.getState());
+        if (basicProperty.getWFProperty() != null && basicProperty.getWFProperty().getPtDemandSet() != null
+                && !basicProperty.getWFProperty().getPtDemandSet().isEmpty()) {
+            for (Ptdemand ptDemand : basicProperty.getWFProperty().getPtDemandSet()) {
+                basicPropertyService.applyAuditing(ptDemand.getDmdCalculations());
+            }
+        }
+        basicProperty = basicPropertyService.update(basicProperty);
         propService.updateIndexes(property, PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT);
         if (SOURCE_SURVEY.equalsIgnoreCase(property.getSource())) {
             SurveyBean surveyBean = new SurveyBean();
@@ -2396,31 +2405,23 @@ public class PropertyExternalService {
             surveyBean.setApplicationTax(totalTax);
             surveyBean.setAgeOfCompletion(propService.getSlaValue(APPLICATION_TYPE_ALTER_ASSESSENT));
             if (activeProperty != null) {
-            	Ptdemand activePtDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(activeProperty);
-            	Map<String, Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(gisPtdemand.getEgInstallmentMaster().getFromDate());
+                Ptdemand activePtDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(activeProperty);
+                Map<String, Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(gisPtdemand.getEgInstallmentMaster().getFromDate());
                 Date firstInstStartDate = yearwiseInstMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF).getFromDate();
                 Date secondInstStartDate = yearwiseInstMap.get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF).getFromDate();
                 for (EgDemandDetails demandDetail : activePtDemand.getEgDemandDetails()) {
                     if (firstInstStartDate.equals(demandDetail.getInstallmentStartDate())
                             || secondInstStartDate.equals(demandDetail.getInstallmentStartDate()) 
-        							&& !PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES.equalsIgnoreCase(
-        									demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
-        							&& !PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY.equalsIgnoreCase(
-        									demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
-                    	activeTax = activeTax.add(demandDetail.getAmount());
+                                                                && !PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES.equalsIgnoreCase(
+                                                                                demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
+                                                                && !PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY.equalsIgnoreCase(
+                                                                                demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                        activeTax = activeTax.add(demandDetail.getAmount());
                 }
-            	surveyBean.setSystemTax(activeTax);
+                surveyBean.setSystemTax(activeTax);
             }
             surveyService.updateSurveyIndex(APPLICATION_TYPE_ALTER_ASSESSENT, surveyBean);
         }
-
-        if (basicProperty.getWFProperty() != null && basicProperty.getWFProperty().getPtDemandSet() != null
-                && !basicProperty.getWFProperty().getPtDemandSet().isEmpty()) {
-            for (Ptdemand ptDemand : basicProperty.getWFProperty().getPtDemandSet()) {
-                basicPropertyService.applyAuditing(ptDemand.getDmdCalculations());
-            }
-        }
-        basicProperty = basicPropertyService.update(basicProperty);
         if (basicProperty != null) {
             newPropertyDetails = new NewPropertyDetails();
             newPropertyDetails.setApplicationNo(basicProperty.getWFProperty().getApplicationNo());

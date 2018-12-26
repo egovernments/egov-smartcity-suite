@@ -104,6 +104,7 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.entity.WaterDemandConnection;
 import org.egov.wtms.application.rest.CollectionApportioner;
+import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.WaterConnectionSmsAndEmailService;
 import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
@@ -162,6 +163,9 @@ public class WaterTaxCollection extends TaxCollection {
 
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
+
+    @Autowired
+    private ConnectionDemandService connectionDemandService;
 
     @Autowired
     public WaterTaxCollection(final WaterTaxUtils waterTaxUtils) {
@@ -280,7 +284,13 @@ public class WaterTaxCollection extends TaxCollection {
                 applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(waterConnectionDetails,
                         approvalPosition, FEE_COLLECTION_COMMENT,
                         waterConnectionDetails.getApplicationType().getCode(), null);
-            if (APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))
+
+            if (!REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+                    && APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
+                    || APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) &&
+                            connectionDemandService.getTotalDemandAmountDue(
+                                    waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand())
+                                    .compareTo(BigDecimal.ZERO) == 0)
                 waterConnectionDetails
                         .setStatus(waterTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_FEEPAID, MODULETYPE));
             waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, null);
@@ -445,13 +455,13 @@ public class WaterTaxCollection extends TaxCollection {
         WaterConnectionDetails waterconndet = null;
         EgDemand demand = null;
         if (egBill.getEgDemand() != null && egBill.getEgDemand().getIsHistory() != null
-                && egBill.getEgDemand().getIsHistory().equals(WaterTaxConstants.DEMANDISHISTORY))
+                && egBill.getEgDemand().getIsHistory().equals(WaterTaxConstants.DEMAND_ISHISTORY_N))
             demand = egBill.getEgDemand();
         else {
             waterconndet = waterConnectionDetailsService.getWaterConnectionDetailsByDemand(egBill.getEgDemand());
             for (final WaterDemandConnection waterDemand : waterconndet.getWaterDemandConnection())
                 if (waterDemand != null && waterDemand.getDemand() != null
-                        && waterDemand.getDemand().getIsHistory().equals(WaterTaxConstants.DEMANDISHISTORY))
+                        && waterDemand.getDemand().getIsHistory().equals(WaterTaxConstants.DEMAND_ISHISTORY_N))
                     demand = waterDemand.getDemand();
         }
         return demand;

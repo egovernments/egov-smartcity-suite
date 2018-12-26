@@ -79,7 +79,6 @@
 		<fieldDescription><![CDATA[Purpose of the amount paid]]></fieldDescription>
 	</field>
 	<field name="groupId" class="java.lang.Long"/>
-	<sortField name="orderNumber"/>
 	<variable name="totalAmount" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{crAmount}-($F{drAmount})]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
@@ -128,7 +127,7 @@
 		<variableExpression><![CDATA[("SERVICETAX".equals($F{purpose})) ? $F{crAmount} : BigDecimal.valueOf(0)]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
-	<filterExpression><![CDATA[$F{isRevenueAccount} == false && ($F{crAmount} > 0 || $F{drAmount} > 0)]]></filterExpression>
+	<filterExpression><![CDATA[$F{isRevenueAccount} == false ]]></filterExpression>
 	<group name="REPORT_GROUP">
 		<groupExpression><![CDATA["DUMMY_GROUP"]]></groupExpression>
 		<groupFooter>

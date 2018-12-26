@@ -72,7 +72,7 @@ public class PropertyMaterlizeView implements Serializable {
     private Boundary locality;
     private Integer sourceID;
     private BigDecimal sitalArea;
-    private BigDecimal toalBuiltUpArea;
+    private BigDecimal totalBuiltUpArea;
     private Integer latestStatus;
     private BigDecimal aggrCurrFirstHalfDmd;
     private BigDecimal aggrCurrSecondHalfDmd;
@@ -112,6 +112,8 @@ public class PropertyMaterlizeView implements Serializable {
     private BigDecimal advance;
     private BigDecimal rebate;
     private BigDecimal adjustment;
+    private BigDecimal latitude;
+    private BigDecimal longitude;
 
     
     public Integer getBasicPropertyID() {
@@ -202,12 +204,12 @@ public class PropertyMaterlizeView implements Serializable {
         this.sitalArea = sitalArea;
     }
 
-    public BigDecimal getToalBuiltUpArea() {
-        return toalBuiltUpArea;
+    public BigDecimal getTotalBuiltUpArea() {
+        return totalBuiltUpArea;
     }
 
-    public void setToalBuiltUpArea(final BigDecimal toalBuiltUpArea) {
-        this.toalBuiltUpArea = toalBuiltUpArea;
+    public void setTotalBuiltUpArea(final BigDecimal totalBuiltUpArea) {
+        this.totalBuiltUpArea = totalBuiltUpArea;
     }
 
     public Integer getLatestStatus() {
@@ -565,6 +567,22 @@ public class PropertyMaterlizeView implements Serializable {
 
     public void setAdjustment(BigDecimal adjustment) {
         this.adjustment = adjustment;
+    }
+
+    public BigDecimal getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(BigDecimal latitude) {
+        this.latitude = latitude;
+    }
+
+    public BigDecimal getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(BigDecimal longitude) {
+        this.longitude = longitude;
     }
       
 }

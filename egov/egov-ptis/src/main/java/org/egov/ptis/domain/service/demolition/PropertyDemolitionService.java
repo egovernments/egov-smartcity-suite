@@ -69,6 +69,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
@@ -99,6 +100,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -339,7 +342,8 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                         .withComments(approvarComments).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(new Date()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(APPLICATION_TYPE_DEMOLITION)
-                        .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
+                        .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
+                        .withSLA(propertyService.getSlaValue(APPLICATION_TYPE_DEMOLITION));
             } else if (property.getCurrentState().getNextAction().equalsIgnoreCase("END"))
                 property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvarComments).withDateInfo(currentDate.toDate());
@@ -643,5 +647,12 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         model.addAttribute("endorsementRequired", endorsementRequired);
         model.addAttribute("endorsementNotices", propertyTaxCommonUtils.getEndorsementNotices(property.getApplicationNo()));
 	}
+
+    public BigDecimal getWaterTaxDues(final String assessmentNo, final HttpServletRequest request) {
+        return propertyService.getWaterTaxDues(assessmentNo, request).get(PropertyTaxConstants.WATER_TAX_DUES) == null
+                ? BigDecimal.ZERO : new BigDecimal(
+                        Double.valueOf((Double) propertyService.getWaterTaxDues(assessmentNo, request)
+                                .get(PropertyTaxConstants.WATER_TAX_DUES)));
+    }
 
 }

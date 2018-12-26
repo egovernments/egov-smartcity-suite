@@ -56,7 +56,19 @@
 	<div id="OwnerDiv">
 		<%@ include file="../common/ownerform-revision-petetion.jsp"%>
 	</div>
-
+	<table width="100%" border="0" cellspacing="0" cellpadding="0"
+		class="table-fixed">
+		<tr>
+			<td class="bluebox" width="5%"></td>
+			<td class="bluebox" width="25%"><s:text name="edit.owner.details"> </s:text>
+			<s:checkbox name="editOwnerDetails" title="Check to edit owner details" id="enableOwnerDetails"
+					value="%{editOwnerDetails}" onclick="enableOwnerDetailsGrid();"/></td>
+					<td class="bluebox" width="25%"><s:hidden id="editOwnerDetailsId" name="editOwnerDetails" value="%{editOwnerDetails}" /></td>
+					<td class="bluebox" width=" "></td>
+					<td class="bluebox" width=" "></td>
+			
+	</tr>
+	</table>
 </s:if>
 <s:else>
 	<table width="100%" border="0" cellspacing="0" cellpadding="0"
@@ -91,7 +103,7 @@
 </s:else>
 <table width="100%" border="0" cellspacing="0" cellpadding="0"
 	class="table-fixed">
-	<tr>
+	<tr> 
 
 		<td colspan="5">
 			<div class="headingsmallbg">
@@ -280,15 +292,19 @@
 	<s:if
 		test="%{!assessmentDocumentTypesRP.isEmpty() && isSuperStructure() && !wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
 		<tr>
-			<td colspan="5"><%@ include
-					file="document-typedetails-form-rp.jsp"%></td>
+			<td colspan="5">
+			<div id="docdetails">
+			<%@ include
+					file="document-typedetails-form-rp.jsp"%></div></td>
 		</tr>
 	</s:if>
 	<s:if
 		test="%{!assessmentDocumentTypesRP.isEmpty() && isSuperStructure() && !wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
 		<tr>
-			<td colspan="5"><%@ include
-					file="doctype-attachments-form-rp.jsp"%></td>
+			<td colspan="5">
+			<div id="attachments">
+			<%@ include
+					file="doctype-attachments-form-rp.jsp"%></div></td>
 		</tr>
 	</s:if>
 </table>
@@ -302,6 +318,21 @@
 	jQuery('td.siteowner').hide();
 	jQuery('tr.bpddetails').hide();
 	jQuery('tr.vacantlanddetaills').hide();
+	
+	function enableOwnerDetailsGrid() {
+		if(jQuery('#enableOwnerDetails').is(":checked")){
+			jQuery('#ownerdetails').show();
+			jQuery('#docdetails').show();
+			jQuery('#attachments').show();
+			jQuery('#editOwnerDetailsId').value(true);
+		}
+		else{
+			jQuery('#ownerdetails').hide();
+			jQuery('#docdetails').hide();
+			jQuery('#attachments').hide();
+			jQuery('#editOwnerDetailsId').value(false);
+		}	
+	}
     
     
 </script>

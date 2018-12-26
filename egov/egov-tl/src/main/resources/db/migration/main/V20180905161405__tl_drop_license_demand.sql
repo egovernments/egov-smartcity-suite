@@ -1,0 +1,1 @@
+drop table egtl_license_demand;

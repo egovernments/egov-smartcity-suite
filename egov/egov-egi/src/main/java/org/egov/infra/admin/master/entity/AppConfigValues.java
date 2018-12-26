@@ -148,18 +148,17 @@ public class AppConfigValues extends AbstractAuditable {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o)
+    public boolean equals(Object other) {
+        if (this == other)
             return true;
-        if (!(o instanceof AppConfigValues))
+        if (!(other instanceof AppConfigValues))
             return false;
-        final AppConfigValues that = (AppConfigValues) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(value, that.value);
+        AppConfigValues that = (AppConfigValues) other;
+        return Objects.equals(getId(), that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, value);
+        return Objects.hash(getId());
     }
 }

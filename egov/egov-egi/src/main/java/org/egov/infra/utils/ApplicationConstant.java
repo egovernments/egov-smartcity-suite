@@ -92,6 +92,9 @@ public final class ApplicationConstant {
     public static final String ANONYMOUS_USERNAME = "anonymous";
     public static final String SYSTEM_USERNAME = "system";
     public static final String TENANTID_KEY = "tenant_id";
+    public static final String MDC_ULBCODE_KEY = "ulbcode";
+    public static final String MDC_APPNAME_KEY = "appname";
+    public static final String MDC_UID_KEY = "uniqueid";
 
     public static final String CONTENT_DISPOSITION_ATTACH = "attachment;filename=%s";
     public static final String CONTENT_DISPOSITION_INLINE = "inline;filename=%s";

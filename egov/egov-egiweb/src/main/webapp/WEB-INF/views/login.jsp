@@ -350,7 +350,7 @@
                 <div class="modal-header">
                     <h4 class="modal-title"><spring:message code="lbl.recover.pwd"/></h4>
                 </div>
-                <form method="post" role="form">
+                <form method="post" role="form" id="otpForm">
                     <c:choose>
                         <c:when test="${param.recovered}">
                             <c:if test="${param.byOTP}">

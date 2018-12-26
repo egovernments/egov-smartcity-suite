@@ -94,6 +94,14 @@ body
 						<div class="col-sm-3 add-margin view-content">
 							<c:out default="N/A" value="${property.taxExemptedReason.name}"></c:out>
 						</div>
+					<c:if test="${!isExempted}">	
+						<div class="col-xs-3">
+							<spring:message code="lbl.exemption.effective.date" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							<fmt:formatDate pattern="dd/MM/yyyy" value="${property.exemptionDate}" />
+						</div>
+						</c:if>
 					</div>
 					<c:if test="${attachedDocuments.size() > 0}">
 							<div>

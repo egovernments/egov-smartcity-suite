@@ -296,6 +296,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private transient List<DocumentType> assessmentDocumentTypesRP = new ArrayList<>();
     private transient List<String> assessmentDocumentNames;
     private transient DocumentTypeDetails documentTypeDetails = new DocumentTypeDetails();
+    private boolean editOwnerDetails = false;
 
     @Autowired
     private transient PropertyStatusValuesDAO propertyStatusValuesDAO;
@@ -688,7 +689,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     @Action(value = "/revPetition-recordInspectionDetails")
     public String recordInspectionDetails() {
         vaidatePropertyDetails();
-        if (superStructureRP(objection)) {
+        if (superStructureRP(objection) && isEditOwnerDetails()) {
             validateOwnerDetails(objection.getProperty());
             validateDocumentDetails(getDocumentTypeDetails());
             basicPropertyService.createOwners(objection.getProperty(), objection.getBasicProperty(),
@@ -715,10 +716,15 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 objection.getCurrentState().getOwnerPosition().getId(), securityUtils.getCurrentUser().getId());
         if (REVENUE_INSPECTOR_DESGN.equals(designation)) {
             propService.processAndStoreDocument(objection.getDocuments());
-            if (getDocumentTypeDetails() != null) {
+            if (getDocumentTypeDetails() != null && isEditOwnerDetails()) {
                 propService.processAndStoreDocument(objection.getProperty().getAssessmentDocuments());
                 propService.saveDocumentTypeDetails(objection.getBasicProperty(), getDocumentTypeDetails());
             }
+            else{
+                if(!objection.getProperty().getAssessmentDocuments().isEmpty())
+                    objection.getProperty().getAssessmentDocuments().clear();
+            }
+            
         }
         if (assignmentService.getAssignmentsForPosition(
                 objection.getStateHistory().get(0).getOwnerPosition().getId(), new Date()).isEmpty()) {
@@ -727,7 +733,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         }
         addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
                 approverComments, approverName));
-        if (superStructureRP(objection))
+        if (superStructureRP(objection) && isEditOwnerDetails())
             basicPropertyService.update(objection.getBasicProperty());
         propertyImplService.merge(objection.getProperty());
         revisionPetitionService.updateRevisionPetition(objection);
@@ -782,16 +788,19 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction)) {
             objection.setEgwStatus(egwStatusDAO.getStatusByModuleAndCode(PropertyTaxConstants.OBJECTION_MODULE,
                     PropertyTaxConstants.OBJECTION_ACCEPTED));
-        	Property oldProperty = objection.getBasicProperty().getProperty();
+            Property oldProperty = objection.getBasicProperty().getProperty();
+            propService.copyCollection((PropertyImpl) oldProperty, objection.getProperty());
             objection.getBasicProperty().getProperty().setStatus(STATUS_ISHISTORY);
             objection.getProperty().setStatus(STATUS_ISACTIVE);
-            
+
             String appConfigValue = getDemandVoucherAppConfigValue();
-            if("Y".equalsIgnoreCase(appConfigValue)){
-            	Map<String, Map<String, Object>> voucherData = propService.prepareDemandVoucherData(objection.getProperty(), oldProperty, false);
-                financialUtil.createVoucher(objection.getBasicProperty().getUpicNo(), voucherData, APPLICATION_TYPE_REVISION_PETITION);
+            if ("Y".equalsIgnoreCase(appConfigValue)) {
+                Map<String, Map<String, Object>> voucherData = propService.prepareDemandVoucherData(objection.getProperty(),
+                        oldProperty, false);
+                financialUtil.createVoucher(objection.getBasicProperty().getUpicNo(), voucherData,
+                        APPLICATION_TYPE_REVISION_PETITION);
             }
-                
+
             if (NATURE_OF_WORK_RP.equalsIgnoreCase(wfType))
                 objection.getBasicProperty().addPropertyStatusValues(propService.createPropStatVal(
                         objection.getBasicProperty(), REVISIONPETITION_STATUS_CODE, null, null, null, null, null));
@@ -800,7 +809,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                         objection.getBasicProperty(), GRP_STATUS_CODE, null, null, null, null, null));
             propService.setWFPropStatValActive(objection.getBasicProperty());
         }
-        
+
         addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
                 approverComments, approverName));
         revisionPetitionService.updateRevisionPetition(objection);
@@ -1155,8 +1164,16 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     @Action(value = "/revPetition-view")
     public String view() {
         getPropertyView(objection.getBasicProperty().getUpicNo());
-        if (superStructureRP(objection))
+        if (superStructureRP(objection)){
             objection.getBasicProperty().setPropertyOwnerInfoProxy(objection.getBasicProperty().getPropertyOwnerInfo());
+            try {
+                final Query query = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
+                query.setParameter("basicProperty", objection.getBasicProperty().getId());
+                setDocumentTypeDetails((DocumentTypeDetails) query.getSingleResult());
+            } catch (final Exception e) {
+                logger.error("No Document type details present for Basicproperty " + e);
+            }
+        }
         isReassignEnabled = reassignmentservice.isReassignEnabled();
         stateAwareId = objection.getId();
         if (objection.getBasicProperty() != null
@@ -1195,14 +1212,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         setOwnerName(objection.getBasicProperty().getProperty());
         setPropertyAddress(objection.getBasicProperty().getAddress());
         setWfType(objection.getType());
-        if(objection.getType().equals(NATURE_OF_WORK_RP) && objection.getBasicProperty().getProperty().getPropertyDetail().isStructure())
-        try {
-            final Query query = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
-            query.setParameter("basicProperty", objection.getBasicProperty().getId());
-            setDocumentTypeDetails((DocumentTypeDetails) query.getSingleResult());
-        } catch (final Exception e) {
-            logger.error("No Document type details present for Basicproperty " + e);
-        }
         return "view";
     }
 
@@ -1226,9 +1235,10 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     @Action(value = "/revPetition-reject")
     public String rejectRevisionPetition() {
 
-        addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
-                approverComments, approverName));
+        revisionPetitionService.cancelObjection(objection);
         revisionPetitionService.updateRevisionPetition(objection);
+        revisionPetitionService.updateIndexAndPushToPortalInbox(objection);
+        addActionMessage(getText("objection.cancelled"));
         return STRUTS_RESULT_MESSAGE;
     }
 
@@ -1252,8 +1262,10 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             if (!propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
                 propCompletionDate = propService
                         .getLowestDtOfCompFloorWise(objection.getProperty().getPropertyDetail().getFloorDetailsProxy());
-            else
+            else{
                 propCompletionDate = objection.getProperty().getPropertyDetail().getDateOfCompletion();
+                setAreaOfPlot(objection.getProperty().getPropertyDetail().getSitalArea().getArea().toString());
+            }
 
         }
         if (propCompletionDate != null) {
@@ -1293,23 +1305,12 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             else
                 propService.changePropertyDetail(objection.getProperty(), new BuiltUpProperty(),
                         objection.getProperty().getPropertyDetail().getFloorDetails().size());
-        final Property modProperty = propService.modifyDemand(objection.getProperty(), (PropertyImpl) objection.getBasicProperty().getProperty());
         if(objection.getProperty().getPropertyModifyReason().equalsIgnoreCase(PROPERTY_MODIFY_REASON_REVISION_PETITION) &&
                 objection.getBasicProperty().getProperty().getPropertyModifyReason().equalsIgnoreCase(PROPERTY_MODIFY_REASON_ADD_OR_ALTER)) {
-            final Installment currInstall = propertyTaxCommonUtils.getCurrentInstallment();
-            Ptdemand currPtDmd = null;
-            for (final Ptdemand demand : modProperty.getPtDemandSet())
-                if ("N".equalsIgnoreCase(demand.getIsHistory()) && demand.getEgInstallmentMaster().equals(currInstall)){
-                    currPtDmd = demand;
-                    break;
-                }
-            Ptdemand latestHistoryDemand = propService
-                    .getLatestDemandforHistoryProp(propService.getHistoryPropertyByUpinNo(objection.getBasicProperty()));
-            Installment effectiveInstall;
-            final Module module = moduleDao.getModuleByName(PTMODULENAME);
-            effectiveInstall = installmentDao.getInsatllmentByModuleForGivenDate(module, propCompletionDate);
-            propService.addArrDmdDetToCurrentDmd(latestHistoryDemand, currPtDmd, effectiveInstall, false);
+          revisionPetitionService.modifyRPDemand(objection.getProperty(), (PropertyImpl) objection.getBasicProperty().getProperty());
         }
+        else
+        	propService.modifyDemand(objection.getProperty(), (PropertyImpl) objection.getBasicProperty().getProperty());
 
         if (objection.getProperty().getPropertyDetail().getLayoutApprovalAuthority() != null && "No Approval"
                 .equals(objection.getProperty().getPropertyDetail().getLayoutApprovalAuthority().getName())) {
@@ -1912,5 +1913,13 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
     public void setDocumentTypeDetails(final DocumentTypeDetails documentTypeDetails) {
         this.documentTypeDetails = documentTypeDetails;
+    }
+
+    public boolean isEditOwnerDetails() {
+        return editOwnerDetails;
+    }
+
+    public void setEditOwnerDetails(boolean editOwnerDetails) {
+        this.editOwnerDetails = editOwnerDetails;
     }
 }

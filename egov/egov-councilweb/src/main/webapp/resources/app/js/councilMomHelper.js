@@ -158,23 +158,25 @@ $(document).ready(function() {
 		}
 	}
 
-	$('#agendaTable tbody').on('blur mouseleave','tr .validnum',function() {
+	$('#agendaTable tbody').on('blur','tr .validnum',function() {
 		var rowObj = $(this).closest('tr');
     	validateUniqueDetails(rowObj.index(), $(rowObj).find('.validnum').val(),'agendaTable');
     	validateSumotoDetails(rowObj.index(), $(rowObj).find('.validnum').val(),'agendaTable');
-    	validateResolutionNumber($(this));
+    	var preambleId = jQuery("input[name='meetingMOMs["+ rowObj.index() +"].preamable.id']").val();
+    	validateResolutionNumber($(this), preambleId);
     });
     
-    $('#sumotoTable tbody').on('blur mouseleave','tr .validnum',function(e) {
+    $('#sumotoTable tbody').on('blur','tr .validnum',function(e) {
     	var rowObj = $(this).closest('tr');
     	validateSumotoDetails(rowObj.index(), $(rowObj).find('.validnum').val(),'sumotoTable');
     	validateUniqueDetails(rowObj.index(), $(rowObj).find('.validnum').val(),'sumotoTable');
-    	validateResolutionNumber($(this));
+    	var preambleId = jQuery("input[name='meetingMOMs["+ rowObj.index() +"].preamable.id']").val();
+    	validateResolutionNumber($(this), preambleId);
     });
     
 });
 
-function validateResolutionNumber(resolutionNumber){
+function validateResolutionNumber(resolutionNumber, preambleId){
 	var resolutionNo = resolutionNumber.val();
 	if(resolutionNo) {
 		$.ajax({
@@ -182,6 +184,7 @@ function validateResolutionNumber(resolutionNumber){
 			type: "GET",
 			data: {
 				resolutionNumber : resolutionNo, 
+				preambleId : preambleId
 			},
 			dataType: "json",
 			success: function (response) { 

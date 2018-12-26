@@ -50,16 +50,16 @@ package org.egov.tl.service;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.dao.DemandGenericHibDao;
+import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Module;
-import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.tl.entity.LicenseDemand;
 import org.egov.tl.entity.LicenseDocument;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.repository.LicenseDocumentTypeRepository;
 import org.egov.tl.utils.LicenseNumberUtils;
+import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,19 +75,19 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static java.math.BigDecimal.ZERO;
 import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACTIVE;
+import static org.egov.tl.utils.Constants.TL_FILE_STORE_DIR;
 
 @Service
 public class LegacyLicenseService extends LicenseService {
 
     private static final String ARREAR = "arrear";
     private static final String CURRENT = "current";
-    private static final String TRADE_LICENSE = "Trade License";
 
     @Autowired
     private LicenseStatusService licenseStatusService;
@@ -102,7 +102,7 @@ public class LegacyLicenseService extends LicenseService {
     private InstallmentHibDao installmentDao;
 
     @Autowired
-    private ModuleService moduleService;
+    private LicenseUtils licenseUtils;
 
     @Autowired
     private LicenseDocumentTypeRepository licenseDocumentTypeRepository;
@@ -225,7 +225,7 @@ public class LegacyLicenseService extends LicenseService {
                                 .add(fileStoreService.store(
                                         file.getInputStream(),
                                         file.getOriginalFilename(),
-                                        file.getContentType(), "EGTL"));
+                                        file.getContentType(), TL_FILE_STORE_DIR));
                         document.setEnclosed(true);
                         document.setDocDate(license.getApplicationDate());
                     } else if (document.getType().isMandatory() && file.isEmpty() && documents.isEmpty()) {
@@ -243,8 +243,8 @@ public class LegacyLicenseService extends LicenseService {
 
     public Map<String, Map<String, BigDecimal>> getOutstandingFee(TradeLicense license) {
         Map<String, Map<String, BigDecimal>> outstandingFee = new HashMap<>();
-        LicenseDemand licenseDemand = license.getCurrentDemand();
-        for (EgDemandDetails demandDetail : licenseDemand.getEgDemandDetails()) {
+        EgDemand egDemand = license.getCurrentDemand();
+        for (EgDemandDetails demandDetail : egDemand.getEgDemandDetails()) {
             String demandReason = demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster();
             Installment installmentYear = demandDetail.getEgDemandReason().getEgInstallmentMaster();
             Map<String, BigDecimal> feeByTypes;
@@ -256,7 +256,7 @@ public class LegacyLicenseService extends LicenseService {
                 feeByTypes.put(CURRENT, ZERO);
             }
             BigDecimal demandAmount = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
-            if (installmentYear.equals(licenseDemand.getEgInstallmentMaster()))
+            if (installmentYear.equals(egDemand.getEgInstallmentMaster()))
                 feeByTypes.put(CURRENT, demandAmount);
             else
                 feeByTypes.put(ARREAR, feeByTypes.get(ARREAR).add(demandAmount));
@@ -268,43 +268,41 @@ public class LegacyLicenseService extends LicenseService {
     private void addLegacyDemand(final TradeLicense license) {
         final Map<Integer, Integer> legacyInstallmentwiseFees = legacyInstallmentfee(license);
         final Map<Integer, Boolean> legacyFeePayStatus = legacyFeeStatus(license);
-        final LicenseDemand licenseDemand = new LicenseDemand();
-        licenseDemand.setIsHistory("N");
-        licenseDemand.setCreateDate(new Date());
-        licenseDemand.setModifiedDate(new Date());
-        licenseDemand.setLicense(license);
-        licenseDemand.setIsLateRenewal('0');
-        Module module = moduleService.getModuleByName(TRADE_LICENSE);
+        final EgDemand egDemand = new EgDemand();
+        egDemand.setIsHistory("N");
+        egDemand.setCreateDate(new Date());
+        egDemand.setModifiedDate(new Date());
+        Module module = licenseUtils.getModule();
         for (Entry<Integer, Integer> legacyInstallmentwiseFee : legacyInstallmentwiseFees.entrySet())
             if (legacyInstallmentwiseFee.getValue() != null && legacyInstallmentwiseFee.getValue() > 0) {
                 Installment installment = installmentDao.fetchInstallmentByModuleAndInstallmentNumber(module,
                         legacyInstallmentwiseFee.getKey());
 
-                licenseDemand.setEgInstallmentMaster(installment);
+                egDemand.setEgInstallmentMaster(installment);
                 BigDecimal demandAmount = BigDecimal.valueOf(legacyInstallmentwiseFee.getValue()).setScale(0,
                         RoundingMode.HALF_UP);
                 BigDecimal amtCollected = legacyFeePayStatus.get(legacyInstallmentwiseFee.getKey()) == null
                         || !legacyFeePayStatus.get(legacyInstallmentwiseFee.getKey()) ? ZERO : demandAmount;
-                licenseDemand.getEgDemandDetails().add(
+                egDemand.getEgDemandDetails().add(
                         EgDemandDetails.fromReasonAndAmounts(demandAmount,
                                 demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
                                         demandGenericDao.getDemandReasonMasterByCode("License Fee", module),
                                         installment, module),
                                 amtCollected));
-                licenseDemand.setBaseDemand(demandAmount.add(licenseDemand.getBaseDemand()).setScale(0, RoundingMode.HALF_UP));
-                licenseDemand.setAmtCollected(amtCollected.add(licenseDemand.getAmtCollected()).setScale(0, RoundingMode.HALF_UP));
+                egDemand.setBaseDemand(demandAmount.add(egDemand.getBaseDemand()).setScale(0, RoundingMode.HALF_UP));
+                egDemand.setAmtCollected(amtCollected.add(egDemand.getAmtCollected()).setScale(0, RoundingMode.HALF_UP));
             }
-        license.setLicenseDemand(licenseDemand);
+        license.setDemand(egDemand);
 
     }
 
     private void updateLegacyDemand(TradeLicense license) {
         Map<Integer, Integer> updatedInstallmentFees = legacyInstallmentfee(license);
         Map<Integer, Boolean> legacyFeePayStatus = legacyFeeStatus(license);
-        LicenseDemand licenseDemand = license.getCurrentDemand();
+        EgDemand egDemand = license.getCurrentDemand();
 
         // Update existing demand details
-        Iterator<EgDemandDetails> demandDetails = licenseDemand.getEgDemandDetails().iterator();
+        Iterator<EgDemandDetails> demandDetails = egDemand.getEgDemandDetails().iterator();
         while (demandDetails.hasNext()) {
             EgDemandDetails demandDetail = demandDetails.next();
             Integer installmentNumber = demandDetail.getEgDemandReason().getEgInstallmentMaster().getInstallmentNumber();
@@ -323,13 +321,13 @@ public class LegacyLicenseService extends LicenseService {
             updatedInstallmentFees.put(installmentNumber, 0);
         }
         // Create demand details which is newly entered
-        updateNewLegacyDemand(updatedInstallmentFees, legacyFeePayStatus, licenseDemand);
+        updateNewLegacyDemand(updatedInstallmentFees, legacyFeePayStatus, egDemand, license);
     }
 
     private void updateNewLegacyDemand(Map<Integer, Integer> updatedInstallmentFees,
-                                       Map<Integer, Boolean> legacyFeePayStatus, LicenseDemand licenseDemand) {
+                                       Map<Integer, Boolean> legacyFeePayStatus, EgDemand egDemand, TradeLicense license) {
 
-        Module module = moduleService.getModuleByName(TRADE_LICENSE);
+        Module module = licenseUtils.getModule();
         for (Entry<Integer, Integer> updatedInstallmentFee : updatedInstallmentFees.entrySet())
             if (updatedInstallmentFee.getValue() != null && updatedInstallmentFee.getValue() > 0) {
 
@@ -338,19 +336,19 @@ public class LegacyLicenseService extends LicenseService {
                 BigDecimal demandAmount = BigDecimal.valueOf(updatedInstallmentFee.getValue()).setScale(0, RoundingMode.HALF_UP);
                 BigDecimal amtCollected = legacyFeePayStatus.get(updatedInstallmentFee.getKey()) == null
                         || !legacyFeePayStatus.get(updatedInstallmentFee.getKey()) ? ZERO : demandAmount;
-                licenseDemand.getEgDemandDetails().add(EgDemandDetails.fromReasonAndAmounts(demandAmount,
+                egDemand.getEgDemandDetails().add(EgDemandDetails.fromReasonAndAmounts(demandAmount,
                         demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
                                 demandGenericDao.getDemandReasonMasterByCode("License Fee", module),
                                 installment, module),
                         amtCollected));
             }
         // Recalculating BasedDemand
-        licenseDemand.recalculateBaseDemand();
+        license.recalculateBaseDemand();
     }
 
     private List<Installment> getLastFiveYearInstallmentsForLicense() {
         List<Installment> installmentList = installmentDao
-                .fetchInstallments(moduleService.getModuleByName(TRADE_LICENSE), new Date(), 6);
+                .fetchInstallments(licenseUtils.getModule(), new Date(), 6);
         Collections.reverse(installmentList);
         return installmentList;
     }

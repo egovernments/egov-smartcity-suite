@@ -122,7 +122,9 @@ public class WaterChargeDocumentService {
         if (waterConnectionDetails.getLegacy()) {
             if (waterConnectionDetails.getApplicationDate() != null)
                 createdDate = dateFormatter.format(waterConnectionDetails.getApplicationDate());
-        } else
+        } else if (waterConnectionDetails.getExecutionDate() == null)
+            createdDate = dateFormatter.format(waterConnectionDetails.getApplicationDate());
+        else
             createdDate = dateFormatter.format(waterConnectionDetails.getExecutionDate());
         monthlyRate = monthlyRateFirld(waterConnectionDetails);
         if (ownerNameItr != null && ownerNameItr.hasNext())
@@ -265,7 +267,7 @@ public class WaterChargeDocumentService {
                                 ? assessmentDetails.getBoundaryDetails().getLocalityName() : "")
                         .withPropertyid(waterConnectionDetails.getConnection().getPropertyIdentifier())
                         .withApplicationcode(waterConnectionDetails.getApplicationType().getCode())
-                        .withCreatedDate(createdDateStr.isEmpty()? new Date():dateFormatter.parse(createdDateStr) )
+                        .withCreatedDate(createdDateStr.isEmpty() ? new Date() : dateFormatter.parse(createdDateStr))
                         .withMobileNumber(mobilNumber)
                         .withStatus(waterConnectionDetails.getConnectionStatus().name())
                         .withDistrictName(defaultString((String) cityInfo.get(CITY_DIST_NAME_KEY)))

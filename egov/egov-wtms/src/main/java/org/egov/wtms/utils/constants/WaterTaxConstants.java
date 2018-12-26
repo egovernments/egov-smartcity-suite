@@ -148,7 +148,7 @@ public class WaterTaxConstants {
     public static final String TEMPERARYCLOSE = "Temporary";
     public static final String PERMENENTCLOSECODE = "P";
     public static final String TEMPERARYCLOSECODE = "T";
-    public static final String DEMANDISHISTORY = "N";
+    public static final String DEMAND_ISHISTORY_N = "N";
 
     public static final String WF_STATE_REJECTED = "Rejected";
     public static final String WFLOW_ACTION_STEP_REJECT = "Reject";
@@ -181,6 +181,15 @@ public class WaterTaxConstants {
     public static final String WF_STATE_ME_APPROVE_PENDING = "Municipal Engineer approval pending";
     public static final String PENDING_DIGI_SIGN = "Pending Digital Signature";
     public static final String COMM_APPROVAL_PENDING = "Commissioner Approval Pending";
+    public static final String AE_APPROVAL_PENDING = "Asst.engineer approval pending";
+    public static final String WF_STATE_PENDING_FORWARD_BY_EE="Pending forward by Executive Engineer";
+    public static final String WF_STATE_PENDING_FORWARD_BY_SE="Pending forward by Superintending Engineer";
+    public static final String WF_STATE_PENDING_FORWARD_BY_ME="Pending forward by Municipal Engineer";
+    public static final String PENDING_DIGI_SIGN_BY_COMM="Commissioner digisign pending";
+    public static final String PENDING_DIGI_SIGN_BY_DEE="Pending Digital Sign by DEE";
+    public static final String PENDING_DIGI_SIGN_BY_EE="Pending Digital Sign by EE";
+    public static final String PENDING_DIGI_SIGN_BY_SE="Pending Digital Sign by SE";
+    public static final String PENDING_DIGI_SIGN_BY_ME="Pending Digital Sign by ME";
 
     public static final String APPROVEWORKFLOWACTION = "Approve";
     public static final String FORWARDWORKFLOWACTION = "Forward";
@@ -260,6 +269,7 @@ public class WaterTaxConstants {
 
     public static final String WATERTAXREASONCODE = "WTAXCHARGES";
     public static final String METERED_CHARGES_REASON_CODE = "METERCHARGES";
+    public static final String WATER_MATERIAL_CHARGES_REASON_CODE="MATERIALCHARGES";
     public static final String WF_CLOSERACKNOWLDGEENT_BUTTON = "Generate Acknowledgement";
     public static final Character DMD_STATUS_CHEQUE_BOUNCED = 'B';
     public static final String WF_RECONNECTIONACKNOWLDGEENT_BUTTON = "Generate Reconnection Ack";
@@ -355,6 +365,7 @@ public class WaterTaxConstants {
     public static final String APPLICATIONSTATUSOPEN = "Open";
     public static final String APPLICATIONSTATUSCLOSED = "Closed";
     public static final String APPLICATIONSTATUSALL = "All";
+    public static final String END = "END";
 
     public static final String RECONNECTION_ESTIMATION_NOTICE = "ReconnacknowlgementNotice";
     public static final String CLOSURE_ESTIMATION_NOTICE = "CloserConnectionAcknowldgemt";
@@ -448,5 +459,10 @@ public class WaterTaxConstants {
     public static final String ADDNL_WATER_TAP_CONNECTION = "Additional Water Tap Connection";
     public static final String CHANGEOFUSE_WATER_TAP_CONNECTION = "Change Of Usage Water Tap Connection";
     public static final String REGLZN_WATER_TAP_CONNECTION = "Regularization connection Water Tap Connection";
-
+    public static final String MESSAGE = "message";
+    public static final String ERROR = "error";
+    public static final String BPL_CATEGORY_DONATION_AMOUNT="BPL_CATEGORY_DONATION_AMOUNT";
+    public static final String SAVE="Save";
+    public static final String CREATE="Create";
+    public static final String DELETE="Delete";
 }

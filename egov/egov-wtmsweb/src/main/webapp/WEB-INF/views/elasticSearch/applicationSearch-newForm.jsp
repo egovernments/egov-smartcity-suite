@@ -58,7 +58,7 @@
 
 			<div class="panel-heading">
 				<div class="panel-title">
-					<strong><spring:message code='title.AppliactionSearch' />
+					<strong><spring:message code='title.application.search' />
 					</strong>
 				</div>
 

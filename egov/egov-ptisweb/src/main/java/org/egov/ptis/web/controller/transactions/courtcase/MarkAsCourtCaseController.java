@@ -58,8 +58,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -80,7 +82,7 @@ public class MarkAsCourtCaseController {
     @Autowired
     private PropertyCourtCaseService propertyCourtcaseService;
     
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     public String newForm(@ModelAttribute final PropertyCourtCase propertyCourtCase, final Model model,
             @PathVariable String assessmentNo) {
         BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
@@ -91,7 +93,7 @@ public class MarkAsCourtCaseController {
         return MARKASCOURTCASE_FROM;
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     public String updateOwnerDetails(@ModelAttribute final PropertyCourtCase propertyCourtCase,
             final RedirectAttributes redirectAttrs, final BindingResult errors, final Model model,
             final HttpServletRequest request, @RequestParam String caseNo) {

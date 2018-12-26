@@ -281,6 +281,7 @@ $('.age-field').blur( function () {
 
   if($('#source').val()=='CHPK'){
 	  $('#select-registrationunit').removeAttr("required");
+	  $('.val-mandatory').find("span").removeClass("mandatory");
 	  $('#txt-zone').removeAttr("required");
 	  $('[id="husband.occupation"]').removeAttr("required");
 	  $('[id="wife.occupation"]').removeAttr("required");

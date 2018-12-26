@@ -128,12 +128,12 @@ public class LicenseStatus extends AbstractPersistable<Long> {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        final LicenseStatus that = (LicenseStatus) o;
-
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof LicenseStatus))
+            return false;
+        LicenseStatus that = (LicenseStatus) other;
         return getName().equals(that.getName());
 
     }

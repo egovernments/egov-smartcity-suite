@@ -69,6 +69,7 @@ public class GisDetails extends AbstractAuditable implements Auditable {
     private BigDecimal systemTax = BigDecimal.ZERO;
     private List<GisAuditDetails> gisAuditDetails = new ArrayList<>();
     private Long version;
+    private String uploadDocumentStatus;
 
     public Property getGisProperty() {
         return gisProperty;
@@ -163,5 +164,13 @@ public class GisDetails extends AbstractAuditable implements Auditable {
     public void setVersion(Long version) {
         this.version = version;
     }
+
+	public String getUploadDocumentStatus() {
+		return uploadDocumentStatus;
+	}
+
+	public void setUploadDocumentStatus(String uploadDocumentStatus) {
+		this.uploadDocumentStatus = uploadDocumentStatus;
+	}
 
 }

@@ -50,6 +50,7 @@ package org.egov.tl.entity;
 
 import com.google.gson.annotations.Expose;
 import org.egov.commons.EgwStatus;
+import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -97,8 +98,10 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static java.lang.System.lineSeparator;
+import static java.math.BigDecimal.ZERO;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.demand.utils.DemandConstants.DEMAND_REASON_CATEGORY_FEE;
 import static org.egov.infra.config.core.LocalizationSettings.currencySymbolUtf8;
 import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
 import static org.egov.infra.utils.ApplicationConstant.UNDERSCORE;
@@ -106,7 +109,6 @@ import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
 import static org.egov.infra.utils.StringUtils.appendTimestamp;
 import static org.egov.tl.utils.Constants.CLOSURE_APPTYPE_CODE;
-import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 import static org.egov.tl.utils.Constants.LICENSE_STATUS_CANCELLED;
 import static org.egov.tl.utils.Constants.NEW_APPTYPE_CODE;
 import static org.egov.tl.utils.Constants.PERMANENT_NATUREOFBUSINESS;
@@ -127,7 +129,6 @@ public class TradeLicense extends StateAware<Position> {
 
     protected static final String SEQUENCE = "SEQ_EGTL_LICENSE";
     private static final long serialVersionUID = -4621190785979222546L;
-    private static final String CLOSURE_APPROVAL_URL = "/tl/viewtradelicense/viewTradeLicense-closure.action?model.id=%d";
     private static final String CLOSURE_UPDATE_URL = "/tl/license/closure/update/%d";
     private static final String NEW_RENEW_APPROVAL_URL = "/tl/newtradelicense/newTradeLicense-showForApproval.action?model.id=%d";
 
@@ -238,36 +239,36 @@ public class TradeLicense extends StateAware<Position> {
     @JoinColumn(name = "adminward")
     private Boundary adminWard;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "NATUREOFBUSINESS")
     private NatureOfBusiness natureOfBusiness;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_demand")
     @NotAudited
-    private LicenseDemand licenseDemand;
+    private EgDemand demand;
 
     @Valid
-    @OneToOne(mappedBy = "license", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "license", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Audited(targetAuditMode = RelationTargetAuditMode.AUDITED)
     private Licensee licensee;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_STATUS")
     private LicenseStatus status;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_SUB_CATEGORY")
     private LicenseSubCategory tradeName;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "licenseAppType")
     private LicenseAppType licenseAppType;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_CATEGORY")
     private LicenseCategory category;
 
@@ -336,20 +337,17 @@ public class TradeLicense extends StateAware<Position> {
     @Override
     public String myLinkId() {
         if (CLOSURE_APPTYPE_CODE.equals(this.getLicenseAppType().getCode()))
-            if (isNewWorkflow())
-                return format(CLOSURE_UPDATE_URL, id);
-            else
-                return format(CLOSURE_APPROVAL_URL, id);
+            return format(CLOSURE_UPDATE_URL, id);
         else
             return format(NEW_RENEW_APPROVAL_URL, id);
     }
 
-    public LicenseDemand getLicenseDemand() {
-        return licenseDemand;
+    public EgDemand getDemand() {
+        return demand;
     }
 
-    public void setLicenseDemand(final LicenseDemand licenseDemand) {
-        this.licenseDemand = licenseDemand;
+    public void setDemand(EgDemand demand) {
+        this.demand = demand;
     }
 
     public Date getApplicationDate() {
@@ -619,8 +617,8 @@ public class TradeLicense extends StateAware<Position> {
                 .anyMatch(licenseDocument -> licenseDocument.getMultipartFiles().stream().anyMatch(MultipartFile::isEmpty));
     }
 
-    public LicenseDemand getCurrentDemand() {
-        return getLicenseDemand();
+    public EgDemand getCurrentDemand() {
+        return getDemand();
     }
 
     public boolean isPaid() {
@@ -628,7 +626,7 @@ public class TradeLicense extends StateAware<Position> {
     }
 
     public BigDecimal getTotalBalance() {
-        return licenseDemand.getBaseDemand().subtract(licenseDemand.getAmtCollected());
+        return getDemand().getBaseDemand().subtract(getDemand().getAmtCollected());
     }
 
     public boolean isRejected() {
@@ -689,10 +687,11 @@ public class TradeLicense extends StateAware<Position> {
         return isStatusActive() || getIsActive() && LICENSE_STATUS_CANCELLED.equals(getStatus().getName());
     }
 
+    @SuppressWarnings("unused")
     public BigDecimal getLatestAmountPaid() {
         Optional<EgDemandDetails> demandDetails = this.getCurrentDemand().getEgDemandDetails().stream()
                 .sorted(Comparator.comparing(EgDemandDetails::getInstallmentEndDate).reversed())
-                .filter(demandDetail -> demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().equals(LICENSE_FEE_TYPE))
+                .filter(demandDetail -> demandDetail.getReasonCategory().equals(DEMAND_REASON_CATEGORY_FEE))
                 .filter(demandDetail -> demandDetail.getAmount().subtract(demandDetail.getAmtCollected())
                         .doubleValue() <= 0)
                 .findFirst();
@@ -799,17 +798,27 @@ public class TradeLicense extends StateAware<Position> {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj)
             return true;
         if (!(obj instanceof TradeLicense))
             return false;
-        final TradeLicense that = (TradeLicense) obj;
+        TradeLicense that = (TradeLicense) obj;
         return Objects.equals(getUid(), that.getUid());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(getUid());
+    }
+
+    public void recalculateBaseDemand() {
+        getDemand().setAmtCollected(ZERO);
+        getDemand().setBaseDemand(ZERO);
+        getDemand().setModifiedDate(new Date());
+        for (final EgDemandDetails demandDetail : getDemand().getEgDemandDetails()) {
+            getDemand().setAmtCollected(getDemand().getAmtCollected().add(demandDetail.getAmtCollected()));
+            getDemand().setBaseDemand(getDemand().getBaseDemand().add(demandDetail.getAmount()));
+        }
     }
 }

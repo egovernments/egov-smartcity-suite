@@ -226,6 +226,7 @@
         <hamcrest-all-version>1.3</hamcrest-all-version>
         <slf4j-version>1.7.25</slf4j-version>
         <log4j-version>1.2.17</log4j-version>
+        <log4j2-version>2.11.1</log4j2-version>
         <google-guava-version>23.2-jre</google-guava-version>
         <google.zxing.version>3.3.0</google.zxing.version>
         <recaptcha.version>0.0.8</recaptcha.version>
@@ -1024,6 +1025,11 @@
                 <artifactId>log4j</artifactId>
                 <version>${log4j-version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-to-slf4j</artifactId>
+                <version>${log4j2-version}</version>
+            </dependency>
             <!-- LOGGING END -->
 
             <!-- DATABASE START -->
@@ -1397,6 +1403,10 @@
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-to-slf4j</artifactId>
         </dependency>
         <!-- LOGGING END -->
 

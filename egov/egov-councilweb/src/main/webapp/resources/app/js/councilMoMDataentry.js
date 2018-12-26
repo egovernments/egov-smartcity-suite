@@ -168,7 +168,7 @@ function validateSerialNumber(idx, sNo) {
 }
 
 
-$("#preambleTable tbody").on('mouseleave','tr .validnum',function(event) {
+$("#preambleTable tbody").on('blur','tr .validnum',function(event) {
 	var rowObj = $(this).closest('tr');
 	validateUniqueResolutionNumber(rowObj.index(), $(rowObj).find('.validnum').val());
 	validateResolutionNumber($(this));
@@ -280,6 +280,7 @@ function validateResolutionNumber(resolutionNumber){
 			type: "GET",
 			data: {
 				resolutionNumber : resolutionNo, 
+				preambleId : null
 			},
 			dataType: "json",
 			success: function (response) { 

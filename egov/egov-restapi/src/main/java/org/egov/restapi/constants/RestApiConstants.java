@@ -704,6 +704,14 @@ public class RestApiConstants {
     
     public static final String THIRD_PARTY_ERR_CODE_NO_BILL_STATUS = "EGF-REST-130";
     public static final String THIRD_PARTY_ERR_MSG_NO_BILL_STATUS = "Bill Status is not Approved";
-       
+
+    public static final String THIRD_PARTY_ERR_CODE_NOT_MATCHING_CREDIT_AMOUNT = "EGF-REST-131";
+    public static final String THIRD_PARTY_ERR_MSG_NOT_MATCHING_CREDIT_AMOUNT = "Sum of Credit amount in bill details and bill payee details is not matching for the Gl-Code";
+
+    public static final String THIRD_PARTY_ERR_CODE_NOT_VALID_FUND_CODE = "EGF-REST-133";
+    public static final String THIRD_PARTY_ERR_MSG_NOT_VALID_FUND_CODE = "Provided fund code is not valid";
     
+    public static final String API_DISABLED = "00";
+    public static final String API_DISABLED_CODE = "This API is temporarily disabled!";
+
 }

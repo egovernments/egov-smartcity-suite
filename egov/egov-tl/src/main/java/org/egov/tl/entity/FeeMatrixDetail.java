@@ -148,20 +148,20 @@ public class FeeMatrixDetail extends AbstractPersistable<Long> {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o)
+    public boolean equals(Object other) {
+        if (this == other)
             return true;
-        if (!(o instanceof FeeMatrixDetail))
+        if (!(other instanceof FeeMatrixDetail))
             return false;
-        final FeeMatrixDetail that = (FeeMatrixDetail) o;
-        return Objects.equals(feeMatrix, that.feeMatrix) &&
-                Objects.equals(uomFrom, that.uomFrom) &&
-                Objects.equals(uomTo, that.uomTo);
+        FeeMatrixDetail that = (FeeMatrixDetail) other;
+        return Objects.equals(getFeeMatrix(), that.getFeeMatrix()) &&
+                Objects.equals(getUomFrom(), that.getUomFrom()) &&
+                Objects.equals(getUomTo(), that.getUomTo());
     }
 
 
     @Override
     public int hashCode() {
-        return Objects.hash(feeMatrix, uomFrom, uomTo);
+        return Objects.hash(getFeeMatrix(), getUomFrom(), getUomTo());
     }
 }

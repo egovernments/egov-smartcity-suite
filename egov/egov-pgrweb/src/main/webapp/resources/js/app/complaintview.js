@@ -64,10 +64,8 @@ $(document).ready(function () {
         $('.history-slide').slideToggle();
         if ($('#toggle-his-icon').hasClass('fa fa-angle-down')) {
             $('#toggle-his-icon').removeClass('fa fa-angle-down').addClass('fa fa-angle-up');
-            //$('#see-more-link').hide();
         } else {
             $('#toggle-his-icon').removeClass('fa fa-angle-up').addClass('fa fa-angle-down');
-            //$('#see-more-link').show();
         }
     });
 
@@ -81,9 +79,7 @@ $(document).ready(function () {
             },
             dataType: "json",
             success: function (response) {
-                $('#location').empty();
-
-                $('#location').append($("<option value=''>Select</option>"));
+                $('#location').find('option:gt(0)').remove();
                 $.each(response, function (index, value) {
 
                     $('#location').append($('<option>').text(value.name).attr('value', value.id));
@@ -107,8 +103,8 @@ $(document).ready(function () {
                 },
                 dataType: "json",
                 success: function (response) {
-                    $('#approvalDesignation').empty();
-                    $('#approvalDesignation').append($("<option value=''>Select</option>"));
+                    $('#approvalDesignation').find('option:gt(0)').remove();
+                    $('#approvalPosition').find('option:gt(0)').remove();
                     $.each(response, function (index, value) {
                         $('#approvalDesignation').append($('<option>').text(value.name).attr('value', value.id));
                     });
@@ -133,13 +129,16 @@ $(document).ready(function () {
                 },
                 dataType: "json",
                 success: function (response) {
-                    $('#approvalPosition').empty();
-                    $('#approvalPosition').append($("<option value=''>Select</option>"));
-                    $.each(response, function (index, employee) {
-                        $('#approvalPosition').append($('<option>').text(employee.name)
-                            .attr('value', employee.positionId)
-                            .attr('data-employee-id', employee.empId));
-                    });
+                    $('#approvalPosition').find('option:gt(0)').remove();
+                    if (response == '') {
+                        bootbox.alert("No employee found, either assignment or grievance role is missing.")
+                    } else {
+                        $.each(response, function (index, employee) {
+                            $('#approvalPosition').append($('<option>').text(employee.name)
+                                .attr('value', employee.positionId)
+                                .attr('data-employee-id', employee.empId));
+                        });
+                    }
                 },
                 error: function (response) {
                     console.log("failed");

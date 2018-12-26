@@ -53,7 +53,7 @@ import org.egov.infra.web.support.search.DataTableSearchRequest;
 
 public class InstallmentWiseDCBRequest extends DataTableSearchRequest {
 
-    private String licensenumber;
+    private String licenseNumber;
 
     private String installment;
 
@@ -61,12 +61,12 @@ public class InstallmentWiseDCBRequest extends DataTableSearchRequest {
 
     private Integer activeLicense = Integer.valueOf(0);
 
-    public String getLicensenumber() {
-        return licensenumber;
+    public String getLicenseNumber() {
+        return licenseNumber;
     }
 
-    public void setLicensenumber(String licensenumber) {
-        this.licensenumber = licensenumber;
+    public void setLicenseNumber(String licenseNumber) {
+        this.licenseNumber = licenseNumber;
     }
 
     public String getInstallment() {

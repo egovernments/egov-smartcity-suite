@@ -47,6 +47,21 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.egov.commons.entity.Source.MEESEVA;
+import static org.egov.commons.entity.Source.ONLINE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SOURCECHANNEL_ONLINE;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.validation.ValidationException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -63,9 +78,9 @@ import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.masters.service.ApplicationProcessTimeService;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -78,23 +93,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import javax.validation.ValidationException;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-
-import static org.egov.commons.entity.Source.MEESEVA;
-import static org.egov.commons.entity.Source.ONLINE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.SOURCECHANNEL_ONLINE;
-
 @Controller
 @RequestMapping(value = "/application")
 public class ReconnectionController extends GenericConnectionController {
+
+    private static final String MEESEVA_APPLICATION_NUMBER = "meesevaApplicationNumber";
+    private static final String APPROVAL_POSITION = "approvalPosition";
 
     @Autowired
     private ApplicationTypeService applicationTypeService;
@@ -114,6 +118,9 @@ public class ReconnectionController extends GenericConnectionController {
     @Autowired
     private SecurityUtils securityUtils;
 
+    @Autowired
+    private ApplicationProcessTimeService applicationProcessTimeService;
+
     @ModelAttribute
     public WaterConnectionDetails getWaterConnectionDetails(@PathVariable final String applicationCode) {
         return waterConnectionDetailsService
@@ -122,7 +129,7 @@ public class ReconnectionController extends GenericConnectionController {
 
     public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
             @ModelAttribute final WaterConnectionDetails waterConnectionDetails) {
-        final ApplicationType applicationType = applicationTypeService.findByCode(WaterTaxConstants.RECONNECTION);
+        final ApplicationType applicationType = applicationTypeService.findByCode(RECONNECTION);
         return waterConnectionDetailsService.getAllActiveDocumentNames(applicationType);
     }
 
@@ -142,21 +149,25 @@ public class ReconnectionController extends GenericConnectionController {
     public String newForm(final Model model, @PathVariable final String applicationCode,
             final HttpServletRequest request) {
 
-        final String meesevaApplicationNumber = request.getParameter("meesevaApplicationNumber");
+        final String meesevaApplicationNumber = request.getParameter(MEESEVA_APPLICATION_NUMBER);
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByConsumerCodeAndConnectionStatus(applicationCode, ConnectionStatus.CLOSED);
-        return loadViewData(model, request, waterConnectionDetails, meesevaApplicationNumber);
+        if (applicationProcessTimeService.getApplicationProcessTime(
+                applicationTypeService.findByCode(RECONNECTION),
+                waterConnectionDetails.getCategory()) == null)
+            throw new ApplicationRuntimeException("err.applicationprocesstime.undefined");
+        return loadViewData(model, waterConnectionDetails, meesevaApplicationNumber);
 
     }
 
-    private String loadViewData(final Model model, final HttpServletRequest request,
+    private String loadViewData(final Model model,
             final WaterConnectionDetails waterConnectionDetails, final String meesevaApplicationNumber) {
         Boolean loggedUserIsMeesevaUser;
         model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
-        model.addAttribute("additionalRule", WaterTaxConstants.RECONNECTION);
+        model.addAttribute("additionalRule", RECONNECTION);
         model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         final WorkflowContainer workflowContainer = new WorkflowContainer();
-        workflowContainer.setAdditionalRule(WaterTaxConstants.RECONNECTION);
+        workflowContainer.setAdditionalRule(RECONNECTION);
         prepareWorkflow(model, waterConnectionDetails, workflowContainer);
         model.addAttribute("applicationDocList",
                 waterConnectionDetailsService.getApplicationDocForExceptClosureAndReConnection(waterConnectionDetails));
@@ -167,11 +178,11 @@ public class ReconnectionController extends GenericConnectionController {
                 waterConnectionDetailsService.getConnectionTypesMap().get(
                         waterConnectionDetails.getConnectionType().name()));
         waterConnectionDetails.setApplicationType(applicationTypeService
-                .findByCode(WaterTaxConstants.RECONNECTION));
+                .findByCode(RECONNECTION));
         model.addAttribute("applicationHistory", waterConnectionDetailsService.getHistory(waterConnectionDetails));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("loggedInCSCUser", waterTaxUtils.getCurrentUserRole());
-        model.addAttribute("typeOfConnection", WaterTaxConstants.RECONNECTION);
+        model.addAttribute("typeOfConnection", RECONNECTION);
         final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getWaterTaxDueAmount(waterConnectionDetails);
         model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
         model.addAttribute("citizenPortalUser", waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser()));
@@ -194,8 +205,8 @@ public class ReconnectionController extends GenericConnectionController {
         final Boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser());
         final Boolean loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(securityUtils.getCurrentUser());
         final Boolean isAnonymousUser = waterTaxUtils.isAnonymousUser(securityUtils.getCurrentUser());
-        if (loggedUserIsMeesevaUser && request.getParameter("meesevaApplicationNumber") != null)
-            waterConnectionDetails.setMeesevaApplicationNumber(request.getParameter("meesevaApplicationNumber"));
+        if (loggedUserIsMeesevaUser && request.getParameter(MEESEVA_APPLICATION_NUMBER) != null)
+            waterConnectionDetails.setMeesevaApplicationNumber(request.getParameter(MEESEVA_APPLICATION_NUMBER));
         model.addAttribute("citizenPortalUser", citizenPortalUser);
         if (!isCSCOperator && !citizenPortalUser && !loggedUserIsMeesevaUser && !isAnonymousUser) {
             final Boolean isJuniorAsstOrSeniorAsst = waterTaxUtils
@@ -247,11 +258,9 @@ public class ReconnectionController extends GenericConnectionController {
             applicationDocument.setDocumentDate(new Date());
             waterConnectionDetails.getApplicationDocs().add(applicationDocument);
         }
-        if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
-            approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-        // waterConnectionDetails.setCloseConnectionType(request.getParameter("closeConnectionType").charAt(0));
+        if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
+            approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
         final String addrule = request.getParameter("additionalRule");
-        // waterConnectionDetails.setConnectionStatus(ConnectionStatus.CLOSED);
 
         if (isAnonymousUser) {
             waterConnectionDetails.setSource(ONLINE);

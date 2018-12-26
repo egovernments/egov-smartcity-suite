@@ -50,24 +50,19 @@ package org.egov.stms.masters.repository;
 import org.egov.stms.masters.entity.DocumentTypeMaster;
 import org.egov.stms.masters.entity.SewerageApplicationType;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
 public interface DocumentTypeMasterRepository extends JpaRepository<DocumentTypeMaster, Long> {
-   
+
     DocumentTypeMaster findByDescription(String description);
 
     List<DocumentTypeMaster> findByApplicationType(SewerageApplicationType applicationType);
 
-    @Query("select DTM from DocumentTypeMaster DTM where DTM.applicationType=:applicationType and DTM.description=:description")
-    DocumentTypeMaster findByApplicationTypeAndDescription(@Param("applicationType") SewerageApplicationType applicationType,
-            @Param("description") String description);
+    DocumentTypeMaster findByApplicationTypeAndDescription(SewerageApplicationType applicationType, String description);
 
-    @Query("select DTM from DocumentTypeMaster DTM where DTM.applicationType=:applicationType and DTM.isActive='t' order by id")
-    List<DocumentTypeMaster> findAllActiveDocumentTypeMasterByApplicationType(@Param("applicationType") SewerageApplicationType applicationType);
- 
+    List<DocumentTypeMaster> findByApplicationTypeAndIsActiveTrueOrderById(SewerageApplicationType applicationType);
+
 }

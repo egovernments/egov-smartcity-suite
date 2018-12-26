@@ -47,6 +47,7 @@
  */
 package org.egov.stms.web.controller.transactions;
 
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_REJECTED;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.util.ArrayList;
@@ -64,6 +65,7 @@ import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -163,7 +165,7 @@ public class SewerageConnectionController extends GenericWorkFlowController {
 
     @Autowired
     public SewerageConnectionController(final SewerageTaxUtils sewerageTaxUtils,
-            final SewerageApplicationDetailsService sewerageApplicationDetailsService) {
+                                        final SewerageApplicationDetailsService sewerageApplicationDetailsService) {
         this.sewerageTaxUtils = sewerageTaxUtils;
         this.sewerageApplicationDetailsService = sewerageApplicationDetailsService;
     }
@@ -190,7 +192,7 @@ public class SewerageConnectionController extends GenericWorkFlowController {
 
     @RequestMapping(value = "/newConnection-newform", method = RequestMethod.GET)
     public String showNewApplicationForm(@ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
-            final Model model, final HttpServletRequest request) {
+                                         final Model model, final HttpServletRequest request) {
         LOG.debug("Inside showNewApplicationForm method");
         final SewerageConnection connection = new SewerageConnection();
         sewerageApplicationDetails.setApplicationDate(new Date());
@@ -219,10 +221,10 @@ public class SewerageConnectionController extends GenericWorkFlowController {
 
     @RequestMapping(value = "/newConnection-create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
-            final BindingResult resultBinder,
-            final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request, final Model model, @RequestParam String workFlowAction,
-            @RequestParam("files") final MultipartFile[] files) {
+                         final BindingResult resultBinder,
+                         final RedirectAttributes redirectAttributes,
+                         final HttpServletRequest request, final Model model, @RequestParam String workFlowAction,
+                         @RequestParam("files") final MultipartFile[] files) {
         sewerageApplicationValidator.validateSewerageNewApplication(sewerageApplicationDetails, resultBinder, request);
         final Boolean isEmployee = sewerageWorkflowService.isEmployee(securityUtils.getCurrentUser());
         final boolean citizenPortalUser = sewerageWorkflowService.isCitizenPortalUser(securityUtils.getCurrentUser());
@@ -327,8 +329,8 @@ public class SewerageConnectionController extends GenericWorkFlowController {
                 + (nextDesign != null ? nextDesign : "");
 
         final String message = messageSource.getMessage("msg.success.forward",
-                new String[] { approverName.concat("~").concat(nextDesignation),
-                        newSewerageApplicationDetails.getApplicationNumber() },
+                new String[]{approverName.concat("~").concat(nextDesignation),
+                        newSewerageApplicationDetails.getApplicationNumber()},
                 null);
         model.addAttribute("message", message);
         if (!isEmployee && !citizenPortalUser) {
@@ -350,14 +352,14 @@ public class SewerageConnectionController extends GenericWorkFlowController {
 
     @RequestMapping(value = "/application-success", method = RequestMethod.GET)
     public ModelAndView successView(@ModelAttribute SewerageApplicationDetails sewerageApplicationDetails,
-            final HttpServletRequest request, final Model model, final ModelMap modelMap) {
-
+                                    final HttpServletRequest request, final Model model, final ModelMap modelMap) {
+        
         final String[] keyNameArray = request.getParameter("pathVars").split(",");
         String applicationNumber = "";
         String approverName = "";
         String currentUserDesgn = "";
         String nextDesign = "";
-        if (keyNameArray.length != 0 && keyNameArray.length > 0)
+       
             if (keyNameArray.length == 1)
                 applicationNumber = keyNameArray[0];
             else if (keyNameArray.length == 3) {
@@ -370,9 +372,17 @@ public class SewerageConnectionController extends GenericWorkFlowController {
                 currentUserDesgn = keyNameArray[2];
                 nextDesign = keyNameArray[3];
             }
-
+    
         if (applicationNumber != null)
             sewerageApplicationDetails = sewerageApplicationDetailsService.findByApplicationNumber(applicationNumber);
+        
+        if (WF_STATE_REJECTED.equalsIgnoreCase(sewerageApplicationDetails.getCurrentState().getValue())) {
+            Position initiatorPos = sewerageApplicationDetails.getCurrentState().getInitiatorPosition();
+            List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(
+                    initiatorPos.getId(), new Date());
+            approverName = assignmentList.stream().findAny().get().getEmployee().getName();
+            nextDesign = initiatorPos.getDeptDesig().getDesignation().getName();
+        }
         model.addAttribute(APPROVER_NAME, approverName);
         model.addAttribute("currentUserDesgn", currentUserDesgn);
         model.addAttribute("nextDesign", nextDesign);
@@ -390,7 +400,7 @@ public class SewerageConnectionController extends GenericWorkFlowController {
     }
 
     private void setCommonDetails(final SewerageApplicationDetails sewerageApplicationDetails, final ModelMap modelMap,
-            final HttpServletRequest request) {
+                                  final HttpServletRequest request) {
         final String assessmentNumber = sewerageApplicationDetails.getConnectionDetail()
                 .getPropertyIdentifier();
 
@@ -411,7 +421,7 @@ public class SewerageConnectionController extends GenericWorkFlowController {
     @RequestMapping(value = "/printacknowledgement", method = GET)
     @ResponseBody
     public ResponseEntity<byte[]> printAck(@RequestParam("appNo") final String appNo, final Model model,
-            final HttpServletRequest request) {
+                                           final HttpServletRequest request) {
         byte[] reportOutput;
         final String cityMunicipalityName = (String) request.getSession()
                 .getAttribute("citymunicipalityname");
@@ -421,7 +431,7 @@ public class SewerageConnectionController extends GenericWorkFlowController {
 
         if (sewerageApplicationDetails != null) {
             reportOutput = sewerageApplicationDetailsService
-                    .getReportParamsForSewerageAcknowdgement(sewerageApplicationDetails, cityMunicipalityName, cityName)
+                    .getReportParamsForSewerageAcknowledgement(sewerageApplicationDetails, cityMunicipalityName, cityName)
                     .getReportOutputData();
             if (reportOutput != null) {
                 final HttpHeaders headers = new HttpHeaders();
@@ -437,7 +447,7 @@ public class SewerageConnectionController extends GenericWorkFlowController {
     }
 
     public void prepareNewForm(final SewerageApplicationDetails sewerageApplicationDetails,
-            final Model model) {
+                               final Model model) {
         final Boolean isEmployee = sewerageWorkflowService.isEmployee(securityUtils.getCurrentUser());
         final Boolean isCitizenPortalUser = sewerageWorkflowService.isCitizenPortalUser(securityUtils.getCurrentUser());
         final SewerageApplicationType applicationType = sewerageApplicationTypeService

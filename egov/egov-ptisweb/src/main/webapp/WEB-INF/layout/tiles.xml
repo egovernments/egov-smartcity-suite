@@ -205,6 +205,11 @@
         <put-attribute name="page-title" value="lbl.workflow.error" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/common/propertyValidation.jsp"/>
     </definition>
+    
+    <definition name="propertyValidationForSpring" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.workflow.error" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/common/propertyValidationForSpring.jsp"/>
+    </definition>
 
     <definition name="dailyCollection-form" extends="base_layout">
         <put-attribute name="page-title" value="lbl.dailyCollection.report" cascade="true"/>

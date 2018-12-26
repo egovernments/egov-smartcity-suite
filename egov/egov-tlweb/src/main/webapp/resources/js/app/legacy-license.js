@@ -76,7 +76,7 @@ $(document).ready(function () {
     }
 
     $('#subCategory').change(function () {
-        getUom();
+        changeUom();
     });
 
     if ($('#boundary').val() != '') {
@@ -85,6 +85,28 @@ $(document).ready(function () {
 
     if ($("#propertyNo") && $("#propertyNo").val() !== "") {
         getPropertyDetails();
+    }
+
+    function changeUom() {
+        $('#uom').text('');
+        $.ajax({
+            url: "/tl/licensesubcategory/detail-by-feetype",
+            type: "GET",
+            data: {
+                subCategoryId: $('#subCategory').val(),
+                feeTypeId: $('#feeTypeId').val()
+            },
+            cache: false,
+            dataType: "json",
+            success: function (response) {
+                if (response)
+                    $('#uom').text(response.uom.name);
+                else {
+                    $('#uom').text('');
+                    bootbox.alert("No UOM mapped for the selected Sub Category");
+                }
+            }
+        });
     }
 
     showHideAgreement();

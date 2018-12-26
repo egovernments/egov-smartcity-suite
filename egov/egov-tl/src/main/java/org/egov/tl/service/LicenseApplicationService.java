@@ -57,7 +57,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
 
@@ -76,7 +75,6 @@ import static org.egov.tl.utils.Constants.SIGNWORKFLOWACTION;
 import static org.egov.tl.utils.Constants.STATUS_ACTIVE;
 
 @Service
-@Transactional(readOnly = true)
 public class LicenseApplicationService extends TradeLicenseService {
 
     @Autowired
@@ -97,10 +95,10 @@ public class LicenseApplicationService extends TradeLicenseService {
 
     @Transactional
     public TradeLicense create(TradeLicense license, WorkflowBean workflowBean) {
-        Date fromRange = installmentDao.getInsatllmentByModuleForGivenDate(this.getModuleName(), new DateTime().toDate())
+        Date fromRange = installmentDao.getInsatllmentByModuleForGivenDate(licenseUtils.getModule(), new DateTime().toDate())
                 .getFromDate();
         Date toRange = installmentDao
-                .getInsatllmentByModuleForGivenDate(this.getModuleName(), new DateTime().plusYears(1).toDate()).getToDate();
+                .getInsatllmentByModuleForGivenDate(licenseUtils.getModule(), new DateTime().plusYears(1).toDate()).getToDate();
         if (license.getCommencementDate() == null || license.getCommencementDate().before(fromRange)
                 || license.getCommencementDate().after(toRange))
             throw new ValidationException("TL-009", "TL-009");
@@ -125,16 +123,12 @@ public class LicenseApplicationService extends TradeLicenseService {
     }
 
     @Transactional
-    public TradeLicense renew(final TradeLicense license, final WorkflowBean workflowBean) {
+    public TradeLicense renew(TradeLicense license, WorkflowBean workflowBean) {
         license.setApplicationDate(new Date());
         license.setLicenseAppType(licenseAppTypeService.getRenewLicenseApplicationType());
         if (!currentUserIsMeeseva())
             license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
-        final BigDecimal currentDemandAmount = recalculateLicenseFee(license.getCurrentDemand());
-        final BigDecimal feematrixDmdAmt = calculateFeeAmount(license);
-        if (feematrixDmdAmt.compareTo(currentDemandAmount) >= 0)
-            recalculateDemand(this.feeMatrixService.getLicenseFeeDetails(license,
-                    license.getLicenseDemand().getEgInstallmentMaster().getFromDate()), license);
+        updateDemandForTradeAreaChange(license);
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
         processAndStoreDocument(license);
         if (license.isPaid())
@@ -152,14 +146,10 @@ public class LicenseApplicationService extends TradeLicenseService {
         return license;
     }
 
-    @Override
     @Transactional
-    public void updateTradeLicense(TradeLicense license, WorkflowBean workflowBean) {
+    public void updateLicense(TradeLicense license, WorkflowBean workflowBean) {
         processAndStoreDocument(license);
-        final BigDecimal currentDemandAmount = recalculateLicenseFee(license.getCurrentDemand());
-        final BigDecimal feematrixDmdAmt = calculateFeeAmount(license);
-        if (feematrixDmdAmt.compareTo(currentDemandAmount) >= 0)
-            updateDemandForChangeTradeArea(license);
+        updateDemandForTradeAreaChange(license);
         license.setCollectionPending(!license.isPaid());
         if (BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             licenseProcessWorkflowService.getRejectTransition(license, workflowBean);

@@ -70,7 +70,7 @@
 		<many-to-one name="locality" class="org.egov.infra.admin.master.entity.Boundary" column="LOCALITYID"/>
 		<property name="sourceID" column="SOURCE_ID" />
 		<property name="sitalArea" column="SITAL_AREA" />
-		<property name="toalBuiltUpArea" column="TOTAL_BUILTUP_AREA" />
+		<property name="totalBuiltUpArea" column="TOTAL_BUILTUP_AREA" />
 		<property name="latestStatus" column="LATEST_STATUS" />
 		<property name="aggrCurrFirstHalfDmd" column="AGGREGATE_CURRENT_FIRSTHALF_DEMAND" />
 		<property name="aggrCurrSecondHalfDmd" column="AGGREGATE_CURRENT_SECONDHALF_DEMAND" />
@@ -108,6 +108,8 @@
 		<property name="rebate" column="REBATE"/>
 		<property name="adjustment" column="ADJUSTMENT"/>
 		<property name="usage" column="usage"/>
+		<property name="latitude" column="latitude"/>
+		<property name="longitude" column="longitude"/>
 		
 		<set name="instDmdColl" table="EGPT_MV_INST_DEM_COLL" order-by="id_installment" >
             <key>

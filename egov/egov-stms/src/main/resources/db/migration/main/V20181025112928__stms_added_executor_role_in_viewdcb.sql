@@ -1,0 +1,1 @@
+insert into eg_roleaction (actionid, roleid) select (select id from eg_action where name = 'viewSewerageConnectionDCBReport' and contextroot = 'stms'),id from eg_role where name = 'Sewerage Connection Executor';
