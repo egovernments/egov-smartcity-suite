@@ -203,16 +203,16 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
                 // rset.close();
                 dc.addGrid(gridName, grid);
             }
-            sql = new StringBuilder("select cgn as \"voucherHeader_cgn\", vouchernumber as \"voucherHeader_voucherNumber\"," +
-                    " to_char(voucherdate,'dd-mon-yyyy') as \"voucherHeader_voucherDate\", chequenumber as \"chequeDetail_chequeNumber\"," +
-                    " to_char(chequedate,'dd-mon-yyyy') as \"chequeDetail_chequeDate\", vh.description as \"narration\"" +
-                    " from voucherheader vh, subledgerpaymentheader sph, chequedetail cq" +
-                    " where sph.voucherheaderid = vh.id and cq.id = sph.chequeid and chequeid is not null and chequeid > 0 and vh.cgn = :cgn" +
-                    " union" +
-                    " select cgn as \"voucherHeader_cgn\", vouchernumber as \"voucherHeader_voucherNumber\"," +
-                    " to_char(voucherdate,'dd-mon-yyyy') as \"voucherHeader_voucherDate\", '','', vh.description as \"narration\"" +
-                    " from voucherheader vh, subledgerpaymentheader sph" +
-                    " where sph.voucherheaderid = vh.id and (chequeid is null or chequeid = 0) and vh.cgn = :cgn");
+            sql = new StringBuilder("select cgn as \"voucherHeader_cgn\", vouchernumber as \"voucherHeader_voucherNumber\",")
+                    .append(" to_char(voucherdate,'dd-mon-yyyy') as \"voucherHeader_voucherDate\", chequenumber as \"chequeDetail_chequeNumber\"," )
+                    .append(" to_char(chequedate,'dd-mon-yyyy') as \"chequeDetail_chequeDate\", vh.description as \"narration\"")
+                    .append(" from voucherheader vh, subledgerpaymentheader sph, chequedetail cq")
+                    .append(" where sph.voucherheaderid = vh.id and cq.id = sph.chequeid and chequeid is not null and chequeid > 0 and vh.cgn = :cgn")
+                    .append(" union")
+                    .append(" select cgn as \"voucherHeader_cgn\", vouchernumber as \"voucherHeader_voucherNumber\",")
+                    .append(" to_char(voucherdate,'dd-mon-yyyy') as \"voucherHeader_voucherDate\", '','', vh.description as \"narration\"")
+                    .append(" from voucherheader vh, subledgerpaymentheader sph")
+                    .append(" where sph.voucherheaderid = vh.id and (chequeid is null or chequeid = 0) and vh.cgn = :cgn");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(sql);
             rset = persistenceService.getSession().createNativeQuery(sql.toString())

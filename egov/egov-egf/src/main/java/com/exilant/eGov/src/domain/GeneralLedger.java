@@ -262,10 +262,10 @@ public class GeneralLedger {
                 LOGGER.debug("map size -------> " + hmA.size());
 
             // Query2 - to get the sum of debit amount glcode wise
-            selQuery = new StringBuilder("SELECT GL.GLCODE AS GLCODE, SUM(GLD.AMOUNT) AS DEBITAMOUNT" +
-                    " FROM VOUCHERHEADER VH,GENERALLEDGER GL,GENERALLEDGERDETAIL GLD" +
-                    " WHERE VH.FUNDID NOT IN (:fundId) AND GLD.DETAILTYPEID = :accountDetailType AND DETAILKEYID = :accountDetailKey AND VH.STATUS = :status AND GL.DEBITAMOUNT > 0" +
-                    " AND VH.ID = GL.VOUCHERHEADERID AND GL.ID = GLD.GENERALLEDGERID AND VH.VOUCHERDATE <= :voucherDate GROUP BY GL.GLCODE");
+            selQuery = new StringBuilder("SELECT GL.GLCODE AS GLCODE, SUM(GLD.AMOUNT) AS DEBITAMOUNT")
+                    .append(" FROM VOUCHERHEADER VH,GENERALLEDGER GL,GENERALLEDGERDETAIL GLD")
+                    .append(" WHERE VH.FUNDID NOT IN (:fundId) AND GLD.DETAILTYPEID = :accountDetailType AND DETAILKEYID = :accountDetailKey AND VH.STATUS = :status AND GL.DEBITAMOUNT > 0")
+                    .append(" AND VH.ID = GL.VOUCHERHEADERID AND GL.ID = GLD.GENERALLEDGERID AND VH.VOUCHERDATE <= :voucherDate GROUP BY GL.GLCODE");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("query (DebitAmount)--> " + selQuery);
             rs = persistenceService.getSession().createNativeQuery(selQuery.toString())

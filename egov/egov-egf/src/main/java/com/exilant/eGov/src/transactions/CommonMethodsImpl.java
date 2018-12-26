@@ -340,16 +340,14 @@ public class CommonMethodsImpl implements CommonMethodsI {
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("opening balance  " + opeAvailable);
 
-            final StringBuilder str1 = new StringBuilder("SELECT (case when sum(gl.debitAmount) = null then 0 else sum(gl.debitAmount) end" +
-                    " - case when sum(gl.creditAmount) = null then 0 else sum(gl.creditAmount) end) + " +
-                    opeAvailable +
-                    ""
-                    +
-                    " as \"totalAmount\"" +
-                    " FROM generalLedger gl, voucherHeader vh" +
-                    " WHERE vh.id = gl.voucherHeaderId AND gl.glCodeid = (select glcodeid from bankaccount where id = :bankAccountId) AND" +
-                    " vh.voucherDate >= (SELECT TO_CHAR(startingDate, 'dd-Mon-yyyy') FROM financialYear WHERE startingDate <= :vcDate" +
-                    " AND endingDate >= :vcDate) AND vh.voucherDate <= :vcDate");
+            final StringBuilder str1 = new StringBuilder("SELECT (case when sum(gl.debitAmount) = null then 0 else sum(gl.debitAmount) end")
+                    .append(" - case when sum(gl.creditAmount) = null then 0 else sum(gl.creditAmount) end) + ")
+                    .append(opeAvailable)
+                    .append(" as \"totalAmount\"")
+                    .append(" FROM generalLedger gl, voucherHeader vh")
+                    .append(" WHERE vh.id = gl.voucherHeaderId AND gl.glCodeid = (select glcodeid from bankaccount where id = :bankAccountId) AND")
+                    .append(" vh.voucherDate >= (SELECT TO_CHAR(startingDate, 'dd-Mon-yyyy') FROM financialYear WHERE startingDate <= :vcDate")
+                    .append(" AND endingDate >= :vcDate) AND vh.voucherDate <= :vcDate");
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(str1);
             rset = persistenceService.getSession().createNativeQuery(str1.toString())
