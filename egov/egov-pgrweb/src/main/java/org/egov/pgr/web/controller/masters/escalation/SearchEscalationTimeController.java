@@ -72,7 +72,7 @@ public class SearchEscalationTimeController {
     private ComplaintEscalationService escalationService;
 
     @ModelAttribute
-    public EscalationRequest escalationForm() {
+    public EscalationRequest escalationRequest() {
         return new EscalationRequest();
     }
 

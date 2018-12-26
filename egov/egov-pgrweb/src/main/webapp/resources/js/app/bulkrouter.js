@@ -54,7 +54,7 @@ $(document).ready(function () {
         } else {
             $.ajax({
                 type: "GET",
-                url: "/pgr/complainttypes/by-category",
+                url: "/pgr/complainttype/by-category",
                 cache: true,
                 data: {'categoryId': this.value}
             }).done(function (data) {

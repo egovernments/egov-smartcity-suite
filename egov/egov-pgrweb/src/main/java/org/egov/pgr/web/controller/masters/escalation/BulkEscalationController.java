@@ -88,7 +88,7 @@ public class BulkEscalationController {
     }
 
     @ModelAttribute
-    public BulkEscalationRequest bulkEscalationGenerator() {
+    public BulkEscalationRequest bulkEscalationRequest() {
         return new BulkEscalationRequest();
     }
 

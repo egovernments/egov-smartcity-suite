@@ -62,7 +62,7 @@
             <div class="alert alert-danger" role="alert"><spring:message code="${warning}"/></div>
         </c:if>
         <form:form id="viewEscalation" method="post" class="form-horizontal form-groups-bordered"
-                   modelAttribute="escalationForm">
+                   modelAttribute="escalationRequest">
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading ">
                     <div class="panel-title">
@@ -120,7 +120,7 @@
         </form:form>
 
         <form:form id="saveEscalationForm" method="post" class="form-horizontal form-groups-bordered"
-                   modelAttribute="escalationForm">
+                   modelAttribute="escalationRequest">
             <div id="escalationDiv" class="hidden">
                 <form:hidden path="position.id" id="formpositionId" value="${position.id}"/>
                 <form:hidden path="position.name" id="formpositionName" value="${position.name}"/>
@@ -137,7 +137,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <c:forEach var="contact" items="${escalationForm.escalationHierarchyList}" varStatus="status">
+                    <c:forEach var="contact" items="${escalationRequest.escalationHierarchyList}" varStatus="status">
                         <tr>
                             <td>
                                 <input type=hidden

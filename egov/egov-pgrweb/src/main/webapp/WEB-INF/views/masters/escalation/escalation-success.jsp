@@ -59,7 +59,7 @@
 					<strong><spring:message code="${message}"/></strong>
 				</div>
 			</div>
-			<form:form id="searchEscalationForm" method="post" modelAttribute="escalationForm"
+			<form:form id="searchEscalationForm" method="post" modelAttribute="escalationRequest"
 				class="form-horizontal form-groups-bordered">
 				<div class="panel-body">
 					<div class="row">
@@ -67,7 +67,7 @@
 							<spring:message code="lbl.escalation.position" />
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin view-content" id="posName">
-							<c:out value="${escalationForm.position.name}"></c:out>
+							<c:out value="${escalationRequest.position.name}"></c:out>
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin">
 						</div>

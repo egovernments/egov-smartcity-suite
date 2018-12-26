@@ -143,7 +143,7 @@
 			</c:if>
 			<form:form id="searchEscalationTimeForm" method="post"
 				class="form-horizontal form-groups-bordered"
-				modelAttribute="escalationForm">
+				modelAttribute="escalationRequest">
 				<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-heading ">
 						<div class="panel-title">
@@ -192,14 +192,14 @@
 					</c:if>
 				</div>
 			</form:form>
-			<form id="saveEscalationTimeForm" method="post"	class="form-horizontal form-groups-bordered" modelAttribute="escalationForm">
+			<form id="saveEscalationTimeForm" method="post"	class="form-horizontal form-groups-bordered" modelAttribute="escalationRequest">
 				<div id="escalationDiv" class="hidden">
-					<form:hidden path="escalationForm.complaintType.id"
+					<form:hidden path="escalationRequest.complaintType.id"
 						id="formcomplaintTypeId"
-						value="${escalationForm.complaintType.id}" />
-					<form:hidden path="escalationForm.complaintType.name"
+						value="${escalationRequest.complaintType.id}" />
+					<form:hidden path="escalationRequest.complaintType.name"
 						id="formcomplaintTypename"
-						value="${escalationForm.complaintType.name}" />
+						value="${escalationRequest.complaintType.name}" />
 					<table id="escalationTable" table width="100%" border="0" cellpadding="0" cellspacing="0" class="table table-bordered">
 						<thead>
 							<tr>
@@ -210,7 +210,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							<c:forEach var="contact" items="${escalationForm.escalationList}" varStatus="status">
+							<c:forEach var="contact" items="${escalationRequest.escalationList}" varStatus="status">
 								<tr>
 									<td>${status.count}</td>
 									<td><input type="text"
