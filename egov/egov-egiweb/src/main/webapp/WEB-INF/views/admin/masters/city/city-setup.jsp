@@ -421,6 +421,7 @@
                                     <spring:message code="help.city.recaptcha.pvt.key" htmlEscape="false"/>
                                 </c:set>
                                 <div class="col-sm-6" style="padding-top: 7px">
+                                    <input style="display:none" type="password">
                                     <form:input path="preferences.recaptchaPK" id="recaptchaPK" type="password"
                                                 data-toggle="popover" data-trigger="focus" data-placement="right"
                                                 data-content="${helptext}" maxlength="64"
@@ -437,6 +438,7 @@
                                     <spring:message code="help.city.recaptcha.pub.key" htmlEscape="false"/>
                                 </c:set>
                                 <div class="col-sm-6" style="padding-top: 7px">
+                                    <input style="display:none" type="password">
                                     <form:input path="preferences.recaptchaPub" id="recaptchaPub" type="password"
                                                 data-toggle="popover" data-trigger="focus" data-placement="right"
                                                 data-content="${helptext}" maxlength="64"
@@ -454,6 +456,7 @@
                                     <spring:message code="help.city.google.api.key" htmlEscape="false"/>
                                 </c:set>
                                 <div class="col-sm-6" style="padding-top: 7px">
+                                    <input style="display:none" type="password">
                                     <form:input path="preferences.googleApiKey" id="googleApiKey" type="password"
                                                 data-toggle="popover" data-trigger="focus" data-placement="right"
                                                 data-content="${helptext}" maxlength="50"

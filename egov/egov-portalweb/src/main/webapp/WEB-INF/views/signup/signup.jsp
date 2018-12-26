@@ -168,6 +168,7 @@
                             <div class="input-group-addon style-label">
                                 <i class="fa fa-key fa-fw theme-color style-color"></i>
                             </div>
+                            <input style="display:none" type="password">
                             <input type="password" class="form-control style-form check-password" name="con-password" id="con-password" placeholder="Confirm password"
                                    autocomplete="new-password" required="required" maxlength="32"/>
                             <span class="mandatory set-mandatory"></span>

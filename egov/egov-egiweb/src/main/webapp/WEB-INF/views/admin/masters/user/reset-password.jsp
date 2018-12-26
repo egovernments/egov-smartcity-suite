@@ -62,7 +62,7 @@
             </div>
             <div class="panel-body custom-form">
                 <form:form id="password-form" cssClass="form-horizontal form-groups-bordered">
-                    <input style="display:none" type="text">
+                    <input style="display:none" type="password">
                     <input style="display:none" type="password"/>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">
@@ -78,6 +78,7 @@
                             <spring:message code="lbl.new.pwd"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-6 add-margin">
+                            <input style="display:none" type="password">
                             <input type="password" name="password" class="form-control" id="password" value="demo" autocomplete="off" required="required" maxlength="32"/>
                         </div>
                     </div>

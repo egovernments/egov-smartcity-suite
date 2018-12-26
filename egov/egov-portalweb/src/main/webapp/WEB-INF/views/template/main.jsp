@@ -122,7 +122,8 @@
                             <label class="control-label">Old Password</label>
                         </div>
                         <div class="col-md-8 add-margin">
-                            <input type="password" class="form-control" id="old-pass">
+                            <input style="display:none" type="password">
+                            <input type="password" class="form-control" id="old-pass" autocomplete="new-password">
                         </div>
                     </div>
                     <div class="form-group">
@@ -130,7 +131,8 @@
                             <label class="control-label">New Password</label>
                         </div>
                         <div class="col-md-8 add-margin">
-                            <input type="password" class="form-control checkpassword" id="new-pass">
+                            <input style="display:none" type="password">
+                            <input type="password" class="form-control checkpassword" id="new-pass" autocomplete="new-password">
                         </div>
                     </div>
                     <div class="form-group">
@@ -138,7 +140,8 @@
                             <label class="control-label">Re-type Password</label>
                         </div>
                         <div class="col-md-8 add-margin">
-                            <input type="password" class="form-control checkpassword" id="retype-pass">
+                            <input style="display:none" type="password">
+                            <input type="password" class="form-control checkpassword" id="retype-pass" autocomplete="new-password">
                             <div class="password-error error-msg display-hide">Password is incorrect</div>
                         </div>
                     </div>
