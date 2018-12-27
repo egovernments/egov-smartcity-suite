@@ -266,7 +266,6 @@ public class CommonWaterTaxSearchController {
             if (waterConnectionDetails.getCloseConnectionType() != null
                     && PERMENENTCLOSECODE.equals(waterConnectionDetails.getCloseConnectionType())) {
             	if(APPLICATION_STATUS_CLOSERSANCTIONED.equals(waterConnectionDetails.getStatus().getCode())){
-
                 model.addAttribute(APPLICATIONTYPE, applicationType);
                 model.addAttribute(MODE, ERROR_MODE);
                 resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_APPLY_FOR_NEWCONNECTION,new String[] { waterConnectionDetails.getApplicationType().getName(),
@@ -285,11 +284,21 @@ public class CommonWaterTaxSearchController {
                 
              else if (waterConnectionDetails.getCloseConnectionType() != null
                         && TEMPERARYCLOSECODE.equals(waterConnectionDetails.getCloseConnectionType())) {
+                  	if(APPLICATION_STATUS_CLOSERSANCTIONED.equals(waterConnectionDetails.getStatus().getCode())){
                     model.addAttribute(APPLICATIONTYPE, applicationType);
                     model.addAttribute(MODE, ERROR_MODE);
                     resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_APPLY_FOR_RECONNECTION,new String[] { waterConnectionDetails.getApplicationType().getName(),
                             waterConnectionDetails.getApplicationNumber() },ERR_APPLY_FOR_RECONNECTION);
                     return COMMON_FORM_SEARCH;
+                  	}
+                  	else
+                  	{
+                        model.addAttribute(MODE, ERROR_MODE);
+                        model.addAttribute(APPLICATIONTYPE, applicationType);
+                        resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_CLOSURE_NOT_ALLOWED,new String[] { waterConnectionDetails.getApplicationType().getName(),
+                        waterConnectionDetails.getApplicationNumber() },ERR_CLOSURE_NOT_ALLOWED);
+                        return COMMON_FORM_SEARCH;
+                    }	
                 }
              else if ((waterConnectionDetails.getApplicationType().getCode().equals(NEWCONNECTION)
                     || waterConnectionDetails.getApplicationType().getCode().equals(ADDNLCONNECTION)
