@@ -65,6 +65,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="description" content="eGov Urban Portal"/>
     <meta name="author" content="eGovernments Foundation"/>
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
     <spring:eval expression="@environment.getProperty('user.pwd.strength')" var="pwdstrengthmsg"/>
     <spring:message code="usr.pwd.strength.msg.${pwdstrengthmsg}" var="pwdmsg"/>
     <title>Citizen Signup</title>
@@ -80,6 +82,10 @@
     <script src="<cdn:url value='/resources/global/js/ie8/html5shiv.min.js' context='/egi'/>"></script>
     <script src="<cdn:url value='/resources/global/js/ie8/respond.min.js' context='/egi'/>"></script>
     <![endif]-->
+    <script>
+        const tokenVal = '${_csrf.token}';
+        const tokenName = '${_csrf.parameterName}';
+    </script>
 </head>
 <body class="page-body">
 <div class="page-container">
@@ -419,5 +425,6 @@
 <script src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script src="<cdn:url value='/resources/global/js/egov/custom.js?rnd=${app_release_no}' context='/egi'/>" type="text/javascript"></script>
 <script src="<cdn:url value='/resources/js/signup.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/global/js/egov/csrf.js?rnd=${app_release_no}' context='/egi'/>"></script>
 </body>
 </html>						
