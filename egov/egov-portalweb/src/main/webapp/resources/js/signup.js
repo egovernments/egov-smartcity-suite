@@ -91,6 +91,7 @@ $(document).ready(function () {
             if ($(this).val()) {
                 $.ajax({
                     url: "signup/validate-pwd",
+                    type: "POST",
                     dataType: "json",
                     data: {"pswd": $(this).val()},
                     success: function (data) {
@@ -138,6 +139,7 @@ $(document).ready(function () {
         $.ajax({
             url: "signup/otp/" + $('#mobileNumber').val(),
             dataType: "json",
+            type: "POST",
             success: function (data) {
                 if (data) {
                     console.log('OTP sent');
