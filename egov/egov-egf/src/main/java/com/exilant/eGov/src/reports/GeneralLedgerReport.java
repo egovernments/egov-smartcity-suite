@@ -113,12 +113,12 @@ public class GeneralLedgerReport {
     public static StringBuffer numberToString(final String strNumberToConvert) {
         String strNumber = "", signBit = "";
         if (strNumberToConvert.startsWith("-")) {
-            strNumber = "" + strNumberToConvert.substring(1, strNumberToConvert.length());
+            strNumber = String.valueOf(strNumberToConvert.substring(1, strNumberToConvert.length()));
             signBit = "-";
         } else
-            strNumber = "" + strNumberToConvert;
+            strNumber = String.valueOf(strNumberToConvert);
         final DecimalFormat dft = new DecimalFormat("##############0.00");
-        final String strtemp = "" + dft.format(Double.parseDouble(strNumber));
+        final String strtemp = String.valueOf(dft.format(Double.parseDouble(strNumber)));
         StringBuffer strbNumber = new StringBuffer(strtemp);
         final int intLen = strbNumber.length();
 
@@ -179,7 +179,7 @@ public class GeneralLedgerReport {
             dt = sdf.parse(endDate);
             formendDate = formatter1.format(dt);
         } catch (final Exception e) {
-            LOGGER.error("inside the try-startdate" + e, e);
+            LOGGER.error("inside the try-startdate" , e);
             throw taskExc;
         }
         try {
@@ -200,7 +200,7 @@ public class GeneralLedgerReport {
             } else
                 startDate = formstartDate;
         } catch (final Exception e) {
-            LOGGER.error("inside the try-startdate" + e, e);
+            LOGGER.error("inside the try-startdate", e);
             throw taskExc;
         }
 
@@ -213,7 +213,7 @@ public class GeneralLedgerReport {
             dt = formatter1.parse(startDateformat);
             startDateformat1 = sdf.format(dt);
         } catch (final Exception e) {
-            LOGGER.error("Parse Exception" + e, e);
+            LOGGER.error("Parse Exception" , e);
             throw taskExc;
         }
         Date dd = new Date();
@@ -426,7 +426,7 @@ public class GeneralLedgerReport {
                         arr9[4] = numberToString(((Double) txnDebit).toString()) + "";
                         arr9[5] = "";
                         if (narration != null)
-                            arr9[6] = "" + narration;
+                            arr9[6] = String.valueOf(narration);
                         else
                             arr9[6] = "";
                         arr9[7] = cgn;
@@ -449,10 +449,10 @@ public class GeneralLedgerReport {
                         arr9[1] = "";
                         arr9[2] = "";
                         arr9[3] = detail.toString();
-                        arr9[5] = numberToString(((Double) txnCredit).toString()) + "";
+                        arr9[5] = String.valueOf(numberToString(((Double) txnCredit).toString()));
                         arr9[4] = "";
                         if (narration != null)
-                            arr9[6] = "" + narration;
+                            arr9[6] = String.valueOf(narration);
                         else
                             arr9[6] = "";
                         arr9[7] = cgn;
@@ -568,22 +568,22 @@ public class GeneralLedgerReport {
                         amount.delete(lenBeforeAppend, lenAfterAppend);
                         detail.delete(lenDetailBefore, lenDetailAfter);
 
-                        detail = detail.append(" " + element[6].toString() + "" + element[8].toString());
+                        detail = detail.append(element[6].toString().concat(element[8].toString()));
                         currentDebit = Double.parseDouble(element[11].toString());
                         currentCredit = Double.parseDouble(element[12].toString());
                         debit = previousDebit + currentDebit - (previousCredit + currentCredit);
                         if (debit > 0) {
-                            debitAmount = "Dr." + ExilPrecision.convertToString(debit, 2) + "0";
-                            amount = amount.append(" " + debitAmount);
+                            debitAmount = "Dr.".concat(ExilPrecision.convertToString(debit, 2)).concat("0");
+                            amount = amount.append(String.valueOf(debitAmount));
                         }
                         credit = previousCredit + currentCredit - (previousDebit + currentDebit);
                         if (credit > 0) {
-                            creditAmount = "Cr." + ExilPrecision.convertToString(credit, 2) + "0";
-                            amount = amount.append(" " + creditAmount);
+                            creditAmount = "Cr.".concat(ExilPrecision.convertToString(credit, 2)).concat("0");
+                            amount = amount.append(String.valueOf(creditAmount));
                         }
 
                     } else {
-                        detail = detail.append(" " + element[6].toString() + "" + element[8].toString());
+                        detail = detail.append(element[6].toString().concat(element[8].toString()));
                         previousDebit = Double.parseDouble(element[11].toString());
                         previousCredit = Double.parseDouble(element[12].toString());
                     }
@@ -662,27 +662,27 @@ public class GeneralLedgerReport {
                         amount.delete(lenBeforeAppend, lenAfterAppend);
                         detail.delete(lenDetailBefore, lenDetailAfter);
 
-                        detail = detail.append(" " + element[6].toString() + "" + element[8].toString());
+                        detail = detail.append(element[6].toString().concat(element[8].toString()));
                         currentDebit = Double.parseDouble(element[11].toString());
                         currentCredit = Double.parseDouble(element[12].toString());
                         debit = previousDebit + currentDebit - (previousCredit + currentCredit);
                         if (debit > 0) {
-                            debitAmount = "Dr." + ExilPrecision.convertToString(debit, 2) + "0";
-                            amount = amount.append(" " + debitAmount);
+                            debitAmount = "Dr.".concat(ExilPrecision.convertToString(debit, 2)).concat("0");
+                            amount = amount.append(String.valueOf(debitAmount));
                         }
                         credit = previousCredit + currentCredit - (previousDebit + currentDebit);
                         if (credit > 0) {
-                            creditAmount = "Cr." + ExilPrecision.convertToString(credit, 2) + "0";
-                            amount = amount.append(" " + creditAmount);
+                            creditAmount = "Cr.".concat(ExilPrecision.convertToString(credit, 2)).concat("0");
+                            amount = amount.append(String.valueOf(creditAmount));
                         }
 
                     } else {
-                        detail = detail.append(" " + element[6].toString() + "" + element[8].toString());
+                        detail = detail.append(element[6].toString().concat(element[8].toString()));
                         previousDebit = Double.parseDouble(element[11].toString());
                         previousCredit = Double.parseDouble(element[12].toString());
                     }
                 } else if (vhId != 0 && !accEntityKey.equals(""))
-                    detail = detail.append(" " + element[6].toString() + "" + element[8].toString());
+                    detail = detail.append(element[6].toString().concat(element[8].toString()));
 
                 accCodePrevious = accCode;
                 VhidPrevious = vhId;
@@ -695,11 +695,11 @@ public class GeneralLedgerReport {
                         arr[14] = voucherHeaderId;
                         arr[2] = detail.toString();
                         arr[3] = "";
-                        arr[4] = numberToString(((Double) txnDebit).toString()) + "";
+                        arr[4] = String.valueOf(numberToString(((Double) txnDebit).toString()));
                         arr[5] = "";
 
                         if (narration != null)
-                            arr[6] = "" + narration;
+                            arr[6] = String.valueOf(narration);
                         else
                             arr[6] = "";
                         txnDrSum = txnDrSum + txnDebit;
@@ -720,9 +720,9 @@ public class GeneralLedgerReport {
                         arr[2] = "";
                         arr[3] = detail.toString();
                         arr[4] = "";
-                        arr[5] = numberToString(((Double) txnCredit).toString()) + "";
+                        arr[5] = String.valueOf(numberToString(((Double) txnCredit).toString()));
                         if (narration != null)
-                            arr[6] = "" + narration;
+                            arr[6] = String.valueOf(narration);
                         else
                             arr[6] = "";
                         txnDrSum = txnDrSum + txnDebit;
@@ -750,10 +750,10 @@ public class GeneralLedgerReport {
                     if (closingBalance > 0) {
                         txnCrSum = txnCrSum + Math.abs(closingBalance);
                         arr2[4] = "";
-                        arr2[5] = "" + numberToString(((Double) Math.abs(closingBalance)).toString()).toString() + "";
+                        arr2[5] = String.valueOf(numberToString(((Double) Math.abs(closingBalance)).toString()).toString());
                     } else if (closingBalance < 0) {
                         txnDrSum = txnDrSum + Math.abs(closingBalance);
-                        arr2[4] = "" + numberToString(((Double) Math.abs(closingBalance)).toString()).toString() + "";
+                        arr2[4] = String.valueOf(numberToString(((Double) Math.abs(closingBalance)).toString()).toString());
                         arr2[5] = "";
                     } else {
                         arr2[4] = "";
@@ -766,11 +766,11 @@ public class GeneralLedgerReport {
                     data.add(arr2);
                     final String arr1[] = new String[15];
                     if (txnDrSum > 0)
-                        arr1[4] = "" + numberToString(((Double) txnDrSum).toString()) + "";
+                        arr1[4] = String.valueOf(numberToString(((Double) txnDrSum).toString()));
                     else
                         arr1[4] = "";
                     if (txnCrSum > 0)
-                        arr1[5] = "" + numberToString(((Double) txnDrSum).toString()) + "";
+                        arr1[5] = String.valueOf(numberToString(((Double) txnDrSum).toString()));
                     else
                         arr1[5] = "";
                     arr1[2] = "";
@@ -846,7 +846,7 @@ public class GeneralLedgerReport {
             }
 
         } catch (final Exception ex) {
-            LOGGER.error("ERROR in getGeneralLedgerList " + ex.toString(), ex);
+            LOGGER.error("ERROR in getGeneralLedgerList " , ex);
             throw taskExc;
         }
         return dataList;
@@ -1203,7 +1203,7 @@ public class GeneralLedgerReport {
                 throw taskExc;
 
         } catch (final Exception ex) {
-            LOGGER.error("Exception in isCurDate():" + ex, ex);
+            LOGGER.error("Exception in isCurDate():" , ex);
             throw new TaskFailedException("Date Should be within the today's date");
         }
 

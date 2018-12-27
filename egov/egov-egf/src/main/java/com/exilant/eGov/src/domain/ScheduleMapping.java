@@ -161,7 +161,7 @@ public class ScheduleMapping {
         try {
             lastModifiedDate = formatter.format(sdf.parse(lastModifiedDate));
         } catch (final ParseException parseExp) {
-            LOGGER.error("error inside newUpdate" + parseExp.getMessage(), parseExp);
+            LOGGER.error("error inside newUpdate" , parseExp);
         }
         setLastModifiedDate(lastModifiedDate);
         final StringBuilder query = new StringBuilder();

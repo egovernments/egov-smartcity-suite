@@ -112,14 +112,12 @@ public class CashBook {
     public static StringBuffer numberToString(final String strNumberToConvert) {
         String strNumber = "", signBit = "";
         if (strNumberToConvert.startsWith("-")) {
-            strNumber = ""
-                    + strNumberToConvert.substring(1,
-                    strNumberToConvert.length());
+            strNumber = String.valueOf(strNumberToConvert.substring(1,strNumberToConvert.length()));
             signBit = "-";
         } else
-            strNumber = "" + strNumberToConvert;
+            strNumber = String.valueOf(strNumberToConvert);
         final DecimalFormat dft = new DecimalFormat("##############0.00");
-        final String strtemp = "" + dft.format(Double.parseDouble(strNumber));
+        final String strtemp = String.valueOf(dft.format(Double.parseDouble(strNumber)));
         StringBuffer strbNumber = new StringBuffer(strtemp);
         final int intLen = strbNumber.length();
 
@@ -299,10 +297,8 @@ public class CashBook {
             chequecreditTotal = chequeOpeningBalance;
             final GeneralLedgerReportBean glbeanOpBal = new GeneralLedgerReportBean();
             glbeanOpBal.setRcptParticulars("<B>To Opening Balance</B>");
-            glbeanOpBal.setRcptcashInHandAmt("<B>"
-                    + numberToString(cashOpeningBalance.toString()) + "</B>");
-            glbeanOpBal.setRcptChqInHandAmt("<B>"
-                    + numberToString(chequeOpeningBalance.toString()) + "</B>");
+            glbeanOpBal.setRcptcashInHandAmt("<B>".concat(numberToString(String.valueOf(cashOpeningBalance)).toString()).concat("</B>"));
+            glbeanOpBal.setRcptChqInHandAmt("<B>".concat(numberToString(String.valueOf(chequeOpeningBalance)).toString()).concat("</B>"));
             dataList.add(glbeanOpBal);
 
             int count2skip1stRow = 0;
@@ -420,34 +416,21 @@ public class CashBook {
                             final GeneralLedgerReportBean glbeanCb = new GeneralLedgerReportBean(
                                     "&nbsp;");
                             glbeanCb.setPmtParticulars("<B>Closing: By balance c/d</B>");
-                            glbeanCb.setPmtCashInHandAmt("<B>"
-                                    + numberToString(cashcreditTotal.subtract(
-                                    cashdebitTotal).toString())
-                                    + "</B>");
-                            glbeanCb.setPmtChqInHandAmt("<B>"
-                                    + numberToString(chequecreditTotal
-                                    .subtract(chequedebitTotal)
-                                    .toString()) + "</B>");
+                            glbeanCb.setPmtCashInHandAmt("<B>".concat(String.valueOf(numberToString(cashcreditTotal.subtract(
+                                    cashdebitTotal).toString()))).concat("</B>"));
+                            glbeanCb.setPmtChqInHandAmt("<B>".concat(String.valueOf(numberToString(chequecreditTotal
+                                    .subtract(chequedebitTotal).toString()))).concat("</B>"));
                             dataList.add(glbeanCb);
                             final GeneralLedgerReportBean glbean1 = new GeneralLedgerReportBean(
                                     "<hr>&nbsp;</hr>");
                             glbean1.setRcptVchrDate("<hr><B>Total</B></hr>");
-                            glbean1.setRcptcashInHandAmt("<hr><B>"
-                                    + numberToString(cashcreditTotal.toString())
-                                    + "</B></hr>");
-                            glbean1.setPmtCashInHandAmt("<hr><B>"
-                                    + numberToString(cashdebitTotal.add(
-                                    cashcreditTotal
-                                            .subtract(cashdebitTotal))
-                                    .toString()) + "</B></hr>");
-                            glbean1.setRcptChqInHandAmt("<hr><B>"
-                                    + numberToString(chequecreditTotal
-                                    .toString()) + "</B></hr>");
-                            glbean1.setPmtChqInHandAmt("<hr><B>"
-                                    + numberToString(chequedebitTotal
-                                    .add(chequecreditTotal
-                                            .subtract(chequedebitTotal))
-                                    .toString()) + "</B></hr>");
+                            glbean1.setRcptcashInHandAmt("<hr><B>".concat(String.valueOf(numberToString(cashcreditTotal.toString())))
+                                    .concat("</B></hr>"));
+                            glbean1.setPmtCashInHandAmt("<hr><B>".concat(String.valueOf(numberToString(cashdebitTotal.add(cashcreditTotal.
+                                    subtract(cashdebitTotal)).toString()))).concat("</B></hr>"));
+                            glbean1.setRcptChqInHandAmt("<hr><B>".concat(String.valueOf(numberToString(chequecreditTotal.toString()))).concat("</B></hr>"));
+                            glbean1.setPmtChqInHandAmt("<hr><B>".concat(String.valueOf(numberToString(chequedebitTotal.add(chequecreditTotal
+                                    .subtract(chequedebitTotal)).toString()))).concat("</B></hr>"));
                             dataList.add(glbean1);
                             if (LOGGER.isInfoEnabled())
                                 LOGGER.info(cashcreditTotal + ":crDr: "
@@ -457,14 +440,10 @@ public class CashBook {
                             glbeanOb.setRcptParticulars("<hr><B>Opening: To balance b/d</B></hr>");
                             // glbeanOb.setRcptcashInHandAmt("<hr><B>"+(numberformatter.format(cashcreditTotal.subtract(cashdebitTotal).doubleValue()))+"</B></hr>");
                             // glbeanOb.setRcptChqInHandAmt("<hr><B>"+(numberformatter.format(chequecreditTotal.subtract(chequedebitTotal).doubleValue()))+"</B></hr>");
-                            glbeanOb.setRcptcashInHandAmt("<hr><B>"
-                                    + numberToString(cashcreditTotal.subtract(
-                                    cashdebitTotal).toString())
-                                    + "</B></hr>");
-                            glbeanOb.setRcptChqInHandAmt("<hr><B>"
-                                    + numberToString(chequecreditTotal
-                                    .subtract(chequedebitTotal)
-                                    .toString()) + "</B></hr>");
+                            glbeanOb.setRcptcashInHandAmt("<hr><B>".concat(String.valueOf(numberToString(cashcreditTotal.subtract(
+                                    cashdebitTotal).toString()))).concat("</B></hr>"));
+                            glbeanOb.setRcptChqInHandAmt("<hr><B>".concat(String.valueOf(numberToString(chequecreditTotal.subtract(chequedebitTotal)
+                                    .toString()))).concat("</B></hr>"));
                             dataList.add(glbeanOb);
                             cashcreditTotal = cashcreditTotal
                                     .subtract(cashdebitTotal);
@@ -506,16 +485,14 @@ public class CashBook {
                             wordLength = element2.length();
                             if (formatedName.length()
                                     - formatedName.lastIndexOf("<Br>") + wordLength < 25)
-                                formatedName = formatedName + " " + element2;
+                                formatedName = formatedName.concat(element2);
                             else {
-                                formatedName = formatedName.concat("<Br>"
-                                        + element2);
+                                formatedName = formatedName.concat("<Br>".concat(element2));
                                 bLine = bLine.concat("<Br>");
                             }
                         }
-                        detail = detail.append(" " + formatedName + "<br>");
-                        accCodebuffer = accCodebuffer.append(" " + accCode
-                                + bLine);
+                        detail = detail.append(formatedName.concat("<br>"));
+                        accCodebuffer = accCodebuffer.append(accCode.concat(bLine));
                         currentDebit = new BigDecimal(element[17].toString());
                         currentCredit = new BigDecimal(element[18].toString());
                         if (LOGGER.isInfoEnabled())
@@ -534,9 +511,7 @@ public class CashBook {
                             // amount=amount.append(" " +
                             // numberformatter.format(currentDebit.doubleValue())
                             // + bLine);
-                            amount = amount.append(" "
-                                    + numberToString(currentDebit.toString())
-                                    + bLine);
+                            amount = amount.append(numberToString(currentDebit.toString()) + bLine);
                             if (purposeid.equalsIgnoreCase(cashPId))
                                 cashdebitTotal = cashdebitTotal
                                         .add(currentDebit);
@@ -651,68 +626,47 @@ public class CashBook {
                             final GeneralLedgerReportBean glbeanCb = new GeneralLedgerReportBean(
                                     "&nbsp;");
                             glbeanCb.setPmtParticulars("<B>Closing: By balance c/d</B>");
-                            glbeanCb.setPmtCashInHandAmt("<B>"
-                                    + numberToString(cashcreditTotal.subtract(
-                                    cashdebitTotal).toString())
-                                    + "</B>");
-                            glbeanCb.setPmtChqInHandAmt("<B>"
-                                    + numberToString(chequecreditTotal
-                                    .subtract(chequedebitTotal)
-                                    .toString()) + "</B>");
+                            glbeanCb.setPmtCashInHandAmt("<B>".concat(String.valueOf(numberToString(cashcreditTotal
+                                    .subtract(cashdebitTotal).toString()))).concat("</B>"));
+                            glbeanCb.setPmtChqInHandAmt("<B>".concat(String.valueOf(numberToString(chequecreditTotal
+                                    .subtract(chequedebitTotal).toString()))).concat("</B>"));
                             dataList.add(glbeanCb);
 
                             final GeneralLedgerReportBean glbean1 = new GeneralLedgerReportBean(
                                     "<hr>&nbsp;</hr>");
                             glbean1.setRcptVchrDate("<hr><B>Total</B></hr>");
-                            glbean1.setRcptcashInHandAmt("<hr><B>"
-                                    + numberToString(cashcreditTotal.toString())
-                                    + "</B></hr>");
-                            glbean1.setPmtCashInHandAmt("<hr><B>"
-                                    + numberToString(cashdebitTotal.add(
-                                    cashcreditTotal
-                                            .subtract(cashdebitTotal))
-                                    .toString()) + "</B></hr>");
-                            glbean1.setRcptChqInHandAmt("<hr><B>"
-                                    + numberToString(chequecreditTotal
-                                    .toString()) + "</B></hr>");
-                            glbean1.setPmtChqInHandAmt("<hr><B>"
-                                    + numberToString(chequedebitTotal
-                                    .add(chequecreditTotal
-                                            .subtract(chequedebitTotal))
-                                    .toString()) + "</B></hr>");
+                            glbean1.setRcptcashInHandAmt("<hr><B>".concat(String.valueOf(numberToString(cashcreditTotal.toString())))
+                                    .concat("</B></hr>"));
+                            glbean1.setPmtCashInHandAmt("<hr><B>".concat(String.valueOf(numberToString(cashdebitTotal.add(cashcreditTotal.subtract(cashdebitTotal))
+                                    .toString()))).concat("</B></hr>"));
+                            glbean1.setRcptChqInHandAmt("<hr><B>".concat(String.valueOf(numberToString(chequecreditTotal
+                                    .toString()))).concat("</B></hr>"));
+                            glbean1.setPmtChqInHandAmt("<hr><B>".concat(String.valueOf(numberToString(chequedebitTotal.add(chequecreditTotal
+                                            .subtract(chequedebitTotal)).toString()))).concat("</B></hr>"));
                             dataList.add(glbean1);
                             final GeneralLedgerReportBean glbeanOb = new GeneralLedgerReportBean(
                                     "<hr>&nbsp;</hr>");
                             glbeanOb.setRcptParticulars("<hr><B>Opening: To balance b/d</B></hr>");
-                            glbeanOb.setRcptcashInHandAmt("<hr><B>"
-                                    + numberToString(cashcreditTotal.subtract(
-                                    cashdebitTotal).toString())
-                                    + "</B></hr>");
-                            glbeanOb.setRcptcashInHandAmt("<hr><B>"
-                                    + numberToString(cashcreditTotal.subtract(
-                                    cashdebitTotal).toString())
-                                    + "</B></hr>");
-                            glbeanOb.setRcptChqInHandAmt("<hr><B>"
-                                    + numberToString(chequecreditTotal
-                                    .subtract(chequedebitTotal)
-                                    .toString()) + "</B></hr>");
-                            glbeanOb.setRcptChqInHandAmt("<hr><B>"
-                                    + numberToString(chequecreditTotal
-                                    .subtract(chequedebitTotal)
-                                    .toString()) + "</B></hr>");
+                            glbeanOb.setRcptcashInHandAmt("<hr><B>".concat(String.valueOf(numberToString(cashcreditTotal.subtract(
+                                    cashdebitTotal).toString()))).concat("</B></hr>"));
+                            glbeanOb.setRcptcashInHandAmt("<hr><B>".concat(String.valueOf(numberToString(cashcreditTotal.subtract(
+                                    cashdebitTotal).toString()))).concat("</B></hr>"));
+                            glbeanOb.setRcptChqInHandAmt("<hr><B>".concat(String.valueOf(numberToString(chequecreditTotal
+                                    .subtract(chequedebitTotal).toString()))).concat("</B></hr>"));
+                            glbeanOb.setRcptChqInHandAmt("<hr><B>".concat(String.valueOf(numberToString(chequecreditTotal
+                                    .subtract(chequedebitTotal).toString()))).concat("</B></hr>"));
                             dataList.add(glbeanOb);
                         }
                     }
                 } catch (final Exception e) {
 
                     LOGGER.error(
-                            "error in resultset processing" + e.getMessage(), e);
+                            "error in resultset processing", e);
                     throw taskExc;
                 }
 
         } catch (final SQLException ex) {
-            LOGGER.error("ERROR in  getGeneralLedgerList " + ex.getMessage(),
-                    ex);
+            LOGGER.error("ERROR in  getGeneralLedgerList ",ex);
             throw taskExc;
         }
         if (LOGGER.isInfoEnabled())

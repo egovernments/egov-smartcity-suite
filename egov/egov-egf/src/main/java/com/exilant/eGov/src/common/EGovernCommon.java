@@ -188,10 +188,10 @@ public class EGovernCommon extends AbstractTask {
         } catch (final SQLGrammarException e) {
             databaseSequenceCreator.createSequence(sequenceName);
             cgvn = (BigInteger) databaseSequenceProvider.getNextSequence(sequenceName);
-            LOGGER.error("Error in generating CGVN" + e);
+            LOGGER.error("Error in generating CGVN" ,e);
             throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
         } catch (final Exception e) {
-            LOGGER.error("Error in generating CGVN" + e);
+            LOGGER.error("Error in generating CGVN" ,e);
             throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
         }
         return cgvn.toString();
@@ -271,7 +271,7 @@ public class EGovernCommon extends AbstractTask {
             if (rs.isEmpty())
                 isUnique = true;
         } catch (final Exception ex) {
-            datacol.addMessage(EXILRPERROR, "DataBase Error(isUniqueVN) : " + ex.toString());
+            datacol.addMessage(EXILRPERROR, "DataBase Error(isUniqueVN) : " , ex.toString());
             throw new TaskFailedException();
         }
         return isUnique;
@@ -348,12 +348,13 @@ public class EGovernCommon extends AbstractTask {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("opening balance  " + opeAvailable);
 
-            str = new StringBuilder("SELECT (case when sum(gl.debitAmount) = null then 0 else sum(gl.debitAmount) end) -" +
-                    " (case when sum(gl.creditAmount) = null then 0 else sum(gl.creditAmount) end) + " + opeAvailable + " as \"totalAmount\"" +
-                    " FROM generalLedger gl, voucherHeader vh" +
-                    " WHERE vh.id = gl.voucherHeaderId AND gl.glCodeid = (select glcodeid from bankaccount where id=:bankAccountId)" +
-                    " AND vh.voucherDate >= (SELECT TO_CHAR(startingDate, 'dd-Mon-yyyy') FROM financialYear WHERE startingDate <= :vcDate AND endingDate >= :vcDate)" +
-                    " AND vh.voucherDate <= :vcDate and vh.status != 4");
+            str = new StringBuilder("SELECT (case when sum(gl.debitAmount) = null then 0 else sum(gl.debitAmount) end) -")
+                    .append(" (case when sum(gl.creditAmount) = null then 0 else sum(gl.creditAmount) end)")
+                    .append(opeAvailable).append(" as \"totalAmount\"")
+                    .append(" FROM generalLedger gl, voucherHeader vh")
+                    .append(" WHERE vh.id = gl.voucherHeaderId AND gl.glCodeid = (select glcodeid from bankaccount where id=:bankAccountId)")
+                    .append(" AND vh.voucherDate >= (SELECT TO_CHAR(startingDate, 'dd-Mon-yyyy') FROM financialYear WHERE startingDate <= :vcDate AND endingDate >= :vcDate)")
+                    .append(" AND vh.voucherDate <= :vcDate and vh.status != 4");
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Curr Yr Bal: " + str);

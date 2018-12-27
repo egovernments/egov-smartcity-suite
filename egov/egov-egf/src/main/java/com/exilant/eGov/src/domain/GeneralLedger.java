@@ -215,7 +215,7 @@ public class GeneralLedger {
             nativeQuery.setParameter("id", id, StringType.INSTANCE)
                     .executeUpdate();
         } catch (final Exception e) {
-            LOGGER.error("Exp in update: " + e.getMessage());
+            LOGGER.error("Exp in update: " ,e);
             throw taskExc;
         }
     }
@@ -302,9 +302,7 @@ public class GeneralLedger {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("hmCopy------>" + hmFinal);
         } catch (final Exception e) {
-            LOGGER
-                    .error("Exception in getRecoveryForSubLedgerNotInFund():"
-                            + e);
+            LOGGER.error("Exception in getRecoveryForSubLedgerNotInFund():", e);
             throw taskExc;
         } finally {
         }
@@ -393,7 +391,7 @@ public class GeneralLedger {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("hmCopy------>" + hmFinal);
         } catch (final Exception e) {
-            LOGGER.error("Exception in getRecoveryForSubLedger():" + e);
+            LOGGER.error("Exception in getRecoveryForSubLedger():",e);
             throw taskExc;
         } finally {
         }

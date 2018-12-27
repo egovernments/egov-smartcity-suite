@@ -215,9 +215,9 @@ public class LoadSubLedgerData extends AbstractTask {
                         .append(" a.PassedAmount as \"passedAmount\", advadjamt as \"advance\", TDSamount as \"tds\", OtherRecoveries as \"otherRecoveries\",")
                         .append(" a.passedAmount-(advadjamt+tdsamount+otherrecoveries) as \"net\", a.PaidAmount - sph.paidamount as \"earlierPayment\", sph.paidamount as \"slph_paidAmount\",")
                         .append(" rownum as \"slNo\", '1' as \"billSelect\"")
-                        .append(" from " + relationBillTable + " a, voucherheader b, subledgerpaymentheader sph")
-                        .append(" where b.id = a.voucherheaderid and sph." + relationBillID + " = a.id and sph.voucherheaderid = (select id from voucherheader where cgn= :cgn)")
-                        .append(" and passedamount > (a.paidamount + tdsamount + advadjamt) - sph.paidamount and a." + relationTypeID + " = :payTo and b.fundid = :fundId")
+                        .append(" from ").append(relationBillTable).append(" a, voucherheader b, subledgerpaymentheader sph")
+                        .append(" where b.id = a.voucherheaderid and sph.").append(relationBillID).append(" = a.id and sph.voucherheaderid = (select id from voucherheader where cgn= :cgn)")
+                        .append(" and passedamount > (a.paidamount + tdsamount + advadjamt) - sph.paidamount and a.").append(relationTypeID).append(" = :payTo and b.fundid = :fundId")
                         .append(" and a.worksdetailid = :worksDetailId order by a.billDate");
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug(sql);

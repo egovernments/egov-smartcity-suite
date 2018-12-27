@@ -360,7 +360,7 @@ public class CommnFunctions {
                 .append(" WHERE (coa.TYPE = :type1 OR coa.TYPE = :type2) and coa.id = ts.glcodeid")
                 .append(" AND financialyearid = (SELECT ID FROM financialyear WHERE startingdate <= :startDate AND endingdate >= :endDate) ")
                 .append(fundCondition).append(" and f.id = ts.fundid and f.isactive = true and f.isnotleaf != true")
-                .append(" GROUP BY substr(coa.glcode, 0, " + substringVal + "), fundid, coa.type");
+                .append(" GROUP BY substr(coa.glcode, 0, ").append(substringVal).append( "), fundid, coa.type");
         if (LOGGER.isInfoEnabled())
             LOGGER.info("query " + query);
         try {
@@ -482,12 +482,12 @@ public class CommnFunctions {
     public StringBuffer numberToString(final String strNumberToConvert) {
         String strNumber = "", signBit = "";
         if (strNumberToConvert.startsWith("-")) {
-            strNumber = "" + strNumberToConvert.substring(1, strNumberToConvert.length());
+            strNumber = strNumberToConvert.substring(1, strNumberToConvert.length());
             signBit = "-";
         } else
-            strNumber = "" + strNumberToConvert;
+            strNumber = String.valueOf(strNumberToConvert);
         final DecimalFormat dft = new DecimalFormat("##############0.00");
-        final String strtemp = "" + dft.format(Double.parseDouble(strNumber));
+        final String strtemp = String.valueOf(dft.format(Double.parseDouble(strNumber)));
         StringBuffer strbNumber = new StringBuffer(strtemp);
         final int intLen = strbNumber.length();
 
