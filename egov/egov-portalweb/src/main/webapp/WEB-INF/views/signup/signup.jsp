@@ -145,7 +145,7 @@
                             </div>
                         </div>
                     </div>
-                    <input style="display:none" type="password">
+                    <input style="display:none" type="password"/>
                     <div class="form-group overflow" id="wrap">
                         <div class="input-group">
                             <div class="input-group-addon style-label">
@@ -168,9 +168,10 @@
                             <div class="input-group-addon style-label">
                                 <i class="fa fa-key fa-fw theme-color style-color"></i>
                             </div>
-                            <input style="display:none" type="password">
+                            <input style="display:none" type="password"/>
                             <input type="password" class="form-control style-form check-password" name="con-password" id="con-password" placeholder="Confirm password"
-                                   autocomplete="new-password" required="required" maxlength="32"/>
+                                   autocomplete="new-password" required="required" maxlength="32"
+                                   onfocus="this.removeAttribute('readonly');" readonly="true"/>
                             <span class="mandatory set-mandatory"></span>
                             <label id="con-password-error" class="error pull-right display-hide" for="con-password">Required</label>
                             <div class="text-right add-margin error-msg display-hide password-error" style="margin:0;">

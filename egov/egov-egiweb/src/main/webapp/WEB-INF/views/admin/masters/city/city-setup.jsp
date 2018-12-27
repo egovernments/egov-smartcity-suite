@@ -421,12 +421,12 @@
                                     <spring:message code="help.city.recaptcha.pvt.key" htmlEscape="false"/>
                                 </c:set>
                                 <div class="col-sm-6" style="padding-top: 7px">
-                                    <input style="display:none" type="password">
+                                    <input style="display:none" type="password"/>
                                     <form:input path="preferences.recaptchaPK" id="recaptchaPK" type="password"
                                                 data-toggle="popover" data-trigger="focus" data-placement="right"
                                                 data-content="${helptext}" maxlength="64"
                                                 class="form-control" placeholder="" autocomplete="off"
-                                                required="required"/>
+                                                required="required" onfocus="this.removeAttribute('readonly');" readonly="true"/>
                                     <form:errors path="preferences.recaptchaPK" cssClass="add-margin error-msg"/>
                                 </div>
 
@@ -438,12 +438,12 @@
                                     <spring:message code="help.city.recaptcha.pub.key" htmlEscape="false"/>
                                 </c:set>
                                 <div class="col-sm-6" style="padding-top: 7px">
-                                    <input style="display:none" type="password">
+                                    <input style="display:none" type="password"/>
                                     <form:input path="preferences.recaptchaPub" id="recaptchaPub" type="password"
                                                 data-toggle="popover" data-trigger="focus" data-placement="right"
                                                 data-content="${helptext}" maxlength="64"
                                                 class="form-control" placeholder="" autocomplete="off"
-                                                required="required"/>
+                                                required="required" onfocus="this.removeAttribute('readonly');" readonly="true"/>
 
                                     <form:errors path="preferences.recaptchaPub" cssClass="add-margin error-msg"/>
                                 </div>
@@ -456,12 +456,12 @@
                                     <spring:message code="help.city.google.api.key" htmlEscape="false"/>
                                 </c:set>
                                 <div class="col-sm-6" style="padding-top: 7px">
-                                    <input style="display:none" type="password">
+                                    <input style="display:none" type="password"/>
                                     <form:input path="preferences.googleApiKey" id="googleApiKey" type="password"
                                                 data-toggle="popover" data-trigger="focus" data-placement="right"
                                                 data-content="${helptext}" maxlength="50"
                                                 class="form-control" placeholder="" autocomplete="off"
-                                                required="required"/>
+                                                required="required" onfocus="this.removeAttribute('readonly');" readonly="true"/>
                                     <form:errors path="preferences.googleApiKey" cssClass="add-margin error-msg"/>
                                 </div>
 

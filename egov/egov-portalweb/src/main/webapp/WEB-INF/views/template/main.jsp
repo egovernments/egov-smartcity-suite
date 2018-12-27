@@ -122,8 +122,9 @@
                             <label class="control-label">Old Password</label>
                         </div>
                         <div class="col-md-8 add-margin">
-                            <input style="display:none" type="password">
-                            <input type="password" class="form-control" id="old-pass" autocomplete="new-password">
+                            <input style="display:none" type="password"/>
+                            <input type="password" class="form-control" id="old-pass" autocomplete="new-password"
+                                   onfocus="this.removeAttribute('readonly');" readonly="true"/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -131,8 +132,9 @@
                             <label class="control-label">New Password</label>
                         </div>
                         <div class="col-md-8 add-margin">
-                            <input style="display:none" type="password">
-                            <input type="password" class="form-control checkpassword" id="new-pass" autocomplete="new-password">
+                            <input style="display:none" type="password"/>
+                            <input type="password" class="form-control checkpassword" id="new-pass"
+                                   autocomplete="new-password" onfocus="this.removeAttribute('readonly');" readonly="true"/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -140,8 +142,9 @@
                             <label class="control-label">Re-type Password</label>
                         </div>
                         <div class="col-md-8 add-margin">
-                            <input style="display:none" type="password">
-                            <input type="password" class="form-control checkpassword" id="retype-pass" autocomplete="new-password">
+                            <input style="display:none" type="password"/>
+                            <input type="password" class="form-control checkpassword" id="retype-pass" autocomplete="new-password"
+                                   onfocus="this.removeAttribute('readonly');" readonly="true"/>
                             <div class="password-error error-msg display-hide">Password is incorrect</div>
                         </div>
                     </div>

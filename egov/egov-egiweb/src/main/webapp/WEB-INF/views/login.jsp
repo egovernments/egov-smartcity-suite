@@ -164,7 +164,7 @@
                         <div class="form-group">
                             <div class="signin-title"><spring:message code="lbl.login"/></div>
                         </div>
-                        <input style="display:none" type="text">
+                        <input style="display:none" type="text"/>
                         <input style="display:none" type="password"/>
                         <div class="form-group">
                             <div class="input-group">
@@ -185,7 +185,8 @@
                                 </div>
                                 <input type="password" class="form-control style-form"
                                        name="password" id="password" placeholder="Password"
-                                       autocomplete="new-password" required="required"/>
+                                       autocomplete="new-password" required="required"
+                                       onfocus="this.removeAttribute('readonly');" readonly="true"/>
                                 <div class="input-group-addon font-12" data-toggle="modal"
                                      data-target="#fpassword" data-backdrop="static">
                                     Forgot?
@@ -199,7 +200,7 @@
                                     <i class="fa fa-lock theme-color style-color" aria-hidden="true"></i>
                                 </div>
                                 <input type="password" class="form-control style-form" name="otp" id="otp" placeholder="OTP"
-                                       autocomplete="new-password"/>
+                                       autocomplete="new-password" onfocus="this.removeAttribute('readonly');" readonly="true"/>
                                 <label id="otp-msg" class="success-msg pull-right" for="otp">
                                     <spring:message code="otp.send.success"/>
                                 </label>
@@ -380,8 +381,10 @@
                                             <div class="input-group-addon style-label">
                                                 <i class="fa fa-key theme-color style-color"></i>
                                             </div>
-                                            <input style="display:none" type="password">
-                                            <input type="password" class="form-control style-form" name="token" id="token" placeholder="Enter your OTP" autocomplete="new-password" required="required"/>
+                                            <input style="display:none" type="password"/>
+                                            <input type="password" class="form-control style-form" name="token" id="token"
+                                                   placeholder="Enter your OTP" autocomplete="new-password"
+                                                   required="required" onfocus="this.removeAttribute('readonly');" readonly="true"/>
                                             <span class="mandatory set-mandatory"></span>
                                         </div>
                                         <div class="text-right font-12"><spring:message code="otp.send.success"/></div>
