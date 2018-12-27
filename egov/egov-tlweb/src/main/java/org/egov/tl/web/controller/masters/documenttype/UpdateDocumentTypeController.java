@@ -47,6 +47,7 @@
  */
 package org.egov.tl.web.controller.masters.documenttype;
 
+import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.service.LicenseAppTypeService;
 import org.egov.tl.service.LicenseDocumentTypeService;
@@ -62,6 +63,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequestMapping("/documenttype/edit/{id}")
@@ -78,9 +80,16 @@ public class UpdateDocumentTypeController {
         return licenseDocumentTypeService.getDocumentTypeById(id);
     }
 
+    @ModelAttribute("applicationTypes")
+    public List<LicenseAppType> applicationTypes() {
+        return licenseAppTypeService.getAllApplicationTypes();
+    }
+
     @GetMapping
-    public String documentTypeEdit(Model model) {
-        model.addAttribute("applicationTypes", licenseAppTypeService.getAllApplicationTypes());
+    public String documentTypeEdit(@ModelAttribute LicenseDocumentType licenseDocumentType, Model model) {
+        if (licenseDocumentType == null) {
+            model.addAttribute("error", "error.documenttype.not.found");
+        }
         return "document-edit";
     }
 

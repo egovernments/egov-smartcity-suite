@@ -118,25 +118,19 @@
         <put-attribute name="body" value="/WEB-INF/views/reports/dcb-report.jsp"/>
     </definition>
 
-    <definition name="penaltyRates-create" extends="base_layout">
+    <definition name="penaltyrate-create" extends="base_layout">
         <put-attribute name="page-title" value="title.create.penalty.rate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/penaltyrates/penaltyrates-create.jsp"/>
     </definition>
 
-    <definition name="penaltyRates-view" extends="base_layout">
-        <put-attribute name="page-title" value="title.view.penalty.rate" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/penaltyrates/penaltyrates-view.jsp"/>
-    </definition>
-
-    <definition name="penaltyRates-result" template="/WEB-INF/views/masters/penaltyrates/penaltyrates-result.jsp"/>
-
-    <definition name="penaltyRates-search" extends="base_layout">
-        <put-attribute name="page-title" value="title.view.penalty.rate" cascade="true"/>
+    <definition name="penaltyrate-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.search.penalty.rate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/penaltyrates/penaltyrates-search.jsp"/>
     </definition>
-    <definition name="penaltyRates-viewResult" extends="base_layout">
-        <put-attribute name="page-title" value="title.view.penalty.rate" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/penaltyrates/penaltyrates-list.jsp"/>
+
+    <definition name="penaltyrate-update" extends="base_layout">
+        <put-attribute name="page-title" value="title.update.penalty.rate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/penaltyrates/penaltyrates-update.jsp"/>
     </definition>
 
     <definition name="digitalSignature-success" extends="base_layout">

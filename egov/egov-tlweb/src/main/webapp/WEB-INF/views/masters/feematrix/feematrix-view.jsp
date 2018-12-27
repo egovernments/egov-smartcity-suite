@@ -52,120 +52,136 @@
 
 <div class="row">
     <div class="col-md-12">
-        <div class="panel panel-primary" data-collapsed="0">
-            <div class="panel-heading">
-                <div class="panel-title"><spring:message code="title.feematrix.view"/></div>
-            </div>
-            <div class="panel-body">
-                <form:form role="form" action="create" modelAttribute="feeMatrix" id="feematrix-new" name="feematrix-new"
-                           cssClass="form-horizontal form-groups-bordered">
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.licenseapptype"/>
-                        </label>
-                        <div class="col-sm-3 add-margin">
-                            <form:label path="licenseAppType.name" cssClass="form-control">${feeMatrix.licenseAppType.name}</form:label>
-                        </div>
-                        <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.tradetype"/>
-                        </label>
-                        <div class="col-sm-3 add-margin">
-                            <form:label path="natureOfBusiness.name" cssClass="form-control">${feeMatrix.natureOfBusiness.name}</form:label>
-                        </div>
+        <c:choose>
+            <c:when test="${not empty error}">
+                <div class="alert alert-danger" role="alert">
+                    <spring:message code="${error}"/>
+                </div>
+                <div class="form-group">
+                    <div class="text-center">
+                        <a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'>
+                            <spring:message code='lbl.close'/>
+                        </a>
                     </div>
-
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.licensecategory"/>
-                        </label>
-                        <div class="col-sm-3 add-margin">
-                            <form:label path="licenseCategory" cssClass="form-control">${feeMatrix.licenseCategory.name}</form:label>
-                        </div>
-                        <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.subcategory"/>
-                        </label>
-                        <div class="col-sm-3 add-margin">
-                            <form:label path="subCategory" cssClass="form-control">${feeMatrix.subCategory.name}</form:label>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.feetype"/>
-                        </label>
-                        <div class="col-sm-3 add-margin">
-                            <form:label path="feeType" cssClass="form-control">${feeMatrix.feeType.name}</form:label>
-                        </div>
-                        <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.financialyear"/>
-                        </label>
-                        <div class="col-sm-3 add-margin">
-                            <form:label path="financialYear.finYearRange" cssClass="form-control">${feeMatrix.financialYear.finYearRange}</form:label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.effective.from"/>
-                        </label>
-                        <div class="col-sm-3 add-margin">
-                            <fmt:formatDate value="${feeMatrix.effectiveFrom}" var="effectiveFrom" pattern="dd/MM/yyyy"/>
-                            <form:label path="effectiveFrom" cssClass="form-control">${effectiveFrom}</form:label>
-                        </div>
-
-                        <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.effective.to"/>
-                        </label>
-                        <div class="col-sm-3 add-margin">
-                            <fmt:formatDate value="${feeMatrix.effectiveTo}" var="effectiveTo" pattern="dd/MM/yyyy"/>
-                            <form:label path="effectiveTo" cssClass="form-control">${effectiveTo}</form:label>
-                        </div>
-                    </div>
+                </div>
+            </c:when>
+            <c:otherwise>
+                <div class="panel panel-primary" data-collapsed="0">
                     <div class="panel-heading">
-                        <div class="col-md-12 panel-title text-left">
-                            <spring:message code="lbl.fee.details"/>
-                        </div>
+                        <div class="panel-title"><spring:message code="title.feematrix.view"/></div>
                     </div>
-                    <div class="col-sm-12">
-                        <table class="table table-bordered fromto" id="result" data-from="<spring:message code='lbl.uomfrom'/>"
-                               data-to="<spring:message code='lbl.uomto'/>">
-                            <thead>
-                            <th class="text-center"><spring:message code="lbl.uomfrom"/></th>
-                            <th class="text-center"><spring:message code="lbl.uomto"/></th>
-                            <th class="text-center"><spring:message code="lbl.amount"/></th>
-                            </thead>
-                            <tbody>
-                            <c:if test="${not empty feeMatrix.feeMatrixDetail}">
-                                <c:forEach items="${feeMatrix.feeMatrixDetail}" var="detail" varStatus="vs">
-                                    <tr data-create="no">
-                                        <td>
-                                            <form:label path="feeMatrixDetail[${vs.index}].uomFrom" cssClass="form-control text-right">
-                                                ${detail.uomFrom}
-                                            </form:label>
-                                        </td>
-                                        <td>
-                                            <form:label path="feeMatrixDetail[${vs.index}].uomTo" cssClass="form-control text-right">
-                                                ${detail.uomTo}
-                                            </form:label>
-                                        </td>
-                                        <td>
-                                            <form:label path="feeMatrixDetail[${vs.index}].amount" cssClass="form-control text-right">
-                                                ${detail.amount}
-                                            </form:label>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-                            </c:if>
-                            </tbody>
-                        </table>
+                    <div class="panel-body">
+                        <form:form role="form" action="create" modelAttribute="feeMatrix" id="feematrix-new" name="feematrix-new"
+                                   cssClass="form-horizontal form-groups-bordered">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">
+                                    <spring:message code="lbl.licenseapptype"/>
+                                </label>
+                                <div class="col-sm-3 add-margin">
+                                    <form:label path="licenseAppType.name" cssClass="form-control">${feeMatrix.licenseAppType.name}</form:label>
+                                </div>
+                                <label class="col-sm-3 control-label">
+                                    <spring:message code="lbl.tradetype"/>
+                                </label>
+                                <div class="col-sm-3 add-margin">
+                                    <form:label path="natureOfBusiness.name" cssClass="form-control">${feeMatrix.natureOfBusiness.name}</form:label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">
+                                    <spring:message code="lbl.licensecategory"/>
+                                </label>
+                                <div class="col-sm-3 add-margin">
+                                    <form:label path="licenseCategory" cssClass="form-control">${feeMatrix.licenseCategory.name}</form:label>
+                                </div>
+                                <label class="col-sm-3 control-label">
+                                    <spring:message code="lbl.subcategory"/>
+                                </label>
+                                <div class="col-sm-3 add-margin">
+                                    <form:label path="subCategory" cssClass="form-control">${feeMatrix.subCategory.name}</form:label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">
+                                    <spring:message code="lbl.feetype"/>
+                                </label>
+                                <div class="col-sm-3 add-margin">
+                                    <form:label path="feeType" cssClass="form-control">${feeMatrix.feeType.name}</form:label>
+                                </div>
+                                <label class="col-sm-3 control-label">
+                                    <spring:message code="lbl.financialyear"/>
+                                </label>
+                                <div class="col-sm-3 add-margin">
+                                    <form:label path="financialYear.finYearRange" cssClass="form-control">${feeMatrix.financialYear.finYearRange}</form:label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">
+                                    <spring:message code="lbl.effective.from"/>
+                                </label>
+                                <div class="col-sm-3 add-margin">
+                                    <fmt:formatDate value="${feeMatrix.effectiveFrom}" var="effectiveFrom" pattern="dd/MM/yyyy"/>
+                                    <form:label path="effectiveFrom" cssClass="form-control">${effectiveFrom}</form:label>
+                                </div>
+
+                                <label class="col-sm-3 control-label">
+                                    <spring:message code="lbl.effective.to"/>
+                                </label>
+                                <div class="col-sm-3 add-margin">
+                                    <fmt:formatDate value="${feeMatrix.effectiveTo}" var="effectiveTo" pattern="dd/MM/yyyy"/>
+                                    <form:label path="effectiveTo" cssClass="form-control">${effectiveTo}</form:label>
+                                </div>
+                            </div>
+                            <div class="panel-heading">
+                                <div class="col-md-12 panel-title text-left">
+                                    <spring:message code="lbl.fee.details"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <table class="table table-bordered fromto" id="result" data-from="<spring:message code='lbl.uomfrom'/>"
+                                       data-to="<spring:message code='lbl.uomto'/>">
+                                    <thead>
+                                    <th class="text-center"><spring:message code="lbl.uomfrom"/></th>
+                                    <th class="text-center"><spring:message code="lbl.uomto"/></th>
+                                    <th class="text-center"><spring:message code="lbl.amount"/></th>
+                                    </thead>
+                                    <tbody>
+                                    <c:if test="${not empty feeMatrix.feeMatrixDetail}">
+                                        <c:forEach items="${feeMatrix.feeMatrixDetail}" var="detail" varStatus="vs">
+                                            <tr data-create="no">
+                                                <td>
+                                                    <form:label path="feeMatrixDetail[${vs.index}].uomFrom" cssClass="form-control text-right">
+                                                        ${detail.uomFrom}
+                                                    </form:label>
+                                                </td>
+                                                <td>
+                                                    <form:label path="feeMatrixDetail[${vs.index}].uomTo" cssClass="form-control text-right">
+                                                        ${detail.uomTo}
+                                                    </form:label>
+                                                </td>
+                                                <td>
+                                                    <form:label path="feeMatrixDetail[${vs.index}].amount" cssClass="form-control text-right">
+                                                        ${detail.amount}
+                                                    </form:label>
+                                                </td>
+                                            </tr>
+                                        </c:forEach>
+                                    </c:if>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="form-group text-center">
+                                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();">
+                                    <spring:message code="lbl.close"/>
+                                </button>
+                            </div>
+                        </form:form>
                     </div>
-                    <div class="form-group text-center">
-                        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();">
-                            <spring:message code="lbl.close"/>
-                        </button>
-                    </div>
-                </form:form>
-            </div>
-        </div>
+                </div>
+            </c:otherwise>
+        </c:choose>
     </div>
 </div>
 <script src="<cdn:url  value='/resources/js/app/license-fee-matrix.js?rnd=${app_release_no}'/>"></script>

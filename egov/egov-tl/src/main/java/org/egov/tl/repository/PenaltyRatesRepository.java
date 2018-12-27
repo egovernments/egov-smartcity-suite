@@ -64,6 +64,8 @@ public interface PenaltyRatesRepository extends JpaRepository<PenaltyRates, Long
 
     List<PenaltyRates> findByLicenseAppTypeOrderByIdAsc(LicenseAppType licenseAppType);
 
+    List<PenaltyRates> findByLicenseAppTypeIdOrderByIdAsc(Long licenseAppTypeId);
+
     PenaltyRates findTopByLicenseAppTypeOrderByFromRangeAsc(LicenseAppType licenseAppType);
 
     PenaltyRates findTopByLicenseAppTypeOrderByToRangeDesc(LicenseAppType licenseAppType);

@@ -51,43 +51,39 @@ package org.egov.tl.entity.contracts;
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.PenaltyRates;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PenaltyForm {
+public class PenaltyRatesRequest {
 
+    @NotNull
     private LicenseAppType licenseAppType;
-    private List<PenaltyRates> penaltyRatesList = new ArrayList<>();
+
+    @NotEmpty
+    @Valid
+    private List<PenaltyRates> penaltyRates = new ArrayList<>();
 
     public LicenseAppType getLicenseAppType() {
         return licenseAppType;
     }
 
-    public void setLicenseAppType(final LicenseAppType licenseAppType) {
+    public void setLicenseAppType(LicenseAppType licenseAppType) {
         this.licenseAppType = licenseAppType;
     }
 
-    public List<PenaltyRates> getPenaltyRatesList() {
-        return penaltyRatesList;
-    }
-
-    public void setPenaltyRatesList(final List<PenaltyRates> penaltyRatesList) {
-        this.penaltyRatesList = penaltyRatesList;
-    }
-
-    public void addpenaltyRatesList(final PenaltyRates penaltyRates) {
-        penaltyRatesList.add(penaltyRates);
-    }
-
     public List<PenaltyRates> getPenaltyRates() {
+        return penaltyRates;
+    }
 
-        if (licenseAppType != null && getPenaltyRatesList() != null && !getPenaltyRatesList().isEmpty())
-            for (final PenaltyRates penaltyRates : getPenaltyRatesList()) {
-                penaltyRates.setLicenseAppType(licenseAppType);
-                penaltyRates.setFromRange(penaltyRates.getFromRange());
-                penaltyRates.setToRange(penaltyRates.getToRange());
-                penaltyRates.setRate(penaltyRates.getRate());
-            }
-        return penaltyRatesList;
+    public void setPenaltyRates(List<PenaltyRates> penaltyRates) {
+        this.penaltyRates = penaltyRates;
+    }
+
+    public List<PenaltyRates> getPenaltyRateData() {
+        penaltyRates.forEach(penaltyRate -> penaltyRate.setLicenseAppType(licenseAppType));
+        return penaltyRates;
     }
 }

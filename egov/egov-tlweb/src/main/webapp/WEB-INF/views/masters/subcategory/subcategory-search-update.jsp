@@ -46,13 +46,19 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 <div class="row" id="page-content">
     <div class="col-md-12">
+        <c:if test="${not empty error}">
+            <div class="alert alert-danger" role="alert">
+                <spring:message code="${error}"/>
+            </div>
+        </c:if>
         <form:form role="form" method="post" modelAttribute="licenseSubCategory" class="form-horizontal form-groups-bordered">
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">

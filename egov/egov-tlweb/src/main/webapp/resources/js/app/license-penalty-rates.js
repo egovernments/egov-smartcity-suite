@@ -47,95 +47,144 @@
  */
 $(document).ready(function () {
 
-    $("#search")
-        .click(
-            function (event) {
-                $('#resultdiv').empty();
-                if ($('#penaltysearchform').valid()) {
-                    var param = "licenseAppType=";
-                    param = param + $('#licenseAppType').val();
-                    $.ajax({
-                        url: "/tl/penaltyRates/search?" + param,
-                        type: "GET",
-                        // dataType: "json",
-                        success: function (response) {
-                            $('#resultdiv').html(response);
-                            $("#penalty").hide();
-                            if ($('#result tbody tr').length == 1) {
-                                $('input[name="penaltyRatesList[0].fromRange"]').attr("readonly", false);
-                            }
-                        },
-                        error: function (response) {
-                            console.log("failed");
-                        }
-                    });
-                } else {
-                    event.preventDefault();
-                }
-            });
+    $('#create-btn,#save-btn').click(function () {
+        if ($('#licenseAppType').val() === '') {
+            bootbox.alert("Please select an Application Type");
+            return false;
+        }
+        $('.licapptype').prop("value", $('#licenseAppType').val());
+        return true;
+    });
 
-    $("#add-row").click(
-        function (event) {
-            var rowCount = $('#result tbody tr').length;
-            var valid = true;
-            //validate all rows before adding new row
-            $('#result tbody tr').each(function (index, value) {
-                $('#result tbody tr:eq(' + index + ') td input[type="text"]').each(function (i, v) {
-                    if (!$.trim($(v).val())) {
-                        valid = false;
-                        bootbox.alert("Enter all values for existing rows!", function () {
-                            $(v).focus();
-                        });
-                        return false;
-                    }
-                });
-            });
-            if (valid) {
-                //Create new row
-                var newRow = $('#result tbody tr:first').clone();
-                newRow.find("input").each(function () {
-                    $(this).attr({
-                        'name': function (_, name) {
-                            return name.replace(/\[.\]/g, '[' + rowCount + ']');
-                        }
-                    });
-                });
-                $('#result tbody').append(newRow);
-                var prev_tovalue = $('#result tbody tr:eq(' + (rowCount - 1) + ')').find('input.tovalue').val();
-                $('#result tbody tr:last').find('input').val('');
-                $('#result tbody tr:last').find('input.fromvalue').val(prev_tovalue);
-                patternvalidation();
-            }
-        });
-
-
-    $('#result tbody').on('click', 'tr td .delete-row', function (e) {
-        var id = $(this).closest('tr').find('td:eq(0) .penaltyId').val();
-        //console.log(id)
+    $('#result tbody').on('click', 'tr td .delete-row', function () {
+        var id = $(this).closest('tr').find('td:eq(0) .detailId').val();
         var idx = $(this).closest('tr').index();
+        var obj = $(this);
         if (idx == 0) {
             bootbox.alert('Cannot delete first row!');
-        } else if ((idx < ($('#result tbody tr').length - 1))) {
+        } else if ((idx < ($('#result tbody tr:visible').length - 1))) {
             bootbox.alert('Try to delete from last row!');
         } else {
-            bootbox.confirm("This will delete the row permanently. Press OK to Continue. ", function (result) {
+            bootbox.confirm("Do you want to delete this penalty rate ? ", function (result) {
                 if (result) {
-                    if (!id) {
-                        $('#result tbody tr:last').remove();
+
+                    if (obj.data('func')) {
+                        obj.closest('tr').remove();
                     } else {
-                        $.ajax({
-                            url: '../penaltyRates/deleterow?penaltyRateId=' + id,
-                            type: "GET",
-                            success: function (response) {
-                                $('#result tbody tr:last').remove();
-                            },
-                            error: function (response) {
-                                bootbox.alert("Unable to delete this row.");
-                            }
-                        });
+                        if (obj.closest('tr').hasClass('dynamicInput'))
+                            obj.closest('tr').remove();
+                        else
+                            obj.closest('tr').hide().find('input.markedForRemoval').val('true');
+
                     }
                 }
             });
+        }
+    });
+
+    $("#addrow").click(function (event) {
+        var rowCount = $('#result tbody tr').length;
+        var valid = true;
+        //validate all rows before adding new row
+        $('#result tbody tr').each(function (index, value) {
+            $('#result tbody tr:eq(' + index + ') td input[type="text"]').each(function (i, v) {
+                if (!$.trim($(v).val())) {
+                    valid = false;
+                    bootbox.alert("Enter all values for existing rows!", function () {
+                        $(v).focus();
+                    });
+                    return false;
+                }
+            });
+        });
+        if (valid) {
+            //Create new row
+            var newRow = $('#result tbody tr:first').clone();
+            newRow.find("input").each(function () {
+                $(this).attr({
+                    'name': function (_, name) {
+                        return name.replace(/\[.\]/g, '[' + rowCount + ']');
+                    }
+                });
+            });
+            $('#result tbody').append(newRow);
+            $('#result tbody tr:last').addClass('dynamicInput');
+            var prev_tovalue = $('#result tbody tr:eq(' + (rowCount - 1) + ')').find('input.tovalue').val();
+            var currentRowObj = $('#result tbody tr:last');
+            currentRowObj.find('input').val('');
+            currentRowObj.find('input.fromvalue').val(prev_tovalue);
+            currentRowObj.find('input.markedForRemoval').val('false');
+            patternvalidation();
+        }
+    });
+
+    $("#search-create-btn").click(function () {
+        let appType = $('#licenseAppType').val();
+        if (appType === '') {
+            bootbox.alert("Select a License Application Type");
+            $('#rates').hide();
+        } else {
+            $.ajax({
+                url: "create/" + appType,
+                type: "GET",
+                success: function (data) {
+                    if (data == true) {
+                        bootbox.alert("Penalty Rates already defined for " + $('#licenseAppType option:selected').text());
+                        $('#rates').hide();
+                    } else {
+                        $('#rates').show();
+                    }
+                },
+                error: function () {
+                    $('.rates').hide();
+                }
+            });
+        }
+    });
+
+    $("#search-btn").click(function () {
+        let appType = $('#licenseAppType').val();
+        if (appType === '') {
+            bootbox.alert("Select a License Application Type");
+            $('#rates').hide();
+        } else {
+            $('#rates').show();
+            oTable = $('#resultTable').DataTable({
+                processing: true,
+                serverSide: false,
+                "bPaginate": false,
+                sort: false,
+                filter: false,
+                ajax: {
+                    type: "POST",
+                    data: {
+                        applicationTypeId: appType
+                    }
+                },
+                "autoWidth": false,
+                "bDestroy": true,
+                columns: [
+                    {
+                        "data": "fromRange",
+                        "sClass": "text-right"
+                    }, {
+                        "data": "toRange",
+                        "sClass": "text-right"
+                    }, {
+                        "data": "rate",
+                        "sClass": "text-right"
+                    }
+                ]
+            });
+        }
+    });
+
+    $("#edit-btn").click(function () {
+        let appType = $('#licenseAppType').val();
+        if (appType === '') {
+            bootbox.alert("Select a License Application Type");
+        } else {
+            window.open("/tl/penaltyrates/update/" + appType, appType, 'width=900, height=700, top=300, left=260,scrollbars=yes');
         }
     });
 });

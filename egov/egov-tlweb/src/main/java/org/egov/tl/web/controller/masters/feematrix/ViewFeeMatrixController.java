@@ -97,7 +97,12 @@ public class ViewFeeMatrixController {
 
     @GetMapping("view/{id}")
     public String view(@PathVariable Long id, Model model) {
-        model.addAttribute("feeMatrix", feeMatrixService.getFeeMatrixById(id));
+        FeeMatrix feeMatrix = feeMatrixService.getFeeMatrixById(id);
+        if (feeMatrix == null) {
+            model.addAttribute("error", "error.feematrix.not.found");
+        } else {
+            model.addAttribute("feeMatrix", feeMatrix);
+        }
         return "feematrix-view";
     }
 

@@ -81,7 +81,11 @@ public class ViewDocumentTypeController {
     @GetMapping("/view/{id}")
     public String documentTypeView(@PathVariable("id") Long id, Model model) {
         LicenseDocumentType licenseDocumentType = licenseDocumentTypeService.getDocumentTypeById(id);
-        model.addAttribute("licenseDocumentType", licenseDocumentType);
+        if (licenseDocumentType == null) {
+            model.addAttribute("error", "error.documenttype.not.found");
+        } else {
+            model.addAttribute("licenseDocumentType", licenseDocumentType);
+        }
         return "document-view";
     }
 

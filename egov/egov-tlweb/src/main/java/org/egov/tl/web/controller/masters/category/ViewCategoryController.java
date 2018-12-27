@@ -56,9 +56,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/licensecategory")
+@RequestMapping("/licensecategory/view/{code}")
 public class ViewCategoryController {
 
     @Autowired
@@ -69,8 +70,12 @@ public class ViewCategoryController {
         return licenseCategoryService.getCategoryByCode(code);
     }
 
-    @GetMapping("/view/{code}")
-    public String viewCategory(@ModelAttribute LicenseCategory licenseCategory) {
+    @GetMapping
+    public String viewCategory(@ModelAttribute LicenseCategory licenseCategory, RedirectAttributes attribs) {
+        if (licenseCategory == null) {
+            attribs.addFlashAttribute("error", "error.category.not.found");
+            return "redirect:/licensecategory/view";
+        }
         return "licensecategory-view";
     }
 }

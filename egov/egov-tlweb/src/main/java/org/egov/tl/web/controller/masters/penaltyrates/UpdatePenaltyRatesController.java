@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,40 +45,59 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-$(document).ready(function() {
-	
-$("#search")
-			.click(
-					function(event) {
-						$('#resultdiv').empty();
-						if ($('#penaltysearchform').valid()) {
-							var param = "licenseAppType=";
-							param = param
-									+ $('#licenseAppType').val();
-							$.ajax({
-									url : "/tl/penaltyRates/searchview?"
-											+ param,
-									type : "GET",
-									// dataType: "json",
-									success : function(response) {
-										$('#resultdiv').html(
-												response);
-										if (jQuery('#result tbody tr').length == 1) {
-											jQuery(
-													'input[name="penaltyRatesList[0].fromRange"]')
-													.attr(
-															"readonly",
-															false);
-										
-										}
-									},
-									error : function(response) {
-										bootbox.alert("failed");
-									}
-								});
-						}else{
-							event.preventDefault();
-						}
-					});
-});
 
+package org.egov.tl.web.controller.masters.penaltyrates;
+
+import org.egov.tl.entity.PenaltyRates;
+import org.egov.tl.entity.contracts.PenaltyRatesRequest;
+import org.egov.tl.service.PenaltyRatesService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
+import java.util.List;
+
+@Controller
+@RequestMapping("/penaltyrates/update/{licenseAppType}")
+public class UpdatePenaltyRatesController {
+
+    @Autowired
+    private PenaltyRatesService penaltyRatesService;
+
+    @ModelAttribute("penaltyRate")
+    public PenaltyRatesRequest penaltyRate(@PathVariable Long licenseAppType) {
+        List<PenaltyRates> penaltyRates = penaltyRatesService.getPenaltyRatesByLicenseAppTypeId(licenseAppType);
+        PenaltyRatesRequest penaltyRatesRequest = null;
+        if (!penaltyRates.isEmpty()) {
+            penaltyRatesRequest = new PenaltyRatesRequest();
+            penaltyRatesRequest.setPenaltyRates(penaltyRates);
+        }
+        return penaltyRatesRequest;
+    }
+
+    @GetMapping
+    public String edit(@ModelAttribute("penaltyRate") PenaltyRatesRequest penaltyRate, Model model) {
+        if (penaltyRate == null) {
+            model.addAttribute("error", "error.penalty.rate.not.found");
+        }
+        return "penaltyrate-update";
+    }
+
+    @PostMapping
+    public String update(@Valid @ModelAttribute("penaltyRate") PenaltyRatesRequest penaltyRate, BindingResult bindingResult,
+                         RedirectAttributes responseAttribs) {
+        if (bindingResult.hasErrors())
+            return "penaltyrate-update";
+        penaltyRatesService.update(penaltyRate.getPenaltyRates());
+        responseAttribs.addFlashAttribute("message", "msg.penalty.rate.updated");
+        return "redirect:/penaltyrates/update/" + penaltyRate.getLicenseAppType().getId();
+    }
+}

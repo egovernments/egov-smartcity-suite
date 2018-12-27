@@ -51,7 +51,7 @@ $(document).ready(function () {
     $("#searchbtn").click(function () {
         tableContainer1.dataTable({
             "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i>" +
-            "<'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+                "<'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
             "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
             "bDestroy": true,
             "autoWidth": false,
@@ -74,8 +74,10 @@ $(document).ready(function () {
                 {
                     "data": null, 'sClass': "text-center", "target": -1, "defaultContent":
 
-                    '<button type="button" class="btn btn-xs btn-secondary edit add-margin">' +
-                    '<span class="glyphicon glyphicon-edit"></span>&nbsp;</button>'
+                        '<button type="button" class="btn btn-xs btn-secondary edit add-margin">' +
+                        '<i class="fa fa-fw fa-edit"></i>&nbsp;</button> &nbsp;&nbsp;' +
+                        '<button type="button" class="btn btn-xs btn-secondary view add-margin">' +
+                        '<i class="fa fa-fw fa-eye"></i>&nbsp;</button>'
                 }
                 ,
                 {"data": "id", "visible": false}
@@ -90,6 +92,13 @@ $(document).ready(function () {
 
     });
 
+    $("#document-Table").on('click', 'tbody tr td .view', function (event) {
+        var id = tableContainer1.fnGetData($(this).parent().parent(), 5);
+        var url = '/tl/documenttype/view/' + id;
+        window.open(url, id, 'width=900, height=700, top=300, left=260,scrollbars=yes');
+
+    });
+
     $("#enabled").click(function () {
         if ($("#enabled").prop('checked') == false) {
             $('input:checkbox[name=mandatory]').attr('checked', false);
@@ -100,8 +109,7 @@ $(document).ready(function () {
         if ($("#enabled").prop('checked') == false) {
             bootbox.alert("Please first make the document enabled");
             return false;
-        }
-        else
+        } else
             $('input:checkbox[name=mandatory]').attr('checked', true);
     });
 });

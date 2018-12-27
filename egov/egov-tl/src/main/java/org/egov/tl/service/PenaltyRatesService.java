@@ -72,6 +72,20 @@ public class PenaltyRatesService {
     @Autowired
     private PenaltyRatesRepository penaltyRatesRepository;
 
+    @Transactional
+    public List<PenaltyRates> create(List<PenaltyRates> penaltyRates) {
+        return penaltyRatesRepository.save(penaltyRates);
+    }
+
+    @Transactional
+    public void update(List<PenaltyRates> penaltyRates) {
+        penaltyRates.stream()
+                .filter(PenaltyRates::isMarkedForRemoval)
+                .forEach(penaltyRate -> penaltyRatesRepository.delete(penaltyRate));
+        penaltyRates.removeIf(PenaltyRates::isMarkedForRemoval);
+        penaltyRatesRepository.save(penaltyRates);
+    }
+
     public PenaltyRates findByDaysAndLicenseAppType(Integer days, LicenseAppType licenseAppType) {
         return penaltyRatesRepository.findByDaysAndLicenseAppType(Long.valueOf(days), licenseAppType);
     }
@@ -88,19 +102,14 @@ public class PenaltyRatesService {
         return penaltyRatesRepository.findTopByLicenseAppTypeOrderByToRangeDesc(licenseAppType).getToRange();
     }
 
-    @Transactional
-    public List<PenaltyRates> create(List<PenaltyRates> penaltyRates) {
-        return penaltyRatesRepository.save(penaltyRates);
+    public List<PenaltyRates> getPenaltyRatesByLicenseAppTypeId(Long licenseAppTypeId) {
+        return licenseAppTypeId == null ? penaltyRatesRepository.findAll() :
+                penaltyRatesRepository.findByLicenseAppTypeIdOrderByIdAsc(licenseAppTypeId);
     }
 
     public List<PenaltyRates> getPenaltyRatesByLicenseAppType(LicenseAppType licenseAppType) {
         return licenseAppType == null ? penaltyRatesRepository.findAll() :
                 penaltyRatesRepository.findByLicenseAppTypeOrderByIdAsc(licenseAppType);
-    }
-
-    @Transactional
-    public void delete(PenaltyRates penaltyRates) {
-        penaltyRatesRepository.delete(penaltyRates);
     }
 
     public BigDecimal calculatePenalty(TradeLicense license, Date fromDate, Date toDate, BigDecimal amount) {

@@ -57,8 +57,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 
 import static org.egov.tl.entity.PenaltyRates.SEQ_PENALTYRATES;
 
@@ -80,7 +81,7 @@ public class PenaltyRates extends AbstractAuditable {
     @NotNull
     private Long toRange;
 
-    @Positive
+    @Min(0)
     private Double rate;
 
     @ManyToOne
@@ -88,13 +89,16 @@ public class PenaltyRates extends AbstractAuditable {
     @NotNull
     private LicenseAppType licenseAppType;
 
+    @Transient
+    private boolean markedForRemoval;
+
     @Override
     public Long getId() {
         return id;
     }
 
     @Override
-    public void setId(final Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -102,7 +106,7 @@ public class PenaltyRates extends AbstractAuditable {
         return fromRange;
     }
 
-    public void setFromRange(final Long fromRange) {
+    public void setFromRange(Long fromRange) {
         this.fromRange = fromRange;
     }
 
@@ -110,7 +114,7 @@ public class PenaltyRates extends AbstractAuditable {
         return toRange;
     }
 
-    public void setToRange(final Long toRange) {
+    public void setToRange(Long toRange) {
         this.toRange = toRange;
     }
 
@@ -118,7 +122,7 @@ public class PenaltyRates extends AbstractAuditable {
         return rate;
     }
 
-    public void setRate(final Double rate) {
+    public void setRate(Double rate) {
         this.rate = rate;
     }
 
@@ -126,8 +130,15 @@ public class PenaltyRates extends AbstractAuditable {
         return licenseAppType;
     }
 
-    public void setLicenseAppType(final LicenseAppType licenseAppType) {
+    public void setLicenseAppType(LicenseAppType licenseAppType) {
         this.licenseAppType = licenseAppType;
     }
 
+    public boolean isMarkedForRemoval() {
+        return markedForRemoval;
+    }
+
+    public void setMarkedForRemoval(boolean markedForRemoval) {
+        this.markedForRemoval = markedForRemoval;
+    }
 }

@@ -60,6 +60,7 @@ import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.NatureOfBusinessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -116,7 +117,10 @@ public class UpdateFeeMatrixController {
     }
 
     @GetMapping
-    public String edit() {
+    public String edit(@ModelAttribute FeeMatrix feeMatrix, Model model) {
+        if (feeMatrix == null) {
+            model.addAttribute("error", "error.feematrix.not.found");
+        }
         return "feematrix-update";
     }
 

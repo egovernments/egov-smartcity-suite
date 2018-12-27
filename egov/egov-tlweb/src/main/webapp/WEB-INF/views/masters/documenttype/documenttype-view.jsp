@@ -52,53 +52,69 @@
 
 <div class="row">
     <div class="col-md-12">
-        <c:if test="${not empty message}">
-            <div class="alert alert-success" role="alert">
-                <spring:message code="${message}" arguments="${name}"/>
-            </div>
-        </c:if>
-        <form:form id="documenttypesuccess" method="GET" class="form-horizontal form-groups-bordered" modelAttribute="licenseDocumentType">
-            <div class="panel panel-primary" data-collapsed="0">
-                <div class="panel-heading">
-                    <div class="panel-title"><spring:message code="title.document.view"/></div>
+        <c:choose>
+            <c:when test="${not empty error}">
+                <div class="alert alert-danger" role="alert">
+                    <spring:message code="${error}"/>
                 </div>
-                <div class="panel-body ">
-                    <div class="row">
-                        <div class="col-sm-3 add-margin"><spring:message code="lbl.name"/></div>
-                        <div class="col-sm-3 add-margin">
-                            <form:label path="name" class="form-control text-left">${licenseDocumentType.name}</form:label>
+                <div class="form-group">
+                    <div class="text-center">
+                        <a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'>
+                            <spring:message code='lbl.close'/>
+                        </a>
+                    </div>
+                </div>
+            </c:when>
+            <c:otherwise>
+                <c:if test="${not empty message}">
+                    <div class="alert alert-success" role="alert">
+                        <spring:message code="${message}" arguments="${name}"/>
+                    </div>
+                </c:if>
+                <form:form id="documenttypesuccess" method="GET" class="form-horizontal form-groups-bordered" modelAttribute="licenseDocumentType">
+                    <div class="panel panel-primary" data-collapsed="0">
+                        <div class="panel-heading">
+                            <div class="panel-title"><spring:message code="title.document.view"/></div>
                         </div>
-                        <div class="col-sm-3 add-margin"><spring:message code="lbl.licenseAppType"/></div>
-                        <div class="col-sm-3 add-margin">
-                            <form:label path="applicationType" class="form-control text-left">${licenseDocumentType.applicationType.name}</form:label>
+                        <div class="panel-body ">
+                            <div class="row">
+                                <div class="col-sm-3 add-margin"><spring:message code="lbl.name"/></div>
+                                <div class="col-sm-3 add-margin">
+                                    <form:label path="name" class="form-control text-left">${licenseDocumentType.name}</form:label>
+                                </div>
+                                <div class="col-sm-3 add-margin"><spring:message code="lbl.licenseAppType"/></div>
+                                <div class="col-sm-3 add-margin">
+                                    <form:label path="applicationType" class="form-control text-left">${licenseDocumentType.applicationType.name}</form:label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3 add-margin"><spring:message code="lbl.enabled"/></div>
+                                <div class="col-sm-3 add-margin">
+                                    <form:label path="enabled" class="form-control text-left">
+                                        ${licenseDocumentType.enabled ? "Yes" : "No"}
+                                    </form:label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3 add-margin"><spring:message code="lbl.mandatory"/></div>
+                                <div class="col-sm-3 add-margin">
+                                    <form:label path="mandatory" class="form-control text-left">
+                                        ${licenseDocumentType.mandatory ? "Yes" : "No"}
+                                    </form:label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-3 add-margin"><spring:message code="lbl.enabled"/></div>
-                        <div class="col-sm-3 add-margin">
-                            <form:label path="enabled" class="form-control text-left">
-                                ${licenseDocumentType.enabled ? "Yes" : "No"}
-                            </form:label>
+                        <div class="text-center">
+                            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()">
+                                <spring:message code="lbl.close"/>
+                            </button>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-sm-3 add-margin"><spring:message code="lbl.mandatory"/></div>
-                        <div class="col-sm-3 add-margin">
-                            <form:label path="mandatory" class="form-control text-left">
-                                ${licenseDocumentType.mandatory ? "Yes" : "No"}
-                            </form:label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="text-center">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()">
-                        <spring:message code="lbl.close"/>
-                    </button>
-                </div>
-            </div>
-        </form:form>
+                </form:form>
+            </c:otherwise>
+        </c:choose>
     </div>
 </div>
 <script>

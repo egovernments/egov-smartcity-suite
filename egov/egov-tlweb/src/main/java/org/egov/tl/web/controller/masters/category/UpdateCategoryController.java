@@ -63,7 +63,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
 
 @Controller
-@RequestMapping("/licensecategory")
+@RequestMapping("/licensecategory/update/{code}")
 public class UpdateCategoryController {
 
     @Autowired
@@ -74,12 +74,17 @@ public class UpdateCategoryController {
         return licenseCategoryService.getCategoryByCode(code);
     }
 
-    @GetMapping("/update/{code}")
-    public String showUpdateCategoryForm() {
+    @GetMapping
+    public String showUpdateCategoryForm(@ModelAttribute LicenseCategory licenseCategory, RedirectAttributes attribs) {
+        if (licenseCategory == null) {
+            attribs.addFlashAttribute("error", "error.category.not.found");
+            return "redirect:/licensecategory/update";
+        }
+
         return "licensecategory-update";
     }
 
-    @PostMapping("/update/{code}")
+    @PostMapping
     public String updateCategory(@ModelAttribute @Valid LicenseCategory licenseCategory, BindingResult bindingResult,
                                  RedirectAttributes responseAttrbs) {
         if (bindingResult.hasErrors())

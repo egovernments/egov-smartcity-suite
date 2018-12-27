@@ -45,53 +45,75 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
-<form:form role="form" action="search" modelAttribute="penaltyForm"
-	commandName="penaltyForm" id="penaltysearchform"
-	cssClass="form-horizontal form-groups-bordered">
-	<div class="row">
-		<div class="col-md-12">
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-						&nbsp;
-					</div>
-				</div>
-				<div class="panel-body">
-					<div class="form-group">
-						<label class="col-sm-5 control-label text-right">
-							<spring:message code="lbl.licenseAppType" /> <span class="mandatory"></span> 
-						</label>
-						<div class="col-sm-3 add-margin">
-							<form:select path="licenseAppType" id="licenseAppType"
-								cssClass="form-control" cssErrorClass="form-control error"
-								required="required">
-								<form:option value="">
-									<spring:message code="lbl.select" />
-								</form:option>
-								<form:options items="${licenseAppTypes}" itemValue="id" itemLabel="name" />
-							</form:select>
-
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="form-group">
-		<div class="text-center">
-			<button type='button' class='btn btn-primary' id="search">
-				<spring:message code='lbl.search' />
-			</button>
-			<a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message code='lbl.close' /></a>
-		</div>
-	</div>
-</form:form>
-<div id="resultdiv"></div>
-<script src="<cdn:url  value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
-<script src="<cdn:url  value='/resources/js/app/license-penaltyrate-search.js?rnd=${app_release_no}'/>"></script>
+<div class="row form-horizontal form-groups-bordered">
+    <div class="col-md-12">
+        <div class="panel panel-primary" data-collapsed="0">
+            <div class="panel-body">
+                <div class="panel-heading">
+                    <div class="col-md-12 panel-title text-left">
+                        &nbsp;
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-5 control-label text-right">
+                        <spring:message code="lbl.licenseAppType"/> <span class="mandatory"></span>
+                    </label>
+                    <div class="col-sm-3 add-margin">
+                        <select name="licenseAppType" id="licenseAppType" class="form-control" required="required">
+                            <option value="">
+                                <spring:message code="lbl.select"/>
+                            </option>
+                            <c:forEach items="${licenseAppTypes}" var="licenseAppType">
+                                <option value="${licenseAppType.id}">${licenseAppType.name}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group text-center">
+                    <label class="col-sm-5 control-label text-right">
+                        &nbsp;
+                    </label>
+                    <div class="col-sm-3 add-margin">
+                        <button type="button" class="btn btn-primary" id="search-btn"><spring:message code="lbl.search"/></button>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();">
+                            <spring:message code="lbl.close"/>
+                        </button>
+                    </div>
+                </div>
+                <div id="rates" style="display: none">
+                    <div class="col-md-12 panel-heading">
+                        <div class="panel-title text-left">
+                            <spring:message code="lbl.penaltyrate.details"/>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <table class="table table-bordered table-hover" id="resultTable">
+                            <thead>
+                            <tr>
+                                <th class="text-center"><spring:message code="lbl.from"/></th>
+                                <th class="text-center"><spring:message code="lbl.to"/></th>
+                                <th class="text-center" colspan="3"><spring:message code="lbl.penaltyrate"/></th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="col-sm-12 add-margin text-center">
+                        <button type="button" class="btn btn-primary" id="edit-btn"><spring:message code="lbl.modify"/></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+<script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/license-penalty-rates.js?rnd=${app_release_no}'/>"></script>

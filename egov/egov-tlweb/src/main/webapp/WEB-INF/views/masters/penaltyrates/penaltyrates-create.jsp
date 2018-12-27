@@ -45,49 +45,164 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
-<form:form role="form" action="search" modelAttribute="penaltyForm" id="penaltysearchform"
-	cssClass="form-horizontal form-groups-bordered">
-	<div class="row">
-		<div class="col-md-12">
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-						&nbsp;
-					</div>
-				</div>
-				<div class="panel-body">
-					<div class="form-group">
-						<label class="col-sm-5 control-label text-right">
-							<spring:message code="lbl.licenseAppType" /> <span class="mandatory"></span> 
-						</label>
-						<div class="col-sm-3 add-margin">
-							<form:select path="licenseAppType" id="licenseAppType"
-								cssClass="form-control" cssErrorClass="form-control error"
-								required="required">
-								<form:option value="">
-									<spring:message code="lbl.select" />
-								</form:option>
-								<form:options items="${licenseAppTypes}" itemValue="id" itemLabel="name" />
-							</form:select>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="form-group">
-		<div class="text-center">
-			<button type='button' class='btn btn-primary' id="search"><spring:message code='lbl.search' /></button>
-			<a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message code='lbl.close' /></a>
-		</div>
-	</div>
+<form:form role="form" modelAttribute="penaltyRate" cssClass="form-horizontal form-groups-bordered">
+    <div class="row">
+        <div class="col-md-12">
+            <c:if test="${not empty message}">
+                <div class="alert alert-success" role="alert">
+                    <spring:message code="${message}"/>
+                </div>
+            </c:if>
+            <c:if test="${not empty error}">
+                <div class="alert alert-danger" role="alert">
+                    <spring:message code="${error}" arguments="${penaltyRate.licenseAppType.name}"/>
+                </div>
+            </c:if>
+            <div class="panel panel-primary" data-collapsed="0">
+                <div class="panel-body">
+                    <div class="panel-heading">
+                        <div class="col-md-12 panel-title text-left">
+                            &nbsp;
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-5 control-label text-right">
+                            <spring:message code="lbl.licenseAppType"/> <span class="mandatory"></span>
+                        </label>
+                        <div class="col-sm-3 add-margin">
+                            <form:select path="licenseAppType" id="licenseAppType"
+                                         cssClass="form-control" cssErrorClass="form-control error"
+                                         required="required">
+                                <form:option value="">
+                                    <spring:message code="lbl.select"/>
+                                </form:option>
+                                <form:options items="${licenseAppTypes}" itemValue="id" itemLabel="name"/>
+                            </form:select>
+                            <form:errors path="penaltyRates[0].licenseAppType" cssClass="error-msg"/>
+                        </div>
+                        <div class="form-group text-center">
+                            <label class="col-sm-5 control-label text-right">
+                                &nbsp;
+                            </label>
+                            <div class="col-sm-3 add-margin ">
+                                <button type="button" class="btn btn-primary" id="search-create-btn"><spring:message code="lbl.search"/></button>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();">
+                                    <spring:message code="lbl.close"/>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="rates" style="display:none">
+                        <div class="panel-heading">
+                            <div class="col-md-12 panel-title text-left">
+                                <spring:message code="lbl.penaltyrate.details"/>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <table class="table table-bordered fromto" id="result" data-from="<spring:message code='lbl.from'/>"
+                                   data-to="<spring:message code='lbl.to'/>">
+                                <thead>
+                                <th class="text-center"><spring:message code="lbl.from"/></th>
+                                <th class="text-center"><spring:message code="lbl.to"/></th>
+                                <th class="text-center" colspan="2"><spring:message code="lbl.penaltyrate"/></th>
+                                </thead>
+                                <tbody>
+                                <c:choose>
+                                    <c:when test="${not empty penaltyRate.penaltyRates}">
+                                        <c:forEach items="${penaltyRate.penaltyRates}" var="penaltyRate" varStatus="vs">
+                                            <tr class="dynamicInput">
+                                                <td>
+                                                    <input type="text" name="penaltyRates[${vs.index}].fromRange" value="${penaltyRate.fromRange}"
+                                                           class="form-control fromRange patternvalidation fromvalue text-right"
+                                                           pattern="-?\d*" data-pattern="numerichyphen" data-fromto="from"
+                                                           maxlength="8" required="required"/>
+                                                    <input type="hidden" name="penaltyRates[${vs.index}].licenseAppType" class="licapptype"
+                                                           value="${penaltyRate.licenseAppType.id}">
+                                                    <form:errors path="penaltyRates[${vs.index}].fromRange" cssClass="error-msg"/>
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="penaltyRates[${vs.index}].toRange" value="${penaltyRate.toRange}"
+                                                           class="form-control patternvalidation tovalue text-right"
+                                                           pattern="-?\d*" data-pattern="numerichyphen" data-fromto="to"
+                                                           maxlength="8" required="required"/>
+                                                    <form:errors path="penaltyRates[${vs.index}].toRange" cssClass="error-msg"/>
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="penaltyRates[${vs.index}].rate" value="${penaltyRate.rate}"
+                                                           class="form-control patternvalidation text-right"
+                                                           data-pattern="number" maxlength="8" required="required"/>
+                                                    <form:errors path="penaltyRates[${vs.index}].rate" cssClass="error-msg"/>
+                                                </td>
+                                                <td><span class="add-padding"><i class="fa fa-trash delete-row" aria-hidden="true"></i></span></td>
+                                            </tr>
+                                        </c:forEach>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <tr>
+                                            <td>
+                                                <input type="text" name="penaltyRates[0].fromRange" value="0"
+                                                       class="form-control patternvalidation fromvalue text-right"
+                                                       pattern="-?\d*" data-pattern="numerichyphen" data-fromto="from"
+                                                       required="required"/>
+                                                <form:errors path="penaltyRates[${vs.index}].fromRange" cssClass="error-msg"/>
+                                                <input type="hidden" name="penaltyRates[0].licenseAppType" class="licapptype">
+                                            </td>
+                                            <td>
+                                                <input type="text" name="penaltyRates[0].toRange"
+                                                       class="form-control patternvalidation tovalue text-right"
+                                                       pattern="-?\d*" data-pattern="numerichyphen" data-fromto="to"
+                                                       maxlength="8" required="required"/>
+                                                <form:errors path="penaltyRates[${vs.index}].toRange" cssClass="error-msg"/>
+                                            </td>
+                                            <td>
+                                                <input type="text" name="penaltyRates[0].rate"
+                                                       class="form-control patternvalidation text-right"
+                                                       data-pattern="number" maxlength="8" required="required"/>
+                                                <form:errors path="penaltyRates[${vs.index}].rate" cssClass="error-msg"/>
+                                            </td>
+                                            <td><span class="add-padding">
+                                            <i class="fa fa-trash delete-row" data-func="add" aria-hidden="true"></i></span>
+                                            </td>
+                                        </tr>
+                                    </c:otherwise>
+                                </c:choose>
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                    <td colspan="4">
+                                        <button type="button" class="btn btn-secondary pull-right" id="addrow">
+                                            <i class="fa fa-plus-circle" aria-hidden="true"></i> &nbsp;<spring:message code="lbl.add.more"/>
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn btn-primary" id="create-btn"><spring:message code="lbl.save"/></button>
+                            <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();">
+                                <spring:message code="lbl.close"/>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </form:form>
-<div id="resultdiv"></div>
 <script src="<cdn:url  value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script src="<cdn:url  value='/resources/js/app/license-penalty-rates.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/value-range-checker.js?rnd=${app_release_no}'/>"></script>
+<script>
+    if (parseInt('${penaltyRate.penaltyRates.size()}') > 0 && '${penaltyRate.penaltyRates[0].rate != null}' == 'true') {
+        $("#rates").show();
+    }
+</script>

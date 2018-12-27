@@ -46,14 +46,13 @@
  *
  */
 
-package org.egov.tl.web.controller.masters.subcategory;
+package org.egov.tl.web.controller.masters.penaltyrates;
 
-import org.egov.tl.entity.LicenseSubCategory;
-import org.egov.tl.entity.enums.RateType;
-import org.egov.tl.service.FeeTypeService;
-import org.egov.tl.service.LicenseCategoryService;
-import org.egov.tl.service.LicenseSubCategoryService;
-import org.egov.tl.service.UnitOfMeasurementService;
+import org.egov.tl.entity.LicenseAppType;
+import org.egov.tl.entity.PenaltyRates;
+import org.egov.tl.entity.contracts.PenaltyRatesRequest;
+import org.egov.tl.service.LicenseAppTypeService;
+import org.egov.tl.service.PenaltyRatesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,59 +62,56 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
-@RequestMapping("/licensesubcategory/update/{code}")
-public class UpdateSubCategoryController {
+@RequestMapping("/penaltyrates/create")
+public class CreatePenaltyRatesController {
 
     @Autowired
-    private LicenseSubCategoryService licenseSubCategoryService;
+    private PenaltyRatesService penaltyRatesService;
 
     @Autowired
-    private LicenseCategoryService licenseCategoryService;
+    private LicenseAppTypeService licenseAppTypeService;
 
-    @Autowired
-    private UnitOfMeasurementService unitOfMeasurementService;
+    @ModelAttribute("penaltyRate")
+    public PenaltyRatesRequest penaltyRate() {
+        return new PenaltyRatesRequest();
+    }
 
-    @Autowired
-    private FeeTypeService feeTypeService;
-
-    @ModelAttribute
-    public LicenseSubCategory licenseSubCategory(@PathVariable String code) {
-        return licenseSubCategoryService.getSubCategoryByCode(code);
+    @ModelAttribute("licenseAppTypes")
+    public List<LicenseAppType> licenseAppTypes() {
+        return licenseAppTypeService.getDisplayableLicenseAppTypes();
     }
 
     @GetMapping
-    public String showSubCategoryUpdateForm(@ModelAttribute LicenseSubCategory licenseSubCategory,
-                                            RedirectAttributes attribs, Model model) {
-        if (licenseSubCategory == null) {
-            attribs.addAttribute("error", "error.subcategory.not.found");
-            return "redirect:/licensesubcategory/update";
-        }
-        prepareSubCategoryAssociations(model);
-        return "subcategory-update";
+    public String penaltyRatesForm() {
+        return "penaltyrate-create";
+    }
+
+    @GetMapping("/{appType}")
+    @ResponseBody
+    public boolean checkPenaltyRatesExist(@PathVariable Long appType) {
+        return !penaltyRatesService.getPenaltyRatesByLicenseAppTypeId(appType).isEmpty();
     }
 
     @PostMapping
-    public String updateSubCategory(@ModelAttribute @Valid LicenseSubCategory licenseSubCategory,
-                                    BindingResult bindingResult, RedirectAttributes responseAttrbs, Model model) {
-        if (bindingResult.hasErrors()) {
-            prepareSubCategoryAssociations(model);
-            return "subcategory-update";
+    public String penaltyRatesCreate(@Valid @ModelAttribute("penaltyRate") PenaltyRatesRequest penaltyRate, BindingResult bindingResult,
+                                     RedirectAttributes redirectAttributes, Model model) {
+        List<PenaltyRates> penaltyRates = penaltyRatesService.getPenaltyRatesByLicenseAppType(penaltyRate.getLicenseAppType());
+        if (!penaltyRates.isEmpty()) {
+            model.addAttribute("error", "error.penalty.rate.exist");
+            return "penaltyrate-create";
         }
-        licenseSubCategoryService.updateSubCategory(licenseSubCategory);
-        responseAttrbs.addFlashAttribute("message", "msg.success.subcategory.update");
-        responseAttrbs.addFlashAttribute("name", licenseSubCategory.getName());
-        return "redirect:/licensesubcategory/update/" + licenseSubCategory.getCode();
-    }
 
-    private void prepareSubCategoryAssociations(Model model) {
-        model.addAttribute("licenseCategories", licenseCategoryService.getCategoriesOrderByName());
-        model.addAttribute("licenseFeeTypes", feeTypeService.findAll());
-        model.addAttribute("rateTypes", RateType.allValues());
-        model.addAttribute("licenseUomTypes", unitOfMeasurementService.getAllActiveUOM());
+        if (bindingResult.hasErrors())
+            return "penaltyrate-create";
+        penaltyRatesService.create(penaltyRate.getPenaltyRateData());
+        redirectAttributes.addFlashAttribute("message", "msg.penalty.rate.created");
+        return "redirect:/penaltyrates/create";
     }
 }
