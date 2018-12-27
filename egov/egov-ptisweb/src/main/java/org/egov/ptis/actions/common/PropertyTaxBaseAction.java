@@ -1118,8 +1118,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
     public void validateEffectiveDate(final List<Floor> floorList) {
         Date firstFloorEffectiveDate = floorList.get(0).getOccupancyDate();
-        boolean allSameDate = floorList.stream().filter(x -> x.getOccupancyDate() != null)
-                .allMatch(x -> x.getOccupancyDate().equals(firstFloorEffectiveDate));
+        boolean allSameDate = floorList.stream().filter(floor -> floor.getOccupancyDate() != null)
+                .allMatch(floor -> floor.getOccupancyDate().equals(firstFloorEffectiveDate));
         if (!allSameDate)
             addActionError(getText("different.effective.date.present"));
     }
