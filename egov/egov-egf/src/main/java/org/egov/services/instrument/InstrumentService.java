@@ -58,6 +58,8 @@ import org.egov.model.instrument.*;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
 import org.hibernate.query.Query;
+import org.hibernate.type.DateType;
+import org.hibernate.type.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -241,9 +243,7 @@ public class InstrumentService {
                     .setBankBranchName(instrMap.get(BRANCH_NAME) != null ? instrMap
                             .get(BRANCH_NAME).toString() : null);
             final EgwStatus status = (EgwStatus) persistenceService
-                    .find("from EgwStatus where upper(moduletype)=upper('Instrument') and upper(description)=upper('"
-                            + FinancialConstants.INSTRUMENT_CREATED_STATUS
-                            + "')");
+                    .find("from EgwStatus where upper(moduletype)=upper('Instrument') and upper(description)=upper(?1)", FinancialConstants.INSTRUMENT_CREATED_STATUS);
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("Created Status of Instrument"
                         + status.getDescription());
@@ -743,10 +743,9 @@ public class InstrumentService {
             LOGGER.debug("Cancelling " + ih);
         boolean result = false;
         try {
-            final String cancelStatusQuiery = "from EgwStatus where upper(moduletype)=upper('instrument') and  upper(description)=upper('"
-                    + FinancialConstants.INSTRUMENT_CANCELLED_STATUS + "')";
+            final String cancelStatusQuiery = "from EgwStatus where upper(moduletype)=upper('instrument') and  upper(description)=upper(?1)";
             final EgwStatus cancelStatus = (EgwStatus) persistenceService
-                    .find(cancelStatusQuiery);
+                    .find(cancelStatusQuiery, FinancialConstants.INSTRUMENT_CANCELLED_STATUS);
             ih.setStatusId(cancelStatus);
             instrumentHeaderService.update(ih);
             result = true;
@@ -790,12 +789,12 @@ public class InstrumentService {
             throw new ApplicationRuntimeException(
                     "reconcilationFromDate and reconcilationToDate should not be null");
         final Query qry = persistenceService.getSession()
-                .createQuery(
-                        "select iv from InstrumentVoucher iv inner join iv.instrumentHeaderId as  ih   where ih.statusId.description=:status"
-                                + " and ih in (select iih from InstrumentOtherDetails io inner join io.instrumentHeaderId as iih where io.instrumentStatusDate>=:startDate and io.instrumentStatusDate<=:endDate )");
-        qry.setString("status", FinancialConstants.INSTRUMENT_RECONCILED_STATUS);
-        qry.setDate("startDate", reconcilationFromDate);
-        qry.setDate("endDate", reconcilationToDate);
+                .createQuery(new StringBuilder("select iv from InstrumentVoucher iv inner join iv.instrumentHeaderId as  ih   where ih.statusId.description=:status")
+                        .append(" and ih in (select iih from InstrumentOtherDetails io inner join io.instrumentHeaderId as iih where io.instrumentStatusDate>=:startDate")
+                        .append(" and io.instrumentStatusDate<=:endDate )").toString());
+        qry.setParameter("status", FinancialConstants.INSTRUMENT_RECONCILED_STATUS, StringType.INSTANCE)
+                .setParameter("startDate", reconcilationFromDate, DateType.INSTANCE)
+                .setParameter("endDate", reconcilationToDate, DateType.INSTANCE);
         return qry.list();
     }
 
@@ -813,12 +812,12 @@ public class InstrumentService {
             throw new ApplicationRuntimeException(
                     "dishonoredFromDate and dishonoredToDate should not be null");
         final Query qry = persistenceService.getSession()
-                .createQuery(
-                        "select iv from InstrumentVoucher iv inner join iv.instrumentHeaderId as  ih   where ih.statusId.description=:status"
-                                + " and ih in (select iih from InstrumentOtherDetails io inner join io.instrumentHeaderId as iih where io.modifiedDate>=:startDate and io.modifiedDate<=:endDate ) order by iv.instrumentHeaderId desc");
-        qry.setString("status", FinancialConstants.INSTRUMENT_DISHONORED_STATUS);
-        qry.setDate("startDate", dishonoredFromDate);
-        qry.setDate("endDate", dishonoredToDate);
+                .createQuery(new StringBuilder("select iv from InstrumentVoucher iv inner join iv.instrumentHeaderId as  ih   where ih.statusId.description=:status")
+                        .append(" and ih in (select iih from InstrumentOtherDetails io inner join io.instrumentHeaderId as iih where io.modifiedDate>=:startDate")
+                        .append(" and io.modifiedDate<=:endDate ) order by iv.instrumentHeaderId desc").toString());
+        qry.setParameter("status", FinancialConstants.INSTRUMENT_DISHONORED_STATUS, StringType.INSTANCE)
+                .setParameter("startDate", dishonoredFromDate, DateType.INSTANCE)
+                .setParameter("endDate", dishonoredToDate, DateType.INSTANCE);
         return qry.list();
     }
 
@@ -855,10 +854,9 @@ public class InstrumentService {
     }
 
     public EgwStatus getStatusId(final String statusString) {
-        final String statusQury = "from EgwStatus where upper(moduletype)=upper('instrument') and  upper(description)=upper('"
-                + statusString + "')";
+        final String statusQury = "from EgwStatus where upper(moduletype)=upper('instrument') and  upper(description)=upper(?1)";
         final EgwStatus egwStatus = (EgwStatus) persistenceService
-                .find(statusQury);
+                .find(statusQury, statusString);
         return egwStatus;
 
     }
@@ -903,13 +901,13 @@ public class InstrumentService {
         AccountCheques accountCheques = new AccountCheques();
         if (serialNo != null)
             accountCheques = (AccountCheques) persistenceService
-                    .find("select ac from AccountCheques ac, ChequeDeptMapping cd where ac.id = cd.accountCheque.id and "
-                                    + " ac.bankAccountId.id=?1 and cd.allotedTo.id=?2 and ?3 between ac.fromChequeNumber and ac.toChequeNumber and ac.serialNo=?4 ",
+                    .find(new StringBuilder("select ac from AccountCheques ac, ChequeDeptMapping cd where ac.id = cd.accountCheque.id and ")
+                                    .append(" ac.bankAccountId.id=?1 and cd.allotedTo.id=?2 and ?3 between ac.fromChequeNumber and ac.toChequeNumber and ac.serialNo=?4 ").toString(),
                             bankAccountId, departmentId.longValue(), chequeNumber, Long.valueOf(serialNo));
         else
             accountCheques = (AccountCheques) persistenceService
-                    .find("select ac from AccountCheques ac, ChequeDeptMapping cd where ac.id = cd.accountCheque.id and "
-                                    + " ac.bankAccountId.id=?1 and cd.allotedTo.id=?2 and ?3 between ac.fromChequeNumber and ac.toChequeNumber ",
+                    .find(new StringBuilder("select ac from AccountCheques ac, ChequeDeptMapping cd where ac.id = cd.accountCheque.id and ")
+                                    .append(" ac.bankAccountId.id=?1 and cd.allotedTo.id=?2 and ?3 between ac.fromChequeNumber and ac.toChequeNumber ").toString(),
                             bankAccountId, departmentId.longValue(), chequeNumber);
         if (accountCheques == null)
             return false;
@@ -922,16 +920,13 @@ public class InstrumentService {
         List<InstrumentHeader> list = new ArrayList<InstrumentHeader>();
         if (serialNo != null)
             list = instrumentHeaderService
-                    .findAllBy(
-                            "from InstrumentHeader where instrumentNumber=?1 and instrumentType.id=?2 and bankAccountId.id=?3 and isPayCheque='1' and "
-                                    + "serialNo.id=?4", chequeNumber,
-                            instrumentType.getId(), bankAccountId, Long.valueOf(serialNo));
+                    .findAllBy(new StringBuilder("from InstrumentHeader where instrumentNumber=?1 and instrumentType.id=?2 and bankAccountId.id=?3 and isPayCheque='1'")
+                            .append(" and serialNo.id=?4").toString(), chequeNumber, instrumentType.getId(), bankAccountId, Long.valueOf(serialNo));
         else
             list = instrumentHeaderService
                     .findAllBy(
                             "from InstrumentHeader where instrumentNumber=?1 and instrumentType.id=2? and bankAccountId.id=?3 and isPayCheque='1' ",
-                            chequeNumber,
-                            instrumentType.getId(), bankAccountId);
+                            chequeNumber, instrumentType.getId(), bankAccountId);
         if (list != null && list.size() > 0)
             return false;
         return true;
@@ -954,8 +949,7 @@ public class InstrumentService {
         final InstrumentType instrumentType = getInstrumentTypeByType("cheque");
         final List<InstrumentHeader> list = instrumentHeaderService
                 .findAllBy(
-                        "from InstrumentHeader where instrumentNumber=?1 and instrumentType.id=?2 and bankAccountId.id=?3 and statusId in (?4) "
-                                + "and serialNo.id=?5",
+                        "from InstrumentHeader where instrumentNumber=?1 and instrumentType.id=?2 and bankAccountId.id=?3 and statusId in (?4) and serialNo.id=?5",
                         chequeNumber,
                         instrumentType.getId(),
                         bankAccountId,
