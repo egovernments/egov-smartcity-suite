@@ -182,7 +182,7 @@ function populateBlock() {
 				id="electionWardId" list="dropdownData.electionWardList"
 				listKey="id" listValue="name" headerKey="-1"
 				headerValue="%{getText('default.select')}" value="%{electionWardId}" /></td>
-		<s:if test="%{id != null}">
+		<s:if test="%{id != null || dataEntry}">
 			<td class="bluebox"><s:text name="doorno"></s:text> <s:if
 					test="%{userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_INSPECTOR_DESGN.toUpperCase())}">
 					<span class="mandatory1" id="houseNoSpan">*</span>
@@ -195,7 +195,7 @@ function populateBlock() {
 
 	<tr>
 		<td class="bluebox2">&nbsp;</td>
-		<s:if test="%{id != null}">
+		<s:if test="%{id != null  || dataEntry}">
 			<td class="greybox"><s:text name="enumerationblock" /> :</td>
 			<td class="greybox"><s:select id="enumBlock" name="enumBlock"
 					headerValue="%{getText('default.select')}" value="%{enumBlock}"
