@@ -121,7 +121,7 @@ public class ExilPrecision
         try {
             dNum = Double.parseDouble(sNum);
         } catch (final Exception e) {
-            LOGGER.error("There is error " + e.getMessage());
+            LOGGER.error("There is error " ,e);
             return "0";
         }
         final int afterPoint = (int) Math.pow(10, precision);

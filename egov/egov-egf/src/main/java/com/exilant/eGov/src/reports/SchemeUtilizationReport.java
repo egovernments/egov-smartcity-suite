@@ -713,7 +713,7 @@ public class SchemeUtilizationReport {
             // cumulative for Total Closing Balance end
 
         } catch (final Exception e) {
-            LOGGER.error("Exp in Scheme Report==" + e.getMessage());
+            LOGGER.error("Exp in Scheme Report==" ,e);
             throw taskExc;
         }
 

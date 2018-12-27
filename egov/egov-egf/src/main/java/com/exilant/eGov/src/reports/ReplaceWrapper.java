@@ -74,7 +74,7 @@ public class ReplaceWrapper implements ColumnDecorator
     {
         // if(LOGGER.isDebugEnabled()) LOGGER.debug("columnValue:"+columnValue);
 
-        final String Rep = "" + columnValue;
+        final String Rep = String.valueOf(columnValue);
 
         final String ReplacedOne = replace(Rep, "<br><br> ", "\n");
         // if(LOGGER.isDebugEnabled()) LOGGER.debug("Replaced1:"+ReplacedOne);

@@ -169,7 +169,7 @@ public class Messages {
         } catch (final Exception e) {
             LOGGER.error("Error in getting Message" + e.getMessage());
             messageToReturn.sevirity = Messages.UNDEFINED;
-            messageToReturn.text = code + " is not a valid message code"; // what
+            messageToReturn.text = code.concat(" is not a valid message code"); // what
             // about
             // language??
             // To

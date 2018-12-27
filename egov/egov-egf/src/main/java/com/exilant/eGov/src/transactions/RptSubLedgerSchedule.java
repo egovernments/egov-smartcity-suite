@@ -69,6 +69,7 @@ import org.hibernate.query.Query;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
+import org.python.antlr.ast.Str;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -108,12 +109,12 @@ public class RptSubLedgerSchedule {
     public static StringBuffer numberToString(final String strNumberToConvert) {
         String strNumber = "", signBit = "";
         if (strNumberToConvert.startsWith("-")) {
-            strNumber = "" + strNumberToConvert.substring(1, strNumberToConvert.length());
+            strNumber = String.valueOf(strNumberToConvert.substring(1, strNumberToConvert.length()));
             signBit = "-";
         } else
-            strNumber = "" + strNumberToConvert;
+            strNumber = String.valueOf(strNumberToConvert);
         final DecimalFormat dft = new DecimalFormat("##############0.00");
-        final String strtemp = "" + dft.format(Double.parseDouble(strNumber));
+        final String strtemp = String.valueOf(dft.format(Double.parseDouble(strNumber)));
         StringBuffer strbNumber = new StringBuffer(strtemp);
         final int intLen = strbNumber.length();
 
@@ -320,31 +321,31 @@ public class RptSubLedgerSchedule {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("Calcualted opening balance... " + openingBal + "==");
                     if (openingBal > 0) {
-                        gb.setOpeningBal("" + numberToString(((Double) openingBal).toString()) + " Cr");
+                        gb.setOpeningBal(String.valueOf(numberToString(((Double) openingBal).toString())).concat(" Cr"));
                         totalOpgBal = totalOpgBal + openingBal;
                     } else if (openingBal < 0) {
                         totalOpgBal = totalOpgBal + openingBal;
                         final double openingBal1 = openingBal * -1;
-                        gb.setOpeningBal("" + numberToString(((Double) openingBal1).toString()) + " Dr");
+                        gb.setOpeningBal(String.valueOf(numberToString(((Double) openingBal1).toString())).concat(" Dr"));
                     } else
                         gb.setOpeningBal("&nbsp;");
 
                     closingBal = openingBal + creditamount - debitamount;
                     if (closingBal > 0)
-                        gb.setClosingBal("" + numberToString(((Double) closingBal).toString()) + " Cr");
+                        gb.setClosingBal(String.valueOf(numberToString(((Double) closingBal).toString())).concat(" Cr"));
                     else if (closingBal < 0) {
                         final double closingBal1 = closingBal * -1;
-                        gb.setClosingBal("" + numberToString(((Double) closingBal1).toString()) + " Dr");
+                        gb.setClosingBal(String.valueOf(numberToString(((Double) closingBal1).toString())).concat(" Dr"));
                     } else
                         gb.setClosingBal("&nbsp;");
 
                     if (debitamount > 0) {
-                        gb.setDebitamount("" + numberToString(((Double) debitamount).toString()));
+                        gb.setDebitamount(String.valueOf(numberToString(((Double) debitamount).toString())));
                         totalDr = totalDr + debitamount;
                     } else
                         gb.setDebitamount("&nbsp;");
                     if (creditamount > 0) {
-                        gb.setCreditamount("" + numberToString(((Double) creditamount).toString()));
+                        gb.setCreditamount(String.valueOf(numberToString(((Double) creditamount).toString())));
                         totalCr = totalCr + creditamount;
                     } else
                         gb.setCreditamount("&nbsp;");
@@ -367,27 +368,27 @@ public class RptSubLedgerSchedule {
         gb.setName("");
 
         if (totalOpgBal > 0)
-            gb.setOpeningBal("<hr noshade color=black size=1><b>" + numberToString(((Double) totalOpgBal).toString())
-                    + " Cr<hr noshade color=black size=1></b>");
+            gb.setOpeningBal("<hr noshade color=black size=1><b>".concat(String.valueOf(numberToString(((Double) totalOpgBal).toString())))
+                    .concat(" Cr<hr noshade color=black size=1></b>"));
         else if (totalOpgBal < 0) {
             totalOpgBal = totalOpgBal * -1;
-            gb.setOpeningBal("<hr noshade color=black size=1><b>" + numberToString(((Double) totalOpgBal).toString())
-                    + " Dr<hr noshade color=black size=1></b>");
+            gb.setOpeningBal("<hr noshade color=black size=1><b>" .concat(String.valueOf(numberToString(((Double) totalOpgBal).toString())))
+                    .concat(" Dr<hr noshade color=black size=1></b>"));
         } else if (totalOpgBal == 0.0)
             gb.setOpeningBal("");
         if (totalClosingBal > 0)
             gb.setClosingBal("<hr noshade color=black size=1><b>"
-                    + numberToString(((Double) totalClosingBal).toString()) + " Cr<hr noshade color=black size=1></b>");
+                    .concat(String.valueOf(numberToString(((Double) totalClosingBal).toString()))).concat(" Cr<hr noshade color=black size=1></b>"));
         else if (totalClosingBal < 0) {
             totalClosingBal = totalClosingBal * -1;
             gb.setClosingBal("<hr noshade color=black size=1><b>"
-                    + numberToString(((Double) totalClosingBal).toString()) + " Dr<hr noshade color=black size=1></b>");
+                    .concat(String.valueOf(numberToString(((Double) totalClosingBal).toString()))).concat(" Dr<hr noshade color=black size=1></b>"));
         } else if (totalClosingBal == 0.0)
             gb.setClosingBal("");
-        gb.setDebitamount("<hr noshade color=black size=1><b>" + numberToString(((Double) totalDr).toString())
-                + "<hr noshade color=black size=1></b>");
-        gb.setCreditamount("<hr noshade color=black size=1><b>" + numberToString(((Double) totalCr).toString())
-                + "<hr noshade color=black size=1></b>");
+        gb.setDebitamount("<hr noshade color=black size=1><b>".concat(String.valueOf(numberToString(((Double) totalDr).toString())))
+               .concat("<hr noshade color=black size=1></b>"));
+        gb.setCreditamount("<hr noshade color=black size=1><b>".concat(String.valueOf(numberToString(((Double) totalCr).toString())))
+                .concat("<hr noshade color=black size=1></b>"));
 
         dataList.add(gb);
     }

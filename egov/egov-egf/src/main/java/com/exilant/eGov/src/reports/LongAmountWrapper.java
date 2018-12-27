@@ -63,7 +63,7 @@ public class LongAmountWrapper implements ColumnDecorator {
     @Override
     public final String decorate(final Object columnValue) {
 
-        final String colVal = "" + columnValue;
+        final String colVal = String.valueOf(columnValue);
 
         if (colVal.equals("0.0"))
             return "";

@@ -66,7 +66,7 @@ public class VoucherTypeForULB {
 
     public String readVoucherTypes(final String vType) {
         String voucherType = "N";
-        final String keyName = "Autogenerate_" + vType.toLowerCase() + "_vouchernumber";
+        final String keyName = "Autogenerate_".concat(vType.toLowerCase()).concat("_vouchernumber");
         final List<AppConfigValues> configValues = appConfigValuesService
                 .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, keyName);
 

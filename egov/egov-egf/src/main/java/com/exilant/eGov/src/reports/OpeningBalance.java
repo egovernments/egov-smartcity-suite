@@ -89,12 +89,12 @@ public class OpeningBalance {
     public static StringBuffer numberToString(final String strNumberToConvert) {
         String strNumber = "", signBit = "";
         if (strNumberToConvert.startsWith("-")) {
-            strNumber = "" + strNumberToConvert.substring(1, strNumberToConvert.length());
+            strNumber = String.valueOf(strNumberToConvert.substring(1, strNumberToConvert.length()));
             signBit = "-";
         } else
-            strNumber = "" + strNumberToConvert;
+            strNumber = String.valueOf(strNumberToConvert);
         final DecimalFormat dft = new DecimalFormat("##############0.00");
-        final String strtemp = "" + dft.format(Double.parseDouble(strNumber));
+        final String strtemp = String.valueOf(dft.format(Double.parseDouble(strNumber)));
         StringBuffer strbNumber = new StringBuffer(strtemp);
         final int intLen = strbNumber.length();
 
@@ -122,7 +122,7 @@ public class OpeningBalance {
             getReport();
             formatReport();
         } catch (final SQLException exception) {
-            LOGGER.error("EXP=" + exception.getMessage(), exception);
+            LOGGER.error("EXP=" , exception);
         }
 
         return al;
@@ -177,9 +177,9 @@ public class OpeningBalance {
                     final double diff = totalDr - totalCr;
                     if (diff > 0) {
                         opeBalDiff.setDebit("&nbsp;");
-                        opeBalDiff.setCredit("<b>" + numberToString(((Double) diff).toString()).toString() + "</b>");
+                        opeBalDiff.setCredit("<b>".concat(numberToString(((Double) diff).toString()).toString()).concat("</b>"));
                     } else {
-                        opeBalDiff.setDebit("<b>" + numberToString(((Double) diff).toString()).toString() + "</b>");
+                        opeBalDiff.setDebit("<b>".concat(numberToString(((Double) diff).toString()).toString()).concat("</b>"));
                         opeBalDiff.setCredit("&nbsp;");
                     }
                     al.add(opeBalDiff);
@@ -189,12 +189,12 @@ public class OpeningBalance {
                     opeBal.setAccName("<b>&nbsp;&nbsp;&nbsp; Total:&nbsp;&nbsp;</b>");
                     if (diff > 0) {
                         totalCr = totalCr + diff;
-                        opeBal.setDebit("<b>" + numberToString(((Double) totalDr).toString()).toString() + "</b>");
-                        opeBal.setCredit("<b>" + numberToString(((Double) totalCr).toString()).toString() + "</b>");
+                        opeBal.setDebit("<b>".concat(numberToString(((Double) totalDr).toString()).toString()).concat("</b>"));
+                        opeBal.setCredit("<b>".concat(numberToString(((Double) totalCr).toString()).toString()).concat("</b>"));
                     } else {
                         totalDr = totalDr + diff * -1;
-                        opeBal.setDebit("<b>" + numberToString(((Double) totalDr).toString()).toString() + "</b>");
-                        opeBal.setCredit("<b>" + numberToString(((Double) totalCr).toString()).toString() + "</b>");
+                        opeBal.setDebit("<b>".concat(numberToString(((Double) totalDr).toString()).toString()).concat("</b>"));
+                        opeBal.setCredit("<b>".concat(numberToString(((Double) totalCr).toString()).toString()).concat("</b>"));
                     }
                     al.add(opeBal);
                     totalDr = 0.0;
@@ -254,9 +254,9 @@ public class OpeningBalance {
             final double diff = totalDr - totalCr;
             if (diff > 0) {
                 opeBalDiff.setDebit("&nbsp;");
-                opeBalDiff.setCredit("<b>" + numberToString(((Double) diff).toString()).toString() + "</b>");
+                opeBalDiff.setCredit("<b>".concat(numberToString(((Double) diff).toString()).toString()).concat("</b>"));
             } else {
-                opeBalDiff.setDebit("<b>" + numberToString(((Double) diff).toString()).toString() + "</b>");
+                opeBalDiff.setDebit("<b>".concat(numberToString(((Double) diff).toString()).toString()).concat("</b>"));
                 opeBalDiff.setCredit("&nbsp;");
             }
             al.add(opeBalDiff);
@@ -269,12 +269,12 @@ public class OpeningBalance {
             opeBal.setFunctioncode("&nbsp;");
             if (diff > 0) {
                 totalCr = totalCr + diff;
-                opeBal.setDebit("<b>" + numberToString(((Double) totalDr).toString()).toString() + "</b>");
-                opeBal.setCredit("<b>" + numberToString(((Double) totalCr).toString()).toString() + "</b>");
+                opeBal.setDebit("<b>".concat(numberToString(((Double) totalDr).toString()).toString()).concat("</b>"));
+                opeBal.setCredit("<b>".concat(numberToString(((Double) totalCr).toString()).toString()).concat("</b>"));
             } else {
                 totalDr = totalDr + diff * -1;
-                opeBal.setDebit("<b>" + numberToString(((Double) totalDr).toString()).toString() + "</b>");
-                opeBal.setCredit("<b>" + numberToString(((Double) totalCr).toString()).toString() + "</b>");
+                opeBal.setDebit("<b>".concat(numberToString(((Double) totalDr).toString()).toString()).concat("</b>"));
+                opeBal.setCredit("<b>".concat(numberToString(((Double) totalCr).toString()).toString()).concat("</b>"));
             }
             al.add(opeBal);
 
@@ -297,12 +297,12 @@ public class OpeningBalance {
         ob.setFunctioncode("&nbsp;");
         if (diff > 0) {
             grandTotalCr = grandTotalCr + diff;
-            ob.setDebit("<hr>&nbsp;<b>" + numberToString(((Double) grandTotalDr).toString()).toString() + "</b><hr>");
-            ob.setCredit("<hr>&nbsp;<b>" + numberToString(((Double) grandTotalCr).toString()).toString() + "</b><hr>");
+            ob.setDebit("<hr>&nbsp;<b>".concat(numberToString(((Double) grandTotalDr).toString()).toString()).concat("</b><hr>"));
+            ob.setCredit("<hr>&nbsp;<b>".concat(numberToString(((Double) grandTotalCr).toString()).toString()).concat("</b><hr>"));
         } else {
             grandTotalDr = grandTotalDr + diff * -1;
-            ob.setDebit("<hr>&nbsp;<b>" + numberToString(((Double) grandTotalDr).toString()).toString() + "</b><hr>");
-            ob.setCredit("<hr>&nbsp;<b>" + numberToString(((Double) grandTotalCr).toString()).toString() + "</b><hr>");
+            ob.setDebit("<hr>&nbsp;<b>".concat(numberToString(((Double) grandTotalDr).toString()).toString()).concat("</b><hr>"));
+            ob.setCredit("<hr>&nbsp;<b>".concat(numberToString(((Double) grandTotalCr).toString()).toString()).concat("</b><hr>"));
         }
         al.add(ob);
     }
@@ -323,7 +323,7 @@ public class OpeningBalance {
                 throw new Exception();
 
         } catch (final Exception ex) {
-            LOGGER.error("Exception " + ex, ex);
+            LOGGER.error("Exception " , ex);
             throw new TaskFailedException("Date Should be within the today's date");
         }
 
@@ -347,9 +347,9 @@ public class OpeningBalance {
         String formattedString = "";
         while (sIndex < str.length()) {
             if (sIndex + fixedLength >= str.length())
-                formattedString = formattedString + str.substring(sIndex, str.length());
+                formattedString = formattedString.concat(str.substring(sIndex, str.length()));
             else
-                formattedString = formattedString + str.substring(sIndex, sIndex + fixedLength) + "<BR>";
+                formattedString = formattedString.concat(str.substring(sIndex, sIndex + fixedLength)).concat("<BR>");
             sIndex = sIndex + fixedLength;
         }
         return formattedString;

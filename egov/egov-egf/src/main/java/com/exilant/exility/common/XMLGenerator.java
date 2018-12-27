@@ -107,7 +107,7 @@ public class XMLGenerator {
             try {
                 tag = ObjectGetSetter.get(object, "type").toString();  // try type field for tag
             } catch (final Exception e) {
-                LOGGER.error("Error in toXML" + e.getMessage());
+                LOGGER.error("Error in toXML" , e);
             }
         if (tag == null || tag.length() == 0) {
             tag = object.getClass().getName();

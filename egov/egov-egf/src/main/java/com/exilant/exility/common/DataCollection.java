@@ -144,7 +144,7 @@ public class DataCollection {
         try {
             return Float.parseFloat(obj.toString());
         } catch (final Exception e1) {
-            LOGGER.error("Inside getFloat" + e1.getMessage());
+            LOGGER.error("Inside getFloat",e1);
             return 0;
         }
     }
@@ -156,7 +156,7 @@ public class DataCollection {
         try {
             return Double.parseDouble(obj.toString());
         } catch (final Exception e1) {
-            LOGGER.error("Inside getDouble" + e1.getMessage());
+            LOGGER.error("Inside getDouble",e1);
             return 0;
         }
     }
@@ -168,7 +168,7 @@ public class DataCollection {
         try {
             return Integer.parseInt(obj.toString());
         } catch (final Exception e1) {
-            LOGGER.error("Inside getInt" + e1.getMessage());
+            LOGGER.error("Inside getInt",e1);
             return 0;
         }
     }
@@ -180,7 +180,7 @@ public class DataCollection {
         try {
             return Long.parseLong(obj.toString());
         } catch (final Exception e1) {
-            LOGGER.error("Inside getLong" + e1.getMessage());
+            LOGGER.error("Inside getLong",e1);
             return 0;
         }
     }
@@ -204,7 +204,7 @@ public class DataCollection {
         try {
             return (String[]) valueLists.get(name);
         } catch (final Exception e) {
-            LOGGER.error("Inside getValueList" + e.getMessage());
+            LOGGER.error("Inside getValueList",e);
         }
         final String[] arr = new String[0];
         return arr;
@@ -219,7 +219,7 @@ public class DataCollection {
         try {
             return (String[][]) obj;
         } catch (final Exception e) {
-            LOGGER.error("Typecasting error in getGrid" + e.getMessage());
+            LOGGER.error("Typecasting error in getGrid",e);
         }
         final String[][] arr = new String[0][0];
         return arr;

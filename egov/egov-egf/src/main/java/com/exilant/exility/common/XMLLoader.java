@@ -152,11 +152,11 @@ public class XMLLoader extends DefaultHandler {
             // Tell the XMLReader to parse the XML document
             xmlReader.parse(fileName);
         } catch (final ParserConfigurationException e) {
-            LOGGER.error("Exp=" + e.getMessage());
+            LOGGER.error("Exp=" ,e);
         } catch (final SAXException e) {
-            LOGGER.error("Exp=" + e.getMessage());
+            LOGGER.error("Exp=",e);
         } catch (final IOException e) {
-            LOGGER.error("Exp=" + e.getMessage());
+            LOGGER.error("Exp=" ,e);
         } finally {
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("Finally in load");
@@ -238,7 +238,7 @@ public class XMLLoader extends DefaultHandler {
             try {
                 childInfo = (ChildInfo) stackedObject.childInfos.get(tag);
             } catch (final Exception e) {
-                LOGGER.error("Error in getting child info" + e.getMessage());
+                LOGGER.error("Error in getting child info" ,e);
             }
 
         if (null == childInfo) {// no info. Probably this tag is encountered for
@@ -253,7 +253,7 @@ public class XMLLoader extends DefaultHandler {
         try {
             key = atts.getValue("id");
         } catch (final Exception e) {
-            LOGGER.error("Exp=" + e.getMessage());
+            LOGGER.error("Exp=",e);
         }
 
         if (null == key)
@@ -261,7 +261,7 @@ public class XMLLoader extends DefaultHandler {
                 key = atts.getValue("key");
             } catch (final Exception e) {
                 if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("Exp=" + e.getMessage());
+                    LOGGER.debug("Exp=" ,e);
             }
 
         if (null == key)
@@ -269,7 +269,7 @@ public class XMLLoader extends DefaultHandler {
                 key = atts.getValue("name");
             } catch (final Exception e) {
                 if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("Exp=" + e.getMessage());
+                    LOGGER.debug("Exp=",e);
             }
 
         return childInfo.createChild(parentObject, key);
@@ -295,8 +295,8 @@ public class XMLLoader extends DefaultHandler {
             String systemId = spe.getSystemId();
             if (systemId == null)
                 systemId = "null";
-            final String info = "URI=" + systemId + " Line=" + spe.getLineNumber()
-                    + ": " + spe.getMessage();
+            final String info = "URI=".concat(systemId).concat(" Line=") + spe.getLineNumber()
+                    + ": ".concat(spe.getMessage());
             return info;
         }
 
@@ -305,18 +305,18 @@ public class XMLLoader extends DefaultHandler {
 
         @Override
         public void warning(final SAXParseException spe) throws SAXException {
-            out.println("Warning: " + getParseExceptionInfo(spe));
+            out.println("Warning: ".concat(getParseExceptionInfo(spe)));
         }
 
         @Override
         public void error(final SAXParseException spe) throws SAXException {
-            final String message = "Error: " + getParseExceptionInfo(spe);
+            final String message = "Error: ".concat(getParseExceptionInfo(spe));
             throw new SAXException(message);
         }
 
         @Override
         public void fatalError(final SAXParseException spe) throws SAXException {
-            final String message = "Fatal Error: " + getParseExceptionInfo(spe);
+            final String message = "Fatal Error: ".concat(getParseExceptionInfo(spe));
             throw new SAXException(message);
         }
     }
@@ -373,14 +373,14 @@ public class XMLLoader extends DefaultHandler {
                     endChildMethod = parentObject.getClass().getMethod(
                             "endChild", stringClass);
                 } catch (final Exception e) {
-                    LOGGER.error("Exp=" + e.getMessage());
+                    LOGGER.error("Exp=" ,e);
                 }
 
                 return; // if this method is available, we do not look for
                 // anything else.
 
             } catch (final Exception e) {
-                LOGGER.error("Exp=" + e.getMessage());
+                LOGGER.error("Exp=" ,e);
             }
 
             /*
@@ -401,7 +401,7 @@ public class XMLLoader extends DefaultHandler {
                 // discovered..
                 // no return. We should explore further....
             } catch (final Exception e) {
-                LOGGER.error("Exp=" + e.getMessage());
+                LOGGER.error("Exp=" ,e);
             }
 
             /*
@@ -449,13 +449,13 @@ public class XMLLoader extends DefaultHandler {
                             addRequiresKey = true;
                             storageType = 4;
                         } catch (final Exception e1) {
-                            LOGGER.error("Exp=" + e1.getMessage());
+                            LOGGER.error("Exp=",e1);
                         }
-                        LOGGER.error("Exp ObjectGetSetter=" + e.getMessage());
+                        LOGGER.error("Exp ObjectGetSetter=", e);
                     }
                 }
             } catch (final Exception e) {
-                LOGGER.error("Exp=" + e.getMessage());
+                LOGGER.error("Exp=" ,e);
             }
             // if all exploration failed, storageType will continue to be 0
             // implying inability to create child object
@@ -478,7 +478,7 @@ public class XMLLoader extends DefaultHandler {
                     childObject = newChildMethod
                             .invoke(parentObject, arr2);
                 } catch (final Exception e) {
-                    LOGGER.error("Exp=" + e.getMessage());
+                    LOGGER.error("Exp=" ,e);
                 }
                 break;
 
@@ -491,7 +491,7 @@ public class XMLLoader extends DefaultHandler {
                         field.set(parentObject, childObject);
                     }
                 } catch (final Exception e) {
-                    LOGGER.error("Exp=" + e.getMessage());
+                    LOGGER.error("Exp=" , e);
                 }
                 break;
 
@@ -509,7 +509,7 @@ public class XMLLoader extends DefaultHandler {
                         addMethod.invoke(collectionObject, arr1);
                     }
                 } catch (final Exception e) {
-                    LOGGER.error("Exp=" + e.getMessage());
+                    LOGGER.error("Exp=" , e);
                 }
                 break;
             default:
@@ -529,7 +529,7 @@ public class XMLLoader extends DefaultHandler {
                         final Object[] a = { tag };
                         endChildMethod.invoke(parentObject, a);
                     } catch (final Exception e) {
-                        LOGGER.error("Exp in endChild=" + e.getMessage());
+                        LOGGER.error("Exp in endChild=" , e);
                     }
                 break;
 
@@ -544,7 +544,7 @@ public class XMLLoader extends DefaultHandler {
                     field.setAccessible(true);
                     field.set(parentObject, o);
                 } catch (final Exception e) {
-                    LOGGER.error("Exp in end Child=" + e.getMessage());
+                    LOGGER.error("Exp in end Child=", e);
                 }
                 break;
 

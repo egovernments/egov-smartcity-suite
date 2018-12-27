@@ -89,7 +89,7 @@ public class IESchedules extends AbstractTask {
 
     private void printSchedules(final DataCollection dc) throws TaskFailedException {
         final String tableTime = dc.getValue("tableToDrop");
-        final String mainTable = "coaie" + tableTime;
+        final String mainTable = "coaie".concat(tableTime);
         final StringBuilder report = new StringBuilder("SELECT scheduleglCode AS \"glcode\", case when operation = 'L' then 'Less: ' else ' ' end  ||")
                 .append(" schedulename AS \"name\", 'Schedule ' || schschedule || ': ' || summaryname || '[Code No ' || summaryglcode || ']' AS \"schTitle\",")
                 .append(" case when schschedule = NULL then '-' else schschedule AS \"schedule\", curYearAmount AS \"curyearamount\",")
@@ -111,8 +111,8 @@ public class IESchedules extends AbstractTask {
         final String eDate = dc.getValue("eDate") == null ? "today" : dc
                 .getValue("eDate");
         dc.addValue("pageTitle",
-                "Income & Expenditure Schedules For the period of " + sDate
-                        + " to " + eDate);
+                "Income & Expenditure Schedules For the period of ".concat(sDate)
+                        .concat(" to ").concat(eDate));
 
         try {
             pst = conn.prepareStatement(report.toString());

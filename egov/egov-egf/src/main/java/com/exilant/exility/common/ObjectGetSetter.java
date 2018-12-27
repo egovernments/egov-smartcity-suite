@@ -148,8 +148,8 @@ public class ObjectGetSetter {
                 cls = cls.getSuperclass();
             }
         if (field == null)
-            throw new NoSuchFieldException("NoSuchFieldException for field " + fieldName + " for class"
-                    + object.getClass().getName());
+            throw new NoSuchFieldException("NoSuchFieldException for field ".concat(fieldName).concat(" for class")
+                    .concat(object.getClass().getName()));
         return field;
 
     }
