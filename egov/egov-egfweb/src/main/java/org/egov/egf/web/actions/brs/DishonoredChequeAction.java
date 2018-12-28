@@ -49,11 +49,7 @@
 package org.egov.egf.web.actions.brs;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Actions;
-import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.convention.annotation.*;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infstr.search.SearchQuery;
@@ -67,22 +63,20 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @ParentPackage("egov")
 @Results({
-    @Result(name = DishonoredChequeAction.SEARCH, location = "dishonoredCheque-search.jsp"),
-    @Result(name = DishonoredChequeAction.SUCCESS, location = "dishonoredCheque-success.jsp")
+        @Result(name = DishonoredChequeAction.SEARCH, location = "dishonoredCheque-search.jsp"),
+        @Result(name = DishonoredChequeAction.SUCCESS, location = "dishonoredCheque-success.jsp")
 })
 public class DishonoredChequeAction extends SearchFormAction {
 
-    private static final long serialVersionUID = 1998083631926900402L;
     public static final String SEARCH = "search";
+    private static final long serialVersionUID = 1998083631926900402L;
     private static final Logger LOGGER = Logger.getLogger(DishonoredChequeAction.class);
     protected DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    protected List<DishonoredChequeBean> dishonoredChequeDisplayList = new ArrayList<DishonoredChequeBean>();
     private String bankBranchId;
     private Long accountCodes;
     private String instrumentMode;
@@ -95,7 +89,6 @@ public class DishonoredChequeAction extends SearchFormAction {
     @Autowired
     private InstrumentService instrumentService;
     private String installmentIds;
-    protected List<DishonoredChequeBean> dishonoredChequeDisplayList = new ArrayList<DishonoredChequeBean>();
 
     @Override
     public Object getModel() {
@@ -104,8 +97,7 @@ public class DishonoredChequeAction extends SearchFormAction {
     }
 
     @Override
-    public void prepare()
-    {
+    public void prepare() {
         super.prepare();
         addDropdownData("bankBranchList",
                 persistenceService.findAllBy("select bb from Bankbranch bb where bb.isactive=true order by bb.bank.name"));
@@ -115,7 +107,7 @@ public class DishonoredChequeAction extends SearchFormAction {
     }
 
     public List getBankBranch() {
-        
+
         return null;
     }
 
@@ -129,7 +121,7 @@ public class DishonoredChequeAction extends SearchFormAction {
     }
 
     @Actions({
-        @Action(value = "/brs/dishonoredCheque-search")
+            @Action(value = "/brs/dishonoredCheque-search")
     })
     public String show() {
         return SEARCH;
@@ -153,15 +145,16 @@ public class DishonoredChequeAction extends SearchFormAction {
             final String id[] = bankBranchId.split("-");
             bankId = Long.parseLong(id[0]);
         }
-        final String searchQuery = receiptService.getReceiptHeaderforDishonor(instrumentMode, accountCodes, bankId, chequeNo,
-                chqDDDate.toString());
+        final Map<String, List<Object>> queryWithParams = receiptService.getReceiptHeaderforDishonor(instrumentMode, accountCodes, bankId, chequeNo, chqDDDate.toString());
+        final Map.Entry<String, List<Object>> queryWithParamsEntry = queryWithParams.entrySet().iterator().next();
+        final String searchQuery = queryWithParamsEntry.getKey();
         StringBuilder srchQry = new StringBuilder();
         srchQry = srchQry.append("select rpt.id as receiptheaderid,ih.id as instrumentheaderid,rpt.receiptnumber as receiptnumber,rpt.receiptdate as receiptdate,ih.instrumentnumber as instrumentnumber,")
                 .append("ih.instrumentdate as instrumentdate,ih.instrumentamount as instrumentamount,b.name as bankname,ba.accountnumber as accountnumber,ih.payto as payto,status.description as description ")
                 .append(searchQuery)
                 .append(" ORDER BY rpt.receiptnumber, rpt.receiptdate ");
         StringBuilder countQry = new StringBuilder("select count(distinct rpt) ").append(searchQuery);
-        return new SearchQuerySQL(srchQry.toString(), countQry.toString(), null);
+        return new SearchQuerySQL(srchQry.toString(), countQry.toString(), queryWithParamsEntry.getValue());
 
     }
 
