@@ -56,9 +56,10 @@ import org.egov.tl.service.DailyCollectionReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Date;
@@ -66,10 +67,9 @@ import java.util.List;
 
 import static org.egov.tl.utils.Constants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.tl.utils.Constants.WARD;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
-@RequestMapping("/reports/dailycollectionreport")
+@RequestMapping("/report/dailycollection")
 public class DailyCollectionReportController {
 
     @Autowired
@@ -86,7 +86,7 @@ public class DailyCollectionReportController {
         return new DCRSearchRequest();
     }
 
-    @RequestMapping(method = GET)
+    @GetMapping
     public String search(final Model model) {
         model.addAttribute("currentDate", new Date());
         model.addAttribute("operators", dCRService.getCollectionOperators());
@@ -96,7 +96,7 @@ public class DailyCollectionReportController {
         return "dcr-search";
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     @ResponseBody
     public List<CollectionDocument> searchCollection(@ModelAttribute final DCRSearchRequest searchRequest) {
         return dCRService.searchDailyCollection(searchRequest);

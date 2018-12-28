@@ -76,13 +76,13 @@ jQuery(document).ready(function () {
                 $('#frmDt').text(frmDt);
                 $('#toDt').text(toDt);
                 var oTable = $('#dailyCollReport-table');
-                $.post("/tl/reports/dailycollectionreport", $('#dailyCollectionform').serialize())
+                $.post("/tl/report/dailycollection", $('#dailyCollectionform').serialize())
                     .done(function (searchResult) {
                         $('#dailyCollectionReport-header').show();
                         oTable.DataTable({
                             "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
                             dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l>" +
-                            "<'col-md-2 col-xs-6 text-left'B><'col-md-5 col-xs-6 text-right'p>>",
+                                "<'col-md-2 col-xs-6 text-left'B><'col-md-5 col-xs-6 text-right'p>>",
                             "autoWidth": true,
                             "bDestroy": true,
                             responsive: true,
@@ -127,8 +127,7 @@ jQuery(document).ready(function () {
                                         if (data != null && data != undefined && data != undefined) {
                                             var regDateSplit = data.split("T")[0].split("-");
                                             return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
-                                        }
-                                        else return "";
+                                        } else return "";
                                     }
                                 },
                                 {title: 'License / Application No.', data: 'consumerCode'},
@@ -173,8 +172,7 @@ jQuery(document).ready(function () {
                         $('.loader-class').modal('hide');
                     });
                 return true;
-            }
-            else
+            } else
                 return false;
         } catch (e) {
             $('.loader-class').modal('hide');

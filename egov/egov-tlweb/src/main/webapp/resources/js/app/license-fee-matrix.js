@@ -55,8 +55,8 @@ $(document).ready(function () {
         }
     });
 
-    $('#licenseAppType').change(function(){
-        if($(this).find("option:selected").text() === "Renew")
+    $('#licenseAppType').change(function () {
+        if ($(this).find("option:selected").text() === "Renew")
             $("#natureOfBusiness option:contains('Temporary')").hide();
         else
             $("#natureOfBusiness option:contains('Temporary')").show();
@@ -149,7 +149,7 @@ $(document).ready(function () {
         var obj = $(this);
         if (idx == 0) {
             bootbox.alert('Cannot delete first row!');
-        } else if ((idx < ($('#result tbody tr:visible').length -1))) {
+        } else if ((idx < ($('#result tbody tr:visible').length - 1))) {
             bootbox.alert('Try to delete from last row!');
         } else {
             bootbox.confirm("Do you want to delete this fee data ? ", function (result) {
@@ -211,13 +211,16 @@ $(document).ready(function () {
         $('.report-section').removeClass('display-hide');
         oTable = $('#resultTable').DataTable({
             ajax: {
-                url: "search?categoryId=" + $('#licenseCategory').val()
-                + "&subcategoryId=" + $("#subCategory").val()
-                + "&financialYearId=" + $("#financialYear").val(),
-                type: "POST"
+                url: "search",
+                type: "POST",
+                data: {
+                    categoryId: $('#licenseCategory').val(),
+                    subcategoryId: $("#subCategory").val(),
+                    financialYearId: $("#financialYear").val()
+                }
             },
             dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l>" +
-            "<'col-md-3 col-xs-6 text-right'B><'col-md-4 col-xs-6 text-right'p>>",
+                "<'col-md-3 col-xs-6 text-right'B><'col-md-4 col-xs-6 text-right'p>>",
             "autoWidth": false,
             "bDestroy": true,
             buttons: [{
@@ -322,8 +325,7 @@ $(document).ready(function () {
         if (row.child.isShown()) {
             row.child.hide();
             tr.removeClass('shown');
-        }
-        else {
+        } else {
             row.child(populateChildTable(row.data())).show();
             tr.addClass('shown');
         }

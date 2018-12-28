@@ -158,7 +158,7 @@ $(document).ready(function () {
                     var action = 'generate';
                     $('#demandnoticesearchForm').attr('method', 'get');
                     $('#demandnoticesearchForm').attr('action', action);
-                    document.forms["demandnoticesearchForm"].submit();
+                    $('#demandnoticesearchForm').submit();
 
                 }
             });

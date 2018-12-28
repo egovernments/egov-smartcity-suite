@@ -65,8 +65,12 @@ $('#btnsearch').click(function (e) {
     reportdatatable = drillDowntableContainer
         .dataTable({
             ajax: {
-                url: "/tl/validity/search" + "?licenseCategory=" + $('#licenseCategory').val() + "&natureOfBusiness=" + $("#natureOfBusiness").val(),
-                type: "POST"
+                url: "/tl/validity/search",
+                type: "POST",
+                data: {
+                    licenseCategory: $('#licenseCategory').val(),
+                    natureOfBusiness: $("#natureOfBusiness").val()
+                }
             },
             "fnRowCallback": function (row, data, index) {
 
