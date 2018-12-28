@@ -1980,6 +1980,6 @@ footer.main a {
   display: none;
 }
 
-input[type="password" i] {
+input[type="password" i],input[type="password" i].form-control {
   background-color: #FFF;
 }
