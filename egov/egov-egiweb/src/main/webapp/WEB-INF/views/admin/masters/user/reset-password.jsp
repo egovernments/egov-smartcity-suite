@@ -78,7 +78,7 @@
                         </label>
                         <div class="col-sm-6 add-margin">
                             <input style="display:none" type="password"/>
-                            <input type="password" name="password" class="form-control" id="password" value="demo"
+                            <input type="password" name="password" class="form-control readonly-pwd" id="password" value="demo"
                                    autocomplete="off" required="required" maxlength="32"
                                    onfocus="this.removeAttribute('readonly');" readonly="true"/>
                         </div>

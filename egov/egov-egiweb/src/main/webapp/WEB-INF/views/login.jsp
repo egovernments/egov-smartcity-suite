@@ -183,7 +183,7 @@
                                 <div class="input-group-addon style-label">
                                     <i class="fa fa-key theme-color style-color"></i>
                                 </div>
-                                <input type="password" class="form-control style-form"
+                                <input type="password" class="form-control style-form readonly-pwd"
                                        name="password" id="password" placeholder="Password"
                                        autocomplete="new-password" required="required"
                                        onfocus="this.removeAttribute('readonly');" readonly="true"/>
@@ -199,7 +199,7 @@
                                 <div class="input-group-addon style-label">
                                     <i class="fa fa-lock theme-color style-color" aria-hidden="true"></i>
                                 </div>
-                                <input type="password" class="form-control style-form" name="otp" id="otp" placeholder="OTP"
+                                <input type="password" class="form-control style-form readonly-pwd" name="otp" id="otp" placeholder="OTP"
                                        autocomplete="new-password" onfocus="this.removeAttribute('readonly');" readonly="true"/>
                                 <label id="otp-msg" class="success-msg pull-right" for="otp">
                                     <spring:message code="otp.send.success"/>
@@ -382,7 +382,7 @@
                                                 <i class="fa fa-key theme-color style-color"></i>
                                             </div>
                                             <input style="display:none" type="password"/>
-                                            <input type="password" class="form-control style-form" name="token" id="token"
+                                            <input type="password" class="form-control style-form readonly-pwd" name="token" id="token"
                                                    placeholder="Enter your OTP" autocomplete="new-password"
                                                    required="required" onfocus="this.removeAttribute('readonly');" readonly="true"/>
                                             <span class="mandatory set-mandatory"></span>
@@ -398,7 +398,7 @@
                             </c:if>
                             <c:if test="${not param.byOTP}">
                                 <div class="modal-body">
-                                    <div class="text-center font-12"><spring:message code="msg.success.pwd.recov.otp.${param.byOTP}"/></div>
+                                    <div class="text-center"><spring:message code="msg.success.pwd.recov.otp.${param.byOTP}"/></div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-default text-right" data-dismiss="modal"><spring:message code="lbl.close"/></button>

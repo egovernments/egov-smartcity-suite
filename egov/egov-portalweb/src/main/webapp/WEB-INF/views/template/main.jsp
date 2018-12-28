@@ -123,7 +123,7 @@
                         </div>
                         <div class="col-md-8 add-margin">
                             <input style="display:none" type="password"/>
-                            <input type="password" class="form-control" id="old-pass" autocomplete="new-password"
+                            <input type="password" class="form-control readonly-pwd" id="old-pass" autocomplete="new-password"
                                    onfocus="this.removeAttribute('readonly');" readonly="true"/>
                         </div>
                     </div>
@@ -133,7 +133,7 @@
                         </div>
                         <div class="col-md-8 add-margin">
                             <input style="display:none" type="password"/>
-                            <input type="password" class="form-control checkpassword" id="new-pass"
+                            <input type="password" class="form-control checkpassword readonly-pwd" id="new-pass"
                                    autocomplete="new-password" onfocus="this.removeAttribute('readonly');" readonly="true"/>
                         </div>
                     </div>
@@ -143,7 +143,7 @@
                         </div>
                         <div class="col-md-8 add-margin">
                             <input style="display:none" type="password"/>
-                            <input type="password" class="form-control checkpassword" id="retype-pass" autocomplete="new-password"
+                            <input type="password" class="form-control checkpassword readonly-pwd" id="retype-pass" autocomplete="new-password"
                                    onfocus="this.removeAttribute('readonly');" readonly="true"/>
                             <div class="password-error error-msg display-hide">Password is incorrect</div>
                         </div>

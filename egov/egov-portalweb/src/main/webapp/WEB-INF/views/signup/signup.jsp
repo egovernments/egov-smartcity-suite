@@ -68,13 +68,12 @@
     <meta name="_csrf" content="${_csrf.token}"/>
     <meta name="_csrf_header" content="${_csrf.headerName}"/>
     <spring:eval expression="@environment.getProperty('user.pwd.strength')" var="pwdstrengthmsg"/>
-    <spring:message code="usr.pwd.strength.msg.${pwdstrengthmsg}" var="pwdmsg"/>
+    <spring:message code="usr.pwd.strength.msg.${pwdstrengthmsg}" var="pwdmsg" htmlEscape="false"/>
     <title>Citizen Signup</title>
     <link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
     <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
     <link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
-    <link rel="stylesheet"
-          href="<cdn:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>">
+    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>">
     <script src="<cdn:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>" type="text/javascript"></script>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -140,7 +139,9 @@
                             <div class="input-group-addon style-label">
                                 <i class="fa fa-mobile fa-fw theme-color style-color"></i>
                             </div>
-                            <form:input path="mobileNumber" cssClass="form-control style-form is_valid_number" id="mobileNumber" placeholder="Mobile number" title="Enter valid mobile number!" minlength="10" maxlength="10" autocomplete="off" required="required"/>
+                            <form:input path="mobileNumber" cssClass="form-control style-form is_valid_number" id="mobileNumber"
+                                        placeholder="Mobile number" title="Enter valid mobile number!" minlength="10" maxlength="10"
+                                        autocomplete="off" required="required"/>
                             <span class="mandatory set-mandatory"></span>
                             <form:hidden path="username" id="username"/>
                             <div class="text-right error-msg display-hide mobile-error" style="margin:0;">
@@ -157,7 +158,10 @@
                             <div class="input-group-addon style-label">
                                 <i class="fa fa-key fa-fw theme-color style-color"></i>
                             </div>
-                            <form:password path="password" cssClass="form-control style-form check-password" id="password" placeholder="Password" maxlength="32" autocomplete="new-password" required="required" data-container="#wrap" data-toggle="popover" data-content='${pwdmsg}'/>
+                            <form:password path="password" cssClass="form-control style-form check-password readonly-pwd"
+                                           id="password" placeholder="Password" maxlength="32" autocomplete="new-password"
+                                           required="required" data-container="#wrap" data-toggle="popover"
+                                           data-content='${pwdmsg}' onfocus="this.removeAttribute('readonly');" readonly="true"/>
                             <span class="mandatory set-mandatory"></span>
                             <div class="input-group-addon" style="background:#fff;border:none;border-bottom:1px solid #D0D2D7;cursor:default;">
                                 <i class="fa fa-eye show password-view" data-view="show" aria-hidden="true"></i>
@@ -167,7 +171,9 @@
                         <label class="text-right align-top add-margin error-msg display-hide password-invalid" style="margin:0;">
                                 ${pwdmsg}
                         </label>
-                        <div class="text-right" style="margin:0;"><form:errors path="password" cssClass="error-check add-margin error-msg font-12"/></div>
+                        <div class="text-right" style="margin:0;">
+                            <form:errors path="password" cssClass="error-check add-margin error-msg font-12"/>
+                        </div>
                     </div>
                     <div class="form-group">
                         <div class="input-group">
@@ -175,8 +181,8 @@
                                 <i class="fa fa-key fa-fw theme-color style-color"></i>
                             </div>
                             <input style="display:none" type="password"/>
-                            <input type="password" class="form-control style-form check-password" name="con-password" id="con-password" placeholder="Confirm password"
-                                   autocomplete="new-password" required="required" maxlength="32"
+                            <input type="password" class="form-control style-form check-password readonly-pwd" name="con-password" id="con-password"
+                                   placeholder="Confirm password" autocomplete="new-password" required="required" maxlength="32"
                                    onfocus="this.removeAttribute('readonly');" readonly="true"/>
                             <span class="mandatory set-mandatory"></span>
                             <label id="con-password-error" class="error pull-right display-hide" for="con-password">Required</label>

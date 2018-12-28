@@ -369,7 +369,7 @@
                         </div>
                         <div class="col-md-8 add-margin">
                             <input style="display:none" type="password"/>
-                            <input type="password" class="form-control" id="currentPwd" required="required"
+                            <input type="password" class="form-control readonly-pwd" id="currentPwd" required="required"
                                    autocomplete="new-password" onfocus="this.removeAttribute('readonly');" readonly="true"/>
                         </div>
                     </div>
@@ -381,7 +381,7 @@
                         </div>
                         <div class="col-md-8 add-margin">
                             <input style="display:none" type="password"/>
-                            <input type="password" class="form-control check-password" id="newPwd" maxlength="32"
+                            <input type="password" class="form-control check-password readonly-pwd" id="newPwd" maxlength="32"
                                    data-container="#wrap" data-toggle="popover" data-content="${pwdmsg}"
                                    autocomplete="new-password" onfocus="this.removeAttribute('readonly');" readonly="true">
                         </div>
@@ -394,7 +394,7 @@
                         </div>
                         <div class="col-md-8 add-margin">
                             <input style="display:none" type="password"/>
-                            <input type="password" class="form-control check-password" id="retypeNewPwd" maxlength="32"
+                            <input type="password" class="form-control check-password readonly-pwd" id="retypeNewPwd" maxlength="32"
                                    autocomplete="new-password" onfocus="this.removeAttribute('readonly');" readonly="true">
                             <div class="password-error error-msg display-hide"><spring:message code="err.pwd.incorrect"/></div>
                             <div class="password-error-msg display-hide">${pwdmsg}</div>

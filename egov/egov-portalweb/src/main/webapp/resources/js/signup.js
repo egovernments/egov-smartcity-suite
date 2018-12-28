@@ -142,14 +142,13 @@ $(document).ready(function () {
             type: "POST",
             success: function (data) {
                 if (data) {
-                    console.log('OTP sent');
                     $('#activationcode').val('');
                     $('#signup-section,#otp-section').show();
                     $('#otpbtn-section').hide();
                 }
             },
             error: function () {
-				console.error('Error while sending otp');
+				bootbox.alert('Could not send OTP, please try later.');
                 $(this).show();
             }
         });

@@ -96,7 +96,7 @@ public class LoginController {
                                           @RequestParam boolean byOTP, RedirectAttributes redirectAttrib) {
         redirectAttrib.addAttribute("recovered", identityRecoveryService
                 .generateAndSendUserPasswordRecovery(identity, originURL + "/egi/login/password/reset?token=", byOTP));
-        redirectAttrib.addAttribute("byOTP", true);
+        redirectAttrib.addAttribute("byOTP", byOTP);
         return "redirect:/login/secure";
     }
 

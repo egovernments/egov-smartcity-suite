@@ -71,7 +71,7 @@
                                 <div class="col-sm-4">
                                     <input style="display:none" type="password"/>
                                     <input type="password" name="newPassword" autocomplete="new-password"
-                                           placeholder="Enter your new password" class="form-control check-password"
+                                           placeholder="Enter your new password" class="form-control check-password readonly-pwd"
                                            id="new-pass" required="required" maxlength="32" data-toggle="popover"
                                            data-content='${pwdmsg}' onfocus="this.removeAttribute('readonly');" readonly="true"/>
                                     <input type="hidden" name="token" value="${param.token}"/>
@@ -84,7 +84,7 @@
                                 </label>
                                 <div class="col-sm-4">
                                     <input type="password" name="confirmPwd" autocomplete="new-password"
-                                           placeholder="Re-enter your new password" class="form-control check-password"
+                                           placeholder="Re-enter your new password" class="form-control check-password readonly-pwd"
                                            id="retype-pass" required="required" maxlength="32"
                                            onfocus="this.removeAttribute('readonly');" readonly="true"/>
                                     <div class="password-error error-msg display-hide"><spring:message code="lbl.pwd.mismatch"/></div>
