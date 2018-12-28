@@ -46,116 +46,115 @@
  *
  */
 
-$(document).ready(function()
-{	
-	
-	var position = new Bloodhound({
-		datumTokenizer: function (datum) {
-			return Bloodhound.tokenizers.whitespace(datum.value);
-		},
-		queryTokenizer: Bloodhound.tokenizers.whitespace,
-		remote: {
-			url: '/eis/employee/position/by-code-or-name-or-position?name=%QUERY',
-			dataType: "json",
-			filter: function (data) {
-				return $.map(data, function (pos) {
-					return {
-						name: pos.name,
-						value: pos.id
-					};
-				});
-			}
-		}
-	});
-	
-	position.initialize();
-	
-	var com_pos_typeahead = $('#fromposition').typeahead({
-		hint: false,
-		highlight: true,
-		minLength: 3
-		}, {
-		displayKey: 'name',
-		source: position.ttAdapter()
-	});
-	typeaheadWithEventsHandling(com_pos_typeahead, '#frompositionId');
-	
+$(document).ready(function () {
 
-	var position = new Bloodhound({
-		datumTokenizer: function (datum) {
-			return Bloodhound.tokenizers.whitespace(datum.value);
-		},
-		queryTokenizer: Bloodhound.tokenizers.whitespace,
-		remote: {
-			url: '/eis/employee/position/by-code-or-name-or-position?name=%QUERY',
-			dataType: "json",
-			filter: function (data) {
-				return $.map(data, function (pos) {
-					return {
-						name: pos.name,
-						value: pos.id
-					};
-				});
-			}
-		}
-	});
-	
-	position.initialize();
-	
-	var com_pos_typeahead = $('#toposition').typeahead({
-		hint: false,
-		highlight: true,
-		minLength: 3
-		}, {
-		displayKey: 'name',
-		source: position.ttAdapter()
-	});
-	typeaheadWithEventsHandling(com_pos_typeahead, '#topositionId');
-	
-	
-	$('#escalationSearch').click(function(e){  
-		if($('form').valid())
-		{    
-			oTable= $('#bulk_escalation_table');
-			oTable.dataTable({
-				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-				"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-				"autoWidth": false,
-				"bDestroy": true,
+    var position = new Bloodhound({
+        datumTokenizer: function (datum) {
+            return Bloodhound.tokenizers.whitespace(datum.value);
+        },
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: {
+            url: '/eis/employee/position/by-code-or-name-or-position?name=%QUERY',
+            dataType: "json",
+            filter: function (data) {
+                return $.map(data, function (pos) {
+                    return {
+                        name: pos.name,
+                        value: pos.id
+                    };
+                });
+            }
+        }
+    });
+
+    position.initialize();
+
+    var com_pos_typeahead = $('#fromposition').typeahead({
+        hint: false,
+        highlight: true,
+        minLength: 3
+    }, {
+        displayKey: 'name',
+        source: position.ttAdapter()
+    });
+    typeaheadWithEventsHandling(com_pos_typeahead, '#frompositionId');
+
+
+    var position = new Bloodhound({
+        datumTokenizer: function (datum) {
+            return Bloodhound.tokenizers.whitespace(datum.value);
+        },
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: {
+            url: '/eis/employee/position/by-code-or-name-or-position?name=%QUERY',
+            dataType: "json",
+            filter: function (data) {
+                return $.map(data, function (pos) {
+                    return {
+                        name: pos.name,
+                        value: pos.id
+                    };
+                });
+            }
+        }
+    });
+
+    position.initialize();
+
+    var com_pos_typeahead = $('#toposition').typeahead({
+        hint: false,
+        highlight: true,
+        minLength: 3
+    }, {
+        displayKey: 'name',
+        source: position.ttAdapter()
+    });
+    typeaheadWithEventsHandling(com_pos_typeahead, '#topositionId');
+
+
+    $('#escalationSearch').click(function (e) {
+        if ($('form').valid()) {
+            oTable = $('#bulk_escalation_table');
+            oTable.dataTable({
+                "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+                "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                "autoWidth": false,
+                "bDestroy": true,
                 ajax: {
                     type: "GET",
                     url: "/pgr/complaint/bulkescalation/?" + $("#bulkEscalation").serialize(),
                 },
-				"columns" : [
-				  { "mData" : "grievanceType",
-					"sTitle" : "Grievance Type"
-				  },
-				  { "mData" : "positionFrom",
-				    "sTitle" : "From Position"
-				  },
-				  { "mData" : "positionTo",
-					"sTitle" : "To Position"
-				  }]
-					});
-			e.stopPropagation();
-			$('.data-save').removeClass('hide');
-		}
-		e.preventDefault();
-		});
-	
-	$('#escalationsave').click(function(e){  
-		if($('form').valid())
-		{
-			if($("#bulk_escalation_table").dataTable().fnSettings().aoData.length == 0){
-				document.forms["bulkEscalation"].submit();
-			}else{
-				bootbox.confirm("Existing Escalation Data will be overridden, Are you sure?", function(result) {
-					if(result){
-						document.forms["bulkEscalation"].submit();
-					}else{
-					}
-				}); 
-			}
-		}
-	});
+                "columns": [
+                    {
+                        "mData": "grievanceType",
+                        "sTitle": "Grievance Type"
+                    },
+                    {
+                        "mData": "positionFrom",
+                        "sTitle": "From Position"
+                    },
+                    {
+                        "mData": "positionTo",
+                        "sTitle": "To Position"
+                    }]
+            });
+            e.stopPropagation();
+            $('.data-save').removeClass('hide');
+        }
+        e.preventDefault();
+    });
+
+    $('#escalationsave').click(function (e) {
+        if ($('form').valid()) {
+            if ($("#bulk_escalation_table").dataTable().fnSettings().aoData.length == 0) {
+                $("#bulkEscalation").submit();
+            } else {
+                bootbox.confirm("Existing Escalation data will be overridden, Are you sure?", function (result) {
+                    if (result) {
+                        $("#bulkEscalation").submit();
+                    }
+                });
+            }
+        }
+    });
 });
