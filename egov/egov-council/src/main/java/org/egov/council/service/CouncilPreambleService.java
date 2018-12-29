@@ -55,12 +55,14 @@ import static org.egov.council.utils.constants.CouncilConstants.REJECTED;
 import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_APPROVED_PREAMBLE;
 import static org.egov.infra.utils.ApplicationConstant.ANONYMOUS_USERNAME;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.autonumber.PreambleNumberGenerator;
@@ -75,9 +77,11 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
+import org.egov.infra.workflow.entity.StateAware;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -86,11 +90,13 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
 public class CouncilPreambleService {
 
+	private static final Logger LOGGER = Logger.getLogger(CouncilPreambleService.class);
     private static final String STATUS_CODE = "status.code";
     private static final String PREAMBLE_NUMBER_AUTO = "PREAMBLE_NUMBER_AUTO";
 
@@ -111,6 +117,8 @@ public class CouncilPreambleService {
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
     @Autowired
     private UserService userService;
+    @Autowired
+    protected FileStoreService fileStoreService;
 
     @Autowired
     public CouncilPreambleService(final CouncilPreambleRepository councilPreambleRepository) {
@@ -123,13 +131,22 @@ public class CouncilPreambleService {
 
     @Transactional
     public CouncilPreamble create(final CouncilPreamble councilPreamble, Long approvalPosition, String approvalComment,
-            String workFlowAction) {
+            String workFlowAction, MultipartFile attachments) {
 
         if (approvalPosition != null && approvalPosition > 0 && StringUtils.isNotEmpty(workFlowAction))
             preambleWorkflowCustomImpl.createCommonWorkflowTransition(councilPreamble,
                     approvalPosition, approvalComment, workFlowAction);
 
-        councilPreambleRepository.save(councilPreamble);
+        if(councilPreamble.isValidApprover()){
+        	if (isAutoPreambleNoGenEnabled()){
+                PreambleNumberGenerator preamblenumbergenerator = autonumberServiceBeanResolver
+                        .getAutoNumberServiceFor(PreambleNumberGenerator.class);
+                councilPreamble.setPreambleNumber(preamblenumbergenerator
+                        .getNextNumber(councilPreamble));
+             }
+        	attachFiles(councilPreamble, attachments);
+        	councilPreambleRepository.save(councilPreamble);
+        }
         return councilPreamble;
     }
     
@@ -155,12 +172,29 @@ public class CouncilPreambleService {
 
     @Transactional
     public CouncilPreamble update(final CouncilPreamble councilPreamble, Long approvalPosition, String approvalComment,
-            String workFlowAction) {
+            String workFlowAction, MultipartFile attachments) {
         if (approvalPosition != null && StringUtils.isNotEmpty(workFlowAction))
             preambleWorkflowCustomImpl.createCommonWorkflowTransition(councilPreamble, approvalPosition, approvalComment,
                     workFlowAction);
-        councilPreambleRepository.save(councilPreamble);
+        if(councilPreamble.isValidApprover()){
+        	attachFiles(councilPreamble, attachments);
+        	councilPreambleRepository.save(councilPreamble);
+        }
         return councilPreamble;
+    }
+    
+    private void attachFiles(CouncilPreamble councilPreamble, MultipartFile attachments){
+    	if (attachments != null && attachments.getSize() > 0) {
+            try {
+                councilPreamble.setFilestoreid(fileStoreService.store(
+                        attachments.getInputStream(),
+                        attachments.getOriginalFilename(),
+                        attachments.getContentType(),
+                        CouncilConstants.MODULE_NAME));
+            } catch (IOException e) {
+                LOGGER.error("Error in attaching documents", e);
+            }
+    	}
     }
 
     @Transactional
@@ -274,6 +308,10 @@ public class CouncilPreambleService {
     public Boolean isAutoPreambleNoGenEnabled() {
         return autoGenerationModeEnabled(
                 MODULE_FULLNAME, PREAMBLE_NUMBER_AUTO);
+    }
+    
+    public boolean isApplicationOwner(StateAware state) {
+    	return preambleWorkflowCustomImpl.isApplicationOwner(state);
     }
 
 }

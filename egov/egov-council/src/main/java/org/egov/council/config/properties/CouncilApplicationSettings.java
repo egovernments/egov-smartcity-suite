@@ -26,12 +26,12 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
- *            Further, all user interfaces, including but not limited to citizen facing interfaces, 
- *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any 
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
  *            derived works should carry eGovernments Foundation logo on the top right corner.
  *
  *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
- *            For any further queries on attribution, including queries on brand guidelines, 
+ *            For any further queries on attribution, including queries on brand guidelines,
  *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
@@ -45,53 +45,21 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.council.config.properties;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 
-jQuery(document).ready(
-		function($) {
-	if ($('#validationMessage').val()) {
-		bootbox.alert($('#validationMessage').val());
-		return false;
-	}
-		
-    var isSelectedAll=false;
-    var wardIds = [];
+@Configuration
+@PropertySource(name = "councilApplicationSettings", value={"classpath:config/council-application-config.properties"}, ignoreResourceNotFound = true)
+public class CouncilApplicationSettings {
 
-	$('.wards').on('change',function(){		
-		wardIds.length=0;
-		if(!isSelectedAll && $('option:contains("All")').is(":selected")){
-			isSelectedAll=true;
-			$(this).find('option:selected').removeAttr('selected');
-			$(this).find('option:not([selected])').prop('selected', true);
-			wardIds.push($(this).val());
-		}
-		else if(isSelectedAll && !$('option:contains("All")').is(":selected")){
-			isSelectedAll=false;
-			$(this).find('option:selected').prop('selected', false);
-			wardIds.push($(this).val());
-		}
-		else{
-			isSelectedAll=false;
-			$(this).find('option:contains("All")').prop('selected', false);
-			wardIds.push($(this).val());
-		}
-		$('#wardsHdnIds').val(wardIds);
-    }); 
-	
-$("select.tick-indicator").mousedown(function(e){
-    e.preventDefault();
-    
-	var select = this;
-    var scroll = select.scrollTop;
-    
-    e.target.selected = !e.target.selected;
-    
-    $(this).trigger('change');
-    
-    setTimeout(function(){select.scrollTop = scroll;}, 0);
-    
-    $(select).focus();
+	@Autowired
+    private Environment environment;
 
-}).mousemove(function(e){e.preventDefault()});
-});
-
+    public Integer getValue(String key) {
+        return environment.getProperty(key, Integer.class);
+    }
+}

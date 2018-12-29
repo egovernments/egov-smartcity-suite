@@ -171,6 +171,9 @@ public class CouncilPreamble extends StateAware<Position> {
     @Column
     @SafeHtml
     private String statusMessage;
+    
+    @Transient
+    private boolean validApprover = true;
 
     @Override
     public Long getId() {
@@ -355,5 +358,13 @@ public class CouncilPreamble extends StateAware<Position> {
     public void setStatusMessage(String statusMessage) {
         this.statusMessage = statusMessage;
     }
+
+	public boolean isValidApprover() {
+		return validApprover;
+	}
+
+	public void setValidApprover(boolean validApprover) {
+		this.validApprover = validApprover;
+	}
     
 }

@@ -56,7 +56,6 @@ import static org.egov.council.utils.constants.CouncilConstants.REVENUE_HIERARCH
 import static org.egov.council.utils.constants.CouncilConstants.WARD;
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,7 +67,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.council.autonumber.PreambleNumberGenerator;
 import org.egov.council.entity.CouncilPreamble;
 import org.egov.council.entity.enums.PreambleType;
 import org.egov.council.enums.PreambleTypeEnum;
@@ -85,11 +83,9 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
@@ -128,14 +124,13 @@ public class CouncilPreambleController extends GenericWorkFlowController {
     private static final String COUNCILPREAMBLE_SEARCH = "councilpreamble-search";
     private static final String COUNCILPREAMBLE_UPDATE_STATUS = "councilpreamble-update-status";
     private static final String COMMONERRORPAGE = "common-error-page";
+    private static final String INVALID_APPROVER = "invalid.approver";
+    private static final String NOT_AUTHORIZED = "notAuthorized";
     
     
     private static final String COUNCILPREAMBLE_API_VIEW = "councilpreamble-viewnew";
     private static final Logger LOGGER = Logger
             .getLogger(CouncilPreambleController.class);
-    @Qualifier("fileStoreService")
-    @Autowired
-    protected FileStoreService fileStoreService;
     @Autowired
     protected FileStoreUtils fileStoreUtils;
     @Autowired
@@ -219,23 +214,6 @@ public class CouncilPreambleController extends GenericWorkFlowController {
             return COUNCILPREAMBLE_NEW;
         }
 
-        if (attachments != null && attachments.getSize() > 0) {
-            try {
-                councilPreamble.setFilestoreid(fileStoreService.store(
-                        attachments.getInputStream(),
-                        attachments.getOriginalFilename(),
-                        attachments.getContentType(),
-                        CouncilConstants.MODULE_NAME));
-            } catch (IOException e) {
-                LOGGER.error("Error in loading documents", e);
-            }
-        }
-        if (isAutoPreambleNoGenEnabled()){
-        PreambleNumberGenerator preamblenumbergenerator = autonumberServiceBeanResolver
-                .getAutoNumberServiceFor(PreambleNumberGenerator.class);
-        councilPreamble.setPreambleNumber(preamblenumbergenerator
-                .getNextNumber(councilPreamble));
-        }
         councilPreamble.setStatus(egwStatusHibernateDAO
                 .getStatusByModuleAndCode(CouncilConstants.PREAMBLE_MODULENAME,
                         CouncilConstants.PREAMBLE_STATUS_CREATED));
@@ -259,15 +237,20 @@ public class CouncilPreambleController extends GenericWorkFlowController {
                     .getParameter(APPROVAL_POSITION));
 
         councilPreambleService.create(councilPreamble, approvalPosition,
-                approvalComment, workFlowAction);
-
-        String message = messageSource.getMessage("msg.councilPreamble.create",
-                new String[]{
-                        approverName.concat("~").concat(nextDesignation),
-                        councilPreamble.getPreambleNumber()},
-                null);
-        redirectAttrs.addFlashAttribute(MESSAGE2, message);
-        return REDIRECT_COUNCILPREAMBLE_RESULT.concat(councilPreamble.getId().toString());
+                approvalComment, workFlowAction, attachments);
+        if (!councilPreamble.isValidApprover()) {
+        	model.addAttribute("validationMessage", messageSource.getMessage(INVALID_APPROVER, new String[] {}, null));
+            prepareWorkFlowOnLoad(model, councilPreamble);
+            return COUNCILPREAMBLE_NEW;
+        } else {
+        	String message = messageSource.getMessage("msg.councilPreamble.create",
+                    new String[]{
+                            approverName.concat("~").concat(nextDesignation),
+                            councilPreamble.getPreambleNumber()},
+                    null);
+            redirectAttrs.addFlashAttribute(MESSAGE2, message);
+            return REDIRECT_COUNCILPREAMBLE_RESULT.concat(councilPreamble.getId().toString());
+        }
     }
 
     @RequestMapping(value = "/downloadfile/{fileStoreId}")
@@ -321,19 +304,6 @@ public class CouncilPreambleController extends GenericWorkFlowController {
         }
         councilPreamble.setWards(wardIdsList);
 
-        if (attachments != null && attachments.getSize() > 0) {
-            try {
-                councilPreamble.setFilestoreid(fileStoreService.store(
-                        attachments.getInputStream(),
-                        attachments.getOriginalFilename(),
-                        attachments.getContentType(),
-                        CouncilConstants.MODULE_NAME));
-            } catch (IOException e) {
-                LOGGER.error(
-                        "Error in loading Employee photo", e);
-            }
-        }
-        
         Long approvalPosition = 0l;
         String approvalComment = StringUtils.EMPTY;
         String message = StringUtils.EMPTY;
@@ -356,28 +326,36 @@ public class CouncilPreambleController extends GenericWorkFlowController {
             nextDesignation = request.getParameter("nextDesignation");
 
         councilPreambleService.update(councilPreamble, approvalPosition,
-                approvalComment, workFlowAction);
-        if (null != workFlowAction) {
-            if (CouncilConstants.WF_STATE_REJECT
-                    .equalsIgnoreCase(workFlowAction)) {
-                message = getMessage("msg.councilPreamble.reject",nextDesignation,approverName,
-                        councilPreamble);
-            } else if (CouncilConstants.WF_APPROVE_BUTTON
-                    .equalsIgnoreCase(workFlowAction)) {
-                message = getMessage("msg.councilPreamble.success",nextDesignation,approverName,
-                        councilPreamble);
-            } else if (CouncilConstants.WF_FORWARD_BUTTON
-                    .equalsIgnoreCase(workFlowAction)) {
-                message = getMessage("msg.councilPreamble.forward",nextDesignation,approverName,
-                        councilPreamble);
-            } else if (CouncilConstants.WF_PROVIDE_INFO_BUTTON
-                    .equalsIgnoreCase(workFlowAction)) {
-                message = getMessage("msg.councilPreamble.moreInfo",nextDesignation,approverName,
-                        councilPreamble);
+                approvalComment, workFlowAction, attachments);
+        if (!councilPreamble.isValidApprover()) {
+        	model.addAttribute("validationMessage", messageSource.getMessage(INVALID_APPROVER, new String[] {}, null));
+        	prepareWorkFlowOnLoad(model, councilPreamble);
+            model.addAttribute(CURRENT_STATE, councilPreamble
+                    .getCurrentState().getValue());
+            return COUNCILPREAMBLE_EDIT;
+        } else {
+            if (null != workFlowAction) {
+                if (CouncilConstants.WF_STATE_REJECT
+                        .equalsIgnoreCase(workFlowAction)) {
+                    message = getMessage("msg.councilPreamble.reject",nextDesignation,approverName,
+                            councilPreamble);
+                } else if (CouncilConstants.WF_APPROVE_BUTTON
+                        .equalsIgnoreCase(workFlowAction)) {
+                    message = getMessage("msg.councilPreamble.success",nextDesignation,approverName,
+                            councilPreamble);
+                } else if (CouncilConstants.WF_FORWARD_BUTTON
+                        .equalsIgnoreCase(workFlowAction)) {
+                    message = getMessage("msg.councilPreamble.forward",nextDesignation,approverName,
+                            councilPreamble);
+                } else if (CouncilConstants.WF_PROVIDE_INFO_BUTTON
+                        .equalsIgnoreCase(workFlowAction)) {
+                    message = getMessage("msg.councilPreamble.moreInfo",nextDesignation,approverName,
+                            councilPreamble);
+                }
+                redirectAttrs.addFlashAttribute(MESSAGE2, message);
             }
-            redirectAttrs.addFlashAttribute(MESSAGE2, message);
+            return REDIRECT_COUNCILPREAMBLE_RESULT.concat(councilPreamble.getId().toString());
         }
-        return REDIRECT_COUNCILPREAMBLE_RESULT.concat(councilPreamble.getId().toString());
     }
 
     @RequestMapping(value = "/updateimplimentaionstatus/{id}", method = RequestMethod.GET)
@@ -421,6 +399,8 @@ public class CouncilPreambleController extends GenericWorkFlowController {
     public String edit(@PathVariable("id") final Long id, final Model model,
             final HttpServletResponse response) {
         CouncilPreamble councilPreamble = councilPreambleService.findOne(id);
+        if (!councilPreambleService.isApplicationOwner(councilPreamble))
+            return NOT_AUTHORIZED;
         WorkflowContainer workFlowContainer = new WorkflowContainer();
         //Setting pending action based on owner
         if (CouncilConstants.DESIGNATION_MANAGER.equalsIgnoreCase(councilPreamble.getState().getOwnerPosition().getDeptDesig().getDesignation().getName())

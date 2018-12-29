@@ -81,6 +81,7 @@
 				<input type="hidden" name="councilPreamble"
 					value="${councilPreamble.id}" />
 				<form:hidden path="type" id="type" value="${councilPreamble.type}" />
+				<input type="hidden" id="validationMessage" value="${validationMessage}" />
 			</div>
 			<div class="form-group">
 				<label class="col-sm-2 control-label text-right"><spring:message

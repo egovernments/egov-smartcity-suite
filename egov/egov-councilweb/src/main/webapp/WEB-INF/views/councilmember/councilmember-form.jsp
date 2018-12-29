@@ -273,7 +273,8 @@
 						<c:when test="${councilMember.photo != null}">
 
 							<input type="file" id="attachments" name="attachments"
-								data-id="1" class="filechange inline btn upload-file" />
+								data-id="1" class="filechange inline btn upload-file" 
+								data-accepts="${allowedFileExt}" data-size="${maxFileSize}" />
 							<form:errors path="attachments" cssClass="error-msg" />
 
 							<form:hidden path="photo.id" value="${councilMember.photo.id}" />
@@ -290,7 +291,8 @@
 						</c:when>
 						<c:otherwise>
 							<input type="file" id="attachments" name="attachments"
-								data-id="1" class="filechange inline btn upload-file" />
+								data-id="1" class="filechange inline btn upload-file" 
+								data-accepts="${allowedFileExt}" data-size="${maxFileSize}" />
 								<small class="error-msg"><spring:message code="lbl.mesg.upload.size"/></small>
 							<form:errors path="attachments" cssClass="error-msg" />
 						</c:otherwise>

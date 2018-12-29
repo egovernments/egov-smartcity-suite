@@ -304,6 +304,10 @@
         <put-attribute name="page-title" value="title.common.error.page" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/common/common-error.jsp"/>
     </definition>
+    <definition name="notAuthorized" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.notAuthorized" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/common/notAuthorized.jsp"/>
+    </definition>
     <definition name="councilmom-result" extends="base_layout">
         <put-attribute name="page-title" value="title.councilmom.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/councilmom/councilmom-result.jsp"/>

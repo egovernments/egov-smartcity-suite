@@ -57,10 +57,12 @@ import org.egov.council.service.CouncilRouterService;
 import org.egov.council.utils.constants.CouncilConstants;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
@@ -96,6 +98,9 @@ public class PreambleWorkflowCustomImpl implements PreambleWorkflowCustom {
 
     @Autowired
     private CouncilRouterService councilRouterService;
+    
+    @Autowired
+    private EisCommonService eisCommonService;
 
     @Override
     public void createCommonWorkflowTransition(CouncilPreamble councilPreamble, Long approvalPosition,
@@ -149,6 +154,10 @@ public class PreambleWorkflowCustomImpl implements PreambleWorkflowCustom {
                     pos == null || null == pos.getDeptDesig() ? "" : pos.getDeptDesig().getDesignation().getName())) {
                 wfmatrix = councilPreambleWorkflowService.getWfMatrix(councilPreamble.getStateType(), null, null, null,
                         CouncilConstants.WF_NEW_STATE, "Application Creation");
+                if (!eisCommonService.isValidAppover(wfmatrix, pos)) {
+                	councilPreamble.setValidApprover(false);
+                    return;
+                }
                 councilPreamble.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
                 if (null == councilPreamble.getState() ||CouncilConstants.REJECTED.equalsIgnoreCase(councilPreamble.getStatus().getCode())) {
                     councilPreamble.transition().start()
@@ -176,6 +185,10 @@ public class PreambleWorkflowCustomImpl implements PreambleWorkflowCustom {
 
                 wfmatrix = councilPreambleWorkflowService.getWfMatrix(councilPreamble.getStateType(), null, null, "CouncilCommonWorkflow",
                         CouncilConstants.WF_NEW_STATE, null);
+                if (!eisCommonService.isValidAppover(wfmatrix, pos)) {
+                	councilPreamble.setValidApprover(false);
+                    return;
+                }
                 councilPreamble.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
                 if (null == councilPreamble.getState()
                         || CouncilConstants.REJECTED.equalsIgnoreCase(councilPreamble.getStatus().getCode())) {
@@ -226,6 +239,10 @@ public class PreambleWorkflowCustomImpl implements PreambleWorkflowCustom {
                         pos == null || null == pos.getDeptDesig() ? "" : pos.getDeptDesig().getDesignation().getName())) {
             wfmatrix = councilPreambleWorkflowService.getWfMatrix(councilPreamble.getStateType(), null, null, null,
                     CouncilConstants.APPROVED, CouncilConstants.MANAGER_APPROVALPENDING);
+            if (!eisCommonService.isValidAppover(wfmatrix, pos)) {
+            	councilPreamble.setValidApprover(false);
+                return;
+            }
             councilPreamble.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
             councilPreamble.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvalComent).withStateValue(wfmatrix.getCurrentState())
@@ -245,6 +262,10 @@ public class PreambleWorkflowCustomImpl implements PreambleWorkflowCustom {
                 wfmatrix = councilPreambleWorkflowService.getWfMatrix(councilPreamble.getStateType(), null, null, null,
                         councilPreamble.getCurrentState().getValue(), CouncilConstants.COMMISSIONER_APPROVALPENDING);
             }
+            if (!eisCommonService.isValidAppover(wfmatrix, pos)) {
+            	councilPreamble.setValidApprover(false);
+                return;
+            }
             councilPreamble.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
             councilPreamble.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvalComent).withStateValue(wfmatrix.getCurrentState())
@@ -253,6 +274,10 @@ public class PreambleWorkflowCustomImpl implements PreambleWorkflowCustom {
         } else {
             wfmatrix = councilPreambleWorkflowService.getWfMatrix(councilPreamble.getStateType(), null, null, null,
                     councilPreamble.getCurrentState().getValue(), null);
+            if (!eisCommonService.isValidAppover(wfmatrix, pos)) {
+            	councilPreamble.setValidApprover(false);
+                return;
+            }
             councilPreamble.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
             councilPreamble.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
@@ -318,5 +343,10 @@ public class PreambleWorkflowCustomImpl implements PreambleWorkflowCustom {
                 .withStateValue(CouncilConstants.WF_ANONYMOUSPREAMBLE_STATE)
                 .withOwner(assignee).withNextAction(wfmatrix.getNextAction()).withDateInfo(new Date())
                 .withNatureOfTask(CouncilConstants.NATURE_OF_WORK).withInitiator(assignee);
+    }
+    
+    public boolean isApplicationOwner(StateAware state) {
+        return positionMasterService.getPositionsForEmployee(securityUtils.getCurrentUser().getId())
+                .contains(state.getCurrentState().getOwnerPosition());
     }
 }
