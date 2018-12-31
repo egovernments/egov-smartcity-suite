@@ -62,7 +62,6 @@ import org.egov.pims.commons.Position;
 import org.egov.pims.dao.PersonalInformationDAO;
 import org.hibernate.Criteria;
 import org.hibernate.query.Query;
-import org.hibernate.SessionFactory;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -139,24 +138,6 @@ public class EisUtilService implements OwnerGroupService<Position> {
 
         }
         return position;
-
-    }
-
-    public User getUserForPosition(Long positionId, Date date) {
-        User user;
-        try {
-            String mainStr = "select emp.userMaster from EmployeeView emp where emp.position.id = ?1";
-
-            Date givenDate = date == null ? new Date() : date;
-
-            mainStr += " and ((emp.toDate is null and emp.fromDate<= ?2) or (emp.fromDate <= ?3 and emp.toDate >= ?4))";
-            user = (User) persistenceService.find(mainStr, positionId, givenDate, givenDate, givenDate);
-        } catch (Exception e) {
-            LOGGER.error("Exception while getting the getUserForPosition", e);
-            throw new ApplicationRuntimeException(e.getMessage(), e);
-
-        }
-        return user;
 
     }
 

@@ -435,7 +435,7 @@ public class PropertyTaxCommonUtils {
     }
 
     public String formatAmount(BigDecimal tax) {
-        tax = tax.setScale(0, RoundingMode.CEILING);
+        tax = tax.setScale(0, BigDecimal.ROUND_HALF_UP);
         return NumberUtil.formatNumber(tax);
     }
 
@@ -805,16 +805,46 @@ public class PropertyTaxCommonUtils {
      *
      * @return BigDecimal
      */
-	public BigDecimal getAggregateGenralTax(Map<String, BigDecimal> demandCollMap) {
-		return demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX) != null ? demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX)
-				: BigDecimal.ZERO
-						.add(demandCollMap.get(PropertyTaxConstants.DEMANDRSN_STR_LIGHT_TAX) != null
-								? demandCollMap.get(PropertyTaxConstants.DEMANDRSN_STR_LIGHT_TAX) : BigDecimal.ZERO)
-						.add(demandCollMap.get(DEMANDRSN_STR_WATER_TAX) != null
-								? demandCollMap.get(DEMANDRSN_STR_WATER_TAX) : BigDecimal.ZERO)
-						.add(demandCollMap.get(DEMANDRSN_STR_SCAVENGE_TAX) != null
-								? demandCollMap.get(DEMANDRSN_STR_SCAVENGE_TAX) : BigDecimal.ZERO)
-						.add(demandCollMap.get(DEMANDRSN_STR_DRAINAGE_TAX) != null
-								? demandCollMap.get(DEMANDRSN_STR_SCAVENGE_TAX) : BigDecimal.ZERO);
-	}
+    public BigDecimal getAggregateGenralTax(Map<String, BigDecimal> demandCollMap) {
+        
+        return nullCheckBigDecimal(demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX))
+                .add(nullCheckBigDecimal(demandCollMap.get(PropertyTaxConstants.DEMANDRSN_STR_LIGHT_TAX)))
+                .add(nullCheckBigDecimal(demandCollMap.get(DEMANDRSN_STR_WATER_TAX)))
+                .add(nullCheckBigDecimal(demandCollMap.get(DEMANDRSN_STR_SCAVENGE_TAX)))
+                .add(nullCheckBigDecimal(demandCollMap.get(DEMANDRSN_STR_DRAINAGE_TAX)));
+
+    }
+    
+
+    /**
+     * Returns zero if value is null otherwise value
+     *
+     * @return BigDecimal
+     */
+    public BigDecimal nullCheckBigDecimal(BigDecimal value) {
+
+        return value != null ? value : BigDecimal.ZERO;
+    }
+
+    public BigInteger getModuleIdByName(){
+    	BigInteger id = BigInteger.ZERO ;
+    	String selectQuery = " select id from eg_modules where name =:name ";
+        final Query qry = getSession().createSQLQuery(selectQuery)
+                .setParameter("name", PropertyTaxConstants.FILESTORE_MODULE_NAME);
+        List<Object> list = qry.list();
+        	if(!list.isEmpty())
+        		id = (BigInteger) list.get(0);
+    	return id;
+    }
+
+    public boolean isUnderMutationWorkflow(final BasicProperty basicProperty) {
+        boolean underWorkFlow = false;
+        if (basicProperty.getPropertyMutations() != null)
+            for (final PropertyMutation propertyMutation : basicProperty.getPropertyMutations()) {
+                underWorkFlow = WF_STATE_CLOSED.equalsIgnoreCase(propertyMutation.getState().getValue()) ? false : true;
+                if (underWorkFlow)
+                    break;
+            }
+        return underWorkFlow;
+    }
 }

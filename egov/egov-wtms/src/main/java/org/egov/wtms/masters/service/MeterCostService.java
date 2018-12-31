@@ -117,7 +117,7 @@ public class MeterCostService {
     }
 
     public void validateMeterMakeForPipesize(Long PipeSizeId) {
-        List<MeterCost> meterCostList = meterCostRepository.findByPipeSize_IdAndActiveTrue(PipeSizeId);
+    	List<MeterCost> meterCostList = meterCostRepository.findByPipeSizeIdAndActiveTrue(PipeSizeId);
         if (meterCostList.isEmpty())
             throw new ApplicationRuntimeException("err.metermake.not.defined");
     }
