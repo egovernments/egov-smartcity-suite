@@ -61,6 +61,8 @@ jQuery(document).ready(
 					jQuery('#flatAmount').val("").attr('disabled','disabled');
 					jQuery('#recursiveFactor').val("").attr('disabled','disabled');
 					jQuery('#recursiveAmount').val("").attr('disabled','disabled');
+					jQuery('input:radio[name=isRecursive]').val("")
+					.attr('disabled', 'disabled');
 				}
 				else {
 					jQuery('#flatAmount').removeAttr('disabled');
