@@ -105,7 +105,7 @@ public class DemandNoticeController {
 
     @GetMapping("search")
     public String searchFormforNotice(Model model) {
-        model.addAttribute("demandnoticesearchForm", new DemandNoticeRequest());
+        model.addAttribute("demandNoticeRequest", new DemandNoticeRequest());
         model.addAttribute("categoryList", licenseCategoryService.getCategoriesOrderByName());
         model.addAttribute("subCategoryList", Collections.emptyList());
         model.addAttribute("localityList", boundaryService

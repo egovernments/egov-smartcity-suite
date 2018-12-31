@@ -55,7 +55,8 @@
 
 <div class="row">
 	<div class="col-md-12">
-		<form:form class="form-horizontal form-groups-bordered" action="" id="searchFormForPayment" modelAttribute="onlineSearchForm" method="get">
+		<form:form class="form-horizontal form-groups-bordered" action="" id="searchFormForPayment"
+                   modelAttribute="onlineSearchRequest" method="get">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">

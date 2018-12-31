@@ -844,18 +844,18 @@ public class TradeLicenseService {
     }
 
     @ReadOnly
-    public List<OnlineSearchRequest> onlineSearchTradeLicense(OnlineSearchRequest searchForm) {
+    public List<OnlineSearchRequest> onlineSearchTradeLicense(OnlineSearchRequest onlineSearchRequest) {
         Criteria searchCriteria = entityManager.unwrap(Session.class).createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat")
                 .createAlias("tradeName", "subcat").createAlias("status", "licstatus");
-        if (isNotBlank(searchForm.getApplicationNumber()))
-            searchCriteria.add(Restrictions.eq("applicationNumber", searchForm.getApplicationNumber()).ignoreCase());
-        if (isNotBlank(searchForm.getLicenseNumber()))
-            searchCriteria.add(Restrictions.eq("licenseNumber", searchForm.getLicenseNumber()).ignoreCase());
-        if (isNotBlank(searchForm.getMobileNo()))
-            searchCriteria.add(Restrictions.eq("licc.mobilePhoneNumber", searchForm.getMobileNo()));
-        if (isNotBlank(searchForm.getTradeOwnerName()))
-            searchCriteria.add(Restrictions.like("licc.applicantName", searchForm.getTradeOwnerName(), ANYWHERE));
+        if (isNotBlank(onlineSearchRequest.getApplicationNumber()))
+            searchCriteria.add(Restrictions.eq("applicationNumber", onlineSearchRequest.getApplicationNumber()).ignoreCase());
+        if (isNotBlank(onlineSearchRequest.getLicenseNumber()))
+            searchCriteria.add(Restrictions.eq("licenseNumber", onlineSearchRequest.getLicenseNumber()).ignoreCase());
+        if (isNotBlank(onlineSearchRequest.getMobileNo()))
+            searchCriteria.add(Restrictions.eq("licc.mobilePhoneNumber", onlineSearchRequest.getMobileNo()));
+        if (isNotBlank(onlineSearchRequest.getTradeOwnerName()))
+            searchCriteria.add(Restrictions.like("licc.applicantName", onlineSearchRequest.getTradeOwnerName(), ANYWHERE));
 
 
         searchCriteria.add(Restrictions.isNotNull("applicationNumber"));

@@ -93,8 +93,8 @@ public class LicenseSearchController {
     @Autowired
     private NatureOfBusinessService natureOfBusinessService;
 
-    @ModelAttribute("searchForm")
-    public LicenseSearchRequest searchForm() {
+    @ModelAttribute("licenseSearchRequest")
+    public LicenseSearchRequest licenseSearchRequest() {
         return new LicenseSearchRequest();
     }
 

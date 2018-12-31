@@ -59,27 +59,27 @@ import java.util.ArrayList;
 
 import static org.egov.infra.utils.StringUtils.defaultIfBlank;
 
-public class OnlineSearchTradeResultHelperAdaptor implements JsonSerializer<OnlineSearchRequest> {
+public class OnlineSearchResponseAdaptor implements JsonSerializer<OnlineSearchRequest> {
 
     @Override
-    public JsonElement serialize(OnlineSearchRequest searchFormObj, Type type,
+    public JsonElement serialize(OnlineSearchRequest onlineSearchRequest, Type type,
                                  JsonSerializationContext jsc) {
         JsonObject searchResult = new JsonObject();
-        if (searchFormObj != null) {
-            searchResult.addProperty("licenseId", searchFormObj.getLicenseId());
-            searchResult.addProperty("uid", searchFormObj.getUid());
-            searchResult.addProperty("applicationNumber", searchFormObj.getApplicationNumber());
-            searchResult.addProperty("tlNumber", defaultIfBlank(searchFormObj.getLicenseNumber()));
-            searchResult.addProperty("tradeOwner", searchFormObj.getTradeOwnerName());
-            searchResult.addProperty("mobileNumber", searchFormObj.getMobileNo());
-            searchResult.addProperty("status", searchFormObj.getStatus());
-            searchResult.addProperty("propertyAssmntNo", defaultIfBlank(searchFormObj.getPropertyAssessmentNo()));
-            searchResult.addProperty("arrDmd", searchFormObj.getArrDmd());
-            searchResult.addProperty("currDmd", searchFormObj.getCurrDmd());
-            searchResult.addProperty("totColl", searchFormObj.getTotColl());
+        if (onlineSearchRequest != null) {
+            searchResult.addProperty("licenseId", onlineSearchRequest.getLicenseId());
+            searchResult.addProperty("uid", onlineSearchRequest.getUid());
+            searchResult.addProperty("applicationNumber", onlineSearchRequest.getApplicationNumber());
+            searchResult.addProperty("tlNumber", defaultIfBlank(onlineSearchRequest.getLicenseNumber()));
+            searchResult.addProperty("tradeOwner", onlineSearchRequest.getTradeOwnerName());
+            searchResult.addProperty("mobileNumber", onlineSearchRequest.getMobileNo());
+            searchResult.addProperty("status", onlineSearchRequest.getStatus());
+            searchResult.addProperty("propertyAssmntNo", defaultIfBlank(onlineSearchRequest.getPropertyAssessmentNo()));
+            searchResult.addProperty("arrDmd", onlineSearchRequest.getArrDmd());
+            searchResult.addProperty("currDmd", onlineSearchRequest.getCurrDmd());
+            searchResult.addProperty("totColl", onlineSearchRequest.getTotColl());
             Gson gson = new Gson();
             ArrayList<JsonObject> actions = new ArrayList<>();
-            searchFormObj.getActions().forEach(action -> {
+            onlineSearchRequest.getActions().forEach(action -> {
                 JsonObject actionItem = new JsonObject();
                 actionItem.addProperty("key", action);
                 actions.add(actionItem);

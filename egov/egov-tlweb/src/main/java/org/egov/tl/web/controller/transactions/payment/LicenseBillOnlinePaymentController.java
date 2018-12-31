@@ -51,7 +51,7 @@ import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.contracts.OnlineSearchRequest;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.service.integration.LicenseBillService;
-import org.egov.tl.web.response.adaptor.OnlineSearchTradeResultHelperAdaptor;
+import org.egov.tl.web.response.adaptor.OnlineSearchResponseAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -81,8 +81,8 @@ public class LicenseBillOnlinePaymentController {
     @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
 
-    @ModelAttribute("onlineSearchForm")
-    public OnlineSearchRequest onlineSearchForm() {
+    @ModelAttribute("onlineSearchRequest")
+    public OnlineSearchRequest onlineSearchRequest() {
         return new OnlineSearchRequest();
     }
 
@@ -105,8 +105,8 @@ public class LicenseBillOnlinePaymentController {
 
     @PostMapping(produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String searchLicense(final OnlineSearchRequest searchForm) {
-        return new StringBuilder("{ \"data\":").append(toJSON(tradeLicenseService.onlineSearchTradeLicense(searchForm),
-                OnlineSearchRequest.class, OnlineSearchTradeResultHelperAdaptor.class)).append("}").toString();
+    public String searchLicense(OnlineSearchRequest onlineSearchRequest) {
+        return new StringBuilder("{ \"data\":").append(toJSON(tradeLicenseService.onlineSearchTradeLicense(onlineSearchRequest),
+                OnlineSearchRequest.class, OnlineSearchResponseAdaptor.class)).append("}").toString();
     }
 }

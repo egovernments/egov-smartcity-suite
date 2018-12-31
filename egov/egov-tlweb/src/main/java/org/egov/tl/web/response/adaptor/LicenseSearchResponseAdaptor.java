@@ -68,9 +68,9 @@ import static org.egov.infra.utils.StringUtils.defaultIfBlank;
 public class LicenseSearchResponseAdaptor implements DataTableJsonAdapter<LicenseSearchRequest> {
 
     @Override
-    public JsonElement serialize(DataTable<LicenseSearchRequest> searchForm, Type type,
+    public JsonElement serialize(DataTable<LicenseSearchRequest> licenseSearchRequest, Type type,
                                  JsonSerializationContext jsc) {
-        List<LicenseSearchRequest> searchResults = searchForm.getData();
+        List<LicenseSearchRequest> searchResults = licenseSearchRequest.getData();
         JsonArray licenseSearchResponse = new JsonArray();
         searchResults.forEach(searchResult -> {
             JsonObject responseJson = new JsonObject();
@@ -99,6 +99,6 @@ public class LicenseSearchResponseAdaptor implements DataTableJsonAdapter<Licens
             responseJson.addProperty("actions", gson.toJson(list));
             licenseSearchResponse.add(responseJson);
         });
-        return enhance(licenseSearchResponse, searchForm);
+        return enhance(licenseSearchResponse, licenseSearchRequest);
     }
 }

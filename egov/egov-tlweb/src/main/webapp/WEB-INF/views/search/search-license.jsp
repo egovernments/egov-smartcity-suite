@@ -60,7 +60,8 @@
 </style>
 <div class="row">
     <div class="col-md-12">
-        <form:form class="form-horizontal form-groups-bordered" action="" id="searchForm" modelAttribute="searchForm"
+        <form:form class="form-horizontal form-groups-bordered" action="" id="searchForm"
+                   modelAttribute="licenseSearchRequest"
                    method="get">
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">
