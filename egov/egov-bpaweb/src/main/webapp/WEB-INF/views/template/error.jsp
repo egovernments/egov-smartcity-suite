@@ -75,17 +75,46 @@
 		
 		
 	</head>
-	<body  class="page-body">
-		<div class="page-container">
-			<tiles:insertAttribute name="header"/>	
-			<div class="main-content">
-				<div class="page-error-404">
-					<div class="error-text">
-						<tiles:insertAttribute name="body" />
-					</div>
+	<body class="page-body">
+	<div class="page-container">
+		<tiles:insertAttribute name="header"/>
+		<div class="main-content">
+			<div class="page-error-404">
+				<div class="error-text">
+					<tiles:insertAttribute name="body"/>
+				</div>
+				<div class="row display-hide" id="close">
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+							onclick="window.close();">Close
+					</button>
 				</div>
 			</div>
-			<tiles:insertAttribute name="footer"/>
 		</div>
+		<tiles:insertAttribute name="footer"/>
+	</div>
+	<script>
+		history.pushState({page: 1}, "Title 1", "#no-back");
+		window.onhashchange = function (event) {
+			window.location.hash = "no-back";
+		};
+
+		/*Restrict page refresh*/
+		window.document.onkeydown = function (event) {
+			switch (event.keyCode) {
+				case 116 : //F5 button
+					event.returnValue = false;
+					event.keyCode = 0;
+					return false;
+				case 82 : //R button
+					if (event.ctrlKey) { //Ctrl button
+						event.returnValue = false;
+						event.keyCode = 0;
+						return false;
+					}
+			}
+		}
+		if (window.opener && window.opener !== window)
+			$("#close").show();
+	</script>
 	</body>
 </html>
