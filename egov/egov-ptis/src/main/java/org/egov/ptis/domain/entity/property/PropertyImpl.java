@@ -48,8 +48,6 @@
 
 package org.egov.ptis.domain.entity.property;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.exceptions.InvalidPropertyException;
@@ -69,16 +67,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_ALTER;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_BIFURCATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_CREATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXEMPTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_GRP;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_CREATE;
 
 public class PropertyImpl extends StateAware<Position> implements Property {
 
@@ -111,7 +110,7 @@ public class PropertyImpl extends StateAware<Position> implements Property {
     private String remarks;
 
     private Date effectiveDate;
-    
+
     private Date exemptionDate;
 
     private transient PropertyDetail propertyDetail;
@@ -233,17 +232,17 @@ public class PropertyImpl extends StateAware<Position> implements Property {
     public void setEffectiveDate(final Date effectiveDate) {
         this.effectiveDate = effectiveDate;
     }
-    
+
     @Override
     public Date getExemptionDate() {
         return exemptionDate;
     }
-    
+
     @Override
     public void setExemptionDate(final Date exemptionDate) {
         this.exemptionDate = exemptionDate;
     }
-    
+
     @Override
     public Character getIsDefaultProperty() {
         return isDefaultProperty;
@@ -572,23 +571,11 @@ public class PropertyImpl extends StateAware<Position> implements Property {
 
     @Override
     public String getStateDetails() {
-        final StringBuilder stateDetails = new StringBuilder();
-        BasicProperty basicPropertyObj = getBasicProperty();
-
-        String upicNo = EMPTY;
-        String applicationNo = EMPTY;
-
-        if (isNotBlank(basicPropertyObj.getUpicNo())) {
-            upicNo = basicPropertyObj.getUpicNo();
-        }
-        if (isNotBlank(getApplicationNo())) {
-            applicationNo = getApplicationNo();
-        }
-
-        stateDetails.append(upicNo.isEmpty() ? applicationNo : upicNo).append(", ")
-                .append(basicPropertyObj.getPrimaryOwner().getName()).append(", ")
+        StringBuilder stateDetails = new StringBuilder()
+                .append(defaultIfBlank(getBasicProperty().getUpicNo(), getApplicationNo())).append(", ")
+                .append(getBasicProperty().getPrimaryOwner().getName()).append(", ")
                 .append(PROPERTY_TYPE_CATEGORIES.get(getPropertyDetail().getCategoryType())).append(", ")
-                .append(basicPropertyObj.getPropertyID().getLocality().getName());
+                .append(getBasicProperty().getPropertyID().getLocality().getName());
         return stateDetails.toString();
     }
 
@@ -852,5 +839,5 @@ public class PropertyImpl extends StateAware<Position> implements Property {
     public void setGisDetails(GisDetails gisDetails) {
         this.gisDetails = gisDetails;
     }
-    
+
 }
