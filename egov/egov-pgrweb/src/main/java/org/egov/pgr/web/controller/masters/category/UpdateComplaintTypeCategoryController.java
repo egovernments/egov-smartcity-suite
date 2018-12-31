@@ -52,7 +52,6 @@ import org.egov.pgr.entity.ComplaintTypeCategory;
 import org.egov.pgr.service.ComplaintTypeCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -64,24 +63,22 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
 
 @Controller
-@RequestMapping("/complaint/category/update/{categoryName}")
+@RequestMapping("/complaint/category/update/{categoryCode}")
 public class UpdateComplaintTypeCategoryController {
 
     @Autowired
     private ComplaintTypeCategoryService complaintTypeCategoryService;
 
     @ModelAttribute
-    public ComplaintTypeCategory complaintTypeCategory(@PathVariable String categoryName) {
-        return complaintTypeCategoryService.findByName(categoryName);
+    public ComplaintTypeCategory complaintTypeCategory(@PathVariable String categoryCode) {
+        return complaintTypeCategoryService.findByCode(categoryCode);
     }
 
     @GetMapping
-    public String updateComplaintTypeCategoryForm(@PathVariable String categoryName,
-                                                  ComplaintTypeCategory complaintTypeCategory,
-                                                  Model model) {
+    public String updateComplaintTypeCategoryForm(ComplaintTypeCategory complaintTypeCategory,
+                                                  RedirectAttributes attrib) {
         if (complaintTypeCategory == null) {
-            model.addAttribute("error", "grievance.category.not.found");
-            model.addAttribute("categoryname", categoryName);
+            attrib.addFlashAttribute("error", "grievance.category.not.found");
             return "redirect:/complaint/category/search";
         }
         return "complainttype-category-update";
@@ -92,8 +89,8 @@ public class UpdateComplaintTypeCategoryController {
                                               BindingResult error, RedirectAttributes redirectAttrs) {
         if (error.hasErrors())
             return "complainttype-category-update";
-        complaintTypeCategoryService.createComplaintTypeCategory(complaintTypeCategory);
+        complaintTypeCategoryService.createOrUpdateComplaintTypeCategory(complaintTypeCategory);
         redirectAttrs.addFlashAttribute("message", "msg.comp.type.catgory.update.success");
-        return "redirect:/complaint/category/update/" + complaintTypeCategory.getName();
+        return "redirect:/complaint/category/update/" + complaintTypeCategory.getCode();
     }
 }

@@ -46,45 +46,48 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
 <div class="row" id="page-content">
     <div class="col-md-12">
-	    <c:if test="${not empty message}">
-	        <div class="alert alert-success" role="alert">${message}</div>
-	    </c:if>
-        <form:form id="searchComplaintType" method="post"   modelAttribute="complaintType" class="form-horizontal form-groups-bordered">
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-						<strong><spring:message code="title.searchComplaintType"></spring:message></strong>
-					</div>
-				</div> 
-						
-				<div class="panel-body custom-form">
-					<div class="form-group">
-						<label class="col-sm-3 control-label"><spring:message code="lbl.complaintType">
-						</spring:message><span class="mandatory"></span></label>
-						<div class="col-sm-6 add-margin">
-                            <form:select path="name"
-                                         id="comp_type" cssClass="form-control" cssErrorClass="form-control error" required="required">
-                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
-                                <form:options items="${complaintTypes}" itemValue="code" itemLabel="name"/>
-                            </form:select>
-                           	<form:errors path="name" cssClass="error-msg"/>
-                       	</div>
-					</div>
-               	</div>
-	        </div>
+        <c:if test="${not empty error}">
+            <div class="alert alert-danger" role="alert"><spring:message code="${error}"/></div>
+        </c:if>
+        <c:if test="${not empty message}">
+            <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
+        </c:if>
+        <form:form id="searchComplaintType" method="post" modelAttribute="complaintType" class="form-horizontal form-groups-bordered">
+            <div class="panel panel-primary" data-collapsed="0">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <strong><spring:message code="title.searchComplaintType"></spring:message></strong>
+                    </div>
+                </div>
+
+                <div class="panel-body custom-form">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label"><spring:message code="lbl.complaintType">
+                        </spring:message><span class="mandatory"></span></label>
+                        <div class="col-sm-6 add-margin">
+                            <select name="complaintTypeCode" id="comp_type" class="form-control" required="required">
+                                <option value=""><spring:message code="lbl.select"/></option>
+                                <c:forEach items="${complaintTypes}" var="complaintType">
+                                    <option value="${complaintType.code}">${complaintType.name}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div class="form-group">
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>                           
+                    <button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
                     <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
-                    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
+                    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
                 </div>
             </div>
         </form:form>

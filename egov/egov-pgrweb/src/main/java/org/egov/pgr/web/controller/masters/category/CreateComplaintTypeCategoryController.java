@@ -83,7 +83,7 @@ public class CreateComplaintTypeCategoryController {
                                               BindingResult errors, RedirectAttributes redirectAttrs) {
         if (errors.hasErrors())
             return "complainttype-category-create";
-        complaintTypeCategoryService.createComplaintTypeCategory(complaintTypeCategory);
+        complaintTypeCategoryService.createOrUpdateComplaintTypeCategory(complaintTypeCategory);
         redirectAttrs.addFlashAttribute("message", "msg.comp.type.catgory.creation.success");
         return "redirect:/complaint/category/create";
     }

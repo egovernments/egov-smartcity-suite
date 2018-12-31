@@ -53,7 +53,6 @@ import org.egov.pgr.service.ComplaintTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -62,6 +61,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 
 @Controller
@@ -83,10 +84,13 @@ public class SearchComplaintTypeController {
     }
 
     @PostMapping
-    public String goToUpdateComplaintTypeForm(ComplaintType complaintType, BindingResult errors) {
-        if (errors.hasErrors())
-            return "complaint-type";
-        return "redirect:/complainttype/update/" + complaintType.getName();
+    public String goToUpdateComplaintTypeForm(String complaintTypeCode, Model model) {
+        if (isBlank(complaintTypeCode)) {
+            model.addAttribute("complaintTypes", complaintTypeService.findAll());
+            model.addAttribute("error", "grievance.type.not.found");
+            return "complaintType-list";
+        }
+        return "redirect:/complainttype/update/" + complaintTypeCode;
     }
 
     @GetMapping("by-department")

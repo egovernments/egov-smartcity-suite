@@ -53,11 +53,13 @@ import org.egov.pgr.service.ComplaintTypeCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Controller
 @RequestMapping("/complaint/category/search")
@@ -78,10 +80,13 @@ public class SearchComplaintTypeCategoryController {
     }
 
     @PostMapping
-    public String goToUpdateComplaintTypeCategoryForm(ComplaintTypeCategory complaintTypeCategory,
-                                                      BindingResult errors) {
-        if (errors.hasErrors())
+    public String goToUpdateComplaintTypeCategoryForm(@RequestParam String categoryCode, Model model) {
+
+        if (isBlank(categoryCode)) {
+            model.addAttribute("error", "grievance.category.not.found");
+            model.addAttribute("categories", complaintTypeCategoryService.findAll());
             return "complainttype-category-search";
-        return "redirect:/complaint/category/update/" + complaintTypeCategory.getName();
+        }
+        return "redirect:/complaint/category/update/" + categoryCode;
     }
 }

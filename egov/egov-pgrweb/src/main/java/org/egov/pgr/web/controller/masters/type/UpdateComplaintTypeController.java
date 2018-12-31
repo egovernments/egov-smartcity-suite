@@ -98,19 +98,20 @@ public class UpdateComplaintTypeController {
     }
 
     @GetMapping
-    public String updateComplaintTypeForm() {
+    public String updateComplaintTypeForm(ComplaintType complaintType, RedirectAttributes attrib) {
+        if (complaintType == null) {
+            attrib.addFlashAttribute("error", "grievance.type.not.found");
+            return "redirect:/complainttype/search";
+        }
         return "complaint-type";
     }
 
     @PostMapping
-    public String updateComplaintType(@Valid ComplaintType complaintType,
-                                      BindingResult errors,
-                                      RedirectAttributes redirectAttrs) {
-        if (errors.hasErrors())
+    public String updateComplaintType(@Valid ComplaintType complaintType, BindingResult bind, RedirectAttributes attrib) {
+        if (bind.hasErrors())
             return "complaint-type";
-        complaintType = complaintTypeService.updateComplaintType(complaintType);
-        redirectAttrs.addFlashAttribute("complaintType", complaintType);
-        redirectAttrs.addFlashAttribute("message", "msg.comp.type.update.success");
+        complaintTypeService.updateComplaintType(complaintType);
+        attrib.addFlashAttribute("message", "msg.comp.type.update.success");
         return "redirect:/complainttype/view/" + complaintType.getCode();
     }
 }

@@ -56,4 +56,6 @@ import org.springframework.stereotype.Repository;
 public interface ComplaintTypeCategoryRepository extends JpaRepository<ComplaintTypeCategory, Long> {
 
     ComplaintTypeCategory findByName(String name);
+
+    ComplaintTypeCategory findByCode(String code);
 }

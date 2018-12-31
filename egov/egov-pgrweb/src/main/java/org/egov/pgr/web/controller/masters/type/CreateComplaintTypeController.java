@@ -105,7 +105,6 @@ public class CreateComplaintTypeController {
         if (errors.hasErrors())
             return "complaint-type";
         complaintTypeService.createComplaintType(complaintType);
-        redirectAttrs.addFlashAttribute("complaintType", complaintType);
         redirectAttrs.addFlashAttribute("message", "msg.comp.type.success");
         return "redirect:/complainttype/view/" + complaintType.getCode();
     }

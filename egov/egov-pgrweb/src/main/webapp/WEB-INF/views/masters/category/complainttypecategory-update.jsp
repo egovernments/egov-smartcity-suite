@@ -77,6 +77,16 @@
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">
+                            <spring:message code="lbl.code"/><span class="mandatory"></span>
+                        </label>
+                        <div class="col-sm-6">
+                            <form:input path="code" id="code" type="text" class="form-control low-width patternvalidation"
+                                        data-pattern="masterCode" placeholder="" autocomplete="off" maxlength="5" readonly="true"/>
+                            <form:errors path="code" cssClass="add-margin error-msg"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">
                             <spring:message code="lbl.local.name"/>
                         </label>
                         <div class="col-sm-6 add-margin">

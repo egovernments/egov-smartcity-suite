@@ -65,7 +65,7 @@ public class ComplaintTypeCategoryService {
     private ComplaintTypeCategoryRepository complaintTypeCategoryRepository;
 
     @Transactional
-    public ComplaintTypeCategory createComplaintTypeCategory(ComplaintTypeCategory complaintTypeCategory) {
+    public ComplaintTypeCategory createOrUpdateComplaintTypeCategory(ComplaintTypeCategory complaintTypeCategory) {
         return complaintTypeCategoryRepository.save(complaintTypeCategory);
     }
 
@@ -75,5 +75,9 @@ public class ComplaintTypeCategoryService {
 
     public ComplaintTypeCategory findByName(String categoryName) {
         return complaintTypeCategoryRepository.findByName(categoryName);
+    }
+
+    public ComplaintTypeCategory findByCode(String categoryCode) {
+        return complaintTypeCategoryRepository.findByCode(categoryCode);
     }
 }

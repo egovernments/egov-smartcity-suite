@@ -163,7 +163,7 @@ public class UpdateComplaintTypeControllerTest extends AbstractContextController
         this.mockMvc.perform(post("/complainttype/update/existing")
                 .param("name", "existing complaint type").param("code", "Test"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(view().name("redirect:/complainttype/view/existing"));
+                .andExpect(view().name("redirect:/complainttype/view/Test"));
 
         ArgumentCaptor<ComplaintType> argumentCaptor = ArgumentCaptor.forClass(ComplaintType.class);
         verify(complaintTypeService).updateComplaintType(argumentCaptor.capture());

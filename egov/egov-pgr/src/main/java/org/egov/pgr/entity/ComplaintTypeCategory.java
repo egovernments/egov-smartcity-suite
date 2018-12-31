@@ -56,6 +56,7 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -64,16 +65,19 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.List;
 
 import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_MASTER_DATA_CODE;
 import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.MASTER_DATA_CODE;
 import static org.egov.pgr.entity.ComplaintTypeCategory.SEQ_COMP_TYPE_CATEGORY;
 
 @Entity
-@Unique(fields = "name", enableDfltMsg = true)
+@Unique(fields = {"name", "code"}, enableDfltMsg = true)
 @Table(name = "egpgr_complainttype_category")
 @SequenceGenerator(name = SEQ_COMP_TYPE_CATEGORY, sequenceName = SEQ_COMP_TYPE_CATEGORY, allocationSize = 1)
 public class ComplaintTypeCategory extends AbstractPersistable<Long> {
@@ -90,6 +94,13 @@ public class ComplaintTypeCategory extends AbstractPersistable<Long> {
     @Length(min = 5, max = 100)
     @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String name;
+
+    @NotBlank
+    @Length(max = 5)
+    @SafeHtml
+    @Column(updatable = false)
+    @Pattern(regexp = MASTER_DATA_CODE, message = INVALID_MASTER_DATA_CODE)
+    private String code;
 
     @SafeHtml
     @Length(max = 200)
@@ -121,6 +132,14 @@ public class ComplaintTypeCategory extends AbstractPersistable<Long> {
 
     public void setName(final String name) {
         this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(final String code) {
+        this.code = code;
     }
 
     public String getLocalName() {

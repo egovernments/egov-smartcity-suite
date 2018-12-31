@@ -46,7 +46,7 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ page contentType="text/html;charset=UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
@@ -69,10 +69,21 @@
 							<spring:message code="lbl.name"/><span class="mandatory"></span>
 						</label>
 						<div class="col-sm-6 add-margin">
-							<form:input path="name" id="name" cssClass="form-control is_valid_alphabet" cssErrorClass="form-control error" required="required" minlength="5" maxlength="100"/>
+							<form:input path="name" id="name" cssClass="form-control is_valid_alphabet"
+										cssErrorClass="form-control error" required="required" minlength="5" maxlength="100"/>
 							<form:errors path="name" cssClass="error-msg" />
 						</div>
-					</div>		
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">
+							<spring:message code="lbl.code"/><span class="mandatory"></span>
+						</label>
+						<div class="col-sm-6">
+							<form:input path="code" id="code" type="text" class="form-control low-width patternvalidation"
+										data-pattern="masterCode" placeholder="" autocomplete="off" maxlength="5"/>
+							<form:errors path="code" cssClass="add-margin error-msg"/>
+						</div>
+					</div>
 					<div class="form-group">
 						<label class="col-sm-3 control-label">
 							<spring:message code="lbl.local.name"/>
