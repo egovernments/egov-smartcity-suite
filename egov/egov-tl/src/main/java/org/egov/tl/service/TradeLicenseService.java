@@ -89,9 +89,9 @@ import org.egov.tl.entity.LicenseSubCategoryDetails;
 import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.contracts.WorkflowBean;
-import org.egov.tl.entity.contracts.DemandNoticeForm;
-import org.egov.tl.entity.contracts.OnlineSearchForm;
-import org.egov.tl.entity.contracts.SearchForm;
+import org.egov.tl.entity.contracts.DemandNoticeRequest;
+import org.egov.tl.entity.contracts.OnlineSearchRequest;
+import org.egov.tl.entity.contracts.LicenseSearchRequest;
 import org.egov.tl.repository.LicenseDocumentTypeRepository;
 import org.egov.tl.repository.LicenseRepository;
 import org.egov.tl.repository.SearchTradeRepository;
@@ -830,21 +830,21 @@ public class TradeLicenseService {
     }
 
     @ReadOnly
-    public Page<SearchForm> searchTradeLicense(SearchForm searchForm) {
-        Pageable pageable = new PageRequest(searchForm.pageNumber(),
-                searchForm.pageSize(), searchForm.orderDir(), searchForm.orderBy());
+    public Page<LicenseSearchRequest> searchTradeLicense(LicenseSearchRequest licenseSearchRequest) {
+        Pageable pageable = new PageRequest(licenseSearchRequest.pageNumber(),
+                licenseSearchRequest.pageSize(), licenseSearchRequest.orderDir(), licenseSearchRequest.orderBy());
         User currentUser = securityUtils.getCurrentUser();
-        Page<TradeLicense> licenses = searchTradeRepository.findAll(SearchTradeSpec.searchTrade(searchForm), pageable);
-        List<SearchForm> searchResults = new ArrayList<>();
+        Page<TradeLicense> licenses = searchTradeRepository.findAll(SearchTradeSpec.searchTrade(licenseSearchRequest), pageable);
+        List<LicenseSearchRequest> searchResults = new ArrayList<>();
         String[] feeCollectorRoles = licenseConfigurationService.getFeeCollectorRoles();
         licenses.forEach(license ->
-                searchResults.add(new SearchForm(license, currentUser, getProcessOwnerName(license), feeCollectorRoles))
+                searchResults.add(new LicenseSearchRequest(license, currentUser, getProcessOwnerName(license), feeCollectorRoles))
         );
         return new PageImpl<>(searchResults, pageable, licenses.getTotalElements());
     }
 
     @ReadOnly
-    public List<OnlineSearchForm> onlineSearchTradeLicense(OnlineSearchForm searchForm) {
+    public List<OnlineSearchRequest> onlineSearchTradeLicense(OnlineSearchRequest searchForm) {
         Criteria searchCriteria = entityManager.unwrap(Session.class).createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat")
                 .createAlias("tradeName", "subcat").createAlias("status", "licstatus");
@@ -860,10 +860,10 @@ public class TradeLicenseService {
 
         searchCriteria.add(Restrictions.isNotNull("applicationNumber"));
         searchCriteria.addOrder(Order.asc("id"));
-        List<OnlineSearchForm> searchResult = new ArrayList<>();
+        List<OnlineSearchRequest> searchResult = new ArrayList<>();
         for (TradeLicense license : (List<TradeLicense>) searchCriteria.list()) {
             if (license != null)
-                searchResult.add(new OnlineSearchForm(license, getDemandColl(license)));
+                searchResult.add(new OnlineSearchRequest(license, getDemandColl(license)));
         }
         return searchResult;
     }
@@ -887,40 +887,40 @@ public class TradeLicenseService {
     }
 
     @ReadOnly
-    public List<DemandNoticeForm> getLicenseDemandNotices(DemandNoticeForm demandNoticeForm) {
+    public List<DemandNoticeRequest> getLicenseDemandNotices(DemandNoticeRequest demandNoticeRequest) {
         Criteria searchCriteria = entityManager.unwrap(Session.class).createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat").createAlias("tradeName", "subcat")
                 .createAlias("status", "licstatus").createAlias("natureOfBusiness", "nob")
                 .createAlias("demand", "licDemand").createAlias("licenseAppType", "appType")
                 .add(Restrictions.ne("appType.code", CLOSURE_APPTYPE_CODE));
-        if (isNotBlank(demandNoticeForm.getLicenseNumber()))
-            searchCriteria.add(Restrictions.eq("licenseNumber", demandNoticeForm.getLicenseNumber()).ignoreCase());
-        if (isNotBlank(demandNoticeForm.getOldLicenseNumber()))
+        if (isNotBlank(demandNoticeRequest.getLicenseNumber()))
+            searchCriteria.add(Restrictions.eq("licenseNumber", demandNoticeRequest.getLicenseNumber()).ignoreCase());
+        if (isNotBlank(demandNoticeRequest.getOldLicenseNumber()))
             searchCriteria
-                    .add(Restrictions.eq("oldLicenseNumber", demandNoticeForm.getOldLicenseNumber()).ignoreCase());
-        if (demandNoticeForm.getCategoryId() != null)
-            searchCriteria.add(Restrictions.eq("cat.id", demandNoticeForm.getCategoryId()));
-        if (demandNoticeForm.getSubCategoryId() != null)
-            searchCriteria.add(Restrictions.eq("subcat.id", demandNoticeForm.getSubCategoryId()));
-        if (demandNoticeForm.getWardId() != null)
+                    .add(Restrictions.eq("oldLicenseNumber", demandNoticeRequest.getOldLicenseNumber()).ignoreCase());
+        if (demandNoticeRequest.getCategoryId() != null)
+            searchCriteria.add(Restrictions.eq("cat.id", demandNoticeRequest.getCategoryId()));
+        if (demandNoticeRequest.getSubCategoryId() != null)
+            searchCriteria.add(Restrictions.eq("subcat.id", demandNoticeRequest.getSubCategoryId()));
+        if (demandNoticeRequest.getWardId() != null)
             searchCriteria.createAlias("parentBoundary", "wards")
-                    .add(Restrictions.eq("wards.id", demandNoticeForm.getWardId()));
-        if (demandNoticeForm.getElectionWard() != null)
+                    .add(Restrictions.eq("wards.id", demandNoticeRequest.getWardId()));
+        if (demandNoticeRequest.getElectionWard() != null)
             searchCriteria.createAlias("adminWard", "electionWard")
-                    .add(Restrictions.eq("electionWard.id", demandNoticeForm.getElectionWard()));
-        if (demandNoticeForm.getLocalityId() != null)
+                    .add(Restrictions.eq("electionWard.id", demandNoticeRequest.getElectionWard()));
+        if (demandNoticeRequest.getLocalityId() != null)
             searchCriteria.createAlias("boundary", "locality")
-                    .add(Restrictions.eq("locality.id", demandNoticeForm.getLocalityId()));
-        if (demandNoticeForm.getStatusId() == null)
+                    .add(Restrictions.eq("locality.id", demandNoticeRequest.getLocalityId()));
+        if (demandNoticeRequest.getStatusId() == null)
             searchCriteria.add(Restrictions.ne("licstatus.statusCode", StringUtils.upperCase("CAN")));
         else
-            searchCriteria.add(Restrictions.eq("status.id", demandNoticeForm.getStatusId()));
+            searchCriteria.add(Restrictions.eq("status.id", demandNoticeRequest.getStatusId()));
         searchCriteria
                 .add(Restrictions.eq("isActive", true))
                 .add(Restrictions.eq("nob.name", PERMANENT_NATUREOFBUSINESS))
                 .add(Restrictions.gtProperty("licDemand.baseDemand", "licDemand.amtCollected"))
                 .addOrder(Order.asc("id"));
-        List<DemandNoticeForm> demandNotices = new LinkedList<>();
+        List<DemandNoticeRequest> demandNotices = new LinkedList<>();
         Module tradeLicenseModule = licenseUtils.getModule();
         for (TradeLicense license : (List<TradeLicense>) searchCriteria.list()) {
             EgDemand egDemand = license.getCurrentDemand();
@@ -930,7 +930,7 @@ public class TradeLicenseService {
                         .fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(tradeLicenseModule, currentInstallment.getToDate(), 1);
                 Map<String, BigDecimal> licenseFees = getOutstandingFeeForDemandNotice(license,
                         currentInstallment, previousInstallment.get(0));
-                demandNotices.add(new DemandNoticeForm(license, licenseFees, getProcessOwnerName(license)));
+                demandNotices.add(new DemandNoticeRequest(license, licenseFees, getProcessOwnerName(license)));
             }
         }
         return demandNotices;

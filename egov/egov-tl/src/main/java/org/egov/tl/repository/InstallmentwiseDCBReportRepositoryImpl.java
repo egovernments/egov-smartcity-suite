@@ -50,7 +50,7 @@ package org.egov.tl.repository;
 
 import org.egov.infra.persistence.utils.Page;
 import org.egov.tl.entity.contracts.InstallmentWiseDCBRequest;
-import org.egov.tl.entity.view.InstallmentWiseDCB;
+import org.egov.tl.entity.view.LicenseInstallmentwiseDCBReportView;
 import org.springframework.data.domain.Sort.Direction;
 
 import javax.persistence.EntityManager;
@@ -78,15 +78,15 @@ public class InstallmentwiseDCBReportRepositoryImpl implements InstallmentwiseDC
     private EntityManager entityManager;
 
     @Override
-    public Page<InstallmentWiseDCB> findByInstallmentWiseDCB(InstallmentWiseDCBRequest installmentWiseDCBRequest,
-                                                             Date financialYearStartDate) {
+    public Page<LicenseInstallmentwiseDCBReportView> findByInstallmentWiseDCB(InstallmentWiseDCBRequest installmentWiseDCBRequest,
+                                                                              Date financialYearStartDate) {
 
         final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<InstallmentWiseDCB> countCriteriaQuery = criteriaBuilder
-                .createQuery(InstallmentWiseDCB.class);
-        final Root<InstallmentWiseDCB> countRoot = countCriteriaQuery.from(InstallmentWiseDCB.class);
+        final CriteriaQuery<LicenseInstallmentwiseDCBReportView> countCriteriaQuery = criteriaBuilder
+                .createQuery(LicenseInstallmentwiseDCBReportView.class);
+        final Root<LicenseInstallmentwiseDCBReportView> countRoot = countCriteriaQuery.from(LicenseInstallmentwiseDCBReportView.class);
 
-        final TypedQuery<InstallmentWiseDCB> query = entityManager
+        final TypedQuery<LicenseInstallmentwiseDCBReportView> query = entityManager
                 .createQuery(generateReport(criteriaBuilder, installmentWiseDCBRequest, financialYearStartDate, true));
 
         countCriteriaQuery.multiselect(criteriaBuilder.count(countRoot))
@@ -94,15 +94,15 @@ public class InstallmentwiseDCBReportRepositoryImpl implements InstallmentwiseDC
                         .toArray(new Predicate[]{}))
                 .groupBy(countRoot.get(LICENSEID));
 
-        final TypedQuery<InstallmentWiseDCB> countquery = entityManager.createQuery(countCriteriaQuery);
+        final TypedQuery<LicenseInstallmentwiseDCBReportView> countquery = entityManager.createQuery(countCriteriaQuery);
         final int recordTotal = countquery.getResultList().size();
 
         return new Page<>(query, installmentWiseDCBRequest.pageNumber() + 1, installmentWiseDCBRequest.pageSize(), recordTotal);
     }
 
     @Override
-    public List<InstallmentWiseDCB> findInstallmentWiseReport(final InstallmentWiseDCBRequest installmentWiseDCBRequest,
-                                                              final Date financialYearStartDate) {
+    public List<LicenseInstallmentwiseDCBReportView> findInstallmentWiseReport(final InstallmentWiseDCBRequest installmentWiseDCBRequest,
+                                                                               final Date financialYearStartDate) {
 
         final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         return entityManager.createQuery(generateReport(criteriaBuilder, installmentWiseDCBRequest, financialYearStartDate, false))
@@ -115,7 +115,7 @@ public class InstallmentwiseDCBReportRepositoryImpl implements InstallmentwiseDC
 
         final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<Object[]> criteriaQuery = criteriaBuilder.createQuery(Object[].class);
-        final Root<InstallmentWiseDCB> root = criteriaQuery.from(InstallmentWiseDCB.class);
+        final Root<LicenseInstallmentwiseDCBReportView> root = criteriaQuery.from(LicenseInstallmentwiseDCBReportView.class);
 
         criteriaQuery.multiselect(
                 criteriaBuilder.coalesce(criteriaBuilder.sum(criteriaBuilder.<Number>selectCase()
@@ -191,12 +191,12 @@ public class InstallmentwiseDCBReportRepositoryImpl implements InstallmentwiseDC
         return entityManager.createQuery(criteriaQuery).getSingleResult();
     }
 
-    public CriteriaQuery<InstallmentWiseDCB> generateReport(CriteriaBuilder criteriaBuilder,
-                                                            InstallmentWiseDCBRequest installmentWiseDCBRequest,
-                                                            Date financialYearStartDate,
-                                                            Boolean fuzzyLogic) {
-        final CriteriaQuery<InstallmentWiseDCB> criteriaQuery = criteriaBuilder.createQuery(InstallmentWiseDCB.class);
-        final Root<InstallmentWiseDCB> root = criteriaQuery.from(InstallmentWiseDCB.class);
+    public CriteriaQuery<LicenseInstallmentwiseDCBReportView> generateReport(CriteriaBuilder criteriaBuilder,
+                                                                             InstallmentWiseDCBRequest installmentWiseDCBRequest,
+                                                                             Date financialYearStartDate,
+                                                                             Boolean fuzzyLogic) {
+        final CriteriaQuery<LicenseInstallmentwiseDCBReportView> criteriaQuery = criteriaBuilder.createQuery(LicenseInstallmentwiseDCBReportView.class);
+        final Root<LicenseInstallmentwiseDCBReportView> root = criteriaQuery.from(LicenseInstallmentwiseDCBReportView.class);
 
         criteriaQuery.multiselect(root.get(LICENSEID), root.get(LICENSENUMBER), root.get(ACTIVE),
                 criteriaBuilder.coalesce(criteriaBuilder.sum(criteriaBuilder.<Number>selectCase()
@@ -246,7 +246,7 @@ public class InstallmentwiseDCBReportRepositoryImpl implements InstallmentwiseDC
     }
 
     private List<Predicate> predicatecondition(CriteriaBuilder criteriaBuilder,
-                                               Root<InstallmentWiseDCB> root,
+                                               Root<LicenseInstallmentwiseDCBReportView> root,
                                                InstallmentWiseDCBRequest installmentWiseDCBRequest,
                                                Date financialYearStartDate) {
         final List<Predicate> predicates = new ArrayList<>();

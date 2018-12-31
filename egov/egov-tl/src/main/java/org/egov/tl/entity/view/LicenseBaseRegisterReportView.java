@@ -64,7 +64,7 @@ import java.util.Date;
 @Entity
 @Immutable
 @Table(name = "EGTL_MV_BASEREGISTER_VIEW")
-public class BaseRegister implements Serializable {
+public class LicenseBaseRegisterReportView implements Serializable {
 
     private static final long serialVersionUID = -5366096182840879108L;
 
@@ -388,7 +388,7 @@ public class BaseRegister implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        final BaseRegister other = (BaseRegister) obj;
+        final LicenseBaseRegisterReportView other = (LicenseBaseRegisterReportView) obj;
         if (licenseId == null) {
             if (other.licenseId != null)
                 return false;

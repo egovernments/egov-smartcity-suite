@@ -53,7 +53,7 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.tl.entity.contracts.BaseRegisterRequest;
-import org.egov.tl.entity.view.BaseRegister;
+import org.egov.tl.entity.view.LicenseBaseRegisterReportView;
 import org.egov.tl.repository.BaseRegisterReportRepository;
 import org.egov.tl.repository.specs.BaseRegisterSpec;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +73,7 @@ public class BaseRegisterService {
     private ReportService reportService;
 
     @ReadOnly
-    public Page<BaseRegister> pagedBaseRegisterRecords(BaseRegisterRequest baseRegisterRequest) {
+    public Page<LicenseBaseRegisterReportView> pagedBaseRegisterRecords(BaseRegisterRequest baseRegisterRequest) {
         return baseRegisterReportRepository.findAll(BaseRegisterSpec.baseRegisterSpecification(baseRegisterRequest),
                 new PageRequest(baseRegisterRequest.pageNumber(), baseRegisterRequest.pageSize(),
                         baseRegisterRequest.orderDir(), baseRegisterRequest.orderBy()));

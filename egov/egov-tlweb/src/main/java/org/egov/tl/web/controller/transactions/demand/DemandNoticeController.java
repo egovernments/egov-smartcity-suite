@@ -50,7 +50,7 @@ package org.egov.tl.web.controller.transactions.demand;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.tl.entity.LicenseStatus;
-import org.egov.tl.entity.contracts.DemandNoticeForm;
+import org.egov.tl.entity.contracts.DemandNoticeRequest;
 import org.egov.tl.service.DemandNoticeService;
 import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.LicenseStatusService;
@@ -105,7 +105,7 @@ public class DemandNoticeController {
 
     @GetMapping("search")
     public String searchFormforNotice(Model model) {
-        model.addAttribute("demandnoticesearchForm", new DemandNoticeForm());
+        model.addAttribute("demandnoticesearchForm", new DemandNoticeRequest());
         model.addAttribute("categoryList", licenseCategoryService.getCategoriesOrderByName());
         model.addAttribute("subCategoryList", Collections.emptyList());
         model.addAttribute("localityList", boundaryService
@@ -122,10 +122,10 @@ public class DemandNoticeController {
 
     @PostMapping(value = "search", produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String searchResult(@ModelAttribute DemandNoticeForm demandnoticeForm) {
+    public String searchResult(@ModelAttribute DemandNoticeRequest demandnoticeRequest) {
         return new StringBuilder("{ \"data\":")
-                .append(toJSON(tradeLicenseService.getLicenseDemandNotices(demandnoticeForm),
-                        DemandNoticeForm.class, DemandNoticeAdaptor.class)).append("}").toString();
+                .append(toJSON(tradeLicenseService.getLicenseDemandNotices(demandnoticeRequest),
+                        DemandNoticeRequest.class, DemandNoticeAdaptor.class)).append("}").toString();
     }
 
     @GetMapping(value = "generate/{licenseId}", produces = APPLICATION_PDF_VALUE)
@@ -136,7 +136,7 @@ public class DemandNoticeController {
 
     @GetMapping(value = "generate", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
-    public ResponseEntity<InputStreamResource> mergeAndDownload(@ModelAttribute DemandNoticeForm searchRequest) {
+    public ResponseEntity<InputStreamResource> mergeAndDownload(@ModelAttribute DemandNoticeRequest searchRequest) {
         return ReportUtil.reportAsResponseEntity(demandNoticeService.generateBulkDemandNotice(searchRequest));
     }
 }

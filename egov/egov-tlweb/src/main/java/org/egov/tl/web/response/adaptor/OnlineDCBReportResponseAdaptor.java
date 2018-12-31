@@ -52,16 +52,16 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.tl.entity.view.DCBReportResult;
+import org.egov.tl.entity.view.LicenseDCBReportView;
 
 import java.lang.reflect.Type;
 
 import static org.egov.infra.utils.StringUtils.defaultIfBlank;
 
-public class OnlineDCBReportResponseAdaptor implements JsonSerializer<DCBReportResult> {
+public class OnlineDCBReportResponseAdaptor implements JsonSerializer<LicenseDCBReportView> {
 
     @Override
-    public JsonElement serialize(final DCBReportResult dCBReportObj, final Type type, final JsonSerializationContext jsc) {
+    public JsonElement serialize(final LicenseDCBReportView dCBReportObj, final Type type, final JsonSerializationContext jsc) {
         final JsonObject dcbReportResponse = new JsonObject();
         if (dCBReportObj != null) {
             dcbReportResponse.addProperty("licenseid", dCBReportObj.getLicenseId());

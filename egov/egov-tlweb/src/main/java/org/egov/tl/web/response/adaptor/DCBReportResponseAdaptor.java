@@ -54,7 +54,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.tl.entity.view.DCBReportResult;
+import org.egov.tl.entity.view.LicenseDCBReportView;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -62,14 +62,14 @@ import java.util.List;
 import static org.egov.infra.utils.StringUtils.defaultIfBlank;
 import static org.egov.infra.utils.StringUtils.toYesOrNo;
 
-public class DCBReportResponseAdaptor implements DataTableJsonAdapter<DCBReportResult> {
+public class DCBReportResponseAdaptor implements DataTableJsonAdapter<LicenseDCBReportView> {
 
     @Override
-    public JsonElement serialize(final DataTable<DCBReportResult> dcbReportResponse, final Type type,
+    public JsonElement serialize(final DataTable<LicenseDCBReportView> dcbReportResponse, final Type type,
                                  final JsonSerializationContext jsc) {
-        final List<DCBReportResult> dCBReportResult = dcbReportResponse.getData();
+        final List<LicenseDCBReportView> dCBReportViewLicense = dcbReportResponse.getData();
         final JsonArray dCBReportResultData = new JsonArray();
-        dCBReportResult.forEach(dCBReport -> {
+        dCBReportViewLicense.forEach(dCBReport -> {
             final JsonObject dCBReportResultJson = new JsonObject();
             dCBReportResultJson.addProperty("licenseId", dCBReport.getLicenseId());
             dCBReportResultJson.addProperty("active", toYesOrNo(dCBReport.isActive()));

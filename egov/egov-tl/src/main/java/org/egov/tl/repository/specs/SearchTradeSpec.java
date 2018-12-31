@@ -49,7 +49,7 @@
 package org.egov.tl.repository.specs;
 
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.entity.contracts.SearchForm;
+import org.egov.tl.entity.contracts.LicenseSearchRequest;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.Predicate;
@@ -60,39 +60,39 @@ public final class SearchTradeSpec {
         //static methods only
     }
 
-    public static Specification<TradeLicense> searchTrade(final SearchForm searchForm) {
+    public static Specification<TradeLicense> searchTrade(final LicenseSearchRequest licenseSearchRequest) {
         return (root, query, builder) -> {
             final Predicate predicate = builder.conjunction();
-            if (searchForm.getLicenseNumber() != null)
-                predicate.getExpressions().add(builder.equal(root.get("licenseNumber"), searchForm.getLicenseNumber()));
-            if (searchForm.getApplicationNumber() != null)
-                predicate.getExpressions().add(builder.equal(root.get("applicationNumber"), searchForm.getApplicationNumber()));
-            if (searchForm.getOldLicenseNumber() != null)
-                predicate.getExpressions().add(builder.equal(root.get("oldLicenseNumber"), searchForm.getOldLicenseNumber()));
-            if (searchForm.getCategoryId() != null)
-                predicate.getExpressions().add(builder.equal(root.get("category").get("id"), searchForm.getCategoryId()));
-            if (searchForm.getSubCategoryId() != null)
-                predicate.getExpressions().add(builder.equal(root.get("tradeName").get("id"), searchForm.getSubCategoryId()));
-            if (searchForm.getTradeTitle() != null)
-                predicate.getExpressions().add(builder.equal(root.get("nameOfEstablishment"), searchForm.getTradeTitle()));
-            if (searchForm.getStatusId() != null)
-                predicate.getExpressions().add(builder.equal(root.get("status").get("id"), searchForm.getStatusId()));
-            if (searchForm.getTradeOwnerName() != null)
+            if (licenseSearchRequest.getLicenseNumber() != null)
+                predicate.getExpressions().add(builder.equal(root.get("licenseNumber"), licenseSearchRequest.getLicenseNumber()));
+            if (licenseSearchRequest.getApplicationNumber() != null)
+                predicate.getExpressions().add(builder.equal(root.get("applicationNumber"), licenseSearchRequest.getApplicationNumber()));
+            if (licenseSearchRequest.getOldLicenseNumber() != null)
+                predicate.getExpressions().add(builder.equal(root.get("oldLicenseNumber"), licenseSearchRequest.getOldLicenseNumber()));
+            if (licenseSearchRequest.getCategoryId() != null)
+                predicate.getExpressions().add(builder.equal(root.get("category").get("id"), licenseSearchRequest.getCategoryId()));
+            if (licenseSearchRequest.getSubCategoryId() != null)
+                predicate.getExpressions().add(builder.equal(root.get("tradeName").get("id"), licenseSearchRequest.getSubCategoryId()));
+            if (licenseSearchRequest.getTradeTitle() != null)
+                predicate.getExpressions().add(builder.equal(root.get("nameOfEstablishment"), licenseSearchRequest.getTradeTitle()));
+            if (licenseSearchRequest.getStatusId() != null)
+                predicate.getExpressions().add(builder.equal(root.get("status").get("id"), licenseSearchRequest.getStatusId()));
+            if (licenseSearchRequest.getTradeOwnerName() != null)
                 predicate.getExpressions()
-                        .add(builder.equal(root.get("licensee").get("applicantName"), searchForm.getTradeOwnerName()));
-            if (searchForm.getPropertyAssessmentNo() != null)
-                predicate.getExpressions().add(builder.equal(root.get("assessmentNo"), searchForm.getPropertyAssessmentNo()));
-            if (searchForm.getMobileNo() != null)
+                        .add(builder.equal(root.get("licensee").get("applicantName"), licenseSearchRequest.getTradeOwnerName()));
+            if (licenseSearchRequest.getPropertyAssessmentNo() != null)
+                predicate.getExpressions().add(builder.equal(root.get("assessmentNo"), licenseSearchRequest.getPropertyAssessmentNo()));
+            if (licenseSearchRequest.getMobileNo() != null)
                 predicate.getExpressions()
-                        .add(builder.equal(root.get("licensee").get("mobilePhoneNumber"), searchForm.getMobileNo()));
-            if (searchForm.getInactive() != null && searchForm.getInactive())
+                        .add(builder.equal(root.get("licensee").get("mobilePhoneNumber"), licenseSearchRequest.getMobileNo()));
+            if (licenseSearchRequest.getInactive() != null && licenseSearchRequest.getInactive())
                 predicate.getExpressions().add(builder.equal(root.get("isActive"), false));
-            if (searchForm.getApplicationTypeId() != null)
+            if (licenseSearchRequest.getApplicationTypeId() != null)
                 predicate.getExpressions()
-                        .add(builder.equal(root.get("licenseAppType").get("id"), searchForm.getApplicationTypeId()));
+                        .add(builder.equal(root.get("licenseAppType").get("id"), licenseSearchRequest.getApplicationTypeId()));
             predicate.getExpressions().add(builder.isNotNull(root.get("applicationNumber")));
-            if (searchForm.getNatureOfBusinessId() != null)
-                predicate.getExpressions().add(builder.equal(root.get("natureOfBusiness"), searchForm.getNatureOfBusinessId()));
+            if (licenseSearchRequest.getNatureOfBusinessId() != null)
+                predicate.getExpressions().add(builder.equal(root.get("natureOfBusiness"), licenseSearchRequest.getNatureOfBusinessId()));
 
             return predicate;
         };

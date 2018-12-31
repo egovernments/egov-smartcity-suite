@@ -71,7 +71,7 @@ import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.egov.tl.utils.Constants.MESSAGE;
 
 @Controller
-@RequestMapping("/demand")
+@RequestMapping("/demand/generate")
 public class DemandGenerationController {
 
     @Autowired
@@ -84,7 +84,7 @@ public class DemandGenerationController {
     @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
 
-    @GetMapping("generate")
+    @GetMapping
     public String newForm(Model model) {
         CFinancialYear financialYear = financialYearService.getLatestFinancialYear();
         model.addAttribute("demandGenerationLogDetails",
@@ -95,7 +95,7 @@ public class DemandGenerationController {
         return "demand-generate";
     }
 
-    @PostMapping("generate")
+    @PostMapping
     @ResponseBody
     public Iterable<DemandGenerationLogDetail> generateDemand(DemandGenerationRequest demandGenerationRequest) {
         Collection<DemandGenerationLogDetail> demandLogDetails = demandGenerationService.generateDemand(demandGenerationRequest);
@@ -107,14 +107,14 @@ public class DemandGenerationController {
         return demandLogDetails;
     }
 
-    @GetMapping("generate/{licenseId}")
+    @GetMapping("/{licenseId}")
     public String generateDemandForLicense(@PathVariable Long licenseId, Model model) {
         model.addAttribute("licenseNumber", tradeLicenseService.getLicenseById(licenseId).getLicenseNumber());
         model.addAttribute("financialYear", financialYearService.getLatestFinancialYear().getFinYearRange());
         return "demandgenerate-result";
     }
 
-    @PostMapping("generate/{licenseId}")
+    @PostMapping("/{licenseId}")
     public String generateDemandForLicense(@PathVariable Long licenseId, RedirectAttributes redirectAttrs) {
         boolean generationStatus = demandGenerationService.generateLicenseDemand(licenseId);
         redirectAttrs.addFlashAttribute(MESSAGE, generationStatus ?

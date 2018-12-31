@@ -54,20 +54,20 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.tl.entity.view.BaseRegister;
+import org.egov.tl.entity.view.LicenseBaseRegisterReportView;
 
 import java.lang.reflect.Type;
 import java.util.List;
 
 import static org.egov.infra.utils.StringUtils.defaultIfBlank;
 
-public class BaseRegisterResponseAdaptor implements DataTableJsonAdapter<BaseRegister> {
+public class BaseRegisterResponseAdaptor implements DataTableJsonAdapter<LicenseBaseRegisterReportView> {
     @Override
-    public JsonElement serialize(final DataTable<BaseRegister> baseRegisterResponse, final Type type,
+    public JsonElement serialize(final DataTable<LicenseBaseRegisterReportView> baseRegisterResponse, final Type type,
                                  final JsonSerializationContext jsc) {
-        final List<BaseRegister> baseRegisterResult = baseRegisterResponse.getData();
+        final List<LicenseBaseRegisterReportView> licenseBaseRegisterReportViewResult = baseRegisterResponse.getData();
         final JsonArray baseRegisterResultData = new JsonArray();
-        baseRegisterResult.forEach(baseForm -> {
+        licenseBaseRegisterReportViewResult.forEach(baseForm -> {
             final JsonObject baseRegisterJson = new JsonObject();
             baseRegisterJson.addProperty("tinno", defaultIfBlank(baseForm.getLicenseNumber()));
             baseRegisterJson.addProperty("licenseId", baseForm.getLicenseId());

@@ -49,7 +49,7 @@
 package org.egov.tl.repository.specs;
 
 import org.egov.tl.entity.contracts.DCBReportSearchRequest;
-import org.egov.tl.entity.view.DCBReportResult;
+import org.egov.tl.entity.view.LicenseDCBReportView;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.Predicate;
@@ -62,7 +62,7 @@ public final class DCBReportSpec {
         //static methods only
     }
 
-    public static Specification<DCBReportResult> dCBReportSpecification(final DCBReportSearchRequest dCBReportSearchRequest) {
+    public static Specification<LicenseDCBReportView> dCBReportSpecification(final DCBReportSearchRequest dCBReportSearchRequest) {
         return (root, query, builder) -> {
             final Predicate result = builder.conjunction();
             if (isNotBlank(dCBReportSearchRequest.getLicenseNumber()))

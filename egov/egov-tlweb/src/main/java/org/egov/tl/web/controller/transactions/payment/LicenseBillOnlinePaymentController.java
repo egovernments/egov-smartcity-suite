@@ -48,7 +48,7 @@
 package org.egov.tl.web.controller.transactions.payment;
 
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.entity.contracts.OnlineSearchForm;
+import org.egov.tl.entity.contracts.OnlineSearchRequest;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.service.integration.LicenseBillService;
 import org.egov.tl.web.response.adaptor.OnlineSearchTradeResultHelperAdaptor;
@@ -82,8 +82,8 @@ public class LicenseBillOnlinePaymentController {
     private TradeLicenseService tradeLicenseService;
 
     @ModelAttribute("onlineSearchForm")
-    public OnlineSearchForm onlineSearchForm() {
-        return new OnlineSearchForm();
+    public OnlineSearchRequest onlineSearchForm() {
+        return new OnlineSearchRequest();
     }
 
     @GetMapping("{id}")
@@ -105,8 +105,8 @@ public class LicenseBillOnlinePaymentController {
 
     @PostMapping(produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String searchLicense(final OnlineSearchForm searchForm) {
+    public String searchLicense(final OnlineSearchRequest searchForm) {
         return new StringBuilder("{ \"data\":").append(toJSON(tradeLicenseService.onlineSearchTradeLicense(searchForm),
-                OnlineSearchForm.class, OnlineSearchTradeResultHelperAdaptor.class)).append("}").toString();
+                OnlineSearchRequest.class, OnlineSearchTradeResultHelperAdaptor.class)).append("}").toString();
     }
 }

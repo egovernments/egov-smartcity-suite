@@ -56,7 +56,7 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.tl.entity.contracts.InstallmentWiseDCBRequest;
-import org.egov.tl.entity.view.InstallmentWiseDCB;
+import org.egov.tl.entity.view.LicenseInstallmentwiseDCBReportView;
 import org.egov.tl.repository.InstallmentwiseDCBReportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -95,13 +95,13 @@ public class InstallmentwiseDCBReportService {
     }
 
     @ReadOnly
-    public Page<InstallmentWiseDCB> getReportResult(final InstallmentWiseDCBRequest installmentWiseDCBRequest) {
+    public Page<LicenseInstallmentwiseDCBReportView> getReportResult(final InstallmentWiseDCBRequest installmentWiseDCBRequest) {
         return installmentwiseDCBReportRepository.findByInstallmentWiseDCB(installmentWiseDCBRequest,
                 financialYearStartDate(installmentWiseDCBRequest));
     }
 
     @ReadOnly
-    public List<InstallmentWiseDCB> getInstallmentWiseDCBReport(Long licenseId) {
+    public List<LicenseInstallmentwiseDCBReportView> getInstallmentWiseDCBReport(Long licenseId) {
         return installmentwiseDCBReportRepository.findAllByLicenseId(licenseId);
     }
 

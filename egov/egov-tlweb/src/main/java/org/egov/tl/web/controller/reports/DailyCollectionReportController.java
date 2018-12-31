@@ -87,7 +87,7 @@ public class DailyCollectionReportController {
     }
 
     @GetMapping
-    public String search(final Model model) {
+    public String search(Model model) {
         model.addAttribute("currentDate", new Date());
         model.addAttribute("operators", dCRService.getCollectionOperators());
         model.addAttribute("status", egwStatusHibernateDAO.getStatusByModule(CollectionConstants.MODULE_NAME_RECEIPTHEADER));

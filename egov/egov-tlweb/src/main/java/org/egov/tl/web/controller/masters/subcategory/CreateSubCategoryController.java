@@ -71,7 +71,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Controller
-@RequestMapping("/licensesubcategory")
+@RequestMapping("/licensesubcategory/create")
 public class CreateSubCategoryController {
 
     @Autowired
@@ -106,15 +106,15 @@ public class CreateSubCategoryController {
         return feeTypeService.findAll();
     }
 
-    @GetMapping("/create")
+    @GetMapping
     public String showCreateSubCategoryForm(Model model) {
         model.addAttribute("code", licenseSubCategoryService.getSubCategoryCode());
         model.addAttribute("rateTypes", RateType.allValues());
         return "subcategory-create";
     }
 
-    @PostMapping("/create")
-    public String createSubCategory(@Valid LicenseSubCategory licenseSubCategory,
+    @PostMapping
+    public String createSubCategory(@Valid @ModelAttribute LicenseSubCategory licenseSubCategory,
                                     BindingResult bindingResult, RedirectAttributes responseAttrbs) {
         if (bindingResult.hasErrors())
             return "subcategory-create";

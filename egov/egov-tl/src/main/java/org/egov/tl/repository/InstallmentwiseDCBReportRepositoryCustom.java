@@ -50,18 +50,18 @@ package org.egov.tl.repository;
 
 import org.egov.infra.persistence.utils.Page;
 import org.egov.tl.entity.contracts.InstallmentWiseDCBRequest;
-import org.egov.tl.entity.view.InstallmentWiseDCB;
+import org.egov.tl.entity.view.LicenseInstallmentwiseDCBReportView;
 
 import java.util.Date;
 import java.util.List;
 
 public interface InstallmentwiseDCBReportRepositoryCustom {
 
-    Page<InstallmentWiseDCB> findByInstallmentWiseDCB(InstallmentWiseDCBRequest installmentWiseDCBRequest,
-                                                      Date financialYearStartDate);
+    Page<LicenseInstallmentwiseDCBReportView> findByInstallmentWiseDCB(InstallmentWiseDCBRequest installmentWiseDCBRequest,
+                                                                       Date financialYearStartDate);
 
-    List<InstallmentWiseDCB> findInstallmentWiseReport(InstallmentWiseDCBRequest installmentWiseDCBRequest,
-                                                       Date financialYearStartDate);
+    List<LicenseInstallmentwiseDCBReportView> findInstallmentWiseReport(InstallmentWiseDCBRequest installmentWiseDCBRequest,
+                                                                        Date financialYearStartDate);
 
     Object[] findReportTotal(InstallmentWiseDCBRequest installmentWiseDCBRequest,
                              Date financialYearStartDate);

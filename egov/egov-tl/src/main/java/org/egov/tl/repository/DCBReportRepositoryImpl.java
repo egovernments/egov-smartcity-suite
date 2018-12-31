@@ -49,7 +49,7 @@
 package org.egov.tl.repository;
 
 import org.egov.tl.entity.contracts.DCBReportSearchRequest;
-import org.egov.tl.entity.view.DCBReportResult;
+import org.egov.tl.entity.view.LicenseDCBReportView;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -72,7 +72,7 @@ public class DCBReportRepositoryImpl implements DCBReportRepositoryCustom {
 
         final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<Object[]> criteriaQuery = criteriaBuilder.createQuery(Object[].class);
-        final Root<DCBReportResult> root = criteriaQuery.from(DCBReportResult.class);
+        final Root<LicenseDCBReportView> root = criteriaQuery.from(LicenseDCBReportView.class);
         final List<Predicate> predicates = new ArrayList<>();
         if (isNotBlank(dCBReportSearchRequest.getLicenseNumber()))
             predicates.add(criteriaBuilder.equal(root.get("licenseNumber"), dCBReportSearchRequest.getLicenseNumber()));

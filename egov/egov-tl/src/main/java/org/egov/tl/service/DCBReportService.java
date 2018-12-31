@@ -52,7 +52,7 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.tl.entity.contracts.DCBReportSearchRequest;
-import org.egov.tl.entity.view.DCBReportResult;
+import org.egov.tl.entity.view.LicenseDCBReportView;
 import org.egov.tl.repository.DCBReportRepository;
 import org.egov.tl.repository.specs.DCBReportSpec;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +75,7 @@ public class DCBReportService {
     private ReportService reportService;
 
     @ReadOnly
-    public Page<DCBReportResult> pagedDCBRecords(final DCBReportSearchRequest searchRequest) {
+    public Page<LicenseDCBReportView> pagedDCBRecords(final DCBReportSearchRequest searchRequest) {
         final Pageable pageable = new PageRequest(searchRequest.pageNumber(),
                 searchRequest.pageSize(),
                 searchRequest.orderDir(), searchRequest.orderBy());
@@ -84,7 +84,7 @@ public class DCBReportService {
     }
 
     @ReadOnly
-    public List<DCBReportResult> getDCBRecords(DCBReportSearchRequest reportCriteria) {
+    public List<LicenseDCBReportView> getDCBRecords(DCBReportSearchRequest reportCriteria) {
         return dCBReportRepository.findAll(DCBReportSpec.dCBReportSpecification(reportCriteria));
     }
 

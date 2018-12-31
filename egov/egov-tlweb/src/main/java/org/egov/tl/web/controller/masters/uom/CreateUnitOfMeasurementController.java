@@ -63,7 +63,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
 
 @Controller
-@RequestMapping("/licenseunitofmeasurement")
+@RequestMapping("/licenseunitofmeasurement/create")
 public class CreateUnitOfMeasurementController {
 
     @Autowired
@@ -74,13 +74,13 @@ public class CreateUnitOfMeasurementController {
         return new UnitOfMeasurement();
     }
 
-    @GetMapping("/create")
+    @GetMapping
     public String showCreateUomForm(Model model) {
         model.addAttribute("code", unitOfMeasurementService.getNextUomCode());
         return "uom-create";
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public String createUom(@Valid @ModelAttribute UnitOfMeasurement unitOfMeasurement, BindingResult bindingResult,
                             RedirectAttributes responseAttrbs) {
         if (bindingResult.hasErrors())

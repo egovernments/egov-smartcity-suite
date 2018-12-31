@@ -51,15 +51,15 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.tl.entity.contracts.DemandNoticeForm;
+import org.egov.tl.entity.contracts.DemandNoticeRequest;
 
 import java.lang.reflect.Type;
 
 import static org.egov.infra.utils.StringUtils.defaultIfBlank;
 
-public class DemandNoticeAdaptor implements JsonSerializer<DemandNoticeForm> {
+public class DemandNoticeAdaptor implements JsonSerializer<DemandNoticeRequest> {
     @Override
-    public JsonElement serialize(final DemandNoticeForm searchFormObj, final Type type,
+    public JsonElement serialize(final DemandNoticeRequest searchFormObj, final Type type,
                                  final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         if (searchFormObj != null) {

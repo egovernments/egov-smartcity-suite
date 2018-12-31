@@ -52,14 +52,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.tl.entity.view.InstallmentWiseDCB;
+import org.egov.tl.entity.view.LicenseInstallmentwiseDCBReportView;
 
 import java.lang.reflect.Type;
 
-public class OnlineInstallmentwiseDCBReportAdaptor implements JsonSerializer<InstallmentWiseDCB> {
+public class OnlineInstallmentwiseDCBReportAdaptor implements JsonSerializer<LicenseInstallmentwiseDCBReportView> {
 
     @Override
-    public JsonElement serialize(InstallmentWiseDCB installmentwiseReportObj, Type type, JsonSerializationContext jsc) {
+    public JsonElement serialize(LicenseInstallmentwiseDCBReportView installmentwiseReportObj, Type type, JsonSerializationContext jsc) {
         JsonObject installmentwiseResponse = new JsonObject();
         if (installmentwiseReportObj != null) {
             installmentwiseResponse.addProperty("installment", new StringBuilder(installmentwiseReportObj.getFinancialYear())

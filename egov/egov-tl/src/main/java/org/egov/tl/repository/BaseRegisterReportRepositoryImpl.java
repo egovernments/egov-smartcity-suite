@@ -49,7 +49,7 @@
 package org.egov.tl.repository;
 
 import org.egov.tl.entity.contracts.BaseRegisterRequest;
-import org.egov.tl.entity.view.BaseRegister;
+import org.egov.tl.entity.view.LicenseBaseRegisterReportView;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -69,7 +69,7 @@ public class BaseRegisterReportRepositoryImpl implements BaseRegisterReportRepos
     public Object[] findByBaseRegisterRequest(final BaseRegisterRequest baseRegisterRequest) {
         final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<Object[]> criteriaQuery = criteriaBuilder.createQuery(Object[].class);
-        final Root<BaseRegister> root = criteriaQuery.from(BaseRegister.class);
+        final Root<LicenseBaseRegisterReportView> root = criteriaQuery.from(LicenseBaseRegisterReportView.class);
         final List<Predicate> predicates = new ArrayList<>();
         if (baseRegisterRequest.getCategoryId() != null)
             predicates.add(criteriaBuilder.equal(root.get("categoryId"), baseRegisterRequest.getCategoryId()));

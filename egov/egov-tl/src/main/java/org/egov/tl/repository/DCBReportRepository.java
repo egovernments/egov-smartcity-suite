@@ -48,13 +48,13 @@
 
 package org.egov.tl.repository;
 
-import org.egov.tl.entity.view.DCBReportResult;
+import org.egov.tl.entity.view.LicenseDCBReportView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DCBReportRepository
-        extends DCBReportRepositoryCustom, JpaRepository<DCBReportResult, Long>, JpaSpecificationExecutor<DCBReportResult> {
+        extends DCBReportRepositoryCustom, JpaRepository<LicenseDCBReportView, Long>, JpaSpecificationExecutor<LicenseDCBReportView> {
 
 }

@@ -64,7 +64,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
 
 @Controller
-@RequestMapping("/documenttype")
+@RequestMapping("/documenttype/create")
 public class CreateDocumentTypeController {
 
     @Autowired
@@ -78,13 +78,13 @@ public class CreateDocumentTypeController {
         return new LicenseDocumentType();
     }
 
-    @GetMapping("/create")
+    @GetMapping
     public String documentTypeForm(Model model) {
         model.addAttribute("applicationTypes", licenseAppTypeService.getAllApplicationTypes());
         return "document-new";
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public String documentTypeCreate(@Valid @ModelAttribute LicenseDocumentType licenseDocumentType,
                                      BindingResult errors, RedirectAttributes redirectAttrs) {
         if (errors.hasErrors()) {

@@ -55,7 +55,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.tl.entity.contracts.SearchForm;
+import org.egov.tl.entity.contracts.LicenseSearchRequest;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -65,12 +65,12 @@ import static org.egov.infra.utils.ApplicationConstant.NA;
 import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
 import static org.egov.infra.utils.StringUtils.defaultIfBlank;
 
-public class LicenseSearchResponseAdaptor implements DataTableJsonAdapter<SearchForm> {
+public class LicenseSearchResponseAdaptor implements DataTableJsonAdapter<LicenseSearchRequest> {
 
     @Override
-    public JsonElement serialize(DataTable<SearchForm> searchForm, Type type,
+    public JsonElement serialize(DataTable<LicenseSearchRequest> searchForm, Type type,
                                  JsonSerializationContext jsc) {
-        List<SearchForm> searchResults = searchForm.getData();
+        List<LicenseSearchRequest> searchResults = searchForm.getData();
         JsonArray licenseSearchResponse = new JsonArray();
         searchResults.forEach(searchResult -> {
             JsonObject responseJson = new JsonObject();

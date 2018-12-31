@@ -57,7 +57,7 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.PenaltyRates;
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.entity.contracts.DemandNoticeForm;
+import org.egov.tl.entity.contracts.DemandNoticeRequest;
 import org.egov.tl.entity.contracts.LicenseDemandDetail;
 import org.egov.tl.utils.LicenseUtils;
 import org.joda.time.DateTime;
@@ -241,16 +241,16 @@ public class DemandNoticeService {
         return penaltylist.toString();
     }
 
-    public ReportOutput generateBulkDemandNotice(DemandNoticeForm searchRequest) {
+    public ReportOutput generateBulkDemandNotice(DemandNoticeRequest searchRequest) {
         ReportOutput reportOutput = new ReportOutput();
         reportOutput.setReportName("demand_notices");
         reportOutput.setReportFormat(PDF);
-        List<DemandNoticeForm> demandNotices = tradeLicenseService.getLicenseDemandNotices(searchRequest);
+        List<DemandNoticeRequest> demandNotices = tradeLicenseService.getLicenseDemandNotices(searchRequest);
         if (demandNotices.isEmpty()) {
             reportOutput.setReportOutputData("No Data".getBytes());
         } else {
             List<InputStream> demandNoticePDFStreams = new ArrayList<>();
-            for (DemandNoticeForm tlNotice : demandNotices) {
+            for (DemandNoticeRequest tlNotice : demandNotices) {
                 demandNoticePDFStreams.add(generateReport(tlNotice.getLicenseId()).asInputStream());
             }
             reportOutput.setReportOutputData(appendFiles(demandNoticePDFStreams));

@@ -48,13 +48,13 @@
 
 package org.egov.tl.repository;
 
-import org.egov.tl.entity.view.BaseRegister;
+import org.egov.tl.entity.view.LicenseBaseRegisterReportView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BaseRegisterReportRepository
-        extends BaseRegisterReportRepositoryCustom, JpaRepository<BaseRegister, Long>, JpaSpecificationExecutor<BaseRegister> {
+        extends BaseRegisterReportRepositoryCustom, JpaRepository<LicenseBaseRegisterReportView, Long>, JpaSpecificationExecutor<LicenseBaseRegisterReportView> {
 
 }

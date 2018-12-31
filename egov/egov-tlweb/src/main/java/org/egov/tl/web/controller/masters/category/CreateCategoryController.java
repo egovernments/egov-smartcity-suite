@@ -63,7 +63,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
 
 @Controller
-@RequestMapping("/licensecategory")
+@RequestMapping("/licensecategory/create")
 public class CreateCategoryController {
 
     @Autowired
@@ -74,14 +74,14 @@ public class CreateCategoryController {
         return new LicenseCategory();
     }
 
-    @GetMapping("/create")
+    @GetMapping
     public String showCreateCategoryForm(Model model) {
         model.addAttribute("code", licenseCategoryService.getCategoryCode());
         return "licensecategory-create";
     }
 
-    @PostMapping("/create")
-    public String createCategory(@Valid LicenseCategory licenseCategory, BindingResult bindingResult,
+    @PostMapping
+    public String createCategory(@Valid @ModelAttribute LicenseCategory licenseCategory, BindingResult bindingResult,
                                  RedirectAttributes responseAttrbs) {
         if (bindingResult.hasErrors())
             return "licensecategory-create";

@@ -57,7 +57,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.egov.tl.utils.Constants.CLOSURE_APPTYPE_CODE;
 import static org.egov.tl.utils.Constants.STATUS_UNDERWORKFLOW;
 
-public class OnlineSearchForm {
+public class OnlineSearchRequest {
 
     private Long licenseId;
     private String applicationNumber;
@@ -72,11 +72,11 @@ public class OnlineSearchForm {
     private String status;
     private String uid;
 
-    public OnlineSearchForm() {
+    public OnlineSearchRequest() {
         // For form binding
     }
 
-    public OnlineSearchForm(final TradeLicense license, final BigDecimal... dmdColl) {
+    public OnlineSearchRequest(final TradeLicense license, final BigDecimal... dmdColl) {
         setLicenseId(license.getId());
         setUid(license.getUid());
         setApplicationNumber(license.getApplicationNumber());

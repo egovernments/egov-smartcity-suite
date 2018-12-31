@@ -63,7 +63,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
 
 @Controller
-@RequestMapping("/licenseunitofmeasurement")
+@RequestMapping("/licenseunitofmeasurement/update/{code}")
 public class UpdateUnitOfMeasurementController {
 
     @Autowired
@@ -74,12 +74,12 @@ public class UpdateUnitOfMeasurementController {
         return unitOfMeasurementService.getUnitOfMeasurementByCode(code);
     }
 
-    @GetMapping("/update/{code}")
+    @GetMapping
     public String showUpdateUomForm() {
         return "uom-update";
     }
 
-    @PostMapping("/update/{code}")
+    @PostMapping
     public String updateUom(@ModelAttribute @Valid UnitOfMeasurement unitOfMeasurement, BindingResult bindingResult,
                             RedirectAttributes responseAttrbs) {
         if (bindingResult.hasErrors())

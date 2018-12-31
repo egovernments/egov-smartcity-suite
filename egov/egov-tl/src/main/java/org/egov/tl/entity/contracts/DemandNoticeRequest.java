@@ -53,7 +53,7 @@ import org.egov.tl.entity.TradeLicense;
 import java.math.BigDecimal;
 import java.util.Map;
 
-public class DemandNoticeForm {
+public class DemandNoticeRequest {
 
     private String applicationNumber;
     private Long licenseId;
@@ -79,11 +79,11 @@ public class DemandNoticeForm {
     private Long electionWard;
     private String electionWardName;
 
-    public DemandNoticeForm() {
+    public DemandNoticeRequest() {
 
     }
 
-    public DemandNoticeForm(final TradeLicense license, Map<String, BigDecimal> licenseFees, String ownerName) {
+    public DemandNoticeRequest(final TradeLicense license, Map<String, BigDecimal> licenseFees, String ownerName) {
         BigDecimal balance = BigDecimal.ZERO;
         setLicenseId(license.getId());
         setLicenseNumber(license.getLicenseNumber());

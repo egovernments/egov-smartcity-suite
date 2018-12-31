@@ -52,7 +52,7 @@ import org.egov.infra.reporting.engine.ReportDisposition;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.web.support.ui.DataTable;
 import org.egov.tl.entity.contracts.InstallmentWiseDCBRequest;
-import org.egov.tl.entity.view.InstallmentWiseDCB;
+import org.egov.tl.entity.view.LicenseInstallmentwiseDCBReportView;
 import org.egov.tl.service.InstallmentwiseDCBReportService;
 import org.egov.tl.web.response.adaptor.InstallmentWiseDCBResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,8 +78,8 @@ public class InstallmentwiseDCBReportController {
     private InstallmentwiseDCBReportService installmentWiseDCBService;
 
     @ModelAttribute
-    public InstallmentWiseDCB installmentWiseDCBForm() {
-        return new InstallmentWiseDCB();
+    public LicenseInstallmentwiseDCBReportView installmentWiseDCBForm() {
+        return new LicenseInstallmentwiseDCBReportView();
     }
 
     @GetMapping("/search")

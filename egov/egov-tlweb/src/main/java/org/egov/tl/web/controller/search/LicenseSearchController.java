@@ -49,7 +49,7 @@
 package org.egov.tl.web.controller.search;
 
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.tl.entity.contracts.SearchForm;
+import org.egov.tl.entity.contracts.LicenseSearchRequest;
 import org.egov.tl.service.LicenseAppTypeService;
 import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.LicenseStatusService;
@@ -94,8 +94,8 @@ public class LicenseSearchController {
     private NatureOfBusinessService natureOfBusinessService;
 
     @ModelAttribute("searchForm")
-    public SearchForm searchForm() {
-        return new SearchForm();
+    public LicenseSearchRequest searchForm() {
+        return new LicenseSearchRequest();
     }
 
     @GetMapping("license")
@@ -110,8 +110,8 @@ public class LicenseSearchController {
 
     @PostMapping(value = "license", produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String searchLicense(SearchForm searchForm) {
-        return new DataTable<>(tradeLicenseService.searchTradeLicense(searchForm), searchForm.draw())
+    public String searchLicense(LicenseSearchRequest licenseSearchRequest) {
+        return new DataTable<>(tradeLicenseService.searchTradeLicense(licenseSearchRequest), licenseSearchRequest.draw())
                 .toJson(LicenseSearchResponseAdaptor.class);
     }
 

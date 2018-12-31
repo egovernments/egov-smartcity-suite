@@ -48,7 +48,7 @@
 
 package org.egov.tl.repository;
 
-import org.egov.tl.entity.view.InstallmentWiseDCB;
+import org.egov.tl.entity.view.LicenseInstallmentwiseDCBReportView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -56,8 +56,8 @@ import java.util.List;
 
 @Repository
 public interface InstallmentwiseDCBReportRepository
-        extends InstallmentwiseDCBReportRepositoryCustom, JpaRepository<InstallmentWiseDCB, Long> {
+        extends InstallmentwiseDCBReportRepositoryCustom, JpaRepository<LicenseInstallmentwiseDCBReportView, Long> {
 
-    List<InstallmentWiseDCB> findAllByLicenseId(Long licenseId);
+    List<LicenseInstallmentwiseDCBReportView> findAllByLicenseId(Long licenseId);
 
 }

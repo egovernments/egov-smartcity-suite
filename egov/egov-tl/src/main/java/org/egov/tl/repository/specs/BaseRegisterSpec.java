@@ -49,7 +49,7 @@
 package org.egov.tl.repository.specs;
 
 import org.egov.tl.entity.contracts.BaseRegisterRequest;
-import org.egov.tl.entity.view.BaseRegister;
+import org.egov.tl.entity.view.LicenseBaseRegisterReportView;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.Predicate;
@@ -60,7 +60,7 @@ public final class BaseRegisterSpec {
         //static methods only
     }
 
-    public static Specification<BaseRegister> baseRegisterSpecification(final BaseRegisterRequest baseRegisterRequest) {
+    public static Specification<LicenseBaseRegisterReportView> baseRegisterSpecification(final BaseRegisterRequest baseRegisterRequest) {
         return (root, query, builder) -> {
             final Predicate predicate = builder.conjunction();
             if (baseRegisterRequest.getCategoryId() != null)

@@ -93,7 +93,7 @@ public class DCBReportController {
     }
 
     @GetMapping("search")
-    public String dcbSearchForm(final Model model) {
+    public String dcbSearchForm(Model model) {
         model.addAttribute("mode", LICENSE);
         model.addAttribute(REPORT_TYPE_ATTRIB_NAME, LICENSE);
         model.addAttribute("revenueWards", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD,

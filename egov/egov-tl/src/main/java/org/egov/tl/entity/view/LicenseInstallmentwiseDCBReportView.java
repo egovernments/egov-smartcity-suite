@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -50,60 +50,78 @@ package org.egov.tl.entity.view;
 
 import org.hibernate.annotations.Immutable;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.io.Serializable;
+import javax.persistence.Transient;
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Entity
 @Immutable
-@Table(name = "EGTL_MV_DCB_VIEW")
-public class DCBReportResult implements Serializable {
-
-    private static final long serialVersionUID = 1188596286215178643L;
+@Table(name = "egtl_dcb_aggr_view")
+public class LicenseInstallmentwiseDCBReportView {
 
     @Id
-    private Integer licenseId;
-
+    private Long id;
     private String licenseNumber;
-
-    private String oldLicenseNumber;
-
+    private Long licenseId;
+    private String licAddress;
     private String userName;
+    private Long wardId;
+    private Long locality;
 
-    @Column(name = "curr_demand")
     private BigDecimal currentDemand;
 
-    @Column(name = "arr_demand")
-    private BigDecimal arrearDemand;
-
-    @Column(name = "curr_coll")
     private BigDecimal currentCollection;
 
-    @Column(name = "arr_coll")
-    private BigDecimal arrearCollection;
-
-    @Column(name = "curr_balance")
     private BigDecimal currentBalance;
 
-    @Column(name = "arr_balance")
+    @Transient
+    private BigDecimal arrearDemand;
+    @Transient
+    private BigDecimal arrearCollection;
+    @Transient
     private BigDecimal arrearBalance;
 
     private boolean active;
 
-    private String licAddress;
+    private Date installment;
 
-    private Long wardId;
+    private String demandReason;
 
-    private String wardName;
+    private String financialYear;
 
-    private Long locality;
+    public LicenseInstallmentwiseDCBReportView(long licenseId, String licenseNumber, boolean active, BigDecimal currentDemand,
+                                               BigDecimal currentCollection, BigDecimal currentBalance, BigDecimal arrearDemand,
+                                               BigDecimal arrearCollection, BigDecimal arrearBalance) {
+        this.licenseId = licenseId;
+        this.licenseNumber = licenseNumber;
+        this.active = active;
+        this.currentDemand = currentDemand;
+        this.currentCollection = currentCollection;
+        this.currentBalance = currentBalance;
+        this.arrearDemand = arrearDemand;
+        this.arrearCollection = arrearCollection;
+        this.arrearBalance = arrearBalance;
 
-    private Long adminWard;
+    }
 
-    private String adminWardName;
+    public LicenseInstallmentwiseDCBReportView(Long count) {
+        //Do nothing for jpa spec
+    }
+
+    public LicenseInstallmentwiseDCBReportView() {
+        //Do nothing for jpa spec
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getLicenseNumber() {
         return licenseNumber;
@@ -113,12 +131,36 @@ public class DCBReportResult implements Serializable {
         this.licenseNumber = licenseNumber;
     }
 
-    public String getOldLicenseNumber() {
-        return oldLicenseNumber;
+    public Long getLocality() {
+        return locality;
     }
 
-    public void setOldLicenseNumber(final String oldLicenseNumber) {
-        this.oldLicenseNumber = oldLicenseNumber;
+    public void setLocality(Long locality) {
+        this.locality = locality;
+    }
+
+    public Date getInstallment() {
+        return installment;
+    }
+
+    public void setInstallment(Date installment) {
+        this.installment = installment;
+    }
+
+    public Long getLicenseId() {
+        return licenseId;
+    }
+
+    public void setLicenseId(Long licenseId) {
+        this.licenseId = licenseId;
+    }
+
+    public String getLicAddress() {
+        return licAddress;
+    }
+
+    public void setLicAddress(String licAddress) {
+        this.licAddress = licAddress;
     }
 
     public String getUserName() {
@@ -127,6 +169,86 @@ public class DCBReportResult implements Serializable {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public Long getWardId() {
+        return wardId;
+    }
+
+    public void setWardId(Long wardId) {
+        this.wardId = wardId;
+    }
+
+    public BigDecimal getCurrentDemand() {
+        return currentDemand;
+    }
+
+    public void setCurrentDemand(BigDecimal currentDemand) {
+        this.currentDemand = currentDemand;
+    }
+
+    public BigDecimal getCurrentCollection() {
+        return currentCollection;
+    }
+
+    public void setCurrentCollection(BigDecimal currentCollection) {
+        this.currentCollection = currentCollection;
+    }
+
+    public BigDecimal getCurrentBalance() {
+        return currentBalance;
+    }
+
+    public void setCurrentBalance(BigDecimal currentBalance) {
+        this.currentBalance = currentBalance;
+    }
+
+    public BigDecimal getArrearDemand() {
+        return arrearDemand;
+    }
+
+    public void setArrearDemand(BigDecimal arrearDemand) {
+        this.arrearDemand = arrearDemand;
+    }
+
+    public BigDecimal getArrearCollection() {
+        return arrearCollection;
+    }
+
+    public void setArrearCollection(BigDecimal arrearCollection) {
+        this.arrearCollection = arrearCollection;
+    }
+
+    public BigDecimal getArrearBalance() {
+        return arrearBalance;
+    }
+
+    public void setArrearBalance(BigDecimal arrearBalance) {
+        this.arrearBalance = arrearBalance;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public String getDemandReason() {
+        return demandReason;
+    }
+
+    public void setDemandReason(String demandReason) {
+        this.demandReason = demandReason;
+    }
+
+    public String getFinancialYear() {
+        return financialYear;
+    }
+
+    public void setFinancialYear(String financialYear) {
+        this.financialYear = financialYear;
     }
 
     public BigDecimal getTotalDemand() {
@@ -139,123 +261,8 @@ public class DCBReportResult implements Serializable {
                 .add(arrearCollection == null ? BigDecimal.ZERO : arrearCollection);
     }
 
-
-    public BigDecimal getCurrentBalance() {
-        return (currentDemand == null ? BigDecimal.ZERO : currentDemand).subtract(currentCollection == null ? BigDecimal.ZERO
-                : currentCollection);
-    }
-
-    public void setCurrentBalance(BigDecimal currentBalance) {
-        this.currentBalance = currentBalance;
-    }
-
-    public BigDecimal getArrearBalance() {
-        return (arrearDemand == null ? BigDecimal.ZERO : arrearDemand).subtract(arrearCollection == null ? BigDecimal.ZERO
-                : arrearCollection);
-    }
-
-    public void setArrearBalance(BigDecimal arrearBalance) {
-        this.arrearBalance = arrearBalance;
-    }
-
     public BigDecimal getTotalBalance() {
         return (currentBalance == null ? BigDecimal.ZERO : currentBalance).add(arrearBalance == null ? BigDecimal.ZERO
                 : arrearBalance);
-    }
-
-    public Integer getLicenseId() {
-        return licenseId;
-    }
-
-    public void setLicenseId(Integer licenseId) {
-        this.licenseId = licenseId;
-    }
-
-    public String getLicAddress() {
-        return licAddress;
-    }
-
-    public void setLicAddress(String licAddress) {
-        this.licAddress = licAddress;
-    }
-
-    public Long getWardId() {
-        return wardId;
-    }
-
-    public void setWardId(Long wardId) {
-        this.wardId = wardId;
-    }
-
-    public String getWardName() {
-        return wardName;
-    }
-
-    public void setWardName(String wardName) {
-        this.wardName = wardName;
-    }
-
-    public Long getLocality() {
-        return locality;
-    }
-
-    public void setLocality(Long locality) {
-        this.locality = locality;
-    }
-
-    public BigDecimal getCurrentDemand() {
-        return currentDemand;
-    }
-
-    public void setCurrentDemand(BigDecimal currentDemand) {
-        this.currentDemand = currentDemand;
-    }
-
-    public BigDecimal getArrearDemand() {
-        return arrearDemand;
-    }
-
-    public void setArrearDemand(BigDecimal arrearDemand) {
-        this.arrearDemand = arrearDemand;
-    }
-
-    public BigDecimal getCurrentCollection() {
-        return currentCollection;
-    }
-
-    public void setCurrentCollection(BigDecimal currentCollection) {
-        this.currentCollection = currentCollection;
-    }
-
-    public BigDecimal getArrearCollection() {
-        return arrearCollection;
-    }
-
-    public void setArrearCollection(BigDecimal arrearCollection) {
-        this.arrearCollection = arrearCollection;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public Long getAdminWard() {
-        return adminWard;
-    }
-
-    public void setAdminWard(Long adminWard) {
-        this.adminWard = adminWard;
-    }
-
-    public String getAdminWardName() {
-        return adminWardName;
-    }
-
-    public void setAdminWardName(String adminWardName) {
-        this.adminWardName = adminWardName;
     }
 }

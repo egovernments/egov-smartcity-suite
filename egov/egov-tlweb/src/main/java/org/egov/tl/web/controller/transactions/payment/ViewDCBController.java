@@ -50,8 +50,8 @@ package org.egov.tl.web.controller.transactions.payment;
 import org.egov.infra.exception.ApplicationValidationException;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.contracts.DCBReportSearchRequest;
-import org.egov.tl.entity.view.DCBReportResult;
-import org.egov.tl.entity.view.InstallmentWiseDCB;
+import org.egov.tl.entity.view.LicenseDCBReportView;
+import org.egov.tl.entity.view.LicenseInstallmentwiseDCBReportView;
 import org.egov.tl.service.DCBReportService;
 import org.egov.tl.service.InstallmentwiseDCBReportService;
 import org.egov.tl.service.TradeLicenseService;
@@ -89,10 +89,10 @@ public class ViewDCBController {
 
         searchRequest.setLicenseId(license.getId());
         model.addAttribute("license", license);
-        model.addAttribute("dcbreport", toJSON(dCBReportService.getDCBRecords(searchRequest), DCBReportResult.class,
+        model.addAttribute("dcbreport", toJSON(dCBReportService.getDCBRecords(searchRequest), LicenseDCBReportView.class,
                 OnlineDCBReportResponseAdaptor.class));
         model.addAttribute("installmentwiseReport", toJSON(installmentwiseDCBReportService.getInstallmentWiseDCBReport(
-                license.getId()), InstallmentWiseDCB.class, OnlineInstallmentwiseDCBReportAdaptor.class));
+                license.getId()), LicenseInstallmentwiseDCBReportView.class, OnlineInstallmentwiseDCBReportAdaptor.class));
         model.addAttribute("receipts", tradeLicenseService.getReceipts(license));
         return "view-license-dcb";
     }

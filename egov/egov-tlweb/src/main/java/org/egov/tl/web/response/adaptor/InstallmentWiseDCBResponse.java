@@ -54,7 +54,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.tl.entity.view.InstallmentWiseDCB;
+import org.egov.tl.entity.view.LicenseInstallmentwiseDCBReportView;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -62,14 +62,14 @@ import java.util.List;
 import static org.egov.infra.utils.StringUtils.defaultIfBlank;
 import static org.egov.infra.utils.StringUtils.toYesOrNo;
 
-public class InstallmentWiseDCBResponse implements DataTableJsonAdapter<InstallmentWiseDCB> {
+public class InstallmentWiseDCBResponse implements DataTableJsonAdapter<LicenseInstallmentwiseDCBReportView> {
 
     @Override
-    public JsonElement serialize(final DataTable<InstallmentWiseDCB> installmentWiseDCBResponse, final Type type,
+    public JsonElement serialize(final DataTable<LicenseInstallmentwiseDCBReportView> installmentWiseDCBResponse, final Type type,
                                  final JsonSerializationContext jsc) {
-        final List<InstallmentWiseDCB> installmentWiseDCBFormResult = installmentWiseDCBResponse.getData();
+        final List<LicenseInstallmentwiseDCBReportView> licenseInstallmentwiseDCBReportViewFormResult = installmentWiseDCBResponse.getData();
         final JsonArray installmentWiseDCBFormData = new JsonArray();
-        installmentWiseDCBFormResult.forEach(installmentWiseDCBForm -> {
+        licenseInstallmentwiseDCBReportViewFormResult.forEach(installmentWiseDCBForm -> {
             final JsonObject installmentWiseResponse = new JsonObject();
             installmentWiseResponse.addProperty("licenseId", installmentWiseDCBForm.getLicenseId());
             installmentWiseResponse.addProperty("active", toYesOrNo(installmentWiseDCBForm.isActive()));

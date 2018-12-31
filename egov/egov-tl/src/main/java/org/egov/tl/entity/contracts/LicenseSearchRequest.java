@@ -65,7 +65,7 @@ import static org.egov.tl.utils.Constants.CSCOPERATOR;
 import static org.egov.tl.utils.Constants.TL_APPROVER_ROLENAME;
 import static org.egov.tl.utils.Constants.TL_CREATOR_ROLENAME;
 
-public class SearchForm extends DataTableSearchRequest {
+public class LicenseSearchRequest extends DataTableSearchRequest {
     private Long licenseId;
     private String applicationNumber;
     private String licenseNumber;
@@ -90,11 +90,11 @@ public class SearchForm extends DataTableSearchRequest {
     private Date expiryDate;
     private String uid;
 
-    public SearchForm() {
+    public LicenseSearchRequest() {
         // For form binding
     }
 
-    public SearchForm(TradeLicense license, User user, String ownerName, String... feeCollectorRoles) {
+    public LicenseSearchRequest(TradeLicense license, User user, String ownerName, String... feeCollectorRoles) {
         setLicenseId(license.getId());
         setUid(license.getUid());
         setApplicationNumber(license.getApplicationNumber());

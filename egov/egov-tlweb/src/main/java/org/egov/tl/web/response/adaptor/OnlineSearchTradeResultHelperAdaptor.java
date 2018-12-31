@@ -52,17 +52,17 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.tl.entity.contracts.OnlineSearchForm;
+import org.egov.tl.entity.contracts.OnlineSearchRequest;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import static org.egov.infra.utils.StringUtils.defaultIfBlank;
 
-public class OnlineSearchTradeResultHelperAdaptor implements JsonSerializer<OnlineSearchForm> {
+public class OnlineSearchTradeResultHelperAdaptor implements JsonSerializer<OnlineSearchRequest> {
 
     @Override
-    public JsonElement serialize(OnlineSearchForm searchFormObj, Type type,
+    public JsonElement serialize(OnlineSearchRequest searchFormObj, Type type,
                                  JsonSerializationContext jsc) {
         JsonObject searchResult = new JsonObject();
         if (searchFormObj != null) {
