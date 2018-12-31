@@ -56,6 +56,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -102,29 +103,26 @@ public class ApplicationMenuRenderingService {
 
     }
 
-    private void createApplicationMenu(List<MenuLink> menuLinks, List<MenuLink> favourites, User user, Menu parentMenu) {
-        Menu applicationRootMenu = Menu.MenuBuilder.aMenu()
+    private void createApplicationMenu(List<MenuLink> menuLinks, List<MenuLink> favourites, User user, Menu rootMenu) {
+        Menu applicationParentMenu = Menu.MenuBuilder.aMenu()
                 .withId("apps").withName(APP_MENU_TITLE)
                 .withTitle(APP_MENU_TITLE).withLink(NAVIGATION_NONE)
                 .withIcon(APP_MENU_ICON).withItems(new LinkedList<>()).build();
-        Menu applicationMenu = Menu.MenuBuilder.aMenu().withTitle(APP_MENU_TITLE)
-                .withIcon(EMPTY).withItems(new LinkedList<>()).build();
-        applicationRootMenu.getItems().add(applicationMenu);
-        parentMenu.getItems().add(applicationRootMenu);
-        menuLinks.stream().filter(menuLink -> !SELF_SERVICE_MODULE_NAME.equals(menuLink.getName())).forEach(menuLink ->
-                createSubmenuRoot(menuLink.getId(), menuLink.getDisplayName(), favourites, user, applicationMenu)
-        );
+        Menu applicationMenu = createMenu(rootMenu, applicationParentMenu, APP_MENU_TITLE);
+        menuLinks.stream()
+                .sorted(Comparator.comparing(MenuLink::getName))
+                .filter(menuLink -> !SELF_SERVICE_MODULE_NAME.equals(menuLink.getName()))
+                .forEach(menuLink ->
+                        createSubmenuRoot(menuLink.getId(), menuLink.getDisplayName(), favourites, user, applicationMenu)
+                );
     }
 
-    private void createSelfServiceMenu(List<MenuLink> selfServices, Menu parentMenu) {
-        Menu selfServiceRootMenu = Menu.MenuBuilder.aMenu()
+    private void createSelfServiceMenu(List<MenuLink> selfServices, Menu rootMenu) {
+        Menu selfServiceParentMenu = Menu.MenuBuilder.aMenu()
                 .withId("ssMenu").withName(SELF_SERVICE_MENU_TITLE)
                 .withTitle(SELF_SERVICE_MENU_TITLE).withLink(NAVIGATION_NONE)
                 .withIcon(SELFSERVICE_MENU_ICON).withItems(new LinkedList<>()).build();
-        Menu selfServiceMenu = Menu.MenuBuilder.aMenu().withTitle(SELF_SERVICE_MENU_TITLE)
-                .withIcon(EMPTY).withItems(new LinkedList<>()).build();
-        selfServiceRootMenu.getItems().add(selfServiceMenu);
-        parentMenu.getItems().add(selfServiceRootMenu);
+        Menu selfServiceMenu = createMenu(rootMenu, selfServiceParentMenu, SELF_SERVICE_MENU_TITLE);
         selfServices.stream().forEach(selfService -> {
             Menu appLinks = new Menu();
             appLinks.setName(selfService.getName());
@@ -134,15 +132,12 @@ public class ApplicationMenuRenderingService {
         });
     }
 
-    private void createFavouritesMenu(List<MenuLink> favourites, Menu parentMenu) {
-        Menu favouritesRootMenu = Menu.MenuBuilder.aMenu()
+    private void createFavouritesMenu(List<MenuLink> favourites, Menu rootMenu) {
+        Menu favouritesParentMenu = Menu.MenuBuilder.aMenu()
                 .withId("favMenu").withName(FAV_MENU_TITLE)
                 .withTitle(FAV_MENU_TITLE).withLink(NAVIGATION_NONE)
                 .withIcon(FAV_MENU_ICON).withItems(new LinkedList<>()).build();
-        Menu favouritesMenu = Menu.MenuBuilder.aMenu().withTitle(FAV_MENU_TITLE)
-                .withIcon(EMPTY).withItems(new LinkedList<>()).build();
-        favouritesRootMenu.getItems().add(favouritesMenu);
-        parentMenu.getItems().add(favouritesRootMenu);
+        Menu favouritesMenu = createMenu(rootMenu, favouritesParentMenu, FAV_MENU_TITLE);
         favourites.stream().forEach(favourite -> {
             Menu appLink = Menu.MenuBuilder.aMenu()
                     .withId("fav-" + favourite.getId()).withName(favourite.getName())
@@ -151,16 +146,14 @@ public class ApplicationMenuRenderingService {
         });
     }
 
-    private void createSubmenuRoot(Long menuId, String menuName, List<MenuLink> favourites, User user, Menu parentMenu) {
+    private void createSubmenuRoot(Long menuId, String menuName, List<MenuLink> favourites, User user, Menu rootMenu) {
         List<MenuLink> submodules = moduleService.getMenuLinksByParentModuleId(menuId, user.getId());
         if (!submodules.isEmpty()) {
-            Menu submenuRoot = Menu.MenuBuilder.aMenu()
+            Menu submenuParent = Menu.MenuBuilder.aMenu()
                     .withId(String.valueOf(menuId)).withName(menuName)
                     .withTitle(menuName).withLink(NAVIGATION_NONE)
                     .withIcon(EMPTY).withItems(new LinkedList<>()).build();
-            Menu submenu = Menu.MenuBuilder.aMenu().withTitle(menuName).withIcon(EMPTY).withItems(new LinkedList<>()).build();
-            submenuRoot.getItems().add(submenu);
-            parentMenu.getItems().add(submenuRoot);
+            Menu submenu = createMenu(rootMenu, submenuParent, menuName);
             submodules.stream().forEach(submodule -> createApplicationLink(submodule, favourites, user, submenu));
         }
     }
@@ -176,5 +169,13 @@ public class ApplicationMenuRenderingService {
         } else {
             createSubmenuRoot(childMenuLink.getId(), childMenuLink.getName(), favourites, user, parentMenu);
         }
+    }
+
+    private Menu createMenu(Menu rootMenu, Menu parentMenu, String menuTitle) {
+        Menu menu = Menu.MenuBuilder.aMenu().withTitle(menuTitle)
+                .withIcon(EMPTY).withItems(new LinkedList<>()).build();
+        parentMenu.getItems().add(menu);
+        rootMenu.getItems().add(parentMenu);
+        return menu;
     }
 }
