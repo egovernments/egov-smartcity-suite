@@ -105,6 +105,11 @@ public class DemandGenerationLogService {
     }
 
     @Transactional
+    public DemandGenerationLogDetail completeDemandGenerationLogDetail(DemandGenerationLogDetail demandGenerationLogDetail) {
+        return demandGenerationLogDetailRepository.save(demandGenerationLogDetail);
+    }
+
+    @Transactional
     public DemandGenerationLogDetail createOrGetDemandGenerationLogDetail(DemandGenerationLog demandGenerationLog, TradeLicense license) {
 
         DemandGenerationLogDetail logDetail = demandGenerationLogDetailRepository.
@@ -131,5 +136,6 @@ public class DemandGenerationLogService {
         logDetail.setStatus(INCOMPLETE);
         logDetail.setDetail(error);
         demandGenerationLog.setDemandGenerationStatus(INCOMPLETE);
+        completeDemandGenerationLogDetail(logDetail);
     }
 }

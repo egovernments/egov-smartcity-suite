@@ -166,6 +166,7 @@ public class DemandGenerationService {
                         renewalNotificationService.notifyLicenseRenewal(license, installment);
                     }
                     demandGenerationLogDetail.setStatus(COMPLETED);
+                    demandGenerationLogService.completeDemandGenerationLogDetail(demandGenerationLogDetail);
                 } catch (RuntimeException e) {
                     LOGGER.warn(ERROR_MSG, license.getLicenseNumber(), e);
                     demandGenerationLogService.updateDemandGenerationLogDetailOnException(demandGenerationLog, demandGenerationLogDetail, e);
