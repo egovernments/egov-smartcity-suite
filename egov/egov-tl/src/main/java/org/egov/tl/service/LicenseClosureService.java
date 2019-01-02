@@ -116,6 +116,9 @@ public class LicenseClosureService extends LicenseService {
     @Autowired
     private LicenseClosureProcessflowService licenseClosureProcessflowService;
 
+    @Autowired
+    private DemandGenerationService demandGenerationService;
+
     public ReportOutput generateClosureEndorsementNotice(TradeLicense license) {
         Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("License", license);
@@ -143,6 +146,7 @@ public class LicenseClosureService extends LicenseService {
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_CANCELLED));
         licenseClosureProcessflowService.processApproval(license);
         update(license);
+        demandGenerationService.markDemandGenerationLogAsCompleted(license, LICENSE_STATUS_CANCELLED);
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
         licenseCitizenPortalService.onUpdate(license);
         tradeLicenseSmsAndEmailService.sendLicenseClosureMessage(license, BUTTONAPPROVE);

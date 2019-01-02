@@ -74,6 +74,7 @@ import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import static org.egov.infra.persistence.utils.PersistenceUtils.flushBatchUpdate;
 import static org.egov.tl.entity.enums.ProcessStatus.COMPLETED;
@@ -187,12 +188,26 @@ public class DemandGenerationService {
             Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(licenseUtils.getModule(),
                     new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate());
             licenseService.raiseDemand(license.getId(), licenseUtils.getModule(), installment);
+            markDemandGenerationLogAsCompleted(license, SUCCESSFUL);
             renewalNotificationService.notifyLicenseRenewal(license, installment);
         } catch (ValidationException e) {
             LOGGER.warn(ERROR_MSG, e);
             generationSuccess = false;
         }
         return generationSuccess;
+    }
+
+    @Transactional
+    public void markDemandGenerationLogAsCompleted(TradeLicense license, String details) {
+        Optional<DemandGenerationLogDetail> demandGenerationLogDetail = demandGenerationLogService
+                .getIncompleteLogDetailsByLicenseId(license.getId());
+        if (demandGenerationLogDetail.isPresent()) {
+            DemandGenerationLogDetail logDetail = demandGenerationLogDetail.get();
+            logDetail.setStatus(COMPLETED);
+            logDetail.setDetail(details);
+            demandGenerationLogService.completeDemandGenerationLogDetail(logDetail);
+            demandGenerationLogService.completeDemandGenerationLog(logDetail.getDemandGenerationLog());
+        }
     }
 
     private boolean installmentYearValidForDemandGeneration(CFinancialYear installmentYear) {

@@ -433,7 +433,7 @@ public class TradeLicenseService {
             EgDemandReason demandReason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
                     demandGenericDao.getDemandReasonMasterByCode(feeType, module), installment, module);
             if (demandReason == null)
-                throw new ValidationException("TL-007", "Demand demandReason missing for " + feeType);
+                throw new ValidationException("TL-007", "Demand Reason missing for " + feeType);
             EgDemandDetails licenseDemandDetail = reasonWiseDemandDetails.get(demandReason);
             BigDecimal tradeAmt = calculateFeeByRateType(license, feeMatrixDetail);
             if (licenseDemandDetail == null)

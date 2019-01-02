@@ -58,8 +58,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+
 import static org.egov.tl.entity.enums.ProcessStatus.COMPLETED;
 import static org.egov.tl.entity.enums.ProcessStatus.INCOMPLETE;
+import static org.egov.tl.entity.enums.ProcessStatus.INPROGRESS;
 
 @Service
 @Transactional(readOnly = true)
@@ -72,6 +76,14 @@ public class DemandGenerationLogService {
 
     @Autowired
     private DemandGenerationLogDetailRepository demandGenerationLogDetailRepository;
+
+    public Optional<DemandGenerationLogDetail> getIncompleteLogDetailsByLicenseId(Long licenseId) {
+        return getLogDetailsByLicenseIdAndStatus(licenseId, INCOMPLETE).stream().findFirst();
+    }
+
+    public List<DemandGenerationLogDetail> getLogDetailsByLicenseIdAndStatus(Long licenseId, ProcessStatus status) {
+        return demandGenerationLogDetailRepository.findByLicenseIdAndStatus(licenseId, status);
+    }
 
     public DemandGenerationLog getDemandGenerationLogByInstallmentYear(String installmentYearRange) {
         return demandGenerationLogRepository.findByInstallmentYear(installmentYearRange);
@@ -89,7 +101,6 @@ public class DemandGenerationLogService {
     public DemandGenerationLog createDemandGenerationLog(String installmentYearRange) {
         return demandGenerationLogRepository.save(new DemandGenerationLog(installmentYearRange));
     }
-
 
     @Transactional
     public DemandGenerationLog completeDemandGenerationLog(DemandGenerationLog demandGenerationLog) {
@@ -119,7 +130,7 @@ public class DemandGenerationLogService {
             logDetail.setLicenseId(license.getId());
             logDetail.setLicenseNumber(license.getLicenseNumber());
             logDetail.setDemandGenerationLog(demandGenerationLog);
-            logDetail.setStatus(ProcessStatus.INPROGRESS);
+            logDetail.setStatus(INPROGRESS);
             demandGenerationLog.getDetails().add(logDetail);
         }
         return logDetail;
@@ -128,13 +139,9 @@ public class DemandGenerationLogService {
     @Transactional
     public void updateDemandGenerationLogDetailOnException(DemandGenerationLog demandGenerationLog,
                                                            DemandGenerationLogDetail logDetail, RuntimeException exception) {
-        String error;
-        if (exception instanceof ValidationException)
-            error = ((ValidationException) exception).getErrors().get(0).getMessage();
-        else
-            error = "Error : " + exception;
         logDetail.setStatus(INCOMPLETE);
-        logDetail.setDetail(error);
+        logDetail.setDetail(exception instanceof ValidationException ?
+                ((ValidationException) exception).getErrors().get(0).getMessage() : "Error : " + exception);
         demandGenerationLog.setDemandGenerationStatus(INCOMPLETE);
         completeDemandGenerationLogDetail(logDetail);
     }

@@ -54,6 +54,7 @@ import org.egov.tl.entity.contracts.DemandGenerationRequest;
 import org.egov.tl.service.DemandGenerationService;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.web.response.adaptor.DemandGenerationResponseAdaptor;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -87,11 +88,18 @@ public class DemandGenerationController {
     @GetMapping("generate")
     public String newForm(Model model) {
         CFinancialYear financialYear = financialYearService.getLatestFinancialYear();
-        model.addAttribute("demandGenerationLogDetails",
-                toJSON(demandGenerationService.getDemandGenerationLog(financialYear).getDetails(),
-                        DemandGenerationLogDetail.class, DemandGenerationResponseAdaptor.class));
-        model.addAttribute("licenseIds", tradeLicenseService.getLicenseIdsForDemandGeneration(financialYear));
-        model.addAttribute("installmentYear", financialYear.getFinYearRange());
+        if (financialYear == null) {
+            DateTime currentFinYear = new DateTime();
+            DateTime finYear = currentFinYear.plusYears(1);
+            model.addAttribute("error", "error.financial.year.not.defined");
+            model.addAttribute("finYear", currentFinYear.toString("yyyy") + "-" + finYear.toString("yy"));
+        } else {
+            model.addAttribute("demandGenerationLogDetails",
+                    toJSON(demandGenerationService.getDemandGenerationLog(financialYear).getDetails(),
+                            DemandGenerationLogDetail.class, DemandGenerationResponseAdaptor.class));
+            model.addAttribute("licenseIds", tradeLicenseService.getLicenseIdsForDemandGeneration(financialYear));
+            model.addAttribute("installmentYear", financialYear.getFinYearRange());
+        }
         return "demand-generate";
     }
 
