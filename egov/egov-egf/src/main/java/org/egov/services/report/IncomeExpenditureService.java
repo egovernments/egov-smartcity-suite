@@ -55,18 +55,14 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.Constants;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 public class IncomeExpenditureService extends ReportService {
     private static final String I = "I";
@@ -114,8 +110,10 @@ public class IncomeExpenditureService extends ReportService {
         coaType.add('E');
         Date fromDate = getFromDate(ie);
         Date toDate = getToDate(ie);
-        final String filterQuery = getFilterQuery(ie);
-        populateCurrentYearAmountPerFund(ie, filterQuery, toDate, fromDate, IE);
+        final Map.Entry<String, Map<String, Object>> queryMapEntry = getFilterQuery(ie).entrySet().iterator().next();
+        final String filterQuery = queryMapEntry.getKey();
+        final Map<String, Object> queryParams = queryMapEntry.getValue();
+        populateCurrentYearAmountPerFund(ie, filterQuery, queryParams, toDate, fromDate, IE);
         ie = addBudgetDetails(ie);
         removeFundsWithNoDataIE(ie);
     }
@@ -155,7 +153,7 @@ public class IncomeExpenditureService extends ReportService {
     }
 
     // add previous year amount and current year amount. Opening balance is not added for IE codes
-    public void populateCurrentYearAmountPerFund(final Statement statement, final String filterQuery, final Date toDate,
+    public void populateCurrentYearAmountPerFund(final Statement statement, final String filterQuery, final Map<String, Object> queryParams, final Date toDate,
                                                  final Date fromDate,
                                                  final String scheduleReportType) {
         if (LOGGER.isDebugEnabled())
@@ -167,9 +165,9 @@ public class IncomeExpenditureService extends ReportService {
 
         // get all the net amount total fundwise for each major code
 
-        final List<StatementResultObject> results = getTransactionAmount(filterQuery, toDate, fromDate, "'I','E'", IE);
+        final List<StatementResultObject> results = getTransactionAmount(filterQuery, queryParams, toDate, fromDate, "'I','E'", IE);
 
-        final List<StatementResultObject> preYearResults = getTransactionAmount(filterQuery, getPreviousYearFor(toDate),
+        final List<StatementResultObject> preYearResults = getTransactionAmount(filterQuery, queryParams, getPreviousYearFor(toDate),
                 getPreviousYearFor(fromDate), "'I','E'", scheduleReportType);
 
         for (final StatementResultObject queryObject : allGlCodes) {
@@ -440,20 +438,26 @@ public class IncomeExpenditureService extends ReportService {
     private List<StatementResultObject> getBudgetForMajorCodes(final Statement incomeExpenditureStatement) {
 
         final StringBuilder queryStr = new StringBuilder(1000);
-
+        final Map<String, Object> params = new HashMap<>();
         queryStr.append(" select coa.majorCode as glcode, sum(bd.approvedamount) as amount ")
                 .append(" from egf_budgetdetail bd , egf_budgetgroup bg,egf_budget b, chartofaccounts coa, eg_wf_states wfs ")
                 .append("where ((bg.maxcode<=coa.id and bg.mincode>=coa.id) or bg.majorcode=coa.id ) ")
                 .append("and bd.budgetgroup= bg.id and bd.budget=b.id and  bd.state_id=wfs.id  and wfs.value='END'")
                 .append("and b.isbere=:isBeRe and b.financialyearid=:finYearId  ");
         if (incomeExpenditureStatement.getFund() != null && incomeExpenditureStatement.getFund().getId() != null
-                && incomeExpenditureStatement.getFund().getId() != 0)
-            queryStr.append(" and bd.fund=" + incomeExpenditureStatement.getFund().getId());
-        if (incomeExpenditureStatement.getDepartment() != null && incomeExpenditureStatement.getDepartment().getId() != 0)
-            queryStr.append(" and bd.executing_department=" + incomeExpenditureStatement.getDepartment().getId());
+                && incomeExpenditureStatement.getFund().getId() != 0) {
+            queryStr.append(" and bd.fund=:fundId");
+            params.put("fundId", incomeExpenditureStatement.getFund().getId());
+        }
+        if (incomeExpenditureStatement.getDepartment() != null && incomeExpenditureStatement.getDepartment().getId() != 0) {
+            queryStr.append(" and bd.executing_department=:deptId");
+            params.put("deptId", incomeExpenditureStatement.getDepartment().getId());
+        }
         if (incomeExpenditureStatement.getFunction() != null && incomeExpenditureStatement.getFunction().getId() != null
-                && incomeExpenditureStatement.getFunction().getId() != 0)
-            queryStr.append("  and bd.function= " + incomeExpenditureStatement.getFunction().getId());
+                && incomeExpenditureStatement.getFunction().getId() != 0) {
+            queryStr.append("  and bd.function=:functionId");
+            params.put("functionId", incomeExpenditureStatement.getFunction().getId());
+        }
 
         queryStr.append(" and coa.majorcode is not null  group by coa.majorCode ");
 
@@ -461,15 +465,16 @@ public class IncomeExpenditureService extends ReportService {
         final NativeQuery budgteQuery = persistenceService.getSession().createNativeQuery(queryStr.toString());
         budgteQuery.addScalar("glCode").addScalar("amount")
                 .setResultTransformer(Transformers.aliasToBean(StatementResultObject.class));
-        budgteQuery.setLong("finYearId", incomeExpenditureStatement.getFinancialYear().getId())
-                .setString("isBeRe", "RE");
+        budgteQuery.setParameter("finYearId", incomeExpenditureStatement.getFinancialYear().getId(), LongType.INSTANCE)
+                .setParameter("isBeRe", "RE", StringType.INSTANCE);
+        params.entrySet().forEach(entry -> budgteQuery.setParameter(entry.getKey(), entry.getValue()));
         return budgteQuery.list();
 
     }
 
     private List<StatementResultObject> getBudgetReappMinorCodes(final Statement incomeExpenditureStatement) {
         final StringBuilder queryStr = new StringBuilder(1000);
-
+        final Map<String, Object> params = new HashMap<>();
         queryStr.append(" select coa.majorcode as glCode, sum(bdr.addition_amount- bdr.deduction_amount) as amount ")
                 .append(" from egf_budgetdetail bd , egf_budgetgroup bg,egf_budget b, chartofaccounts coa,eg_wf_states wfs,")
                 .append("egf_budget_reappropriation bdr where ((bg.maxcode<=coa.id and bg.mincode>=coa.id) or bg.majorcode=coa.id ) ")
@@ -477,21 +482,28 @@ public class IncomeExpenditureService extends ReportService {
                 .append("and wfs.value='END' and b.isbere=:isBeRe and b.financialyearid=:finYearId  ");
 
         if (incomeExpenditureStatement.getFund() != null && incomeExpenditureStatement.getFund().getId() != null
-                && incomeExpenditureStatement.getFund().getId() != 0)
-            queryStr.append(" and bd.fund=" + incomeExpenditureStatement.getFund().getId());
-        if (incomeExpenditureStatement.getDepartment() != null && incomeExpenditureStatement.getDepartment().getId() != 0)
-            queryStr.append(" and bd.executing_department=" + incomeExpenditureStatement.getDepartment().getId());
+                && incomeExpenditureStatement.getFund().getId() != 0) {
+            queryStr.append(" and bd.fund=:fundId");
+            params.put("fundId", incomeExpenditureStatement.getFund().getId());
+        }
+        if (incomeExpenditureStatement.getDepartment() != null && incomeExpenditureStatement.getDepartment().getId() != 0) {
+            queryStr.append(" and bd.executing_department=:deptId");
+            params.put("deptId", incomeExpenditureStatement.getDepartment().getId());
+        }
         if (incomeExpenditureStatement.getFunction() != null && incomeExpenditureStatement.getFunction().getId() != null
-                && incomeExpenditureStatement.getFunction().getId() != 0)
-            queryStr.append("  and bd.function= " + incomeExpenditureStatement.getFunction().getId());
+                && incomeExpenditureStatement.getFunction().getId() != 0) {
+            queryStr.append("  and bd.function=:functionId");
+            params.put("functionId", incomeExpenditureStatement.getFunction().getId());
+        }
         queryStr.append("  group by coa.majorCode ");
 
         queryStr.append(" order by 1 asc");
         final NativeQuery budgteReappQuery = persistenceService.getSession().createNativeQuery(queryStr.toString());
         budgteReappQuery.addScalar("glCode").addScalar("amount")
                 .setResultTransformer(Transformers.aliasToBean(StatementResultObject.class));
-        budgteReappQuery.setLong("finYearId", incomeExpenditureStatement.getFinancialYear().getId())
-                .setString("isBeRe", "RE");
+        budgteReappQuery.setParameter("finYearId", incomeExpenditureStatement.getFinancialYear().getId(), LongType.INSTANCE)
+                .setParameter("isBeRe", "RE", StringType.INSTANCE);
+        params.entrySet().forEach(entry -> budgteReappQuery.setParameter(entry.getKey(), entry.getValue()));
         return budgteReappQuery.list();
     }
 

@@ -335,37 +335,35 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
                     .equalsIgnoreCase(
                             FinancialConstants.PAYMENTVOUCHER_NAME_DIRECTBANK)) {
                 final Paymentheader ph = (Paymentheader) persistenceService
-                        .find("select ph from Paymentheader ph , Miscbilldetail misc ,CVoucherHeader vh,CGeneralLedger gl where misc.payVoucherHeader = ph.voucherheader and misc.billVoucherHeader = vh and gl.voucherHeaderId = vh and vh.status not in ("
-                                        + FinancialConstants.CANCELLEDVOUCHERSTATUS
-                                        + ") and gl.debitAmount > 0  and (gl.glcode like '210%' or gl.glcode like '460%') and ph = ?1 ",
-                                paymentheader);
+                        .find(new StringBuilder("select ph from Paymentheader ph , Miscbilldetail misc ,CVoucherHeader vh,CGeneralLedger gl")
+                                        .append(" where misc.payVoucherHeader = ph.voucherheader and misc.billVoucherHeader = vh and gl.voucherHeaderId = vh")
+                                        .append(" and vh.status not in (?1) and gl.debitAmount > 0  and (gl.glcode like '210%' or gl.glcode like '460%') and ph = ?2 ").toString(),
+                                FinancialConstants.CANCELLEDVOUCHERSTATUS, paymentheader);
                 if (ph != null)
                     return (double) 0;
                 else {
                     final Double grossAmount = (Double) persistenceService
-                            .find("select sum(gl.debitAmount) from Paymentheader ph , Miscbilldetail misc ,CVoucherHeader vh,CGeneralLedger gl where misc.payVoucherHeader = ph.voucherheader and misc.billVoucherHeader = vh and gl.voucherHeaderId = vh and vh.status not in ("
-                                            + FinancialConstants.CANCELLEDVOUCHERSTATUS
-                                            + ") and gl.debitAmount > 0 and ph = ?1",
-                                    paymentheader);
+                            .find(new StringBuilder("select sum(gl.debitAmount) from Paymentheader ph , Miscbilldetail misc ,CVoucherHeader vh,CGeneralLedger gl")
+                                            .append(" where misc.payVoucherHeader = ph.voucherheader and misc.billVoucherHeader = vh and gl.voucherHeaderId = vh")
+                                            .append(" and vh.status not in (?1) and gl.debitAmount > 0 and ph = ?2").toString(),
+                                    FinancialConstants.CANCELLEDVOUCHERSTATUS, paymentheader);
 
                     return grossAmount != null ? grossAmount : (double) 0;
 
                 }
             } else {
                 final Paymentheader ph = (Paymentheader) persistenceService
-                        .find("select ph from Paymentheader ph ,CVoucherHeader vh,CGeneralLedger gl where ph.voucherheader = vh and gl.voucherHeaderId = vh and vh.status not in ("
-                                        + FinancialConstants.CANCELLEDVOUCHERSTATUS
-                                        + ") and gl.debitAmount > 0 and (gl.glcode like '210%' or gl.glcode like '460%') and ph = ?1 ",
-                                paymentheader);
+                        .find(new StringBuilder("select ph from Paymentheader ph ,CVoucherHeader vh,CGeneralLedger gl")
+                                        .append(" where ph.voucherheader = vh and gl.voucherHeaderId = vh and vh.status not in (?1) and gl.debitAmount > 0")
+                                        .append(" and (gl.glcode like '210%' or gl.glcode like '460%') and ph = ?2 ").toString(),
+                                FinancialConstants.CANCELLEDVOUCHERSTATUS, paymentheader);
                 if (ph != null)
                     return (double) 0;
                 else {
                     final Double grossAmount = (Double) persistenceService
-                            .find("select sum(gl.debitAmount) from Paymentheader ph ,CVoucherHeader vh,CGeneralLedger gl where ph.voucherheader = vh and gl.voucherHeaderId = vh and vh.status not in ("
-                                            + FinancialConstants.CANCELLEDVOUCHERSTATUS
-                                            + ") and gl.debitAmount > 0 and ph = ?1",
-                                    paymentheader);
-
+                            .find(new StringBuilder("select sum(gl.debitAmount) from Paymentheader ph ,CVoucherHeader vh,CGeneralLedger gl")
+                                            .append(" where ph.voucherheader = vh and gl.voucherHeaderId = vh and vh.status not in (?1) and gl.debitAmount > 0 and ph = ?2").toString(),
+                                    FinancialConstants.CANCELLEDVOUCHERSTATUS, paymentheader);
                     return grossAmount != null ? grossAmount : (double) 0;
 
                 }
@@ -1369,8 +1367,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
         EgBillregister egBillregister = null;
         try {
             egBillregister = (EgBillregister) persistenceService
-                    .find("from EgBillregister br where br.egBillregistermis.voucherHeader.id="
-                            + voucherHeader.getId());
+                    .find("from EgBillregister br where br.egBillregistermis.voucherHeader.id=?1", voucherHeader.getId());
             final EgBillregistermis egBillregistermis = egBillregister
                     .getEgBillregistermis();
             if (null != voucherTypeBean.getBillDate())
@@ -1509,8 +1506,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
     private boolean isBillNumUnique(final String billNumber) {
 
         final String billNum = (String) persistenceService
-                .find("select billnumber from EgBillregister where upper(billnumber)='"
-                        + billNumber.toUpperCase() + "'");
+                .find("select billnumber from EgBillregister where upper(billnumber)=?1", billNumber.toUpperCase());
         return billNum == null;
     }
 

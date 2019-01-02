@@ -61,6 +61,8 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.query.Query;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -74,22 +76,20 @@ import java.util.Map.Entry;
 public class BalanceSheetScheduleService extends ScheduleService {
     private static final String BS = "BS";
     private static final String L = "L";
+    private static final Logger LOGGER = Logger.getLogger(BalanceSheetScheduleService.class);
     private BalanceSheetService balanceSheetService;
     private String removeEntrysWithZeroAmount = "";
-    private static final Logger LOGGER = Logger.getLogger(BalanceSheetScheduleService.class);
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    @Autowired
+    private FinancialYearHibernateDAO financialYearDAO;
 
-   
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired
-    private  FinancialYearHibernateDAO financialYearDAO;
-    
-   
+
     public void setBalanceSheetService(final BalanceSheetService balanceSheetService) {
         this.balanceSheetService = balanceSheetService;
     }
-    
+
     public void populateDataForSchedule(final Statement balanceSheet, final String majorCode) {
         getAppConfigValueForRemoveEntrysWithZeroAmount();
         voucherStatusToExclude = getAppConfigValueFor("EGF", "statusexcludeReport");
@@ -99,16 +99,18 @@ public class BalanceSheetScheduleService extends ScheduleService {
         final Date toDate = balanceSheetService.getToDate(balanceSheet);
         final CChartOfAccounts coa = (CChartOfAccounts) find("from CChartOfAccounts where glcode=?1", majorCode);
         final List<Fund> fundList = balanceSheet.getFunds();
-        populateCurrentYearAmountForSchedule(balanceSheet, fundList, balanceSheetService.getFilterQuery(balanceSheet), toDate,
-                fromDate, majorCode, coa.getType());
-        addCurrentOpeningBalancePerFund(balanceSheet, fundList, balanceSheetService.getTransactionQuery(balanceSheet));
-        populatePreviousYearTotalsForSchedule(balanceSheet, balanceSheetService.getFilterQuery(balanceSheet), toDate, fromDate,
-                majorCode, coa.getType());
-        addOpeningBalanceForPreviousYear(balanceSheet, balanceSheetService.getTransactionQuery(balanceSheet), fromDate);
-        balanceSheetService.addExcessIEForCurrentYear(balanceSheet, fundList, getGlcodeForPurposeCode7(),
-                balanceSheetService.getFilterQuery(balanceSheet), toDate, fromDate);
-        balanceSheetService.addExcessIEForPreviousYear(balanceSheet, fundList, getGlcodeForPurposeCode7(),
-                balanceSheetService.getFilterQuery(balanceSheet), toDate, fromDate);
+        final Map.Entry<String, Map<String, Object>> queryMapEntry = balanceSheetService.getFilterQuery(balanceSheet).entrySet().iterator().next();
+        final String queryString = queryMapEntry.getKey();
+        final Map<String, Object> queryParams = queryMapEntry.getValue();
+        populateCurrentYearAmountForSchedule(balanceSheet, fundList, queryString, queryParams, toDate, fromDate, majorCode, coa.getType());
+        final Map.Entry<String, Map<String, Object>> transQueryMapEntry = balanceSheetService.getTransactionQuery(balanceSheet).entrySet().iterator().next();
+        final String transQueryString = transQueryMapEntry.getKey();
+        final Map<String, Object> transQueryParams = transQueryMapEntry.getValue();
+        addCurrentOpeningBalancePerFund(balanceSheet, fundList, transQueryString, transQueryParams);
+        populatePreviousYearTotalsForSchedule(balanceSheet, queryString, queryParams, toDate, fromDate, majorCode, coa.getType());
+        addOpeningBalanceForPreviousYear(balanceSheet, transQueryString, transQueryParams, fromDate);
+        balanceSheetService.addExcessIEForCurrentYear(balanceSheet, fundList, getGlcodeForPurposeCode7(), queryString, queryParams, toDate, fromDate);
+        balanceSheetService.addExcessIEForPreviousYear(balanceSheet, fundList, getGlcodeForPurposeCode7(), queryString, queryParams, toDate, fromDate);
         balanceSheetService.removeFundsWithNoData(balanceSheet);
         balanceSheetService.computeCurrentYearTotals(balanceSheet, Constants.LIABILITIES, Constants.ASSETS);
         computeAndAddTotals(balanceSheet);
@@ -117,20 +119,21 @@ public class BalanceSheetScheduleService extends ScheduleService {
     }
 
     public void addCurrentOpeningBalancePerFund(final Statement balanceSheet, final List<Fund> fundList,
-            final String transactionQuery) {
+                                                final String transactionQuery, final Map<String, Object> queryParams) {
         final BigDecimal divisor = balanceSheet.getDivisor();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("addCurrentOpeningBalancePerFund");
         final Query query = persistenceService.getSession()
-                .createNativeQuery(
-                        "select sum(openingdebitbalance)- sum(openingcreditbalance),ts.fundid,coa.glcode,coa.type FROM transactionsummary ts,chartofaccounts coa  WHERE ts.glcodeid = coa.ID  AND ts.financialyearid="
-                                + balanceSheet.getFinancialYear().getId()
-                                + transactionQuery
-                                + " GROUP BY ts.fundid,coa.glcode,coa.type");
+                .createNativeQuery(new StringBuilder("select sum(openingdebitbalance)- sum(openingcreditbalance),ts.fundid,coa.glcode,coa.type")
+                        .append(" FROM transactionsummary ts,chartofaccounts coa  WHERE ts.glcodeid = coa.ID  AND ts.financialyearid=:financialYearId")
+                        .append(transactionQuery)
+                        .append(" GROUP BY ts.fundid,coa.glcode,coa.type").toString());
+        query.setParameter("financialYearId", balanceSheet.getFinancialYear().getId(), LongType.INSTANCE);
+        queryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
         final List<Object[]> openingBalanceAmountList = query.list();
         for (final Object[] obj : openingBalanceAmountList)
             if (obj[0] != null && obj[1] != null) {
-                BigDecimal total = (BigDecimal)obj[0];
+                BigDecimal total = (BigDecimal) obj[0];
                 if (L.equals(obj[3].toString()))
                     total = total.multiply(NEGATIVE);
                 for (final StatementEntry entry : balanceSheet.getEntries())
@@ -159,21 +162,23 @@ public class BalanceSheetScheduleService extends ScheduleService {
             }
     }
 
-    public void addOpeningBalanceForPreviousYear(final Statement balanceSheet, final String transactionQuery, final Date fromDate) {
+    public void addOpeningBalanceForPreviousYear(final Statement balanceSheet, final String transactionQuery, Map<String, Object> queryParams, final Date fromDate) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("addOpeningBalanceForPreviousYear");
         final BigDecimal divisor = balanceSheet.getDivisor();
         final CFinancialYear prevFinanciaYr = financialYearDAO.getPreviousFinancialYearByDate(fromDate);
         final String prevFinancialYrId = prevFinanciaYr.getId().toString();
         final Query query = persistenceService.getSession()
-                .createNativeQuery(
-                        "select sum(openingdebitbalance)- sum(openingcreditbalance),coa.glcode,coa.type FROM transactionsummary ts,chartofaccounts coa  WHERE ts.glcodeid = coa.ID  AND ts.financialyearid="
-                                + prevFinancialYrId + transactionQuery + " GROUP BY coa.glcode,coa.type");
+                .createNativeQuery(new StringBuilder("select sum(openingdebitbalance)- sum(openingcreditbalance),coa.glcode,coa.type")
+                        .append(" FROM transactionsummary ts,chartofaccounts coa  WHERE ts.glcodeid = coa.ID  AND ts.financialyearid=:prevFinancialYrId")
+                        .append(transactionQuery).append(" GROUP BY coa.glcode,coa.type").toString());
+        query.setParameter("prevFinancialYrId", prevFinancialYrId, StringType.INSTANCE);
+        queryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
         final List<Object[]> openingBalanceAmountList = query.list();
         for (final Object[] obj : openingBalanceAmountList)
             if (obj[0] != null && obj[1] != null) {
 
-                BigDecimal total = (BigDecimal)obj[0];
+                BigDecimal total = (BigDecimal) obj[0];
 
                 if (L.equals(obj[2].toString()))
                     total = total.multiply(NEGATIVE);
@@ -187,6 +192,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                     }
             }
     }
+
     private String getGlcodeForPurposeCode7() {
         final Query query = persistenceService.getSession().createNativeQuery(
                 "select glcode from chartofaccounts where purposeid=7");
@@ -199,7 +205,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
 
     private String getGlcodeForPurposeCode7MinorCode() {
         final Query query = persistenceService.getSession().createNativeQuery(
-                "select substr(glcode,1," + minorCodeLength + ") from chartofaccounts where purposeid=7");
+                new StringBuilder("select substr(glcode,1,").append(minorCodeLength).append(") from chartofaccounts where purposeid=7").toString());
         final List list = query.list();
         String glCode = "";
         if (list.get(0) != null)
@@ -210,7 +216,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
     /* For Detailed */
     private String getGlcodeForPurposeCode7DetailedCode() {
         final Query query = persistenceService.getSession().createNativeQuery(
-                "select substr(glcode,1," + detailCodeLength + ") from chartofaccounts where purposeid=7");
+                new StringBuilder("select substr(glcode,1,").append(detailCodeLength).append(") from chartofaccounts where purposeid=7").toString());
         final List list = query.list();
         String glCode = "";
         if (list.get(0) != null)
@@ -218,39 +224,39 @@ public class BalanceSheetScheduleService extends ScheduleService {
         return glCode;
     }
 
-    private void populatePreviousYearTotalsForSchedule(final Statement balanceSheet, final String filterQuery, final Date toDate,
-            final Date fromDate,
-            final String majorCode, final Character type) {
+    private void populatePreviousYearTotalsForSchedule(final Statement balanceSheet, final String filterQuery, Map<String, Object> queryParams, final Date toDate,
+                                                       final Date fromDate,
+                                                       final String majorCode, final Character type) {
         String formattedToDate = "";
-        if ("Yearly".equalsIgnoreCase(balanceSheet.getPeriod()))
-        {
+        if ("Yearly".equalsIgnoreCase(balanceSheet.getPeriod())) {
             final Calendar cal = Calendar.getInstance();
             cal.setTime(fromDate);
             cal.add(Calendar.DATE, -1);
             formattedToDate = balanceSheetService.getFormattedDate(cal.getTime());
-        }
-        else
+        } else
             formattedToDate = balanceSheetService.getFormattedDate(balanceSheetService.getPreviousYearFor(toDate));
         final StringBuffer qry = new StringBuffer(512);
         qry.append("select sum(debitamount)-sum(creditamount),c.glcode from generalledger g,chartofaccounts c,voucherheader v   ");
         if (balanceSheet.getDepartment() != null && balanceSheet.getDepartment().getId() != -1)
             qry.append(", VoucherMis mis ");
-        qry.append(" where  v.id=g.voucherheaderid and c.id=g.glcodeid and v.status not in(" + voucherStatusToExclude + ") ");
+        qry.append(" where  v.id=g.voucherheaderid and c.id=g.glcodeid and v.status not in(").append(voucherStatusToExclude).append(") ");
         if (balanceSheet.getDepartment() != null && balanceSheet.getDepartment().getId() != -1)
             qry.append(" and v.id= mis.voucherheaderid ");
-        qry.append(" AND v.voucherdate <= '" + formattedToDate + "' and v.voucherdate >='"
-                +balanceSheetService.getFormattedDate(balanceSheetService.getPreviousYearFor(fromDate)) +
-                "' and c.glcode in (select distinct coad.glcode from chartofaccounts coa2, schedulemapping s " +
-                ",chartofaccounts coad where s.id=coa2.scheduleid and coa2.classification=2 and s.reporttype = 'BS'" +
-                " and coa2.glcode=SUBSTR(coad.glcode,1," + minorCodeLength + ") and coad.classification=4 and coad.majorcode='"
-                + majorCode + "')  and c.majorcode='" + majorCode + "' and c.classification=4 " + filterQuery
-                + " group by c.glcode");
+        qry.append(" AND v.voucherdate <= :voucherToDate and v.voucherdate >= :voucherFromDate and c.glcode in (select distinct coad.glcode")
+                .append(" from chartofaccounts coa2, schedulemapping s ,chartofaccounts coad where s.id=coa2.scheduleid and coa2.classification=2 and s.reporttype = 'BS'")
+                .append(" and coa2.glcode=SUBSTR(coad.glcode,1,").append(minorCodeLength).append(") and coad.classification=4 and coad.majorcode=:majorCode)")
+                .append(" and c.majorcode=:majorCode and c.classification=4 ").append(filterQuery).append(" group by c.glcode");
         final Query query = persistenceService.getSession().createNativeQuery(qry.toString());
+        query.setParameter("voucherToDate", formattedToDate, StringType.INSTANCE)
+                .setParameter("voucherFromDate", balanceSheetService.getFormattedDate(balanceSheetService.getPreviousYearFor(fromDate)), StringType.INSTANCE)
+                .setParameter("majorCode", majorCode, StringType.INSTANCE);
+
+        queryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
         final List<Object[]> result = query.list();
         for (final Object[] row : result)
             for (int index = 0; index < balanceSheet.size(); index++)
                 if (balanceSheet.get(index).getGlCode() != null
-                && row[1].toString().equalsIgnoreCase(balanceSheet.get(index).getGlCode())) {
+                        && row[1].toString().equalsIgnoreCase(balanceSheet.get(index).getGlCode())) {
 
                     BigDecimal previousYearTotal = new BigDecimal(row[0].toString());
                     if (LOGGER.isDebugEnabled())
@@ -263,12 +269,12 @@ public class BalanceSheetScheduleService extends ScheduleService {
     }
 
     private void populateCurrentYearAmountForSchedule(final Statement balanceSheet, final List<Fund> fundList,
-            final String filterQuery,
-            final Date toDate, final Date fromDate, final String majorCode, final Character type) {
+                                                      final String filterQuery, final Map<String, Object> queryParams,
+                                                      final Date toDate, final Date fromDate, final String majorCode, final Character type) {
         final BigDecimal divisor = balanceSheet.getDivisor();
         final List<Object[]> allGlCodes = getAllDetailGlCodesForSubSchedule(majorCode, type, BS);
         // addRowForSchedule(balanceSheet, allGlCodes);
-        final List<Object[]> resultMap = currentYearAmountQuery(filterQuery, toDate, fromDate, majorCode, BS);
+        final List<Object[]> resultMap = currentYearAmountQuery(filterQuery, queryParams, toDate, fromDate, majorCode, BS);
         for (final Object[] obj : allGlCodes)
             if (!contains(resultMap, obj[0].toString()))
                 balanceSheet.add(new StatementEntry(obj[0].toString(), obj[1].toString(), "", BigDecimal.ZERO, BigDecimal.ZERO,
@@ -279,7 +285,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                     if (!balanceSheet.containsBalanceSheetEntry(row[2].toString())) {
                         final StatementEntry balanceSheetEntry = new StatementEntry();
                         if (row[0] != null && row[1] != null) {
-                            BigDecimal total = (BigDecimal)row[0];
+                            BigDecimal total = (BigDecimal) row[0];
                             if (LOGGER.isDebugEnabled())
                                 LOGGER.debug(row[0] + "-----" + row[1] + "------------------------------" + total);
                             if (L.equalsIgnoreCase(type.toString()))
@@ -294,7 +300,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                         balanceSheet.add(balanceSheetEntry);
                     } else
                         for (int index = 0; index < balanceSheet.size(); index++) {
-                            BigDecimal amount = balanceSheetService.divideAndRound((BigDecimal)row[0], divisor);
+                            BigDecimal amount = balanceSheetService.divideAndRound((BigDecimal) row[0], divisor);
                             if (LOGGER.isDebugEnabled())
                                 LOGGER.debug(row[0] + "-----" + row[1] + "------------------------------" + amount);
                             if (L.equalsIgnoreCase(type.toString()))
@@ -305,20 +311,20 @@ public class BalanceSheetScheduleService extends ScheduleService {
                                         new Integer(row[1].toString()));
                                 if (balanceSheet.get(index).getFundWiseAmount().get(fundNameForId) == null)
                                     balanceSheet
-                                    .get(index)
-                                    .getFundWiseAmount()
-                                    .put(balanceSheetService.getFundNameForId(fundList, new Integer(row[1].toString())),
-                                            amount);
-                                else
-                                    balanceSheet
-                                    .get(index)
-                                    .getFundWiseAmount()
-                                    .put(balanceSheetService.getFundNameForId(fundList, new Integer(row[1].toString())),
-                                            balanceSheet
                                             .get(index)
                                             .getFundWiseAmount()
-                                            .get(balanceSheetService.getFundNameForId(fundList, new Integer(
-                                                    row[1].toString()))).add(amount));
+                                            .put(balanceSheetService.getFundNameForId(fundList, new Integer(row[1].toString())),
+                                                    amount);
+                                else
+                                    balanceSheet
+                                            .get(index)
+                                            .getFundWiseAmount()
+                                            .put(balanceSheetService.getFundNameForId(fundList, new Integer(row[1].toString())),
+                                                    balanceSheet
+                                                            .get(index)
+                                                            .getFundWiseAmount()
+                                                            .get(balanceSheetService.getFundNameForId(fundList, new Integer(
+                                                                    row[1].toString()))).add(amount));
                             }
                         }
             }
@@ -334,16 +340,18 @@ public class BalanceSheetScheduleService extends ScheduleService {
         final Date fromDate = balanceSheetService.getFromDate(balanceSheet);
         final Date toDate = balanceSheetService.getToDate(balanceSheet);
         final List<Fund> fundList = balanceSheet.getFunds();
-        populateCurrentYearAmountForAllSchedulesDetailed(balanceSheet, fundList,
-                amountPerFundQueryForAllSchedulesDetailed(balanceSheetService.getFilterQuery(balanceSheet), toDate, fromDate, BS));
-        addCurrentOpeningBalancePerFund(balanceSheet, fundList, balanceSheetService.getTransactionQuery(balanceSheet));
-        populatePreviousYearTotalsForScheduleForAllSchedulesDetailed(balanceSheet,
-                balanceSheetService.getFilterQuery(balanceSheet), toDate, fromDate);
-        addOpeningBalanceForPreviousYear(balanceSheet, balanceSheetService.getTransactionQuery(balanceSheet), fromDate);
-        balanceSheetService.addExcessIEForCurrentYear(balanceSheet, fundList, getGlcodeForPurposeCode7DetailedCode(),
-                balanceSheetService.getFilterQuery(balanceSheet), toDate, fromDate);
-        balanceSheetService.addExcessIEForPreviousYear(balanceSheet, fundList, getGlcodeForPurposeCode7DetailedCode(),
-                balanceSheetService.getFilterQuery(balanceSheet), toDate, fromDate);
+        final Map.Entry<String, Map<String, Object>> queryMapEntry = balanceSheetService.getFilterQuery(balanceSheet).entrySet().iterator().next();
+        final String queryString = queryMapEntry.getKey();
+        final Map<String, Object> queryParams = queryMapEntry.getValue();
+        populateCurrentYearAmountForAllSchedulesDetailed(balanceSheet, fundList, amountPerFundQueryForAllSchedulesDetailed(queryString, queryParams, toDate, fromDate, BS));
+        final Map.Entry<String, Map<String, Object>> transQueryMapEntry = balanceSheetService.getTransactionQuery(balanceSheet).entrySet().iterator().next();
+        final String transQueryString = transQueryMapEntry.getKey();
+        final Map<String, Object> transQueryParams = transQueryMapEntry.getValue();
+        addCurrentOpeningBalancePerFund(balanceSheet, fundList, transQueryString, transQueryParams);
+        populatePreviousYearTotalsForScheduleForAllSchedulesDetailed(balanceSheet, queryString, queryParams, toDate, fromDate);
+        addOpeningBalanceForPreviousYear(balanceSheet, transQueryString, queryParams, fromDate);
+        balanceSheetService.addExcessIEForCurrentYear(balanceSheet, fundList, getGlcodeForPurposeCode7DetailedCode(), queryString, queryParams, toDate, fromDate);
+        balanceSheetService.addExcessIEForPreviousYear(balanceSheet, fundList, getGlcodeForPurposeCode7DetailedCode(), queryString, queryParams, toDate, fromDate);
         balanceSheetService.removeFundsWithNoData(balanceSheet);
         balanceSheetService.computeCurrentYearTotals(balanceSheet, Constants.LIABILITIES, Constants.ASSETS);
         computeAndAddTotals(balanceSheet);
@@ -361,16 +369,20 @@ public class BalanceSheetScheduleService extends ScheduleService {
         final Date fromDate = balanceSheetService.getFromDate(balanceSheet);
         final Date toDate = balanceSheetService.getToDate(balanceSheet);
         final List<Fund> fundList = balanceSheet.getFunds();
-        populateCurrentYearAmountForAllSchedules(balanceSheet, fundList,
-                amountPerFundQueryForAllSchedules(balanceSheetService.getFilterQuery(balanceSheet), toDate, fromDate, BS));
-        addCurrentOpeningBalancePerFund(balanceSheet, fundList, balanceSheetService.getTransactionQuery(balanceSheet));
-        populatePreviousYearTotalsForScheduleForAllSchedules(balanceSheet, balanceSheetService.getFilterQuery(balanceSheet),
-                toDate, fromDate);
-        addOpeningBalanceForPreviousYear(balanceSheet, balanceSheetService.getTransactionQuery(balanceSheet), fromDate);
+        final Map.Entry<String, Map<String, Object>> queryMapEntry = balanceSheetService.getFilterQuery(balanceSheet).entrySet().iterator().next();
+        final String queryString = queryMapEntry.getKey();
+        final Map<String, Object> queryParams = queryMapEntry.getValue();
+        populateCurrentYearAmountForAllSchedules(balanceSheet, fundList, amountPerFundQueryForAllSchedules(queryString, queryParams, toDate, fromDate, BS));
+        final Map.Entry<String, Map<String, Object>> transQueryMapEntry = balanceSheetService.getTransactionQuery(balanceSheet).entrySet().iterator().next();
+        final String transQueryString = transQueryMapEntry.getKey();
+        final Map<String, Object> transQueryParams = transQueryMapEntry.getValue();
+        addCurrentOpeningBalancePerFund(balanceSheet, fundList, transQueryString, transQueryParams);
+        populatePreviousYearTotalsForScheduleForAllSchedules(balanceSheet, queryString, queryParams, toDate, fromDate);
+        addOpeningBalanceForPreviousYear(balanceSheet, transQueryString, transQueryParams, fromDate);
         balanceSheetService.addExcessIEForCurrentYear(balanceSheet, fundList, getGlcodeForPurposeCode7MinorCode(),
-                balanceSheetService.getFilterQuery(balanceSheet), toDate, fromDate);
+                queryString, queryParams, toDate, fromDate);
         balanceSheetService.addExcessIEForPreviousYear(balanceSheet, fundList, getGlcodeForPurposeCode7MinorCode(),
-                balanceSheetService.getFilterQuery(balanceSheet), toDate, fromDate);
+                queryString, queryParams, toDate, fromDate);
         balanceSheetService.removeFundsWithNoData(balanceSheet);
         balanceSheetService.computeCurrentYearTotals(balanceSheet, Constants.LIABILITIES, Constants.ASSETS);
         computeAndAddTotals(balanceSheet);
@@ -378,21 +390,18 @@ public class BalanceSheetScheduleService extends ScheduleService {
             balanceSheetService.removeScheduleEntrysWithZeroAmount(balanceSheet);
     }
 
-    private void populatePreviousYearTotalsForScheduleForAllSchedules(final Statement balanceSheet, final String filterQuery,
-            final Date toDate, final Date fromDate) {
+    private void populatePreviousYearTotalsForScheduleForAllSchedules(final Statement balanceSheet, final String filterQuery, final Map<String, Object> queryParams,
+                                                                      final Date toDate, final Date fromDate) {
         Date formattedToDate = null;
         final BigDecimal divisor = balanceSheet.getDivisor();
-        if ("Yearly".equalsIgnoreCase(balanceSheet.getPeriod()))
-        {
+        if ("Yearly".equalsIgnoreCase(balanceSheet.getPeriod())) {
             final Calendar cal = Calendar.getInstance();
             cal.setTime(fromDate);
             cal.add(Calendar.DATE, -1);
             formattedToDate = cal.getTime();
-        }
-        else
+        } else
             formattedToDate = balanceSheetService.getPreviousYearFor(toDate);
-        final List<Object[]> resultMap = amountPerFundQueryForAllSchedules(filterQuery, formattedToDate,
-                balanceSheetService.getPreviousYearFor(fromDate), BS);
+        final List<Object[]> resultMap = amountPerFundQueryForAllSchedules(filterQuery, queryParams, formattedToDate, balanceSheetService.getPreviousYearFor(fromDate), BS);
         final List<Object[]> allGlCodes = getAllGlCodesForAllSchedule(BS, "('A','L')");
         for (final Object[] obj : allGlCodes)
             for (final Object[] row : resultMap) {
@@ -403,7 +412,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                         addRowToStatement(balanceSheet, row, glCode);
                     else
                         for (int index = 0; index < balanceSheet.size(); index++) {
-                            BigDecimal amount = balanceSheetService.divideAndRound((BigDecimal)row[0], divisor);
+                            BigDecimal amount = balanceSheetService.divideAndRound((BigDecimal) row[0], divisor);
                             if (L.equalsIgnoreCase(type))
                                 amount = amount.multiply(NEGATIVE);
                             if (balanceSheet.get(index).getGlCode() != null
@@ -419,20 +428,18 @@ public class BalanceSheetScheduleService extends ScheduleService {
 
     /* for detailed */
     private void populatePreviousYearTotalsForScheduleForAllSchedulesDetailed(final Statement balanceSheet,
-            final String filterQuery,
-            final Date toDate, final Date fromDate) {
+                                                                              final String filterQuery, final Map<String, Object> queryParams,
+                                                                              final Date toDate, final Date fromDate) {
         Date formattedToDate = null;
         final BigDecimal divisor = balanceSheet.getDivisor();
-        if ("Yearly".equalsIgnoreCase(balanceSheet.getPeriod()))
-        {
+        if ("Yearly".equalsIgnoreCase(balanceSheet.getPeriod())) {
             final Calendar cal = Calendar.getInstance();
             cal.setTime(fromDate);
             cal.add(Calendar.DATE, -1);
             formattedToDate = cal.getTime();
-        }
-        else
+        } else
             formattedToDate = balanceSheetService.getPreviousYearFor(toDate);
-        final List<Object[]> resultMap = amountPerFundQueryForAllSchedulesDetailed(filterQuery, formattedToDate,
+        final List<Object[]> resultMap = amountPerFundQueryForAllSchedulesDetailed(filterQuery, queryParams, formattedToDate,
                 balanceSheetService.getPreviousYearFor(fromDate), BS);
         final List<Object[]> allGlCodes = getAllGlCodesForAllSchedule(BS, "('A','L')");
         for (final Object[] obj : allGlCodes)
@@ -444,7 +451,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                         addRowToStatement(balanceSheet, row, glCode);
                     else
                         for (int index = 0; index < balanceSheet.size(); index++) {
-                            BigDecimal amount = balanceSheetService.divideAndRound((BigDecimal)row[0], divisor);
+                            BigDecimal amount = balanceSheetService.divideAndRound((BigDecimal) row[0], divisor);
                             if (L.equalsIgnoreCase(type))
                                 amount = amount.multiply(NEGATIVE);
                             if (balanceSheet.get(index).getGlCode() != null
@@ -459,7 +466,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
     }
 
     private void populateCurrentYearAmountForAllSchedules(final Statement balanceSheet, final List<Fund> fundList,
-            final List<Object[]> currentYearAmounts) {
+                                                          final List<Object[]> currentYearAmounts) {
         final BigDecimal divisor = balanceSheet.getDivisor();
         final Map<String, Schedules> scheduleToGlCodeMap = getScheduleToGlCodeMap(BS, "('A','L')");
         for (final Entry<String, Schedules> entry : scheduleToGlCodeMap.entrySet()) {
@@ -474,7 +481,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                     if (!balanceSheet.containsBalanceSheetEntry(glCode)) {
                         final StatementEntry balanceSheetEntry = new StatementEntry();
                         if (row[0] != null && row[1] != null) {
-                            BigDecimal total = (BigDecimal)row[0];
+                            BigDecimal total = (BigDecimal) row[0];
                             if (L.equalsIgnoreCase(type))
                                 total = total.multiply(NEGATIVE);
                             balanceSheetEntry.getFundWiseAmount().put(
@@ -486,7 +493,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                         balanceSheet.add(balanceSheetEntry);
                     } else
                         for (int index = 0; index < balanceSheet.size(); index++) {
-                            BigDecimal amount = balanceSheetService.divideAndRound((BigDecimal)row[0], divisor);
+                            BigDecimal amount = balanceSheetService.divideAndRound((BigDecimal) row[0], divisor);
                             if (L.equalsIgnoreCase(type))
                                 amount = amount.multiply(NEGATIVE);
                             if (balanceSheet.get(index).getGlCode() != null
@@ -497,10 +504,10 @@ public class BalanceSheetScheduleService extends ScheduleService {
                                     balanceSheet.get(index).getFundWiseAmount().put(fundNameForId, amount);
                                 else
                                     balanceSheet
-                                    .get(index)
-                                    .getFundWiseAmount()
-                                    .put(fundNameForId,
-                                            balanceSheet.get(index).getFundWiseAmount().get(fundNameForId).add(amount));
+                                            .get(index)
+                                            .getFundWiseAmount()
+                                            .put(fundNameForId,
+                                                    balanceSheet.get(index).getFundWiseAmount().get(fundNameForId).add(amount));
                             }
                         }
             }
@@ -516,7 +523,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
 
     /* for detailed */
     private void populateCurrentYearAmountForAllSchedulesDetailed(final Statement balanceSheet, final List<Fund> fundList,
-            final List<Object[]> currentYearAmounts) {
+                                                                  final List<Object[]> currentYearAmounts) {
         final BigDecimal divisor = balanceSheet.getDivisor();
         final Map<String, Schedules> scheduleToGlCodeMap = getScheduleToGlCodeMapDetailed(BS, "('A','L')");
         for (final Entry<String, Schedules> entry : scheduleToGlCodeMap.entrySet()) {
@@ -531,7 +538,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                     if (!balanceSheet.containsBalanceSheetEntry(glCode)) {
                         final StatementEntry balanceSheetEntry = new StatementEntry();
                         if (row[0] != null && row[1] != null) {
-                            BigDecimal total = (BigDecimal)row[0];
+                            BigDecimal total = (BigDecimal) row[0];
                             if (L.equalsIgnoreCase(type))
                                 total = total.multiply(NEGATIVE);
                             balanceSheetEntry.getFundWiseAmount().put(
@@ -543,7 +550,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                         balanceSheet.add(balanceSheetEntry);
                     } else
                         for (int index = 0; index < balanceSheet.size(); index++) {
-                            BigDecimal amount = balanceSheetService.divideAndRound((BigDecimal)row[0], divisor);
+                            BigDecimal amount = balanceSheetService.divideAndRound((BigDecimal) row[0], divisor);
                             if (L.equalsIgnoreCase(type))
                                 amount = amount.multiply(NEGATIVE);
                             if (balanceSheet.get(index).getGlCode() != null
@@ -554,10 +561,10 @@ public class BalanceSheetScheduleService extends ScheduleService {
                                     balanceSheet.get(index).getFundWiseAmount().put(fundNameForId, amount);
                                 else
                                     balanceSheet
-                                    .get(index)
-                                    .getFundWiseAmount()
-                                    .put(fundNameForId,
-                                            balanceSheet.get(index).getFundWiseAmount().get(fundNameForId).add(amount));
+                                            .get(index)
+                                            .getFundWiseAmount()
+                                            .put(fundNameForId,
+                                                    balanceSheet.get(index).getFundWiseAmount().get(fundNameForId).add(amount));
                             }
                         }
             }

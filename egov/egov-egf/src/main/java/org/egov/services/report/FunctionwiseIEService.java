@@ -61,147 +61,176 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.BigDecimalType;
-import org.hibernate.type.BooleanType;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StringType;
+import org.hibernate.type.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class FunctionwiseIEService
-{
-    
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired AppConfigValueService appConfigValuesService;
+public class FunctionwiseIEService {
+
+    private static final Logger LOGGER = Logger.getLogger(FunctionwiseIEService.class);
     protected SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
     protected SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
-    private static final Logger LOGGER = Logger.getLogger(FunctionwiseIEService.class);
+    @Autowired
+    AppConfigValueService appConfigValuesService;
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
     private String capExpCodeCond = "";
     private String capExpCodesWithQuotesCond = "";
 
-    public String getFilterQueryVoucher(final ReportSearch reportSearch) throws ApplicationException, ParseException
-    {
-
+    public Map<String, Map<String, Object>> getFilterQueryVoucher(final ReportSearch reportSearch) throws ApplicationException, ParseException {
         final String excludeStatus = appConfigValuesService.getConfigValuesByModuleAndKey("finance", "statusexcludeReport")
                 .get(0)
                 .getValue();
-        String appendQry = "";
-        appendQry = " AND vh.voucherdate>=TO_DATE('" + formatter.format(sdf.parse(reportSearch.getStartDate())) + "') ";
-        appendQry = appendQry + " AND vh.voucherdate<=TO_DATE('" + formatter.format(sdf.parse(reportSearch.getEndDate())) + "') ";
-        appendQry = getFiltersExcludingDate(reportSearch, excludeStatus,
-                appendQry);
+        final Map<String, Map<String, Object>> queryMap = new HashMap<>();
+        final Map<String, Object> params = new HashMap<>();
+        StringBuilder appendQry = new StringBuilder(" AND vh.voucherdate>=TO_DATE(:voucherFromDate) AND vh.voucherdate<=TO_DATE(:voucherToDate) ");
+        params.put("voucherFromDate", formatter.format(sdf.parse(reportSearch.getStartDate())));
+        params.put("voucherToDate", formatter.format(sdf.parse(reportSearch.getEndDate())));
+        getFiltersExcludingDate(reportSearch, excludeStatus, appendQry, params);
+        queryMap.put(appendQry.toString(), params);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("appendQry==" + appendQry);
-        return appendQry;
+        return queryMap;
     }
 
-    public String getFilterQueryVoucherAsOnDate(final ReportSearch reportSearch) throws ApplicationException, ParseException
-    {
+    public Map<String, Map<String, Object>> getFilterQueryVoucherAsOnDate(final ReportSearch reportSearch) throws ApplicationException, ParseException {
 
+        final Map<String, Map<String, Object>> queryMap = new HashMap<>();
         final String excludeStatus = appConfigValuesService.getConfigValuesByModuleAndKey("finance", "statusexcludeReport")
                 .get(0)
                 .getValue();
-        String appendQry = "";
-        appendQry = " AND vh.voucherdate>=TO_DATE('" + formatter.format(reportSearch.getYearStartDate()) + "') ";
-        appendQry = appendQry + " AND vh.voucherdate<=TO_DATE('" + formatter.format(reportSearch.getAsOnDate()) + "') ";
-        appendQry = getFiltersExcludingDate(reportSearch, excludeStatus,
-                appendQry);
+        final Map<String, Object> params = new HashMap<>();
+        StringBuilder appendQry = new StringBuilder(" AND vh.voucherdate>=TO_DATE(:voucherFromDate) ");
+        appendQry.append(" AND vh.voucherdate<=TO_DATE(:voucherToDate) ");
+        params.put("voucherFromDate", formatter.format(reportSearch.getYearStartDate()));
+        params.put("voucherToDate", formatter.format(reportSearch.getAsOnDate()));
+        appendQry = getFiltersExcludingDate(reportSearch, excludeStatus, appendQry, params);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("appendQry==" + appendQry);
-        return appendQry;
+        queryMap.put(appendQry.toString(), params);
+        return queryMap;
     }
 
-    public String getFilterQueryVoucherAsOnPreviousYearDate(final ReportSearch reportSearch) throws ApplicationException,
-    ParseException
-    {
+    public Map<String, Map<String, Object>> getFilterQueryVoucherAsOnPreviousYearDate(final ReportSearch reportSearch) throws ApplicationException,
+            ParseException {
 
+        final Map<String, Map<String, Object>> queryMap = new HashMap<>();
         final String excludeStatus = appConfigValuesService.getConfigValuesByModuleAndKey("finance", "statusexcludeReport")
                 .get(0)
                 .getValue();
-        String appendQry = "";
-        appendQry = " AND vh.voucherdate>=TO_DATE('" + formatter.format(reportSearch.getPreviousYearStartDate()) + "') ";
-
-        appendQry = appendQry + " AND vh.voucherdate<=TO_DATE('" + formatter.format(reportSearch.getPreviousYearDate()) + "') ";
-        appendQry = getFiltersExcludingDate(reportSearch, excludeStatus,
-                appendQry);
+        final Map<String, Object> params = new HashMap<>();
+        StringBuilder appendQry = new StringBuilder(" AND vh.voucherdate>=TO_DATE(:voucherFromDate) ");
+        appendQry.append(" AND vh.voucherdate<=TO_DATE(:vouucherToDate) ");
+        params.put("voucherFromDate", formatter.format(reportSearch.getPreviousYearStartDate()));
+        params.put("voucherToDate", formatter.format(reportSearch.getPreviousYearDate()));
+        appendQry = getFiltersExcludingDate(reportSearch, excludeStatus, appendQry, params);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("appendQry==" + appendQry);
+        queryMap.put(appendQry.toString(), params);
+        return queryMap;
+    }
+
+    private StringBuilder getFiltersExcludingDate(final ReportSearch reportSearch,
+                                                  final String excludeStatus, StringBuilder appendQry, Map<String, Object> params) {
+        appendQry.append(" AND vh.status NOT IN (").append(excludeStatus).append(")");
+        if (reportSearch.getFund() != null && reportSearch.getFund().getId() != null) {
+            appendQry.append(" AND vh.fundid =:fundId");
+            params.put("fundId", reportSearch.getFund().getId());
+        }
+        if (reportSearch.getFundsource() != null && reportSearch.getFundsource().getId() != null) {
+            appendQry.append(" AND vh.fundsourceid =:fundSourceId");
+            params.put("fundSourceId", reportSearch.getFundsource().getId());
+        }
+        if (reportSearch.getDepartment() != null && reportSearch.getDepartment().getId() != null) {
+            appendQry.append(" AND vmis.departmentid =:deptId");
+            params.put("deptId", reportSearch.getDepartment().getId());
+        }
+        if (reportSearch.getField() != null && reportSearch.getField().getId() != null) {
+            appendQry.append(" AND vmis.divisionid =:divisionId");
+            params.put("divisionId", reportSearch.getField().getId());
+        }
+        if (reportSearch.getScheme() != null && reportSearch.getScheme().getId() != null) {
+            appendQry.append(" AND vmis.schemeid =:schemeId");
+            params.put("schemeId", reportSearch.getScheme().getId());
+        }
+        if (reportSearch.getSubScheme() != null && reportSearch.getSubScheme().getId() != null) {
+            appendQry.append(" AND vmis.subschemeid =:subSchemeId");
+            params.put("subSchemeId", reportSearch.getSubScheme().getId());
+        }
+        if (reportSearch.getFunctionary() != null && reportSearch.getFunctionary().getId() != null) {
+            appendQry.append(" AND vmis.functionaryid =:functionaryId");
+            params.put("functionaryId", reportSearch.getFunctionary().getId());
+        }
         return appendQry;
     }
 
-    private String getFiltersExcludingDate(final ReportSearch reportSearch,
-            final String excludeStatus, String appendQry) {
-        appendQry = appendQry + " AND vh.status NOT IN (" + excludeStatus + ")";
-        if (reportSearch.getFund() != null && reportSearch.getFund().getId() != null)
-            appendQry = appendQry + " AND vh.fundid =" + reportSearch.getFund().getId();
-        if (reportSearch.getFundsource() != null && reportSearch.getFundsource().getId() != null)
-            appendQry = appendQry + " AND vh.fundsourceid =" + reportSearch.getFundsource().getId();
-        if (reportSearch.getDepartment() != null && reportSearch.getDepartment().getId() != null)
-            appendQry = appendQry + " AND vmis.departmentid =" + reportSearch.getDepartment().getId();
-        if (reportSearch.getField() != null && reportSearch.getField().getId() != null)
-            appendQry = appendQry + " AND vmis.divisionid =" + reportSearch.getField().getId();
-        if (reportSearch.getScheme() != null && reportSearch.getScheme().getId() != null)
-            appendQry = appendQry + " AND vmis.schemeid =" + reportSearch.getScheme().getId();
-        if (reportSearch.getSubScheme() != null && reportSearch.getSubScheme().getId() != null)
-            appendQry = appendQry + " AND vmis.subschemeid =" + reportSearch.getSubScheme().getId();
-        if (reportSearch.getFunctionary() != null && reportSearch.getFunctionary().getId() != null)
-            appendQry = appendQry + " AND vmis.functionaryid =" + reportSearch.getFunctionary().getId();
-        return appendQry;
-    }
-
-    public String getFilterQueryGL(final ReportSearch reportSearch)
-    {
-        String appendQry = "";
-        if (reportSearch.getFunction() != null && reportSearch.getFunction().getId() != null)
-            appendQry = appendQry + " AND gl.functionid =" + reportSearch.getFunction().getId();
-        return appendQry;
+    public Map<String, Map<String, Object>> getFilterQueryGL(final ReportSearch reportSearch) {
+        final StringBuilder appendQry = new StringBuilder("");
+        final Map<String, Map<String, Object>> queryMap = new HashMap<>();
+        final Map<String, Object> params = new HashMap<>();
+        if (reportSearch.getFunction() != null && reportSearch.getFunction().getId() != null) {
+            appendQry.append(" AND gl.functionid = :functionId");
+            params.put("functionId", reportSearch.getFunction().getId());
+        }
+        queryMap.put(appendQry.toString(), params);
+        return queryMap;
     }
 
     public void getMajorCodeList(final FunctionwiseIE functionwiseIE, final ReportSearch reportSearch)
             throws ApplicationException,
-    ParseException
-    {
-
+            ParseException {
         final List<String> majorCodeList = new ArrayList<String>();
-        final String filterQuery = getFilterQueryVoucher(reportSearch);
-        final String sql = "select distinct SUBSTR(gl.glcode,1,"
-                + reportSearch.getMinorCodeLen()
-                + "),coa.name from CHARTOFACCOUNTS coa,GENERALLEDGER gl WHERE gl.functionid is not null and gl.voucherheaderid IN (SELECT vh.id FROM VOUCHERHEADER vh,vouchermis vmis WHERE vh.id=vmis.voucherheaderid "
-                + filterQuery + " AND coa.TYPE='" + reportSearch.getIncExp() + "' AND SUBSTR(gl.glcode,1,"
-                + reportSearch.getMajorCodeLen() + ")=coa.glcode) " + getFilterQueryGL(reportSearch) + " ORDER BY 1";
+        final Map.Entry<String, Map<String, Object>> queryMapEntry = getFilterQueryVoucher(reportSearch).entrySet().iterator().next();
+        final String filterQuery = queryMapEntry.getKey();
+        final Map<String, Object> queryParams = queryMapEntry.getValue();
+        final Map.Entry<String, Map<String, Object>> queryGLMapEntry = getFilterQueryGL(reportSearch).entrySet().iterator().next();
+        final String queryGLString = queryGLMapEntry.getKey();
+        final Map<String, Object> queryGLParams = queryGLMapEntry.getValue();
+        final StringBuilder sql = new StringBuilder("select distinct SUBSTR(gl.glcode,1,")
+                .append(reportSearch.getMinorCodeLen())
+                .append("),coa.name from CHARTOFACCOUNTS coa,GENERALLEDGER gl")
+                .append(" WHERE gl.functionid is not null and gl.voucherheaderid IN (SELECT vh.id FROM VOUCHERHEADER vh,vouchermis vmis WHERE vh.id=vmis.voucherheaderid ")
+                .append(filterQuery).append(" AND coa.TYPE=:coaType AND SUBSTR(gl.glcode,1,").append(reportSearch.getMajorCodeLen()).append(")=coa.glcode) ")
+                .append(queryGLString).append(" ORDER BY 1");
+
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("sql====================" + sql);
-        final Query query = persistenceService.getSession().createNativeQuery(sql);
+        final Query query = persistenceService.getSession().createNativeQuery(sql.toString());
+        query.setParameter("coaType", reportSearch.getIncExp(), StringType.INSTANCE);
+        queryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
+        queryGLParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
         final List<Object[]> list = query.list();
         for (final Object[] obj : list)
             majorCodeList.add(obj[0].toString() + "-" + obj[1].toString());
         functionwiseIE.setMajorCodeList(majorCodeList);
     }
 
-    public List<String> getMinorCodeList(final ReportSearch reportSearch) throws ApplicationException, ParseException
-    {
+    public List<String> getMinorCodeList(final ReportSearch reportSearch) throws ApplicationException, ParseException {
         final List<String> minorCodeList = new ArrayList<String>();
-        final String filterQuery = getFilterQueryVoucher(reportSearch);
-        final String sql = "select distinct SUBSTR(gl.glcode,1,"
-                + reportSearch.getMinorCodeLen()
-                + "),coa.name from CHARTOFACCOUNTS coa,GENERALLEDGER gl WHERE gl.functionid is not null and gl.voucherheaderid IN (SELECT vh.id FROM VOUCHERHEADER vh,vouchermis vmis WHERE vh.id=vmis.voucherheaderid "
-                + filterQuery + " AND coa.TYPE='" + reportSearch.getIncExp() + "' AND SUBSTR(gl.glcode,1,"
-                + reportSearch.getMinorCodeLen() + ")=coa.glcode) " + getFilterQueryGL(reportSearch) + " ORDER BY 1";
+        final Map.Entry<String, Map<String, Object>> queryMapEntry = getFilterQueryVoucher(reportSearch).entrySet().iterator().next();
+        final String filterQuery = queryMapEntry.getKey();
+        final Map<String, Object> queryParams = queryMapEntry.getValue();
+        final Map.Entry<String, Map<String, Object>> queryGLMapEntry = getFilterQueryGL(reportSearch).entrySet().iterator().next();
+        final String queryGLString = queryGLMapEntry.getKey();
+        final Map<String, Object> queryGLParams = queryGLMapEntry.getValue();
+        final StringBuilder sql = new StringBuilder("select distinct SUBSTR(gl.glcode,1,")
+                .append(reportSearch.getMinorCodeLen()).append("),coa.name")
+                .append(" from CHARTOFACCOUNTS coa,GENERALLEDGER gl")
+                .append(" WHERE gl.functionid is not null and gl.voucherheaderid IN (SELECT vh.id FROM VOUCHERHEADER vh,vouchermis vmis WHERE vh.id=vmis.voucherheaderid ")
+                .append(filterQuery).append(" AND coa.TYPE=:coaType AND SUBSTR(gl.glcode,1,").append(reportSearch.getMinorCodeLen()).append(")=coa.glcode) ")
+                .append(queryGLString).append(" ORDER BY 1");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("sql====================" + sql);
-        final Query query = persistenceService.getSession().createNativeQuery(sql);
+        final Query query = persistenceService.getSession().createNativeQuery(sql.toString());
+        query.setParameter("coaType", reportSearch.getIncExp(), StringType.INSTANCE);
+        queryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
+        queryGLParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
         final List<Object[]> list = query.list();
         for (final Object[] obj : list)
             minorCodeList.add(obj[0].toString() + "-" + obj[1].toString());
@@ -209,50 +238,44 @@ public class FunctionwiseIEService
     }
 
     /**
-     *
      * @param reportSearch
      * @return
      * @throws ApplicationException
-     * @throws ParseException for Main report getMajor Code and Minor Code for Sub Report get only minor code
+     * @throws ParseException       for Main report getMajor Code and Minor Code for Sub Report get only minor code
      */
     public List<CommonReportBean> getMinorAndMajorCodeList(final ReportSearch reportSearch) throws ApplicationException,
-            ParseException
-    {
-        String sql = "";
+            ParseException {
+        StringBuilder sql = new StringBuilder("");
         if (reportSearch.getByDepartment() && reportSearch.getByDetailCode())
-            sql = " select coa.glcode as accCode,coa.name as name,null as schedule,null as FIEscheduleId,0 as isMajor from Chartofaccounts coa"
-                    +
-                    " where  coa.type=:type and length(coa.glcode)=" + reportSearch.getMinorCodeLen() +
-                    " and coa.glcode like :glcode and classification=4 and isActiveForPosting=true order by 1 ";
+            sql.append(" select coa.glcode as accCode,coa.name as name,null as schedule,null as FIEscheduleId,0 as isMajor from Chartofaccounts coa")
+                    .append(" where  coa.type=:type and length(coa.glcode)=:glcodeLength and coa.glcode like :glcode and classification=4 and isActiveForPosting=true order by 1 ");
         else if (reportSearch.getByDepartment())
-            sql = " select coa.glcode as accCode,coa.name as name,mp.schedule as schedule,mp.id as FIEscheduleId,0 as isMajor from Chartofaccounts coa,Schedulemapping mp"
-                    +
-                    " where coa.FIEscheduleId=mp.id and coa.type=:type and length(coa.glcode)=" + reportSearch.getMinorCodeLen() +
-                    " and coa.FIEscheduleId=:FIEscheduleId  order by 1";
+            sql.append(" select coa.glcode as accCode,coa.name as name,mp.schedule as schedule,mp.id as FIEscheduleId,0 as isMajor from Chartofaccounts coa,Schedulemapping mp")
+                    .append(" where coa.FIEscheduleId=mp.id and coa.type=:type and length(coa.glcode)=:glcodeLength and coa.FIEscheduleId=:FIEscheduleId  order by 1");
         else
-            sql = " select coa.glcode as accCode,coa.name as name,mp.schedule as schedule,mp.id as FIEscheduleId, 0 as isMajor from Chartofaccounts coa,Schedulemapping mp"
-                    +
-                    " where coa.FIEscheduleId=mp.id and coa.type=:type and length(coa.glcode)="
-                    + reportSearch.getMinorCodeLen()
-                    +
-                    " Union "
-                    +
-                    " select coa.glcode as accCode,coa.name as name,null as schedule,null as FIEscheduleId ,1 as isMajor from Chartofaccounts coa"
-                    +
-                    " where  coa.type=:type and length(coa.glcode)=" + reportSearch.getMajorCodeLen() +
-                    " order by 1";
-        final Query query = persistenceService.getSession().createNativeQuery(sql)
+            sql.append(" select coa.glcode as accCode,coa.name as name,mp.schedule as schedule,mp.id as FIEscheduleId, 0 as isMajor from Chartofaccounts coa,Schedulemapping mp")
+                    .append(" where coa.FIEscheduleId=mp.id and coa.type=:type and length(coa.glcode)=:glcodeLength")
+                    .append(" Union ")
+                    .append(" select coa.glcode as accCode,coa.name as name,null as schedule,null as FIEscheduleId ,1 as isMajor from Chartofaccounts coa")
+                    .append(" where  coa.type=:type and length(coa.glcode)=:majorCodeLength order by 1");
+        final Query query = persistenceService.getSession().createNativeQuery(sql.toString())
                 .addScalar("accCode", StringType.INSTANCE)
                 .addScalar("name", StringType.INSTANCE)
                 .addScalar("schedule", StringType.INSTANCE)
                 .addScalar("FIEscheduleId", LongType.INSTANCE)
                 .addScalar("isMajor", BooleanType.INSTANCE)
-                .setString("type", reportSearch.getIncExp())
+                .setParameter("type", reportSearch.getIncExp(), StringType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(CommonReportBean.class));
-        if (reportSearch.getByDetailCode())
-            query.setString("glcode", reportSearch.getGlcode() + "%");
-        else if (reportSearch.getByDepartment())
-            query.setLong("FIEscheduleId", reportSearch.getFIEscheduleId());
+        if (reportSearch.getByDetailCode()) {
+            query.setParameter("glcode", reportSearch.getGlcode() + "%", StringType.INSTANCE)
+                    .setParameter("glcodeLength", reportSearch.getMinorCodeLen(), IntegerType.INSTANCE);
+        } else if (reportSearch.getByDepartment()) {
+            query.setParameter("FIEscheduleId", reportSearch.getFIEscheduleId(), LongType.INSTANCE)
+                    .setParameter("glcodeLength", reportSearch.getMinorCodeLen(), IntegerType.INSTANCE);
+        } else {
+            query.setParameter("glcodeLength", reportSearch.getMinorCodeLen(), IntegerType.INSTANCE)
+                    .setParameter("majorCodeLength", reportSearch.getMajorCodeLen(), IntegerType.INSTANCE);
+        }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("----------------" + sql);
         return query.list();
@@ -260,43 +283,28 @@ public class FunctionwiseIEService
     }
 
     /**
-     *
      * @param reportSearch
      * @return
      * @throws ApplicationException
-     * @throws ParseException for Main report getMajor Code and Minor Code for Sub Report get only minor code
+     * @throws ParseException       for Main report getMajor Code and Minor Code for Sub Report get only minor code
      */
     public List<CommonReportBean> getMinorAndMajorCodeListForCapitalExp(final ReportSearch reportSearch)
             throws ApplicationException,
-    ParseException
-    {
-        String sql = "";
+            ParseException {
+        StringBuilder sql = new StringBuilder("");
         if (reportSearch.getByDepartment() && reportSearch.getByDetailCode())
-            sql = " select coa.glcode as accCode,coa.name as name,null as schedule,null as FIEscheduleId,0 as isMajor from Chartofaccounts coa"
-                    +
-                    " where  coa.type=:type and length(coa.glcode)=" + reportSearch.getMinorCodeLen() +
-                    " and coa.glcode like :glcode and classification=4 and isActiveForPosting=true order by 1 ";
+            sql.append(" select coa.glcode as accCode,coa.name as name,null as schedule,null as FIEscheduleId,0 as isMajor from Chartofaccounts coa")
+                    .append(" where  coa.type=:type and length(coa.glcode)=:minorCodeLength and coa.glcode like :glcode and classification=4 and isActiveForPosting=true order by 1 ");
         else if (reportSearch.getByDepartment())
-            sql = " select coa.glcode as accCode,coa.name as name,mp.schedule as schedule,mp.id as FIEscheduleId,0 as isMajor from Chartofaccounts coa,Schedulemapping mp"
-                    +
-                    " where coa.FIEscheduleId=mp.id and coa.type=:type and length(coa.glcode)=" + reportSearch.getMinorCodeLen() +
-                    " and coa.FIEscheduleId=:FIEscheduleId  order by 1";
+            sql.append(" select coa.glcode as accCode,coa.name as name,mp.schedule as schedule,mp.id as FIEscheduleId,0 as isMajor from Chartofaccounts coa,Schedulemapping mp")
+                    .append(" where coa.FIEscheduleId=mp.id and coa.type=:type and length(coa.glcode)=:minorCodeLength and coa.FIEscheduleId=:FIEscheduleId  order by 1");
         else
-            sql = " select coa.glcode as accCode,coa.name as name,mp.schedule as schedule,mp.id as FIEscheduleId, 0 as isMajor from Chartofaccounts coa,Schedulemapping mp"
-                    +
-                    " where coa.FIEscheduleId=mp.id and coa.type=:type and length(coa.glcode)="
-                    + reportSearch.getMinorCodeLen()
-                    +
-                    " Union "
-                    +
-                    " select coa.glcode as accCode,coa.name as name,null as schedule,null as FIEscheduleId ,1 as isMajor from Chartofaccounts coa"
-                    +
-                    " where  coa.type=:type and length(coa.glcode)="
-                    + reportSearch.getMajorCodeLen()
-                    + "and coa.glcode in ("
-                    + capExpCodesWithQuotesCond + ")" +
-                    " order by 1";
-        final Query query = persistenceService.getSession().createNativeQuery(sql)
+            sql.append(" select coa.glcode as accCode,coa.name as name,mp.schedule as schedule,mp.id as FIEscheduleId, 0 as isMajor from Chartofaccounts coa,Schedulemapping mp")
+                    .append(" where coa.FIEscheduleId=mp.id and coa.type=:type and length(coa.glcode)=:minorCodeLength")
+                    .append(" Union ")
+                    .append(" select coa.glcode as accCode,coa.name as name,null as schedule,null as FIEscheduleId ,1 as isMajor from Chartofaccounts coa")
+                    .append(" where  coa.type=:type and length(coa.glcode)=:majorCodeLength and coa.glcode in (").append(capExpCodesWithQuotesCond).append(")").append(" order by 1");
+        final Query query = persistenceService.getSession().createNativeQuery(sql.toString())
                 .addScalar("accCode", StringType.INSTANCE)
                 .addScalar("name", StringType.INSTANCE)
                 .addScalar("schedule", StringType.INSTANCE)
@@ -304,10 +312,16 @@ public class FunctionwiseIEService
                 .addScalar("isMajor", BooleanType.INSTANCE)
                 .setString("type", "A")
                 .setResultTransformer(Transformers.aliasToBean(CommonReportBean.class));
-        if (reportSearch.getByDetailCode())
-            query.setString("glcode", reportSearch.getGlcode() + "%");
-        else if (reportSearch.getByDepartment())
-            query.setLong("FIEscheduleId", reportSearch.getFIEscheduleId());
+        if (reportSearch.getByDetailCode()) {
+            query.setParameter("glcode", reportSearch.getGlcode() + "%", StringType.INSTANCE)
+                    .setParameter("minorCodeLength", reportSearch.getMinorCodeLen(), IntegerType.INSTANCE);
+        } else if (reportSearch.getByDepartment()) {
+            query.setParameter("FIEscheduleId", reportSearch.getFIEscheduleId(), LongType.INSTANCE)
+                    .setParameter("minorCodeLength", reportSearch.getMinorCodeLen(), IntegerType.INSTANCE);
+        } else {
+            query.setParameter("majorCodeLength", reportSearch.getMajorCodeLen(), IntegerType.INSTANCE)
+                    .setParameter("minorCodeLength", reportSearch.getMinorCodeLen(), IntegerType.INSTANCE);
+        }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("----------------" + sql);
         return query.list();
@@ -315,43 +329,38 @@ public class FunctionwiseIEService
     }
 
     public List<CommonReportBean> getIncomeMinorAndMajorCodeList(final ReportSearch reportSearch) throws ApplicationException,
-    ParseException
-    {
-        String sql = "";
+            ParseException {
+        StringBuilder sql = new StringBuilder("");
         if (reportSearch.getByDepartment() && reportSearch.getByDetailCode())
-            sql = " select coa.glcode as accCode,coa.name as name,null as schedule,null as FIEscheduleId,0 as isMajor from Chartofaccounts coa"
-                    +
-                    " where  coa.type=:type and length(coa.glcode)=" + reportSearch.getMinorCodeLen() +
-                    " and coa.glcode like :glcode and classification=4 and isActiveForPosting=true order by 1 ";
+            sql.append(" select coa.glcode as accCode,coa.name as name,null as schedule,null as FIEscheduleId,0 as isMajor from Chartofaccounts coa")
+                    .append(" where  coa.type=:type and length(coa.glcode)=:minorCodeLength and coa.glcode like :glcode and classification=4 and isActiveForPosting=true order by 1 ");
         else if (reportSearch.getByDepartment())
-            sql = " select coa.glcode as accCode,coa.name as name,mp.schedule as schedule,mp.id as FIEscheduleId,0 as isMajor from Chartofaccounts coa,Schedulemapping mp"
-                    +
-                    " where coa.FIEscheduleId=mp.id and coa.type=:type and length(coa.glcode)=" + reportSearch.getMinorCodeLen() +
-                    " and coa.FIEscheduleId=:FIEscheduleId  order by 1";
+            sql.append(" select coa.glcode as accCode,coa.name as name,mp.schedule as schedule,mp.id as FIEscheduleId,0 as isMajor from Chartofaccounts coa,Schedulemapping mp")
+                    .append(" where coa.FIEscheduleId=mp.id and coa.type=:type and length(coa.glcode)=:minorCodeLength and coa.FIEscheduleId=:FIEscheduleId  order by 1");
         else
-            sql = " select coa.glcode as accCode,coa.name as name,mp.schedule as schedule,mp.id as FIEscheduleId, 0 as isMajor from Chartofaccounts coa,Schedulemapping mp"
-                    +
-                    " where coa.FIEscheduleId=mp.id and coa.type=:type and length(coa.glcode)="
-                    + reportSearch.getMinorCodeLen()
-                    +
-                    " Union "
-                    +
-                    " select coa.glcode as accCode,coa.name as name,null as schedule,null as FIEscheduleId ,1 as isMajor from Chartofaccounts coa"
-                    +
-                    " where  coa.type=:type and length(coa.glcode)=" + reportSearch.getMajorCodeLen() +
-                    " order by 1";
-        final Query query = persistenceService.getSession().createNativeQuery(sql)
+            sql.append(" select coa.glcode as accCode,coa.name as name,mp.schedule as schedule,mp.id as FIEscheduleId, 0 as isMajor from Chartofaccounts coa,Schedulemapping mp")
+                    .append(" where coa.FIEscheduleId=mp.id and coa.type=:type and length(coa.glcode)=:minorCodeLength")
+                    .append(" Union ")
+                    .append(" select coa.glcode as accCode,coa.name as name,null as schedule,null as FIEscheduleId ,1 as isMajor from Chartofaccounts coa")
+                    .append(" where  coa.type=:type and length(coa.glcode)=:majorCodeLength order by 1");
+        final Query query = persistenceService.getSession().createNativeQuery(sql.toString())
                 .addScalar("accCode", StringType.INSTANCE)
                 .addScalar("name", StringType.INSTANCE)
                 .addScalar("schedule", StringType.INSTANCE)
                 .addScalar("FIEscheduleId", LongType.INSTANCE)
                 .addScalar("isMajor", BooleanType.INSTANCE)
-                .setString("type", reportSearch.getIncExp())
+                .setParameter("type", reportSearch.getIncExp(), StringType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(CommonReportBean.class));
-        if (reportSearch.getByDetailCode())
-            query.setString("glcode", reportSearch.getGlcode() + "%");
-        else if (reportSearch.getByDepartment())
-            query.setLong("FIEscheduleId", reportSearch.getFIEscheduleId());
+        if (reportSearch.getByDetailCode()) {
+            query.setParameter("glcode", reportSearch.getGlcode() + "%", StringType.INSTANCE)
+                    .setParameter("minorCodeLength", reportSearch.getMinorCodeLen());
+        } else if (reportSearch.getByDepartment()) {
+            query.setParameter("FIEscheduleId", reportSearch.getFIEscheduleId(), LongType.INSTANCE)
+                    .setParameter("minorCodeLength", reportSearch.getMinorCodeLen());
+        } else {
+            query.setParameter("minorCodeLength", reportSearch.getMinorCodeLen())
+                    .setParameter("majorCodeLength", reportSearch.getMajorCodeLen());
+        }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("----------------" + sql);
         return query.list();
@@ -359,20 +368,28 @@ public class FunctionwiseIEService
     }
 
     public void getAmountList(final FunctionwiseIE functionwiseIE, final ReportSearch reportSearch) throws ApplicationException,
-    ParseException
-    {
+            ParseException {
 
-        final String sql = "SELECT fn.code,fn.name,CONCAT(CONCAT(coa.majorcode,'-'),coa.name),case '"
-                + reportSearch.getIncExp()
-                + "' when  'I' then (SUM(gl.creditamount)-SUM(gl.debitamount)) when 'E' then (SUM(gl.debitamount)-SUM(gl.creditamount)) else 0 end AS amt " +
-                " FROM GENERALLEDGER gl,FUNCTION fn,VOUCHERHEADER vh, CHARTOFACCOUNTS coa,vouchermis vmis " +
-                " WHERE vh.id=vmis.voucherheaderid and vh.ID=gl.voucherheaderid AND SUBSTR(gl.glcode,1,"
-                + reportSearch.getMajorCodeLen() + ")=coa.glcode AND coa.TYPE='" + reportSearch.getIncExp() + "' " +
-                " AND fn.id = gl.functionid " + getFilterQueryVoucher(reportSearch) + getFilterQueryGL(reportSearch)
-                + " GROUP BY fn.code,fn.name,CONCAT(CONCAT(coa.majorcode,'-'),coa.name) order by 1,3";
+        final Map.Entry<String, Map<String, Object>> filterQueryVoucherMapEntry = getFilterQueryVoucher(reportSearch).entrySet().iterator().next();
+        final String filterQueryVoucherString = filterQueryVoucherMapEntry.getKey();
+        final Map<String, Object> voucherParams = filterQueryVoucherMapEntry.getValue();
+        final Map.Entry<String, Map<String, Object>> filterQueryGLMapEntry = getFilterQueryGL(reportSearch).entrySet().iterator().next();
+        final String filterQueryGLString = filterQueryGLMapEntry.getKey();
+        final Map<String, Object> glParams = filterQueryGLMapEntry.getValue();
+        final StringBuilder sql = new StringBuilder("SELECT fn.code,fn.name,CONCAT(CONCAT(coa.majorcode,'-'),coa.name),case '")
+                .append(reportSearch.getIncExp())
+                .append("' when  'I' then (SUM(gl.creditamount)-SUM(gl.debitamount)) when 'E' then (SUM(gl.debitamount)-SUM(gl.creditamount)) else 0 end AS amt ")
+                .append(" FROM GENERALLEDGER gl,FUNCTION fn,VOUCHERHEADER vh, CHARTOFACCOUNTS coa,vouchermis vmis ")
+                .append(" WHERE vh.id=vmis.voucherheaderid and vh.ID=gl.voucherheaderid AND SUBSTR(gl.glcode,1,:majorCodeLength)=coa.glcode AND coa.TYPE=:coaType ")
+                .append(" AND fn.id = gl.functionid ").append(filterQueryVoucherString).append(filterQueryGLString)
+                .append(" GROUP BY fn.code,fn.name,CONCAT(CONCAT(coa.majorcode,'-'),coa.name) order by 1,3");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("sql===" + sql);
-        final Query query = persistenceService.getSession().createNativeQuery(sql);
+        final Query query = persistenceService.getSession().createNativeQuery(sql.toString());
+        query.setParameter("majorCodeLength", reportSearch.getMajorCodeLen(), IntegerType.INSTANCE)
+                .setParameter("coaType", reportSearch.getIncExp(), StringType.INSTANCE);
+        voucherParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
+        glParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
         final List<Object[]> list = query.list();
         FunctionwiseIEEntry entry = new FunctionwiseIEEntry();
         Map<String, BigDecimal> majorcodeWiseAmount = new HashMap<String, BigDecimal>();
@@ -381,20 +398,14 @@ public class FunctionwiseIEService
         BigDecimal totalIncome = BigDecimal.ZERO;
         BigDecimal grandTotal = BigDecimal.ZERO;
         int i = 1;
-        for (final Object[] obj : list)
-        {
-            if (tempFunctionCode.equals(obj[0].toString()))
-            {
-                if (functionwiseIE.getMajorCodeList().contains(obj[2].toString()))
-                {
+        for (final Object[] obj : list) {
+            if (tempFunctionCode.equals(obj[0].toString())) {
+                if (functionwiseIE.getMajorCodeList().contains(obj[2].toString())) {
                     majorcodeWiseAmount.put(obj[2].toString(), round((BigDecimal) obj[3]));
                     totalIncome = totalIncome.add((BigDecimal) obj[3]);
                 }
-            }
-            else
-            {
-                if (!majorcodeWiseAmount.isEmpty())
-                {
+            } else {
+                if (!majorcodeWiseAmount.isEmpty()) {
                     entry.setTotalIncome(round(totalIncome));
                     entry.setMajorcodeWiseAmount(majorcodeWiseAmount);
                     functionwiseIE.add(entry);
@@ -406,22 +417,20 @@ public class FunctionwiseIEService
                 entry.setFunctionCode(obj[0].toString());
                 entry.setFunctionName(obj[1].toString());
                 majorcodeWiseAmount = new HashMap<String, BigDecimal>();
-                if (functionwiseIE.getMajorCodeList().contains(obj[2].toString()))
-                {
+                if (functionwiseIE.getMajorCodeList().contains(obj[2].toString())) {
                     majorcodeWiseAmount.put(obj[2].toString(), round((BigDecimal) obj[3]));
                     totalIncome = totalIncome.add((BigDecimal) obj[3]);
                 }
             }
             if (totalAmountMap.containsKey(obj[2].toString()))
                 totalAmountMap
-                .put(obj[2].toString(), totalAmountMap.get(obj[2].toString()).add((BigDecimal) obj[3]));
+                        .put(obj[2].toString(), totalAmountMap.get(obj[2].toString()).add((BigDecimal) obj[3]));
             else
                 totalAmountMap.put(obj[2].toString(), (BigDecimal) obj[3]);
             grandTotal = grandTotal.add((BigDecimal) obj[3]);
             tempFunctionCode = obj[0].toString();
         }
-        if (!majorcodeWiseAmount.isEmpty())
-        {
+        if (!majorcodeWiseAmount.isEmpty()) {
             entry.setTotalIncome(round(totalIncome));
             entry.setMajorcodeWiseAmount(majorcodeWiseAmount);
             functionwiseIE.add(entry);
@@ -433,8 +442,7 @@ public class FunctionwiseIEService
             majorcodeWiseAmount = new HashMap<String, BigDecimal>();
             final Iterator it = totalAmountMap.keySet().iterator();
             String key;
-            while (it.hasNext())
-            {
+            while (it.hasNext()) {
                 key = it.next().toString();
                 majorcodeWiseAmount.put(key, round(totalAmountMap.get(key)));
             }
@@ -445,91 +453,81 @@ public class FunctionwiseIEService
 
     @SuppressWarnings("unchecked")
     public List<CommonReportBean> getAmountListForMinorCode(final FunctionwiseIE functionwiseIE, final ReportSearch reportSearch)
-            throws ApplicationException, ParseException
-            {
+            throws ApplicationException, ParseException {
 
-        String sql = "";
-        Query query = null;
+        final StringBuilder sql = new StringBuilder("");
+        final Map<String, Object> params = new HashMap<>();
+        final Query query;
 
-        if (reportSearch.getByDetailCode())
-        {
-            if (reportSearch.getIncExp().equalsIgnoreCase("E"))
-                sql = "SELECT SUBSTR(coa.glcode,1,"
-                        + reportSearch.getMinorCodeLen()
-                        + ") as accCode,d.dept_name as deptName ,(SUM(gl.debitamount)-SUM(gl.creditamount)) AS amount,0 as isMajor ";
-            else
-                sql = "SELECT SUBSTR(coa.glcode,1,"
-                        + reportSearch.getMinorCodeLen()
-                        + ") as accCode,d.dept_name as deptName ,(SUM(gl.creditamount)-SUM(gl.debitamount)) AS amount,0 as isMajor ";
+        final Map.Entry<String, Map<String, Object>> voucherQueryMapEntry = getFilterQueryVoucherAsOnDate(reportSearch).entrySet().iterator().next();
+        final String voucherQuery = voucherQueryMapEntry.getKey();
+        final Map<String, Object> voucherQueryParams = voucherQueryMapEntry.getValue();
 
-            if (reportSearch.getIncExp().equalsIgnoreCase("E"))
-                sql = sql
-                + " FROM GENERALLEDGER gl,FUNCTION fn,VOUCHERHEADER vh, CHARTOFACCOUNTS coa,vouchermis vmis,eg_department d  "
-                +
-                " WHERE vh.id=vmis.voucherheaderid and vh.ID=gl.voucherheaderid AND SUBSTR(gl.glcode,1,"
-                + reportSearch.getMinorCodeLen()
-                + ")=coa.glcode AND (coa.TYPE='"
-                + reportSearch.getIncExp()
-                + "' "
-                + capExpCodeCond
-                + ")"
-                +
-                " and d.dept_name=:deptName and coa.glcode like :glcode AND fn.id = gl.functionid  and vmis.departmentid=d.id_dept "
-                + getFilterQueryVoucherAsOnDate(reportSearch) + getFilterQueryGL(reportSearch)
-                + " GROUP BY  SUBSTR(coa.glcode,1," + reportSearch.getMinorCodeLen() + "),d.dept_name ";
-            else
-                sql = sql
-                + " FROM GENERALLEDGER gl,FUNCTION fn,VOUCHERHEADER vh, CHARTOFACCOUNTS coa,vouchermis vmis,eg_department d  "
-                +
-                " WHERE vh.id=vmis.voucherheaderid and vh.ID=gl.voucherheaderid AND SUBSTR(gl.glcode,1,"
-                + reportSearch.getMinorCodeLen()
-                + ")=coa.glcode AND coa.TYPE='"
-                + reportSearch.getIncExp()
-                + "' "
-                +
-                " and d.dept_name=:deptName and coa.glcode like :glcode AND fn.id = gl.functionid  and vmis.departmentid=d.id_dept "
-                + getFilterQueryVoucherAsOnDate(reportSearch) + getFilterQueryGL(reportSearch)
-                + " GROUP BY  SUBSTR(coa.glcode,1," + reportSearch.getMinorCodeLen() + "),d.dept_name ";
-            sql = sql + "order by 2,1 ";
-            query = persistenceService.getSession().createNativeQuery(sql).addScalar("accCode", StringType.INSTANCE).
+        final Map.Entry<String, Map<String, Object>> glQueryMapEntry = getFilterQueryGL(reportSearch).entrySet().iterator().next();
+        final String glQuery = glQueryMapEntry.getKey();
+        final Map<String, Object> glQueryParams = glQueryMapEntry.getValue();
+
+        if (reportSearch.getByDetailCode()) {
+            if (reportSearch.getIncExp().equalsIgnoreCase("E")) {
+                sql.append("SELECT SUBSTR(coa.glcode,1,:minorCodeLength) as accCode,d.dept_name as deptName ,(SUM(gl.debitamount)-SUM(gl.creditamount)) AS amount,0 as isMajor ");
+                params.put("minorCodeLength", reportSearch.getMinorCodeLen());
+            } else {
+                sql.append("SELECT SUBSTR(coa.glcode,1,:minorCodeLength) as accCode,d.dept_name as deptName ,(SUM(gl.creditamount)-SUM(gl.debitamount)) AS amount,0 as isMajor ");
+                params.put("minorCodeLength", reportSearch.getMinorCodeLen());
+            }
+
+            if (reportSearch.getIncExp().equalsIgnoreCase("E")) {
+                sql.append(" FROM GENERALLEDGER gl,FUNCTION fn,VOUCHERHEADER vh, CHARTOFACCOUNTS coa,vouchermis vmis,eg_department d  ")
+                        .append(" WHERE vh.id=vmis.voucherheaderid and vh.ID=gl.voucherheaderid AND SUBSTR(gl.glcode,1,:minorCodeLength)=coa.glcode")
+                        .append(" AND (coa.TYPE=:coaType ").append(capExpCodeCond).append(")")
+                        .append(" and d.dept_name=:deptName and coa.glcode like :glcode AND fn.id = gl.functionid  and vmis.departmentid=d.id_dept ")
+                        .append(voucherQuery).append(glQuery)
+                        .append(" GROUP BY  SUBSTR(coa.glcode,1,:minorCodeLength),d.dept_name ");
+                params.put("minorCodeLength", reportSearch.getMinorCodeLen());
+                params.put("coaType", reportSearch.getIncExp());
+            } else {
+                sql.append(" FROM GENERALLEDGER gl,FUNCTION fn,VOUCHERHEADER vh, CHARTOFACCOUNTS coa,vouchermis vmis,eg_department d  ")
+                        .append(" WHERE vh.id=vmis.voucherheaderid and vh.ID=gl.voucherheaderid AND SUBSTR(gl.glcode,1,:minorCodeLength)=coa.glcode")
+                        .append(" AND coa.TYPE=:coaType and d.dept_name=:deptName and coa.glcode like :glcode AND fn.id = gl.functionid  and vmis.departmentid=d.id_dept ")
+                        .append(voucherQuery).append(glQuery)
+                        .append(" GROUP BY  SUBSTR(coa.glcode,1,:minorCodeLength),d.dept_name ");
+                params.put("minorCodeLength", reportSearch.getMinorCodeLen());
+                params.put("coaType", reportSearch.getIncExp());
+            }
+            sql.append("order by 2,1 ");
+            query = persistenceService.getSession().createNativeQuery(sql.toString()).addScalar("accCode", StringType.INSTANCE).
                     addScalar("amount", BigDecimalType.INSTANCE)
                     .addScalar("isMajor", BooleanType.INSTANCE)
                     .addScalar("deptName", StringType.INSTANCE)
-                    .setString("glcode", reportSearch.getGlcode() + "%")
-                    .setString("deptName", reportSearch.getDepartment().getName())
+                    .setParameter("glcode", reportSearch.getGlcode() + "%", StringType.INSTANCE)
+                    .setParameter("deptName", reportSearch.getDepartment().getName(), StringType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(CommonReportBean.class));
-        } else if (reportSearch.getByDepartment())
-        {
-            if (reportSearch.getIncExp().equalsIgnoreCase("E"))
-                sql = "SELECT SUBSTR(coa.glcode,1,"
-                        + reportSearch.getMinorCodeLen()
-                        + ") as accCode,d.dept_name as deptName ,(SUM(gl.debitamount)-SUM(gl.creditamount)) AS amount,0 as isMajor ";
-            else
-                sql = "SELECT SUBSTR(coa.glcode,1,"
-                        + reportSearch.getMinorCodeLen()
-                        + ") as accCode,d.dept_name as deptName ,(SUM(gl.creditamount)-SUM(gl.debitamount)) AS amount,0 as isMajor ";
 
-            if (reportSearch.getIncExp().equalsIgnoreCase("E"))
-                sql = sql
-                + " FROM GENERALLEDGER gl,FUNCTION fn,VOUCHERHEADER vh, CHARTOFACCOUNTS coa,vouchermis vmis,eg_department d  "
-                +
-                " WHERE vh.id=vmis.voucherheaderid and vh.ID=gl.voucherheaderid AND SUBSTR(gl.glcode,1,"
-                + reportSearch.getMinorCodeLen() + ")=coa.glcode AND (coa.TYPE='" + reportSearch.getIncExp() + "'"
-                + capExpCodeCond + ")" +
-                " AND fn.id = gl.functionid  and vmis.departmentid=d.id_dept "
-                + getFilterQueryVoucherAsOnDate(reportSearch) + getFilterQueryGL(reportSearch)
-                + " GROUP BY  SUBSTR(coa.glcode,1," + reportSearch.getMinorCodeLen() + "),d.dept_name ";
-            else
-                sql = sql
-                + " FROM GENERALLEDGER gl,FUNCTION fn,VOUCHERHEADER vh, CHARTOFACCOUNTS coa,vouchermis vmis,eg_department d  "
-                +
-                " WHERE vh.id=vmis.voucherheaderid and vh.ID=gl.voucherheaderid AND SUBSTR(gl.glcode,1,"
-                + reportSearch.getMinorCodeLen() + ")=coa.glcode AND coa.TYPE='" + reportSearch.getIncExp() + "' " +
-                " AND fn.id = gl.functionid  and vmis.departmentid=d.id_dept "
-                + getFilterQueryVoucherAsOnDate(reportSearch) + getFilterQueryGL(reportSearch)
-                + " GROUP BY  SUBSTR(coa.glcode,1," + reportSearch.getMinorCodeLen() + "),d.dept_name ";
-            sql = sql + "order by 2,1 ";
-            query = persistenceService.getSession().createNativeQuery(sql).addScalar("accCode", StringType.INSTANCE).
+        } else if (reportSearch.getByDepartment()) {
+            if (reportSearch.getIncExp().equalsIgnoreCase("E")) {
+                sql.append("SELECT SUBSTR(coa.glcode,1,:minorCodeLength) as accCode,d.dept_name as deptName ,(SUM(gl.debitamount)-SUM(gl.creditamount)) AS amount,0 as isMajor ");
+                params.put("minorCodeLength", reportSearch.getMinorCodeLen());
+            } else {
+                sql.append("SELECT SUBSTR(coa.glcode,1,:minorCodeLength) as accCode,d.dept_name as deptName ,(SUM(gl.creditamount)-SUM(gl.debitamount)) AS amount,0 as isMajor ");
+                params.put("minorCodeLength", reportSearch.getMinorCodeLen());
+            }
+            if (reportSearch.getIncExp().equalsIgnoreCase("E")) {
+                sql.append(" FROM GENERALLEDGER gl,FUNCTION fn,VOUCHERHEADER vh, CHARTOFACCOUNTS coa,vouchermis vmis,eg_department d  ")
+                        .append(" WHERE vh.id=vmis.voucherheaderid and vh.ID=gl.voucherheaderid AND SUBSTR(gl.glcode,1,:minorCodeLength)=coa.glcode AND (coa.TYPE=:coaType")
+                        .append(capExpCodeCond).append(")").append(" AND fn.id = gl.functionid  and vmis.departmentid=d.id_dept ")
+                        .append(voucherQuery).append(glQuery).append(" GROUP BY  SUBSTR(coa.glcode,1,:minorCodeLength),d.dept_name ");
+                params.put("minorCodeLength", reportSearch.getMinorCodeLen());
+                params.put("coaType", reportSearch.getIncExp());
+            } else {
+                sql.append(" FROM GENERALLEDGER gl,FUNCTION fn,VOUCHERHEADER vh, CHARTOFACCOUNTS coa,vouchermis vmis,eg_department d  ")
+                        .append(" WHERE vh.id=vmis.voucherheaderid and vh.ID=gl.voucherheaderid AND SUBSTR(gl.glcode,1,:minorCodeLength)=coa.glcode AND coa.TYPE=:coaType")
+                        .append(" AND fn.id = gl.functionid  and vmis.departmentid=d.id_dept ")
+                        .append(voucherQuery).append(glQuery).append(" GROUP BY  SUBSTR(coa.glcode,1,:minorCodeLength),d.dept_name ");
+                params.put("minorCodeLength", reportSearch.getMinorCodeLen());
+                params.put("coaType", reportSearch.getIncExp());
+            }
+            sql.append("order by 2,1 ");
+            query = persistenceService.getSession().createNativeQuery(sql.toString()).addScalar("accCode", StringType.INSTANCE).
                     addScalar("amount", BigDecimalType.INSTANCE)
                     .addScalar("isMajor", BooleanType.INSTANCE)
                     .addScalar("deptName", StringType.INSTANCE)
@@ -537,195 +535,187 @@ public class FunctionwiseIEService
 
         } else {
             if (reportSearch.getIncExp().equalsIgnoreCase("E"))
+                sql.append("SELECT coa.majorcode as accCode,coa.name as accName,(SUM(gl.debitamount)-SUM(gl.creditamount)) AS amount,1 as isMajor ");
+            else
+                sql.append("SELECT coa.majorcode as accCode,coa.name as accName,(SUM(gl.creditamount)-SUM(gl.debitamount)) AS amount,1 as isMajor ");
 
-                sql = "SELECT coa.majorcode as accCode,coa.name as accName,(SUM(gl.debitamount)-SUM(gl.creditamount)) AS amount,1 as isMajor ";
-            else
-                sql = "SELECT coa.majorcode as accCode,coa.name as accName,(SUM(gl.creditamount)-SUM(gl.debitamount)) AS amount,1 as isMajor ";
+            if (reportSearch.getIncExp().equalsIgnoreCase("E")) {
+                sql.append(" FROM GENERALLEDGER gl,FUNCTION fn,VOUCHERHEADER vh, CHARTOFACCOUNTS coa,vouchermis vmis  ")
+                        .append(" WHERE vh.id=vmis.voucherheaderid and vh.ID=gl.voucherheaderid AND SUBSTR(gl.glcode,1,:majorCodeLength)=coa.glcode AND (coa.TYPE=:coaType")
+                        .append(capExpCodeCond).append(")").append(" AND fn.id = gl.functionid ").append(voucherQuery)
+                        .append(glQuery).append(" GROUP BY coa.majorcode,coa.name ");
+                params.put("majorCodeLength", reportSearch.getMajorCodeLen());
+                params.put("coaType", reportSearch.getIncExp());
+            } else {
+                sql.append(" FROM GENERALLEDGER gl,FUNCTION fn,VOUCHERHEADER vh, CHARTOFACCOUNTS coa,vouchermis vmis  ")
+                        .append(" WHERE vh.id=vmis.voucherheaderid and vh.ID=gl.voucherheaderid AND SUBSTR(gl.glcode,1,:majorCodeLength)=coa.glcode AND coa.TYPE=:coaType")
+                        .append(" AND fn.id = gl.functionid ").append(voucherQuery).append(glQuery).append(" GROUP BY coa.majorcode,coa.name ");
+                params.put("majorCodeLength", reportSearch.getMajorCodeLen());
+                params.put("coaType", reportSearch.getIncExp());
+            }
+            if (reportSearch.getIncExp().equalsIgnoreCase("E")) {
+                sql.append(" Union SELECT SUBSTR(coa.glcode,1,:minorCodeLength) as accCode, coa.name  as accName,(SUM(gl.debitamount)-SUM(gl.creditamount)) AS amount ,0 as isMajor ");
+                params.put("minorCodeLength", reportSearch.getMinorCodeLen());
+            } else {
+                sql.append(" Union SELECT SUBSTR(coa.glcode,1,:minorCodeLength) as accCode, coa.name  as accName,(SUM(gl.creditamount)-SUM(gl.debitamount)) AS amount ,0 as isMajor ");
+                params.put("minorCodeLength", reportSearch.getMinorCodeLen());
+            }
 
-            if (reportSearch.getIncExp().equalsIgnoreCase("E"))
-                sql = sql + " FROM GENERALLEDGER gl,FUNCTION fn,VOUCHERHEADER vh, CHARTOFACCOUNTS coa,vouchermis vmis  " +
-                        " WHERE vh.id=vmis.voucherheaderid and vh.ID=gl.voucherheaderid AND SUBSTR(gl.glcode,1,"
-                        + reportSearch.getMajorCodeLen() + ")=coa.glcode AND (coa.TYPE='" + reportSearch.getIncExp() + "'"
-                        + capExpCodeCond + ")" +
-                        " AND fn.id = gl.functionid " + getFilterQueryVoucherAsOnDate(reportSearch)
-                        + getFilterQueryGL(reportSearch) + " GROUP BY coa.majorcode,coa.name ";
-            else
-                sql = sql + " FROM GENERALLEDGER gl,FUNCTION fn,VOUCHERHEADER vh, CHARTOFACCOUNTS coa,vouchermis vmis  " +
-                        " WHERE vh.id=vmis.voucherheaderid and vh.ID=gl.voucherheaderid AND SUBSTR(gl.glcode,1,"
-                        + reportSearch.getMajorCodeLen() + ")=coa.glcode AND coa.TYPE='" + reportSearch.getIncExp() + "' " +
-                        " AND fn.id = gl.functionid " + getFilterQueryVoucherAsOnDate(reportSearch)
-                        + getFilterQueryGL(reportSearch) + " GROUP BY coa.majorcode,coa.name ";
-            if (reportSearch.getIncExp().equalsIgnoreCase("E"))
-                sql = sql
-                + " Union SELECT SUBSTR(coa.glcode,1,"
-                + reportSearch.getMinorCodeLen()
-                + ") as accCode, coa.name  as accName,(SUM(gl.debitamount)-SUM(gl.creditamount)) AS amount ,0 as isMajor ";
-            else
-                sql = sql
-                + " Union SELECT SUBSTR(coa.glcode,1,"
-                + reportSearch.getMinorCodeLen()
-                + ") as accCode, coa.name  as accName,(SUM(gl.creditamount)-SUM(gl.debitamount)) AS amount ,0 as isMajor ";
-
-            if (reportSearch.getIncExp().equalsIgnoreCase("E"))
-                sql = sql + " FROM GENERALLEDGER gl,FUNCTION fn,VOUCHERHEADER vh, CHARTOFACCOUNTS coa,vouchermis vmis " +
-                        " WHERE vh.id=vmis.voucherheaderid and vh.ID=gl.voucherheaderid AND SUBSTR(gl.glcode,1,"
-                        + reportSearch.getMinorCodeLen() + ")=coa.glcode AND (coa.TYPE='" + reportSearch.getIncExp() + "'"
-                        + capExpCodeCond + ")" +
-                        " AND fn.id = gl.functionid " + getFilterQueryVoucherAsOnDate(reportSearch)
-                        + getFilterQueryGL(reportSearch) + " GROUP BY SUBSTR(coa.glcode,1," + reportSearch.getMinorCodeLen()
-                        + "),coa.name order by 1,2 ";
-            else
-                sql = sql + " FROM GENERALLEDGER gl,FUNCTION fn,VOUCHERHEADER vh, CHARTOFACCOUNTS coa,vouchermis vmis " +
-                        " WHERE vh.id=vmis.voucherheaderid and vh.ID=gl.voucherheaderid AND SUBSTR(gl.glcode,1,"
-                        + reportSearch.getMinorCodeLen() + ")=coa.glcode AND coa.TYPE='" + reportSearch.getIncExp() + "' " +
-                        " AND fn.id = gl.functionid " + getFilterQueryVoucherAsOnDate(reportSearch)
-                        + getFilterQueryGL(reportSearch) + " GROUP BY SUBSTR(coa.glcode,1," + reportSearch.getMinorCodeLen()
-                        + "),coa.name order by 1,2 ";
-            query = persistenceService.getSession().createNativeQuery(sql).addScalar("accCode", StringType.INSTANCE).
+            if (reportSearch.getIncExp().equalsIgnoreCase("E")) {
+                sql.append(" FROM GENERALLEDGER gl,FUNCTION fn,VOUCHERHEADER vh, CHARTOFACCOUNTS coa,vouchermis vmis ")
+                        .append(" WHERE vh.id=vmis.voucherheaderid and vh.ID=gl.voucherheaderid AND SUBSTR(gl.glcode,1,:minorCodeLength)=coa.glcode AND (coa.TYPE=:coaType")
+                        .append(capExpCodeCond).append(")").append(" AND fn.id = gl.functionid ").append(voucherQuery).append(glQuery)
+                        .append(" GROUP BY SUBSTR(coa.glcode,1,:minorCodeLength),coa.name order by 1,2 ");
+                params.put("minorCodeLength", reportSearch.getMinorCodeLen());
+                params.put("coaType", reportSearch.getIncExp());
+            } else {
+                sql.append(" FROM GENERALLEDGER gl,FUNCTION fn,VOUCHERHEADER vh, CHARTOFACCOUNTS coa,vouchermis vmis ")
+                        .append(" WHERE vh.id=vmis.voucherheaderid and vh.ID=gl.voucherheaderid AND SUBSTR(gl.glcode,1,:minorCodeLength)=coa.glcode AND coa.TYPE=:coaType")
+                        .append(" AND fn.id = gl.functionid ").append(voucherQuery).append(glQuery).append(" GROUP BY SUBSTR(coa.glcode,1,:minorCodeLength),coa.name order by 1,2 ");
+                params.put("minorCodeLength", reportSearch.getMinorCodeLen());
+                params.put("coaType", reportSearch.getIncExp());
+            }
+            query = persistenceService.getSession().createNativeQuery(sql.toString()).addScalar("accCode", StringType.INSTANCE).
                     addScalar("amount", BigDecimalType.INSTANCE)
                     .addScalar("isMajor", BooleanType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(CommonReportBean.class));
         }
+
+        voucherQueryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
+        glQueryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
+        params.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("sql===" + sql);
         final List<CommonReportBean> list = query.list();
         return list;
 
-            }
+    }
 
     @SuppressWarnings("unchecked")
     public List<CommonReportBean> getPreviousYearAmountListForMinorCode(final FunctionwiseIE functionwiseIE,
-            final ReportSearch reportSearch) throws ApplicationException, ParseException
-            {
+                                                                        final ReportSearch reportSearch) throws ApplicationException, ParseException {
 
-        String sql = "";
-        Query query = null;
+        final StringBuilder sql = new StringBuilder("");
+        final Query query;
 
-        if (reportSearch.getByDetailCode())
-        {
+        final Map.Entry<String, Map<String, Object>> voucherQueryMapEntry = getFilterQueryVoucherAsOnPreviousYearDate(reportSearch).entrySet().iterator().next();
+        final String voucherQuery = voucherQueryMapEntry.getKey();
+        final Map<String, Object> voucherQueryParams = voucherQueryMapEntry.getValue();
+
+        final Map.Entry<String, Map<String, Object>> glQueryMapEntry = getFilterQueryGL(reportSearch).entrySet().iterator().next();
+        final String glQuery = glQueryMapEntry.getKey();
+        final Map<String, Object> glQueryParams = glQueryMapEntry.getValue();
+
+        if (reportSearch.getByDetailCode()) {
             if (reportSearch.getIncExp().equalsIgnoreCase("E"))
-                sql = "SELECT SUBSTR(coa.glcode,1,"
-                        + reportSearch.getMinorCodeLen()
-                        + ") as accCode,d.dept_name as deptName ,(SUM(gl.debitamount)-SUM(gl.creditamount)) AS amount,0 as isMajor ";
+                sql.append("SELECT SUBSTR(coa.glcode,1,").append(reportSearch.getMinorCodeLen())
+                        .append(") as accCode,d.dept_name as deptName ,(SUM(gl.debitamount)-SUM(gl.creditamount)) AS amount,0 as isMajor ");
             else
-                sql = "SELECT SUBSTR(coa.glcode,1,"
-                        + reportSearch.getMinorCodeLen()
-                        + ") as accCode,d.dept_name as deptName ,(SUM(gl.creditamount)-SUM(gl.debitamount)) AS amount,0 as isMajor ";
+                sql.append("SELECT SUBSTR(coa.glcode,1,").append(reportSearch.getMinorCodeLen())
+                        .append(") as accCode,d.dept_name as deptName ,(SUM(gl.creditamount)-SUM(gl.debitamount)) AS amount,0 as isMajor ");
 
-            sql = sql
-                    + " FROM GENERALLEDGER gl,FUNCTION fn,VOUCHERHEADER vh, CHARTOFACCOUNTS coa,vouchermis vmis,eg_department d  "
-                    +
-                    " WHERE vh.id=vmis.voucherheaderid and vh.ID=gl.voucherheaderid AND SUBSTR(gl.glcode,1,"
-                    + reportSearch.getMinorCodeLen()
-                    + ")=coa.glcode AND coa.TYPE='"
-                    + reportSearch.getIncExp()
-                    + "' "
-                    +
-                    " and d.dept_name=:deptName and coa.glcode like :glcode AND fn.id = gl.functionid  and vmis.departmentid=d.id_dept "
-                    + getFilterQueryVoucherAsOnPreviousYearDate(reportSearch) + getFilterQueryGL(reportSearch)
-                    + " GROUP BY  SUBSTR(coa.glcode,1," + reportSearch.getMinorCodeLen() + "),d.dept_name ";
-            sql = sql + "order by 2,1 ";
-            query = persistenceService.getSession().createNativeQuery(sql).addScalar("accCode", StringType.INSTANCE).
+            sql.append(" FROM GENERALLEDGER gl,FUNCTION fn,VOUCHERHEADER vh, CHARTOFACCOUNTS coa,vouchermis vmis,eg_department d  ")
+                    .append(" WHERE vh.id=vmis.voucherheaderid and vh.ID=gl.voucherheaderid AND SUBSTR(gl.glcode,1,:minCodeLength)=coa.glcode AND coa.TYPE=:coaType ")
+                    .append(" and d.dept_name=:deptName and coa.glcode like :glcode AND fn.id = gl.functionid  and vmis.departmentid=d.id_dept ")
+                    .append(voucherQuery).append(glQuery)
+                    .append(" GROUP BY  SUBSTR(coa.glcode,1,:minCodeLength),d.dept_name ");
+            sql.append("order by 2,1 ");
+            query = persistenceService.getSession().createNativeQuery(sql.toString()).addScalar("accCode", StringType.INSTANCE).
                     addScalar("amount", BigDecimalType.INSTANCE)
                     .addScalar("isMajor", BooleanType.INSTANCE)
                     .addScalar("deptName", StringType.INSTANCE)
                     .setString("glcode", reportSearch.getGlcode() + "%")
                     .setString("deptName", reportSearch.getDepartment().getName())
                     .setResultTransformer(Transformers.aliasToBean(CommonReportBean.class));
-        } else if (reportSearch.getByDepartment())
-        {
-            if (reportSearch.getIncExp().equalsIgnoreCase("E"))
-                sql = "SELECT SUBSTR(coa.glcode,1,"
-                        + reportSearch.getMinorCodeLen()
-                        + ") as accCode,d.dept_name as deptName ,(SUM(gl.debitamount)-SUM(gl.creditamount)) AS amount,0 as isMajor ";
-            else
-                sql = "SELECT SUBSTR(coa.glcode,1,"
-                        + reportSearch.getMinorCodeLen()
-                        + ") as accCode,d.dept_name as deptName ,(SUM(gl.creditamount)-SUM(gl.debitamount)) AS amount,0 as isMajor ";
+            query.setParameter("minCodeLength", reportSearch.getMinorCodeLen(), IntegerType.INSTANCE)
+                    .setParameter("coaType", reportSearch.getIncExp(), StringType.INSTANCE);
 
-            sql = sql
-                    + " FROM GENERALLEDGER gl,FUNCTION fn,VOUCHERHEADER vh, CHARTOFACCOUNTS coa,vouchermis vmis,eg_department d  "
-                    +
-                    " WHERE vh.id=vmis.voucherheaderid and vh.ID=gl.voucherheaderid AND SUBSTR(gl.glcode,1,"
-                    + reportSearch.getMinorCodeLen() + ")=coa.glcode AND coa.TYPE='" + reportSearch.getIncExp() + "' " +
-                    " AND fn.id = gl.functionid  and vmis.departmentid=d.id_dept "
-                    + getFilterQueryVoucherAsOnPreviousYearDate(reportSearch) + getFilterQueryGL(reportSearch)
-                    + " GROUP BY  SUBSTR(coa.glcode,1," + reportSearch.getMinorCodeLen() + "),d.dept_name ";
-            sql = sql + "order by 2,1 ";
-            query = persistenceService.getSession().createNativeQuery(sql).addScalar("accCode", StringType.INSTANCE).
+        } else if (reportSearch.getByDepartment()) {
+            if (reportSearch.getIncExp().equalsIgnoreCase("E"))
+                sql.append("SELECT SUBSTR(coa.glcode,1,").append(reportSearch.getMinorCodeLen())
+                        .append(") as accCode,d.dept_name as deptName ,(SUM(gl.debitamount)-SUM(gl.creditamount)) AS amount,0 as isMajor ");
+            else
+                sql.append("SELECT SUBSTR(coa.glcode,1,").append(reportSearch.getMinorCodeLen())
+                        .append(") as accCode,d.dept_name as deptName ,(SUM(gl.creditamount)-SUM(gl.debitamount)) AS amount,0 as isMajor ");
+
+            sql.append(" FROM GENERALLEDGER gl,FUNCTION fn,VOUCHERHEADER vh, CHARTOFACCOUNTS coa,vouchermis vmis,eg_department d  ")
+                    .append(" WHERE vh.id=vmis.voucherheaderid and vh.ID=gl.voucherheaderid AND SUBSTR(gl.glcode,1,:minCodeLength)=coa.glcode")
+                    .append(" AND coa.TYPE=:coaType AND fn.id = gl.functionid  and vmis.departmentid=d.id_dept ")
+                    .append(voucherQuery).append(glQuery)
+                    .append(" GROUP BY  SUBSTR(coa.glcode,1,:minCodeLength),d.dept_name ");
+            sql.append("order by 2,1 ");
+            query = persistenceService.getSession().createNativeQuery(sql.toString()).addScalar("accCode", StringType.INSTANCE).
                     addScalar("amount", BigDecimalType.INSTANCE)
                     .addScalar("isMajor", BooleanType.INSTANCE)
                     .addScalar("deptName", StringType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(CommonReportBean.class));
 
+            query.setParameter("minCodeLength", reportSearch.getMinorCodeLen(), IntegerType.INSTANCE)
+                    .setParameter("coaType", reportSearch.getIncExp(), StringType.INSTANCE);
         } else {
             if (reportSearch.getIncExp().equalsIgnoreCase("E"))
-
-                sql = "SELECT coa.majorcode as accCode,coa.name as accName,(SUM(gl.debitamount)-SUM(gl.creditamount)) AS amount,1 as isMajor ";
+                sql.append("SELECT coa.majorcode as accCode,coa.name as accName,(SUM(gl.debitamount)-SUM(gl.creditamount)) AS amount,1 as isMajor ");
             else
-                sql = "SELECT coa.majorcode as accCode,coa.name as accName,(SUM(gl.creditamount)-SUM(gl.debitamount)) AS amount,1 as isMajor ";
-            sql = sql + " FROM GENERALLEDGER gl,FUNCTION fn,VOUCHERHEADER vh, CHARTOFACCOUNTS coa,vouchermis vmis  " +
-                    " WHERE vh.id=vmis.voucherheaderid and vh.ID=gl.voucherheaderid AND SUBSTR(gl.glcode,1,"
-                    + reportSearch.getMajorCodeLen() + ")=coa.glcode AND coa.TYPE='" + reportSearch.getIncExp() + "' " +
-                    " AND fn.id = gl.functionid " + getFilterQueryVoucherAsOnPreviousYearDate(reportSearch)
-                    + getFilterQueryGL(reportSearch) + " GROUP BY coa.majorcode,coa.name ";
+                sql.append("SELECT coa.majorcode as accCode,coa.name as accName,(SUM(gl.creditamount)-SUM(gl.debitamount)) AS amount,1 as isMajor ");
+            sql.append(" FROM GENERALLEDGER gl,FUNCTION fn,VOUCHERHEADER vh, CHARTOFACCOUNTS coa,vouchermis vmis  ")
+                    .append(" WHERE vh.id=vmis.voucherheaderid and vh.ID=gl.voucherheaderid AND SUBSTR(gl.glcode,1,:majorCodeLength)=coa.glcode")
+                    .append(" AND coa.TYPE=:coaType AND fn.id = gl.functionid ")
+                    .append(voucherQuery).append(glQuery).append(" GROUP BY coa.majorcode,coa.name ");
             if (reportSearch.getIncExp().equalsIgnoreCase("E"))
-                sql = sql
-                + " Union SELECT SUBSTR(coa.glcode,1,"
-                + reportSearch.getMinorCodeLen()
-                + ") as accCode, coa.name  as accName,(SUM(gl.debitamount)-SUM(gl.creditamount)) AS amount ,0 as isMajor ";
+                sql.append(" Union SELECT SUBSTR(coa.glcode,1,").append(reportSearch.getMinorCodeLen())
+                        .append(") as accCode, coa.name  as accName,(SUM(gl.debitamount)-SUM(gl.creditamount)) AS amount ,0 as isMajor ");
             else
-                sql = sql
-                + " Union SELECT SUBSTR(coa.glcode,1,"
-                + reportSearch.getMinorCodeLen()
-                + ") as accCode, coa.name  as accName,(SUM(gl.creditamount)-SUM(gl.debitamount)) AS amount ,0 as isMajor ";
+                sql.append(" Union SELECT SUBSTR(coa.glcode,1,").append(reportSearch.getMinorCodeLen())
+                        .append(") as accCode, coa.name  as accName,(SUM(gl.creditamount)-SUM(gl.debitamount)) AS amount ,0 as isMajor ");
 
-            sql = sql + " FROM GENERALLEDGER gl,FUNCTION fn,VOUCHERHEADER vh, CHARTOFACCOUNTS coa,vouchermis vmis " +
-                    " WHERE vh.id=vmis.voucherheaderid and vh.ID=gl.voucherheaderid AND SUBSTR(gl.glcode,1,"
-                    + reportSearch.getMinorCodeLen() + ")=coa.glcode AND coa.TYPE='" + reportSearch.getIncExp() + "' " +
-                    " AND fn.id = gl.functionid " + getFilterQueryVoucherAsOnPreviousYearDate(reportSearch)
-                    + getFilterQueryGL(reportSearch) + " GROUP BY SUBSTR(coa.glcode,1," + reportSearch.getMinorCodeLen()
-                    + "),coa.name order by 1,2 ";
-            query = persistenceService.getSession().createNativeQuery(sql).addScalar("accCode", StringType.INSTANCE).
+            sql.append(" FROM GENERALLEDGER gl,FUNCTION fn,VOUCHERHEADER vh, CHARTOFACCOUNTS coa,vouchermis vmis ")
+                    .append(" WHERE vh.id=vmis.voucherheaderid and vh.ID=gl.voucherheaderid AND SUBSTR(gl.glcode,1,:minCodeLength)=coa.glcode")
+                    .append(" AND coa.TYPE=:coaType AND fn.id = gl.functionid ")
+                    .append(voucherQuery).append(glQuery).append(" GROUP BY SUBSTR(coa.glcode,1,:minCodeLength),coa.name order by 1,2 ");
+            query = persistenceService.getSession().createNativeQuery(sql.toString()).addScalar("accCode", StringType.INSTANCE).
                     addScalar("amount", BigDecimalType.INSTANCE)
                     .addScalar("isMajor", BooleanType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(CommonReportBean.class));
+            query.setParameter("minCodeLength", reportSearch.getMinorCodeLen(), IntegerType.INSTANCE)
+                    .setParameter("majorCodeLength", reportSearch.getMajorCodeLen(), IntegerType.INSTANCE)
+                    .setParameter("coaType", reportSearch.getIncExp(), StringType.INSTANCE);
         }
+
+        voucherQueryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
+        glQueryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("sql===" + sql);
         final List<CommonReportBean> list = query.list();
         return list;
 
-            }
+    }
 
     public void populateData(final FunctionwiseIE functionwiseIE, final ReportSearch reportSearch) throws ApplicationException,
-    ParseException
-    {
+            ParseException {
         getMajorCodeList(functionwiseIE, reportSearch);
         getAmountList(functionwiseIE, reportSearch);
     }
 
     public List<CommonReportBean> populateDataWithBudget(final FunctionwiseIE functionwiseIE, final ReportSearch reportSearch)
-            throws ApplicationException, ParseException
-            {
+            throws ApplicationException, ParseException {
         final String capExpCode = appConfigValuesService.getConfigValuesByModuleAndKey
                 (Constants.EGF, FinancialConstants.APPCONFIG_COA_MAJORCODE_CAPITAL_EXP_FIE_REPORT).get(0).getValue();
         final String[] temp = capExpCode.split(",");
         // To generate condition for appconfig values.
-        String capExpCodes = "";
+        StringBuilder capExpCodes = new StringBuilder("");
         for (final String element : temp)
-            capExpCodes = capExpCodes + " or coa.glcode like '" + element + "%'";
-        capExpCodeCond = capExpCodes;
+            capExpCodes.append(" or coa.glcode like ").append(element).append("%");
+        capExpCodeCond = capExpCodes.toString();
         // To generate major code values from appconfig with quotes.
-        String capExpCodesWithQuotes = "";
+        StringBuilder capExpCodesWithQuotes = new StringBuilder("");
         for (int i = 0; i < temp.length; i++) {
-            capExpCodesWithQuotes = capExpCodesWithQuotes + "'" + temp[i] + "'";
+            capExpCodesWithQuotes.append("'").append(temp[i]).append("'");
             if (i != temp.length - 1)
-                capExpCodesWithQuotes = capExpCodesWithQuotes + ",";
+                capExpCodesWithQuotes.append(",");
         }
-        capExpCodesWithQuotesCond = capExpCodesWithQuotes;
+        capExpCodesWithQuotesCond = capExpCodesWithQuotes.toString();
 
         // functionwiseIE.setMinorCodeList(getMinorCodeList(reportSearch));
         final List<CommonReportBean> minorAndMajorCodeList = getMinorAndMajorCodeList(reportSearch);
@@ -741,22 +731,25 @@ public class FunctionwiseIEService
         // if(LOGGER.isDebugEnabled())
         // LOGGER.debug("amountListForMinorCode---------------------------------------------------------------------------------------");
         print(amountListForMinorCode);
-        final StringBuffer queryStr = getBudgetQueryForMinorCodes(reportSearch);
-        final List<CommonReportBean> beAmountListForMinorCode = getBudgetAmountListForMinorCode(reportSearch, "BE",
-                queryStr.toString());
+
+        final Map.Entry<String, Map<String, Object>> budgetQueryMapEntry = getBudgetQueryForMinorCodes(reportSearch).entrySet().iterator().next();
+        final String queryStr = budgetQueryMapEntry.getKey();
+        final Map<String, Object> budgetQueryParams = budgetQueryMapEntry.getValue();
+        final List<CommonReportBean> beAmountListForMinorCode = getBudgetAmountListForMinorCode(reportSearch, "BE", queryStr, budgetQueryParams);
         // if(LOGGER.isDebugEnabled())
         // LOGGER.debug("beAmountListForMinorCode---------------------------------------------------------------------------------------");
         print(beAmountListForMinorCode);
-        final List<CommonReportBean> reAmountListForMinorCode = getBudgetAmountListForMinorCode(reportSearch, "RE",
-                queryStr.toString());
+        final List<CommonReportBean> reAmountListForMinorCode = getBudgetAmountListForMinorCode(reportSearch, "RE", queryStr, budgetQueryParams);
         // if(LOGGER.isDebugEnabled())
         // LOGGER.debug("reAmountListForMinorCode---------------------------------------------------------------------------------------");
         print(reAmountListForMinorCode);
-        final StringBuffer reappQueryStr = getBudgetReappQueryForMinorCodes(reportSearch);
+        final Map.Entry<String, Map<String, Object>> budgetReappQueryMapEntry = getBudgetReappQueryForMinorCodes(reportSearch).entrySet().iterator().next();
+        final String reappQueryStr = budgetReappQueryMapEntry.getKey();
+        final Map<String, Object> reappQueryParams = budgetReappQueryMapEntry.getValue();
         final List<CommonReportBean> beappAmountListForMinorCode = getBudgetApprAmountListForMinorCode(reportSearch, "BE",
-                reappQueryStr.toString());
+                reappQueryStr, reappQueryParams);
         final List<CommonReportBean> reappAmountListForMinorCode = getBudgetApprAmountListForMinorCode(reportSearch, "RE",
-                reappQueryStr.toString());
+                reappQueryStr, reappQueryParams);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("beappAmountListForMinorCode---------------------------------------------------------------------------------------");
         print(beappAmountListForMinorCode);
@@ -777,14 +770,12 @@ public class FunctionwiseIEService
         CommonReportBean glCRB;
         CommonReportBean pyglCRB;
         BigDecimal beSum = BigDecimal.ZERO, reSum = BigDecimal.ZERO, beAppSum = BigDecimal.ZERO, reAppSum = BigDecimal.ZERO, amountSum = BigDecimal.ZERO, pyAmountSum = BigDecimal.ZERO;
-        if (reportSearch.getByDepartment() && !reportSearch.getByDetailCode())
-        {
+        if (reportSearch.getByDepartment() && !reportSearch.getByDetailCode()) {
             final List<CommonReportBean> deptWiseWithBudgetList = new ArrayList<CommonReportBean>();
             CommonReportBean crb;
 
             for (final Department dept : reportSearch.getDeptList())
-                for (final CommonReportBean bean : minorAndMajorCodeList)
-                {
+                for (final CommonReportBean bean : minorAndMajorCodeList) {
                     final String accCode = dept.getName() + "-" + bean.getAccCode();
                     crb = new CommonReportBean();
 
@@ -797,41 +788,35 @@ public class FunctionwiseIEService
                     reCRB = reAmountMap.get(accCode);
                     reAppCRB = reAppAmountMap.get(accCode);
                     beAppCRB = beAppAmountMap.get(accCode);
-                    if (glCRB != null)
-                    {
+                    if (glCRB != null) {
                         crb.setAmount(glCRB.getAmount());
                         if (glCRB.getIsMajor() == false)
                             amountSum = glCRB.getAmount() == null ? amountSum.add(BigDecimal.ZERO) : amountSum.add(glCRB
                                     .getAmount());
                     }
-                    if (pyglCRB != null)
-                    {
+                    if (pyglCRB != null) {
                         crb.setPyAmount(pyglCRB.getAmount());
                         if (pyglCRB.getIsMajor() == false)
                             pyAmountSum = pyglCRB.getAmount() == null ? pyAmountSum.add(BigDecimal.ZERO) : pyAmountSum
                                     .add(pyglCRB.getAmount());
                     }
-                    if (beCRB != null)
-                    {
+                    if (beCRB != null) {
                         crb.setBeAmount(beCRB.getAmount());
                         if (beCRB.getIsMajor() == false)
                             beSum = beCRB.getAmount() == null ? beSum.add(BigDecimal.ZERO) : beSum.add(beCRB.getAmount());
                     }
-                    if (reCRB != null)
-                    {
+                    if (reCRB != null) {
                         crb.setReAmount(reCRB.getAmount());
                         if (reCRB.getIsMajor() == false)
                             reSum = reCRB.getAmount() == null ? reSum.add(BigDecimal.ZERO) : reSum.add(reCRB.getAmount());
                     }
-                    if (reAppCRB != null)
-                    {
+                    if (reAppCRB != null) {
                         crb.setReAppAmount(reAppCRB.getAmount());
                         if (reAppCRB.getIsMajor() == false)
                             reAppSum = reAppCRB.getAmount() == null ? reAppSum.add(BigDecimal.ZERO) : reAppSum.add(reAppCRB
                                     .getAmount());
                     }
-                    if (beAppCRB != null)
-                    {
+                    if (beAppCRB != null) {
                         crb.setBeAppAmount(beAppCRB.getAmount());
                         if (beAppCRB.getIsMajor() == false)
                             beAppSum = beAppCRB.getAmount() == null ? beAppSum.add(BigDecimal.ZERO) : beAppSum.add(beAppCRB
@@ -846,10 +831,8 @@ public class FunctionwiseIEService
             deptWiseWithBudgetList.add(totalCrb);
             // print(deptWiseWithBudgetList);
             return deptWiseWithBudgetList;
-        } else
-        {
-            for (final CommonReportBean crb : minorAndMajorCodeList)
-            {
+        } else {
+            for (final CommonReportBean crb : minorAndMajorCodeList) {
                 final String accCode = crb.getAccCode();
                 glCRB = minorCodeAmountMap.get(accCode);
                 pyglCRB = prevousAmountMap.get(accCode);
@@ -857,40 +840,34 @@ public class FunctionwiseIEService
                 reCRB = reAmountMap.get(accCode);
                 reAppCRB = reAppAmountMap.get(accCode);
                 beAppCRB = beAppAmountMap.get(accCode);
-                if (glCRB != null)
-                {
+                if (glCRB != null) {
                     crb.setAmount(glCRB.getAmount());
                     if (glCRB.getIsMajor() == false)
                         amountSum = glCRB.getAmount() == null ? amountSum.add(BigDecimal.ZERO) : amountSum.add(glCRB.getAmount());
                 }
-                if (pyglCRB != null)
-                {
+                if (pyglCRB != null) {
                     crb.setPyAmount(pyglCRB.getAmount());
                     if (pyglCRB.getIsMajor() == false)
                         pyAmountSum = pyglCRB.getAmount() == null ? pyAmountSum.add(BigDecimal.ZERO) : pyAmountSum.add(pyglCRB
                                 .getAmount());
                 }
-                if (beCRB != null)
-                {
+                if (beCRB != null) {
                     crb.setBeAmount(beCRB.getAmount());
                     if (beCRB.getIsMajor() == false)
                         beSum = beCRB.getAmount() == null ? beSum.add(BigDecimal.ZERO) : beSum.add(beCRB.getAmount());
                 }
-                if (reCRB != null)
-                {
+                if (reCRB != null) {
                     crb.setReAmount(reCRB.getAmount());
                     if (reCRB.getIsMajor() == false)
                         reSum = reCRB.getAmount() == null ? reSum.add(BigDecimal.ZERO) : reSum.add(reCRB.getAmount());
                 }
-                if (reAppCRB != null)
-                {
+                if (reAppCRB != null) {
                     crb.setReAppAmount(reAppCRB.getAmount());
                     if (reAppCRB.getIsMajor() == false)
                         reAppSum = reAppCRB.getAmount() == null ? reAppSum.add(BigDecimal.ZERO) : reAppSum.add(reAppCRB
                                 .getAmount());
                 }
-                if (beAppCRB != null)
-                {
+                if (beAppCRB != null) {
                     crb.setBeAppAmount(beAppCRB.getAmount());
                     if (beAppCRB.getIsMajor() == false)
                         beAppSum = beAppCRB.getAmount() == null ? beAppSum.add(BigDecimal.ZERO) : beAppSum.add(beAppCRB
@@ -903,12 +880,11 @@ public class FunctionwiseIEService
         }
         // print(minorAndMajorCodeList);
         return minorAndMajorCodeList;
-            }
+    }
 
     public List<CommonReportBean> populateIncomeDataWithBudget(final FunctionwiseIE functionwiseIE,
-            final ReportSearch reportSearch)
-            throws ApplicationException, ParseException
-            {
+                                                               final ReportSearch reportSearch)
+            throws ApplicationException, ParseException {
 
         final List<CommonReportBean> minorAndMajorCodeList = getIncomeMinorAndMajorCodeList(reportSearch);
         if (LOGGER.isDebugEnabled())
@@ -916,15 +892,15 @@ public class FunctionwiseIEService
         final List<CommonReportBean> amountListForMinorCode = getAmountListForMinorCode(functionwiseIE, reportSearch);
         final List<CommonReportBean> amountPreviousyearListForMinorCode = getPreviousYearAmountListForMinorCode(functionwiseIE,
                 reportSearch);
+        final Map.Entry<String, Map<String, Object>> budgetQueryMapEntry = getBudgetQueryForMinorCodes(reportSearch).entrySet().iterator().next();
+        final String queryStr = budgetQueryMapEntry.getKey();
+        final Map<String, Object> budgetQueryParams = budgetQueryMapEntry.getValue();
 
-        final StringBuffer queryStr = getBudgetQueryForMinorCodes(reportSearch);
-        final List<CommonReportBean> beAmountListForMinorCode = getBudgetAmountListForMinorCode(reportSearch, "BE",
-                queryStr.toString());
+        final List<CommonReportBean> beAmountListForMinorCode = getBudgetAmountListForMinorCode(reportSearch, "BE", queryStr, budgetQueryParams);
         // if(LOGGER.isDebugEnabled())
         // LOGGER.debug("beAmountListForMinorCode---------------------------------------------------------------------------------------");
         // print(beAmountListForMinorCode);
-        final List<CommonReportBean> reAmountListForMinorCode = getBudgetAmountListForMinorCode(reportSearch, "RE",
-                queryStr.toString());
+        final List<CommonReportBean> reAmountListForMinorCode = getBudgetAmountListForMinorCode(reportSearch, "RE", queryStr, budgetQueryParams);
         // if(LOGGER.isDebugEnabled())
         // LOGGER.debug("reAmountListForMinorCode---------------------------------------------------------------------------------------");
         // print(reAmountListForMinorCode);
@@ -938,14 +914,12 @@ public class FunctionwiseIEService
         CommonReportBean objBE;
         CommonReportBean objRE;
         BigDecimal beTotal = BigDecimal.ZERO, reTotal = BigDecimal.ZERO, previousSum = BigDecimal.ZERO, amountSum = BigDecimal.ZERO;
-        if (reportSearch.getByDepartment() && !reportSearch.getByDetailCode())
-        {
+        if (reportSearch.getByDepartment() && !reportSearch.getByDetailCode()) {
             final List<CommonReportBean> deptWiseWithBudgetList = new ArrayList<CommonReportBean>();
             CommonReportBean crb;
 
             for (final Department dept : reportSearch.getDeptList())
-                for (final CommonReportBean bean : minorAndMajorCodeList)
-                {
+                for (final CommonReportBean bean : minorAndMajorCodeList) {
                     final String accCode = dept.getName() + "-" + bean.getAccCode();
                     crb = new CommonReportBean();
 
@@ -957,28 +931,24 @@ public class FunctionwiseIEService
                     objBE = beAmountMap.get(accCode);
                     objRE = reAmountMap.get(accCode);
 
-                    if (glCRB != null)
-                    {
+                    if (glCRB != null) {
                         crb.setAmount(glCRB.getAmount());
                         if (glCRB.getIsMajor() == false)
                             amountSum = glCRB.getAmount() == null ? amountSum.add(BigDecimal.ZERO) : amountSum.add(glCRB
                                     .getAmount());
                     }
-                    if (pyglCRB != null)
-                    {
+                    if (pyglCRB != null) {
                         crb.setPyAmount(pyglCRB.getAmount());
                         if (pyglCRB.getIsMajor() == false)
                             previousSum = pyglCRB.getAmount() == null ? previousSum.add(BigDecimal.ZERO) : previousSum
                                     .add(pyglCRB.getAmount());
                     }
-                    if (objBE != null)
-                    {
+                    if (objBE != null) {
                         crb.setBeAmount(objBE.getAmount());
                         if (objBE.getIsMajor() == false)
                             beTotal = objBE.getAmount() == null ? beTotal.add(BigDecimal.ZERO) : beTotal.add(objBE.getAmount());
                     }
-                    if (objRE != null)
-                    {
+                    if (objRE != null) {
                         crb.setReAmount(objRE.getAmount());
                         if (objRE.getIsMajor() == false)
                             reTotal = objRE.getAmount() == null ? reTotal.add(BigDecimal.ZERO) : reTotal.add(objRE.getAmount());
@@ -991,34 +961,29 @@ public class FunctionwiseIEService
             // print(deptWiseWithBudgetList);
             return deptWiseWithBudgetList;
         } else {
-            for (final CommonReportBean crb : minorAndMajorCodeList)
-            {
+            for (final CommonReportBean crb : minorAndMajorCodeList) {
                 final String accCode = crb.getAccCode();
                 glCRB = minorCodeAmountMap.get(accCode);
                 pyglCRB = prevousAmountMap.get(accCode);
                 objBE = beAmountMap.get(accCode);
                 objRE = reAmountMap.get(accCode);
-                if (glCRB != null)
-                {
+                if (glCRB != null) {
                     crb.setAmount(glCRB.getAmount());
                     if (glCRB.getIsMajor() == false)
                         amountSum = glCRB.getAmount() == null ? amountSum.add(BigDecimal.ZERO) : amountSum.add(glCRB.getAmount());
                 }
-                if (pyglCRB != null)
-                {
+                if (pyglCRB != null) {
                     crb.setPyAmount(pyglCRB.getAmount());
                     if (pyglCRB.getIsMajor() == false)
                         previousSum = pyglCRB.getAmount() == null ? previousSum.add(BigDecimal.ZERO) : previousSum.add(pyglCRB
                                 .getAmount());
                 }
-                if (objBE != null)
-                {
+                if (objBE != null) {
                     crb.setBeAmount(objBE.getAmount());
                     if (objBE.getIsMajor() == false)
                         beTotal = objBE.getAmount() == null ? beTotal.add(BigDecimal.ZERO) : beTotal.add(objBE.getAmount());
                 }
-                if (objRE != null)
-                {
+                if (objRE != null) {
                     crb.setReAmount(objRE.getAmount());
                     if (objRE.getIsMajor() == false)
                         reTotal = objRE.getAmount() == null ? reTotal.add(BigDecimal.ZERO) : reTotal.add(objRE.getAmount());
@@ -1031,7 +996,7 @@ public class FunctionwiseIEService
         }
         // print(minorAndMajorCodeList);
         return minorAndMajorCodeList;
-            }
+    }
 
     private Map<String, CommonReportBean> loadIntoMap(final List<CommonReportBean> amountList, final ReportSearch reportSearch) {
         final Map<String, CommonReportBean> amountMap = new LinkedHashMap<String, CommonReportBean>();
@@ -1052,141 +1017,134 @@ public class FunctionwiseIEService
     }
 
     private List<CommonReportBean> getBudgetApprAmountListForMinorCode(final ReportSearch reportSearch, final String isBeRe,
-            final String queryStr)
-    {
-        Query query = null;
+                                                                       final String queryStr, final Map<String, Object> queryParams) {
+        final Query query;
         if (reportSearch.getAsOnDate().getMonth() == 2 && reportSearch.getAsOnDate().getDate() == 31) {
-            if (reportSearch.getByDepartment())
-            {
+            if (reportSearch.getByDepartment()) {
                 query = persistenceService.getSession().createNativeQuery(queryStr)
                         .addScalar("accCode", StringType.INSTANCE)
                         .addScalar("amount", BigDecimalType.INSTANCE)
                         .addScalar("isMajor", BooleanType.INSTANCE)
                         .addScalar("deptName", StringType.INSTANCE)
-                        .setString("isBeRe", isBeRe)
-                        .setLong("finYearId", reportSearch.getFinYearId())
-                        .setInteger("fundId", reportSearch.getFund().getId())
+                        .setParameter("isBeRe", isBeRe, StringType.INSTANCE)
+                        .setParameter("finYearId", reportSearch.getFinYearId(), LongType.INSTANCE)
+                        .setParameter("fundId", reportSearch.getFund().getId(), IntegerType.INSTANCE)
                         .setResultTransformer(Transformers.aliasToBean(CommonReportBean.class));
 
                 if (reportSearch.getFunction() != null && reportSearch.getFunction().getId() != null
                         && reportSearch.getFunction().getId() != -1)
-                    query.setLong("functionId", reportSearch.getFunction().getId());
-                if (reportSearch.getByDetailCode())
-                {
-                    query.setString("deptName", reportSearch.getDepartment().getName());
-                    query.setString("glcode", reportSearch.getGlcode() + "%");
+                    query.setParameter("functionId", reportSearch.getFunction().getId(), LongType.INSTANCE);
+                if (reportSearch.getByDetailCode()) {
+                    query.setParameter("deptName", reportSearch.getDepartment().getName(), StringType.INSTANCE);
+                    query.setParameter("glcode", reportSearch.getGlcode() + "%", StringType.INSTANCE);
                 } else
-                    query.setLong("FIEscheduleId", reportSearch.getFIEscheduleId());
-            } else
-            {
+                    query.setParameter("FIEscheduleId", reportSearch.getFIEscheduleId(), LongType.INSTANCE);
+            } else {
                 query = persistenceService.getSession().createNativeQuery(queryStr)
                         .addScalar("accCode", StringType.INSTANCE)
                         .addScalar("amount", BigDecimalType.INSTANCE)
                         .addScalar("isMajor", BooleanType.INSTANCE)
-                        .setString("isBeRe", isBeRe)
-                        .setLong("finYearId", reportSearch.getFinYearId())
-                        .setInteger("fundId", reportSearch.getFund().getId())
+                        .setParameter("isBeRe", isBeRe, StringType.INSTANCE)
+                        .setParameter("finYearId", reportSearch.getFinYearId(), LongType.INSTANCE)
+                        .setParameter("fundId", reportSearch.getFund().getId(), IntegerType.INSTANCE)
                         .setResultTransformer(Transformers.aliasToBean(CommonReportBean.class));
                 if (reportSearch.getFunction() != null && reportSearch.getFunction().getId() != null
                         && reportSearch.getFunction().getId() != -1)
-                    query.setLong("functionId", reportSearch.getFunction().getId());
+                    query.setParameter("functionId", reportSearch.getFunction().getId(), LongType.INSTANCE);
 
             }
-        } else if (reportSearch.getByDepartment())
-        {
+        } else if (reportSearch.getByDepartment()) {
             query = persistenceService.getSession().createNativeQuery(queryStr)
                     .addScalar("accCode", StringType.INSTANCE)
                     .addScalar("amount", BigDecimalType.INSTANCE)
                     .addScalar("isMajor", BooleanType.INSTANCE)
                     .addScalar("deptName", StringType.INSTANCE)
-                    .setString("isBeRe", isBeRe)
-                    .setDate("asOnDate", reportSearch.getAsOnDate())
-                    .setLong("finYearId", reportSearch.getFinYearId())
-                    .setInteger("fundId", reportSearch.getFund().getId())
+                    .setParameter("isBeRe", isBeRe, StringType.INSTANCE)
+                    .setParameter("asOnDate", reportSearch.getAsOnDate(), DateType.INSTANCE)
+                    .setParameter("finYearId", reportSearch.getFinYearId(), LongType.INSTANCE)
+                    .setParameter("fundId", reportSearch.getFund().getId(), IntegerType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(CommonReportBean.class));
 
             if (reportSearch.getFunction() != null && reportSearch.getFunction().getId() != null
                     && reportSearch.getFunction().getId() != -1)
-                query.setLong("functionId", reportSearch.getFunction().getId());
-            if (reportSearch.getByDetailCode())
-            {
-                query.setString("deptName", reportSearch.getDepartment().getName());
-                query.setString("glcode", reportSearch.getGlcode() + "%");
+                query.setParameter("functionId", reportSearch.getFunction().getId(), LongType.INSTANCE);
+            if (reportSearch.getByDetailCode()) {
+                query.setParameter("deptName", reportSearch.getDepartment().getName(), StringType.INSTANCE);
+                query.setParameter("glcode", reportSearch.getGlcode() + "%", StringType.INSTANCE);
             } else
-                query.setLong("FIEscheduleId", reportSearch.getFIEscheduleId());
-        } else
-        {
+                query.setParameter("FIEscheduleId", reportSearch.getFIEscheduleId(), LongType.INSTANCE);
+        } else {
             query = persistenceService.getSession().createNativeQuery(queryStr)
                     .addScalar("accCode", StringType.INSTANCE)
                     .addScalar("amount", BigDecimalType.INSTANCE)
                     .addScalar("isMajor", BooleanType.INSTANCE)
-                    .setString("isBeRe", isBeRe)
-                    .setDate("asOnDate", reportSearch.getAsOnDate())
-                    .setLong("finYearId", reportSearch.getFinYearId())
-                    .setInteger("fundId", reportSearch.getFund().getId())
+                    .setParameter("isBeRe", isBeRe, StringType.INSTANCE)
+                    .setParameter("asOnDate", reportSearch.getAsOnDate(), DateType.INSTANCE)
+                    .setParameter("finYearId", reportSearch.getFinYearId(), LongType.INSTANCE)
+                    .setParameter("fundId", reportSearch.getFund().getId(), IntegerType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(CommonReportBean.class));
             if (reportSearch.getFunction() != null && reportSearch.getFunction().getId() != null
                     && reportSearch.getFunction().getId() != -1)
-                query.setLong("functionId", reportSearch.getFunction().getId());
+                query.setParameter("functionId", reportSearch.getFunction().getId(), LongType.INSTANCE);
 
         }
+        queryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
+
         return query.list();
 
     }
 
     @SuppressWarnings("unchecked")
     private List<CommonReportBean> getBudgetAmountListForMinorCode(final ReportSearch reportSearch, final String isBeRe,
-            final String queryStr)
-    {
+                                                                   final String queryStr, final Map<String, Object> queryParams) {
 
-        Query query = null;
-        if (reportSearch.getByDepartment())
-        {
+        final Query query;
+        if (reportSearch.getByDepartment()) {
             query = persistenceService.getSession().createNativeQuery(queryStr)
                     .addScalar("accCode", StringType.INSTANCE)
                     .addScalar("amount", BigDecimalType.INSTANCE)
                     .addScalar("isMajor", BooleanType.INSTANCE)
                     .addScalar("deptName", StringType.INSTANCE)
-                    .setString("isBeRe", isBeRe)
-                    .setDate("asOnDate", reportSearch.getAsOnDate())
-                    .setLong("finYearId", reportSearch.getFinYearId())
-                    .setInteger("fundId", reportSearch.getFund().getId())
-
+                    .setParameter("isBeRe", isBeRe, StringType.INSTANCE)
+                    .setParameter("asOnDate", reportSearch.getAsOnDate(), DateType.INSTANCE)
+                    .setParameter("finYearId", reportSearch.getFinYearId(), LongType.INSTANCE)
+                    .setParameter("fundId", reportSearch.getFund().getId(), IntegerType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(CommonReportBean.class));
             if (reportSearch.getFunction() != null && reportSearch.getFunction().getId() != null
                     && reportSearch.getFunction().getId() != -1)
-                query.setLong("functionId", reportSearch.getFunction().getId());
-            if (reportSearch.getByDetailCode())
-            {
-                query.setString("deptName", reportSearch.getDepartment().getName());
-                query.setString("glcode", reportSearch.getGlcode() + "%");
+                query.setParameter("functionId", reportSearch.getFunction().getId(), LongType.INSTANCE);
+            if (reportSearch.getByDetailCode()) {
+                query.setParameter("deptName", reportSearch.getDepartment().getName(), StringType.INSTANCE);
+                query.setParameter("glcode", reportSearch.getGlcode() + "%", StringType.INSTANCE);
             } else
-                query.setLong("FIEscheduleId", reportSearch.getFIEscheduleId());
-        } else
-        {
+                query.setParameter("FIEscheduleId", reportSearch.getFIEscheduleId(), LongType.INSTANCE);
+        } else {
             query = persistenceService.getSession().createNativeQuery(queryStr)
                     .addScalar("accCode", StringType.INSTANCE)
                     .addScalar("amount", BigDecimalType.INSTANCE)
                     .addScalar("isMajor", BooleanType.INSTANCE)
-                    .setString("isBeRe", isBeRe)
-                    .setDate("asOnDate", reportSearch.getAsOnDate())
-                    .setLong("finYearId", reportSearch.getFinYearId())
-                    .setInteger("fundId", reportSearch.getFund().getId())
+                    .setParameter("isBeRe", isBeRe, StringType.INSTANCE)
+                    .setParameter("asOnDate", reportSearch.getAsOnDate(), DateType.INSTANCE)
+                    .setParameter("finYearId", reportSearch.getFinYearId(), LongType.INSTANCE)
+                    .setParameter("fundId", reportSearch.getFund().getId(), IntegerType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(CommonReportBean.class));
             if (reportSearch.getFunction() != null && reportSearch.getFunction().getId() != null
                     && reportSearch.getFunction().getId() != -1)
-                query.setLong("functionId", reportSearch.getFunction().getId());
+                query.setParameter("functionId", reportSearch.getFunction().getId(), LongType.INSTANCE);
         }
+
+        queryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
 
         return query.list();
     }
 
-    private StringBuffer getBudgetQueryForMinorCodes(final ReportSearch reportSearch) {
+    private Map<String, Map<String, Object>> getBudgetQueryForMinorCodes(final ReportSearch reportSearch) {
 
+        final Map<String, Map<String, Object>> queryMap = new HashMap<>();
+        final Map<String, Object> queryParams = new HashMap<>();
         final StringBuffer queryStr = new StringBuffer(1024);
-        queryStr.append(
-                " select SUBSTR(coa.glcode,1," + reportSearch.getMinorCodeLen()
-                + ") as accCode, sum(bd.approvedamount) as amount ,0 as isMajor ");
+        queryStr.append(" select SUBSTR(coa.glcode,1,").append(reportSearch.getMinorCodeLen())
+                .append(") as accCode, sum(bd.approvedamount) as amount ,0 as isMajor ");
         if (reportSearch.getByDepartment())
             queryStr.append(",d.dept_name  as deptName ");
         queryStr.append(" from egf_budgetdetail bd , egf_budgetgroup bg,egf_budget b, chartofaccounts coa, eg_wf_states wfs");
@@ -1194,27 +1152,36 @@ public class FunctionwiseIEService
             queryStr.append(",eg_department d");
         else if (reportSearch.getByDepartment())
             queryStr.append(",eg_department d, chartofaccounts minorcoa");
-        queryStr.append(" where ((bg.maxcode<=coa.id and bg.mincode>=coa.id) or bg.majorcode=coa.id ) and bd.budgetgroup= bg.id  "
-                +
-                " and bd.state_id=wfs.id and wfs.created_date<=:asOnDate and wfs.value='END' ");
-        queryStr.append(" and bd.budget=b.id and b.isbere=:isBeRe and b.financialyearid=:finYearId and bd.fund=:fundId ");
-        if (reportSearch.getByDetailCode())
+        queryStr.append(" where ((bg.maxcode<=coa.id and bg.mincode>=coa.id) or bg.majorcode=coa.id ) and bd.budgetgroup= bg.id  ")
+                .append(" and bd.state_id=wfs.id and wfs.created_date<=:asOnDate and wfs.value='END' ")
+                .append(" and bd.budget=b.id and b.isbere=:isBeRe and b.financialyearid=:finYearId and bd.fund=:fundId ");
+        queryParams.put("asOnDate", reportSearch.getAsOnDate());
+        queryParams.put("finYearId", reportSearch.getFinYearId());
+        queryParams.put("fundId", reportSearch.getFund().getId());
+
+        if (reportSearch.getByDetailCode()) {
             queryStr.append(" and d.id_dept=bd.executing_department and d.dept_name=:deptName and coa.glcode like :glcode ");
-        else if (reportSearch.getByDepartment())
-            queryStr.append(" and d.id_dept=bd.executing_department  and minorcoa.FIEscheduleId=:FIEscheduleId and  SUBSTR(coa.glcode,1,"
-                    + reportSearch.getMinorCodeLen() + ")=minorcoa.glcode ");
+            queryParams.put("deptName", reportSearch.getDepartment().getName());
+            queryParams.put("glcode", reportSearch.getGlcode());
+        } else if (reportSearch.getByDepartment()) {
+            queryStr.append(" and d.id_dept=bd.executing_department  and minorcoa.FIEscheduleId=:FIEscheduleId and  SUBSTR(coa.glcode,1,:minorCodeLength)=minorcoa.glcode ");
+            queryParams.put("FIEscheduleId", reportSearch.getFIEscheduleId());
+            queryParams.put("minorCodeLength", reportSearch.getMinorCodeLen());
+        }
         if (reportSearch.getFunction() != null && reportSearch.getFunction().getId() != null
-                && reportSearch.getFunction().getId() != -1)
+                && reportSearch.getFunction().getId() != -1) {
             queryStr.append("  and bd.function=:functionId ");
-        if (reportSearch.getIncExp().equals("E"))
-            queryStr.append(" and (coa.type='E'" + capExpCodeCond + ") group by SUBSTR(coa.glcode,1,"
-                    + reportSearch.getMinorCodeLen() + ")");
-        else
-            queryStr.append(" and (coa.type='I') group by SUBSTR(coa.glcode,1," + reportSearch.getMinorCodeLen() + ")");
+            queryParams.put("functionId", reportSearch.getFunction().getId());
+        }
+        if (reportSearch.getIncExp().equals("E")) {
+            queryStr.append(" and (coa.type='E'").append(capExpCodeCond).append(") group by SUBSTR(coa.glcode,1,")
+                    .append(reportSearch.getMinorCodeLen()).append(")");
+        } else {
+            queryStr.append(" and (coa.type='I') group by SUBSTR(coa.glcode,1,").append(reportSearch.getMinorCodeLen()).append(")");
+        }
         if (reportSearch.getByDepartment())
             queryStr.append(" ,d.dept_name ");
-        if (!reportSearch.getByDepartment())
-        {
+        if (!reportSearch.getByDepartment()) {
             queryStr.append(" UNION ");
             queryStr.append(" select coa.majorCode as accCode, sum(bd.approvedamount) as amount,1 as isMajor ");
             if (reportSearch.getByDepartment())
@@ -1223,18 +1190,24 @@ public class FunctionwiseIEService
             if (reportSearch.getByDepartment())
                 queryStr.append(",eg_department d");
 
-            queryStr.append("where ((bg.maxcode<=coa.id and bg.mincode>=coa.id) or bg.majorcode=coa.id ) and bd.budgetgroup= bg.id "
-                    +
-                    " and bd.budget=b.id and  bd.state_id=wfs.id and wfs.created_date<=:asOnDate and wfs.value='END'  and b.isbere=:isBeRe and b.financialyearid=:finYearId and bd.fund=:fundId  ");
-            if (reportSearch.getByDepartment())
+            queryStr.append("where ((bg.maxcode<=coa.id and bg.mincode>=coa.id) or bg.majorcode=coa.id ) and bd.budgetgroup= bg.id ")
+                    .append(" and bd.budget=b.id and  bd.state_id=wfs.id and wfs.created_date<=:asOnDate and wfs.value='END'  and b.isbere=:isBeRe")
+                    .append(" and b.financialyearid=:finYearId and bd.fund=:fundId  ");
+            queryParams.put("asOnDate", reportSearch.getAsOnDate());
+            queryParams.put("finYearId", reportSearch.getFinYearId());
+            queryParams.put("fundId", reportSearch.getFund().getId());
+            if (reportSearch.getByDepartment()) {
                 queryStr.append(" and d.id_dept=bd.executing_department and coa.FIEscheduleId=:FIEscheduleId ");
+                queryParams.put("FIEscheduleId", reportSearch.getFIEscheduleId());
+            }
             if (reportSearch.getFunction() != null && reportSearch.getFunction().getId() != null
-                    && reportSearch.getFunction().getId() != -1)
+                    && reportSearch.getFunction().getId() != -1) {
                 queryStr.append("  and bd.function=:functionId ");
-            if (reportSearch.getIncExp().equals("E"))
-                queryStr.append(" and (coa.type='E'" + capExpCodeCond
-                        + ") and coa.majorcode is not null  group by coa.majorCode ");
-            else
+                queryParams.put("functionId", reportSearch.getFunction().getId());
+            }
+            if (reportSearch.getIncExp().equals("E")) {
+                queryStr.append(" and (coa.type='E'").append(capExpCodeCond).append(") and coa.majorcode is not null  group by coa.majorCode ");
+            } else
                 queryStr.append(" and (coa.type='I') and coa.majorcode is not null  group by coa.majorCode ");
             if (reportSearch.getByDepartment())
                 queryStr.append(" d.dept_name");
@@ -1242,14 +1215,16 @@ public class FunctionwiseIEService
         queryStr.append(" order by 3,1");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("query is " + queryStr.toString());
-        return queryStr;
+        queryMap.put(queryStr.toString(), queryParams);
+        return queryMap;
     }
 
-    private StringBuffer getBudgetReappQueryForMinorCodes(final ReportSearch reportSearch) {
+    private Map<String, Map<String, Object>> getBudgetReappQueryForMinorCodes(final ReportSearch reportSearch) {
+        final Map<String, Map<String, Object>> queryMap = new HashMap<>();
+        final Map<String, Object> queryParams = new HashMap<>();
         final StringBuffer queryStr = new StringBuffer(1024);
-        queryStr.append(
-                " select SUBSTR(coa.glcode,1," + reportSearch.getMinorCodeLen()
-                + ") as accCode, sum(bdr.addition_amount- bdr.deduction_amount) as amount ,0 as isMajor ");
+        queryStr.append(" select SUBSTR(coa.glcode,1,").append(reportSearch.getMinorCodeLen())
+                .append(") as accCode, sum(bdr.addition_amount- bdr.deduction_amount) as amount ,0 as isMajor ");
         if (reportSearch.getByDepartment())
             queryStr.append(",d.dept_name  as deptName ");
         queryStr.append(" from egf_budgetdetail bd , egf_budgetgroup bg,egf_budget b, chartofaccounts coa, egf_budget_reappropriation bdr,eg_wf_states wfs");
@@ -1257,48 +1232,62 @@ public class FunctionwiseIEService
             queryStr.append(",eg_department d");
         else if (reportSearch.getByDepartment())
             queryStr.append(",eg_department d,chartofaccounts minorcoa ");
-        queryStr.append(" where ((bg.maxcode<=coa.id and bg.mincode>=coa.id) or bg.majorcode=coa.id ) and bd.budgetgroup= bg.id  and bdr.budgetdetail=bd.id"
-                +
-                " and bdr.state_id=wfs.id and wfs.value='END' ");
-        if (!(reportSearch.getAsOnDate().getMonth() == 2 && reportSearch.getAsOnDate().getDate() == 31))
+        queryStr.append(" where ((bg.maxcode<=coa.id and bg.mincode>=coa.id) or bg.majorcode=coa.id ) and bd.budgetgroup= bg.id  and bdr.budgetdetail=bd.id")
+                .append(" and bdr.state_id=wfs.id and wfs.value='END' ");
+        if (!(reportSearch.getAsOnDate().getMonth() == 2 && reportSearch.getAsOnDate().getDate() == 31)) {
             queryStr.append(" and wfs.created_date<=:asOnDate ");
+            queryParams.put("asOnDate", reportSearch.getAsOnDate());
+        }
         queryStr.append(" and bd.budget=b.id and b.isbere=:isBeRe and b.financialyearid=:finYearId and bd.fund=:fundId ");
+        queryParams.put("finYearId", reportSearch.getFinYearId());
+        queryParams.put("fundId", reportSearch.getFund().getId());
         if (reportSearch.getFunction() != null && reportSearch.getFunction().getId() != null
-                && reportSearch.getFunction().getId() != -1)
+                && reportSearch.getFunction().getId() != -1) {
             queryStr.append("  and bd.function=:functionId ");
-        if (reportSearch.getByDetailCode())
+            queryParams.put("functionId", reportSearch.getFunction().getId());
+        }
+        if (reportSearch.getByDetailCode()) {
             queryStr.append(" and d.id_dept=bd.executing_department and d.dept_name=:deptName and coa.glcode like :glcode   ");
-        else if (reportSearch.getByDepartment())
-            queryStr.append(" and d.id_dept=bd.executing_department and minorcoa.FIEscheduleId=:FIEscheduleId and  SUBSTR(coa.glcode,1,"
-                    + reportSearch.getMinorCodeLen() + ")=minorcoa.glcode ");
-        queryStr.append(" and (coa.type='E'" + capExpCodeCond + ") group by SUBSTR(coa.glcode,1,"
-                + reportSearch.getMinorCodeLen() + ")");
+            queryParams.put("deptName", reportSearch.getDepartment().getName());
+            queryParams.put("glcode", reportSearch.getGlcode());
+        } else if (reportSearch.getByDepartment()) {
+            queryStr.append(" and d.id_dept=bd.executing_department and minorcoa.FIEscheduleId=:FIEscheduleId and  SUBSTR(coa.glcode,1,:minorCodeLength)=minorcoa.glcode ");
+            queryParams.put("FIEscheduleId", reportSearch.getFIEscheduleId());
+            queryParams.put("minorCodeLength", reportSearch.getMinorCodeLen());
+        }
+        queryStr.append(" and (coa.type='E'").append(capExpCodeCond).append(") group by SUBSTR(coa.glcode,1,").append(reportSearch.getMinorCodeLen()).append(")");
         if (reportSearch.getByDepartment())
             queryStr.append(" ,d.dept_name ");
-        if (!reportSearch.getByDepartment())
-        {
+        if (!reportSearch.getByDepartment()) {
             queryStr.append(" UNION ");
-            queryStr.append(" select SUBSTR(coa.glcode,1," + reportSearch.getMajorCodeLen()
-                    + ") as accCode, sum(bdr.addition_amount- bdr.deduction_amount) as amount,1 as isMajor ");
+            queryStr.append(" select SUBSTR(coa.glcode,1,").append(reportSearch.getMajorCodeLen())
+                    .append(") as accCode, sum(bdr.addition_amount- bdr.deduction_amount) as amount,1 as isMajor ");
             if (reportSearch.getByDepartment())
                 queryStr.append(",bd.executing_derpartment  as deptName ");
-            queryStr.append(" from egf_budgetdetail bd , egf_budgetgroup bg,egf_budget b, chartofaccounts coa,eg_wf_states wfs,egf_budget_reappropriation bdr where ((bg.maxcode<=coa.id and bg.mincode>=coa.id) or bg.majorcode=coa.id ) and bd.budgetgroup= bg.id "
-                    +
-                    "  and bdr.budgetdetail=bd.id and bd.budget=b.id and bdr.state_id=wfs.id  and wfs.value='END' and b.isbere=:isBeRe and b.financialyearid=:finYearId and bd.fund=:fundId ");
-            if (!(reportSearch.getAsOnDate().getMonth() == 2 && reportSearch.getAsOnDate().getDate() == 31))
+            queryStr.append(" from egf_budgetdetail bd , egf_budgetgroup bg,egf_budget b, chartofaccounts coa,eg_wf_states wfs,egf_budget_reappropriation bdr")
+                    .append(" where ((bg.maxcode<=coa.id and bg.mincode>=coa.id) or bg.majorcode=coa.id ) and bd.budgetgroup= bg.id ")
+                    .append(" and bdr.budgetdetail=bd.id and bd.budget=b.id and bdr.state_id=wfs.id  and wfs.value='END' and b.isbere=:isBeRe")
+                    .append(" and b.financialyearid=:finYearId and bd.fund=:fundId ");
+            queryParams.put("finYearId", reportSearch.getFinYearId());
+            queryParams.put("fundId", reportSearch.getFund().getId());
+            if (!(reportSearch.getAsOnDate().getMonth() == 2 && reportSearch.getAsOnDate().getDate() == 31)) {
                 queryStr.append(" and wfs.created_date<=:asOnDate ");
+                queryParams.put("asOnDate", reportSearch.getAsOnDate());
+            }
             if (reportSearch.getFunction() != null && reportSearch.getFunction().getId() != null
-                    && reportSearch.getFunction().getId() != -1)
+                    && reportSearch.getFunction().getId() != -1) {
                 queryStr.append("  and bd.function=:functionId ");
-            queryStr.append(" and (coa.type='E'" + capExpCodeCond + ") group by SUBSTR(coa.glcode,1,"
-                    + reportSearch.getMajorCodeLen() + ")");
+                queryParams.put("functionId", reportSearch.getFunction().getId());
+            }
+            queryStr.append(" and (coa.type='E'").append(capExpCodeCond).append(") group by SUBSTR(coa.glcode,1,").append(reportSearch.getMajorCodeLen()).append(")");
             if (reportSearch.getByDepartment())
                 queryStr.append(" bd.executing_derpartment ");
         }
         queryStr.append(" order by 1 desc");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("query is " + queryStr.toString());
-        return queryStr;
+        queryMap.put(queryStr.toString(), queryParams);
+        return queryMap;
     }
 
     public void setReportSearch(final ReportSearch reportSearch) {
