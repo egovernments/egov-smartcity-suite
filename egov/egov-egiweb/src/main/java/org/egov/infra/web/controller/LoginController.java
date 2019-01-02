@@ -59,6 +59,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -100,7 +101,7 @@ public class LoginController {
         return "redirect:/login/secure";
     }
 
-    @PostMapping(value = RESET_PASS_URL_PATH, params = TOKEN)
+    @GetMapping(value = RESET_PASS_URL_PATH, params = TOKEN)
     public String viewPasswordReset(@RequestParam String token, Model model) {
         model.addAttribute(VALID, identityRecoveryService.tokenValid(token));
         return RESET_PASS_URL_PATH;
