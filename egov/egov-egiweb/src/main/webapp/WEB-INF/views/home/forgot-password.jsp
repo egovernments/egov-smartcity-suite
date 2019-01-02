@@ -74,7 +74,7 @@
                                            placeholder="Enter your new password" class="form-control check-password readonly-pwd"
                                            id="new-pass" required="required" maxlength="32" data-toggle="popover"
                                            data-content='${pwdmsg}' onfocus="this.removeAttribute('readonly');" readonly="true"/>
-                                    <input type="hidden" name="token" value="${param.token}"/>
+                                    <input type="hidden" name="validToken" value="${token}"/>
                                 </div>
                             </div>
 

@@ -59,12 +59,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping(value = "/login")
@@ -101,30 +103,31 @@ public class LoginController {
         return "redirect:/login/secure";
     }
 
-    @GetMapping(value = RESET_PASS_URL_PATH, params = TOKEN)
+    @RequestMapping(value = RESET_PASS_URL_PATH, params = TOKEN, method = {GET, POST})
     public String viewPasswordReset(@RequestParam String token, Model model) {
         model.addAttribute(VALID, identityRecoveryService.tokenValid(token));
+        model.addAttribute(TOKEN, token);
         return RESET_PASS_URL_PATH;
     }
 
-    @PostMapping(value = RESET_PASS_URL_PATH, params = {TOKEN, "newPassword", "confirmPwd"})
-    public String validateAndSendNewPassword(@RequestParam String token, @RequestParam String newPassword,
+    @PostMapping(value = RESET_PASS_URL_PATH, params = {"validToken", "newPassword", "confirmPwd"})
+    public String validateAndSendNewPassword(@RequestParam String validToken, @RequestParam String newPassword,
                                              @RequestParam String confirmPwd, Model model) {
         if (!newPassword.equals(confirmPwd)) {
             model.addAttribute("error", "err.login.pwd.mismatch");
-            model.addAttribute(TOKEN, token);
-            model.addAttribute(VALID, identityRecoveryService.tokenValid(token));
+            model.addAttribute(TOKEN, validToken);
+            model.addAttribute(VALID, identityRecoveryService.tokenValid(validToken));
             return RESET_PASS_URL_PATH;
         }
 
         if (!validatorUtils.isValidPassword(newPassword)) {
             model.addAttribute("error", "usr.pwd.strength.msg." + passwordStrength);
-            model.addAttribute(TOKEN, token);
-            model.addAttribute(VALID, identityRecoveryService.tokenValid(token));
+            model.addAttribute(TOKEN, validToken);
+            model.addAttribute(VALID, identityRecoveryService.tokenValid(validToken));
             return RESET_PASS_URL_PATH;
         }
 
-        return "redirect:/login/secure?reset=" + identityRecoveryService.validateAndResetPassword(token, newPassword);
+        return "redirect:/login/secure?reset=" + identityRecoveryService.validateAndResetPassword(validToken, newPassword);
     }
 
     @PostMapping("preauth-check")
