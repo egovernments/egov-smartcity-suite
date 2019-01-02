@@ -121,23 +121,23 @@ public class DemandGenerationService {
     public DemandGenerationLog getDemandGenerationLog(CFinancialYear financialYear) {
         DemandGenerationLog demandGenerationLog = demandGenerationLogService
                 .getDemandGenerationLogByInstallmentYear(financialYear.getFinYearRange());
-        if (demandGenerationLog == null)
-            demandGenerationLog = createDemandGenerationLog(financialYear);
+        if (demandGenerationLog == null) {
+            DemandGenerationLog previousDemandGenLog = demandGenerationLogService
+                    .getPreviousInstallmentDemandGenerationLog(financialYear.getFinYearRange());
+            if (previousDemandGenLog != null && previousDemandGenLog.getDemandGenerationStatus().equals(INCOMPLETE))
+                demandGenerationLog = previousDemandGenLog;
+            else
+                demandGenerationLog = createDemandGenerationLog(financialYear);
+        }
         return demandGenerationLog;
     }
 
     @Transactional
     public DemandGenerationLog createDemandGenerationLog(CFinancialYear financialYear) {
-        DemandGenerationLog previousDemandGenLog = demandGenerationLogService
-                .getPreviousInstallmentDemandGenerationLog(financialYear.getFinYearRange());
-        if (previousDemandGenLog != null && previousDemandGenLog.getDemandGenerationStatus().equals(INCOMPLETE))
-            throw new ApplicationValidationException("TL-008");
-
         if (!installmentYearValidForDemandGeneration(financialYear))
             throw new ApplicationValidationException("TL-006");
 
         return demandGenerationLogService.createDemandGenerationLog(financialYear.getFinYearRange());
-
     }
 
     @Transactional
@@ -181,12 +181,13 @@ public class DemandGenerationService {
     }
 
     @Transactional
-    public boolean generateLicenseDemand(Long licenseId) {
+    public boolean generateLicenseDemand(Long licenseId, boolean forPrevYear) {
         boolean generationSuccess = true;
         try {
             TradeLicense license = licenseService.getLicenseById(licenseId);
             Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(licenseUtils.getModule(),
-                    new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate());
+                    forPrevYear ? new DateTime(license.getDemand().getEgInstallmentMaster().getToDate()).plusDays(1).toDate()
+                            : new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate());
             licenseService.raiseDemand(license.getId(), licenseUtils.getModule(), installment);
             markDemandGenerationLogAsCompleted(license, SUCCESSFUL);
             renewalNotificationService.notifyLicenseRenewal(license, installment);
