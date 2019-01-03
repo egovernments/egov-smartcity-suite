@@ -113,7 +113,7 @@ public class RequiredValidator {
                 .append(" where detailTypeId = :detailId and detailKey = :keyToValidate");
         final List list = persistenceService.getSession().createNativeQuery(sql.toString())
                 .setParameter("detailId", detailId, IntegerType.INSTANCE)
-                .setParameter("keyToValidate", keyToValidate, StringType.INSTANCE)
+                .setParameter("keyToValidate", Integer.valueOf(keyToValidate), IntegerType.INSTANCE)
                 .list();
         if (list != null && list.size() > 0)
             return true;
