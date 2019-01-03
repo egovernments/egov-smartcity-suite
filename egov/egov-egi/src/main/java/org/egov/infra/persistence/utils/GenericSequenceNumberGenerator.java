@@ -48,11 +48,11 @@
 
 package org.egov.infra.persistence.utils;
 
-import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.PersistenceException;
 import java.io.Serializable;
 
 import static org.egov.infra.utils.ApplicationConstant.UNDERSCORE;
@@ -78,7 +78,7 @@ public class GenericSequenceNumberGenerator {
         String normalizedSequenceName = sequenceName.replaceAll(DISALLOWED_CHARACTERS, UNDERSCORE);
         try {
             return this.databaseSequenceProvider.getNextSequence(normalizedSequenceName);
-        } catch (SQLGrammarException e) {
+        } catch (PersistenceException e) {
             this.databaseSequenceCreator.createSequence(normalizedSequenceName);
         }
         return this.databaseSequenceProvider.getNextSequence(normalizedSequenceName);

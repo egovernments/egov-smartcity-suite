@@ -64,7 +64,6 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.VoucherHelper;
-import org.hibernate.exception.SQLGrammarException;
 import org.hibernate.type.DateType;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
@@ -73,6 +72,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.PersistenceException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
@@ -185,7 +185,7 @@ public class EGovernCommon extends AbstractTask {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("----- CGVN : " + cgvn);
 
-        } catch (final SQLGrammarException e) {
+        } catch (final PersistenceException e) {
             databaseSequenceCreator.createSequence(sequenceName);
             cgvn = (BigInteger) databaseSequenceProvider.getNextSequence(sequenceName);
             LOGGER.error("Error in generating CGVN" ,e);

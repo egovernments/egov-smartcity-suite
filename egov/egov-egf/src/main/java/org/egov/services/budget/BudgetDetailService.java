@@ -102,7 +102,6 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
-import org.hibernate.exception.SQLGrammarException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -111,6 +110,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.script.ScriptContext;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -1860,7 +1860,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         Serializable sequenceNumber = null;
         try {
             sequenceNumber = databaseSequenceProvider.getNextSequence("seq_eg_wf_states");
-        } catch (final SQLGrammarException e) {
+        } catch (final PersistenceException e) {
         }
         stateId = Long.valueOf(sequenceNumber.toString());
 
@@ -1883,7 +1883,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             Serializable sequenceNumber = null;
             try {
                 sequenceNumber = databaseSequenceProvider.getNextSequence("seq_egf_budgetgroup");
-            } catch (final SQLGrammarException e) {
+            } catch (final PersistenceException e) {
             }
 
             Long.valueOf(sequenceNumber.toString());
@@ -2008,7 +2008,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         try {
             sequenceNumber = databaseSequenceProvider.getNextSequence("seq_eg_wf_states");
             stateId = Long.valueOf(sequenceNumber.toString());
-        } catch (final SQLGrammarException e) {
+        } catch (final PersistenceException e) {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
         }
         persistenceService.getSession().createNativeQuery(BUDGET_STATES_INSERT).setLong("stateId", stateId)
