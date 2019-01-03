@@ -63,11 +63,21 @@ jQuery(document).ready(
 					jQuery('#recursiveAmount').val("").attr('disabled','disabled');
 					jQuery('input:radio[name=isRecursive]').val("")
 					.attr('disabled', 'disabled');
+					jQuery('#highLimit').removeAttr('disabled');
 				}
 				else {
+					if(highLimit.value != ""||highLimit.value.length > 0) 
+					{
+					jQuery('#recursiveFactor').val("").attr('disabled','disabled');
+					jQuery('#recursiveAmount').val("").attr('disabled','disabled');
+					jQuery('#flatAmount').removeAttr('disabled');
+					}else{
 					jQuery('#flatAmount').removeAttr('disabled');
 					jQuery('#recursiveFactor').removeAttr('disabled');
 					jQuery('#recursiveAmount').removeAttr('disabled');
+					jQuery('input:radio[name=isRecursive]').removeAttr(
+					'disabled');
+				}
 				}
 				
 			});
@@ -104,9 +114,18 @@ jQuery(document).ready(
 						if (this.value != "" || this.value.length > 0) {
 							jQuery('input:radio[name=isRecursive]').val("")
 									.attr('disabled', 'disabled');
+							jQuery('#recursiveFactor').val("").attr('disabled', 'disabled');
+							jQuery('#recursiveAmount').val("").attr('disabled', 'disabled');
 						} else {
+							if(percentage.value != ""||percentage.value.length > 0) 
+							{
+									jQuery('#recursiveFactor').val("").attr('disabled','disabled');
+									jQuery('#recursiveAmount').val("").attr('disabled','disabled');
+							}else{
 							jQuery('input:radio[name=isRecursive]').removeAttr(
 									'disabled');
+							jQuery('#flatAmount').removeAttr('disabled');
+							}
 						}
 					});
 
@@ -115,6 +134,10 @@ jQuery(document).ready(
 					jQuery('#highLimit').val("").attr('disabled', 'disabled');
 
 				} else {
+					if(percentage.value != ""||percentage.value.length > 0) 
+					{
+					jQuery('#highLimit').removeAttr('disabled');
+					}else
 					jQuery('#highLimit').removeAttr('disabled');
 				}
 			});
@@ -123,8 +146,11 @@ jQuery(document).ready(
 					jQuery('#highLimit').val("").attr('disabled', 'disabled');
 
 				} else {
+					if(percentage.value != ""||percentage.value.length > 0) 
+					{
 					jQuery('#highLimit').removeAttr('disabled');
-
+					}else
+						jQuery('#highLimit').removeAttr('disabled');
 				}
 			});
 			jQuery('.effToDate').change(function() {
