@@ -1200,7 +1200,8 @@ public class ContingentBillAction extends BaseBillAction {
         final Query query = persistenceService.getSession().createQuery(statusQuery.toString())
                 .setParameter("moduletype" , FinancialConstants.CONTINGENCYBILL_FIN, StringType.INSTANCE)
                 .setParameter("description" , FinancialConstants.CONTINGENCYBILL_CREATED_STATUS.toUpperCase(), StringType.INSTANCE);
-        final EgwStatus egwStatus = (EgwStatus) persistenceService.find(query.toString());
+        final EgwStatus egwStatus = (EgwStatus) query.uniqueResult();
+
         bill.setStatus(egwStatus);
         bill.setBilltype("Final Bill");
 
