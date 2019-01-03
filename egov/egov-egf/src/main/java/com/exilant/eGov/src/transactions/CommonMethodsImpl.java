@@ -374,8 +374,8 @@ public class CommonMethodsImpl implements CommonMethodsI {
     public String getCodeName(final String purposeId) throws Exception {
         String codeAndName = "null";
         try {
-            final String query = "select a.glcode, a.name from chartofaccounts a, egf_accountcode_purpose b where a.purposeid = b.id and b.id = :purposeId";
-            List<Object[]> rset = persistenceService.getSession().createNativeQuery(query)
+            final StringBuilder query = new StringBuilder("select a.glcode, a.name from chartofaccounts a, egf_accountcode_purpose b where a.purposeid = b.id and b.id = :purposeId");
+            List<Object[]> rset = persistenceService.getSession().createNativeQuery(query.toString())
                     .setParameter("purposeId", purposeId, StringType.INSTANCE)
                     .list();
             // for(int i=0;rset.next();i++){
@@ -399,10 +399,10 @@ public class CommonMethodsImpl implements CommonMethodsI {
 
         String codeName = "null";
         try {
-            final String query = "select name from chartofaccounts where glcode = :glcode";
+            final StringBuilder query = new StringBuilder("select name from chartofaccounts where glcode = :glcode");
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("  query   " + query);
-            List<Object[]> rset = persistenceService.getSession().createNativeQuery(query)
+            List<Object[]> rset = persistenceService.getSession().createNativeQuery(query.toString())
                     .setParameter("glcode", glcode, StringType.INSTANCE)
                     .list();
             for (final Object[] element : rset) {
@@ -426,10 +426,10 @@ public class CommonMethodsImpl implements CommonMethodsI {
     public String getGlCode(final String glCodeId, final Connection connection) throws Exception {
         String glCode = "null";
         try {
-            final String query = "select glcode from chartofaccounts where id = :glcode";
+            final StringBuffer query = new StringBuffer("select glcode from chartofaccounts where id = :glcode");
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("  query   " + query);
-            List<Object[]> rset = persistenceService.getSession().createNativeQuery(query)
+            List<Object[]> rset = persistenceService.getSession().createNativeQuery(query.toString())
                     .setParameter("glcode", glCodeId)
                     .list();
             for (final Object[] element : rset) {
@@ -453,10 +453,10 @@ public class CommonMethodsImpl implements CommonMethodsI {
     public String checkRecordIdInLog(final String recordId, final int userId, final Connection connection) throws Exception {
         String cgn = null;
         try {
-            final String query = "SELECT VOUCHERNUMBER FROM integrationlog WHERE RECORDID = :recordId and USERID = :userId order by id desc";
+            final StringBuilder query = new StringBuilder("SELECT VOUCHERNUMBER FROM integrationlog WHERE RECORDID = :recordId and USERID = :userId order by id desc");
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("  query   " + query);
-            List<Object[]> rset = persistenceService.getSession().createNativeQuery(query)
+            List<Object[]> rset = persistenceService.getSession().createNativeQuery(query.toString())
                     .setParameter("recordId", recordId, StringType.INSTANCE)
                     .setParameter("userId", userId, IntegerType.INSTANCE)
                     .list();
@@ -798,10 +798,10 @@ public class CommonMethodsImpl implements CommonMethodsI {
     @Override
     public Integer getDivisionIdFromCode(final String divisionCode, final Connection connection) throws Exception {
         Integer divId = null;
-        final String sql = "Select id_bndry from EG_BOUNDARY where BNDRY_NUM = :divCode and is_bndry_active = 1 order by id_bndry_type desc";
+        final StringBuilder sql = new StringBuilder("Select id_bndry from EG_BOUNDARY where BNDRY_NUM = :divCode and is_bndry_active = 1 order by id_bndry_type desc");
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Sub Field id query-->>>>>>>> " + sql);
-        List<Object[]> rset = persistenceService.getSession().createNativeQuery(sql)
+        List<Object[]> rset = persistenceService.getSession().createNativeQuery(sql.toString())
                 .setParameter("divCode", divisionCode, StringType.INSTANCE)
                 .list();
         for (final Object[] element : rset)
