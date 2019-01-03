@@ -56,12 +56,7 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.egov.commons.EgwStatus;
-import org.egov.commons.Functionary;
-import org.egov.commons.Fund;
-import org.egov.commons.Fundsource;
-import org.egov.commons.Scheme;
-import org.egov.commons.SubScheme;
+import org.egov.commons.*;
 import org.egov.commons.dao.FunctionaryDAO;
 import org.egov.commons.dao.FundSourceHibernateDAO;
 import org.egov.commons.repository.FundRepository;
@@ -83,19 +78,14 @@ import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author manoranjan
- *
  */
 @ParentPackage("egov")
 @Results({
-    @Result(name = BillRegisterSearchAction.NEW, location = "billRegisterSearch-" + BillRegisterSearchAction.NEW + ".jsp")
+        @Result(name = BillRegisterSearchAction.NEW, location = "billRegisterSearch-" + BillRegisterSearchAction.NEW + ".jsp")
 })
 public class BillRegisterSearchAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
@@ -110,10 +100,10 @@ public class BillRegisterSearchAction extends BaseFormAction {
     private List<Map<String, Object>> billList;
     @Autowired
     private AppConfigValueService appConfigValueService;
-   
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
+
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
     @Autowired
     private DepartmentService departmentService;
     @Autowired
@@ -163,7 +153,7 @@ public class BillRegisterSearchAction extends BaseFormAction {
         if (headerFields.contains("functionary"))
             addDropdownData("functionaryList", functionaryDAO.findAllActiveFunctionary());
         if (headerFields.contains("fund"))
-            addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
+            addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true, false));
         if (headerFields.contains("fundsource"))
             addDropdownData("fundsourceList", fundSourceHibernateDAO.findAllActiveIsLeafFundSources());
         if (headerFields.contains("field"))
@@ -188,19 +178,26 @@ public class BillRegisterSearchAction extends BaseFormAction {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("BillRegisterSearchAction | search | Start");
+        final Map.Entry<String, Map<String, Object>> billMisQueryMapEntry = VoucherHelper.getBillMisQuery(billregister).entrySet().iterator().next();
+        final String billMisQueryString = billMisQueryMapEntry.getKey();
+        final Map<String, Object> billMisQueryParams = billMisQueryMapEntry.getValue();
+        final Map.Entry<String, Map<String, Object>> billDateQueryMapEntry = VoucherHelper.getBillDateQuery(billDateFrom, billDateTo).entrySet().iterator().next();
+        final String billDateQueryString = billDateQueryMapEntry.getKey();
+        final Map<String, Object> billDateQueryParams = billDateQueryMapEntry.getValue();
         final StringBuffer query = new StringBuffer(500);
-        query
-        .append(
-                "select br.expendituretype , br.billtype ,br.billnumber , br.billdate , br.billamount , br.passedamount ,egwstatus.description,billmis.sourcePath,")
+        query.append("select br.expendituretype , br.billtype ,br.billnumber , br.billdate , br.billamount , br.passedamount ,egwstatus.description,billmis.sourcePath,")
                 .append(" br.id ,br.status.id,egwstatus.description ,br.state.id,br.lastModifiedBy.id ")
                 .append(" from EgBillregister br, EgBillregistermis billmis , EgwStatus egwstatus where   billmis.egBillregister.id = br.id and egwstatus.id = br.status.id  ")
-                        .append(" and br.expendituretype=?").append(
-                                VoucherHelper
-                                .getBillDateQuery(billDateFrom, billDateTo))
-                                .append(VoucherHelper.getBillMisQuery(billregister));
+                .append(" and br.expendituretype=:expType")
+                .append(billDateQueryString)
+                .append(billMisQueryString);
 
-        final List<Object[]> list = persistenceService.findAllBy(query.toString(),
-                expType);
+        final Query qry = persistenceService.getSession().createNativeQuery(query.toString())
+                .setParameter("expType", expType, StringType.INSTANCE);
+        billMisQueryParams.entrySet().forEach(entry -> qry.setParameter(entry.getKey(), entry.getValue()));
+        billDateQueryParams.entrySet().forEach(entry -> qry.setParameter(entry.getKey(), entry.getValue()));
+        final List<Object[]> list = qry.list();
+
         final List<Long> stateIds = new ArrayList<Long>();
         final Map<Long, String> stateIdAndOwnerNameMap = new HashMap<Long, String>();
         for (final Object[] object : list)
@@ -233,10 +230,9 @@ public class BillRegisterSearchAction extends BaseFormAction {
                 billMap.put("passedamount", object[5]);
                 billMap.put("billstatus", object[6].toString());
                 billMap.put("sourcepath",
-                            "/EGF/bill/billView-view.action?billId=" + object[8].toString());
+                        "/EGF/bill/billView-view.action?billId=" + object[8].toString());
                 // If bill is created from create bill screen
-                if (object[11] != null)
-                {
+                if (object[11] != null) {
                     if (!(getStringValue(object[10]).equalsIgnoreCase(FinancialConstants.CONTINGENCYBILL_APPROVED_STATUS) || getStringValue(
                             object[10]).equalsIgnoreCase(FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS)))
                         billMap.put(
@@ -254,20 +250,17 @@ public class BillRegisterSearchAction extends BaseFormAction {
         return NEW;
     }
 
-    private List<Object[]> getOwnersForWorkFlowState(final List<Long> stateIds)
-    {
+    private List<Object[]> getOwnersForWorkFlowState(final List<Long> stateIds) {
         List<Object[]> ownerNamesList = new ArrayList<Object[]>();
         final String ownerNamesQueryStr = "select a.employee.username,bill.state.id from Assignment a,State state, EgBillregister bill"
                 + " where  bill.state.id=state.id and a.position.id = state.ownerPosition.id and bill.state.id in (:IDS)";
         int size = stateIds.size();
-        if (size > 999)
-        {
+        if (size > 999) {
             int fromIndex = 0;
             int toIndex = 0;
             final int step = 1000;
             List<Object[]> newGLDList;
-            while (size - step >= 0)
-            {
+            while (size - step >= 0) {
                 newGLDList = new ArrayList<Object[]>();
                 toIndex += step;
                 final Query ownerNamesQuery = persistenceService.getSession().createQuery(ownerNamesQueryStr);
@@ -280,8 +273,7 @@ public class BillRegisterSearchAction extends BaseFormAction {
 
             }
 
-            if (size > 0)
-            {
+            if (size > 0) {
                 newGLDList = new ArrayList<Object[]>();
                 fromIndex = toIndex;
                 toIndex = fromIndex + size;
@@ -294,8 +286,8 @@ public class BillRegisterSearchAction extends BaseFormAction {
 
         } else
             ownerNamesList = persistenceService.getSession().createQuery(ownerNamesQueryStr)
-            .setParameterList("IDS", stateIds)
-            .list();
+                    .setParameterList("IDS", stateIds)
+                    .list();
         return ownerNamesList;
     }
 
@@ -304,7 +296,7 @@ public class BillRegisterSearchAction extends BaseFormAction {
         statusQuery = statusQuery.append("from EgwStatus where upper(moduletype)=upper(:moduleType) and id=:statusId");
         final Query query = persistenceService.getSession().createQuery(statusQuery.toString())
                 .setParameter("moduleType", moduleType, StringType.INSTANCE)
-                .setParameter("statusId",statusid, IntegerType.INSTANCE);
+                .setParameter("statusId", statusid, IntegerType.INSTANCE);
         final EgwStatus egwStatus = (EgwStatus) persistenceService.find(query.toString());
         return egwStatus;
 
@@ -312,14 +304,14 @@ public class BillRegisterSearchAction extends BaseFormAction {
 
     protected void getHeaderFields() {
         final List<AppConfigValues> appConfigList = appConfigValueService.getConfigValuesByModuleAndKey("EGF", "DEFAULT_SEARCH_MISATTRRIBUTES");
-            for (final AppConfigValues appConfigVal : appConfigList) {
-                final String value = appConfigVal.getValue();
-                final String header = value.substring(0, value.indexOf('|'));
-                headerFields.add(header);
-                final String mandate = value.substring(value.indexOf('|') + 1);
-                if (mandate.equalsIgnoreCase("M"))
-                    mandatoryFields.add(header);
-            }
+        for (final AppConfigValues appConfigVal : appConfigList) {
+            final String value = appConfigVal.getValue();
+            final String header = value.substring(0, value.indexOf('|'));
+            headerFields.add(header);
+            final String mandate = value.substring(value.indexOf('|') + 1);
+            if (mandate.equalsIgnoreCase("M"))
+                mandatoryFields.add(header);
+        }
 
     }
 
@@ -339,36 +331,36 @@ public class BillRegisterSearchAction extends BaseFormAction {
         this.billregister = billregister;
     }
 
-    public void setExpType(final String expType) {
-        this.expType = expType;
+    public String getBillDateFrom() {
+        return billDateFrom;
     }
 
     public void setBillDateFrom(final String billDateFrom) {
         this.billDateFrom = billDateFrom;
     }
 
-    public void setBillDateTo(final String billDateTo) {
-        this.billDateTo = billDateTo;
-    }
-
-    public void setBillList(final List<Map<String, Object>> billList) {
-        this.billList = billList;
-    }
-
-    public String getBillDateFrom() {
-        return billDateFrom;
-    }
-
     public String getBillDateTo() {
         return billDateTo;
+    }
+
+    public void setBillDateTo(final String billDateTo) {
+        this.billDateTo = billDateTo;
     }
 
     public String getExpType() {
         return expType;
     }
 
+    public void setExpType(final String expType) {
+        this.expType = expType;
+    }
+
     public List<Map<String, Object>> getBillList() {
         return billList;
+    }
+
+    public void setBillList(final List<Map<String, Object>> billList) {
+        this.billList = billList;
     }
 
     public void setHeaderFields(final List<String> headerFields) {

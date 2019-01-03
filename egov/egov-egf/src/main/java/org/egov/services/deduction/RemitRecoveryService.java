@@ -89,6 +89,9 @@ public class RemitRecoveryService {
                                                           final Integer detailKeyId) throws ValidationException {
         final List<RemittanceBean> listRemitBean = new ArrayList<RemittanceBean>();
         final StringBuffer query = new StringBuffer(200);
+        final Map.Entry<String, Map<String, Object>> queryMapEntry = VoucherHelper.getMisQuery(voucherHeader).entrySet().iterator().next();
+        final String queryString = queryMapEntry.getKey();
+        final Map<String, Object> queryParams = queryMapEntry.getValue();
         query.append("select vh.name,vh.voucherNumber ,vh.voucherDate,egr.gldtlamt,gld.detailTypeId.id,gld.detailKeyId,egr.id ")
                 .append(" from CVoucherHeader vh ,Vouchermis mis, CGeneralLedger gl ,CGeneralLedgerDetail gld , EgRemittanceGldtl egr , Recovery rec ")
                 .append(" where rec.chartofaccounts.id = gl.glcodeId.id and gld.id = egr.generalledgerdetail.id and  gl.id = gld.generalLedgerId.id and vh.id = gl.voucherHeaderId.id ")
@@ -98,12 +101,13 @@ public class RemitRecoveryService {
                 .append(" and rec.id = :recoveryId and ( egr.recovery.id = :recoveryId OR egr.recovery.id is null ) and vh.voucherDate <= :voucherDate");
         if (detailKeyId != null && detailKeyId != -1)
             query.append(" and egr.generalledgerdetail.detailkeyid = :detailKeyId");
-        query.append(VoucherHelper.getMisQuery(voucherHeader)).append(" order by vh.voucherNumber,vh.voucherDate");
+        query.append(queryString).append(" order by vh.voucherNumber,vh.voucherDate");
 
         final Query qry = persistenceService.getSession().createQuery(query.toString())
                 .setParameter("fundId", voucherHeader.getFundId().getId(), LongType.INSTANCE)
                 .setParameter("recoveryId", remittanceBean.getRecoveryId(), LongType.INSTANCE)
                 .setParameter("voucherDate", Constants.DDMMYYYYFORMAT1.format(voucherHeader.getVoucherDate()), StringType.INSTANCE);
+        queryParams.entrySet().forEach(entry -> qry.setParameter(entry.getKey(), entry.getValue()));
         if (detailKeyId != null && detailKeyId != -1)
             qry.setParameter("detailKeyId", detailKeyId, IntegerType.INSTANCE);
 
