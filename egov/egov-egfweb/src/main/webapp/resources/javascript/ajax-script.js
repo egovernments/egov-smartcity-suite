@@ -45,7 +45,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-jQuery.noConflict();
+
 var maskingTimeForDownloads = 30000;//30 seconds
 var displayTagExportPDF = 'd-5394226-e=5';
 var displayTagExportExcel = 'd-5394226-e=2';
