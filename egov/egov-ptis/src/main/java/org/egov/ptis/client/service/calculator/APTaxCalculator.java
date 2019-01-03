@@ -291,7 +291,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
                 else
                     halfYearHeadTax = halfYearHeadTax.add(calculateHalfYearNonVacantTax(applicableTax, alv, floor));
                 halfYearHeadTax = taxIfGovtProperty(propTypeCode, halfYearHeadTax);
-                generalTax = generalTax.add(halfYearHeadTax);
+                generalTax = generalTax.add(halfYearHeadTax.setScale(0, BigDecimal.ROUND_HALF_UP));
             }
             if (applicableTax.equals(DEMANDRSN_CODE_EDUCATIONAL_TAX)){
                 if (floor != null && floor.getPropertyUsage().getIsResidential())
@@ -304,7 +304,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
                 halfYearHeadTax = getYearTax(generalTax.add(educationTax), getTaxPercentage(DEMANDRSN_CODE_LIBRARY_CESS));
             
             if (halfYearHeadTax.compareTo(BigDecimal.ZERO) > 0) {
-                totalHalfTaxPayable = totalHalfTaxPayable.add(halfYearHeadTax);
+            	totalHalfTaxPayable = totalHalfTaxPayable.add(halfYearHeadTax.setScale(0, BigDecimal.ROUND_HALF_UP));
                 createMiscTax(applicableTax, halfYearHeadTax, unitTaxCalculationInfo);
             }
         }
