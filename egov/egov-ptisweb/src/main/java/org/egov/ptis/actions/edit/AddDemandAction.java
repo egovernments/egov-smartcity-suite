@@ -197,6 +197,7 @@ public class AddDemandAction extends BaseFormAction {
     private final Set<Installment> propertyInstallments = new TreeSet<>();
     private Map<Installment, Map<String, Boolean>> collectionDetails = new HashMap<>();
     private Map<String, String> demandReasonMap = new HashMap<>();
+	private boolean newValue;
 
     @Override
     public Object getModel() {
@@ -250,17 +251,18 @@ public class AddDemandAction extends BaseFormAction {
         List<String> instString;
         final Set<String> actAmtInstallments = new TreeSet<>();
         List<String> errorParams = null;
-
+      List<Installment> displInstallment = new ArrayList<>();
         for (final DemandDetail dd : demandDetailBeanList)
             if (dd.getIsNew() != null && dd.getIsNew()) {
                 instString = new ArrayList<>();
                 instString.add(dd.getReasonMaster());
+                newValue=true;
                 if ((PropertyTaxConstants.NON_VACANT_TAX_DEMAND_REASONS.contains(dd.getReasonMaster())
                         || dd.getReasonMaster().equalsIgnoreCase(DEMANDRSN_STR_VACANT_TAX))
                         && (dd.getInstallment().getId() == null
                                 || dd.getInstallment().getId().equals(-1)))
                     addActionError(getText("error.editDemand.selectInstallment"));
-
+              
                 if (null != dd.getInstallment().getId() && !dd.getInstallment().getId().equals(-1)) {
                     if (null == dd.getActualAmount())
                         addActionError(getText("error.editDemand.actualAmount", instString));
@@ -278,6 +280,7 @@ public class AddDemandAction extends BaseFormAction {
                         addActionError(getText("error.editDemand.selectInstallment"));
                     else {
                         newInstallments.add(dd.getInstallment());
+                        displInstallment.add(dd.getInstallment());
                         final String instRsn = dd.getInstallment().toString().concat(ADD_TYPE_POSTFIX)
                                 .concat(dd.getReasonMaster());
                         if (!instDmdRsnMaster.add(instRsn)) {
@@ -285,9 +288,11 @@ public class AddDemandAction extends BaseFormAction {
                             addActionError(getText("error.editDemand.duplicateInstallment", instString));
                         }
                     }
+               
             } else {
                 newInstallments.add(dd.getInstallment());
-
+                displInstallment.add(dd.getInstallment());
+                newValue=false;
                 if (null != dd.getRevisedAmount() && dd.getRevisedAmount().compareTo(BigDecimal.ZERO) == 0
                         && dd.getActualCollection().compareTo(BigDecimal.ZERO) > 0 && dd.getRevisedCollection() == null) {
                     errorParams = new ArrayList<>();
@@ -302,7 +307,7 @@ public class AddDemandAction extends BaseFormAction {
                         && dd.getRevisedAmount().intValue() < dd.getRevisedCollection().intValue())
                     addActionError(getText("error.revisedCollecion.greaterThan.revisedAmount"));
             }
-
+        
         if (!actAmtInstallments.isEmpty()) {
             final String inst = actAmtInstallments.toString().replace('[', ' ').replace(']', ' ');
             final List<String> instStrings = new ArrayList<>();
@@ -328,9 +333,12 @@ public class AddDemandAction extends BaseFormAction {
                     addActionError(getText("error.currentyearinstallments"));
             } else if (!newInstallments.contains(currYearInstMap.get(CURRENTYEAR_SECOND_HALF)))
                 addActionError(getText("error.currentInst"));
-
+            if (newValue = true){
+            	if(!displInstallment.get(0).equals(installmentsInOrder.get(0)))             
+            	 addActionError(getText("error.editDemand.badInstallmentSelection"));
+            	}    
         }
-
+               
         if (!installmentsChqPenalty.isEmpty()) {
             final String inst = installmentsChqPenalty.toString().replace('[', ' ').replace(']', ' ');
             final List<String> instStrings = new ArrayList<>();
@@ -342,6 +350,7 @@ public class AddDemandAction extends BaseFormAction {
             addActionError(getText("mandatory.editDmdCollRemarks"));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Exiting from validate");
+
     }
 
     @SkipValidation
@@ -362,8 +371,8 @@ public class AddDemandAction extends BaseFormAction {
             qry.setParameter(INSTALLMENT2, propertyTaxCommonUtils.getCurrentInstallment());
             demandDetails = qry.getResultList();
             if (!demandDetails.isEmpty())
-                Collections.sort(demandDetails, (o1, o2) -> o1.getEgDemandReason().getEgInstallmentMaster()
-                        .compareTo(o2.getEgDemandReason().getEgInstallmentMaster()));
+                Collections.sort(demandDetails, (o1, o2) -> o2.getEgDemandReason().getEgInstallmentMaster()
+                        .compareTo(o1.getEgDemandReason().getEgInstallmentMaster()));
 
             final PropertyTaxBillable billable = new PropertyTaxBillable();
             billable.setBasicProperty(basicProperty);
@@ -423,7 +432,7 @@ public class AddDemandAction extends BaseFormAction {
                     "createDemandDetailBean - demandDetail= " + demandDetail + "\nExiting from createDemandDetailBean");
         return demandDetail;
     }
-
+  
     /**
      * To set DcbDispInfo with ReasonCategoryCodes as Tax and Penalty. Here reasonMasterCodes could also be set to DcbDispInfo.
      *
