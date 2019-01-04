@@ -137,14 +137,20 @@ public class ValidationInterceptor extends AbstractInterceptor {
         }
     }
 
-    private void transformValidationErrors(ActionInvocation invocation, ValidationException e) {
+    private void transformValidationErrors(ActionInvocation invocation, ValidationException ve) {
         BaseFormAction action = (BaseFormAction) invocation.getAction();
-        List<ValidationError> errors = e.getErrors();
+        List<ValidationError> errors = ve.getErrors();
         for (ValidationError error : errors) {
             if (error.getArgs() == null || error.getArgs().length == 0) {
-                action.addFieldError("model." + error.getKey(), action.getText(error.getMessage(), error.getMessage()));
+                if (error.isNonFieldError())
+                    action.addActionError(action.getText(error.getMessage(), error.getMessage()));
+                else
+                    action.addFieldError("model." + error.getKey(), action.getText(error.getMessage(), error.getMessage()));
             } else {
-                action.addFieldError("model." + error.getKey(), action.getText(error.getMessage(), error.getMessage(), error.getArgs()));
+                if (error.isNonFieldError())
+                    action.addActionError(action.getText(error.getMessage(), error.getMessage(), error.getArgs()));
+                else
+                    action.addFieldError("model." + error.getKey(), action.getText(error.getMessage(), error.getMessage(), error.getArgs()));
             }
         }
     }

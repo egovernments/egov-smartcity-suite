@@ -56,20 +56,31 @@ public class ValidationException extends RuntimeException {
 
     private final List<ValidationError> errors;
 
-    public ValidationException(final List<ValidationError> errors) {
+    public ValidationException(List<ValidationError> errors) {
         this.errors = errors;
     }
 
-    public ValidationException(final ValidationError... errors) {
+    public ValidationException(List<ValidationError> errors, boolean nonFieldError) {
+        this.errors = errors;
+        errors.stream().forEach(error -> error.setNonFieldError(nonFieldError));
+    }
+
+    public ValidationException(ValidationError... errors) {
         this.errors = Arrays.asList(errors);
     }
 
-    public ValidationException(final String key, final String defaultMsg, final String... args) {
+    public ValidationException(String key, String defaultMsg, String... args) {
         errors = new ArrayList<>();
         errors.add(new ValidationError(key, defaultMsg, args));
+    }
+
+    public ValidationException(String key, String defaultMsg, boolean nonFieldError, String... args) {
+        errors = new ArrayList<>();
+        errors.add(new ValidationError(key, defaultMsg, nonFieldError, args));
     }
 
     public List<ValidationError> getErrors() {
         return errors;
     }
+
 }
