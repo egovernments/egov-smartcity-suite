@@ -48,11 +48,11 @@
 
 package org.egov.adtax.entity;
 
-import org.egov.adtax.entity.enums.AgencyStatus;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import static org.egov.infra.validation.constants.ValidationRegex.EMAIL;
+import static org.egov.infra.validation.constants.ValidationRegex.MOBILE_NUMBER;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -67,14 +67,16 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.util.HashSet;
-import java.util.Set;
 
-import static org.egov.infra.validation.constants.ValidationRegex.EMAIL;
-import static org.egov.infra.validation.constants.ValidationRegex.MOBILE_NUMBER;
+import org.egov.adtax.entity.enums.AgencyStatus;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGADTAX_AGENCY")
@@ -91,29 +93,32 @@ public class Agency extends AbstractAuditable {
     @NotNull
     @Column(name = "code", unique = true, updatable = false)
     @SafeHtml
+    @Length(max = 15)
     private String code;
 
     @NotNull
     @Column(name = "name", unique = true)
     @SafeHtml
+    @Length(max = 32)
     private String name;
 
     @SafeHtml
+    @Length(max = 15)
     private String ssId;
 
     @Email(regexp = EMAIL)
-    @Length(max = 128)
+    @Length(max = 32)
     @SafeHtml
     private String emailId;
 
     @NotNull
     @Pattern(regexp = MOBILE_NUMBER)
-    @Length(max = 15)
+    @Length(max = 10)
     @SafeHtml
     private String mobileNumber;
 
     @SafeHtml
-    @Length(max = 256)
+    @Length(max = 250)
     private String address;
 
     @NotNull
@@ -121,6 +126,7 @@ public class Agency extends AbstractAuditable {
     private AgencyStatus status;
 
     @NotNull
+    @Digits(fraction = 0, integer = 10)
     private Double depositAmount;
 
     @OrderBy("ID DESC")
