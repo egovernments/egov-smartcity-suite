@@ -66,6 +66,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -208,16 +209,26 @@ public class ContractTypeAction extends BaseFormAction {
     @Action(value = "/masters/contractType-search")
     public String search() {
         final StringBuffer query = new StringBuffer();
+        final List params = new ArrayList();
+        int i = 1;
         query.append("From EgwTypeOfWork where createdBy is not null ");
-        if (!typeOfWork.getCode().isEmpty())
-            query.append(" and upper(code) like upper('%" + typeOfWork.getCode() + "%')");
-        if (!typeOfWork.getDescription().isEmpty())
-            query.append(" and upper(description) like upper('%" + typeOfWork.getDescription() + "%')");
-        if (typeOfWork.getEgPartytype() != null && typeOfWork.getEgPartytype().getId() != null)
-            query.append(" and egPartytype =" + typeOfWork.getEgPartytype());
-        if (typeOfWork.getParentid() != null && typeOfWork.getParentid().getId() != null)
-            query.append(" and parentid = " + typeOfWork.getParentid());
-        typeOfWorkList = persistenceService.findAllBy(query.toString());
+        if (!typeOfWork.getCode().isEmpty()) {
+            query.append(" and upper(code) like upper(?)").append(i++);
+            params.add("%".concat(typeOfWork.getCode()).concat("%"));
+        }
+        if (!typeOfWork.getDescription().isEmpty()) {
+            query.append(" and upper(description) like upper(?)").append(i++);
+            params.add("%".concat(typeOfWork.getDescription()).concat("%"));
+        }
+        if (typeOfWork.getEgPartytype() != null && typeOfWork.getEgPartytype().getId() != null) {
+            query.append(" and egPartytype = ?").append(i++);
+            params.add(typeOfWork.getEgPartytype());
+        }
+        if (typeOfWork.getParentid() != null && typeOfWork.getParentid().getId() != null) {
+            query.append(" and parentid = ?").append(i++);
+            params.add(typeOfWork.getParentid());
+        }
+        typeOfWorkList = persistenceService.findAllBy(query.toString(), params);
 
         return "search";
     }

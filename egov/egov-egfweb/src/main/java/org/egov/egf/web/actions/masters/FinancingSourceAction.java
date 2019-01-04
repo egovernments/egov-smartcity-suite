@@ -52,11 +52,7 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.egov.commons.Bankaccount;
-import org.egov.commons.FinancingInstitution;
-import org.egov.commons.Fundsource;
-import org.egov.commons.SharedFundSource;
-import org.egov.commons.SubScheme;
+import org.egov.commons.*;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
@@ -67,11 +63,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.services.financingsource.FinancingSourceService;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 
 /**
@@ -145,8 +137,8 @@ public class FinancingSourceAction extends BaseFormAction {
     @Action(value = "/masters/financingSource-getIntEstAmt")
     public String getIntEstAmt() {
 
-        final SubScheme subscheme = (SubScheme) persistenceService.find("from SubScheme  where id = "
-                + Integer.valueOf(parameters.get("subSchemeId")[0]));
+        final SubScheme subscheme = (SubScheme) persistenceService.find("from SubScheme  where id = ?1",
+                Integer.valueOf(parameters.get("subSchemeId")[0]));
         initialEstimateAmount = subscheme.getInitialEstimateAmount();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" initial estimate amount received = " + initialEstimateAmount);
@@ -157,8 +149,8 @@ public class FinancingSourceAction extends BaseFormAction {
 
     public String getOwnSrcAmount() {
 
-        final Fundsource fundsource = (Fundsource) persistenceService.find("from Fundsource where id="
-                + Integer.valueOf(parameters.get("finSrcOwnSrcId")[0]));
+        final Fundsource fundsource = (Fundsource) persistenceService.find("from Fundsource where id=?1",
+                Integer.valueOf(parameters.get("finSrcOwnSrcId")[0]));
         initialEstimateAmount = fundsource.getSourceAmount();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" initial estimate amount received = " + initialEstimateAmount);
@@ -177,9 +169,8 @@ public class FinancingSourceAction extends BaseFormAction {
     public boolean getCodeCheck() {
 
         boolean codeExistsOrNot = false;
-        final Fundsource fundsourceObj = (Fundsource) persistenceService.find("from Fundsource where code='"
-                + fundsource.getCode()
-                + "'");
+        final Fundsource fundsourceObj = (Fundsource) persistenceService.find("from Fundsource where code=?1",
+                fundsource.getCode());
         if (null != fundsourceObj)
             codeExistsOrNot = true;
         return codeExistsOrNot;
@@ -194,9 +185,8 @@ public class FinancingSourceAction extends BaseFormAction {
     public boolean getNameCheck() {
 
         boolean nameExistsOrNot = false;
-        final Fundsource fundsourceObj = (Fundsource) persistenceService.find("from Fundsource where name='"
-                + fundsource.getName()
-                + "'");
+        final Fundsource fundsourceObj = (Fundsource) persistenceService.find("from Fundsource where name=?1",
+                fundsource.getName());
         if (null != fundsourceObj)
             nameExistsOrNot = true;
         return nameExistsOrNot;
@@ -209,7 +199,7 @@ public class FinancingSourceAction extends BaseFormAction {
             LOGGER.debug("FinancingSourceAction | save | start");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("financial source list size " + fundSourceList.size());
-        final User user = (User) persistenceService.find("from User where id=" + ApplicationThreadLocals.getUserId());
+        final User user = (User) persistenceService.find("from User where id=?1", ApplicationThreadLocals.getUserId());
         SharedFundSource sharedFundSource;
         try {
             for (Fundsource fundsource : fundSourceList)

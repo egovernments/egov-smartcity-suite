@@ -70,12 +70,7 @@ import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 
@@ -126,12 +121,10 @@ public class AutoRemittanceAction extends BaseFormAction {
             addDropdownData("departmentList", departmentService.getAllDepartments());
             deptDOList = persistenceService.findAllBy("from DepartmentDOMapping where department is not null  ");
 
-            final List<Object[]> list = persistenceService.getSession()
-                    .
-                    createNativeQuery(
-                            "select glcode, to_char(max(lastrundate),'dd/mm/yyyy') from egf_remittance_scheduler where glcode is not null and sch_type='A' "
-                                    +
-                            " GROUP by glcode order by glcode").list();
+            final List<Object[]> list = persistenceService.getSession().createNativeQuery(
+                    new StringBuilder("select glcode, to_char(max(lastrundate),'dd/mm/yyyy')")
+                            .append(" from egf_remittance_scheduler where glcode is not null and sch_type='A' ")
+                            .append(" GROUP by glcode order by glcode").toString()).list();
             lastRunDateMap = new HashMap<String, String>();
             for (final Object[] ob : list)
                 lastRunDateMap.put((String) ob[0], (String) ob[1]);
@@ -183,7 +176,9 @@ public class AutoRemittanceAction extends BaseFormAction {
             throw new ValidationException(Arrays.asList(new ValidationError(scheduledRemittanceService.getErrorMessage()
                     .toString(), scheduledRemittanceService.getErrorMessage().toString())));
         }
-        final List<String> findAllBy = persistenceService.findAllBy("select voucherheaderId.voucherNumber from RemittanceSchedulePayment  where schId.id=?1", remittanceScheduler.getId());
+        final List<String> findAllBy = persistenceService.findAllBy(new StringBuilder("select voucherheaderId.voucherNumber")
+                .append(" from RemittanceSchedulePayment ")
+                .append(" where schId.id=?1").toString(), remittanceScheduler.getId());
         if (findAllBy.isEmpty())
             addActionMessage(" No Payments Created ");
         else

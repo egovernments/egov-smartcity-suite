@@ -56,12 +56,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.billsaccounting.services.VoucherConstant;
-import org.egov.commons.Bankaccount;
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.CFunction;
-import org.egov.commons.EgwStatus;
-import org.egov.commons.Fund;
+import org.egov.commons.*;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.service.BankAccountService;
 import org.egov.commons.utils.EntityType;
@@ -107,22 +102,10 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang.StringUtils.*;
 
 @ParentPackage("egov")
 @Results({
@@ -437,8 +420,8 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     public void prepareBeforeRemittanceRtgsSearch() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting prepareBeforeRemittanceRtgsSearch...");
-        addDropdownData("drawingofficerList", getPersistenceService().findAllBy("from DrawingOfficer where id in" +
-                " (select drawingOfficer.id from DepartmentDOMapping) order by code"));
+        addDropdownData("drawingofficerList", getPersistenceService().findAllBy(new StringBuilder("from DrawingOfficer where id in")
+                .append(" (select drawingOfficer.id from DepartmentDOMapping) order by code").toString()));
         final List<Recovery> listRecovery = recoveryService.getAllActiveAutoRemitTds();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("RemitRecoveryAction | Tds list size : " + listRecovery.size());
@@ -759,7 +742,8 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         try {
             if (bankaccount != null) {
                 if (department != null) {
-                    StringBuilder query = new StringBuilder("select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd  where ac.serialNo = fs.id and  bankAccountId=?1")
+                    StringBuilder query = new StringBuilder("select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd")
+                            .append(" where ac.serialNo = fs.id and  bankAccountId=?1")
                                             .append("and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where id =?2")
                                             .append(" order by serialNo desc ");
                     final List<Object[]> yearCodes = persistenceService.findAllBy(query.toString(),bankaccount,department);
@@ -1284,7 +1268,9 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 Long.valueOf(parameters.get("instHeaderId")[0]));
         for (final InstrumentVoucher instrumentVoucher : instrumentHdr.getInstrumentVouchers()) {
             final Object[] obj = (Object[]) persistenceService
-                    .find(" select gld.detailTypeId.id,gld.detailKeyId,gld.amount from CGeneralLedgerDetail gld,CGeneralLedger gl where gl.id=gld.generalLedgerId.id and gl.voucherHeaderId=?1",
+                    .find(new StringBuilder(" select gld.detailTypeId.id,gld.detailKeyId,gld.amount")
+                                    .append(" from CGeneralLedgerDetail gld,CGeneralLedger gl")
+                                    .append(" where gl.id=gld.generalLedgerId.id and gl.voucherHeaderId=?1").toString(),
                             instrumentVoucher.getVoucherHeaderId());
             if (obj != null) {
                 entity = paymentService.getEntity((Integer) obj[0], (Serializable) obj[1]);
@@ -1368,41 +1354,43 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
 
         final StringBuilder sql = new StringBuilder();
         try {
-            List<Object> params = new LinkedList<>();
-            if (isNotBlank(fromDate)) {
-                sql.append(" and iv.voucherHeaderId.voucherDate>=?1 ");
-                params.add(new Date(sdf.format(formatter.parse(fromDate))));
-            }
-            if (isNotBlank(toDate)) {
-                sql.append(" and iv.voucherHeaderId.voucherDate<=?1 ");
-                params.add(new Date(sdf.format(formatter.parse(toDate))));
-            }
-            if (bankaccount != null && bankaccount != -1) {
-                sql.append(" and  ih.bankAccountId.id=?1 ");
-                params.add(Long.valueOf(bankaccount));
-            }
-            if (isNotBlank(instrumentNumber)) {
-                sql.append(" and  ih.instrumentNumber=?1 ");
-                params.add(instrumentNumber);
-            }
-            if (department != null && department != -1) {
-                sql.append(" and  iv.voucherHeaderId.vouchermis.departmentid.id=?1 ");
-                params.add(Long.valueOf(department));
-            }
-            if (isNotBlank(voucherHeader.getVoucherNumber())) {
-                sql.append(" and  iv.voucherHeaderId.voucherNumber=?1 ");
-                params.add(voucherHeader.getVoucherNumber());
-            }
-            final String mainQuery = new StringBuilder(500)
+            final List<Object> params = new LinkedList<>();
+            int i = 1;
+            final StringBuilder mainQuery = new StringBuilder(500)
                     .append("select ih from  InstrumentVoucher iv ,InstrumentHeader ih ,InstrumentType it ")
                     .append("where iv.instrumentHeaderId.id =ih.id and ih.instrumentNumber is not null ")
                     .append("and ih.instrumentType=it.id and ( it.type = 'cheque' or it.type = 'cash' ) and ")
-                    .append("iv.voucherHeaderId.status=0  and iv.voucherHeaderId.type='")
-                    .append(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT).append("'  ")
-                    .append(sql).append(" and ih.statusId.id in (?1)  order by iv.voucherHeaderId.voucherDate").toString();
+                    .append("iv.voucherHeaderId.status=0  and iv.voucherHeaderId.type=?").append(i++);
+            params.add(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
+
+            if (isNotBlank(fromDate)) {
+                sql.append(" and iv.voucherHeaderId.voucherDate>=?").append(i++);
+                params.add(new Date(sdf.format(formatter.parse(fromDate))));
+            }
+            if (isNotBlank(toDate)) {
+                sql.append(" and iv.voucherHeaderId.voucherDate<=?").append(i++);
+                params.add(new Date(sdf.format(formatter.parse(toDate))));
+            }
+            if (bankaccount != null && bankaccount != -1) {
+                sql.append(" and  ih.bankAccountId.id=?").append(i++);
+                params.add(Long.valueOf(bankaccount));
+            }
+            if (isNotBlank(instrumentNumber)) {
+                sql.append(" and  ih.instrumentNumber=?").append(i++);
+                params.add(instrumentNumber);
+            }
+            if (department != null && department != -1) {
+                sql.append(" and  iv.voucherHeaderId.vouchermis.departmentid.id=?").append(i++);
+                params.add(Long.valueOf(department));
+            }
+            if (isNotBlank(voucherHeader.getVoucherNumber())) {
+                sql.append(" and  iv.voucherHeaderId.voucherNumber=?").append(i++);
+                params.add(voucherHeader.getVoucherNumber());
+            }
+            mainQuery.append(sql).append(" and ih.statusId.id in (?").append(i++).append(")  order by iv.voucherHeaderId.voucherDate").toString();
             final EgwStatus created = instrumentService.getStatusId(FinancialConstants.INSTRUMENT_CREATED_STATUS);
             params.add(created.getId());
-            instrumentHeaderList = persistenceService.findAllBy(mainQuery, params.toArray());
+            instrumentHeaderList = persistenceService.findAllBy(mainQuery.toString(), params);
             final LinkedHashSet lhs = new LinkedHashSet();
             lhs.addAll(instrumentHeaderList);
             instrumentHeaderList.clear();
@@ -1447,42 +1435,44 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             return beforeSearchForRTGSSurrender();
         }
 
+        List<Object> params = new LinkedList<>();
+        int i = 1;
+        final StringBuilder mainQuery = new StringBuilder(500)
+                .append("select ih from  InstrumentVoucher iv,InstrumentHeader ih ,InstrumentType it ")
+                .append("where iv.instrumentHeaderId.id =ih.id and ih.transactionNumber is not null and ih.instrumentType=it.id ")
+                .append("and it.type = 'advice' and   iv.voucherHeaderId.status=0  and iv.voucherHeaderId.type=?").append(i++);
+        params.add(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
         final StringBuilder sql = new StringBuilder();
         try {
-            List<Object> params = new LinkedList<>();
             if (isNotBlank(fromDate)) {
-                sql.append(" and iv.voucherHeaderId.voucherDate>=?1 ");
+                sql.append(" and iv.voucherHeaderId.voucherDate>=?").append(i++);
                 params.add(sdf.format(formatter.parse(fromDate)));
             }
             if (isNotBlank(toDate)) {
-                sql.append(" and iv.voucherHeaderId.voucherDate<=?1 ");
+                sql.append(" and iv.voucherHeaderId.voucherDate<=?").append(i++);
                 params.add(sdf.format(formatter.parse(toDate)));
             }
             if (bankaccount != null && bankaccount != -1) {
-                sql.append(" and  ih.bankAccountId.id=?1 ");
+                sql.append(" and  ih.bankAccountId.id=?").append(i++);
                 params.add(bankaccount);
             }
             if (isNotBlank(instrumentNumber)) {
-                sql.append(" and  ih.transactionNumber=?1 ");
+                sql.append(" and  ih.transactionNumber=?").append(i++);
                 params.add(instrumentNumber);
             }
             if (department != null && department != -1) {
-                sql.append(" and  iv.voucherHeaderId.vouchermis.departmentid.id=?1 ");
+                sql.append(" and  iv.voucherHeaderId.vouchermis.departmentid.id=?").append(i++);
                 params.add(department);
             }
             if (isNotBlank(voucherHeader.getVoucherNumber())) {
-                sql.append(" and  iv.voucherHeaderId.voucherNumber=?1 ");
+                sql.append(" and  iv.voucherHeaderId.voucherNumber=?").append(i++);
                 params.add(voucherHeader.getVoucherNumber());
             }
-            final String mainQuery = new StringBuilder(500)
-                    .append("select ih from  InstrumentVoucher iv,InstrumentHeader ih ,InstrumentType it ")
-                    .append("where iv.instrumentHeaderId.id =ih.id and ih.transactionNumber is not null and ih.instrumentType=it.id ")
-                    .append("and it.type = 'advice' and   iv.voucherHeaderId.status=0  and iv.voucherHeaderId.type='")
-                    .append(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT).append("' ").append(sql)
-                    .append(" and ih.statusId.id in (?1)  order by iv.voucherHeaderId.voucherDate").toString();
+            mainQuery.append(sql).append(" and ih.statusId.id in (?").append(i++)
+                    .append(")  order by iv.voucherHeaderId.voucherDate").toString();
             final EgwStatus created = instrumentService.getStatusId(FinancialConstants.INSTRUMENT_CREATED_STATUS);
             params.add(created.getId());
-            instrumentHeaderList = persistenceService.findAllBy(mainQuery, params.toArray());
+            instrumentHeaderList = persistenceService.findAllBy(mainQuery.toString(), params.toArray());
             final LinkedHashSet lhs = new LinkedHashSet();
             lhs.addAll(instrumentHeaderList);
             instrumentHeaderList.clear();

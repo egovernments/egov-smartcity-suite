@@ -48,14 +48,8 @@
 package org.egov.egf.web.actions.masters;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import jnr.ffi.annotations.In;
+import com.exilant.GLEngine.ChartOfAccounts;
+import com.exilant.GLEngine.CoaCache;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -63,12 +57,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.Accountdetailtype;
-import org.egov.commons.CChartOfAccountDetail;
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CGeneralLedger;
-import org.egov.commons.CGeneralLedgerDetail;
-import org.egov.commons.EgfAccountcodePurpose;
+import org.egov.commons.*;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.service.AccountdetailtypeService;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -86,8 +75,7 @@ import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.exilant.GLEngine.ChartOfAccounts;
-import com.exilant.GLEngine.CoaCache;
+import java.util.*;
 
 @ParentPackage("egov")
 @Results({
@@ -328,7 +316,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     boolean hasReference(final Integer id, final String glCode) {
         StringBuilder queryString = new StringBuilder("select * from chartofaccounts c,generalledger gl,generalledgerdetail gd ")
                 .append("where c.glcode=:glCode")
-                .append("' and gl.glcodeid=c.id and gd.generalledgerid=gl.id and gd.DETAILTYPEID=:id");
+                .append(" and gl.glcodeid=c.id and gd.generalledgerid=gl.id and gd.DETAILTYPEID=:id");
         final NativeQuery query = persistenceService.getSession().createNativeQuery(queryString.toString())
                 .setParameter("glCode", glCode, StringType.INSTANCE)
                 .setParameter("id", id, IntegerType.INSTANCE);
@@ -342,8 +330,8 @@ public class ChartOfAccountsAction extends BaseFormAction {
         boolean flag=true;
         final StringBuffer strQuery = new StringBuffer();
         strQuery.append("select bd.billid from  eg_billdetails bd, chartofaccounts coa,  eg_billregistermis brm where coa.glcode =:glCode")
-                .append( " and bd.glcodeid = coa.id and brm.billid = bd.billid and brm.voucherheaderid is null ");
-        strQuery.append(" intersect SELECT br.id FROM eg_billregister br, eg_billdetails bd, chartofaccounts coa,egw_status  sts WHERE coa.glcode =:glCode")
+                .append(" and bd.glcodeid = coa.id and brm.billid = bd.billid and brm.voucherheaderid is null ")
+                .append(" intersect SELECT br.id FROM eg_billregister br, eg_billdetails bd, chartofaccounts coa,egw_status  sts WHERE coa.glcode =:glCode")
                 .append(" AND bd.glcodeid = coa.id AND br.id= bd.billid AND br.statusid=sts.id ");
         strQuery.append(" and sts.id not in (select id from egw_status where upper(moduletype) like '%BILL%' and upper(description) like '%CANCELLED%') ");
         final NativeQuery query = persistenceService.getSession().createNativeQuery(strQuery.toString())

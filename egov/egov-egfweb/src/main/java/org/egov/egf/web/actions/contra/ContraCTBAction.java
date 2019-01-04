@@ -179,8 +179,7 @@ public class ContraCTBAction extends BaseVoucherAction
 
                     voucherHeader = voucherService.updateVoucherHeader(voucherHeader, voucherTypeBean);
                     final InstrumentVoucher iVoucher = (InstrumentVoucher) persistenceService.find(
-                            "from InstrumentVoucher where " +
-                                    "voucherHeaderId=?1", voucherHeader);
+                            "from InstrumentVoucher where voucherHeaderId=?1", voucherHeader);
                     final Bankaccount bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?1",
                             Integer.valueOf(contraBean.getAccountNumberId()));
                     final InstrumentHeader instrHeader = iVoucher.getInstrumentHeaderId();

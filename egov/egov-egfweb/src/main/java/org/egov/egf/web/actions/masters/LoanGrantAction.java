@@ -55,13 +55,7 @@ import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
-import org.egov.egf.masters.model.FundingAgency;
-import org.egov.egf.masters.model.LoanGrantBean;
-import org.egov.egf.masters.model.LoanGrantDetail;
-import org.egov.egf.masters.model.LoanGrantHeader;
-import org.egov.egf.masters.model.LoanGrantReceiptDetail;
-import org.egov.egf.masters.model.SchemeBankaccount;
-import org.egov.egf.masters.model.SubSchemeProject;
+import org.egov.egf.masters.model.*;
 import org.egov.egf.web.actions.masters.loangrant.LoanGrantBaseAction;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -72,18 +66,13 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.services.masters.BankService;
 import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 
@@ -165,10 +154,12 @@ public class LoanGrantAction extends LoanGrantBaseAction {
         schemeId = loanGrantHeader.getSubScheme().getScheme().getId();
         subSchemeId = loanGrantHeader.getSubScheme().getId();
         projectCodeList = new ArrayList<LoanGrantBean>();
-        final String strQuery = "select pc.id as id , pc.code as code, pc.name as name from egw_projectcode pc," +
-                " egf_subscheme_project sp where pc.id= sp.projectcodeid and sp.subschemeid=" + subSchemeId;
+        final String strQuery = new StringBuilder("select pc.id as id , pc.code as code, pc.name as name")
+                .append(" from egw_projectcode pc, egf_subscheme_project sp")
+                .append(" where pc.id= sp.projectcodeid and sp.subschemeid=:subSchemeId").toString();
         query = persistenceService.getSession().createNativeQuery(strQuery)
                 .addScalar("id", LongType.INSTANCE).addScalar("code").addScalar("name")
+                .setParameter("subSchemeId", subSchemeId, IntegerType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(LoanGrantBean.class));
         projectCodeList = query.list();
         final List<LoanGrantDetail> lgDetailList = loanGrantHeader.getDetailList();
@@ -404,7 +395,8 @@ public class LoanGrantAction extends LoanGrantBaseAction {
                     lgRecptDetail.setModifiedDate(currDate);
                 }
             query = persistenceService.getSession().createNativeQuery(
-                    "delete from egf_subscheme_project where subschemeid= " + getSubSchemeId());
+                    "delete from egf_subscheme_project where subschemeid= :subSchemeId")
+                    .setParameter("subSchemeId", getSubSchemeId(), IntegerType.INSTANCE);
             query.executeUpdate();
             SubSchemeProject subSchemeProject;
             //persistenceService.setType(SubSchemeProject.class);

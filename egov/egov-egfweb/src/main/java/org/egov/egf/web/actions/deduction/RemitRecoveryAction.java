@@ -61,16 +61,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
-import org.egov.commons.Bank;
-import org.egov.commons.Bankaccount;
-import org.egov.commons.CFunction;
-import org.egov.commons.CVoucherHeader;
-import org.egov.commons.Functionary;
-import org.egov.commons.Fund;
-import org.egov.commons.Fundsource;
-import org.egov.commons.Scheme;
-import org.egov.commons.SubScheme;
-import org.egov.commons.Vouchermis;
+import org.egov.commons.*;
 import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.service.BankAccountService;
@@ -117,15 +108,8 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 @ParentPackage("egov")
 @Validation
@@ -722,9 +706,9 @@ public class RemitRecoveryAction extends BasePaymentAction {
      * @return
      */
     private BigDecimal calculateEarlierPayment(final EgRemittanceDetail remitDtl) {
-        final BigDecimal sum = (BigDecimal) persistenceService.find(
-                "select sum(egr.remittedamt) from EgRemittanceDetail egr where "
-                        + " egr.egRemittanceGldtl=?1  and egr.egRemittance.voucherheader.status  NOT in (?2,?3)",
+        final BigDecimal sum = (BigDecimal) persistenceService.find(new StringBuilder("select sum(egr.remittedamt)")
+                        .append(" from EgRemittanceDetail egr")
+                        .append(" where egr.egRemittanceGldtl=?1 and egr.egRemittance.voucherheader.status NOT in (?2,?3)").toString(),
                 remitDtl.getEgRemittanceGldtl(), FinancialConstants.CANCELLEDVOUCHERSTATUS,
                 FinancialConstants.REVERSEDVOUCHERSTATUS);
         if (sum == null)

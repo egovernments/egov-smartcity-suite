@@ -60,6 +60,7 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.hibernate.exception.ConstraintViolationException;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -135,16 +136,25 @@ public class FundingAgencyAction extends BaseFormAction {
     @Action(value = "/masters/fundingAgency-search")
     public String search() {
         final StringBuffer query = new StringBuffer();
+        final List params = new ArrayList();
+        int i = 1;
         query.append("From FundingAgency");
-        if (!fundingAgency.getCode().equals("") && !fundingAgency.getName().equals(""))
-            query.append(" where code like '%" + fundingAgency.getCode() + "%' and name like '%" + fundingAgency.getName() + "%'");
-        else {
-            if (!fundingAgency.getCode().isEmpty())
-                query.append(" where code like '%" + fundingAgency.getCode() + "%'");
-            if (!fundingAgency.getName().isEmpty())
-                query.append(" where name like '%" + fundingAgency.getName() + "%'");
+        if (!fundingAgency.getCode().equals("") && !fundingAgency.getName().equals("")) {
+            query.append(" where code like ?").append(i++).append(" and name like ?").append(i++);
+            params.add(new StringBuilder("%").append(fundingAgency.getCode()).append("%").toString());
+            params.add(new StringBuilder("%").append(fundingAgency.getName()).append("%").toString());
         }
-        fundingAgencyList = persistenceService.findAllBy(query.toString());
+        else {
+            if (!fundingAgency.getCode().isEmpty()) {
+                query.append(" where code like ?").append(i++);
+                params.add(new StringBuilder("%").append(fundingAgency.getName()).append("%").toString());
+            }
+            if (!fundingAgency.getName().isEmpty()) {
+                query.append(" where name like ?").append(i++);
+                params.add(new StringBuilder("%").append(fundingAgency.getName()).append("%"));
+            }
+        }
+        fundingAgencyList = persistenceService.findAllBy(query.toString(), params);
         return "search";
     }
 

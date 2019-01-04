@@ -47,16 +47,6 @@
  */
 package org.egov.egf.web.actions.payment;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
@@ -98,6 +88,9 @@ import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.math.BigDecimal;
+import java.util.*;
 
 @Results({ @Result(name = AdvancePaymentAction.NEW, location = "advancePayment-" + AdvancePaymentAction.NEW + ".jsp"),
         @Result(name = "view", location = "advancePayment-view.jsp") })
@@ -185,7 +178,8 @@ public class AdvancePaymentAction extends BasePaymentAction {
     }
 
     private void loadBankBranch(final Fund fund) {
-        StringBuilder queryString = new StringBuilder("from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=?1 and isactive = true and type in (?2,?3) ) ")
+        StringBuilder queryString = new StringBuilder("from Bankbranch br")
+                .append(" where br.id in (select bankbranch.id from Bankaccount where fund=?1 and isactive = true and type in (?2,?3) ) ")
                 .append(" and br.isactive=true and br.bank.isactive = true order by br.bank.name asc");
         addDropdownData("bankBranchList", persistenceService.findAllBy(queryString.toString(),fund,FinancialConstants.TYPEOFACCOUNT_PAYMENTS,
                 FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS));
@@ -321,7 +315,8 @@ public class AdvancePaymentAction extends BasePaymentAction {
     }
 
     private void populateBankAccounts(final Integer bankBranchId, final Integer fundId) {
-        StringBuilder queryString = new StringBuilder("from Bankaccount ba where ba.bankbranch.id=?1 and ba.fund.id=?2 and ba.type in (?3,?4) ")
+        StringBuilder queryString = new StringBuilder("from Bankaccount ba")
+                .append(" where ba.bankbranch.id=?1 and ba.fund.id=?2 and ba.type in (?3,?4) ")
                 .append("and ba.isactive=true order by ba.chartofaccounts.glcode");
         addDropdownData("accountNumberList", persistenceService.findAllBy(queryString.toString(),bankBranchId,fundId,FinancialConstants.TYPEOFACCOUNT_PAYMENTS,
                 FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS));
@@ -554,8 +549,8 @@ public class AdvancePaymentAction extends BasePaymentAction {
         addDropdownData("designationList", (List<Designation>) map.get("designationList"));
 
         if (bDefaultDeptId && !dName.equals("")) {
-            final Department dept = (Department) persistenceService.find("from Department where deptName like '%"
-                    + dName + "' ");
+            final Department dept = (Department) persistenceService.find("from Department where deptName like ?1",
+                    "%".concat(dName));
             departmentId = dept.getId().intValue();
         }
         wfitemstate = map.get("wfitemstate") != null ? map.get("wfitemstate").toString() : "";

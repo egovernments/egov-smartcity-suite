@@ -77,9 +77,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @ParentPackage("egov")
 @Results({
@@ -157,8 +155,10 @@ public class BankEntriesNotInBankBookAction extends BasePaymentAction {
     @SkipValidation
     @Action(value = "/payment/bankEntriesNotInBankBook-search")
     public String search() {
-        Query query = null;
-        query = persistenceService.getSession().createNativeQuery(getQuery())
+        final Map.Entry<String, Map<String, Object>> queryMapEntry = getQuery().entrySet().iterator().next();
+        final String queryString = queryMapEntry.getKey();
+        final Map<String, Object> queryParams = queryMapEntry.getValue();
+        final Query query = persistenceService.getSession().createNativeQuery(queryString)
                 .addScalar("refNum", StringType.INSTANCE)
                 .addScalar("type", StringType.INSTANCE)
                 .addScalar("date", DateType.INSTANCE)
@@ -167,7 +167,7 @@ public class BankEntriesNotInBankBookAction extends BasePaymentAction {
                 .addScalar("glcodeDetail", StringType.INSTANCE)
                 .addScalar("beId", LongType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(BankEntriesNotInBankBook.class));
-        query.setParameter("bankaccount", bankaccount, StringType.INSTANCE);
+        queryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
         bankEntriesNotInBankBookList = query.list();
         List<BankEntriesNotInBankBook> tempList = new ArrayList<BankEntriesNotInBankBook>();
         for (BankEntriesNotInBankBook bean : bankEntriesNotInBankBookList)
@@ -186,32 +186,54 @@ public class BankEntriesNotInBankBookAction extends BasePaymentAction {
         return NEW;
     }
 
-    private String getQuery() {
-        StringBuilder query = new StringBuilder();
-        StringBuilder subQuery = new StringBuilder();
-        if (bankaccount != null)
-            subQuery = subQuery.append("and be.bankaccountid =:bankaccount ");
-        if (voucherHeader.getVouchermis().getDepartmentid() != null)
-            subQuery = subQuery.append("and bemis.departmentid = ").append(voucherHeader.getVouchermis().getDepartmentid().getId());
-        if (voucherHeader.getFundId() != null)
-            subQuery = subQuery.append("and bemis.fundid = ").append(voucherHeader.getFundId().getId());
-        if (voucherHeader.getVouchermis().getSchemeid() != null)
-            subQuery = subQuery.append("and bemis.schemeid = ").append(voucherHeader.getVouchermis().getSchemeid().getId());
-        if (voucherHeader.getVouchermis().getSubschemeid() != null)
-            subQuery = subQuery.append("and bemis.subschemeid = ").append(voucherHeader.getVouchermis().getSubschemeid().getId());
-        if (voucherHeader.getVouchermis().getFundsource() != null)
-            subQuery = subQuery.append("and bemis.fundsourceid = ").append(voucherHeader.getVouchermis().getFundsource().getId());
-        if (voucherHeader.getVouchermis().getDivisionid() != null)
-            subQuery = subQuery.append("and bemis.divisionid = ").append(voucherHeader.getVouchermis().getDivisionid().getId());
-        if (voucherHeader.getVouchermis().getFunctionary() != null)
-            subQuery = subQuery.append("and bemis.functionaryid = ").append(voucherHeader.getVouchermis().getFunctionary().getId());
-        if (voucherHeader.getVouchermis().getFunction() != null)
-            subQuery = subQuery.append("and bemis.functionid = ").append(voucherHeader.getVouchermis().getFunction().getId());
+    private Map<String, Map<String, Object>> getQuery() {
+        final Map<String, Map<String, Object>> queryMap = new HashMap<>();
+        final Map<String, Object> queryParams = new HashMap<>();
+        final StringBuilder query = new StringBuilder();
+        final StringBuilder subQuery = new StringBuilder();
+        if (bankaccount != null) {
+            subQuery.append("and be.bankaccountid =:bankaccount");
+            queryParams.put("bankaccount", bankaccount);
+        }
+        if (voucherHeader.getVouchermis().getDepartmentid() != null) {
+            subQuery.append("and bemis.departmentid = :deptId");
+            queryParams.put("deptId", voucherHeader.getVouchermis().getDepartmentid().getId());
+        }
+        if (voucherHeader.getFundId() != null) {
+            subQuery.append("and bemis.fundid = :fundId");
+            queryParams.put("fundId", voucherHeader.getFundId().getId());
+        }
+        if (voucherHeader.getVouchermis().getSchemeid() != null) {
+            subQuery.append("and bemis.schemeid = :schemeId");
+            queryParams.put("schemeId", voucherHeader.getVouchermis().getSchemeid().getId());
+        }
+        if (voucherHeader.getVouchermis().getSubschemeid() != null) {
+            subQuery.append("and bemis.subschemeid = :subSchemeId");
+            queryParams.put("subSchemeId", voucherHeader.getVouchermis().getSubschemeid().getId());
+        }
+        if (voucherHeader.getVouchermis().getFundsource() != null) {
+            subQuery.append("and bemis.fundsourceid = :fundSourceId");
+            queryParams.put("fundSourceId", voucherHeader.getVouchermis().getFundsource().getId());
+        }
+        if (voucherHeader.getVouchermis().getDivisionid() != null) {
+            subQuery.append("and bemis.divisionid = :divisionId");
+            queryParams.put("divisionId", voucherHeader.getVouchermis().getDivisionid().getId());
+        }
+        if (voucherHeader.getVouchermis().getFunctionary() != null) {
+            subQuery.append("and bemis.functionaryid = :functionaryId");
+            queryParams.put("functionaryId", voucherHeader.getVouchermis().getFunctionary().getId());
+        }
+        if (voucherHeader.getVouchermis().getFunction() != null) {
+            subQuery.append("and bemis.functionid = :functionId");
+            queryParams.put("functionId", voucherHeader.getVouchermis().getFunction().getId());
+        }
 
-        query = query.append("select be.id as beId,be.refno as refnum,be.type as type,be.txndate as date,be.txnamount as amount,be.glcodeid as glcodeDetail,be.remarks as remarks ")
-                .append(" from bankentries be,bankentries_mis bemis where be.voucherheaderid is null and be.id = bemis.bankentriesid ")
+        query.append("select be.id as beId,be.refno as refnum,be.type as type,be.txndate as date,be.txnamount as amount,be.glcodeid as glcodeDetail,be.remarks as remarks ")
+                .append(" from bankentries be,bankentries_mis bemis")
+                .append(" where be.voucherheaderid is null and be.id = bemis.bankentriesid ")
                 .append(subQuery.toString());
-        return query.toString();
+        queryMap.put(query.toString(), queryParams);
+        return queryMap;
 
     }
 

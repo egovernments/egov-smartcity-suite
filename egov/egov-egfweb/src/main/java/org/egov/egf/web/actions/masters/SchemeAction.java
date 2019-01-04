@@ -160,20 +160,28 @@ public class SchemeAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside Search |Search scheme Action Starts");
         final StringBuffer query = new StringBuffer();
+        final List params = new ArrayList();
+        int i = 1;
         schemeList = new ArrayList<Scheme>();
         query.append("From Scheme scheme");
-
-        if (scheme.getFund().getId() != null)
-            query.append(" where scheme.fund=" + scheme.getFund().getId());
-        if (scheme.getValidfrom() != null && scheme.getValidto() != null)
-            query.append(" and scheme.validfrom>='" + Constants.DDMMYYYYFORMAT1.format(scheme.getValidfrom()) + "'")
-            .append("and scheme.validto<='" + Constants.DDMMYYYYFORMAT1.format(scheme.getValidto()) + "'");
-        else if (scheme.getValidfrom() != null)
-            query.append(" and scheme.validfrom>='" + Constants.DDMMYYYYFORMAT1.format(scheme.getValidfrom()) + "'");
-        else if (scheme.getValidto() != null)
-            query.append("and scheme.validto<='" + Constants.DDMMYYYYFORMAT1.format(scheme.getValidto()) + "'");
+        if (scheme.getFund().getId() != null) {
+            query.append(" where scheme.fund=?").append(i++);
+            params.add(scheme.getFund().getId());
+        }
+        if (scheme.getValidfrom() != null && scheme.getValidto() != null) {
+            query.append(" and scheme.validfrom>=?").append(i++)
+                    .append(" and scheme.validto<=?").append(i++);
+            params.add(Constants.DDMMYYYYFORMAT1.format(scheme.getValidfrom()));
+            params.add(Constants.DDMMYYYYFORMAT1.format(scheme.getValidto()));
+        } else if (scheme.getValidfrom() != null) {
+            query.append(" and scheme.validfrom>=?").append(i++);
+            params.add(Constants.DDMMYYYYFORMAT1.format(scheme.getValidfrom()));
+        } else if (scheme.getValidto() != null) {
+            query.append("and scheme.validto<=?").append(i++);
+            params.add(Constants.DDMMYYYYFORMAT1.format(scheme.getValidto()));
+        }
         query.append("order by scheme.name");
-        schemeList = persistenceService.findAllBy(query.toString());
+        schemeList = persistenceService.findAllBy(query.toString(), params);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Scheme List Size is" + schemeList.size());
         return SEARCH;

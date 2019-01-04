@@ -75,12 +75,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Results(value = {
@@ -198,15 +193,15 @@ public class OutstandingPaymentAction extends BaseFormAction {
             {
                 final String ownerIdList = getCommaSeperatedListForDesignationNameAndFunctionaryName(designationName,
                         functionaryName);
-                query.append(" and state.owner in (").append(ownerIdList).append(") order by state.createdDate desc ");
+                query.append(" and state.owner in (?5) order by state.createdDate desc ");
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("In condtitionalAppConfigIsPresent - qry" + query.toString());
                 paymentHeaderList.addAll(persistenceService.findPageBy(query.toString(), 1, 100, getAsOnDate(),
-                        FinancialConstants.CREATEDVOUCHERSTATUS,FinancialConstants.PREAPPROVEDVOUCHERSTATUS, id).getList());
+                        FinancialConstants.CREATEDVOUCHERSTATUS,FinancialConstants.PREAPPROVEDVOUCHERSTATUS, id, ownerIdList).getList());
             }
             else
             {
-                query.append(" and state.value like '").append(stateWithoutCondition).append("' order by state.createdDate desc ");
+                query.append(" and state.value like ").append(stateWithoutCondition).append(" order by state.createdDate desc ");
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("In ELSE - qry" + query.toString());
                 paymentHeaderList.addAll(persistenceService.findPageBy(query.toString(), 1, 100, getAsOnDate(),

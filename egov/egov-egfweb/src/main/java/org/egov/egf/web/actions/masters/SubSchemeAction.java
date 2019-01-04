@@ -68,10 +68,7 @@ import org.egov.services.masters.SubSchemeService;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @ParentPackage("egov")
 
@@ -215,23 +212,25 @@ public class SubSchemeAction extends BaseFormAction {
     @Action(value = "/masters/subScheme-search")
     public String search() {
         final StringBuffer query = new StringBuffer(500);
-        new StringBuffer(100);
+        final List params = new ArrayList();
+        int i = 1;
         query.append("From SubScheme s ");
         if (fundId != 0) {
-            query.append("where s.scheme.fund.id= " + fundId);
-            // params.append(""+fundId);
+            query.append("where s.scheme.fund.id=?").append(i++);
+            params.add(fundId);
 
             if (schemeId != -1) {
-                query.append("and  s.scheme.id= " + schemeId);
-                // params.append(","+schemeId);
+                query.append("and  s.scheme.id=?").append(i++);
+                params.add(schemeId);
 
-                if (subScheme.getId() != -1)
-                    query.append("and s.id=" + subScheme.getId());
-                // params.append(","+subSchemeId);
+                if (subScheme.getId() != -1) {
+                    query.append("and s.id=?").append(i++);
+                    params.add(subScheme.getId());
+                }
             }
         }
         loadDropDowns();
-        subSchemeList = persistenceService.findAllBy(query.toString());
+        subSchemeList = persistenceService.findAllBy(query.toString(), params);
         return SEARCH;
     }
 
@@ -251,10 +250,8 @@ public class SubSchemeAction extends BaseFormAction {
 
         if (fundId != 0) {
 
-            st.append("from Scheme where isactive=true and fund.id=");
-            st.append(fundId);
-            dropdownData.put("schemeList", persistenceService.findAllBy(st
-                    .toString()));
+            st.append("from Scheme where isactive=true and fund.id=?1");
+            dropdownData.put("schemeList", persistenceService.findAllBy(st.toString(), fundId));
             st.delete(0, st.length() - 1);
 
         } else

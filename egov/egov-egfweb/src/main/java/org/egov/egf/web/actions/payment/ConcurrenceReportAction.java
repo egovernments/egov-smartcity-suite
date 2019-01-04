@@ -72,12 +72,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Results(value = {
@@ -165,7 +160,7 @@ public class ConcurrenceReportAction extends BaseFormAction {
                 && parameters.get("asOnDate")[0] != null) {
             setDateData(parameters.get("asOnDate")[0], " ");
             final Query query = generateQuery();
-            query.setDate("date", asOnDate).setResultTransformer(
+            query.setResultTransformer(
                     Transformers.aliasToBean(ConcurrenceReportData.class));
             paymentHeaderList.addAll(query.list());
         } else if (parameters.containsKey("fromDate")
@@ -175,8 +170,7 @@ public class ConcurrenceReportAction extends BaseFormAction {
             setDateData(parameters.get("fromDate")[0],
                     parameters.get("toDate")[0]);
             final Query query = generateQuery();
-            query.setDate("fromDate", fromDate).setDate("toDate", toDate)
-            .setResultTransformer(
+            query.setResultTransformer(
                     Transformers
                     .aliasToBean(ConcurrenceReportData.class));
             paymentHeaderList.addAll(query.list());
@@ -239,12 +233,22 @@ public class ConcurrenceReportAction extends BaseFormAction {
     }
 
     private Query generateQuery() {
-        final Query query = persistenceService.getSession().createNativeQuery(
-                getQueryString().toString()).addScalar("bankName").addScalar(
-                        "bankAccountNumber").addScalar("fundId").addScalar(
-                                "departmentName").addScalar("billNumber").addScalar("billDate")
-                                .addScalar("uac").addScalar("bpvNumber").addScalar("bpvDate")
-                                .addScalar("bpvAccountCode").addScalar("amount");
+        final Map.Entry<String, Map<String, Object>> queryMapEntry = getQueryString().entrySet().iterator().next();
+        final String queryString = queryMapEntry.getKey();
+        final Map<String, Object> queryParams = queryMapEntry.getValue();
+        final Query query = persistenceService.getSession().createNativeQuery(queryString)
+                .addScalar("bankName")
+                .addScalar("bankAccountNumber")
+                .addScalar("fundId")
+                .addScalar("departmentName")
+                .addScalar("billNumber")
+                .addScalar("billDate")
+                .addScalar("uac")
+                .addScalar("bpvNumber")
+                .addScalar("bpvDate")
+                .addScalar("bpvAccountCode")
+                .addScalar("amount");
+        queryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
         return query;
     }
 
@@ -253,82 +257,106 @@ public class ConcurrenceReportAction extends BaseFormAction {
         this.paymentHeaderList = paymentHeaderList;
     }
 
-    private StringBuffer getQueryString() {
+    private Map<String, Map<String, Object>> getQueryString() {
 
+        final Map<String, Map<String, Object>> queryMap = new HashMap<>();
+        final Map<String, Object> queryParams = new HashMap<>();
+        final Map<String, Object> dateQueryParams = new HashMap<>();
+        final Map<String, Object> bankQueryParams = new HashMap<>();
+        final Map<String, Object> instrumentQueryParams = new HashMap<>();
+        final Map<String, Object> chqOrRtgsQueryParams = new HashMap<>();
         final StringBuffer queryString = new StringBuffer();
         String bankQry = "";
         String dateQry = "";
         String insturmentQry = "";
 
-        if (dateType.equals("1"))
+        if (dateType.equals("1")) {
             dateQry = "ph.concurrenceDate <=:date and ";
-        else if (dateType.equals("0"))
+            dateQueryParams.put("date", asOnDate);
+        } else if (dateType.equals("0")) {
             dateQry = "ph.concurrenceDate >=:fromDate and ph.concurrenceDate <= :toDate and ";
+            dateQueryParams.put("fromDate", fromDate);
+            dateQueryParams.put("toDate", toDate);
+        }
 
         if (bankAccountExist) {
-            bankQry = "ph.bankaccountnumberid=" + bankAccount.getId() + " and ";
-            insturmentQry = " where bankaccountid=" + bankAccount.getId();
+            bankQry = "ph.bankaccountnumberid=:accNumberId and ";
+            bankQueryParams.put("accNumberId", bankAccount.getId());
+            insturmentQry = " where bankaccountid=:bankAccId";
+            instrumentQueryParams.put("bankAccId", bankAccount.getId());
         } else
             bankQry = " ";
 
         if (StringUtils.isNotBlank(chequeOrRTGS)) {
             // query to fetch vouchers for which no cheque has been assigned
             String chqOrRtgsQry = "";
-            if (Constants.CHEQUE.equals(chequeOrRTGS))
+            if (Constants.CHEQUE.equals(chequeOrRTGS)) {
                 // this part is same as below query except " and iv.VOUCHERHEADERID is null" is removed
-                chqOrRtgsQry = "ih.INSTRUMENTNUMBER is not null and ih.INSTRUMENTTYPE = (select id from egf_instrumenttype where type = '"
-                        + FinancialConstants.INSTRUMENT_TYPE_CHEQUE + "') and iv.instrumentheaderId = ih.id and ";
-            else if (Constants.RTGS.equals(chequeOrRTGS))
-                chqOrRtgsQry = "ih.TRANSACTIONNUMBER is not null and ih.INSTRUMENTTYPE = (select id from egf_instrumenttype where type = '"
-                        + FinancialConstants.INSTRUMENT_TYPE_ADVICE + "') and iv.instrumentheaderId = ih.id and ";
+                chqOrRtgsQry = new StringBuilder("ih.INSTRUMENTNUMBER is not null and ih.INSTRUMENTTYPE = (select id from egf_instrumenttype where type = :instrumentType)")
+                        .append(" and iv.instrumentheaderId = ih.id and ").toString();
+                chqOrRtgsQueryParams.put("instrumentType", FinancialConstants.INSTRUMENT_TYPE_CHEQUE);
+            } else if (Constants.RTGS.equals(chequeOrRTGS)) {
+                chqOrRtgsQry = new StringBuilder("ih.TRANSACTIONNUMBER is not null and ih.INSTRUMENTTYPE = (select id from egf_instrumenttype where type = :instrumentType)")
+                        .append(" and iv.instrumentheaderId = ih.id and ").toString();
+                chqOrRtgsQueryParams.put("instrumentType", FinancialConstants.INSTRUMENT_TYPE_ADVICE);
+            }
             queryString
-            .append("select bk.name   As bankName,ba.accountnumber As bankAccountNumber, vh.fundid As fundId,d.dept_name as departmentName,ms.billnumber as billNumber, ")
-            .append("ms.billdate as billDate ,egusr.first_name as uac, vh.vouchernumber as bpvNumber, vh.voucherdate as bpvDate, gl.glcode as bpvAccountCode,")
-            .append("ms.paidamount as amount  from miscbilldetail ms,bank bk,bankbranch bb,bankaccount ba, voucherheader vh,vouchermis vmis, eg_department d,")
-            .append("generalledger gl,paymentheader ph,eg_wf_states es,EGF_INSTRUMENTHEADER ih, egf_instrumentvoucher iv right outer join voucherheader vh1 on ")
-            .append("vh1.id =iv.VOUCHERHEADERID,egw_status egws, eg_user egusr where ph.voucherheaderid=vh.id and gl.debitamount!=0 and gl.debitamount is not null and vh.id= vmis.voucherheaderid and ")
-            .append("vmis.departmentid= d.id_dept and ph.state_id=es.id and egusr.id_user=ph.createdby and es.value='END' and gl.voucherheaderid=vh.id and ")
-            .append(" ms.payvhid=vh.id and ph.voucherheaderid=vh.id and ")
-            .append(chqOrRtgsQry)
-            .append(dateQry)
-            .append(bankQry)
-            .append(" ph.bankaccountnumberid=ba.id and ba.branchid=bb.id and bb.bankid=bk.id")
-            .append(" and  vh1.id=vh.id and vh.status=0  group by vh.fundid, ms.billnumber, d.dept_name,")
-            .append(" egusr.first_name, ms.billdate,gl.glcode,vh.vouchernumber,bk.name,ba.accountnumber, vh.voucherdate, ms.paidamount ");
-
-        } else
+                    .append("select bk.name   As bankName,ba.accountnumber As bankAccountNumber, vh.fundid As fundId,d.dept_name as departmentName,ms.billnumber as billNumber, ")
+                    .append("ms.billdate as billDate ,egusr.first_name as uac, vh.vouchernumber as bpvNumber, vh.voucherdate as bpvDate, gl.glcode as bpvAccountCode,")
+                    .append("ms.paidamount as amount  from miscbilldetail ms,bank bk,bankbranch bb,bankaccount ba, voucherheader vh,vouchermis vmis, eg_department d,")
+                    .append("generalledger gl,paymentheader ph,eg_wf_states es,EGF_INSTRUMENTHEADER ih, egf_instrumentvoucher iv right outer join voucherheader vh1 on ")
+                    .append("vh1.id =iv.VOUCHERHEADERID,egw_status egws, eg_user egusr where ph.voucherheaderid=vh.id and gl.debitamount!=0 and gl.debitamount is not null")
+                    .append(" and vh.id= vmis.voucherheaderid and ")
+                    .append("vmis.departmentid= d.id_dept and ph.state_id=es.id and egusr.id_user=ph.createdby and es.value='END' and gl.voucherheaderid=vh.id and ")
+                    .append(" ms.payvhid=vh.id and ph.voucherheaderid=vh.id and ")
+                    .append(chqOrRtgsQry)
+                    .append(dateQry)
+                    .append(bankQry)
+                    .append(" ph.bankaccountnumberid=ba.id and ba.branchid=bb.id and bb.bankid=bk.id")
+                    .append(" and  vh1.id=vh.id and vh.status=0  group by vh.fundid, ms.billnumber, d.dept_name,")
+                    .append(" egusr.first_name, ms.billdate,gl.glcode,vh.vouchernumber,bk.name,ba.accountnumber, vh.voucherdate, ms.paidamount ");
+            queryParams.putAll(chqOrRtgsQueryParams);
+            queryParams.putAll(dateQueryParams);
+            queryParams.putAll(bankQueryParams);
+        } else {
             queryString
-            .append("select bk.name   As bankName,ba.accountnumber As bankAccountNumber, vh.fundid As fundId,d.dept_name as departmentName,ms.billnumber as billNumber, ")
-            .append("ms.billdate as billDate ,egusr.first_name as uac, vh.vouchernumber as bpvNumber, vh.voucherdate as bpvDate, gl.glcode as bpvAccountCode,")
-            .append("ms.paidamount as amount  from miscbilldetail ms,bank bk,bankbranch bb,bankaccount ba, voucherheader vh,vouchermis vmis, eg_department d,")
-            .append("generalledger gl,paymentheader ph,eg_wf_states es,egf_instrumentvoucher iv right outer join voucherheader vh1 on ")
-            .append("vh1.id =iv.VOUCHERHEADERID,egw_status egws, eg_user egusr where ph.voucherheaderid=vh.id and gl.debitamount!=0 and gl.debitamount is not null and vh.id= vmis.voucherheaderid and ")
-            .append("vmis.departmentid= d.id_dept and ph.state_id=es.id and egusr.id_user=ph.createdby and es.value='END' and gl.voucherheaderid=vh.id and ")
-            .append(" ms.payvhid=vh.id and ph.voucherheaderid=vh.id and ")
-            .append(dateQry)
-            .append(bankQry)
-            .append(" ph.bankaccountnumberid=ba.id and ba.branchid=bb.id and bb.bankid=bk.id")
-            .append(" and  vh1.id=vh.id and vh.status=0 and iv.VOUCHERHEADERID is null group by vh.fundid, ms.billnumber, d.dept_name,")
-            .append(" egusr.first_name, ms.billdate,gl.glcode,vh.vouchernumber,bk.name,ba.accountnumber, vh.voucherdate, ms.paidamount ")
-            .append(" union ")
-            // query to fetch vouchers for which cheque has been assigned and surrendered
-            .append(" select bk.name   As bankName,ba.accountnumber As bankAccountNumber, vh.fundid As fundId,d.dept_name as departmentName,ms.billnumber as billNumber, ")
-            .append("ms.billdate as billDate ,egusr.first_name as uac, vh.vouchernumber as bpvNumber, vh.voucherdate as bpvDate, gl.glcode as bpvAccountCode,")
-            .append("ms.paidamount as amount  from miscbilldetail ms, bank bk,bankbranch bb,bankaccount ba, egf_instrumentvoucher iv,voucherheader vh,")
-            .append("vouchermis vmis, eg_department d,generalledger gl,")
-            .append("paymentheader ph,eg_wf_states es, eg_user egusr,egw_status egws,(select ih1.id,ih1.id_status from egf_instrumentheader ih1, ")
-            .append("(select bankid,bankaccountid,instrumentnumber,max(lastmodifieddate) as lastmodifieddate from egf_instrumentheader ")
-            .append(insturmentQry)
-            .append(" group by bankid,bankaccountid,")
-            .append("instrumentnumber order by lastmodifieddate desc) max_rec where max_rec.bankid=ih1.bankid and max_rec.bankaccountid=ih1.bankaccountid and max_rec.instrumentnumber=ih1.instrumentnumber ")
-            .append("and max_rec.lastmodifieddate=ih1.lastmodifieddate and rownum=1) ih where ph.voucherheaderid=vh.id and ms.payvhid=vh.id and vh.id= vmis.voucherheaderid and ")
-            .append("vmis.departmentid= d.id_dept and ph.state_id=es.id and es.value='END' and egusr.id_user=ph.createdby and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id ")
-            .append(" and  iv.voucherheaderid=vh.id and iv.instrumentheaderid=ih.id and vh.status=0 and ")
-            .append("ih.id_status=egws.id and egws.description in ('Surrendered','Surrender_For_Reassign') and gl.debitamount!=0 and gl.debitamount is not null and ")
-            .append(dateQry).append(bankQry)
-            .append(" ph.bankaccountnumberid=ba.id and ba.branchid=bb.id and bb.bankid=bk.id and vh.type='")
-            .append(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT).append("'");
-        return queryString.append("order by fundid ,bankaccountnumber,billdate");
+                    .append("select bk.name   As bankName,ba.accountnumber As bankAccountNumber, vh.fundid As fundId,d.dept_name as departmentName,ms.billnumber as billNumber, ")
+                    .append("ms.billdate as billDate ,egusr.first_name as uac, vh.vouchernumber as bpvNumber, vh.voucherdate as bpvDate, gl.glcode as bpvAccountCode,")
+                    .append("ms.paidamount as amount  from miscbilldetail ms,bank bk,bankbranch bb,bankaccount ba, voucherheader vh,vouchermis vmis, eg_department d,")
+                    .append("generalledger gl,paymentheader ph,eg_wf_states es,egf_instrumentvoucher iv right outer join voucherheader vh1 on ")
+                    .append("vh1.id =iv.VOUCHERHEADERID,egw_status egws, eg_user egusr where ph.voucherheaderid=vh.id and gl.debitamount!=0 and gl.debitamount is not null and vh.id= vmis.voucherheaderid and ")
+                    .append("vmis.departmentid= d.id_dept and ph.state_id=es.id and egusr.id_user=ph.createdby and es.value='END' and gl.voucherheaderid=vh.id and ")
+                    .append(" ms.payvhid=vh.id and ph.voucherheaderid=vh.id and ")
+                    .append(dateQry)
+                    .append(bankQry)
+                    .append(" ph.bankaccountnumberid=ba.id and ba.branchid=bb.id and bb.bankid=bk.id")
+                    .append(" and  vh1.id=vh.id and vh.status=0 and iv.VOUCHERHEADERID is null group by vh.fundid, ms.billnumber, d.dept_name,")
+                    .append(" egusr.first_name, ms.billdate,gl.glcode,vh.vouchernumber,bk.name,ba.accountnumber, vh.voucherdate, ms.paidamount ")
+                    .append(" union ")
+                    // query to fetch vouchers for which cheque has been assigned and surrendered
+                    .append(" select bk.name   As bankName,ba.accountnumber As bankAccountNumber, vh.fundid As fundId,d.dept_name as departmentName,ms.billnumber as billNumber, ")
+                    .append("ms.billdate as billDate ,egusr.first_name as uac, vh.vouchernumber as bpvNumber, vh.voucherdate as bpvDate, gl.glcode as bpvAccountCode,")
+                    .append("ms.paidamount as amount  from miscbilldetail ms, bank bk,bankbranch bb,bankaccount ba, egf_instrumentvoucher iv,voucherheader vh,")
+                    .append("vouchermis vmis, eg_department d,generalledger gl,")
+                    .append("paymentheader ph,eg_wf_states es, eg_user egusr,egw_status egws,(select ih1.id,ih1.id_status from egf_instrumentheader ih1, ")
+                    .append("(select bankid,bankaccountid,instrumentnumber,max(lastmodifieddate) as lastmodifieddate from egf_instrumentheader ")
+                    .append(insturmentQry)
+                    .append(" group by bankid,bankaccountid,")
+                    .append("instrumentnumber order by lastmodifieddate desc) max_rec where max_rec.bankid=ih1.bankid and max_rec.bankaccountid=ih1.bankaccountid and max_rec.instrumentnumber=ih1.instrumentnumber ")
+                    .append("and max_rec.lastmodifieddate=ih1.lastmodifieddate and rownum=1) ih where ph.voucherheaderid=vh.id and ms.payvhid=vh.id and vh.id= vmis.voucherheaderid and ")
+                    .append("vmis.departmentid= d.id_dept and ph.state_id=es.id and es.value='END' and egusr.id_user=ph.createdby and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id ")
+                    .append(" and  iv.voucherheaderid=vh.id and iv.instrumentheaderid=ih.id and vh.status=0 and ")
+                    .append("ih.id_status=egws.id and egws.description in ('Surrendered','Surrender_For_Reassign') and gl.debitamount!=0 and gl.debitamount is not null and ")
+                    .append(dateQry).append(bankQry)
+                    .append(" ph.bankaccountnumberid=ba.id and ba.branchid=bb.id and bb.bankid=bk.id and vh.type=:vhType");
+            queryParams.putAll(dateQueryParams);
+            queryParams.putAll(bankQueryParams);
+            queryParams.putAll(instrumentQueryParams);
+            queryParams.put("vhType", FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
+        }
+        queryString.append("order by fundid ,bankaccountnumber,billdate");
+        queryMap.put(queryString.toString(), queryParams);
+        return queryMap;
     }
 
     public String getChequeOrRTGS() {
@@ -355,11 +383,9 @@ public class ConcurrenceReportAction extends BaseFormAction {
         paramMap.put("grandTol", grandTol);
         String bankName = " ";
         if (bankAccountExist)
-            bankName = "for ".concat(
-                    bankAccount.getBankbranch().getBank().getName())
-                    .concat("-").concat(
-                            bankAccount.getBankbranch().getBranchname())
-                            .concat("-").concat(bankAccount.getAccountnumber());
+            bankName = new StringBuilder("for ").append(bankAccount.getBankbranch().getBank().getName())
+                    .append("-").append(bankAccount.getBankbranch().getBranchname())
+                    .append("-").append(bankAccount.getAccountnumber()).toString();
         if (dateType.equals("1"))
             header = "Concurrence Report " + bankName + " as on "
                     + Constants.DDMMYYYYFORMAT2.format(asOnDate);

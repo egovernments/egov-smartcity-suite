@@ -65,6 +65,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -181,15 +182,23 @@ public class PartyTypeAction extends BaseFormAction {
     @Action(value = "/masters/partyType-search")
     public String search() {
         final StringBuffer query = new StringBuffer();
-
+        final List params = new ArrayList();
+        int i = 1;
         query.append("From EgPartytype where createdBy is not null ");
-        if (!partyType.getCode().isEmpty())
-            query.append(" and upper(code) like upper('%" + partyType.getCode() + "%')");
-        if (!partyType.getDescription().isEmpty())
-            query.append(" and upper(description) like upper('%" + partyType.getDescription() + "%')");
-        if (partyType.getEgPartytype() != null && partyType.getEgPartytype().getId() != null)
-            query.append(" and egPartytype =" + partyType.getEgPartytype());
-        partySearchList = persistenceService.findAllBy(query.toString());
+        if (!partyType.getCode().isEmpty()) {
+            query.append(" and upper(code) like upper(?").append(i++).append(")");
+            params.add(new StringBuilder("%").append(partyType.getCode()).append("%").toString());
+        }
+        if (!partyType.getDescription().isEmpty()) {
+            query.append(" and upper(description) like upper(?").append(i++).append(")");
+            params.add(new StringBuilder("%").append(partyType.getDescription()).append("%").toString());
+
+        }
+        if (partyType.getEgPartytype() != null && partyType.getEgPartytype().getId() != null) {
+            query.append(" and egPartytype = ?").append(i++);
+            params.add(partyType.getEgPartytype());
+        }
+        partySearchList = persistenceService.findAllBy(query.toString(), params);
         return "search";
     }
 
