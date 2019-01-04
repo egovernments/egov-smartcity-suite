@@ -51,10 +51,8 @@ package org.egov.infra.persistence.validator;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.Criteria;
+import org.hibernate.FlushMode;
 import org.hibernate.Session;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -69,16 +67,16 @@ public class UniqueCheckValidator implements ConstraintValidator<Unique, Object>
     private EntityManager entityManager;
 
     @Override
-    public void initialize(final Unique unique) {
+    public void initialize(Unique unique) {
         this.unique = unique;
     }
 
     @Override
-    public boolean isValid(final Object arg0, final ConstraintValidatorContext constraintValidatorContext) {
+    public boolean isValid(Object arg0, ConstraintValidatorContext constraintValidatorContext) {
         try {
-            final Number id = (Number) FieldUtils.readField(arg0, unique.id(), true);
+            Number id = (Number) FieldUtils.readField(arg0, unique.id(), true);
             boolean isValid = true;
-            for (final String fieldName : unique.fields())
+            for (String fieldName : unique.fields())
                 if (!checkUnique(arg0, id, fieldName)) {
                     isValid = false;
                     if (unique.enableDfltMsg())
@@ -88,23 +86,31 @@ public class UniqueCheckValidator implements ConstraintValidator<Unique, Object>
 
                 }
             return isValid;
-        } catch (final IllegalAccessException e) {
+        } catch (IllegalAccessException e) {
             throw new ApplicationRuntimeException("Error while validating unique key", e);
         }
 
     }
 
-    private boolean checkUnique(final Object arg0, final Number id, final String fieldName) throws IllegalAccessException {
-        final Criteria criteria = entityManager.unwrap(Session.class)
-                .createCriteria(unique.isSuperclass() ? arg0.getClass().getSuperclass() : arg0.getClass()).setReadOnly(true);
-        final Object fieldValue = FieldUtils.readField(arg0, fieldName, true);
+    private boolean checkUnique(Object arg0, Number id, String fieldName) throws IllegalAccessException {
+
+        String className = (unique.isSuperclass() ? arg0.getClass().getSuperclass() : arg0.getClass()).getTypeName();
+        StringBuilder uniqueCheckQuery = new StringBuilder().append("SELECT ").append(unique.id()).append(" FROM ")
+                .append(className).append(" WHERE ");
+        Object fieldValue = FieldUtils.readField(arg0, fieldName, true);
         if (fieldValue instanceof String)
-            criteria.add(Restrictions.eq(fieldName, fieldValue).ignoreCase());
+            uniqueCheckQuery.append("lower(").append(fieldName).append(")").append("=lower(:").append(fieldName).append(")");
         else
-            criteria.add(Restrictions.eq(fieldName, fieldValue));
+            uniqueCheckQuery.append(fieldName).append("=:").append(fieldName);
         if (id != null)
-            criteria.add(Restrictions.ne(unique.id(), id));
-        return criteria.setProjection(Projections.id()).setMaxResults(1).uniqueResult() == null;
+            uniqueCheckQuery.append(" AND ").append(unique.id()).append("!=:").append(unique.id());
+        return !entityManager.unwrap(Session.class).createQuery(uniqueCheckQuery.toString())
+                .setParameter(fieldName, fieldValue)
+                .setParameter(unique.id(), id)
+                .setReadOnly(true)
+                .setMaxResults(1)
+                .setHibernateFlushMode(FlushMode.MANUAL)
+                .uniqueResultOptional().isPresent();
     }
 
 }
