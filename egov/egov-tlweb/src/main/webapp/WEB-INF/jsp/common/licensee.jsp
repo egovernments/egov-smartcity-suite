@@ -54,15 +54,13 @@
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><s:text name='licensee.applicantname'/><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
-        <s:textfield name="licensee.applicantName" id="applicantName" maxlength="250" cssClass="form-control patternvalidation"
-                     required="true" data-pattern="alphabetwithspace"/>
+        <s:textfield name="licensee.applicantName" id="applicantName" maxlength="250" cssClass="form-control"/>
         <div id="applicantname_error" class="error-msg" style="display:none;" align="left"></div>
         <s:fielderror fieldName="model.licensee.applicantName" cssClass="error-msg"/>
     </div>
     <label class="col-sm-2 control-label text-right"><s:text name='licensee.fatherorspousename'/><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
-        <s:textfield name="licensee.fatherOrSpouseName" maxlength="250" id="fatherOrSpouseName" cssClass="form-control patternvalidation"
-                     required="true" data-pattern="alphabetwithspace"/>
+        <s:textfield name="licensee.fatherOrSpouseName" maxlength="250" id="fatherOrSpouseName" cssClass="form-control"/>
         <div id="fatherorSpouse_error" class="error-msg" style="display:none;" align="left"></div>
         <s:fielderror fieldName="model.licensee.fatherOrSpouseName" cssClass="error-msg"/>
     </div>

@@ -58,9 +58,10 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import javax.validation.ConstraintViolation;
 import javax.validation.Path;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 @Component
 public class EntityValidatorUtil {
@@ -78,9 +79,10 @@ public class EntityValidatorUtil {
         if (entity != null) {
             Set<ConstraintViolation<AbstractPersistable>> constraintViolations = entityValidator.validate(entity);
             for (ConstraintViolation<AbstractPersistable> constraintViolation : constraintViolations) {
-                Iterator<Path.Node> nodes = constraintViolation.getPropertyPath().iterator();
-                while (nodes.hasNext())
-                    errors.add(new ValidationError(nodes.next().getName(), constraintViolation.getMessage()));
+                Path fieldPath = constraintViolation.getPropertyPath();
+                String message = constraintViolation.getMessage().replaceAll("(\\{|\\})+", EMPTY);
+                errors.add(new ValidationError(fieldPath.toString(), message,
+                        String.valueOf(constraintViolation.getInvalidValue())));
             }
         }
         return errors;

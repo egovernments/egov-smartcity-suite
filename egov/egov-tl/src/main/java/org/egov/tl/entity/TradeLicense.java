@@ -90,6 +90,7 @@ import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -221,7 +222,9 @@ public class TradeLicense extends StateAware<Position> {
     @NotAudited
     private boolean legacy;
 
+    @NotNull
     @Column(name = "TRADE_AREA_WEIGHT")
+    @Positive
     private BigDecimal tradeArea_weight;
 
     @ManyToOne(fetch = FetchType.LAZY)

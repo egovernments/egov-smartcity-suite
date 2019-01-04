@@ -71,11 +71,13 @@ import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.persistence.validator.EntityValidatorUtil;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -235,23 +237,19 @@ public class TradeLicenseService {
     @Autowired
     protected LicenseUtils licenseUtils;
     @Autowired
+    protected EntityValidatorUtil entityValidatorUtil;
+    @Autowired
     private PenaltyRatesService penaltyRatesService;
-
     @Autowired
     private SubCategoryDetailsService subCategoryDetailsService;
-
     @Autowired
     private FeeTypeService feeTypeService;
-
     @Autowired
     private ReportService reportService;
-
     @Autowired
     private SearchTradeRepository searchTradeRepository;
-
     @Autowired
     private CityService cityService;
-
     @Autowired
     private EisCommonService eisCommonService;
 
@@ -683,9 +681,14 @@ public class TradeLicenseService {
 
     @Transactional
     public void save(TradeLicense license) {
-        updateDemandForTradeAreaChange(license);
-        processAndStoreDocument(license);
-        licenseRepository.save(license);
+        List<ValidationError> errors = entityValidatorUtil.validateEntity(license);
+        if (errors.isEmpty()) {
+            updateDemandForTradeAreaChange(license);
+            processAndStoreDocument(license);
+            licenseRepository.save(license);
+        } else {
+            throw new ValidationException(errors);
+        }
     }
 
     @Transactional
