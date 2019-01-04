@@ -57,6 +57,7 @@ import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -101,6 +102,7 @@ public class Appeal extends AbstractAuditable {
     @NotNull
     @Column(name = "srnumber")
     @Audited
+    @SafeHtml
     private String srNumber;
 
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT)
@@ -112,6 +114,7 @@ public class Appeal extends AbstractAuditable {
     @Length(max = 100)
     @Column(name = "appealfiledby")
     @Audited
+    @SafeHtml
     private String appealFiledBy;
 
     @OneToMany(mappedBy = "appeal", fetch = FetchType.LAZY)

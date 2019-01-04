@@ -52,6 +52,7 @@ import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.utils.constants.LcmsConstants;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.Column;
@@ -90,9 +91,11 @@ public class BatchCase extends AbstractPersistable<Long> {
     @Column(name="casedate")
     private Date batchCaseDate;
 
+    @SafeHtml
     @OptionalPattern(regex = LcmsConstants.caseNumberRegx, message = "batchcase.number.alphanumeric")
     private String casenumber;
 
+    @SafeHtml
     @OptionalPattern(regex = LcmsConstants.mixedCharType1withComma, message = "petitionerName.batchcase.mixedChar")
     @Column(name="petitionername")
     private String petitionerName;

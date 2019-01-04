@@ -61,6 +61,7 @@ import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -140,6 +141,7 @@ public class Judgment extends AbstractAuditable {
     @Length(max = 1024)
     @Column(name = "judgmentdetails")
     @Audited
+    @SafeHtml
     private String judgmentDetails;
 
     @Column(name = "advisorfee")
@@ -153,6 +155,7 @@ public class Judgment extends AbstractAuditable {
     @Length(max = 1024)
     @Column(name = "enquirydetails")
     @Audited
+    @SafeHtml
     private String enquiryDetails;
 
     @Temporal(TemporalType.DATE)
@@ -167,6 +170,7 @@ public class Judgment extends AbstractAuditable {
     @Length(max = 1024)
     @Column(name = "setasidepetitiondetails")
     @Audited
+    @SafeHtml
     private String setasidePetitionDetails;
 
     @Temporal(TemporalType.DATE)

@@ -49,6 +49,7 @@ package org.egov.lcms.transactions.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.validation.exception.ValidationError;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -81,6 +82,7 @@ public class Reminder extends AbstractAuditable {
     @Valid
     @JoinColumn(name = "LEGALCASEDEPT", nullable = false)
     private LegalCaseDepartment legalCaseDepartment;
+    @SafeHtml
     private String remarks;
     private Date date;
 

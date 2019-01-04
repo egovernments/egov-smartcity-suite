@@ -51,6 +51,8 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.egov.lcms.masters.service.CourtMasterService;
 import org.egov.lcms.masters.service.PetitionTypeMasterService;
 import org.egov.lcms.transactions.entity.LegalCase;
@@ -116,7 +118,7 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
     }
 
     @RequestMapping(value = "/edit/", method = RequestMethod.POST)
-    public String update(@ModelAttribute final LegalCase legalCase, @RequestParam("lcNumber") final String lcNumber,
+    public String update(@Valid @ModelAttribute final LegalCase legalCase, @RequestParam("lcNumber") final String lcNumber,
             final BindingResult errors, @RequestParam("file") final MultipartFile[] files, final Model model,
             final RedirectAttributes redirectAttrs) throws IOException, ParseException {
         if (errors.hasErrors())

@@ -56,6 +56,7 @@ import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -98,6 +99,7 @@ public class Contempt extends AbstractAuditable{
     @NotNull
     @Column(name = "canumber")
     @Audited
+    @SafeHtml
     private String caNumber;
 
     @Temporal(TemporalType.DATE)

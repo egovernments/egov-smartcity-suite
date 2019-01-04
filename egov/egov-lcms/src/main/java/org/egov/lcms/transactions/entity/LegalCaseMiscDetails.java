@@ -52,6 +52,7 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -84,8 +85,10 @@ public class LegalCaseMiscDetails extends AbstractAuditable {
     @Required(message = "miscDetails.date.null")
     @DateFormat(message = "invalid.fieldvalue.model.miscDate")
     private Date miscDate;
+    @SafeHtml
     @Length(max = 50, message = "miscDetails.referencenumber.maxlength")
     private String referenceNumber;
+    @SafeHtml
     @Length(max = 1024, message = "miscDetails.remarks.maxlength")
     private String remarks;
     @ManyToOne

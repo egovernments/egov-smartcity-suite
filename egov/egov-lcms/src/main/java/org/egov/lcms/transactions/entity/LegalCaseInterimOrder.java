@@ -59,6 +59,7 @@ import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -122,10 +123,12 @@ public class LegalCaseInterimOrder extends AbstractAuditable {
     @Length(max = 50)
     @Column(name = "mpnumber")
     @Audited
+    @SafeHtml
     private String mpNumber;
 
     @Length(max = 1024)
     @Audited
+    @SafeHtml
     private String notes;
 
     @Temporal(TemporalType.DATE)
@@ -164,9 +167,11 @@ public class LegalCaseInterimOrder extends AbstractAuditable {
 
     @Length(max = 50)
     @Audited
+    @SafeHtml
     private String referenceNumber;
 
     @Audited
+    @SafeHtml
     @Column(name = "actionitem")
     private String actionItem;
 
@@ -181,6 +186,7 @@ public class LegalCaseInterimOrder extends AbstractAuditable {
     private Date dueDate;
 
     @Audited
+    @SafeHtml
     @Column(name = "actiontaken")
     private String actionTaken;
 

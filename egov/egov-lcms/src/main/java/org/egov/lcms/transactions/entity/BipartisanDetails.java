@@ -57,6 +57,7 @@ import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -97,14 +98,17 @@ public class BipartisanDetails extends AbstractAuditable {
     @NotNull
     @Length(max = 128)
     @Audited
+    @SafeHtml
     private String name;
 
     @Length(max = 256)
     @Audited
+    @SafeHtml
     private String address;
 
     @Pattern(regexp = LcmsConstants.numericiValForPhoneNo)
     @Audited
+    @SafeHtml
     private String contactNumber;
 
     @Column(name = "isrespondent")

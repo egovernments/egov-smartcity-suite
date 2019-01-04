@@ -86,7 +86,7 @@
 						 	<table id="uploadertbl"><tbody>
 						 		<tr id="row1">			 				
 									<td>
-										<input type="file" name="file" id="file1" onchange="isValidFile(this.id)">
+										<input type="file" name="file" id="file1" onchange="isValidFile(this.id)" data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 										<div class="add-margin error-msg text-left" ><font size="2">
 								<spring:message code="lbl.mesg.document"/>	
 								</font></div>

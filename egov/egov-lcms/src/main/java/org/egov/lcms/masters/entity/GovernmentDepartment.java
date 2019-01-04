@@ -89,6 +89,7 @@ public class GovernmentDepartment extends AbstractAuditable {
     @Audited
     @NotNull
     @Length(max = 256)
+    @SafeHtml
     private String name;
 
     @SafeHtml

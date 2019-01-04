@@ -53,6 +53,7 @@ import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -90,11 +91,13 @@ public class PetitionTypeMaster extends AbstractAuditable {
     @NotNull
     @Length(max = 25)
     @Audited
+    @SafeHtml
     private String code;
 
     @NotNull
     @Length(max = 128)
     @Audited
+    @SafeHtml
     private String petitionType;
 
     @Min(1)

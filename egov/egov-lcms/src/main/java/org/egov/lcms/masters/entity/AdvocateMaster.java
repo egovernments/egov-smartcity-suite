@@ -94,16 +94,19 @@ public class AdvocateMaster extends AbstractAuditable implements EntityType {
     private Long id;
 
     @Audited
+    @SafeHtml
     @Length(max = 20)
     private String salutation;
 
     @NotNull
     @Length(max = 128)
     @Audited
+    @SafeHtml
     private String name;
 
     @Length(max = 256)
     @Audited
+    @SafeHtml
     private String address;
 
     @Audited
@@ -112,6 +115,7 @@ public class AdvocateMaster extends AbstractAuditable implements EntityType {
     private String contactPhone;
 
     @Audited
+    @SafeHtml
     private String specilization;
 
     @Audited
@@ -135,11 +139,13 @@ public class AdvocateMaster extends AbstractAuditable implements EntityType {
     private Boolean isRetaineradvocate;
 
     @Audited
+    @SafeHtml
     private String firmName;
 
     @NotNull
     @Length(max = 10)
     @Audited
+    @SafeHtml
     private String panNumber;
 
     @Audited
@@ -151,19 +157,23 @@ public class AdvocateMaster extends AbstractAuditable implements EntityType {
     private Boolean isSenioradvocate;
 
     @Audited
+    @SafeHtml
     private String paymentMode;
 
     @Length(max = 20)
     @Audited
+    @SafeHtml
     private String bankAccount;
 
     @Length(max = 20)
     @Audited
+    @SafeHtml
     private String ifscCode;
 
     @Length(max = 20)
     @Audited
     @Column(name = "tinumber")
+    @SafeHtml
     private String tinNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -176,6 +186,7 @@ public class AdvocateMaster extends AbstractAuditable implements EntityType {
 
     @Length(max = 256)
     @Audited
+    @SafeHtml
     private String remarks;
 
     @ManyToOne(fetch = FetchType.LAZY)

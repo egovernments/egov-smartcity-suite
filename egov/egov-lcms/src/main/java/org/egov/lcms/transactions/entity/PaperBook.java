@@ -47,6 +47,7 @@
  */
 package org.egov.lcms.transactions.entity;
 
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.Entity;
@@ -79,7 +80,9 @@ public class PaperBook extends AbstractPersistable<Long> {
     private LegalCase legalCase;
     private Date lastDateToDepositAmt;
     private Double depositedAmount;
+    @SafeHtml
     private String concernedOfficerName;
+    @SafeHtml
     private String remarks;
     private boolean isPaperBookRequired;
 

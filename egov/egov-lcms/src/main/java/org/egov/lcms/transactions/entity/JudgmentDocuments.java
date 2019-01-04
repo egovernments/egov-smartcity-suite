@@ -50,6 +50,7 @@ package org.egov.lcms.transactions.entity;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.CascadeType;
@@ -84,6 +85,7 @@ public class JudgmentDocuments extends AbstractPersistable<Long> {
 
     @NotNull
     @Length(min = 3, max = 100)
+    @SafeHtml
     private String documentName;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

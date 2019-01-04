@@ -83,11 +83,13 @@ public class CaseTypeMaster extends AbstractAuditable {
     @Length(max = 25)
     @Audited
     @NotNull
+    @SafeHtml
     private String code;
 
     @NotNull
     @Length(max = 50)
     @Audited
+    @SafeHtml
     private String caseType;
 
     @Audited

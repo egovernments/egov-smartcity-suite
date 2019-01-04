@@ -55,6 +55,7 @@ import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -100,6 +101,7 @@ public class LegalCaseDisposal extends AbstractAuditable {
     @Length(max = 1024)
     @Column(name = "disposaldetails")
     @Audited
+    @SafeHtml
     private String disposalDetails;
 
     @Temporal(TemporalType.DATE)

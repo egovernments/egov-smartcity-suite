@@ -57,6 +57,7 @@ import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -120,6 +121,7 @@ public class LegalCaseAdvocate extends AbstractAuditable {
 
     @Length(max = 32)
     @Audited
+    @SafeHtml
     @Column(name = "ordernumber")
     private String orderNumber;
 
@@ -136,6 +138,7 @@ public class LegalCaseAdvocate extends AbstractAuditable {
     @Length(max = 32)
     @JoinColumn(name = "ordernumberjunior")
     @Audited
+    @SafeHtml
     private String orderNumberJunior;
 
     @Temporal(TemporalType.DATE)
@@ -155,11 +158,13 @@ public class LegalCaseAdvocate extends AbstractAuditable {
 
     @Length(max = 256)
     @Audited
+    @SafeHtml
     @Column(name = "reassignmentreasonjunior")
     private String reassignmentReasonJunior;
 
     @Length(max = 256)
     @Audited
+    @SafeHtml
     @Column(name = "reassignmentreasonsenior")
     private String reassignmentReasonSenior;
 

@@ -45,66 +45,21 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.lcms.transactions.entity;
+package org.egov.lcms.config.properties;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.envers.Audited;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+@Configuration
+@PropertySource(name = "lcmsApplicationSettings", value={"classpath:config/lcms-application-config.properties"}, ignoreResourceNotFound = true)
+public class LcmsApplicationSettings {
 
-@Entity
-@Table(name = "eglc_reportstatus")
-@SequenceGenerator(name = ReportStatus.SEQ_EGLC_REPORTSTATUS, sequenceName = ReportStatus.SEQ_EGLC_REPORTSTATUS, allocationSize = 1)
-public class ReportStatus extends AbstractAuditable {
+	@Autowired
+    private Environment environment;
 
-    private static final long serialVersionUID = 1517694643078084884L;
-    public static final String SEQ_EGLC_REPORTSTATUS = "SEQ_EGLC_REPORTSTATUS";
-
-    @Id
-    @GeneratedValue(generator = SEQ_EGLC_REPORTSTATUS, strategy = GenerationType.SEQUENCE)
-    private Long id;
-
-    @Length(max = 25)
-    @Audited
-    @SafeHtml
-    private String code;
-
-    @Length(max = 25)
-    @Audited
-    @SafeHtml
-    private String name;
-
-    @Override
-    public Long getId() {
-        return id;
+    public Integer getValue(String key) {
+        return environment.getProperty(key, Integer.class);
     }
-
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(final String code) {
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
 }

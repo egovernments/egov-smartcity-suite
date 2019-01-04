@@ -58,6 +58,7 @@ import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -101,6 +102,7 @@ public class JudgmentImpl extends AbstractAuditable {
     @Length(max = 1024)
     @Column(name = "compliancereport")
     @Audited
+    @SafeHtml
     private String complianceReport;
 
     @Enumerated(EnumType.STRING)
@@ -111,6 +113,7 @@ public class JudgmentImpl extends AbstractAuditable {
     @Length(max = 1024)
     @Column(name = "implementationdetails")
     @Audited
+    @SafeHtml
     private String details;
 
     @OneToMany(mappedBy = "judgmentImpl", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

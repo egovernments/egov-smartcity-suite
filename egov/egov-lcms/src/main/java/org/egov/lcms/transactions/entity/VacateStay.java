@@ -56,6 +56,7 @@ import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -112,6 +113,7 @@ public class VacateStay extends AbstractAuditable {
 
     @Length(max = 1024)
     @Audited
+    @SafeHtml
     private String remarks;
 
     @Override

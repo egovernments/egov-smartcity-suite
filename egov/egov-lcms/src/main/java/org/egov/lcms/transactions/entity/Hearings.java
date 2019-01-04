@@ -55,6 +55,7 @@ import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -94,6 +95,7 @@ public class Hearings extends AbstractAuditable {
 
     @Length(max = 128)
     @Audited
+    @SafeHtml
     private String additionalLawyers;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hearing", orphanRemoval = true)
@@ -106,6 +108,7 @@ public class Hearings extends AbstractAuditable {
 
     @Length(max = 1024)
     @Audited
+    @SafeHtml
     private String hearingOutcome;
 
     @Audited
@@ -114,10 +117,12 @@ public class Hearings extends AbstractAuditable {
     @Length(max = 1024)
     @Column(name = "purposeofhearing")
     @Audited
+    @SafeHtml
     private String purposeofHearings;
 
     @Length(max = 50)
     @Audited
+    @SafeHtml
     private String referenceNumber;
 
     public Date getHearingDate() {

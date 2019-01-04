@@ -62,6 +62,7 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -115,6 +116,7 @@ public class LegalCase extends AbstractAuditable {
     @NotNull
     @Column(name = "casenumber", unique = true)
     @Audited
+    @SafeHtml
     private String caseNumber;
 
     @NotNull
@@ -127,15 +129,18 @@ public class LegalCase extends AbstractAuditable {
     @Length(max = 1024)
     @Column(name = "casetitle")
     @Audited
+    @SafeHtml
     private String caseTitle;
 
     @Length(max = 50)
     @Column(name = "appealnum")
     @Audited
+    @SafeHtml
     private String appealNum;
 
     @Length(max = 1024)
     @Audited
+    @SafeHtml
     private String remarks;
 
     @Column(name = "casereceivingdate")
@@ -149,11 +154,13 @@ public class LegalCase extends AbstractAuditable {
     @Length(max = 50)
     @Column(name = "lcnumber")
     @Audited
+    @SafeHtml
     private String lcNumber;
 
     @NotNull
     @Length(max = 10000)
     @Audited
+    @SafeHtml
     private String prayer;
 
     @Column(name = "isSenioradvrequired")
@@ -167,11 +174,13 @@ public class LegalCase extends AbstractAuditable {
     @Length(max = 128)
     @Column(name = "oppPartyAdvocate")
     @Audited
+    @SafeHtml
     private String oppPartyAdvocate;
 
     @Length(max = 256)
     @Column(name = "representedby")
     @Audited
+    @SafeHtml
     private String representedby;
 
     @Temporal(TemporalType.DATE)
@@ -181,6 +190,7 @@ public class LegalCase extends AbstractAuditable {
 
     @Column(name = "stampNumber")
     @Audited
+    @SafeHtml
     private String stampNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -208,6 +218,7 @@ public class LegalCase extends AbstractAuditable {
     private String finwpYear;
 
     @Audited
+    @SafeHtml
     private String oldReferenceNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -48,6 +48,7 @@
 package org.egov.lcms.transactions.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -77,13 +78,17 @@ public class ProcessRegister extends AbstractAuditable {
     @Valid
     @JoinColumn(name = "legalcase", nullable = false)
     private LegalCase legalCase;
+    @SafeHtml
     private String detailedAddress;
     private Date processDate;
     private Date nextDateOfProcess;
     private Date receivedOn;
+    @SafeHtml
     private String processHandedOverTo;
     private Date dateOfHandingOver;
+    @SafeHtml
     private String processFilingAttorney;
+    @SafeHtml
     private String remarks;
     private boolean isProcessRegReqd;
 
