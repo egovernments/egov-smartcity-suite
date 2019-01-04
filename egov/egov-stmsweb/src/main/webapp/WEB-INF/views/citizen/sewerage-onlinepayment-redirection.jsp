@@ -46,37 +46,40 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<%@ page language="java" pageEncoding="UTF-8"%>
 <html>
-	<head>
-		<title><spring:message code="title.collect.seweragetax.view" /></title>
-		<script type="text/javascript">
+<head>
+    <title><spring:message code="title.collect.seweragetax.view"/></title>
+    <script type="text/javascript">
 
-	 	jQuery(document).ready( function() {
+        jQuery(document).ready(function () {
 
-			var collectXML = '${collectxml}';
-			
-			jQuery('<form>.').attr({
-				method: 'post',
-				action: '/collection/citizen/onlineReceipt-newform.action',
-				target: '_self'
-			}).append(jQuery('<input>').attr({
-			    type: 'hidden',
-			    id: 'collectXML',
-			    name: 'collectXML',
-			    value: collectXML
-			})).appendTo( document.body ).submit();
-			
-		});
-		
-		</script>
-	</head>
-	<body>
-	</body>
+            let collectXML = '${collectxml}';
+
+            jQuery('<form>.').attr({
+                method: 'post',
+                action: '/collection/citizen/onlineReceipt-newform.action',
+                target: '_self'
+            }).append(jQuery('<input>').attr({
+                type: 'hidden',
+                id: 'collectXML',
+                name: 'collectXML',
+                value: collectXML
+            })).append(jQuery('<input >').attr({
+                type: 'hidden',
+                name: '${_csrf.parameterName}',
+                value: '${_csrf.token}'
+            })).appendTo(document.body).submit();
+
+        });
+
+    </script>
+</head>
+<body>
+</body>
 </html>
