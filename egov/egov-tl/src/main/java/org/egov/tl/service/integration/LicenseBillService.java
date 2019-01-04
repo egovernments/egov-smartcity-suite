@@ -362,7 +362,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
 
                 if (tradeLicense.hasState()) {
                     if (tradeLicense.transitionCompleted())
-                        throw new ValidationException("TL-008", "License application may be already cancelled");
+                        throw new ValidationException("TL-008", "License application may be already cancelled", true);
                     if (tradeLicense.isNewWorkflow()) {
                         tradeLicense.setCollectionPending(false);
                         licenseApplicationService.collectionTransition(tradeLicense);

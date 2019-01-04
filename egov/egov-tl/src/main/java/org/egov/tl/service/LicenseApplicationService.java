@@ -104,7 +104,7 @@ public class LicenseApplicationService extends TradeLicenseService {
                 .getInsatllmentByModuleForGivenDate(licenseUtils.getModule(), new DateTime().plusYears(1).toDate()).getToDate();
         if (license.getCommencementDate() == null || license.getCommencementDate().before(fromRange)
                 || license.getCommencementDate().after(toRange))
-            throw new ValidationException("TL-009", "TL-009");
+            throw new ValidationException("TL-009", "TL-009", true);
         license.setLicenseAppType(licenseAppTypeService.getNewLicenseApplicationType());
         raiseNewDemand(license);
         license.getLicensee().setLicense(license);

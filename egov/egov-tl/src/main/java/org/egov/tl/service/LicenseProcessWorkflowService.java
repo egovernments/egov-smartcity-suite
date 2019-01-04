@@ -66,8 +66,8 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.entity.contracts.WorkflowBean;
 import org.egov.tl.entity.contracts.LicenseStateInfo;
+import org.egov.tl.entity.contracts.WorkflowBean;
 import org.egov.tl.utils.LicenseUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,7 +140,7 @@ public class LicenseProcessWorkflowService {
                     .stream()
                     .filter(assignment -> workFlowMatrix.getCurrentDesignation().contains(assignment.getDesignation().getName()))
                     .findAny()
-                    .orElseThrow(() -> new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, PROCESS_OWNER_NOT_FOUND))
+                    .orElseThrow(() -> new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, PROCESS_OWNER_NOT_FOUND, true))
                     .getPosition();
             LicenseStateInfo licenseStateInfo = getLicenseStateInfo(workflowBean, wfInitiator,
                     workFlowMatrix, new LicenseStateInfo(), wfInitiator);
@@ -227,7 +227,7 @@ public class LicenseProcessWorkflowService {
                 null, new Date(), null);
         List<Assignment> assignmentList = getAssignments(workFlowMatrix, license.getAdminWard());
         if (assignmentList.isEmpty()) {
-            throw new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, ERROR_KEY_WF_INITIATOR_NOT_DEFINED);
+            throw new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, ERROR_KEY_WF_INITIATOR_NOT_DEFINED, true);
         } else {
             String additionalRule = license.isNewApplication() ? NEWLICENSE : RENEWLICENSE;
             final Assignment wfAssignment = assignmentList.get(0);

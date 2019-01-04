@@ -116,7 +116,7 @@ public class ValidityService {
     public void applyLicenseValidity(TradeLicense license) {
         Validity validity = getApplicableLicenseValidity(license);
         if (validity == null)
-            throw new ValidationException("TL-010", "License validity not defined.");
+            throw new ValidationException("TL-010", "License validity not defined.", true);
         if (validity.isBasedOnFinancialYear())
             applyLicenseExpiryBasedOnFinancialYear(license);
         else

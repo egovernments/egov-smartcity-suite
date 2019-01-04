@@ -90,10 +90,10 @@ import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.LicenseSubCategoryDetails;
 import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.entity.contracts.WorkflowBean;
 import org.egov.tl.entity.contracts.DemandNoticeRequest;
-import org.egov.tl.entity.contracts.OnlineSearchRequest;
 import org.egov.tl.entity.contracts.LicenseSearchRequest;
+import org.egov.tl.entity.contracts.OnlineSearchRequest;
+import org.egov.tl.entity.contracts.WorkflowBean;
 import org.egov.tl.repository.LicenseDocumentTypeRepository;
 import org.egov.tl.repository.LicenseRepository;
 import org.egov.tl.repository.SearchTradeRepository;
@@ -431,7 +431,7 @@ public class TradeLicenseService {
             EgDemandReason demandReason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
                     demandGenericDao.getDemandReasonMasterByCode(feeType, module), installment, module);
             if (demandReason == null)
-                throw new ValidationException("TL-007", "Demand demandReason missing for " + feeType);
+                throw new ValidationException("TL-007", "Demand demandReason missing for " + feeType, true);
             EgDemandDetails licenseDemandDetail = reasonWiseDemandDetails.get(demandReason);
             BigDecimal tradeAmt = calculateFeeByRateType(license, feeMatrixDetail);
             if (licenseDemandDetail == null)
@@ -482,7 +482,7 @@ public class TradeLicenseService {
             if (!license.hasState()) {
                 Position wfInitiator = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId())
                         .stream().findFirst()
-                        .orElseThrow(() -> new ValidationException(ERROR_WF_INITIATOR_NOT_DEFINED, ERROR_MSG_NO_ASSIGNMENT))
+                        .orElseThrow(() -> new ValidationException(ERROR_WF_INITIATOR_NOT_DEFINED, ERROR_MSG_NO_ASSIGNMENT, true))
                         .getPosition();
                 WorkFlowMatrix wfmatrix = getWorkFlowMatrixApi(license, workflowBean);
                 license.transition().start()
@@ -547,7 +547,7 @@ public class TradeLicenseService {
                 .filter(position -> position.getDeptDesig().getDesignation().getName().equals(COMMISSIONER_DESGN))
                 .findFirst()
                 .orElseThrow(
-                        () -> new ValidationException("error.wf.comm.pos.not.found", "You are not authorized approve this application"));
+                        () -> new ValidationException("error.wf.comm.pos.not.found", "You are not authorized approve this application", true));
     }
 
     public WorkFlowMatrix getWorkFlowMatrixApi(TradeLicense license, WorkflowBean workflowBean) {
@@ -571,7 +571,7 @@ public class TradeLicenseService {
                 document.setDocDate(currentDate);
             } else if (document.getType().isMandatory() && document.getFiles().isEmpty() && document.getId() == null) {
                 document.getFiles().clear();
-                throw new ValidationException("TL-004", "TL-004", document.getType().getName());
+                throw new ValidationException("TL-004", "TL-004", true, document.getType().getName());
             }
             document.setLicense(license);
         });
@@ -782,7 +782,7 @@ public class TradeLicenseService {
                 .filter(demandDetail -> demandDetail.getReasonCategory().equals(DEMAND_REASON_CATEGORY_FEE)
                         && demandDetail.getAmtCollected().doubleValue() > 0)
                 .findFirst()
-                .orElseThrow(() -> new ValidationException("License Fee is not paid", "License Fee is not paid"));
+                .orElseThrow(() -> new ValidationException("License Fee is not paid", "License Fee is not paid", true));
         String installmentYear = toYearFormat(demandDetails.getInstallmentStartDate()) + "-" +
                 toYearFormat(demandDetails.getInstallmentEndDate());
         reportParams.put("installMentYear", installmentYear);
