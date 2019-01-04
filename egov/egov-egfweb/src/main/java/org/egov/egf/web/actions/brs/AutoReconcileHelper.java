@@ -74,11 +74,10 @@ import org.egov.model.brs.BankStatementUploadFile;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.HibernateException;
-import org.hibernate.query.Query;
 import org.hibernate.query.NativeQuery;
+import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StringType;
+import org.hibernate.type.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,19 +87,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -367,8 +358,10 @@ public class AutoReconcileHelper {
 
     private boolean alreadyUploaded(final String dateStr) {
         final List list = persistenceService.getSession()
-                .createNativeQuery("select id from egf_brs_bankstatements where accountid=" + accountId
-                        + " and txdate=to_date('" + dateStr + "','" + dateInDotFormat + "')").list();
+                .createNativeQuery("select id from egf_brs_bankstatements where accountid=:accountId and txdate=to_date(:date, dateInDotFormat)")
+                .setParameter("accountId", accountId, IntegerType.INSTANCE)
+                .setParameter("date", dateStr, StringType.INSTANCE)
+                .list();
         if (list.size() >= 1)
             return true;
         else
@@ -473,13 +466,13 @@ public class AutoReconcileHelper {
 
 
         StringBuilder statusQury = new StringBuilder();
-        statusQury = statusQury.append("select id from EgwStatus where upper(moduletype)=upper(:instrument) and")
+        statusQury.append("select id from EgwStatus where upper(moduletype)=upper(:instrument) and")
                 .append("upper(description)=upper(:description)");
         final Query query = persistenceService.getSession().createQuery(statusQury.toString())
-                        .setParameter("instrument","instrument")
-                        .setParameter("description",FinancialConstants.INSTRUMENT_RECONCILED_STATUS , StringType.INSTANCE);
+                .setParameter("instrument", "instrument", StringType.INSTANCE)
+                .setParameter("description", FinancialConstants.INSTRUMENT_RECONCILED_STATUS, StringType.INSTANCE);
 
-        statusId = (Integer) persistenceService.find(query.toString());
+        statusId = (Integer) query.uniqueResult();
         final Long instrumentTypeId = getInstrumentType(FinancialConstants.INSTRUMENT_TYPE_CHEQUE);
         final Long instrumentTypeDDId = getInstrumentType(FinancialConstants.INSTRUMENT_TYPE_DD);
         // where instrumentheaderid= (select id.....) is used to fetch only one record may be double submit or two instrument
@@ -487,86 +480,79 @@ public class AutoReconcileHelper {
         // let the user decide
 
         StringBuilder recociliationQuery = new StringBuilder();
-        recociliationQuery = recociliationQuery.append("update EGF_InstrumentHeader set id_status=:statusId,  lastmodifiedby=:userId,lastmodifieddate=CURRENT_DATE")
+        recociliationQuery.append("update EGF_InstrumentHeader set id_status=:statusId, lastmodifiedby=:userId,lastmodifieddate=CURRENT_DATE")
                 .append(" where id= (select id from egf_instrumentheader where instrumentNumber=:instrumentNo and ")
-                .append(" instrumentAmount=:amount and bankaccountid=:accountId and ispaycheque=:ispaycheque and instrumentType in (")
-                .append(instrumentTypeId)
-                .append(",")
-                .append(instrumentTypeDDId)
-                .append(")")
+                .append(" instrumentAmount=:amount and bankaccountid=:accountId and ispaycheque=:ispaycheque and instrumentType in (:instrumentType)")
                 .append(" and id_status=(select id from Egw_Status where upper(moduletype)=upper('instrument') and  upper(description)=upper(:instrumentStatus)))");
-
 
         StringBuilder recociliationAmountQuery = new StringBuilder();
-        recociliationAmountQuery = recociliationAmountQuery.append("update egf_instrumentOtherdetails set reconciledamount=:amount,instrumentstatusdate=:txDate ")
+        recociliationAmountQuery.append("update egf_instrumentOtherdetails set reconciledamount=:amount,instrumentstatusdate=:txDate ")
                 .append(",lastmodifiedby=:userId,lastmodifieddate=CURRENT_DATE,reconciledOn=:reconciliationDate ")
                 .append(" where instrumentheaderid= (select id from egf_instrumentheader where instrumentNumber=:instrumentNo and ")
-                .append(" instrumentAmount=:amount and bankaccountid=:accountId and ispaycheque=:ispaycheque and instrumentType in (")
-                .append(instrumentTypeId)
-                .append(",")
-                .append(instrumentTypeDDId)
-                .append(")")
+                .append(" instrumentAmount=:amount and bankaccountid=:accountId and ispaycheque=:ispaycheque and instrumentType in (:instrumentType)")
                 .append(" and id_status=(select id from Egw_Status where upper(moduletype)=upper('instrument') and  upper(description)=upper(:instrumentStatus)))");
 
-        final NativeQuery updateQuery = persistenceService.getSession().createNativeQuery(recociliationQuery.toString());
-        final NativeQuery updateQuery2 = persistenceService.getSession().createNativeQuery(recociliationAmountQuery.toString());
+        final NativeQuery updateQuery = persistenceService.getSession().createNativeQuery(recociliationQuery.toString())
+                .setParameterList("instrumentType", Arrays.asList(instrumentTypeId, instrumentTypeDDId), LongType.INSTANCE);
+        final NativeQuery updateQuery2 = persistenceService.getSession().createNativeQuery(recociliationAmountQuery.toString())
+                .setParameterList("instrumentType", Arrays.asList(instrumentTypeId, instrumentTypeDDId), LongType.INSTANCE);
 
-        final String backUpdateBankStmtquery = "update " + TABLENAME + " set action='" + BRS_ACTION_PROCESSED
-                + "' ,reconciliationDate=:reconciliationDate where id=:id";
+        final String backUpdateBankStmtquery = String.format("update %s set action=:action", TABLENAME).concat(",reconciliationDate=:reconciliationDate where id=:id");
+        final String backUpdateFailureBRSquery = String.format("update %s set action=:action", TABLENAME).concat(",errormessage=:e where id=:id");
 
-        final String backUpdateFailureBRSquery = "update " + TABLENAME + " set action='" + BRS_ACTION_TO_BE_PROCESSED_MANUALLY
-                + "',errormessage=:e where id=:id";
-        final NativeQuery backupdateQuery = persistenceService.getSession().createNativeQuery(backUpdateBankStmtquery);
-        final NativeQuery backupdateFailureQuery = persistenceService.getSession().createNativeQuery(backUpdateFailureBRSquery);
+        final NativeQuery backupdateQuery = persistenceService.getSession().createNativeQuery(backUpdateBankStmtquery)
+                .setParameter("action", BRS_ACTION_PROCESSED, StringType.INSTANCE);
+        final NativeQuery backupdateFailureQuery = persistenceService.getSession().createNativeQuery(backUpdateFailureBRSquery)
+                .setParameter("action", BRS_ACTION_TO_BE_PROCESSED_MANUALLY, StringType.INSTANCE);
         rowCount = 0;
         for (final AutoReconcileBean bean : detailList) {
             int updated = -1;
             try {
-                updateQuery.setLong("statusId", statusId);
-                updateQuery.setLong("accountId", accountId);
+                updateQuery.setParameter("statusId", statusId, LongType.INSTANCE);
+                updateQuery.setParameter("accountId", accountId, LongType.INSTANCE);
 
-                updateQuery.setString("instrumentNo", bean.getInstrumentNo());
-                updateQuery.setInteger("userId", ApplicationThreadLocals.getUserId().intValue());
+                updateQuery.setParameter("instrumentNo", bean.getInstrumentNo(), StringType.INSTANCE);
+                updateQuery.setParameter("userId", ApplicationThreadLocals.getUserId().intValue(), IntegerType.INSTANCE);
 
-                updateQuery2.setDate("txDate", bean.getTxDate());
-                updateQuery2.setDate("reconciliationDate", reconciliationDate);
-                updateQuery2.setLong("accountId", accountId);
+                updateQuery2.setParameter("txDate", bean.getTxDate(), DateType.INSTANCE);
+                updateQuery2.setParameter("reconciliationDate", reconciliationDate, DateType.INSTANCE);
+                updateQuery2.setParameter("accountId", accountId, LongType.INSTANCE);
 
-                updateQuery2.setString("instrumentNo", bean.getInstrumentNo());
-                updateQuery2.setInteger("userId", ApplicationThreadLocals.getUserId().intValue());
+                updateQuery2.setParameter("instrumentNo", bean.getInstrumentNo(), StringType.INSTANCE);
+                updateQuery2.setParameter("userId", ApplicationThreadLocals.getUserId().intValue(), IntegerType.INSTANCE);
                 if (bean.getDebit() != null && bean.getDebit().compareTo(BigDecimal.ZERO) != 0) {
-                    updateQuery.setBigDecimal("amount", bean.getDebit());
-                    updateQuery.setCharacter("ispaycheque", '1');
-                    updateQuery.setString("instrumentStatus", FinancialConstants.INSTRUMENT_CREATED_STATUS);
+                    updateQuery.setParameter("amount", bean.getDebit(), BigDecimalType.INSTANCE);
+                    updateQuery.setParameter("ispaycheque", '1', CharacterType.INSTANCE);
+                    updateQuery.setParameter("instrumentStatus", FinancialConstants.INSTRUMENT_CREATED_STATUS, StringType.INSTANCE);
                     updated = updateQuery.executeUpdate();
                     if (updated != 0) {
-                        updateQuery2.setBigDecimal("amount", bean.getDebit());
-                        updateQuery2.setCharacter("ispaycheque", '1');
-                        updateQuery2.setString("instrumentStatus", FinancialConstants.INSTRUMENT_RECONCILED_STATUS);
+                        updateQuery2.setParameter("amount", bean.getDebit(), BigDecimalType.INSTANCE);
+                        updateQuery2.setParameter("ispaycheque", '1', CharacterType.INSTANCE);
+                        updateQuery2.setParameter("instrumentStatus", FinancialConstants.INSTRUMENT_RECONCILED_STATUS, StringType.INSTANCE);
                         updated = updateQuery2.executeUpdate();
                     }
 
                 } else {
-                    updateQuery.setBigDecimal("amount", bean.getCredit());
-                    updateQuery.setCharacter("ispaycheque", '0');
-                    updateQuery.setString("instrumentStatus", FinancialConstants.INSTRUMENT_DEPOSITED_STATUS);
+                    updateQuery.setParameter("amount", bean.getCredit(), BigDecimalType.INSTANCE);
+                    updateQuery.setParameter("ispaycheque", '0', CharacterType.INSTANCE);
+                    updateQuery.setParameter("instrumentStatus", FinancialConstants.INSTRUMENT_DEPOSITED_STATUS, StringType.INSTANCE);
                     updated = updateQuery.executeUpdate();
                     if (updated != 0) {
-                        updateQuery2.setBigDecimal("amount", bean.getCredit());
-                        updateQuery2.setCharacter("ispaycheque", '0');
-                        updateQuery2.setString("instrumentStatus", FinancialConstants.INSTRUMENT_RECONCILED_STATUS);
+                        updateQuery2.setParameter("amount", bean.getCredit(), BigDecimalType.INSTANCE);
+                        updateQuery2.setParameter("ispaycheque", '0', CharacterType.INSTANCE);
+                        updateQuery2.setParameter("instrumentStatus", FinancialConstants.INSTRUMENT_RECONCILED_STATUS, StringType.INSTANCE);
                         updated = updateQuery2.executeUpdate();
                     }
                 }
                 // if updated is 0 means nothing got updated means could not find matching row in instrumentheader
                 if (updated == 0) {
-                    backupdateFailureQuery.setLong("id", bean.getId());
-                    backupdateFailureQuery.setString("e", DID_NOT_FIND_MATCH_IN_BANKBOOK);
+                    backupdateFailureQuery.setParameter("id", bean.getId(), LongType.INSTANCE);
+                    backupdateFailureQuery.setParameter("e", DID_NOT_FIND_MATCH_IN_BANKBOOK, StringType.INSTANCE);
                     backupdateFailureQuery.executeUpdate();
 
                 } else {
-                    backupdateQuery.setLong("id", bean.getId());
-                    backupdateQuery.setDate("reconciliationDate", reconciliationDate);
+                    backupdateQuery.setParameter("id", bean.getId(), LongType.INSTANCE);
+                    backupdateQuery.setParameter("reconciliationDate", reconciliationDate, DateType.INSTANCE);
                     backupdateQuery.executeUpdate();
                     count++;
                     // if(LOGGER.isDebugEnabled()) LOGGER.debug(count);
@@ -582,18 +568,17 @@ public class AutoReconcileHelper {
                 // so any issues leave it for manual update
             } catch (final HibernateException e) {
                 if (e.getCause().getMessage().contains("single-row subquery returns more"))
-                    backupdateFailureQuery.setString("e", BRS_MESSAGE_MORE_THAN_ONE_MATCH);
+                    backupdateFailureQuery.setParameter("e", BRS_MESSAGE_MORE_THAN_ONE_MATCH, StringType.INSTANCE);
                 else
-                    backupdateFailureQuery.setString("e", e.getMessage());
-                backupdateFailureQuery.setLong("id", bean.getId());
+                    backupdateFailureQuery.setParameter("e", e.getMessage(), StringType.INSTANCE);
+                backupdateFailureQuery.setParameter("id", bean.getId(), LongType.INSTANCE);
                 backupdateFailureQuery.executeUpdate();
 
             } catch (final Exception e) {
-                backupdateFailureQuery.setLong("id", bean.getId());
-                backupdateFailureQuery.setString("e", e.getMessage());
+                backupdateFailureQuery.setParameter("id", bean.getId(), LongType.INSTANCE);
+                backupdateFailureQuery.setParameter("e", e.getMessage(), StringType.INSTANCE);
                 backupdateFailureQuery.executeUpdate();
             }
-
         }
         processCSL();
         return "result";
@@ -601,25 +586,22 @@ public class AutoReconcileHelper {
 
     private Long getInstrumentType(final String typeName) {
 
-        return (Long) persistenceService.find("select id from InstrumentType where upper(type)=upper(?)", typeName);
+        return (Long) persistenceService.find("select id from InstrumentType where upper(type)=upper(?1)", typeName);
     }
 
     private void markForProcessing(final String type) {
 
         final StringBuffer sql = new StringBuffer(256);
-        sql.append("update ")
-                .append(TABLENAME)
-                .append(" set action='")
-                .append(BRS_ACTION_TO_BE_PROCESSED)
-                .append("' where type='")
-                .append(type)
-                .append("' and accountid=:accountId and txdate>=:fromDate and txDate<=:toDate and  (action is null or action!='processed')");
+        sql.append(String.format("update %s set action=:action", TABLENAME))
+                .append(" where type=:type and accountid=:accountId and txdate>=:fromDate and txDate<=:toDate and  (action is null or action!='processed')");
         if (BRS_TRANSACTION_TYPE_BANK.equalsIgnoreCase(type))
             sql.append(" and CSLno is not null ");
-        final NativeQuery markQuery = persistenceService.getSession().createNativeQuery(sql.toString());
-        markQuery.setDate("fromDate", fromDate);
-        markQuery.setDate("toDate", toDate);
-        markQuery.setLong("accountId", accountId);
+        final NativeQuery markQuery = persistenceService.getSession().createNativeQuery(sql.toString())
+                .setParameter("action", BRS_ACTION_TO_BE_PROCESSED, StringType.INSTANCE)
+                .setParameter("type", type, StringType.INSTANCE)
+                .setParameter("fromDate", fromDate, DateType.INSTANCE)
+                .setParameter("toDate", toDate, DateType.INSTANCE)
+                .setParameter("accountId", accountId, LongType.INSTANCE);
         markQuery.executeUpdate();
     }
 
@@ -629,79 +611,73 @@ public class AutoReconcileHelper {
         final Long instrumentTypeId = getInstrumentType(FinancialConstants.INSTRUMENT_TYPE_BANK_TO_BANK);
 
         StringBuilder recociliationQuery = new StringBuilder();
-        recociliationQuery = recociliationQuery.append("update EGF_InstrumentHeader set id_status=:statusId,  lastmodifiedby=:userId,lastmodifieddate=CURRENT_DATE")
+        recociliationQuery.append("update EGF_InstrumentHeader set id_status=:statusId,  lastmodifiedby=:userId,lastmodifieddate=CURRENT_DATE")
                 .append(" where id = (select ih.id from egf_instrumentheader ih,egf_instrumentvoucher iv,voucherheader vh where ")
-                .append(" instrumentAmount=:amount and bankaccountid=:accountId and ispaycheque=:ispaycheque and instrumentType in (")
-                .append(instrumentTypeId)
-                .append(")")
+                .append(" instrumentAmount=:amount and bankaccountid=:accountId and ispaycheque=:ispaycheque and instrumentType in (:instrumentType)")
                 .append(" and id_status=(select id from Egw_Status where upper(moduletype)=upper('instrument') and  upper(description)=")
                 .append(" upper(:instrumentStatus)) and iv.instrumentheaderid=ih.id and iv.voucherheaderid=ih.id and vh.vouchernumber=:cslNo )  ");
 
         StringBuilder recociliationAmountQuery = new StringBuilder();
-        recociliationAmountQuery = recociliationAmountQuery.append("update egf_instrumentOtherdetails set reconciledamount=:amount,instrumentstatusdate=:txDate ")
+        recociliationAmountQuery.append("update egf_instrumentOtherdetails set reconciledamount=:amount,instrumentstatusdate=:txDate ")
                 .append(" ,lastmodifiedby=:userId,lastmodifieddate=CURRENT_DATE,reconciledOn=:reconciliationDate ")
                 .append(" where instrumentheaderid = (select ih.id from egf_instrumentheader ih,egf_instrumentvoucher iv,voucherheader vh where ")
-                .append(" instrumentAmount=:amount and bankaccountid=:accountId and ispaycheque=:ispaycheque and instrumentType in (")
-                .append(instrumentTypeId)
-                .append(")")
+                .append(" instrumentAmount=:amount and bankaccountid=:accountId and ispaycheque=:ispaycheque and instrumentType in (:instrumentType)")
                 .append(" and id_status=(select id from Egw_Status where upper(moduletype)=upper('instrument') and  upper(description)=")
                 .append(" upper(:instrumentStatus)) and iv.instrumentheaderid=ih.id and iv.voucherheaderid=ih.id and vh.vouchernumber=:cslNo ) ");
 
-        final NativeQuery updateQuery = persistenceService.getSession().createNativeQuery(recociliationQuery.toString());
-        final NativeQuery updateQuery2 = persistenceService.getSession().createNativeQuery(recociliationAmountQuery.toString());
+        final NativeQuery updateQuery = persistenceService.getSession().createNativeQuery(recociliationQuery.toString())
+                .setParameterList("instrumentType", Arrays.asList(instrumentTypeId), LongType.INSTANCE);
+        final NativeQuery updateQuery2 = persistenceService.getSession().createNativeQuery(recociliationAmountQuery.toString())
+                .setParameterList("instrumentType", Arrays.asList(instrumentTypeId), LongType.INSTANCE);
 
         StringBuilder backUpdateBankStmtquery = new StringBuilder();
-        backUpdateBankStmtquery = backUpdateBankStmtquery.append("update ")
-                .append(TABLENAME)
-                .append(" set action='")
-                .append(BRS_ACTION_PROCESSED)
-                .append("' ,reconciliationDate=:reconciliationDate where id=:id");
+        backUpdateBankStmtquery.append(String.format("update %s set action=:action", TABLENAME))
+                .append(" ,reconciliationDate=:reconciliationDate where id=:id");
 
         StringBuilder backUpdateFailureBRSquery = new StringBuilder();
-        backUpdateFailureBRSquery = backUpdateFailureBRSquery.append("update ")
-                .append(TABLENAME)
-                .append(" set action='")
-                .append(BRS_ACTION_TO_BE_PROCESSED_MANUALLY)
-                .append("',errormessage=:e where id=:id");
+        backUpdateFailureBRSquery.append(String.format("update %s set action=:action", TABLENAME))
+                .append(",errormessage=:e where id=:id");
 
-        final NativeQuery backupdateQuery = persistenceService.getSession().createNativeQuery(backUpdateBankStmtquery.toString());
-        final NativeQuery backupdateFailureQuery = persistenceService.getSession().createNativeQuery(backUpdateFailureBRSquery.toString());
+        final NativeQuery backupdateQuery = persistenceService.getSession().createNativeQuery(backUpdateBankStmtquery.toString())
+                .setParameter("action", BRS_ACTION_PROCESSED, StringType.INSTANCE);
+        final NativeQuery backupdateFailureQuery = persistenceService.getSession().createNativeQuery(backUpdateFailureBRSquery.toString())
+                .setParameter("action", BRS_ACTION_TO_BE_PROCESSED_MANUALLY, StringType.INSTANCE);
         for (final AutoReconcileBean bean : CSLList) {
             int updated = -1;
             try {
-                updateQuery.setLong("statusId", statusId);
-                updateQuery.setLong("accountId", accountId);
+                updateQuery.setParameter("statusId", statusId, LongType.INSTANCE);
+                updateQuery.setParameter("accountId", accountId, LongType.INSTANCE);
 
-                updateQuery.setString("cslNo", bean.getCSLno());
-                updateQuery.setInteger("userId", ApplicationThreadLocals.getUserId().intValue());
+                updateQuery.setParameter("cslNo", bean.getCSLno(), StringType.INSTANCE);
+                updateQuery.setParameter("userId", ApplicationThreadLocals.getUserId().intValue(), IntegerType.INSTANCE);
 
-                updateQuery2.setDate("txDate", bean.getTxDate());
-                updateQuery2.setDate("reconciliationDate", reconciliationDate);
-                updateQuery2.setLong("accountId", accountId);
+                updateQuery2.setParameter("txDate", bean.getTxDate(), DateType.INSTANCE);
+                updateQuery2.setParameter("reconciliationDate", reconciliationDate, DateType.INSTANCE);
+                updateQuery2.setParameter("accountId", accountId, LongType.INSTANCE);
 
-                updateQuery2.setString("cslNo", bean.getCSLno());
-                updateQuery2.setInteger("userId", ApplicationThreadLocals.getUserId().intValue());
+                updateQuery2.setParameter("cslNo", bean.getCSLno(), StringType.INSTANCE);
+                updateQuery2.setParameter("userId", ApplicationThreadLocals.getUserId().intValue(), IntegerType.INSTANCE);
                 if (bean.getDebit() != null && bean.getDebit().compareTo(BigDecimal.ZERO) != 0) {
-                    updateQuery.setBigDecimal("amount", bean.getDebit());
-                    updateQuery.setCharacter("ispaycheque", '1');
-                    updateQuery.setString("instrumentStatus", FinancialConstants.INSTRUMENT_CREATED_STATUS);
+                    updateQuery.setParameter("amount", bean.getDebit(), BigDecimalType.INSTANCE);
+                    updateQuery.setParameter("ispaycheque", '1', CharacterType.INSTANCE);
+                    updateQuery.setParameter("instrumentStatus", FinancialConstants.INSTRUMENT_CREATED_STATUS, StringType.INSTANCE);
                     updated = updateQuery.executeUpdate();
                     if (updated != 0) {
-                        updateQuery2.setBigDecimal("amount", bean.getDebit());
-                        updateQuery2.setCharacter("ispaycheque", '1');
-                        updateQuery2.setString("instrumentStatus", FinancialConstants.INSTRUMENT_RECONCILED_STATUS);
+                        updateQuery2.setParameter("amount", bean.getDebit(), BigDecimalType.INSTANCE);
+                        updateQuery2.setParameter("ispaycheque", '1', CharacterType.INSTANCE);
+                        updateQuery2.setParameter("instrumentStatus", FinancialConstants.INSTRUMENT_RECONCILED_STATUS, StringType.INSTANCE);
                         updated = updateQuery2.executeUpdate();
                     }
 
                 } else {
-                    updateQuery.setBigDecimal("amount", bean.getCredit());
-                    updateQuery.setCharacter("ispaycheque", '1');
-                    updateQuery.setString("instrumentStatus", FinancialConstants.INSTRUMENT_CREATED_STATUS);
+                    updateQuery.setParameter("amount", bean.getCredit(), BigDecimalType.INSTANCE);
+                    updateQuery.setParameter("ispaycheque", '1', CharacterType.INSTANCE);
+                    updateQuery.setParameter("instrumentStatus", FinancialConstants.INSTRUMENT_CREATED_STATUS, StringType.INSTANCE);
                     updated = updateQuery.executeUpdate();
                     if (updated != 0) {
-                        updateQuery2.setBigDecimal("amount", bean.getCredit());
-                        updateQuery2.setCharacter("ispaycheque", '1');
-                        updateQuery2.setString("instrumentStatus", FinancialConstants.INSTRUMENT_RECONCILED_STATUS);
+                        updateQuery2.setParameter("amount", bean.getCredit(), BigDecimalType.INSTANCE);
+                        updateQuery2.setParameter("ispaycheque", '1', CharacterType.INSTANCE);
+                        updateQuery2.setParameter("instrumentStatus", FinancialConstants.INSTRUMENT_RECONCILED_STATUS, StringType.INSTANCE);
                         updated = updateQuery2.executeUpdate();
                     }
                     if (updated == 0) {
@@ -711,18 +687,18 @@ public class AutoReconcileHelper {
                 // if updated is 0 means nothing got updated means could not find matching row in instrumentheader
 
                 if (updated == 0) {
-                    backupdateFailureQuery.setLong("id", bean.getId());
-                    backupdateFailureQuery.setString("e", DID_NOT_FIND_MATCH_IN_BANKBOOK);
+                    backupdateFailureQuery.setParameter("id", bean.getId(), LongType.INSTANCE);
+                    backupdateFailureQuery.setParameter("e", DID_NOT_FIND_MATCH_IN_BANKBOOK, StringType.INSTANCE);
                     backupdateFailureQuery.executeUpdate();
 
                 } else if (updated == -1) {
-                    backupdateFailureQuery.setLong("id", bean.getId());
-                    backupdateFailureQuery.setString("e", DID_NOT_FIND_MATCH_IN_BANKBOOK);
+                    backupdateFailureQuery.setParameter("id", bean.getId(), LongType.INSTANCE);
+                    backupdateFailureQuery.setParameter("e", DID_NOT_FIND_MATCH_IN_BANKBOOK, StringType.INSTANCE);
                     backupdateFailureQuery.executeUpdate();
                     // if(LOGGER.isDebugEnabled()) LOGGER.debug(count);
                 } else {
-                    backupdateQuery.setLong("id", bean.getId());
-                    backupdateQuery.setDate("reconciliationDate", reconciliationDate);
+                    backupdateQuery.setParameter("id", bean.getId(), LongType.INSTANCE);
+                    backupdateQuery.setParameter("reconciliationDate", reconciliationDate, DateType.INSTANCE);
                     backupdateQuery.executeUpdate();
                     count++;
                     // if(LOGGER.isDebugEnabled()) LOGGER.debug(count);
@@ -738,33 +714,28 @@ public class AutoReconcileHelper {
                 // so any issues leave it for manual update
             } catch (final HibernateException e) {
                 if (e.getCause().getMessage().contains("single-row subquery returns more"))
-                    backupdateFailureQuery.setString("e", BRS_MESSAGE_MORE_THAN_ONE_MATCH);
+                    backupdateFailureQuery.setParameter("e", BRS_MESSAGE_MORE_THAN_ONE_MATCH, StringType.INSTANCE);
                 else
-                    backupdateFailureQuery.setString("e", e.getMessage());
-                backupdateFailureQuery.setLong("id", bean.getId());
+                    backupdateFailureQuery.setParameter("e", e.getMessage(), StringType.INSTANCE);
+                backupdateFailureQuery.setParameter("id", bean.getId(), LongType.INSTANCE);
                 backupdateFailureQuery.executeUpdate();
 
             } catch (final Exception e) {
-                backupdateFailureQuery.setLong("id", bean.getId());
-                backupdateFailureQuery.setString("e", e.getMessage());
+                backupdateFailureQuery.setParameter("id", bean.getId(), LongType.INSTANCE);
+                backupdateFailureQuery.setParameter("e", e.getMessage(), StringType.INSTANCE);
                 backupdateFailureQuery.executeUpdate();
             }
-
         }
-
     }
 
     private List<AutoReconcileBean> getStatmentsForProcessing(final String type) {
         StringBuilder queryString = new StringBuilder();
-        queryString = queryString.append("select id,txDate,instrumentNo,debit,credit,CSLno  from ")
-                .append(TABLENAME)
-                .append(" where accountId=:accountId  and type='")
-                .append(type)
-                .append("' and action='")
-                .append(BRS_ACTION_TO_BE_PROCESSED)
-                .append("'");
-        final NativeQuery detailQuery = persistenceService.getSession().createNativeQuery(queryString.toString());
-        detailQuery.setLong("accountId", accountId);
+        queryString = queryString.append(String.format("select id,txDate,instrumentNo,debit,credit,CSLno from %s", TABLENAME))
+                .append(" where accountId=:accountId and type=:type and action=:action");
+        final NativeQuery detailQuery = persistenceService.getSession().createNativeQuery(queryString.toString())
+                .setParameter("type", type, StringType.INSTANCE)
+                .setParameter("action", BRS_ACTION_TO_BE_PROCESSED, StringType.INSTANCE)
+                .setParameter("accountId", accountId, IntegerType.INSTANCE);
         detailQuery.addScalar("id", LongType.INSTANCE).addScalar("txDate").addScalar("instrumentNo").addScalar("debit")
                 .addScalar("credit").addScalar("CSLno")
                 .setResultTransformer(Transformers.aliasToBean(AutoReconcileBean.class));
@@ -789,8 +760,8 @@ public class AutoReconcileHelper {
 
         bankAccount = (Bankaccount) persistenceService.find("from Bankaccount ba where id=?1", Long.valueOf(accountId));
         StringBuilder statmentsNotInBankBookStr = new StringBuilder();
-        statmentsNotInBankBookStr = statmentsNotInBankBookStr.append("select id,txDate,instrumentNo,debit,credit,narration,type,action as \"errorCode\",errorMessage from ")
-                .append(TABLENAME)
+        statmentsNotInBankBookStr.append("select id,txDate,instrumentNo,debit,credit,narration,type,action as \"errorCode\",errorMessage")
+                .append(String.format(" from %s", TABLENAME))
                 .append(" where accountId=:accountId and txdate>=:fromDate ")
                 .append(" and txdate<=:toDate and reconciliationdate is null and (errorMesSage is null or errorMessage !=:multipleEntryErrorMessage)")
                 .append(" order by  txDate ");
@@ -807,10 +778,10 @@ public class AutoReconcileHelper {
                 .addScalar("errorMessage")
                 .setResultTransformer(Transformers.aliasToBean(AutoReconcileBean.class));
 
-        statmentsNotInBankBookQry.setDate("fromDate", fromDate)
-                .setDate("toDate", toDate)
-                .setString("multipleEntryErrorMessage", BRS_MESSAGE_MORE_THAN_ONE_MATCH)
-                .setLong("accountId", accountId);
+        statmentsNotInBankBookQry.setParameter("fromDate", fromDate, DateType.INSTANCE)
+                .setParameter("toDate", toDate, DateType.INSTANCE)
+                .setParameter("multipleEntryErrorMessage", BRS_MESSAGE_MORE_THAN_ONE_MATCH, StringType.INSTANCE)
+                .setParameter("accountId", accountId, LongType.INSTANCE);
         statementsNotInBankBookList = statmentsNotInBankBookQry.list();
         notInBooktotalDebit = BigDecimal.ZERO;
         notInBooktotalCredit = BigDecimal.ZERO;
@@ -832,18 +803,23 @@ public class AutoReconcileHelper {
         finYearStartDate = finYearByDate.getStartingDate();
 
         StringBuilder entriesNotInBankStamentStr = new StringBuilder();
-        entriesNotInBankStamentStr = entriesNotInBankStamentStr.append("select  instrumentnumber as \"instrumentNo\",")
-                .append(" instrumentdate as \"txDate\", instrumentamount as \"credit\",null as \"debit\", payto as \"narration\"  from egf_instrumentheader  where bankaccountid=:accountId and instrumentdate BETWEEN")
+        entriesNotInBankStamentStr.append("select  instrumentnumber as \"instrumentNo\",")
+                .append(" instrumentdate as \"txDate\", instrumentamount as \"credit\",null as \"debit\", payto as \"narration\"  from egf_instrumentheader")
+                .append("  where bankaccountid=:accountId and instrumentdate BETWEEN")
                 .append(" :fromDate and :toDate and ispaycheque='0' and id_status=(select id from egw_status where moduletype='Instrument'  and description='Deposited')")
-                .append(" and instrumentnumber is not null and instrumentamount is not null and instrumentnumber||'-'||instrumentamount not in (select  instrumentno||'-'|| credit from egf_brs_bankstatements ")
-                .append(" where accountid=:accountId and txdate between :fromDate and :toDate and action=:action and errorMessage =:multipleEntryErrorMessage  and instrumentno is not null and  credit is not null and credit>0) ")
+                .append(" and instrumentnumber is not null and instrumentamount is not null and instrumentnumber||'-'||instrumentamount")
+                .append(" not in (select  instrumentno||'-'|| credit from egf_brs_bankstatements ")
+                .append(" where accountid=:accountId and txdate between :fromDate and :toDate and action=:action and errorMessage =:multipleEntryErrorMessage")
+                .append("  and instrumentno is not null and  credit is not null and credit>0) ")
                 .append(" union ")
                 .append(" select   instrumentnumber as \"instrumentNo\",")
                 .append(" instrumentdate as \"txDate\", instrumentamount \"debit\",null as \"credit\", payto as \"narration\" ")
                 .append(" from egf_instrumentheader where bankaccountid=:accountId and instrumentdate BETWEEN :fromDate and :toDate ")
                 .append(" and ispaycheque='1' and id_status=(select id from egw_status where moduletype='Instrument'  and description='New')")
-                .append(" and  instrumentnumber is not null   and instrumentamount is not null and instrumentnumber||'-'||instrumentamount not in  (select  instrumentno||'-'|| debit from egf_brs_bankstatements")
-                .append(" where accountid=:accountId and txdate between :fromDate and :toDate and action=:action and errorMessage =:multipleEntryErrorMessage  and instrumentno is not null and debit is not null and debit>0) order by \"txDate\"");
+                .append(" and  instrumentnumber is not null   and instrumentamount is not null and instrumentnumber||'-'||instrumentamount")
+                .append(" not in  (select  instrumentno||'-'|| debit from egf_brs_bankstatements")
+                .append(" where accountid=:accountId and txdate between :fromDate and :toDate and action=:action and errorMessage =:multipleEntryErrorMessage")
+                .append("  and instrumentno is not null and debit is not null and debit>0) order by \"txDate\"");
 
         Query entriesNotInBankStamentQry = persistenceService.getSession().createNativeQuery(entriesNotInBankStamentStr.toString())
                 .addScalar("instrumentNo")
@@ -853,11 +829,11 @@ public class AutoReconcileHelper {
                 .addScalar("narration")
                 .setResultTransformer(Transformers.aliasToBean(AutoReconcileBean.class));
 
-        entriesNotInBankStamentQry.setDate("fromDate", finYearStartDate)
-                .setDate("toDate", toDate)
-                .setString("action", BRS_ACTION_TO_BE_PROCESSED_MANUALLY)
-                .setLong("accountId", accountId)
-                .setString("multipleEntryErrorMessage", BRS_MESSAGE_MORE_THAN_ONE_MATCH);
+        entriesNotInBankStamentQry.setParameter("fromDate", finYearStartDate, DateType.INSTANCE)
+                .setParameter("toDate", toDate, DateType.INSTANCE)
+                .setParameter("action", BRS_ACTION_TO_BE_PROCESSED_MANUALLY, StringType.INSTANCE)
+                .setParameter("accountId", accountId, LongType.INSTANCE)
+                .setParameter("multipleEntryErrorMessage", BRS_MESSAGE_MORE_THAN_ONE_MATCH, StringType.INSTANCE);
         entriesNotInBankStament = entriesNotInBankStamentQry.list();
 
         /**
@@ -880,16 +856,20 @@ public class AutoReconcileHelper {
         // LOGGER.error("notInStatementTotalCredit=="+notInStatementTotalCredit+"           "+"notInStatementTotalDebit=="+notInStatementTotalDebit
         // +"notInStatementNet                       "+notInStatementNet);
         // for match
-        entriesNotInBankStamentStr = entriesNotInBankStamentStr.append("select  sum(instrumentamount) as \"credit\"  from egf_instrumentheader  where bankaccountid=:accountId and instrumentdate BETWEEN")
+        entriesNotInBankStamentStr.append("select  sum(instrumentamount) as \"credit\"  from egf_instrumentheader  where bankaccountid=:accountId and instrumentdate BETWEEN")
                 .append(" :fromDate and :toDate and ispaycheque='0' and id_status=(select id from egw_status where moduletype='Instrument' and description='Deposited')")
-                .append(" and instrumentnumber is not null and instrumentamount is not null and instrumentnumber||'-'||instrumentamount not in (select  instrumentno||'-'|| credit from egf_brs_bankstatements ")
-                .append(" where accountid=:accountId and txdate between :fromDate and :toDate and action=:action and errorMessage =:multipleEntryErrorMessage  and instrumentno is not null and  credit is not null and credit>0) ")
+                .append(" and instrumentnumber is not null and instrumentamount is not null and instrumentnumber||'-'||instrumentamount")
+                .append(" not in (select  instrumentno||'-'|| credit from egf_brs_bankstatements ")
+                .append(" where accountid=:accountId and txdate between :fromDate and :toDate and action=:action and errorMessage =:multipleEntryErrorMessage ")
+                .append(" and instrumentno is not null and  credit is not null and credit>0) ")
                 .append(" union ")
                 .append(" select   sum(instrumentamount) as \"credit\" ")
                 .append(" from egf_instrumentheader where bankaccountid=:accountId and instrumentdate BETWEEN :fromDate and :toDate ")
                 .append(" and ispaycheque='1' and id_status=(select id from egw_status where moduletype='Instrument'  and description='New')")
-                .append(" and  instrumentnumber is not null   and instrumentamount is not null and instrumentnumber||'-'||instrumentamount not in  (select  instrumentno||'-'|| debit from egf_brs_bankstatements")
-                .append(" where accountid=:accountId and txdate between :fromDate and :toDate and action=:action and errorMessage =:multipleEntryErrorMessage  and instrumentno is not null and debit is not null and debit>0) ");
+                .append(" and  instrumentnumber is not null   and instrumentamount is not null and instrumentnumber||'-'||instrumentamount")
+                .append(" not in  (select  instrumentno||'-'|| debit from egf_brs_bankstatements")
+                .append(" where accountid=:accountId and txdate between :fromDate and :toDate and action=:action and errorMessage =:multipleEntryErrorMessage ")
+                .append(" and instrumentno is not null and debit is not null and debit>0) ");
 
         entriesNotInBankStamentQry = persistenceService.getSession().createNativeQuery(entriesNotInBankStamentStr.toString())
                 // .addScalar("instrumentNo")
@@ -899,11 +879,11 @@ public class AutoReconcileHelper {
                 // .addScalar("narration")
                 .setResultTransformer(Transformers.aliasToBean(AutoReconcileBean.class));
 
-        entriesNotInBankStamentQry.setDate("fromDate", finYearStartDate)
-                .setDate("toDate", toDate)
-                .setString("action", BRS_ACTION_TO_BE_PROCESSED_MANUALLY)
-                .setLong("accountId", accountId)
-                .setString("multipleEntryErrorMessage", BRS_MESSAGE_MORE_THAN_ONE_MATCH);
+        entriesNotInBankStamentQry.setParameter("fromDate", finYearStartDate, DateType.INSTANCE)
+                .setParameter("toDate", toDate, DateType.INSTANCE)
+                .setParameter("action", BRS_ACTION_TO_BE_PROCESSED_MANUALLY, StringType.INSTANCE)
+                .setParameter("accountId", accountId, LongType.INSTANCE)
+                .setParameter("multipleEntryErrorMessage", BRS_MESSAGE_MORE_THAN_ONE_MATCH, StringType.INSTANCE);
         final List<AutoReconcileBean> entriesNotInBankStament1 = entriesNotInBankStamentQry.list();
         if (entriesNotInBankStament1.size() > 0) {
             notInStatementTotalCredit = entriesNotInBankStament1.get(0).getCredit();
@@ -918,9 +898,8 @@ public class AutoReconcileHelper {
 
         notInStatementNet = notInStatementTotalCredit.subtract(notInStatementTotalDebit);
         StringBuilder statmentsfoundButNotProcessed = new StringBuilder();
-        statmentsfoundButNotProcessed = statmentsfoundButNotProcessed.append("select id,txDate,instrumentNo,debit,credit,narration,type,action as \"errorCode\",errorMessage ")
-                .append("from ")
-                .append(TABLENAME)
+        statmentsfoundButNotProcessed.append("select id,txDate,instrumentNo,debit,credit,narration,type,action as \"errorCode\",errorMessage ")
+                .append(String.format("from %s", TABLENAME))
                 .append(" where accountId=:accountId and txdate>=:fromDate  and txdate<=:toDate and reconciliationdate is null ")
                 .append(" and  errorMessage =:multipleEntryErrorMessage order by  txDate ");
 
@@ -937,10 +916,10 @@ public class AutoReconcileHelper {
                 .addScalar("errorMessage")
                 .setResultTransformer(Transformers.aliasToBean(AutoReconcileBean.class));
 
-        statmentsfoundButNotProcessedQry.setDate("fromDate", fromDate)
-                .setDate("toDate", toDate)
-                .setString("multipleEntryErrorMessage", BRS_MESSAGE_MORE_THAN_ONE_MATCH)
-                .setLong("accountId", accountId);
+        statmentsfoundButNotProcessedQry.setParameter("fromDate", fromDate, DateType.INSTANCE)
+                .setParameter("toDate", toDate, DateType.INSTANCE)
+                .setParameter("multipleEntryErrorMessage", BRS_MESSAGE_MORE_THAN_ONE_MATCH, StringType.INSTANCE)
+                .setParameter("accountId", accountId, LongType.INSTANCE);
         statementsFoundButNotProcessed = statmentsfoundButNotProcessedQry.list();
         notprocessedDebit = BigDecimal.ZERO;
         notprocessedCredit = BigDecimal.ZERO;
@@ -1038,78 +1017,66 @@ public class AutoReconcileHelper {
         // for payment cheques instrumentNo,debit,accountId combination should be unique else mark it duplicate
         try {
             StringBuilder duplicates = new StringBuilder();
-            duplicates = duplicates.append("select instrumentNo,debit,accountId from ")
-                    .append(TABLENAME)
-                    .append(" where accountId=:accountId")
-                    .append(" and debit>0 and action='")
-                    .append(BRS_ACTION_TO_BE_PROCESSED)
+            duplicates.append("select instrumentNo,debit,accountId")
+                    .append(String.format(" from %s", TABLENAME))
+                    .append(" where accountId=:accountId and debit>0 and action=:action")
                     .append("' group by  instrumentNo,debit,accountId having count(*)>1");
 
             final NativeQuery paymentDuplicateChequesQuery = persistenceService.getSession().createNativeQuery(duplicates.toString());
             paymentDuplicateChequesQuery.addScalar("instrumentNo")
                     .addScalar("debit")
                     .addScalar("accountId", LongType.INSTANCE)
-                    .setResultTransformer(Transformers.aliasToBean(AutoReconcileBean.class));
-            // paymentDuplicateChequesQuery.setParameter("accountId", Long.class);
-            paymentDuplicateChequesQuery.setLong("accountId", accountId);
+                    .setResultTransformer(Transformers.aliasToBean(AutoReconcileBean.class))
+                    .setParameter("action", BRS_ACTION_TO_BE_PROCESSED, StringType.INSTANCE)
+                    .setParameter("accountId", accountId, LongType.INSTANCE);
             final List<AutoReconcileBean> duplicatePaymentCheques = paymentDuplicateChequesQuery.list();
 
             StringBuilder backUpdateDuplicatePaymentquery = new StringBuilder();
-            backUpdateDuplicatePaymentquery = backUpdateDuplicatePaymentquery.append("update ")
-                    .append(TABLENAME)
-                    .append(" set action='")
-                    .append(BRS_ACTION_TO_BE_PROCESSED_MANUALLY)
-                    .append("',")
-                    .append(" errorMessage='")
-                    .append(BRS_MESSAGE_DUPPLICATE_IN_BANKSTATEMENT)
-                    .append("' where debit=:debit and accountid=:accountId and instrumentNo=:instrumentNo ")
-                    .append(" and action='")
-                    .append(BRS_ACTION_TO_BE_PROCESSED)
-                    .append("'");
+            backUpdateDuplicatePaymentquery.append(String.format("update %s", TABLENAME))
+                    .append(" set action=:updateAction, errorMessage=:errorMsg")
+                    .append(" where debit=:debit and accountid=:accountId and instrumentNo=:instrumentNo ")
+                    .append(" and action=:whereAction");
 
-            final NativeQuery paymentDuplicateUpdate = persistenceService.getSession().createNativeQuery(backUpdateDuplicatePaymentquery.toString());
+            final NativeQuery paymentDuplicateUpdate = persistenceService.getSession().createNativeQuery(backUpdateDuplicatePaymentquery.toString())
+                    .setParameter("updateAction", BRS_ACTION_TO_BE_PROCESSED_MANUALLY, StringType.INSTANCE)
+                    .setParameter("errorMsg", BRS_MESSAGE_DUPPLICATE_IN_BANKSTATEMENT, StringType.INSTANCE)
+                    .setParameter("whereAction", BRS_ACTION_TO_BE_PROCESSED, StringType.INSTANCE);
             for (final AutoReconcileBean bean : duplicatePaymentCheques) {
-
-                paymentDuplicateUpdate.setLong("accountId", bean.getAccountId());
-                paymentDuplicateUpdate.setBigDecimal("debit", bean.getDebit());
-                paymentDuplicateUpdate.setString("instrumentNo", bean.getInstrumentNo());
+                paymentDuplicateUpdate.setParameter("accountId", bean.getAccountId(), LongType.INSTANCE);
+                paymentDuplicateUpdate.setParameter("debit", bean.getDebit(), BigDecimalType.INSTANCE);
+                paymentDuplicateUpdate.setParameter("instrumentNo", bean.getInstrumentNo(), StringType.INSTANCE);
                 paymentDuplicateUpdate.executeUpdate();
 
             }
             // this portion is for receipts instrumentNo,credit,accountId combination should be unique else mark it duplicate
-            duplicates = duplicates.append("select instrumentNo,credit,accountId from ")
-                    .append(TABLENAME)
-                    .append(" where accountid=:accountId")
-                    .append(" and  credit>0 and action='")
-                    .append(BRS_ACTION_TO_BE_PROCESSED)
-                    .append("' group by  instrumentNo,credit,accountId having count(*)>1");
+            duplicates.append("select instrumentNo,credit,accountId")
+                    .append(String.format(" from %s", TABLENAME))
+                    .append(" where accountid=:accountId and  credit>0 and action=:action")
+                    .append(" group by  instrumentNo,credit,accountId having count(*)>1");
 
-            final NativeQuery receiptsDuplicateChequesQuery = persistenceService.getSession().createNativeQuery(duplicates.toString());
+            final NativeQuery receiptsDuplicateChequesQuery = persistenceService.getSession().createNativeQuery(duplicates.toString())
+                    .setParameter("action", BRS_ACTION_TO_BE_PROCESSED, StringType.INSTANCE);
             receiptsDuplicateChequesQuery.addScalar("instrumentNo")
                     .addScalar("credit")
                     .addScalar("accountId", LongType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(AutoReconcileBean.class));
-            receiptsDuplicateChequesQuery.setLong("accountId", accountId);
+            receiptsDuplicateChequesQuery.setParameter("accountId", accountId, LongType.INSTANCE);
             final List<AutoReconcileBean> duplicateReceiptsCheques = receiptsDuplicateChequesQuery.list();
 
             StringBuilder backUpdateDuplicateReceiptsQuery = new StringBuilder();
-            backUpdateDuplicateReceiptsQuery = backUpdateDuplicateReceiptsQuery.append("update ")
-                    .append(TABLENAME)
-                    .append(" set action='")
-                    .append(BRS_ACTION_TO_BE_PROCESSED_MANUALLY)
-                    .append("'")
-                    .append(" ,errorMessage='")
-                    .append(BRS_MESSAGE_DUPPLICATE_IN_BANKSTATEMENT)
-                    .append("' where credit=:credit and accountid=:accountId and instrumentNo=:instrumentNo ")
-                    .append(" and action='")
-                    .append(BRS_ACTION_TO_BE_PROCESSED)
-                    .append("'");
-            final NativeQuery receiptDuplicateUpdate = persistenceService.getSession().createNativeQuery(backUpdateDuplicateReceiptsQuery.toString());
+            backUpdateDuplicateReceiptsQuery.append(String.format("update %s", TABLENAME))
+                    .append(" set action=:updateAction, errorMessage=:errorMsg")
+                    .append(" where credit=:credit and accountid=:accountId and instrumentNo=:instrumentNo ")
+                    .append(" and action=:whereAction");
+            final NativeQuery receiptDuplicateUpdate = persistenceService.getSession().createNativeQuery(backUpdateDuplicateReceiptsQuery.toString())
+                    .setParameter("updateAction", BRS_ACTION_TO_BE_PROCESSED_MANUALLY, StringType.INSTANCE)
+                    .setParameter("errorMsg", BRS_MESSAGE_DUPPLICATE_IN_BANKSTATEMENT, StringType.INSTANCE)
+                    .setParameter("whereAction", BRS_ACTION_TO_BE_PROCESSED, StringType.INSTANCE);
 
             for (final AutoReconcileBean bean : duplicateReceiptsCheques) {
-                receiptDuplicateUpdate.setLong("accountId", bean.getAccountId());
-                receiptDuplicateUpdate.setBigDecimal("credit", bean.getCredit());
-                receiptDuplicateUpdate.setString("instrumentNo", bean.getInstrumentNo());
+                receiptDuplicateUpdate.setParameter("accountId", bean.getAccountId(), LongType.INSTANCE);
+                receiptDuplicateUpdate.setParameter("credit", bean.getCredit(), BigDecimalType.INSTANCE);
+                receiptDuplicateUpdate.setParameter("instrumentNo", bean.getInstrumentNo(), StringType.INSTANCE);
                 receiptDuplicateUpdate.executeUpdate();
             }
         } catch (final HibernateException e) {

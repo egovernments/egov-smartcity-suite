@@ -57,7 +57,6 @@ import org.egov.commons.dao.FunctionaryDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.repository.BoundaryRepository;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -65,23 +64,14 @@ import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.model.bills.EgBillPayeedetails;
-import org.egov.model.bills.EgBilldetails;
-import org.egov.model.bills.EgBillregister;
-import org.egov.model.bills.EgBillregistermis;
-import org.egov.model.bills.EgSalaryCodes;
+import org.egov.model.bills.*;
 import org.egov.model.voucher.PreApprovedVoucher;
 import org.egov.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @ParentPackage("egov")
 public class SalaryBillRegisterAction extends BaseFormAction {
@@ -89,6 +79,8 @@ public class SalaryBillRegisterAction extends BaseFormAction {
      *
      */
     private static final long serialVersionUID = -1417150690192038536L;
+    private final Map<BigDecimal, CChartOfAccounts> coaAndIds = new HashMap<BigDecimal, CChartOfAccounts>();
+    private final Map<BigDecimal, String> coaIdAndHead = new HashMap<BigDecimal, String>();
     private EgBillregister billregister = new EgBillregister();
     private EgBillregistermis billregistermis = new EgBillregistermis();
     private PersistenceService<EgBillregister, Long> billRegisterService;
@@ -99,8 +91,6 @@ public class SalaryBillRegisterAction extends BaseFormAction {
     private List<EgBilldetails> deductionsList = new ArrayList<EgBilldetails>();
     private List<EgBilldetails> netPayList = new ArrayList<EgBilldetails>();
     private List<PreApprovedVoucher> subledgerList = new ArrayList<PreApprovedVoucher>();
-    private final Map<BigDecimal, CChartOfAccounts> coaAndIds = new HashMap<BigDecimal, CChartOfAccounts>();
-    private final Map<BigDecimal, String> coaIdAndHead = new HashMap<BigDecimal, String>();
     private List<CChartOfAccounts> glcodesList = new ArrayList<CChartOfAccounts>();
     private CommonMethodsImpl commonMethodsImpl;
     private ScriptService scriptExecutionService;
@@ -109,7 +99,8 @@ public class SalaryBillRegisterAction extends BaseFormAction {
     private Long billregisterId;
     private List<EgSalaryCodes> earningsCodes = new ArrayList<EgSalaryCodes>();
     private List<EgSalaryCodes> deductionsCodes = new ArrayList<EgSalaryCodes>();
-    private @Autowired AppConfigValueService appConfigValuesService;
+    private @Autowired
+    AppConfigValueService appConfigValuesService;
     private CChartOfAccounts defaultNetPayCode;
 
     @Autowired
@@ -118,7 +109,7 @@ public class SalaryBillRegisterAction extends BaseFormAction {
     private BoundaryService boundaryService;
     @Autowired
     private FunctionaryDAO functionaryDAO;
-    
+
     public SalaryBillRegisterAction() {
         addRelatedEntity("fieldList", Boundary.class);
         addRelatedEntity("functionaryList", Functionary.class);
@@ -184,8 +175,8 @@ public class SalaryBillRegisterAction extends BaseFormAction {
                 "EGF",
                 "salaryBillDefaultPurposeId");
         final String cBillDefaulPurposeId = defaultConfigValuesByModuleAndKey.get(0).getValue();
-        final List<CChartOfAccounts> salaryPayableCoa = persistenceService.findAllBy("FROM CChartOfAccounts WHERE purposeid in ("
-                + cBillDefaulPurposeId + ") and isactiveforposting = true and classification=4");
+        final List<CChartOfAccounts> salaryPayableCoa = persistenceService.findAllBy(new StringBuilder("FROM CChartOfAccounts WHERE purposeid in (?1) and isactiveforposting = true")
+                .append(" and classification=4").toString(), cBillDefaulPurposeId);
         for (final CChartOfAccounts chartOfAccounts : salaryPayableCoa) {
             final EgBilldetails billdetails = new EgBilldetails();
             billdetails.setGlcodeid(BigDecimal.valueOf(chartOfAccounts.getId()));
@@ -227,13 +218,13 @@ public class SalaryBillRegisterAction extends BaseFormAction {
     private void saveBilldetails() {
         for (final EgBilldetails row : earningsList) {
             row.setEgBillregister(getBillregister());
-            if (row.getFunctionid() != null && BigDecimal.ZERO.compareTo(row.getFunctionid())==0)
+            if (row.getFunctionid() != null && BigDecimal.ZERO.compareTo(row.getFunctionid()) == 0)
                 row.setFunctionid(null);
             billDetailsService.persist(row);
         }
         for (final EgBilldetails row : deductionsList) {
             row.setEgBillregister(getBillregister());
-            if (row.getFunctionid() != null && BigDecimal.ZERO.compareTo(row.getFunctionid())==0)
+            if (row.getFunctionid() != null && BigDecimal.ZERO.compareTo(row.getFunctionid()) == 0)
                 row.setFunctionid(null);
             billDetailsService.persist(row);
         }
@@ -247,7 +238,7 @@ public class SalaryBillRegisterAction extends BaseFormAction {
             billPayeedetails.setCreditAmount(row.getCreditAmount());
             billPayeedetails.setDebitAmount(row.getDebitAmount());
             billPayeedetails
-            .setEgBilldetailsId(getEgBillDetailsForGlCode(coaAndIds.get(new BigDecimal(row.getGlcode().getId()))));
+                    .setEgBilldetailsId(getEgBillDetailsForGlCode(coaAndIds.get(new BigDecimal(row.getGlcode().getId()))));
             billPayeeDetailsService.persist(billPayeedetails);
         }
     }
@@ -255,11 +246,11 @@ public class SalaryBillRegisterAction extends BaseFormAction {
     private EgBilldetails getEgBillDetailsForGlCode(final CChartOfAccounts chartOfAccounts) {
         for (final EgBilldetails row : earningsList)
             if (chartOfAccounts != null && chartOfAccounts.getId() != null
-            && chartOfAccounts.getId().equals(row.getGlcodeid().longValue()))
+                    && chartOfAccounts.getId().equals(row.getGlcodeid().longValue()))
                 return row;
         for (final EgBilldetails row : deductionsList)
             if (chartOfAccounts != null && chartOfAccounts.getId() != null
-            && chartOfAccounts.getId().equals(row.getGlcodeid().longValue()))
+                    && chartOfAccounts.getId().equals(row.getGlcodeid().longValue()))
                 return row;
         return null;
     }
@@ -300,12 +291,9 @@ public class SalaryBillRegisterAction extends BaseFormAction {
     public String view() {
         setBillregister((EgBillregister) persistenceService.find("from EgBillregister where id=?1", billregisterId));
         billregistermis = getBillregister().getEgBillregistermis();
-        earningsList = persistenceService.findAllBy("from EgBilldetails where egBillregister.id=?1 and glcodeid in ("
-                + getGlCodeIds(earningsCodes) + ")", billregisterId);
-        deductionsList = persistenceService.findAllBy("from EgBilldetails where egBillregister.id=?1 and glcodeid in ("
-                + getGlCodeIds(deductionsCodes) + ")", billregisterId);
-        subledgerList = persistenceService.findAllBy("from EgBillPayeedetails where egBilldetailsId.id in ("
-                + getBillDetailsId(earningsList, deductionsList) + ")");
+        earningsList = persistenceService.findAllBy("from EgBilldetails where egBillregister.id=?1 and glcodeid in (?2)", billregisterId, getGlCodeIds(earningsCodes));
+        deductionsList = persistenceService.findAllBy("from EgBilldetails where egBillregister.id=?1 and glcodeid in (?2)", billregisterId, getGlCodeIds(deductionsCodes));
+        subledgerList = persistenceService.findAllBy("from EgBillPayeedetails where egBilldetailsId.id in (?1)", getBillDetailsId(earningsList, deductionsList));
         return Constants.VIEW;
     }
 
@@ -332,40 +320,40 @@ public class SalaryBillRegisterAction extends BaseFormAction {
         this.billRegisterService = billRegisterService;
     }
 
-    public void setEarningsList(final List<EgBilldetails> earningsList) {
-        this.earningsList = earningsList;
-    }
-
     public List<EgBilldetails> getEarningsList() {
         return earningsList;
     }
 
-    public void setDeductionsList(final List<EgBilldetails> deductionsList) {
-        this.deductionsList = deductionsList;
+    public void setEarningsList(final List<EgBilldetails> earningsList) {
+        this.earningsList = earningsList;
     }
 
     public List<EgBilldetails> getDeductionsList() {
         return deductionsList;
     }
 
-    public void setSubledgerList(final List<PreApprovedVoucher> earningsSubledgerList) {
-        subledgerList = earningsSubledgerList;
+    public void setDeductionsList(final List<EgBilldetails> deductionsList) {
+        this.deductionsList = deductionsList;
     }
 
     public List<PreApprovedVoucher> getSubledgerList() {
         return subledgerList;
     }
 
+    public void setSubledgerList(final List<PreApprovedVoucher> earningsSubledgerList) {
+        subledgerList = earningsSubledgerList;
+    }
+
     public Map<BigDecimal, CChartOfAccounts> getCoaAndIds() {
         return coaAndIds;
     }
 
-    public void setNetPayList(final List<EgBilldetails> netPayList) {
-        this.netPayList = netPayList;
-    }
-
     public List<EgBilldetails> getNetPayList() {
         return netPayList;
+    }
+
+    public void setNetPayList(final List<EgBilldetails> netPayList) {
+        this.netPayList = netPayList;
     }
 
     public Map<BigDecimal, String> getCoaIdAndHead() {
@@ -400,55 +388,55 @@ public class SalaryBillRegisterAction extends BaseFormAction {
         this.scriptExecutionService = scriptExecutionService;
     }
 
-    public void setGlcodesList(final List<CChartOfAccounts> glcodesList) {
-        this.glcodesList = glcodesList;
-    }
-
     public List<CChartOfAccounts> getGlcodesList() {
         return glcodesList;
+    }
+
+    public void setGlcodesList(final List<CChartOfAccounts> glcodesList) {
+        this.glcodesList = glcodesList;
     }
 
     public void setBillPayeeDetailsService(final PersistenceService<EgBillPayeedetails, Long> billPayeeDetailsService) {
         this.billPayeeDetailsService = billPayeeDetailsService;
     }
 
-    public void setClose(final boolean close) {
-        this.close = close;
-    }
-
     public boolean isClose() {
         return close;
     }
 
-    public void setMessage(final String message) {
-        this.message = message;
+    public void setClose(final boolean close) {
+        this.close = close;
     }
 
     public String getMessage() {
         return message;
     }
 
-    public void setBillregisterId(final Long billregisterId) {
-        this.billregisterId = billregisterId;
+    public void setMessage(final String message) {
+        this.message = message;
     }
 
     public Long getBillregisterId() {
         return billregisterId;
     }
 
-    public void setBillregister(final EgBillregister billregister) {
-        this.billregister = billregister;
+    public void setBillregisterId(final Long billregisterId) {
+        this.billregisterId = billregisterId;
     }
 
     public EgBillregister getBillregister() {
         return billregister;
     }
 
-    public void setDefaultNetPayCode(final CChartOfAccounts defaultNetPayCode) {
-        this.defaultNetPayCode = defaultNetPayCode;
+    public void setBillregister(final EgBillregister billregister) {
+        this.billregister = billregister;
     }
 
     public CChartOfAccounts getDefaultNetPayCode() {
         return defaultNetPayCode;
+    }
+
+    public void setDefaultNetPayCode(final CChartOfAccounts defaultNetPayCode) {
+        this.defaultNetPayCode = defaultNetPayCode;
     }
 }

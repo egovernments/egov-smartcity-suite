@@ -74,6 +74,7 @@ import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.query.Query;
 import org.hibernate.type.IntegerType;
+import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -252,8 +253,8 @@ public class BillRegisterSearchAction extends BaseFormAction {
 
     private List<Object[]> getOwnersForWorkFlowState(final List<Long> stateIds) {
         List<Object[]> ownerNamesList = new ArrayList<Object[]>();
-        final String ownerNamesQueryStr = "select a.employee.username,bill.state.id from Assignment a,State state, EgBillregister bill"
-                + " where  bill.state.id=state.id and a.position.id = state.ownerPosition.id and bill.state.id in (:IDS)";
+        final StringBuilder ownerNamesQueryStr = new StringBuilder("select a.employee.username,bill.state.id from Assignment a,State state, EgBillregister bill")
+                .append(" where  bill.state.id=state.id and a.position.id = state.ownerPosition.id and bill.state.id in (:IDS)");
         int size = stateIds.size();
         if (size > 999) {
             int fromIndex = 0;
@@ -263,8 +264,8 @@ public class BillRegisterSearchAction extends BaseFormAction {
             while (size - step >= 0) {
                 newGLDList = new ArrayList<Object[]>();
                 toIndex += step;
-                final Query ownerNamesQuery = persistenceService.getSession().createQuery(ownerNamesQueryStr);
-                ownerNamesQuery.setParameterList("IDS", stateIds.subList(fromIndex, toIndex));
+                final Query ownerNamesQuery = persistenceService.getSession().createQuery(ownerNamesQueryStr.toString())
+                        .setParameterList("IDS", stateIds.subList(fromIndex, toIndex), LongType.INSTANCE);
                 newGLDList = ownerNamesQuery.list();
                 fromIndex = toIndex;
                 size -= step;
@@ -277,29 +278,28 @@ public class BillRegisterSearchAction extends BaseFormAction {
                 newGLDList = new ArrayList<Object[]>();
                 fromIndex = toIndex;
                 toIndex = fromIndex + size;
-                final Query ownerNamesQuery = persistenceService.getSession().createQuery(ownerNamesQueryStr);
-                ownerNamesQuery.setParameterList("IDS", stateIds.subList(fromIndex, toIndex));
+                final Query ownerNamesQuery = persistenceService.getSession().createQuery(ownerNamesQueryStr.toString())
+                        .setParameterList("IDS", stateIds.subList(fromIndex, toIndex), LongType.INSTANCE);
                 newGLDList = ownerNamesQuery.list();
                 if (newGLDList != null)
                     ownerNamesList.addAll(newGLDList);
             }
 
         } else
-            ownerNamesList = persistenceService.getSession().createQuery(ownerNamesQueryStr)
-                    .setParameterList("IDS", stateIds)
+            ownerNamesList = persistenceService.getSession().createQuery(ownerNamesQueryStr.toString())
+                    .setParameterList("IDS", stateIds, LongType.INSTANCE)
                     .list();
         return ownerNamesList;
     }
 
     public EgwStatus getStatusId(final String moduleType, final Integer statusid) {
         StringBuffer statusQuery = new StringBuffer();
-        statusQuery = statusQuery.append("from EgwStatus where upper(moduletype)=upper(:moduleType) and id=:statusId");
+        statusQuery.append("from EgwStatus where upper(moduletype)=upper(:moduleType) and id=:statusId");
         final Query query = persistenceService.getSession().createQuery(statusQuery.toString())
                 .setParameter("moduleType", moduleType, StringType.INSTANCE)
                 .setParameter("statusId", statusid, IntegerType.INSTANCE);
         final EgwStatus egwStatus = (EgwStatus) persistenceService.find(query.toString());
         return egwStatus;
-
     }
 
     protected void getHeaderFields() {

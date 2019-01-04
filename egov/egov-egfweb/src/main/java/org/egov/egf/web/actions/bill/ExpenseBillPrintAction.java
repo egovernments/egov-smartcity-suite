@@ -48,31 +48,13 @@
 package org.egov.egf.web.actions.bill;
 
 
-import static org.egov.utils.FinancialConstants.BUDGETTYPE_ALL;
-import static org.egov.utils.FinancialConstants.BUDGETTYPE_CREDIT;
-import static org.egov.utils.FinancialConstants.BUDGETTYPE_DEBIT;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import net.sf.jasperreports.engine.JRException;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.Accountdetailtype;
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.CFunction;
-import org.egov.commons.CVoucherHeader;
+import org.egov.commons.*;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.utils.EntityType;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
@@ -99,7 +81,13 @@ import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import net.sf.jasperreports.engine.JRException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import static org.egov.utils.FinancialConstants.*;
 
 @Results(value = {
 
@@ -116,9 +104,9 @@ public class ExpenseBillPrintAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
     private static final String PRINT = "print";
     private static final String ACCDETAILTYPEQUERY = " from Accountdetailtype where id=?1";
-    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     private static final String jasperpath = "/reports/templates/expenseBillReport.jasper";
     private static final String subReportPath = "/reports/templates/budgetAppropriationDetail.jasper";
+    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     private String functionName;
     @Autowired
     private transient AppConfigValueService appConfigValuesService;
@@ -475,7 +463,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                         budgetApprDetails = getBudgetDetails(coa, detail, functionById.getName());
                         budget.add(budgetApprDetails);
                     }
-                   
+
                 }
                 vd.setGlcodeDetail(coa.getGlcode());
                 vd.setGlcodeIdDetail(coa.getId());
@@ -498,11 +486,11 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                         dataType = method.getReturnType().getSimpleName();
                         if (dataType.equals("Long"))
                             entity = (EntityType) persistenceService.find(
-                                    "from " + detailTypeName + " where id=?1 order by name", payeedetail.getAccountDetailKeyId()
+                                    String.format("from %s where id=?1 order by name", detailTypeName), payeedetail.getAccountDetailKeyId()
                                             .longValue());
                         else
                             entity = (EntityType) persistenceService.find(
-                                    "from " + detailTypeName + " where id=?1 order by name", payeedetail.getAccountDetailKeyId());
+                                    String.format("from %s where id=?1 order by name", detailTypeName), payeedetail.getAccountDetailKeyId());
                         vd.setDetailKey(entity.getCode());
                         vd.setDetailName(entity.getName());
                     } catch (final Exception e) {
@@ -532,17 +520,17 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                 final CChartOfAccounts coa = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id=?1",
                         Long.valueOf(glcodeid.toString()));
                 if (budgetcheck && coa.getBudgetCheckReq() != null && coa.getBudgetCheckReq()) {
-                        final List<BudgetGroup> budgetHeadListByGlcode = budgetDetailsDAO.getBudgetHeadByGlcode(coa);
+                    final List<BudgetGroup> budgetHeadListByGlcode = budgetDetailsDAO.getBudgetHeadByGlcode(coa);
 
-                        if (isBudgetCheckingRequiredForType("credit",
-                                budgetHeadListByGlcode.get(0).getBudgetingType().toString())) {
-                            if (LOGGER.isDebugEnabled())
-                                LOGGER.debug("No need to check budget for :" + coa.getGlcode() + " as the transaction type is credit "
-                                        + "so skipping budget check");
-                            budgetApprDetails = getBudgetDetails(coa, detail, functionName);
-                            budget.add(budgetApprDetails);
-                        }
-                
+                    if (isBudgetCheckingRequiredForType("credit",
+                            budgetHeadListByGlcode.get(0).getBudgetingType().toString())) {
+                        if (LOGGER.isDebugEnabled())
+                            LOGGER.debug("No need to check budget for :" + coa.getGlcode() + " as the transaction type is credit "
+                                    + "so skipping budget check");
+                        budgetApprDetails = getBudgetDetails(coa, detail, functionName);
+                        budget.add(budgetApprDetails);
+                    }
+
                 }
                 vd.setGlcodeDetail(coa.getGlcode());
                 vd.setGlcodeIdDetail(coa.getId());
@@ -566,11 +554,11 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                         dataType = method.getReturnType().getSimpleName();
                         if (dataType.equals("Long"))
                             entity = (EntityType) persistenceService.find(
-                                    "from " + detailTypeName + " where id=?1 order by name", payeedetail.getAccountDetailKeyId()
+                                    String.format("from %s where id=?1 order by name", detailTypeName), payeedetail.getAccountDetailKeyId()
                                             .longValue());
                         else
                             entity = (EntityType) persistenceService.find(
-                                    "from " + detailTypeName + " where id=?1 order by name", payeedetail.getAccountDetailKeyId());
+                                    String.format("from %s where id=?1 order by name", detailTypeName), payeedetail.getAccountDetailKeyId());
                         vd.setDetailKey(entity.getCode());
                         vd.setDetailName(entity.getName());
                     } catch (final Exception e) {
@@ -586,10 +574,10 @@ public class ExpenseBillPrintAction extends BaseFormAction {
         paramMap.put("budgetDetail", budget);
 
     }
-    
+
     /**
      * to check the budget checking is required or not
-     * 
+     *
      * @param txnType
      * @param budgetingType
      * @return

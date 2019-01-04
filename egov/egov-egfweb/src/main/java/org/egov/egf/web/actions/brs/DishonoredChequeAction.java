@@ -149,8 +149,9 @@ public class DishonoredChequeAction extends SearchFormAction {
         final Map.Entry<String, List<Object>> queryWithParamsEntry = queryWithParams.entrySet().iterator().next();
         final String searchQuery = queryWithParamsEntry.getKey();
         StringBuilder srchQry = new StringBuilder();
-        srchQry = srchQry.append("select rpt.id as receiptheaderid,ih.id as instrumentheaderid,rpt.receiptnumber as receiptnumber,rpt.receiptdate as receiptdate,ih.instrumentnumber as instrumentnumber,")
-                .append("ih.instrumentdate as instrumentdate,ih.instrumentamount as instrumentamount,b.name as bankname,ba.accountnumber as accountnumber,ih.payto as payto,status.description as description ")
+        srchQry.append("select rpt.id as receiptheaderid,ih.id as instrumentheaderid,rpt.receiptnumber as receiptnumber,rpt.receiptdate as receiptdate,")
+                .append("ih.instrumentnumber as instrumentnumber, ih.instrumentdate as instrumentdate,ih.instrumentamount as instrumentamount,b.name as bankname,")
+                .append("ba.accountnumber as accountnumber,ih.payto as payto,status.description as description ")
                 .append(searchQuery)
                 .append(" ORDER BY rpt.receiptnumber, rpt.receiptdate ");
         StringBuilder countQry = new StringBuilder("select count(distinct rpt) ").append(searchQuery);

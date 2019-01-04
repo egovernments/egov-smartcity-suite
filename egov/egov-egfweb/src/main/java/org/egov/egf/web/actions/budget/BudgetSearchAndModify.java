@@ -72,30 +72,27 @@ import org.egov.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class BudgetSearchAndModify extends BudgetSearchAction {
     private static final String ACTIONNAME = "actionName";
+    private static final long serialVersionUID = 1L;
+    private static final Logger LOGGER = Logger.getLogger(BudgetSearchAndModify.class);
+    protected WorkflowService<Budget> budgetWorkflowService;
     boolean enableApprovedAmount = false;
     boolean enableOriginalAmount = false;
     boolean consolidatedScreen = false;
     private String comments = "";
-    private static final long serialVersionUID = 1L;
-    private static final Logger LOGGER = Logger.getLogger(BudgetSearchAndModify.class);
-    protected WorkflowService<Budget> budgetWorkflowService;
     private boolean showDetails = false;
     private boolean isDetailByFunction;
     private ScriptService scriptService;
 
     @Autowired
     private DepartmentService departmentService;
+    private String wfitemstate;
+    private VoucherService voucherService;
+    private Integer defaultDept;
+    private Department department;
 
     public ScriptService getScriptService() {
         return scriptService;
@@ -181,9 +178,8 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
             comments = topBudget.getState().getExtraInfo();
         }
         // if u want only selected function centre filter here by owner
-        final String query = " from BudgetDetail bd where bd.budget=?1 and bd.function=" + budgetDetail.getFunction().getId()
-                + "  order by bd.function.name,bd.budgetGroup.name";
-        savedbudgetDetailList = budgetDetailService.findAllBy(query, topBudget);
+        final String query = " from BudgetDetail bd where bd.budget=?1 and bd.function=?2 order by bd.function.name,bd.budgetGroup.name";
+        savedbudgetDetailList = budgetDetailService.findAllBy(query, topBudget, budgetDetail.getFunction().getId());
         re = checkRe(topBudget);
         // check what actuals needs to be shown for next year be AND possible remove if
         if (LOGGER.isInfoEnabled())
@@ -259,7 +255,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
             // financialYear=topBudget.getFinancialYear();
             if (count == 0) {
                 final BudgetDetail detail = (BudgetDetail) persistenceService.find(
-                        "from BudgetDetail where materializedPath like ?",
+                        "from BudgetDetail where materializedPath like ?1",
                         topBudget.getMaterializedPath() + ".%");
                 if (detail != null)
                     department = detail.getExecutingDepartment();
@@ -302,6 +298,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
 
     /**
      * move the budget detail and its parents depending on save or approve
+     *
      * @return
      */
     public void approve() {
@@ -565,7 +562,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
     }
 
     public void mapBudgetDetailForPreviousYear(final List<BudgetDetail> budgetdetail, final List<Object[]> previousYearList,
-            final List<Object[]> beforelastYearList) {
+                                               final List<Object[]> beforelastYearList) {
         new BudgetDetail();
         if (previousYearList.size() > 0)
             for (final Object[] row : previousYearList)
@@ -628,6 +625,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
     /**
      * reference Budget is one which exists in the system but wont be having active and primary budget as parent it is used for
      * reference . These should be filtered for approval life cycle
+     *
      * @param budget
      */
 
@@ -716,16 +714,11 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
 
         addDropdownData("designationList", (List<Designation>) map.get("designationList"));
         if (bDefaultDeptId && !dName.equals("")) {
-            final Department dept = (Department) persistenceService.find("from Department where deptName like '%" + dName + "' ");
+            final Department dept = (Department) persistenceService.find("from Department where deptName like ?1 ", "%".concat(dName));
             defaultDept = dept.getId().intValue();
         }
         wfitemstate = map.get("wfitemstate") != null ? map.get("wfitemstate").toString() : "";
     }
-
-    private String wfitemstate;
-    private VoucherService voucherService;
-    private Integer defaultDept;
-    private Department department;
 
     public Integer getDefaultDept() {
         return defaultDept;
@@ -753,12 +746,12 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
         return value.substring(0, 1).toUpperCase() + value.substring(1).toLowerCase();
     }
 
-    public void setComments(final String comments) {
-        this.comments = comments;
-    }
-
     public String getComments() {
         return comments;
+    }
+
+    public void setComments(final String comments) {
+        this.comments = comments;
     }
 
     @Override
