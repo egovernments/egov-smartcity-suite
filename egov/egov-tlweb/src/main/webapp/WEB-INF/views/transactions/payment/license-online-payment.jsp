@@ -48,27 +48,30 @@
 
 <html>
 <head>
- 
-<script type="text/javascript">
 
-  jQuery(document).ready( function() {
+    <script type="text/javascript">
 
-		var collectXML = '${collectXML}';
+        jQuery(document).ready(function () {
 
-		jQuery('<form>.').attr({
-			method: 'post',
-			action: '/collection/citizen/onlineReceipt-newform.action',
-			target: '_self'
-		}).append(jQuery('<input>').attr({
-		    type: 'hidden',
-		    id: 'collectXML',
-		    name: 'collectXML',
-		    value: collectXML
-		})).appendTo( document.body ).submit();
-		
-	});
-  
-</script>   
+            let collectXML = '${collectXML}';
+
+            jQuery('<form>.').attr({
+                method: 'post',
+                action: '/collection/citizen/onlineReceipt-newform.action',
+                target: '_self'
+            }).append(jQuery('<input>').attr({
+                type: 'hidden',
+                id: 'collectXML',
+                name: 'collectXML',
+                value: collectXML
+            })).append(jQuery('<input >').attr({
+                type: 'hidden',
+                name: '${_csrf.parameterName}',
+                value: '${_csrf.token}'
+            })).appendTo(document.body).submit();
+        });
+
+    </script>
 </head>
 <body>
 </body>

@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2019  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -46,23 +46,29 @@
   ~
   --%>
 
-<%@ include file="/includes/taglibs.jsp" %>
-<%@ page pageEncoding="UTF-8" %>
-<html>
-<head>
-    <script type="text/javascript">
-        function doSubmit() {
-            document.forms[0].submit();
-        }
-    </script>
-</head>
-<body onload="doSubmit()">
-<center style="color: #444; font: bold 13px tohoma, arial, helvetica; position: relative; top: 250px">
-    Please wait...
-</center>
-<form action="/collection/receipts/receipt-newform.action" method="POST">
-    <input type="hidden" id="collectXML" name="collectXML" value="${collectXML}"/>
-    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-</form>
-</body>
-</html>
+
+<script type="text/javascript">
+
+    jQuery(document).ready(function () {
+        $('.loader-class').modal('show', {
+            backdrop: 'static'
+        });
+        let collectXML = '${collectXML}';
+
+        jQuery('<form>.').attr({
+            method: 'post',
+            action: '/collection/receipts/receipt-newform.action',
+            target: '_self'
+        }).append(jQuery('<input>').attr({
+            type: 'hidden',
+            id: 'collectXML',
+            name: 'collectXML',
+            value: collectXML
+        })).append(jQuery('<input >').attr({
+            type: 'hidden',
+            name: '${_csrf.parameterName}',
+            value: '${_csrf.token}'
+        })).appendTo(document.body).submit();
+    });
+
+</script>

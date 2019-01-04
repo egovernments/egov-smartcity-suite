@@ -252,9 +252,17 @@
         <put-attribute name="page-title" value="title.document.new" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/search/search-license-online.jsp"/>
     </definition>
-    <definition name="license-onlinepayment" extends="base_layout">
-        <put-attribute name="page-title" value="title.document.new" cascade="true"/>
+    <definition name="license-online-payment" extends="base_layout">
+        <put-attribute name="page-title" value="title.online.payment" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/transactions/payment/license-online-payment.jsp"/>
+    </definition>
+    <definition name="license-fee-details" extends="base_layout">
+        <put-attribute name="page-title" value="title.license.fee.detail" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/payment/license-fee-details.jsp"/>
+    </definition>
+    <definition name="license-counter-payment" extends="base_layout">
+        <put-attribute name="page-title" value="title.counter.payment" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/payment/license-counter-payment.jsp"/>
     </definition>
     <definition name="dcr-search" extends="base_layout">
         <put-attribute name="page-title" value="title.dailycollection" cascade="true"/>

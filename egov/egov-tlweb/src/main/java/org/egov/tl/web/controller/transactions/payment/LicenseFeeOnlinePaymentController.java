@@ -71,7 +71,7 @@ import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
 @RequestMapping("/pay/online")
-public class LicenseBillOnlinePaymentController {
+public class LicenseFeeOnlinePaymentController {
 
     @Autowired
     @Qualifier("TLCollectionsInterface")
@@ -91,11 +91,11 @@ public class LicenseBillOnlinePaymentController {
         final TradeLicense license = tradeLicenseService.getLicenseById(id);
         if (license.isPaid()) {
             model.addAttribute("paymentdone", "License Fee already collected");
-            return "license-onlinepayment";
+            return "license-online-payment";
         }
 
         model.addAttribute("collectXML", URLEncoder.encode(licenseBillService.createLicenseBillXML(license), "UTF-8"));
-        return "license-onlinepayment";
+        return "license-online-payment";
     }
 
     @GetMapping

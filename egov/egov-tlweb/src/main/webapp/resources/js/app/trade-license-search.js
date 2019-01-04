@@ -328,7 +328,7 @@ $(document).ready(function () {
                 success: function (data) {
                     $.each(data, function (i) {
                         var obj = {};
-                        obj['id'] = data[i]['id']
+                        obj['id'] = data[i]['id'];
                         obj['text'] = data[i]['name'];
                         results.push(obj);
                     });
@@ -441,7 +441,7 @@ $(document).ready(function () {
                                     return {name: row.applicationNumber, id: row.uid};
                                 },
                                 "render": function (data, type, row) {
-                                    return '<a href="javascript:void(0);" onclick="goToView(\''+ row.uid +'\');" data-hiddenele="uid" data-eleval="'
+                                    return '<a href="javascript:void(0);" onclick="goToView(\'' + row.uid + '\');" data-hiddenele="uid" data-eleval="'
                                         + data.id + '">' + data.name + '</a>';
                                 },
                                 "name": "applicationNumber"
@@ -501,7 +501,7 @@ function goToAction(obj, uid, id) {
     else if (obj.options[obj.selectedIndex].innerHTML == 'Modify Legacy License')
         openWindow("/tl/legacylicense/update/" + id, 'mll' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Collect Fees')
-        openWindow("/tl/integration/licenseBillCollect.action?licenseId=" + id, 'cf' + id);
+        openWindow("/tl/license/fee/collect/" + uid, 'cf' + uid);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Print Certificate')
         openWindow("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=" + id, 'pc' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Print Provisional Certificate')

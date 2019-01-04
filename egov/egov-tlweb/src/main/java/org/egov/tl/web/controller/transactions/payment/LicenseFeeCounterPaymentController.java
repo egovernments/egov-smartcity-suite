@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2018  eGovernments Foundation
+ *     Copyright (C) 2019  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,89 +46,58 @@
  *
  */
 
-package org.egov.tl.web.actions.integration;
+package org.egov.tl.web.controller.transactions.payment;
 
-import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
-import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.service.integration.LicenseBillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.io.IOException;
-import java.math.BigDecimal;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Map;
 
-import static com.opensymphony.xwork2.Action.SUCCESS;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
-@ParentPackage("egov")
-@Results({@Result(name = "showfees", location = "license-showfees.jsp"),
-        @Result(name = SUCCESS, location = "licenseBillCollect.jsp")})
-public class LicenseBillCollectAction extends BaseFormAction {
+@Controller
+@RequestMapping("/license/fee/collect/{uid}")
+public class LicenseFeeCounterPaymentController {
 
-    private static final long serialVersionUID = 1L;
-    private Long licenseId;
-    private String collectXML;
+    @Autowired
+    @Qualifier("tradeLicenseService")
+    private TradeLicenseService tradeLicenseService;
 
     @Autowired
     @Qualifier("TLCollectionsInterface")
     private transient LicenseBillService licenseBillService;
 
-    @Autowired
-    @Qualifier("tradeLicenseService")
-    private transient TradeLicenseService tradeLicenseService;
+    @ModelAttribute
+    public TradeLicense tradeLicense(@PathVariable String uid) {
+        return tradeLicenseService.getLicenseByUID(uid);
+    }
 
-    private Map<String, Map<String, BigDecimal>> outstandingFee;
-
-    @Override
-    public String execute() throws IOException {
-        final TradeLicense license = tradeLicenseService.getLicenseById(licenseId);
-        if (license.isPaid()) {
-            ServletActionContext.getResponse().setContentType("text/html");
-            ServletActionContext.getResponse().getWriter()
-                    .write("<center style='color:red;font-weight:bolder'>License Fee already collected !</center>");
-            return null;
+    @GetMapping
+    public String showCollectFee(@ModelAttribute TradeLicense tradeLicense, Model model) {
+        if (tradeLicense == null) {
+            model.addAttribute("error", "error.license.not.found");
+        } else if (tradeLicense.isPaid()) {
+            model.addAttribute("error", "error.license.fee.collected");
+        } else {
+            model.addAttribute("outstandingFee", licenseBillService.getPaymentFee(tradeLicense));
         }
-        setOutstandingFee(licenseBillService.getPaymentFee(license));
-        setLicenseId(licenseId);
-        return "showfees";
+        return "license-fee-details";
     }
 
-    @Action(value = "/integration/licenseBillCollect-collectfees")
-    public String payFee() throws IOException {
-        final TradeLicense license = tradeLicenseService.getLicenseById(licenseId);
-        collectXML = URLEncoder.encode(licenseBillService.createLicenseBillXML(license), "UTF-8");
-        return SUCCESS;
-    }
-
-    @Override
-    public Object getModel() {
-        return null;
-    }
-
-    public String getCollectXML() {
-        return collectXML;
-    }
-
-    public Long getLicenseId() {
-        return licenseId;
-    }
-
-    public void setLicenseId(final Long licenseId) {
-        this.licenseId = licenseId;
-    }
-
-    public Map<String, Map<String, BigDecimal>> getOutstandingFee() {
-        return outstandingFee;
-    }
-
-    public void setOutstandingFee(Map<String, Map<String, BigDecimal>> outstandingFee) {
-        this.outstandingFee = outstandingFee;
+    @PostMapping
+    public String collectFee(@ModelAttribute TradeLicense tradeLicense, Model model) throws UnsupportedEncodingException {
+        model.addAttribute("collectXML", URLEncoder.encode(licenseBillService.createLicenseBillXML(tradeLicense), UTF_8.name()));
+        return "license-counter-payment";
     }
 }
