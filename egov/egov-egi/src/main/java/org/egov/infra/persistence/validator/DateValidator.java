@@ -60,21 +60,19 @@ public class DateValidator implements ConstraintValidator<ValidateDate, Date> {
     private ValidateDate validateDate;
 
     @Override
-    public void initialize(final ValidateDate validateDate) {
+    public void initialize(ValidateDate validateDate) {
         this.validateDate = validateDate;
     }
 
     @Override
-    public boolean isValid(final Date value, final ConstraintValidatorContext arg1) {
-        if (value == null)
-            return true;
-        return dateValidation(value);
+    public boolean isValid(Date value, ConstraintValidatorContext arg1) {
+        return value == null || dateValidation(value);
     }
 
-    private boolean dateValidation(final Date date) {
+    private boolean dateValidation(Date date) {
         if (validateDate.dateFormat() == null)
             return false;
-        final Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);

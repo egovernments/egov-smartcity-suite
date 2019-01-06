@@ -53,19 +53,21 @@ import org.egov.infra.persistence.validator.annotation.Required;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+
 public class RequiredValidator implements ConstraintValidator<Required, Object> {
 
     @Override
-    public void initialize(final Required parameters) {
+    public void initialize(Required parameters) {
         // Unused
     }
 
     @Override
-    public boolean isValid(final Object value, final ConstraintValidatorContext arg1) {
+    public boolean isValid(Object value, ConstraintValidatorContext arg1) {
         if (value == null)
             return false;
         else if (value instanceof String)
-            return org.apache.commons.lang.StringUtils.isNotBlank((String) value);
+            return isNotBlank((String) value);
         else
             return true;
     }

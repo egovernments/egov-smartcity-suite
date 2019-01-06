@@ -60,13 +60,13 @@ import java.util.regex.Pattern;
 public class DateFormatValidator implements ConstraintValidator<DateFormat, Date> {
 
     @Override
-    public void initialize(final DateFormat dateFormat) {
+    public void initialize(DateFormat dateFormat) {
         // Unused
 
     }
 
     @Override
-    public boolean isValid(final Date date, final ConstraintValidatorContext context) {
+    public boolean isValid(Date date, ConstraintValidatorContext context) {
         return date == null || Pattern.compile(ValidationRegex.DATEFORMAT)
                 .matcher(DateUtils.getFormattedDate(date, "dd/MM/yyyy")).matches();
     }

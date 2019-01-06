@@ -67,9 +67,7 @@ public class OptionalPatternValidator implements ConstraintValidator<OptionalPat
 
     @Override
     public boolean isValid(Object value, ConstraintValidatorContext arg1) {
-        if (value == null || isBlank(String.valueOf(value)))
-            return true;
-        return Pattern.compile(optionalPattern.regex(),
+        return value == null || isBlank(String.valueOf(value)) || Pattern.compile(optionalPattern.regex(),
                 optionalPattern.flags()).matcher(String.valueOf(value))
                 .matches();
     }

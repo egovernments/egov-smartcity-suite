@@ -54,21 +54,23 @@ import org.egov.infra.validation.constants.ValidationRegex;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+
 public class NumericValidator implements ConstraintValidator<Numeric, Object> {
 
     @Override
-    public void initialize(final Numeric numeric) {
+    public void initialize(Numeric numeric) {
         // Unused
     }
 
     @Override
-    public boolean isValid(final Object value, final ConstraintValidatorContext arg1) {
+    public boolean isValid(Object value, ConstraintValidatorContext arg1) {
 
         if (value == null)
             return true;
         else {
             final String stringVal = String.valueOf(value);
-            if (org.apache.commons.lang.StringUtils.isBlank(stringVal))
+            if (isBlank(stringVal))
                 return true;
 
             return stringVal.trim().matches(ValidationRegex.NUMERIC);
