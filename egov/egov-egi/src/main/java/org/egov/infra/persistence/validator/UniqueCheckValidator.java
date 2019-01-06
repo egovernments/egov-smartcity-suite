@@ -51,8 +51,11 @@ package org.egov.infra.persistence.validator;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -76,7 +79,7 @@ public class UniqueCheckValidator implements ConstraintValidator<Unique, Object>
         try {
             Number id = (Number) FieldUtils.readField(arg0, unique.id(), true);
             boolean isValid = true;
-            for (String fieldName : unique.fields())
+            for (String fieldName : unique.fields()) {
                 if (!checkUnique(arg0, id, fieldName)) {
                     isValid = false;
                     if (unique.enableDfltMsg())
@@ -85,32 +88,29 @@ public class UniqueCheckValidator implements ConstraintValidator<Unique, Object>
                                 .addConstraintViolation();
 
                 }
+            }
             return isValid;
-        } catch (IllegalAccessException e) {
-            throw new ApplicationRuntimeException("Error while validating unique key", e);
+        } catch (IllegalAccessException iae) {
+            throw new ApplicationRuntimeException("Error while validating unique key", iae);
         }
 
     }
 
     private boolean checkUnique(Object arg0, Number id, String fieldName) throws IllegalAccessException {
-
-        String className = (unique.isSuperclass() ? arg0.getClass().getSuperclass() : arg0.getClass()).getTypeName();
-        StringBuilder uniqueCheckQuery = new StringBuilder().append("SELECT ").append(unique.id()).append(" FROM ")
-                .append(className).append(" WHERE ");
+        Criteria criteria = entityManager.unwrap(Session.class)
+                .createCriteria(unique.isSuperclass() ? arg0.getClass().getSuperclass() : arg0.getClass()).setReadOnly(true);
         Object fieldValue = FieldUtils.readField(arg0, fieldName, true);
         if (fieldValue instanceof String)
-            uniqueCheckQuery.append("lower(").append(fieldName).append(")").append("=lower(:").append(fieldName).append(")");
+            criteria.add(Restrictions.eq(fieldName, fieldValue).ignoreCase());
         else
-            uniqueCheckQuery.append(fieldName).append("=:").append(fieldName);
+            criteria.add(Restrictions.eq(fieldName, fieldValue));
         if (id != null)
-            uniqueCheckQuery.append(" AND ").append(unique.id()).append("!=:").append(unique.id());
-        return !entityManager.unwrap(Session.class).createQuery(uniqueCheckQuery.toString())
-                .setParameter(fieldName, fieldValue)
-                .setParameter(unique.id(), id)
-                .setReadOnly(true)
+            criteria.add(Restrictions.ne(unique.id(), id));
+        return criteria
+                .setProjection(Projections.id())
                 .setMaxResults(1)
-                .setHibernateFlushMode(FlushMode.MANUAL)
-                .uniqueResultOptional().isPresent();
+                .setFlushMode(FlushMode.MANUAL)
+                .uniqueResult() == null;
     }
 
 }
