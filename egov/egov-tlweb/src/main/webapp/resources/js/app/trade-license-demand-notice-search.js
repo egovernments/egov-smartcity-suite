@@ -137,7 +137,7 @@ $(document).ready(function () {
                 success: function (data) {
                     $.each(data, function (i) {
                         var obj = {};
-                        obj['id'] = data[i]['id']
+                        obj['id'] = data[i]['id'];
                         obj['text'] = data[i]['name'];
                         results.push(obj);
                     });
@@ -154,22 +154,14 @@ $(document).ready(function () {
         .click(
             function (e) {
                 if ($('form').valid()) {
-
-                    var action = 'generate';
-                    $('#demandnoticesearchForm').attr('method', 'get');
-                    $('#demandnoticesearchForm').attr('action', action);
-                    document.forms["demandnoticesearchForm"].submit();
-
+                    window.open("generate", 'btngeneratePDF', 'scrollbars=yes,width=1000,height=700,status=yes');
                 }
             });
 
 
     $("#btnsearch").click(
         function () {
-
-
             var valid = 0;
-
             $('form').find('input[type=text],input[type="checkbox"], select').each(function () {
                 if ($(this).attr('type') == 'checkbox') {
                     if ($(this).is(":checked"))
@@ -195,12 +187,13 @@ $(document).ready(function () {
                     return false;
                 }
 
+                $('.loader-class').modal('show', {backdrop: 'static'});
                 $('.report-section').show();
 
                 reportdatatable = drillDowntableContainer
                     .dataTable({
                         ajax: {
-                            type:"POST",
+                            type: "POST",
                             data: {
                                 licenseNumber: licenseNumber,
                                 oldLicenseNumber: oldLicenseNumber,
@@ -213,8 +206,19 @@ $(document).ready(function () {
 
                             }
                         },
+                        "initComplete": function (settings, json) {
+                            $('.loader-class').modal('hide');
+                        },
+                        processing: true,
                         "bDestroy": true,
-                        "autoWidth": false,
+                        "autoWidth": true,
+                        scrollY: "500px",
+                        scrollX: true,
+                        scrollCollapse: true,
+                        fixedColumns:   {
+                            leftColumns: 1,
+                            rightColumns: 1
+                        },
                         "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
                         aaSorting: [],
                         columns: [{
@@ -274,18 +278,21 @@ $(document).ready(function () {
                                     return '<a href="javascript:void(0);" onclick="goToView(' + row.licenseId + ');" data-hiddenele="licenseId" data-eleval="'
                                         + data.id + '">' + "Generate Notice" + '</a>';
                                 },
-                                "sTitle": "Action"
+                                "sTitle": "Action",
+                                "sortable": false,
+                                "orderable": false
                             }]
                     });
             } else {
                 $('.report-section').hide();
-                bootbox.alert('Atleast one search criteria is mandatory!');
+                bootbox.alert('Minimum one search criteria is mandatory!');
             }
 
 
         }
     );
 });
+
 function goToView(id) {
     window.open("generate/" + id, 'dn' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
 } 
