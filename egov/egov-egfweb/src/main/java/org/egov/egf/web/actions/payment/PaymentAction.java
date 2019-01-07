@@ -490,10 +490,10 @@ public class PaymentAction extends BasePaymentAction {
             final Map<String, Object> statusCheckParams = new HashMap<>();
             if (egwStatus == null) {
                 statusCheck = " and bill.status in (:billStatus) ";
-                statusCheckParams.put("billStatus", Arrays.asList(egwStatus1.getId()));
+                statusCheckParams.put("billStatus", Arrays.asList(egwStatus1));
             } else {
                 statusCheck = " and bill.status in (:billStatus) ";
-                statusCheckParams.put("billStatus", Arrays.asList(egwStatus.getId(), egwStatus1.getId()));
+                statusCheckParams.put("billStatus", Arrays.asList(egwStatus, egwStatus1));
             }
 
             final String supplierBillSql = new StringBuilder(mainquery.toString()).append(statusCheck).append(sql.toString()).append(" order by bill.billdate desc").toString();
@@ -540,10 +540,10 @@ public class PaymentAction extends BasePaymentAction {
             final Map<String, Object> statusCheckParams = new HashMap<>();
             if (egwStatus1 == null) {
                 statusCheck = " and bill.status in (:billStatus) ";
-                statusCheckParams.put("billStatus", Arrays.asList(egwStatus.getId()));
+                statusCheckParams.put("billStatus", Arrays.asList(egwStatus));
             } else {
                 statusCheck = " and bill.status in (:billStatus) ";
-                statusCheckParams.put("billStatus", Arrays.asList(egwStatus.getId(), egwStatus1.getId()));
+                statusCheckParams.put("billStatus", Arrays.asList(egwStatus, egwStatus1));
             }
 
             final String contractorBillSql = new StringBuilder(mainquery.toString()).append(statusCheck).append(sql.toString()).append(" order by bill.billdate desc").toString();
