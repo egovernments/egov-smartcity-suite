@@ -53,15 +53,7 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.egov.commons.Bankaccount;
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.CFunction;
-import org.egov.commons.Functionary;
-import org.egov.commons.Fund;
-import org.egov.commons.Fundsource;
-import org.egov.commons.Scheme;
-import org.egov.commons.SubScheme;
-import org.egov.commons.Vouchermis;
+import org.egov.commons.*;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.egf.model.BankBookEntry;
@@ -84,6 +76,7 @@ import org.hibernate.FlushMode;
 import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -92,13 +85,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @ParentPackage("egov")
 @Results({
@@ -194,7 +181,7 @@ public class BankBookReportAction extends BaseFormAction {
     @Override
     public void prepare() {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
         super.prepare();
         if (!parameters.containsKey("skipPrepare")) {
             addDropdownData("bankList", egovCommon.getBankBranchForActiveBanks());
@@ -533,10 +520,11 @@ public class BankBookReportAction extends BaseFormAction {
     }
 
     private void getInstrumentsByVoucherIds() {
-        StringBuilder mainQuery = new StringBuilder("SELECT vh2.id,ih2.instrumentnumber,es2.code,ih2.id as instrumentHeaderId ,ih2.instrumentdate, ih2.transactionnumber, ih2.transactiondate");
-        getInstrumentsByVoucherIdsQuery = " FROM VOUCHERHEADER vh2,egf_instrumentvoucher iv2 ,egf_instrumentheader ih2 ,egw_status es2 WHERE vh2.id = iv2.voucherheaderid AND iv2.instrumentheaderid=ih2.id"
-                +
-                " AND ih2.id_status = es2.id AND vh2.id in (select vh.id as vhId" + queryFrom + ")";
+        StringBuilder mainQuery = new StringBuilder("SELECT vh2.id,ih2.instrumentnumber,es2.code,ih2.id as instrumentHeaderId ,ih2.instrumentdate,")
+                .append(" ih2.transactionnumber, ih2.transactiondate");
+        getInstrumentsByVoucherIdsQuery = new StringBuilder(" FROM VOUCHERHEADER vh2,egf_instrumentvoucher iv2 ,egf_instrumentheader ih2 ,egw_status es2")
+                .append(" WHERE vh2.id = iv2.voucherheaderid AND iv2.instrumentheaderid=ih2.id AND ih2.id_status = es2.id AND vh2.id in (select vh.id as vhId")
+                .append(queryFrom).append(")").toString();
         mainQuery = mainQuery.append(getInstrumentsByVoucherIdsQuery);
 
         final List<Object[]> objs = persistenceService.getSession().createNativeQuery(mainQuery.toString()).list();
@@ -553,7 +541,8 @@ public class BankBookReportAction extends BaseFormAction {
 
     private void getInstrumentVouchersByInstrumentHeaderIds() {
         StringBuilder queryString = new StringBuilder("SELECT ih.id,vh1.id as voucherHeaderId")
-                .append(" FROM VOUCHERHEADER vh1,egf_instrumentvoucher iv ,egf_instrumentheader ih,egw_status es1 WHERE vh1.id = iv.voucherheaderid AND iv.instrumentheaderid=ih.id")
+                .append(" FROM VOUCHERHEADER vh1,egf_instrumentvoucher iv ,egf_instrumentheader ih,egw_status es1")
+                .append(" WHERE vh1.id = iv.voucherheaderid AND iv.instrumentheaderid=ih.id")
                 .append(" AND ih.id_status = es1.id AND ih.id in (select ih2.id as instrHeaderId ")
                 .append(getInstrumentsByVoucherIdsQuery)
                 .append(")");
@@ -632,7 +621,9 @@ public class BankBookReportAction extends BaseFormAction {
     }
 
     private List<BankBookEntry> getResults(final String glCode1) {
-        final String miscQuery = getMiscQuery();
+        final Map.Entry<String, Map<String, Object>> queryMapEntry = getMiscQuery().entrySet().iterator().next();
+        final String miscQuery = queryMapEntry.getKey();
+        final Map<String, Object> queryParams = queryMapEntry.getValue();
         String OrderBy = "";
         final String voucherStatusToExclude = getAppConfigValueFor("EGF", "statusexcludeReport");
         StringBuilder query1 = new StringBuilder("SELECT distinct vh.id as voucherId,vh.voucherDate AS voucherDate, vh.voucherNumber AS voucherNumber,")
@@ -646,24 +637,19 @@ public class BankBookReportAction extends BaseFormAction {
                 .append("case when ch.instrumentnumber is NULL then ch.transactionnumber else ch.instrumentnumber end ||' , ' ||TO_CHAR(")
                 .append("case when ch.instrumentdate is NULL then ch.transactiondate else ch.instrumentdate end,'dd/mm/yyyy') end")
                 .append(" AS chequeDetail,gl.glcode as glCode,ch.description as instrumentStatus ");
-        queryFrom = " FROM generalLedger gl,generalLedger gl1"
-                +
-                ",vouchermis vmis, VOUCHERHEADER vh left outer join (select iv.voucherheaderid,ih.instrumentnumber,ih.instrumentdate,"
-                +
-                "es.description,ih.transactionnumber,ih.transactiondate from egf_instrumentheader ih,egw_status es,egf_instrumentvoucher iv where iv.instrumentheaderid=ih.id and "
-                +
-                "ih.id_status=es.id) ch on ch.voucherheaderid=vh.id  WHERE  gl.voucherHeaderId = vh.id  AND vmis.VOUCHERHEADERID=vh.id  "
-                +
-                "and gl.voucherheaderid  IN (SELECT voucherheaderid FROM generalledger gl WHERE glcode='" + glCode1
-                + "') AND gl.voucherheaderid = gl1.voucherheaderid AND gl.glcode <> '" + glCode1 + "' AND gl1.glcode = '"
-                + glCode1 + "' and vh.voucherDate>='" + Constants.DDMMYYYYFORMAT1.format(startDate) + "' " +
-                "and vh.voucherDate<='" + Constants.DDMMYYYYFORMAT1.format(endDate) + "' and vh.status not in("
-                + voucherStatusToExclude + ") " + miscQuery + " ";
+        queryFrom = new StringBuilder(" FROM generalLedger gl,generalLedger gl1, vouchermis vmis, VOUCHERHEADER vh")
+                .append(" left outer join (select iv.voucherheaderid,ih.instrumentnumber,ih.instrumentdate, es.description,ih.transactionnumber,ih.transactiondate")
+                .append(" from egf_instrumentheader ih,egw_status es,egf_instrumentvoucher iv where iv.instrumentheaderid=ih.id and ")
+                .append("ih.id_status=es.id) ch on ch.voucherheaderid=vh.id  WHERE  gl.voucherHeaderId = vh.id  AND vmis.VOUCHERHEADERID=vh.id  ")
+                .append("and gl.voucherheaderid  IN (SELECT voucherheaderid FROM generalledger gl WHERE glcode=:glCode) AND gl.voucherheaderid = gl1.voucherheaderid")
+                .append(" AND gl.glcode <> :glCode AND gl1.glcode = :glCode and vh.voucherDate>=:startDate ")
+                .append("and vh.voucherDate<=:endDate and vh.status not in(")
+                .append(voucherStatusToExclude).append(") ").append(miscQuery).append(" ").toString();
         OrderBy = "order by voucherdate,vouchernumber";
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Main query :" + query1.toString() + queryFrom + OrderBy);
 
-        final Query query = persistenceService.getSession().createNativeQuery(query1.toString() + queryFrom + OrderBy)
+        final Query query = persistenceService.getSession().createNativeQuery(query1.append(queryFrom).append(OrderBy).toString())
                 .addScalar("voucherId", new BigDecimalType())
                 .addScalar("voucherDate")
                 .addScalar("voucherNumber")
@@ -673,42 +659,59 @@ public class BankBookReportAction extends BaseFormAction {
                 .addScalar("chequeDetail")
                 .addScalar("glCode")
                 .addScalar("instrumentStatus")
+                .setParameter("glCode", glCode1, StringType.INSTANCE)
+                .setParameter("startDate", Constants.DDMMYYYYFORMAT1.format(startDate), StringType.INSTANCE)
+                .setParameter("endDate", Constants.DDMMYYYYFORMAT1.format(endDate), StringType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(BankBookEntry.class));
+        queryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
         final List<BankBookEntry> results = query.list();
         return results;
     }
 
-    String getMiscQuery() {
+    Map<String, Map<String, Object>> getMiscQuery() {
         final StringBuffer query = new StringBuffer();
-
+        final Map<String, Map<String, Object>> queryMap = new HashMap<>();
+        final Map<String, Object> queryParams = new HashMap<>();
         if (fundId != null && fundId.getId() != null && fundId.getId() != -1) {
-            query.append(" and vh.fundId=").append(fundId.getId().toString());
+            query.append(" and vh.fundId=:fundId");
+            queryParams.put("fundId", fundId.getId().toString());
             final Fund fnd = (Fund) persistenceService.find("from Fund where id=?1", fundId.getId());
             header.append(" for " + fnd.getName());
         }
 
         if (getVouchermis() != null && getVouchermis().getDepartmentid() != null
                 && getVouchermis().getDepartmentid().getId() != null && getVouchermis().getDepartmentid().getId() != -1) {
-            query.append(" and vmis.DEPARTMENTID=").append(getVouchermis().getDepartmentid().getId().toString());
+            query.append(" and vmis.DEPARTMENTID=:deptId");
+            queryParams.put("deptId", getVouchermis().getDepartmentid().getId().toString());
             final Department dept = (Department) persistenceService.find("from Department where id=?1", getVouchermis()
                     .getDepartmentid().getId());
             header.append(" in " + dept.getName() + " ");
         }
         if (getVouchermis() != null && getVouchermis().getFunctionary() != null
-                && getVouchermis().getFunctionary().getId() != null && getVouchermis().getFunctionary().getId() != -1)
-            query.append(" and vmis.FUNCTIONARYID=").append(getVouchermis().getFunctionary().getId().toString());
+                && getVouchermis().getFunctionary().getId() != null && getVouchermis().getFunctionary().getId() != -1) {
+            query.append(" and vmis.FUNCTIONARYID=:functionaryId");
+            queryParams.put("functionaryId", getVouchermis().getFunctionary().getId().toString());
+        }
         if (getVouchermis() != null && getVouchermis().getFundsource() != null && getVouchermis().getFundsource().getId() != null
-                && getVouchermis().getFundsource().getId() != -1)
-            query.append(" and vmis.FUNDSOURCEID =").append(getVouchermis().getFundsource().getId().toString());
+                && getVouchermis().getFundsource().getId() != -1) {
+            query.append(" and vmis.FUNDSOURCEID =:fundSourceId");
+            queryParams.put("fundSourceId", getVouchermis().getFundsource().getId().toString());
+        }
         if (getVouchermis() != null && getVouchermis().getSchemeid() != null && getVouchermis().getSchemeid().getId() != null
-                && getVouchermis().getSchemeid().getId() != -1)
-            query.append(" and vmis.SCHEMEID =").append(getVouchermis().getSchemeid().getId().toString());
+                && getVouchermis().getSchemeid().getId() != -1) {
+            query.append(" and vmis.SCHEMEID =:schemeId");
+            queryParams.put("schemeId", getVouchermis().getSchemeid().getId().toString());
+        }
         if (getVouchermis() != null && getVouchermis().getSubschemeid() != null
-                && getVouchermis().getSubschemeid().getId() != null && getVouchermis().getSubschemeid().getId() != -1)
-            query.append(" and vmis.SUBSCHEMEID =").append(getVouchermis().getSubschemeid().getId().toString());
+                && getVouchermis().getSubschemeid().getId() != null && getVouchermis().getSubschemeid().getId() != -1) {
+            query.append(" and vmis.SUBSCHEMEID =:subSchemeId");
+            queryParams.put("subSchemeId", getVouchermis().getSubschemeid().getId().toString());
+        }
         if (getVouchermis() != null && getVouchermis().getDivisionid() != null && getVouchermis().getDivisionid().getId() != null
-                && getVouchermis().getDivisionid().getId() != -1)
-            query.append(" and vmis.DIVISIONID =").append(getVouchermis().getDivisionid().getId().toString());
+                && getVouchermis().getDivisionid().getId() != -1) {
+            query.append(" and vmis.DIVISIONID =:divisionId");
+            queryParams.put("divisionId", getVouchermis().getDivisionid().getId().toString());
+        }
         /*
          * if (function != null && function.getId() != null && function.getId() != -1) {
          * query.append(" and vmis.FUNCTIONID=").append(function.getId().toString()); final CFunction func = (CFunction)
@@ -716,13 +719,14 @@ public class BankBookReportAction extends BaseFormAction {
          */
         if (getVouchermis() != null && getVouchermis().getFunction() != null
                 && getVouchermis().getFunction().getId() != null && getVouchermis().getFunction().getId() != -1) {
-            query.append(" and vmis.functionid=").append(getVouchermis().getFunction().getId());
+            query.append(" and vmis.functionid=:functionId");
+            queryParams.put("functionId", getVouchermis().getFunction().getId());
             final CFunction func = (CFunction) persistenceService.find("from CFunction where id=?1", getVouchermis()
                     .getFunction().getId());
             header.append(" in " + func.getName() + " ");
         }
-
-        return query.toString();
+        queryMap.put(query.toString(), queryParams);
+        return queryMap;
     }
 
     /*

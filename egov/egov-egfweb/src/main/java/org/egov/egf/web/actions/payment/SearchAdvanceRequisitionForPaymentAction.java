@@ -63,11 +63,7 @@ import org.hibernate.FlushMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 
@@ -112,24 +108,25 @@ public class SearchAdvanceRequisitionForPaymentAction extends SearchFormAction {
         final StringBuffer query = new StringBuffer(700);
         final List<Object> paramList = new ArrayList<Object>();
         final HashMap<String, Object> queryAndParams = new HashMap<String, Object>();
-        query.append("from EgAdvanceRequisition arf where arf.arftype = ?1 and arf.status.code = ?2 and ")
+        int index = 1;
+        query.append("from EgAdvanceRequisition arf where arf.arftype = ?").append(index++).append(" and arf.status.code = ?").append(index++).append(" and ")
                 .append(" NOT EXISTS (select 1 from CVoucherHeader vh where vh.id=arf.egAdvanceReqMises.voucherheader.id and arf.egAdvanceReqMises.voucherheader.status<>4) ");
         paramList.add(ARF_TYPE);
         paramList.add(ARF_STATUS_APPROVED);
 
         if (StringUtils.isNotBlank(arfNumber)) {
-            query.append(" and UPPER(arf.advanceRequisitionNumber) like '%'||?1||'%'");
+            query.append(" and UPPER(arf.advanceRequisitionNumber) like '%'||?").append(index++).append("||'%'");
             paramList.add(StringUtils.trim(arfNumber).toUpperCase());
         }
 
         if (fromDate != null && toDate != null && getFieldErrors().isEmpty()) {
-            query.append(" and arf.advanceRequisitionDate between ?1 and ?2 ");
+            query.append(" and arf.advanceRequisitionDate between ?").append(index++).append(" and ?").append(index++).append(" ");
             paramList.add(fromDate);
             paramList.add(toDate);
         }
 
         if (departmentId != 0 && departmentId != -1) {
-            query.append(" and arf.egAdvanceReqMises.egDepartment.id = ?1 ");
+            query.append(" and arf.egAdvanceReqMises.egDepartment.id = ?").append(index++).append(" ");
             paramList.add(departmentId);
         }
         // TODO - Order by Department and advanceRequisitionDate
@@ -142,15 +139,11 @@ public class SearchAdvanceRequisitionForPaymentAction extends SearchFormAction {
 
     @Override
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
-        String query = null;
-        String countQuery = null;
-        Map queryAndParms = null;
-        List<Object> paramList = new ArrayList<Object>();
-        queryAndParms = getQuery();
-        paramList = (List<Object>) queryAndParms.get("params");
-        query = (String) queryAndParms.get("query");
-        countQuery = "select count(distinct arf.id) " + query;
-        query = "select distinct arf " + query;
+        Map queryAndParms = getQuery();
+        List<Object> paramList = (List<Object>) queryAndParms.get("params");
+        String query = (String) queryAndParms.get("query");
+        String countQuery = "select count(distinct arf.id) ".concat(query);
+        query = "select distinct arf ".concat(query);
         return new SearchQueryHQL(query, countQuery, paramList);
     }
 
@@ -162,7 +155,7 @@ public class SearchAdvanceRequisitionForPaymentAction extends SearchFormAction {
 
     public String searchList() {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
         boolean isError = false;
         if (fromDate != null && toDate == null) {
             addFieldError("toDate", getText("search.toDate.null"));

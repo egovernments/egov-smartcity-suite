@@ -82,11 +82,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Results(value = {
@@ -265,7 +261,7 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
 
     private void populateVoucher() {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
 
         if (!StringUtils.isBlank(parameters.get("id")[0])) {
             chequeNosList = new ArrayList<>();

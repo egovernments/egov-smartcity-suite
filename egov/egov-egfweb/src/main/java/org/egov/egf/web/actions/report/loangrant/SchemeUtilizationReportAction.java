@@ -70,12 +70,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 
@@ -155,7 +150,7 @@ public class SchemeUtilizationReportAction extends LoanGrantBaseAction {
 
         // used to identify subschemes
         String temp = "";
-        final String pcQryStr = "from " + table + " where  id=?1";
+        final String pcQryStr = String.format("from %s where  id=?1", table);
         BigDecimal grandTotal = BigDecimal.ZERO;
         // sub scheme wise total
         final Map<String, BigDecimal> ssTotalMap = new LinkedHashMap<String, BigDecimal>();

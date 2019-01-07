@@ -53,11 +53,7 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.egov.commons.Bank;
-import org.egov.commons.Bankaccount;
-import org.egov.commons.Bankbranch;
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.Fund;
+import org.egov.commons.*;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
@@ -74,8 +70,8 @@ import org.egov.model.recoveries.Recovery;
 import org.egov.services.deduction.RemitRecoveryService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.query.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -282,10 +278,9 @@ public class AutoRemittanceReportAction extends BaseFormAction {
         {
             final StringBuffer finyearQuery = new StringBuffer();
             final Date currentDate = new Date();
-            finyearQuery.append("from CFinancialYear where  startingDate <= '")
-                    .append(Constants.DDMMYYYYFORMAT1.format(currentDate)).append("' AND endingDate >='")
-                    .append(Constants.DDMMYYYYFORMAT1.format(currentDate)).append("'");
-            final CFinancialYear financialyear = (CFinancialYear) persistenceService.find(finyearQuery.toString());
+            finyearQuery.append("from CFinancialYear where  startingDate <= ?1 AND endingDate >= ?2");
+            final CFinancialYear financialyear = (CFinancialYear) persistenceService.find(finyearQuery.toString(), Constants.DDMMYYYYFORMAT1.format(currentDate),
+                    Constants.DDMMYYYYFORMAT1.format(currentDate));
             if (null == paymentVoucherFromDate)
                 paymentVoucherFromDate = financialyear.getStartingDate();
             if (null == paymentVoucherToDate)
@@ -316,7 +311,7 @@ public class AutoRemittanceReportAction extends BaseFormAction {
         {
             final StringBuffer finyearQuery = new StringBuffer();
             final Date currentDate = new Date();
-            finyearQuery.append("from CFinancialYear where  startingDate <=?1 ").append(" AND endingDate >=?2 ");
+            finyearQuery.append("from CFinancialYear where  startingDate <=?1 AND endingDate >=?2 ");
             final CFinancialYear financialyear = (CFinancialYear) persistenceService.find(finyearQuery.toString(),Constants.DDMMYYYYFORMAT1.format(currentDate),
                     Constants.DDMMYYYYFORMAT1.format(currentDate));
             if (null == paymentVoucherFromDate)
@@ -428,6 +423,7 @@ public class AutoRemittanceReportAction extends BaseFormAction {
         final StringBuffer query = new StringBuffer("");
         final Date currentDate = new Date();
         final StringBuffer finyearQuery = new StringBuffer();
+        final Map<String, Object> params = new HashMap<>();
 
         finyearQuery.append("from CFinancialYear where  startingDate <= ?1").append(" AND endingDate >= ?2");
         final CFinancialYear financialyear = (CFinancialYear) persistenceService.find(finyearQuery.toString(),Constants.DDMMYYYYFORMAT1.format(currentDate),
@@ -467,54 +463,85 @@ public class AutoRemittanceReportAction extends BaseFormAction {
                     .append(" AND ph.BANKACCOUNTNUMBERID = bnkacc.ID AND gl.VOUCHERHEADERID= vh.id AND gld.GENERALLEDGERID=gl.id AND  rem.paymentvhid IS  NOT  NULL ")
                     .append(" AND ih.ID_STATUS= (SELECT  id  FROM EGW_STATUS WHERE moduletype='Instrument' AND code='New') ")
                     .append(" AND bnkacc.BRANCHID=bnkbranch.ID  AND bank.id =bnkbranch.BANKID   AND coa.id= tds.GLCODEID ");
-        if (null != department && null != department.getId() && department.getId() != -1)
-            query.append(" AND vh.DEPARTMENTID = ").append(department.getId());
-        if (null != recovery && null != recovery.getId() && recovery.getId() != -1)
-            query.append(" AND  TDS.id = ").append(recovery.getId());
+        if (null != department && null != department.getId() && department.getId() != -1) {
+            query.append(" AND vh.DEPARTMENTID = :departmentId");
+            params.put("departmentId", department.getId());
+        }
+        if (null != recovery && null != recovery.getId() && recovery.getId() != -1) {
+            query.append(" AND  TDS.id = :recoveryId");
+            params.put("recoveryId", recovery.getId());
+        }
 
         if (level.equals("atcoc"))
         {
-            if (null != paymentVoucherFromDate)
-                query.append(" AND vh.voucherdate >= '").append(Constants.DDMMYYYYFORMAT1.format(paymentVoucherFromDate) + "'");
-            else
-                query.append(" AND vh.voucherdate >= '").append(Constants.DDMMYYYYFORMAT1.format(financialyear.getStartingDate()) + "'");
-            if (null != paymentVoucherToDate)
-                query.append(" AND vh.voucherdate <= '").append(Constants.DDMMYYYYFORMAT1.format(paymentVoucherToDate) + "'");
-            else
-                query.append(" AND vh.voucherdate <= '").append(Constants.DDMMYYYYFORMAT1.format(financialyear.getEndingDate()) + "'");
+            if (null != paymentVoucherFromDate) {
+                query.append(" AND vh.voucherdate >= :voucherFromDate");
+                params.put("voucherFromDate", Constants.DDMMYYYYFORMAT1.format(paymentVoucherFromDate));
+            } else {
+                query.append(" AND vh.voucherdate >= :finStartingDate");
+                params.put("finStartingDate", Constants.DDMMYYYYFORMAT1.format(financialyear.getStartingDate()));
+            }
+            if (null != paymentVoucherToDate) {
+                query.append(" AND vh.voucherdate <= :voucherToDate");
+                params.put("voucherToDate", Constants.DDMMYYYYFORMAT1.format(paymentVoucherToDate));
+            } else {
+                query.append(" AND vh.voucherdate <= :finEndtingDate'");
+                params.put("finEndtingDate", Constants.DDMMYYYYFORMAT1.format(financialyear.getEndingDate()));
+            }
         }
         else
         {
-            if (null != paymentVoucherFromDate)
-                query.append(" AND vh.voucherdate >= '").append(Constants.DDMMYYYYFORMAT1.format(paymentVoucherFromDate) + "'");
-            if (null != paymentVoucherToDate)
-                query.append(" AND vh.voucherdate <= '").append(Constants.DDMMYYYYFORMAT1.format(paymentVoucherToDate) + "'");
+            if (null != paymentVoucherFromDate) {
+                query.append(" AND vh.voucherdate >= :voucherFromDate");
+                params.put("voucherFromDate", Constants.DDMMYYYYFORMAT1.format(paymentVoucherFromDate));
+            }
+            if (null != paymentVoucherToDate) {
+                query.append(" AND vh.voucherdate <= :voucherToDate");
+                params.put("voucherToDate", Constants.DDMMYYYYFORMAT1.format(paymentVoucherToDate));
+            }
         }
-        if (null != fund && null != fund.getId() && fund.getId() != -1)
-            query.append(" AND vh.fundid= " + fund.getId());
-        if (null != drawingOfficer && null != drawingOfficer.getId() && drawingOfficer.getId() != -1)
-            query.append(" AND ph.DRAWINGOFFICER_ID =").append(drawingOfficer.getId());
-        if (null != rtgsAssignedFromDate)
-            query.append(" AND ih.INSTRUMENTDATE >= '").append(Constants.DDMMYYYYFORMAT1.format(rtgsAssignedFromDate) + "'");
-        if (null != rtgsAssignedToDate)
-        {
-            query.append(" AND ih.INSTRUMENTDATE <= '").append(Constants.DDMMYYYYFORMAT1.format(rtgsAssignedToDate) + "'");
-            query.append(rtgsAssignedToDate + "'");
+        if (null != fund && null != fund.getId() && fund.getId() != -1) {
+            query.append(" AND vh.fundid= :fundId");
+            params.put("fundId", fund.getId());
         }
-        if (null != instrumentNumber)
-            query.append(" AND ih.INSTRUMENTNUMBER = '").append(instrumentNumber + "'");
-        if (null != bank && null != bank.getId() && bank.getId() != -1)
-            query.append("AND bank.id = ").append(bank.getId());
-        if (null != supplierCode && !supplierCode.isEmpty())
-            query.append(" AND ( gld.DETAILKEYID = ").append(supplierCode)
-                    .append(" AND gld.DETAILTYPEID=(SELECT id FROM accountdetailtype WHERE name='Creditor'))");
-        if (null != contractorCode && !contractorCode.isEmpty())
-            query.append(" AND ( gld.DETAILKEYID = ").append(contractorCode)
-                    .append(" AND gld.DETAILTYPEID=(SELECT id FROM accountdetailtype WHERE name='contractor'))");
-        if (null != bankbranch && null != bankbranch.getId() && bankbranch.getId() != -1)
-            query.append("AND bnkacc.BRANCHID = " + bankbranch.getId());
-        if (null != bankaccount && null != bankaccount.getId() && bankaccount.getId() != -1)
-            query.append(" AND bnkacc.id = " + bankaccount.getId());
+        if (null != drawingOfficer && null != drawingOfficer.getId() && drawingOfficer.getId() != -1) {
+            query.append(" AND ph.DRAWINGOFFICER_ID = :drawingOffId");
+            params.put("drawingOffId", drawingOfficer.getId());
+        }
+        if (null != rtgsAssignedFromDate) {
+            query.append(" AND ih.INSTRUMENTDATE >= :rtgsFromDate");
+            params.put("rtgsFromDate", Constants.DDMMYYYYFORMAT1.format(rtgsAssignedFromDate));
+        }
+        if (null != rtgsAssignedToDate) {
+            query.append(" AND ih.INSTRUMENTDATE <= :rtgsToDate");
+            params.put("rtgsToDate", Constants.DDMMYYYYFORMAT1.format(rtgsAssignedToDate));
+        }
+        if (null != instrumentNumber) {
+            query.append(" AND ih.INSTRUMENTNUMBER = :instrumentNumber");
+            params.put("instrumentNumber", instrumentNumber);
+        }
+        if (null != bank && null != bank.getId() && bank.getId() != -1) {
+            query.append("AND bank.id = :bankId");
+            params.put("bankId", bank.getId());
+        }
+        if (null != supplierCode && !supplierCode.isEmpty()) {
+            query.append(" AND ( gld.DETAILKEYID = :supplierCode");
+            params.put("supplierCode", supplierCode);
+            query.append(" AND gld.DETAILTYPEID=(SELECT id FROM accountdetailtype WHERE name='Creditor'))");
+        }
+        if (null != contractorCode && !contractorCode.isEmpty()) {
+            query.append(" AND ( gld.DETAILKEYID = :contractorCode");
+            params.put("contractorCode", contractorCode);
+            query.append(" AND gld.DETAILTYPEID=(SELECT id FROM accountdetailtype WHERE name='contractor'))");
+        }
+        if (null != bankbranch && null != bankbranch.getId() && bankbranch.getId() != -1) {
+            query.append("AND bnkacc.BRANCHID = :bankBranchId");
+            params.put("bankBranchId", bankbranch.getId());
+        }
+        if (null != bankaccount && null != bankaccount.getId() && bankaccount.getId() != -1) {
+            query.append(" AND bnkacc.id = :bankAccId");
+            params.put("bankAccId", bankaccount.getId());
+        }
         if (level.equals("atcoc"))
             query.append("  GROUP BY coa.GLCODE ,coa.NAME,dept.DEPT_NAME, DO.NAME, DO.TAN,");
         else
@@ -532,7 +559,7 @@ public class AutoRemittanceReportAction extends BaseFormAction {
                 .append(" ih.INSTRUMENTAMOUNT,remdt.ID ");
 
         final Session session = persistenceService.getSession();
-        Query sqlQuery = null;
+        final Query sqlQuery;
         if (level.equals("atcoc"))
             sqlQuery = session.createNativeQuery(query.toString())
                     .addScalar("remittanceCOA").addScalar("department").addScalar("drawingOfficer")
@@ -546,6 +573,7 @@ public class AutoRemittanceReportAction extends BaseFormAction {
                     .addScalar("remittancePaymentNo").addScalar("rtgsNoDate")
                     .addScalar("rtgsAmount").addScalar("remittanceDTId").addScalar("paymentVoucherId")
                     .setResultTransformer(Transformers.aliasToBean(AutoRemittanceBeanReport.class));
+        params.entrySet().forEach(entry -> sqlQuery.setParameter(entry.getKey(), entry.getValue()));
         autoRemittance = remitRecoveryService.populateAutoRemittanceDetailbySQL(sqlQuery);
 
     }
@@ -654,7 +682,7 @@ public class AutoRemittanceReportAction extends BaseFormAction {
             queryString2.append(" AND vh.voucherdate <=:paymentVoucherToDate ");
             parameters.put("paymentVoucherToDate", Constants.DDMMYYYYFORMAT1.format(paymentVoucherToDate));
         }else {
-            queryString2.append(" AND vh.voucherdate <=:endDate '");
+            queryString2.append(" AND vh.voucherdate <=:endDate ");
             parameters.put("endDate", Constants.DDMMYYYYFORMAT1.format(financialyear.getEndingDate()));
         }
         queryString2.append(" ))GROUP BY departmentcode  ORDER BY departmentcode ");
