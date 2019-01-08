@@ -154,7 +154,7 @@ $(document).ready(function () {
         .click(
             function (e) {
                 if ($('form').valid()) {
-                    window.open("generate", 'btngeneratePDF', 'scrollbars=yes,width=1000,height=700,status=yes');
+                   window.open("generate?"+ $("#demandnoticesearchForm").serialize(), 'btngeneratePDF', 'scrollbars=yes,width=1000,height=700,status=yes');
                 }
             });
 
@@ -180,9 +180,8 @@ $(document).ready(function () {
                 var subCategory = $('#subCategory').val();
                 var wardId = $('#wardId').val();
                 var localityId = $('#localityId').val();
-                var status = $('#status').val();
                 var electionWard = $('#electionWard').val();
-                if (!licenseNumber && !oldLicenseNumber && !category && !subCategory && !wardId && !localityId && !status && !electionWard) {
+                if (!licenseNumber && !oldLicenseNumber && !category && !subCategory && !wardId && !localityId && !electionWard) {
                     bootbox.alert("Atleast one search criteria is mandatory!");
                     return false;
                 }
@@ -201,9 +200,7 @@ $(document).ready(function () {
                                 subCategoryId: subCategory,
                                 wardId: wardId,
                                 electionWard: electionWard,
-                                localityId: localityId,
-                                statusId: status,
-
+                                localityId: localityId
                             }
                         },
                         "initComplete": function (settings, json) {

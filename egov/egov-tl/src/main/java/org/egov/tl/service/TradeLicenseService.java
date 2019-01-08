@@ -48,7 +48,6 @@
 
 package org.egov.tl.service;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -889,8 +888,8 @@ public class TradeLicenseService {
     @ReadOnly
     public List<DemandNoticeForm> getLicenseDemandNotices(DemandNoticeForm demandNoticeForm) {
         Criteria searchCriteria = entityManager.unwrap(Session.class).createCriteria(TradeLicense.class);
-        searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat").createAlias("tradeName", "subcat")
-                .createAlias("status", "licstatus").createAlias("natureOfBusiness", "nob")
+        searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat")
+                .createAlias("tradeName", "subcat").createAlias("natureOfBusiness", "nob")
                 .createAlias("demand", "licDemand").createAlias("licenseAppType", "appType")
                 .add(Restrictions.ne("appType.code", CLOSURE_APPTYPE_CODE));
         if (isNotBlank(demandNoticeForm.getLicenseNumber()))
@@ -911,10 +910,6 @@ public class TradeLicenseService {
         if (demandNoticeForm.getLocalityId() != null)
             searchCriteria.createAlias("boundary", "locality")
                     .add(Restrictions.eq("locality.id", demandNoticeForm.getLocalityId()));
-        if (demandNoticeForm.getStatusId() == null)
-            searchCriteria.add(Restrictions.ne("licstatus.statusCode", StringUtils.upperCase("CAN")));
-        else
-            searchCriteria.add(Restrictions.eq("status.id", demandNoticeForm.getStatusId()));
         searchCriteria
                 .add(Restrictions.eq("isActive", true))
                 .add(Restrictions.eq("nob.name", PERMANENT_NATUREOFBUSINESS))

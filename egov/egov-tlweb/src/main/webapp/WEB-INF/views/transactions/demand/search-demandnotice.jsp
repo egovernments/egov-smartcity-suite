@@ -62,30 +62,38 @@
                 </div>
             </div>
             <div class="panel-body">
-                <form:form class="form-horizontal form-groups-bordered" action="" id="demandnoticesearchForm" modelAttribute="demandnoticesearchForm" method="get">
-                     <div class="form-group">
-                        <label class="col-sm-3 control-label text-right"> <spring:message code='search.licensee.no'/></label>
+                <form:form class="form-horizontal form-groups-bordered" action="" id="demandnoticesearchForm"
+                           modelAttribute="demandnoticesearchForm" method="get">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"> <spring:message
+                                code='search.licensee.no'/></label>
                         <div class="col-sm-3 add-margin">
-                            <input type="text" id="licenseNumber" class="form-control typeahead" placeholder="" autocomplete="off"/>
+                            <input type="text" id="licenseNumber" class="form-control typeahead" placeholder=""
+                                   autocomplete="off"/>
                             <form:hidden path="licenseNumber" id="licenseNumber"/>
                         </div>
-                        <label class="col-sm-2 control-label text-right"> <spring:message code='license.oldlicensenum'/></label>
+                        <label class="col-sm-2 control-label text-right"> <spring:message
+                                code='license.oldlicensenum'/></label>
                         <div class="col-sm-3 add-margin">
-                            <input type="text" id="oldLicenseNumber" class="form-control typeahead" placeholder="" autocomplete="off"/>
+                            <input type="text" id="oldLicenseNumber" class="form-control typeahead" placeholder=""
+                                   autocomplete="off"/>
                             <form:hidden path="oldLicenseNumber" id="oldLicenseNumber"/>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label text-right"> <spring:message code='search.license.category'/></label>
+                        <label class="col-sm-3 control-label text-right"> <spring:message
+                                code='search.license.category'/></label>
                         <div class="col-sm-3 add-margin">
-                            <form:select path="categoryId" id="category" cssClass="form-control" cssErrorClass="form-control error">
+                            <form:select path="categoryId" id="category" cssClass="form-control"
+                                         cssErrorClass="form-control error">
                                 <form:option value="">
                                     <spring:message code="lbl.category.select"/>
                                 </form:option>
                                 <form:options items="${categoryList}" itemValue="id" itemLabel="name"/>
                             </form:select>
                         </div>
-                        <label class="col-sm-2 control-label text-right"> <spring:message code='search.license.subCategory'/></label>
+                        <label class="col-sm-2 control-label text-right"> <spring:message
+                                code='search.license.subCategory'/></label>
                         <div class="col-sm-3 add-margin">
                             <select id="subCategory" class="form-control select2"/>
                             <form:hidden path="subCategoryId" id="subCategoryId"/>
@@ -93,18 +101,22 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label text-right"> <spring:message code='baseregister.ward'/></label>
+                        <label class="col-sm-3 control-label text-right"> <spring:message
+                                code='baseregister.ward'/></label>
                         <div class="col-sm-3 add-margin">
-                            <form:select path="wardId" id="wardId" cssClass="form-control" cssErrorClass="form-control error">
+                            <form:select path="wardId" id="wardId" cssClass="form-control"
+                                         cssErrorClass="form-control error">
                                 <form:option value="">
                                     <spring:message code="lbl.select"/>
                                 </form:option>
                                 <form:options items="${revenueWards}" itemValue="id" itemLabel="name"/>
                             </form:select>
                         </div>
-                        <label class="col-sm-2 control-label text-right"> <spring:message code='lbl.admin.ward'/></label>
+                        <label class="col-sm-2 control-label text-right"> <spring:message
+                                code='lbl.admin.ward'/></label>
                         <div class="col-sm-3 add-margin">
-                            <form:select path="electionWard" id="electionWard" cssClass="form-control" cssErrorClass="form-control error">
+                            <form:select path="electionWard" id="electionWard" cssClass="form-control"
+                                         cssErrorClass="form-control error">
                                 <form:option value="">
                                     <spring:message code="lbl.select"/>
                                 </form:option>
@@ -116,23 +128,14 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label text-right"> <spring:message code='lbl.locality'/></label>
                         <div class="col-sm-3 add-margin">
-                            <form:select path="localityId" id="localityId" cssClass="form-control" cssErrorClass="form-control error">
+                            <form:select path="localityId" id="localityId" cssClass="form-control"
+                                         cssErrorClass="form-control error">
                                 <form:option value="">
                                     <spring:message code="lbl.select"/>
                                 </form:option>
                                 <form:options items="${localityList}" itemValue="id" itemLabel="name"/>
                             </form:select>
                         </div>
-                        <label class="col-sm-2 control-label text-right"> <spring:message code='search.license.status'/></label>
-                        <div class="col-sm-3 add-margin">
-                            <form:select path="statusId" id="status" cssClass="form-control" cssErrorClass="form-control error">
-                                <form:option value="">
-                                    <spring:message code="lbl.category.select"/>
-                                </form:option>
-                                <form:options items="${statusList}" itemValue="id" itemLabel="name"/>
-                            </form:select>
-                        </div>
-
                     </div>
 
                     <div class="row">
@@ -141,7 +144,8 @@
                                 <spring:message code="lbl.search"/>
                             </button>
                             <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();">
+                            <button type="button" class="btn btn-default" data-dismiss="modal"
+                                    onclick="window.close();">
                                 <spring:message code="lbl.close"/>
                             </button>
                         </div>

@@ -49,7 +49,6 @@ package org.egov.tl.web.controller.transactions.demand;
 
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.reporting.util.ReportUtil;
-import org.egov.tl.entity.LicenseStatus;
 import org.egov.tl.entity.contracts.DemandNoticeForm;
 import org.egov.tl.service.DemandNoticeService;
 import org.egov.tl.service.LicenseCategoryService;
@@ -70,7 +69,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Collections;
-import java.util.List;
 
 import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.egov.tl.utils.Constants.ADMIN_HIERARCHY;
@@ -79,7 +77,6 @@ import static org.egov.tl.utils.Constants.LOCALITY;
 import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.tl.utils.Constants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.tl.utils.Constants.REVENUE_WARD;
-import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
@@ -114,9 +111,6 @@ public class DemandNoticeController {
                 REVENUE_HIERARCHY_TYPE));
         model.addAttribute("adminWards", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ADMIN_WARD,
                 ADMIN_HIERARCHY));
-        List<LicenseStatus> status = licenseStatusService.findAll();
-        status.remove(licenseStatusService.getLicenseStatusByCode(STATUS_CANCELLED));
-        model.addAttribute("statusList", status);
         return "search-demandnotice";
     }
 
