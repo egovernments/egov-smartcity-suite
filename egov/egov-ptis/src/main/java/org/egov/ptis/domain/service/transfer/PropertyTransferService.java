@@ -228,7 +228,6 @@ public class PropertyTransferService {
     @Transactional
     public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
         propertyMutation.setBasicProperty(basicProperty);
-        propertyMutation.setProperty(basicProperty.getActiveProperty());
         defineDocumentValue(propertyMutation);
         for (final PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo())
             propertyMutation.getTransferorInfos().add(ownerInfo.getOwner());
@@ -709,7 +708,6 @@ public class PropertyTransferService {
         propertyMutation.setDeedDate(propertyService.convertStringToDate(deedDate));
         propertyMutation.setMutationReason(mutationMaster);
         propertyMutation.setBasicProperty(basicProperty);
-        propertyMutation.setProperty(basicProperty.getActiveProperty());
         transitionWorkFlow(propertyMutation);
         basicPropertyService.applyAuditing(propertyMutation);
         basicProperty.getPropertyMutations().add(propertyMutation);
