@@ -65,6 +65,13 @@
 		if (!validateData())
 			return false;
 		document.chartOfAccountsForm.action = '${pageContext.request.contextPath}/masters/chartOfAccounts-update.action';
+        $(document.chartOfAccountsForm).append(
+            $('<input>', {
+                type: 'hidden',
+                name: '${_csrf.parameterName}',
+                value: '${_csrf.token}'
+            })
+        );
 		document.chartOfAccountsForm.submit();
 
 		return true;
