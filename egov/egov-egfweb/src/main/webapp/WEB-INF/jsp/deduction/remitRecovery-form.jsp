@@ -336,6 +336,13 @@ function validateRemit(){
 	}
 	disableAll();
 	document.remitRecoveryForm.action='/EGF/deduction/remitRecovery-remit.action';
+    $(document.remitRecoveryForm).append(
+        $('<input>', {
+            type: 'hidden',
+            name: '${_csrf.parameterName}',
+            value: '${_csrf.token}'
+        })
+    );
 	document.remitRecoveryForm.submit();
 	return true;
 }

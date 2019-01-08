@@ -126,11 +126,11 @@ public class RemitRecoveryService {
         StringBuilder query = new StringBuilder();
         if (remittanceBean.getFromVhDate() != null && voucherHeader.getVoucherDate() != null) {
             dateQry.append(" and vh.VOUCHERDATE >= :fromVhDate and vh.VOUCHERDATE <= :voucherDate ");
-            params.put("fromVhDate", Constants.DDMMYYYYFORMAT1.format(remittanceBean.getFromVhDate()));
-            params.put("voucherDate", Constants.DDMMYYYYFORMAT1.format(voucherHeader.getVoucherDate()));
+            params.put("fromVhDate", remittanceBean.getFromVhDate());
+            params.put("voucherDate", voucherHeader.getVoucherDate());
         } else {
             dateQry.append(" and vh.VOUCHERDATE <= :voucherDate");
-            params.put("voucherDate", Constants.DDMMYYYYFORMAT1.format(voucherHeader.getVoucherDate()));
+            params.put("voucherDate", voucherHeader.getVoucherDate());
         }
         if (remittanceBean.getBank() != null && remittanceBean.getBankBranchId() != null
                 && remittanceBean.getBankAccountId() != null) {
@@ -232,7 +232,7 @@ public class RemitRecoveryService {
             LOGGER.debug("RemitRecoveryService | getRecoveryDetails | query := " + query.toString());
 
         final NativeQuery searchNativeQuery = persistenceService.getSession().createNativeQuery(query.toString());
-        searchNativeQuery.setParameter("selectedRows", selectedRows, StringType.INSTANCE);
+        searchNativeQuery.setParameter("selectedRows", Long.valueOf(selectedRows), LongType.INSTANCE);
         final List<Object[]> list = searchNativeQuery.list();
 
         populateDetailsBySQL(null, listRemitBean, list);
