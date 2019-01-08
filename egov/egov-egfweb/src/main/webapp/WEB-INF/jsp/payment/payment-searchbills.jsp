@@ -176,6 +176,13 @@ function check()
 		}	
        addSelectedToForm2();   
 		document.form2.action='${pageContext.request.contextPath}/payment/payment-save.action';
+        $(document.form2).append(
+            $('<input>', {
+                type: 'hidden',
+                name: '${_csrf.parameterName}',
+                value: '${_csrf.token}'
+            })
+        );
 		document.form2.submit();
 	}	             
 	if(document.getElementById('miscount').value==0)
@@ -187,6 +194,13 @@ function check()
 		document.getElementById('vouchermis.departmentid').disabled=false;
     addSelectedToForm2();  
 	document.form2.action='${pageContext.request.contextPath}/payment/payment-save.action';
+    $(document.form2).append(
+        $('<input>', {
+            type: 'hidden',
+            name: '${_csrf.parameterName}',
+            value: '${_csrf.token}'
+        })
+    );
 	document.form2.submit();
 	return true;
 }
@@ -204,6 +218,13 @@ function search()
 		document.getElementById("search").innerHTML=document.getElementById("searchtab").innerHTML;
 		setSelectedValues();
 		document.form2.action='${pageContext.request.contextPath}/payment/payment-search.action';
+        $(document.form2).append(
+            $('<input>', {
+                type: 'hidden',
+                name: '${_csrf.parameterName}',
+                value: '${_csrf.token}'
+            })
+        );
 		document.form2.submit();  
 		
 	}

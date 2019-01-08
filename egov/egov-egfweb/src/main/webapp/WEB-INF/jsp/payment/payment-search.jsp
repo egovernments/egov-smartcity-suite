@@ -161,6 +161,13 @@
 					bootbox.alert("Please select fund");     
 				}else{
 					document.forms[0].action='${pageContext.request.contextPath}/payment/payment-search.action';
+                    $(document.forms[0]).append(
+                        $('<input>', {
+                            type: 'hidden',
+                            name: '${_csrf.parameterName}',
+                            value: '${_csrf.token}'
+                        })
+                    );
 	    			document.forms[0].submit();
 				}
 				return true;
