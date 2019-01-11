@@ -73,7 +73,7 @@ public interface DemandBillService {
     
     public Map<String, Object> getDemandBillDetails(BasicProperty basicProperty);
     
-    public List<ViewLegacyDemand> getOldDemandData(String assessmentNo);
+    public List<ViewLegacyDemand> getOldDemandData(String propertyId);
 
 	   
 }
