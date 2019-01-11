@@ -64,6 +64,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Vaibhav.K
@@ -211,7 +212,7 @@ public class PositionMasterService {
     }
 
     public List<Position> getPositionsByDepartmentAndDesignationId(Long departmentId, Long designationId) {
-        return getPositionsByDepartmentAndDesignationForGivenRange(departmentId, designationId, new Date());
+        return assignmentService.getAllPositionsByDepartmentAndDesignationForGivenRange(departmentId, designationId, new Date()).stream().map(Assignment::getPosition).collect(Collectors.toList());
     }
 
     public Position getCurrentPositionForUser(final Long userId) {
@@ -256,11 +257,11 @@ public class PositionMasterService {
      */
     public List<Position> getPositionsForEmployee(final Long employeeId, final Date forDate) {
         final Date userGivenDate = null == forDate ? new Date() : forDate;
-        final Set<Position> positions = new HashSet<Position>();
+        final Set<Position> positions = new HashSet<>();
         final List<Assignment> assignments = assignmentService.findByEmployeeAndGivenDate(employeeId, userGivenDate);
         for (final Assignment assign : assignments)
             positions.add(assign.getPosition());
-        return new ArrayList<Position>(positions);
+        return new ArrayList<>(positions);
     }
 
     /**
@@ -270,7 +271,7 @@ public class PositionMasterService {
      * @return List of position objects
      */
     public List<Position> getPositionsForEmployee(final Long employeeId) {
-        final Set<Position> positions = new HashSet<Position>();
+        final Set<Position> positions = new HashSet<>();
         final List<Assignment> assignList = assignmentService.getAllAssignmentsByEmpId(employeeId);
         for (final Assignment assign : assignList)
             positions.add(assign.getPosition());
