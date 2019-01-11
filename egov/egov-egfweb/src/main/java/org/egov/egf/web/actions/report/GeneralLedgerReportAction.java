@@ -137,7 +137,7 @@ public class GeneralLedgerReportAction extends BaseFormAction {
     public String ajaxSearch() {
 
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
         try {
             generalLedgerDisplayList = generalLedgerReport.getGeneralLedgerList(generalLedgerReportBean);
         } catch (Exception e) {
@@ -152,7 +152,7 @@ public class GeneralLedgerReportAction extends BaseFormAction {
     @Action(value = "/report/generalLedgerReport-searchDrilldown")
     public String searchDrilldown() {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
         try {
             generalLedgerDisplayList = generalLedgerReport.getGeneralLedgerList(generalLedgerReportBean);
         } catch (Exception e) {

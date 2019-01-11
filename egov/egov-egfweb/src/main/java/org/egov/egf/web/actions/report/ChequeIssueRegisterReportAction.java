@@ -78,20 +78,13 @@ import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StandardBasicTypes;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Results(value = { @Result(name = "result", location = "chequeIssueRegisterReport-result.jsp"),
         @Result(name = "PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
@@ -140,7 +133,7 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
     @Override
     public void prepare() {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
         super.prepare();
         if (!parameters.containsKey("showDropDown")) {
             addDropdownData("bankList", egovCommon.getBankBranchForActiveBanks());
@@ -186,15 +179,16 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
                 .append(" vh.name as voucherName,ih.payto as payTo,mbd.billnumber as billNumber,")
                 .append(" mbd.billDate as billDate,vh.type as type,es.DESCRIPTION as chequeStatus,ih.id as instrumentheaderid from egf_instrumentHeader ih,")
                 .append(" egf_instrumentvoucher iv,EGW_STATUS es,")
-                .append(" voucherheader vh left outer join miscbilldetail mbd on  vh.id=mbd.PAYVHID ,vouchermis vmis where ih.instrumentDate <':toDate' ")
-                .append(" and ih.instrumentDate>=':fromDate' ")
+                .append(" voucherheader vh left outer join miscbilldetail mbd on  vh.id=mbd.PAYVHID ,vouchermis vmis where ih.instrumentDate <:toDate ")
+                .append(" and ih.instrumentDate>=:fromDate ")
                 .append(" and ih.isPayCheque='1' ")
                 .append(" and ih.INSTRUMENTTYPE=(select id from egf_instrumenttype where TYPE='cheque' ) and vh.status not in (:voucherStatus)")
                 .append(" and vh.id=iv.voucherheaderid and  bankAccountId=:bankAccountId")
                 .append(" and ih.id=iv.instrumentheaderid and ih.id_status=es.id ")
-                .append(" and vmis.voucherheaderid=vh.id ")
-                .append(createQuery())
-                .append(" order by ih.instrumentDate,ih.instrumentNumber ");
+                .append(" and vmis.voucherheaderid=vh.id ");
+        if (department != null && department.getId() != 0)
+            queryString.append(" and vmis.departmentid=:deptId");
+        queryString.append(" order by ih.instrumentDate,ih.instrumentNumber ");
 
         final Query query = persistenceService.getSession().createNativeQuery(queryString.toString())
                 .addScalar("chequeNumber").addScalar("chequeDate", StandardBasicTypes.DATE)
@@ -205,10 +199,12 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
                 .addScalar("chequeStatus").addScalar("instrumentHeaderId", LongType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(ChequeIssueRegisterDisplay.class));
 
-        query.setParameter("toDate",getFormattedDate(getNextDate(toDate)))
-                .setParameter("fromDate",getFormattedDate(fromDate))
-                .setParameter("voucherStatus",getExcludeVoucherStatues())
-                .setParameter("bankAccountId",accountNumber.getId());
+        query.setParameter("toDate", getFormattedDate(getNextDate(toDate)), StringType.INSTANCE)
+                .setParameter("fromDate", getFormattedDate(fromDate), StringType.INSTANCE)
+                .setParameter("voucherStatus", getExcludeVoucherStatues(), StringType.INSTANCE)
+                .setParameter("bankAccountId", accountNumber.getId(), LongType.INSTANCE);
+        if (department != null && department.getId() != 0)
+            query.setParameter("deptId", department.getId());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Search query" + query.getQueryString());
         chequeIssueRegisterList = query.list();
@@ -247,13 +243,6 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
             else
                 row.remove();
         }
-    }
-
-    String createQuery() {
-        String query = "";
-        if (department != null && department.getId() != 0)
-            query = query.concat(" and vmis.departmentid=" + department.getId());
-        return query;
     }
 
     private void updateBillNumber() {

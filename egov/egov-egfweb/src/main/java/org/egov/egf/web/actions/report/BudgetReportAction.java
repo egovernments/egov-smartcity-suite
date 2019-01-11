@@ -78,13 +78,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Results(value = {
         @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
@@ -241,11 +235,11 @@ public class BudgetReportAction extends BaseFormAction {
             final CFinancialYear previousYear = budgetDetailHelper.getPreviousYearFor(finYear);
             if (previousYear != null) {
                 lastYearBe = budgetDetailService.findAllBy(
-                        "from BudgetDetail where budget.financialYear.id=?1 and budget.isPrimaryBudget=1 and " +
-                                "budget.isActiveBudget=1 and budget.isbere='BE'", previousYear.getId());
+                        new StringBuilder("from BudgetDetail where budget.financialYear.id=?1 and budget.isPrimaryBudget=1 and ")
+                                .append("budget.isActiveBudget=1 and budget.isbere='BE'").toString(), previousYear.getId());
                 lastYearRe = budgetDetailService.findAllBy(
-                        "from BudgetDetail where budget.financialYear.id=?1 and budget.isPrimaryBudget=1 and " +
-                                "budget.isActiveBudget=1 and budget.isbere='RE'", previousYear.getId());
+                        new StringBuilder("from BudgetDetail where budget.financialYear.id=?1 and budget.isPrimaryBudget=1 and ")
+                                .append("budget.isActiveBudget=1 and budget.isbere='RE'").toString(), previousYear.getId());
             }
         } else
             nextYearBeList = populateNextYearBe(finYear);

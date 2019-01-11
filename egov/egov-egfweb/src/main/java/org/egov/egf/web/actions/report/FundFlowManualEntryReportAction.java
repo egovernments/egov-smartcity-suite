@@ -68,9 +68,9 @@ import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
-import org.hibernate.query.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -78,13 +78,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 @Results(value = {
         @Result(name = "PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
@@ -135,7 +129,7 @@ public class FundFlowManualEntryReportAction extends BaseFormAction {
     @Override
     public void prepare() {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
         super.prepare();
         addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
         addDropdownData("bankList", Collections.EMPTY_LIST);
@@ -180,7 +174,6 @@ public class FundFlowManualEntryReportAction extends BaseFormAction {
             LOGGER.error("Error in parsing Date ");
         }
         final Criteria critQuery = persistenceService.getSession().createCriteria(FundFlowBean.class)
-
                 .add(Restrictions.between("reportDate", startdt, enddt))
                 .add(Restrictions.ne("currentReceipt", BigDecimal.ZERO))
                 .add(Restrictions.eq("bankAccountId", BigDecimal.valueOf(reportSearch.getBankAccount().getId())))

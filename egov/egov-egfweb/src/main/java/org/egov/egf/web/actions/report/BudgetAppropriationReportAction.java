@@ -73,355 +73,361 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Results(value = {
-		@Result(name = BudgetAppropriationReportAction.NEW, location = "budgetAppropriationReport-new.jsp"),
-		@Result(name = "result", location = "budgetAppropriationReport-result.jsp"),
-		@Result(name = "PDF", type = "stream", location = Constants.INPUT_STREAM, params = {
-				Constants.INPUT_NAME, Constants.INPUT_STREAM,
-				Constants.CONTENT_TYPE, "application/pdf",
-				Constants.CONTENT_DISPOSITION,
-				"no-cache;filename=BudgetAppropriationReport.pdf" }),
-		@Result(name = "XLS", type = "stream", location = Constants.INPUT_STREAM, params = {
-				Constants.INPUT_NAME, Constants.INPUT_STREAM,
-				Constants.CONTENT_TYPE, "application/xls",
-				Constants.CONTENT_DISPOSITION,
-				"no-cache;filename=BudgetAppropriationReport.xls" }) })
+        @Result(name = BudgetAppropriationReportAction.NEW, location = "budgetAppropriationReport-new.jsp"),
+        @Result(name = "result", location = "budgetAppropriationReport-result.jsp"),
+        @Result(name = "PDF", type = "stream", location = Constants.INPUT_STREAM, params = {
+                Constants.INPUT_NAME, Constants.INPUT_STREAM,
+                Constants.CONTENT_TYPE, "application/pdf",
+                Constants.CONTENT_DISPOSITION,
+                "no-cache;filename=BudgetAppropriationReport.pdf"}),
+        @Result(name = "XLS", type = "stream", location = Constants.INPUT_STREAM, params = {
+                Constants.INPUT_NAME, Constants.INPUT_STREAM,
+                Constants.CONTENT_TYPE, "application/xls",
+                Constants.CONTENT_DISPOSITION,
+                "no-cache;filename=BudgetAppropriationReport.xls"})})
 @ParentPackage("egov")
 public class BudgetAppropriationReportAction extends BaseFormAction {
-	/**
+    public static final SimpleDateFormat YYYY_MM_DD_FORMAT = new SimpleDateFormat(
+            "yyyy/MM/dd");
+    /**
      *
      */
-	private static final long serialVersionUID = 1L;
-	private static final Logger LOGGER = Logger
-			.getLogger(BudgetAppropriationReportAction.class);
+    private static final long serialVersionUID = 1L;
+    private static final Logger LOGGER = Logger
+            .getLogger(BudgetAppropriationReportAction.class);
+    private Date fromDate = null;
+    private Date toDate = null;
+    private InputStream inputStream;
+    private ReportHelper reportHelper;
+    private List<Budget> budgetList = null;
+    private BudgetReAppropriation budgetRep = new BudgetReAppropriation();
+    private List<BudgetReAppReportBean> budgetAppropriationList = new ArrayList<BudgetReAppReportBean>();
+    private List<BudgetReAppReportBean> budgetDisplayList = new ArrayList<BudgetReAppReportBean>();
+    private StringBuffer heading = new StringBuffer();
+    private String budgetName;
+    private String deptName = "";
+    private String fundName = "";
+    private String functionName = "";
+    private String isFundSelected = "false";
+    private String isFunctionSelected = "false";
+    private String isDepartmentSelected = "false";
 
-	public static final SimpleDateFormat YYYY_MM_DD_FORMAT = new SimpleDateFormat(
-			"yyyy/MM/dd");
-	private Date fromDate = null;
-	private Date toDate = null;
-	private InputStream inputStream;
-	private ReportHelper reportHelper;
-	private List<Budget> budgetList = null;
-	private BudgetReAppropriation budgetRep = new BudgetReAppropriation();
-	private List<BudgetReAppReportBean> budgetAppropriationList = new ArrayList<BudgetReAppReportBean>();
-	private List<BudgetReAppReportBean> budgetDisplayList = new ArrayList<BudgetReAppReportBean>();
-	private StringBuffer heading = new StringBuffer();
-	private String budgetName;
-	private String deptName = "";
-	private String fundName = "";
-	private String functionName = "";
-	private String isFundSelected = "false";
-	private String isFunctionSelected = "false";
-	private String isDepartmentSelected = "false";
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private FunctionRepository functionRepository;
+    @Autowired
+    private FundRepository fundRepository;
 
-	@Autowired
-	@Qualifier("persistenceService")
-	private PersistenceService persistenceService;
-	@Autowired
-	private DepartmentService departmentService;
-	@Autowired
-	private FunctionRepository functionRepository;
-	@Autowired
-	private FundRepository fundRepository;
-	@Override
-	public void prepare() {
-		persistenceService.getSession().setDefaultReadOnly(true);
-		persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
-		super.prepare();
-		if (!parameters.containsKey("showDropDown")) {
-			addDropdownData("departmentList",
-					departmentService.getAllDepartments());
-			addDropdownData("functionList", functionRepository.findByIsActiveAndIsNotLeaf(true,false));
-			addDropdownData("fundDropDownList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
-			budgetList = persistenceService
-					.findAllBy("from Budget bud where bud.isActiveBudget=true  and bud.parent is null  order by bud.financialYear.id  desc");
-			addDropdownData("budList", budgetList);
+    public BudgetAppropriationReportAction() {
+    }
 
-		}
-	}
+    @Override
+    public void prepare() {
+        persistenceService.getSession().setDefaultReadOnly(true);
+        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        super.prepare();
+        if (!parameters.containsKey("showDropDown")) {
+            addDropdownData("departmentList",
+                    departmentService.getAllDepartments());
+            addDropdownData("functionList", functionRepository.findByIsActiveAndIsNotLeaf(true, false));
+            addDropdownData("fundDropDownList", fundRepository.findByIsactiveAndIsnotleaf(true, false));
+            budgetList = persistenceService
+                    .findAllBy("from Budget bud where bud.isActiveBudget=true  and bud.parent is null  order by bud.financialYear.id  desc");
+            addDropdownData("budList", budgetList);
 
-	@Override
-	public Object getModel() {
-		return budgetRep;
-	}
+        }
+    }
 
-	public BudgetAppropriationReportAction() {
-	}
+    @Override
+    public Object getModel() {
+        return budgetRep;
+    }
 
-	@Action(value = "/report/budgetAppropriationReport-newForm")
-	public String newForm() {
-		return NEW;
-	}
+    @Action(value = "/report/budgetAppropriationReport-newForm")
+    public String newForm() {
+        return NEW;
+    }
 
-	@Action(value = "/report/budgetAppropriationReport-ajaxGenerateReport")
-	public String ajaxGenerateReport() {
-		if (LOGGER.isInfoEnabled())
-			LOGGER.info("Starting ajaxGenerateReport..");
-		populateReAppropriationData();
-		return "result";
-	}
+    @Action(value = "/report/budgetAppropriationReport-ajaxGenerateReport")
+    public String ajaxGenerateReport() {
+        if (LOGGER.isInfoEnabled())
+            LOGGER.info("Starting ajaxGenerateReport..");
+        populateReAppropriationData();
+        return "result";
+    }
 
-	private void prepareFormattedList() {
-		for (int index = 0, slNo = 1; index < budgetDisplayList.size(); index++) {
-			budgetAppropriationList.add(budgetDisplayList.get(index));
-			budgetAppropriationList.get(index).setSlNo(slNo++);
-			budgetAppropriationList.get(index).setAppDate(
-					Constants.DDMMYYYYFORMAT2.format(budgetDisplayList.get(
-							index).getAppropriationDate()));
-		}
-	}
+    private void prepareFormattedList() {
+        for (int index = 0, slNo = 1; index < budgetDisplayList.size(); index++) {
+            budgetAppropriationList.add(budgetDisplayList.get(index));
+            budgetAppropriationList.get(index).setSlNo(slNo++);
+            budgetAppropriationList.get(index).setAppDate(
+                    Constants.DDMMYYYYFORMAT2.format(budgetDisplayList.get(
+                            index).getAppropriationDate()));
+        }
+    }
 
-	@SuppressWarnings("unchecked")
-	private void populateReAppropriationData() {
-		setRelatedEntitesOn();
-		final Query query = generateQuery();
-		query.setResultTransformer(Transformers
-				.aliasToBean(BudgetReAppReportBean.class));
-		budgetDisplayList.addAll(query.list());
-	}
+    @SuppressWarnings("unchecked")
+    private void populateReAppropriationData() {
+        setRelatedEntitesOn();
+        final Query query = generateQuery();
+        query.setResultTransformer(Transformers
+                .aliasToBean(BudgetReAppReportBean.class));
+        budgetDisplayList.addAll(query.list());
+    }
 
-	private StringBuffer getQueryString() {
-		StringBuffer queryString = new StringBuffer();
-		String deptQry = "";
-		String fundQry = "";
-		String functionQry = "";
+    private Map<String, Map<String, Object>> getQueryString() {
+        StringBuffer queryString = new StringBuffer();
+        String deptQry = "";
+        String fundQry = "";
+        String functionQry = "";
+        final Map<String, Object> params = new HashMap<>();
+        final Map<String, Map<String, Object>> queryMap = new HashMap<>();
 
-		if (budgetRep.getBudgetDetail().getExecutingDepartment() != null
-				&& budgetRep.getBudgetDetail().getExecutingDepartment().getId() != null)
-			deptQry = " and bd.EXECUTING_DEPARTMENT="
-					+ budgetRep.getBudgetDetail().getExecutingDepartment()
-							.getId();
-		if (budgetRep.getBudgetDetail().getFund() != null
-				&& budgetRep.getBudgetDetail().getFund().getId() != null)
-			fundQry = "  and bd.fund="
-					+ budgetRep.getBudgetDetail().getFund().getId();
-		if (budgetRep.getBudgetDetail().getFunction() != null
-				&& budgetRep.getBudgetDetail().getFunction().getId() != null)
-			functionQry = "  and bd.function="
-					+ budgetRep.getBudgetDetail().getFunction().getId();
+        if (budgetRep.getBudgetDetail().getExecutingDepartment() != null
+                && budgetRep.getBudgetDetail().getExecutingDepartment().getId() != null) {
+            deptQry = " and bd.EXECUTING_DEPARTMENT=:execDeptId";
+            params.put("execDeptId", budgetRep.getBudgetDetail().getExecutingDepartment().getId());
+        }
+        if (budgetRep.getBudgetDetail().getFund() != null
+                && budgetRep.getBudgetDetail().getFund().getId() != null) {
+            fundQry = "  and bd.fund=:fundId";
+            params.put("fundId", budgetRep.getBudgetDetail().getFund().getId());
+        }
+        if (budgetRep.getBudgetDetail().getFunction() != null
+                && budgetRep.getBudgetDetail().getFunction().getId() != null) {
+            functionQry = "  and bd.function=:functionId";
+            params.put("functionId", budgetRep.getBudgetDetail().getFunction().getId());
+        }
 
-		queryString = queryString.append("select dept.name as department,funct.name as function ,fnd.name as fund ,")
-						.append(" bg.name  as budgetHead,bmisc.sequence_number as budgetAppropriationNo,bmisc.reappropriation_date as appropriationDate,")
-						.append(" bd.approvedamount as actualAmount,br.addition_amount as additionAmount,br.deduction_amount as deductionAmount")
-						.append(" from egf_budget B,egf_budget_reappropriation br,egf_budgetdetail bd,egf_budgetgroup bg,egf_reappropriation_misc bmisc")
-						.append(", eg_department dept,fund fnd , function funct")
-						.append("  where  bd.id =br.budgetdetail and bd.budgetgroup=bg.id and br.REAPPROPRIATION_MISC=bmisc.id and bd.budget=b.id ")
-						.append(" and funct.id=bd.function and fnd.id=bd.fund and dept.id= bd.EXECUTING_DEPARTMENT ")
-						.append(deptQry)
-						.append(fundQry)
-						.append(functionQry)
-						.append(" and bmisc.reappropriation_date between ':fromDate")
-						.append("' and ':toDate' ")
-						.append("  and bd.MATERIALIZEDPATH like ''||(select budinn.MATERIALIZEDPATH ||'%' from egf_budget budinn where budinn.id=:budgetDetails")
-						.append( ")||''");
+        queryString.append("select dept.name as department,funct.name as function ,fnd.name as fund ,")
+                .append(" bg.name  as budgetHead,bmisc.sequence_number as budgetAppropriationNo,bmisc.reappropriation_date as appropriationDate,")
+                .append(" bd.approvedamount as actualAmount,br.addition_amount as additionAmount,br.deduction_amount as deductionAmount")
+                .append(" from egf_budget B,egf_budget_reappropriation br,egf_budgetdetail bd,egf_budgetgroup bg,egf_reappropriation_misc bmisc")
+                .append(", eg_department dept,fund fnd , function funct")
+                .append("  where  bd.id =br.budgetdetail and bd.budgetgroup=bg.id and br.REAPPROPRIATION_MISC=bmisc.id and bd.budget=b.id ")
+                .append(" and funct.id=bd.function and fnd.id=bd.fund and dept.id= bd.EXECUTING_DEPARTMENT ")
+                .append(deptQry)
+                .append(fundQry)
+                .append(functionQry)
+                .append(" and bmisc.reappropriation_date between :fromDate and :toDate ")
+                .append("  and bd.MATERIALIZEDPATH like ''||(select budinn.MATERIALIZEDPATH ||'%' from egf_budget budinn where budinn.id=:budgetDetails")
+                .append(")||''");
+        params.put("fromDate", YYYY_MM_DD_FORMAT.format(getFromDate()));
+        params.put("toDate", YYYY_MM_DD_FORMAT.format(getToDate()));
+        params.put("budgetDetails", budgetRep.getBudgetDetail().getBudget().getId());
+        queryString.append(" order by fnd.id,dept.id,funct.id,bmisc.reappropriation_date");
+        queryMap.put(queryString.toString(), params);
+        return queryMap;
+    }
 
-		return queryString.append(" order by fnd.id,dept.id,funct.id,bmisc.reappropriation_date");
-	}
+    private Query generateQuery() {
+        final Map.Entry<String, Map<String, Object>> queryMapEntry = getQueryString().entrySet().iterator().next();
+        final String queryString = queryMapEntry.getKey();
+        final Map<String, Object> queryParams = queryMapEntry.getValue();
+        final Query query = persistenceService.getSession()
+                .createNativeQuery(queryString)
+                .addScalar("department").addScalar("function")
+                .addScalar("fund").addScalar("budgetHead")
+                .addScalar("budgetAppropriationNo")
+                .addScalar("appropriationDate").addScalar("actualAmount")
+                .addScalar("additionAmount", BigDecimalType.INSTANCE)
+                .addScalar("deductionAmount", BigDecimalType.INSTANCE);
+        queryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
+        return query;
+    }
 
-	private Query generateQuery() {
-		final Query query = persistenceService.getSession()
-				.createNativeQuery(getQueryString().toString())
-				.addScalar("department").addScalar("function")
-				.addScalar("fund").addScalar("budgetHead")
-				.addScalar("budgetAppropriationNo")
-				.addScalar("appropriationDate").addScalar("actualAmount")
-				.addScalar("additionAmount", BigDecimalType.INSTANCE)
-				.addScalar("deductionAmount", BigDecimalType.INSTANCE);
-		query.setParameter("fromDate",YYYY_MM_DD_FORMAT.format(getFromDate()))
-				.setParameter("toDate",YYYY_MM_DD_FORMAT.format(getToDate()))
-				.setParameter("budgetDetails",budgetRep.getBudgetDetail().getBudget().getId());
-		return query;
-	}
+    protected void setRelatedEntitesOn() {
+        heading.append("Budget Addition/Deduction Appropriation ");
+        if (!getFundName().equals("")) {
+            heading.append(" in " + getFundName());
+            isFundSelected = "true";
+        }
+        if (!getFunctionName().equals("")) {
+            heading.append(" under " + getFunctionName());
+            isFunctionSelected = "true";
+        }
+        if (!getDeptName().equals("")) {
+            heading.append(" For " + getDeptName() + "Department");
+            isDepartmentSelected = "true";
+        }
+        if (getFromDate() != null && getToDate() != null)
+            heading.append(" From " + getFormattedDate(getFromDate()) + " To "
+                    + getFormattedDate(getToDate()));
+    }
 
-	protected void setRelatedEntitesOn() {
-		heading.append("Budget Addition/Deduction Appropriation ");
-		if (!getFundName().equals("")) {
-			heading.append(" in " + getFundName());
-			isFundSelected = "true";
-		}
-		if (!getFunctionName().equals("")) {
-			heading.append(" under " + getFunctionName());
-			isFunctionSelected = "true";
-		}
-		if (!getDeptName().equals("")) {
-			heading.append(" For " + getDeptName() + "Department");
-			isDepartmentSelected = "true";
-		}
-		if (getFromDate() != null && getToDate() != null)
-			heading.append(" From " + getFormattedDate(getFromDate()) + " To "
-					+ getFormattedDate(getToDate()));
-	}
+    /*
+     * For Pdf/Excel
+     */
+    @SuppressWarnings("unchecked")
+    public String getUlbName() {
+        final Query query = persistenceService.getSession().createNativeQuery(
+                "select name from companydetail");
+        final List<String> result = query.list();
+        if (result != null)
+            return result.get(0);
+        return "";
+    }
 
-	/*
-	 * For Pdf/Excel
-	 */
-	@SuppressWarnings("unchecked")
-	public String getUlbName() {
-		final Query query = persistenceService.getSession().createNativeQuery(
-				"select name from companydetail");
-		final List<String> result = query.list();
-		if (result != null)
-			return result.get(0);
-		return "";
-	}
+    @Action(value = "/report/budgetAppropriationReport-ajaxGenerateReportXls")
+    public String ajaxGenerateReportXls() throws Exception {
+        populateReAppropriationData();
+        prepareFormattedList();
+        final String title = ReportUtil.getCityName();
+        final String subtitle = "Amount in Rupess";
+        final JasperPrint jasper = reportHelper
+                .generateBudgetAppropriationJasperPrint(
+                        budgetAppropriationList, title, subtitle, budgetName,
+                        getIsFundSelected(), getIsFunctionSelected(),
+                        getIsDepartmentSelected());
+        inputStream = reportHelper.exportXls(inputStream, jasper);
+        return "XLS";
+    }
 
-	@Action(value = "/report/budgetAppropriationReport-ajaxGenerateReportXls")
-	public String ajaxGenerateReportXls() throws Exception {
-		populateReAppropriationData();
-		prepareFormattedList();
-		final String title = ReportUtil.getCityName();
-		final String subtitle = "Amount in Rupess";
-		final JasperPrint jasper = reportHelper
-				.generateBudgetAppropriationJasperPrint(
-						budgetAppropriationList, title, subtitle, budgetName,
-						getIsFundSelected(), getIsFunctionSelected(),
-						getIsDepartmentSelected());
-		inputStream = reportHelper.exportXls(inputStream, jasper);
-		return "XLS";
-	}
+    @Action(value = "/report/budgetAppropriationReport-ajaxGenerateReportPdf")
+    public String ajaxGenerateReportPdf() throws Exception {
+        populateReAppropriationData();
+        prepareFormattedList();
+        final String title = ReportUtil.getCityName();
+        final String subtitle = "Amount in Rupess";
+        final JasperPrint jasper = reportHelper
+                .generateBudgetAppropriationJasperPrint(
+                        budgetAppropriationList, title, subtitle, budgetName,
+                        getIsFundSelected(), getIsFunctionSelected(),
+                        getIsDepartmentSelected());
+        inputStream = reportHelper.exportPdf(inputStream, jasper);
+        return "PDF";
+    }
 
-	@Action(value = "/report/budgetAppropriationReport-ajaxGenerateReportPdf")
-	public String ajaxGenerateReportPdf() throws Exception {
-		populateReAppropriationData();
-		prepareFormattedList();
-		final String title = ReportUtil.getCityName();
-		final String subtitle = "Amount in Rupess";
-		final JasperPrint jasper = reportHelper
-				.generateBudgetAppropriationJasperPrint(
-						budgetAppropriationList, title, subtitle, budgetName,
-						getIsFundSelected(), getIsFunctionSelected(),
-						getIsDepartmentSelected());
-		inputStream = reportHelper.exportPdf(inputStream, jasper);
-		return "PDF";
-	}
+    public String getFormattedDate(final Date date) {
+        return Constants.DDMMYYYYFORMAT2.format(date);
+    }
 
-	public String getFormattedDate(final Date date) {
-		return Constants.DDMMYYYYFORMAT2.format(date);
-	}
+    public Date getFromDate() {
+        return fromDate;
+    }
 
-	public Date getFromDate() {
-		return fromDate;
-	}
+    public void setFromDate(final Date fromDate) {
+        this.fromDate = fromDate;
+    }
 
-	public void setFromDate(final Date fromDate) {
-		this.fromDate = fromDate;
-	}
+    public Date getToDate() {
+        return toDate;
+    }
 
-	public Date getToDate() {
-		return toDate;
-	}
+    public void setToDate(final Date toDate) {
+        this.toDate = toDate;
+    }
 
-	public void setToDate(final Date toDate) {
-		this.toDate = toDate;
-	}
+    public InputStream getInputStream() {
+        return inputStream;
+    }
 
-	public InputStream getInputStream() {
-		return inputStream;
-	}
+    public void setInputStream(final InputStream inputStream) {
+        this.inputStream = inputStream;
+    }
 
-	public void setInputStream(final InputStream inputStream) {
-		this.inputStream = inputStream;
-	}
+    public ReportHelper getReportHelper() {
+        return reportHelper;
+    }
 
-	public ReportHelper getReportHelper() {
-		return reportHelper;
-	}
+    public void setReportHelper(final ReportHelper reportHelper) {
+        this.reportHelper = reportHelper;
+    }
 
-	public void setReportHelper(final ReportHelper reportHelper) {
-		this.reportHelper = reportHelper;
-	}
+    public StringBuffer getHeading() {
+        return heading;
+    }
 
-	public StringBuffer getHeading() {
-		return heading;
-	}
+    public void setHeading(final StringBuffer heading) {
+        this.heading = heading;
+    }
 
-	public BudgetReAppropriation getBudgetRep() {
-		return budgetRep;
-	}
+    public BudgetReAppropriation getBudgetRep() {
+        return budgetRep;
+    }
 
-	public void setBudgetRep(final BudgetReAppropriation budgetRep) {
-		this.budgetRep = budgetRep;
-	}
+    public void setBudgetRep(final BudgetReAppropriation budgetRep) {
+        this.budgetRep = budgetRep;
+    }
 
-	public void setHeading(final StringBuffer heading) {
-		this.heading = heading;
-	}
+    public List<BudgetReAppReportBean> getBudgetDisplayList() {
+        return budgetDisplayList;
+    }
 
-	public List<BudgetReAppReportBean> getBudgetDisplayList() {
-		return budgetDisplayList;
-	}
+    public void setBudgetDisplayList(
+            final List<BudgetReAppReportBean> budgetDisplayList) {
+        this.budgetDisplayList = budgetDisplayList;
+    }
 
-	public void setBudgetDisplayList(
-			final List<BudgetReAppReportBean> budgetDisplayList) {
-		this.budgetDisplayList = budgetDisplayList;
-	}
+    public List<BudgetReAppReportBean> getBudgetAppropriationList() {
+        return budgetAppropriationList;
+    }
 
-	public List<BudgetReAppReportBean> getBudgetAppropriationList() {
-		return budgetAppropriationList;
-	}
+    public void setBudgetAppropriationList(
+            final List<BudgetReAppReportBean> budgetAppropriationList) {
+        this.budgetAppropriationList = budgetAppropriationList;
+    }
 
-	public void setBudgetAppropriationList(
-			final List<BudgetReAppReportBean> budgetAppropriationList) {
-		this.budgetAppropriationList = budgetAppropriationList;
-	}
+    public String getIsFundSelected() {
+        return isFundSelected;
+    }
 
-	public String getIsFundSelected() {
-		return isFundSelected;
-	}
+    public void setIsFundSelected(final String isFundSelected) {
+        this.isFundSelected = isFundSelected;
+    }
 
-	public void setIsFundSelected(final String isFundSelected) {
-		this.isFundSelected = isFundSelected;
-	}
+    public String getIsFunctionSelected() {
+        return isFunctionSelected;
+    }
 
-	public String getIsFunctionSelected() {
-		return isFunctionSelected;
-	}
+    public void setIsFunctionSelected(final String isFunctionSelected) {
+        this.isFunctionSelected = isFunctionSelected;
+    }
 
-	public void setIsFunctionSelected(final String isFunctionSelected) {
-		this.isFunctionSelected = isFunctionSelected;
-	}
+    public String getIsDepartmentSelected() {
+        return isDepartmentSelected;
+    }
 
-	public String getIsDepartmentSelected() {
-		return isDepartmentSelected;
-	}
+    public void setIsDepartmentSelected(final String isDepartmentSelected) {
+        this.isDepartmentSelected = isDepartmentSelected;
+    }
 
-	public void setIsDepartmentSelected(final String isDepartmentSelected) {
-		this.isDepartmentSelected = isDepartmentSelected;
-	}
+    public String getBudgetName() {
+        return budgetName;
+    }
 
-	public String getBudgetName() {
-		return budgetName;
-	}
+    public void setBudgetName(final String budgetName) {
+        this.budgetName = budgetName;
+    }
 
-	public void setBudgetName(final String budgetName) {
-		this.budgetName = budgetName;
-	}
+    public String getDeptName() {
+        return deptName;
+    }
 
-	public String getDeptName() {
-		return deptName;
-	}
+    public void setDeptName(final String deptName) {
+        this.deptName = deptName;
+    }
 
-	public void setDeptName(final String deptName) {
-		this.deptName = deptName;
-	}
+    public String getFundName() {
+        return fundName;
+    }
 
-	public String getFundName() {
-		return fundName;
-	}
+    public void setFundName(final String fundName) {
+        this.fundName = fundName;
+    }
 
-	public void setFundName(final String fundName) {
-		this.fundName = fundName;
-	}
+    public String getFunctionName() {
+        return functionName;
+    }
 
-	public String getFunctionName() {
-		return functionName;
-	}
-
-	public void setFunctionName(final String functionName) {
-		this.functionName = functionName;
-	}
+    public void setFunctionName(final String functionName) {
+        this.functionName = functionName;
+    }
 }

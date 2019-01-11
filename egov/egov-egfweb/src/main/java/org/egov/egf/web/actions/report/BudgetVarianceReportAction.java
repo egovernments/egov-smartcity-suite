@@ -53,14 +53,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.CFunction;
-import org.egov.commons.Functionary;
-import org.egov.commons.Fund;
-import org.egov.commons.Fundsource;
-import org.egov.commons.Scheme;
-import org.egov.commons.SubScheme;
-import org.egov.commons.Vouchermis;
+import org.egov.commons.*;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.egf.model.BudgetVarianceEntry;
@@ -86,6 +79,9 @@ import org.egov.utils.BudgetAccountType;
 import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.Constants;
 import org.hibernate.FlushMode;
+import org.hibernate.query.Query;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -94,12 +90,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Results(value = {
         @Result(name = "results", location = "budgetVarianceReport-results.jsp"),
@@ -179,7 +170,7 @@ public class BudgetVarianceReportAction extends BaseFormAction {
         addRelatedEntity("budgetGroup", BudgetGroup.class);
         super.prepare();
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
 
         mandatoryFields = budgetDetailConfig.getMandatoryFields();
         if (!parameters.containsKey("skipPrepare")) {
@@ -234,33 +225,42 @@ public class BudgetVarianceReportAction extends BaseFormAction {
         return new Date();
     }
 
-    private StringBuffer formMiscQuery(final String mis, final String gl, final String detail) {
-        StringBuffer miscQuery = new StringBuffer();
+    private Map<String, Map<String, Object>> formMiscQuery(final String mis, final String gl, final String detail) {
+        final StringBuffer miscQuery = new StringBuffer();
+        final Map<String, Object> params = new HashMap<>();
+        final Map<String, Map<String, Object>> queryMap = new HashMap<>();
         if (shouldShowHeaderField(Constants.FUND) && queryParamMap.containsKey("fundId")) {
-            miscQuery = miscQuery.append(" and " + detail + ".fundId=bd.fund ");
-            miscQuery = miscQuery.append(" and bd.fund= " + queryParamMap.get("fundId"));
+            miscQuery.append(String.format(" and %s.fundId=bd.fund ", detail));
+            miscQuery.append(" and bd.fund=:fundId");
+            params.put("fundId", queryParamMap.get("fundId"));
         }
         if (shouldShowHeaderField(Constants.SCHEME) && queryParamMap.containsKey("schemeId")) {
-            miscQuery = miscQuery.append(" and " + mis + ".schemeid=bd.scheme ");
-            miscQuery = miscQuery.append(" and bd.scheme= " + queryParamMap.get("schemeId"));
+            miscQuery.append(String.format(" and %s.schemeid=bd.scheme ", mis));
+            miscQuery.append(" and bd.scheme=:schemeId");
+            params.put("schemeId", queryParamMap.get("schemeId"));
         }
         if (shouldShowHeaderField(Constants.SUB_SCHEME) && queryParamMap.containsKey("subSchemeId")) {
-            miscQuery = miscQuery.append(" and " + mis + ".subschemeid=bd.subscheme ");
-            miscQuery = miscQuery.append(" and bd.subscheme= " + queryParamMap.get("subSchemeId"));
+            miscQuery.append(String.format(" and %s.subschemeid=bd.subscheme ", mis));
+            miscQuery.append(" and bd.subscheme= :subSchemeId");
+            params.put("subSchemeId", queryParamMap.get("subSchemeId"));
         }
         if (shouldShowHeaderField(Constants.FUNCTIONARY) && queryParamMap.containsKey("functionaryId")) {
-            miscQuery = miscQuery.append(" and " + mis + ".functionaryid=bd.functionary ");
-            miscQuery = miscQuery.append(" and bd.functionary= " + queryParamMap.get("functionaryId"));
+            miscQuery.append(String.format(" and %s.functionaryid=bd.functionary ", mis));
+            miscQuery.append(" and bd.functionary= :functionaryId");
+            params.put("functionaryId", queryParamMap.get("functionaryId"));
         }
         if (shouldShowHeaderField(Constants.FUNCTION) && queryParamMap.containsKey("functionId")) {
-            miscQuery = miscQuery.append(" and " + gl + ".functionId=bd.function ");
-            miscQuery = miscQuery.append(" and bd.function= " + Long.parseLong(queryParamMap.get("functionId").toString()));
+            miscQuery.append(String.format(" and %s.functionId=bd.function ", gl));
+            miscQuery.append(" and bd.function= :functionId");
+            params.put("functionId", Long.parseLong(queryParamMap.get("functionId").toString()));
         }
         if (shouldShowHeaderField(Constants.EXECUTING_DEPARTMENT) && queryParamMap.containsKey("deptId")) {
-            miscQuery = miscQuery.append(" and " + mis + ".departmentid=bd.executing_department ");
-            miscQuery = miscQuery.append(" and bd.executing_department= " + queryParamMap.get("deptId"));
+            miscQuery.append(String.format(" and %s.departmentid=bd.executing_department ", mis));
+            miscQuery.append(" and bd.executing_department= :deptId");
+            params.put("deptId", queryParamMap.get("deptId"));
         }
-        return miscQuery;
+        queryMap.put(miscQuery.toString(), params);
+        return queryMap;
     }
 
     public List<Paymentheader> getPaymentHeaderList() {
@@ -314,11 +314,15 @@ public class BudgetVarianceReportAction extends BaseFormAction {
             type = "Revised";
             budgetType = Constants.RE;
         }
-        final List<BudgetDetail> result = persistenceService.findAllBy("from BudgetDetail where budget.isbere='" + budgetType
-                + "' and " +
-                "budget.isActiveBudget=true and budget.status.code='Approved' and budget.financialYear.id="
-                + financialYear.getId()
-                + getMiscQuery() + " order by budget.name,budgetGroup.name");
+        final Map.Entry<String, Map<String, Object>> queryMapEntry = getMiscQuery().entrySet().iterator().next();
+
+        final Query query = persistenceService.getSession().createQuery(new StringBuilder("from BudgetDetail where budget.isbere=:isBeRe")
+                .append(" and budget.isActiveBudget=true and budget.status.code='Approved' and budget.financialYear.id=:finYearId")
+                .append(queryMapEntry.getKey()).append(" order by budget.name,budgetGroup.name").toString());
+        query.setParameter("isBeRe", budgetType, StringType.INSTANCE)
+                .setParameter("finYearId", financialYear.getId(), LongType.INSTANCE);
+        queryMapEntry.getValue().entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
+        final List<BudgetDetail> result = query.list();
         if (budgetVarianceEntries == null)
             budgetVarianceEntries = new ArrayList<BudgetVarianceEntry>();
         for (final BudgetDetail budgetDetail : result) {
@@ -353,34 +357,55 @@ public class BudgetVarianceReportAction extends BaseFormAction {
         populateActualData(financialYear);
     }
 
-    private String getMiscQuery() {
+    private Map<String, Map<String, Object>> getMiscQuery() {
         final StringBuilder query = new StringBuilder();
+        final Map<String, Map<String, Object>> queryMap = new HashMap<>();
+        final Map<String, Object> params = new HashMap<>();
         if (budgetDetail.getExecutingDepartment() != null && budgetDetail.getExecutingDepartment().getId() != null
-                && budgetDetail.getExecutingDepartment().getId() != -1)
-            query.append(" and executingDepartment.id=").append(budgetDetail.getExecutingDepartment().getId());
+                && budgetDetail.getExecutingDepartment().getId() != -1) {
+            query.append(" and executingDepartment.id=:execDeptId");
+            params.put("execDeptId", budgetDetail.getExecutingDepartment().getId());
+        }
         if (budgetDetail.getBudgetGroup() != null && budgetDetail.getBudgetGroup().getId() != null
-                && budgetDetail.getBudgetGroup().getId() != -1)
-            query.append(" and budgetGroup.id=").append(budgetDetail.getBudgetGroup().getId());
+                && budgetDetail.getBudgetGroup().getId() != -1) {
+            query.append(" and budgetGroup.id=:budgetGroupId");
+            params.put("budgetGroupId", budgetDetail.getBudgetGroup().getId());
+        }
         if (budgetDetail.getFunction() != null && budgetDetail.getFunction().getId() != null
-                && budgetDetail.getFunction().getId() != -1)
-            query.append(" and function.id=").append(budgetDetail.getFunction().getId());
-        if (budgetDetail.getFund() != null && budgetDetail.getFund().getId() != null && budgetDetail.getFund().getId() != -1)
-            query.append(" and fund.id=").append(budgetDetail.getFund().getId());
+                && budgetDetail.getFunction().getId() != -1) {
+            query.append(" and function.id=:functionId");
+            params.put("functionId", budgetDetail.getFunction().getId());
+        }
+        if (budgetDetail.getFund() != null && budgetDetail.getFund().getId() != null && budgetDetail.getFund().getId() != -1) {
+            query.append(" and fund.id=:fundId");
+            params.put("fundId", budgetDetail.getFund().getId());
+        }
         if (budgetDetail.getFunctionary() != null && budgetDetail.getFunctionary().getId() != null
-                && budgetDetail.getFunctionary().getId() != -1)
-            query.append(" and functionary.id=").append(budgetDetail.getFunctionary().getId());
+                && budgetDetail.getFunctionary().getId() != -1) {
+            query.append(" and functionary.id=:functionaryId");
+            params.put("functionaryId", budgetDetail.getFunctionary().getId());
+        }
         if (budgetDetail.getScheme() != null && budgetDetail.getScheme().getId() != null
-                && budgetDetail.getScheme().getId() != -1)
-            query.append(" and scheme.id=").append(budgetDetail.getScheme().getId());
+                && budgetDetail.getScheme().getId() != -1) {
+            query.append(" and scheme.id=:schemeId");
+            params.put("schemeId", budgetDetail.getScheme().getId());
+        }
         if (budgetDetail.getSubScheme() != null && budgetDetail.getSubScheme().getId() != null
-                && budgetDetail.getSubScheme().getId() != -1)
-            query.append(" and subScheme.id=").append(budgetDetail.getSubScheme().getId());
+                && budgetDetail.getSubScheme().getId() != -1) {
+            query.append(" and subScheme.id=:subSchemeId");
+            params.put("subSchemeId", budgetDetail.getSubScheme().getId());
+        }
         if (budgetDetail.getBoundary() != null && budgetDetail.getBoundary().getId() != null
-                && budgetDetail.getBoundary().getId() != -1)
-            query.append(" and boundary.id=").append(budgetDetail.getBoundary().getId());
-        if (!"".equalsIgnoreCase(accountType) && !"-1".equalsIgnoreCase(accountType))
-            query.append(" and budgetGroup.accountType='").append(accountType).append("'");
-        return query.toString();
+                && budgetDetail.getBoundary().getId() != -1) {
+            query.append(" and boundary.id=:boundaryId");
+            params.put("boundaryId", budgetDetail.getBoundary().getId());
+        }
+        if (!"".equalsIgnoreCase(accountType) && !"-1".equalsIgnoreCase(accountType)) {
+            query.append(" and budgetGroup.accountType=:accountType");
+            params.put("accountType", accountType);
+        }
+        queryMap.put(query.toString(), params);
+        return queryMap;
     }
 
     private void setQueryParams() {
@@ -413,11 +438,13 @@ public class BudgetVarianceReportAction extends BaseFormAction {
         final String fromDate = Constants.DDMMYYYYFORMAT2.format(financialYear.getStartingDate());
         if (budgetVarianceEntries != null && budgetVarianceEntries.size() != 0) {
             setQueryParams();
+            final Map.Entry<String, Map<String, Object>> vimsQueryMapEntry = formMiscQuery("vmis", "gl", "vh").entrySet().iterator().next();
             final List<Object[]> resultForVoucher = budgetDetailService.fetchActualsForFYWithParams(fromDate, "'"
-                    + Constants.DDMMYYYYFORMAT2.format(asOnDate) + "'", formMiscQuery("vmis", "gl", "vh"));
+                    + Constants.DDMMYYYYFORMAT2.format(asOnDate) + "'", vimsQueryMapEntry.getKey(), vimsQueryMapEntry.getValue());
             extractData(resultForVoucher);
+            final Map.Entry<String, Map<String, Object>> bmisQueryMapEntry = formMiscQuery("bmis", "bdetail", "bmis").entrySet().iterator().next();
             final List<Object[]> resultForBill = budgetDetailService.fetchActualsForBillWithVouchersParams(fromDate, "'"
-                    + Constants.DDMMYYYYFORMAT2.format(asOnDate) + "'", formMiscQuery("bmis", "bdetail", "bmis"));
+                    + Constants.DDMMYYYYFORMAT2.format(asOnDate) + "'", bmisQueryMapEntry.getKey(), bmisQueryMapEntry.getValue());
             extractData(resultForBill);
         } else {
             addActionError("no data found");

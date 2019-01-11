@@ -81,6 +81,10 @@ import org.egov.services.deduction.RemitRecoveryService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.FlushMode;
+import org.hibernate.query.Query;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -88,11 +92,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Results(value = {
@@ -168,7 +168,7 @@ public class PendingTDSReportAction extends BaseFormAction {
     @Override
     public void prepare() {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
         super.prepare();
         addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
         addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));  
@@ -268,34 +268,36 @@ public class PendingTDSReportAction extends BaseFormAction {
             return;
         recovery = (Recovery) persistenceService.find("from Recovery where id=?1", recovery.getId());
         type = recovery.getType();
-        String deptQuery = "";
-        String partyNameQuery = "";
         final RemittanceBean remittanceBean = new RemittanceBean();
         remittanceBean.setRecoveryId(recovery.getId());
-        if (department.getId() != null && department.getId() != -1)
-            deptQuery = " and egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.vouchermis.departmentid.id="
-                    + department.getId();
-        if (detailKey != null && detailKey != -1)
-            partyNameQuery = " and egRemittanceGldtl.generalledgerdetail.detailkeyid=" + detailKey;
         if (fromDate != null)
             remittanceBean.setFromDate(Constants.DDMMYYYYFORMAT1.format(fromDate));
         pendingTDS = remitRecoveryService.getRecoveryDetailsForReport(remittanceBean, getVoucherHeader(), detailKey);
         final StringBuffer query1 = new StringBuffer(1000);
         List<EgRemittanceDetail> result1 = new ArrayList<EgRemittanceDetail>();
-        query1.append("from EgRemittanceDetail where  egRemittanceGldtl.generalledgerdetail.generalLedgerId.glcodeId.id=?1 ")
-                .append("and egRemittance.fund.id=?2 and egRemittance.voucherheader.status = 5 and ")
+        int index = 1;
+        List<Object> params = new ArrayList<>();
+        query1.append("from EgRemittanceDetail where  egRemittanceGldtl.generalledgerdetail.generalLedgerId.glcodeId.id=?").append(index++)
+                .append("and egRemittance.fund.id=?").append(index++).append(" and egRemittance.voucherheader.status = 5 and ")
                 .append(" egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.status=0 and ")
-                .append("egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherDate <= ?3 ");
-        if (fromDate != null)
-            query1.append(" and egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherDate >= ?4");
-        query1.append(deptQuery).append(partyNameQuery);
+                .append("egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherDate <= ?").append(index++);
+        params.add(recovery.getChartofaccounts().getId());
+        params.add(fund.getId());
+        params.add(asOnDate);
+        if (fromDate != null) {
+            query1.append(" and egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherDate >= ?").append(index++);
+            params.add(fromDate);
+        }
+        if (department.getId() != null && department.getId() != -1) {
+            query1.append(" and egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.vouchermis.departmentid.id=?").append(index++);
+            params.add(department.getId());
+        }
+        if (detailKey != null && detailKey != -1) {
+            query1.append(" and egRemittanceGldtl.generalledgerdetail.detailkeyid=?").append(index++);
+            params.add(detailKey);
+        }
         query1.append(" order by egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherNumber ");
-        if (fromDate != null)
-            result1 = persistenceService.findAllBy(query1.toString(), recovery.getChartofaccounts().getId(), fund.getId(),
-                    asOnDate, fromDate);
-        else
-            result1 = persistenceService.findAllBy(query1.toString(), recovery.getChartofaccounts().getId(), fund.getId(),
-                    asOnDate);
+        result1 = persistenceService.findAllBy(query1.toString(), params);
         Boolean createPartialRow1 = false;
         for (final EgRemittanceDetail entry : result1) {
             createPartialRow1 = false;
@@ -310,8 +312,10 @@ public class PendingTDSReportAction extends BaseFormAction {
             tds.setAmount(entry.getRemittedamt());
             if (entry.getEgRemittance().getVoucherheader() != null)
                 tds.setPaymentVoucherNumber(entry.getEgRemittance().getVoucherheader().getVoucherNumber());
-            final List<InstrumentVoucher> ivList = persistenceService.findAllBy("from InstrumentVoucher where instrumentHeaderId.statusId.description in(?1,?2,?3) and voucherHeaderId=?4"
-                    , FinancialConstants.INSTRUMENT_DEPOSITED_STATUS, FinancialConstants.INSTRUMENT_CREATED_STATUS,
+            final List<InstrumentVoucher> ivList = persistenceService.findAllBy(
+                    new StringBuilder("from InstrumentVoucher where instrumentHeaderId.statusId.description in(?1,?2,?3)")
+                            .append(" and voucherHeaderId=?4").toString(),
+                    FinancialConstants.INSTRUMENT_DEPOSITED_STATUS, FinancialConstants.INSTRUMENT_CREATED_STATUS,
                     FinancialConstants.INSTRUMENT_RECONCILED_STATUS, entry.getEgRemittance().getVoucherheader());
             boolean isMultiple = false;
             for (final InstrumentVoucher iv : ivList)
@@ -329,29 +333,32 @@ public class PendingTDSReportAction extends BaseFormAction {
             inWorkflowTDS.add(tds);
         }
         if (showRemittedEntries) {
-            if (department.getId() != null && department.getId() != -1)
-                deptQuery = " and egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.vouchermis.departmentid.id="
-                        + department.getId();
-            if (detailKey != null && detailKey != -1)
-                partyNameQuery = " and egRemittanceGldtl.generalledgerdetail.detailkeyid=" + detailKey;
             final StringBuffer query = new StringBuffer(1000);
-           
+            params = new ArrayList<>();
+            index = 1;
             List<EgRemittanceDetail> result = new ArrayList<EgRemittanceDetail>();
-            query.append("from EgRemittanceDetail where  egRemittanceGldtl.generalledgerdetail.generalLedgerId.glcodeId.id=?1 ")
-                    .append(" and egRemittance.fund.id=?2 and egRemittance.voucherheader.status = 0 and ")
+            query.append("from EgRemittanceDetail where  egRemittanceGldtl.generalledgerdetail.generalLedgerId.glcodeId.id=?").append(index++)
+                    .append(" and egRemittance.fund.id=?").append(index++).append(" and egRemittance.voucherheader.status = 0 and ")
                     .append(" egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.status=0 and ")
-                    .append(" egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherDate <= ?3 ");
-            if (fromDate != null)
-                query.append(" and egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherDate >= ?4");
-            query.append(deptQuery).append(partyNameQuery);
+                    .append(" egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherDate <= ?").append(index++);
+            params.add(recovery.getChartofaccounts().getId());
+            params.add(fund.getId());
+            params.add(asOnDate);
+            if (fromDate != null) {
+                query.append(" and egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherDate >= ?").append(index++);
+                params.add(fromDate);
+            }
+            if (department.getId() != null && department.getId() != -1) {
+                query.append(" and egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.vouchermis.departmentid.id=?").append(index++);
+                params.add(department.getId());
+            }
+            if (detailKey != null && detailKey != -1) {
+                query.append(" and egRemittanceGldtl.generalledgerdetail.detailkeyid=?").append(index++);
+                params.add(detailKey);
+            }
             query.append(" order by egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherNumber ");
-            if (fromDate != null)
-                result = persistenceService.findAllBy(query.toString(), recovery.getChartofaccounts().getId(), fund.getId(),
-                        asOnDate, fromDate);
-            else
-                result = persistenceService.findAllBy(query.toString(), recovery.getChartofaccounts().getId(), fund.getId(),
-                        asOnDate);
-            
+            result = persistenceService.findAllBy(query.toString(), params);
+
             Boolean createPartialRow = false;
             for (final EgRemittanceDetail entry : result) {
                 createPartialRow = false;
@@ -366,8 +373,10 @@ public class PendingTDSReportAction extends BaseFormAction {
                 tds.setAmount(entry.getRemittedamt());
                 if (entry.getEgRemittance().getVoucherheader() != null)
                     tds.setPaymentVoucherNumber(entry.getEgRemittance().getVoucherheader().getVoucherNumber());
-                final List<InstrumentVoucher> ivList = persistenceService.findAllBy("from InstrumentVoucher where instrumentHeaderId.statusId.description in(?1,?2,?3) and voucherHeaderId=?4"
-                        , FinancialConstants.INSTRUMENT_DEPOSITED_STATUS, FinancialConstants.INSTRUMENT_CREATED_STATUS,
+                final List<InstrumentVoucher> ivList = persistenceService.findAllBy(
+                        new StringBuilder("from InstrumentVoucher where instrumentHeaderId.statusId.description in(?1,?2,?3)")
+                                .append(" and voucherHeaderId=?4").toString(),
+                        FinancialConstants.INSTRUMENT_DEPOSITED_STATUS, FinancialConstants.INSTRUMENT_CREATED_STATUS,
                         FinancialConstants.INSTRUMENT_RECONCILED_STATUS, entry.getEgRemittance().getVoucherheader());
                 boolean isMultiple = false;
                 for (final InstrumentVoucher iv : ivList)
@@ -395,44 +404,59 @@ public class PendingTDSReportAction extends BaseFormAction {
     private void populateSummaryData() {
         recovery = (Recovery) persistenceService.find("from Recovery where id=?1", recovery.getId());
         type = recovery.getType();
-        String deptQuery = "";
-        String partyNameQuery = "";
-        if (department.getId() != null && department.getId() != -1)
-            deptQuery = " and mis.departmentid=" + department.getId();
-        if (detailKey != null && detailKey != -1)
-            partyNameQuery = " and gld.detailkeyid=" + detailKey;
         List<Object[]> result = new ArrayList<Object[]>();
         List<Object[]> resultTolDeduction = new ArrayList<Object[]>();
         try {
-            StringBuffer qry = new StringBuffer("select vh.name,sum(erd.remittedamt),er.month from eg_remittance_detail erd,")
-                    .append(" voucherheader vh1 right outer join eg_remittance er on vh1.id=er.paymentvhid,voucherheader vh,vouchermis mis,generalledger gl, ")
-                    .append(" generalledgerdetail gld,fund f,eg_remittance_gldtl ergl where erd.remittancegldtlid= ergl.id and erd.remittanceid=er.id ")
-                    .append(" and gl.glcodeid=:glCodeId and vh.id=mis.voucherheaderid and vh1.status=0 and ergl.gldtlid=gld.id and gl.id=gld.generalledgerid ")
-                    .append(" and gl.voucherheaderid=vh.id and er.fundid=f.id and f.id=:fundId and vh.status=0 and vh.voucherDate <= to_date(':asOnDate','dd/MM/yyyy') ")
-                    .append(" and vh.voucherDate >= to_date(':startingDate' , 'dd/MM/yyyy') ").append(deptQuery).append(partyNameQuery)
-                    .append(" group by er.month,vh.name order by er.month,vh.name");
+            StringBuffer qry = new StringBuffer("select vh.name,sum(erd.remittedamt),er.month")
+                    .append(" from eg_remittance_detail erd, voucherheader vh1 right outer join eg_remittance er on vh1.id=er.paymentvhid,voucherheader vh,vouchermis mis,")
+                    .append("generalledger gl, generalledgerdetail gld,fund f,eg_remittance_gldtl ergl")
+                    .append(" where erd.remittancegldtlid= ergl.id and erd.remittanceid=er.id and gl.glcodeid=:glCodeId and vh.id=mis.voucherheaderid and vh1.status=0")
+                    .append(" and ergl.gldtlid=gld.id and gl.id=gld.generalledgerid ")
+                    .append(" and gl.voucherheaderid=vh.id and er.fundid=f.id and f.id=:fundId and vh.status=0 and vh.voucherDate <= to_date(:asOnDate,'dd/MM/yyyy') ")
+                    .append(" and vh.voucherDate >= to_date(:startingDate, 'dd/MM/yyyy') ");
+            if (department.getId() != null && department.getId() != -1)
+                qry.append(" and mis.departmentid=:deptId");
+            if (detailKey != null && detailKey != -1)
+                qry.append(" and gld.detailkeyid=:detailKeyId");
+            qry.append(" group by er.month,vh.name order by er.month,vh.name");
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(qry.toString());
-            result = persistenceService.getSession().createNativeQuery(qry.toString())
-                    .setParameter("glCodeId",recovery.getChartofaccounts().getId())
-                    .setParameter("fundId",fund.getId())
-                    .setParameter("asOnDate",Constants.DDMMYYYYFORMAT2.format(asOnDate))
-                    .setParameter("startingDate",Constants.DDMMYYYYFORMAT2.format(financialYearDAO.getFinancialYearByDate(asOnDate).getStartingDate())).list();
+            Query nativeQuery = persistenceService.getSession().createNativeQuery(qry.toString())
+                    .setParameter("glCodeId", recovery.getChartofaccounts().getId(), LongType.INSTANCE)
+                    .setParameter("fundId", fund.getId(), LongType.INSTANCE)
+                    .setParameter("asOnDate", Constants.DDMMYYYYFORMAT2.format(asOnDate), StringType.INSTANCE)
+                    .setParameter("startingDate", Constants.DDMMYYYYFORMAT2.format(financialYearDAO.getFinancialYearByDate(asOnDate).getStartingDate()), StringType.INSTANCE);
+            if (department.getId() != null && department.getId() != -1)
+                nativeQuery.setParameter("deptId", department.getId(), LongType.INSTANCE);
+            if (detailKey != null && detailKey != -1)
+                nativeQuery.setParameter("detailKeyId", detailKey, IntegerType.INSTANCE);
+
+            result = nativeQuery.list();
             // Query to get total deduction
             StringBuffer qryTolDeduction = new StringBuffer("SELECT type,MONTH,SUM(gldtamt) FROM (SELECT DISTINCT er.month AS MONTH,ergl.gldtlamt AS gldtamt, ")
-                    .append(" ergl.gldtlid as gldtlid,vh.name AS type FROM eg_remittance_detail erd,voucherheader vh1 RIGHT OUTER JOIN eg_remittance er ON ")
+                    .append(" ergl.gldtlid as gldtlid,vh.name AS type")
+                    .append(" FROM eg_remittance_detail erd,voucherheader vh1 RIGHT OUTER JOIN eg_remittance er ON ")
                     .append(" vh1.id=er.paymentvhid,voucherheader vh,vouchermis mis,generalledger gl,generalledgerdetail gld,fund f,eg_remittance_gldtl ergl ")
                     .append(" WHERE erd.remittancegldtlid= ergl.id AND erd.remittanceid=er.id  AND gl.glcodeid =:glCodeId AND vh.id =mis.voucherheaderid ")
-                    .append(" AND vh1.status =0 AND f.id =:fundId AND vh.status =0 AND vh.voucherDate <= to_date(':asOnDate','dd/MM/yyyy' ) and ")
-                    .append(" vh.voucherDate >= to_date(':startingDate','dd/MM/yyyy') ").append(deptQuery).append(partyNameQuery)
-                    .append(" as temptable group by type,month");
+                    .append(" AND vh1.status =0 AND f.id =:fundId AND vh.status =0 AND vh.voucherDate <= to_date(:asOnDate,'dd/MM/yyyy' ) and ")
+                    .append(" vh.voucherDate >= to_date(:startingDate,'dd/MM/yyyy') ");
+            if (department.getId() != null && department.getId() != -1)
+                qryTolDeduction.append(" and mis.departmentid=:deptId");
+            if (detailKey != null && detailKey != -1)
+                qryTolDeduction.append(" and gld.detailkeyid=:detailKeyId");
+            qryTolDeduction.append(" as temptable group by type,month");
 
-            resultTolDeduction = persistenceService.getSession().createNativeQuery(qryTolDeduction.toString())
-                    .setParameter("glCodeId",recovery.getChartofaccounts().getId())
-                    .setParameter("fundId",fund.getId())
-                    .setParameter("asOnDate",Constants.DDMMYYYYFORMAT2.format(asOnDate))
-                    .setParameter("startingDate",Constants.DDMMYYYYFORMAT2.format(financialYearDAO.getFinancialYearByDate(asOnDate).getStartingDate())).list();
+            nativeQuery = persistenceService.getSession().createNativeQuery(qryTolDeduction.toString())
+                    .setParameter("glCodeId", recovery.getChartofaccounts().getId(), LongType.INSTANCE)
+                    .setParameter("fundId", fund.getId(), LongType.INSTANCE)
+                    .setParameter("asOnDate", Constants.DDMMYYYYFORMAT2.format(asOnDate), StringType.INSTANCE)
+                    .setParameter("startingDate", Constants.DDMMYYYYFORMAT2.format(financialYearDAO.getFinancialYearByDate(asOnDate).getStartingDate()), StringType.INSTANCE);
+            if (department.getId() != null && department.getId() != -1)
+                nativeQuery.setParameter("deptId", department.getId(), LongType.INSTANCE);
+            if (detailKey != null && detailKey != -1)
+                nativeQuery.setParameter("detailKeyId", detailKey, IntegerType.INSTANCE);
+            resultTolDeduction = nativeQuery.list();
         } catch (final ApplicationRuntimeException e) {
             message = e.getMessage();
             return;

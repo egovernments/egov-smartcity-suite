@@ -78,12 +78,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 
@@ -129,10 +124,11 @@ public class DepartmentwiseExpenditureReportAction extends BaseFormAction {
     @Override
     public void prepare() {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
         super.prepare();
         addDropdownData("fundDropDownList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
-        addDropdownData("financialYearList", getPersistenceService().findAllBy("from CFinancialYear where isActive=true and startingDate >='01-Apr-2010' order by finYearRange desc  "));
+        addDropdownData("financialYearList", getPersistenceService().findAllBy(
+                "from CFinancialYear where isActive=true and startingDate >='01-Apr-2010' order by finYearRange desc  "));
     }
 
     @Override

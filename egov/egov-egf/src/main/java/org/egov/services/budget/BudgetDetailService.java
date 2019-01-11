@@ -1538,7 +1538,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     public List<Object[]> fetchActualsForFYWithParams(final String fromDate, final String toVoucherDate,
-            final StringBuffer miscQuery) {
+            final String miscQuery, final Map<String, Object> miscQueryParams) {
         final List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,
                 "exclude_status_forbudget_actual");
         if (list.isEmpty())
@@ -1569,7 +1569,9 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + "vh.voucherDate>= to_date('" + fromDate + "','dd/MM/yyyy') and vh.voucherDate <= to_date("
                         + toVoucherDate + ",'dd/MM/yyyy') " + miscQuery
                         + " and (gl.glcode = bg.mincode  or gl.glcode=bg.majorcode ) group by bd.id");
-        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
+        final Query nativeQuery = getSession().createNativeQuery(query.toString());
+        miscQueryParams.entrySet().forEach(entry -> nativeQuery.setParameter(entry.getKey(), entry.getValue()));
+        final List<Object[]> result = nativeQuery.list();
 
         return result;
     }
@@ -1620,7 +1622,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
      * vouchers are uncancelled and BAN numbers are present for the bills and not vouchers
      */
     public List<Object[]> fetchActualsForBillWithVouchersParams(final String fromDate, final String toVoucherDate,
-            final StringBuffer miscQuery) {
+            final String miscQuery, final Map<String, Object> miscQueryParams) {
         StringBuffer query = new StringBuffer();
         query = query
                 .append("select bd.id as bud,SUM(case when bdetail.debitAmount is null then 0  else bdetail.debitAmount  end)   -SUM(case when bdetail.creditAmount is null then 0 else bdetail.creditAmount end)   as amt from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
@@ -1659,7 +1661,9 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" Main Query :" + query);
-        final List<Object[]> result = getSession().createNativeQuery(query.toString()).list();
+        final Query nativeQuery = getSession().createNativeQuery(query.toString());
+        miscQueryParams.entrySet().forEach(entry -> nativeQuery.setParameter(entry.getKey(), entry.getValue()));
+        final List<Object[]> result = nativeQuery.list();
         return result;
     }
 

@@ -126,7 +126,7 @@ public class BudgetProposalStatusReportAction extends BaseFormAction {
     public void prepare() {
         // persistenceService.getSession().setDefaultReadOnly(true);
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
         super.prepare();
     }
 
@@ -158,7 +158,8 @@ public class BudgetProposalStatusReportAction extends BaseFormAction {
             final BudgetProposalStatus budgetProposalStatus = new BudgetProposalStatus();
             budgetProposalStatus.setDepartment(dept);
             final BudgetDetail budgetDetail = (BudgetDetail) persistenceService
-                    .find("from BudgetDetail where budget.financialYear.id=?1 and executingDepartment=?2 and budget.isbere='RE' and budget.state.value<>'END' and budgetGroup.accountType=?3",
+                    .find(new StringBuilder("from BudgetDetail where budget.financialYear.id=?1 and executingDepartment=?2 and budget.isbere='RE'")
+                                    .append(" and budget.state.value<>'END' and budgetGroup.accountType=?3").toString(),
                             Long.valueOf(finYearId), dept, fundType + "_" + budgetType);
             if (budgetDetail != null && budgetDetail.getBudget() != null && budgetDetail.getBudget().getState() != null
                     && budgetDetail.getBudget().getState().getOwnerPosition() != null) {
@@ -201,7 +202,8 @@ public class BudgetProposalStatusReportAction extends BaseFormAction {
             final BudgetProposalStatus budgetProposalStatus = new BudgetProposalStatus();
             budgetProposalStatus.setFunction(func);
             final BudgetDetail budgetDetail = (BudgetDetail) persistenceService
-                    .find("from BudgetDetail where budget.financialYear.id=?1 and executingDepartment.id=?2 and budget.isbere='RE' and budget.state.value<>'END' and state.value<>'END' and function=?3 and budgetGroup.accountType=?4",
+                    .find(new StringBuilder("from BudgetDetail where budget.financialYear.id=?1 and executingDepartment.id=?2 and budget.isbere='RE'")
+                                    .append(" and budget.state.value<>'END' and state.value<>'END' and function=?3 and budgetGroup.accountType=?4").toString(),
                             Long.valueOf(finYearId), department.getId(), func, fundType + "_" + budgetType);
             if (budgetDetail != null && budgetDetail.getState() != null && budgetDetail.getState().getOwnerPosition() != null) {
                 final Assignment assignment = (Assignment) persistenceService.find(

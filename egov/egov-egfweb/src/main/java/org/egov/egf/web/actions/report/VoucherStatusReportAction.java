@@ -54,15 +54,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.CGeneralLedger;
-import org.egov.commons.CVoucherHeader;
-import org.egov.commons.EgModules;
-import org.egov.commons.Functionary;
-import org.egov.commons.Fund;
-import org.egov.commons.Fundsource;
-import org.egov.commons.Scheme;
-import org.egov.commons.SubScheme;
-import org.egov.commons.Vouchermis;
+import org.egov.commons.*;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.egf.model.VoucherReportView;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -88,13 +80,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -129,6 +115,7 @@ public class VoucherStatusReportAction extends BaseFormAction {
     private Integer pageSize = 30;
     private transient EgovPaginatedList pagedResults;
     private String countQry;
+    private List<Object> countParams;
     private String modeOfPayment;
     @Autowired
     private transient AppConfigValueService appConfigValueService;
@@ -246,7 +233,7 @@ public class VoucherStatusReportAction extends BaseFormAction {
         Long voucherHeaderId;
         String voucherOwner;
         final Query qry = voucherSearchQuery();
-        final Long count = (Long) persistenceService.find(countQry);
+        final Long count = (Long) persistenceService.find(countQry, countParams);
         final Page resPage = new Page(qry, page, pageSize);
         pagedResults = new EgovPaginatedList(resPage, count.intValue());
         final List<CVoucherHeader> list = pagedResults.getList();
@@ -280,9 +267,8 @@ public class VoucherStatusReportAction extends BaseFormAction {
         if (headerFields.contains(SCHEME))
             if (voucherHeader.getFundId() != null && voucherHeader.getFundId().getId() != -1) {
                 final StringBuilder st = new StringBuilder(50);
-                st.append("from Scheme where isactive=true and fund.id=");
-                st.append(voucherHeader.getFundId().getId());
-                dropdownData.put(SCHEME_LIST, persistenceService.findAllBy(st.toString()));
+                st.append("from Scheme where isactive=true and fund.id=?1");
+                dropdownData.put(SCHEME_LIST, persistenceService.findAllBy(st.toString(), voucherHeader.getFundId().getId()));
                 st.delete(0, st.length() - 1);
 
             } else
@@ -310,45 +296,75 @@ public class VoucherStatusReportAction extends BaseFormAction {
 
     private Query voucherSearchQuery() {
         StringBuilder sql = new StringBuilder(500);
-
+        int index = 1;
+        List<Object> params = new ArrayList<>();
         if (modeOfPayment.equals("-1"))
             sql.append(" from CVoucherHeader vh where ");
         else
             sql.append(" from CVoucherHeader vh,Paymentheader ph where vh.id = ph.voucherheader.id and");
 
-        if (voucherHeader.getFundId() != null && voucherHeader.getFundId().getId() != -1)
-            sql.append("  vh.fundId=").append(voucherHeader.getFundId().getId());
-
-        if (voucherHeader.getType() != null && !voucherHeader.getType().equals("-1"))
-            sql.append(" and vh.type='").append(voucherHeader.getType()).append('\'');
+        if (voucherHeader.getFundId() != null && voucherHeader.getFundId().getId() != -1) {
+            sql.append("  vh.fundId=?").append(index++);
+            params.add(voucherHeader.getFundId().getId());
+        }
+        if (voucherHeader.getType() != null && !voucherHeader.getType().equals("-1")) {
+            sql.append(" and vh.type=?").append(index++);
+            params.add(voucherHeader.getType());
+        }
         if (voucherHeader.getName() != null && !voucherHeader.getName().equalsIgnoreCase("-1")
-                && !voucherHeader.getName().equalsIgnoreCase("0"))
-            sql.append(" and vh.name='").append(voucherHeader.getName()).append('\'');
-        if (fromDate != null)
-            sql.append(" and vh.voucherDate>='").append(Constants.DDMMYYYYFORMAT1.format(fromDate)).append('\'');
-        if (toDate != null)
-            sql.append(" and vh.voucherDate<='").append(Constants.DDMMYYYYFORMAT1.format(toDate)).append('\'');
-        if (voucherHeader.getStatus() != -1)
-            sql.append(" and vh.status=").append(voucherHeader.getStatus());
+                && !voucherHeader.getName().equalsIgnoreCase("0")) {
+            sql.append(" and vh.name=?").append(index++);
+            params.add(voucherHeader.getName());
+        }
+        if (fromDate != null) {
+            sql.append(" and vh.voucherDate>=?").append(index++);
+            params.add(Constants.DDMMYYYYFORMAT1.format(fromDate));
+        }
+        if (toDate != null) {
+            sql.append(" and vh.voucherDate<=?").append(index++);
+            params.add(Constants.DDMMYYYYFORMAT1.format(toDate));
+        }
+        if (voucherHeader.getStatus() != -1) {
+            sql.append(" and vh.status=?").append(index++);
+            params.add(voucherHeader.getStatus());
 
+        }
         if (voucherHeader.getVouchermis().getDepartmentid() != null
-                && voucherHeader.getVouchermis().getDepartmentid().getId() != -1)
-            sql.append(" and vh.vouchermis.departmentid=").append(voucherHeader.getVouchermis().getDepartmentid().getId());
+                && voucherHeader.getVouchermis().getDepartmentid().getId() != -1) {
+            sql.append(" and vh.vouchermis.departmentid=?").append(index++);
+            params.add(voucherHeader.getVouchermis().getDepartmentid().getId());
+        }
 
-        if (voucherHeader.getVouchermis().getSchemeid() != null)
-            sql.append(" and vh.vouchermis.schemeid=").append(voucherHeader.getVouchermis().getSchemeid().getId());
-        if (voucherHeader.getVouchermis().getSubschemeid() != null)
-            sql.append(" and vh.vouchermis.subschemeid=").append(voucherHeader.getVouchermis().getSubschemeid().getId());
-        if (voucherHeader.getVouchermis().getFunctionary() != null)
-            sql.append(" and vh.vouchermis.functionary=").append(voucherHeader.getVouchermis().getFunctionary().getId());
-        if (voucherHeader.getVouchermis().getDivisionid() != null)
-            sql.append(" and vh.vouchermis.divisionid=").append(voucherHeader.getVouchermis().getDivisionid().getId());
-        if (!modeOfPayment.equals("-1"))
-            sql.append(" and upper(ph.type) ='").append(getModeOfPayment()).append('\'');
+        if (voucherHeader.getVouchermis().getSchemeid() != null) {
+            sql.append(" and vh.vouchermis.schemeid=?").append(index++);
+            params.add(voucherHeader.getVouchermis().getSchemeid().getId());
+        }
+        if (voucherHeader.getVouchermis().getSubschemeid() != null) {
+            sql.append(" and vh.vouchermis.subschemeid=?").append(index++);
+            params.add(voucherHeader.getVouchermis().getSubschemeid().getId());
+        }
+        if (voucherHeader.getVouchermis().getFunctionary() != null) {
+            sql.append(" and vh.vouchermis.functionary=?").append(index++);
+            params.add(voucherHeader.getVouchermis().getFunctionary().getId());
+        }
+        if (voucherHeader.getVouchermis().getDivisionid() != null) {
+            sql.append(" and vh.vouchermis.divisionid=?").append(index++);
+            params.add(voucherHeader.getVouchermis().getDivisionid().getId());
+        }
+        if (!modeOfPayment.equals("-1")) {
+            sql.append(" and upper(ph.type) =?").append(index++);
+            params.add(getModeOfPayment());
+        }
         countQry = "select count(*) " + sql;
-        return persistenceService.getSession()
+        countParams = params;
+        final Query query = persistenceService.getSession()
                 .createQuery(new StringBuilder().append("select vh ").append(sql)
                         .append(" order by vh.vouchermis.departmentid.name ,vh.voucherDate, vh.voucherNumber").toString());
+        index = 1;
+        for (Object param : params) {
+            query.setParameter(index++, param);
+        }
+        return query;
     }
 
     private String getVoucherModule(final Integer vchrModuleId) throws ApplicationException {

@@ -141,12 +141,12 @@ public class FunctionwiseIEAction extends ReportAction
     public void prepare()
     {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
         super.prepare();
         if (reportSearch.getStartDate() == null || reportSearch.getStartDate().equals(""))
             reportSearch.setStartDate(sdf.format(((CFinancialYear) persistenceService
-                    .find(" from CFinancialYear where startingDate <= '" + formatter.format(new Date()) + "' and endingDate >= '"
-                            + formatter.format(new Date()) + "'")).getStartingDate()));
+                    .find(" from CFinancialYear where startingDate <= ?1 and endingDate >= ?2",
+                            formatter.format(new Date()), formatter.format(new Date()))).getStartingDate()));
         if (reportSearch.getEndDate() == null || reportSearch.getEndDate().equals(""))
             reportSearch.setEndDate(sdf.format(new Date()));
         setTodayDate(new Date());

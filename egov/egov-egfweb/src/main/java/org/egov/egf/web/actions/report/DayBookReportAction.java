@@ -75,10 +75,7 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @ParentPackage("egov")
 @Results({
@@ -148,20 +145,23 @@ public class DayBookReportAction extends BaseFormAction {
         heading = getGLHeading();
         prepareNewForm();
 
-        persistenceService.getSession().setFlushMode(FlushMode.AUTO);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.AUTO);
         return "result";
     }
 
-    private String getQuery() {
-        /*final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
-        String startDate = "", endDate = "", fundId = "";
-        fundId = dayBookReport.getFundId();
+    private Map<String, Map<String, Object>> getQuery() {
+        final Map<String, Map<String, Object>> queryMap = new HashMap<>();
+        final Map<String, Object> params = new HashMap<>();
+        final String fundId = dayBookReport.getFundId();
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+        String startDate = null;
+        String endDate = null;
         try {
             startDate = sdf.format(formatter.parse(dayBookReport.getStartDate()));
             endDate = sdf.format(formatter.parse(dayBookReport.getEndDate()));
         } catch (ParseException e) {
 
-        }*/
+        }
         StringBuilder query = new StringBuilder("SELECT voucherdate as vdate, TO_CHAR(voucherdate, 'dd-Mon-yyyy')  AS  voucherdate, vouchernumber as vouchernumber ,")
                             .append(" gd.glcode AS glcode,ca.name AS particulars ,vh.name ||' - '|| vh.TYPE AS type, ")
                             .append(" CASE WHEN vh.description is null THEN ' ' ELSE vh.description END AS narration, ")
@@ -169,27 +169,21 @@ public class DayBookReportAction extends BaseFormAction {
                             .append(" case WHEN status=2 THEN 'Reversal' else ' ' END) END ) END as status , debitamount  , ")
                             .append(" creditamount,vh.CGVN ,vh.isconfirmed as \"isconfirmed\",vh.id as vhId FROM voucherheader vh, generalledger gd, ")
                             .append(" chartofaccounts ca WHERE vh.ID=gd.VOUCHERHEADERID ")
-                            .append(" AND ca.GLCODE=gd.GLCODE AND voucherdate >=':startDate' ")
-                            .append(" and voucherdate <= ':endDate' ")
+                .append(" AND ca.GLCODE=gd.GLCODE AND voucherdate >=:startDate ")
+                .append(" and voucherdate <= :endDate ")
                             .append(" and vh.status not in (4,5)  and vh.fundid =:fundId ")
                             .append(" ORDER BY vdate,vouchernumber");
-
-        return query.toString();
+        params.put("startDate", startDate);
+        params.put("endDate", endDate);
+        params.put("fundId", fundId);
+        queryMap.put(query.toString(), params);
+        return queryMap;
     }
 
     private void prepareResultList() {
-        final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
-        String startDate = "", endDate = "", fundId = "";
-        fundId = dayBookReport.getFundId();
-        try {
-            startDate = sdf.format(formatter.parse(dayBookReport.getStartDate()));
-            endDate = sdf.format(formatter.parse(dayBookReport.getEndDate()));
-        } catch (ParseException e) {
-
-        }
         String voucherDate = "", voucherNumber = "", voucherType = "", narration = "", status = "";
-        Query query = null;
-        query = persistenceService.getSession().createNativeQuery(getQuery())
+        final Map.Entry<String, Map<String, Object>> queryMapEntry = getQuery().entrySet().iterator().next();
+        final Query query = persistenceService.getSession().createNativeQuery(queryMapEntry.getKey())
                 .addScalar("voucherdate", StringType.INSTANCE)
                 .addScalar("vouchernumber", StringType.INSTANCE)
                 .addScalar("glcode", StringType.INSTANCE)
@@ -201,10 +195,7 @@ public class DayBookReportAction extends BaseFormAction {
                 .addScalar("debitamount", StringType.INSTANCE)
                 .addScalar("vhId", StringType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(DayBook.class));
-
-        query.setParameter("startDate",startDate,StringType.INSTANCE)
-                .setParameter("endDate",endDate,StringType.INSTANCE)
-                .setParameter("fundId",fundId,StringType.INSTANCE);
+        queryMapEntry.getValue().entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
         dayBookDisplayList = query.list();
         for (DayBook bean : dayBookDisplayList) {
             bean.setDebitamount(new BigDecimal(bean.getDebitamount()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());

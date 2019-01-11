@@ -130,7 +130,7 @@ public class DishonoredChequeReportAction extends BaseFormAction {
     public String ajaxSearch() throws TaskFailedException {
 
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("DishonoredChequeAction | Search | start");
         try {
