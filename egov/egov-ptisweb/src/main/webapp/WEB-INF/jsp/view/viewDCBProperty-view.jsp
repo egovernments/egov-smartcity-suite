@@ -79,7 +79,13 @@
 				+ 'propertyId=<s:property value="%{basicProperty.upicNo}"/>',
 				'_blank', 'width=650, height=500, scrollbars=yes', false);
 	}
-
+	
+	function openShowCollections(){
+		window.open('../view/viewDCBProperty-legacyDemand.action?'
+				+ 'propertyId=<s:property value="%{basicProperty.upicNo}"/>',
+				'_blank', 'width=650, height=600, scrollbars=yes', false);
+	}
+	
 	function switchPayTaxButton(ensureCheckbox) {
 		var buttonPayTax = document.getElementById('PayTax');
 
@@ -621,8 +627,12 @@
 														value="Show Old Receipts" class="buttonsubmit"
 														onclick="openShowReceipts();" />
 												</s:if>
+												
 												<s:else></s:else>
 											</s:if>
+											<input type="button" name="button5" id="button5"
+														value="Show Old Collections" class="buttonsubmit"
+														onclick="openShowCollections();" />
 										</div>
 									</td>
 								</tr>
