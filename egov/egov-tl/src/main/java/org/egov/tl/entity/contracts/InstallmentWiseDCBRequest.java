@@ -51,6 +51,8 @@ package org.egov.tl.entity.contracts;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.web.support.search.DataTableSearchRequest;
 
+import java.util.List;
+
 public class InstallmentWiseDCBRequest extends DataTableSearchRequest {
 
     private String licenseNumber;
@@ -60,6 +62,8 @@ public class InstallmentWiseDCBRequest extends DataTableSearchRequest {
     private ReportFormat printFormat;
 
     private Integer activeLicense = Integer.valueOf(0);
+
+    private List<Long> wardId;
 
     public String getLicenseNumber() {
         return licenseNumber;
@@ -94,4 +98,11 @@ public class InstallmentWiseDCBRequest extends DataTableSearchRequest {
         this.activeLicense = activeLicense;
     }
 
+    public List<Long> getWardId() {
+        return wardId;
+    }
+
+    public void setWardId(List<Long> wardId) {
+        this.wardId = wardId;
+    }
 }

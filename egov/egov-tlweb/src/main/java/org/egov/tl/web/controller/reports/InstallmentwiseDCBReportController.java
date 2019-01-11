@@ -48,6 +48,7 @@
 
 package org.egov.tl.web.controller.reports;
 
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.reporting.engine.ReportDisposition;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.web.support.ui.DataTable;
@@ -69,6 +70,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import static org.egov.infra.utils.StringUtils.appendTimestamp;
 import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
+import static org.egov.tl.utils.Constants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.tl.utils.Constants.REVENUE_WARD;
 
 @Controller
 @RequestMapping("/report/dcb/yearwise")
@@ -77,7 +80,10 @@ public class InstallmentwiseDCBReportController {
     @Autowired
     private InstallmentwiseDCBReportService installmentWiseDCBService;
 
-    @ModelAttribute
+    @Autowired
+    private BoundaryService boundaryService;
+
+    @ModelAttribute("installmentWiseDCBForm")
     public InstallmentWiseDCB installmentWiseDCBForm() {
         return new InstallmentWiseDCB();
     }
@@ -85,6 +91,8 @@ public class InstallmentwiseDCBReportController {
     @GetMapping("/search")
     public String search(Model model) {
         model.addAttribute("financialYears", installmentWiseDCBService.getFinancialYears());
+        model.addAttribute("revenueWards", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD,
+                REVENUE_HIERARCHY_TYPE));
         return "yearwiseDCBReport-search";
     }
 
