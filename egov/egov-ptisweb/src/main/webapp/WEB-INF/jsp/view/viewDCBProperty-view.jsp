@@ -626,13 +626,13 @@
 													<input type="button" name="button4" id="button4"
 														value="Show Old Receipts" class="buttonsubmit"
 														onclick="openShowReceipts();" />
+														<input type="button" name="button5" id="button5"
+														value="Show Old Demand" class="buttonsubmit"
+														onclick="openShowCollections();" />
 												</s:if>
 												
-												<s:else></s:else>
 											</s:if>
-											<input type="button" name="button5" id="button5"
-														value="Show Old Collections" class="buttonsubmit"
-														onclick="openShowCollections();" />
+											
 										</div>
 									</td>
 								</tr>
