@@ -178,7 +178,7 @@ public class AadharSeedingService extends GenericWorkFlowController {
                 .append("where mv.latitude is not null and mv.longitude is not null and mv.sitalArea > 10 and mv.basicPropertyID not in")
                 .append("(select basicPropertyID from PropertyMaterlizeView where usage <>'VACANTLAND' and totalBuiltUpArea <= 0) ")
                 .append("and mv.basicPropertyID in(select p.basicProperty from PropertyImpl p where ")
-                .append("p.propertyDetail.structure=false and p.status in('A','I') and p.id not in(select m.basicProperty.property from PropertyMutation m ")
+                .append("p.propertyDetail.structure=false and p.status in('A','I') and p.basicProperty not in(select m.basicProperty from PropertyMutation m ")
                 .append("where m.state.status <> 2) and p.basicProperty not in(select psv.referenceBasicProperty from PropertyStatusValues psv ")
                 .append("where psv.referenceBasicProperty is not null and psv.referenceBasicProperty.underWorkflow = true)) and ")
                 .append("mv.basicPropertyID not in(select basicProperty from AadharSeeding where status <> 'CANCELED') and mv.locality not in(select id from")
