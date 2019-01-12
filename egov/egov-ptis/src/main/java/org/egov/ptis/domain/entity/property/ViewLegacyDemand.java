@@ -1,3 +1,4 @@
+
 /*
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
@@ -45,17 +46,68 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.tl.repository;
+package org.egov.ptis.domain.entity.property;
 
-import org.egov.tl.entity.DemandGenerationLogDetail;
-import org.egov.tl.entity.enums.ProcessStatus;
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.io.Serializable;
+import java.math.BigDecimal;
 
-import java.util.List;
+// @SuppressWarnings("serial")
+public abstract class ViewLegacyDemand implements Serializable {
 
-public interface DemandGenerationLogDetailRepository extends JpaRepository<DemandGenerationLogDetail, Long> {
+	private static final long serialVersionUID = 5488717224503418632L;
+	protected String year;
+	protected BigDecimal arrearPenalty;
+	protected String propertyId;
+	protected BigDecimal currentTax;
+	protected BigDecimal arrearTax;
+	protected BigDecimal totalTax;
 
-    DemandGenerationLogDetail findByDemandGenerationLogIdAndLicenseId(Long logId, Long licenseId);
+	public void setPropertyId(String propertyId) {
+		this.propertyId = propertyId;
+	}
 
-    List<DemandGenerationLogDetail> findByLicenseIdAndStatus(Long licenseId, ProcessStatus status);
+	public BigDecimal getArrearTax() {
+		return arrearTax;
+	}
+
+	public void setArrearTax(BigDecimal arrearTax) {
+		this.arrearTax = arrearTax;
+	}
+
+	public BigDecimal getCurrentTax() {
+		return currentTax;
+	}
+
+	public BigDecimal getArrearPenalty() {
+		return arrearPenalty;
+	}
+
+	public String getYear() {
+		return year;
+	}
+
+	public String getPropertyId() {
+		return propertyId;
+	}
+
+	public void setCurrentTax(BigDecimal currentTax) {
+		this.currentTax = currentTax;
+	}
+
+	public void setArrearPenalty(BigDecimal arrearPenalty) {
+		this.arrearPenalty = arrearPenalty;
+	}
+
+	public void setYear(String year) {
+		this.year = year;
+	}
+
+	public BigDecimal getTotalTax() {
+		return totalTax;
+	}
+
+	public void setTotalTax(BigDecimal totalTax) {
+		this.totalTax = totalTax;
+	}
+
 }

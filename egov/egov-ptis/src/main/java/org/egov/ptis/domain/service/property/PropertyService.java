@@ -2348,6 +2348,12 @@ public class PropertyService {
                 errorMsg = "error.parent.not.bifurcated";
         }
         /**
+         * Reason For Modification is Transfer
+         */
+        else if (PROP_MUTATION_RSN.equalsIgnoreCase(reason) && childrenCreated && !parentBifurcated) {
+           errorMsg = "error.parent.not.bifurcated";
+        }
+        /**
          * Reason For Creation is Bifurcation of Assessment
          */
         else if (PROP_CREATE_RSN_BIFUR.equals(reason))

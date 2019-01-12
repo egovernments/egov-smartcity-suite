@@ -52,7 +52,54 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<script type="text/javascript">
+function fieldValidation(){
+		var percentage = document.getElementById("percentage");
+		var flatAmount = document.getElementById("flatAmount");
+		var highLimit =  document.getElementById("highLimit");
+		var recursiveFactor = document.getElementById("recursiveFactor");
+		var recursiveAmount = document.getElementById("recursiveAmount");		
+		
+		//percentage
+		if (percentage.value != "" || percentage.value.length > 0) {
+			jQuery('#flatAmount').val("").attr('disabled','disabled');
+			jQuery('#recursiveFactor').val("").attr('disabled','disabled');
+			jQuery('#recursiveAmount').val("").attr('disabled','disabled');
+			jQuery('input:radio[name=isRecursive]').val("")
+			.attr('disabled', 'disabled');
+		}else{
+			jQuery('#flatAmount').removeAttr('disabled');
+		}
+		
+		//flatamount validation
+		 if (flatAmount.value != "" || flatAmount.value.length > 0)
+			 jQuery('#percentage').val("").attr('disabled', 'disabled');
+			
+		if (highLimit.value != "" || highLimit.value.length > 0) {
+			jQuery('input:radio[name=isRecursive]').val("")
+					.attr('disabled', 'disabled');
+			jQuery('#recursiveFactor').val("").attr('disabled','disabled');
+			jQuery('#recursiveAmount').val("").attr('disabled','disabled');
+		}
+		
+		if (recursiveFactor.value != "" || recursiveFactor.value.length > 0) {
+			jQuery('#highLimit').val("").attr('disabled', 'disabled');
 
+		}
+		
+		if (recursiveAmount.value != "" || recursiveAmount.value.length > 0) {
+			jQuery('#highLimit').val("").attr('disabled', 'disabled');
+
+		}
+		if(percentage.value =="" && (highLimit.value != ""||highLimit.value.length > 0)) 
+	{
+			jQuery('#recursiveFactor').val("").attr('disabled','disabled');
+			jQuery('#recursiveAmount').val("").attr('disabled','disabled');
+	}
+	}
+
+</script>
+<body onload="fieldValidation();">
 <div class="row" id="page-content">
 	<div class="col-md-12">
 		<form:form mothod="post" class="form-horizontal form-groups-bordered"
@@ -189,6 +236,7 @@
 		</form:form>
 	</div>
 </div>
+</body>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/js/app/mutationfee.js?rnd=${app_release_no}'/>"></script>
 

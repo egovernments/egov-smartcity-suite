@@ -98,8 +98,10 @@ import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyReceipt;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import org.egov.ptis.domain.entity.property.ViewLegacyDemand;
 import org.egov.ptis.exceptions.PropertyNotFoundException;
 import org.hibernate.Session;
+import org.egov.ptis.service.DemandBill.DemandBillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
@@ -107,8 +109,9 @@ import org.springframework.context.ApplicationContext;
 @ParentPackage("egov")
 @Results({ @Result(name = ViewDCBPropertyAction.VIEW, location = "viewDCBProperty-view.jsp"),
         @Result(name = ViewDCBPropertyAction.HEADWISE_DCB, location = "viewDCBProperty-headwiseDcb.jsp"),
-        @Result(name = ViewDCBPropertyAction.RESULT_MIGDATA, location = "viewDCBProperty-viewMigData.jsp") })
-public class ViewDCBPropertyAction extends BaseFormAction {
+        @Result(name = ViewDCBPropertyAction.RESULT_MIGDATA, location = "viewDCBProperty-viewMigData.jsp"),
+        @Result(name = ViewDCBPropertyAction.LEGACY_DEMAND, location = "viewDCBProperty-legacyDemand.jsp")})
+       public class ViewDCBPropertyAction extends BaseFormAction {
     public static final String HEADWISE_DCB = "headwiseDcb";
     public static final String VIEW = "view";
     public static final String RESULT_MIGDATA = "viewMigData";
@@ -132,6 +135,9 @@ public class ViewDCBPropertyAction extends BaseFormAction {
     private String serviceCode;
     private Map<String, Object> viewMap;
     private String searchUrl;
+    private List<ViewLegacyDemand> demandList = new ArrayList<ViewLegacyDemand>();
+    private ViewLegacyDemand viewLegacyDemand;
+    public static final String LEGACY_DEMAND = "legacyDemand";
 
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
@@ -147,6 +153,9 @@ public class ViewDCBPropertyAction extends BaseFormAction {
     private PropertyTaxUtil propertyTaxUtil;
     @PersistenceContext
     EntityManager entityManager;
+
+    @Autowired
+    private DemandBillService demandBillService;
 
     public ViewDCBPropertyAction() {
     }
@@ -372,6 +381,13 @@ public class ViewDCBPropertyAction extends BaseFormAction {
         return RESULT_MIGDATA;
     }
 
+
+   @Action(value = "/view/viewDCBProperty-legacyDemand")
+    public String getOldDemandData() {
+	   setDemandList(demandBillService.getOldDemandData(basicProperty.getUpicNo()));
+       return LEGACY_DEMAND;
+		}
+
     private void populateMutationReceipts() {
         Receipt receipt = null;
         for (PropertyMutation propMutation : basicProperty.getPropertyMutations()) {
@@ -385,6 +401,7 @@ public class ViewDCBPropertyAction extends BaseFormAction {
             }
         }
     }
+
 
     public String getPropertyId() {
         return propertyId;
@@ -537,5 +554,15 @@ public class ViewDCBPropertyAction extends BaseFormAction {
     public void setSearchUrl(String searchUrl) {
         this.searchUrl = searchUrl;
     }
+
+	public List<ViewLegacyDemand> getDemandList() {
+		return demandList;
+	}
+
+	public void setDemandList(List<ViewLegacyDemand> demandList) {
+		this.demandList = demandList;
+	}
+
+
 
 }

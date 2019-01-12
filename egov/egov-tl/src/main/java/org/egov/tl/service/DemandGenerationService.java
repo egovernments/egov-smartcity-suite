@@ -74,6 +74,7 @@ import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import static org.egov.infra.persistence.utils.PersistenceUtils.flushBatchUpdate;
 import static org.egov.tl.entity.enums.ProcessStatus.COMPLETED;
@@ -120,23 +121,23 @@ public class DemandGenerationService {
     public DemandGenerationLog getDemandGenerationLog(CFinancialYear financialYear) {
         DemandGenerationLog demandGenerationLog = demandGenerationLogService
                 .getDemandGenerationLogByInstallmentYear(financialYear.getFinYearRange());
-        if (demandGenerationLog == null)
-            demandGenerationLog = createDemandGenerationLog(financialYear);
+        if (demandGenerationLog == null) {
+            DemandGenerationLog previousDemandGenLog = demandGenerationLogService
+                    .getPreviousInstallmentDemandGenerationLog(financialYear.getFinYearRange());
+            if (previousDemandGenLog != null && previousDemandGenLog.getDemandGenerationStatus().equals(INCOMPLETE))
+                demandGenerationLog = previousDemandGenLog;
+            else
+                demandGenerationLog = createDemandGenerationLog(financialYear);
+        }
         return demandGenerationLog;
     }
 
     @Transactional
     public DemandGenerationLog createDemandGenerationLog(CFinancialYear financialYear) {
-        DemandGenerationLog previousDemandGenLog = demandGenerationLogService
-                .getPreviousInstallmentDemandGenerationLog(financialYear.getFinYearRange());
-        if (previousDemandGenLog != null && previousDemandGenLog.getDemandGenerationStatus().equals(INCOMPLETE))
-            throw new ApplicationValidationException("TL-008");
-
         if (!installmentYearValidForDemandGeneration(financialYear))
             throw new ApplicationValidationException("TL-006");
 
         return demandGenerationLogService.createDemandGenerationLog(financialYear.getFinYearRange());
-
     }
 
     @Transactional
@@ -166,6 +167,7 @@ public class DemandGenerationService {
                         renewalNotificationService.notifyLicenseRenewal(license, installment);
                     }
                     demandGenerationLogDetail.setStatus(COMPLETED);
+                    demandGenerationLogService.completeDemandGenerationLogDetail(demandGenerationLogDetail);
                 } catch (RuntimeException e) {
                     LOGGER.warn(ERROR_MSG, license.getLicenseNumber(), e);
                     demandGenerationLogService.updateDemandGenerationLogDetailOnException(demandGenerationLog, demandGenerationLogDetail, e);
@@ -179,19 +181,34 @@ public class DemandGenerationService {
     }
 
     @Transactional
-    public boolean generateLicenseDemand(Long licenseId) {
+    public boolean generateLicenseDemand(Long licenseId, boolean forPrevYear) {
         boolean generationSuccess = true;
         try {
             TradeLicense license = licenseService.getLicenseById(licenseId);
             Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(licenseUtils.getModule(),
-                    new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate());
+                    forPrevYear ? new DateTime(license.getDemand().getEgInstallmentMaster().getToDate()).plusDays(1).toDate()
+                            : new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate());
             licenseService.raiseDemand(license.getId(), licenseUtils.getModule(), installment);
+            markDemandGenerationLogAsCompleted(license, SUCCESSFUL);
             renewalNotificationService.notifyLicenseRenewal(license, installment);
         } catch (ValidationException e) {
             LOGGER.warn(ERROR_MSG, e);
             generationSuccess = false;
         }
         return generationSuccess;
+    }
+
+    @Transactional
+    public void markDemandGenerationLogAsCompleted(TradeLicense license, String details) {
+        Optional<DemandGenerationLogDetail> demandGenerationLogDetail = demandGenerationLogService
+                .getIncompleteLogDetailsByLicenseId(license.getId());
+        if (demandGenerationLogDetail.isPresent()) {
+            DemandGenerationLogDetail logDetail = demandGenerationLogDetail.get();
+            logDetail.setStatus(COMPLETED);
+            logDetail.setDetail(details);
+            demandGenerationLogService.completeDemandGenerationLogDetail(logDetail);
+            demandGenerationLogService.completeDemandGenerationLog(logDetail.getDemandGenerationLog());
+        }
     }
 
     private boolean installmentYearValidForDemandGeneration(CFinancialYear installmentYear) {

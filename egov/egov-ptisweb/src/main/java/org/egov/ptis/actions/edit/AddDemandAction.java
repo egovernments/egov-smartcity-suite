@@ -362,8 +362,8 @@ public class AddDemandAction extends BaseFormAction {
             qry.setParameter(INSTALLMENT2, propertyTaxCommonUtils.getCurrentInstallment());
             demandDetails = qry.getResultList();
             if (!demandDetails.isEmpty())
-                Collections.sort(demandDetails, (o1, o2) -> o1.getEgDemandReason().getEgInstallmentMaster()
-                        .compareTo(o2.getEgDemandReason().getEgInstallmentMaster()));
+                Collections.sort(demandDetails, (o1, o2) -> o2.getEgDemandReason().getEgInstallmentMaster()
+                        .compareTo(o1.getEgDemandReason().getEgInstallmentMaster()));
 
             final PropertyTaxBillable billable = new PropertyTaxBillable();
             billable.setBasicProperty(basicProperty);

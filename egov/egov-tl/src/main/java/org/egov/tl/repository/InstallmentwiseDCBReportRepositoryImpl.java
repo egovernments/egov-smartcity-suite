@@ -254,7 +254,8 @@ public class InstallmentwiseDCBReportRepositoryImpl implements InstallmentwiseDC
             predicates.add(criteriaBuilder.equal(root.get(LICENSENUMBER), installmentWiseDCBRequest.getLicenseNumber()));
         if (installmentWiseDCBRequest.getActiveLicense() > 0)
             predicates.add(criteriaBuilder.equal(root.get(ACTIVE), installmentWiseDCBRequest.getActiveLicense() == 1));
-
+        if (installmentWiseDCBRequest.getWardId() != null && !installmentWiseDCBRequest.getWardId().isEmpty())
+            predicates.add(root.get("wardId").in(installmentWiseDCBRequest.getWardId()));
         predicates.add(criteriaBuilder.or(criteriaBuilder.equal(root.get(INSTALLMENT), financialYearStartDate),
                 criteriaBuilder.lessThan(root.get(INSTALLMENT), financialYearStartDate)));
         return predicates;

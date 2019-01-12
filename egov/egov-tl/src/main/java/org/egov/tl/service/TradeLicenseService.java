@@ -48,7 +48,6 @@
 
 package org.egov.tl.service;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -431,7 +430,7 @@ public class TradeLicenseService {
             EgDemandReason demandReason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
                     demandGenericDao.getDemandReasonMasterByCode(feeType, module), installment, module);
             if (demandReason == null)
-                throw new ValidationException("TL-007", "Demand demandReason missing for " + feeType, true);
+                throw new ValidationException("TL-007", "Demand Reason missing for " + feeType, true);
             EgDemandDetails licenseDemandDetail = reasonWiseDemandDetails.get(demandReason);
             BigDecimal tradeAmt = calculateFeeByRateType(license, feeMatrixDetail);
             if (licenseDemandDetail == null)
@@ -683,9 +682,9 @@ public class TradeLicenseService {
     public void save(TradeLicense license) {
         List<ValidationError> errors = entityValidatorUtil.validateEntity(license);
         if (errors.isEmpty()) {
-            updateDemandForTradeAreaChange(license);
-            processAndStoreDocument(license);
-            licenseRepository.save(license);
+        updateDemandForTradeAreaChange(license);
+        processAndStoreDocument(license);
+        licenseRepository.save(license);
         } else {
             throw new ValidationException(errors);
         }
@@ -892,8 +891,8 @@ public class TradeLicenseService {
     @ReadOnly
     public List<DemandNoticeRequest> getLicenseDemandNotices(DemandNoticeRequest demandNoticeRequest) {
         Criteria searchCriteria = entityManager.unwrap(Session.class).createCriteria(TradeLicense.class);
-        searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat").createAlias("tradeName", "subcat")
-                .createAlias("status", "licstatus").createAlias("natureOfBusiness", "nob")
+        searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat")
+                .createAlias("tradeName", "subcat").createAlias("natureOfBusiness", "nob")
                 .createAlias("demand", "licDemand").createAlias("licenseAppType", "appType")
                 .add(Restrictions.ne("appType.code", CLOSURE_APPTYPE_CODE));
         if (isNotBlank(demandNoticeRequest.getLicenseNumber()))
@@ -914,10 +913,6 @@ public class TradeLicenseService {
         if (demandNoticeRequest.getLocalityId() != null)
             searchCriteria.createAlias("boundary", "locality")
                     .add(Restrictions.eq("locality.id", demandNoticeRequest.getLocalityId()));
-        if (demandNoticeRequest.getStatusId() == null)
-            searchCriteria.add(Restrictions.ne("licstatus.statusCode", StringUtils.upperCase("CAN")));
-        else
-            searchCriteria.add(Restrictions.eq("status.id", demandNoticeRequest.getStatusId()));
         searchCriteria
                 .add(Restrictions.eq("isActive", true))
                 .add(Restrictions.eq("nob.name", PERMANENT_NATUREOFBUSINESS))
