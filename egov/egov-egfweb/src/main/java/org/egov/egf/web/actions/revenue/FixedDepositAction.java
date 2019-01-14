@@ -70,11 +70,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Results(value = {
@@ -160,17 +156,24 @@ public class FixedDepositAction extends BaseFormAction {
     public String search() {
         final StringBuffer query = new StringBuffer();
         query.append("From FixedDeposit ");
-        if (fromDate != null && toDate != null)
-            query.append("where date >='" + sdf.format(fromDate) + "' and date <='" + sdf.format(toDate) + "'");
-        else if (fromDate == null && toDate == null)
+        final List<Object> params = new ArrayList<>();
+        int index = 1;
+        if (fromDate != null && toDate != null) {
+            query.append("where date >=?").append(index++).append(" and date <=?").append(index++);
+            params.add(sdf.format(fromDate));
+            params.add(sdf.format(toDate));
+        } else if (fromDate == null && toDate == null) {
             query.append("where date<= CURRENT_DATE");
-        else if (fromDate != null)
-            query.append("where date>='" + sdf.format(fromDate) + "'");
-        else
-            query.append("where date<='" + sdf.format(toDate) + "'");
+        } else if (fromDate != null) {
+            query.append("where date>=?").append(index++);
+            params.add(sdf.format(fromDate));
+        } else {
+            query.append("where date<=?").append(index++);
+            params.add(sdf.format(toDate));
+        }
         query.append("  order by id");
 
-        fixedDepositList = persistenceService.findAllBy(query.toString());
+        fixedDepositList = persistenceService.findAllBy(query.toString(), params);
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Fixed deposit size= " + fixedDepositList.size());
 

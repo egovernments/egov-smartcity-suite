@@ -79,12 +79,7 @@ import org.egov.utils.VoucherHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @ParentPackage("egov")
 @Results({ @Result(name = JournalVoucherAction.NEW, location = "billVoucher-new.jsp") })
@@ -145,24 +140,32 @@ public class BillVoucherAction extends BaseVoucherAction {
         final StringBuffer query = new StringBuffer(300);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Expenditure Type selected :=" + expType);
-
+        int index = 1;
+        final List<Object> params = new ArrayList<>();
         try {
             final String statusid = getApprovalStatusForBills();
-            query.append("from EgBillregister br where br.status.id in(")
-                    .append(statusid)
-                    .append(")and ( br.egBillregistermis.voucherHeader is null or br.egBillregistermis.voucherHeader in (from CVoucherHeader vh where vh.status =?1 ))");
-            if (null != billNumber && StringUtils.isNotEmpty(billNumber))
-                query.append(" and br.billnumber='").append(billNumber).append("'");
-            if (null != voucherHeader.getVouchermis().getDepartmentid())
-                query.append(" and br.egBillregistermis.egDepartment.id=").append(
-                        voucherHeader.getVouchermis().getDepartmentid().getId());
-            if (null != voucherTypeBean.getVoucherDateFrom() && StringUtils.isNotEmpty(voucherTypeBean.getVoucherDateFrom()))
-                query.append(" and br.billdate>='").append(Constants.DDMMYYYYFORMAT1.format(Constants.DDMMYYYYFORMAT2.
-                        parse(voucherTypeBean.getVoucherDateFrom()))).append("'");
-            if (null != voucherTypeBean.getVoucherDateTo() && StringUtils.isNotEmpty(voucherTypeBean.getVoucherDateTo()))
-                query.append(" and br.billdate<='").append(Constants.DDMMYYYYFORMAT1.format(Constants.DDMMYYYYFORMAT2.
-                        parse(voucherTypeBean.getVoucherDateTo()))).append("'");
-            preApprovedVoucherList = persistenceService.findAllBy(query.toString(), 4);
+            query.append("from EgBillregister br where br.status.id in(?)").append(index++)
+                    .append(" and ( br.egBillregistermis.voucherHeader is null or br.egBillregistermis.voucherHeader in (from CVoucherHeader vh where vh.status =?")
+                    .append(index++).append(" ))");
+            params.add(statusid);
+            params.add(4);
+            if (null != billNumber && StringUtils.isNotEmpty(billNumber)) {
+                query.append(" and br.billnumber=?").append(index++);
+                params.add(billNumber);
+            }
+            if (null != voucherHeader.getVouchermis().getDepartmentid()) {
+                query.append(" and br.egBillregistermis.egDepartment.id=?").append(index++);
+                params.add(voucherHeader.getVouchermis().getDepartmentid().getId());
+            }
+            if (null != voucherTypeBean.getVoucherDateFrom() && StringUtils.isNotEmpty(voucherTypeBean.getVoucherDateFrom())) {
+                query.append(" and br.billdate>=?").append(index++);
+                params.add(Constants.DDMMYYYYFORMAT1.format(Constants.DDMMYYYYFORMAT2.parse(voucherTypeBean.getVoucherDateFrom())));
+            }
+            if (null != voucherTypeBean.getVoucherDateTo() && StringUtils.isNotEmpty(voucherTypeBean.getVoucherDateTo())) {
+                query.append(" and br.billdate<=?").append(index++);
+                params.add(Constants.DDMMYYYYFORMAT1.format(Constants.DDMMYYYYFORMAT2.parse(voucherTypeBean.getVoucherDateTo())));
+            }
+            preApprovedVoucherList = persistenceService.findAllBy(query.toString(), params);
             if(preApprovedVoucherList.size()==0)
             {
             	addActionError("No records found.");

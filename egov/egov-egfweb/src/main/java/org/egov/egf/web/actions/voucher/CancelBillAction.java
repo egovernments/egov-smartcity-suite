@@ -66,16 +66,15 @@ import org.egov.services.bills.BillsService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.query.NativeQuery;
+import org.hibernate.query.Query;
+import org.hibernate.type.LongType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Results({ @Result(name = "search", location = "cancelBill-search.jsp") })
 public class CancelBillAction extends BaseFormAction {
@@ -168,9 +167,7 @@ public class CancelBillAction extends BaseFormAction {
                 "expenditureList",
                 persistenceService
                         .findAllBy(
-                                "select distinct bill.expendituretype from EgBillregister bill where bill.expendituretype like '"
-                                        + FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT
-                                        + "'   order by bill.expendituretype"));
+                                "select distinct bill.expendituretype from EgBillregister bill where bill.expendituretype like ?1 order by bill.expendituretype"));
     }
 
     public void prepareBeforeSearch() {
@@ -188,30 +185,37 @@ public class CancelBillAction extends BaseFormAction {
         return "search";
     }
 
-    public StringBuilder filterQuery() {
+    public Map<String, Map<String, Object>> filterQuery() {
+        final Map<String, Map<String, Object>> queryMap = new HashMap<>();
+        final Map<String, Object> params = new HashMap<>();
         final String userCond = " where ";
         final StringBuilder query = new StringBuilder(
-                " select billmis.egBillregister.id, billmis.egBillregister.billnumber, billmis.egBillregister.billdate, billmis.egBillregister.billamount, billmis.egDepartment.name  from EgBillregistermis billmis ");
+                " select billmis.egBillregister.id, billmis.egBillregister.billnumber, billmis.egBillregister.billdate, billmis.egBillregister.billamount, billmis.egDepartment.name")
+                .append("  from EgBillregistermis billmis ");
         // if the logged in user is same as creator or is superruser
         query.append(userCond);
 
         if (fund != null && fund.getId() != null && fund.getId() != -1
-                && fund.getId() != 0)
-            query.append(" billmis.fund.id=" + fund.getId());
+                && fund.getId() != 0) {
+            query.append(" billmis.fund.id=:fundId");
+            params.put("fundId", fund.getId());
+        }
 
-        if (billNumber != null && billNumber.length() != 0)
-            query.append(" and billmis.egBillregister.billnumber ='"
-                    + billNumber + "'");
+        if (billNumber != null && billNumber.length() != 0) {
+            query.append(" and billmis.egBillregister.billnumber =:billNumber");
+            params.put("billNumber", billNumber);
+        }
         if (deptImpl != null && deptImpl.getId() != null
-                && deptImpl.getId() != -1 && deptImpl.getId() != 0)
-            query.append(" and billmis.egDepartment.id ='" + deptImpl.getId()
-                    + "'");
+                && deptImpl.getId() != -1 && deptImpl.getId() != 0) {
+            query.append(" and billmis.egDepartment.id =:deptId");
+            params.put("deptId", deptImpl.getId());
+        }
         if (fromDate != null && fromDate.length() != 0) {
             Date fDate;
             try {
                 fDate = formatter.parse(fromDate);
-                query.append(" and billmis.egBillregister.billdate >= '"
-                        + Constants.DDMMYYYYFORMAT1.format(fDate) + "'");
+                query.append(" and billmis.egBillregister.billdate >= :fromDate");
+                params.put("fromDate", Constants.DDMMYYYYFORMAT1.format(fDate));
             } catch (final ParseException e) {
                 LOGGER.error(" From Date parse error");
                 //
@@ -221,65 +225,62 @@ public class CancelBillAction extends BaseFormAction {
             Date tDate;
             try {
                 tDate = formatter.parse(toDate);
-                query.append(" and billmis.egBillregister.billdate <= '"
-                        + Constants.DDMMYYYYFORMAT1.format(tDate) + "'");
+                query.append(" and billmis.egBillregister.billdate <= :toDate");
+                params.put("toDate", Constants.DDMMYYYYFORMAT1.format(tDate));
             } catch (final ParseException e) {
                 LOGGER.error(" To Date parse error");
                 //
             }
         }
         if (expType == null || expType.equalsIgnoreCase("")) {
-            query.append(" and billmis.egBillregister.expendituretype ='"
-                    + FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT
-                    + "'");
-            query.append(" and billmis.egBillregister.status.moduletype='"
-                    + FinancialConstants.CONTINGENCYBILL_FIN
-                    + "' and billmis.egBillregister.status.description='"
-                    + FinancialConstants.CONTINGENCYBILL_APPROVED_STATUS + "'");
+            query.append(" and billmis.egBillregister.expendituretype =:expenditureType");
+            params.put("expenditureType", FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT);
+            query.append(" and billmis.egBillregister.status.moduletype=:moduleType");
+            params.put("moduleType", FinancialConstants.CONTINGENCYBILL_FIN);
+            query.append(" and billmis.egBillregister.status.description=:description");
+            params.put("description", FinancialConstants.CONTINGENCYBILL_APPROVED_STATUS);
         } else {
-            query.append(" and billmis.egBillregister.expendituretype ='"
-                    + expType + "'");
+            query.append(" and billmis.egBillregister.expendituretype =:expenditureType");
+            params.put("expenditureType", expType);
             if (FinancialConstants.STANDARD_EXPENDITURETYPE_SALARY
-                    .equalsIgnoreCase(expType))
-                query.append(" and billmis.egBillregister.status.moduletype='"
-                        + FinancialConstants.SALARYBILL
-                        + "' and billmis.egBillregister.status.description='"
-                        + FinancialConstants.SALARYBILL_APPROVED_STATUS + "'");
-            else if (FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT
-                    .equalsIgnoreCase(expType))
-                query.append(" and billmis.egBillregister.status.moduletype='"
-                        + FinancialConstants.CONTINGENCYBILL_FIN
-                        + "' and billmis.egBillregister.status.description='"
-                        + FinancialConstants.CONTINGENCYBILL_APPROVED_STATUS
-                        + "'");
-            else if (FinancialConstants.STANDARD_EXPENDITURETYPE_PURCHASE
-                    .equalsIgnoreCase(expType))
-                query.append(" and billmis.egBillregister.status.moduletype='"
-                        + FinancialConstants.SUPPLIERBILL
-                        + "' and billmis.egBillregister.status.description='"
-                        + FinancialConstants.SUPPLIERBILL_PASSED_STATUS + "'");
-            else if (FinancialConstants.STANDARD_EXPENDITURETYPE_WORKS
-                    .equalsIgnoreCase(expType))
-                query.append(" and billmis.egBillregister.status.moduletype='"
-                        + FinancialConstants.CONTRACTORBILL
-                        + "' and billmis.egBillregister.status.description='"
-                        + FinancialConstants.CONTRACTORBILL_PASSED_STATUS + "'");
+                    .equalsIgnoreCase(expType)) {
+                query.append(" and billmis.egBillregister.status.moduletype=:moduleType");
+                params.put("moduleType", FinancialConstants.SALARYBILL);
+                query.append(" and billmis.egBillregister.status.description=:description");
+                params.put("description", FinancialConstants.SALARYBILL_APPROVED_STATUS);
+            } else if (FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT
+                    .equalsIgnoreCase(expType)) {
+                query.append(" and billmis.egBillregister.status.moduletype=:moduleType");
+                params.put("moduleType", FinancialConstants.CONTINGENCYBILL_FIN);
+                query.append(" and billmis.egBillregister.status.description=:description");
+                params.put("description", FinancialConstants.CONTINGENCYBILL_APPROVED_STATUS);
+            } else if (FinancialConstants.STANDARD_EXPENDITURETYPE_PURCHASE
+                    .equalsIgnoreCase(expType)) {
+                query.append(" and billmis.egBillregister.status.moduletype=:moduleType");
+                params.put("moduleType", FinancialConstants.SUPPLIERBILL);
+                query.append(" and billmis.egBillregister.status.description=:description");
+                params.put("description", FinancialConstants.SUPPLIERBILL_PASSED_STATUS);
+            } else if (FinancialConstants.STANDARD_EXPENDITURETYPE_WORKS
+                    .equalsIgnoreCase(expType)) {
+                query.append(" and billmis.egBillregister.status.moduletype=:moduleType");
+                params.put("moduleType", FinancialConstants.CONTRACTORBILL);
+                query.append(" and billmis.egBillregister.status.description=:description");
+                params.put("description", FinancialConstants.CONTRACTORBILL_PASSED_STATUS);
+            }
         }
-
-        return query;
+        queryMap.put(query.toString(), params);
+        return queryMap;
 
     }
 
-    public String[] query() {
-        final String[] retQry = new String[2];
-        final StringBuilder filterQry = filterQuery();
-
-        retQry[0] = filterQry + " and billmis.voucherHeader is null ";
-        retQry[1] = filterQry + " and billmis.voucherHeader.status in ("
-                + FinancialConstants.REVERSEDVOUCHERSTATUS + ","
-                + FinancialConstants.CANCELLEDVOUCHERSTATUS + ") ";
-
-        return retQry;
+    public Map<String, Map<String, Object>> query() {
+        final Map<String, Map<String, Object>> queries = new HashMap<>();
+        final Map.Entry<String, Map<String, Object>> mapQueryEntry = filterQuery().entrySet().iterator().next();
+        queries.put(mapQueryEntry.getKey() + " and billmis.voucherHeader is null ", mapQueryEntry.getValue());
+        final Map<String, Object> params = mapQueryEntry.getValue();
+        params.put("vhStatus", Arrays.asList(FinancialConstants.REVERSEDVOUCHERSTATUS, FinancialConstants.CANCELLEDVOUCHERSTATUS));
+        queries.put(mapQueryEntry.getKey() + " and billmis.voucherHeader.status in (:vhStatus)", params);
+        return queries;
     }
 
     public void prepareSearch() {
@@ -297,15 +298,14 @@ public class CancelBillAction extends BaseFormAction {
         validateFund();
         if (!hasFieldErrors()) {
             billListDisplay.clear();
-            final String[] searchQuery = query();
+            final Map<String, Map<String, Object>> queries = query();
+            final List<String> list = queries.keySet().stream().collect(Collectors.toList());
             final List<Object[]> tempBillList = new ArrayList<Object[]>();
             List<Object[]> billListWithNoVouchers, billListWithCancelledReversedVouchers;
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Search Query - " + searchQuery);
             billListWithNoVouchers = persistenceService
-                    .findAllBy(searchQuery[0]);
+                    .findAllBy(list.get(0), queries.get(list.get(0)));
             billListWithCancelledReversedVouchers = persistenceService
-                    .findAllBy(searchQuery[1]);
+                    .findAllBy(list.get(1), queries.get(list.get(1)));
             tempBillList.addAll(billListWithNoVouchers);
             tempBillList.addAll(billListWithCancelledReversedVouchers);
 
@@ -336,7 +336,9 @@ public class CancelBillAction extends BaseFormAction {
 
         final Long[] idList = new Long[billListDisplay.size()];
         int i = 0, idListLength = 0;
-        String idString = "";
+        List ids = new ArrayList();
+        final Map<String, Object> statusQueryMap = new HashMap<>();
+        final Map<String, Object> cancelQueryMap = new HashMap<>();
         final StringBuilder statusQuery = new StringBuilder(
                 "from EgwStatus where ");
         final StringBuilder cancelQuery = new StringBuilder(
@@ -347,56 +349,42 @@ public class CancelBillAction extends BaseFormAction {
                 idListLength++;
             }
         if (expType == null || expType.equalsIgnoreCase("")) {
-            statusQuery
-                    .append("moduletype='"
-                            + FinancialConstants.CONTINGENCYBILL_FIN
-                            + "' and description='"
-                            + FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS
-                            + "'");
-            cancelQuery.append(" billstatus='"
-                    + FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS
-                    + "' , statusid=:statusId ");
+            statusQuery.append("moduletype=:moduleType and description=:description");
+            statusQueryMap.put("moduleType", FinancialConstants.CONTINGENCYBILL_FIN);
+            statusQueryMap.put("description", FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS);
+            cancelQuery.append(" billstatus=:billStatus, statusid=:statusId ");
+            cancelQueryMap.put("billStatus", FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS);
         } else if (FinancialConstants.STANDARD_EXPENDITURETYPE_SALARY
                 .equalsIgnoreCase(expType)) {
-            statusQuery.append("moduletype='" + FinancialConstants.SALARYBILL
-                    + "' and description='"
-                    + FinancialConstants.SALARYBILL_CANCELLED_STATUS + "'");
-            cancelQuery.append(" billstatus='"
-                    + FinancialConstants.SALARYBILL_CANCELLED_STATUS
-                    + "' , statusid=:statusId ");
-
-        } else if (FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT
-                .equalsIgnoreCase(expType)) {
-            statusQuery
-                    .append("moduletype='"
-                            + FinancialConstants.CONTINGENCYBILL_FIN
-                            + "' and description='"
-                            + FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS
-                            + "'");
-            cancelQuery.append(" billstatus='"
-                    + FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS
-                    + "' , statusid=:statusId ");
-        } else if (FinancialConstants.STANDARD_EXPENDITURETYPE_PURCHASE
-                .equalsIgnoreCase(expType)) {
-            statusQuery.append("moduletype='" + FinancialConstants.SUPPLIERBILL
-                    + "' and description='"
-                    + FinancialConstants.SUPPLIERBILL_CANCELLED_STATUS + "'");
-            cancelQuery.append(" billstatus='"
-                    + FinancialConstants.SUPPLIERBILL_CANCELLED_STATUS
-                    + "' , statusid=:statusId ");
-        } else if (FinancialConstants.STANDARD_EXPENDITURETYPE_WORKS
-                .equalsIgnoreCase(expType)) {
-            statusQuery.append("moduletype='"
-                    + FinancialConstants.CONTRACTORBILL + "' and description='"
-                    + FinancialConstants.CONTRACTORBILL_CANCELLED_STATUS + "'");
-            cancelQuery.append(" billstatus='"
-                    + FinancialConstants.CONTRACTORBILL_CANCELLED_STATUS
-                    + "' , statusid=:statusId ");
+            statusQuery.append("moduletype=:moduleType and description=:description");
+            statusQueryMap.put("moduleType", FinancialConstants.SALARYBILL);
+            statusQueryMap.put("description", FinancialConstants.SALARYBILL_CANCELLED_STATUS);
+            cancelQuery.append(" billstatus=:billStatus, statusid=:statusId ");
+            cancelQueryMap.put("billStatus", FinancialConstants.SALARYBILL_CANCELLED_STATUS);
+        } else if (FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT.equalsIgnoreCase(expType)) {
+            statusQuery.append("moduletype=:moduleType and description=:description");
+            statusQueryMap.put("moduleType", FinancialConstants.CONTINGENCYBILL_FIN);
+            statusQueryMap.put("description", FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS);
+            cancelQuery.append(" billstatus=:billStatus, statusid=:statusId ");
+            cancelQueryMap.put("billStatus", FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS);
+        } else if (FinancialConstants.STANDARD_EXPENDITURETYPE_PURCHASE.equalsIgnoreCase(expType)) {
+            statusQuery.append("moduletype=:moduleType and description=:description");
+            statusQueryMap.put("moduleType", FinancialConstants.SUPPLIERBILL);
+            statusQueryMap.put("description", FinancialConstants.SUPPLIERBILL_CANCELLED_STATUS);
+            cancelQuery.append(" billstatus=:billStatus, statusid=:statusId ");
+            cancelQueryMap.put("billStatus", FinancialConstants.SUPPLIERBILL_CANCELLED_STATUS);
+        } else if (FinancialConstants.STANDARD_EXPENDITURETYPE_WORKS.equalsIgnoreCase(expType)) {
+            statusQuery.append("moduletype=:moduleType and description=:description");
+            statusQueryMap.put("moduleType", FinancialConstants.CONTRACTORBILL);
+            statusQueryMap.put("description", FinancialConstants.CONTRACTORBILL_CANCELLED_STATUS);
+            cancelQuery.append(" billstatus=:billStatus, statusid=:statusId ");
+            cancelQueryMap.put("billStatus", FinancialConstants.CONTRACTORBILL_CANCELLED_STATUS);
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" Status Query - " + statusQuery.toString());
-        final EgwStatus status = (EgwStatus) persistenceService
-                .find(statusQuery.toString());
+        final Query query = persistenceService.getSession().createQuery(statusQuery.toString());
+        statusQueryMap.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
+        final EgwStatus status = (EgwStatus) query.uniqueResult();
         persistenceService.getSession();
         if (idListLength != 0) {
             for (i = 0; i < idListLength; i++) {
@@ -406,24 +394,21 @@ public class CancelBillAction extends BaseFormAction {
                     addActionMessage(getText("cancel.bill.failure", new String[] { billRegister.getBillnumber() }));
                     continue;
                 }
-                idString += idList[i] + (i == idListLength - 1 ? "" : ",");
+                ids.add(idList[i]);
             }
-            if (isNotBlank(idString))
-            {
-                if (idString.charAt(idString.length() - 1) == ',')
-                    idString = idString.replace(",", "");
-            }
-            cancelQuery.append(" where id in (" + idString + ")");
+            cancelQuery.append(" where id in (:ids)");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(" Cancel Query - " + cancelQuery.toString());
             final NativeQuery totalNativeQuery = persistenceService.getSession()
                     .createNativeQuery(cancelQuery.toString());
-            totalNativeQuery.setLong("statusId", status.getId());
-            if (isNotBlank(idString))
+            totalNativeQuery.setParameter("statusId", status.getId(), LongType.INSTANCE);
+            cancelQueryMap.entrySet().forEach(entry -> totalNativeQuery.setParameter(entry.getKey(), entry.getValue()));
+            totalNativeQuery.setParameterList("ids", ids);
+            if (!ids.isEmpty())
                 totalNativeQuery.executeUpdate();
         }
 
-        if (isNotBlank(idString))
+        if (!ids.isEmpty())
             addActionMessage(getText("cancel.bill.success"));
 
         prepareBeforeSearch();

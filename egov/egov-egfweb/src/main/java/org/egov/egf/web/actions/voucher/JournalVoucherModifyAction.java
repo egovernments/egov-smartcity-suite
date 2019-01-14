@@ -85,15 +85,12 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.query.Query;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @ParentPackage("egov")
 @Results({
@@ -336,8 +333,8 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
     private void cancelBill(final Long vhId) {
         final StringBuffer billQuery = new StringBuffer();
         final String statusQuery = "(select stat.id from  egw_status  stat where stat.moduletype=:module and stat.description=:description)";
-        final String cancelQuery = "Update eg_billregister set billstatus=:billstatus , statusid =" + statusQuery
-                + " where  id=:billId";
+        final String cancelQuery = new StringBuilder("Update eg_billregister set billstatus=:billstatus , statusid =").append(statusQuery)
+                .append(" where  id=:billId").toString();
         String moduleType = "", description = "", billstatus = "";
         final EgBillregistermis billMis = (EgBillregistermis) persistenceService.find(
                 "from  EgBillregistermis  mis where voucherHeader.id=?1", vhId);
@@ -347,8 +344,8 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
                 LOGGER.debug("....Cancelling Bill Associated with the Voucher....");
             billQuery.append(
                     "select bill.expendituretype,bill.id from CVoucherHeader vh,EgBillregister bill ,EgBillregistermis mis")
-                    .append(" where vh.id=mis.voucherHeader and bill.id=mis.egBillregister and vh.id=" + vhId);
-            final Object[] bill = (Object[]) persistenceService.find(billQuery.toString()); // bill[0] contains expendituretype
+                    .append(" where vh.id=mis.voucherHeader and bill.id=mis.egBillregister and vh.id=?1");
+            final Object[] bill = (Object[]) persistenceService.find(billQuery.toString(), vhId); // bill[0] contains expendituretype
                                                                                             // and
             // bill[1] contaons billid
 
@@ -377,10 +374,10 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
             }
 
             final Query billQry = persistenceService.getSession().createNativeQuery(cancelQuery.toString());
-            billQry.setString("module", moduleType);
-            billQry.setString("description", description);
-            billQry.setString("billstatus", billstatus);
-            billQry.setLong("billId", (Long) bill[1]);
+            billQry.setParameter("module", moduleType, StringType.INSTANCE)
+                    .setParameter("description", description, StringType.INSTANCE)
+                    .setParameter("billstatus", billstatus, StringType.INSTANCE)
+                    .setParameter("billId", (Long) bill[1], LongType.INSTANCE);
             billQry.executeUpdate();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bill Cancelled Successfully" + bill[1]);
@@ -437,7 +434,7 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("JournalVoucherModify | getBillInfo | Start");
         final EgBillregister billRegister = (EgBillregister) persistenceService
-                .find("from EgBillregister br where br.egBillregistermis.voucherHeader.id=" + voucherHeader.getId());
+                .find("from EgBillregister br where br.egBillregistermis.voucherHeader.id=?1", voucherHeader.getId());
         /**
          * If its not General JV.
          */

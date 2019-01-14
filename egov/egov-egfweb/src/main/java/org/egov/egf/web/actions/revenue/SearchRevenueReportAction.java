@@ -105,19 +105,28 @@ public class SearchRevenueReportAction extends BaseRevenueAction {
     @Action(value = "/revenue/searchRevenueReport-search")
     public String search() {
         final StringBuffer query = new StringBuffer();
+        int index = 1;
+        final List<Object> params = new ArrayList<>();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Search Query:-" + "Financials Year id" + finYearId);
-        query.append("select distinct gr.financialYear ,gr.grantType,gr.department From Grant gr where gr.financialYear.id="
-                + finYearId);
-        if (!deptId.equals("-1") && !grantTypeStr.equals("-1"))
-            query.append(" and gr.grantType='" + grantTypeStr + "' and gr.department.id='" + deptId + "'");
-        else {
-            if (!grantTypeStr.equals("-1"))
-                query.append(" and gr.grantType='" + grantTypeStr + "'");
-            if (!deptId.equals("-1"))
-                query.append(" and gr.department.id='" + deptId + "'");
+        query.append("select distinct gr.financialYear ,gr.grantType,gr.department From Grant gr where gr.financialYear.id=?").append(index++);
+        params.add(finYearId);
+        if (!deptId.equals("-1") && !grantTypeStr.equals("-1")) {
+            query.append(" and gr.grantType=?").append(index++).append(" and gr.department.id=?").append(index++);
+            params.add(grantTypeStr);
+            params.add(deptId);
         }
-        final List<Object[]> findAllBy = persistenceService.findAllBy(query.toString());
+        else {
+            if (!grantTypeStr.equals("-1")) {
+                query.append(" and gr.grantType=?").append(index++);
+                params.add(grantTypeStr);
+            }
+            if (!deptId.equals("-1")) {
+                query.append(" and gr.department.id=?").append(index++);
+                params.add(deptId);
+            }
+        }
+        final List<Object[]> findAllBy = persistenceService.findAllBy(query.toString(), params);
         grantsList = new ArrayList<Grant>();
         // this loop needs to be replaced by query using hibernate facilities
         for (final Object[] ob : findAllBy)

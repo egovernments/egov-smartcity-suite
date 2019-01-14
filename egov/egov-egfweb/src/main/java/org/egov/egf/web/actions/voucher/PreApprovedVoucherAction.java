@@ -447,7 +447,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
         if (voucherHeader.getState() != null && voucherHeader.getState().getValue().contains("Rejected"))
             if (voucherHeader.getModuleId() == null) {
                 final EgBillregistermis billMis = (EgBillregistermis) persistenceService.find(
-                        "from EgBillregistermis where voucherHeader.id=?", voucherHeader.getId());
+                        "from EgBillregistermis where voucherHeader.id=?1", voucherHeader.getId());
                 if (billMis != null) {
                     final State billWorkFlowState = billMis.getEgBillregister().getState();
                     if (billWorkFlowState == null) {
