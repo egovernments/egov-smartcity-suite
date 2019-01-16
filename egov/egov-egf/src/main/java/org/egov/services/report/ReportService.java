@@ -131,13 +131,13 @@ public abstract class ReportService {
                 && balanceSheet.getDepartment().getId() != null
                 && balanceSheet.getDepartment().getId() != 0) {
             query.append(" and mis.departmentid=:deptId");
-            queryParams.put("deptId", balanceSheet.getDepartment().getId().toString());
+            queryParams.put("deptId", balanceSheet.getDepartment().getId());
         }
         if (balanceSheet.getFunction() != null
                 && balanceSheet.getFunction().getId() != null
                 && balanceSheet.getFunction().getId() != 0) {
             query.append(" and g.functionid=:functionId");
-            queryParams.put("functionId", balanceSheet.getFunction().getId().toString());
+            queryParams.put("functionId", balanceSheet.getFunction().getId());
         }
         /*if (balanceSheet.getFunctionary() != null
                 && balanceSheet.getFunctionary().getId() != null
@@ -153,7 +153,7 @@ public abstract class ReportService {
                 && balanceSheet.getFund().getId() != null
                 && balanceSheet.getFund().getId() != 0) {
             query.append(" and v.fundid=:fundId");
-            queryParams.put("fundId", balanceSheet.getFund().getId().toString());
+            queryParams.put("fundId", balanceSheet.getFund().getId());
         }
         queryMap.put(query.toString(), queryParams);
         return queryMap;
@@ -166,14 +166,11 @@ public abstract class ReportService {
         return "";
     }
 
-    public String getfundList(final List<Fund> fundList) {
-        final StringBuffer fundId = new StringBuffer();
-        fundId.append("(");
+    public List<Integer> getfundList(final List<Fund> fundList) {
+        final List<Integer> fundId = new ArrayList<>();
         for (final Fund fund : fundList)
-            fundId.append(fund.getId()).append(",");
-        fundId.setLength(fundId.length() - 1);
-        fundId.append(")");
-        return fundId.toString();
+            fundId.add(fund.getId());
+        return fundId;
     }
 
     public BigDecimal divideAndRound(BigDecimal value, final BigDecimal divisor) {

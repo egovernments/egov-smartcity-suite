@@ -47,6 +47,7 @@
  */
 package org.egov.services.report;
 
+import com.kenai.jffi.Array;
 import org.apache.log4j.Logger;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.Fund;
@@ -57,15 +58,14 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.Constants;
 import org.hibernate.query.Query;
 import org.hibernate.type.CharacterType;
+import org.hibernate.type.DateType;
+import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 public class IncomeExpenditureScheduleService extends ScheduleService {
@@ -111,8 +111,8 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
 
     private Query populatePreviousYearTotals(final Statement statement, final Date toDate, final Date fromDate,
                                              final String majorCode,
-                                             final String filterQuery, final String fundId) {
-        String formattedToDate = "";
+                                             final String filterQuery,final Map<String, Object> queryParams, final List<Integer> fundId) {
+        Date formattedToDate;
         final String voucherStatusToExclude = getAppConfigValueFor("EGF", "statusexcludeReport");
         String majorCodeQuery = "";
         if (!(majorCodeQuery.equals("") || majorCodeQuery.isEmpty()))
@@ -121,22 +121,22 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Getting previous year Details");
         if ("Yearly".equalsIgnoreCase(statement.getPeriod()))
-            formattedToDate = incomeExpenditureService.getFormattedDate(fromDate);
+            formattedToDate = fromDate;
         else
-            formattedToDate = incomeExpenditureService.getFormattedDate(incomeExpenditureService.getPreviousYearFor(toDate));
+            formattedToDate = incomeExpenditureService.getPreviousYearFor(toDate);
         final Query query = persistenceService.getSession()
                 .createNativeQuery(new StringBuilder("select c.glcode,c.name ,sum(g.debitamount)-sum(g.creditamount),v.fundid ,c.type ,c.majorcode  from ")
-                        .append("generalledger g,chartofaccounts c,voucherheader v ,vouchermis mis where v.id=mis.voucherheaderid and  v.fundid in :fundId")
+                        .append("generalledger g,chartofaccounts c,voucherheader v ,vouchermis mis where v.id=mis.voucherheaderid and  v.fundid in (:fundId)")
                         .append(" and v.id=g.voucherheaderid and c.id=g.glcodeid and v.status not in(").append(voucherStatusToExclude)
                         .append(")  AND v.voucherdate < :voucherFromDate and v.voucherdate >= :voucherToDate").append(majorCodeQuery)
                         .append(filterQuery)
                         .append(" group by c.glcode, v.fundid,c.name ,c.type ,c.majorcode order by c.glcode,v.fundid,c.type").toString());
         if (!(majorCodeQuery.equals("") || majorCodeQuery.isEmpty()))
             query.setParameter("majorCode", majorCode, StringType.INSTANCE);
-        query.setParameter("fundId", fundId, StringType.INSTANCE)
-                .setParameter("voucherFromDate", formattedToDate, StringType.INSTANCE)
-                .setParameter("voucherToDate", incomeExpenditureService.getFormattedDate(incomeExpenditureService.getPreviousYearFor(fromDate)), StringType.INSTANCE);
-
+        query.setParameterList("fundId", fundId, IntegerType.INSTANCE)
+                .setParameter("voucherFromDate", formattedToDate, DateType.INSTANCE)
+                .setParameter("voucherToDate", incomeExpenditureService.getPreviousYearFor(fromDate), DateType.INSTANCE);
+        queryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(),entry.getValue()));
         if (LOGGER.isInfoEnabled())
             LOGGER.info("prevoius year to Date=" + formattedToDate + " and from Date="
                     + incomeExpenditureService.getPreviousYearFor(fromDate));
@@ -149,7 +149,7 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
         // List<Fund> fundList = statement.getFunds();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("preparing list to load all detailcode");
-        populateAmountForAllSchedules(statement, toDate, fromDate, "('I','E')");
+        populateAmountForAllSchedules(statement, toDate, fromDate, Arrays.asList("I","E"));
         incomeExpenditureService.removeFundsWithNoDataIE(statement);
 
     }
@@ -163,7 +163,7 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
 
     @SuppressWarnings({"unused", "unchecked"})
     private void populateAmountForAllSchedules(final Statement statement, final Date toDate, final Date fromDate,
-                                               final String reportType) {
+                                               final List<String> reportType) {
         boolean addrow = false;
         final BigDecimal divisor = statement.getDivisor();
         BigDecimal amount = BigDecimal.ZERO;
@@ -184,11 +184,10 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
         final Map.Entry<String, Map<String, Object>> queryMapEntry = incomeExpenditureService.getFilterQuery(statement).entrySet().iterator().next();
         final String filterQuery = queryMapEntry.getKey();
         final Map<String, Object> queryParams = queryMapEntry.getValue();
-        final String fundId = incomeExpenditureService.getfundList(statement.getFunds());
+        final List<Integer> fundId = incomeExpenditureService.getfundList(statement.getFunds());
         majorCodeLength = Integer.valueOf(incomeExpenditureService.getAppConfigValueFor(Constants.EGF, "coa_majorcode_length"));
         final List<Object[]> previousLedgerBalance = populatePreviousYearTotals(statement, toDate, fromDate, forAllCOA,
-                filterQuery,
-                fundId).list();
+                filterQuery, queryParams, fundId).list();
         final List<Object[]> CurrentYearLedgerDetail = getAllLedgerTransaction(forAllCOA, toDate, fromDate, fundId, filterQuery, queryParams); // current
         // year
         // transaction
@@ -354,7 +353,7 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
         final BigDecimal divisor = statement.getDivisor();
         BigDecimal amount = BigDecimal.ZERO;
         BigDecimal preAmount = BigDecimal.ZERO;
-        final String fundId = incomeExpenditureService.getfundList(statement.getFunds());
+        final List<Integer> fundId = incomeExpenditureService.getfundList(statement.getFunds());
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Getting All ledger codes ..");
         final List<Object[]> AllLedger = persistenceService.getSession()
@@ -364,7 +363,7 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
                 .setParameter("type", type, CharacterType.INSTANCE)
                 .list();
         final List<Object[]> previousLedgerBalance = populatePreviousYearTotals(statement, toDate, fromDate, majorCode,
-                filterQuery,
+                filterQuery,queryParams,
                 fundId).list();
         final List<Object[]> allGlCodes = getAllGlCodesForSubSchedule(majorCode, type, IE); // for schedule name AND MINOR code
 

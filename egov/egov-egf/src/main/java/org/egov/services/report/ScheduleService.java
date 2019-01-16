@@ -61,6 +61,8 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.hibernate.type.CharacterType;
+import org.hibernate.type.DateType;
+import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -210,15 +212,15 @@ public abstract class ScheduleService extends PersistenceService {
         return query.list();
     }
 
-    protected List<Object[]> getAllGlCodesForSchedule(final String reportType) {
+    protected List<Object[]> getAllGlCodesForSchedule(final List<String> reportType) {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Getting schedule for ");
         final Query query = getSession().createNativeQuery(new StringBuilder("SELECT coa1.glcode, s.schedule, s.schedulename, coa1.type, coa1.name")
                 .append(" FROM chartofaccounts coa1, chartofaccounts coa2, chartofaccounts coa3, schedulemapping s")
                 .append(" WHERE coa3.scheduleid  = s.id AND coa3.id = coa2.parentid AND coa2.id = coa1.parentid")
                 .append(" AND coa2.classification=2 AND coa1.classification=4")
-                .append(" AND coa3.type   IN :reportType AND coa2.type IN :reportType AND coa1.type IN :reportType AND s.reporttype = 'IE' ORDER BY coa1.glcode").toString());
-        query.setParameter("reportType", reportType, StringType.INSTANCE);
+                .append(" AND coa3.type   IN (:reportType) AND coa2.type IN (:reportType) AND coa1.type IN (:reportType) AND s.reporttype = 'IE' ORDER BY coa1.glcode").toString());
+        query.setParameterList("reportType", reportType, StringType.INSTANCE);
         return query.list();
     }
 
@@ -247,7 +249,7 @@ public abstract class ScheduleService extends PersistenceService {
     }
 
     protected List<Object[]> getAllLedgerTransaction(final String majorcode, final Date toDate, final Date fromDate,
-                                                     final String fundId,
+                                                     final List<Integer> fundId,
                                                      final String filterQuery, final Map<String, Object> queryParams) {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Getting ledger transactions details where >>>> EndDate=" + toDate + "from Date=" + fromDate);
@@ -262,9 +264,9 @@ public abstract class ScheduleService extends PersistenceService {
                         .append(" and v.status not in (").append(voucherStatusToExclude).append(") and v.id=g.voucherheaderid and v.fundid in :fundId")
                         .append(filterQuery).append(" and g.glcodeid=coa.id  ")
                         .append("GROUP by g.glcode,coa.name,v.fundid ,coa.type ,coa.majorcode order by g.glcode,coa.name,coa.type").toString());
-        query.setParameter("voucherFromDate", getFormattedDate(fromDate), StringType.INSTANCE)
-                .setParameter("voucherToDate", getFormattedDate(toDate), StringType.INSTANCE)
-                .setParameter("fundId", fundId, StringType.INSTANCE);
+        query.setParameter("voucherFromDate", fromDate, DateType.INSTANCE)
+                .setParameter("voucherToDate", toDate, DateType.INSTANCE)
+                .setParameterList("fundId", fundId, IntegerType.INSTANCE);
         queryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
         return query.list();
     }
