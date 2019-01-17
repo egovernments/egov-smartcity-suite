@@ -1039,7 +1039,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             loggedInUserposition = collectionsUtil.getPositionOfUser(this.securityUtils.getCurrentUser());
         // Validate
         if (loggedInUserposition != null && receiptHeader.getState() != null
-                && receiptHeader.getState().getOwnerPosition().getName().equals(loggedInUserposition.getName())) {
+                && !(receiptHeader.getState().getOwnerPosition().getName().equals(loggedInUserposition.getName()))) {
             throw new ValidationException(
                     Arrays.asList(new ValidationError("Current user is not the owner of the selected workflow inbox item",
                             "Current user is not the owner of the selected workflow inbox item")));
@@ -1199,7 +1199,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
     @Transactional
     public void updateCollectionIndexAndPushMail(final ReceiptHeader receiptHeader) {
-        if (receiptHeader.getPayeeEmail() != null
+/*        if (receiptHeader.getPayeeEmail() != null
                 && !receiptHeader.getPayeeEmail().isEmpty()
                 && (receiptHeader.getCollectiontype().equals(CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION)
                         && receiptHeader.getStatus().getCode().equals(CollectionConstants.RECEIPT_STATUS_CODE_APPROVED)
@@ -1215,8 +1215,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
         } else {
             collectionIndexObj = collectionsUtil.constructCollectionIndex(receiptHeader);
-            collectionIndexService.pushCollectionIndex(collectionIndexObj);
-        }
+       //     collectionIndexService.pushCollectionIndex(collectionIndexObj);
+        }*/
     }
 
     private void pushMail(final ReceiptHeader receiptHeader) {

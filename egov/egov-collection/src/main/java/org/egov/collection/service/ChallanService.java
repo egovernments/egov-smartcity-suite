@@ -106,7 +106,7 @@ public class ChallanService extends PersistenceService<Challan, Long> {
 
         if (challan.getState() != null & challan.getState().getOwnerPosition() != null)
             if (challan.getState() != null && loggedInUserposition != null
-                    && challan.getState().getOwnerPosition().getName().equals(loggedInUserposition.getName()))
+                    &&!(challan.getState().getOwnerPosition().getName().equals(loggedInUserposition.getName())))
                 throw new ValidationException(
                         Arrays.asList(new ValidationError("Current user is not the owner of the selected workflow inbox item",
                                 "Current user is not the owner of the selected workflow inbox item")));
