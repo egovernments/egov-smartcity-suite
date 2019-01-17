@@ -154,11 +154,11 @@ public class DayBookReportAction extends BaseFormAction {
         final Map<String, Object> params = new HashMap<>();
         final String fundId = dayBookReport.getFundId();
         final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
-        String startDate = null;
-        String endDate = null;
+        Date startDate = null;
+        Date endDate = null;
         try {
-            startDate = sdf.format(formatter.parse(dayBookReport.getStartDate()));
-            endDate = sdf.format(formatter.parse(dayBookReport.getEndDate()));
+            startDate = formatter.parse(dayBookReport.getStartDate());
+            endDate = formatter.parse(dayBookReport.getEndDate());
         } catch (ParseException e) {
 
         }
@@ -166,7 +166,7 @@ public class DayBookReportAction extends BaseFormAction {
                             .append(" gd.glcode AS glcode,ca.name AS particulars ,vh.name ||' - '|| vh.TYPE AS type, ")
                             .append(" CASE WHEN vh.description is null THEN ' ' ELSE vh.description END AS narration, ")
                             .append(" CASE  WHEN status=0 THEN ( 'Approved') ELSE ( case WHEN status=1 THEN 'Reversed' else ")
-                            .append(" case WHEN status=2 THEN 'Reversal' else ' ' END) END ) END as status , debitamount  , ")
+                            .append(" (case WHEN status=2 THEN 'Reversal' else ' ' END) END ) END as status , debitamount  , ")
                             .append(" creditamount,vh.CGVN ,vh.isconfirmed as \"isconfirmed\",vh.id as vhId FROM voucherheader vh, generalledger gd, ")
                             .append(" chartofaccounts ca WHERE vh.ID=gd.VOUCHERHEADERID ")
                 .append(" AND ca.GLCODE=gd.GLCODE AND voucherdate >=:startDate ")
@@ -175,7 +175,7 @@ public class DayBookReportAction extends BaseFormAction {
                             .append(" ORDER BY vdate,vouchernumber");
         params.put("startDate", startDate);
         params.put("endDate", endDate);
-        params.put("fundId", fundId);
+        params.put("fundId", Long.valueOf(fundId));
         queryMap.put(query.toString(), params);
         return queryMap;
     }

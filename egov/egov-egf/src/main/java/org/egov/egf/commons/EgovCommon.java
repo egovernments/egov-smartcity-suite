@@ -980,8 +980,8 @@ public class EgovCommon {
                 .append(
                         " where financialyear.id = ( select id from CFinancialYear where startingDate <= :startDate AND endingDate >= :endDate) and glcodeid.glcode = :glCode ")
                 .append(fundConidtion).append(deptCondition);
-        params.put("startDate", Constants.DDMMYYYYFORMAT1.format(asondate));
-        params.put("endDate", Constants.DDMMYYYYFORMAT1.format(asondate));
+        params.put("startDate", asondate);
+        params.put("endDate", asondate);
         params.put("glCode", glcode);
         if (null != accountdetailType) {
             opBalncQuery.append(" and accountdetailtype.id = :accountDetailType");
@@ -1087,7 +1087,7 @@ public class EgovCommon {
                     .append(" and vh.voucherDate < :date and vh.status not in (").append(statusExclude)
                     .append(")");
             params.put("glCode", glcode);
-            params.put("date", Constants.DDMMYYYYFORMAT1.format(asondate));
+            params.put("date", asondate);
             Query query = getPersistenceService().getSession().createQuery(glCodeBalQry.toString());
             params.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
             final List<Object> list = query.list();
