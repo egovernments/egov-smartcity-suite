@@ -186,6 +186,8 @@ public class ApplicationDocumentService {
     
     private static final String MODULE_MARRIAGE_REGISTRATION = "Marriage Registration";
     
+    private static final String MODULE_SEWERAGE_TAX = "Sewerage Tax";
+    
     private static final String SLA = "sla";
 
     private static final String REJECTED = "REJECTED";
@@ -815,6 +817,8 @@ public class ApplicationDocumentService {
                 applicationDetailsList.addAll(moduleWiseDetailsMap.get(MODULE_ADVERTISEMENT_TAX));
             if (moduleWiseDetailsMap.get(MODULE_MARRIAGE_REGISTRATION) != null)
                 applicationDetailsList.addAll(moduleWiseDetailsMap.get(MODULE_MARRIAGE_REGISTRATION));
+            if (moduleWiseDetailsMap.get(MODULE_SEWERAGE_TAX) != null)
+                applicationDetailsList.addAll(moduleWiseDetailsMap.get(MODULE_SEWERAGE_TAX));
         }
         return applicationDetailsList;
     }
