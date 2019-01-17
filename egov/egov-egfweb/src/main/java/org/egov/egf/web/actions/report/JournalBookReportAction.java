@@ -77,10 +77,7 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @ParentPackage("egov")
 @Results({
@@ -209,19 +206,19 @@ public class JournalBookReportAction extends BaseFormAction {
     private Map<String, Map<String, Object>> getQuery() {
         final Map<String, Map<String, Object>> queryMap = new HashMap<>();
         final Map<String, Object> params = new HashMap<>();
-        String startDate = null;
-        String endDate = null;
+        Date startDate = null;
+        Date endDate = null;
         try {
             final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            startDate = formatter.format(sdf.parse(journalBookReport.getStartDate()));
-            endDate = formatter.format(sdf.parse(journalBookReport.getEndDate()));
+            startDate = sdf.parse(journalBookReport.getStartDate());
+            endDate = sdf.parse(journalBookReport.getEndDate());
         } catch (ParseException e) {
 
         }
         StringBuilder subQuery = new StringBuilder();
         if (journalBookReport.getFund_id() != null && !journalBookReport.getFund_id().equals("")) {
             subQuery.append(" and f.id=:fundId ");
-            params.put("fundId", journalBookReport.getFund_id());
+            params.put("fundId", Long.valueOf(journalBookReport.getFund_id()));
         }
         if (journalBookReport.getVoucher_name() != null && !journalBookReport.getVoucher_name().equals("")) {
             subQuery.append(" and vh.Name=:voucherName ");
