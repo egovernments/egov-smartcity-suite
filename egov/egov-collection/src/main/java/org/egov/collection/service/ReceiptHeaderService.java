@@ -1199,7 +1199,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
     @Transactional
     public void updateCollectionIndexAndPushMail(final ReceiptHeader receiptHeader) {
-/*        if (receiptHeader.getPayeeEmail() != null
+        if (receiptHeader.getPayeeEmail() != null
                 && !receiptHeader.getPayeeEmail().isEmpty()
                 && (receiptHeader.getCollectiontype().equals(CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION)
                         && receiptHeader.getStatus().getCode().equals(CollectionConstants.RECEIPT_STATUS_CODE_APPROVED)
@@ -1215,8 +1215,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
         } else {
             collectionIndexObj = collectionsUtil.constructCollectionIndex(receiptHeader);
-       //     collectionIndexService.pushCollectionIndex(collectionIndexObj);
-        }*/
+            collectionIndexService.pushCollectionIndex(collectionIndexObj);
+        }
     }
 
     private void pushMail(final ReceiptHeader receiptHeader) {
