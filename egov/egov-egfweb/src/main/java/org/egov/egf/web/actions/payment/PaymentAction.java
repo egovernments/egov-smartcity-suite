@@ -1382,7 +1382,7 @@ public class PaymentAction extends BasePaymentAction {
                 .append(" where iv.instrumentHeaderId in (from InstrumentHeader ih where ih.statusId.id in (?").append(i++)
                 .append(") ) ))");
         params.add(statusId);
-        paymentheaderList = getPersistenceService().findAllBy(queryString.toString(), params);
+        paymentheaderList = getPersistenceService().findAllBy(queryString.toString(), params.toArray());
         action = LIST;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed list...");

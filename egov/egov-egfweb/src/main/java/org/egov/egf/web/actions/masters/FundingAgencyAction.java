@@ -154,7 +154,7 @@ public class FundingAgencyAction extends BaseFormAction {
                 params.add(new StringBuilder("%").append(fundingAgency.getName()).append("%"));
             }
         }
-        fundingAgencyList = persistenceService.findAllBy(query.toString(), params);
+        fundingAgencyList = persistenceService.findAllBy(query.toString(), params.toArray());
         return "search";
     }
 

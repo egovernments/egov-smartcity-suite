@@ -173,7 +173,7 @@ public class FixedDepositAction extends BaseFormAction {
         }
         query.append("  order by id");
 
-        fixedDepositList = persistenceService.findAllBy(query.toString(), params);
+        fixedDepositList = persistenceService.findAllBy(query.toString(), params.toArray());
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Fixed deposit size= " + fixedDepositList.size());
 

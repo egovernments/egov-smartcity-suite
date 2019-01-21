@@ -230,7 +230,7 @@ public class SubSchemeAction extends BaseFormAction {
             }
         }
         loadDropDowns();
-        subSchemeList = persistenceService.findAllBy(query.toString(), params);
+        subSchemeList = persistenceService.findAllBy(query.toString(), params.toArray());
         return SEARCH;
     }
 

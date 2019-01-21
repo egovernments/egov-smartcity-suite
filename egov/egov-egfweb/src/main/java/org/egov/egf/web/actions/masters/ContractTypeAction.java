@@ -228,7 +228,7 @@ public class ContractTypeAction extends BaseFormAction {
             query.append(" and parentid = ?").append(i++);
             params.add(typeOfWork.getParentid());
         }
-        typeOfWorkList = persistenceService.findAllBy(query.toString(), params);
+        typeOfWorkList = persistenceService.findAllBy(query.toString(), params.toArray());
 
         return "search";
     }
