@@ -68,7 +68,7 @@ function populateBoundaries() {
 		data: {
 			locality : jQuery('#locality').val()
 		},
-		cache: false,
+		cache: true,
 		dataType: "json",
 		success: function (response) {
 			jQuery('#wardId').html("");
@@ -111,7 +111,7 @@ function populateBlock() {
 		data: {
 			wardId : jQuery('#wardId').val()
 		},
-		cache: false,
+		cache: true,
 		dataType: "json",
 		success: function (response) {
 			jQuery('#blockId').html("");

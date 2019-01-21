@@ -73,6 +73,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.math.BigDecimal;
@@ -115,6 +117,9 @@ public class AddArrearsController {
     
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @ModelAttribute
     public ArrearsInfo getArrearsInfo() {
@@ -132,7 +137,7 @@ public class AddArrearsController {
             if (property != null) {
                 Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(module, installmentDate);
                 Ptdemand ptDemand = persistenceService.find(
-                        "from  Ptdemand ptd where ptd.egptProperty =? and ptd.egInstallmentMaster.id =? ",
+                        "from  Ptdemand ptd where ptd.egptProperty =?1 and ptd.egInstallmentMaster.id =?2 ",
                         property, propertyTaxCommonUtils.getCurrentInstallment().getId());
                 Boolean arrearDemandExists = checkDemandExistsForInstallment(ptDemand, installment);
                 model.addAttribute("propertyType", property.getPropertyDetail().getPropertyTypeMaster().getCode());
@@ -174,7 +179,7 @@ public class AddArrearsController {
             return ADDARREARS_FORM;
         BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         Ptdemand ptDemand = persistenceService.find(
-                "from  Ptdemand ptd where ptd.egptProperty =? and ptd.egInstallmentMaster.id =? ",
+                "from  Ptdemand ptd where ptd.egptProperty =?1 and ptd.egInstallmentMaster.id =?2 ",
                 basicProperty.getActiveProperty(), propertyTaxCommonUtils.getCurrentInstallment().getId());
         addDemandDetails(arrearsInfo, ptDemand);
         persistenceService.update(ptDemand);

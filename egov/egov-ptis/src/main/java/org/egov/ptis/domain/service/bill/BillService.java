@@ -47,6 +47,24 @@
  */
 package org.egov.ptis.domain.service.bill;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUARTZ_BULKBILL_JOBS;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_BILL_GENERATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_CREATED;
+import static org.egov.ptis.constants.PropertyTaxConstants.STRING_EMPTY;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
@@ -75,28 +93,11 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.egov.ptis.wtms.WaterChargesIntegrationService;
-import org.hibernate.query.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUARTZ_BULKBILL_JOBS;
-import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_BILL_GENERATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_CREATED;
-import static org.egov.ptis.constants.PropertyTaxConstants.STRING_EMPTY;
 
 /**
  * Provides API to Generate a Demand Notice or the Bill giving the break up of
@@ -322,9 +323,10 @@ public class BillService {
         final Installment currentInstallment = propertyTaxCommonUtils.getCurrentInstallment();
         final Module ptModule = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
         // read zone and ward saved in bulkbillgeneration table.
-        final List<BulkBillGeneration> bulkBillGeneration = getPersistenceService().findAllBy(
-                "from BulkBillGeneration where zone.id is not null and installment.id = ? order by id",
-                currentInstallment.getId());
+        final javax.persistence.Query billQuery = entityManager.createQuery(
+                "from BulkBillGeneration where zone.id is not null and installment.id =: currentInstallmentId order by id");
+        billQuery.setParameter("currentInstallmentId", currentInstallment.getId());
+        final List<BulkBillGeneration> bulkBillGeneration = billQuery.getResultList();
         queryString = queryString.append("select bp.upicNo ").append("from BasicPropertyImpl bp ")
                 .append("where bp.active = true ").append("and bp.upicNo IS not NULL ")
                 .append("and (bp.isBillCreated is NULL or bp.isBillCreated='N' or bp.isBillCreated='false') ")

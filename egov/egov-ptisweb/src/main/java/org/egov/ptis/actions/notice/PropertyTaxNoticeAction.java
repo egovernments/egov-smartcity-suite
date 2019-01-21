@@ -84,6 +84,7 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyDAO;
+import org.egov.ptis.domain.dao.property.PropertyMutationDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -206,7 +207,10 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 	
 	@Autowired
 	private BasicPropertyDAO basicPropertyDAO;
-
+	
+	@Autowired
+	private PropertyMutationDAO propertyMutationDAO;
+ 
 	@Override
 	public StateAware getModel() {
 		return null;
@@ -272,30 +276,29 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 		return DIGITAL_SIGNATURE_REDIRECTION;
 	}
 
-        private void generateNoticeForVRorMutation(final StringBuilder fileStoreId, final String[] id) {
-            if (VACANCYREMISSIONAPPROVAL.equalsIgnoreCase(id[2])) {
-                noticeMode = VACANCYREMISSIONAPPROVAL;
-                noticeType = NOTICE_TYPE_VRPROCEEDINGS;
-                fileStoreId.append(generatePropertyNotice(Long.valueOf(id[0]), id[2]));
-            } else {
-                final String cityGrade = cityService.getCityGrade();
-                Boolean isCorporation;
-                if (cityGrade != null && cityGrade != ""
-                        && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION))
-                    isCorporation = true;
-                else
-                    isCorporation = false;
+    private void generateNoticeForVRorMutation(final StringBuilder fileStoreId, final String[] id) {
+        if (VACANCYREMISSIONAPPROVAL.equalsIgnoreCase(id[2])) {
+            noticeMode = VACANCYREMISSIONAPPROVAL;
+            noticeType = NOTICE_TYPE_VRPROCEEDINGS;
+            fileStoreId.append(generatePropertyNotice(Long.valueOf(id[0]), id[2]));
+        } else {
+            final String cityGrade = cityService.getCityGrade();
+            Boolean isCorporation;
+            if (cityGrade != null && cityGrade != ""
+                    && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION))
+                isCorporation = true;
+            else
+                isCorporation = false;
 
-                final PropertyMutation propertyMutation = (PropertyMutation) persistenceService
-                        .find("From PropertyMutation where id = ? ", Long.valueOf(id[0]));
-                final BasicProperty basicProperty = propertyMutation.getBasicProperty();
-                transferOwnerService.generateTransferNotice(basicProperty, propertyMutation,
-                        WFLOW_ACTION_STEP_SIGN, isCorporation);
-                final PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(
-                        NOTICE_TYPE_MUTATION_CERTIFICATE, propertyMutation.getApplicationNo());
-                fileStoreId.append(notice.getFileStore().getFileStoreId());
-            }
+            final PropertyMutation propertyMutation = (PropertyMutation) propertyMutationDAO.findById(Long.valueOf(id[0]), false);
+            final BasicProperty basicProperty = propertyMutation.getBasicProperty();
+            transferOwnerService.generateTransferNotice(basicProperty, propertyMutation,
+                    WFLOW_ACTION_STEP_SIGN, isCorporation);
+            final PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(
+                    NOTICE_TYPE_MUTATION_CERTIFICATE, propertyMutation.getApplicationNo());
+            fileStoreId.append(notice.getFileStore().getFileStoreId());
         }
+    }
 
 	private String generatePropertyNotice(final Long basicPropertyId, final String type) {
 		BasicPropertyImpl basicProperty;

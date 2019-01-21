@@ -98,7 +98,7 @@ public class NoticeNumberGeneratorImpl implements NoticeNumberGenerator {
                 noticeTypeCode = "EN";
             else if (PropertyTaxConstants.NOTICE_TYPE_SURVEY_COMPARISON.equalsIgnoreCase(noticeType))
                 noticeTypeCode = "CN";
-            noticeNumber = String.format("%s/%s%06d", noticeTypeCode, ApplicationThreadLocals.getCityCode(),
+            noticeNumber = String.format("%s_%s%06d", noticeTypeCode, ApplicationThreadLocals.getCityCode(),
                     genericSequenceNumberGenerator.getNextSequence(SEQ_EGPT_NOTICE_NUMBER));
         }
         return noticeNumber;

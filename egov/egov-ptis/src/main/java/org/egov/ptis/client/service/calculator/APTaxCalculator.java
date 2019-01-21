@@ -382,7 +382,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 		final List<BoundaryCategory> categories = (List<BoundaryCategory>) entityManager.createNamedQuery(QUERY_BASERATE_BY_OCCUPANCY_ZONE)
 				.setParameter("boundary", zone.getId()).setParameter("usage", usageId)
 				.setParameter("structure", classification).setParameter("fromDate", occupancyDate)
-				.setParameter("toDate", installment.getToDate());
+				.setParameter("toDate", installment.getToDate()).getResultList();
 
         LOGGER.debug("baseRentOfUnit - Installment : " + installment);
 

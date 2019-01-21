@@ -503,9 +503,9 @@ public class SearchNoticesAction extends SearchFormAction {
     private Map<String, Object> getCriteriaString() {
         final Map<String, Object> map = new HashMap<>();
         final ArrayList<Object> params = new ArrayList<>();
-
+        int pos = 0;
         StringBuilder criteriaString;
-        criteriaString = new StringBuilder(" where notice.noticeType = ?");
+        criteriaString = new StringBuilder(" where notice.noticeType = ?").append(++pos);
         params.add(noticeType);
 
         // To show only the active Demand Bill
@@ -517,45 +517,45 @@ public class SearchNoticesAction extends SearchFormAction {
         else
             criteriaString = criteriaString.append(" and bp.upicNo=pmv.propertyId");
         if (isNotBlank(ownerName)) {
-            criteriaString.append(" and pmv.ownerName like ?");
+            criteriaString.append(" and pmv.ownerName like ?").append(++pos);
             params.add("%" + ownerName + "%");
         }
         if (zoneId != null && !zoneId.equals(-1l)) {
-            criteriaString.append(" and bp.propertyID.zone.id = ?");
+            criteriaString.append(" and bp.propertyID.zone.id = ?").append(++pos);
             params.add(zoneId);
         }
         if (wardId != null && !wardId.equals(-1l)) {
-            criteriaString.append(" and bp.propertyID.ward.id = ?");
+            criteriaString.append(" and bp.propertyID.ward.id = ?").append(++pos);
             params.add(wardId);
         }
         if (propertyType != null && !propertyType.equals("-1")) {
-            criteriaString.append(" and pmv.propTypeMstrID.id = ?");
+            criteriaString.append(" and pmv.propTypeMstrID.id = ?").append(++pos);
             params.add(Long.parseLong(propertyType));
         }
         if (isNotBlank(noticeNumber)) {
-            criteriaString.append(" and notice.noticeNo = ?");
+            criteriaString.append(" and notice.noticeNo = ?").append(++pos);
             params.add(noticeNumber);
         }
         if (noticeFromDate != null) {
-            criteriaString.append(" and notice.noticeDate >= ?");
+            criteriaString.append(" and notice.noticeDate >= ?").append(++pos);
             params.add(noticeFromDate);
         }
         if (noticeToDate != null) {
             final Calendar nextDate = Calendar.getInstance();
             nextDate.setTime(noticeToDate);
             nextDate.add(Calendar.DATE, 1);
-            criteriaString.append(" and notice.noticeDate <= ?");
+            criteriaString.append(" and notice.noticeDate <= ?").append(++pos);
             params.add(nextDate.getTime());
         }
         if (isNotBlank(indexNumber)) {
         	if(NOTICE_TYPE_SURVEY_COMPARISON.equalsIgnoreCase(noticeType))
-        		criteriaString.append(" and bp.upicNo = ?");
+        		criteriaString.append(" and bp.upicNo = ?").append(++pos);
         	else
-        		criteriaString.append(" and pmv.propertyId = ?");
+        		criteriaString.append(" and pmv.propertyId = ?").append(++pos);
             params.add(indexNumber);
         }
         if (isNotBlank(houseNumber)) {
-            criteriaString.append(" and bp.address.houseNoBldgApt like ?");
+            criteriaString.append(" and bp.address.houseNoBldgApt like ?").append(++pos);
             params.add(houseNumber);
         }
         map.put("criteriaString", criteriaString);

@@ -85,9 +85,9 @@ public class NoticeDAO {
 			Query query = getCurrentSession()
 					.createNativeQuery(
 							"insert into EGPT_NOTICE (ID,ID_MODULE,NOTICETYPE,NOTICENO,NOTICEDATE,ID_USER) "
-									+ "values (SEQ_EGPT_NOTICE.nextval,:moduleId,:noticeType,:noticeNo,sysdate,?")
+									+ "values (SEQ_EGPT_NOTICE.nextval,:moduleId,:noticeType,:noticeNo,sysdate,:userId")
 					.setParameter("moduleId", notice.getModuleId()).setParameter("noticeType", notice.getNoticeType())
-					.setParameter("noticeNo", notice.getNoticeNo()).setParameter(3, notice.getUserId());
+					.setParameter("noticeNo", notice.getNoticeNo()).setParameter("userId", notice.getUserId());
 			query.executeUpdate();
 			isNoticeSaved = true;
 		} catch (Exception e) {

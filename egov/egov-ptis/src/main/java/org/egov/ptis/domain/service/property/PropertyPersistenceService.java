@@ -48,6 +48,19 @@
 
 package org.egov.ptis.domain.service.property;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.User;
@@ -74,17 +87,6 @@ import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.PersistenceContext;
-
 public class PropertyPersistenceService extends PersistenceService<BasicProperty, Long> {
 
     private static final Logger LOGGER = Logger.getLogger(PropertyPersistenceService.class);
@@ -100,6 +102,9 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
     private CityService cityService;
     @Autowired 
     UserRepository userRepository;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
     
     public PropertyPersistenceService() {
         super(BasicProperty.class);
@@ -243,8 +248,10 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
                 if (user == null || user.getId().equals(ownerInfo.getOwner().getId()))
                     userService.updateUser(ownerInfo.getOwner());
                 else {
-                    final BasicProperty basicProp = find("select basicProperty from PropertyOwnerInfo where owner = ?",
-                            user.getId());
+                    final Query query = entityManager
+                            .createQuery("select basicProperty from PropertyOwnerInfo where owner =: userId");
+                    query.setParameter("userId", user.getId());
+                    final BasicProperty basicProp = (BasicProperty) query.getSingleResult();
                     errorMesg.append("With entered aadhar number - ").append(ownerInfo.getOwner().getAadhaarNumber())
                             .append(" there is already owner present with owner name: ")
                             .append(user.getName());

@@ -1054,7 +1054,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 	private void prepareWorkflowPropInfo() {
 		setBasicProp((BasicProperty) entityManager.unwrap(Session.class)
 				.createQuery("select prop.basicProperty from PropertyImpl prop where prop.id=:id")
-				.setParameter("id", Long.valueOf(getModelId())));
+				.setParameter("id", Long.valueOf(getModelId())).getSingleResult());
 		propWF = (PropertyImpl) propertyDAO.getWorkflowPropertyById(Long.valueOf(getModelId()));
 		if (propWF != null) {
 			setProperty(propWF);

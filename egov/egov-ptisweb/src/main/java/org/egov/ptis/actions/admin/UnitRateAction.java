@@ -295,7 +295,7 @@ public class UnitRateAction extends BaseFormAction {
     @Action(value = "/unitRate-view")
     public String view() {
         if (categoryId != null && categoryId != -1) {
-            category = (Category) getPersistenceService().find("from Category where id = ?", categoryId);
+            category = categoryDao.findById(categoryId, false);
         }
         setUsageId(category.getPropUsage().getId());
         setStructureClassId(category.getStructureClass().getId());

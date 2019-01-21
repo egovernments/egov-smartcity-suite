@@ -852,7 +852,7 @@ public class PropertyTaxCollection extends TaxCollection {
                     receiptAmountInfo.setInstallmentTo(desc[1]);
         }
         String revenueWard = (String) persistenceService.find(
-                "select bp.propertyID.ward.name from BasicPropertyImpl bp where bp.upicNo = ?",
+                "select bp.propertyID.ward.name from BasicPropertyImpl bp where bp.upicNo = ?1",
                 reciptDetailList.get(0).getReceiptHeader().getConsumerCode());
 
         String courtCaseQuery = "select (case when exists (select assessmentno from egpt_courtcases where assessmentno=:assessmentNo) then 1 else 0 end)";

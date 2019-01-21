@@ -55,8 +55,8 @@ import org.springframework.core.env.Environment;
 
 @Configuration
 @PropertySource(name = "ptisApplicationSetting", 
-	value = { "classpath:dashboard/ptis-dashboard-sql.properties",
-		"classpath:ptis-application-config.properties"},
+	value = { "classpath:config/ptis-application-config.properties",
+		"classpath:dashboard/ptis-dashboard-sql.properties"},
         ignoreResourceNotFound = true)
 public class PTISApplicationProperties {
 
