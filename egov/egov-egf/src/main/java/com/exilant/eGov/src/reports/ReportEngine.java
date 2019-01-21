@@ -54,10 +54,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Manikanta
@@ -73,7 +70,7 @@ public class ReportEngine {
     private AppConfigValueService appConfigValuesService;
 
     public ReportEngineBean getVouchersListQuery(final ReportEngineBean reBean) throws ApplicationRuntimeException {
-        Map<String, String> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         boolean includeVouchermis = false;
         boolean includeGeneralLedger = false;
         String firstParam = "";
@@ -119,12 +116,12 @@ public class ReportEngine {
              */
             if (checkNullandEmpty(reBean.getFundId())) {
                 reportEngineQry.append(firstParam).append(" voucher.fundId = :fundId");
-                params.put("fundId", reBean.getFundId());
+                params.put("fundId", Long.valueOf(reBean.getFundId()));
                 firstParam = andParam;
             }
             if (checkNullandEmpty(reBean.getFundsourceId())) {
                 reportEngineQry.append(firstParam).append(" mis.fundsourceId = :fundSourceId");
-                params.put("fundSourceId", reBean.getFundsourceId());
+                params.put("fundSourceId", Long.valueOf(reBean.getFundsourceId()));
                 firstParam = andParam;
             }
 
@@ -151,32 +148,32 @@ public class ReportEngine {
             }
             if (checkNullandEmpty(reBean.getSchemeId())) {
                 reportEngineQry.append(firstParam).append(" mis.schemeId = :schemeId");
-                params.put("schemeId", reBean.getSchemeId());
+                params.put("schemeId", Long.valueOf(reBean.getSchemeId()));
                 firstParam = andParam;
             }
             if (checkNullandEmpty(reBean.getSubSchemeId())) {
                 reportEngineQry.append(firstParam).append(" mis.subSchemeId = :subSchemeId");
-                params.put("subSchemeId", reBean.getSubSchemeId());
+                params.put("subSchemeId", Long.valueOf(reBean.getSubSchemeId()));
                 firstParam = andParam;
             }
             if (checkNullandEmpty(reBean.getDivisionId())) {
                 reportEngineQry.append(firstParam).append(" mis.divisionId = :divisionId");
-                params.put("divisionId", reBean.getDivisionId());
+                params.put("divisionId", Long.valueOf(reBean.getDivisionId()));
                 firstParam = andParam;
             }
             if (checkNullandEmpty(reBean.getDepartmentId())) {
                 reportEngineQry.append(firstParam).append(" mis.departmentId = :departmentId");
-                params.put("departmentId", reBean.getDepartmentId());
+                params.put("departmentId", Long.valueOf(reBean.getDepartmentId()));
                 firstParam = andParam;
             }
             if (checkNullandEmpty(reBean.getFunctionaryId())) {
                 reportEngineQry.append(firstParam).append(" mis.functionaryId = :functionaryId");
-                params.put("functionaryId", reBean.getFunctionaryId());
+                params.put("functionaryId", Long.valueOf(reBean.getFunctionaryId()));
                 firstParam = andParam;
             }
             if (checkNullandEmpty(reBean.getFunctionId())) {
                 reportEngineQry.append(firstParam).append(" ledger.functionid = :functionId");
-                params.put("functionId", reBean.getFunctionId());
+                params.put("functionId", Long.valueOf(reBean.getFunctionId()));
                 firstParam = andParam;
             }
 
@@ -186,28 +183,26 @@ public class ReportEngine {
              */
 
             new ArrayList<String>();
-            String defaultStatusExclude = null;
+            final List<Integer> defaultStatusExclude = new ArrayList<>();
             final List<AppConfigValues> listAppConfVal = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
                     "statusexcludeReport");
-            if (null != listAppConfVal)
-                defaultStatusExclude = listAppConfVal.get(0).getValue();
-            else
+            if (null != listAppConfVal) {
+                Arrays.asList(listAppConfVal.get(0).getValue().split(","))
+                        .stream().forEach(rec -> defaultStatusExclude.add(Integer.valueOf(rec)));
+            }else
                 throw new ApplicationRuntimeException("Exlcude statusses not  are not defined for Reports");
-            reportEngineQry.append(firstParam).append(" voucher.status not in (:defaultStatus");
-            params.put("defaultStatus", defaultStatusExclude);
+            reportEngineQry.append(firstParam).append(" voucher.status not in (:defaultStatus)");
             if (reBean.getExcludeStatuses() != null && reBean.getExcludeStatuses().size() > 0) {
-                reportEngineQry.append(",").append(":excludeStatuses)");
-                params.put("excludeStatuses", reBean.getCommaSeperatedValues(reBean.getExcludeStatuses()));
+                defaultStatusExclude.addAll(reBean.getExcludeStatuses());
                 firstParam = andParam;
             } else {
-                reportEngineQry.append(")");
                 firstParam = andParam;
             }
+            params.put("defaultStatus", defaultStatusExclude);
 
             if (reBean.getIncludeStatuses() != null && reBean.getIncludeStatuses().size() > 0) {
-                reportEngineQry.append(firstParam).append(" voucher.status in(:includeStatuses)");
-                params.put("includeStatuses", reBean.getCommaSeperatedValues(reBean.getIncludeStatuses()));
-                firstParam = andParam;
+                reportEngineQry.append(firstParam).append(" voucher.status in (:includeStatuses)");
+                params.put("includeStatuses", reBean.getIncludeStatuses());
             }
 
         } catch (final Exception e) {
