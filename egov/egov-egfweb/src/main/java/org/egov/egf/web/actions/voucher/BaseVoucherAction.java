@@ -577,8 +577,8 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
 
         final StringBuffer fyQuery = new StringBuffer();
         fyQuery.append("from CFinancialYear where isActiveForPosting=true and startingDate <= ?1 AND endingDate >= ?2");
-        final List<CFinancialYear> list = persistenceService.findAllBy(fyQuery.toString(), Constants.DDMMYYYYFORMAT1.format(voucherHeader.getVoucherDate()),
-                Constants.DDMMYYYYFORMAT1.format(voucherHeader.getVoucherDate()));
+        final List<CFinancialYear> list = persistenceService.findAllBy(fyQuery.toString(), voucherHeader.getVoucherDate(),
+                voucherHeader.getVoucherDate());
         if (list.size() == 0) {
             addActionError(getText("journalvoucher.fYear.notActive"));
             return true;
