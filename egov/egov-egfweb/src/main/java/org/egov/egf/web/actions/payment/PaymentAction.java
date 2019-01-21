@@ -414,11 +414,11 @@ public class PaymentAction extends BasePaymentAction {
         }
         if (!"".equals(fromDate)) {
             sql.append(" and bill.billdate>=:billFromDate ");
-            sqlParams.put("billFromDate", sdf.format(formatter.parse(fromDate)));
+            sqlParams.put("billFromDate", formatter.parse(fromDate));
         }
         if (!"".equals(toDate)) {
             sql.append(" and bill.billdate<=:billToDate");
-            sqlParams.put("billToDate", sdf.format(formatter.parse(toDate)));
+            sqlParams.put("billToDate", formatter.parse(toDate));
         }
         if (voucherHeader.getFundId() != null) {
             sql.append(" and bill.egBillregistermis.fund.id=:fundId");
