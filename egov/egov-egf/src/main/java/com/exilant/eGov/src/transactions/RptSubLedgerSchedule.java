@@ -289,11 +289,11 @@ public class RptSubLedgerSchedule {
 
                     try {
                         entity = (EntityType) persistenceService.find(" from " .concat(accountdetailtype.getFullQualifiedName())
-                                .concat(" where id = ?1"), element[0].toString());
+                                .concat(" where id = ?1"), Integer.valueOf(element[0].toString()));
                     } catch (final Exception ee) {
                         LOGGER.error(ee.getMessage(), ee);
                         entity = (EntityType) persistenceService.find(" from " .concat(accountdetailtype.getFullQualifiedName())
-                                .concat(" where id = ?1"), element[0].toString());
+                                .concat(" where id = ?1"), Integer.valueOf(element[0].toString()));
                     }
                     if (entity != null) {
                         gb.setCode(entity.getCode());

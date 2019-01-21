@@ -1390,7 +1390,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             mainQuery.append(sql).append(" and ih.statusId.id in (?").append(i++).append(")  order by iv.voucherHeaderId.voucherDate").toString();
             final EgwStatus created = instrumentService.getStatusId(FinancialConstants.INSTRUMENT_CREATED_STATUS);
             params.add(created.getId());
-            instrumentHeaderList = persistenceService.findAllBy(mainQuery.toString(), params);
+            instrumentHeaderList = persistenceService.findAllBy(mainQuery.toString(), params.toArray());
             final LinkedHashSet lhs = new LinkedHashSet();
             lhs.addAll(instrumentHeaderList);
             instrumentHeaderList.clear();
