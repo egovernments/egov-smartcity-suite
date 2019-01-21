@@ -144,10 +144,10 @@ public class BillVoucherAction extends BaseVoucherAction {
         final List<Object> params = new ArrayList<>();
         try {
             final String statusid = getApprovalStatusForBills();
-            query.append("from EgBillregister br where br.status.id in(?)").append(index++)
-                    .append(" and ( br.egBillregistermis.voucherHeader is null or br.egBillregistermis.voucherHeader in (from CVoucherHeader vh where vh.status =?")
+            query.append("from EgBillregister br where br.status.id in(?").append(index++)
+                    .append(") and ( br.egBillregistermis.voucherHeader is null or br.egBillregistermis.voucherHeader in (from CVoucherHeader vh where vh.status =?")
                     .append(index++).append(" ))");
-            params.add(statusid);
+            params.add(Integer.valueOf(statusid));
             params.add(4);
             if (null != billNumber && StringUtils.isNotEmpty(billNumber)) {
                 query.append(" and br.billnumber=?").append(index++);
@@ -159,13 +159,13 @@ public class BillVoucherAction extends BaseVoucherAction {
             }
             if (null != voucherTypeBean.getVoucherDateFrom() && StringUtils.isNotEmpty(voucherTypeBean.getVoucherDateFrom())) {
                 query.append(" and br.billdate>=?").append(index++);
-                params.add(Constants.DDMMYYYYFORMAT1.format(Constants.DDMMYYYYFORMAT2.parse(voucherTypeBean.getVoucherDateFrom())));
+                params.add(Constants.DDMMYYYYFORMAT2.parse(voucherTypeBean.getVoucherDateFrom()));
             }
             if (null != voucherTypeBean.getVoucherDateTo() && StringUtils.isNotEmpty(voucherTypeBean.getVoucherDateTo())) {
                 query.append(" and br.billdate<=?").append(index++);
-                params.add(Constants.DDMMYYYYFORMAT1.format(Constants.DDMMYYYYFORMAT2.parse(voucherTypeBean.getVoucherDateTo())));
+                params.add(Constants.DDMMYYYYFORMAT2.parse(voucherTypeBean.getVoucherDateTo()));
             }
-            preApprovedVoucherList = persistenceService.findAllBy(query.toString(), params);
+            preApprovedVoucherList = persistenceService.findAllBy(query.toString(), params.toArray());
             if(preApprovedVoucherList.size()==0)
             {
             	addActionError("No records found.");
