@@ -854,7 +854,7 @@ public class GeneralLedgerReport {
 
     @SuppressWarnings("unchecked")
     private List getQuery(final String glCode1, final String accEntityId, final String accEntityKey, final String fieldId, final String functionId,
-                          String queryString, Map<String, String> params) throws TaskFailedException {
+                          String queryString, Map<String, Object> params) throws TaskFailedException {
         StringBuilder query;
         StringBuilder addTableToQuery = new StringBuilder("");
         StringBuilder entityCondition = new StringBuilder("");
@@ -880,7 +880,7 @@ public class GeneralLedgerReport {
                     .append(" gl.description as \"narration\", vh .type || '-' || vh.name||CASE WHEN status = 1 THEN '(Reversed)'")
                     .append(" ELSE (CASE WHEN status = 2 THEN '(Reversal)' ELSE '' END) END AS \"type\", CASE WHEN gl.glcode = :glCode1")
                     .append(" THEN (CASE WHEN gl.debitAMOUNT = 0 THEN 0 ELSE gldet.amount END) ELSE (CASE WHEN gl.debitAMOUNT = 0 THEN 0")
-                    .append(" ELSE gl.debitamount END) END as \"debitamount\", CASE WHEN gl.glcode = :glCodee1 THEN (CASE WHEN gl.creditAMOUNT = 0")
+                    .append(" ELSE gl.debitamount END) END as \"debitamount\", CASE WHEN gl.glcode = :glCode1 THEN (CASE WHEN gl.creditAMOUNT = 0")
                     .append(" THEN 0 ELSE gldet.amount END) ELSE (CASE WHEN gl.debitAMOUNT = 0 THEN 0 ELSE gl.creditamount END) END as \"creditamount\",")
                     .append(" f.name as \"fundName\", vh.isconfirmed as \"isconfirmed\", case when (gldet.generalledgerid = gl.id)")
                     .append(" then gldet.detailkeyid else null end as \"DetailKeyId\", vh.type||'-'||vh.name as \"vouchertypename\"")
@@ -920,10 +920,14 @@ public class GeneralLedgerReport {
         }
         try {
             pstmt = persistenceService.getSession().createNativeQuery(query.toString());
-            pstmt.setParameter("accEntityId", accEntityId, StringType.INSTANCE)
-                    .setParameter("functionId", functionId, StringType.INSTANCE)
-                    .setParameter("glCode1", glCode1, StringType.INSTANCE);
-            params.entrySet().forEach(entry -> pstmt.setParameter(entry.getKey(), entry.getValue(), StringType.INSTANCE));
+            pstmt.setParameter("glCode1", glCode1, StringType.INSTANCE);
+            if (!accEntityId.equalsIgnoreCase("") && !accEntityKey.equalsIgnoreCase("")){
+                pstmt.setParameter("accEntityId", Long.valueOf(accEntityId), LongType.INSTANCE);
+            }
+            if (!StringUtils.isEmpty(functionId)){
+                pstmt.setParameter("functionId", Long.valueOf(functionId), LongType.INSTANCE);
+            }
+            params.entrySet().forEach(entry -> pstmt.setParameter(entry.getKey(), entry.getValue()));
             return pstmt.list();
         } catch (final Exception e) {
             LOGGER.error("Exception in getQuery:", e);
@@ -1071,30 +1075,30 @@ public class GeneralLedgerReport {
             pstmt = persistenceService.getSession().createNativeQuery(queryTillDateOpBal.toString());
             if (!accEntityId.equalsIgnoreCase("") && !accEntityKey.equalsIgnoreCase("")) {
                 if (!fundId.equalsIgnoreCase(""))
-                    pstmt.setParameter("fundId", Long.parseLong(fundId), LongType.INSTANCE);
+                    pstmt.setParameter("fundId", Long.valueOf(fundId), LongType.INSTANCE);
                 if (!fundSourceId.equalsIgnoreCase(""))
-                    pstmt.setParameter("fundSourceId", Long.parseLong(fundSourceId), LongType.INSTANCE);
+                    pstmt.setParameter("fundSourceId", Long.valueOf(fundSourceId), LongType.INSTANCE);
                 if (!StringUtils.isEmpty(functionId))
-                    pstmt.setParameter("functionId", Long.parseLong(functionId), LongType.INSTANCE);
+                    pstmt.setParameter("functionId", Long.valueOf(functionId), LongType.INSTANCE);
                 if (!accEntityId.equalsIgnoreCase("")) {
-                    pstmt.setParameter("detailTypeId", Long.parseLong(accEntityId), LongType.INSTANCE);
-                    pstmt.setParameter("detailKeyId", Long.parseLong(accEntityKey), LongType.INSTANCE);
+                    pstmt.setParameter("detailTypeId", Long.valueOf(accEntityId), LongType.INSTANCE);
+                    pstmt.setParameter("detailKeyId", Long.valueOf(accEntityKey), LongType.INSTANCE);
                 }
                 if (deptId != null && !deptId.equalsIgnoreCase(""))
-                    pstmt.setParameter("departmentId", Long.parseLong(deptId), LongType.INSTANCE);
+                    pstmt.setParameter("departmentId", Long.valueOf(deptId), LongType.INSTANCE);
                 pstmt.setParameter("startDate", startDate, StringType.INSTANCE);
                 pstmt.setParameter("endDate", tillDate, StringType.INSTANCE);
                 if (deptId != null && !deptId.equalsIgnoreCase(""))
-                    pstmt.setParameter("departmentId", Long.parseLong(deptId), LongType.INSTANCE);
+                    pstmt.setParameter("departmentId", Long.valueOf(deptId), LongType.INSTANCE);
                 if (!fundId.equalsIgnoreCase(""))
-                    pstmt.setParameter("fundId", Long.parseLong(fundId), LongType.INSTANCE);
+                    pstmt.setParameter("fundId", Long.valueOf(fundId), LongType.INSTANCE);
                 if (!fundSourceId.equalsIgnoreCase(""))
-                    pstmt.setParameter("fundSourceId", Long.parseLong(fundSourceId), LongType.INSTANCE);
+                    pstmt.setParameter("fundSourceId", Long.valueOf(fundSourceId), LongType.INSTANCE);
                 if (!StringUtils.isEmpty(functionId))
-                    pstmt.setParameter("functionId", Long.parseLong(functionId), LongType.INSTANCE);
+                    pstmt.setParameter("functionId", Long.valueOf(functionId), LongType.INSTANCE);
                 if (!accEntityId.equalsIgnoreCase("")) {
-                    pstmt.setParameter("detailTypeId", Long.parseLong(accEntityId), LongType.INSTANCE);
-                    pstmt.setParameter("detailKeyId", Long.parseLong(accEntityKey), LongType.INSTANCE);
+                    pstmt.setParameter("detailTypeId", Long.valueOf(accEntityId), LongType.INSTANCE);
+                    pstmt.setParameter("detailKeyId", Long.valueOf(accEntityKey), LongType.INSTANCE);
                 }
                 pstmt.setParameter("startDate", startDate, StringType.INSTANCE);
                 pstmt.setParameter("endDate", tillDate, StringType.INSTANCE);
@@ -1102,14 +1106,14 @@ public class GeneralLedgerReport {
             } else {
 
                 if (deptId != null && !deptId.equalsIgnoreCase(""))
-                    pstmt.setParameter("departmentId", Long.parseLong(deptId), LongType.INSTANCE);
+                    pstmt.setParameter("departmentId", Long.valueOf(deptId), LongType.INSTANCE);
                 pstmt.setParameter("glCode", glCode, StringType.INSTANCE);
                 if (!fundId.equalsIgnoreCase(""))
-                    pstmt.setParameter("fundId", Long.parseLong(fundId), LongType.INSTANCE);
+                    pstmt.setParameter("fundId", Long.valueOf(fundId), LongType.INSTANCE);
                 if (!fundSourceId.equalsIgnoreCase(""))
-                    pstmt.setParameter("fundSourceId", Long.parseLong(fundSourceId), LongType.INSTANCE);
+                    pstmt.setParameter("fundSourceId", Long.valueOf(fundSourceId), LongType.INSTANCE);
                 if (!StringUtils.isEmpty(functionId))
-                    pstmt.setParameter("functionId", Long.parseLong(functionId), LongType.INSTANCE);
+                    pstmt.setParameter("functionId", Long.valueOf(functionId), LongType.INSTANCE);
                 pstmt.setParameter("startDate", startDate, StringType.INSTANCE);
                 pstmt.setParameter("endDate", tillDate, StringType.INSTANCE);
             }
