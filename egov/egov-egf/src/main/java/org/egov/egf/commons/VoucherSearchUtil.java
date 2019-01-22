@@ -58,6 +58,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.query.Query;
+import org.hibernate.type.DateType;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
@@ -254,8 +255,8 @@ public class VoucherSearchUtil {
             query.setParameterList("vhName", Arrays.asList(FinancialConstants.JOURNALVOUCHER_NAME_CONTRACTORJOURNAL, FinancialConstants.JOURNALVOUCHER_NAME_SUPPLIERJOURNAL,
                     FinancialConstants.JOURNALVOUCHER_NAME_SALARYJOURNAL), StringType.INSTANCE);
         query.setParameter("voucherNumber", "%".concat(voucherHeader.getVoucherNumber()).concat("%"), StringType.INSTANCE)
-                .setParameter("fromDate", Constants.DDMMYYYYFORMAT1.format(fromDate), StringType.INSTANCE)
-                .setParameter("toDate", Constants.DDMMYYYYFORMAT1.format(toDate), StringType.INSTANCE)
+                .setParameter("fromDate", fromDate, DateType.INSTANCE)
+                .setParameter("toDate", toDate, DateType.INSTANCE)
                 .setParameter("fundId", voucherHeader.getFundId().getId(), IntegerType.INSTANCE)
                 .setParameter("fundSourceId", voucherHeader.getVouchermis().getFundsource().getId(), LongType.INSTANCE)
                 .setParameter("deptId", voucherHeader.getVouchermis().getDepartmentid().getId(), LongType.INSTANCE)
@@ -290,14 +291,14 @@ public class VoucherSearchUtil {
         }
         if (fromDate != null) {
             sql.append(" and vh.voucherDate >= :fromDate");
-            params.put("fromDate", Constants.DDMMYYYYFORMAT1.format(fromDate));
+            params.put("fromDate", fromDate);
         }
         if (toDate != null) {
             sql.append(" and vh.voucherDate <= :toDate");
-            params.put("toDate", Constants.DDMMYYYYFORMAT1.format(toDate));
+            params.put("toDate", toDate);
         }
         if (voucherHeader.getFundId() != null) {
-            sql.append(" and vh.fundId = :fundId");
+            sql.append(" and vh.fundId.id = :fundId");
             params.put("fundId", voucherHeader.getFundId().getId());
         }
         if (voucherHeader.getVouchermis().getFundsource() != null) {

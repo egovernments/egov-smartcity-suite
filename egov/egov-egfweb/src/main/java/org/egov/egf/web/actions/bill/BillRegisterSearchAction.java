@@ -193,7 +193,7 @@ public class BillRegisterSearchAction extends BaseFormAction {
                 .append(billDateQueryString)
                 .append(billMisQueryString);
 
-        final Query qry = persistenceService.getSession().createNativeQuery(query.toString())
+        final Query qry = persistenceService.getSession().createQuery(query.toString())
                 .setParameter("expType", expType, StringType.INSTANCE);
         billMisQueryParams.entrySet().forEach(entry -> qry.setParameter(entry.getKey(), entry.getValue()));
         billDateQueryParams.entrySet().forEach(entry -> qry.setParameter(entry.getKey(), entry.getValue()));
