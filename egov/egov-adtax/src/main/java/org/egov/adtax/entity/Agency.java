@@ -48,6 +48,8 @@
 
 package org.egov.adtax.entity;
 
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHANUMERIC_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHANUMERIC_WITH_SPACE;
 import static org.egov.infra.validation.constants.ValidationRegex.EMAIL;
 import static org.egov.infra.validation.constants.ValidationRegex.MOBILE_NUMBER;
 
@@ -100,10 +102,12 @@ public class Agency extends AbstractAuditable {
     @Column(name = "name", unique = true)
     @SafeHtml
     @Length(max = 32)
+    @Pattern(regexp = ALPHANUMERIC_WITH_SPACE, message = INVALID_ALPHANUMERIC_WITH_SPACE)
     private String name;
 
     @SafeHtml
     @Length(max = 15)
+    @Pattern(regexp = ALPHANUMERIC_WITH_SPACE, message = INVALID_ALPHANUMERIC_WITH_SPACE)
     private String ssId;
 
     @Email(regexp = EMAIL)
