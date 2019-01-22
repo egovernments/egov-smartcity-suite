@@ -213,7 +213,7 @@ function deSelectAll() {
 // Select all receipts
 function selectAll() {
 	// Select all checkboxes
-	changeSelectionOfAllReceipts(true);
+	changeSelectionOfAllReceipts(true); 
 
  	// Set all amounts to original values
 	totalAmount = ${totalAmount};
