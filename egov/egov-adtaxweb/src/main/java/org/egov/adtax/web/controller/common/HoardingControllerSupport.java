@@ -49,7 +49,10 @@ package org.egov.adtax.web.controller.common;
 
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.HoardingCategory;
@@ -82,6 +85,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHANUMERIC_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHANUMERIC_WITH_SLASH;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHANUMERIC_WITH_SPACE;
 
 public class HoardingControllerSupport extends GenericWorkFlowController {
     private static final String HOARDING_DOC_NOT_ENCLOSED = "hoarding.doc.not.enclosed";
@@ -218,7 +224,8 @@ public class HoardingControllerSupport extends GenericWorkFlowController {
 
     protected void validateAdvertisementDetails(final AdvertisementPermitDetail advertisementPermitDetail,
             final BindingResult resultBinder) {
-
+    	Pattern pattern;
+    	Matcher matcher;
         if (advertisementPermitDetail.getAgency() == null && advertisementPermitDetail.getOwnerDetail() == null)
             resultBinder.rejectValue("agency", "invalid.eitherAgencyOrOwnerDetailRequired");
 
@@ -233,5 +240,19 @@ public class HoardingControllerSupport extends GenericWorkFlowController {
                 && advertisementPermitDetail.getPermissionstartdate()
                         .compareTo(advertisementPermitDetail.getPermissionenddate()) > -1)
             resultBinder.rejectValue("permissionstartdate", "invalid.permissionFromDateAndToDateCompare");
+        
+        if(StringUtils.isNotBlank(advertisementPermitDetail.getAdvertisement().getElectricityServiceNumber())){
+        	pattern = Pattern.compile(ALPHANUMERIC_WITH_SLASH);
+            matcher = pattern.matcher(advertisementPermitDetail.getAdvertisement().getElectricityServiceNumber());
+            if(!matcher.matches())
+            	resultBinder.rejectValue("advertisement.electricityServiceNumber", "invalid.pattern.alphanumeric.with.hyphen.slash");
+        }
+        
+        if(StringUtils.isNotBlank(advertisementPermitDetail.getAdvertisement().getAddress())){
+        	pattern = Pattern.compile(ALPHANUMERIC_WITH_SPACE);
+        	matcher = pattern.matcher(advertisementPermitDetail.getAdvertisement().getAddress());
+            if(!matcher.matches())
+            	resultBinder.rejectValue("advertisement.address", INVALID_ALPHANUMERIC_WITH_SPACE);
+        }
     }
 }

@@ -114,6 +114,7 @@
 											<spring:message code="lbl.select" />
 										</form:option>
 									</form:select>
+									<form:errors path="advertisement.subCategory" cssClass="error-msg" />
 								</div>
 							</div>
 							<div class="form-group">
@@ -207,7 +208,7 @@
 										cssClass="form-control patternvalidation"
 										data-pattern="alphanumerichyphenbackslash"
 										path="applicationNumber" maxlength="25" id="applicationNumber"
-										readonly="true" />
+										disabled="true" />
 									<form:errors path="applicationNumber" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right"> <spring:message
@@ -216,7 +217,7 @@
 								<div class="col-sm-3 add-margin">
 									<form:input type="text" cssClass="form-control"
 										path="applicationDate" id="applicationDate"
-										required="required" readonly="true" />
+										required="required" disabled="true" />
 									<form:errors path="applicationDate" cssClass="error-msg" />
 								</div>
 							</div>
@@ -228,7 +229,7 @@
 									<form:input type="text"
 										cssClass="form-control patternvalidation"
 										data-pattern="alphanumerichyphenbackslash" maxlength="25"
-										path="permissionNumber" id="permissionNumber" readonly="true" />
+										path="permissionNumber" id="permissionNumber" disabled="true" />
 									<form:errors path="permissionNumber" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right"> <spring:message
@@ -238,7 +239,7 @@
 										cssClass="form-control patternvalidation"
 										data-pattern="username" maxlength="25"
 										path="advertisement.advertisementNumber"
-										id="advertisementnumber" readonly="true" />
+										id="advertisementnumber" disabled="true" />
 									<form:errors path="advertisement.advertisementNumber"
 										cssClass="error-msg" />
 								</div>

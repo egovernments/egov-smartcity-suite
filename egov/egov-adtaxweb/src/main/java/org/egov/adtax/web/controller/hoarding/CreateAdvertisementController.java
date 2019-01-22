@@ -160,6 +160,13 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
         validateAssignmentForCscUser(advertisementPermitDetail, isEmployee, resultBinder);
         validateHoardingDocs(advertisementPermitDetail, resultBinder);
         validateAdvertisementDetails(advertisementPermitDetail, resultBinder);
+        model.addAttribute(IS_EMPLOYEE, isEmployee);
+
+        if (resultBinder.hasErrors()) {
+            buildCreateHoardingForm(advertisementPermitDetail, model);
+            return HOARDING_CREATE;
+        }
+
         if (advertisementPermitDetail != null) {
             if (advertisementPermitDetail.getState() == null)
                 advertisementPermitDetail.setStatus(advertisementPermitDetailService
@@ -169,13 +176,6 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
             advertisementPermitDetail.setSource(Source.SYSTEM.toString());
             advertisementPermitDetail.setApplicationtype(AdvertisementApplicationType.NEW);
         }
-        model.addAttribute(IS_EMPLOYEE, isEmployee);
-
-        if (resultBinder.hasErrors()) {
-            buildCreateHoardingForm(advertisementPermitDetail, model);
-            return HOARDING_CREATE;
-        }
-
         storeHoardingDocuments(advertisementPermitDetail);
         RequestDetails requestDetails = new RequestDetails();
         requestDetails.setIsEmployee(isEmployee);

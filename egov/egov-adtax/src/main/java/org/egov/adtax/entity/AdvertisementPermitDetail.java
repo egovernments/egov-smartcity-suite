@@ -48,14 +48,14 @@
 
 package org.egov.adtax.entity;
 
-import org.egov.adtax.entity.enums.AdvertisementApplicationType;
-import org.egov.adtax.entity.enums.AdvertisementDuration;
-import org.egov.commons.EgwStatus;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infra.workflow.entity.StateAware;
-import org.egov.pims.commons.Position;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import static org.egov.adtax.entity.AdvertisementPermitDetail.SEQ_ADTAX_APPLICATION;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHANUMERIC_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHANUMERIC_WITH_SLASH;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHANUMERIC_WITH_SPACE;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -70,12 +70,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.PositiveOrZero;
 
-import static org.egov.adtax.entity.AdvertisementPermitDetail.SEQ_ADTAX_APPLICATION;
+import org.egov.adtax.entity.enums.AdvertisementApplicationType;
+import org.egov.adtax.entity.enums.AdvertisementDuration;
+import org.egov.commons.EgwStatus;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGADTAX_PERMITDETAILS")
@@ -104,6 +111,7 @@ public class AdvertisementPermitDetail extends StateAware<Position> {
     @Column(name = "permissionNumber", unique = true)
     @SafeHtml
     @Length(max = 25)
+    @Pattern(regexp = ALPHANUMERIC_WITH_SLASH, message="{invalid.pattern.alphanumeric.with.hyphen.slash}")
     private String permissionNumber;
 
     @NotNull
@@ -117,8 +125,10 @@ public class AdvertisementPermitDetail extends StateAware<Position> {
     private EgwStatus status;
 
     @NotNull
+    @PositiveOrZero
     private BigDecimal taxAmount;
 
+    @PositiveOrZero
     private BigDecimal encroachmentFee;
 
     @ManyToOne
@@ -126,13 +136,14 @@ public class AdvertisementPermitDetail extends StateAware<Position> {
     private AdvertisementPermitDetail previousapplicationid;
 
     private Boolean isActive = false;
-
+    
     private Date permissionstartdate;
 
     private Date permissionenddate;
 
     @SafeHtml
     @Length(max = 125)
+    @Pattern(regexp = ALPHANUMERIC_WITH_SPACE, message = INVALID_ALPHANUMERIC_WITH_SPACE)
     private String ownerDetail;
 
     @ManyToOne
@@ -141,10 +152,12 @@ public class AdvertisementPermitDetail extends StateAware<Position> {
 
     @SafeHtml
     @Length(max = 125)
+    @Pattern(regexp = ALPHANUMERIC_WITH_SPACE, message = INVALID_ALPHANUMERIC_WITH_SPACE)
     private String advertiser;
 
     @SafeHtml
-    @Length(max = 512)
+    @Length(max = 256)
+    @Pattern(regexp = ALPHANUMERIC_WITH_SPACE, message = INVALID_ALPHANUMERIC_WITH_SPACE)
     private String advertisementParticular;
 
     @NotNull
@@ -152,14 +165,18 @@ public class AdvertisementPermitDetail extends StateAware<Position> {
     @JoinColumn(name = "unitofmeasure", nullable = false)
     private UnitOfMeasure unitOfMeasure;
 
+    @Digits(fraction = 2, integer = 13)
     private Double measurement;
 
+    @Digits(fraction = 2, integer = 13)
     private Double length;
 
+    @Digits(fraction = 2, integer = 13)
     private Double width;
 
     private Double breadth;
 
+    @Digits(fraction = 2, integer = 13)
     private Double totalHeight;
 
     @Column(name = "deactivation_remarks")

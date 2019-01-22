@@ -53,9 +53,9 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <import resource="applicationSecurityContext-adtax.xml"/>
-
     <context:property-placeholder/>
+    
+    <import resource="applicationSecurityContext-adtax.xml"/>
 
     <context:component-scan base-package="org.egov.adtax.web">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>

@@ -48,6 +48,10 @@
 
 package org.egov.adtax.entity;
 
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHANUMERIC_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHANUMERIC_WITH_SLASH;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHANUMERIC_WITH_SPACE;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -72,6 +76,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 import org.egov.adtax.entity.enums.AdvertisementPropertyType;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
@@ -112,11 +117,12 @@ public class Advertisement extends AbstractAuditable {
     private AdvertisementPropertyType propertyType;
 
     @SafeHtml
-    @Length(max = 50)
+    @Length(max = 15)
     private String propertyNumber;
 
     @SafeHtml
-    @Length(max = 50)
+    @Length(max = 25)
+    @Pattern(regexp = ALPHANUMERIC_WITH_SLASH, message="{invalid.pattern.alphanumeric.with.hyphen.slash}")
     private String electricityServiceNumber;
 
     // @NotNull
@@ -177,6 +183,7 @@ public class Advertisement extends AbstractAuditable {
     @NotNull
     @SafeHtml
     @Length(max = 512)
+    @Pattern(regexp = ALPHANUMERIC_WITH_SPACE, message = INVALID_ALPHANUMERIC_WITH_SPACE)
     private String address;
 
     @OneToMany(mappedBy = "advertisement", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
