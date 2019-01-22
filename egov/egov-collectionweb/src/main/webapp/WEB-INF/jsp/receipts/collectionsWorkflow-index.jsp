@@ -275,6 +275,7 @@ function onChangePaymentMode(obj)
 <div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/collection/resources/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
 
 <s:form theme="simple" name="collectionsWorkflowForm">
+   <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 	<div class="subheadnew"><s:if test="%{isSubmitAction == true}">
 		<s:text name="collectionsWorkflow.submitTitle" />
 	</s:if> <s:else>
