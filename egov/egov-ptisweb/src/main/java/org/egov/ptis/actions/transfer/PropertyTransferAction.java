@@ -308,8 +308,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             wfErrorMsg = getText("wf.pending.msg", msgParams);
             return TARGET_WORKFLOW_ERROR;
         } else {
-            final PropertyTaxUtil propertyTaxUtil = new PropertyTaxUtil();
-            propertyTaxUtil.setPersistenceService(persistenceService);
             final boolean hasChildPropertyUnderWorkflow = propertyTaxUtil
                     .checkForParentUsedInBifurcation(basicproperty.getUpicNo());
             if (hasChildPropertyUnderWorkflow) {

@@ -528,10 +528,15 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
         if (documentValue.compareTo(ZERO) > 0) {
             BigDecimal excessDocValue;
             BigDecimal multiplicationFactor;
-			final MutationFeeDetails mutationFeeDetails = (MutationFeeDetails) entityManager.unwrap(Session.class)
-					.createQuery(
-							"from MutationFeeDetails where lowLimit <= :documentValue and (highLimit is null OR highLimit >= :documentValue) and toDate > now()")
-					.setParameter("documentValue", documentValue);
+            MutationFeeDetails mutationFeeDetails = null;
+            try {
+                mutationFeeDetails = (MutationFeeDetails) entityManager.unwrap(Session.class)
+                        .createQuery(
+                                "from MutationFeeDetails where lowLimit <= :documentValue and (highLimit is null OR highLimit >= :documentValue) and toDate > now()")
+                        .setParameter("documentValue", documentValue).getSingleResult();
+            } catch (final Exception e) {
+                logger.error("Mutation fee details not present");
+            }
             if (mutationFeeDetails != null) {
                 if (mutationFeeDetails.getFlatAmount() != null
                         && mutationFeeDetails.getFlatAmount().compareTo(ZERO) > 0)
