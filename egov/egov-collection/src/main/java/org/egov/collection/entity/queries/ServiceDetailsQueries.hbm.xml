@@ -159,7 +159,7 @@
 	</query>
 	
     <query name="getActiveServiceByCodes">
-	<![CDATA[select s from ServiceDetails s where s.isEnabled = true and s.serviceType = ?1 and s.code in(:param_1) order by s.orderNumber]]>
+	<![CDATA[select s from ServiceDetails s where s.isEnabled = true and s.serviceType = ?1 and s.code in(:param_2) order by s.orderNumber]]>
 	</query>
 
 	<query name="getAllLocations">
