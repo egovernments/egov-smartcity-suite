@@ -56,8 +56,6 @@
 	class="form-horizontal form-groups-bordered" modelAttribute="hearings"
 	role="form" method="post" enctype="multipart/form-data">
 	 <input type="hidden" name="legalCase" value="${legalCase.id}" />
-	 <input type="hidden" id="lcNumber" name="lcNumber"
-		value="${legalCase.lcNumber}" /> 
 	<jsp:include page="../transactions/view-summarizedcase.jsp"/>
 	<%@ include file="hearings-form.jsp"%>
 	<div class="form-group">
