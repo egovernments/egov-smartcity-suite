@@ -675,11 +675,17 @@ public class PropertyTaxUtil {
     }
 
     public void makeTheEgBillAsHistory(final BasicProperty basicProperty) {
-		final EgBill egBill = (EgBill) entityManager.unwrap(Session.class)
-				.createQuery(
-						"from EgBill where module =:module and consumerId like :upicNo || '%' and is_history = 'N'")
-				.setParameter("module", moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME))
-				.setParameter("upicNo", basicProperty.getUpicNo()).getSingleResult();
+        EgBill egBill = null;
+        try {
+            egBill = (EgBill) entityManager.unwrap(Session.class)
+                    .createQuery(
+                            "from EgBill where module =:module and consumerId like :upicNo || '%' and is_history = 'N' and egBillType.code =: billType")
+                    .setParameter("module", moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME))
+                    .setParameter("upicNo", basicProperty.getUpicNo())
+                    .setParameter("billType", PropertyTaxConstants.BILLTYPE_MANUAL).getSingleResult();
+        } catch (Exception e) {
+            LOGGER.error("No manual bill present for property");
+        }
         if (egBill != null) {
             egBill.setIs_History("Y");
             egBill.setModifiedDate(new Date());
