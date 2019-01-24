@@ -522,9 +522,10 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
     }
 
     public BigDecimal getWaterTaxDues(final String assessmentNo, final HttpServletRequest request) {
-		return propertyService.getWaterTaxDues(assessmentNo, request).get(PropertyTaxConstants.WATER_TAX_DUES) == null
-				? BigDecimal.ZERO
-				: (BigDecimal) propertyService.getWaterTaxDues(assessmentNo, request).get(PropertyTaxConstants.WATER_TAX_DUES);
+        return propertyService.getWaterTaxDues(assessmentNo, request).get(PropertyTaxConstants.WATER_TAX_DUES) == null
+                ? BigDecimal.ZERO
+                : BigDecimal.valueOf(
+                        (Double) propertyService.getWaterTaxDues(assessmentNo, request).get(PropertyTaxConstants.WATER_TAX_DUES));
     }
 
     public Boolean isUnderWtmsWF(final String assessmentNo, final HttpServletRequest request) {
@@ -614,8 +615,8 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         for (final Object object : dmdCollList) {
             final Object[] listObj = (Object[]) object;
             instId = Integer.valueOf(listObj[0].toString());
-            demand = listObj[1] == null ? BigDecimal.ZERO : (BigDecimal) listObj[1];
-            collection = listObj[2] == null ? BigDecimal.ZERO : (BigDecimal) listObj[2];
+            demand = listObj[1] == null ? BigDecimal.ZERO : BigDecimal.valueOf((Double)listObj[1]);
+            collection = listObj[2] == null ? BigDecimal.ZERO : BigDecimal.valueOf((Double)listObj[2]);
 
             installment = installmentDao.findById(instId, false);
             if (installment.getFromDate().before(effectiveInst.getFromDate())) {
