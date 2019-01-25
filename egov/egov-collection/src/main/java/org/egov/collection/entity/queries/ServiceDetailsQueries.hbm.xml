@@ -141,7 +141,7 @@
 	<![CDATA[from EgwStatus s where moduletype=?1 order by orderId]]></query>
 	
 	<query name="getStatusesForModuleAndCodes">
-		<![CDATA[from EgwStatus s where s.moduletype= ?1 and s.code in (:param_1)]]>
+		<![CDATA[from EgwStatus s where s.moduletype= ?1 and s.code in (:param_2)]]>
 	</query>
     
     <query name="getLocationById">

@@ -356,10 +356,9 @@ public class RemittanceServiceImpl extends RemittanceService {
             for (ReceiptHeader receiptHeader : receiptHeadList) {
                 for (InstrumentHeader instHead : receiptHeader.getReceiptInstrument()) {
                     if (!isChequeAmount || (isChequeAmount && instrumentId.contains(instHead.getId().toString())))
-                        remittanceInstrumentSet.add(prepareRemittanceInstrument(remittance, instHead));
+                    	remittance.addRemittanceInstruments(prepareRemittanceInstrument(remittance, instHead));
                 }
             }
-            remittance.setRemittanceInstruments(remittanceInstrumentSet);
             remittancePersistService.persist(remittance);
         }
         return remittance;

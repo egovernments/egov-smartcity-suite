@@ -193,5 +193,7 @@ public class Remittance extends StateAware<Position> implements Auditable {
         this.remittanceInstruments = remittanceInstruments;
     }
 
-
+	public void addRemittanceInstruments(final RemittanceInstrument remittanceInstruments) {
+		getRemittanceInstruments().add(remittanceInstruments);
+	}
 }
