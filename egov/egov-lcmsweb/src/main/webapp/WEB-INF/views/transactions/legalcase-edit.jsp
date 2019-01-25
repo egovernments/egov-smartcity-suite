@@ -52,7 +52,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-<form:form method="post" action="" modelAttribute="legalCase"
+<form:form method="post" action="" modelAttribute="legalCaseedit"
 	id="newlegalcaseForm" class="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<div class="row">
