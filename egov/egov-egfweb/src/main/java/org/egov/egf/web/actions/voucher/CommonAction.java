@@ -1933,7 +1933,7 @@ public class CommonAction extends BaseFormAction {
                     .append(" where bankaccount.id in ( select DISTINCT ph.bankaccountnumberid")
                     .append(" from egf_instrumentvoucher iv,voucherheader vh, paymentheader ph, egw_status egws, (")
                     .append(" select ih1.id,ih1.id_status from egf_instrumentheader ih1, (select bankid, bankaccountid, instrumentnumber, max(id) as id")
-                    .append("from egf_instrumentheader group by bankid,bankaccountid, instrumentnumber) max_rec")
+                    .append(" from egf_instrumentheader group by bankid,bankaccountid, instrumentnumber) max_rec")
                     .append(" where max_rec.bankid = ih1.bankid and max_rec.bankaccountid = ih1.bankaccountid and max_rec.instrumentnumber = ih1.instrumentnumber ")
                     .append(" and max_rec.id=ih1.id) ih")
                     .append(" where ph.voucherheaderid = vh.id and vh.status = 0 and ph.voucherheaderid = vh.id and iv.voucherheaderid = vh.id and iv.instrumentheaderid = ih.id and")

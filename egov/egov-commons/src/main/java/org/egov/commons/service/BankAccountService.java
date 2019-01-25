@@ -53,6 +53,8 @@ import org.egov.commons.Bankbranch;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.utils.BankAccountType;
 import org.egov.infstr.services.PersistenceService;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.LongType;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -249,8 +251,8 @@ public class BankAccountService extends PersistenceService<Bankaccount, Long> {
                 queryString.append(" and bankaccount.fundid=:fundId");
 
         return getSession().createNativeQuery(queryString.toString()).
-                setInteger("fundId", fundId).
-                setInteger(BRANCH_ID, branchId).
+                setParameter("fundId", Long.valueOf(fundId), LongType.INSTANCE).
+                setParameter(BRANCH_ID, Long.valueOf(branchId), LongType.INSTANCE).
                 list();
     }
 

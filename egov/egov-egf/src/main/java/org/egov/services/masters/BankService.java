@@ -136,13 +136,13 @@ public class BankService extends PersistenceService<Bank, Integer> {
 
     private List<Object[]> fetchBankByFundAndTypeOfAccount(final Integer fundId, final String typeOfAccount) {
         final StringBuilder query = new StringBuilder();
-        query.append("select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),bankBranch.branchname) as bankbranchname ").
-                append("FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount where  bank.isactive=true  and bankBranch.isactive=true and ").
-                append(" bankaccount.isactive=true and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id ");
+        query.append("select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),bankBranch.branchname) as bankbranchname ")
+                .append(" FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount where  bank.isactive=true  and bankBranch.isactive=true and ")
+                .append(" bankaccount.isactive=true and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id ");
         if (fundId != null)
-            query.append("and bankaccount.fund.id=:fundId and bankaccount.type in(");
+            query.append(" and bankaccount.fund.id=:fundId and bankaccount.type in(");
         else
-            query.append("and bankaccount.type in(");
+            query.append(" and bankaccount.type in(");
         if (typeOfAccount.indexOf(',') != -1) {
             String[] strArray = typeOfAccount.split(",");
             int index = 0;
@@ -169,7 +169,7 @@ public class BankService extends PersistenceService<Bank, Integer> {
         StringBuilder query = new StringBuilder();
         query.append("select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),bankBranch.branchname) as bankbranchname ").
                 append(" FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount  where  bank.isactive=true  and bankBranch.isactive=true and bankaccount.isactive=true ").
-                append("and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id and bankaccount.fund.id=:fundId order by 2");
+                append(" and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id and bankaccount.fund.id=:fundId order by 2");
         return getSession().createNativeQuery(query.toString())
                 .setParameter(FUND_ID, fundId, IntegerType.INSTANCE)
                 .list();
@@ -181,12 +181,12 @@ public class BankService extends PersistenceService<Bank, Integer> {
                 append(" ih.transactionNumber is not null");
 
         StringBuilder queryString = new StringBuilder();
-        queryString = queryString.append("select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),").
-                append("bankBranch.branchname) as bankbranchname from  voucherheader vh,Bank bank,Bankbranch bankBranch,Bankaccount bankaccount, ").
-                append(" paymentheader ph where  ph.voucherheaderid=vh.id and vh.id  in (").append(vouchersWithNewInstrumentsQuery).
-                append(") and bank.isactive=true  and bankBranch.isactive=true ").
-                append(" and  bank.id = bankBranch.bankid and bankBranch.id = bankaccount.BRANCHID and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date").
-                append(" and ph.bankaccountnumberid=bankaccount.id  and bankaccount.isactive=true order by 2");
+        queryString = queryString.append("select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),")
+                .append("bankBranch.branchname) as bankbranchname from  voucherheader vh,Bank bank,Bankbranch bankBranch,Bankaccount bankaccount, ")
+                .append(" paymentheader ph where  ph.voucherheaderid=vh.id and vh.id  in (").append(vouchersWithNewInstrumentsQuery)
+                .append(") and bank.isactive=true  and bankBranch.isactive=true ")
+                .append(" and  bank.id = bankBranch.bankid and bankBranch.id = bankaccount.BRANCHID and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date")
+                .append(" and ph.bankaccountnumberid=bankaccount.id  and bankaccount.isactive=true order by 2");
         return getSession().createNativeQuery(queryString.toString())
                 .setParameter("date", asOnDate, DateType.INSTANCE)
                 .list();
@@ -196,12 +196,12 @@ public class BankService extends PersistenceService<Bank, Integer> {
         final StringBuilder vouchersWithNewInstrumentsQuery = new StringBuilder().append("select voucherheaderid from egf_instrumentvoucher eiv,egf_instrumentheader ih,").
                 append(" egw_status egws where eiv.instrumentheaderid=ih.id and egws.id=ih.id_status and egws.moduletype='Instrument' and egws.description='New' ");
         StringBuilder queryString = new StringBuilder();
-        queryString.append("select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),").
-                append("bankBranch.branchname) as bankbranchname from  voucherheader vh,Bank bank,Bankbranch bankBranch,Bankaccount bankaccount, ").
-                append(" paymentheader ph where ph.voucherheaderid=vh.id and vh.id  in (").append(vouchersWithNewInstrumentsQuery.toString()).
-                append(") and bank.isactive=true  and bankBranch.isactive=true ").
-                append(" and  bank.id = bankBranch.bankid and bankBranch.id = bankaccount.BRANCHID and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date").
-                append(" and ph.bankaccountnumberid=bankaccount.id  and bankaccount.isactive=true order by 2");
+        queryString.append("select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),")
+                .append("bankBranch.branchname) as bankbranchname from  voucherheader vh,Bank bank,Bankbranch bankBranch,Bankaccount bankaccount, ")
+                .append(" paymentheader ph where ph.voucherheaderid=vh.id and vh.id  in (").append(vouchersWithNewInstrumentsQuery.toString())
+                .append(") and bank.isactive=true  and bankBranch.isactive=true ")
+                .append(" and  bank.id = bankBranch.bankid and bankBranch.id = bankaccount.BRANCHID and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date")
+                .append(" and ph.bankaccountnumberid=bankaccount.id  and bankaccount.isactive=true order by 2");
         return getSession().createNativeQuery(queryString.toString())
                 .setParameter("date", asOnDate, DateType.INSTANCE)
                 .list();
@@ -210,26 +210,27 @@ public class BankService extends PersistenceService<Bank, Integer> {
     private List<Object[]> fetchBankAndBranchNameHasApprovedPayment(Integer fundId, Date asOnDate) {
         StringBuilder queryString = new StringBuilder();
         // query to fetch vouchers for which no cheque has been assigned
-        queryString.append("select distinct concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),").
-                append(" bankBranch.branchname) as bankbranchname  from Bank bank,  Bankbranch bankBranch,   Bankaccount bankaccount where bankaccount.id in ( ").
-                append(" select DISTINCT ph.bankaccountnumberid from  paymentheader ph,egf_instrumentvoucher iv right outer join voucherheader vh on ").
-                append(" vh.id =iv.VOUCHERHEADERID where ph.voucherheaderid=vh.id  and  vh.status=0  and ").append(" ph.voucherheaderid=vh.id  and iv.VOUCHERHEADERID is null ");
+        queryString.append("select distinct concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),")
+                .append(" bankBranch.branchname) as bankbranchname  from Bank bank,  Bankbranch bankBranch,   Bankaccount bankaccount where bankaccount.id in ( ")
+                .append(" select DISTINCT ph.bankaccountnumberid from  paymentheader ph,egf_instrumentvoucher iv right outer join voucherheader vh on ")
+                .append(" vh.id =iv.VOUCHERHEADERID where ph.voucherheaderid=vh.id  and  vh.status=0  and ")
+                .append(" ph.voucherheaderid=vh.id  and iv.VOUCHERHEADERID is null ");
         if (fundId != null && fundId > 0)
             queryString.append(" and vh.fundid=:fundId");
-        queryString.append(" and vh.name NOT IN (:vhNames) ").
-                append("and vh.voucherdate <= :asOnDate ) AND bank.id = bankBranch.bankid AND bank.isactive=true AND bankBranch.isactive=true ").
-                append("AND bankaccount.type IN ('RECEIPTS_PAYMENTS','PAYMENTS') AND bankBranch.id = bankaccount.branchid");
+        queryString.append(" and vh.name NOT IN (:vhNames) ")
+                .append("and vh.voucherdate <= :asOnDate ) AND bank.id = bankBranch.bankid AND bank.isactive=true AND bankBranch.isactive=true ")
+                .append("AND bankaccount.type IN ('RECEIPTS_PAYMENTS','PAYMENTS') AND bankBranch.id = bankaccount.branchid");
         if (fundId != null && fundId > 0)
             queryString.append(" and bankaccount.fundid=:fundId");
-        queryString.append(" union select distinct concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),").
-                append("bankBranch.branchname) as bankbranchname from Bank bank,  Bankbranch bankBranch,   Bankaccount bankaccount where bankaccount.id in ( ").
-                append(" select DISTINCT ph.bankaccountnumberid from egf_instrumentvoucher iv,voucherheader vh,").
-                append(" paymentheader ph,egw_status egws,(select ih1.id,ih1.id_status from egf_instrumentheader ih1, ").
-                append("(select bankid,bankaccountid,instrumentnumber,max(id) as id from egf_instrumentheader group by bankid,bankaccountid,").
-                append("instrumentnumber) max_rec where max_rec.bankid=ih1.bankid and max_rec.bankaccountid=ih1.bankaccountid and max_rec.instrumentnumber=ih1.instrumentnumber ").
-                append(" and max_rec.id=ih1.id) ih where ph.voucherheaderid=vh.id and vh.status=0  and ph.voucherheaderid=vh.id and iv.voucherheaderid=vh.id")
-                .append(" and iv.instrumentheaderid=ih.id and ").
-                append("ih.id_status=egws.id and egws.description in  ('Surrendered','Surrender_For_Reassign')");
+        queryString.append(" union select distinct concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),")
+                .append(" bankBranch.branchname) as bankbranchname from Bank bank,  Bankbranch bankBranch,   Bankaccount bankaccount where bankaccount.id in ( ")
+                .append(" select DISTINCT ph.bankaccountnumberid from egf_instrumentvoucher iv,voucherheader vh,")
+                .append(" paymentheader ph,egw_status egws,(select ih1.id,ih1.id_status from egf_instrumentheader ih1, ")
+                .append(" (select bankid,bankaccountid,instrumentnumber,max(id) as id from egf_instrumentheader group by bankid,bankaccountid,")
+                .append(" instrumentnumber) max_rec where max_rec.bankid=ih1.bankid and max_rec.bankaccountid=ih1.bankaccountid and max_rec.instrumentnumber=ih1.instrumentnumber ")
+                .append(" and max_rec.id=ih1.id) ih where ph.voucherheaderid=vh.id and vh.status=0  and ph.voucherheaderid=vh.id and iv.voucherheaderid=vh.id")
+                .append(" and iv.instrumentheaderid=ih.id and ")
+                .append(" ih.id_status=egws.id and egws.description in  ('Surrendered','Surrender_For_Reassign')");
         if (fundId != null && fundId > 0)
             queryString.append(" and vh.fundid=:fundId");
         queryString.append("  and vh.voucherdate <= :asOnDate and vh.name NOT IN (:vhNames) ) ").
@@ -238,9 +239,9 @@ public class BankService extends PersistenceService<Bank, Integer> {
         if (fundId != null && fundId > 0)
             queryString.append(" and bankaccount.fundid=:fundId");
         return getSession().createNativeQuery(queryString.toString())
-                .setParameter(FUND_ID, fundId, IntegerType.INSTANCE)
+                .setParameter(FUND_ID, Integer.valueOf(fundId), IntegerType.INSTANCE)
                 .setParameter("asOnDate", asOnDate, DateType.INSTANCE)
-                .setParameter("vhNames", Arrays.asList(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE, FinancialConstants.PAYMENTVOUCHER_NAME_SALARY), StringType.INSTANCE)
+                .setParameterList("vhNames", Arrays.asList(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE, FinancialConstants.PAYMENTVOUCHER_NAME_SALARY), StringType.INSTANCE)
                 .list();
     }
 }

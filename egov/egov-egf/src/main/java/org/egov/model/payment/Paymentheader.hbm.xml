@@ -58,7 +58,7 @@
             <param name="sequence_name">SEQ_PAYMENTHEADER</param>
             </generator>
         </id>
-        <many-to-one name="voucherheader" class="org.egov.commons.CVoucherHeader" fetch="select">
+        <many-to-one name="voucherheader" class="org.egov.commons.CVoucherHeader" fetch="select" lazy="false">
             <column name="VOUCHERHEADERID" precision="22" scale="0" not-null="true" />
         </many-to-one>
         <many-to-one name="bankaccount" class="org.egov.commons.Bankaccount" fetch="select">
@@ -71,7 +71,7 @@
             <column name="concurrenceDate"  />
         </property>
         
-        <many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all">
+        <many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all" fetch="select" lazy="false">
             <column name="STATE_ID"/>
         </many-to-one>
         <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY"/>
