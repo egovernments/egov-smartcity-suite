@@ -56,6 +56,7 @@
 	id="legalcasecaform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
+	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 	<input type="hidden" name="legalCase" value="${legalCase.id}" />
 	<input type="hidden" id="mode" name="mode" value="${mode}" />
 	<input type="hidden" value="${advocateUserRole}" id="advocateUserRole"/>
