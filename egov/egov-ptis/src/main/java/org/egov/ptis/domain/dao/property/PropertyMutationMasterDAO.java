@@ -71,5 +71,7 @@ public interface PropertyMutationMasterDAO {
 	public PropertyMutationMaster getPropertyMutationMasterByIdAndType(Long id,String type);
 	
 	public List<PropertyMutationMaster> getPropertyMutationMasterByType(String type);
+	
+	public List<PropertyMutationMaster> getAllPropertyMutationMasterByCodeAndType(String code,String type);
 
 }

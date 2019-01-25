@@ -508,12 +508,18 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     }
 
     public RevisionPetition getExistingObjections(final BasicProperty basicProperty) {
-        return (RevisionPetition) entityManager.createNamedQuery("RP_BY_BASICPROPERTY").setParameter("basicProperty", basicProperty);
+        @SuppressWarnings("unchecked")
+        List<RevisionPetition> revisionPetition = (List<RevisionPetition>) entityManager.createNamedQuery("RP_BY_BASICPROPERTY")
+                .setParameter("basicProperty", basicProperty).getResultList();
+        return !revisionPetition.isEmpty() ? revisionPetition.get(0) : null;
     }
 
     public RevisionPetition getExistingGRP(final BasicProperty basicProperty) {
-		return (RevisionPetition) entityManager.createNamedQuery("RP_BY_BASICPROPERTYANDTYPE").setParameter("basicProperty", basicProperty)
-				.setParameter("type", NATURE_OF_WORK_GRP);
+        @SuppressWarnings("unchecked")
+        List<RevisionPetition> revisionPetition = (List<RevisionPetition>) entityManager
+                .createNamedQuery("RP_BY_BASICPROPERTYANDTYPE").setParameter("basicProperty", basicProperty)
+                .setParameter("type", NATURE_OF_WORK_GRP).getResultList();
+        return !revisionPetition.isEmpty() ? revisionPetition.get(0) : null;
     }
 
     /**

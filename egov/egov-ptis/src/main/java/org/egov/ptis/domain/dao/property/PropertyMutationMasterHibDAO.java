@@ -62,120 +62,127 @@ import java.util.List;
 @Repository(value = "propertyMutationMasterDAO")
 @Transactional(readOnly = true)
 public class PropertyMutationMasterHibDAO implements PropertyMutationMasterDAO {
-	
-	@PersistenceContext
-	private EntityManager entityManager;
 
-	private Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
-	
-	// this method return list of ProperyMutationMaster objects based on type
-	// which is passed as parameter type
-	@Override
-	public List<PropertyMutationMaster> getAllPropertyMutationMastersByType(String type) {
-		Query qry = getCurrentSession().createQuery(
-				"from PropertyMutationMaster PM where upper(PM.type) = :type order by PM.orderId");
-		qry.setString("type", type.toUpperCase());
-		return qry.list();
-	}
-	
-	public List<PropertyMutationMaster> getAllActiveReasonsByType(String type) {
-            Query qry = getCurrentSession().createQuery(
-                            "from PropertyMutationMaster PM where upper(PM.type) = :type and active = true order by PM.orderId");
-            qry.setString("type", type.toUpperCase());
-            return qry.list();
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    private Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
     }
 
-	// this method returns ProperyMutationMaster object based on code which is
-	// passed as a parameter
-	@Override
-	public PropertyMutationMaster getPropertyMutationMasterByCode(String code) {
-		Query qry = getCurrentSession().createQuery(
-				"from PropertyMutationMaster PM where upper(PM.code) = :code");
-		qry.setString("code", code.toUpperCase());
-		return (PropertyMutationMaster) qry.uniqueResult();
-	}
+    // this method return list of ProperyMutationMaster objects based on type
+    // which is passed as parameter type
+    @Override
+    public List<PropertyMutationMaster> getAllPropertyMutationMastersByType(String type) {
+        Query qry = getCurrentSession().createQuery(
+                "from PropertyMutationMaster PM where upper(PM.type) = :type order by PM.orderId");
+        qry.setParameter("type", type.toUpperCase());
+        return qry.list();
+    }
 
-	    @Override
-	    public PropertyMutationMaster getPropertyMutationMasterByCodeAndType(String code, String type) {
-	        Query qry = getCurrentSession().createQuery(
-                        "from PropertyMutationMaster PM where upper(PM.code) = :code and upper(PM.type) = :type");
-        qry.setString("code", code.toUpperCase());
-        qry.setString("type", type.toUpperCase());
+    public List<PropertyMutationMaster> getAllActiveReasonsByType(String type) {
+        Query qry = getCurrentSession().createQuery(
+                "from PropertyMutationMaster PM where upper(PM.type) = :type and active = true order by PM.orderId");
+        qry.setParameter("type", type.toUpperCase());
+        return qry.list();
+    }
+
+    // this method returns ProperyMutationMaster object based on code which is
+    // passed as a parameter
+    @Override
+    public PropertyMutationMaster getPropertyMutationMasterByCode(String code) {
+        Query qry = getCurrentSession().createQuery(
+                "from PropertyMutationMaster PM where upper(PM.code) = :code");
+        qry.setParameter("code", code.toUpperCase());
         return (PropertyMutationMaster) qry.uniqueResult();
-	    }
-	public Object findById(Serializable id, boolean lock) {
+    }
 
-		return null;
-	}
+    @Override
+    public PropertyMutationMaster getPropertyMutationMasterByCodeAndType(String code, String type) {
+        Query qry = getCurrentSession().createQuery(
+                "from PropertyMutationMaster PM where upper(PM.code) = :code and upper(PM.type) = :type");
+        qry.setParameter("code", code.toUpperCase());
+        qry.setParameter("type", type.toUpperCase());
+        return (PropertyMutationMaster) qry.uniqueResult();
+    }
 
-	@Override
-	public List findAll() {
+    public Object findById(Serializable id, boolean lock) {
 
-		return null;
-	}
+        return null;
+    }
 
-	public List findByExample(Object exampleT) {
+    @Override
+    public List findAll() {
 
-		return null;
-	}
+        return null;
+    }
 
-	public Object create(Object entity) {
+    public List findByExample(Object exampleT) {
 
-		return null;
-	}
+        return null;
+    }
 
-	public void delete(Object entity) {
+    public Object create(Object entity) {
 
+        return null;
+    }
 
-	}
+    public void delete(Object entity) {
 
-	public Object update(Object entity) {
+    }
 
-		return null;
-	}
+    public Object update(Object entity) {
 
-	@Override
-	public PropertyMutationMaster findById(Long id, boolean lock) {
-		return (PropertyMutationMaster) getCurrentSession()
-				.createQuery("from PropertyMutationMaster P where P.id =:id ").setParameter("id", id).getSingleResult();
-	}
+        return null;
+    }
 
-	@Override
-	public PropertyMutationMaster create(PropertyMutationMaster propertyMutationMaster) {
+    @Override
+    public PropertyMutationMaster findById(Long id, boolean lock) {
+        return (PropertyMutationMaster) getCurrentSession()
+                .createQuery("from PropertyMutationMaster P where P.id =:id ").setParameter("id", id).getSingleResult();
+    }
 
-		return null;
-	}
+    @Override
+    public PropertyMutationMaster create(PropertyMutationMaster propertyMutationMaster) {
 
-	@Override
-	public void delete(PropertyMutationMaster propertyMutationMaster) {
+        return null;
+    }
 
-		
-	}
+    @Override
+    public void delete(PropertyMutationMaster propertyMutationMaster) {
 
-	@Override
-	public PropertyMutationMaster update(PropertyMutationMaster propertyMutationMaster) {
+    }
 
-		return null;
-	}
+    @Override
+    public PropertyMutationMaster update(PropertyMutationMaster propertyMutationMaster) {
 
-	@Override
-	public PropertyMutationMaster getPropertyMutationMasterByIdAndType(Long id, String type) {
-		Query qry = getCurrentSession()
-				.createQuery("from PropertyMutationMaster PM where id = :id and upper(PM.type) = :type");
-		qry.setParameter("id", id);
-		qry.setParameter("type", type.toUpperCase());
-		return (PropertyMutationMaster) qry.uniqueResult();
-	}
+        return null;
+    }
 
-	@Override
-	public List<PropertyMutationMaster> getPropertyMutationMasterByType(String type) {
-		Query qry = getCurrentSession()
-				.createQuery("from PropertyMutationMaster PM where upper(PM.type) = :type");
-		qry.setParameter("type", type.toUpperCase());
-		return qry.list();
-	}
+    @Override
+    public PropertyMutationMaster getPropertyMutationMasterByIdAndType(Long id, String type) {
+        Query qry = getCurrentSession()
+                .createQuery("from PropertyMutationMaster PM where id = :id and upper(PM.type) = :type");
+        qry.setParameter("id", id);
+        qry.setParameter("type", type.toUpperCase());
+        return (PropertyMutationMaster) qry.uniqueResult();
+    }
 
+    @Override
+    public List<PropertyMutationMaster> getPropertyMutationMasterByType(String type) {
+        Query qry = getCurrentSession()
+                .createQuery("from PropertyMutationMaster PM where upper(PM.type) = :type");
+        qry.setParameter("type", type.toUpperCase());
+        return qry.list();
+    }
+    
+    @Override
+    public List<PropertyMutationMaster> getAllPropertyMutationMasterByCodeAndType(String code, String type) {
+        Query qry = getCurrentSession().createQuery(
+                "from PropertyMutationMaster PM where upper(PM.code) = :code and upper(PM.type) = :type");
+        qry.setParameter("code", code.toUpperCase());
+        qry.setParameter("type", type.toUpperCase());
+        return (List<PropertyMutationMaster>) qry.getResultList();
+    }
 
 }

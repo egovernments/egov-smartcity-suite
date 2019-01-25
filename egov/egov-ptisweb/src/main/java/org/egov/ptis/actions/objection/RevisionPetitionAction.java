@@ -436,7 +436,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         final List<WoodType> woodTypes = woodTypeRepository.findAll();
         final List<PropertyTypeMaster> propTypeList = propertyTypeMasterDAO.findAllExcludeEWSHS();
 		final List<PropertyMutationMaster> propMutList = (List<PropertyMutationMaster>) propertyMutationMasterDAO
-				.getPropertyMutationMasterByCodeAndType("OBJ", "MODIFY");
+				.getAllPropertyMutationMasterByCodeAndType("OBJ", "MODIFY");
         final List<StructureClassification> structureList = classificationRepository.findByIsActiveTrueOrderByTypeName();
         final List<PropertyOccupation> propOccList = propertyOccupationDAO.findAll();
         final List<DepreciationMaster> ageFacList =depreciationMasterDao.findAll();

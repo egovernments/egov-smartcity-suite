@@ -381,7 +381,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     @SuppressWarnings("unchecked")
     private void getMutationListByCode(final String code) {
 		final List<PropertyMutationMaster> mutationList = (List<PropertyMutationMaster>) propertyMutationMasterDAO
-				.getPropertyMutationMasterByCodeAndType(code, PROP_CREATE_RSN);
+				.getAllPropertyMutationMasterByCodeAndType(code, PROP_CREATE_RSN);
         addDropdownData("MutationList", mutationList);
     }
 
@@ -1072,7 +1072,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             mutationList = propertyMutationMasterDAO.getPropertyMutationMasterByType(PROP_CREATE_RSN);
         else
 			mutationList = (List<PropertyMutationMaster>) propertyMutationMasterDAO
-					.getPropertyMutationMasterByCodeAndType(PROP_CREATE_RSN_NEWPROPERTY_CODE, PROP_CREATE_RSN);
+					.getAllPropertyMutationMasterByCodeAndType(PROP_CREATE_RSN_NEWPROPERTY_CODE, PROP_CREATE_RSN);
         if (null != property && property.getMeesevaServiceCode() != null) {
             if (property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVA_SERVICE_CODE_NEWPROPERTY))
                 getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_CODE);
