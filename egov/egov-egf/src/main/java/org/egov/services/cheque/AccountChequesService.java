@@ -130,7 +130,7 @@ public class AccountChequesService extends PersistenceService<AccountCheques, Lo
                             + chequeDetail.getSerialNo());
                 chqDept = new ChequeDeptMapping();
                 chqDept.setAccountCheque(accountCheques);
-                final Department dept = (Department) persistenceService.find("from Department where id=?1", chequeDetail.getDeptId());
+                final Department dept = (Department) persistenceService.find("from Department where id=?1", Long.valueOf(chequeDetail.getDeptId()));
                 chqDept.setAllotedTo(dept);
                 chequeDeptMappingService.persist(chqDept);
             }

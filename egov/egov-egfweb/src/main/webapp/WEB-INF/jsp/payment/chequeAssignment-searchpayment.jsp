@@ -283,6 +283,7 @@
 					</tr>
 				</table>
 			</div>
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 			<div class="buttonbottom">
 			<s:hidden id="selectedRowsId" name="selectedRowsId"
 					value="%{selectedRowsId}" />
@@ -364,6 +365,13 @@
 				if(result){
                     dom.get('departmentid').disabled=false;
                     document.forms[0].action='${pageContext.request.contextPath}/payment/chequeAssignment-create.action';
+                    $(document.forms[0]).append(
+                        $('<input>', {
+                            type: 'hidden',
+                            name: '${_csrf.parameterName}',
+                            value: '${_csrf.token}'
+                        })
+                    );
                     document.forms[0].submit();
 				}
 				return result;   
