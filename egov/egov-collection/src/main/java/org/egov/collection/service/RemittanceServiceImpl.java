@@ -126,147 +126,147 @@ public class RemittanceServiceImpl extends RemittanceService {
      * @return List of Contra Vouchers Created
      */
     @Transactional
-    @Override
-    public List<ReceiptHeader> createCashBankRemittance(final String[] serviceNameArr, final String[] totalCashAmount,
-            final String[] totalAmount, final String[] totalCardAmount, final String[] receiptDateArray,
-            final String[] fundCodeArray, final String[] departmentCodeArray, final Integer accountNumberId,
-            final Integer positionUser, final String[] receiptNumberArray, final Date remittanceDate) {
+	@Override
+	public List<ReceiptHeader> createCashBankRemittance(final String[] serviceNameArr, final String[] totalCashAmount,
+			final String[] totalAmount, final String[] totalCardAmount, final String[] receiptDateArray,
+			final String[] fundCodeArray, final String[] departmentCodeArray, final Integer accountNumberId,
+			final Integer positionUser, final String[] receiptNumberArray, final Date remittanceDate) {
 
-        final List<ReceiptHeader> bankRemittanceList = new ArrayList<>(0);
-        final List<ReceiptHeader> bankRemitList = new ArrayList<>();
-        final SimpleDateFormat dateFomatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        financialsUtil.prepareForUpdateInstrumentDepositSQL();
-        final String cashInHandQueryString = "SELECT COA.GLCODE FROM CHARTOFACCOUNTS COA,EGF_INSTRUMENTACCOUNTCODES IAC,EGF_INSTRUMENTTYPE IT "
-                + "WHERE IT.ID=IAC.TYPEID AND IAC.GLCODEID=COA.ID AND IT.TYPE= '" + CollectionConstants.INSTRUMENTTYPE_CASH
-                + "'";
-        final String receiptInstrumentQueryString = "select DISTINCT (instruments) from org.egov.collection.entity.ReceiptHeader receipt "
-                + "join receipt.receiptInstrument as instruments join receipt.receiptMisc as receiptMisc where ";
-        final String serviceNameCondition = "receipt.service.name=? ";
-        final String receiptDateCondition = "and date(receipt.receiptdate)=? ";
-        final String instrumentStatusCondition = "and instruments.statusId.id=? ";
-        final String instrumentTypeCondition = "and instruments.instrumentType.type = ? ";
-        final String receiptFundCondition = "and receiptMisc.fund.code = ? ";
-        final String receiptDepartmentCondition = "and receiptMisc.department.code = ? ";
-        final String receiptSourceCondition = "and receipt.source = ? ";
-        String depositedBranchCondition = "";
-        if (collectionsUtil.isBankCollectionRemitter(collectionsUtil.getLoggedInUser())) {
-            BranchUserMap branchUserMap = branchUserMapService.findByNamedQuery(
-                    CollectionConstants.QUERY_ACTIVE_BRANCHUSER_BY_USER,
-                    collectionsUtil.getLoggedInUser().getId());
-            depositedBranchCondition = "and receiptMisc.depositedBranch.id=" + branchUserMap.getBankbranch().getId();
-        } else
-            depositedBranchCondition = "and receiptMisc.depositedBranch is null";
+		final List<ReceiptHeader> bankRemittanceList = new ArrayList<>(0);
+		final List<ReceiptHeader> bankRemitList = new ArrayList<>();
+		final SimpleDateFormat dateFomatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+		financialsUtil.prepareForUpdateInstrumentDepositSQL();
+		final String cashInHandQueryString = "SELECT COA.GLCODE FROM CHARTOFACCOUNTS COA,EGF_INSTRUMENTACCOUNTCODES IAC,EGF_INSTRUMENTTYPE IT "
+				+ "WHERE IT.ID=IAC.TYPEID AND IAC.GLCODEID=COA.ID AND IT.TYPE= '"
+				+ CollectionConstants.INSTRUMENTTYPE_CASH + "'";
+		final String receiptInstrumentQueryString = "select DISTINCT (instruments) from org.egov.collection.entity.ReceiptHeader receipt "
+				+ "join receipt.receiptInstrument as instruments join receipt.receiptMisc as receiptMisc where ";
+		final String serviceNameCondition = "receipt.service.name=:servicename ";
+		final String receiptDateCondition = "and date(receipt.receiptdate)=:receiptdate ";
+		final String instrumentStatusCondition = "and instruments.statusId.id=:instrstatusid ";
+		final String instrumentTypeCondition = "and instruments.instrumentType.type =:instrtype ";
+		final String receiptFundCondition = "and receiptMisc.fund.code =:fundcode ";
+		final String receiptDepartmentCondition = "and receiptMisc.department.code =:departmetcode ";
+		final String receiptSourceCondition = "and receipt.source =:source ";
+		String depositedBranchCondition = "";
+		if (collectionsUtil.isBankCollectionRemitter(collectionsUtil.getLoggedInUser())) {
+			BranchUserMap branchUserMap = branchUserMapService.findByNamedQuery(
+					CollectionConstants.QUERY_ACTIVE_BRANCHUSER_BY_USER, collectionsUtil.getLoggedInUser().getId());
+			depositedBranchCondition = "and receiptMisc.depositedBranch.id=" + branchUserMap.getBankbranch().getId();
+		} else
+			depositedBranchCondition = "and receiptMisc.depositedBranch is null";
 
-        final Query cashInHand = persistenceService.getSession().createNativeQuery(cashInHandQueryString);
+		final Query cashInHand = persistenceService.getSession().createNativeQuery(cashInHandQueryString);
 
-        String cashInHandGLCode = null;
+		String cashInHandGLCode = null;
 
-        final String createVoucher = collectionsUtil.getAppConfigValue(
-                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                CollectionConstants.APPCONFIG_VALUE_CREATEVOUCHER_FOR_REMITTANCE);
-        final String functionCode = collectionsUtil.getAppConfigValue(
-                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                CollectionConstants.APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_FUNCTIONCODE);
-        final EgwStatus instrmentStatusNew = collectionsUtil.getStatusForModuleAndCode(
-                CollectionConstants.MODULE_NAME_INSTRUMENTHEADER, CollectionConstants.INSTRUMENT_NEW_STATUS);
-        final EgwStatus receiptStatusRemitted = collectionsUtil
-                .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_REMITTED);
-        final EgwStatus instrumentStatusReconciled = collectionsUtil.getStatusForModuleAndCode(
-                CollectionConstants.MODULE_NAME_INSTRUMENTHEADER, CollectionConstants.INSTRUMENT_RECONCILED_STATUS);
+		final String createVoucher = collectionsUtil.getAppConfigValue(
+				CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+				CollectionConstants.APPCONFIG_VALUE_CREATEVOUCHER_FOR_REMITTANCE);
+		final String functionCode = collectionsUtil.getAppConfigValue(
+				CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+				CollectionConstants.APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_FUNCTIONCODE);
+		final EgwStatus instrmentStatusNew = collectionsUtil.getStatusForModuleAndCode(
+				CollectionConstants.MODULE_NAME_INSTRUMENTHEADER, CollectionConstants.INSTRUMENT_NEW_STATUS);
+		final EgwStatus receiptStatusRemitted = collectionsUtil
+				.getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_REMITTED);
+		final EgwStatus instrumentStatusReconciled = collectionsUtil.getStatusForModuleAndCode(
+				CollectionConstants.MODULE_NAME_INSTRUMENTHEADER, CollectionConstants.INSTRUMENT_RECONCILED_STATUS);
 
-        if (!cashInHand.list().isEmpty())
-            cashInHandGLCode = cashInHand.list().get(0).toString();
-        collectionsUtil.getVoucherType();
-        Boolean showRemitDate = false;
-        BigDecimal totalCashAmt = BigDecimal.ZERO;
-        BigDecimal totalCashVoucherAmt = BigDecimal.ZERO;
-        String fundCode = "";
-        Date voucherDate = null;
-        List<InstrumentHeader> instrumentHeaderListCash;
-        if (collectionsUtil
-                .getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                        CollectionConstants.APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_SHOWREMITDATE)
-                .equals(CollectionConstants.YES))
-            showRemitDate = true;
+		if (!cashInHand.list().isEmpty())
+			cashInHandGLCode = cashInHand.list().get(0).toString();
+		collectionsUtil.getVoucherType();
+		Boolean showRemitDate = false;
+		BigDecimal totalCashAmt = BigDecimal.ZERO;
+		BigDecimal totalCashVoucherAmt = BigDecimal.ZERO;
+		String fundCode = "";
+		Date voucherDate = null;
+		List<InstrumentHeader> instrumentHeaderListCash;
+		if (collectionsUtil
+				.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+						CollectionConstants.APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_SHOWREMITDATE)
+				.equals(CollectionConstants.YES))
+			showRemitDate = true;
 
-        final Bankaccount depositedBankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?1",
-                Long.valueOf(accountNumberId.longValue()));
-        final String serviceGlCode = depositedBankAccount.getChartofaccounts().getGlcode();
-        for (int i = 0; i < serviceNameArr.length; i++) {
-            final String serviceName = serviceNameArr[i].trim();
-            if (showRemitDate && remittanceDate != null)
-                voucherDate = remittanceDate;
-            else
-                try {
-                    collectionsUtil.getRemittanceVoucherDate(dateFomatter.parse(receiptDateArray[i]));
-                } catch (final ParseException e) {
-                    LOGGER.error("Error Parsing Date", e);
-                }
-            if (serviceName != null && serviceName.length() > 0) {
-                final ServiceDetails serviceDetails = (ServiceDetails) persistenceService
-                        .findByNamedQuery(CollectionConstants.QUERY_SERVICE_BY_NAME, serviceName);
+		final Bankaccount depositedBankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?1",
+				Long.valueOf(accountNumberId.longValue()));
+		final String serviceGlCode = depositedBankAccount.getChartofaccounts().getGlcode();
+		for (int i = 0; i < serviceNameArr.length; i++) {
+			final String serviceName = serviceNameArr[i].trim();
+			if (showRemitDate && remittanceDate != null)
+				voucherDate = remittanceDate;
+			else
+				try {
+					collectionsUtil.getRemittanceVoucherDate(dateFomatter.parse(receiptDateArray[i]));
+				} catch (final ParseException e) {
+					LOGGER.error("Error Parsing Date", e);
+				}
+			if (serviceName != null && serviceName.length() > 0) {
+				final ServiceDetails serviceDetails = (ServiceDetails) persistenceService
+						.findByNamedQuery(CollectionConstants.QUERY_SERVICE_BY_NAME, serviceName);
 
-                // If Cash Amount is present
-                if (totalCashAmount[i].trim() != null && totalCashAmount[i].trim().length() > 0
-                        && cashInHandGLCode != null) {
-                    final StringBuilder cashQueryBuilder = new StringBuilder(receiptInstrumentQueryString);
-                    cashQueryBuilder.append(serviceNameCondition);
-                    cashQueryBuilder.append(receiptDateCondition);
-                    cashQueryBuilder.append(instrumentStatusCondition);
-                    cashQueryBuilder.append(instrumentTypeCondition);
-                    cashQueryBuilder.append(receiptFundCondition);
-                    cashQueryBuilder.append(receiptDepartmentCondition);
-                    cashQueryBuilder.append(
-                            "and receipt.status.id=(select id from org.egov.commons.EgwStatus where moduletype=?1 and code=?2) ");
-                    cashQueryBuilder.append(receiptSourceCondition);
-                    cashQueryBuilder.append(depositedBranchCondition);
-                    final Object arguments[] = new Object[9];
-                    arguments[0] = serviceName;
-                    try {
-                        arguments[1] = dateFomatter.parse(receiptDateArray[i]);
-                    } catch (final ParseException exp) {
-                        LOGGER.debug("Exception in parsing date  " + receiptDateArray[i] + " - " + exp.getMessage());
-                        throw new ApplicationRuntimeException("Exception while parsing date", exp);
-                    }
-                    arguments[2] = instrmentStatusNew.getId();
-                    arguments[3] = CollectionConstants.INSTRUMENTTYPE_CASH;
-                    arguments[4] = fundCodeArray[i];
-                    arguments[5] = departmentCodeArray[i];
-                    arguments[6] = CollectionConstants.MODULE_NAME_RECEIPTHEADER;
-                    arguments[7] = CollectionConstants.RECEIPT_STATUS_CODE_APPROVED;
-                    arguments[8] = Source.SYSTEM.toString();
-                    fundCode = fundCodeArray[i];
-                    instrumentHeaderListCash = persistenceService.findAllBy(cashQueryBuilder.toString(), arguments);
-                    totalCashAmt = totalCashAmt.add(new BigDecimal(totalCashAmount[i]));
-                    if (CollectionConstants.YES.equalsIgnoreCase(createVoucher) && serviceDetails.getVoucherCreation())
-                        totalCashVoucherAmt = totalCashVoucherAmt.add(new BigDecimal(totalCashAmount[i]));
-                    else
-                        financialsUtil.updateInstrumentHeader(instrumentHeaderListCash, instrumentStatusReconciled,
-                                depositedBankAccount);
-                    bankRemittanceList.addAll(getRemittanceList(serviceDetails, instrumentHeaderListCash));
-                }
-            }
-            for (final ReceiptHeader receiptHeader : bankRemittanceList)
-                if (!bankRemitList.contains(receiptHeader))
-                    bankRemitList.add(receiptHeader);
-        }
-        if (totalCashVoucherAmt.compareTo(totalCashAmt) != 0) {
-            String validationMessage = "There is a difference of amount " + totalCashAmt.subtract(totalCashVoucherAmt)
-                    + " between bank challan and the remittance voucher , please contact system administrator ";
-            throw new ValidationException(Arrays.asList(new ValidationError(validationMessage, validationMessage)));
-        }
-        final Remittance remittance = populateAndPersistRemittance(totalCashAmt, BigDecimal.ZERO, fundCode,
-                cashInHandGLCode, null, serviceGlCode, functionCode, bankRemitList, createVoucher,
-                voucherDate, depositedBankAccount, totalCashVoucherAmt, BigDecimal.ZERO, Collections.EMPTY_LIST);
+				// If Cash Amount is present
+				if (totalCashAmount[i].trim() != null && totalCashAmount[i].trim().length() > 0
+						&& cashInHandGLCode != null) {
+					final StringBuilder cashQueryBuilder = new StringBuilder(receiptInstrumentQueryString);
+					cashQueryBuilder.append(serviceNameCondition);
+					cashQueryBuilder.append(receiptDateCondition);
+					cashQueryBuilder.append(instrumentStatusCondition);
+					cashQueryBuilder.append(instrumentTypeCondition);
+					cashQueryBuilder.append(receiptFundCondition);
+					cashQueryBuilder.append(receiptDepartmentCondition);
+					cashQueryBuilder.append(
+							"and receipt.status.id=(select id from org.egov.commons.EgwStatus where moduletype=:moduletype and code=:receiptstatus) ");
+					cashQueryBuilder.append(receiptSourceCondition);
+					cashQueryBuilder.append(depositedBranchCondition);
+					fundCode = fundCodeArray[i];
+					Query query = persistenceService.getSession().createQuery(cashQueryBuilder.toString());
+					query.setParameter("servicename", serviceName);
+					try {
+						query.setParameter("receiptdate", dateFomatter.parse(receiptDateArray[i]));
+					} catch (final ParseException exp) {
+						LOGGER.debug("Exception in parsing date  " + receiptDateArray[i] + " - " + exp.getMessage());
+						throw new ApplicationRuntimeException("Exception while parsing date", exp);
+					}
 
-        for (final ReceiptHeader receiptHeader : bankRemitList) {
-            receiptHeader.setStatus(receiptStatusRemitted);
-            receiptHeader.setRemittanceReferenceNumber(remittance.getReferenceNumber());
-            receiptHeaderService.update(receiptHeader);
-            //receiptHeaderService.updateCollectionIndexAndPushMail(receiptHeader);
-        }
-        return bankRemitList;
-    }
+					query.setParameter("instrstatusid", instrmentStatusNew.getId());
+					query.setParameter("instrtype", CollectionConstants.INSTRUMENTTYPE_CASH);
+					query.setParameter("fundcode", fundCodeArray[i]);
+					query.setParameter("departmetcode", departmentCodeArray[i]);
+					query.setParameter("moduletype", CollectionConstants.MODULE_NAME_RECEIPTHEADER);
+					query.setParameter("receiptstatus", CollectionConstants.RECEIPT_STATUS_CODE_APPROVED);
+					query.setParameter("source", Source.SYSTEM.toString());
+					instrumentHeaderListCash = query.getResultList();
+					totalCashAmt = totalCashAmt.add(new BigDecimal(totalCashAmount[i]));
+					if (CollectionConstants.YES.equalsIgnoreCase(createVoucher) && serviceDetails.getVoucherCreation())
+						totalCashVoucherAmt = totalCashVoucherAmt.add(new BigDecimal(totalCashAmount[i]));
+					else
+						financialsUtil.updateInstrumentHeader(instrumentHeaderListCash, instrumentStatusReconciled,
+								depositedBankAccount);
+					bankRemittanceList.addAll(getRemittanceList(serviceDetails, instrumentHeaderListCash));
+				}
+			}
+			for (final ReceiptHeader receiptHeader : bankRemittanceList)
+				if (!bankRemitList.contains(receiptHeader))
+					bankRemitList.add(receiptHeader);
+		}
+		if (totalCashVoucherAmt.compareTo(totalCashAmt) != 0) {
+			String validationMessage = "There is a difference of amount " + totalCashAmt.subtract(totalCashVoucherAmt)
+					+ " between bank challan and the remittance voucher , please contact system administrator ";
+			throw new ValidationException(Arrays.asList(new ValidationError(validationMessage, validationMessage)));
+		}
+		final Remittance remittance = populateAndPersistRemittance(totalCashAmt, BigDecimal.ZERO, fundCode,
+				cashInHandGLCode, null, serviceGlCode, functionCode, bankRemitList, createVoucher, voucherDate,
+				depositedBankAccount, totalCashVoucherAmt, BigDecimal.ZERO, Collections.EMPTY_LIST);
+
+		for (final ReceiptHeader receiptHeader : bankRemitList) {
+			receiptHeader.setStatus(receiptStatusRemitted);
+			receiptHeader.setRemittanceReferenceNumber(remittance.getReferenceNumber());
+			receiptHeaderService.update(receiptHeader);
+			// receiptHeaderService.updateCollectionIndexAndPushMail(receiptHeader);
+		}
+		return bankRemitList;
+	}
 
     @Transactional
     public CVoucherHeader createVoucherForRemittance(final String cashInHandGLCode, final String chequeInHandGLcode,
