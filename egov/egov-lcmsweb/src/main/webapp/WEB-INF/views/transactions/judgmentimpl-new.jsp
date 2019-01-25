@@ -50,6 +50,7 @@
 <form:form method="post" modelAttribute="judgmentImpl"
 	id="judgmentImplform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
+	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 	<input type="hidden" name="mode" value="${mode}" />
 	<input type="hidden" name="legalCase" value="${legalCase.id}" />
 	<input type="hidden" name="judgment" value="${judgment.id}" />
