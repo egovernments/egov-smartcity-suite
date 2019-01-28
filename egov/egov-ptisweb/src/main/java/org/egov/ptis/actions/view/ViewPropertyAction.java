@@ -253,7 +253,7 @@ public class ViewPropertyAction extends BaseFormAction {
 
             propertyTaxUtil.setPersistenceService(persistenceService);
 			PropertyStatusValues statusValues = propertyStatusValuesDAO
-					.getPropertyStatusValuesByBasicProperty(basicProperty);
+					.getLatestParentPSVByBasicProperty(basicProperty);
             if (null != statusValues && null != statusValues.getReferenceBasicProperty())
                 viewMap.put("parentProps", statusValues.getReferenceBasicProperty().getUpicNo());
 
@@ -544,5 +544,13 @@ public class ViewPropertyAction extends BaseFormAction {
 
     public void setEndorsementNotices(List<PtNotice> endorsementNotices) {
         this.endorsementNotices = endorsementNotices;
+    }
+
+    public PropertyStatusValuesDAO getPropertyStatusValuesDAO() {
+        return propertyStatusValuesDAO;
+    }
+
+    public void setPropertyStatusValuesDAO(PropertyStatusValuesDAO propertyStatusValuesDAO) {
+        this.propertyStatusValuesDAO = propertyStatusValuesDAO;
     }
 }

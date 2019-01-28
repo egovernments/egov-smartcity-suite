@@ -343,7 +343,6 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 			savedNotice = saveAllNotice(type, basicProperty, revisionPetition, vacancyRemissionApproval, noticeNo);
 		} else
 			savedNotice = noticeService.updateNotice(notice, NoticePDF);
-		noticeService.getSession().flush();
 		return savedNotice.getFileStore().getFileStoreId();
 	}
 
@@ -430,7 +429,6 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 					final PtNotice savedNotice = noticeService.updateNotice(notice, NoticePDF);
 					setFileStoreIds(savedNotice.getFileStore().getFileStoreId());
 				}
-				noticeService.getSession().flush();
 				if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(property.getSource()))
 				    propService.updatePortalMessage(property, APPLICATION_TYPE_NEW_ASSESSENT);
 				return DIGITAL_SIGNATURE_REDIRECTION;
@@ -493,7 +491,6 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 					final PtNotice savedNotice = noticeService.updateNotice(notice, NoticePDF);
 					setFileStoreIds(savedNotice.getFileStore().getFileStoreId());
 				}
-				noticeService.getSession().flush();
 				if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(property.getSource()))
 				    propService.updatePortal(property, APPLICATION_TYPE_NEW_ASSESSENT);
 				return DIGITAL_SIGNATURE_REDIRECTION;

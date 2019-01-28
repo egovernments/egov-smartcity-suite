@@ -47,20 +47,20 @@
  */
 package org.egov.ptis.domain.dao.property;
 
-import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
-import org.egov.ptis.domain.entity.property.PropertyStatusValues;
-import org.hibernate.query.Query;
-import org.hibernate.Session;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPURTENANT_PROPERTY;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.APPURTENANT_PROPERTY;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.PropertyStatusValues;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository(value = "propertyStatusValuesDAO")
 @Transactional(readOnly = true)
@@ -157,23 +157,32 @@ public class PropertyStatusValuesHibernateDAO implements PropertyStatusValuesDAO
         entityManager.persist(propertyStatusValues);
         return propertyStatusValues;
     }
-    
+
     @Override
-	public List<PropertyStatusValues> getPropStatValByUpicNoAndStatCodeAndISActive(final String propertyId,
-			final String active, final String status) {
-		final Query qry = getCurrentSession().createQuery(
-				"from PropertyStatusValues PSV where PSV.basicProperty.upicNo = :propertyId and PSV.isActive = :active and PSV.propertyStatus.statusCode= :status");
-		qry.setString("propertyId", propertyId);
-		qry.setString("active", active);
-		qry.setString("status", status);
-		return qry.list();
-	}
-    
+    public List<PropertyStatusValues> getPropStatValByUpicNoAndStatCodeAndISActive(final String propertyId,
+            final String active, final String status) {
+        final Query qry = getCurrentSession().createQuery(
+                "from PropertyStatusValues PSV where PSV.basicProperty.upicNo = :propertyId and PSV.isActive = :active and PSV.propertyStatus.statusCode= :status");
+        qry.setString("propertyId", propertyId);
+        qry.setString("active", active);
+        qry.setString("status", status);
+        return qry.list();
+    }
+
     @Override
-    public PropertyStatusValues getPropertyStatusValuesByBasicProperty(final BasicProperty basicProperty){
-    	final Query qry = getCurrentSession().createQuery(
-				"from PropertyStatusValues where basicProperty= :basicProperty order by createdDate desc");
-		qry.setParameter("basicProperty", basicProperty);
-		return (PropertyStatusValues) (qry.getResultList().isEmpty() ? null : qry.getSingleResult());
+    public PropertyStatusValues getPropertyStatusValuesByBasicProperty(final BasicProperty basicProperty) {
+        final Query qry = getCurrentSession().createQuery(
+                "from PropertyStatusValues where basicProperty= :basicProperty order by createdDate desc");
+        qry.setParameter("basicProperty", basicProperty);
+        return (PropertyStatusValues) (qry.getResultList().isEmpty() ? null : qry.getSingleResult());
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    public PropertyStatusValues getLatestParentPSVByBasicProperty(final BasicProperty basicProperty) {
+        final Query qry = getCurrentSession().createQuery(
+                "from PropertyStatusValues where basicProperty= :basicProperty and referenceBasicProperty is not null order by createdDate desc");
+        qry.setParameter("basicProperty", basicProperty);
+        return (PropertyStatusValues) (qry.getResultList().isEmpty() ? null : qry.getResultList().get(0));
     }
 }

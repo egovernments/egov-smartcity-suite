@@ -185,17 +185,20 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         return notice;
     }
     
+    @SuppressWarnings("unchecked")
     @ReadOnly
-	public PtNotice getPtNoticeByNoticeNumberAndNoticeType(final String noticeNo, final String noticeType) {
-		return (PtNotice) entityManager.createNamedQuery("getNoticeByNoticeNoAndType")
-				.setParameter("noticeNo", noticeNo).setParameter("noticeType", noticeType.toUpperCase());
-	}
+    public PtNotice getPtNoticeByNoticeNumberAndNoticeType(final String noticeNo, final String noticeType) {
+        List<PtNotice> noticeList = (List<PtNotice>) entityManager.createNamedQuery("getNoticeByNoticeNoAndType")
+                .setParameter("noticeNo", noticeNo).setParameter("noticeType", noticeType.toUpperCase()).getResultList();
+        return !noticeList.isEmpty() ? noticeList.get(0) : null;
+    }
     
     @ReadOnly
     public PtNotice getNoticeByApplicationNumber(final String applicationNo) {
         return (PtNotice) entityManager.createNamedQuery("getNoticeByApplicationNo").setParameter("applicationNumber", applicationNo);
     }
     
+    @SuppressWarnings("unchecked")
     public PtNotice getNoticeByNoticeTypeAndApplicationNumber(final String noticeType, final String applicationNo) {
 		List<PtNotice> notice= entityManager.createNamedQuery("getNoticeByApplicationNoAndNoticeType")
 				.setParameter("noticeType", noticeType.toUpperCase()).setParameter("applicationNumber", applicationNo).getResultList();

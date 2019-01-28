@@ -264,7 +264,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     protected transient WorkflowService<RevisionPetition> objectionWorkflowService;
     private String ownerName;
     private String propertyAddress;
-    private transient PersistenceService<Property, Long> propertyImplService;
     private String propTypeObjId;
     private String[] floorNoStr = new String[275];
     private Boolean loggedUserIsEmployee = Boolean.TRUE;
@@ -374,6 +373,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private ApartmentRepository apartmentRepository;
     @Autowired
     TaxExemptionReasonRepository reasonRepository;
+    @Autowired
+    private transient PersistenceService<Property, Long> propertyImplService;
 
     public RevisionPetitionAction() {
 
@@ -655,7 +656,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         final PropertyImpl refNewProperty = propService.creteNewPropertyForObjectionWorkflow(
                 objection.getBasicProperty(), objection.getObjectionNumber(), objection.getRecievedOn(),
                 objection.getCreatedBy(), null, wfType);
-        propertyImplService.getSession().flush();
         objection.setProperty(refNewProperty);
         revisionPetitionService.updateRevisionPetition(objection);
         return STRUTS_RESULT_MESSAGE;
@@ -936,7 +936,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     final PtNotice savedNotice = noticeService.updateNotice(notice, specialNoticePdf);
                     setFileStoreIds(savedNotice.getFileStore().getFileStoreId());
                 }
-                noticeService.getSession().flush();
             } else
                 reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         }
@@ -1356,6 +1355,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         viewPropertyAction.setPropertyTaxCommonUtils(propertyTaxCommonUtils);
         viewPropertyAction.setUserService(userService);
         viewPropertyAction.setPropService(propService);
+        viewPropertyAction.setPropertyStatusValuesDAO(propertyStatusValuesDAO);
         viewPropertyAction.setSession(getSession());
         viewPropertyAction.viewForm();
         objection.setBasicProperty(viewPropertyAction.getBasicProperty());

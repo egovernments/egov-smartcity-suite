@@ -80,4 +80,6 @@ public interface PropertyStatusValuesDAO {
 	
 	public PropertyStatusValues getPropertyStatusValuesByBasicProperty(BasicProperty basicProperty);
 	
+	public PropertyStatusValues getLatestParentPSVByBasicProperty(BasicProperty basicProperty);
+	
 }
