@@ -87,8 +87,96 @@ $(document).ready(function(){
         source : agency.ttAdapter()
     });
     typeaheadWithEventsHandling(agency_typeahead, '#agencyId');
-    });
+});   
+   
+$('#searchagencywise').click(function(e){
+    	e.preventDefault();
 
+    	$.ajax({
+    		url: "/adtax/reports/getAgencyWiseDcb?"+$("#agencywisehoardingsearchform").serialize(),    
+    		data: {},
+    		dataType: "json",
+    		success: function (response) {
+    			if(response.data){
+    				$('#agencyDCBTableDiv').empty();
+        			$("#agencyDCBTableDiv").append('<table class="table table-bordered table-hover multiheadertbl" id="adtax_searchagencywiserecord"><tfoot id="report-footer"><tr><td>Total</td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tfoot></table>');
+    				$("#adtax_searchagencywiserecord").dataTable({
+    					"aaData":response.data,
+    					"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+    					"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+    					"autoWidth": false,
+    					"bDestroy": true,
+    						"columns" : [
+    									  { 
+    									  	
+    										  "data" : function(row, type, set, meta) {
+    												return {
+    													name : row.agencyName,
+    													id : row.agency,
+    												};
+    											},
+    										  "render" : function(data, type, row, meta) 
+    										  {
+    											return '<a href="javascript:void(0);" onclick="reportFunction('+data.id+');" >'+data.name+'</a> ';
+    										   },
+    										   "title": "Agency"
+    									  },
+    									  { "data" : "totalHoardingInAgency", "title": "No.of hoarding"},
+    									  { "data" : "penaltyAmount", "title": "Penalty Amount"},
+    									  { "data" : "additionalTaxAmount", "title": "Additional Tax (Service Tax and Cesses)"},							  
+    									  { "data" : "totalDemand", "title": "TotalDemand"},
+    									  { "data" : "collectedAmount", "title": "Collected Amount"},
+    									  { "data" : "pendingAmount", "title": "Pending Amount"},
+    									  ],
+    										"footerCallback" : function(row, data, start, end, display) {
+    											var api = this.api(), data;
+    											if (data.length == 0) {
+    												jQuery('#report-footer').hide();
+    											} else {
+    												jQuery('#report-footer').show(); 
+    											}
+    											if (data.length > 0) {
+    												updateTotalFooter(1, api);
+    												updateTotalFooter(2, api);
+    												updateTotalFooter(3, api);
+    												updateTotalFooter(4, api);
+    												updateTotalFooter(5, api);
+    												updateTotalFooter(6, api);
+    												}
+    										},
+    										"aoColumnDefs" : [ {
+    											"aTargets" : [1,2,3,4,5,6],
+    											"mRender" : function(data, type, full) {
+    												return formatNumberInr(data);    
+    											}
+    										} ]	
+    							});
+    			} else if (response.error){
+    				$('#agencyDCBTableDiv').empty();
+        			$("#agencyDCBTableDiv").append('<table class="table table-bordered table-hover multiheadertbl" id="adtax_searchagencywiserecord"></table>');
+    				$("#adtax_searchagencywiserecord").dataTable({
+            			"aaData":response.error,
+            			"bDestroy": true,
+            			"autoWidth": true, searching: false, paging: false, info: false,
+            			"columns" : [
+            		      { "data" : "errorMessage", "title":"Error"},
+            			  ],
+                          "columnDefs": [
+                                         {"className": "dt-center", "targets": "_all"}
+                                       ],
+                                       "createdRow": function( row, data, dataIndex){
+                                            $(row).css('color', '#FF0000');
+                                         }
+            		});
+    			}
+    			
+    		}, 
+    		error: function (response) {
+    			console.log("------------ failed -----------");
+    		}
+    	});
+    });
+    
    
 $('#categories').change(function(){
 	$.ajax({
@@ -146,82 +234,6 @@ $('#zoneList').change(function(){
 $('#wardlist').change(function(){
 	$("#wardId").val($('#wardlist').val());    
 });
-
-var prevdatatable;
-$('#searchagencywise').click(function(e){
-	$('.report-section').removeClass('display-hide');
-		oTable= $('#adtax_searchagencywiserecord');
-		if(prevdatatable)
-		{
-			prevdatatable.fnClearTable();
-			$('#adtax_searchagencywiserecord thead tr').remove();
-		}
-			prevdatatable = oTable.dataTable({
-			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-			"autoWidth": false,
-			"bDestroy": true,
-			ajax : {
-				url : "/adtax/reports/getAgencyWiseDcb",
-				type : "get",
-				beforeSend : function() {
-					$('.loader-class').modal('show', {
-						backdrop : 'static'
-					});
-				},
-				"data" : getFormData($('form')),
-				complete : function() {
-					$('.loader-class').modal('hide');
-				}
-			},
-				"columns" : [
-							  { 
-							  	
-								  "data" : function(row, type, set, meta) {
-										return {
-											name : row.agencyName,
-											id : row.agency,
-										};
-									},
-								  "render" : function(data, type, row, meta) 
-								  {
-									return '<a href="javascript:void(0);" onclick="reportFunction('+data.id+');" >'+data.name+'</a> ';
-								   },
-								   "title": "Agency"
-							  },
-							  { "data" : "totalHoardingInAgency", "title": "No.of hoarding"},
-							  { "data" : "penaltyAmount", "title": "Penalty Amount"},
-							  { "data" : "additionalTaxAmount", "title": "Additional Tax (Service Tax and Cesses)"},							  
-							  { "data" : "totalDemand", "title": "TotalDemand"},
-							  { "data" : "collectedAmount", "title": "Collected Amount"},
-							  { "data" : "pendingAmount", "title": "Pending Amount"},
-							  ],
-								"footerCallback" : function(row, data, start, end, display) {
-									var api = this.api(), data;
-									if (data.length == 0) {
-										jQuery('#report-footer').hide();
-									} else {
-										jQuery('#report-footer').show(); 
-									}
-									if (data.length > 0) {
-										updateTotalFooter(1, api);
-										updateTotalFooter(2, api);
-										updateTotalFooter(3, api);
-										updateTotalFooter(4, api);
-										updateTotalFooter(5, api);
-										updateTotalFooter(6, api);
-										}
-								},
-								"aoColumnDefs" : [ {
-									"aTargets" : [1,2,3,4,5,6],
-									"mRender" : function(data, type, full) {
-										return formatNumberInr(data);    
-									}
-								} ]	
-					});
-		e.stopPropagation();
-		e.preventDefault();
-	});
 
 function reportFunction(id)
 {

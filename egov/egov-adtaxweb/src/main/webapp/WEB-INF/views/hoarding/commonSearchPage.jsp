@@ -62,26 +62,28 @@
                             <form:input type="text" class="form-control" id="advertisementNumber" path="advertisementNumber"/>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.application.no"/></label>
-                        <div class="col-sm-3 add-margin">
-                            <form:input type="text" class="form-control" id="applicationNumber" path="applicationNumber"/>
-                        </div>
-                        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.hoarding.permission.no"/></label>
-                        <div class="col-sm-3 add-margin">
-                            <form:input type="text" class="form-control" id="permissionNumber" path="permissionNumber"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.application.frm.date"/></label>
-                        <div class="col-sm-3 add-margin">
-                            <form:input type="text" class="form-control datepicker" id="applicationFromDate" path="applicationFromDate"/>
-                        </div>
-                        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.application.to.date"/></label>
-                        <div class="col-sm-3 add-margin">
-                            <form:input type="text" class="form-control datepicker" id="applicationToDate" path="applicationToDate"/>
-                        </div>
-                    </div>
+                    <c:if test="${mode == 'AdvertisementwiseDCBReport'}">
+	                    <div class="form-group">
+	                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.application.no"/></label>
+	                        <div class="col-sm-3 add-margin">
+	                            <form:input type="text" class="form-control" id="applicationNumber" path="applicationNumber"/>
+	                        </div>
+	                        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.hoarding.permission.no"/></label>
+	                        <div class="col-sm-3 add-margin">
+	                            <form:input type="text" class="form-control" id="permissionNumber" path="permissionNumber"/>
+	                        </div>
+	                    </div>
+	                    <div class="form-group">
+	                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.application.frm.date"/></label>
+	                        <div class="col-sm-3 add-margin">
+	                            <form:input type="text" class="form-control datepicker" id="applicationFromDate" path="applicationFromDate"/>
+	                        </div>
+	                        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.application.to.date"/></label>
+	                        <div class="col-sm-3 add-margin">
+	                            <form:input type="text" class="form-control datepicker" id="applicationToDate" path="applicationToDate"/>
+	                        </div>
+	                    </div>
+                    </c:if>
                     <div class="form-group">
                         <label class="col-sm-3 control-label text-right"><spring:message code="lbl.hoarding.category"/></label>
                         <div class="col-sm-3 add-margin">
@@ -139,7 +141,8 @@
                          <label class="col-sm-2 control-label text-right"><spring:message code="lbl.owner.Details"/></label>
                         <div class="col-sm-3 add-margin">
                       
-                            <form:input type="text" class="form-control" id="ownerDetail" path="ownerDetail"/>
+                            <form:input type="text" class="form-control patternvalidation"
+										data-pattern="alphanumericwithspace" id="ownerDetail" path="ownerDetail"/>
 							<form:errors path="ownerDetail" cssClass="error-msg"/>
                         </div>	
                     </div>

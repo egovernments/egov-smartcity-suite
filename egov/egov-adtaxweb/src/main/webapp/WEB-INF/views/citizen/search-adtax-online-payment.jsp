@@ -72,7 +72,6 @@
 	 			<div class="form-group">
                          <label class="col-sm-3 control-label text-right"><spring:message code="lbl.owner.Details"/></label>
                         <div class="col-sm-3 add-margin">
-                      
                             <form:input type="text" class="form-control" id="ownerDetail" path="ownerDetail"/>
 							<form:errors path="ownerDetail" cssClass="error-msg"/>
                         </div>	
@@ -87,8 +86,7 @@
        			</div>
         	</div>
     	 </form:form>
-    	 <div class="col-md-12"><br>
-    	 	<table class="table table-bordered datatable dt-responsive" id="search-dcbresult-table"></table>
+    	 <div class="col-md-12" id="searchAdtaxOnlineDiv"><br>
     	 </div>
 	</div>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>

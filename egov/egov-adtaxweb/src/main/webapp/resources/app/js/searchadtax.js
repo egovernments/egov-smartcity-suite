@@ -247,32 +247,61 @@ $(document).ready(function(){
 		});
 		e.stopPropagation();
 	});
-	var datadcbtbl = $('#search-dcbresult-table');
-	$('#search-dcb').click(function(e){
-		datadcbtbl.dataTable({
-			"ajax": {url:"/adtax/reports/search-for-dcbreport?"+$("#hoardingsearchform").serialize(),
-				type:"POST"
-			},
-			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
-			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-			"bDestroy": true,
-			"autoWidth": false,
-			"columns" : [
-			  { "data" : "id","visible" : false, "searchable": false},
-		      { "data" : "advertisementNumber", "title":"Advertisement No."},
-			  { "data" : "applicationNumber", "title": "Application No."},
-			  { "data" : "agencyName", "title": "Agency"},
-			  { "data" : "ownerDetail", "title": "Owner Details"},
-			  { "data" : "status", "title": "Hoarding Status"},
-			  { "data" : "","title": "Actions", "target":-1,"defaultContent": '<button type="button" class="btn btn-xs btn-secondary fa-demandCollection"><span class="glyphicon glyphicon-edit"></span>&nbsp;View DCB Report</button>&nbsp;'}			 
-			  ]
+
+	var datadcbtbl;
+	$('#search-dcb').click(function(){
+		$.ajax({
+			url: "/adtax/reports/search-for-dcbreport?"+$("#hoardingsearchform").serialize(),
+			type: "POST",
+			data: {},
+			dataType: "json",
+			success: function (response) {
+				if(response.data){
+					$("#dcbTableDiv").empty();
+                    $("#dcbTableDiv").append('<table class="table table-bordered datatable dt-responsive" id="search-dcbresult-table" ></table>');
+                    datadcbtbl = $("#search-dcbresult-table").dataTable({
+            			"aaData":response.data,
+            			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
+            			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            			"bDestroy": true,
+            			"autoWidth": false,
+            			"columns" : [
+            			  { "data" : "id","visible" : false, "searchable": false},
+            		      { "data" : "advertisementNumber", "title":"Advertisement No."},
+            			  { "data" : "applicationNumber", "title": "Application No."},
+            			  { "data" : "agencyName", "title": "Agency"},
+            			  { "data" : "ownerDetail", "title": "Owner Details"},
+            			  { "data" : "status", "title": "Hoarding Status"},
+            			  { "data" : "","title": "Actions", "target":-1,"defaultContent": '<button type="button" class="btn btn-xs btn-secondary fa-demandCollection"><span class="glyphicon glyphicon-edit"></span>&nbsp;View DCB Report</button>&nbsp;'}			 
+            			  ]
+            		});
+                    $("#search-dcbresult-table").on('click','tbody tr td .fa-demandCollection',function(e) {
+                		var hoardingId = datadcbtbl.fnGetData($(this).parent().parent(),0);
+                		window.open("getHoardingDcb/"+hoardingId, ''+hoardingId+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
+                	});
+				} else if (response.error){
+					$("#dcbTableDiv").empty();
+                    $("#dcbTableDiv").append('<table class="table table-bordered datatable dt-responsive" id="search-dcbresult-table" ></table>');
+                    $("#search-dcbresult-table").dataTable({
+            			"aaData":response.error,
+            			"bDestroy": true,
+            			"autoWidth": true, searching: false, paging: false, info: false,
+            			"columns" : [
+            		      { "data" : "errorMessage", "title":"Errors"},
+            			  ],
+                          "columnDefs": [
+                                         {"className": "dt-center", "targets": "_all"}
+                                       ],
+                                       "createdRow": function( row, data, dataIndex){
+                                            $(row).css('color', '#FF0000');
+                                         }
+            		});
+				}
+			}, 
+			error: function (response) {
+				console.log("-------- failed --------");
+			}
 		});
-		e.stopPropagation();
-	});
-	
-	$("#search-dcbresult-table").on('click','tbody tr td .fa-demandCollection',function(e) {
-		var hoardingId = datadcbtbl.fnGetData($(this).parent().parent(),0);
-		window.open("getHoardingDcb/"+hoardingId, ''+hoardingId+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 	});
 	
 	$("#search-update-result-table").on('click','tbody tr td i.fa-edit',function(e) {

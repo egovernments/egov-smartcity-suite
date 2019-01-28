@@ -258,11 +258,15 @@ public class AdvertisementPermitDetailService {
         return egwStatusHibernateDAO.getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_MODULE_TYPE, code);
     }
 
-    public List<HoardingSearch> getAdvertisementSearchResult(final AdvertisementPermitDetail advPermitDetail,
-            final String searchType) {
-
-        final List<AdvertisementPermitDetail> advPermitDtl = advertisementPermitDetailRepository
-                .searchAdvertisementPermitDetailBySearchParams(advPermitDetail);
+    public List<HoardingSearch> getAdvertisementSearchResult(final AdvertisementPermitDetail advPermitDetail, 
+    		final  HoardingSearch hoardingSearch, final String searchType) {
+    	final List<AdvertisementPermitDetail> advPermitDtl;
+		if (hoardingSearch != null)
+			advPermitDtl = advertisementPermitDetailRepository.searchAdvertisementPermitDetailLike(hoardingSearch,
+					searchType);
+		else
+			advPermitDtl = advertisementPermitDetailRepository
+					.searchAdvertisementPermitDetailBySearchParams(advPermitDetail);
         final HashMap<String, HoardingSearch> agencyWiseHoardingList = new HashMap<>();
         final List<HoardingSearch> hoardingSearchResults = new ArrayList<>();
 
@@ -542,10 +546,10 @@ public class AdvertisementPermitDetailService {
     }
 
     public List<HoardingAgencyWiseSearch> getAgencyWiseAdvertisementSearchResult(
-            final AdvertisementPermitDetail advPermitDetail) {
+            final HoardingSearch hoardingSearch) {
 
         final List<AdvertisementPermitDetail> advPermitDtl = advertisementPermitDetailRepository
-                .searchAdvertisementPermitDetailBySearchParams(advPermitDetail);
+                .searchAdvertisementPermitDetailLike(hoardingSearch, null);
         final HashMap<String, HoardingAgencyWiseSearch> agencyWiseHoardingMap = new HashMap<>();
         final List<HoardingAgencyWiseSearch> agencyWiseFinalHoardingList = new ArrayList<>();
 

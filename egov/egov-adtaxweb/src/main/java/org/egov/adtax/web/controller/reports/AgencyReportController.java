@@ -50,18 +50,17 @@ package org.egov.adtax.web.controller.reports;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
-import org.apache.commons.io.IOUtils;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.HoardingCategory;
 import org.egov.adtax.search.contract.HoardingDcbReport;
+import org.egov.adtax.search.contract.HoardingSearch;
 import org.egov.adtax.service.AdvertisementDemandService;
 import org.egov.adtax.service.AdvertisementPermitDetailService;
 import org.egov.adtax.service.HoardingCategoryService;
@@ -72,6 +71,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -103,23 +104,36 @@ public class AgencyReportController extends GenericController {
     }
 
     @RequestMapping(value = "/dcbreport-search", method = GET)
-    public String searchAgencyWiseHoardingForm(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail) {
+    public String searchAgencyWiseHoardingForm(@ModelAttribute final HoardingSearch hoardingSearch) {
         return "report-agencywise";
     }
 
-    @RequestMapping(value = "/getAgencyWiseDcb", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public void agencyWiseViewHoarding(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
-            @RequestParam String agency,
-            final HttpServletResponse response) throws IOException {
-        IOUtils.write(new StringBuilder("{ \"data\":")
-                .append(new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
-                        .toJson(advertisementPermitDetailService
-                                .getAgencyWiseAdvertisementSearchResult(advertisementPermitDetail)))
-                .append(
-                        "}"),
-                response.getWriter());
-    }
+	@RequestMapping(value = "/getAgencyWiseDcb", method = GET, produces = MediaType.TEXT_PLAIN_VALUE)
+	@ResponseBody
+	public String agencyWiseViewHoarding(@Valid @ModelAttribute("hoardingSearch") final HoardingSearch hoardingSearch,
+			final BindingResult resultBinder) {
+		if (resultBinder.hasErrors()) {
+			List<HoardingSearch> errors = new ArrayList<>();
+			HoardingSearch search;
+			String criteriaName;
+			for (ObjectError error : resultBinder.getAllErrors()) {
+				search = new HoardingSearch();
+				criteriaName = error.getCodes()[0].split("\\.")[2];
+				search.setErrorMessage(new StringBuilder()
+						.append("Invalid input for ").append("adminBoundryParent".equalsIgnoreCase(criteriaName)
+								? "Locality" : "adminBoundry".equalsIgnoreCase(criteriaName) ? "Ward" : criteriaName)
+						.toString());
+				errors.add(search);
+			}
+			return new StringBuilder("{ \"error\":").append(new GsonBuilder().create().toJson(errors)).append("}")
+					.toString();
+		} else {
+			return new StringBuilder("{ \"data\":")
+					.append(new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create().toJson(
+							advertisementPermitDetailService.getAgencyWiseAdvertisementSearchResult(hoardingSearch)))
+					.append("}").toString();
+		}
+	}
 
     @RequestMapping(value = "/report-view", method = GET)
     public String agencywiseReport(@RequestParam("id") final String id, @RequestParam("category") final String category,

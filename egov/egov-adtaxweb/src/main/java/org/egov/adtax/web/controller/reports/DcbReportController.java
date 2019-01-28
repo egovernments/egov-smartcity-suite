@@ -50,6 +50,11 @@ package org.egov.adtax.web.controller.reports;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.search.contract.HoardingSearch;
@@ -61,6 +66,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -79,18 +86,35 @@ public class DcbReportController extends GenericController {
     private AdvertisementPermitDetailService advertisementPermitDetailService;
 
     @RequestMapping(value = "search-for-dcbreport", method = GET)
-    public String searchHoardingForm(@ModelAttribute final HoardingSearch hoardingSearch) {
+    public String searchHoardingForm(@ModelAttribute final HoardingSearch hoardingSearch, Model model) {
+    	model.addAttribute("mode", "AdvertisementwiseDCBReport");
         return "report-dcb";
     }
 
     @RequestMapping(value = "search-for-dcbreport", method = POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String searchHoarding(@ModelAttribute final HoardingSearch hoardingSearch) {
-        return new StringBuilder("{ \"data\":")
-                .append(new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
-                        .toJson(advertisementPermitDetailService.getAdvertisementSearchResult(hoardingSearch, null)))
-                .append("}").toString();
-    }
+	public String searchHoarding(@Valid @ModelAttribute("hoardingSearch") final HoardingSearch hoardingSearch,
+			final BindingResult resultBinder) {
+		if (resultBinder.hasErrors()) {
+			List<HoardingSearch> errors = new ArrayList<>();
+			HoardingSearch search;
+			String criteriaName;
+			for (ObjectError error : resultBinder.getAllErrors()) {
+				search = new HoardingSearch();
+				criteriaName = error.getCodes()[0].split("\\.")[2];
+				search.setErrorMessage(new StringBuilder().append("Invalid input for ").append("adminBoundryParent".equalsIgnoreCase(criteriaName)
+						? "Locality" : "adminBoundry".equalsIgnoreCase(criteriaName) ? "Ward" : criteriaName).toString());
+				errors.add(search);
+			}
+			return new StringBuilder("{ \"error\":").append(new GsonBuilder().create().toJson(errors)).append("}")
+					.toString();
+		} else {
+			return new StringBuilder("{ \"data\":")
+					.append(new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create().toJson(
+							advertisementPermitDetailService.getAdvertisementSearchResult(hoardingSearch, null)))
+					.append("}").toString();
+		}
+	}
 
     @RequestMapping(value = "getHoardingDcb/{id}")
     public String viewHoarding(@PathVariable final Long id, final Model model) {

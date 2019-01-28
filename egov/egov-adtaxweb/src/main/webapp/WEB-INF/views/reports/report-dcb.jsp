@@ -53,6 +53,7 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="row">
     	 <form:form id="hoardingsearchform" method="post" class="form-horizontal form-groups-bordered" modelAttribute="hoardingSearch" commandName="hoardingSearch">
+    	 <form:hidden path="" id="mode" value="${mode}" />
     	 <div class="col-md-12">
 	        <div class="panel panel-primary" data-collapsed="0">
 	            <div class="panel-heading">
@@ -80,9 +81,11 @@
        			</div>
         	</div>
     	 </form:form>
-    	 <div class="col-md-12"><br>
-    	 	<table class="table table-bordered datatable dt-responsive" id="search-dcbresult-table"></table>
+    	 <br />
+    	 <br />
+    	 <div class="col-md-12" id="dcbTableDiv"><br />
     	 </div>
+    	 
 	</div>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">

@@ -137,104 +137,121 @@ $(document).ready(function(){
 	var prevdatatable;
 	
 	$('#search').click(function(e){
-		oTable= $('#adtax_search');
-		if(prevdatatable)
-		{
-			prevdatatable.fnClearTable();
-			$('#adtax_search thead tr').remove();
-		}
-			prevdatatable = oTable.dataTable({
-			"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
-			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-			"autoWidth": false,
-			"bDestroy": true,
-			"oTableTools" : {
-				"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-				"aButtons" : [ 
-		               {
-			             "sExtends": "pdf",
-	                     "sPdfMessage": "",
-	                     "sTitle": "Advertisement Tax Search Result",
-	                     "sPdfOrientation": "landscape",
-	                     "mColumns": [0, 1, 2, 3, 4, 5, 6, 7]	 
-		                },
-		                {
-				             "sExtends": "xls",
-	                         "sTitle": "Advertisement Tax Search Result",
-	                         "mColumns": [0, 1, 2, 3, 4, 5, 6, 7]
-			             },
-			             {
-				             "sExtends": "print",
-	                         "sTitle": "Advertisement Tax Search Result",
-	                         "mColumns": [0, 1, 2, 3, 4, 5, 6, 7]
-			             }]
-				
-			},
-			ajax : {
-				url : "/adtax/hoarding/getsearch-adtax-result",      
-				beforeSend : function() {
-					$('.loader-class').modal('show', {
-						backdrop : 'static'
-					});
-				},
-				"data" : getFormData(jQuery('form')),
-				complete : function() {
-					$('.loader-class').modal('hide');
-				}
-			},
-			"columns" : [
-			              { "data" : "agencyName", "title": "Agency"},
-			              { "data" : "ownerDetail", "title": "Owner Detail"},
-						  { "data" : "advertisementNumber", "title":"Advertisement No."},
-						  { "data" : "applicationNumber", "title": "Application No."},
-						  { "data" : "applicationFromDate", "title": "Application Date"},
-						  { "data" : "pendingDemandAmount", "title": "Amount"},
-						  { "data" : "additionalTaxAmount", "title": "Additional Tax (Service Tax and Cesses)"},
-						  { "data" : "penaltyAmount", "title": "Penalty Amount"},
-						  { "data" : "totalAmount", "title": "Total Amount"},
-						  { "data" : "permissionNumber", "visible": false},
-						  { "data" : "permitStatus", "title": "Application status"},
-						  { "data" : "userName", "title": "User Name"},
-						  { "data" : "pendingAction", "title": "Pending Action"},
-						  { "data" : "id", "visible": false},
-						  { "data" : "isLegacy", "visible":false},
-						  {"title" : "Actions","sortable":false,
-				        	   render : function(data, type, row) {
-				        		   
-				        		   	 if(row.permitStatus=="APPROVED"){
-				        		   		 if(row.totalAmount==0){
-				        		   			 return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="0">Generate Permit Order</option><option value="2">View</option></select>');
-				        		   		 }
-				        		   		 else{
-			        					   return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="2">View</option><option value="1">Generate Demand Notice</option></select>');
-				        		   		 }
-				        		   	  } 
-				        		   	 else if(row.permitStatus=="ADTAXAMTPAYMENTPAID" || row.permitStatus=="ADTAXPERMITGENERATED"){
-				        		   		  if(row.isLegacy && row.totalAmount==0){
-				        		   			return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="0">Generate Permit Order</option><option value="2">View</option></select>'); 
-				        		   		  }
-				        		   		  else if(row.isLegacy && row.totalAmount!=0){
-				        		   			 return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="0">Generate Permit Order</option><option value="1">Generate Demand Notice</option><option value="2">View</option></select>');
-				        		   		  }
-				        		   		  else
-				        		   			  {
-					        		   			return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="0">Generate Permit Order</option><option value="2">View</option></select>'); 
-				        		   			  }
-			        				  } 
-				        		   	 else
-			        					   return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="2">View</option></select>');
-				        		   		
-				        			   }}],
-						  "aaSorting": [[4, 'asc']] 
-				});
-		e.stopPropagation();
-	});
+    	e.preventDefault();
+
+    	$.ajax({
+    		url: "/adtax/hoarding/getsearch-adtax-result?"+$("#adtaxsearchform").serialize(),    
+    		data: {},
+    		dataType: "json",
+    		success: function (response) {
+    			if(response.data){
+    				$('#searchResultsDiv').empty();
+        			$("#searchResultsDiv").append('<table class="table table-bordered datatable dt-responsive" id="adtax_search"></table>');
+        			oTable = $("#adtax_search").dataTable({
+    					"aaData":response.data,
+    					"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
+    					"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+    					"autoWidth": false,
+    					"bDestroy": true,
+    					"oTableTools" : {
+    						"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+    						"aButtons" : [ 
+    				               {
+    					             "sExtends": "pdf",
+    			                     "sPdfMessage": "",
+    			                     "sTitle": "Advertisement Tax Search Result",
+    			                     "sPdfOrientation": "landscape",
+    			                     "mColumns": [0, 1, 2, 3, 4, 5, 6, 7]	 
+    				                },
+    				                {
+    						             "sExtends": "xls",
+    			                         "sTitle": "Advertisement Tax Search Result",
+    			                         "mColumns": [0, 1, 2, 3, 4, 5, 6, 7]
+    					             },
+    					             {
+    						             "sExtends": "print",
+    			                         "sTitle": "Advertisement Tax Search Result",
+    			                         "mColumns": [0, 1, 2, 3, 4, 5, 6, 7]
+    					             }]
+    						
+    					},
+    					"columns" : [
+    					              { "data" : "agencyName", "title": "Agency"},
+    					              { "data" : "ownerDetail", "title": "Owner Detail"},
+    								  { "data" : "advertisementNumber", "title":"Advertisement No."},
+    								  { "data" : "applicationNumber", "title": "Application No."},
+    								  { "data" : "applicationFromDate", "title": "Application Date"},
+    								  { "data" : "pendingDemandAmount", "title": "Amount"},
+    								  { "data" : "additionalTaxAmount", "title": "Additional Tax (Service Tax and Cesses)"},
+    								  { "data" : "penaltyAmount", "title": "Penalty Amount"},
+    								  { "data" : "totalAmount", "title": "Total Amount"},
+    								  { "data" : "permissionNumber", "visible": false},
+    								  { "data" : "permitStatus", "title": "Application status"},
+    								  { "data" : "userName", "title": "User Name"},
+    								  { "data" : "pendingAction", "title": "Pending Action"},
+    								  { "data" : "id", "visible": false},
+    								  { "data" : "isLegacy", "visible":false},
+    								  {"title" : "Actions","sortable":false,
+    						        	   render : function(data, type, row) {
+    						        		   
+    						        		   	 if(row.permitStatus=="APPROVED"){
+    						        		   		 if(row.totalAmount==0){
+    						        		   			 return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="0">Generate Permit Order</option><option value="2">View</option></select>');
+    						        		   		 }
+    						        		   		 else{
+    					        					   return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="2">View</option><option value="1">Generate Demand Notice</option></select>');
+    						        		   		 }
+    						        		   	  } 
+    						        		   	 else if(row.permitStatus=="ADTAXAMTPAYMENTPAID" || row.permitStatus=="ADTAXPERMITGENERATED"){
+    						        		   		  if(row.isLegacy && row.totalAmount==0){
+    						        		   			return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="0">Generate Permit Order</option><option value="2">View</option></select>'); 
+    						        		   		  }
+    						        		   		  else if(row.isLegacy && row.totalAmount!=0){
+    						        		   			 return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="0">Generate Permit Order</option><option value="1">Generate Demand Notice</option><option value="2">View</option></select>');
+    						        		   		  }
+    						        		   		  else
+    						        		   			  {
+    							        		   			return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="0">Generate Permit Order</option><option value="2">View</option></select>'); 
+    						        		   			  }
+    					        				  } 
+    						        		   	 else
+    					        					   return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="2">View</option></select>');
+    						        		   		
+    						        			   }}
+    									  ],
+    								  "aaSorting": [[4, 'asc']]	
+    							});
+    			} else if (response.error){
+    				$('#searchResultsDiv').empty();
+        			$("#searchResultsDiv").append('<table class="table table-bordered datatable dt-responsive" id="adtax_search"></table>');
+    				$("#adtax_search").dataTable({
+            			"aaData":response.error,
+            			"bDestroy": true,
+            			"autoWidth": true, searching: false, paging: false, info: false,
+            			"columns" : [
+            		      { "data" : "errorMessage", "title":"Errorssss"},
+            			  ],
+                          "columnDefs": [
+                                         {"className": "dt-center", "targets": "_all"}
+                                       ],
+                                       "createdRow": function( row, data, dataIndex){
+                                            $(row).css('color', '#FF0000');
+                                         }
+            		});
+    			}
+    			
+    		}, 
+    		error: function (response) {
+    			console.log("------------- failed ------------");
+    		}
+    	});
+    });
 
 	$("#reset").click(function(e){
 		$('#agencyId').val("");    
 	});
 
-	$("#adtax_search").on('change','tbody tr td .dropchange',
+	$("#searchResultsDiv").on('change','table tbody tr td .dropchange',
 			function() {
 			var adtaxid= oTable.fnGetData($(this).parent().parent(), 13);
 						if (this.value == 0) {
@@ -253,8 +270,7 @@ $(document).ready(function(){
 							$('#adtaxsearchform').attr('action', urlForView);
 							window.open(urlForView,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
 						}
-						
-						}); 
+	}); 
 	
 	$('#renewalsearch').click(function(e){
 		oTable= $('#renew_search');

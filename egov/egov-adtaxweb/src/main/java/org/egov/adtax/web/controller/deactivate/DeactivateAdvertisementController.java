@@ -144,7 +144,7 @@ public class DeactivateAdvertisementController extends GenericController {
 
     public String commonSearchResult(final AdvertisementPermitDetail advertisementPermitDetailRecord, final String searchType) {
         final List<HoardingSearch> searchResult = advertisementPermitDetailService
-                .getAdvertisementSearchResult(advertisementPermitDetailRecord, searchType);
+                .getAdvertisementSearchResult(advertisementPermitDetailRecord, null, searchType);
         return new StringBuilder("{ \"data\":").append(searchResult).append("}").toString();
     }
 

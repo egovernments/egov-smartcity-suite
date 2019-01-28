@@ -52,11 +52,16 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import org.egov.adtax.entity.enums.AdvertisementStatus;
+import org.hibernate.validator.constraints.SafeHtml;
 
 public class HoardingSearch {
+	@SafeHtml
     private String advertisementNumber;
+	@SafeHtml
     private String applicationNumber;
+	@SafeHtml
     private String permissionNumber;
+	@SafeHtml
     private String agencyName;
     private Long agency;
     private Date applicationFromDate;
@@ -72,16 +77,25 @@ public class HoardingSearch {
     private BigDecimal additionalTaxAmount;
     private BigDecimal totalAmount;
     private int totalHoardingInAgency;
+    @SafeHtml
     private String hordingIdsSearchedByAgency;
+    @SafeHtml
     private String permitStatus;
     private Long id;
+    @SafeHtml
     private String categoryName;
+    @SafeHtml
     private String subCategoryName;
+    @SafeHtml
     private String financialYear;
+    @SafeHtml
     private String ownerDetail;
     private boolean isLegacy;
+    @SafeHtml
     private String userName;
+    @SafeHtml
     private String pendingAction;
+    private String errorMessage;
 
     public String getAdvertisementNumber() {
         return advertisementNumber;
@@ -306,5 +320,13 @@ public class HoardingSearch {
     public void setPendingAction(String pendingAction) {
         this.pendingAction = pendingAction;
     }
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
 
 }

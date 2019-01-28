@@ -52,11 +52,13 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.apache.commons.io.IOUtils;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
@@ -73,6 +75,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -100,10 +104,6 @@ public class SearchHoardingController extends GenericController {
     @Autowired
     private AdvertisementWorkFlowService advertisementWorkFlowService;
 
-    @ModelAttribute
-    public AdvertisementPermitDetail advertisementPermitDetail() {
-        return new AdvertisementPermitDetail();
-    }
 
     @RequestMapping(value = "/getsubcategories-by-category", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -112,24 +112,42 @@ public class SearchHoardingController extends GenericController {
     }
 
     @RequestMapping(value = "/search", method = GET)
-    public String search() {
+    public String search(@ModelAttribute HoardingSearch hoardingSearch) {
         return HOARDING_SEARCH;
     }
 
     @RequestMapping(value = "/adtax-search", method = GET)
-    public String searchAdtaxForm() {
+    public String searchAdtaxForm(@ModelAttribute HoardingSearch hoardingSearch, Model model) {
+    	model.addAttribute("mode", "Search");
         return ADVERTISEMENT_SEARCH;
     }
 
-    @RequestMapping(value = "/getsearch-adtax-result", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/getsearch-adtax-result", method = GET, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public void searchAdtaxResult(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
-            final HttpServletRequest request,
-            final HttpServletResponse response) throws IOException {
-        IOUtils.write(new StringBuilder(DATA).append(new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
-                .toJson(advertisementPermitDetailService.getAdvertisementSearchResult(advertisementPermitDetail,
-                        "Advertisement")))
-                .append("}"), response.getWriter());
+    public String searchAdtaxResult(@Valid @ModelAttribute("hoardingSearch") final HoardingSearch hoardingSearch, final BindingResult resultBinder, Model model) {
+
+		if (resultBinder.hasErrors()) {
+			List<HoardingSearch> errors = new ArrayList<>();
+			HoardingSearch search;
+			String criteriaName;
+			for (ObjectError error : resultBinder.getAllErrors()) {
+				search = new HoardingSearch();
+				criteriaName = error.getCodes()[0].split("\\.")[2];
+				search.setErrorMessage(new StringBuilder()
+						.append("Invalid input for ").append("adminBoundryParent".equalsIgnoreCase(criteriaName)
+								? "Locality" : "adminBoundry".equalsIgnoreCase(criteriaName) ? "Ward" : criteriaName)
+						.toString());
+				errors.add(search);
+				errors.add(search);
+			}
+			return new StringBuilder("{ \"error\":").append(new GsonBuilder().create().toJson(errors)).append("}")
+					.toString();
+		} else {
+			return new StringBuilder(DATA).append(new GsonBuilder().setDateFormat(LocalizationSettings.datePattern())
+					.create().toJson(advertisementPermitDetailService.getAdvertisementSearchResult(null, hoardingSearch,
+							"Advertisement")))
+					.append("}").toString();
+		}
     }
 
     @RequestMapping(value = "/hoarding-search-list", method = GET, produces = APPLICATION_JSON_VALUE)
@@ -139,13 +157,13 @@ public class SearchHoardingController extends GenericController {
             final HttpServletResponse response) throws IOException {
         final String searchType = request.getParameter("searchType");
         IOUtils.write(new StringBuilder(DATA).append(new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
-                .toJson(advertisementPermitDetailService.getAdvertisementSearchResult(advertisementPermitDetail, searchType)))
+                .toJson(advertisementPermitDetailService.getAdvertisementSearchResult(advertisementPermitDetail, null, searchType)))
                 .append("}"), response.getWriter());
     }
 
     public String commonSearchResult(final AdvertisementPermitDetail advertisementPermitDetail, final String searchType) {
         final List<HoardingSearch> searchResult = advertisementPermitDetailService
-                .getAdvertisementSearchResult(advertisementPermitDetail, searchType);
+                .getAdvertisementSearchResult(advertisementPermitDetail, null, searchType);
         return new StringBuilder(DATA).append(searchResult).append("}").toString();
     }
 
