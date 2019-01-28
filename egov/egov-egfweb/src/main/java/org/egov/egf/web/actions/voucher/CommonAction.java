@@ -1624,7 +1624,7 @@ public class CommonAction extends BaseFormAction {
                     .append(" eiv.instrumentheaderid = ih.id and egws.id = ih.id_status and egws.moduletype = 'Instrument' and egws.description='New'")
                     .append(" and ih.instrumenttype = (select id from egf_instrumenttype where upper(type) = :type) and ispaycheque = '1'")
                     .append(" and bank.isactive = true and bankBranch.isactive = true and bankaccount.isactive = true")
-                    .append(" and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.branchid = : branchId")
+                    .append(" and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.branchid = :branchId")
                     .append(" and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date");
             queryString = queryString.append(" and ph.bankaccountnumberid = bankaccount.id order by vh.voucherdate desc");
             if (type == null || type.equalsIgnoreCase(""))

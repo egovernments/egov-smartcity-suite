@@ -146,6 +146,13 @@
 	<script>
 		function onSubmit() {
 			document.chequeAssignment.action = '/EGF/payment/chequeAssignment-searchChequesForSurrender.action';
+            $(document.chequeAssignment).append(
+                $('<input>', {
+                    type: 'hidden',
+                    name: '${_csrf.parameterName}',
+                    value: '${_csrf.token}'
+                })
+            );
 			document.chequeAssignment.submit();
 		}
 		var date = '<s:date name="currentDate" format="dd/MM/yyyy"/>';
