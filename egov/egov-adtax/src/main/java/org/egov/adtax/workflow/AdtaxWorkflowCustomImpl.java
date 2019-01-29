@@ -213,10 +213,6 @@ public abstract class AdtaxWorkflowCustomImpl implements AdtaxWorkflowCustom {
             final String approvalComent, final String additionalRule, final DateTime currentDate, Assignment wfInitiator) {
         WorkFlowMatrix wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
                 null, additionalRule, advertisementPermitDetail.getCurrentState().getValue(), null);
-        if (!eisCommonService.isValidAppover(wfmatrix, wfInitiator.getPosition())) {
-            advertisementPermitDetail.setValidApprover(Boolean.FALSE);
-            return;
-        }
         advertisementPermitDetail.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
         advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.ACTIVE);
         if (wfmatrix.getNextAction().equalsIgnoreCase(AdvertisementTaxConstants.WF_END_STATE))
@@ -230,10 +226,6 @@ public abstract class AdtaxWorkflowCustomImpl implements AdtaxWorkflowCustom {
             final String additionalRule, final DateTime currentDate, Assignment wfInitiator) {
         WorkFlowMatrix wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
                 null, additionalRule, advertisementPermitDetail.getCurrentState().getValue(), null);
-        if (!eisCommonService.isValidAppover(wfmatrix, wfInitiator.getPosition())) {
-            advertisementPermitDetail.setValidApprover(Boolean.FALSE);
-            return;
-        }
         advertisementPermitDetail.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
         advertisementPermitDetail.transition().progressWithStateCopy()
                 .withSenderName(getSenderName(wfInitiator))
