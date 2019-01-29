@@ -62,7 +62,7 @@
                             <form:input type="text" class="form-control" id="advertisementNumber" path="advertisementNumber"/>
                         </div>
                     </div>
-                    <c:if test="${mode == 'AdvertisementwiseDCBReport'}">
+                    <c:if test="${mode == 'AdvertisementwiseDCBReport' || mode == 'SearchLegacyForUpdate'}">
 	                    <div class="form-group">
 	                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.application.no"/></label>
 	                        <div class="col-sm-3 add-margin">

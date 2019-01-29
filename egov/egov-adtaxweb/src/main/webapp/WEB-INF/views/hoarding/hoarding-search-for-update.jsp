@@ -70,8 +70,8 @@
        			</div>
         	</div>
     	 </form:form>
-    	 <div class="col-md-12"><br>
-    	 	<table class="table table-bordered datatable dt-responsive" id="search-update-result-table"></table>
+    	 <br />
+    	 <div class="col-md-12" id="searchForUpdateDiv"><br>
     	 </div>
 	</div>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>

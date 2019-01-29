@@ -138,7 +138,6 @@ public class SearchHoardingController extends GenericController {
 								? "Locality" : "adminBoundry".equalsIgnoreCase(criteriaName) ? "Ward" : criteriaName)
 						.toString());
 				errors.add(search);
-				errors.add(search);
 			}
 			return new StringBuilder("{ \"error\":").append(new GsonBuilder().create().toJson(errors)).append("}")
 					.toString();
@@ -149,16 +148,31 @@ public class SearchHoardingController extends GenericController {
 					.append("}").toString();
 		}
     }
-
-    @RequestMapping(value = "/hoarding-search-list", method = GET, produces = APPLICATION_JSON_VALUE)
+    
+    @RequestMapping(value = "/hoarding-search-list", method = POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public void searchResult(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
-            final HttpServletRequest request,
-            final HttpServletResponse response) throws IOException {
-        final String searchType = request.getParameter("searchType");
-        IOUtils.write(new StringBuilder(DATA).append(new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
-                .toJson(advertisementPermitDetailService.getAdvertisementSearchResult(advertisementPermitDetail, null, searchType)))
-                .append("}"), response.getWriter());
+    public String searchResult(@Valid @ModelAttribute("hoardingSearch") final HoardingSearch hoardingSearch, final BindingResult resultBinder, @RequestParam String searchType) {
+		if (resultBinder.hasErrors()) {
+			List<HoardingSearch> errors = new ArrayList<>();
+			HoardingSearch search;
+			String criteriaName;
+			for (ObjectError error : resultBinder.getAllErrors()) {
+				search = new HoardingSearch();
+				criteriaName = error.getCodes()[0].split("\\.")[2];
+				search.setErrorMessage(new StringBuilder()
+						.append("Invalid input for ").append("adminBoundryParent".equalsIgnoreCase(criteriaName)
+								? "Locality" : "adminBoundry".equalsIgnoreCase(criteriaName) ? "Ward" : criteriaName)
+						.toString());
+				errors.add(search);
+			}
+			return new StringBuilder("{ \"error\":").append(new GsonBuilder().create().toJson(errors)).append("}")
+					.toString();
+		} else {
+			return new StringBuilder(DATA).append(new GsonBuilder().setDateFormat(LocalizationSettings.datePattern())
+					.create().toJson(advertisementPermitDetailService.getAdvertisementSearchResult(null, hoardingSearch,
+							searchType)))
+					.append("}").toString();
+		}
     }
 
     public String commonSearchResult(final AdvertisementPermitDetail advertisementPermitDetail, final String searchType) {
@@ -168,16 +182,36 @@ public class SearchHoardingController extends GenericController {
     }
 
     @RequestMapping(value = "findhoarding-for-update", method = GET)
-    public String searchHoardingForm(@ModelAttribute final HoardingSearch hoardingSearch) {
+    public String searchHoardingForm(@ModelAttribute final HoardingSearch hoardingSearch, Model model) {
+    	model.addAttribute("mode", "SearchLegacyForUpdate");
         return HOARDING_SEARCH_FOR_UPDATE;
     }
 
     @RequestMapping(value = "findhoarding-for-update", method = POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String searchHoarding(@ModelAttribute final HoardingSearch hoardingSearch) {
-        return new StringBuilder(DATA).append(new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
-                .toJson(advertisementPermitDetailService.getAdvertisementSearchResult(hoardingSearch, "searchLegacyRecord")))
-                .append("}").toString();
+    public String searchHoarding(@Valid @ModelAttribute final HoardingSearch hoardingSearch, final BindingResult resultBinder) {
+		if (resultBinder.hasErrors()) {
+			List<HoardingSearch> errors = new ArrayList<>();
+			HoardingSearch search;
+			String criteriaName;
+			for (ObjectError error : resultBinder.getAllErrors()) {
+				search = new HoardingSearch();
+				criteriaName = error.getCodes()[0].split("\\.")[2];
+				search.setErrorMessage(new StringBuilder()
+						.append("Invalid input for ").append("adminBoundryParent".equalsIgnoreCase(criteriaName)
+								? "Locality" : "adminBoundry".equalsIgnoreCase(criteriaName) ? "Ward" : criteriaName)
+						.toString());
+				errors.add(search);
+			}
+			return new StringBuilder("{ \"error\":").append(new GsonBuilder().create().toJson(errors)).append("}")
+					.toString();
+		} else {
+			return new StringBuilder(DATA)
+					.append(new GsonBuilder().setDateFormat(LocalizationSettings.datePattern())
+							.create().toJson(advertisementPermitDetailService
+									.getAdvertisementSearchResult(hoardingSearch, "searchLegacyRecord")))
+					.append("}").toString();
+		}
     }
 
     @RequestMapping(value = "view/{id}", method = GET)
