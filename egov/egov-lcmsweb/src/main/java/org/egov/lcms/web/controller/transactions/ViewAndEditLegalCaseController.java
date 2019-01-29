@@ -102,7 +102,7 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
     }
 
     @RequestMapping(value = "/edit/", method = RequestMethod.GET)
-    public String edit(@ModelAttribute("legalCaseedit")  LegalCase legalCaseedit,@RequestParam("lcNumber") final String lcNumber, final Model model) {
+    public String edit(@RequestParam("lcNumber") final String lcNumber, final Model model) {
         final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
         final LegalCase newlegalCase = getLegalCaseDocuments(legalCase);
         model.addAttribute(LcmsConstants.LEGALCASE, newlegalCase);
@@ -114,20 +114,19 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
         legalCase.getBipartisanPetitionerDetailsList().addAll(legalCase.getPetitioners());
         legalCase.getBipartisanRespondentDetailsList().addAll(legalCase.getRespondents());
         model.addAttribute(LcmsConstants.MODE, "edit");
-        model.addAttribute("legalCaseedit", legalCaseedit);
         return "legalcase-edit";
     }
 
     @RequestMapping(value = "/edit/", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute("legalCaseedit") final LegalCase legalCaseedit, @RequestParam("lcNumber") final String lcNumber,
+    public String update(@Valid @ModelAttribute("legalCase") final LegalCase legalCase, @RequestParam("lcNumber") final String lcNumber,
             final BindingResult errors, @RequestParam("file") final MultipartFile[] files, final Model model,
             final RedirectAttributes redirectAttrs) throws IOException, ParseException {
         if (errors.hasErrors())
             return "legalcase-edit";
 
-        legalCaseService.persist(legalCaseedit, files);
+        legalCaseService.persist(legalCase, files);
         setDropDownValues(model);
-        final LegalCase newlegalCase = getLegalCaseDocuments(legalCaseedit);
+        final LegalCase newlegalCase = getLegalCaseDocuments(legalCase);
         model.addAttribute(LcmsConstants.LEGALCASE, newlegalCase);
         redirectAttrs.addFlashAttribute(LcmsConstants.LEGALCASE, newlegalCase);
         model.addAttribute(LcmsConstants.MODE, "view");

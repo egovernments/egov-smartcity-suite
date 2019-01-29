@@ -143,10 +143,10 @@
 		<label class="col-sm-2 control-label text-right"><spring:message
 				code="lbl.lcnumber" />:</label>
 		<div class="col-sm-3 add-margin text-center">
-			<form:input class="form-control patternvalidation"
+			<input class="form-control patternvalidation"
 				data-pattern="number" maxlength="50" id="lcNumber"
-				readonly="readonly" path="lcNumber" /></div>
-		<form:errors path="lcNumber" cssClass="add-margin error-msg" />
+				readonly="readonly" value="${legalCase.lcNumber}" /></div>
+
 	</c:if>
 </div>
 <div class="form-group">

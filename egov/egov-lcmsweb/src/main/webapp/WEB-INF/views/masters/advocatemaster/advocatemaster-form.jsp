@@ -104,7 +104,7 @@
 					<div class="col-sm-3 add-margin">
 						<form:input path="contactPhone"
 							class="form-control text-left patternvalidation"
-							data-pattern="number" maxlength="20" />
+							data-pattern="number" maxlength="10" />
 						<form:errors path="contactPhone" cssClass="error-msg" />
 					</div>
 				</div>

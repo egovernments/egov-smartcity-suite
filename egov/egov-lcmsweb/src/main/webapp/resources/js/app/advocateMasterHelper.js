@@ -208,14 +208,16 @@ $("#monthlyRenumeration").on("keyup", function(){  // validate 7 digits and two 
 
 function checkPanNumber() {
 	var text =document.getElementById('panNumber').value;
-	var panNumber = document.getElementById('panNumber').value.length;
-    if( text != text.toUpperCase() || panNumber<10 && panNumber!='' )
-        {
-    	bootbox.alert("Enter valid Pan Number.")
-        window.scroll(0,0);
-        return false;
-        }
-    return true;
+	var regpan = /^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/;
+	if(!regpan.test(text)){
+		
+	    	bootbox.alert("Enter valid Pan Number.")
+	        window.scroll(0,0);
+	        return false;
+	        
+		} 
+         return true;
+    
 } 
 $('#panNumber').keyup(function() {
     this.value = this.value.toUpperCase();
