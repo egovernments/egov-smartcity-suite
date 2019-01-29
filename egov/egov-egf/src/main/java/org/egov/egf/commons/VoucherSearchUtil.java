@@ -306,23 +306,23 @@ public class VoucherSearchUtil {
             params.put("fundSourceId", voucherHeader.getVouchermis().getFundsource().getId());
         }
         if (voucherHeader.getVouchermis().getDepartmentid() != null) {
-            sql.append(" and vh.vouchermis.departmentid = :deptId");
+            sql.append(" and vh.vouchermis.departmentid.id = :deptId");
             params.put("deptId", voucherHeader.getVouchermis().getDepartmentid().getId());
         }
         if (voucherHeader.getVouchermis().getSchemeid() != null) {
-            sql.append(" and vh.vouchermis.schemeid = :schemeId");
+            sql.append(" and vh.vouchermis.schemeid.id = :schemeId");
             params.put("schemeId", voucherHeader.getVouchermis().getSchemeid().getId());
         }
         if (voucherHeader.getVouchermis().getSubschemeid() != null) {
-            sql.append(" and vh.vouchermis.subschemeid = :subSchemeId");
+            sql.append(" and vh.vouchermis.subschemeid.id = :subSchemeId");
             params.put("subSchemeId", voucherHeader.getVouchermis().getSubschemeid().getId());
         }
         if (voucherHeader.getVouchermis().getFunctionary() != null) {
-            sql.append(" and vh.vouchermis.functionary = :functionary");
+            sql.append(" and vh.vouchermis.functionary.id = :functionary");
             params.put("functionary", voucherHeader.getVouchermis().getFunctionary().getId());
         }
         if (voucherHeader.getVouchermis().getDivisionid() != null) {
-            sql.append(" and vh.vouchermis.divisionid = :divisionId");
+            sql.append(" and vh.vouchermis.divisionid.id = :divisionId");
             params.put("divisionId", voucherHeader.getVouchermis().getDivisionid().getId());
         }
         if (voucherHeader.getModuleId() != null) {

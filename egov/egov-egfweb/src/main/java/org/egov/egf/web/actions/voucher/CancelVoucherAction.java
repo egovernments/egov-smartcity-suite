@@ -185,10 +185,10 @@ public class CancelVoucherAction extends BaseFormAction {
                     "Financial Year  Not active for Posting(either year or date within selected date range)",
                     "Financial Year  Not active for Posting(either year or date within selected date range)")));
 
-        final Map<String, Map<String, Object>> filterQueryMap = voucherSearchUtil.voucherFilterQuery(voucherHeader, fromDate, toDate, "");
-        final Map.Entry<String, Map<String, Object>> filterQueryEntry = filterQueryMap.entrySet().iterator().next();
-        final String queryString = filterQueryEntry.getKey();
-        final Map<String, Object> params = filterQueryEntry.getValue();
+        Map<String, Map<String, Object>> filterQueryMap = voucherSearchUtil.voucherFilterQuery(voucherHeader, fromDate, toDate, "");
+        Map.Entry<String, Map<String, Object>> filterQueryEntry = filterQueryMap.entrySet().iterator().next();
+        String queryString = filterQueryEntry.getKey();
+        Map<String, Object> params = filterQueryEntry.getValue();
 
         //final String filter = voucherSearchUtil.voucherFilterQuery(voucherHeader, fromDate, toDate, "");
         final String userCond = "";
@@ -204,7 +204,7 @@ public class CancelVoucherAction extends BaseFormAction {
                                     .append(" and vh.status in (:createStatus) and (vh.isConfirmed != 1 or vh.isConfirmed is null)");
 
             Query noPayQuery = persistenceService.getSession().createQuery(voucheerWithNoPayment.toString().concat(filterQry))
-                    .setParameter("createStatus",FinancialConstants.CREATEDVOUCHERSTATUS,StringType.INSTANCE);
+                    .setParameter("createStatus",Long.valueOf(FinancialConstants.CREATEDVOUCHERSTATUS),LongType.INSTANCE);
             params.entrySet().forEach(entry -> noPayQuery.setParameter(entry.getKey(), entry.getValue()));
             voucherList.addAll(noPayQuery.list());
 
@@ -213,7 +213,7 @@ public class CancelVoucherAction extends BaseFormAction {
                     .append(" and (vh.isConfirmed != 1  or  vh.isConfirmed  is null ) and vh.status in (:createStatus)");
 
             Query allPayQuery = persistenceService.getSession().createQuery(allPayment.toString().concat(filterQry))
-                    .setParameter("createStatus",FinancialConstants.CREATEDVOUCHERSTATUS,StringType.INSTANCE);
+                    .setParameter("createStatus",Long.valueOf(FinancialConstants.CREATEDVOUCHERSTATUS),LongType.INSTANCE);
             params.entrySet().forEach(entry -> allPayQuery.setParameter(entry.getKey(), entry.getValue()));
             voucherList.addAll(allPayQuery.list());
 
@@ -223,8 +223,8 @@ public class CancelVoucherAction extends BaseFormAction {
                     .append(" and ph.status  in (:createdVoucherStatus , :preApprovedStatus) ")
                     .append(" and (vh.isConfirmed != 1 or  vh.isConfirmed is null) ");
             Query query3 = persistenceService.getSession().createQuery(editModeQuery3.toString().concat(filterQry))
-                    .setParameter("createdVoucherStatus",FinancialConstants.CREATEDVOUCHERSTATUS, StringType.INSTANCE)
-                    .setParameter("preApprovedStatus",FinancialConstants.PREAPPROVEDVOUCHERSTATUS,StringType.INSTANCE);
+                    .setParameter("createdVoucherStatus",Long.valueOf(FinancialConstants.CREATEDVOUCHERSTATUS), LongType.INSTANCE)
+                    .setParameter("preApprovedStatus",Long.valueOf(FinancialConstants.PREAPPROVEDVOUCHERSTATUS),LongType.INSTANCE);
             params.entrySet().forEach(entry -> query3.setParameter(entry.getKey(), entry.getValue()));
             final List<Long> vouchersHavingActivePayments = query3.list();
 
@@ -235,7 +235,7 @@ public class CancelVoucherAction extends BaseFormAction {
                     .append(" rd.voucherheader=remittedvh AND gl.voucherHeaderId =vh  AND ")
                     .append(" remittedvh =billmis.voucherheaderid and remittedvh.status!=:cancelledStatus");
             Query uncancelledRemQuery = persistenceService.getSession().createQuery(uncancelledRemittances.toString().concat(queryString).concat(userCond))
-                    .setParameter("cancelledStatus",FinancialConstants.CANCELLEDVOUCHERSTATUS,StringType.INSTANCE);
+                    .setParameter("cancelledStatus",Long.valueOf(FinancialConstants.CANCELLEDVOUCHERSTATUS),LongType.INSTANCE);
             params.entrySet().forEach(entry -> uncancelledRemQuery.setParameter(entry.getKey(), entry.getValue()));
             final List<Long> remittanceBillVhIdList = uncancelledRemQuery.list();
 
@@ -264,12 +264,25 @@ public class CancelVoucherAction extends BaseFormAction {
             // BPVs for which no Cheque is issued
             noChequePaymentQry = noChequePaymentQry.append("from CVoucherHeader vh where vh.status not in (:preApprovedStatus , :cancelledStatus )")
                         .append(queryString)
-                        .append("  and not Exists(select 'true' from InstrumentVoucher iv where iv.voucherHeaderId=vh.id) order by vh.voucherNumber)");
+                        .append("  and not Exists(select 'true' from InstrumentVoucher iv where iv.voucherHeaderId=vh.id) order by vh.voucherNumber ");
             Query noChkPayQry = persistenceService.getSession().createQuery(noChequePaymentQry.toString())
-                    .setParameter("preApprovedStatus",FinancialConstants.PREAPPROVEDVOUCHERSTATUS,StringType.INSTANCE)
-                    .setParameter("cancelledStatus",FinancialConstants.CANCELLEDVOUCHERSTATUS,StringType.INSTANCE);
+                    .setParameter("preApprovedStatus",Long.valueOf(FinancialConstants.PREAPPROVEDVOUCHERSTATUS),LongType.INSTANCE)
+                    .setParameter("cancelledStatus",Long.valueOf(FinancialConstants.CANCELLEDVOUCHERSTATUS),LongType.INSTANCE);
             params.entrySet().forEach(entry -> noChkPayQry.setParameter(entry.getKey(), entry.getValue()));
             voucherList.addAll(noChkPayQry.list());
+
+            filterQueryMap = voucherFilterSqlQuery(voucherHeader, fromDate, toDate, "");
+            filterQueryEntry = filterQueryMap.entrySet().iterator().next();
+            queryString = filterQueryEntry.getKey();
+            params = filterQueryEntry.getValue();
+            misTab = "";
+            VoucherMisJoin = "";
+            if (queryString.contains(" and vh.vouchermis")) {
+                misTab = ", Vouchermis mis ";
+                VoucherMisJoin = " and vh.id=mis.voucherheaderid";
+                filterQuerySql = queryString.replace("and vh.vouchermis.", " and mis.");
+            } else
+                filterQuerySql = queryString;
 
             StringBuffer queryString1 = new StringBuffer("SELECT distinct vh.id FROM egw_status status")
                     .append(misTab)
@@ -277,8 +290,8 @@ public class CancelVoucherAction extends BaseFormAction {
                     .append(" LEFT JOIN EGF_INSTRUMENTVOUCHER IV ON VH.ID=IV.VOUCHERHEADERID")
                     .append(" LEFT JOIN EGF_INSTRUMENTHEADER IH ON IV.INSTRUMENTHEADERID=IH.ID INNER JOIN (SELECT MAX(iv1.instrumentheaderid) AS maxihid,")
                     .append(" iv1.voucherheaderid AS iv1vhid FROM egf_instrumentvoucher iv1 GROUP BY iv1.voucherheaderid)as INST ON maxihid=IH.ID ")
-                    .append(" WHERE	IV.VOUCHERHEADERID  IS NOT NULL	AND status.description IN (':instrumentCancelledStatus' , ':instrumentSurrenderedStatus', ")
-                    .append(" ':instrumentSurrReassignStatus' and status.id=ih.id_status and vh.status not in (:preApprovedStatus , :cancelledVoucStatus ) ")
+                    .append(" WHERE	IV.VOUCHERHEADERID  IS NOT NULL	AND status.description IN (:instrumentCancelledStatus , :instrumentSurrenderedStatus, ")
+                    .append(" :instrumentSurrReassignStatus ) and status.id=ih.id_status and vh.status not in (:preApprovedStatus , :cancelledVoucStatus ) ")
                     .append(VoucherMisJoin).append(filterQuerySql);
             // Query for cancelling BPVs for which cheque is assigned and cancelled
             final Query query1 = persistenceService.getSession()
@@ -286,8 +299,8 @@ public class CancelVoucherAction extends BaseFormAction {
                     .setParameter("instrumentCancelledStatus",FinancialConstants.INSTRUMENT_CANCELLED_STATUS,StringType.INSTANCE)
                     .setParameter("instrumentSurrenderedStatus",FinancialConstants.INSTRUMENT_SURRENDERED_STATUS,StringType.INSTANCE)
                     .setParameter("instrumentSurrReassignStatus",FinancialConstants.INSTRUMENT_SURRENDERED_FOR_REASSIGN_STATUS,StringType.INSTANCE)
-                    .setParameter("preApprovedStatus",FinancialConstants.PREAPPROVEDVOUCHERSTATUS,StringType.INSTANCE)
-                    .setParameter("cancelledVoucStatus",FinancialConstants.CANCELLEDVOUCHERSTATUS,StringType.INSTANCE);
+                    .setParameter("preApprovedStatus",Long.valueOf(FinancialConstants.PREAPPROVEDVOUCHERSTATUS),LongType.INSTANCE)
+                    .setParameter("cancelledVoucStatus",Long.valueOf(FinancialConstants.CANCELLEDVOUCHERSTATUS),LongType.INSTANCE);
             params.entrySet().forEach(entry -> query1.setParameter(entry.getKey(), entry.getValue()));
             final List<BigInteger> list = query1.list();
 
@@ -296,7 +309,7 @@ public class CancelVoucherAction extends BaseFormAction {
         } else if (voucherHeader.getType().equalsIgnoreCase(FinancialConstants.STANDARD_VOUCHER_TYPE_CONTRA)) {
             contraVoucherQry = "from CVoucherHeader vh where vh.status =:vhStatus and (vh.isConfirmed != 1 or vh.isConfirmed is null) ";
             Query qry1 = persistenceService.getSession().createQuery(contraVoucherQry.concat(filterQry));
-            qry1.setParameter("vhStatus", FinancialConstants.CREATEDVOUCHERSTATUS, IntegerType.INSTANCE);
+            qry1.setParameter("vhStatus", Integer.valueOf(FinancialConstants.CREATEDVOUCHERSTATUS), IntegerType.INSTANCE);
             params.entrySet().forEach(entry -> qry1.setParameter(entry.getKey(), entry.getValue()));
             voucherList.addAll(qry1.list());
         }
@@ -543,6 +556,75 @@ public class CancelVoucherAction extends BaseFormAction {
             final String errorKey) {
         if (mandatoryFields.contains(fieldName) && (value == null || value.equals(-1)))
             addFieldError(objectName, getText(errorKey));
+    }
+
+    private Map<String, Map<String, Object>> voucherFilterSqlQuery(final CVoucherHeader voucherHeader, final Date fromDate, final Date toDate, final String mode) {
+        Map<String, Map<String, Object>> map = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
+        StringBuilder sql = new StringBuilder("");
+        if (!voucherHeader.getType().equals("-1")) {
+            sql.append(" and vh.type = :vhType");
+            params.put("vhType", voucherHeader.getType());
+        }
+
+        if (voucherHeader.getName() != null
+                && !voucherHeader.getName().equalsIgnoreCase("0") && !voucherHeader.getName().equalsIgnoreCase("-1")) {
+            sql.append(" and vh.name = :vhName");
+            params.put("vhName", voucherHeader.getName());
+        }
+        if (voucherHeader.getVoucherNumber() != null
+                && !voucherHeader.getVoucherNumber().equals("")) {
+            sql.append(" and vh.voucherNumber like '%:voucherNumber%'");
+            params.put("voucherNumber", voucherHeader.getVoucherNumber());
+        }
+        if (fromDate != null) {
+            sql.append(" and vh.voucherDate >= :fromDate");
+            params.put("fromDate", fromDate);
+        }
+        if (toDate != null) {
+            sql.append(" and vh.voucherDate <= :toDate");
+            params.put("toDate", toDate);
+        }
+        if (voucherHeader.getFundId() != null) {
+            sql.append(" and vh.fundId = :fundId");
+            params.put("fundId", voucherHeader.getFundId().getId());
+        }
+        if (voucherHeader.getVouchermis().getFundsource() != null) {
+            sql.append(" and vh.fundsourceId = :fundSourceId");
+            params.put("fundSourceId", voucherHeader.getVouchermis().getFundsource().getId());
+        }
+        if (voucherHeader.getVouchermis().getDepartmentid() != null) {
+            sql.append(" and vh.vouchermis.departmentid = :deptId");
+            params.put("deptId", voucherHeader.getVouchermis().getDepartmentid().getId());
+        }
+        if (voucherHeader.getVouchermis().getSchemeid() != null) {
+            sql.append(" and vh.vouchermis.schemeid = :schemeId");
+            params.put("schemeId", voucherHeader.getVouchermis().getSchemeid().getId());
+        }
+        if (voucherHeader.getVouchermis().getSubschemeid() != null) {
+            sql.append(" and vh.vouchermis.subschemeid = :subSchemeId");
+            params.put("subSchemeId", voucherHeader.getVouchermis().getSubschemeid().getId());
+        }
+        if (voucherHeader.getVouchermis().getFunctionary() != null) {
+            sql.append(" and vh.vouchermis.functionaryid = :functionary");
+            params.put("functionary", voucherHeader.getVouchermis().getFunctionary().getId());
+        }
+        if (voucherHeader.getVouchermis().getDivisionid() != null) {
+            sql.append(" and vh.vouchermis.divisionid = :divisionId");
+            params.put("divisionId", voucherHeader.getVouchermis().getDivisionid().getId());
+        }
+        if (voucherHeader.getModuleId() != null) {
+            // -2 For vouchers created from the financial module. -2 is set in
+            // populateSourceMap() of VoucherSearchAction.
+            if (voucherHeader.getModuleId() == -2)
+                sql.append(" and vh.moduleId is null ");
+            else {
+                sql.append(" and vh.moduleId = :moduleId");
+                params.put("moduleId", voucherHeader.getModuleId());
+            }
+        }
+        map.put(sql.toString(), params);
+        return map;
     }
 
     public boolean isFieldMandatory(final String field) {
