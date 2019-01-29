@@ -143,6 +143,14 @@ $(document).ready(function(){
     		url: "/adtax/hoarding/getsearch-adtax-result?"+$("#adtaxsearchform").serialize(),    
     		data: {},
     		dataType: "json",
+    		beforeSend : function() {
+				$('.loader-class').modal('show', {
+					backdrop : 'static'
+				});
+			},
+			complete : function() {
+				$('.loader-class').modal('hide');
+			},
     		success: function (response) {
     			if(response.data){
     				$('#searchResultsDiv').empty();

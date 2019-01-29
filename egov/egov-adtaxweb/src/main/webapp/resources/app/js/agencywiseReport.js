@@ -96,6 +96,14 @@ $('#searchagencywise').click(function(e){
     		url: "/adtax/reports/getAgencyWiseDcb?"+$("#agencywisehoardingsearchform").serialize(),    
     		data: {},
     		dataType: "json",
+    		beforeSend : function() {
+				$('.loader-class').modal('show', {
+					backdrop : 'static'
+				});
+			},
+			complete : function() {
+				$('.loader-class').modal('hide');
+			},
     		success: function (response) {
     			if(response.data){
     				$('#agencyDCBTableDiv').empty();
