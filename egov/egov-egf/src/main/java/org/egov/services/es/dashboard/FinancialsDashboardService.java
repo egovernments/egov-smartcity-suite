@@ -662,19 +662,20 @@ public class FinancialsDashboardService {
     private FinancialsDetailResponse setResponseDetails(final TopHits topHits) {
         FinancialsDetailResponse finResponse = new FinancialsDetailResponse();
         final SearchHit[] hit = topHits.getHits().getHits();
-        finResponse.setRegion(hit[0].field(FinancialConstants.REGNAME).getValue());
-        finResponse.setDistrict(hit[0].field(FinancialConstants.DISTNAME).getValue());
-        finResponse.setGrade(hit[0].field(FinancialConstants.ULBGRADE).getValue());
-        finResponse.setUlbName(hit[0].field(FinancialConstants.ULBNAME).getValue());
-        finResponse.setMajorCodeDescription(hit[0].field(FinancialConstants.MAJORCODEDESCRIPTION).getValue());
-        finResponse.setMinorCodeDescription(hit[0].field(FinancialConstants.MINORCODEDESCRIPTION).getValue());
-        finResponse.setDetailedCodeDescription(hit[0].field(FinancialConstants.DETAILEDCODEDESCRIPTION).getValue());
-        finResponse.setFundName(hit[0].field(FinancialConstants.VOUCHERFUNDNAME) == null ? "" : hit[0].field(FinancialConstants.VOUCHERFUNDNAME).getValue());
-        finResponse.setFunctionName(hit[0].field(FinancialConstants.VOUCHERMISFUNCTIONNAME) == null ? "" : hit[0].field(FinancialConstants.VOUCHERMISFUNCTIONNAME).getValue());
-        finResponse.setDepartmentName(hit[0].field(FinancialConstants.VOUCHERMISDEPARTMENTNAME) == null ? "" : hit[0].field(FinancialConstants.VOUCHERMISDEPARTMENTNAME).getValue());
-        finResponse.setSchemeName(hit[0].field(FinancialConstants.VOUCHERMISSCHEMENAME) == null ? "" : hit[0].field(FinancialConstants.VOUCHERMISSCHEMENAME).getValue());
-        finResponse.setSubschemeName(hit[0].field(FinancialConstants.VOUCHERMISSUBSCHEMENAME) == null ? "" : hit[0].field(FinancialConstants.VOUCHERMISSUBSCHEMENAME).getValue());
-
+        if(hit.length > 0) {
+            finResponse.setRegion(hit[0].field(FinancialConstants.REGNAME).getValue());
+            finResponse.setDistrict(hit[0].field(FinancialConstants.DISTNAME).getValue());
+            finResponse.setGrade(hit[0].field(FinancialConstants.ULBGRADE).getValue());
+            finResponse.setUlbName(hit[0].field(FinancialConstants.ULBNAME).getValue());
+            finResponse.setMajorCodeDescription(hit[0].field(FinancialConstants.MAJORCODEDESCRIPTION).getValue());
+            finResponse.setMinorCodeDescription(hit[0].field(FinancialConstants.MINORCODEDESCRIPTION).getValue());
+            finResponse.setDetailedCodeDescription(hit[0].field(FinancialConstants.DETAILEDCODEDESCRIPTION).getValue());
+            finResponse.setFundName(hit[0].field(FinancialConstants.VOUCHERFUNDNAME) == null ? "" : hit[0].field(FinancialConstants.VOUCHERFUNDNAME).getValue());
+            finResponse.setFunctionName(hit[0].field(FinancialConstants.VOUCHERMISFUNCTIONNAME) == null ? "" : hit[0].field(FinancialConstants.VOUCHERMISFUNCTIONNAME).getValue());
+            finResponse.setDepartmentName(hit[0].field(FinancialConstants.VOUCHERMISDEPARTMENTNAME) == null ? "" : hit[0].field(FinancialConstants.VOUCHERMISDEPARTMENTNAME).getValue());
+            finResponse.setSchemeName(hit[0].field(FinancialConstants.VOUCHERMISSCHEMENAME) == null ? "" : hit[0].field(FinancialConstants.VOUCHERMISSCHEMENAME).getValue());
+            finResponse.setSubschemeName(hit[0].field(FinancialConstants.VOUCHERMISSUBSCHEMENAME) == null ? "" : hit[0].field(FinancialConstants.VOUCHERMISSUBSCHEMENAME).getValue());
+        }
         return finResponse;
 
     }
