@@ -114,7 +114,7 @@ public class LicenseDocument extends AbstractAuditable {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "license", updatable = false)
+    @JoinColumn(name = "license")
     private TradeLicense license;
 
     @Transient
