@@ -1433,6 +1433,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             addActionError(getText("mandatory.property.department"));
         if (upicNo == null || "".equals(upicNo))
             validateDocumentDetails(getDocumentTypeDetails());
+        if (isDataEntryOperator)
+            setDataEntry(Boolean.TRUE);
     }
 
 	private void checkIfParentIsUnderWorkflow(final BasicProperty basicProperty) {
@@ -1503,11 +1505,13 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     public String save() {
         if (upicNo == null || "".equals(upicNo)) {
             addActionError(getText("mandatory.indexNumber"));
+            setDataEntry(Boolean.TRUE);
             return RESULT_DATAENTRY;
         }
         propTypeMstr = propertyTypeMasterDAO.findById(Long.valueOf(propTypeId), false);
         if (!propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND) && StringUtils.isBlank(houseNumber)) {
             addActionError(getText("mandatory.doorNo"));
+            setDataEntry(Boolean.TRUE);
             return RESULT_DATAENTRY;
         }
         final BasicProperty basicProperty = createBasicProp(PropertyTaxConstants.STATUS_ISACTIVE);
@@ -1523,7 +1527,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             basicProperty.setPropertyOwnerInfoProxy(basicProperty.getPropertyOwnerInfo());
             addActionError(getText(UNIT_RATE_ERROR));
             logger.error("save : There are no Unit rates defined for chosen combinations", e);
-            return RESULT_NEW;
+            return RESULT_DATAENTRY;
         }
         basicProperty.setAssessmentdate(propCompletionDate);
         basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);

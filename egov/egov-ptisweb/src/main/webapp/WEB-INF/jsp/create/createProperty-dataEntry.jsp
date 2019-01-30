@@ -156,7 +156,7 @@ function validateProperty() {
 		data: {
 			assessmentNo : jQuery('#upicNo').val()
 		},
-		cache: false,
+		cache: true,
 		dataType: "json",
 		success: function (response) {
 			if(response.exists) {
@@ -181,6 +181,7 @@ function loadOnStartUp() {
 	var category = '<s:property value="%{propertyDetail.categoryType}"/>';
 	document.forms[0].propTypeCategoryId.options[document.forms[0].propTypeCategoryId.selectedIndex].value = category;
 	toggleFloorDetails();
+	enableFieldsForPropType();
      var aadhartextboxes = jQuery('.txtaadhar');
      aadhartextboxes.each(function() {
 	   	if(jQuery(this).val())
@@ -275,9 +276,9 @@ function enableDisableFirmName(obj){
 function onSubmit() { 
 	jQuery('#gender, #guardianRelation').removeAttr('disabled');
 	document.forms[0].action = 'createProperty-createDataEntry.action';
-	<s:if test="mode=='edit'">
-	document.forms[0].action = 'createProperty-updateDataEntry.action';
-	</s:if>
+	if('<s:property value="%{mode}"/>' == 'edit'){
+		document.forms[0].action = 'createProperty-updateDataEntry.action';
+	}
 	
    return true; 
 }

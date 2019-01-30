@@ -500,14 +500,15 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
         return USAGE;
     }
 
+    @SuppressWarnings("unchecked")
     @Action(value = "/ajaxCommon-checkIfPropertyExists")
     public void checkIfPropertyExists() throws IOException {
         if (StringUtils.isNotBlank(assessmentNo)) {
-			final BasicProperty basicProperty = (BasicProperty) entityManager.unwrap(Session.class)
-					.createQuery("from BasicPropertyImpl bp where bp.oldMuncipalNum=:assessmentNo and bp.active='Y'")
-					.setParameter("assessmentNo", assessmentNo);
+            final List<BasicProperty> basicProperty = (List<BasicProperty>) entityManager.unwrap(Session.class)
+                    .createQuery("from BasicPropertyImpl bp where bp.oldMuncipalNum=:assessmentNo and bp.active='Y'")
+                    .setParameter("assessmentNo", assessmentNo).getResultList();
             final JSONObject jsonObject = new JSONObject();
-            if (null != basicProperty)
+            if (!basicProperty.isEmpty())
                 jsonObject.put("exists", Boolean.TRUE);
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             IOUtils.write(jsonObject.toString(), response.getWriter());

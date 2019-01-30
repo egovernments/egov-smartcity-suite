@@ -279,10 +279,10 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
                 .append("group by bndry.name, bndry.boundaryNum ").append("order by bndry.boundaryNum, bndry.name");
 
 		final List<Object> billList = (List<Object>) entityManager.createNamedQuery(QUERY_DEMAND_BILL_STATUS)
-				.setParameter("FromDate", currInst.getFromDate()).setParameter("ToDate", currInst.getToDate());
+				.setParameter("FromDate", currInst.getFromDate()).setParameter("ToDate", currInst.getToDate()).getResultList();
         LOGGER.info("billList : " + billList);
 		final List<Object> propList = (List<Object>) entityManager.unwrap(Session.class)
-				.createQuery(propQueryString.toString());
+				.createQuery(propQueryString.toString()).getResultList();
         LOGGER.info("propList : " + propList);
 
         for (final Object props : propList) {

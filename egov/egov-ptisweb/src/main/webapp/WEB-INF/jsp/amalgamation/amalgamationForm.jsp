@@ -153,7 +153,7 @@
 	</div>
 </div>
 <s:if test="%{oldPropertyTypeCode!=@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND}">
-	<div class="overflow-x-scroll floors-tbl-freeze-column-div">
+	<div class="overflow-x-scroll">
 	<%@ include file="builtupPropDetailsForm.jsp"%>
 	</div>
 </s:if>
