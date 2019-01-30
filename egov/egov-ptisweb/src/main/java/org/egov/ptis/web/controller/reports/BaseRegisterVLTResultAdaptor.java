@@ -116,9 +116,9 @@ public class BaseRegisterVLTResultAdaptor implements DataTableJsonAdapter<Proper
                 currPenaltyFine = currPenaltyFine.add(baseRegisterResultObj.getAggrCurrSecondHalfPenaly());
 
             final BigDecimal currentColl = baseRegisterResultObj.getAggrCurrFirstHalfColl() == null
-                    ? BigDecimal.ZERO.add(baseRegisterResultObj.getAggrCurrSecondHalfColl() == null
-                            ? BigDecimal.ZERO : baseRegisterResultObj.getAggrCurrSecondHalfColl())
-                    : baseRegisterResultObj.getAggrCurrFirstHalfColl();
+                    ? BigDecimal.ZERO.add(((baseRegisterResultObj.getAggrCurrSecondHalfColl() == null)
+                            ? BigDecimal.ZERO : baseRegisterResultObj.getAggrCurrSecondHalfColl()))
+                    : baseRegisterResultObj.getAggrCurrFirstHalfColl().add(baseRegisterResultObj.getAggrCurrSecondHalfColl());
 
             final BigDecimal arrColl = baseRegisterResultObj.getAggrArrColl() != null
                     ? baseRegisterResultObj.getAggrArrColl() : BigDecimal.ZERO;
