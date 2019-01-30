@@ -174,6 +174,11 @@ $(document).ready(function(){
 	 var form = document.createElement("form");
 	 form.setAttribute("action", url);
 	 form.setAttribute("method", "post");
+	 $('<input>', {
+         type: 'hidden',
+         name: tokenName,
+         value: tokenVal
+     }).appendTo(form);
 	 document.body.appendChild(form);
 	 form.submit();
 	}
