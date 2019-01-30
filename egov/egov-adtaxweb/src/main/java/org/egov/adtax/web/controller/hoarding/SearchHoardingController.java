@@ -149,7 +149,7 @@ public class SearchHoardingController extends GenericController {
 		}
     }
     
-    @RequestMapping(value = "/hoarding-search-list", method = POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/hoarding-search-list", method = GET, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchResult(@Valid @ModelAttribute("hoardingSearch") final HoardingSearch hoardingSearch, final BindingResult resultBinder, @RequestParam String searchType) {
 		if (resultBinder.hasErrors()) {

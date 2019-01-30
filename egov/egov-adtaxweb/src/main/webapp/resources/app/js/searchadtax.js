@@ -165,7 +165,6 @@ $(document).ready(function(){
 		
 	    $.ajax({
 			url: "/adtax/hoarding/hoarding-search-list?"+$("#hoardingsearchform").serialize(),
-			type: "POST",
 			data: {},
 			dataType: "json",
 			beforeSend : function() {
@@ -431,6 +430,12 @@ $(document).ready(function(){
 	     form.appendChild(input);
 	   }
 	 }
+	 $('<input>', {
+         type: 'hidden',
+         name: tokenName,
+         value: tokenVal
+     }).appendTo(form);
+	 
 	 document.body.appendChild(form);
 	 window.open("collectTaxByAgency", name, windowoption);
 	 form.submit();

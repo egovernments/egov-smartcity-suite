@@ -54,7 +54,7 @@
 
 <div class="row">
     <div class="col-md-12">
-    	<form:form id="hoardingsearchform" method="post" class="form-horizontal form-groups-bordered" modelAttribute="hoardingSearch" commandName="hoardingSearch">
+    	<form:form id="hoardingsearchform" method="get" class="form-horizontal form-groups-bordered" modelAttribute="hoardingSearch" commandName="hoardingSearch">
 	        <div class="panel panel-primary" data-collapsed="0">
 	            <div class="panel-heading">
 	                <div class="panel-title"></div>
