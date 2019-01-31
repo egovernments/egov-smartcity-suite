@@ -71,9 +71,13 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
 import java.util.Date;
 
 import static org.egov.council.entity.CouncilMember.SEQ_COUNCILMEMBER;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHANUMERIC;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHANUMERIC_WITH_SPACE;
 
 @Entity
 @Unique(fields = {"name"}, enableDfltMsg = true)
@@ -129,6 +133,7 @@ public class CouncilMember extends AbstractAuditable {
     @NotNull
     @SafeHtml
     @Length(min = 2, max = 100)
+    @Pattern(regexp = ALPHANUMERIC, message=INVALID_ALPHANUMERIC_WITH_SPACE)
     private String name;
 
     @NotNull
@@ -137,6 +142,7 @@ public class CouncilMember extends AbstractAuditable {
 
     @NotNull
     @SafeHtml
+    @Length(min = 5, max = 256)
     private String residentialAddress;
 
 

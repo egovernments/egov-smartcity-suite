@@ -119,7 +119,7 @@
 				<div class="col-sm-3 add-margin">
 					<form:input path="name"
 						class="form-control text-left patternvalidation"
-						data-pattern="alphanumeric" maxlength="100" required="required" />
+						data-pattern="alphanumericwithspace" maxlength="100" required="required" />
 					<form:errors path="name" cssClass="error-msg" />
 				</div>
 				<label class="col-sm-2 control-label text-right"><spring:message
@@ -171,7 +171,7 @@
 				<div class="col-sm-3 add-margin">
 					<form:textarea path="residentialAddress" id="residentialAddress"
 						cols="5" rows="2" class="form-control patternvalidation"
-						data-pattern="regexp_alphabetspecialcharacters" required="required"
+						data-pattern="alphanumericwithspecialcharacters" required="required"
 						minlength="5" maxlength="256" />
 					<form:errors path="residentialAddress" cssClass="error-msg" />
 				</div>
