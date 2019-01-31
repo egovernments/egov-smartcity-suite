@@ -50,6 +50,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.entity.CouncilPreamble;
@@ -185,9 +186,11 @@ public class PreambleWorkflowCustomImpl implements PreambleWorkflowCustom {
 
                 wfmatrix = councilPreambleWorkflowService.getWfMatrix(councilPreamble.getStateType(), null, null, "CouncilCommonWorkflow",
                         CouncilConstants.WF_NEW_STATE, null);
-                if (!eisCommonService.isValidAppover(wfmatrix, pos)) {
-                	councilPreamble.setValidApprover(false);
-                    return;
+                if(StringUtils.isNotBlank(wfmatrix.getNextDesignation())){
+                	if (!eisCommonService.isValidAppover(wfmatrix, pos)) {
+                    	councilPreamble.setValidApprover(false);
+                        return;
+                    }
                 }
                 councilPreamble.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
                 if (null == councilPreamble.getState()
