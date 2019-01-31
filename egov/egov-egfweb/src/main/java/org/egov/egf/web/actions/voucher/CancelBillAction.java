@@ -163,11 +163,10 @@ public class CancelBillAction extends BaseFormAction {
                         .findAllBy("from Fund where isactive=true and isnotleaf=false order by name"));
         // Important - Remove the like part of the query below to generalize the
         // bill cancellation screen
-        addDropdownData(
-                "expenditureList",
+        addDropdownData("expenditureList",
                 persistenceService
                         .findAllBy(
-                                "select distinct bill.expendituretype from EgBillregister bill where bill.expendituretype like ?1 order by bill.expendituretype"));
+                                "select distinct bill.expendituretype from EgBillregister bill where bill.expendituretype like ?1 order by bill.expendituretype", FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT));
     }
 
     public void prepareBeforeSearch() {
@@ -215,7 +214,7 @@ public class CancelBillAction extends BaseFormAction {
             try {
                 fDate = formatter.parse(fromDate);
                 query.append(" and billmis.egBillregister.billdate >= :fromDate");
-                params.put("fromDate", Constants.DDMMYYYYFORMAT1.format(fDate));
+                params.put("fromDate", fDate);
             } catch (final ParseException e) {
                 LOGGER.error(" From Date parse error");
                 //
@@ -226,7 +225,7 @@ public class CancelBillAction extends BaseFormAction {
             try {
                 tDate = formatter.parse(toDate);
                 query.append(" and billmis.egBillregister.billdate <= :toDate");
-                params.put("toDate", Constants.DDMMYYYYFORMAT1.format(tDate));
+                params.put("toDate", tDate);
             } catch (final ParseException e) {
                 LOGGER.error(" To Date parse error");
                 //
@@ -276,10 +275,13 @@ public class CancelBillAction extends BaseFormAction {
     public Map<String, Map<String, Object>> query() {
         final Map<String, Map<String, Object>> queries = new HashMap<>();
         final Map.Entry<String, Map<String, Object>> mapQueryEntry = filterQuery().entrySet().iterator().next();
-        queries.put(mapQueryEntry.getKey() + " and billmis.voucherHeader is null ", mapQueryEntry.getValue());
-        final Map<String, Object> params = mapQueryEntry.getValue();
+        String query = mapQueryEntry.getKey() + " and billmis.voucherHeader is null ";
+        queries.put(query, mapQueryEntry.getValue());
+        final Map<String, Object> params = new HashMap<>();
+        params.putAll(mapQueryEntry.getValue());
+        query = mapQueryEntry.getKey() + " and billmis.voucherHeader.status in (:vhStatus)";
         params.put("vhStatus", Arrays.asList(FinancialConstants.REVERSEDVOUCHERSTATUS, FinancialConstants.CANCELLEDVOUCHERSTATUS));
-        queries.put(mapQueryEntry.getKey() + " and billmis.voucherHeader.status in (:vhStatus)", params);
+        queries.put(query, params);
         return queries;
     }
 
@@ -302,10 +304,13 @@ public class CancelBillAction extends BaseFormAction {
             final List<String> list = queries.keySet().stream().collect(Collectors.toList());
             final List<Object[]> tempBillList = new ArrayList<Object[]>();
             List<Object[]> billListWithNoVouchers, billListWithCancelledReversedVouchers;
-            billListWithNoVouchers = persistenceService
-                    .findAllBy(list.get(0), queries.get(list.get(0)));
-            billListWithCancelledReversedVouchers = persistenceService
-                    .findAllBy(list.get(1), queries.get(list.get(1)));
+            final Query queryOne = persistenceService.getSession().createQuery(list.get(0));
+            queries.get(list.get(0)).entrySet().forEach(entry -> queryOne.setParameter(entry.getKey(), entry.getValue()));
+            billListWithNoVouchers = queryOne.list();
+            final Query queryTwo = persistenceService.getSession().createQuery(list.get(1));
+            queries.get(list.get(1)).entrySet().forEach(entry -> queryTwo.setParameter(entry.getKey(), entry.getValue()));
+            billListWithCancelledReversedVouchers = queryTwo.list();
+
             tempBillList.addAll(billListWithNoVouchers);
             tempBillList.addAll(billListWithCancelledReversedVouchers);
 
@@ -401,7 +406,7 @@ public class CancelBillAction extends BaseFormAction {
                 LOGGER.debug(" Cancel Query - " + cancelQuery.toString());
             final NativeQuery totalNativeQuery = persistenceService.getSession()
                     .createNativeQuery(cancelQuery.toString());
-            totalNativeQuery.setParameter("statusId", status.getId(), LongType.INSTANCE);
+            totalNativeQuery.setParameter("statusId", Long.valueOf(status.getId()), LongType.INSTANCE);
             cancelQueryMap.entrySet().forEach(entry -> totalNativeQuery.setParameter(entry.getKey(), entry.getValue()));
             totalNativeQuery.setParameterList("ids", ids);
             if (!ids.isEmpty())
