@@ -233,7 +233,7 @@ public class VoucherStatusReportAction extends BaseFormAction {
         Long voucherHeaderId;
         String voucherOwner;
         final Query qry = voucherSearchQuery();
-        final Long count = (Long) persistenceService.find(countQry, countParams);
+        final Long count = (Long) persistenceService.find(countQry, countParams.toArray());
         final Page resPage = new Page(qry, page, pageSize);
         pagedResults = new EgovPaginatedList(resPage, count.intValue());
         final List<CVoucherHeader> list = pagedResults.getList();
@@ -305,7 +305,7 @@ public class VoucherStatusReportAction extends BaseFormAction {
 
         if (voucherHeader.getFundId() != null && voucherHeader.getFundId().getId() != -1) {
             sql.append("  vh.fundId=?").append(index++);
-            params.add(voucherHeader.getFundId().getId());
+            params.add(voucherHeader.getFundId());
         }
         if (voucherHeader.getType() != null && !voucherHeader.getType().equals("-1")) {
             sql.append(" and vh.type=?").append(index++);
@@ -318,11 +318,11 @@ public class VoucherStatusReportAction extends BaseFormAction {
         }
         if (fromDate != null) {
             sql.append(" and vh.voucherDate>=?").append(index++);
-            params.add(Constants.DDMMYYYYFORMAT1.format(fromDate));
+            params.add(fromDate);
         }
         if (toDate != null) {
             sql.append(" and vh.voucherDate<=?").append(index++);
-            params.add(Constants.DDMMYYYYFORMAT1.format(toDate));
+            params.add(toDate);
         }
         if (voucherHeader.getStatus() != -1) {
             sql.append(" and vh.status=?").append(index++);
@@ -332,24 +332,24 @@ public class VoucherStatusReportAction extends BaseFormAction {
         if (voucherHeader.getVouchermis().getDepartmentid() != null
                 && voucherHeader.getVouchermis().getDepartmentid().getId() != -1) {
             sql.append(" and vh.vouchermis.departmentid=?").append(index++);
-            params.add(voucherHeader.getVouchermis().getDepartmentid().getId());
+            params.add(voucherHeader.getVouchermis().getDepartmentid());
         }
 
         if (voucherHeader.getVouchermis().getSchemeid() != null) {
             sql.append(" and vh.vouchermis.schemeid=?").append(index++);
-            params.add(voucherHeader.getVouchermis().getSchemeid().getId());
+            params.add(voucherHeader.getVouchermis().getSchemeid());
         }
         if (voucherHeader.getVouchermis().getSubschemeid() != null) {
             sql.append(" and vh.vouchermis.subschemeid=?").append(index++);
-            params.add(voucherHeader.getVouchermis().getSubschemeid().getId());
+            params.add(voucherHeader.getVouchermis().getSubschemeid());
         }
         if (voucherHeader.getVouchermis().getFunctionary() != null) {
             sql.append(" and vh.vouchermis.functionary=?").append(index++);
-            params.add(voucherHeader.getVouchermis().getFunctionary().getId());
+            params.add(voucherHeader.getVouchermis().getFunctionary());
         }
         if (voucherHeader.getVouchermis().getDivisionid() != null) {
             sql.append(" and vh.vouchermis.divisionid=?").append(index++);
-            params.add(voucherHeader.getVouchermis().getDivisionid().getId());
+            params.add(voucherHeader.getVouchermis().getDivisionid());
         }
         if (!modeOfPayment.equals("-1")) {
             sql.append(" and upper(ph.type) =?").append(index++);
