@@ -63,6 +63,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHANUMERIC_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHANUMERIC;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,6 +88,7 @@ public class CommitteeType extends AbstractAuditable {
     @NotNull
     @SafeHtml
     @Length(min = 2, max = 100)
+    @Pattern(regexp = ALPHANUMERIC, message=INVALID_ALPHANUMERIC_WITH_SPACE)
     private String name;
 
     @NotNull
