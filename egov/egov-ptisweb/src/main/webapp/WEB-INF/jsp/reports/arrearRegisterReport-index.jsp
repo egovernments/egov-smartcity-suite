@@ -47,28 +47,30 @@
   --%>
 
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 <html>
-<head> 
-	<title><s:text name='arrearRegReport.search' /></title>
-	<script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-	<script src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-	<script type="text/javascript">
-	function validateFormAndSubmit(){
-		 document.arrearRegForm.action='${pageContext.request.contextPath}/reports/arrearRegisterReport-generateArrearReport.action';
-    	 document.arrearRegForm.submit();
+<head>
+<title><s:text name='arrearRegReport.search' /></title>
+<script
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+<script type="text/javascript">
+	function validateFormAndSubmit() {
+		document.arrearRegForm.action = '${pageContext.request.contextPath}/reports/arrearRegisterReport-generateArrearReport.action';
+		document.arrearRegForm.submit();
 	}
 
 	function populateWard() {
-		populatewardId( {
+		populatewardId({
 			zoneId : document.getElementById("zoneId").value
 		});
 		document.getElementById("areaId").options.length = 1;
 		jQuery('#areaId').val('-1');
-	}	
+	}
 
 	function populateBlock() {
 		populateareaId({
@@ -76,30 +78,30 @@
 		});
 	}
 
-	jQuery(document).ready(function(){
-		 jQuery('#localityId').change(function() {
+	jQuery(document).ready(function() {
+		jQuery('#localityId').change(function() {
 			jQuery.ajax({
-				url: "/egi/boundary/block/by-locality",
-				type: "GET",
-				data: {
+				url : "/egi/boundary/block/by-locality",
+				type : "GET",
+				data : {
 					locality : jQuery('#localityId').val()
 				},
-				cache: false,
-				dataType: "json",
-				success: function (response) {
-                    var jsonResp = JSON.parse(response);
+				cache : true,
+				dataType : "json",
+				success : function(response) {
+					var jsonResp = JSON.parse(response);
 					jQuery('#zoneId').val(jsonResp.zoneId);
-					setTimeout(function(){
-  					//your code to be executed after 1 seconds
+					setTimeout(function() {
+						//your code to be executed after 1 seconds
 						jQuery('#wardId').val(jsonResp.wardId);
 						populateBlock();
-						setTimeout(function(){
-		  					//your code to be executed after 1 seconds
-								jQuery('#areaId').val(jsonResp.blockId);
-							}, 1000);
-					}, 1000); 
-				}, 
-				error: function (response) {
+						setTimeout(function() {
+							//your code to be executed after 1 seconds
+							jQuery('#areaId').val(jsonResp.blockId);
+						}, 1000);
+					}, 1000);
+				},
+				error : function(response) {
 					jQuery('#zoneId').val('-1');
 					jQuery('#wardId').val('-1');
 					jQuery('#areaId').val('-1');
@@ -107,62 +109,67 @@
 				}
 			});
 		});
-		
+
 	});
-	</script>
+</script>
 </head>
-	<body>
-		<div align="left">
-  			<s:actionerror/>
-  		</div>
-		<s:form name="arrearRegForm" theme="simple" validate="true">
+<body>
+	<div align="left">
+		<s:actionerror />
+	</div>
+	<s:form name="arrearRegForm" theme="simple" validate="true">
 		<div class="formmainbox">
-			<div class="headingbg"><s:text name="arrearRegReport.search"/></div>
-				<table width="100%" border="0" cellspacing="0" cellpadding="0">
-				 <tr>
-				  	<td class="greybox2">&nbsp;</td>
+			<div class="headingbg">
+				<s:text name="arrearRegReport.search" />
+			</div>
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td class="greybox2">&nbsp;</td>
 					<td class="greybox"><s:text name="locality"></s:text></td>
-					<td class="greybox"><s:select name="localityId" id="localityId" list="dropdownData.localityList"
-					listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{localityId}"/>
+					<td class="greybox"><s:select name="localityId"
+							id="localityId" list="dropdownData.localityList" listKey="id"
+							listValue="name" headerKey="-1"
+							headerValue="%{getText('default.select')}" value="%{localityId}" />
 					</td>
-				    <td class="greybox"><s:text name="Zone"/> :</td>
-					<td class="greybox">
-						<s:select name="zoneId" id="zoneId" list="dropdownData.Zone"
-							listKey="id" listValue="name" headerKey="-1"
-							headerValue="%{getText('default.select')}" value="%{zoneId}"/>
-					</td>
-				 </tr>
-				
+					<td class="greybox"><s:text name="Zone" /> :</td>
+					<td class="greybox"><s:select name="zoneId" id="zoneId"
+							list="dropdownData.Zone" listKey="id" listValue="name"
+							headerKey="-1" headerValue="%{getText('default.select')}"
+							value="%{zoneId}" /></td>
+				</tr>
+
 				<tr>
 					<td class="bluebox2">&nbsp;</td>
-					<td class="bluebox"><s:text name="Ward"/> :</td>
-					<td class="bluebox"><s:select name="wardId" id="wardId" list="dropdownData.wardList"
-							listKey="id" listValue="name" headerKey="-1"
-							headerValue="%{getText('default.select')}" value="%{wardId}"  
-							onchange="populateBlock()"/>
-							<egov:ajaxdropdown id="areaId" fields="['Text','Value']"
-							dropdownId="areaId" url="common/ajaxCommon-areaByWard.action" />
-					</td>
-					<td class="bluebox"><s:text name="block"/> :</td>
-					<td class="bluebox"><s:select name="areaId" id="areaId" list="dropdownData.blockList"
-							listKey="id" listValue="name" headerKey="-1"
-							headerValue="%{getText('default.select')}" value="%{areaId}" />
-					</td>
+					<td class="bluebox"><s:text name="Ward" /> :</td>
+					<td class="bluebox"><s:select name="wardId" id="wardId"
+							list="dropdownData.wardList" listKey="id" listValue="name"
+							headerKey="-1" headerValue="%{getText('default.select')}"
+							value="%{wardId}" onchange="populateBlock()" /> <egov:ajaxdropdown
+							id="areaId" fields="['Text','Value']" dropdownId="areaId"
+							url="common/ajaxCommon-areaByWard.action" /></td>
+					<td class="bluebox"><s:text name="block" /> :</td>
+					<td class="bluebox"><s:select name="areaId" id="areaId"
+							list="dropdownData.blockList" listKey="id" listValue="name"
+							headerKey="-1" headerValue="%{getText('default.select')}"
+							value="%{areaId}" /></td>
 				</tr>
 				<tr>
 					<td colspan="4">&nbsp;</td>
 				</tr>
-				
-	</table>
-	</div>
-	<div class="buttonbottom" align="center">
-		<tr>
-		 <td><input type="submit" id="btnsearch" name="btnsearch" value="Search" class="buttonsubmit" onclick="return validateFormAndSubmit();" /></td>
-		 <td><input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();"/></td>
-		</tr>
-	</div>
-	<br />
-	<s:text name="reports.note.text" />
+
+			</table>
+		</div>
+		<div class="buttonbottom" align="center">
+			<tr>
+				<td><input type="submit" id="btnsearch" name="btnsearch"
+					value="Search" class="buttonsubmit"
+					onclick="return validateFormAndSubmit();" /></td>
+				<td><input type="button" name="button2" id="button2"
+					value="Close" class="button" onclick="window.close();" /></td>
+			</tr>
+		</div>
+		<br />
+		<s:text name="reports.note.text" />
 	</s:form>
-	</body>
+</body>
 </html>

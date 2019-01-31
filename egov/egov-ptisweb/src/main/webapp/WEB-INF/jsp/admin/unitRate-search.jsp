@@ -51,65 +51,70 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title><s:text name="unit.rate.search.title"/></title>
+<title><s:text name="unit.rate.search.title" /></title>
 <script type="text/javascript">
 	function submitForm() {
 		document.forms[0].action = 'unitRate-search.action';
-		document.forms[0].submit;       
+		document.forms[0].submit;
 		return true;
 	}
 
-	function confirmClose(categoryId,bndryId) {
+	function confirmClose(categoryId, bndryId) {
 		/* var result = confirm("Do you really want to Deactivate selected record?"); */
-		bootbox.dialog({ 
-          message: "Do you really want to Deactivate selected record ?",
-		  show: true,
-		  backdrop: true,
-		  closeButton: true,
-		  animate: true,
-		  className: "my-modal",
-		  buttons: {
-		    success: {   
-		      label: "Yes",
-		      className: "btn-primary",
-		      callback: function() {
-		    	  document.unitRateForm.action='${pageContext.request.contextPath}/admin/unitRate-deactivate.action?categoryId='+categoryId;
-				  document.unitRateForm.submit(); 
-			  }
-		    },
-		    "No": {
-		      className: "btn-default",
-		      callback: function() {
-		    	  document.unitRateForm.action='${pageContext.request.contextPath}/admin/unitRate-search.action';
-				  document.unitRateForm.submit(); 
-			  }
-		    }
-		  }
-		});
-		
-		
+		bootbox
+				.dialog({
+					message : "Do you really want to Deactivate selected record ?",
+					show : true,
+					backdrop : true,
+					closeButton : true,
+					animate : true,
+					className : "my-modal",
+					buttons : {
+						success : {
+							label : "Yes",
+							className : "btn-primary",
+							callback : function() {
+								document.unitRateForm.action = '${pageContext.request.contextPath}/admin/unitRate-deactivate.action?categoryId='
+										+ categoryId;
+								$(document.unitRateForm).append($('<input>', {
+									type : 'hidden',
+									name : '${_csrf.parameterName}',
+									value : '${_csrf.token}'
+								}));
+								document.unitRateForm.submit();
+							}
+						},
+						"No" : {
+							className : "btn-default",
+							callback : function() {
+								document.unitRateForm.action = '${pageContext.request.contextPath}/admin/unitRate-search.action';
+								document.unitRateForm.submit();
+							}
+						}
+					}
+				});
+
 		/* 
-	    if (result == true) {
-	    	document.unitRateForm.action='${pageContext.request.contextPath}/admin/unitRate-deactivate.action?categoryId='+categoryId;
+		if (result == true) {
+			document.unitRateForm.action='${pageContext.request.contextPath}/admin/unitRate-deactivate.action?categoryId='+categoryId;
 		    document.unitRateForm.submit(); 
 		} else {
 			document.unitRateForm.action='${pageContext.request.contextPath}/admin/unitRate-search.action';
 			document.unitRateForm.submit(); 
 		} */
-	} 
-	
+	}
 </script>
 </head>
 <body>
 
 	<s:form name="unitRateForm" action="unitRate" theme="simple">
 		<s:if test="%{hasErrors()}">
-		<div class="errorstyle" id="unitrate_error_area">
-			<div class="errortext">
-				<s:actionerror />
+			<div class="errorstyle" id="unitrate_error_area">
+				<div class="errortext">
+					<s:actionerror />
+				</div>
 			</div>
-		</div>
-	  </s:if>
+		</s:if>
 		<s:push value="model">
 			<s:token />
 			<s:hidden name="mode" id="mode" value="%{mode}" />
@@ -132,8 +137,7 @@
 					<tr>
 						<td class="greybox" width="20%">&nbsp;</td>
 						<td class="greybox" width="30%"><s:text
-								name="unit.rate.usage" />
-							:</td>
+								name="unit.rate.usage" /> :</td>
 						<td class="greybox" width="30%"><s:select headerKey="-1"
 								headerValue="%{getText('default.select')}" name="usageId"
 								id="usageId" listKey="id" listValue="usageName"
@@ -170,46 +174,53 @@
 
 				<s:if test="%{bndryCatList != null && bndryCatList.size >0}">
 					<tr>
-						<display:table name="bndryCatList" id="linksTables" pagesize="10" export="true" requestURI="" class="tablebottom"
+						<display:table name="bndryCatList" id="linksTables" pagesize="10"
+							export="true" requestURI="" class="tablebottom"
 							style="width:100%" uid="currentRowObject">
 							<display:caption>
 							 Unit Rates
-							</display:caption> 
-							
-							<display:column property="category.categoryName" title="Category Name" headerClass="bluebgheadtd"
+							</display:caption>
+
+							<display:column property="category.categoryName"
+								title="Category Name" headerClass="bluebgheadtd"
 								class="blueborderfortd" style="text-align:left" />
-							<display:column property="bndry.name" title="Zone" headerClass="bluebgheadtd" class="blueborderfortd"
+							<display:column property="bndry.name" title="Zone"
+								headerClass="bluebgheadtd" class="blueborderfortd"
 								style="text-align:left" />
-							<display:column property="category.propUsage.usageName"	title="Property Usage" headerClass="bluebgheadtd"
+							<display:column property="category.propUsage.usageName"
+								title="Property Usage" headerClass="bluebgheadtd"
 								class="blueborderfortd" style="text-align:left" />
-							<display:column property="category.structureClass.typeName"	title="Classification of Building" headerClass="bluebgheadtd"
+							<display:column property="category.structureClass.typeName"
+								title="Classification of Building" headerClass="bluebgheadtd"
 								class="blueborderfortd" style="text-align:left" />
-							<display:column property="category.categoryAmount"	title="Category Amount" headerClass="bluebgheadtd"
+							<display:column property="category.categoryAmount"
+								title="Category Amount" headerClass="bluebgheadtd"
 								class="blueborderfortd" style="text-align:left" />
-							<display:column property="category.fromDate" format="{0,date,dd/MM/yyyy}" title="Effective From"
+							<display:column property="category.fromDate"
+								format="{0,date,dd/MM/yyyy}" title="Effective From"
 								headerClass="bluebgheadtd" class="blueborderfortd"
 								style="text-align:left" />
 							<s:if test="%{mode == 'edit'}">
-							  <display:column title=""
-									 media="html"
-									headerClass="bluebgheadtd" class="blueborderfortd"
-									style="text-align:center">
-									<a href="../admin/unitRate-newForm.action?categoryId=${currentRowObject.category.id}&zoneId=${currentRowObject.bndry.id}&mode=edit"> Edit</a>
-									</display:column> 
-									<display:column title="" media="html"
-									headerClass="bluebgheadtd" class="blueborderfortd"
-									style="text-align:center">
-									<a href="javascript:void(0);" onclick="confirmClose('${currentRowObject.category.id}','${currentRowObject.bndry.id}');">Deactivate</a>
-									</display:column>
-									</s:if>
+								<display:column title="" media="html" headerClass="bluebgheadtd"
+									class="blueborderfortd" style="text-align:center">
+									<a
+										href="../admin/unitRate-newForm.action?categoryId=${currentRowObject.category.id}&zoneId=${currentRowObject.bndry.id}&mode=edit">
+										Edit</a>
+								</display:column>
+								<display:column title="" media="html" headerClass="bluebgheadtd"
+									class="blueborderfortd" style="text-align:center">
+									<a href="javascript:void(0);"
+										onclick="confirmClose('${currentRowObject.category.id}','${currentRowObject.bndry.id}');">Deactivate</a>
+								</display:column>
+							</s:if>
 							<s:if test="%{mode == 'view'}">
-							 <display:column title=""
-									 media="html"
-									headerClass="bluebgheadtd" class="blueborderfortd"
-									style="text-align:center">
-									<a href="../admin/unitRate-view.action?categoryId=${currentRowObject.category.id}&zoneId=${currentRowObject.bndry.id}&mode=view"> View</a>
-									</display:column> 
-									</s:if>
+								<display:column title="" media="html" headerClass="bluebgheadtd"
+									class="blueborderfortd" style="text-align:center">
+									<a
+										href="../admin/unitRate-view.action?categoryId=${currentRowObject.category.id}&zoneId=${currentRowObject.bndry.id}&mode=view">
+										View</a>
+								</display:column>
+							</s:if>
 
 							<display:setProperty name="export.pdf" value="true" />
 							<display:setProperty name="export.rtf" value="false" />
@@ -222,5 +233,5 @@
 			</div>
 		</s:push>
 	</s:form>
-	
+
 </body>
