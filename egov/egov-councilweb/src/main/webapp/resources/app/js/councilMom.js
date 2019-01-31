@@ -299,6 +299,11 @@ $('#buttonFinalSubmit')
 										 var action = '/council/councilmom/generateresolution';
 								 			$('#councilMomform').attr('method', 'post');
 								 			$('#councilMomform').attr('action', action); 
+								 			$(document.forms["councilMomform"]).append( $('<input>', {
+					                            type: 'hidden',
+					                            name: tokenName,
+					                            value: tokenVal
+					                        }))
 								 			document.forms["councilMomform"].submit();
 									} else {
 										e.stopPropagation();
@@ -324,6 +329,11 @@ $('#buttonSubmit').click(function(e) {
 		$('.loader-class').modal('show', {
 			backdrop : 'static'
 		});
+		$(document.forms["councilMomform"]).append( $('<input>', {
+            type: 'hidden',
+            name: tokenName,
+            value: tokenVal
+        }))
 		document.forms["councilMomform"].submit();
 	} else {
 		e.preventDefault();
