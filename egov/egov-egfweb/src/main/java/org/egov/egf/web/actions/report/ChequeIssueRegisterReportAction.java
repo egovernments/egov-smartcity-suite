@@ -75,10 +75,7 @@ import org.egov.utils.ReportHelper;
 import org.hibernate.FlushMode;
 import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.BigDecimalType;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StandardBasicTypes;
-import org.hibernate.type.StringType;
+import org.hibernate.type.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
@@ -199,9 +196,9 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
                 .addScalar("chequeStatus").addScalar("instrumentHeaderId", LongType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(ChequeIssueRegisterDisplay.class));
 
-        query.setParameter("toDate", getFormattedDate(getNextDate(toDate)), StringType.INSTANCE)
-                .setParameter("fromDate", getFormattedDate(fromDate), StringType.INSTANCE)
-                .setParameter("voucherStatus", getExcludeVoucherStatues(), StringType.INSTANCE)
+        query.setParameter("toDate", getNextDate(toDate), DateType.INSTANCE)
+                .setParameter("fromDate", fromDate, DateType.INSTANCE)
+                .setParameterList("voucherStatus", getExcludeVoucherStatues(), IntegerType.INSTANCE)
                 .setParameter("bankAccountId", accountNumber.getId(), LongType.INSTANCE);
         if (department != null && department.getId() != 0)
             query.setParameter("deptId", department.getId());
@@ -421,11 +418,18 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
         this.egovCommon = egovCommon;
     }
 
-    private String getExcludeVoucherStatues() {
+    private List<Integer> getExcludeVoucherStatues() {
         final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
                 "statusexcludeReport");
-        String statusExclude = "-1";
-        statusExclude = appList.get(0).getValue();
+        List<Integer> statusExclude = new ArrayList<>();
+        String strArray[] = appList.get(0).getValue().split(",");
+        int intArray[] = new int[strArray.length];
+        for (int count = 0; count < intArray.length ; count++) {
+            intArray[count] = Integer.parseInt(strArray[count]);
+        }
+        for (int s : intArray) {
+            statusExclude.add(s);
+        }
         return statusExclude;
     }
 

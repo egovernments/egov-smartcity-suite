@@ -75,11 +75,12 @@ function generateReport(){
 	var bankAccount = document.getElementById('accountNumber').value;
 	var bank = document.getElementById('bank').value;
 	var department = document.getElementById('department').value;
+	var csrfValue = document.getElementById('csrfTokenValue').value;
 	isValid = validateDates();
 	if(isValid == false)
 		return false;
 	doLoadingMask();
-	var url = '../report/chequeIssueRegisterReport-ajaxPrint.action?fromDate='+fromDate+'&toDate='+toDate+'&accountNumber.id='+bankAccount+'&department.id='+department+'&bank='+bank+'&showDropDown=false';
+	var url = '../report/chequeIssueRegisterReport-ajaxPrint.action?fromDate='+fromDate+'&toDate='+toDate+'&_csrf='+csrfValue+'&accountNumber.id='+bankAccount+'&department.id='+department+'&bank='+bank+'&showDropDown=false';
 	YAHOO.util.Connect.asyncRequest('POST', url, callback, null);
 }
 
@@ -140,6 +141,7 @@ function printCheque(id)
 
 		<s:form action="chequeIssueRegisterReport" theme="simple"
 			name="chequeIssueRegister">
+		<input type="hidden" id="csrfTokenValue" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 			<table width="100%" cellpadding="0" cellspacing="0" border="0">
 				<tr>
 					<td width="10%">&nbsp;</td>
