@@ -73,7 +73,7 @@ function makePlingthAreaReadonly() {
 				jQuery(this).attr('readonly', true);
 			}
 			if (jQuery(this).attr('id') == 'unstructuredLand') {
-				jQuery(this).attr('disabled', true);
+				jQuery(":not(:selected)", this).attr('disabled', true);
 			}
 		});
 		jQuery("#floorDetails tr").find('input').each(function() {
