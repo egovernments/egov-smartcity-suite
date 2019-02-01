@@ -295,36 +295,36 @@ public class RtgsIssueRegisterReportAction extends ReportAction {
         try {
             if (null != parameters.get("departmentid")[0] && !parameters.get("departmentid")[0].equalsIgnoreCase("-1")) {
                 deptQry = " AND vmis.departmentid =:deptId";
-                deptQueryParams.put("deptId", parameters.get("departmentid")[0]);
+                deptQueryParams.put("deptId", Long.valueOf(parameters.get("departmentid")[0]));
             }
             if (null != parameters.get("rtgsAssignedFromDate")[0]
                     && !parameters.get("rtgsAssignedFromDate")[0].equalsIgnoreCase("")) {
                 instrumentHeaderQry.append(" and ih.transactiondate >=:rtgsFromDate");
-                instrumentHeaderQueryParams.put("rtgsFromDate", dateFormat.format(formatter.parse(parameters.get("rtgsAssignedFromDate")[0])));
+                instrumentHeaderQueryParams.put("rtgsFromDate", formatter.parse(parameters.get("rtgsAssignedFromDate")[0]));
             } else {
                 instrumentHeaderQry.append(" and ih.transactiondate >=:finStartDate");
                 instrumentHeaderQueryParams.put("finStartDate", new java.sql.Date(fromDate.getTime()));
             }
             if (null != parameters.get("rtgsAssignedToDate")[0] && !parameters.get("rtgsAssignedToDate")[0].equalsIgnoreCase("")) {
                 instrumentHeaderQry.append(" and ih.transactiondate  <=:rtgsToDate");
-                instrumentHeaderQueryParams.put("rtgsToDate", dateFormat.format(formatter.parse(parameters.get("rtgsAssignedToDate")[0])));
+                instrumentHeaderQueryParams.put("rtgsToDate", formatter.parse(parameters.get("rtgsAssignedToDate")[0]));
             }
             if (null != parameters.get("bank")[0] && !parameters.get("bank")[0].equals("-1")
                     && !parameters.get("bank")[0].equalsIgnoreCase("")) {
                 bankQry.append(" AND b.id = :bankId");
-                bankQueryParams.put("bankId", parameters.get("bank")[0]);
+                bankQueryParams.put("bankId", Long.valueOf(parameters.get("bank")[0]));
             }
             if (null != parameters.get("bankbranch.id")[0] && !parameters.get("bankbranch.id")[0].equals("-1")
                     && !parameters.get("bankbranch.id")[0].equalsIgnoreCase("")) {
                 bankQry.append(" AND branch.id=:bankBranchId");
-                bankQueryParams.put("bankBranchId", parameters.get("bankbranch.id")[0]);
+                bankQueryParams.put("bankBranchId", Long.valueOf(parameters.get("bankbranch.id")[0]));
             }
             if (null != parameters.get("bankaccount.id")[0] && !parameters.get("bankaccount.id")[0].equals("-1")
                     && !parameters.get("bankaccount.id")[0].equalsIgnoreCase("")) {
                 phQry = " AND ph.bankaccountnumberid=:bankAccId";
-                phQueryParams.put("bankAccId", parameters.get("bankaccount.id")[0]);
+                phQueryParams.put("bankAccId", Long.valueOf(parameters.get("bankaccount.id")[0]));
                 instrumentHeaderQry.append(" and ih.bankaccountid =:bankAccId");
-                instrumentHeaderQueryParams.put("bankAccId", parameters.get("bankaccount.id")[0]);
+                instrumentHeaderQueryParams.put("bankAccId", Long.valueOf(parameters.get("bankaccount.id")[0]));
             }
             if (null != parameters.get("instrumentnumber")[0] && !parameters.get("instrumentnumber")[0].equalsIgnoreCase("")) {
                 instrumentHeaderQry.append(" and ih.transactionnumber = :instrumentNumber");
@@ -332,7 +332,7 @@ public class RtgsIssueRegisterReportAction extends ReportAction {
             }
             if (null != parameters.get("fundId")[0] && !parameters.get("fundId")[0].equalsIgnoreCase("")) {
                 fundQry = " AND vh.fundId=:fundId";
-                fundQueryParams.put("fundId", parameters.get("fundId")[0]);
+                fundQueryParams.put("fundId", Long.valueOf(parameters.get("fundId")[0]));
             }
 
             queryString.append(" SELECT ih.id as ihId , ih.transactionnumber as rtgsNumber,  ih.transactiondate as rtgsDate, vh.id as vhId, ")
