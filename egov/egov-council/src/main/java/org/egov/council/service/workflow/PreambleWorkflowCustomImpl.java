@@ -186,7 +186,7 @@ public class PreambleWorkflowCustomImpl implements PreambleWorkflowCustom {
 
                 wfmatrix = councilPreambleWorkflowService.getWfMatrix(councilPreamble.getStateType(), null, null, "CouncilCommonWorkflow",
                         CouncilConstants.WF_NEW_STATE, null);
-                if(StringUtils.isNotBlank(wfmatrix.getNextDesignation())){
+                if(StringUtils.isNotBlank(wfmatrix.getAdditionalRule())){
                 	if (!eisCommonService.isValidAppover(wfmatrix, pos)) {
                     	councilPreamble.setValidApprover(false);
                         return;
@@ -242,10 +242,6 @@ public class PreambleWorkflowCustomImpl implements PreambleWorkflowCustom {
                         pos == null || null == pos.getDeptDesig() ? "" : pos.getDeptDesig().getDesignation().getName())) {
             wfmatrix = councilPreambleWorkflowService.getWfMatrix(councilPreamble.getStateType(), null, null, null,
                     CouncilConstants.APPROVED, CouncilConstants.MANAGER_APPROVALPENDING);
-            if (!eisCommonService.isValidAppover(wfmatrix, pos)) {
-            	councilPreamble.setValidApprover(false);
-                return;
-            }
             councilPreamble.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
             councilPreamble.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvalComent).withStateValue(wfmatrix.getCurrentState())
@@ -264,10 +260,6 @@ public class PreambleWorkflowCustomImpl implements PreambleWorkflowCustom {
             } else {
                 wfmatrix = councilPreambleWorkflowService.getWfMatrix(councilPreamble.getStateType(), null, null, null,
                         councilPreamble.getCurrentState().getValue(), CouncilConstants.COMMISSIONER_APPROVALPENDING);
-            }
-            if (!eisCommonService.isValidAppover(wfmatrix, pos)) {
-            	councilPreamble.setValidApprover(false);
-                return;
             }
             councilPreamble.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
             councilPreamble.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
