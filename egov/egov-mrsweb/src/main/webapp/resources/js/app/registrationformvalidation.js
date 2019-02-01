@@ -257,7 +257,7 @@ function showMarriageFee(url)
 		
 	}
 	
-var age_obj={'husband':21,'wife':18,'witness':18};
+var age_obj={'husband':21,'wife':18,'witness':25};
 
 $('.age-field').blur( function () {
 	if(!$.trim($(this).val())){
