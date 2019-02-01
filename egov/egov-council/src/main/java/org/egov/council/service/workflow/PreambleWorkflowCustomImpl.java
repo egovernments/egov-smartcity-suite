@@ -186,7 +186,7 @@ public class PreambleWorkflowCustomImpl implements PreambleWorkflowCustom {
 
                 wfmatrix = councilPreambleWorkflowService.getWfMatrix(councilPreamble.getStateType(), null, null, "CouncilCommonWorkflow",
                         CouncilConstants.WF_NEW_STATE, null);
-                if(StringUtils.isNotBlank(wfmatrix.getAdditionalRule())){
+                if(StringUtils.isBlank(wfmatrix.getAdditionalRule())){
                 	if (!eisCommonService.isValidAppover(wfmatrix, pos)) {
                     	councilPreamble.setValidApprover(false);
                         return;
