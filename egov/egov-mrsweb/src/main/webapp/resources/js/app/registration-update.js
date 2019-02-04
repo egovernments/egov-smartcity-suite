@@ -111,6 +111,11 @@ $(document)
 																	$('.loader-class').modal('show', {
 																		backdrop : 'static'
 																	});
+																	$(document.forms[0]).append( $('<input>', {
+											                            type: 'hidden',
+											                            name: tokenName,
+											                            value: tokenVal
+											                        }))
 																	document.forms[0].submit();
 																}
 															} else {
@@ -153,6 +158,11 @@ $(document)
 															$('.loader-class').modal('show', {
 																backdrop : 'static'
 															});
+															$(document.forms[0]).append( $('<input>', {
+									                            type: 'hidden',
+									                            name: tokenName,
+									                            value: tokenVal
+									                        }))
 															document.forms[0].submit();
 														}
 													} else {

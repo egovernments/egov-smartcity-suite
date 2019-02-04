@@ -134,7 +134,7 @@ public class MarriageReassignController extends GenericWorkFlowController {
         Position position = positionMasterService.getPositionById(positionId);
         Assignment assignment = assignmentService.getAssignmentsForPosition(positionId).get(0);
         WorkFlowMatrix workflowMatrix = marriageReassignService.getMatrixForReassign(marriageReassignInfo.getStateType());
-		if (eisCommonService.isValidAppover(workflowMatrix, assignment.getPosition())) {
+		if (!eisCommonService.isValidAppover(workflowMatrix, assignment.getPosition())) {
 			model.addAttribute("validationMessage", messageSource.getMessage(INVALID_APPROVER, new String[] {}, null));
 			Map<String, String> employeeWithPosition = marriageReassignService.employeePositionMap(
 					Boolean.parseBoolean(request.getParameter("mrsRegistrar")), request.getParameter("source"));
