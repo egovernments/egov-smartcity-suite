@@ -297,7 +297,7 @@ public class PendingTDSReportAction extends BaseFormAction {
             params.add(detailKey);
         }
         query1.append(" order by egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherNumber ");
-        result1 = persistenceService.findAllBy(query1.toString(), params);
+        result1 = persistenceService.findAllBy(query1.toString(), params.toArray());
         Boolean createPartialRow1 = false;
         for (final EgRemittanceDetail entry : result1) {
             createPartialRow1 = false;
