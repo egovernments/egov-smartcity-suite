@@ -89,7 +89,7 @@ public abstract class Address extends AbstractPersistable<Long> {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQ_ADDRESS)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userid")
     private User user;
 
