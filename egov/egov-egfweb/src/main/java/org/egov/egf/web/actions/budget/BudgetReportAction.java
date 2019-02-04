@@ -314,15 +314,15 @@ public class BudgetReportAction extends BaseFormAction {
         final Map<String, Map<String, Object>> queryMap = new HashMap<>();
         final Map<String, Object> queryParams = new HashMap<>();
         StringBuilder sql = new StringBuilder("");
-        sql.append(" bd.budget.financialYear=:finYearId");
-        queryParams.put("finYearId", budgetReport.getFinancialYear().getId());
+        sql.append(" bd.budget.financialYear.id=:finYearId");
+        queryParams.put("finYearId", Long.valueOf(budgetReport.getFinancialYear().getId()));
         if (budgetReport.getDepartment() != null && budgetReport.getDepartment().getId() != null) {
             sql.append(" and bd.executingDepartment.id=:execDeptId");
-            queryParams.put("execDeptId", budgetReport.getDepartment().getId());
+            queryParams.put("execDeptId", Long.valueOf(budgetReport.getDepartment().getId()));
         }
         if (budgetReport.getFunction() != null && budgetReport.getFunction().getId() != null) {
             sql.append(" and bd.function.id=:functionId");
-            queryParams.put("functionId", budgetReport.getFunction().getId());
+            queryParams.put("functionId", Long.valueOf(budgetReport.getFunction().getId()));
         }
         queryMap.put(sql.toString(), queryParams);
         return queryMap;
@@ -336,7 +336,7 @@ public class BudgetReportAction extends BaseFormAction {
         if (budgetReport.getType().equalsIgnoreCase("IE"))
             sql.append(" and bd.budgetGroup.minCode.type in ('I','E')");
         else if (!budgetReport.getType().equalsIgnoreCase("All")) {
-            sql.append(" and bd.budgetGroup.minCode.type=:minCodeType");
+            sql.append(" and bd.budgetGroup.minCode.type =:minCodeType");
             queryParams.put("minCodeType", budgetReport.getType());
         }
         List<BudgetDetail> budgetDetailList = new ArrayList<BudgetDetail>();

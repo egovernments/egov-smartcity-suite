@@ -449,23 +449,23 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
             int index = 1;
             List<Object> params = new ArrayList<>();
             StringBuilder query = new StringBuilder(" from BudgetDetail bd where bd.budget.isbere=?").append(index++)
-                    .append(" and bd.budgetGroup=?").append(index++).append(" and bd.budget.financialYear=?").append(index++);
+                    .append(" and bd.budgetGroup.id=?").append(index++).append(" and bd.budget.financialYear.id=?").append(index++);
             params.add(type);
-            params.add(budgetGroup);
-            params.add(financialYear);
+            params.add(Long.valueOf(budgetGroup.getId()));
+            params.add(Long.valueOf(financialYear.getId()));
             if (department.getId() != null && department.getId() != -1) {
                 query.append(" and bd.executingDepartment.id=?").append(index++);
-                params.add(department.getId());
+                params.add(Long.valueOf(department.getId()));
             }
             if (function.getId() != null && function.getId() != -1) {
                 query.append(" and bd.function.id=?").append(index++);
-                params.add(function.getId());
+                params.add(Long.valueOf(function.getId()));
             }
             if (fund.getId() != null && fund.getId() != -1) {
                 query.append(" and bd.fund.id=?").append(index++);
-                params.add(fund.getId());
+                params.add(Integer.valueOf(fund.getId()));
             }
-            budgedDetailList = persistenceService.findAllBy(query.toString(), params);
+            budgedDetailList = persistenceService.findAllBy(query.toString(), params.toArray());
             if (budgedDetailList != null && budgedDetailList.size() > 0)
                 for (final BudgetDetail bdetail : budgedDetailList) {
                     approvedAmount = approvedAmount.add(bdetail.getApprovedAmount());
@@ -547,7 +547,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
         }
         if (fund.getId() != null && fund.getId() != -1)
         {
-            query.setParameter("fundId", fund.getId(), LongType.INSTANCE);
+            query.setParameter("fundId", Long.valueOf(fund.getId()), LongType.INSTANCE);
         }
         if (budgetGroup.getMinCode().getId() != null )
         {
