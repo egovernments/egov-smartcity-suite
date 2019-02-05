@@ -416,7 +416,7 @@ else{
 																		id="remitAmount" /></td>
 																	<egov:updatevalues id="availableBalance"
 																		fields="['Text']"
-																		url="/payment/payment-ajaxGetAccountBalance.action" />
+																		url="payment/payment-ajaxGetAccountBalance.action" />
 																	<td class="greybox"><span id="balanceText"
 																		style="display: none" width="18%"><s:text
 																				name="balance.available" />&nbsp;</span></td>
