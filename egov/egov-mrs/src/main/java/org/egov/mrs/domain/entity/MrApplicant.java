@@ -108,7 +108,6 @@ public class MrApplicant extends AbstractAuditable {
     @Column(name = "relationstatus")
     private MaritalStatus maritalStatus;
 
-    @NotNull
     @SafeHtml
     @Length(max = 60)
     private String occupation;

@@ -53,9 +53,9 @@ import static org.egov.mrs.application.MarriageConstants.BOUNDARYTYPE_LOCALITY;
 import static org.egov.mrs.application.MarriageConstants.BOUNDARY_TYPE;
 import static org.egov.mrs.application.MarriageConstants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.mrs.application.MarriageConstants.MARRIAGEREGISTRATION_DAYS_VALIDATION;
+import static org.egov.mrs.application.MarriageConstants.MODULE_NAME;
 import static org.egov.mrs.application.MarriageConstants.MRS_BOUNDARYYTYPE;
 import static org.egov.mrs.application.MarriageConstants.MRS_HEIRARCHYTYPE;
-import static org.egov.mrs.application.MarriageConstants.MODULE_NAME;
 import static org.egov.mrs.application.MarriageConstants.REGISTER_NO_OF_DAYS;
 import static org.egov.mrs.application.MarriageConstants.getMarriageVenues;
 import static org.egov.mrs.application.MarriageConstants.getWitnessRelations;
@@ -63,6 +63,7 @@ import static org.egov.mrs.application.MarriageConstants.getWitnessRelations;
 import java.util.Arrays;
 import java.util.Date;
 
+import org.egov.commons.entity.Source;
 import org.egov.commons.service.EducationalQualificationService;
 import org.egov.commons.service.NationalityService;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
@@ -181,8 +182,11 @@ public class MarriageRegistrationController extends GenericWorkFlowController {
                 && !registration.isLegacy()) {
             validateDateOfMarriage(registration, errors);
         }
+        if(!Source.CHPK.toString().equalsIgnoreCase(registration.getSource()) && registration.getFeePaid()==null)
+        	errors.rejectValue("feePaid", "err.validate.marriageRegistration.feepaid");
+        
     }
-
+    
     private void validateDateOfMarriage(final MarriageRegistration registration, final BindingResult errors) {
         if (registration.getApplicationDate() != null) {
             if (!new DateTime(registration.getApplicationDate())

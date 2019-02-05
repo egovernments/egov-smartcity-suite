@@ -64,6 +64,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Date;
@@ -137,14 +138,11 @@ public class MarriageRegistration extends StateAware<Position> {
     @JoinColumn(name = "wife")
     private MrApplicant wife = new MrApplicant();
 
-    @NotNull
-    @Valid
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "registration")
     @Size(max = 4)
     @OrderBy("id")
     private List<MarriageWitness> witnesses = new LinkedList<>();
 
-    @Valid
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "priest")
     private MarriagePriest priest;
@@ -160,7 +158,7 @@ public class MarriageRegistration extends StateAware<Position> {
     @JoinColumn(name = "feeCriteria")
     private MarriageFee feeCriteria;
 
-    @NotNull
+    @PositiveOrZero
     private Double feePaid;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
