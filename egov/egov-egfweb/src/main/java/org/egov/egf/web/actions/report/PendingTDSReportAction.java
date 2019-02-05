@@ -82,6 +82,7 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.FlushMode;
 import org.hibernate.query.Query;
+import org.hibernate.type.DateType;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
@@ -402,7 +403,7 @@ public class PendingTDSReportAction extends BaseFormAction {
      */
     @ReadOnly
     private void populateSummaryData() {
-        recovery = (Recovery) persistenceService.find("from Recovery where id=?1", recovery.getId());
+        recovery = (Recovery) persistenceService.find("from Recovery where id=?1", Long.valueOf(recovery.getId()));
         type = recovery.getType();
         List<Object[]> result = new ArrayList<Object[]>();
         List<Object[]> resultTolDeduction = new ArrayList<Object[]>();
@@ -423,14 +424,14 @@ public class PendingTDSReportAction extends BaseFormAction {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(qry.toString());
             Query nativeQuery = persistenceService.getSession().createNativeQuery(qry.toString())
-                    .setParameter("glCodeId", recovery.getChartofaccounts().getId(), LongType.INSTANCE)
-                    .setParameter("fundId", fund.getId(), LongType.INSTANCE)
-                    .setParameter("asOnDate", Constants.DDMMYYYYFORMAT2.format(asOnDate), StringType.INSTANCE)
-                    .setParameter("startingDate", Constants.DDMMYYYYFORMAT2.format(financialYearDAO.getFinancialYearByDate(asOnDate).getStartingDate()), StringType.INSTANCE);
+                    .setParameter("glCodeId", Long.valueOf(recovery.getChartofaccounts().getId()), LongType.INSTANCE)
+                    .setParameter("fundId", Long.valueOf(fund.getId()), LongType.INSTANCE)
+                    .setParameter("asOnDate", asOnDate, DateType.INSTANCE)
+                    .setParameter("startingDate", financialYearDAO.getFinancialYearByDate(asOnDate).getStartingDate(), DateType.INSTANCE);
             if (department.getId() != null && department.getId() != -1)
-                nativeQuery.setParameter("deptId", department.getId(), LongType.INSTANCE);
+                nativeQuery.setParameter("deptId", Long.valueOf(department.getId()), LongType.INSTANCE);
             if (detailKey != null && detailKey != -1)
-                nativeQuery.setParameter("detailKeyId", detailKey, IntegerType.INSTANCE);
+                nativeQuery.setParameter("detailKeyId", Integer.valueOf(detailKey), IntegerType.INSTANCE);
 
             result = nativeQuery.list();
             // Query to get total deduction
@@ -445,17 +446,17 @@ public class PendingTDSReportAction extends BaseFormAction {
                 qryTolDeduction.append(" and mis.departmentid=:deptId");
             if (detailKey != null && detailKey != -1)
                 qryTolDeduction.append(" and gld.detailkeyid=:detailKeyId");
-            qryTolDeduction.append(" as temptable group by type,month");
+            qryTolDeduction.append(" ) as temptable group by type,month");
 
             nativeQuery = persistenceService.getSession().createNativeQuery(qryTolDeduction.toString())
-                    .setParameter("glCodeId", recovery.getChartofaccounts().getId(), LongType.INSTANCE)
-                    .setParameter("fundId", fund.getId(), LongType.INSTANCE)
-                    .setParameter("asOnDate", Constants.DDMMYYYYFORMAT2.format(asOnDate), StringType.INSTANCE)
-                    .setParameter("startingDate", Constants.DDMMYYYYFORMAT2.format(financialYearDAO.getFinancialYearByDate(asOnDate).getStartingDate()), StringType.INSTANCE);
+                    .setParameter("glCodeId", Long.valueOf(recovery.getChartofaccounts().getId()), LongType.INSTANCE)
+                    .setParameter("fundId", Long.valueOf(fund.getId()), LongType.INSTANCE)
+                    .setParameter("asOnDate", asOnDate, DateType.INSTANCE)
+                    .setParameter("startingDate", financialYearDAO.getFinancialYearByDate(asOnDate).getStartingDate(), DateType.INSTANCE);
             if (department.getId() != null && department.getId() != -1)
-                nativeQuery.setParameter("deptId", department.getId(), LongType.INSTANCE);
+                nativeQuery.setParameter("deptId", Long.valueOf(department.getId()), LongType.INSTANCE);
             if (detailKey != null && detailKey != -1)
-                nativeQuery.setParameter("detailKeyId", detailKey, IntegerType.INSTANCE);
+                nativeQuery.setParameter("detailKeyId", Integer.valueOf(detailKey), IntegerType.INSTANCE);
             resultTolDeduction = nativeQuery.list();
         } catch (final ApplicationRuntimeException e) {
             message = e.getMessage();
