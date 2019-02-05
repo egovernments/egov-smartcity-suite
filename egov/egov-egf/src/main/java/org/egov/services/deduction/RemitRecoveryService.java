@@ -129,7 +129,7 @@ public class RemitRecoveryService {
             params.put("fromVhDate", remittanceBean.getFromVhDate());
             params.put("voucherDate", voucherHeader.getVoucherDate());
         } else {
-            dateQry.append(" and vh.VOUCHERDATE <= :voucherDate");
+            dateQry.append(" and vh.VOUCHERDATE <= :voucherDate ");
             params.put("voucherDate", voucherHeader.getVoucherDate());
         }
         if (remittanceBean.getBank() != null && remittanceBean.getBankBranchId() != null
@@ -206,6 +206,11 @@ public class RemitRecoveryService {
 
     public List<RemittanceBean> getRecoveryDetails(final String selectedRows)
             throws ValidationException {
+        String [] items = selectedRows.split(",");
+        List<Long> selectedRowId = new ArrayList<>();
+        for(int i=0; i< items.length;i++){
+            selectedRowId.add(Long.valueOf(items[i]));
+        }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("RemitRecoveryService | getRecoveryDetails | Start");
         final List<RemittanceBean> listRemitBean = new ArrayList<RemittanceBean>();
@@ -232,7 +237,7 @@ public class RemitRecoveryService {
             LOGGER.debug("RemitRecoveryService | getRecoveryDetails | query := " + query.toString());
 
         final NativeQuery searchNativeQuery = persistenceService.getSession().createNativeQuery(query.toString());
-        searchNativeQuery.setParameter("selectedRows", Long.valueOf(selectedRows), LongType.INSTANCE);
+        searchNativeQuery.setParameterList("selectedRows", selectedRowId, LongType.INSTANCE);
         final List<Object[]> list = searchNativeQuery.list();
 
         populateDetailsBySQL(null, listRemitBean, list);

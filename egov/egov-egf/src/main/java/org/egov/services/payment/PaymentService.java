@@ -2385,11 +2385,11 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
             final Map<String, Object> params = new HashMap<>();
             if (!"".equals(parameters.get("fromDate")[0])) {
                 sql.append(" and vh.voucherDate>=:voucherFromDate");
-                params.put("voucherFromDate", sdf.format(formatter.parse(parameters.get("fromDate")[0])));
+                params.put("voucherFromDate", formatter.parse(parameters.get("fromDate")[0]));
             }
             if (!"".equals(parameters.get("toDate")[0])) {
                 sql.append(" and vh.voucherDate<=:voucherToDate");
-                params.put("voucherToDate", sdf.format(formatter.parse(parameters.get("toDate")[0])));
+                params.put("voucherToDate", formatter.parse(parameters.get("toDate")[0]));
             }
             if (!StringUtils.isEmpty(voucherHeader.getVoucherNumber())) {
                 sql.append(" and vh.voucherNumber like :voucherNumber");
@@ -2397,7 +2397,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
             }
             if (voucherHeader.getFundId() != null) {
                 sql.append(" and vh.fundId=:fundId");
-                params.put("fundId", voucherHeader.getFundId().getId());
+                params.put("fundId", Long.valueOf(voucherHeader.getFundId().getId()));
             }
             if (voucherHeader.getVouchermis().getFundsource() != null) {
                 sql.append(" and vmis.fundsourceId=:fundSourceId");
@@ -2405,7 +2405,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
             }
             if (voucherHeader.getVouchermis().getDepartmentid() != null) {
                 sql.append(" and vmis.departmentid=:deptId");
-                params.put("deptId", voucherHeader.getVouchermis().getDepartmentid().getId());
+                params.put("deptId", Long.valueOf(voucherHeader.getVouchermis().getDepartmentid().getId()));
             }
             if (voucherHeader.getVouchermis().getSchemeid() != null) {
                 sql.append(" and vmis.schemeid=:schemeId");
@@ -2424,7 +2424,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                 params.put("divisionId", voucherHeader.getVouchermis().getDivisionid().getId());
             }
             sql.append(" and ph.bankaccountnumberid=:accountNumberId");
-            params.put("accountNumberId", parameters.get("bankaccount")[0]);
+            params.put("accountNumberId", Long.valueOf(parameters.get("bankaccount")[0]));
             sql.append(" and lower(ph.type)=lower(:paymentMode)");
             params.put("paymentMode", parameters.get("paymentMode")[0]);
 
@@ -2751,7 +2751,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                                 Transformers
                                         .aliasToBean(ChequeAssignment.class));
                 if (!recoveryId.isEmpty())
-                    query.setParameter("tdsId", parameters.get("recoveryId")[0], StringType.INSTANCE);
+                    query.setParameter("tdsId", Long.valueOf(parameters.get("recoveryId")[0]), LongType.INSTANCE);
                 query.setParameter("vhStatus", Long.valueOf(approvedstatus), LongType.INSTANCE)
                         .setParameter("vhType", FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT, StringType.INSTANCE)
                         .setParameter("vhName", FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE, StringType.INSTANCE);
@@ -2791,7 +2791,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                                 Transformers
                                         .aliasToBean(ChequeAssignment.class));
                 if (!recoveryId1.isEmpty())
-                    qry.setParameter("tdsId", parameters.get("recoveryId")[0], StringType.INSTANCE);
+                    qry.setParameter("tdsId", Long.valueOf(parameters.get("recoveryId")[0]), LongType.INSTANCE);
                 qry.setParameter("vhStatus", Long.valueOf(approvedstatus), LongType.INSTANCE)
                         .setParameterList("idStatus", statusId, IntegerType.INSTANCE)
                         .setParameter("vhType", FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT, StringType.INSTANCE)
