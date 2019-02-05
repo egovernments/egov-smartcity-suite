@@ -743,10 +743,10 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             if (bankaccount != null) {
                 if (department != null) {
                     StringBuilder query = new StringBuilder("select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd")
-                            .append(" where ac.serialNo = fs.id and  bankAccountId=?1")
-                                            .append("and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where id =?2")
-                                            .append(" order by serialNo desc ");
-                    final List<Object[]> yearCodes = persistenceService.findAllBy(query.toString(),bankaccount,department);
+                            .append(" where ac.serialNo = fs.id and  bankAccountId=?1 ")
+                                            .append(" and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where id =?2 ")
+                                            .append(" order by serialNo desc )");
+                    final List<Object[]> yearCodes = persistenceService.findAllBy(query.toString(),Long.valueOf(bankaccount),Long.valueOf(department));
 
                     if (yearCodes != null) {
                         for (final Object[] s : yearCodes)
@@ -754,8 +754,8 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                     }
                 } else if (departmentId != null) {
                     StringBuilder queryString = new StringBuilder("select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd ")
-                            .append("where ac.serialNo = fs.id and  bankAccountId=?1")
-                            .append("and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where id =?2 ")
+                            .append(" where ac.serialNo = fs.id and  bankAccountId=?1")
+                            .append(" and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where id =?2 ")
                             .append(" order by serialNo desc ");
                     final List<Object[]> yearCodes = persistenceService.findAllBy(queryString.toString(),bankaccount,departmentId);
 
@@ -765,8 +765,8 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                     }
                 } else {
                     StringBuilder query1 = new StringBuilder("select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd ")
-                            .append("where ac.serialNo = fs.id and  bankAccountId=?1")
-                            .append("and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where upper(name) = 'ACCOUNTS')")
+                            .append(" where ac.serialNo = fs.id and  bankAccountId=?1")
+                            .append(" and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where upper(name) = 'ACCOUNTS')")
                             .append(" order by serialNo desc ");
                     final List<Object[]> yearCodes = persistenceService.findAllBy(query1.toString(),bankaccount);
 
