@@ -83,7 +83,8 @@
 				<div class="panel-body custom-form">
 					<div class="form-group">
 						<label for="Field-1" class="col-sm-4 control-label"><spring:message
-								code="lbl.assessmentNumber.deactivate" /><span class="mandatory"></span></label>
+								code="lbl.assessmentNumber.deactivate" /><span
+							class="mandatory"></span></label>
 
 						<div class="col-sm-3 add-margin">
 							<form:input id="basicproperty" path="basicproperty" type="text"
@@ -123,8 +124,8 @@
 						</div>
 					</div>
 				</div>
-			   </div>
-			
+			</div>
+
 			<div class="row">
 				<div class="text-center">
 					<button type="button" class="btn btn-primary add-margin"
@@ -137,13 +138,14 @@
 					</button>
 				</div>
 			</div>
-			
-		 	<font size="3"><div class="col-md-8 mandatory1" id="notelabel">
-				<label class="notelbel"><spring:message code="lbl.note" />:</label>
-			    </div></font>
-             <font size="2"><div class="col-md-10 mandatory1" id="note">  
-                  <spring:message code="msg.propertydeactivate.reason.note" />  
-			 </div></font> 
+
+			<font size="3"><div class="col-md-8 mandatory1" id="notelabel">
+					<label class="notelbel"><spring:message code="lbl.note" />:</label>
+				</div></font>
+			<font size="2"><div class="col-md-10 mandatory1" id="note">
+					<spring:message code="msg.propertydeactivate.reason.note"
+						htmlEscape="false" />
+				</div></font>
 			<br>
 			<c:if test="${propDetails!=null || orgPropDetails!=null}">
 				<div class="panel panel-primary">
@@ -188,37 +190,35 @@
 									<spring:message code="lbl.hdr.wcdetails" />
 								</div>
 							</div>
-                            <c:choose>
-                            <c:when test="${not empty wcDetails}">
-							 <table class="table table-bordered" width="100%">
-								<tr>
-									<th align="center" class="bluebgheadtd">Consumer Number</th>
-									<th align="center" class="bluebgheadtd">Connection Type</th>
-									<th align="center" class="bluebgheadtd">Tax Due</th>
-									<th align="center" class="bluebgheadtd"">status</th>
-								</tr>
-								
-									<c:forEach var="rowObj" items="${wcDetails}">
+							<c:choose>
+								<c:when test="${not empty wcDetails}">
+									<table class="table table-bordered" width="100%">
 										<tr>
-											<td align="center"><c:out value="${rowObj.consumerCode}"
-													default="N/A" /></td>
-											<td align="center"><c:out
-													value="${rowObj.connectionType}" default="N/A" /></td>
-											<td align="center"><c:out value="${rowObj.totalTaxDue}"
-													default="N/A" /></td>
-											<td align="center"><c:out
-													value="${rowObj.connectionStatus}" default="N/A" /></td>
+											<th align="center" class="bluebgheadtd">Consumer Number</th>
+											<th align="center" class="bluebgheadtd">Connection Type</th>
+											<th align="center" class="bluebgheadtd">Tax Due</th>
+											<th align="center" class="bluebgheadtd"">status</th>
 										</tr>
-									</c:forEach>
+
+										<c:forEach var="rowObj" items="${wcDetails}">
+											<tr>
+												<td align="center"><c:out
+														value="${rowObj.consumerCode}" default="N/A" /></td>
+												<td align="center"><c:out
+														value="${rowObj.connectionType}" default="N/A" /></td>
+												<td align="center"><c:out value="${rowObj.totalTaxDue}"
+														default="N/A" /></td>
+												<td align="center"><c:out
+														value="${rowObj.connectionStatus}" default="N/A" /></td>
+											</tr>
+										</c:forEach>
 									</table>
 								</c:when>
 								<c:otherwise>
-								<div class="panel-body">
-								No data found
-								</div>
+									<div class="panel-body">No data found</div>
 								</c:otherwise>
-								</c:choose>
-								
+							</c:choose>
+
 						</div>
 					</c:if>
 				</div>
@@ -268,33 +268,31 @@
 								</div>
 							</div>
 							<c:choose>
-							<c:when test="${not empty orgPropWCDetails}">
-								<table class="table table-bordered" width="100%">
-									<tr>
-										<th align="center" class="bluebgheadtd">Consumer Number</th>
-										<th align="center" class="bluebgheadtd">Connection Type</th>
-										<th align="center" class="bluebgheadtd">Tax Due</th>
-										<th align="center" class="bluebgheadtd"">Status</th>
-									</tr>
-									<c:forEach var="connObj" items="${orgPropWCDetails}">
+								<c:when test="${not empty orgPropWCDetails}">
+									<table class="table table-bordered" width="100%">
 										<tr>
-											<td align="center"><c:out
-													value="${connObj.consumerCode}" default="N/A" /></td>
-											<td align="center"><c:out
-													value="${connObj.connectionType}" default="N/A" /></td>
-											<td align="center"><c:out value="${connObj.totalTaxDue}"
-													default="N/A" /></td>
-											<td align="center"><c:out
-													value="${connObj.connectionStatus}" default="N/A" /></td>
+											<th align="center" class="bluebgheadtd">Consumer Number</th>
+											<th align="center" class="bluebgheadtd">Connection Type</th>
+											<th align="center" class="bluebgheadtd">Tax Due</th>
+											<th align="center" class="bluebgheadtd"">Status</th>
 										</tr>
-									</c:forEach>
+										<c:forEach var="connObj" items="${orgPropWCDetails}">
+											<tr>
+												<td align="center"><c:out
+														value="${connObj.consumerCode}" default="N/A" /></td>
+												<td align="center"><c:out
+														value="${connObj.connectionType}" default="N/A" /></td>
+												<td align="center"><c:out
+														value="${connObj.totalTaxDue}" default="N/A" /></td>
+												<td align="center"><c:out
+														value="${connObj.connectionStatus}" default="N/A" /></td>
+											</tr>
+										</c:forEach>
 
-								</table>
-							</c:when>
-							<c:otherwise>
-								<div class="panel-body">
-								No data found
-								</div>
+									</table>
+								</c:when>
+								<c:otherwise>
+									<div class="panel-body">No data found</div>
 								</c:otherwise>
 							</c:choose>
 
@@ -302,50 +300,50 @@
 
 					</div>
 				</c:if>
-			<%-- 	<c:if test="${hasActiveWC !=true}"> --%>
-					<div class="panel panel-primary">
-						<div class="panel-heading">
-							<div class="panel-title">
-								<p class="text-center">
-									<spring:message code="lbl.council.doc" />
-								</p>
-							</div>
-						</div>
-						<%@ include file="/WEB-INF/jsp/common/documents-upload.jsp"%>
-						<div class="panel-body">
-							<label for="Field-1" class="col-sm-3 control-label"><spring:message
-									code="lbl.council.no" /><span class="mandatory"></span></label>
-
-							<div class="col-sm-3 add-margin">
-								<form:input id="councilno" path="councilno" type="text"
-									value="${councilno}" cssClass="form-control is_valid_number" autocomplete="off"
-									required="required" maxlength="10" />
-								<form:errors path="councilno" cssClass="error-msg" />
-							</div>
-							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.council.date" /> <span class="mandatory"></span> </label>
-							<div class="col-sm-2 add-margin">
-								<form:input type="text" cssClass="form-control dateval"
-									path="councilDate" id="councilDate" data-date-end-date="0d"
-									required="required" />
-								<form:errors path="councilDate" cssClass="error-msg" />
-							</div>
+				<%-- 	<c:if test="${hasActiveWC !=true}"> --%>
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<div class="panel-title">
+							<p class="text-center">
+								<spring:message code="lbl.council.doc" />
+							</p>
 						</div>
 					</div>
-					<br>
-					<div class="row">
-						<div class="text-center">
-							<button type="button" class="btn btn-primary add-margin"
-								id="deactBtn" align="center">
-								<spring:message code="lbl.btn.deactivate" />
-							</button>
-							<button type="button" class="btn btn-default"
-								onclick="self.close()">
-								<spring:message code="lbl.close" />
-							</button>
-						</div>
+					<%@ include file="/WEB-INF/jsp/common/documents-upload.jsp"%>
+					<div class="panel-body">
+						<label for="Field-1" class="col-sm-3 control-label"><spring:message
+								code="lbl.council.no" /><span class="mandatory"></span></label>
 
+						<div class="col-sm-3 add-margin">
+							<form:input id="councilno" path="councilno" type="text"
+								value="${councilno}" cssClass="form-control is_valid_number"
+								autocomplete="off" required="required" maxlength="10" />
+							<form:errors path="councilno" cssClass="error-msg" />
+						</div>
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.council.date" /> <span class="mandatory"></span> </label>
+						<div class="col-sm-2 add-margin">
+							<form:input type="text" cssClass="form-control dateval"
+								path="councilDate" id="councilDate" data-date-end-date="0d"
+								required="required" />
+							<form:errors path="councilDate" cssClass="error-msg" />
+						</div>
 					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="text-center">
+						<button type="button" class="btn btn-primary add-margin"
+							id="deactBtn" align="center">
+							<spring:message code="lbl.btn.deactivate" />
+						</button>
+						<button type="button" class="btn btn-default"
+							onclick="self.close()">
+							<spring:message code="lbl.close" />
+						</button>
+					</div>
+
+				</div>
 				<%-- </c:if> --%>
 			</c:if>
 		</form:form>
