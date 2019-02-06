@@ -91,10 +91,10 @@ var adminBoundry = '${advertisementPermitDetail.advertisement.ward.id}';
 var revenueBoundary = '${advertisementPermitDetail.advertisement.locality.id}';
 
 $(window).load(function(){
-		$("#applicationNumber").prop("readonly", true);
-		$("#applicationDate").prop("readonly", true);
-		$("#permissionNumber").prop("readonly", true);
-		$("#advertisementnumber").prop("readonly", true);
+		$("#applicationNumber").prop("disabled", true);
+		$("#applicationDate").prop("disabled", true);
+		$("#permissionNumber").prop("disabled", true);
+		$("#advertisementnumber").prop("disabled", true);
 		$('#applicationDate').datepicker('remove');
 				});
 
