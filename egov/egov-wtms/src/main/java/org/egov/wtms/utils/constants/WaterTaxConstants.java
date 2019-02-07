@@ -347,7 +347,7 @@ public class WaterTaxConstants {
     public static final String WF_SIGN_BUTTON = "Sign";
 
     public static final String CONNECTION_WORK_ORDER = "connectionWorkOrder";
-    public static final String SIGNED_DOCUMENT_PREFIX = "SN/";
+    public static final String SIGNED_DOCUMENT_PREFIX = "SN_";
 
     public static final String MODE = "mode";
     public static final String APPROVAL_POSITION = "approvalPosition";

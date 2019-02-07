@@ -48,6 +48,8 @@
 
 package org.egov.wtms.web.controller.utils;
 
+import javax.validation.Valid;
+
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
@@ -83,7 +85,7 @@ public class WaterTaxUtilController extends GenericConnectionController {
     }
 
     @PostMapping
-    public String storeDocument(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
+    public String storeDocument(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             @RequestParam("files") final MultipartFile... files) {
         WaterConnectionDetails connectionDetails = null;
         if (waterConnectionDetails.getApplicationNumber() != null)

@@ -63,6 +63,7 @@ import javax.persistence.Table;
 
 import org.egov.demand.model.EgDemand;
 import org.hibernate.annotations.Immutable;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egwtr_mv_dcb_view")
@@ -72,20 +73,35 @@ public class WaterChargeMaterlizeView implements Serializable {
     private static final long serialVersionUID = -6146352214041057969L;
     @Id
     private Long connectiondetailsid;
+    @SafeHtml
     private String propertyid;
+    @SafeHtml
     private String hscno;
+    @SafeHtml
     private String address;
+    @SafeHtml
     private String oldhscno;
+    @SafeHtml
     private String propertytype;
+    @SafeHtml
     private String applicationtype;
+    @SafeHtml
     private String usagetype;
+    @SafeHtml
     private String categorytype;
+    @SafeHtml
     private String pipesize;
+    @SafeHtml
     private String username;
+    @SafeHtml
     private String houseno;
+    @SafeHtml
     private String watersource;
+    @SafeHtml
     private String connectiontype;
+    @SafeHtml
     private String connectionstatus;
+    
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "demand")
     private EgDemand demand;

@@ -118,8 +118,9 @@ public class AdditionalConnectionService {
                         validationMessage = wcmsMessageSource.getMessage("err.validate.primary.connection.watertax.due",
                                 null, null);
                     else
-                        validationMessage = validationMessage + " and " + wcmsMessageSource
-                                .getMessage("err.validate.primary.connection.watertax.due", null, null);
+                        
+                    validationMessage = validationMessage  .concat(" and ".toString()).concat(wcmsMessageSource
+                            .getMessage("err.validate.primary.connection.watertax.due", null, null).toString()) ;
                 }
                 if (parentWaterConnectionDetail.getConnection().getId() != null
                         && waterTaxUtils.waterConnectionDue(parentWaterConnectionDetail.getConnection().getId()) > 0) {
@@ -127,8 +128,8 @@ public class AdditionalConnectionService {
                         validationMessage = wcmsMessageSource
                                 .getMessage("err.validate.additional.connection.watertax.due", null, null);
                     else
-                        validationMessage = validationMessage + " and " + wcmsMessageSource
-                                .getMessage("err.validate.additional.connection.watertax.due", null, null);
+                        validationMessage = validationMessage.concat(" and ".toString()).concat(wcmsMessageSource
+                                .getMessage("err.validate.additional.connection.watertax.due", null, null).toString()) ;
                 }
             }
         }

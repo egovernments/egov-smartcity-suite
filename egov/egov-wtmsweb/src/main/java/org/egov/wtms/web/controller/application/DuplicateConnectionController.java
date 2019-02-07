@@ -70,6 +70,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
@@ -111,7 +112,7 @@ public class DuplicateConnectionController {
     }
 
     @RequestMapping(value = "/duplicateConsumerCode/{consumerCode}", method = RequestMethod.POST)
-    public String closeConnection(@ModelAttribute final DuplicateConnection duplicateConnection,
+    public String closeConnection(@Valid @ModelAttribute final DuplicateConnection duplicateConnection,
             @PathVariable final String consumerCode, final BindingResult resultBinder,
             final RedirectAttributes redirectAttrs, final Model model) {
 

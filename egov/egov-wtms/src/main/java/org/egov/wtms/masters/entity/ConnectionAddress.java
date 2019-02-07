@@ -67,6 +67,7 @@ import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egwtr_connection_address")
@@ -112,14 +113,17 @@ public class ConnectionAddress extends AbstractAuditable {
 
     @Length(min = 1, max = 150)
     @Audited
+    @SafeHtml
     private String ownerName;
 
     @Length(min = 1, max = 250)
     @Audited
+    @SafeHtml
     private String address;
 
     @Length(min = 1, max = 50)
     @Audited
+    @SafeHtml
     private String doorNumber;
 
     @Override

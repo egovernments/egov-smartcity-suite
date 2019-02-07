@@ -49,6 +49,7 @@
 package org.egov.wtms.web.controller.application;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 import org.egov.wtms.application.entity.ActivateConnection;
@@ -86,7 +87,7 @@ public class ActivateConsumerCodeController {
     }
 
     @RequestMapping(value = "/activateConsumerCode/{consumerCode}", method = RequestMethod.POST)
-    public String activateConnection(@ModelAttribute final ActivateConnection activateConnection,
+    public String activateConnection(@Valid @ModelAttribute final ActivateConnection activateConnection,
             @PathVariable final String consumerCode, final BindingResult resultBinder,
             final RedirectAttributes redirectAttrs, final Model model) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService

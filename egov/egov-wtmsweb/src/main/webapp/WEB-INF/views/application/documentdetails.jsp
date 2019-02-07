@@ -125,12 +125,12 @@
 					<c:choose>
 						<c:when test="${docs.required}">
 							<td>
-								<input type="file" id="file${status.index}id" name="applicationDocs[${status.index}].files" class="file-ellipsis upload-file" required="required">
+								<input type="file" id="file${status.index}id" name="applicationDocs[${status.index}].files" class="file-ellipsis upload-file" required="required" data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 							</td>
 						</c:when>
 						<c:otherwise>
 							<td>
-								<input type="file" id="file${status.index}id" name="applicationDocs[${status.index}].files" class="file-ellipsis upload-file">
+								<input type="file" id="file${status.index}id" name="applicationDocs[${status.index}].files" class="file-ellipsis upload-file" data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 							</td>
 						</c:otherwise>		
 					</c:choose> 

@@ -57,6 +57,8 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.REVENUE_WARD;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.wtms.application.entity.WaterConnExecutionDetails;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -127,7 +129,7 @@ public class WaterConnectionMaterialDemandController {
 
     @PostMapping(value = "/update/{applicationnumber}")
     public String updateApplicationDetails(@PathVariable("applicationnumber") final String applicationNumber,
-            @ModelAttribute final WaterConnectionDetails waterConnectionDetails, final Model model) {
+            @Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails, final Model model) {
         model.addAttribute("message", connectionDemandService.updateUlbMaterial(applicationNumber, waterConnectionDetails));
         model.addAttribute("mode", "success");
         model.addAttribute("waterConnectionDetails", applicationNumber != null

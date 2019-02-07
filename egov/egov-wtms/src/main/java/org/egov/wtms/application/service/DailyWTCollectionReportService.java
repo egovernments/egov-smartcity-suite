@@ -134,7 +134,7 @@ public class DailyWTCollectionReportService {
 
         queryStr.append(
                 "select distinct receiptheader from ReceiptHeader receiptheader inner join fetch receiptheader.receiptInstrument instHeader"
-                        + " inner join fetch instHeader.instrumentType instType where receiptheader.service.name =:service and (receiptdate between :fromDate and :toDate) ");
+                        .concat(" inner join fetch instHeader.instrumentType instType where receiptheader.service.name =:service and (receiptdate between :fromDate and :toDate)"));
         if (StringUtils.isNotBlank(collectionMode))
             queryStr.append(" and receiptheader.source =:mode ");
         if (StringUtils.isNotBlank(collectionOperator))
@@ -171,8 +171,8 @@ public class DailyWTCollectionReportService {
             final StringBuilder queryString = new StringBuilder();
             queryString
                     .append("select wardboundary.name as \"wardName\",dcbinfo.houseno as \"houseNo\" from egwtr_mv_dcb_view dcbinfo"
-                            + " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id  where dcbinfo.hscno = '"
-                            + receiptHeader.getConsumerCode() + "'");
+                            .concat(" INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id  where dcbinfo.hscno = '")
+                            .concat(receiptHeader.getConsumerCode().toString()) .concat("'") );
             final NativeQuery finalQuery = getCurrentSession().createNativeQuery(queryString.toString());
             finalQuery.setResultTransformer(new AliasToBeanResultTransformer(DefaultersReport.class));
             List<DefaultersReport> listforWardAndHsc = new ArrayList<DefaultersReport>();

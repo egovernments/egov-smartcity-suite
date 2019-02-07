@@ -62,6 +62,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 import org.egov.commons.Installment;
@@ -193,7 +194,7 @@ public class MeterReadingController {
     }
 
     @RequestMapping(value = "/meterentry/{consumerCode}", method = RequestMethod.POST)
-    public String updateMeterEntry(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
+    public String updateMeterEntry(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model,
             final HttpServletRequest request) {
         Date givenDate = null;

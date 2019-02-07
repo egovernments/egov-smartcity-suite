@@ -100,8 +100,7 @@ function checkRateExists(){
 	$.ajax({
 		url : '/wtms/masters/usageslab-rate-exists-ajax',
 		type : 'GET',
-		data : {
-			slabName
+		data : { "slabName" :slabName
 		},
 		async : false,
 		dataType : "json",
@@ -184,11 +183,8 @@ function validateUsageSlabOverLap(usage, slabName, fromVolume, toVolume){
 	$.ajax({
 		url : '/wtms/masters/usageslab-overlap-ajax',
 		type : "GET",
-		data : {
-			usage,
-			slabName,
-			fromVolume,
-			toVolume
+		data : {"usage" :usage, "slabName" :slabName, "fromVolume" :fromVolume, "toVolume" :toVolume 
+			
 		},
 		async : false,
 		dataType : "json",
@@ -211,11 +207,8 @@ function validateUsageSlabGap(usage, slabName, fromVolume, toVolume){
 	$.ajax({
 		url : "/wtms/masters/usageslab-gap-ajax",
 		type : "GET",
-		data : {
-			usage,
-			slabName,
-			fromVolume,
-			toVolume
+		data : {"usage" :usage, "slabName" :slabName, "fromVolume" :fromVolume, "toVolume" :toVolume
+			
 		},
 		async : false,
 		dataType : "json",

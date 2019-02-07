@@ -162,6 +162,7 @@ public class WaterConnectionDetails extends StateAware<Position> {
     private WaterSupply waterSupply;
 
     @Length(max = 1024)
+    @SafeHtml
     private String buildingName;
 
     @ManyToOne
@@ -174,11 +175,13 @@ public class WaterConnectionDetails extends StateAware<Position> {
     private Integer numberOfPerson;
 
     @Length(max = 1024)
+    @SafeHtml
     private String connectionReason;
 
     private Integer numberOfRooms;
 
     @Length(max = 150)
+    @SafeHtml
     private String bplCardHolderName;
 
     @NotNull
@@ -195,8 +198,9 @@ public class WaterConnectionDetails extends StateAware<Position> {
     @Temporal(value = TemporalType.DATE)
     private Date workOrderDate;
 
+    @SafeHtml
     private String workOrderNumber;
-
+    @SafeHtml
     private String estimationNumber;
 
     @Temporal(value = TemporalType.DATE)
@@ -265,14 +269,18 @@ public class WaterConnectionDetails extends StateAware<Position> {
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<NonMeteredConnBillDetails> nonmeteredBillDetails = new HashSet<>(0);
 
+    @SafeHtml
     private String closeConnectionType;
 
+    @SafeHtml
     private String previousApplicationType;
 
     @Length(max = 1024)
+    @SafeHtml
     private String closeconnectionreason;
 
     @Length(max = 1024)
+    @SafeHtml
     private String reConnectionReason;
 
     @Transient
@@ -293,12 +301,15 @@ public class WaterConnectionDetails extends StateAware<Position> {
     @Transient
     private List<DemandDetail> demandDetailBeanList = new ArrayList<>(0);
 
+    @SafeHtml
     private String referenceNumber;
 
     @Length(max = 1024)
+    @SafeHtml
     private String deactivateReason;
 
     @Length(max = 1024)
+    @SafeHtml
     private String communicationAddress;
 
     public String getCommunicationAddress() {

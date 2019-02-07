@@ -147,7 +147,8 @@
 					<form:checkbox id="activeid" path="donationHeader.active" value ="donationHeader.active" />
 					<form:errors path="donationHeader.active" />
 				</div>
-			</div>								
+			</div>					
+<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>						
 <form:hidden id="typeOfConnection" path="" value="${typeOfConnection}"/>
 <form:hidden id="reqAttr" path="" value="${reqAttr}"/>
 <input type="hidden" value="${mode}" id="mode" />

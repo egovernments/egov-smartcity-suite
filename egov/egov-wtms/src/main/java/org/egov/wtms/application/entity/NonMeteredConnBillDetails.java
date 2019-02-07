@@ -49,6 +49,7 @@ package org.egov.wtms.application.entity;
 
 import org.egov.commons.Installment;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -77,6 +78,7 @@ public class NonMeteredConnBillDetails extends AbstractAuditable {
     @JoinColumn(name = "connectiondetailsid", nullable = false)
     private WaterConnectionDetails waterConnectionDetails;
 
+    @SafeHtml
     private String billNo;
 
     @ManyToOne(fetch = FetchType.LAZY)

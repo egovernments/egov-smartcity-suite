@@ -98,6 +98,7 @@
 						</div>
 				</div>	
 			</div>
+<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 <input type="hidden" name="applicationProcessTime" value="${applicationProcessTime.id}" />
 <form:hidden id="reqAttr" path="" value="${reqAttr}"/>
 <input type="hidden" value="${mode}" id="mode" />

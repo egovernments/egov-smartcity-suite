@@ -66,6 +66,7 @@
     </div>
 
     <div class="page-container" id="page-container">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <input type="hidden" id="mode"  name="mode" value="${mode}"/>
         <input type="hidden" name="approvalPositionExist" id="approvalPositionExist" value="${approvalPositionExist}"/>
         <input type="hidden" name="wfstateDesc" id="wfstateDesc" value="${waterConnectionDetails.state.value}"/>

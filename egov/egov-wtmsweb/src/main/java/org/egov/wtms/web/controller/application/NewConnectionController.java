@@ -237,7 +237,7 @@ public class NewConnectionController extends GenericConnectionController {
             Model model, @RequestParam String workFlowAction,
             @RequestParam("files") MultipartFile... files) {
 
-        User currentUser = securityUtils.getCurrentUser();
+    	User currentUser = securityUtils.getCurrentUser();
         boolean loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(currentUser);
         boolean isCSCOperator = waterTaxUtils.isCSCoperator(currentUser);
         boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(currentUser);

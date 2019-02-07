@@ -118,7 +118,7 @@ public class SearchNoticeService {
         queryStr.append(
                 " INNER JOIN eg_bill bill on dcbinfo.hscno = bill.consumer_id and dcbinfo.demand= bill.id_demand");
         queryStr.append(" INNER JOIN eg_boundary zoneboundary on dcbinfo.zoneid = zoneboundary.id ");
-        queryStr.append(" where dcbinfo.connectionstatus = '" + ConnectionStatus.ACTIVE.toString() + "' ");
+        queryStr.append(" where dcbinfo.connectionstatus = '" .concat(ConnectionStatus.ACTIVE.toString()) .concat("' ") );
         queryStr.append(" and bill.module_id = (select id from eg_module where name ='Water Tax Management')");
         queryStr.append(" and bill.id_bill_type = (select id from eg_bill_type  where code ='MANUAL')");
         queryStr.append(" and bill.is_cancelled ='N' ");
@@ -142,7 +142,7 @@ public class SearchNoticeService {
         final Query query = entityManager.unwrap(Session.class).createNativeQuery(queryStr.toString());
         setSearchQueryParameters(searchNoticeDetails, null, null, query);
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("GenerateConnectionBill -- Search Result " + queryStr.toString());
+            LOGGER.debug("GenerateConnectionBill -- Search Result " .concat(queryStr.toString()) );
         query.setResultTransformer(new AliasToBeanResultTransformer(SearchNoticeDetails.class));
         final long endTime = System.currentTimeMillis();
         if (LOGGER.isDebugEnabled()) {
@@ -343,7 +343,7 @@ public class SearchNoticeService {
                 + " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id"
                 + " INNER JOIN eg_bill bill on dcbinfo.hscno = bill.consumer_id and dcbinfo.demand= bill.id_demand"
                 + " INNER JOIN eg_boundary zoneboundary on dcbinfo.zoneid = zoneboundary.id ");
-        queryStr.append(" where dcbinfo.connectionstatus = '" + ConnectionStatus.ACTIVE.toString() + "' ");
+        queryStr.append(" where dcbinfo.connectionstatus = '".concat(ConnectionStatus.ACTIVE.toString()).concat("' ") );
         queryStr.append(" and bill.module_id = (select id from eg_module where name ='Water Tax Management')");
         queryStr.append(" and bill.id_bill_type = (select id from eg_bill_type  where code ='MANUAL')");
         queryStr.append(" and bill.is_cancelled ='N' ");
@@ -366,7 +366,7 @@ public class SearchNoticeService {
         Query query = entityManager.unwrap(Session.class).createNativeQuery(queryStr.toString());
         setSearchQueryParameters(searchNoticeDetails, null, null, query);
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("GenerateConnectionBill -- count Result " + queryStr.toString());
+            LOGGER.debug("GenerateConnectionBill -- count Result " .concat(queryStr.toString()) );
         return ((BigInteger) query.uniqueResult()).longValue();
     }
 

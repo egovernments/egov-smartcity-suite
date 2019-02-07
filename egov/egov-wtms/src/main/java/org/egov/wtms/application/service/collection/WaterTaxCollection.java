@@ -185,10 +185,10 @@ public class WaterTaxCollection extends TaxCollection {
                 .getConsumerCode();
         try {
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("updateDemandDetails : Demand before proceeding : " + demand);
-                LOGGER.debug("updateDemandDetails : collection back update started for property : " + indexNo
-                        + " and receipt event is " + billRcptInfo.getEvent() + ". Total Receipt amount is."
-                        + totalAmount + " with receipt no." + billRcptInfo.getReceiptNum());
+                LOGGER.debug("updateDemandDetails : Demand before proceeding : " .concat(demand.toString()) );
+                LOGGER.debug("updateDemandDetails : collection back update started for property : " .concat(indexNo.toString()) 
+                        .concat(" and receipt event is ")  .concat(billRcptInfo.getEvent().toString())  .concat(". Total Receipt amount is.") 
+                        .concat(totalAmount.toString())  .concat(" with receipt no.")  .concat(billRcptInfo.getReceiptNum().toString()) );
             }
 
             if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CREATED)) {
@@ -210,20 +210,20 @@ public class WaterTaxCollection extends TaxCollection {
                     && waterConnectionDetailsService.getPortalInbox(waterConnectionDetails.getApplicationNumber()) != null)
                 waterConnectionDetailsService.updatePortalMessage(waterConnectionDetails);
             if (LOGGER.isDebugEnabled())
-                LOGGER.debug("updateDemandDetails : Demand after processed : " + demand);
+                LOGGER.debug("updateDemandDetails : Demand after processed : " .concat(demand.toString()) );
         } catch (final Exception e) {
 
-            throw new ApplicationRuntimeException("Error occured during back update of DCB : " + e.getMessage(), e);
+            throw new ApplicationRuntimeException("Error occured during back update of DCB : " .concat(e.getMessage().toString()) , e);
         }
     }
 
     private void updateCollForChequeBounce(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
-        LOGGER.debug("reconcileCollForChequeBounce : Updating Collection Started For Demand : " + demand
-                + " with BillReceiptInfo - " + billRcptInfo);
+        LOGGER.debug("reconcileCollForChequeBounce : Updating Collection Started For Demand : " .concat(demand.toString()) 
+                .concat(" with BillReceiptInfo - ")  .concat(billRcptInfo.toString()) );
         cancelBill(Long.valueOf(billRcptInfo.getBillReferenceNum()));
         demand.setStatus(DMD_STATUS_CHEQUE_BOUNCED);
         updateDmdDetForRcptCancelAndCheckBounce(demand, billRcptInfo);
-        LOGGER.debug("reconcileCollForChequeBounce : Updating Collection finished For Demand : " + demand);
+        LOGGER.debug("reconcileCollForChequeBounce : Updating Collection finished For Demand : " .concat(demand.toString()) );
     }
 
     @Transactional
@@ -252,8 +252,8 @@ public class WaterTaxCollection extends TaxCollection {
                                     demand.setAmtCollected(
                                             demand.getAmtCollected().subtract(instrumentHeader.getInstrumentAmount()));
                             }
-                            LOGGER.info("Deducted Collected amount Rs." + rcptAccInfo.getCrAmount() + " for tax : "
-                                    + reason + " and installment : " + installment);
+                            LOGGER.info("Deducted Collected amount Rs." .concat(rcptAccInfo.getCrAmount().toString())  .concat(" for tax : ") 
+                                    .concat(reason.toString())  .concat(" and installment : ")  .concat(installment.toString()) );
                             break;
                         }
                         break;
@@ -302,14 +302,14 @@ public class WaterTaxCollection extends TaxCollection {
     public void updateCollForRcptCreate(final EgDemand demand, final BillReceiptInfo billRcptInfo,
             final BigDecimal totalAmount) {
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("updateCollForRcptCreate : Updating Collection Started For Demand : " + demand
-                    + " with BillReceiptInfo - " + billRcptInfo);
+            LOGGER.debug("updateCollForRcptCreate : Updating Collection Started For Demand : " .concat(demand.toString()) 
+                    .concat(" with BillReceiptInfo - ")  .concat(billRcptInfo.toString()) );
         try {
             updateDemandDetailForReceiptCreate(billRcptInfo.getAccountDetails(), demand, billRcptInfo, totalAmount);
         } catch (final Exception e) {
 
             throw new ApplicationRuntimeException(
-                    "Error occured during back update of DCB : updateCollForRcptCreate() " + e.getMessage(), e);
+                    "Error occured during back update of DCB : updateCollForRcptCreate() " .concat(e.getMessage().toString()) , e);
         }
     }
 
@@ -342,7 +342,7 @@ public class WaterTaxCollection extends TaxCollection {
                 installmentWiseDemandDetailsByReason.get(installmentDesc)
                         .put(dmdRsn.getEgDemandReasonMaster().getReasonMaster(), dmdDtls);
             } else if (LOGGER.isDebugEnabled())
-                LOGGER.debug("saveCollectionDetails - demand detail amount is zero " + dmdDtls);
+                LOGGER.debug("saveCollectionDetails - demand detail amount is zero " .concat(dmdDtls.toString()) );
 
         EgDemandDetails demandDetail;
         final Map<String, Installment> currInstallments = new HashMap<>();
@@ -397,14 +397,14 @@ public class WaterTaxCollection extends TaxCollection {
                     try {
                         persistCollectedReceipts(demandDetail, billRcptInfo.getReceiptNum(), totalAmount,
                                 billRcptInfo.getReceiptDate(), demandDetail.getAmtCollected());
-                        LOGGER.debug("Persisted Collected Receipts ,amount:" + totalAmount);
+                        LOGGER.debug("Persisted Collected Receipts ,amount:" .concat(totalAmount.toString()) );
                     } catch (final Exception e) {
-                        throw new ApplicationRuntimeException("Error while persisting receipts " + e.getMessage(), e);
+                        throw new ApplicationRuntimeException("Error while persisting receipts " .concat(e.getMessage().toString()) , e);
                     }
                     if (LOGGER.isDebugEnabled())
-                        LOGGER.debug("Persisted demand and receipt details for tax : " + reason + " installment : "
-                                + instDesc + " with receipt No : " + billRcptInfo.getReceiptNum() + " for Rs. "
-                                + rcptAccInfo.getCrAmount());
+                        LOGGER.debug("Persisted demand and receipt details for tax : " .concat(reason.toString())  .concat(" installment : ") 
+                                .concat(instDesc.toString())  .concat(" with receipt No : ")  .concat(billRcptInfo.getReceiptNum().toString())  .concat(" for Rs. ") 
+                                .concat(rcptAccInfo.getCrAmount().toString()) );
                 }
 
     }
@@ -470,15 +470,15 @@ public class WaterTaxCollection extends TaxCollection {
     // Receipt cancellation ,updating bill,demanddetails,demand
     @Transactional
     public void updateCollectionForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
-        LOGGER.debug("reconcileCollForRcptCancel : Updating Collection Started For Demand : " + demand
-                + " with BillReceiptInfo - " + billRcptInfo);
+        LOGGER.debug("reconcileCollForRcptCancel : Updating Collection Started For Demand : " .concat(demand.toString()) 
+                .concat(" with BillReceiptInfo - ")  .concat(billRcptInfo.toString()) );
         try {
             cancelBill(Long.valueOf(billRcptInfo.getBillReferenceNum()));
             updateDmdDetForRcptCancel(demand, billRcptInfo);
-            LOGGER.debug("reconcileCollForRcptCancel : Updating Collection finished For Demand : " + demand);
+            LOGGER.debug("reconcileCollForRcptCancel : Updating Collection finished For Demand : " .concat(demand.toString()) );
         } catch (final Exception e) {
 
-            throw new ApplicationRuntimeException("Error occured during back update of DCB : " + e.getMessage(), e);
+            throw new ApplicationRuntimeException("Error occured during back update of DCB : " .concat(e.getMessage().toString()) , e);
         }
     }
 
@@ -509,9 +509,9 @@ public class WaterTaxCollection extends TaxCollection {
                         if (demandDetail.getAmtCollected().compareTo(rcptAccInfo.getCrAmount()) < 0)
                             throw new ApplicationRuntimeException(
                                     "updateDmdDetForRcptCancel : Exception while updating cancel receipt, "
-                                            + "to be deducted amount " + rcptAccInfo.getCrAmount()
-                                            + " is greater than the collected amount " + demandDetail.getAmtCollected()
-                                            + " for demandDetail " + demandDetail);
+                                            .concat("to be deducted amount ")  .concat(rcptAccInfo.getCrAmount().toString()) 
+                                            .concat(" is greater than the collected amount ")  .concat(demandDetail.getAmtCollected().toString()) 
+                                            .concat(" for demandDetail ")  .concat(demandDetail.toString()) );
 
                         demandDetail
                                 .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
@@ -519,8 +519,8 @@ public class WaterTaxCollection extends TaxCollection {
                                 && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
                             demand.setAmtCollected(demand.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
 
-                        LOGGER.info("Deducted Collected amount Rs." + rcptAccInfo.getCrAmount() + " for tax : " + reason
-                                + " and installment : " + installment);
+                        LOGGER.info("Deducted Collected amount Rs." .concat(rcptAccInfo.getCrAmount().toString())  .concat(" for tax : ")  .concat(reason.toString()) 
+                                .concat(" and installment : ")  .concat(installment.toString()) );
                     }
             }
         updateReceiptStatusWhenCancelled(billRcptInfo.getReceiptNum());
@@ -604,10 +604,10 @@ public class WaterTaxCollection extends TaxCollection {
      */
     private void prepareTaxMap(final Map<String, BigDecimal> retMap, final String installment, final ReceiptDetail rd,
             final String type) {
-        if (retMap.get(installment + type) == null)
-            retMap.put(installment + type, rd.getCramountToBePaid());
+        if (retMap.get(installment .concat(type.toString()) ) == null)
+            retMap.put(installment .concat(type.toString()) , rd.getCramountToBePaid());
         else
-            retMap.put(installment + type, retMap.get(installment + type).add(rd.getCramountToBePaid()));
+            retMap.put(installment .concat(type.toString()) , retMap.get(installment .concat(type.toString()) ).add(rd.getCramountToBePaid()));
     }
 
     @Override
@@ -616,8 +616,8 @@ public class WaterTaxCollection extends TaxCollection {
         final Long billID = Long.valueOf(billReferenceNumber);
         final List<EgBillDetails> billDetails = new ArrayList<>();
         final EgBill bill = connectionBillService.updateBillWithLatest(billID);
-        LOGGER.debug("Reconstruct consumer code :" + bill.getConsumerId() + ", with bill reference number: "
-                + billReferenceNumber + ", for Amount Paid :" + actualAmountPaid);
+        LOGGER.debug("Reconstruct consumer code :" .concat(bill.getConsumerId().toString())  .concat(", with bill reference number: ") 
+                .concat(billReferenceNumber.toString())  .concat(", for Amount Paid :")  .concat(actualAmountPaid.toString()) );
         final CollectionApportioner apportioner = new CollectionApportioner();
         billDetails.addAll(bill.getEgBillDetails());
         return apportioner.reConstruct(actualAmountPaid, billDetails, functionDAO, chartOfAccountsDAO,

@@ -63,6 +63,7 @@
 				<form:form id="drillDownReportForm" method="get"
 					class="form-horizontal form-groups-bordered"
 					modelAttribute="reportHelper">
+					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-heading">
 							<div class="panel-title">

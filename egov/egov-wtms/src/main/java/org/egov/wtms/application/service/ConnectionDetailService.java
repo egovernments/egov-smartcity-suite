@@ -148,8 +148,8 @@ public class ConnectionDetailService {
             waterTaxDue.setConsumerCode(Collections.emptyList());
             waterTaxDue.setConnectionCount(0);
             waterTaxDue.setErrorCode(WaterTaxConstants.CONSUMERCODE_NOT_EXIST_ERR_CODE);
-            waterTaxDue.setErrorMessage(WaterTaxConstants.WTAXDETAILS_CONSUMER_CODE_NOT_EXIST_ERR_MSG_PREFIX
-                    + consumerCode + WaterTaxConstants.WTAXDETAILS_NOT_EXIST_ERR_MSG_SUFFIX);
+            waterTaxDue.setErrorMessage(WaterTaxConstants.WTAXDETAILS_CONSUMER_CODE_NOT_EXIST_ERR_MSG_PREFIX.concat(consumerCode.toString())
+                     .concat(WaterTaxConstants.WTAXDETAILS_NOT_EXIST_ERR_MSG_SUFFIX).toString());
         }
         return waterTaxDue;
     }
@@ -171,7 +171,7 @@ public class ConnectionDetailService {
             waterTaxDue.setIsSuccess(false);
             waterTaxDue.setErrorCode(WaterTaxConstants.PROPERTYID_NOT_EXIST_ERR_CODE);
             waterTaxDue.setErrorMessage(WaterTaxConstants.WTAXDETAILS_PROPERTYID_NOT_EXIST_ERR_MSG_PREFIX
-                    + propertyIdentifier + WaterTaxConstants.WTAXDETAILS_NOT_EXIST_ERR_MSG_SUFFIX);
+                    .concat(propertyIdentifier.toString()).concat(WaterTaxConstants.WTAXDETAILS_NOT_EXIST_ERR_MSG_SUFFIX.toString()) );
         } else {
             waterTaxDue = new WaterTaxDue();
             final List<String> consumerCodes = new ArrayList<>();

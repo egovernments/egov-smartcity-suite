@@ -202,8 +202,8 @@ public class ConnectionBillService extends BillServiceInterface {
                 billdetail.setModifiedDate(currentDate);
                 billdetail.setOrderNo(i++);
                 billdetail.setDescription(
-                        reason.getEgDemandReasonMaster().getReasonMaster() + " - " + installment.getDescription()
-                                + " # " + billObj.getCurrentDemand().getEgInstallmentMaster().getDescription());
+                        reason.getEgDemandReasonMaster().getReasonMaster() .concat(" - ")  .concat(installment.getDescription().toString()) 
+                                .concat(" # ")  .concat(billObj.getCurrentDemand().getEgInstallmentMaster().getDescription().toString()) );
                 billdetail.setFunctionCode(STRING_WCMS_FUCNTION_CODE);
                 if (waterConnectionDetails != null && waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED))
                     if (billdetail.getDescription().contains(DEMANDRSN_REASON_ADVANCE))
@@ -322,8 +322,8 @@ public class ConnectionBillService extends BillServiceInterface {
                         billdetail.setModifiedDate(new Date());
                         j = billDetails.size() + 1;
                         billdetail.setOrderNo(j);
-                        billdetail.setDescription(reasonmaster.getEgDemandReasonMaster().getReasonMaster() + " - "
-                                + installment.getDescription());
+                        billdetail.setDescription(reasonmaster.getEgDemandReasonMaster().getReasonMaster() .concat(" - ") 
+                                .concat(installment.getDescription().toString()) );
                         if (billdetail.getDescription().contains(DEMANDRSN_REASON_ADVANCE))
                             billdetail.setPurpose(PURPOSE.ADVANCE_AMOUNT.toString());
                         else if (billdetail.getEgDemandReason().getEgInstallmentMaster().getToDate()
@@ -357,7 +357,7 @@ public class ConnectionBillService extends BillServiceInterface {
         if (LOG.isDebugEnabled())
             LOG.debug("updateBillWithLatest old bill = {}", bill);
         if (bill == null)
-            throw new ApplicationRuntimeException("No bill found with bill reference no :" + billId);
+            throw new ApplicationRuntimeException("No bill found with bill reference no :" .concat(billId.toString()) );
         bill.getEgBillDetails().clear();
         WaterConnectionBillable waterConnectionBillable = (WaterConnectionBillable) context.getBean("waterConnectionBillable");
 
@@ -383,9 +383,10 @@ public class ConnectionBillService extends BillServiceInterface {
     @SuppressWarnings("unchecked")
     public List<Installment> getAdvanceInstallmentsList(Date startDate) {
         List<Installment> advanceInstallments;
-        String query = "select inst from Installment inst where inst.module.name = '" + PROPERTY_MODULE_NAME
-                + "' and inst.fromDate >= :startdate order by inst.fromDate asc ";
-        advanceInstallments = getCurrentSession().createQuery(query).setParameter("startdate", startDate)
+        String query = "select inst from Installment inst where inst.module.name = :moduleName and inst.fromDate >= :startdate order by inst.fromDate asc ";
+        advanceInstallments = getCurrentSession().createQuery(query)
+        		.setParameter("moduleName", PROPERTY_MODULE_NAME)
+        		.setParameter("startdate", startDate)
                 .setMaxResults(MAX_ADVANCES_ALLOWED).list();
         return advanceInstallments;
     }

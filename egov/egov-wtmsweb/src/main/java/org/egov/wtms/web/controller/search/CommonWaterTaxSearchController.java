@@ -68,6 +68,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import java.math.BigDecimal;
 
 import static java.math.BigDecimal.ZERO;
@@ -184,7 +186,7 @@ public class CommonWaterTaxSearchController {
     }
 
     @PostMapping(value = "commonSearch-form/")
-    public String searchConnectionSubmit(@ModelAttribute ConnectionSearchRequest searchRequest,
+    public String searchConnectionSubmit(@Valid @ModelAttribute ConnectionSearchRequest searchRequest,
                                          BindingResult resultBinder, Model model, HttpServletRequest request) {
         WaterConnectionDetails waterConnectionDetails = null;
         String applicationType = request.getParameter(APPLICATIONTYPE);

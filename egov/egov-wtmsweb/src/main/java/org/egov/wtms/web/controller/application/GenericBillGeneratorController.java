@@ -69,6 +69,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import javax.validation.ValidationException;
 import java.math.BigDecimal;
 
@@ -128,7 +129,7 @@ public class GenericBillGeneratorController {
     }
 
     @PostMapping(value = "/generatebill/{applicationCode}")
-    public String payTax(@ModelAttribute WaterConnectionDetails waterConnectionDetails, @PathVariable String applicationCode,
+    public String payTax(@ModelAttribute("waterConnectionDetails") WaterConnectionDetails waterConnectionDetails, @PathVariable String applicationCode,
                          @RequestParam String applicationTypeCode, Model model) {
         WaterConnectionDetails waterconnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(applicationCode);
         AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(

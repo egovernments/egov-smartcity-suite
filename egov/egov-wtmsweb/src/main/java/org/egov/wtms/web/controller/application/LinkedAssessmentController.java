@@ -48,6 +48,8 @@
 
 package org.egov.wtms.web.controller.application;
 
+import javax.validation.Valid;
+
 import org.egov.wtms.application.entity.LinkedAssessment;
 import org.egov.wtms.application.service.LinkAssessmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +75,7 @@ public class LinkedAssessmentController {
     }
 
     @RequestMapping(value = "/linkedAssessment", method = RequestMethod.POST)
-    public String linkActiveAssessments(@ModelAttribute final LinkedAssessment linkedAssessment, final Model model) {
+    public String linkActiveAssessments(@Valid @ModelAttribute final LinkedAssessment linkedAssessment, final Model model) {
         linkAssessmentService.linkActiveAssessmentToConnection(linkedAssessment);
         model.addAttribute("propertyIdentifier",
                 linkedAssessment.getActiveAssessmentDetails().getAssessmentNumber());

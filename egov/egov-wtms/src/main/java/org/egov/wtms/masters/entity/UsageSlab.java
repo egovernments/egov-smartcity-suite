@@ -65,7 +65,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "egwtr_usage_slab")
-@Unique(id = "id", columnName = { "slabname" }, fields = { "slabname" }, enableDfltMsg = true)
+@Unique(id = "id", columnName = { "slabName" }, fields = { "slabName" }, enableDfltMsg = true)
 @SequenceGenerator(name = UsageSlab.SEQ_USAGE_SLAB, sequenceName = UsageSlab.SEQ_USAGE_SLAB, allocationSize = 1)
 @AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
         @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate")
@@ -82,8 +82,8 @@ public class UsageSlab extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_USAGE_SLAB, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @SafeHtml
     @NotNull
+    @SafeHtml
     @Audited
     private String slabName;
 

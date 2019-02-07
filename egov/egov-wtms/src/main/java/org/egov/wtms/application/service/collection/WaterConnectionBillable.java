@@ -281,9 +281,9 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     @Override
     public String getDescription() {
         if (null != getWaterConnectionDetails().getConnection().getConsumerCode())
-            return "Water Charge H.S.C No: " + getWaterConnectionDetails().getConnection().getConsumerCode();
+            return "Water Charge H.S.C No: " .concat(getWaterConnectionDetails().getConnection().getConsumerCode().toString()) ;
         else
-            return "Water Charge Application Number: " + getWaterConnectionDetails().getApplicationNumber();
+            return "Water Charge Application Number: " .concat(getWaterConnectionDetails().getApplicationNumber().toString()) ;
     }
 
     @Override

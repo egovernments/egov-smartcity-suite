@@ -71,6 +71,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import javax.validation.Valid;
+
 @Controller
 @RequestMapping(value = "/masters")
 public class UsageSlabMasterController {
@@ -94,7 +96,7 @@ public class UsageSlabMasterController {
     }
 
     @RequestMapping(value = "/usageslab-create", method = POST)
-    public String saveUsageSlab(@ModelAttribute final UsageSlab usageSlab, final BindingResult bindingResult,
+    public String saveUsageSlab(@Valid @ModelAttribute final UsageSlab usageSlab, final BindingResult bindingResult,
             final RedirectAttributes redirectAttrs, final Model model) {
         usageSlabService.save(usageSlab);
         model.addAttribute(MODE_VALUE, "create");
@@ -143,7 +145,7 @@ public class UsageSlabMasterController {
     }
 
     @RequestMapping(value = "/usageslab-edit/{id}", method = POST)
-    public String updteUsageSlab(@ModelAttribute(USAGESLAB_SEARCH_REQUEST) final UsageSlabSearchRequest usageSlabSearchRequest,
+    public String updteUsageSlab(@Valid @ModelAttribute(USAGESLAB_SEARCH_REQUEST) final UsageSlabSearchRequest usageSlabSearchRequest,
             @PathVariable("id") final String id,
             final RedirectAttributes redirectAttrs, final Model model) {
         UsageSlab existingObject = null;

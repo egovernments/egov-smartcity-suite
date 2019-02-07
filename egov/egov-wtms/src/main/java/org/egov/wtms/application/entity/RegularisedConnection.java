@@ -65,6 +65,7 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egwtr_regularise_connection_detail")
@@ -79,18 +80,23 @@ public class RegularisedConnection extends StateAware<Position> {
     private Long id;
 
     @NotNull
+    @SafeHtml
     private String ulbCode;
 
     @NotNull
+    @SafeHtml
     private String propertyIdentifier;
 
+    @SafeHtml
     private String applicationNumber;
     
     @Temporal(value = TemporalType.DATE)
     private Date applicationDate;
     
+    @SafeHtml
     private String source;
  
+    @SafeHtml
     private String referenceNumber;
 
     @Override

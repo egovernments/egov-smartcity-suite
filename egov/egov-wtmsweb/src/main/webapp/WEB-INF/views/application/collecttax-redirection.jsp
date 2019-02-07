@@ -57,7 +57,7 @@
 	<head>
 		<title><spring:message code="title.collect.tax.view" /></title>
 		<script type="text/javascript">
-
+            debugger;
             jQuery(document).ready(function () {
                 var collectXML = '${collectxml}';
                 var citizenRole= '${citizenrole}';

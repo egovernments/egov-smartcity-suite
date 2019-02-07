@@ -52,12 +52,13 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-
  <form:form method ="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="waterRatesHeader" id="waterRatesform"
 			cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading"></div>
 	<div class="panel-body custom-form">
+	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+	
 <form:hidden path="connectionType" value="${waterRatesConnecionType}" id="connectionType" name="waterRatesConnecionType"/>
 <div class="form-group">
      <label class="col-sm-3 control-label text-right"><spring:message code="lbl.watersourcetype" />:<span class="mandatory"></span></label>

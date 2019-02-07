@@ -83,6 +83,7 @@ public class LegacyReceipts extends AbstractAuditable {
     @JoinColumn(name = "connectiondetails")
     private WaterConnectionDetails waterConnectionDetails;
 
+    @SafeHtml
     private String bookNumber;
 
     @NotNull

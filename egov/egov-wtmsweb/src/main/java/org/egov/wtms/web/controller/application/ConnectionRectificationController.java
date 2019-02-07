@@ -67,6 +67,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
@@ -92,7 +93,7 @@ public class ConnectionRectificationController {
     }
 
     @RequestMapping(value = "/connectionrectification", method = RequestMethod.POST)
-    public String searchConnections(@ModelAttribute final ConnectionRectification connectionRectification,
+    public String searchConnections(@Valid @ModelAttribute final ConnectionRectification connectionRectification,
             final BindingResult resultBinder, final RedirectAttributes redirectAttrs, final Model model) {
 
         final List<WaterConnectionDetails> waterConnectionDetailsList = new ArrayList<WaterConnectionDetails>(0);

@@ -52,7 +52,6 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-
 <form:form method="post" action="" class="form-horizontal form-groups-bordered" id="applicationprocesstime-view" 
  cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 <input type="hidden" name="applicationProcessTimeList" id="applicationProcessTimeList" value="${applicationProcessTimeList}">

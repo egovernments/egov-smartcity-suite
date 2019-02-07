@@ -45,29 +45,21 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.wtms.autonumber.impl;
+package org.egov.wtms.config.properties;
 
-import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
-import org.egov.wtms.autonumber.BillReferenceNumberGenerator;
-import org.egov.wtms.utils.WaterTaxUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATER_CONN_BILLNO_SEQ;
+@Configuration
+@PropertySource(name = "wtmsApplicationSettings", value={"classpath:config/wtms-application-config.properties"}, ignoreResourceNotFound = true)
+public class WTMSApplicationSettings {
 
-@Service
-public class BillReferenceNumberGeneratorImpl implements BillReferenceNumberGenerator {
+	@Autowired
+    private Environment environment;
 
-    @Autowired
-    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
-
-    @Autowired
-    private WaterTaxUtils waterTaxUtils;
-
-    @Override
-    public String generateBillNumber(final String installmentYear) {
-        return String.format("%s%06d", waterTaxUtils.getCityCode(),
-                genericSequenceNumberGenerator.getNextSequence(WATER_CONN_BILLNO_SEQ .concat(installmentYear.toString()) ));
+    public Integer getValue(String key) {
+        return environment.getProperty(key, Integer.class);
     }
-
 }

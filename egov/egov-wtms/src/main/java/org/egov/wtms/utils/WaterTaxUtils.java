@@ -86,6 +86,7 @@ import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -99,6 +100,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -209,6 +213,13 @@ public class WaterTaxUtils {
 
     @Autowired
     private InstallmentDao installmentDao;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
+    
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
     public List<AppConfigValues> getAppConfigValueByModuleNameAndKeyName(String moduleName, String keyName) {
         return appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, keyName);
@@ -422,24 +433,29 @@ public class WaterTaxUtils {
         return asignList.isEmpty() ? EMPTY : asignList.get(0).getEmployee().getName();
     }
 
+    
+    
     public EgwStatus getStatusByCodeAndModuleType(String code, String moduleName) {
-        return (EgwStatus) persistenceService.find("from EgwStatus where moduleType=? and code=?", moduleName, code);
+    	
+        return (EgwStatus) getCurrentSession().createQuery("from EgwStatus where moduleType= :moduleName and code= :code").setParameter("code", code).setParameter("moduleName", moduleName).getSingleResult();
+        
     }
 
     public String getRevenueWardForConsumerCode(String code, WaterConnectionDetails waterConnectionDetails) {
 
         BasicPropertyImpl basicPropertyImpl;
         if (waterConnectionDetails != null && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE))
-            basicPropertyImpl = (BasicPropertyImpl) persistenceService.find(
-                    "from BasicPropertyImpl "
-                            + "bp where bp.upicNo in(select conn.propertyIdentifier from WaterConnection conn where conn.consumerCode = ?)",
-                    code);
+
+        basicPropertyImpl = (BasicPropertyImpl) getCurrentSession().createQuery(
+                "from BasicPropertyImpl "
+                        + "bp where bp.upicNo in(select conn.propertyIdentifier from WaterConnection conn where conn.consumerCode = :code").setParameter("code", code).getSingleResult();
         else
-            basicPropertyImpl = (BasicPropertyImpl) persistenceService.find(
-                    "from BasicPropertyImpl "
-                            + "bp where bp.upicNo in(select conn.propertyIdentifier from WaterConnection conn where conn.id in"
-                            + "(select conndet.connection from WaterConnectionDetails conndet where conndet.applicationNumber = ?))",
-                    code);
+            
+        basicPropertyImpl = (BasicPropertyImpl) getCurrentSession().createQuery(
+                "from BasicPropertyImpl "
+                        + "bp where bp.upicNo in(select conn.propertyIdentifier from WaterConnection conn where conn.id in"
+                        + "(select conndet.connection from WaterConnectionDetails conndet where conndet.applicationNumber = :code))").setParameter("code", code).uniqueResult();
+        
         return basicPropertyImpl != null && basicPropertyImpl.getPropertyID() != null
                 && basicPropertyImpl.getPropertyID().getWard() != null
                 ? basicPropertyImpl.getPropertyID().getWard().getName() : "";

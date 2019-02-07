@@ -377,12 +377,16 @@ public class ConnectionDemandService {
         return demandDetailBean;
     }
 
-    public EgDemandReason getDemandReasonByCodeAndInstallment(String demandReason, Installment installment) {
-        Query demandQuery = getCurrentSession().getNamedQuery("DEMANDREASONBY_CODE_AND_INSTALLMENTID");
-        demandQuery.setParameter(0, demandReason);
-        demandQuery.setParameter(1, installment.getId());
-        return (EgDemandReason) demandQuery.uniqueResult();
-    }
+    
+	public EgDemandReason getDemandReasonByCodeAndInstallment(String demandReason, Installment installment) {
+		return (EgDemandReason) getCurrentSession()
+				.createQuery(
+						"select dr from org.egov.demand.model.EgDemandReason dr where dr.egDemandReasonMaster.code = :demandReason and dr.egInstallmentMaster.id = :installment")
+				.setParameter("demandReason", demandReason).setParameter("installment", installment.getId()).getSingleResult();
+		  
+	}
+    
+    
 
     public Map<String, Double> getSplitFee(WaterConnectionDetails waterConnectionDetails) {
         EgDemand demand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();

@@ -61,6 +61,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandDetails;
@@ -199,7 +200,7 @@ public class EditDemandForDataEntryController {
     }
 
     @RequestMapping(value = "/editDemand/{consumerCode}", method = RequestMethod.POST)
-    public String updateMeterEntry(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
+    public String updateMeterEntry(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model,
             final HttpServletRequest request) {
         final String sourceChannel = request.getParameter("Source");

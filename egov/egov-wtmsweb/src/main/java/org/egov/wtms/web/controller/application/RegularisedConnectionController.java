@@ -68,6 +68,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 import org.egov.demand.model.EgDemand;
@@ -165,7 +166,7 @@ public class RegularisedConnectionController extends GenericConnectionController
     }
 
     @PostMapping("/regulariseconnection/new")
-    public String createRegulariseConnApplication(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
+    public String createRegulariseConnApplication(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final HttpServletRequest request, final BindingResult errors, final Model model) {
         return createReglnConnection(waterConnectionDetails, null, errors, model, request);
     }
@@ -184,7 +185,7 @@ public class RegularisedConnectionController extends GenericConnectionController
     }
 
     @PostMapping("/regulariseconnection-form/{id}")
-    public String createReglnConnection(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
+    public String createReglnConnection(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             @PathVariable final Long id, final BindingResult errors, final Model model,
             final HttpServletRequest request) {
 

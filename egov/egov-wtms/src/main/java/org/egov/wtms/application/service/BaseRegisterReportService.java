@@ -95,7 +95,7 @@ public class BaseRegisterReportService {
         queryStr.append(" INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
         queryStr.append(
                 " where ut.id=wrh.usagetype and wt.id=wrh.watersource and ps.id=wrh.pipesize and dcbinfo.usagetype =ut.name and  dcbinfo.watersource = wt.watersourcetype and dcbinfo.pipesize = ps.code and wrd.waterratesheader=wrh.id and wrh.active=true  and wrd.fromdate <= now() and  wrd.todate >= now() and dcbinfo.connectionstatus = '"
-                        + ConnectionStatus.ACTIVE.toString() + "'");
+                       .concat(ConnectionStatus.ACTIVE.toString().toString()).concat("'".toString()));
         if (StringUtils.isNotBlank(ward))
             queryStr.append(" and wardboundary.id = :ward");
         queryStr.append(
@@ -116,7 +116,7 @@ public class BaseRegisterReportService {
         queryStr.append(" INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
         queryStr.append(
                 " where ut.id=wrh.usagetype and wt.id=wrh.watersource and ps.id=wrh.pipesize and dcbinfo.usagetype =ut.name and  dcbinfo.watersource = wt.watersourcetype and dcbinfo.pipesize = ps.code and wrd.waterratesheader=wrh.id and wrh.active=false and dcbinfo.connectionstatus = '"
-                        + ConnectionStatus.ACTIVE.toString() + "'" +" and dcbinfo.hscno not in (");
+                        .concat(ConnectionStatus.ACTIVE.toString()) .concat("'".toString()).concat(" and dcbinfo.hscno not in (".toString()));
         queryStr.append(
                 " select dcbinfo.hscno from  egwtr_usage_type ut, egwtr_water_source wt, egwtr_pipesize ps, egwtr_water_rates_header wrh,egwtr_water_rates_details wrd ,");
         queryStr.append(
@@ -124,7 +124,7 @@ public class BaseRegisterReportService {
         queryStr.append(" INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
         queryStr.append(
                 " where ut.id=wrh.usagetype and wt.id=wrh.watersource and ps.id=wrh.pipesize and dcbinfo.usagetype =ut.name and  dcbinfo.watersource = wt.watersourcetype and dcbinfo.pipesize = ps.code and wrd.waterratesheader=wrh.id and wrh.active=true  and wrd.fromdate <= now() and  wrd.todate >= now() and dcbinfo.connectionstatus = '"
-                        + ConnectionStatus.ACTIVE.toString() + "')");
+                        .concat(ConnectionStatus.ACTIVE.toString()).concat("')".toString()));
         if (StringUtils.isNotBlank(ward))
             queryStr.append(" and wardboundary.id = :ward");
         final NativeQuery query = getCurrentSession().createNativeQuery(queryStr.toString());

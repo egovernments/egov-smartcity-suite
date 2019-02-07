@@ -64,6 +64,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -81,7 +83,7 @@ public class ChairPersonMasterController {
     }
 
     @RequestMapping(value = "/chairperson-create", method = POST)
-    public String createChairPerson(@ModelAttribute final ChairPerson chairPerson, final Model model) {
+    public String createChairPerson(@Valid @ModelAttribute final ChairPerson chairPerson, final Model model) {
         final ChairPerson chairPersonFromDb = chairPersonService.getActiveChairPerson();
         chairPersonService.createChairPerson(chairPerson);
 
@@ -125,7 +127,7 @@ public class ChairPersonMasterController {
     }
 
     @RequestMapping(value = "/chairperson-edit/{chairpersonid}", method = POST)
-    public String saveModifiedChairPerson(@ModelAttribute final ChairPerson chairPerson, final Model model,
+    public String saveModifiedChairPerson(@Valid @ModelAttribute final ChairPerson chairPerson, final Model model,
             final RedirectAttributes redirectAttrs,
             @PathVariable("chairpersonid") final Long chairpersonid) {
 
