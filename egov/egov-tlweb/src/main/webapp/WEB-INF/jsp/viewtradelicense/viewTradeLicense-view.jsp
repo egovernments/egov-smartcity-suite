@@ -70,6 +70,7 @@
                 <s:hidden name="uid" id="uid"/>
                 <s:hidden name="actionName" value="create"/>
                 <s:hidden id="detailChanged" name="detailChanged"></s:hidden>
+                <s:hidden name="model.id" id="tlid"/>
                 <s:hidden name="id" id="id"/>
                 <c:set var="trclass" value="greybox"/>
                 <div class="text-right error-msg" style="font-size:14px;">

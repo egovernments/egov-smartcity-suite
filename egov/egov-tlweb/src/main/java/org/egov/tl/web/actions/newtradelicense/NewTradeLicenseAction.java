@@ -316,7 +316,6 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
 
 
     public void prepareSave() {
-        tradeLicense.setId((Long) getSession().get("model.id"));
         prepareNewForm();
     }
 
@@ -331,7 +330,6 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     }
 
     public void prepareApprove() {
-        tradeLicense.setId((Long) getSession().get("model.id"));
         prepareNewForm();
     }
 

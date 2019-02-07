@@ -390,7 +390,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     // forwards here
     @SkipValidation
     public String showForApproval() {
-        getSession().put("model.id", license().getId());
+        getModel().setId(license().getId());
         String result = APPROVE_PAGE;
         setRoleName(securityUtils.getCurrentUser().getRoles().toString());
         if (license().isNewApplication()) {
