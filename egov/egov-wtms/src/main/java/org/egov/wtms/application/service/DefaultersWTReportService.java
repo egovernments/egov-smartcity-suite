@@ -85,13 +85,13 @@ public class DefaultersWTReportService {
                 .append("from egwtr_mv_dcb_view dcbinfo INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
 
         if (Double.parseDouble(toAmount) == 0)
-            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >=".concat(fromAmount.toString()) );
+            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >=".concat(fromAmount) );
         else
-            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >=" .concat(fromAmount.toString()) 
-                    .concat(" and dcbinfo.arr_balance+dcbinfo.curr_balance <=".toString()).concat(toAmount.toString()) );
+            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >=" .concat(fromAmount) 
+                    .concat(" and dcbinfo.arr_balance+dcbinfo.curr_balance <=").concat(toAmount) );
         queryStr.append(" and dcbinfo.connectionstatus = '" .concat(ConnectionStatus.ACTIVE.toString()).concat("'"));
         if (ward != null && !ward.isEmpty())
-            queryStr.append(" and wardboundary.id = '" .concat(ward.toString())  .concat("'") );
+            queryStr.append(" and wardboundary.id = '" .concat(ward)  .concat("'") );
 
         queryStr.append(" and dcbinfo.demand IS NOT NULL");
         if (!topDefaulters.isEmpty())
@@ -110,10 +110,10 @@ public class DefaultersWTReportService {
                 .append(" INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary")
                 .append(" on dcbinfo.locality = localboundary.id");
         if (Double.parseDouble(toAmount) == 0)
-            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >=" .concat(fromAmount.toString()) );
+            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >=" .concat(fromAmount) );
         else
-            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >=" .concat(fromAmount.toString()) 
-                    .concat(" and dcbinfo.arr_balance+dcbinfo.curr_balance <=")  .concat(toAmount.toString()) );
+            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >=" .concat(fromAmount) 
+                    .concat(" and dcbinfo.arr_balance+dcbinfo.curr_balance <=")  .concat(toAmount) );
         queryStr.append(" and dcbinfo.connectionstatus = '" .concat(ConnectionStatus.ACTIVE.toString()).concat("'") );
         if (ward != null && !ward.isEmpty())
             queryStr.append(" and wardboundary.id = '".concat(ward.toString()).concat("'") );
@@ -130,15 +130,15 @@ public class DefaultersWTReportService {
                 .append(" INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary")
                 .append(" on dcbinfo.locality = localboundary.id");
         if (Double.parseDouble(toAmount) == 0)
-            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >=".concat(fromAmount.toString()) );
+            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >=".concat(fromAmount) );
         else
-            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >=" .concat(fromAmount.toString()) 
-                    .concat(" and dcbinfo.arr_balance+dcbinfo.curr_balance <=").concat(toAmount.toString()));
+            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >=" .concat(fromAmount) 
+                    .concat(" and dcbinfo.arr_balance+dcbinfo.curr_balance <=").concat(toAmount));
         queryStr.append(" and dcbinfo.connectionstatus = '" .concat(ConnectionStatus.ACTIVE.toString()).concat("'"));
         if (ward != null && !ward.isEmpty())
-            queryStr.append(" and wardboundary.id = '" .concat(ward.toString()).concat("'") );
+            queryStr.append(" and wardboundary.id = '" .concat(ward).concat("'") );
         if (!topDefaulters.isEmpty())
-            queryStr.append(" limit ".concat(topDefaulters.toString()) );
+            queryStr.append(" limit ".concat(topDefaulters) );
         queryStr.append(") as count");
         final NativeQuery finalQuery = getCurrentSession().createNativeQuery(queryStr.toString());
         final Long count = ((BigInteger) finalQuery.uniqueResult()).longValue();

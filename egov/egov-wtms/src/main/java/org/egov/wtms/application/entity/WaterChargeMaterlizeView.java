@@ -72,43 +72,43 @@ public class WaterChargeMaterlizeView implements Serializable {
 
     private static final long serialVersionUID = -6146352214041057969L;
     @Id
-    private Long connectiondetailsid;
+    private Long connectionDetailsId;
     @SafeHtml
-    private String propertyid;
+    private String propertyId;
     @SafeHtml
-    private String hscno;
+    private String hscNo;
     @SafeHtml
     private String address;
     @SafeHtml
-    private String oldhscno;
+    private String oldHscNo;
     @SafeHtml
-    private String propertytype;
+    private String propertyType;
     @SafeHtml
-    private String applicationtype;
+    private String applicationType;
     @SafeHtml
-    private String usagetype;
+    private String usageType;
     @SafeHtml
-    private String categorytype;
+    private String categoryType;
     @SafeHtml
-    private String pipesize;
+    private String pipeSize;
     @SafeHtml
-    private String username;
+    private String userName;
     @SafeHtml
-    private String houseno;
+    private String houseNo;
     @SafeHtml
-    private String watersource;
+    private String waterSource;
     @SafeHtml
-    private String connectiontype;
+    private String connectionType;
     @SafeHtml
-    private String connectionstatus;
+    private String connectionStatus;
     
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "demand")
     private EgDemand demand;
 
-    private Long wardid;
+    private Long wardId;
 
-    private Long zoneid;
+    private Long zoneId;
 
     private Long street;
     private Long block;
@@ -116,243 +116,245 @@ public class WaterChargeMaterlizeView implements Serializable {
     private Long locality;
 
     @Column(name = "curr_demand")
-    private double currentdemand;
+    private double currentDemand;
     @Column(name = "curr_coll")
-    private double currentcoll;
+    private double currentColl;
     @Column(name = "curr_balance")
-    private double currentbalance;
+    private double currentBalance;
     @Column(name = "arr_demand")
-    private double arreardemand;
+    private double arrearDemand;
     @Column(name = "arr_coll")
-    private double arrearcoll;
+    private double arrearColl;
     @Column(name = "arr_balance")
-    private double arrearbalance;
+    private double arrearBalance;
 
     @OneToMany(mappedBy = "waterMatView", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<InstDmdCollResponse> instDmdColl = new ArrayList<>(0);
 
-    public String getAddress() {
-        return address;
-    }
+   
+	public Long getConnectionDetailsId() {
+		return connectionDetailsId;
+	}
 
-    public void setAddress(final String address) {
-        this.address = address;
-    }
+	public void setConnectionDetailsId(final Long connectionDetailsId) {
+		this.connectionDetailsId = connectionDetailsId;
+	}
 
-    public String getHscno() {
-        return hscno;
-    }
+	public String getPropertyId() {
+		return propertyId;
+	}
 
-    public void setHscno(final String hscno) {
-        this.hscno = hscno;
-    }
+	public void setPropertyId(final String propertyId) {
+		this.propertyId = propertyId;
+	}
 
-    public String getOldhscno() {
-        return oldhscno;
-    }
+	public String getHscNo() {
+		return hscNo;
+	}
 
-    public void setOldhscno(final String oldhscno) {
-        this.oldhscno = oldhscno;
-    }
+	public void setHscNo(final String hscNo) {
+		this.hscNo = hscNo;
+	}
 
-    public String getPropertytype() {
-        return propertytype;
-    }
+	public String getAddress() {
+		return address;
+	}
 
-    public void setPropertytype(final String propertytype) {
-        this.propertytype = propertytype;
-    }
+	public void setAddress(final String address) {
+		this.address = address;
+	}
 
-    public String getApplicationtype() {
-        return applicationtype;
-    }
+	public String getOldHscNo() {
+		return oldHscNo;
+	}
 
-    public void setApplicationtype(final String applicationtype) {
-        this.applicationtype = applicationtype;
-    }
+	public void setOldHscNo(final String oldHscNo) {
+		this.oldHscNo = oldHscNo;
+	}
 
-    public String getUsagetype() {
-        return usagetype;
-    }
+	public String getPropertyType() {
+		return propertyType;
+	}
 
-    public void setUsagetype(final String usagetype) {
-        this.usagetype = usagetype;
-    }
+	public void setPropertyType(final String propertyType) {
+		this.propertyType = propertyType;
+	}
 
-    public String getCategorytype() {
-        return categorytype;
-    }
+	public String getApplicationType() {
+		return applicationType;
+	}
 
-    public void setCategorytype(final String categorytype) {
-        this.categorytype = categorytype;
-    }
+	public void setApplicationType(final String applicationType) {
+		this.applicationType = applicationType;
+	}
 
-    public String getPipesize() {
-        return pipesize;
-    }
+	public String getUsageType() {
+		return usageType;
+	}
 
-    public void setPipesize(final String pipesize) {
-        this.pipesize = pipesize;
-    }
+	public void setUsageType(final String usageType) {
+		this.usageType = usageType;
+	}
 
-    public String getWatersource() {
-        return watersource;
-    }
+	public String getCategoryType() {
+		return categoryType;
+	}
 
-    public void setWatersource(final String watersource) {
-        this.watersource = watersource;
-    }
+	public void setCategoryType(final String categoryType) {
+		this.categoryType = categoryType;
+	}
 
-    public String getConnectiontype() {
-        return connectiontype;
-    }
+	public String getPipeSize() {
+		return pipeSize;
+	}
 
-    public void setConnectiontype(final String connectiontype) {
-        this.connectiontype = connectiontype;
-    }
+	public void setPipeSize(final String pipeSize) {
+		this.pipeSize = pipeSize;
+	}
 
-    public String getConnectionstatus() {
-        return connectionstatus;
-    }
+	public String getUserName() {
+		return userName;
+	}
 
-    public void setConnectionstatus(final String connectionstatus) {
-        this.connectionstatus = connectionstatus;
-    }
+	public void setUserName(final String userName) {
+		this.userName = userName;
+	}
 
-    public String getPropertyid() {
-        return propertyid;
-    }
+	public String getHouseNo() {
+		return houseNo;
+	}
 
-    public void setPropertyid(final String propertyid) {
-        this.propertyid = propertyid;
-    }
+	public void setHouseNo(final String houseNo) {
+		this.houseNo = houseNo;
+	}
 
-    public EgDemand getDemand() {
-        return demand;
-    }
+	public String getWaterSource() {
+		return waterSource;
+	}
 
-    public void setDemand(final EgDemand demand) {
-        this.demand = demand;
-    }
+	public void setWaterSource(final String waterSource) {
+		this.waterSource = waterSource;
+	}
 
-    public Long getConnectiondetailsid() {
-        return connectiondetailsid;
-    }
+	public String getConnectionType() {
+		return connectionType;
+	}
 
-    public void setConnectiondetailsid(final Long connectiondetailsid) {
-        this.connectiondetailsid = connectiondetailsid;
-    }
+	public void setConnectionType(final String connectionType) {
+		this.connectionType = connectionType;
+	}
 
-    public List<InstDmdCollResponse> getInstDmdColl() {
-        return instDmdColl;
-    }
+	public String getConnectionStatus() {
+		return connectionStatus;
+	}
 
-    public void setInstDmdColl(final List<InstDmdCollResponse> instDmdColl) {
-        this.instDmdColl = instDmdColl;
-    }
+	public void setConnectionStatus(final String connectionStatus) {
+		this.connectionStatus = connectionStatus;
+	}
 
-    public double getCurrentdemand() {
-        return currentdemand;
-    }
+	public EgDemand getDemand() {
+		return demand;
+	}
 
-    public void setCurrentdemand(final double currentdemand) {
-        this.currentdemand = currentdemand;
-    }
+	public void setDemand(final EgDemand demand) {
+		this.demand = demand;
+	}
 
-    public double getCurrentcoll() {
-        return currentcoll;
-    }
+	public Long getWardId() {
+		return wardId;
+	}
 
-    public void setCurrentcoll(final double currentcoll) {
-        this.currentcoll = currentcoll;
-    }
+	public void setWardId(Long wardId) {
+		this.wardId = wardId;
+	}
 
-    public double getCurrentbalance() {
-        return currentbalance;
-    }
+	public Long getZoneId() {
+		return zoneId;
+	}
 
-    public void setCurrentbalance(final double currentbalance) {
-        this.currentbalance = currentbalance;
-    }
+	public void setZoneId(Long zoneId) {
+		this.zoneId = zoneId;
+	}
 
-    public double getArreardemand() {
-        return arreardemand;
-    }
+	public Long getStreet() {
+		return street;
+	}
 
-    public void setArreardemand(final double arreardemand) {
-        this.arreardemand = arreardemand;
-    }
+	public void setStreet(Long street) {
+		this.street = street;
+	}
 
-    public double getArrearcoll() {
-        return arrearcoll;
-    }
+	public Long getBlock() {
+		return block;
+	}
 
-    public void setArrearcoll(final double arrearcoll) {
-        this.arrearcoll = arrearcoll;
-    }
+	public void setBlock(Long block) {
+		this.block = block;
+	}
 
-    public double getArrearbalance() {
-        return arrearbalance;
-    }
+	public Long getLocality() {
+		return locality;
+	}
 
-    public void setArrearbalance(final double arrearbalance) {
-        this.arrearbalance = arrearbalance;
-    }
+	public void setLocality(Long locality) {
+		this.locality = locality;
+	}
 
-    public String getUsername() {
-        return username;
-    }
+	public double getCurrentDemand() {
+		return currentDemand;
+	}
 
-    public void setUsername(final String username) {
-        this.username = username;
-    }
+	public void setCurrentDemand(final double currentDemand) {
+		this.currentDemand = currentDemand;
+	}
 
-    public String getHouseno() {
-        return houseno;
-    }
+	public double getCurrentColl() {
+		return currentColl;
+	}
 
-    public void setHouseno(final String houseno) {
-        this.houseno = houseno;
-    }
+	public void setCurrentColl(final double currentColl) {
+		this.currentColl = currentColl;
+	}
 
-    public Long getWardid() {
-        return wardid;
-    }
+	public double getCurrentBalance() {
+		return currentBalance;
+	}
 
-    public void setWardid(Long wardid) {
-        this.wardid = wardid;
-    }
+	public void setCurrentBalance(final double currentBalance) {
+		this.currentBalance = currentBalance;
+	}
 
-    public Long getZoneid() {
-        return zoneid;
-    }
+	public double getArrearDemand() {
+		return arrearDemand;
+	}
 
-    public void setZoneid(Long zoneid) {
-        this.zoneid = zoneid;
-    }
+	public void setArrearDemand(final double arrearDemand) {
+		this.arrearDemand = arrearDemand;
+	}
 
-    public Long getStreet() {
-        return street;
-    }
+	public double getArrearColl() {
+		return arrearColl;
+	}
 
-    public void setStreet(Long street) {
-        this.street = street;
-    }
+	public void setArrearColl(final double arrearColl) {
+		this.arrearColl = arrearColl;
+	}
 
-    public Long getBlock() {
-        return block;
-    }
+	public double getArrearBalance() {
+		return arrearBalance;
+	}
 
-    public void setBlock(Long block) {
-        this.block = block;
-    }
+	public void setArrearBalance(final double arrearBalance) {
+		this.arrearBalance = arrearBalance;
+	}
 
-    public Long getLocality() {
-        return locality;
-    }
+	 public List<InstDmdCollResponse> getInstDmdColl() {
+	        return instDmdColl;
+	 }
 
-    public void setLocality(Long locality) {
-        this.locality = locality;
-    }
+	    public void setInstDmdColl(final List<InstDmdCollResponse> instDmdColl) {
+	        this.instDmdColl = instDmdColl;
+	 }
+    
 
 }

@@ -88,7 +88,7 @@ public class DataEntryConnectionReportService {
         queryStr.append(
                 " where dcbinfo.connectionstatus = 'ACTIVE' and dcbinfo.legacy = true and dcbinfo.approvalnumber IS NULL  and dcbinfo.connectiontype = 'NON_METERED' ");
         if (ward != null && !ward.isEmpty())
-            queryStr.append(" and wardboundary.name = " .concat("'").concat(ward.toString()).concat("'"));
+            queryStr.append(" and wardboundary.name = '".concat(ward).concat("'"));
         final NativeQuery query = getCurrentSession().createNativeQuery(queryStr.toString());
         query.setResultTransformer(new AliasToBeanResultTransformer(DataEntryConnectionReport.class));
         return query.list();

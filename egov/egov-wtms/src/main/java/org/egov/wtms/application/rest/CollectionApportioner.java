@@ -78,7 +78,7 @@ public class CollectionApportioner {
 
     public void apportion(final BigDecimal amtPaid, final List<ReceiptDetail> receiptDetails,
             final Map<String, BigDecimal> instDmdMap) {
-        LOGGER.info("receiptDetails before apportioning amount " .concat(amtPaid.toString()).concat(":".toString()).concat(receiptDetails.toString()));
+        LOGGER.info("receiptDetails before apportioning amount " .concat(amtPaid.toString()).concat(":").concat(receiptDetails.toString()));
 
         Amount balance = new Amount(amtPaid);
         BigDecimal crAmountToBePaid = BigDecimal.ZERO;
@@ -116,7 +116,7 @@ public class CollectionApportioner {
             final FunctionHibernateDAO functionDAO, final ChartOfAccountsHibernateDAO chartOfAccountsDAO,
             final FinancialYearDAO financialYearDAO) {
         final List<ReceiptDetail> receiptDetails = new ArrayList<ReceiptDetail>(0);
-        LOGGER.info("receiptDetails before reApportion amount ".concat(amountPaid.toString()).concat(": ".toString()).concat(receiptDetails.toString()));
+        LOGGER.info("receiptDetails before reApportion amount ".concat(amountPaid.toString()).concat(": ").concat(receiptDetails.toString()));
         LOGGER.info("billDetails before reApportion ".concat(billDetails.toString()) );
         Amount balance = new Amount(amountPaid);
         final CFinancialYear finYear = financialYearDAO.getFinancialYearByDate(new Date());

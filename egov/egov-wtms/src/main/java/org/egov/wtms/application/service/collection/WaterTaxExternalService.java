@@ -301,7 +301,7 @@ public class WaterTaxExternalService {
             errorDetails.setErrorCode(WaterTaxConstants.PROPERTYID_NOT_EXIST_ERR_CODE);
             errorDetails.setErrorMessage(WaterTaxConstants.WTAXDETAILS_CONSUMER_CODE_NOT_EXIST_ERR_MSG_PREFIX .concat((payWaterTaxDetails.getConsumerNo() != null
                     ? payWaterTaxDetails.getConsumerNo()
-                    : payWaterTaxDetails.getApplicationNumber()).toString()) .concat(WaterTaxConstants.WTAXDETAILS_NOT_EXIST_ERR_MSG_SUFFIX.toString()));
+                    : payWaterTaxDetails.getApplicationNumber())) .concat(WaterTaxConstants.WTAXDETAILS_NOT_EXIST_ERR_MSG_SUFFIX));
             waterTaxDetails.setErrorDetails(errorDetails);
         } else {
             waterTaxDetails.setConsumerNo(waterConnectionDetails.getConnection().getConsumerCode());
@@ -321,7 +321,7 @@ public class WaterTaxExternalService {
         if (waterConnectionDetails == null) {
             errorDetails.setErrorCode(WaterTaxConstants.PROPERTYID_NOT_EXIST_ERR_CODE);
             errorDetails.setErrorMessage(WaterTaxConstants.WTAXDETAILS_CONSUMER_CODE_NOT_EXIST_ERR_MSG_PREFIX
-                    .concat(consumerCode.toString())  .concat(WaterTaxConstants.WTAXDETAILS_NOT_EXIST_ERR_MSG_SUFFIX.toString()));
+                    .concat(consumerCode.toString())  .concat(WaterTaxConstants.WTAXDETAILS_NOT_EXIST_ERR_MSG_SUFFIX));
             waterTaxDetails.setErrorDetails(errorDetails);
         } else {
             waterTaxDetails.setConsumerNo(consumerCode);

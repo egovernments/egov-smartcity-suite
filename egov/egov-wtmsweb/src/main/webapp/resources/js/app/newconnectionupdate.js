@@ -306,7 +306,6 @@ $(document).ready(
                         document.forms[0].submit();
                     }
                 } else {
-                	debugger;
                     document.getElementById("mode").value = mode;
                     var applicationDate = $('#applicationDate').html();
                     var approvalDate = $(

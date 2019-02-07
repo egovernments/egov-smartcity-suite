@@ -287,7 +287,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
 
             waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                     APPLICATION_STATUS_CANCELLED, MODULETYPE));
-            waterConnectionDetails.transition().end().withSenderName(user.getUsername() .concat("::")  .concat(user.getName().toString()) )
+            waterConnectionDetails.transition().end().withSenderName(user.getUsername() .concat("::")  .concat(user.getName()) )
                     .withComments(approvalComent).withStateValue(WF_STATE_CANCELLED).withOwner(ownerPosition)
                     .withDateInfo(currentDate.toDate())
                     .withNatureOfTask(natureOfwork)
@@ -313,7 +313,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 }
                 waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                         APPLICATION_STATUS_CANCELLED, MODULETYPE));
-                waterConnectionDetails.transition().end().withSenderName(user.getUsername() .concat("::")  .concat(user.getName().toString()) )
+                waterConnectionDetails.transition().end().withSenderName(user.getUsername() .concat("::")  .concat(user.getName()) )
                         .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork)
                         .withNextAction("END");
                 waterConnectionSmsAndEmailService.sendSmsAndEmailOnRejection(waterConnectionDetails, approvalComent);
@@ -322,7 +322,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 if (ownerPosition == null && wfInitiator != null)
                     ownerPosition = wfInitiator.getPosition();
                 waterConnectionDetails.transition().progressWithStateCopy()
-                        .withSenderName(user.getUsername() .concat("::")  .concat(user.getName().toString()) )
+                        .withSenderName(user.getUsername() .concat("::")  .concat(user.getName()) )
                         .withComments(approvalComent).withStateValue(WF_STATE_REJECTED).withDateInfo(currentDate.toDate())
                         .withOwner(ownerPosition)
                         .withNextAction(APPLICATION_REJECTED)
@@ -344,19 +344,19 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         waterConnectionDetails.getCategory());
                 if (sla == null)
                     throw new ApplicationRuntimeException("err.applicationprocesstime.undefined");
-                waterConnectionDetails.transition().start().withSenderName(user.getUsername() .concat("::")  .concat(user.getName().toString()) )
+                waterConnectionDetails.transition().start().withSenderName(user.getUsername() .concat("::")  .concat(user.getName()) )
                         .withSLA(new LocalDateTime().plusDays(sla).toDate())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
                         .withOwner(ownerPosition).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
             } else if (SIGNWORKFLOWACTION.equalsIgnoreCase(workFlowAction))
-                waterConnectionDetails.transition().end().withSenderName(user.getUsername() .concat("::")  .concat(user.getName().toString()) )
+                waterConnectionDetails.transition().end().withSenderName(user.getUsername() .concat("::")  .concat(user.getName()) )
                         .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork)
                         .withNextAction("END");
             else if (null != approvalComent && "Receipt Cancelled".equalsIgnoreCase(approvalComent)) {
                 wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
                         additionalRule, "Asst engg approved", null);
                 waterConnectionDetails.transition().progressWithStateCopy()
-                        .withSenderName(user.getUsername() .concat("::")  .concat(user.getName().toString()) )
+                        .withSenderName(user.getUsername() .concat("::")  .concat(user.getName()) )
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(ownerPosition).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(natureOfwork);
@@ -372,7 +372,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                             additionalRule, null, null);
                 if (wfmatrix != null && !wfmatrix.getNextAction().equalsIgnoreCase("END"))
                     waterConnectionDetails.transition().reopen()
-                            .withSenderName(user.getUsername() .concat("::")  .concat(user.getName().toString()) )
+                            .withSenderName(user.getUsername() .concat("::")  .concat(user.getName()) )
                             .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                             .withDateInfo(currentDate.toDate()).withOwner(ownerPosition).withNextAction(wfmatrix.getNextAction())
                             .withNatureOfTask(natureOfwork);
@@ -405,11 +405,11 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 if ((additionalRule.equals(CLOSECONNECTION) || additionalRule.equals(RECONNECTION)) && wfmatrix != null
                         && wfmatrix.getNextAction().equalsIgnoreCase("END"))
                     waterConnectionDetails.transition().end()
-                            .withSenderName(user.getUsername() .concat("::")  .concat(user.getName().toString()) ).withComments(approvalComent)
+                            .withSenderName(user.getUsername() .concat("::")  .concat(user.getName()) ).withComments(approvalComent)
                             .withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork).withNextAction("END");
                 else
                     waterConnectionDetails.transition().progressWithStateCopy()
-                            .withSenderName(user.getUsername() .concat("::")  .concat(user.getName().toString()) )
+                            .withSenderName(user.getUsername() .concat("::")  .concat(user.getName()) )
                             .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                             .withDateInfo(currentDate.toDate()).withOwner(ownerPosition).withNextAction(wfmatrix.getNextAction())
                             .withNatureOfTask(natureOfwork);

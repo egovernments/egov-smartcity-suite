@@ -184,7 +184,7 @@ public class ChangeOfUseService {
                     validationMsg = wcmsMessageSource
                             .getMessage("err.validate.primary.connection.wtdue.forchangeofuse", null, null);
                 else
-                    validationMsg = validationMsg.concat(" and ".toString()).concat(wcmsMessageSource
+                    validationMsg = validationMsg.concat(" and ").concat(wcmsMessageSource
                             .getMessage("err.validate.primary.connection.wtdue.forchangeofuse", null, null).toString());
             if (parentWaterConnectionDetail.getConnection().getId() != null
                     && waterTaxUtils.waterConnectionDue(parentWaterConnectionDetail.getConnection().getId()) > 0)
@@ -192,7 +192,7 @@ public class ChangeOfUseService {
                     validationMsg = wcmsMessageSource
                             .getMessage("err.validate.additional.connection.wtdue.forchangeofuse", null, null);
                 else
-                    validationMsg = validationMsg.concat(" and ".toString())  .concat(wcmsMessageSource
+                    validationMsg = validationMsg.concat(" and ")  .concat(wcmsMessageSource
                             .getMessage("err.validate.additional.connection.wtdue.forchangeofuse", null, null).toString());
         }
         return validationMsg;

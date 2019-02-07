@@ -144,10 +144,10 @@ public class ArrearRegisterReportController {
         for (final WaterChargeMaterlizeView propMatView : propertyViewList) {
 
             final ArrearReportInfo arrearReportInfoObj = new ArrearReportInfo();
-            arrearReportInfoObj.setBasicPropId(propMatView.getConnectiondetailsid());
-            arrearReportInfoObj.setIndexNumber(propMatView.getHscno());
-            arrearReportInfoObj.setOwnerName(propMatView.getUsername());
-            arrearReportInfoObj.setHouseNo(propMatView.getHouseno());
+            arrearReportInfoObj.setBasicPropId(propMatView.getConnectionDetailsId());
+            arrearReportInfoObj.setIndexNumber(propMatView.getHscNo());
+            arrearReportInfoObj.setOwnerName(propMatView.getUserName());
+            arrearReportInfoObj.setHouseNo(propMatView.getHouseNo());
             // If there is only one Arrear Installment
             if (propMatView.getInstDmdColl().size() == 1) {
                 final InstDmdCollResponse currIDCMatView = propMatView.getInstDmdColl().iterator().next();

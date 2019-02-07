@@ -437,7 +437,7 @@ public class WaterTaxUtils {
     
     public EgwStatus getStatusByCodeAndModuleType(String code, String moduleName) {
     	
-        return (EgwStatus) getCurrentSession().createQuery("from EgwStatus where moduleType= :moduleName and code= :code").setParameter("code", code).setParameter("moduleName", moduleName).getSingleResult();
+        return (EgwStatus) getCurrentSession().createQuery("from EgwStatus where code= :code and moduleType= :moduleName").setParameter("code", code).setParameter("moduleName", moduleName).getSingleResult();
         
     }
 

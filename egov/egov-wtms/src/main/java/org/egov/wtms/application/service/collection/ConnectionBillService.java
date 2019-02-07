@@ -202,8 +202,8 @@ public class ConnectionBillService extends BillServiceInterface {
                 billdetail.setModifiedDate(currentDate);
                 billdetail.setOrderNo(i++);
                 billdetail.setDescription(
-                        reason.getEgDemandReasonMaster().getReasonMaster() .concat(" - ")  .concat(installment.getDescription().toString()) 
-                                .concat(" # ")  .concat(billObj.getCurrentDemand().getEgInstallmentMaster().getDescription().toString()) );
+                        reason.getEgDemandReasonMaster().getReasonMaster() .concat(" - ")  .concat(installment.getDescription()) 
+                                .concat(" # ")  .concat(billObj.getCurrentDemand().getEgInstallmentMaster().getDescription()) );
                 billdetail.setFunctionCode(STRING_WCMS_FUCNTION_CODE);
                 if (waterConnectionDetails != null && waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED))
                     if (billdetail.getDescription().contains(DEMANDRSN_REASON_ADVANCE))
@@ -323,7 +323,7 @@ public class ConnectionBillService extends BillServiceInterface {
                         j = billDetails.size() + 1;
                         billdetail.setOrderNo(j);
                         billdetail.setDescription(reasonmaster.getEgDemandReasonMaster().getReasonMaster() .concat(" - ") 
-                                .concat(installment.getDescription().toString()) );
+                                .concat(installment.getDescription()) );
                         if (billdetail.getDescription().contains(DEMANDRSN_REASON_ADVANCE))
                             billdetail.setPurpose(PURPOSE.ADVANCE_AMOUNT.toString());
                         else if (billdetail.getEgDemandReason().getEgInstallmentMaster().getToDate()

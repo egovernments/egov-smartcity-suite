@@ -74,7 +74,7 @@ public class WaterChargesRestApiResponse {
     @Override
     public String toString() {
     
-        return "ErrorCodes [errorCode=" .concat(errorCode.toString()).concat(", errorMessage=".toString()).concat(errorMessage.toString()).concat("]".toString());
+        return "ErrorCodes [errorCode=" .concat(errorCode).concat(", errorMessage=").concat(errorMessage).concat("]");
 
     }
 

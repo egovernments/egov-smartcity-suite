@@ -67,7 +67,7 @@ public class BillReferenceNumberGeneratorImpl implements BillReferenceNumberGene
     @Override
     public String generateBillNumber(final String installmentYear) {
         return String.format("%s%06d", waterTaxUtils.getCityCode(),
-                genericSequenceNumberGenerator.getNextSequence(WATER_CONN_BILLNO_SEQ .concat(installmentYear.toString()) ));
+                genericSequenceNumberGenerator.getNextSequence(WATER_CONN_BILLNO_SEQ .concat(installmentYear) ));
     }
 
 }
