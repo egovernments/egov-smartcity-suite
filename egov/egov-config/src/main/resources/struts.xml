@@ -70,7 +70,7 @@
 	<constant name="struts.custom.i18n.resources" value="messages/common-errors,messages/common-labels,custom" />
 	<constant name="struts.locale" value="en_IN" />
 	<constant name="struts.multipart.maxSize" value="26214400" />
-	<constant name="struts.multipart.parser" value="jakarta" />
+	<constant name="struts.multipart.parser" value="customParser" />
 	<constant name="struts.convention.action.mapAllMatches" value="true" />
 	<constant name="struts.convention.default.parent.package" value="egov" />
 	<!-- Comma separated list of regular expressions of jar URLs to be scanned -->
