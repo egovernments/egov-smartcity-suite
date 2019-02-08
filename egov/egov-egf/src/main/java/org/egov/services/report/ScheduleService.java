@@ -94,7 +94,7 @@ public abstract class ScheduleService extends PersistenceService {
                 .append(" FROM chartofaccounts coa1, chartofaccounts coa2, chartofaccounts coa3, schedulemapping s")
                 .append(" WHERE coa3.scheduleid  = s.id AND coa3.id = coa2.parentid AND coa2.id = coa1.parentid")
                 .append(" AND  coa2.classification=2 AND coa1.classification=4")
-                .append(" AND coa3.type IN :coaType AND coa2.type IN :coaType AND coa1.type IN :coaType")
+                .append(" AND coa3.type IN (:coaType ) AND coa2.type IN (:coaType ) AND coa1.type IN (:coaType ) ")
                 .append(" AND s.reporttype = :reportType ORDER BY coa1.glcode").toString());
         query.setParameter("coaType", coaType, StringType.INSTANCE)
                 .setParameter("reportType", reportType, StringType.INSTANCE);
@@ -112,7 +112,7 @@ public abstract class ScheduleService extends PersistenceService {
     Map<String, Schedules> getScheduleToGlCodeMap(final String reportType, final String coaType) {
         final Query query = getSession().createNativeQuery(new StringBuilder("select distinct coa.glcode,s.schedule,s.schedulename,")
                 .append("coa.type,coa.name from chartofaccounts coa, schedulemapping s where s.id=coa.scheduleid and ")
-                .append("coa.classification=2 and s.reporttype = :reportType and coa.type in :coaType ")
+                .append("coa.classification=2 and s.reporttype = :reportType and coa.type in (:coaType )")
                 .append("order by coa.glcode").toString());
         query.setParameter("coaType", coaType, StringType.INSTANCE)
                 .setParameter("reportType", reportType, StringType.INSTANCE);
@@ -130,7 +130,7 @@ public abstract class ScheduleService extends PersistenceService {
     List<Object[]> getAllGlCodesForAllSchedule(final String reportType, final String coaType) {
         final Query query = getSession().createNativeQuery(new StringBuilder("select distinct coa.majorcode,s.schedule,s.schedulename,")
                 .append("coa.type from chartofaccounts coa, schedulemapping s where s.id=coa.scheduleid and ")
-                .append("coa.classification=2 and s.reporttype = :reportType and coa.type in :coaType ")
+                .append("coa.classification=2 and s.reporttype = :reportType and coa.type in (:coaType ) ")
                 .append("group by coa.majorcode,s.schedule,s.schedulename,coa.type order by coa.majorcode").toString());
         query.setParameter("coaType", coaType, StringType.INSTANCE)
                 .setParameter("reportType", reportType, StringType.INSTANCE);
@@ -149,8 +149,8 @@ public abstract class ScheduleService extends PersistenceService {
                 .append("schedulemapping s where s.id=coa2.scheduleid and coa2.classification=2 and s.reporttype = :reportType) ").append(filterQuery)
                 .append(" group by v.fundid,substr(c.glcode,1,").append(minorCodeLength).append("),c.name order by substr(c.glcode,1,")
                 .append(minorCodeLength).append(")").toString());
-        query.setParameter("voucherToDate", getFormattedDate(toDate), StringType.INSTANCE)
-                .setParameter("voucherFromDate", getFormattedDate(fromDate), StringType.INSTANCE)
+        query.setParameter("voucherToDate",toDate, DateType.INSTANCE)
+                .setParameter("voucherFromDate", fromDate, DateType.INSTANCE)
                 .setParameter("reportType", reportType, StringType.INSTANCE);
         queryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
         return query.list();
@@ -163,14 +163,14 @@ public abstract class ScheduleService extends PersistenceService {
         final Query query = getSession().createNativeQuery(new StringBuilder("select sum(debitamount)-sum(creditamount),v.fundid,substr(c.glcode,1,")
                 .append(detailCodeLength).append("),").append("c.name from generalledger g,chartofaccounts c,voucherheader v ,vouchermis mis where  ")
                 .append(" v.id=g.voucherheaderid and c.id=g.glcodeid and v.id=mis.voucherheaderid and v.status not in(")
-                .append(voucherStatusToExclude).append(")  AND v.voucherdate <= :vouucherToDate and v.voucherdate >= :voucherFromDate and substr(c.glcode,1,")
+                .append(voucherStatusToExclude).append(")  AND v.voucherdate <= :voucherToDate and v.voucherdate >= :voucherFromDate and substr(c.glcode,1,")
                 .append(detailCodeLength).append(") not in (select DISTINCT coa4.glcode from chartofaccounts coa4 where coa4.parentid in (SELECT coa3.id")
                 .append(" FROM chartofaccounts coa3 WHERE coa3.parentid IN(select coa2.id from chartofaccounts coa2, ")
                 .append("schedulemapping s where s.id=coa2.scheduleid and coa2.classification=2 and s.reporttype = :reportType ))) ").append(filterQuery)
                 .append(" group by v.fundid,substr(c.glcode,1,").append(detailCodeLength).append("),c.name order by substr(c.glcode,1,")
                 .append(detailCodeLength).append(")").toString());
-        query.setParameter("voucherToDate", getFormattedDate(toDate), StringType.INSTANCE)
-                .setParameter("voucherFromDate", getFormattedDate(fromDate), StringType.INSTANCE)
+        query.setParameter("voucherToDate", toDate, DateType.INSTANCE)
+                .setParameter("voucherFromDate", fromDate, DateType.INSTANCE)
                 .setParameter("reportType", reportType, StringType.INSTANCE);
         queryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
         return query.list();

@@ -68,6 +68,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
+import org.hibernate.type.DateType;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -305,8 +306,8 @@ public abstract class ReportService {
                 .addScalar("amount", BigDecimalType.INSTANCE).setResultTransformer(
                         Transformers.aliasToBean(StatementResultObject.class));
         query.setParameter("coaType", coaType, StringType.INSTANCE)
-                .setParameter("voucherToDate", getFormattedDate(toDate), StringType.INSTANCE)
-                .setParameter("voucherFromDate", getFormattedDate(fromDate), StringType.INSTANCE)
+                .setParameter("voucherToDate", toDate, DateType.INSTANCE)
+                .setParameter("voucherFromDate", fromDate, DateType.INSTANCE)
                 .setParameter("reportType", subReportType, StringType.INSTANCE);
         queryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
         return query.list();

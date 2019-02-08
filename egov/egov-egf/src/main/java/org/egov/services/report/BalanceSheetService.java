@@ -60,12 +60,15 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.query.Query;
+import org.hibernate.type.DateType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -174,8 +177,8 @@ public class BalanceSheetService extends ReportService {
             qry.append(" and v.id= mis.voucherheaderid  and mis.departmentid=:deptId ");
         qry.append(" and coa.ID=g.glcodeid and coa.type in ('I','E') ").append(filterQuery).append(" group by v.fundid");
         final Query query = persistenceService.getSession().createNativeQuery(qry.toString());
-        query.setParameter("voucherFromDate", getFormattedDate(fromDate), StringType.INSTANCE)
-                .setParameter("voucherToDate", getFormattedDate(toDate), StringType.INSTANCE);
+        query.setParameter("voucherFromDate", fromDate, DateType.INSTANCE)
+                .setParameter("voucherToDate", toDate, DateType.INSTANCE);
         if (balanceSheet.getDepartment() != null && balanceSheet.getDepartment().getId() != -1)
             query.setParameter("deptId", balanceSheet.getDepartment().getId(), LongType.INSTANCE);
         queryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
@@ -204,14 +207,21 @@ public class BalanceSheetService extends ReportService {
         final BigDecimal divisor = balanceSheet.getDivisor();
         BigDecimal sum = BigDecimal.ZERO;
         String formattedToDate = "";
+        Date formattedToDateType=new Date();
         String voucherStatusToExclude = getAppConfigValueFor("EGF", "statusexcludeReport");
         if ("Yearly".equalsIgnoreCase(balanceSheet.getPeriod())) {
             final Calendar cal = Calendar.getInstance();
             cal.setTime(fromDate);
             cal.add(Calendar.DATE, -1);
             formattedToDate = getFormattedDate(cal.getTime());
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+            try {
+                formattedToDateType = formatter.parse(formattedToDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         } else
-            formattedToDate = getFormattedDate(getPreviousYearFor(toDate));
+            formattedToDateType = getPreviousYearFor(toDate);
         StringBuffer qry = new StringBuffer(256);
         qry.append("select sum(g.creditamount)-sum(g.debitamount),v.fundid  from voucherheader v,generalledger g, ");
         if (balanceSheet.getDepartment() != null && balanceSheet.getDepartment().getId() != -1)
@@ -222,8 +232,8 @@ public class BalanceSheetService extends ReportService {
             qry.append(" and v.id= mis.voucherheaderid");
         qry.append(" and coa.type in ('I','E') ").append(filterQuery).append(" group by v.fundid,g.functionid");
         final Query query = persistenceService.getSession().createNativeQuery(qry.toString());
-        query.setParameter("voucherFromDate", getFormattedDate(getPreviousYearFor(fromDate)), StringType.INSTANCE)
-                .setParameter("voucherToDate", formattedToDate, StringType.INSTANCE);
+        query.setParameter("voucherFromDate", getPreviousYearFor(fromDate), DateType.INSTANCE)
+                .setParameter("voucherToDate", formattedToDateType, DateType.INSTANCE);
         queryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
         final List<Object[]> excessieAmountList = query.list();
         for (final Object[] obj : excessieAmountList)

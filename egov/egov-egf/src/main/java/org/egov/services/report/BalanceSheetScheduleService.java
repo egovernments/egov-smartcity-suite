@@ -172,7 +172,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                 .createNativeQuery(new StringBuilder("select sum(openingdebitbalance)- sum(openingcreditbalance),coa.glcode,coa.type")
                         .append(" FROM transactionsummary ts,chartofaccounts coa  WHERE ts.glcodeid = coa.ID  AND ts.financialyearid=:prevFinancialYrId")
                         .append(transactionQuery).append(" GROUP BY coa.glcode,coa.type").toString());
-        query.setParameter("prevFinancialYrId", prevFinancialYrId, StringType.INSTANCE);
+        query.setParameter("prevFinancialYrId", Long.valueOf(prevFinancialYrId), LongType.INSTANCE);
         queryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
         final List<Object[]> openingBalanceAmountList = query.list();
         for (final Object[] obj : openingBalanceAmountList)
