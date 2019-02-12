@@ -69,6 +69,11 @@
 			function validateAndSubmit()
 			{
 				document.forms[0].action='/EGF/budget/budgetSearch-groupedBudgets.action';
+                $(document.forms[0]).append($('<input>', {
+                    type : 'hidden',
+                    name : '${_csrf.parameterName}',
+                    value : '${_csrf.token}'
+                }));
 				document.forms[0].submit();
 				}
 			
