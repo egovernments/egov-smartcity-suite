@@ -183,7 +183,7 @@ public class ComplaintUpdationController {
 
     @GetMapping(COMPLAINT_UPDATE_SUCCESS)
     public ModelAndView successView(@ModelAttribute Complaint complaint) {
-        return new ModelAndView("update-success", COMPLAINT_ATTRIB, complaint);
+        return new ModelAndView(COMPLAINT_UPDATE_SUCCESS, COMPLAINT_ATTRIB, complaint);
     }
 
     private void prepareUpdateView(@ModelAttribute final Complaint complaint, final Model model) {
@@ -201,7 +201,12 @@ public class ComplaintUpdationController {
                     boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(
                             complaint.getLocation().getBoundaryType().getName(), "Administration"));
             model.addAttribute(LOCATION_ATTRIB,
-                    crossHierarchyService.getChildBoundariesNameAndBndryTypeAndHierarchyType("Locality", "Location"));
+                    crossHierarchyService.findChildBoundariesByBoundaryTypeAndHierarchyAndParentBoundary(
+                            complaint.getChildLocation().getBoundaryType().getName(),
+                            complaint.getChildLocation().getBoundaryType().getHierarchyType().getName(),
+                            complaint.getLocation().getBoundaryType().getName(),
+                            complaint.getLocation().getBoundaryType().getHierarchyType().getName(),
+                            complaint.getLocation().getName()));
         } else if (complaint.getLat() > 0D && complaint.getLng() > 0D) {
             model.addAttribute("ward",
                     boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(
