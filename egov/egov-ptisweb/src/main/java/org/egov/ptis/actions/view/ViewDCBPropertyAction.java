@@ -365,7 +365,7 @@ import org.springframework.context.ApplicationContext;
         // List of property receipts
 		propReceiptList = (List<PropertyReceipt>) entityManager.unwrap(Session.class)
 				.createQuery("from PropertyReceipt where basicProperty.id=:bp order by receiptDate desc")
-				.setParameter("bp", getBasicProperty().getId());
+				.setParameter("bp", getBasicProperty().getId()).getResultList();
         for (PropertyReceipt propReceipt : propReceiptList) {
             try {
                 propReceipt.setReceiptDate(sdf.parse(sdf.format(propReceipt.getReceiptDate())));
