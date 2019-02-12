@@ -1,0 +1,4 @@
+DELETE from eg_roleaction where actionid in(select id from eg_action where name='OnlineTransactionReportResult' and contextroot='collection') and roleid in (select id from eg_role where name in('COLLECTION REPORT VIEWER','Coll_View Access','ULB Operator')) ;
+INSERT into eg_roleaction (roleid,actionid) values ((select id from eg_role where name='COLLECTION REPORT VIEWER'),(select id from eg_action where name='OnlineTransactionReportResult' and contextroot='collection'));
+INSERT into eg_roleaction (roleid,actionid) values ((select id from eg_role where name='Coll_View Access'),(select id from eg_action where name='OnlineTransactionReportResult' and contextroot='collection'));
+INSERT into eg_roleaction (roleid,actionid) values ((select id from eg_role where name LIKE 'ULB Operator') ,(select id FROM eg_action  WHERE name = 'OnlineTransactionReportResult' and contextroot='collection'));
