@@ -75,6 +75,7 @@ $(document).ready(function () {
     });
 
     $('#btnsearch').click(function (e) {
+    $('#btnsearch').attr("disabled",true);
         onSubmitEvent(e);
         return false;
     });
@@ -110,7 +111,10 @@ function onSubmitEvent(event) {
         $('.loader-class').modal('show', {backdrop: 'static'});
         $('.report-section').removeClass('display-hide');
         event.preventDefault();
-        $("#baseregistertbl").dataTable({
+        var table = $("#baseregistertbl");
+        if ( $.fn.dataTable.isDataTable(table) )
+            table.DataTable().destroy();
+        table = table.DataTable({
             processing: true,
             serverSide: true,
             sort: true,
@@ -260,6 +264,7 @@ function onSubmitEvent(event) {
             },
             "initComplete": function (settings, json) {
                 $('.loader-class').modal('hide');
+                $('#btnsearch').attr("disabled",false);
             },
             "aoColumnDefs": [{
                 "aTargets": [17, 18, 19, 20],
@@ -270,7 +275,6 @@ function onSubmitEvent(event) {
             }]
         });
         $('.loader-class').modal('hide');
-        var table = $('#baseregistertbl').DataTable();
         var info = table.page.info();
         if (info.start == 0)
             getSumOfRecords();
