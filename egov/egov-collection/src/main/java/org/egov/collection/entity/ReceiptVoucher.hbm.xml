@@ -59,10 +59,10 @@
 				<param name="sequence_name">SEQ_EGCL_COLLECTIONVOUCHER</param>
 			</generator>
         </id>
-        <many-to-one name="voucherheader" class="org.egov.commons.CVoucherHeader" fetch="select">
+        <many-to-one name="voucherheader" class="org.egov.commons.CVoucherHeader" fetch="select" lazy="false">
             <column name="voucherheader" precision="22" scale="0" />
         </many-to-one>
-        <many-to-one name="receiptHeader" class="org.egov.collection.entity.ReceiptHeader" fetch="select">
+        <many-to-one name="receiptHeader" class="org.egov.collection.entity.ReceiptHeader" fetch="select" lazy="false">
             <column name="collectionheader" precision="22" scale="0" />
         </many-to-one>
     </class>
