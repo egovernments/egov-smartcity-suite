@@ -107,7 +107,7 @@
                             <label class="col-md-4 control-label"> <spring:message code="lbl.oldconsumerno"/></label>
                             <div class="col-md-4 add-margin">
                                 <input type="text" name="oldConsumerNumber" id="oldConsumerNumber"
-                                       class="form-control patternvalidation" data-pattern="number"
+                                       class="form-control patternvalidation" 
                                        maxlength="15" id="app-oldcode"/>
                             </div>
                         </div>
