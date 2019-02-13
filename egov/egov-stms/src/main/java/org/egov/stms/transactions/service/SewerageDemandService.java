@@ -150,8 +150,8 @@ public class SewerageDemandService {
      */
     public EgDemandReason getDemandReasonByCodeAndInstallment(final String demandReason, final Integer installment) {
         final Query demandQuery = getCurrentSession().getNamedQuery("DEMANDREASONBY_CODE_AND_INSTALLMENTID");
-        demandQuery.setParameter(0, demandReason);
-        demandQuery.setParameter(1, installment);
+        demandQuery.setParameter(1, demandReason);
+        demandQuery.setParameter(2, installment);
         return (EgDemandReason) demandQuery.uniqueResult();
     }
 
