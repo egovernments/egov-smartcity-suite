@@ -586,7 +586,7 @@ public class BillRegisterReportAction extends SearchFormAction {
             String coaQuery;
             for (final AppConfigValues appConfigValues : cBillNetPurpose) {
                 coaQuery = "from CChartOfAccounts where purposeId in (:value)";
-                final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).setParameter("value", appConfigValues.getValue(), StringType.INSTANCE).list();
+                final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).setParameter("value", Long.valueOf(appConfigValues.getValue()), LongType.INSTANCE).list();
                 for (final CChartOfAccounts chartOfAccounts : coaList)
                     cBillNetPayCodeList.add(chartOfAccounts.getId().toString());
             }
@@ -599,7 +599,7 @@ public class BillRegisterReportAction extends SearchFormAction {
             
             for (final AppConfigValues appConfigValues : purchBillNetPurpose) {
                 coaQuery = "from CChartOfAccounts where purposeId in (:value)";
-                final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).setParameter("value", appConfigValues.getValue(), StringType.INSTANCE).list();
+                final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).setParameter("value", Long.valueOf(appConfigValues.getValue()), LongType.INSTANCE).list();
                 for (final CChartOfAccounts chartOfAccounts : coaList)
                     pBillNetPayCodeList.add(chartOfAccounts.getId().toString());
             }
@@ -616,7 +616,7 @@ public class BillRegisterReportAction extends SearchFormAction {
                 coaQuery = "from CChartOfAccounts where purposeId in (:value)";
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Querying CChartOfAccounts -  " + coaQuery);
-                final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).setParameter("value", appConfigValues.getValue(), StringType.INSTANCE).list();
+                final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).setParameter("value", Long.valueOf(appConfigValues.getValue()), LongType.INSTANCE).list();
                 for (final CChartOfAccounts chartOfAccounts : coaList)
                     sBillNetPayCodeList.add(chartOfAccounts.getId().toString());
 
@@ -632,7 +632,7 @@ public class BillRegisterReportAction extends SearchFormAction {
 
             for (final AppConfigValues appConfigValues : wBillNetPurpose) {
                 coaQuery = "from CChartOfAccounts where purposeId in (:value)";
-                final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).setParameter("value", appConfigValues.getValue(), StringType.INSTANCE).list();
+                final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).setParameter("value", Long.valueOf(appConfigValues.getValue()), LongType.INSTANCE).list();
                 for (final CChartOfAccounts chartOfAccounts : coaList)
                     wBillNetPayCodeList.add(chartOfAccounts.getId().toString());
             }
@@ -645,7 +645,7 @@ public class BillRegisterReportAction extends SearchFormAction {
             
             for (final AppConfigValues appConfigValues : pensionBillNetPurpose) {
                 coaQuery = "from CChartOfAccounts where purposeId in (:value)";
-                final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).setParameter("value", appConfigValues.getValue(), StringType.INSTANCE).list();
+                final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).setParameter("value", Long.valueOf(appConfigValues.getValue()), LongType.INSTANCE).list();
                 for (final CChartOfAccounts chartOfAccounts : coaList)
                     penBillNetPayCodeList.add(chartOfAccounts.getId().toString());
             }
@@ -677,31 +677,31 @@ public class BillRegisterReportAction extends SearchFormAction {
         int index = 1;
         if (null != voucherHeader.getFundId()) {
             whereQuery.append(" and mis.fundid=?").append(index++);
-            params.add(voucherHeader.getFundId().getId());
+            params.add(Long.valueOf(voucherHeader.getFundId().getId()));
         }
         if (null != voucherHeader.getVouchermis().getDepartmentid()) {
             whereQuery.append(" and mis.departmentid=?").append(index++);
-            params.add(voucherHeader.getVouchermis().getDepartmentid().getId());
+            params.add(Long.valueOf(voucherHeader.getVouchermis().getDepartmentid().getId()));
         }
         if (null != voucherHeader.getVouchermis().getSchemeid()) {
             whereQuery.append(" and mis.schemeid=?").append(index++);
-            params.add(voucherHeader.getVouchermis().getSchemeid().getId());
+            params.add(Long.valueOf(voucherHeader.getVouchermis().getSchemeid().getId()));
         }
         if (null != voucherHeader.getVouchermis().getSubschemeid()) {
             whereQuery.append(" and mis.subschemeid=?").append(index++);
-            params.add(voucherHeader.getVouchermis().getSubschemeid().getId());
+            params.add(Long.valueOf(voucherHeader.getVouchermis().getSubschemeid().getId()));
         }
         if (null != voucherHeader.getVouchermis().getFunctionary()) {
             whereQuery.append(" and mis.functionaryid=?").append(index++);
-            params.add(voucherHeader.getVouchermis().getFunctionary().getId());
+            params.add(Long.valueOf(voucherHeader.getVouchermis().getFunctionary().getId()));
         }
         if (null != voucherHeader.getVouchermis().getFundsource()) {
             whereQuery.append(" and mis.fundsourceid=?").append(index++);
-            params.add(voucherHeader.getVouchermis().getFundsource().getId());
+            params.add(Long.valueOf(voucherHeader.getVouchermis().getFundsource().getId()));
         }
         if (null != voucherHeader.getVouchermis().getDivisionid()) {
             whereQuery.append(" and mis.fieldid=?").append(index++);
-            params.add(voucherHeader.getVouchermis().getDivisionid().getId());
+            params.add(Long.valueOf(voucherHeader.getVouchermis().getDivisionid().getId()));
         }
         if (!StringUtils.isEmpty(billType)) {
             whereQuery.append(" and  b.billtype=?").append(index++);
@@ -709,11 +709,11 @@ public class BillRegisterReportAction extends SearchFormAction {
         }
         if (null != fromDate) {
             whereQuery.append(" and b.billdate >= to_date(?").append(index++).append(",'dd/MM/yyyy')");
-            params.add(DDMMYYYYFORMATS.format(fromDate));
+            params.add(fromDate);
         }
         if (null != toDate) {
             whereQuery.append(" and b.billdate <= to_date(?").append(index++).append(",'dd/MM/yyyy')");
-            params.add(DDMMYYYYFORMATS.format(toDate));
+            params.add(toDate);
         }
         if (null != billNumber && !StringUtils.isEmpty(billNumber)) {
             whereQuery.append(" and b.billnumber like ?").append(index++);
