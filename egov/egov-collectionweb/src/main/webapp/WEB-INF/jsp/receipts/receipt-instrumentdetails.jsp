@@ -397,7 +397,8 @@ function validateTransactionNumber()
 										name="billreceipt.payment.chequeddno" /><span
 									class="mandatory1">*</span></td>
 								<td class="bluebox"><s:textfield label="instrumentNumber"
-										id="instrumentChequeNumber" maxlength="6"
+										id="instrumentChequeNumber" maxlength="6" cssClass="form-control patternvalidation"
+										 data-pattern="number" 
 										name="instrumentProxyList[0].instrumentNumber" size="18" /></td>
 								<td class="bluebox"><s:text
 										name="billreceipt.payment.chequedddate" /><span
@@ -478,7 +479,7 @@ function validateTransactionNumber()
 										class="mandatory1">*</span></td>
 									<td class="bluebox2" width="20%"><s:textfield
 											label="instrumentNumber" id="instrumentChequeNumber"
-											maxlength="6"
+											maxlength="6"  cssClass="form-control patternvalidation" data-pattern="number" 
 											name="instrumentProxyList[%{#instrstatus.index}].instrumentNumber"
 											size="18" /></td>
 									<td class="bluebox2" width="23%"><s:text
