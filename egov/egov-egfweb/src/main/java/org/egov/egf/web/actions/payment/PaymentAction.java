@@ -451,7 +451,7 @@ public class PaymentAction extends BasePaymentAction {
         // function field is intruduced later as mandatory , so we getting for
         // the vocuhermis table
         if (voucherHeader.getVouchermis().getFunction() != null) {
-            sql.append(" and bill.egBillregistermis.function=:functionId");
+            sql.append(" and bill.egBillregistermis.function.id=:functionId");
             sqlParams.put("functionId", voucherHeader.getVouchermis().getFunction().getId());
         }
 

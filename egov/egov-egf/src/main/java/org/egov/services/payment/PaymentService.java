@@ -1820,11 +1820,11 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 
         if (!"".equals(parameters.get("fromDate")[0])) {
             sql.append(" and vh.voucherDate>= :fromDate");
-            params.put("fromDate", sdf.format(formatter.parse(parameters.get("fromDate")[0])));
+            params.put("fromDate", formatter.parse(parameters.get("fromDate")[0]));
         }
         if (!"".equals(parameters.get("toDate")[0])) {
             sql.append(" and vh.voucherDate<= :toDate");
-            params.put("toDate", sdf.format(formatter.parse(parameters.get("toDate")[0])));
+            params.put("toDate", formatter.parse(parameters.get("toDate")[0]));
         }
         if (!StringUtils.isEmpty(voucherHeader.getVoucherNumber())) {
             sql.append(" and vh.voucherNumber like :voucherNumber");
@@ -2210,11 +2210,11 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
         final StringBuffer sql = new StringBuffer();
         if (!"".equals(parameters.get("fromDate")[0])) {
             sql.append(" and vh.voucherDate>=:voucherFromDate");
-            params.put("voucherFromDate", sdf.format(formatter.parse(parameters.get("fromDate")[0])));
+            params.put("voucherFromDate", formatter.parse(parameters.get("fromDate")[0]));
         }
         if (!"".equals(parameters.get("toDate")[0])) {
             sql.append(" and vh.voucherDate<=:voucherToDate");
-            params.put("voucherToDate", sdf.format(formatter.parse(parameters.get("toDate")[0])));
+            params.put("voucherToDate", formatter.parse(parameters.get("toDate")[0]));
         }
         if (!StringUtils.isEmpty(voucherHeader.getVoucherNumber())) {
             sql.append(" and vh.voucherNumber like :voucherNumber");
@@ -2222,7 +2222,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
         }
         if (voucherHeader.getFundId() != null) {
             sql.append(" and vh.fundId=:fundId");
-            params.put("fundId", voucherHeader.getFundId().getId());
+            params.put("fundId", Long.valueOf(voucherHeader.getFundId().getId()));
         }
         if (voucherHeader.getVouchermis().getFundsource() != null) {
             sql.append(" and vmis.fundsourceId=:fundSourceId");
@@ -2230,7 +2230,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
         }
         if (voucherHeader.getVouchermis().getDepartmentid() != null) {
             sql.append(" and vmis.departmentid=:deptId");
-            params.put("deptId", voucherHeader.getVouchermis().getDepartmentid().getId());
+            params.put("deptId", Long.valueOf(voucherHeader.getVouchermis().getDepartmentid().getId()));
         }
         if (voucherHeader.getVouchermis().getSchemeid() != null) {
             sql.append(" and vmis.schemeid=:schemeId");
@@ -2251,7 +2251,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
         if (parameters.get("bankaccount") != null
                 && !parameters.get("bankaccount")[0].equals("-1")) {
             sql.append(" and ph.bankaccountnumberid=:accNumberId");
-            params.put("accNumberId", parameters.get("bankaccount")[0]);
+            params.put("accNumberId", Long.valueOf(parameters.get("bankaccount")[0]));
             sql.append(" and lower(ph.type)=lower(:paymentMode)");
             params.put("paymentMode", parameters.get("paymentMode")[0]);
             sql.append(" and ph.bankaccountnumberid=ba.id");
