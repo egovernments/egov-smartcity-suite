@@ -862,7 +862,7 @@ function loadDropDownCodesFunction()
 var yuiflagFunc = new Array();
 function autocompletecodeFunction(obj,myEvent)
 {
-	
+
 	var src = obj;	
 	var target = document.getElementById('codescontainer');	
 	
@@ -1250,14 +1250,15 @@ function loadSLFunc(selectedIndex,funcSelected){
 	}
 	slFuncObj.value = funcSelected ;
 }
-var onDropdownChange = function(index,obj) { 
+var onDropdownChange = function(index,obj) {
+    	var csrfToken = document.getElementById('csrfTokenValue').value;
 		// loadSLFunc(obj,document.getElementById('subLedgerlist['+obj.value+'].functionDetail').value);
 		var subledgerid=document.getElementById('subLedgerlist['+obj.value+'].glcode.id');
 		var accountCode = subledgerid.options[subledgerid.selectedIndex].text;
 		console.log("---"+accountCode+"-------");
 		document.getElementById('subLedgerlist['+obj.value+'].subledgerCode').value =accountCode;
 		if(accountCode != '---Select---'){
-			var url = path+'/voucher/common-getDetailType.action?accountCode='+accountCode+'&index='+obj.value;
+			var url = path+'/voucher/common-getDetailType.action?accountCode='+accountCode+'&_csrf='+csrfToken+'&index='+obj.value;
 			var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postType, null);
 		}else{
 				var d = document.getElementById('subLedgerlist['+obj.value+'].detailType.id');
@@ -1302,13 +1303,14 @@ success: function(o) {
     }
 }
 function check(){
+    var csrfToken = document.getElementById('csrfTokenValue').value;
 	var accountCodes=new Array();
 	for(var i=0;i<billDetailTableIndex+1;i++){
 	if(null != document.getElementById('billDetailslist['+i+'].glcodeDetail')){
 		accountCodes[i] = document.getElementById('billDetailslist['+i+'].glcodeDetail').value;
 	}
 	}
-	var url = path+'/voucher/common-getDetailCode.action?accountCodes='+accountCodes;
+	var url = path+'/voucher/common-getDetailCode.action?accountCodes='+accountCodes+'&_csrf='+csrfToken;
 	var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackJV, null);
 }
 var callbackJV = {
@@ -1501,13 +1503,13 @@ function splitSubSchemeCode(obj)
 
 
 function openSearchWindowFromJV(obj) {
-
+    var csrfToken = document.getElementById('csrfTokenValue').value;
 	var index = getRowIndex(obj);
 	acctTypeCurrRow = index;
 	var element = document.getElementById(SUBLEDGERLIST+'['+index+']'+'.detailType.id');
 	var detailtypeid = element.options[element.selectedIndex].value;
 	if( detailtypeid != null && detailtypeid != 0) {
-		var	url = "../voucher/common-searchEntites.action?accountDetailType="+detailtypeid;
+		var	url = "../voucher/common-searchEntites.action?accountDetailType="+detailtypeid+'&_csrf='+csrfToken;
 		window.open(url, 'EntitySearch','resizable=no,scrollbars=yes,left=300,top=40, width=400, height=500');
 	} else {
 		bootbox.alert("Select the Type.");

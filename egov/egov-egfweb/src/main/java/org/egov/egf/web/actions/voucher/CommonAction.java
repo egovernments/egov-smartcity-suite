@@ -918,7 +918,7 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Starting getDetailType...");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside getDetailType method");
-        String value = "";
+        value = "";
         final String accountCode = parameters.get("accountCode")[0];
         final String index = parameters.get("index")[0];
         if (LOGGER.isDebugEnabled())
