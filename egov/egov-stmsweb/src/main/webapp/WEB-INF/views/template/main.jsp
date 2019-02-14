@@ -54,6 +54,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <c:if test="${empty maxFileSize}">
+        <spring:eval expression="@environment.getProperty('stms.max.file.size')" scope="application" var="maxFileSize"/>
+        <spring:eval expression="@environment.getProperty('stms.allowed.file.ext')" scope="application" var="allowedFileExt"/>
+    </c:if>
     <c:if test="${empty analyticsEnabled}">
         <spring:eval expression="@environment.getProperty('analytics.enabled')" scope="application" var="analyticsEnabled"/>
         <spring:eval expression="@environment.getProperty('analytics.config')" scope="application" var="analyticsConfig"/>

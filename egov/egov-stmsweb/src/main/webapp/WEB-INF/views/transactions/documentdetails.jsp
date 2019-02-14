@@ -128,11 +128,21 @@
 									</c:forEach>
 									
 									<c:if test="${fn:length(docs.getFileStore()) eq 0}">
-										       <input type="file" id="file${status.index}id" name="appDetailsDocument[${status.index}].files"  class="file-ellipsis upload-file" required="required" isMandatory="isMandatory">
+										       <input type="file" id="file${status.index}id"
+													  name="appDetailsDocument[${status.index}].files"
+													  class="file-ellipsis upload-file" required="required"
+													  isMandatory="isMandatory" data-accepts="${allowedFileExt}"
+													  data-size="${maxFileSize}">
 								   </c:if>
 							   </c:when>
 							   <c:otherwise>
-								   <input type="file" id="file${status.index}id" name="appDetailsDocument[${status.index}].files" class="file-ellipsis upload-file" required="required" isMandatory="isMandatory">
+								   <input type="file" id="file${status.index}id"
+										  name="appDetailsDocument[${status.index}].files"
+										  class="file-ellipsis upload-file"
+										  required="required"
+										  isMandatory="isMandatory"
+										  data-accepts="${allowedFileExt}"
+										  data-size="${maxFileSize}">
 							   </c:otherwise>
 						  </c:choose>
 			</c:when>
@@ -145,11 +155,19 @@
 										</c:forEach>
 											
 										<c:if test="${fn:length(docs.getFileStore()) eq 0}">
-										    <input type="file" id="file${status.index}id" name="appDetailsDocument[${status.index}].files" class="file-ellipsis upload-file">
+										    <input type="file" id="file${status.index}id"
+												   name="appDetailsDocument[${status.index}].files"
+												   class="file-ellipsis upload-file"
+												   data-accepts="${allowedFileExt}"
+												   data-size="${maxFileSize}">
 										  </c:if>
 									</c:when>
 									<c:otherwise>
-										  <input type="file" id="file${status.index}id" name="appDetailsDocument[${status.index}].files" class="file-ellipsis upload-file">
+										  <input type="file" id="file${status.index}id"
+												 name="appDetailsDocument[${status.index}].files"
+												 class="file-ellipsis upload-file"
+												 data-accepts="${allowedFileExt}"
+												 data-size="${maxFileSize}">
 									</c:otherwise>
 							</c:choose>
 			</c:otherwise>		

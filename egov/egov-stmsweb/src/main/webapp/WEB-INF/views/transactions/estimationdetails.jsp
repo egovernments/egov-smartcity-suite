@@ -73,7 +73,8 @@
 				
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.attachdocument"/></label>
 						<div class="col-sm-3 add-margin">
-							<input type="file" id="fileStoreId" name="files" class="file-ellipsis upload-file"> 
+							<input type="file" id="fileStoreId" name="files" class="file-ellipsis upload-file"
+								   data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 							<div class="add-margin error-msg" ><font size="2">
 								<spring:message code="lbl.mesg.document"/>	
 								</font></div>
