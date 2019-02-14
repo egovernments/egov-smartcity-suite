@@ -432,7 +432,7 @@
 			data: {
 				locality : jQuery('#localityId').val()
 			},
-			cache: false,
+			cache: true,
 			dataType: "json",
 			success: function (response) {
 				jQuery('#wardId').html("");
@@ -472,7 +472,7 @@
 			data: {
 				wardId : wardId
 			},
-			cache: false,
+			cache: true,
 			dataType: "json",
 			success: function (response) {
 				jQuery('#blockId').html("");
