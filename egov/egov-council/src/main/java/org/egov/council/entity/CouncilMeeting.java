@@ -48,16 +48,20 @@
 
 package org.egov.council.entity;
 
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHANUMERIC_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHANUMERIC_WITH_SPACE;
+
 import org.egov.commons.EgwStatus;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.Pattern;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -98,8 +102,9 @@ public class CouncilMeeting extends StateAware<Position> {
     private String meetingTime;
 
     @SafeHtml
-    @Size(min = 5, max = 100)
+    @Length(min = 5, max = 32)
     @Column(name = "meetingLocation")
+    @Pattern(regexp = ALPHANUMERIC_WITH_SPACE, message = INVALID_ALPHANUMERIC_WITH_SPACE)
     private String meetingLocation;
 
     @ManyToOne
