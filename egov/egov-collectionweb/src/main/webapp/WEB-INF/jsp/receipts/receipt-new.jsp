@@ -250,7 +250,7 @@ function validate()
 			var advanceRebatePresent=document.getElementById('receiptDetailList['+j+'].isActualDemand').value;			
 			var amounttobecollected=document.getElementById('receiptDetailList['+j+'].cramountToBePaid').value;
 			totalCreditAmountToBePaid = parseInt(totalCreditAmountToBePaid)+parseInt(amounttobecollected);
-			if(advanceRebatePresent==0){
+			if(advanceRebatePresent=="false"){
 				zeroAccHeads=true;
 			}
 		}
