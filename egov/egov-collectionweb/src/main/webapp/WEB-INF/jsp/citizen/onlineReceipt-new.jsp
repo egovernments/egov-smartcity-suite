@@ -122,6 +122,13 @@ function populateapportioningamountnew(){
 		dom.get("receipt_error_area").style.display="block";
 		return false;
 	}
+	if(collectiontotal < billingTotalNumberFormat && checkpartpaymentvalue=='true'){
+		 var minimumAmt=document.forms[0].totalAmountToBeCollected.value;
+		 if(collectiontotal < minimumAmt){
+	     	document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.paytlessthanmin.errormessage" />'+': ' + minimumAmt+ '<br>';
+	     	validation=false;
+	     }
+	}
 	if(dom.get("callbackForApportioning").value=="false")
 	{
 		if(initialSetting=="true"){

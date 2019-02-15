@@ -666,6 +666,10 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
         for (final ReceiptDetail rDetails : receiptHeader.getReceiptDetails())
             rDetails.getCramountToBePaid().setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT, BigDecimal.ROUND_UP);
 
+        if (receiptHeader.getTotalAmount().compareTo(receiptHeader.getMinimumAmount()) < 0)
+			throw new ApplicationRuntimeException("Payment Amount " + receiptHeader.getTotalAmount()
+					+ " must be greater than or equal to minimum amount " + receiptHeader.getMinimumAmount());
+
         if (totalAmountToBeCollected.compareTo(BigDecimal.ZERO) == -1) {
             LOGGER.info("Amount to be collected is less than zero, hence cannot proceed.");
             throw new ValidationException(Arrays.asList(new ValidationError(
