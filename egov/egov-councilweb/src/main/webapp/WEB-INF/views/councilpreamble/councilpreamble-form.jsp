@@ -174,6 +174,7 @@
 								<c:if test="${fn:contains(councilPreamble.wards, ward)}"> Selected </c:if>>${ward.name}</option>
 						</c:forEach>
 					</select>
+					<form:errors path="wards" cssClass="error-msg" />
 				</div>
 				<input type="hidden" name="wardsHiddenIds" id="wardsHdnIds"
 					class="wardsHdnIds">

@@ -51,6 +51,7 @@ package org.egov.council.web.controller;
 import org.egov.council.entity.CommitteeType;
 import org.egov.council.entity.CouncilMeeting;
 import org.egov.council.entity.CouncilPreamble;
+import org.egov.council.entity.CouncilSearchRequest;
 import org.egov.council.entity.es.CouncilMeetingDetailsSearchRequest;
 import org.egov.council.entity.es.CouncilMeetingDetailsSearchResult;
 import org.egov.council.entity.es.CouncilMeetingIndex;
@@ -75,13 +76,18 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.gson.GsonBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.validation.Valid;
 
 import static org.egov.council.utils.constants.CouncilConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.council.utils.constants.CouncilConstants.WARD;
@@ -124,21 +130,34 @@ public class CouncilReportsController {
 
 	@RequestMapping(value = "/preamblewardwise/search", method = RequestMethod.GET)
 	public String getSearchView(Model model) {
-		model.addAttribute("councilPreamble", new CouncilPreamble());
+		model.addAttribute("councilSearchRequest", new CouncilSearchRequest());
 		return COUNCILPREAMBLE_WARDWISE_SEARCH;
 	}
 
 	@RequestMapping(value = "/preamblewardwise/search-result", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-	@ResponseBody public String searchPreambleWardwise(Model model,
-			@ModelAttribute final CouncilPreamble councilPreamble, final BindingResult errors) {
-		if (errors.hasErrors()) {
-			return COUNCILPREAMBLE_WARDWISE_SEARCH;
+	@ResponseBody
+	public String searchPreambleWardwise(Model model,
+			@Valid @ModelAttribute final CouncilSearchRequest councilSearchRequest, final BindingResult resultBinder) {
+		if (resultBinder.hasErrors()) {
+			List<CouncilSearchRequest> errors = new ArrayList<>();
+			CouncilSearchRequest searchRequest;
+			String criteriaName;
+			for (ObjectError error : resultBinder.getAllErrors()) {
+				searchRequest = new CouncilSearchRequest();
+				criteriaName = error.getCodes()[0].split("\\.")[2];
+				searchRequest.setErrorMessage(
+						new StringBuilder().append("Invalid input for ").append(criteriaName).toString());
+				errors.add(searchRequest);
+			}
+			return new StringBuilder("{ \"error\":").append(new GsonBuilder().create().toJson(errors)).append("}")
+					.toString();
+		} else {
+			List<CouncilPreamble> searchResultList = councilPreambleService
+					.searchPreambleForWardwiseReport(councilSearchRequest);
+			return new StringBuilder("{\"data\":")
+					.append(toJSON(searchResultList, CouncilPreamble.class, CouncilPreambleJsonAdaptor.class))
+					.append("}").toString();
 		}
-		List<CouncilPreamble> searchResultList = councilPreambleService
-				.searchPreambleForWardwiseReport(councilPreamble);
-		return  new StringBuilder("{\"data\":")
-                        .append(toJSON(searchResultList, CouncilPreamble.class, CouncilPreambleJsonAdaptor.class)).append("}")
-                        .toString();
 	}
 	
     @RequestMapping(value = "/meetingdetails/search", method = RequestMethod.GET)

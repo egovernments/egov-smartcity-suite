@@ -68,6 +68,7 @@ import org.egov.council.entity.CommitteeType;
 import org.egov.council.entity.CouncilAgenda;
 import org.egov.council.entity.CouncilAgendaDetails;
 import org.egov.council.entity.CouncilPreamble;
+import org.egov.council.entity.CouncilSearchRequest;
 import org.egov.council.service.CommitteeTypeService;
 import org.egov.council.service.CouncilAgendaService;
 import org.egov.council.service.CouncilPreambleService;
@@ -85,12 +86,15 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping("/agenda")
@@ -152,7 +156,7 @@ public class CouncilAgendaController {
     public String newForm(final Model model) {
         model.addAttribute("autoAgendaNoGenEnabled", isAutoAgendaNoGenEnabled()); 
         model.addAttribute(COUNCIL_AGENDA, new CouncilAgenda());
-        model.addAttribute(COUNCIL_PREAMBLE, new CouncilPreamble());
+        model.addAttribute("councilSearchRequest", new CouncilSearchRequest());
         return COUNCILAGENDA_NEW;
     }
 
@@ -168,8 +172,8 @@ public class CouncilAgendaController {
         }
         if (errors.hasErrors()) {
             model.addAttribute("autoAgendaNoGenEnabled", isAutoAgendaNoGenEnabled()); 
-            model.addAttribute(COUNCIL_AGENDA, new CouncilAgenda());
-            model.addAttribute(COUNCIL_PREAMBLE, new CouncilPreamble());
+            model.addAttribute(COUNCIL_AGENDA, councilAgenda);
+            model.addAttribute("councilSearchRequest", new CouncilSearchRequest());
             return COUNCILAGENDA_NEW;
         }
         List<CouncilAgendaDetails> preambleList = new ArrayList<>();
@@ -233,15 +237,14 @@ public class CouncilAgendaController {
 
     @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
     public String search(@PathVariable("mode") final String mode, Model model) {
-        model.addAttribute(COUNCIL_AGENDA, new CouncilAgenda());
+    	model.addAttribute("councilSearchRequest", new CouncilSearchRequest());
         return COUNCILAGENDA_SEARCH;
-
     }
 
     @RequestMapping(value = "/searchagenda/{mode}", method = RequestMethod.GET)
     public String editAgenda(@PathVariable("mode") final String mode,
             Model model) {
-        model.addAttribute(COUNCIL_AGENDA, new CouncilAgenda());
+    	model.addAttribute("councilSearchRequest", new CouncilSearchRequest());
         return COUNCILAGENDA_SEARCH_APPROVED;
 
     }
@@ -301,39 +304,81 @@ public class CouncilAgendaController {
     @ResponseBody
     public String searchPreamble(
             @PathVariable("mode") final String mode, Model model,
-            @ModelAttribute final CouncilAgenda councilAgenda) {
-        List<CouncilAgenda> searchResultList = councilAgendaService
-                .search(councilAgenda);
-        return new StringBuilder(DATA)
-                .append(toJSON(searchResultList, CouncilAgenda.class,
-                        CouncilAgendaJsonAdaptor.class))
-                .append("}").toString();
+			@Valid @ModelAttribute final CouncilSearchRequest councilSearchRequest, BindingResult resultBinder) {
+		if (resultBinder.hasErrors()) {
+			List<CouncilSearchRequest> errors = new ArrayList<>();
+			CouncilSearchRequest searchRequest;
+			String criteriaName;
+			for (ObjectError error : resultBinder.getAllErrors()) {
+				searchRequest = new CouncilSearchRequest();
+				criteriaName = error.getCodes()[0].split("\\.")[2];
+				searchRequest.setErrorMessage(
+						new StringBuilder().append("Invalid input for ").append(criteriaName).toString());
+				errors.add(searchRequest);
+			}
+			return new StringBuilder("{ \"error\":").append(new GsonBuilder().create().toJson(errors)).append("}")
+					.toString();
+		} else {
+			List<CouncilAgenda> searchResultList = councilAgendaService.search(councilSearchRequest);
+			return new StringBuilder(DATA)
+					.append(toJSON(searchResultList, CouncilAgenda.class, CouncilAgendaJsonAdaptor.class)).append("}")
+					.toString();
+		}
     }
 
     @RequestMapping(value = "/ajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String searchPreamble(Model model,
-            @ModelAttribute final CouncilPreamble councilPreamble) {
-        List<CouncilPreamble> searchResultList = councilPreambleService
-                .searchForPreamble(councilPreamble);
-        return new StringBuilder(DATA)
-                .append(toJSON(searchResultList, CouncilPreamble.class,
-                        CouncilPreambleJsonAdaptor.class))
-                .append("}")
-                .toString();
-    }
+	public String searchPreamble(@Valid @ModelAttribute final CouncilSearchRequest councilSearchRequest,
+			BindingResult resultBinder, Model model) {
+
+		if (resultBinder.hasErrors()) {
+			List<CouncilSearchRequest> errors = new ArrayList<>();
+			CouncilSearchRequest searchRequest;
+			String criteriaName;
+			for (ObjectError error : resultBinder.getAllErrors()) {
+				searchRequest = new CouncilSearchRequest();
+				criteriaName = error.getCodes()[0].split("\\.")[2];
+				searchRequest.setErrorMessage(
+						new StringBuilder().append("Invalid input for ").append(criteriaName).toString());
+				errors.add(searchRequest);
+			}
+			return new StringBuilder("{ \"error\":").append(new GsonBuilder().create().toJson(errors)).append("}")
+					.toString();
+		} else {
+			List<CouncilPreamble> searchResultList = councilPreambleService.searchForPreamble(councilSearchRequest);
+			return new StringBuilder(DATA)
+					.append(toJSON(searchResultList, CouncilPreamble.class, CouncilPreambleJsonAdaptor.class))
+					.append("}").toString();
+		}
+
+	}
 
     @RequestMapping(value = "/searchagenda-tocreatemeeting", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String searchAgendaToCreateMeeting(Model model,
-            @ModelAttribute final CouncilAgenda councilAgenda) {
-        List<CouncilAgenda> searchResultList = councilAgendaService
-                .searchForAgendaToCreateMeeting(councilAgenda);
-        return new StringBuilder(DATA)
-                .append(toJSON(searchResultList, CouncilAgenda.class,
-                        CouncilAgendaJsonAdaptor.class))
-                .append("}").toString();
-    }
+	public String searchAgendaToCreateMeeting(Model model,
+			@Valid @ModelAttribute final CouncilSearchRequest councilSearchRequest, BindingResult resultBinder) {
+
+		if (resultBinder.hasErrors()) {
+			List<CouncilSearchRequest> errors = new ArrayList<>();
+			CouncilSearchRequest searchRequest;
+			String criteriaName;
+			for (ObjectError error : resultBinder.getAllErrors()) {
+				searchRequest = new CouncilSearchRequest();
+				criteriaName = error.getCodes()[0].split("\\.")[2];
+				searchRequest.setErrorMessage(
+						new StringBuilder().append("Invalid input for ").append(criteriaName).toString());
+				errors.add(searchRequest);
+			}
+			return new StringBuilder("{ \"error\":").append(new GsonBuilder().create().toJson(errors)).append("}")
+					.toString();
+		} else {
+			List<CouncilAgenda> searchResultList = councilAgendaService
+					.searchForAgendaToCreateMeeting(councilSearchRequest);
+			return new StringBuilder(DATA)
+					.append(toJSON(searchResultList, CouncilAgenda.class, CouncilAgendaJsonAdaptor.class)).append("}")
+					.toString();
+		}
+	}
     
     public Boolean isAutoAgendaNoGenEnabled() {
         return councilPreambleService.autoGenerationModeEnabled(

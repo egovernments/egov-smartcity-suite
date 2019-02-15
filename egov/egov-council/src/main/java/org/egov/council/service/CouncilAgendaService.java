@@ -56,8 +56,10 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.council.entity.CouncilAgenda;
 import org.egov.council.entity.CouncilAgendaDetails;
+import org.egov.council.entity.CouncilSearchRequest;
 import org.egov.council.repository.CouncilAgendaDetailsRepository;
 import org.egov.council.repository.CouncilAgendaRepository;
 import org.egov.infra.utils.DateUtils;
@@ -121,26 +123,24 @@ public class CouncilAgendaService {
     }
 
     @SuppressWarnings("unchecked")
-    public List<CouncilAgenda> search(CouncilAgenda councilAgenda) {
-        return buildSearchCriteria(councilAgenda).list();
+    public List<CouncilAgenda> search(CouncilSearchRequest councilSearchRequest) {
+        return buildSearchCriteria(councilSearchRequest).list();
     }
     
     @SuppressWarnings("unchecked")
-    public List<CouncilAgenda> searchForAgendaToCreateMeeting(CouncilAgenda councilAgenda) {
-        return buildSearchCriteria(councilAgenda).add(Restrictions.in("status.code", APPROVED, ADJOURNED)).list();
+    public List<CouncilAgenda> searchForAgendaToCreateMeeting(CouncilSearchRequest councilSearchRequest) {
+        return buildSearchCriteria(councilSearchRequest).add(Restrictions.in("status.code", APPROVED, ADJOURNED)).list();
     }
     
-    public Criteria buildSearchCriteria(CouncilAgenda councilAgenda){
+    public Criteria buildSearchCriteria(CouncilSearchRequest councilSearchRequest){
         final Criteria criteria = getCurrentSession().createCriteria(CouncilAgenda.class,"councilAgenda").createAlias("councilAgenda.status", "status");
-        if(null != councilAgenda.getStatus())
-            criteria.add(Restrictions.eq("status", councilAgenda.getStatus().getCode()));
-    if(null != councilAgenda.getCommitteeType())
-            criteria.add(Restrictions.eq("committeeType", councilAgenda.getCommitteeType()));
-    if (councilAgenda.getFromDate() != null && councilAgenda.getToDate() != null) {
-        criteria.add(Restrictions.between("councilAgenda.createdDate", councilAgenda.getFromDate(),DateUtils.addDays(councilAgenda.getToDate(),1)));
+    if(councilSearchRequest.getCommitteeType() != null)
+            criteria.add(Restrictions.eq("committeeType.id", councilSearchRequest.getCommitteeType()));
+    if (councilSearchRequest.getFromDate() != null && councilSearchRequest.getToDate() != null) {
+        criteria.add(Restrictions.between("councilAgenda.createdDate", councilSearchRequest.getFromDate(),DateUtils.addDays(councilSearchRequest.getToDate(),1)));
     }
-    if (null != councilAgenda.getAgendaNumber())
-        criteria.add(Restrictions.ilike("councilAgenda.agendaNumber", councilAgenda.getAgendaNumber(),MatchMode.ANYWHERE));
+    if (StringUtils.isNotBlank(councilSearchRequest.getAgendaNumber()))
+        criteria.add(Restrictions.ilike("councilAgenda.agendaNumber", councilSearchRequest.getAgendaNumber(),MatchMode.ANYWHERE));
 
     return criteria;
     }

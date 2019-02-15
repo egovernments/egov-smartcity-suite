@@ -113,26 +113,27 @@ function callAjaxSearch() {
 	var month = currentDate.getMonth() + 1;
 	var year = currentDate.getFullYear();
 	var currentDate = day + "-" + month + "-" + year;
-	drillDowntableContainer = jQuery("#resultTable");
 	jQuery('.report-section').removeClass('display-hide');
-	reportdatatable = drillDowntableContainer
-			.dataTable({
-				ajax : {
-					url : "/council/councilreports/preamblewardwise/search-result",
-					type : "POST",
-					traditional: true,
-					beforeSend : function() {
-						$('.loader-class').modal('show', {
-							backdrop : 'static'
-						});
-					},
-					"data" : getFormData(jQuery('form')),
-					complete : function() {
-						$('.loader-class').modal('hide');
-					}
-				},
-
-				"bDestroy" : true,
+	$.ajax({
+		url: "/council/councilreports/preamblewardwise/search-result",
+		type: "POST",
+		dataType: "json",
+		beforeSend : function() {
+			$('.loader-class').modal('show', {
+				backdrop : 'static'
+			});
+		},
+		data : getFormData(jQuery('form')),
+		traditional:true,
+		complete : function() {
+			$('.loader-class').modal('hide');
+		},
+		success : function (response) {
+			if(response.data){
+				 $('#resultsDiv').show();
+				reportdatatable = $('#resultTable').dataTable({
+	  			"aaData":response.data,
+	  			"bDestroy" : true,
 				"autoWidth" : false,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
@@ -209,8 +210,32 @@ function callAjaxSearch() {
 				     	        	  },
 			     	                   "targets": [4]
 				     	           }
-				     	          ] 
+				     	          ]
 			});
+				$('#errorsDiv').hide();
+		} else if (response.error){
+			$('#errorsDiv').show();
+			$("#errorTable").dataTable({
+				"aaData":response.error,
+				"bDestroy": true,
+				"autoWidth": true, searching: false, paging: false, info: false,
+				"columns" : [
+			      { "data" : "errorMessage", "title":"Errors"},
+				  ],
+	             "columnDefs": [
+	                            {"className": "dt-center", "targets": "_all"}
+	                          ],
+	                          "createdRow": function( row, data, dataIndex){
+	                               $(row).css('color', '#FF0000');
+	                            }
+				});
+	       $('#resultsDiv').hide();
+		}
+	}, 
+	error: function (response) {
+		console.log(" ------------ failed ------------ ");
+	}
+	});
 }
 
 $("#resultTable").on('click','tbody tr td button.details',function(e) {

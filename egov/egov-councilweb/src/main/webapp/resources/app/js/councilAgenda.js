@@ -233,27 +233,30 @@ function getFormData($form) {
 	
 	return indexed_array;
 }
- 
+var reportdatatable;
 function callAjaxSearch() {
-	drillDowntableContainer = jQuery("#resultTable");		
 	jQuery('.report-section').removeClass('display-hide');
-		reportdatatable = drillDowntableContainer
-			.dataTable({
-				ajax : {
-					url : "/council/agenda/ajaxsearch",      
-					type: "POST",
-					traditional: true,
-					beforeSend : function() {
-						$('.loader-class').modal('show', {
-							backdrop : 'static'
-						});
-					},
-					"data" : getFormData(jQuery('form')),
-					complete : function() {
-						$('.loader-class').modal('hide');
-					}
-				},
-				"bDestroy" : true,
+	$.ajax({
+		url : "/council/agenda/ajaxsearch",
+		type: "POST",
+		dataType: "json",
+		beforeSend : function() {
+			$('.loader-class').modal('show', {
+				backdrop : 'static'
+			});
+		},
+		data : getFormData(jQuery('form')),
+		traditional: true,
+		complete : function() {
+			$('.loader-class').modal('hide');
+		},
+		success : function (response) {
+			if(response.data){
+				 $('#searchResultsDiv').show();
+				 $('#searchResultsLabelDiv').show();
+				reportdatatable = $('#resultTable').dataTable({
+      			"aaData":response.data,
+      			"bDestroy" : true,
 				"autoWidth": false,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
@@ -319,7 +322,35 @@ function callAjaxSearch() {
 									  }
 				     	          ]			
 			});
+				$('#errorsDiv').hide();
+				$('.agenda-section').show();
+			} else if (response.error){
+				$('#errorsDiv').show();
+				$("#errorTable").dataTable({
+	    			"aaData":response.error,
+	    			"bDestroy": true,
+	    			"autoWidth": true, searching: false, paging: false, info: false,
+	    			"columns" : [
+	    		      { "data" : "errorMessage", "title":"Errors"},
+	    			  ],
+	                  "columnDefs": [
+	                                 {"className": "dt-center", "targets": "_all"}
+	                               ],
+	                               "createdRow": function( row, data, dataIndex){
+	                                    $(row).css('color', '#FF0000');
+	                                 }
+	    			});
+	            $('#searchResultsDiv').hide();
+	            $('#searchResultsLabelDiv').hide();
+	            $('.agenda-section').hide();
 			}
+		}, 
+		error: function (response) {
+			console.log(" ------------ failed ------------ ");
+		}
+	});
+}
+
 function validateAgendaNumber(agendaNumber){
 	var agendaresponse=false;
 	if(agendaNumber != '') {
@@ -450,7 +481,7 @@ $(document).ready(function() {
 		    regenerateIndexes();
 		  }
 	});
-		   
+	
 });
 
 function  emptyRowAlert(e){

@@ -68,6 +68,7 @@ import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.entity.CouncilPreamble;
+import org.egov.council.entity.CouncilSearchRequest;
 import org.egov.council.entity.enums.PreambleType;
 import org.egov.council.enums.PreambleTypeEnum;
 import org.egov.council.service.BidderService;
@@ -93,6 +94,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -102,6 +104,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping("/councilpreamble")
@@ -456,28 +460,41 @@ public class CouncilPreambleController extends GenericWorkFlowController {
 
     @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
     public String search(@PathVariable("mode") final String mode, Model model) {
-        model.addAttribute(COUNCIL_PREAMBLE, new CouncilPreamble());
+        model.addAttribute("councilSearchRequest", new CouncilSearchRequest());
         return COUNCILPREAMBLE_SEARCH;
 
     }
+    
+	@RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+	@ResponseBody
+	public String ajaxsearch(@PathVariable("mode") final String mode,
+			@Valid @ModelAttribute CouncilSearchRequest councilSearchRequest, BindingResult resultBinder) {
 
-    @RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseBody
-    public String ajaxsearch(@PathVariable("mode") final String mode, Model model,
-                             @ModelAttribute final CouncilPreamble councilPreamble) {
-        List<CouncilPreamble> searchResultList;
-
-        if ("edit".equalsIgnoreCase(mode)) {
-            searchResultList = councilPreambleService
-                    .searchFinalizedPreamble(councilPreamble);
-        } else {
-            searchResultList = councilPreambleService.search(councilPreamble);
-        }
-        return new StringBuilder("{\"data\":")
-                .append(toJSON(searchResultList, CouncilPreamble.class,
-                        CouncilPreambleJsonAdaptor.class))
-                .append("}").toString();
-    }
+		if (resultBinder.hasErrors()) {
+			List<CouncilSearchRequest> errors = new ArrayList<>();
+			CouncilSearchRequest searchRequest;
+			String criteriaName;
+			for (ObjectError error : resultBinder.getAllErrors()) {
+				searchRequest = new CouncilSearchRequest();
+				criteriaName = error.getCodes()[0].split("\\.")[2];
+				searchRequest.setErrorMessage(
+						new StringBuilder().append("Invalid input for ").append(criteriaName).toString());
+				errors.add(searchRequest);
+			}
+			return new StringBuilder("{ \"error\":").append(new GsonBuilder().create().toJson(errors)).append("}")
+					.toString();
+		} else {
+			List<CouncilPreamble> searchResultList;
+			if ("edit".equalsIgnoreCase(mode)) {
+				searchResultList = councilPreambleService.searchFinalizedPreamble(councilSearchRequest);
+			} else {
+				searchResultList = councilPreambleService.search(councilSearchRequest);
+			}
+			return new StringBuilder("{\"data\":")
+					.append(toJSON(searchResultList, CouncilPreamble.class, CouncilPreambleJsonAdaptor.class))
+					.append("}").toString();
+		}
+	}
     
     public Boolean isAutoPreambleNoGenEnabled() {
         return councilPreambleService.autoGenerationModeEnabled(

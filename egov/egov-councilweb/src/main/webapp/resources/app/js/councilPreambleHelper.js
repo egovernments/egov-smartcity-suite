@@ -47,7 +47,6 @@
  */
 
 jQuery('#btnsearch').click(function(e) {
-
 	callAjaxSearch();
 });
 
@@ -116,28 +115,31 @@ $('#buttonClose')
 								}
 							});
 				});
-
+var reportdatatable;
 function callAjaxSearch() {
-	drillDowntableContainer = jQuery("#resultTable");
+
 	jQuery('.report-section').removeClass('display-hide');
-	reportdatatable = drillDowntableContainer
-			.dataTable({
-				ajax : {
-					url : "/council/councilpreamble/ajaxsearch/"
-							+ $('#mode').val(),
-					type : "POST",
-					traditional: true,
-					beforeSend : function() {
-						$('.loader-class').modal('show', {
-							backdrop : 'static'
-						});
-					},
-					"data" : getFormData(jQuery('form')),
-					complete : function() {
-						$('.loader-class').modal('hide');
-					}
-				},
-				"autoWidth" : false,
+	$.ajax({
+		url: "/council/councilpreamble/ajaxsearch/"+ $('#mode').val(),
+		type: "POST",
+		dataType: "json",
+		beforeSend : function() {
+			$('.loader-class').modal('show', {
+				backdrop : 'static'
+			});
+		},
+		data : getFormData(jQuery('form')),
+		traditional:true,
+		complete : function() {
+			$('.loader-class').modal('hide');
+		},
+		success: function (response) {
+			if(response.data){
+				 $('#searchResultsDiv').show();
+				 $('#searchResultsLabelDiv').show();
+				reportdatatable = $('#resultTable').dataTable({
+       			"aaData":response.data,
+       			"autoWidth" : false,
 				"bDestroy" : true,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
@@ -233,8 +235,33 @@ function callAjaxSearch() {
 							     	        	  },
 						     	                   "targets": [4]
 							     	           }
-						     	          ] 
+						     	          ]
 			});
+			$('#errorsDiv').hide();
+		} else if (response.error){
+			$('#errorsDiv').show();
+			$("#errorTable").dataTable({
+    			"aaData":response.error,
+    			"bDestroy": true,
+    			"autoWidth": true, searching: false, paging: false, info: false,
+    			"columns" : [
+    		      { "data" : "errorMessage", "title":"Errors"},
+    			  ],
+                  "columnDefs": [
+                                 {"className": "dt-center", "targets": "_all"}
+                               ],
+                               "createdRow": function( row, data, dataIndex){
+                                    $(row).css('color', '#FF0000');
+                                 }
+    			});
+            $('#searchResultsDiv').hide();
+            $('#searchResultsLabelDiv').hide();
+			}
+		}, 
+		error: function (response) {
+			console.log(" ------------ failed ------------ ");
+		}
+	});
 }
 
 function callAjaxSearchForAgendaPreamble() {

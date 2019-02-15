@@ -51,7 +51,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
-<form:form role="form" action="search" modelAttribute="councilPreamble"
+<form:form role="form" action="search" modelAttribute="councilSearchRequest"
 	id="councilPreamblesearchform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
@@ -60,9 +60,9 @@
 
 </form:form>
 <div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left">Council Preamble
+	<div class="col-md-12 table-header text-left" id="searchResultsLabelDiv">Council Preamble
 		Search Result</div>
-	<div class="col-md-12 form-group report-table-container">
+	<div class="col-md-12 form-group report-table-container" id="searchResultsDiv">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="resultTable">
 			<thead>
@@ -79,6 +79,10 @@
 				</tr>
 			</thead>
 		</table>
+	</div>
+	<div class="col-md-12 form-group" id="errorsDiv">
+		<table class="table table-bordered datatable dt-responsive"
+			id="errorTable" ></table>
 	</div>
 </div>
 

@@ -71,51 +71,80 @@ function getFormData($form){
 
 
 function callAjaxSearch() {
-	drillDowntableContainer = jQuery("#resultTable");		
 	jQuery('.report-section').removeClass('display-hide');
-		reportdatatable = drillDowntableContainer
-			.dataTable({
-				ajax : {
-					url : "/council/agenda/searchagenda-tocreatemeeting",      
-					type: "POST",
-					beforeSend : function() {
-						$('.loader-class').modal('show', {
-							backdrop : 'static'
-						});
-					},
-					"data" : getFormData(jQuery('form')),
-					complete : function() {
-						$('.loader-class').modal('hide');
-					}
-				},
-				"bDestroy" : true,
-				"autoWidth": false,
-				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
-				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
-				"oTableTools" : {
-					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons" : [{"sExtends" : "xls"},
-						           {"sExtends" :"pdf"},
-						           {"sExtends" : "print"}]
-				},
-				aaSorting: [],				
-				columns : [ { 
-"data" : "agendaNumber", "sClass" : "text-center"} ,{ 
-"data" : "committeeType", "sClass" : "text-center"} ,{ 
-"data" : "status", "sClass" : "text-center"}
-,{ "data" : null, "sClass" : "text-center", "target":-1,
 	
-    sortable: false,
-    "render": function ( data, type, full, meta ) {
-        var mode = $('#mode').val();
-       	 return '<button type="button" class="btn btn-xs btn-secondary edit"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button>';
-        
-    }
-}
-,{ "data": "id", "visible":false }
-]				
+	$.ajax({
+		url: "/council/agenda/searchagenda-tocreatemeeting", 
+		type: "POST",
+		dataType: "json",
+		beforeSend : function() {
+			$('.loader-class').modal('show', {
+				backdrop : 'static'
 			});
+		},
+		data : getFormData(jQuery('form')),
+		complete : function() {
+			$('.loader-class').modal('hide');
+		},
+		success: function (response) {
+			if(response.data){
+				 $('#searchResultsDiv').show();
+				 $('#searchResultsLabelDiv').show();
+				 reportdatatable = $('#resultTable').dataTable({
+						"aaData" : response.data,
+						"bDestroy" : true,
+						"autoWidth": false,
+						"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
+						"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
+						"oTableTools" : {
+							"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+							"aButtons" : [{"sExtends" : "xls"},
+								           {"sExtends" :"pdf"},
+								           {"sExtends" : "print"}]
+						},
+						aaSorting: [],				
+						columns : [ { 
+						"data" : "agendaNumber", "sClass" : "text-center"} ,{ 
+						"data" : "committeeType", "sClass" : "text-center"} ,{ 
+						"data" : "status", "sClass" : "text-center"}
+						,{ "data" : null, "sClass" : "text-center", "target":-1,
+							
+						    sortable: false,
+						    "render": function ( data, type, full, meta ) {
+						        var mode = $('#mode').val();
+						       	 return '<button type="button" class="btn btn-xs btn-secondary edit"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button>';
+						        
+						    }
+						}
+						,{ "data": "id", "visible":false }
+						]				
+					});
+				$('#errorsDiv').hide();
+			} else if (response.error){
+				$('#errorsDiv').show();
+				$("#errorTable").dataTable({
+	    			"aaData":response.error,
+	    			"bDestroy": true,
+	    			"autoWidth": true, searching: false, paging: false, info: false,
+	    			"columns" : [
+	    		      { "data" : "errorMessage", "title":"Errors"},
+	    			  ],
+	                  "columnDefs": [
+	                                 {"className": "dt-center", "targets": "_all"}
+	                               ],
+	                               "createdRow": function( row, data, dataIndex){
+	                                    $(row).css('color', '#FF0000');
+	                                 }
+	    			});
+	            $('#searchResultsDiv').hide();
+	            $('#searchResultsLabelDiv').hide();
 			}
+		}, 
+		error: function (response) {
+			console.log(" ------------ failed ------------ ");
+		}
+	});
+}
 
 
 $("#resultTable").on('click','tbody tr td  .view',function(event) {

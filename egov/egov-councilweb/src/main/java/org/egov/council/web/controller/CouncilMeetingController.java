@@ -69,6 +69,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.autonumber.CouncilMeetingNumberGenerator;
 import org.egov.council.entity.CommitteeMembers;
@@ -77,6 +78,7 @@ import org.egov.council.entity.CouncilAgenda;
 import org.egov.council.entity.CouncilAgendaDetails;
 import org.egov.council.entity.CouncilMeeting;
 import org.egov.council.entity.CouncilMeetingType;
+import org.egov.council.entity.CouncilSearchRequest;
 import org.egov.council.entity.MeetingAttendence;
 import org.egov.council.entity.MeetingMOM;
 import org.egov.council.service.CommitteeTypeService;
@@ -234,7 +236,7 @@ public class CouncilMeetingController {
     public String create(@Valid @ModelAttribute final CouncilMeeting councilMeeting, final BindingResult errors,
                          final Model model, final RedirectAttributes redirectAttrs, final HttpServletRequest request) {
 
-        validateCouncilMeeting(errors);
+        validateCouncilMeeting(councilMeeting, errors);
         if (errors.hasErrors()) {
             model .addAttribute("autoMeetingNoGenEnabled", isAutoMeetingNoGenEnabled()); 
             model.addAttribute(COUNCIL_MEETING, councilMeeting);
@@ -261,10 +263,15 @@ public class CouncilMeetingController {
         return REDIRECT_COUNCILMEETING_RESULT.concat(councilMeeting.getId().toString());
     }
 
-    private void validateCouncilMeeting(BindingResult errors) {
+    private void validateCouncilMeeting(CouncilMeeting councilMeeting, BindingResult errors) {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "meetingDate", "notempty.meeting.meetingDate");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "meetingTime", "notempty.meeting.meetingTime");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "meetingLocation", "notempty.meeting.committeeType");
+        
+        if(StringUtils.isNotBlank(councilMeeting.getMeetingTime())){
+        	if(!getMeetingTimings().containsKey(councilMeeting.getMeetingTime()))
+        		errors.rejectValue("meetingTime", "err.meeting.time.invalid");
+        }
     }
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
@@ -280,7 +287,7 @@ public class CouncilMeetingController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final CouncilMeeting councilMeeting, final BindingResult errors,
                          final Model model, final RedirectAttributes redirectAttrs) {
-        validateCouncilMeeting(errors);
+        validateCouncilMeeting(councilMeeting, errors);
         if (errors.hasErrors()) {
             councilMeetingService.sortMeetingMomByItemNumber(councilMeeting);
             model.addAttribute("autoMeetingNoGenEnabled", true);
@@ -334,7 +341,7 @@ public class CouncilMeetingController {
 
     @RequestMapping(value = "/agendasearch/{mode}", method = RequestMethod.GET)
     public String searchagenda(@PathVariable("mode") final String mode, Model model) {
-        model.addAttribute("councilAgenda", new CouncilAgenda());
+    	model.addAttribute("councilSearchRequest", new CouncilSearchRequest());
         return COUNCIL_MEETING_AGENDA_SEARCH;
 
     }

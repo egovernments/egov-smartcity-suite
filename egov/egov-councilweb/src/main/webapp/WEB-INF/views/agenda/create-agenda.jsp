@@ -52,7 +52,7 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 
-<form:form role="form" action="new" modelAttribute="councilPreamble"
+<form:form role="form" action="new" modelAttribute="councilSearchRequest"
 	id="councilPreambleform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
@@ -71,12 +71,16 @@
 </div>
 
 <div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left">Preamble Search
+	<div class="col-md-12 table-header text-left" id="searchResultsLabelDiv">Preamble Search
 		Result</div>
-	<div class="col-md-12 form-group report-table-container">
+	<div class="col-md-12 form-group report-table-container" id="searchResultsDiv">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="resultTable">
 		</table>
+	</div>
+	<div class="col-md-12 form-group" id="errorsDiv">
+		<table class="table table-bordered datatable dt-responsive"
+			id="errorTable" ></table>
 	</div>
 </div>
 <form:form role="agendaform" action="create" modelAttribute="councilAgenda"
