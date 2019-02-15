@@ -122,11 +122,12 @@ function populateapportioningamountnew(){
 		dom.get("receipt_error_area").style.display="block";
 		return false;
 	}
-	if(collectiontotal < billingTotalNumberFormat && checkpartpaymentvalue=='true'){
+	if(collectiontotal < billingtotal && checkpartpaymentvalue=='true'){
 		 var minimumAmt=document.forms[0].totalAmountToBeCollected.value;
 		 if(collectiontotal < minimumAmt){
 	     	document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.paytlessthanmin.errormessage" />'+': ' + minimumAmt+ '<br>';
-	     	validation=false;
+	     	dom.get("receipt_error_area").style.display="block";
+	     	return false;
 	     }
 	}
 	if(dom.get("callbackForApportioning").value=="false")
@@ -254,8 +255,15 @@ function calculateCreditTotal(){
 }
 
 function validateOnlineReceipt(){
-	populateapportioningamountnew();
-	var amount=dom.get("paymentAmount").value;
+	 var validation=populateapportioningamountnew();
+     if(validation==false){
+    	 if(validation==false &&  document.getElementById("receipt_error_area").innerHTML!=''){
+    			document.getElementById("receipt_error_area").style.display="block";
+    			window.scroll(0,0);
+    		}
+            return false;
+        }  
+ 	var amount=dom.get("paymentAmount").value;
 	var billingtotal=dom.get("totalAmountToBeCollected").value;
 	document.getElementById("receipt_error_area").innerHTML='';
 	dom.get("receipt_error_area").style.display="none";
