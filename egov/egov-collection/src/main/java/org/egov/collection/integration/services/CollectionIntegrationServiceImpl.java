@@ -291,6 +291,11 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
                     + bill.getDepartmentCode() + "].");
         final ReceiptHeader receiptHeader = collectionCommon.initialiseReceiptModelWithBillInfo(bill, fund, dept);
 
+        if (receiptHeader.getPartPaymentAllowed()
+				&& receiptHeader.getTotalAmount().compareTo(receiptHeader.getMinimumAmount()) < 0)
+			throw new ApplicationRuntimeException("Payment Amount " + receiptHeader.getTotalAmount()
+					+ " is less than the minimum amount " + receiptHeader.getMinimumAmount());
+
         receiptHeader.setCreatedDate(new Date());
         receiptHeader.setReceiptdate(new Date());
         receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_BILL);
