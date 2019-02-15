@@ -116,12 +116,7 @@ public abstract class BillServiceInterface {
         bill.setDescription(billObj.getDescription());
         bill.setDisplayMessage(billObj.getDisplayMessage());
         bill.setEmailId(billObj.getEmailId());
-
-        if (currentDemand != null && currentDemand.getMinAmtPayable() != null) {
-            bill.setMinAmtPayable(currentDemand.getMinAmtPayable());
-        } else {
-            bill.setMinAmtPayable(billObj.getMinAmountPayable());
-        }
+        bill.setMinAmtPayable(billObj.getMinAmountPayable());
 
         // Get it from the concrete implementation
         List<EgBillDetails> bd = getBilldetails(billObj);
