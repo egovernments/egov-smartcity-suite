@@ -51,6 +51,7 @@
 <script type="text/javascript"
 	src="/egi/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}"></script>
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
+<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 <tr>
 	<td class="greybox"></td>
 	<td class="greybox"><s:text name="bank" /> <span class="greybox"><span
