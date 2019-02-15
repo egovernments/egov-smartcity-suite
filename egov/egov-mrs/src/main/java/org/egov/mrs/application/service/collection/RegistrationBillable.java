@@ -311,4 +311,9 @@ public class RegistrationBillable extends AbstractBillable implements Billable {
     public String getConsumerType() {
         return null;
     }
+    
+    @Override
+	public BigDecimal getMinAmountPayable() {
+		return BigDecimal.ZERO;
+	}
 }

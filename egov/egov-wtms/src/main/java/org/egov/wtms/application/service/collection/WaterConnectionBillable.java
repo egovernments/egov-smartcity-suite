@@ -400,4 +400,9 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     public void setTransanctionReferenceNumber(final String transanctionReferenceNumber) {
         this.transanctionReferenceNumber = transanctionReferenceNumber;
     }
+    
+    @Override
+	public BigDecimal getMinAmountPayable() {
+		return BigDecimal.ZERO;
+	}
 }

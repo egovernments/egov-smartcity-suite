@@ -366,5 +366,10 @@ public class SewerageBillable extends AbstractBillable implements Billable {
     public String getEmailId() {
 
         return null;
-    }    
+    }  
+    
+    @Override
+	public BigDecimal getMinAmountPayable() {
+		return BigDecimal.ZERO;
+	}
 }

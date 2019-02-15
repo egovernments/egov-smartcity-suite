@@ -310,4 +310,9 @@ public class ReIssueBillable extends AbstractBillable implements Billable {
     public String getConsumerType() {
         return MARRIAGE_REISSUE_MESSAGE;
     }
+    
+    @Override
+	public BigDecimal getMinAmountPayable() {
+		return BigDecimal.ZERO;
+	}
 }
