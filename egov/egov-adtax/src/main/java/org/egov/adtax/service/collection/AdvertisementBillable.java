@@ -328,7 +328,7 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
 
 	@Override
 	public BigDecimal getMinAmountPayable() {
-		return BigDecimal.ZERO;
+		return getPartPaymentAllowed() ? BigDecimal.ZERO : getTotalAmount();
 	}
 
 }

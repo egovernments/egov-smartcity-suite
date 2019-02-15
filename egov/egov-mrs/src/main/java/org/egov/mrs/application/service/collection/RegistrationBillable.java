@@ -222,7 +222,7 @@ public class RegistrationBillable extends AbstractBillable implements Billable {
 
     @Override
     public BigDecimal getTotalAmount() {
-        return new BigDecimal(registration.getFeePaid());
+        return BigDecimal.valueOf(registration.getFeePaid());
     }
 
     @Override
@@ -314,6 +314,6 @@ public class RegistrationBillable extends AbstractBillable implements Billable {
     
     @Override
 	public BigDecimal getMinAmountPayable() {
-		return BigDecimal.ZERO;
+		return getPartPaymentAllowed() ? BigDecimal.ZERO : getTotalAmount();
 	}
 }
