@@ -59,6 +59,7 @@
 	</td>
 </tr>
 <%@include file="../voucher/vouchertrans-filter-new.jsp"%>
+<input type="hidden" id="csrfTokenValue" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 <tr>
 	<td class="greybox"></td>
 	<egov:ajaxdropdown id="fromBankId" fields="['Text','Value']"

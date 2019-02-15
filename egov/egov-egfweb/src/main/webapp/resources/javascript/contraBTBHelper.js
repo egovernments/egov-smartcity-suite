@@ -124,7 +124,8 @@ function populatefromNarration(accnumObj) {
 	var bankbranchId = bankbranchObj.options[bankbranchObj.selectedIndex].value;
 	var index = bankbranchId.indexOf("-");
 	var branchId = bankbranchId.substring(index + 1, bankbranchId.length);
-	var url = '../voucher/common-loadAccNumNarration.action?accnum=' + accnum
+    var csrfToken = document.getElementById('csrfTokenValue').value;
+	var url = '../voucher/common-loadAccNumNarration.action?accnum=' + accnum+'&_csrf='+csrfToken
 			+ '&branchId=' + branchId;
 	YAHOO.util.Connect.asyncRequest('POST', url, postTypeFrom, null);
 }
@@ -135,7 +136,8 @@ function populatetoNarration(accnumObj) {
 	var bankbranchId = bankbranchObj.options[bankbranchObj.selectedIndex].value;
 	var index = bankbranchId.indexOf("-");
 	var branchId = bankbranchId.substring(index + 1, bankbranchId.length);
-	var url = '../voucher/common-loadAccNumNarration.action?accnum=' + accnum
+    var csrfToken = document.getElementById('csrfTokenValue').value;
+	var url = '../voucher/common-loadAccNumNarration.action?accnum=' + accnum+'&_csrf='+csrfToken
 			+ '&branchId=' + branchId;
 	YAHOO.util.Connect.asyncRequest('POST', url, postTypeTo, null);
 
