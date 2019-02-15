@@ -70,6 +70,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 
 import org.egov.commons.EgwStatus;
 import org.egov.council.entity.enums.PreambleType;
@@ -104,6 +105,7 @@ public class CouncilPreamble extends StateAware<Position> {
     @Length(max = 25)
     private String preambleNumber;
 
+    @PositiveOrZero
     private BigDecimal sanctionAmount;
 
     @NotNull
