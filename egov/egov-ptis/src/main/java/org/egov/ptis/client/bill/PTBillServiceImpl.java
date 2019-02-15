@@ -200,7 +200,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
 
         for (final EgDemandDetails demandDetail : ptDemand.getEgDemandDetails()) {
             balance = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
-            if(!billable.getPartPaymentAllowed())
+            if(billable.getPartPaymentAllowed())
         		minAmountPayable= minAmountPayable.add(balance);
             reason = demandDetail.getEgDemandReason();
             installment = reason.getEgInstallmentMaster();

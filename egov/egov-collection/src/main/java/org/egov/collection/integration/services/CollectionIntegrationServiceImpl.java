@@ -291,7 +291,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
                     + bill.getDepartmentCode() + "].");
         final ReceiptHeader receiptHeader = collectionCommon.initialiseReceiptModelWithBillInfo(bill, fund, dept);
 
-        if (receiptHeader.getTotalAmount().compareTo(receiptHeader.getMinimumAmount()) >= 0)
+        if (receiptHeader.getTotalAmount().compareTo(receiptHeader.getMinimumAmount()) < 0)
 			throw new ApplicationRuntimeException("Payment Amount " + receiptHeader.getTotalAmount()
 					+ " must be greater than or equal to minimum amount " + receiptHeader.getMinimumAmount());
 

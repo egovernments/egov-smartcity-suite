@@ -350,11 +350,10 @@ public class PropertyTaxBillable extends AbstractBillable implements LatePayPena
 
     @Override
     public Boolean getPartPaymentAllowed() {
-        /*if (isMutationFeePayment())
+        if (isMutationFeePayment())
             return false;
         else
-            return true;*/
-    	return false;
+            return true;
     }
 
     @Override
