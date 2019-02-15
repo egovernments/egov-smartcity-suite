@@ -310,6 +310,6 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
     
     @Override
 	public BigDecimal getMinAmountPayable() {
-		return BigDecimal.ZERO;
+		return getTotalAmount();
 	}
 }
