@@ -116,7 +116,6 @@ public abstract class BillServiceInterface {
         bill.setDescription(billObj.getDescription());
         bill.setDisplayMessage(billObj.getDisplayMessage());
         bill.setEmailId(billObj.getEmailId());
-        bill.setMinAmtPayable(billObj.getMinAmountPayable());
 
         // Get it from the concrete implementation
         List<EgBillDetails> bd = getBilldetails(billObj);
@@ -124,7 +123,7 @@ public abstract class BillServiceInterface {
             bill.addEgBillDetails(billdetails);
             billdetails.setEgBill(bill);
         }
-
+        bill.setMinAmtPayable(billObj.getMinAmountPayable());
         bill.setConsumerId(billObj.getConsumerId());
         bill.setConsumerType(billObj.getConsumerType());
         bill.setCallBackForApportion(billObj.isCallbackForApportion());

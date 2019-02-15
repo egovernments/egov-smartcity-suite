@@ -175,7 +175,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
 
         String key;
         BigDecimal balance =  BigDecimal.ZERO;
-        BigDecimal minAmountPayable =  BigDecimal.ONE;
+        BigDecimal minAmountPayable =  BigDecimal.ZERO;
         BigDecimal earlyPayRebate = BigDecimal.ZERO;
         DateTime installmentDate;
         BillDetailBean billDetailBean;
