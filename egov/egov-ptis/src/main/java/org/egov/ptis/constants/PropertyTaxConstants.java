@@ -1258,6 +1258,7 @@ public interface PropertyTaxConstants {
 
     public static final String THIRD_PARTY_DEMAND_AMOUNT_GREATER_CODE = "PTIS-REST-46";
     public static final String THIRD_PARTY_DEMAND_AMOUNT_GREATER_MSG= "Paid Amount is greater than Total Amount to be paid";
+    public static final String THIRD_PARTY_DEMAND_AMOUNT_LESSER_MSG= "Paid Amount is lesser than Total Amount to be paid";
     
     public static final String THIRD_PARTY_AMOUNT_HAVING_DECIMALS_CODE = "PTIS-REST-47";
     public static final String THIRD_PARTY_AMOUNT_HAVING_DECIMALS_MSG= "Paid amount in decimal is not accepted.";

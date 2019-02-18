@@ -84,6 +84,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.MOBILE_PAYMENT_INCORR
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_DEMAND_AMOUNT_GREATER_MSG;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_DEMAND_AMOUNT_LESSER_MSG;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_EXEMPTED_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTY_TAX_ASSESSMENT_NOT_FOUND;
@@ -166,6 +167,10 @@ public class MobilePaymentController {
                     model.addAttribute(ERROR_MSG, THIRD_PARTY_DEMAND_AMOUNT_GREATER_MSG);
                     return PROPERTY_VALIDATION;
                 }
+                if (amountToBePaid.compareTo(totalTaxDue) < 0) {
+                    model.addAttribute(ERROR_MSG, THIRD_PARTY_DEMAND_AMOUNT_LESSER_MSG);
+                    return PROPERTY_VALIDATION;
+                }
                 if (!propType.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)
                         && category.equalsIgnoreCase(CATEGORY_TYPE_VACANTLAND_TAX)) {
                     model.addAttribute(ERROR_MSG, THIRD_PARTY_ERR_MSG_VACANTLAND_ASSESSMENT_NOT_FOUND);
@@ -230,7 +235,7 @@ public class MobilePaymentController {
     }
     
     private String checkPropertyCategory(String propType) {
-        if (propType == OWNERSHIP_TYPE_VAC_LAND)
+        if (OWNERSHIP_TYPE_VAC_LAND.equals(propType))
             return CATEGORY_TYPE_VACANTLAND_TAX;
         else
             return CATEGORY_TYPE_PROPERTY_TAX;
