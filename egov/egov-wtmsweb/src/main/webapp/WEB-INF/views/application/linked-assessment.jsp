@@ -55,6 +55,7 @@
  <form:form method ="post" action="" class="form-horizontal form-groups-bordered"  modelAttribute="linkedAssessment" id="linkedAssessmentform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 			<input type="hidden" value="${mode}" id="mode" />	
 			<div class="row">
 						<div class="col-md-12">

@@ -448,7 +448,7 @@ public class WaterTaxUtils {
 
         basicPropertyImpl = (BasicPropertyImpl) getCurrentSession().createQuery(
                 "from BasicPropertyImpl "
-                        + "bp where bp.upicNo in(select conn.propertyIdentifier from WaterConnection conn where conn.consumerCode = :code").setParameter("code", code).getSingleResult();
+                        + "bp where bp.upicNo in(select conn.propertyIdentifier from WaterConnection conn where conn.consumerCode = :code)").setParameter("code", code).getSingleResult();
         else
             
         basicPropertyImpl = (BasicPropertyImpl) getCurrentSession().createQuery(

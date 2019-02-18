@@ -105,7 +105,7 @@ $(document).ready(function(){
 		var propertyID=$('#propertyIdentifier').val()
 		if(propertyID != '') {
 			$.ajax({
-				url: "/wtms//ajaxconnection/check-primaryconnection-exists",      
+				url: "/wtms/ajaxconnection/check-primaryconnection-exists",      
 				type: "GET",
 				data: {
 					propertyID : propertyID  
