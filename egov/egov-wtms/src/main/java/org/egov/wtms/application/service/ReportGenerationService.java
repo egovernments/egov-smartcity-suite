@@ -516,7 +516,7 @@ public class ReportGenerationService {
             }
             reportParams.put("applicationDueDate", appProcessTime == null ? null :
                     toDefaultDateFormat(waterConnectionDetailsService.getDisposalDate(waterConnectionDetails, appProcessTime)));
-            reportParams.put(ADDRESS, assessmentDetails.getPropertyAddress());
+            reportParams.put(ADDRESS, assessmentDetails.getPropertyAddress().replaceAll("\n", " "));
             reportParams.put("electionWard", assessmentDetails.getBoundaryDetails().getAdminWardName());
             reportInput = setReportParameters(reportParams, waterConnectionDetails);
         }
