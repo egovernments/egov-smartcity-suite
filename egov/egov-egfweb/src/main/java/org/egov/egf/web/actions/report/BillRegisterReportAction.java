@@ -114,7 +114,7 @@ public class BillRegisterReportAction extends SearchFormAction {
     private final List<String> headerFields = new ArrayList<String>();
     private final List<String> mandatoryFields = new ArrayList<String>();
     private CVoucherHeader voucherHeader = new CVoucherHeader();
-    private static Map<String, List<String>> netAccountCode = new HashMap<String, List<String>>(); // have list of all net payable
+    private static Map<String, List<Long>> netAccountCode = new HashMap<String, List<Long>>(); // have list of all net payable
     // accounts codes based on the
     // expenditure type.
     private Date fromDate;
@@ -582,18 +582,18 @@ public class BillRegisterReportAction extends SearchFormAction {
                     getConfigValuesByModuleAndKey("EGF", "contingencyBillPurposeIds");
             
         	
-        	final List<String> cBillNetPayCodeList = new ArrayList<String>();
+        	final List<Long> cBillNetPayCodeList = new ArrayList<>();
             String coaQuery;
             for (final AppConfigValues appConfigValues : cBillNetPurpose) {
                 coaQuery = "from CChartOfAccounts where purposeId in (:value)";
                 final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).setParameter("value", Long.valueOf(appConfigValues.getValue()), LongType.INSTANCE).list();
                 for (final CChartOfAccounts chartOfAccounts : coaList)
-                    cBillNetPayCodeList.add(chartOfAccounts.getId().toString());
+                    cBillNetPayCodeList.add(chartOfAccounts.getId());
             }
             netAccountCode.put("Expense", cBillNetPayCodeList);
 
             // setting net pay account codes for purchase type.
-            final List<String> pBillNetPayCodeList = new ArrayList<String>();
+            final List<Long> pBillNetPayCodeList = new ArrayList<>();
             final List<AppConfigValues> purchBillNetPurpose = appConfigValueService.
                     getConfigValuesByModuleAndKey("EGF", "purchaseBillPurposeIds");
             
@@ -601,12 +601,12 @@ public class BillRegisterReportAction extends SearchFormAction {
                 coaQuery = "from CChartOfAccounts where purposeId in (:value)";
                 final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).setParameter("value", Long.valueOf(appConfigValues.getValue()), LongType.INSTANCE).list();
                 for (final CChartOfAccounts chartOfAccounts : coaList)
-                    pBillNetPayCodeList.add(chartOfAccounts.getId().toString());
+                    pBillNetPayCodeList.add(chartOfAccounts.getId());
             }
             netAccountCode.put("Purchase", pBillNetPayCodeList);
 
             // setting net pay account codes for salary type.
-            final List<String> sBillNetPayCodeList = new ArrayList<String>();
+            final List<Long> sBillNetPayCodeList = new ArrayList<>();
             final List<AppConfigValues> sBillNetPurpose = appConfigValueService.
                     getConfigValuesByModuleAndKey("EGF", "salaryBillPurposeIds");
             
@@ -618,14 +618,14 @@ public class BillRegisterReportAction extends SearchFormAction {
                     LOGGER.debug("Querying CChartOfAccounts -  " + coaQuery);
                 final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).setParameter("value", Long.valueOf(appConfigValues.getValue()), LongType.INSTANCE).list();
                 for (final CChartOfAccounts chartOfAccounts : coaList)
-                    sBillNetPayCodeList.add(chartOfAccounts.getId().toString());
+                    sBillNetPayCodeList.add(chartOfAccounts.getId());
 
             }
             netAccountCode.put("Salary", sBillNetPayCodeList);
 
             // setting net pay account codes for works type.
 
-            final List<String> wBillNetPayCodeList = new ArrayList<String>();
+            final List<Long> wBillNetPayCodeList = new ArrayList<>();
             
             final List<AppConfigValues> wBillNetPurpose = appConfigValueService.
                     getConfigValuesByModuleAndKey("EGF", "worksBillPurposeIds");
@@ -634,12 +634,12 @@ public class BillRegisterReportAction extends SearchFormAction {
                 coaQuery = "from CChartOfAccounts where purposeId in (:value)";
                 final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).setParameter("value", Long.valueOf(appConfigValues.getValue()), LongType.INSTANCE).list();
                 for (final CChartOfAccounts chartOfAccounts : coaList)
-                    wBillNetPayCodeList.add(chartOfAccounts.getId().toString());
+                    wBillNetPayCodeList.add(chartOfAccounts.getId());
             }
             netAccountCode.put("Works", wBillNetPayCodeList);
 
             // setting the netpayable code for pension type
-            final List<String> penBillNetPayCodeList = new ArrayList<String>();
+            final List<Long> penBillNetPayCodeList = new ArrayList<>();
             final List<AppConfigValues> pensionBillNetPurpose = appConfigValueService.
                     getConfigValuesByModuleAndKey("EGF", "pensionBillPurposeIds");
             
@@ -647,7 +647,7 @@ public class BillRegisterReportAction extends SearchFormAction {
                 coaQuery = "from CChartOfAccounts where purposeId in (:value)";
                 final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).setParameter("value", Long.valueOf(appConfigValues.getValue()), LongType.INSTANCE).list();
                 for (final CChartOfAccounts chartOfAccounts : coaList)
-                    penBillNetPayCodeList.add(chartOfAccounts.getId().toString());
+                    penBillNetPayCodeList.add(chartOfAccounts.getId());
             }
 
             netAccountCode.put("Pension", penBillNetPayCodeList);
@@ -666,15 +666,29 @@ public class BillRegisterReportAction extends SearchFormAction {
 
     protected Map<String, Object> getQuery() {
         final StringBuffer query = new StringBuffer(1000);
-        final StringBuffer whereQuery = new StringBuffer(200);
-        new StringBuffer(50);
         final List<Object> params = new ArrayList<>();
-
+        int index = 1;
         /*
          * if(null != voucherHeader.getVoucherNumber() && !StringUtils.isEmpty(voucherHeader.getVoucherNumber())){
          * whereQuery.append(" and vh.vouchernumber like '%"+voucherHeader.getVoucherNumber()+"%'"); }
          */
-        int index = 1;
+        if (StringUtils.isEmpty(exptype)) {
+            final List<String> expndtrList = dropdownData.get("expenditureList");
+            for (final String expenditure : expndtrList) {
+                if (!StringUtils.isEmpty(query.toString()))
+                    query.append(" UNION ");
+              index =  getQueryByExpndType(query,expenditure, params,index);
+            }
+        } else
+            index = getQueryByExpndType(query,exptype, params,index);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("query", query);
+        map.put("params", params);
+        return map;
+    }
+
+    private int prepareCriteria(StringBuffer whereQuery, List<Object> params, int index) {
         if (null != voucherHeader.getFundId()) {
             whereQuery.append(" and mis.fundid=?").append(index++);
             params.add(Long.valueOf(voucherHeader.getFundId().getId()));
@@ -719,65 +733,43 @@ public class BillRegisterReportAction extends SearchFormAction {
             whereQuery.append(" and b.billnumber like ?").append(index++);
             params.add("%" + billNumber + "%");
         }
-
-        if (StringUtils.isEmpty(exptype)) {
-            final List<String> expndtrList = dropdownData.get("expenditureList");
-            for (final String expenditure : expndtrList) {
-                if (!StringUtils.isEmpty(query.toString()))
-                    query.append(" UNION ");
-                query.append(getQueryByExpndType(expenditure, whereQuery.toString(), params, index));
-
-            }
-        } else
-            query.append(getQueryByExpndType(exptype, whereQuery.toString(), params, index));
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("query", query);
-        map.put("params", params);
-        return map;
+        return index;
     }
 
-    protected String getQueryByExpndType(final String expndType, final String whereQuery, final List<Object> params, int index) {
+    protected int getQueryByExpndType(final StringBuffer query,final String expndType, final List<Object> params,int index) {
+        netAccountCodeValue();
+        final List<Long> listOfNetPayGlIds = netAccountCode.get(expndType);
 
-    	netAccountCodeValue();
-        final List<String> listOfNetPayGlIds = netAccountCode.get(expndType);
-        final StringBuffer netPayCodes = new StringBuffer(30);
-        String voucherQry = "";
-        for (final String netCode : listOfNetPayGlIds)
-            if (!StringUtils.isEmpty(netPayCodes.toString()))
-                netPayCodes.append(",").append(netCode);
-            else
-                netPayCodes.append(netCode);
-        // voucher header condition for complete bill register report
-        if (voucherHeader.getVoucherNumber() != null && !StringUtils.isEmpty(voucherHeader.getVoucherNumber())) {
-            voucherQry = new StringBuilder(" and vh.vouchernumber like ?").append(index++).toString();
-            params.add("%" + voucherHeader.getVoucherNumber() + "%");
-
-        }
-        final StringBuffer query = new StringBuffer(500);
         // query to get bills for which vouchers are approved.
         query.append(" select b.billnumber ,vh.vouchernumber as vouchernumber, mis.payto,b.passedamount, sum(bd.creditamount) as netpay, s.description,b.billdate as billdate")
                 .append(" from eg_billregister b, eg_billdetails bd, voucherheader vh,eg_billregistermis mis , egw_status s ")
-                .append(" where b.id= bd.billid and b.id=mis.billid and mis.voucherheaderid =vh.id  and s.id= b.statusid and bd.creditamount > 0")
-                .append(whereQuery)
-                .append(voucherQry)
-                .append("  and bd.glcodeid in(?").append(index++).append(")").append(" and b.expendituretype=?").append(index++)
+                .append(" where b.id= bd.billid and b.id=mis.billid and mis.voucherheaderid =vh.id  and s.id= b.statusid and bd.creditamount > 0");
+                index = prepareCriteria(query, params, index);
+                index = prepareVoucherFilter(query, params, index);
+                if(listOfNetPayGlIds != null && !listOfNetPayGlIds.isEmpty()){
+                    query.append("  and bd.glcodeid in(?").append(index++).append(")");
+                    params.add(listOfNetPayGlIds);
+                }
+                query.append(" and b.expendituretype=?").append(index++)
                 .append("  and vh.status IN (0,5) ")
                 .append(" group by b.billnumber, vh.vouchernumber,mis.payto, b.passedamount, s.description,b.billdate");
-        params.add(netPayCodes);
+
         params.add(expndType);
         query.append(" UNION ");
 
         // query to get bills for which vouchers are Cancelled.
         query.append(" select b.billnumber ,'' as vouchernumber, mis.payto,b.passedamount, sum(bd.creditamount) as netpay, s.description,b.billdate as billdate")
                 .append(" from eg_billregister b, eg_billdetails bd, voucherheader vh,eg_billregistermis mis , egw_status s ")
-                .append(" where b.id= bd.billid and b.id=mis.billid and mis.voucherheaderid =vh.id  and s.id= b.statusid and bd.creditamount > 0")
-                .append(whereQuery)
-                .append(voucherQry)
-                .append("  and bd.glcodeid in(?").append(index++).append(")").append(" and b.expendituretype=?").append(index++)
+                .append(" where b.id= bd.billid and b.id=mis.billid and mis.voucherheaderid =vh.id  and s.id= b.statusid and bd.creditamount > 0");
+                index = prepareCriteria(query, params, index);
+                index = prepareVoucherFilter(query, params, index);
+                if(listOfNetPayGlIds != null && !listOfNetPayGlIds.isEmpty()){
+                    query.append("  and bd.glcodeid in(?").append(index++).append(")");
+                    params.add(listOfNetPayGlIds);
+                }
+                query.append(" and b.expendituretype=?").append(index++)
                 .append("  and vh.status = 4")
                 .append(" group by b.billnumber,vouchernumber, mis.payto, b.passedamount, s.description,b.billdate");
-        params.add(netPayCodes.toString());
         params.add(expndType);
         if (voucherHeader.getVoucherNumber() == null || StringUtils.isEmpty(voucherHeader.getVoucherNumber())) {
             query.append(" UNION ");
@@ -785,15 +777,28 @@ public class BillRegisterReportAction extends SearchFormAction {
             // query to get bills for voucher is not created
             query.append(" select b.billnumber ,'' as vouchernumber, mis.payto,b.passedamount, sum(bd.creditamount) as netpay, s.description,b.billdate as billdate")
                     .append(" from eg_billregister b, eg_billdetails bd,eg_billregistermis mis , egw_status s ")
-                    .append(" where b.id= bd.billid and b.id=mis.billid  and s.id= b.statusid and  mis.voucherheaderid is null and bd.creditamount > 0")
-                    .append(whereQuery)
-                    .append("  and bd.glcodeid in(?").append(index++).append(")").append(" and b.expendituretype=?").append(index++)
+                    .append(" where b.id= bd.billid and b.id=mis.billid  and s.id= b.statusid and  mis.voucherheaderid is null and bd.creditamount > 0");
+                    index = prepareCriteria(query, params, index);
+                    if(listOfNetPayGlIds != null && !listOfNetPayGlIds.isEmpty()){
+                        query.append("  and bd.glcodeid in(?").append(index++).append(")");
+                        params.add(listOfNetPayGlIds);
+                    }
+                    query.append(" and b.expendituretype=?").append(index++)
                     .append(" group by b.billnumber, vouchernumber,mis.payto, b.passedamount, s.description,b.billdate");
-            params.add(netPayCodes.toString());
             params.add(expndType);
         }
 
-        return query.toString();
+        return index;
+    }
+
+    private int prepareVoucherFilter(StringBuffer voucherQry, List<Object> params, int index) {
+        // voucher header condition for complete bill register report
+        if (voucherHeader.getVoucherNumber() != null && !StringUtils.isEmpty(voucherHeader.getVoucherNumber())) {
+            voucherQry.append(" and vh.vouchernumber like ?").append(index++);
+            params.add("%" + voucherHeader.getVoucherNumber() + "%");
+
+        }
+        return index;
     }
 
     protected void loadDropdownData() {
@@ -923,11 +928,11 @@ public class BillRegisterReportAction extends SearchFormAction {
         this.isCompleteBillRegisterReport = isCompleteBillRegisterReport;
     }
 
-    public static Map<String, List<String>> getNetAccountCode() {
+    public static Map<String, List<Long>> getNetAccountCode() {
 		return netAccountCode;
 	}
 
-	public static void setNetAccountCode(Map<String, List<String>> netAccountCode) {
+	public static void setNetAccountCode(Map<String, List<Long>> netAccountCode) {
 		BillRegisterReportAction.netAccountCode = netAccountCode;
 	}
 

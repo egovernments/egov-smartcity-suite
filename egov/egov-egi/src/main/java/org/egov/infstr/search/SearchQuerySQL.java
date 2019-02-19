@@ -111,10 +111,10 @@ public class SearchQuerySQL implements SearchQuery {
      */
     private Query getNativeQueryWithParams(final PersistenceService persistenceService, final String query) {
         final Query q = persistenceService.getSession().createNativeQuery(query);
-
+        int counter = 1;
         if (this.params != null && this.params.length > 0) {
             for (int index = 0; index < this.params.length; index++) {
-                q.setParameter(index, this.params[index]);
+                q.setParameter(counter++, this.params[index]);
             }
         }
         return q;
