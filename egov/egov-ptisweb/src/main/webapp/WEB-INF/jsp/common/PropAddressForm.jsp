@@ -62,6 +62,8 @@
 });
 
 function populateBoundaries() {
+	var locality = jQuery('#locality').val();
+	if(locality != -1 && locality != null) {
 	jQuery.ajax({
 		url: "/egi/boundary/block/by-locality",
 		type: "GET",
@@ -101,7 +103,10 @@ function populateBoundaries() {
 			bootbox.alert("No boundary details mapped for locality")
 		}
 	});
-
+}
+	else{
+		return false;
+	}
 }
 
 function populateBlock() {

@@ -67,9 +67,9 @@
 				class="mandatory1">*</span></th>
 			<th class="bluebgheadtd"><s:text name="lbl.layout.authority" /><span
 				class="mandatory1">*</span></th>
-			<th class="bluebgheadtd"><s:text name="lbl.layout.permitno" /><span
+			<th class="bluebgheadtd" id="permitNoLabel"><s:text name="lbl.layout.permitno" /><span
 				class="mandatory1">*</span></th>
-			<th class="bluebgheadtd"><s:text name="lbl.layout.permitdate" /><span
+			<th class="bluebgheadtd" id="permitDateLabel"><s:text name="lbl.layout.permitdate" /><span
 				class="mandatory1">*</span></th>
 		</tr>
 

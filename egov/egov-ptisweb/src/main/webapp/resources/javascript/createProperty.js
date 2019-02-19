@@ -567,8 +567,9 @@ function populateUsg() {
 		}
 	}
 }
-function populateUsages() {
+function populateUsages(obj) {
 	jQuery("#propertyCategory").val(document.getElementById("propTypeCategoryId").value);
+	changeFirmName();
 	populatefloorUsage({
 		propTypeCategory : document.getElementById("propTypeCategoryId").value
 	});
@@ -1312,4 +1313,15 @@ function setEffectiveDate(){
 		}
 		jQuery('#dateOfCompletion').val(effectiveDate);
 	}
+
+function changeFirmName(){
+	
+	var propType = document.getElementById("propTypeCategoryId").value;
+	if(propType == 'RESIDENTIAL'){
+		jQuery('#firmNameLabel').html('Firm Name');
+	}
+	else{
+		jQuery('#firmNameLabel').html('Firm Name <span class="mandatory1">*');
+	}
+}
 

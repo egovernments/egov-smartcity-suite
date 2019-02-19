@@ -133,7 +133,7 @@
 			var category = '<s:property value="%{propertyDetail.categoryType}"/>';
 			document.forms[0].propTypeCategoryId.options[document.forms[0].propTypeCategoryId.selectedIndex].value = category;
 			toggleFloorDetails();
-			
+			changeFirmName();
 			var aadhartextboxes = jQuery('.txtaadhar');
 			aadhartextboxes.each(function() {
 				if (jQuery(this).val()) {

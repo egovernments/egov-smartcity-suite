@@ -53,9 +53,13 @@ jQuery('#layoutApprovalAuthorityId').change(function() {
 		jQuery('#layoutPermitNo').prop("disabled", true);
 		jQuery('#layoutPermitDate').val("");
 		jQuery('#layoutPermitDate').prop("disabled", true);
+		jQuery('#permitNoLabel').html('Layout Permit Number');
+		jQuery('#permitDateLabel').html('Layout Permit Date');
 	}
 	else{
 		jQuery('#layoutPermitNo').prop("disabled", false);
 		jQuery('#layoutPermitDate').prop("disabled", false);
+		jQuery('#permitNoLabel').html('Layout Permit Number <span class="mandatory1">*');
+		jQuery('#permitDateLabel').html('Layout Permit Date <span class="mandatory1">*');
 	}
 });
