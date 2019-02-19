@@ -201,12 +201,7 @@ public class ComplaintUpdationController {
                     boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(
                             complaint.getLocation().getBoundaryType().getName(), "Administration"));
             model.addAttribute(LOCATION_ATTRIB,
-                    crossHierarchyService.findChildBoundariesByBoundaryTypeAndHierarchyAndParentBoundary(
-                            complaint.getChildLocation().getBoundaryType().getName(),
-                            complaint.getChildLocation().getBoundaryType().getHierarchyType().getName(),
-                            complaint.getLocation().getBoundaryType().getName(),
-                            complaint.getLocation().getBoundaryType().getHierarchyType().getName(),
-                            complaint.getLocation().getName()));
+                    crossHierarchyService.getChildBoundariesNameAndBndryTypeAndHierarchyType("Locality", "Location"));
         } else if (complaint.getLat() > 0D && complaint.getLng() > 0D) {
             model.addAttribute("ward",
                     boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(
