@@ -49,7 +49,7 @@ $(document)
 		.ready(
 				function() {
 
-					var fileformatsinclude = [ 'doc', 'docx', 'xls', 'xlsx',
+					var fileformatsinclude = [ 'doc', 'docx', 'xls', 'xlsx', 'gif',
 							'rtf', 'pdf', 'jpeg', 'jpg', 'png', 'txt', 'zip',
 							'rar' ];
 
