@@ -125,7 +125,10 @@ import java.util.Set;
         @Result(name = ContingentBillAction.VIEW, location = "contingentBill-view.jsp")
 })
 public class ContingentBillAction extends BaseBillAction {
-    public class COAcomparator implements Comparator<CChartOfAccounts> {
+	
+    private static final String INVALID_APPROVER = "invalid.approver";
+
+	public class COAcomparator implements Comparator<CChartOfAccounts> {
         @Override
         public int compare(final CChartOfAccounts o1, final CChartOfAccounts o2) {
             return o1.getGlcode().compareTo(o2.getGlcode());
@@ -134,7 +137,7 @@ public class ContingentBillAction extends BaseBillAction {
 
     }
 
-    private final static String FORWARD = "Forward";
+    private static final String FORWARD = "Forward";
     private static final String ACCOUNT_DETAIL_TYPE_LIST = "accountDetailTypeList";
     private static final String BILL_SUB_TYPE_LIST = "billSubTypeList";
     private static final String USER_LIST = "userList";
@@ -252,7 +255,6 @@ public class ContingentBillAction extends BaseBillAction {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     @SkipValidation
     @Action(value = "/bill/contingentBill-newform")
     public String newform() {
@@ -379,6 +381,10 @@ public class ContingentBillAction extends BaseBillAction {
                             + commonBean.getBillNumber())));
             populateWorkflowBean();
             bill = egBillRegisterService.createBill(bill, workflowBean, checkListsTable);
+            if (!bill.isValidApprover()) {
+            	addActionError(getText(INVALID_APPROVER));
+            	return NEW;
+            }
             addActionMessage(getText("cbill.transaction.succesful") + bill.getBillnumber());
             billRegisterId = bill.getId();
 

@@ -64,6 +64,7 @@ import org.egov.egf.expensebill.repository.ExpenseBillRepository;
 import org.egov.egf.utils.FinancialUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
@@ -150,6 +151,8 @@ public class ExpenseBillService {
     private BudgetDetailsHibernateDAO budgetDetailsHibernateDAO;
     @Autowired
     private CFinancialYearService cFinancialYearService;
+    @Autowired
+    private EisCommonService eisCommonService;
 
     @Autowired
     public ExpenseBillService(final ExpenseBillRepository expenseBillRepository, final ScriptService scriptExecutionService) {
@@ -316,6 +319,8 @@ public class ExpenseBillService {
                 createExpenseBillRegisterWorkflowTransition(updatedegBillregister, approvalPosition, approvalComent,
                         additionalRule,
                         workFlowAction);
+                if (!updatedegBillregister.isValidApprover())
+                	return updatedegBillregister;
             }
             updatedegBillregister = expenseBillRepository.save(updatedegBillregister);
         } else {
@@ -327,6 +332,8 @@ public class ExpenseBillService {
                 createExpenseBillRegisterWorkflowTransition(egBillregister, approvalPosition, approvalComent,
                         additionalRule,
                         workFlowAction);
+                if (!egBillregister.isValidApprover())
+                	return egBillregister;
             }
             updatedegBillregister = expenseBillRepository.save(egBillregister);
         }
@@ -431,6 +438,11 @@ public class ExpenseBillService {
 
                 wfmatrix = egBillregisterRegisterWorkflowService.getWfMatrix(egBillregister.getStateType(), null,
                         null, additionalRule, currState, null);
+                
+                if (!eisCommonService.isValidAppover(wfmatrix, wfInitiator.getPosition())) {
+                    egBillregister.setValidApprover(Boolean.FALSE);
+                    return;
+                }
 
                 if (stateValue.isEmpty())
                     stateValue = wfmatrix.getNextState();
@@ -467,6 +479,11 @@ public class ExpenseBillService {
                 wfmatrix = egBillregisterRegisterWorkflowService.getWfMatrix(egBillregister.getStateType(), null,
                         null, additionalRule, egBillregister.getCurrentState().getValue(), null);
 
+                if (!eisCommonService.isValidAppover(wfmatrix, wfInitiator.getPosition())) {
+                    egBillregister.setValidApprover(Boolean.FALSE);
+                    return;
+                }
+                
                 if (stateValue.isEmpty())
                     stateValue = wfmatrix.getNextState();
 

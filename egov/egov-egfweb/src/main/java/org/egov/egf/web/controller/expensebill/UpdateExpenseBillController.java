@@ -47,15 +47,23 @@
  */
 package org.egov.egf.web.controller.expensebill;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.commons.service.CheckListService;
+import org.egov.egf.commons.CommonsUtil;
 import org.egov.egf.expensebill.repository.DocumentUploadRepository;
 import org.egov.egf.expensebill.service.ExpenseBillService;
 import org.egov.egf.utils.FinancialUtils;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.EgChecklists;
 import org.egov.model.bills.DocumentUpload;
@@ -74,11 +82,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 @Controller
 @RequestMapping(value = "/expensebill")
 public class UpdateExpenseBillController extends BaseBillController {
@@ -94,17 +97,32 @@ public class UpdateExpenseBillController extends BaseBillController {
     private static final String EXPENSEBILL_VIEW = "expensebill-view";
 
     private static final String NET_PAYABLE_ID = "netPayableId";
+    
+    private static final String UNAUTHORIZED = "unuthorized";
+    
+    private static final String INVALID_APPROVER = "invalid.approver";
+    
     @Autowired
     private DocumentUploadRepository documentUploadRepository;
+    
     @Autowired
     private ExpenseBillService expenseBillService;
+    
     @Autowired
     @Qualifier("chartOfAccountsService")
     private ChartOfAccountsService chartOfAccountsService;
+    
     @Autowired
     private FinancialUtils financialUtils;
+    
     @Autowired
     private CheckListService checkListService;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
+    
+    @Autowired
+    private CommonsUtil commonsUtil;
     
     public UpdateExpenseBillController(final AppConfigValueService appConfigValuesService) {
         super(appConfigValuesService);
@@ -119,6 +137,8 @@ public class UpdateExpenseBillController extends BaseBillController {
     public String updateForm(final Model model, @PathVariable final String billId,
                              final HttpServletRequest request) throws ApplicationException {
         final EgBillregister egBillregister = expenseBillService.getById(Long.parseLong(billId));
+        if (!commonsUtil.isApplicationOwner(securityUtils.getCurrentUser(), egBillregister))
+            return UNAUTHORIZED;
         final List<DocumentUpload> documents = documentUploadRepository.findByObjectId(Long.valueOf(billId));
         egBillregister.setDocumentDetail(documents);
         List<Map<String, Object>> budgetDetails = null;
@@ -212,28 +232,16 @@ public class UpdateExpenseBillController extends BaseBillController {
             }
         } else {
             try {
-                if (null != workFlowAction)
+                if (null != workFlowAction) {
                     updatedEgBillregister = expenseBillService.update(egBillregister, approvalPosition, approvalComment, null,
                             workFlowAction, mode);
-            } catch (final ValidationException e) {
-                setDropDownValues(model);
-                model.addAttribute("stateType", egBillregister.getClass().getSimpleName());
-                prepareWorkflow(model, egBillregister, new WorkflowContainer());
-                model.addAttribute(APPROVAL_DESIGNATION, request.getParameter(APPROVAL_DESIGNATION));
-                model.addAttribute(APPROVAL_POSITION, request.getParameter(APPROVAL_POSITION));
-                model.addAttribute(NET_PAYABLE_ID, request.getParameter(NET_PAYABLE_ID));
-                model.addAttribute(NET_PAYABLE_AMOUNT, request.getParameter(NET_PAYABLE_AMOUNT));
-                model.addAttribute("designation", request.getParameter("designation"));
-                if (egBillregister.getState() != null
-                        && (FinancialConstants.WORKFLOW_STATE_REJECTED.equals(egBillregister.getState().getValue())
-                        || financialUtils.isBillEditable(egBillregister.getState()))) {
-                    prepareValidActionListByCutOffDate(model);
-                    model.addAttribute("mode", "edit");
-                    return "expensebill-update";
-                } else {
-                    model.addAttribute("mode", "view");
-                    return EXPENSEBILL_VIEW;
+                    if (!egBillregister.isValidApprover()) {
+                    	model.addAttribute("errorMessage", INVALID_APPROVER);
+                    	return populateOnException(updatedEgBillregister, model, request);
+                    }
                 }
+            } catch (final ValidationException e) {
+                return populateOnException(egBillregister, model, request);
             }
 
             redirectAttributes.addFlashAttribute(EG_BILLREGISTER, updatedEgBillregister);
@@ -250,6 +258,28 @@ public class UpdateExpenseBillController extends BaseBillController {
                     + updatedEgBillregister.getBillnumber();
         }
     }
+
+	private String populateOnException(final EgBillregister egBillregister, final Model model,
+			final HttpServletRequest request) {
+		setDropDownValues(model);
+		model.addAttribute("stateType", egBillregister.getClass().getSimpleName());
+		prepareWorkflow(model, egBillregister, new WorkflowContainer());
+		model.addAttribute(APPROVAL_DESIGNATION, request.getParameter(APPROVAL_DESIGNATION));
+		model.addAttribute(APPROVAL_POSITION, request.getParameter(APPROVAL_POSITION));
+		model.addAttribute(NET_PAYABLE_ID, request.getParameter(NET_PAYABLE_ID));
+		model.addAttribute(NET_PAYABLE_AMOUNT, request.getParameter(NET_PAYABLE_AMOUNT));
+		model.addAttribute("designation", request.getParameter("designation"));
+		if (egBillregister.getState() != null
+		        && (FinancialConstants.WORKFLOW_STATE_REJECTED.equals(egBillregister.getState().getValue())
+		        || financialUtils.isBillEditable(egBillregister.getState()))) {
+		    //prepareValidActionListByCutOffDate(model);
+		    model.addAttribute("mode", "edit");
+		    return "expensebill-update";
+		} else {
+		    model.addAttribute("mode", "view");
+		    return EXPENSEBILL_VIEW;
+		}
+	}
 
     @RequestMapping(value = "/view/{billId}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String billId,

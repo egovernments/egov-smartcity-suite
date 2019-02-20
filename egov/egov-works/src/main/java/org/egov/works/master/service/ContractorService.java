@@ -105,7 +105,7 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
     public List<Contractor> getAllActiveEntities(final Integer accountDetailTypeId) {
         return findAllBy(
                 "select distinct contractorDet.contractor from ContractorDetail contractorDet "
-                        + "where contractorDet.status.description=? and contractorDet.status.moduletype=?",
+                        + "where contractorDet.status.description=?1 and contractorDet.status.moduletype=?2",
                 "Active", "Contractor");
     }
 
@@ -127,8 +127,8 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
         final Integer pageSize = maxRecords > 0 ? maxRecords : 0;
         final String param = "%" + filterKey.toUpperCase() + "%";
         final String qry = "select distinct cont from Contractor cont, ContractorDetail contractorDet "
-                + "where cont.id=contractorDet.contractor.id and contractorDet.status.description=? and contractorDet.status.moduletype=? and (upper(cont.code) like ? "
-                + "or upper(cont.name) like ?) order by cont.code,cont.name";
+                + "where cont.id=contractorDet.contractor.id and contractorDet.status.description=?1 and contractorDet.status.moduletype=?2 and (upper(cont.code) like ?3 "
+                + "or upper(cont.name) like ?4) order by cont.code,cont.name";
         return findPageBy(qry, 0, pageSize, "Active", "Contractor", param, param).getList();
     }
 
@@ -168,96 +168,98 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
 
     public List<Contractor> getContractorListForCriterias(final Map<String, Object> criteriaMap) {
         List<Contractor> contractorList = null;
-        String contractorStr = null;
-        final List<Object> paramList = new ArrayList<Object>();
+        StringBuilder contractorStr = new StringBuilder();
+        final List<Object> paramList = new ArrayList<>();
+        int index = 1; 
         Object[] params;
         final String contractorName = (String) criteriaMap.get(WorksConstants.CONTRACTOR_NAME);
         final String contractorCode = (String) criteriaMap.get(WorksConstants.CONTRACTOR_CODE);
         final Long departmentId = (Long) criteriaMap.get(WorksConstants.DEPARTMENT_ID);
         final Integer statusId = (Integer) criteriaMap.get(WorksConstants.STATUS_ID);
         final Long gradeId = (Long) criteriaMap.get(WorksConstants.GRADE_ID);
-        contractorStr = " select distinct contractor from Contractor contractor ";
+        contractorStr.append(" select distinct contractor from Contractor contractor ");
 
         if (statusId != null || departmentId != null || gradeId != null)
-            contractorStr = contractorStr + " left outer join fetch contractor.contractorDetails as detail ";
+            contractorStr.append(" left outer join fetch contractor.contractorDetails as detail ");
 
         if (statusId != null || departmentId != null || gradeId != null
                 || contractorCode != null && !contractorCode.equals("")
                 || contractorName != null && !contractorName.equals(""))
-            contractorStr = contractorStr + " where contractor.code is not null";
+            contractorStr.append(" where contractor.code is not null");
 
         if (org.apache.commons.lang.StringUtils.isNotEmpty(contractorCode)) {
-            contractorStr = contractorStr + " and UPPER(contractor.code) like ?";
+            contractorStr.append(" and UPPER(contractor.code) like ?").append(index++);
             paramList.add("%" + contractorCode.toUpperCase() + "%");
         }
 
         if (org.apache.commons.lang.StringUtils.isNotEmpty(contractorName)) {
-            contractorStr = contractorStr + " and UPPER(contractor.name) like ?";
+            contractorStr.append(" and UPPER(contractor.name) like ?").append(index++);
             paramList.add("%" + contractorName.toUpperCase() + "%");
         }
 
         if (statusId != null) {
-            contractorStr = contractorStr + " and detail.status.id = ?";
+            contractorStr.append(" and detail.status.id = ?").append(index++);
             paramList.add(statusId);
         }
 
         if (departmentId != null) {
-            contractorStr = contractorStr + " and detail.department.id = ?";
+            contractorStr.append(" and detail.department.id = ?").append(index++);
             paramList.add(departmentId);
         }
 
         if (gradeId != null) {
-            contractorStr = contractorStr + " and detail.grade.id = ?";
+            contractorStr.append(" and detail.grade.id = ?").append(index);
             paramList.add(gradeId);
         }
 
         if (paramList.isEmpty())
-            contractorList = findAllBy(contractorStr);
+            contractorList = findAllBy(contractorStr.toString());
         else {
             params = new Object[paramList.size()];
             params = paramList.toArray(params);
-            contractorList = findAllBy(contractorStr, params);
+            contractorList = findAllBy(contractorStr.toString(), params);
         }
         return contractorList;
     }
 
     public SearchQuery prepareQuery(final Map<String, Object> criteriaMap) {
-        String contractorStr = null;
-        final List<Object> paramList = new ArrayList<Object>();
+        final StringBuilder contractorStr = new StringBuilder();
+        int index = 1;
+        final List<Object> paramList = new ArrayList<>();
         final String contractorName = (String) criteriaMap.get(WorksConstants.CONTRACTOR_NAME);
         final String contractorCode = (String) criteriaMap.get(WorksConstants.CONTRACTOR_CODE);
         final Long departmentId = (Long) criteriaMap.get(WorksConstants.DEPARTMENT_ID);
         final Integer statusId = (Integer) criteriaMap.get(WorksConstants.STATUS_ID);
         final Long gradeId = (Long) criteriaMap.get(WorksConstants.GRADE_ID);
-        contractorStr = " from ContractorDetail detail ";
+        contractorStr.append(" from ContractorDetail detail ");
 
         if (statusId != null || departmentId != null || gradeId != null
                 || contractorCode != null && !contractorCode.equals("")
                 || contractorName != null && !contractorName.equals(""))
-            contractorStr = contractorStr + " where detail.contractor.code is not null";
+            contractorStr.append(" where detail.contractor.code is not null");
 
         if (contractorCode != null && !contractorCode.equals("")) {
-            contractorStr = contractorStr + " and UPPER(detail.contractor.code) like ?";
+            contractorStr.append(" and UPPER(detail.contractor.code) like ?").append(index++);
             paramList.add("%" + contractorCode.toUpperCase() + "%");
         }
 
         if (contractorName != null && !contractorName.equals("")) {
-            contractorStr = contractorStr + " and UPPER(detail.contractor.name) like ?";
+            contractorStr.append(" and UPPER(detail.contractor.name) like ?").append(index++);
             paramList.add("%" + contractorName.toUpperCase() + "%");
         }
 
         if (statusId != null) {
-            contractorStr = contractorStr + " and detail.status.id = ? ";
+            contractorStr.append(" and detail.status.id = ? ").append(index++);
             paramList.add(statusId);
         }
 
         if (departmentId != null) {
-            contractorStr = contractorStr + " and detail.department.id = ? ";
+            contractorStr.append(" and detail.department.id = ? ").append(index++);
             paramList.add(departmentId);
         }
 
         if (gradeId != null) {
-            contractorStr = contractorStr + " and detail.grade.id = ? ";
+            contractorStr.append(" and detail.grade.id = ? ").append(index);
             paramList.add(gradeId);
         }
         final String query = "select distinct detail.contractor " + contractorStr;
@@ -327,7 +329,7 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
         final Integer pageSize = maxRecords > 0 ? maxRecords : 0;
         final String param = "%" + filterKey.toUpperCase() + "%";
         final String qry = "select distinct cont from Contractor cont, ContractorDetail contractorDet "
-                + "where cont.id=contractorDet.contractor.id and contractorDet.status.description=? and contractorDet.status.moduletype=? and upper(cont.code) like ? "
+                + "where cont.id=contractorDet.contractor.id and contractorDet.status.description=?1 and contractorDet.status.moduletype=?2 and upper(cont.code) like ?3 "
                 + "order by cont.code,cont.name";
         return findPageBy(qry, 0, pageSize, "Active", "Contractor", param).getList();
     }
@@ -354,7 +356,7 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
     public String getContractorClassShortName(final String contractorGrade) {
         final String[] contractorMasterClassValues = worksApplicationProperties.contractorMasterClassValues();
         if (contractorMasterClassValues != null && !Arrays.asList(contractorMasterClassValues).contains("")) {
-            final HashMap<String, String> contractorClassKeyValuePair = new HashMap<String, String>();
+            final HashMap<String, String> contractorClassKeyValuePair = new HashMap<>();
             for (final String s : contractorMasterClassValues)
                 contractorClassKeyValuePair.put(s.split(":")[0], s.split(":")[1]);
             return contractorClassKeyValuePair.get(contractorGrade);

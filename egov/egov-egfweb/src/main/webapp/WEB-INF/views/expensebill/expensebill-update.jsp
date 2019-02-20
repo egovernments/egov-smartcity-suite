@@ -82,6 +82,11 @@
 	border-radius: 5px;
 }
 </style>
+<c:if test="${not empty errorMessage}">
+	<div class="alert alert-danger" role="alert">
+		<spring:message code="${errorMessage}" />
+	</div>
+</c:if>
 <form:form name="expenseBillForm" role="form"
 	modelAttribute="egBillregister" id="egBillregister"
 	class="form-horizontal form-groups-bordered"

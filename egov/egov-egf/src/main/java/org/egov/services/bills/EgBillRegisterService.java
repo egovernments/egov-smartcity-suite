@@ -52,6 +52,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -93,6 +94,8 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
+    @Autowired
+    private EisCommonService eisCommonService;
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
@@ -116,6 +119,8 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
                 bill.setStatus(egwStatus);
             } else {
                 bill = transitionWorkFlow(bill, workflowBean);
+                if (!bill.isValidApprover())
+                	return bill;
                 applyAuditing(bill.getState());
             }
             persist(bill);
@@ -219,6 +224,8 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
             if (null == billregister.getState()) {
                 final WorkFlowMatrix wfmatrix = billRegisterWorkflowService.getWfMatrix(billregister.getStateType(), null,
                         null, null, workflowBean.getCurrentState(), null);
+                if (!eisCommonService.isValidAppover(wfmatrix, pos))
+                	return billregister;
                 billregister.transition().start().withSenderName(user.getName())
                         .withComments(workflowBean.getApproverComments())
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)

@@ -655,5 +655,9 @@
         <put-attribute name="body" value="/WEB-INF/views/receiptpayment/receiptpayment-search.jsp"/>
     </definition>
 
+	<definition name="unuthorized" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.unauthorized" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/common/unauthorized.jsp"/>
+    </definition>
 
 </tiles-definitions>
