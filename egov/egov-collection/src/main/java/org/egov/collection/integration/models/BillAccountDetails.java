@@ -72,6 +72,8 @@ public class BillAccountDetails implements Comparable<BillAccountDetails> {
     private final BigDecimal crAmount;
     @XStreamAlias("drAmount")
     private final BigDecimal drAmount;
+    @XStreamAlias("cramountToBePaid")
+	private BigDecimal cramountToBePaid;
     private final String functionCode;
 
     @XStreamAsAttribute
@@ -109,6 +111,13 @@ public class BillAccountDetails implements Comparable<BillAccountDetails> {
         this.purpose = purpose;
         this.groupId = groupId;
     }
+    
+    public BillAccountDetails(final String glCode, final Integer order, final BigDecimal crAmount,
+			final BigDecimal drAmount, final String functionCode, final String description,
+			final Boolean isActualDemand, final PURPOSE purpose, final BigDecimal cramountToBePaid) {
+		this(glCode, order, crAmount, drAmount, functionCode, description, isActualDemand, purpose);
+		this.cramountToBePaid = cramountToBePaid;
+	}
 
     @Override
     public String toString() {
@@ -180,5 +189,9 @@ public class BillAccountDetails implements Comparable<BillAccountDetails> {
     public Integer getGroupId() {
         return groupId;
     }
+    
+    public BigDecimal getCramountToBePaid() {
+		return cramountToBePaid;
+	}
 
 }

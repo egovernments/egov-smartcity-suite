@@ -302,8 +302,9 @@ public class CollectionCommon {
                                 billAccount.getDrAmount());
                     Long billAccountGroupid = Long.valueOf((billAccount.getGroupId() == null) ? 0 : billAccount.getGroupId());
 
-                    final ReceiptDetail receiptDetail = new ReceiptDetail(account, function, billAccount.getCrAmount()
-                            .subtract(billAccount.getDrAmount()), billAccount.getDrAmount(), billAccount.getCrAmount(),
+                    final ReceiptDetail receiptDetail = new ReceiptDetail(account, function,
+                    		(billAccount.getCramountToBePaid() == null ? billAccount.getCrAmount().subtract(billAccount.getDrAmount())
+									: billAccount.getCramountToBePaid()), billAccount.getDrAmount(), billAccount.getCrAmount(),
                             Long.valueOf(billAccount.getOrder()), billAccount.getDescription(),
                             billAccount.getIsActualDemand(), receiptHeader, billAccount.getPurpose().toString(),
                             billAccountGroupid);
