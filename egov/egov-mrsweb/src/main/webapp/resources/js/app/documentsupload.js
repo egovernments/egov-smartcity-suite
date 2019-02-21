@@ -109,9 +109,9 @@ var fileimageformatsinclude = ['jpeg','jpg','png','gif'];
 			var charlen = (this.value
 					.split('/').pop().split(
 							'\\').pop()).length;
-			if (charlen > 50) {
+			if (charlen > 255) {
 				bootbox
-						.alert('File length should not exceed 50 characters!');
+						.alert('File length should not exceed 255 characters!');
 				fileInput.replaceWith(fileInput
 						.val('').clone(true));
 				return false;
