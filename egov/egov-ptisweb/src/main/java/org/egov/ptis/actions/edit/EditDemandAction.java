@@ -558,14 +558,14 @@ public class EditDemandAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.info("Entered into update, basicProperty=" + basicProperty);
 		final List<EgDemandDetails> demandDetailsFromDB = (List<EgDemandDetails>) entityManager.unwrap(Session.class)
-				.createQuery(QUERY_NONZERO_DEMAND_DETAILS).setParameter("bp", basicProperty);
+				.createQuery(QUERY_NONZERO_DEMAND_DETAILS).setParameter("bp", basicProperty).getResultList();
         final Installment currentInstallment = propertyTaxCommonUtils.getCurrentInstallment();
         final Map<Installment, List<EgDemandDetails>> demandDetails = new TreeMap<>();
 
         final String queryZeroDemandDetails = QUERY_DEMAND_DETAILS + " AND dd.amount = 0";
 
 		final List<EgDemandDetails> dmdDtlsWithZeroAmt = (List<EgDemandDetails>) entityManager.unwrap(Session.class)
-				.createQuery(queryZeroDemandDetails).setParameter("bp", basicProperty);
+				.createQuery(queryZeroDemandDetails).setParameter("bp", basicProperty).getResultList();
         final Set<Installment> zeroInstallments = new TreeSet<>();
 
         BigDecimal totalDmd = BigDecimal.ZERO;
@@ -662,7 +662,7 @@ public class EditDemandAction extends BaseFormAction {
 
 		final List<EgDemandDetails> currentInstdemandDetailsFromDB = (List<EgDemandDetails>) entityManager.unwrap(Session.class)
 				.createQuery(QUERYINSTDD).setParameter("bp", basicProperty)
-				.setParameter("instalment", propertyTaxCommonUtils.getCurrentInstallment());
+				.setParameter("installment", propertyTaxCommonUtils.getCurrentInstallment()).getResultList();
 
         final Map<Installment, Set<EgDemandDetails>> demandDetailsSetByInstallment = getEgDemandDetailsSetByInstallment(
                 currentInstdemandDetailsFromDB);
