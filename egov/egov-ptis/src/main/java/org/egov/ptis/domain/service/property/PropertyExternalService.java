@@ -2907,7 +2907,7 @@ public class PropertyExternalService {
 						.setParameter("boundary", zone.getId()).setParameter("usage", usage.getId())
 						.setParameter("structure", sc.getId())
 						.setParameter("fromDate", convertStringToDate(floorDetails.getOccupancyDate()))
-						.setParameter("toDate", installment.getToDate());
+						.setParameter("toDate", installment.getToDate()).getResultList();
                 if (categories.isEmpty()) {
                     isActive = Boolean.TRUE;
                 }
