@@ -237,7 +237,7 @@ $(document).ready(function(){
             			"bDestroy": true,
             			"autoWidth": true, searching: false, paging: false, info: false,
             			"columns" : [
-            		      { "data" : "errorMessage", "title":"Errorssss"},
+            		      { "data" : "errorMessage", "title":"Errors"},
             			  ],
                           "columnDefs": [
                                          {"className": "dt-center", "targets": "_all"}
