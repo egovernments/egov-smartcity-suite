@@ -645,6 +645,14 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
                     + " must be greater than or equal to minimum amount " + receiptHeader.getMinimumAmount());
         }
 
+        final List<ReceiptHeader> pendingOnlinePayments = findAllByNamedQuery(
+                CollectionConstants.QUERY_ONLINE_PENDING_RECEIPTS_BY_CONSUMERCODE_AND_SERVICECODE,
+                receiptHeader.getService().getCode(),
+                receiptHeader.getConsumerCode(), CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
+        if (!pendingOnlinePayments.isEmpty())
+            throw new ApplicationRuntimeException(
+                    "The transaction is in pending status and we are working with the banker to reconcile it.Please try after sometime.");
+
         if (totalAmountToBeCollected.compareTo(BigDecimal.ZERO) == -1) {
             LOGGER.info("Amount to be collected is less than zero, hence cannot proceed.");
             throw new ValidationException(Arrays.asList(new ValidationError("billreceipt.totalamountlessthanzero.error",
