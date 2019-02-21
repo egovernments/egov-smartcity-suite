@@ -47,6 +47,8 @@
  */
 package org.egov.mrs.masters.service;
 
+import org.apache.commons.lang3.StringUtils;
+import org.egov.mrs.domain.entity.MarriageRegistrationSearchFilter;
 import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
 import org.egov.mrs.masters.repository.MrRegistrationUnitRepository;
 import org.hibernate.Criteria;
@@ -115,28 +117,20 @@ public class MarriageRegistrationUnitService {
 
     @SuppressWarnings("unchecked")
     public List<MarriageRegistrationUnit> searchMarriageRegistrationUnit(
-            final MarriageRegistrationUnit marriageRegistrationUnit) {
+            final MarriageRegistrationSearchFilter searchFilter) {
         final Criteria criteria = getCurrentSession().createCriteria(
                 MarriageRegistrationUnit.class);
-        if (null != marriageRegistrationUnit.getName())
+        if (StringUtils.isNotBlank(searchFilter.getRegistrationUnitName()))
             criteria.add(Restrictions.ilike("name",
-                    marriageRegistrationUnit.getName(), MatchMode.ANYWHERE));
-        if (null != marriageRegistrationUnit.getAddress())
-            criteria.add(Restrictions.ilike("address",
-                    marriageRegistrationUnit.getAddress(), MatchMode.ANYWHERE));
-        if (null != marriageRegistrationUnit.getIsActive() && marriageRegistrationUnit.getIsActive())
+            		searchFilter.getRegistrationUnitName(), MatchMode.ANYWHERE));
+        if (searchFilter.getIsRegistrationUnitActive())
             criteria.add(Restrictions.eq("isActive",
-                    marriageRegistrationUnit.getIsActive()));
-        if (null != marriageRegistrationUnit.getIsMainRegistrationUnit()
-                && marriageRegistrationUnit.getIsMainRegistrationUnit())
-            criteria.add(Restrictions.eq("isMainRegistrationUnit",
-                    marriageRegistrationUnit.getIsMainRegistrationUnit()));
-        if (marriageRegistrationUnit.getZone().getId() != null)
-            criteria.add(Restrictions.eq("zone.id", marriageRegistrationUnit
-                    .getZone().getId()));
+            		 searchFilter.getIsRegistrationUnitActive()));
+        if (searchFilter.getRegistrationUnitZone() != null)
+            criteria.add(Restrictions.eq("zone.id", searchFilter.getRegistrationUnitZone()));
 
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
     }
-
+    
 }

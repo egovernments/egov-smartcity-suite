@@ -56,91 +56,119 @@ $('#btnSearch').click(function(e) {
 	});
 
 
-	function callAjaxSearch() {
+function callAjaxSearch() {
 		
 						$('.report-section').removeClass('display-hide');
-						reportdatatable =	$("#registrationUnitResultTable")
-								.dataTable(
-										{
-											ajax : {
-												
-												url :"/mrs/masters/mrregistrationunit/ajaxsearch/"
-													+ $('#mode').val(),
-													
-												type : "POST",
-												"data" : getFormData($('form')),
+						$.ajax({
+							url: "/mrs/masters/mrregistrationunit/ajaxsearch/"+ $('#mode').val(),
+							type: "POST",
+							dataType: "json",
+							beforeSend : function() {
+								$('.loader-class').modal('show', {
+									backdrop : 'static'
+								});
+							},
+							data : getFormData($('form')),
+							complete : function() {
+								$('.loader-class').modal('hide');
+							},
+							success : function(response){
+								if(response.data){
+									$('#searchResultsDiv').show();
+									$('#searchResultsLabelDiv').show();
+									reportdatatable = $('#registrationUnitResultTable').dataTable({
+					       			"aaData":response.data,
+					       			"bDestroy" : true,
+									"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
+									"aLengthMenu" : [
+											[ 10, 25, 50, -1 ],
+											[ 10, 25, 50, "All" ] ],
+									"oTableTools" : {
+										"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+										"aButtons" : [ "xls", "pdf",
+												"print" ]
+									},
+									aaSorting : [],
+									columns : [
+											{
+												"data" : "name",
+												"sClass" : "text-left"
 											},
-											
-											"bDestroy" : true,
-											"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
-											"aLengthMenu" : [
-													[ 10, 25, 50, -1 ],
-													[ 10, 25, 50, "All" ] ],
-											"oTableTools" : {
-												"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-												"aButtons" : [ "xls", "pdf",
-														"print" ]
+											{
+												"data" : "address",
+												"sClass" : "text-left"
 											},
-											aaSorting : [],
-											columns : [
-													{
-														"data" : "name",
-														"sClass" : "text-left"
-													},
-													{
-														"data" : "address",
-														"sClass" : "text-left"
-													},
-													{
-														"data" : "zone",
-														"sClass" : "text-left"
-													},
-													{
-														"data" : "isActive",
-														sortable : false,
-														"render" : function(data, type, row, meta) {
-
-															if (row.isActive == true) {
-																return '<p>yes</p>';
-															} else {
-																return '<p>no</p>';
-															}
-														},													},
-													{
-														"data" : "isMainRegistrationUnit",
-														sortable : false,
-														"render" : function(data, type, row, meta) {
-
-															if (row.isMainRegistrationUnit == true) {
-																return '<p>yes</p>';
-															} else {
-																return '<p>no</p>';
-															}
-														},													},
-													{
-
-														"data" : "id",
-														sortable : false,
-														"render" : function(
-																data, type,
-																row, meta) {
-															var mode = $(
-																	'#mode')
-																	.val();
-															if (mode == 'edit') {
-																return '<button type="button" class="btn btn-xs btn-secondary edit"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button>';
-															} else {
-																return '<button type="button" class="btn btn-xs btn-secondary view"><span class="glyphicon glyphicon-tasks"></span>&nbsp;View</button>';
-															}
-														}
-
-													} ]
-
-										});
-								
-						
-						
-				}
+											{
+												"data" : "zone",
+												"sClass" : "text-left"
+											},
+											{
+												"data" : "isActive",
+												sortable : false,
+												"render" : function(data, type, row, meta) {
+	
+													if (row.isActive == true) {
+														return '<p>yes</p>';
+													} else {
+														return '<p>no</p>';
+													}
+												},													},
+											{
+												"data" : "isMainRegistrationUnit",
+												sortable : false,
+												"render" : function(data, type, row, meta) {
+	
+													if (row.isMainRegistrationUnit == true) {
+														return '<p>yes</p>';
+													} else {
+														return '<p>no</p>';
+													}
+												},													},
+											{
+	
+												"data" : "id",
+												sortable : false,
+												"render" : function(
+														data, type,
+														row, meta) {
+													var mode = $(
+															'#mode')
+															.val();
+													if (mode == 'edit') {
+														return '<button type="button" class="btn btn-xs btn-secondary edit"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button>';
+													} else {
+														return '<button type="button" class="btn btn-xs btn-secondary view"><span class="glyphicon glyphicon-tasks"></span>&nbsp;View</button>';
+													}
+												}
+	
+											} ]
+									});
+									$('#errorsDiv').hide();
+								} else if (response.error){
+									$('#errorsDiv').show();
+									$("#errorTable").dataTable({
+						    			"aaData":response.error,
+						    			"bDestroy": true,
+						    			"autoWidth": true, searching: false, paging: false, info: false,
+						    			"columns" : [
+						    		      { "data" : "errorMessage", "title":"Errors"},
+						    			  ],
+						                  "columnDefs": [
+						                                 {"className": "dt-center", "targets": "_all"}
+						                               ],
+						                               "createdRow": function( row, data, dataIndex){
+						                                    $(row).css('color', '#FF0000');
+						                                 }
+						    			});
+						            $('#searchResultsDiv').hide();
+						            $('#searchResultsLabelDiv').hide();
+								}
+							},
+							error: function (response){
+								console.log(" ------------ failed ------------ ");
+							}
+						});
+}
 	
 	$("#registrationUnitResultTable").on('click','tbody tr td  .view',function(event) {
 		var id = reportdatatable.fnGetData($(this).parent().parent(),5);

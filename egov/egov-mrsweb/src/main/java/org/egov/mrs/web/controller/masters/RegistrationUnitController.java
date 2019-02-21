@@ -52,6 +52,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.mrs.application.MarriageConstants;
+import org.egov.mrs.domain.entity.MarriageRegistrationSearchFilter;
 import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
 import org.egov.mrs.masters.service.MarriageRegistrationUnitService;
 import org.egov.mrs.web.adaptor.MarriageRegistrationUnitJsonAdaptor;
@@ -61,6 +62,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -69,6 +71,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.egov.infra.utils.JsonUtils.toJSON;
@@ -155,9 +159,8 @@ public class RegistrationUnitController {
     @RequestMapping(value = "/mrregistrationunit/search/{mode}", method = RequestMethod.GET)
     public String searchRegistrationunit(
             @PathVariable("mode") final String mode, Model model) {
-        MarriageRegistrationUnit marriageRegistrationUnit = new MarriageRegistrationUnit();
         prepareNewForm(model);
-        model.addAttribute(MARRIAGE_REGISTRATION_UNIT, marriageRegistrationUnit);
+        model.addAttribute("searchFilter", new MarriageRegistrationSearchFilter());
         return REGISTRATIONUNIT_SEARCH;
 
     }
@@ -172,18 +175,33 @@ public class RegistrationUnitController {
         return REGISTRATIONUNIT_VIEW;
     }
 
-    @RequestMapping(value = "/mrregistrationunit/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseBody
-    public String ajaxsearchRegistrationunit(
-            @PathVariable("mode") final String mode,
-            Model model,
-            @ModelAttribute final MarriageRegistrationUnit marriageRegistrationUnit) {
-        List<MarriageRegistrationUnit> searchResultList = marriageRegistrationUnitService
-                .searchMarriageRegistrationUnit(marriageRegistrationUnit);
-        return new StringBuilder("{ \"data\":")
-                .append(toJSON(searchResultList, MarriageRegistrationUnit.class, MarriageRegistrationUnitJsonAdaptor.class))
-                .append("}").toString();
-    }
+	@RequestMapping(value = "/mrregistrationunit/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+	@ResponseBody
+	public String ajaxsearchRegistrationunit(@PathVariable("mode") final String mode,
+			@Valid @ModelAttribute("searchFilter") MarriageRegistrationSearchFilter searchFilter,
+			BindingResult resultBinder) {
+
+		if (resultBinder.hasErrors()) {
+			List<MarriageRegistrationSearchFilter> errors = new ArrayList<>();
+			MarriageRegistrationSearchFilter searchRequest;
+			String criteriaName;
+			for (ObjectError error : resultBinder.getAllErrors()) {
+				searchRequest = new MarriageRegistrationSearchFilter();
+				criteriaName = error.getCodes()[0].split("\\.")[2];
+				searchRequest.setErrorMessage(new StringBuilder().append("Invalid input for ")
+						.append(criteriaName.startsWith("registrationUnit") ? criteriaName.substring(16) : criteriaName)
+						.toString());
+				errors.add(searchRequest);
+			}
+			return new StringBuilder("{ \"error\":").append(toJSON((errors))).append("}").toString();
+		} else {
+			List<MarriageRegistrationUnit> searchResultList = marriageRegistrationUnitService
+					.searchMarriageRegistrationUnit(searchFilter);
+			return new StringBuilder("{ \"data\":").append(
+					toJSON(searchResultList, MarriageRegistrationUnit.class, MarriageRegistrationUnitJsonAdaptor.class))
+					.append("}").toString();
+		}
+	}
 
     @RequestMapping(value = "/mrregistrationunit/edit/{id}", method = RequestMethod.GET)
     public String editRegistrationunit(@PathVariable("id") Long id,

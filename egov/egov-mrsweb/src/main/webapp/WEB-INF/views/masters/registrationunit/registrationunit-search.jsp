@@ -51,7 +51,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>	
-<form:form role="form"  modelAttribute="marriageRegistrationUnit" id="registrationunitsearchform" name="registrationunitsearchform"
+<form:form role="form"  modelAttribute="searchFilter" id="registrationunitsearchform" name="registrationunitsearchform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<div class="row">
@@ -69,9 +69,9 @@
 							<spring:message code="lbl.registrationunitname"/>
 						</label>
 						<div class="col-sm-6">
-							<form:input path="name" id="name" type="text" cssClass="form-control patternvalidation" 
+							<form:input path="registrationUnitName" id="name" type="text" cssClass="form-control patternvalidation" 
                         	  data-pattern="alphanumericwithspacehyphenunderscore" maxlength="50" placeholder="" autocomplete="off" />
-                            <form:errors path="name" cssClass="add-margin error-msg"/>
+                            <form:errors path="registrationUnitName" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
 
@@ -80,20 +80,20 @@
 						<spring:message code="lbl.zone"/>
 					</label>
 			<div class="col-sm-3">
-			<form:select path="zone.id" id="select-zones" cssClass="form-control" 
+			<form:select path="registrationUnitZone" id="select-zones" cssClass="form-control" 
 						cssErrorClass="form-control error">
                  <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
                  <form:options items="${zones}" itemValue="id" itemLabel="name"/>
              </form:select>
-            <form:errors path="zone.id" cssClass="add-margin error-msg"/>
+            <form:errors path="registrationUnitZone" cssClass="add-margin error-msg"/>
             </div>
 			</div>
 			<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.isactive" /> </label>
 						<div class="col-sm-3 add-margin">
-							<form:checkbox path="isActive" checked="checked" />
-							<form:errors path="isActive" cssClass="error-msg" />
+							<form:checkbox path="isRegistrationUnitActive" checked="checked" />
+							<form:errors path="isRegistrationUnitActive" cssClass="error-msg" />
 						</div>
 					</div>
 
@@ -112,8 +112,8 @@
 </form:form>
 
  <div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left">Registration Unit Search Result</div>
-	<div class="col-md-12 form-group report-table-container">
+	<div class="col-md-12 table-header text-left" id="searchResultsLabelDiv">Registration Unit Search Result</div>
+	<div class="col-md-12 form-group report-table-container" id="searchResultsDiv">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="registrationUnitResultTable">
 			<thead>
@@ -128,6 +128,10 @@
 			</thead>
 			
 		</table>
+	</div>
+	<div class="col-md-12 form-group" id="errorsDiv">
+		<table class="table table-bordered datatable dt-responsive"
+			id="errorTable" ></table>
 	</div>
 </div> 
 <script> 

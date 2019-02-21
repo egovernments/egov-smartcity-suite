@@ -49,18 +49,31 @@ package org.egov.mrs.domain.entity;
 
 import java.util.Date;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 public class MarriageRegistrationSearchFilter {
 
+	@SafeHtml
     private String applicationNo;
+	@SafeHtml
     private String registrationNo;
+	@SafeHtml
     private String husbandName;
+	@SafeHtml
     private String wifeName;
     private String dateOfMarriage;
     private String applicationDate;
+    @SafeHtml
     private String marriageRegistrationType;
     private Date fromDate;
     private Date toDate;
     private Long marriageRegistrationUnit;
+    @SafeHtml
+    private String registrationUnitName;
+    private Long registrationUnitZone;
+    private boolean isRegistrationUnitActive;
+    
+    private String errorMessage;
 
     public String getRegistrationNo() {
         return registrationNo;
@@ -141,5 +154,37 @@ public class MarriageRegistrationSearchFilter {
     public void setMarriageRegistrationUnit(Long marriageRegistrationUnit) {
         this.marriageRegistrationUnit = marriageRegistrationUnit;
     }
+
+	public String getRegistrationUnitName() {
+		return registrationUnitName;
+	}
+
+	public void setRegistrationUnitName(String registrationUnitName) {
+		this.registrationUnitName = registrationUnitName;
+	}
+
+	public Long getRegistrationUnitZone() {
+		return registrationUnitZone;
+	}
+
+	public void setRegistrationUnitZone(Long registrationUnitZone) {
+		this.registrationUnitZone = registrationUnitZone;
+	}
+
+	public boolean getIsRegistrationUnitActive() {
+		return isRegistrationUnitActive;
+	}
+
+	public void setIsRegistrationUnitActive(boolean isRegistrationUnitActive) {
+		this.isRegistrationUnitActive = isRegistrationUnitActive;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
 
 }
