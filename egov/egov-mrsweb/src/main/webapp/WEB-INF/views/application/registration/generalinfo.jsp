@@ -110,7 +110,7 @@
 			class="form-control low-width patternvalidation" disabled="true"
 			data-pattern="decimalvalue" placeholder="" autocomplete="off"
 			required="required" />
-		<form:errors path="zone" cssClass="add-margin error-msg" />
+		<form:errors path="zone.name" cssClass="add-margin error-msg" />
 	</div>
 </div>
 
