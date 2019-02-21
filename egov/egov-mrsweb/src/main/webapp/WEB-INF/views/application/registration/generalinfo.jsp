@@ -107,7 +107,7 @@
 		<form:hidden path="zone" id="txt-zoneid" />
 
 		<form:input path="zone.name" id="txt-zone" type="text"
-			class="form-control low-width patternvalidation" readonly="true"
+			class="form-control low-width patternvalidation" disabled="true"
 			data-pattern="decimalvalue" placeholder="" autocomplete="off"
 			required="required" />
 		<form:errors path="zone" cssClass="add-margin error-msg" />
@@ -120,7 +120,7 @@
 	</label>
 	<div class="col-sm-3">
 		<form:input path="street" id="txt-street" type="text"
-			data-pattern="regexp_alphabetspecialcharacters"
+			data-pattern="alphabetwithspecialcharacters"
 			class="form-control low-width patternvalidation" placeholder=""
 			maxlength="100" autocomplete="off" required="required" />
 		<form:errors path="street" cssClass="add-margin error-msg" />
@@ -201,7 +201,7 @@
 	</label>
 	<div class="col-sm-3">
 		<form:input path="feePaid" id="txt-feepaid" type="text"
-			readonly="true" class="form-control low-width patternvalidation"
+			disabled="true" class="form-control low-width patternvalidation"
 			data-pattern="decimalvalue" placeholder="" autocomplete="off"
 			required="required" />
 		<form:errors path="feePaid" cssClass="add-margin error-msg" />

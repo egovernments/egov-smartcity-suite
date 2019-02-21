@@ -86,15 +86,6 @@
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 
-			<div>
-				<spring:hasBindErrors name="registration">
-					<div class="alert alert-danger col-md-12 col-md-offset-0">
-						<form:errors path="*" />
-						<br />
-					</div>
-				</spring:hasBindErrors>
-				<br />
-			</div>
 			<input type="hidden" name="applicationNo"
 				value="${marriageRegistration.applicationNo}" />
 			<input type="hidden" name="source"

@@ -72,7 +72,7 @@ public class ValidationRegex {
     public static final String ALPHANUMERIC_WITH_SLASH = "^[a-zA-Z0-9]+(([/][a-zA-Z0-9])?[a-zA-Z0-9]*)*$";
     public static final String ALPHABETS_UNDERSCORE_HYPHEN_SPACE = "^[a-zA-Z]+(([ _-][a-zA-Z])?[a-zA-Z]*)*$";
     public static final String ALPHANUMERIC_UNDERSCORE_HYPHEN_SPACE = "^[a-zA-Z0-9]+(([ _-][a-zA-Z0-9])?[a-zA-Z0-9]*)*$";
-    public static final String ALPHANUMERIC_WITH_SPECIAL_CHARS = "^([a-zA-Z0-9]+([ _-&:,/.()@#])?[a-zA-Z0-9])+$";
+    public static final String ALPHANUMERIC_WITH_SPECIAL_CHARS = "^([a-zA-Z0-9]+([ _\\-&:,/.()@#])?[a-zA-Z0-9])+$";
     public static final String SALUTATION = "^(Mrs?|Miss)$";
     public static final String PERSON_NAME = "^[a-zA-Z]+(([.\\s][a-zA-Z])?[a-zA-Z]*)*$";
     public static final String USERNAME = "^(?:[\\w+( \\w+)*]{2,64}|[[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*]{2,100}@(?:[a-zA-Z0-9-]{1,22}+\\.)+[a-zA-Z]{2,6})$";

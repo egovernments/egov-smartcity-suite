@@ -52,8 +52,12 @@ import org.hibernate.annotations.Formula;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
+
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 @Embeddable
 public class Name {
@@ -61,16 +65,17 @@ public class Name {
     @NotNull
     @SafeHtml
     @Length(max = 110,message="Husband/wife firstName should be less than 110 character")
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String firstName;
 
-    @NotNull
     @SafeHtml
     @Length(max = 20,message="Husband/wife middleName should be less than 20 character")
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String middleName;
 
-    @NotNull
     @SafeHtml
     @Length(max = 20,message="Husband/wife lastName  should be less than 20 character")
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String lastName;
 
     @SafeHtml

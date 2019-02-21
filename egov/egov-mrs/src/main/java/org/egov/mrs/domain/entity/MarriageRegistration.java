@@ -64,6 +64,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
@@ -73,6 +74,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_NUMERIC;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.NUMERIC;
 import static org.egov.mrs.domain.entity.MarriageRegistration.SEQ_REGISTRATION;
 
 @Entity
@@ -124,6 +129,7 @@ public class MarriageRegistration extends StateAware<Position> {
     @NotNull
     @SafeHtml
     @Length(max = 30)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String city;
 
     @NotNull
@@ -140,6 +146,7 @@ public class MarriageRegistration extends StateAware<Position> {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "registration")
     @Size(max = 4)
+    @Valid
     @OrderBy("id")
     private List<MarriageWitness> witnesses = new LinkedList<>();
 
@@ -163,6 +170,7 @@ public class MarriageRegistration extends StateAware<Position> {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "zone")
+    @Valid
     private Boundary zone;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -233,9 +241,11 @@ public class MarriageRegistration extends StateAware<Position> {
 
     @SafeHtml
     @Column(name = "serialno", unique = true)
+    @Pattern(regexp = NUMERIC, message = INVALID_NUMERIC)
     private String serialNo;
     
     @SafeHtml
+    @Pattern(regexp = NUMERIC, message = INVALID_NUMERIC)
     private String pageNo;
 
     @SafeHtml

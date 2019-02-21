@@ -55,9 +55,14 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.multipart.MultipartFile;
 
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
+
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "egmrs_witness")
@@ -71,14 +76,17 @@ public class MarriageWitness extends AbstractAuditable {
     private Long id;
 
     @Embedded
+    @Valid
     private Name name;
 
     @SafeHtml
     @Length(max = 60)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String occupation;
 
     @SafeHtml
     @Length(max = 30)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String relationshipWithApplicant;
 
     @NotNull
@@ -93,6 +101,7 @@ public class MarriageWitness extends AbstractAuditable {
     @NotNull
     @SafeHtml
     @Length(max = 70)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String relativeName;
 
     @SafeHtml
@@ -128,6 +137,7 @@ public class MarriageWitness extends AbstractAuditable {
     private MRApplicantType applicantType;
 
     @Embedded
+    @Valid
     private Contact contactInfo;
 
     public String getFullName() {

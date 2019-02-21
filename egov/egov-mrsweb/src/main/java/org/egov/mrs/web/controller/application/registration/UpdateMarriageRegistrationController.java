@@ -285,9 +285,8 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
     }
 
     @RequestMapping(value = "/update", method = POST)
-    public String updateRegistration(final WorkflowContainer workflowContainer,
-    		@Valid @ModelAttribute final MarriageRegistration marriageRegistration, final Model model,
-            final HttpServletRequest request, final BindingResult errors) throws IOException {
+    public String updateRegistration(@Valid @ModelAttribute final MarriageRegistration marriageRegistration, final BindingResult errors, final Model model,
+            final HttpServletRequest request, final WorkflowContainer workflowContainer) throws IOException {
 
         String workFlowAction = EMPTY;
         if (isNotBlank(request.getParameter(WORK_FLOW_ACTION)))

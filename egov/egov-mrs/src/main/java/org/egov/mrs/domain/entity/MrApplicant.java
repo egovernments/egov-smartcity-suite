@@ -62,6 +62,11 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
+
 import java.io.IOException;
 import java.util.Base64;
 import java.util.HashSet;
@@ -84,6 +89,7 @@ public class MrApplicant extends AbstractAuditable {
 
     @SafeHtml
     @Length(max = 20)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String otherName;
 
     @NotNull
@@ -110,6 +116,7 @@ public class MrApplicant extends AbstractAuditable {
 
     @SafeHtml
     @Length(max = 60)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String occupation;
 
     @SafeHtml
@@ -136,6 +143,7 @@ public class MrApplicant extends AbstractAuditable {
     private IdentityProof proofsAttached;
 
     @Embedded
+    @Valid
     private Contact contactInfo;
 
     @NotNull
@@ -146,6 +154,7 @@ public class MrApplicant extends AbstractAuditable {
     @NotNull
     @SafeHtml
     @Length(max = 110)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String parentsName;
 
     @NotNull

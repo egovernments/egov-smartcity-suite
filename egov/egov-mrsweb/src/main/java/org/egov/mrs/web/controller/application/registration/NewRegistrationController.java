@@ -164,11 +164,9 @@ public class NewRegistrationController extends MarriageRegistrationController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public String register(final WorkflowContainer workflowContainer,
-    		@Valid @ModelAttribute(MARRIAGE_REGISTRATION) final MarriageRegistration marriageRegistration,
-            final Model model,
-            final HttpServletRequest request,
-            final BindingResult errors, final RedirectAttributes redirectAttributes) {
+    public String register(@Valid @ModelAttribute(MARRIAGE_REGISTRATION) final MarriageRegistration marriageRegistration,
+    		final BindingResult errors, final Model model, final WorkflowContainer workflowContainer,
+            final HttpServletRequest request, final RedirectAttributes redirectAttributes) {
         User logedinUser = securityUtils.getCurrentUser();
         validateApplicationDate(marriageRegistration, errors);
         marriageFormValidator.validate(marriageRegistration, errors, "registration",null);

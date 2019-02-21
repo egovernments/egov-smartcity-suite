@@ -87,15 +87,6 @@
 					</div>
 				</div>
 			</c:if>
-			<div>
-				<spring:hasBindErrors name="marriageRegistration">
-					<div class="alert alert-danger col-md-10 col-md-offset-1">
-						<form:errors path="*" />
-						<br />
-					</div>
-				</spring:hasBindErrors>
-				<br />
-			</div>
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab" href="#applicant-info"
 					data-tabidx=0>Applicant's Information</a></li>
