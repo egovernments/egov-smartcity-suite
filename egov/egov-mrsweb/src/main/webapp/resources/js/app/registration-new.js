@@ -72,6 +72,8 @@ $(document)
 					$('#Forward')
 							.click(
 									function() {
+										$("#txt-zone").prop("disabled", false);
+										$("#txt-feepaid").prop("disabled", false);
 										if ($('#allowDaysValidation').val() == "YES") {
 											var noOfDays = validateApplicationDate();
 											if (noOfDays > 90) {
