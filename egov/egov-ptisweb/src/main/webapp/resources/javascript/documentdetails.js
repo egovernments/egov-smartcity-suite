@@ -213,39 +213,6 @@ function viewDocument(fileStoreId) {
 			'scrollbars=yes,resizable=no,height=400,width=400,status=yes');
 }
 
-jQuery(".doctable input:file")
-		.change(
-				function() {
-					var fileName = jQuery(this).val();
-					var fileInput = jQuery(this);
-					var maxSize = 5242880; // file size in bytes(5MB)
-					var inMB = maxSize / 1024 / 1024;
-					if (fileInput.get(0).files.length) {
-						var fileSize = this.files[0].size; // in bytes
-						if (fileSize > maxSize) {
-							bootbox.alert('File size should not exceed ' + inMB
-									+ ' MB!');
-							fileInput
-									.replaceWith(fileInput.val('').clone(true));
-							return false;
-						}
-					}
-					if (fileName) {
-						jQuery(this)
-								.after(
-										"<a href='javascript:void(0);' onclick='clearSelectedFile(this);' class='fileclear'><span class='tblactionicon delete'><i class='fa fa-times-circle'></i></span></a>");
-					} else {
-						if (jQuery(this).next().is("span")) {
-							jQuery(this).next().remove();
-						}
-					}
-				});
-
-function clearSelectedFile(obj) {
-	jQuery(obj).parent().find('input:file').val('');
-	jQuery(obj).remove();
-}
-
 function enableOwnerDetailsFields(dropdownvalue) {
 	if (dropdownvalue.indexOf('Notary document') == -1) {
 		var rowidx = 0;

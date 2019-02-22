@@ -68,8 +68,8 @@
 				<tr>
 					<td style="text-align: left"><span class="bold"><s:property
 								value="#status.index + 1" /></span></td>
-					<td style="text-align: left"><s:property value="name" />
-						<s:if test="mandatory">
+					<td style="text-align: left"><s:property value="name" /> <s:if
+							test="mandatory">
 							<span class="mandatory1">*</span>
 						</s:if></td>
 					<td style="text-align: left"><s:if
@@ -79,11 +79,13 @@
 							<s:if test="mandatory">
 								<s:file name="documents[%{#status.index}].uploads"
 									value="%{documents[#status.index].uploads}" cssClass="button"
-									required="true" />
+									required="true" data-accepts="${allowedFileExt}"
+									data-size="${maxFileSize}" />
 							</s:if>
 							<s:else>
 								<s:file name="documents[%{#status.index}].uploads"
-									value="%{documents[#status.index].uploads}" cssClass="button" />
+									value="%{documents[#status.index].uploads}" cssClass="button"
+									data-accepts="${allowedFileExt}" data-size="${maxFileSize}" />
 							</s:else>
 						</s:if> <s:elseif test="%{documents[#status.index].files.isEmpty()}">
 							<s:if
@@ -95,26 +97,32 @@
 							<s:if test="mandatory">
 								<s:file name="documents[%{#status.index}].uploads"
 									value="%{documents[#status.index].uploads}" cssClass="button"
-									required="true" />
+									required="true" data-accepts="${allowedFileExt}"
+									data-size="${maxFileSize}" />
 							</s:if>
 							<s:else>
 								<s:file name="documents[%{#status.index}].uploads"
-									value="%{documents[#status.index].uploads}" cssClass="button" />
+									value="%{documents[#status.index].uploads}" cssClass="button"
+									data-accepts="${allowedFileExt}" data-size="${maxFileSize}" />
 							</s:else>
 						</s:elseif> <s:else>
 							<s:iterator value="%{documents[#status.index].files}">
 								<s:hidden name="documents[%{#status.index}].id" />
-									<s:if test="%{allowEditDocument}">
-										<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button"/>
-										<a href="javascript:viewDocument('<s:property value="fileStoreId"/>')"> 
-					 						<s:property value="%{fileName}"/>
-					 					</a>
-									</s:if>
-									<s:else>
-										<a href="javascript:viewDocument('<s:property value="fileStoreId"/>')">
-											<s:property value="%{fileName}" />
-										</a>
-									</s:else>
+								<s:if test="%{allowEditDocument}">
+									<s:file name="documents[%{#status.index}].uploads"
+										value="%{documents[#status.index].uploads}" cssClass="button"
+										data-accepts="${allowedFileExt}" data-size="${maxFileSize}" />
+									<a
+										href="javascript:viewDocument('<s:property value="fileStoreId"/>')">
+										<s:property value="%{fileName}" />
+									</a>
+								</s:if>
+								<s:else>
+									<a
+										href="javascript:viewDocument('<s:property value="fileStoreId"/>')">
+										<s:property value="%{fileName}" />
+									</a>
+								</s:else>
 							</s:iterator>
 						</s:else></td>
 				</tr>
@@ -129,38 +137,5 @@
 				+ "&moduleName=PTIS";
 		window.open(sUrl, "window",
 				'scrollbars=yes,resizable=no,height=400,width=400,status=yes');
-	}
-
-	jQuery(".doctable input:file")
-			.change(
-					function() {
-						var fileName = jQuery(this).val();
-						var fileInput = jQuery(this);
-						var maxSize = 5242880; //file size  in bytes(5MB)
-						var inMB = maxSize / 1024 / 1024;
-						if (fileInput.get(0).files.length) {
-							var fileSize = this.files[0].size; // in bytes
-							if (fileSize > maxSize) {
-								bootbox.alert('File size should not exceed '
-										+ inMB + ' MB!');
-								fileInput.replaceWith(fileInput.val('').clone(
-										true));
-								return false;
-							}
-						}
-						if (fileName) {
-							jQuery(this)
-									.after(
-											"<a href='javascript:void(0);' onclick='clearSelectedFile(this);' class='fileclear'><span class='tblactionicon delete'><i class='fa fa-times-circle'></i></span></a>");
-						} else {
-							if (jQuery(this).next().is("span")) {
-								jQuery(this).next().remove();
-							}
-						}
-					});
-
-	function clearSelectedFile(obj) {
-		jQuery(obj).parent().find('input:file').val('');
-		jQuery(obj).remove();
 	}
 </script>

@@ -68,13 +68,14 @@
 				<s:if test="mandatory">
 					<s:file name="assessmentDocuments[%{#status.index}].uploads"
 						value="%{assessmentDocuments[#status.index].uploads}"
-						cssClass="button" required="true" 
-						data-accepts="%{allowedFileExt}" data-size="%{maxFileSize}"/>
+						cssClass="button" required="true" data-accepts="${allowedFileExt}"
+						data-size="${maxFileSize}" />
 				</s:if>
 				<s:else>
 					<s:file name="assessmentDocuments[%{#status.index}].uploads"
 						value="%{assessmentDocuments[#status.index].uploads}"
-						cssClass="button" data-accepts="%{allowedFileExt}" data-size="%{maxFileSize}" />
+						cssClass="button" data-accepts="${allowedFileExt}"
+						data-size="${maxFileSize}" />
 				</s:else>
 			</s:if> <s:elseif
 				test="%{assessmentDocuments[#status.index].files.isEmpty()}">
@@ -87,12 +88,14 @@
 				<s:if test="mandatory">
 					<s:file name="assessmentDocuments[%{#status.index}].uploads"
 						value="%{assessmentDocuments[#status.index].uploads}"
-						cssClass="button" required="true" data-accepts="%{allowedFileExt}" data-size="%{maxFileSize}"/>
+						cssClass="button" required="true" data-accepts="${allowedFileExt}"
+						data-size="${maxFileSize}" />
 				</s:if>
 				<s:else>
 					<s:file name="assessmentDocuments[%{#status.index}].uploads"
 						value="%{assessmentDocuments[#status.index].uploads}"
-						cssClass="button" />
+						cssClass="button" data-accepts="${allowedFileExt}"
+						data-size="${maxFileSize}" />
 				</s:else>
 			</s:elseif> <s:else>
 				<s:iterator value="%{assessmentDocuments[#status.index].files}">
@@ -100,7 +103,8 @@
 					<s:if test="%{allowEditDocument}">
 						<s:file name="assessmentDocuments[%{#status.index}].uploads"
 							value="%{assessmentDocuments[#status.index].uploads}"
-							cssClass="button" data-accepts="%{allowedFileExt}" data-size="%{maxFileSize}"/>
+							cssClass="button" data-accepts="${allowedFileExt}"
+							data-size="${maxFileSize}" />
 						<a
 							href="javascript:viewDocument('<s:property value="fileStoreId"/>')">
 							<s:property value="%{fileName}" />
@@ -124,14 +128,18 @@
 		documentTypeToggle(dropdownvalue);
 		if (dropdownvalue.indexOf('Certificate') == -1
 				&& dropdownvalue != 'select') {
-			jQuery('#Decree_Document_Idx').html(
-					'<span class="bold"><s:property value="#OldMaxIndex + 1" /></span>');
-			jQuery('#Will_Deed_Idx').html(
-					'<span class="bold"><s:property value="#OldMaxIndex + 1" /></span>');
-			jQuery('#Registered_Document_Idx').html(
-					'<span class="bold"><s:property value="#OldMaxIndex + 1" /></span>');
-			jQuery('#Photo_of_Property_With_Holder_Idx').html(
-					'<span class="bold"><s:property value="#OldMaxIndex + 1" /></span>');
+			jQuery('#Decree_Document_Idx')
+					.html(
+							'<span class="bold"><s:property value="#OldMaxIndex + 1" /></span>');
+			jQuery('#Will_Deed_Idx')
+					.html(
+							'<span class="bold"><s:property value="#OldMaxIndex + 1" /></span>');
+			jQuery('#Registered_Document_Idx')
+					.html(
+							'<span class="bold"><s:property value="#OldMaxIndex + 1" /></span>');
+			jQuery('#Photo_of_Property_With_Holder_Idx')
+					.html(
+							'<span class="bold"><s:property value="#OldMaxIndex + 1" /></span>');
 		}
 	}
 </script>

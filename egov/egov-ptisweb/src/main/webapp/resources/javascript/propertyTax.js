@@ -131,3 +131,73 @@ function checkHouseNoStartsWithNo(field) {
 	
 	return true;
 }
+
+function clearSelectedFile(obj) {
+	jQuery(obj).parent().find('input:file').val('');
+	jQuery(obj).remove();
+}
+
+$(document).ready(function () {
+
+//check file name and format is valid
+var fileNamePattern = "^[\\w\\[\\]\\(\\)\\-\\s]{1,245}\\.(0){1,9}";
+$('input:file').change(function () {
+    var acceptableExtensions = $(this).data("accepts");
+    if (acceptableExtensions) {
+        var file = $(this);
+        var fileName = file.val().split(/[\\/]/g).pop();
+        var acceptableFileNamePattern = new RegExp(fileNamePattern.replace("0", acceptableExtensions), "ig");
+        if (!fileName.match(acceptableFileNamePattern)) {
+            file.replaceWith(file.val('').clone(true))
+            bootbox.alert({
+                title: "Invalid file, ensure the file name and format is valid.",
+                message: "File name must be less than <i style='font-weight: bold'>256</i> character long.<br/>" +
+                    "Should not contain any special characters except <i style='font-weight: bold'>- _ ] [ ) ( and space</i>.<br/>" +
+                    "Accepts only <i style='font-weight: bold'>" + acceptableExtensions + "</i> formats."
+            });
+            return false;
+        }
+    }
+});
+
+//check file size is valid
+$('input:file').change(function () {
+    if ($(this).data("size")) {
+        var file = $(this);
+        var maxFileSize = parseInt($(this).data("size"));
+        if (file.get(0).files.length) {
+            var fileSize = (this.files[0].size / 1024 / 1024).toFixed(0);
+            if (fileSize > maxFileSize) {
+                bootbox.alert({
+                    title: "Invalid file, size exceeded.",
+                    message: "File could not be uploaded, it is larger than the maximum allowed file size.<br/>" +
+                        "(<i style=\'font-weight: bold\'>Uploaded : " + fileSize + " MB, Allowed : " + maxFileSize + " MB</i>)"
+                });
+                file.replaceWith(file.val('').clone(true));
+                return false;
+            }
+        }
+    }
+    var file = $(this);
+    var fileName = file.val().split(/[\\/]/g).pop();
+    if (fileName) {
+		$(this)
+				.after(
+						"<a href='javascript:void(0);' onclick='clearSelectedFile(this);' class='fileclear'><span class='tblactionicon delete'><i class='fa fa-times-circle'></i></span></a>");
+	} else {
+		if ($(this).next().is("span")) {
+			$(this).next().remove();
+		}
+	}
+});
+
+//Add tooltip about the file size and the file extension allowed
+$('input:file').hover(function () {
+    if ($(this).data("accepts") && $(this).data("size")) {
+        $(this).attr('title', 'Accepts only file with extension [' + $(this).data("accepts")
+            + '], file size upto [' + $(this).data("size") + 'MB] and file name length upto [255]');
+        $(this).tooltip();
+    }
+});
+
+});

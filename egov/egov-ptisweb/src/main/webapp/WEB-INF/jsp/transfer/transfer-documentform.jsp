@@ -79,41 +79,47 @@
 								</s:if></td>
 							<td class="blueborderfortd" style="text-align: left"><s:if
 									test="%{otherDocuments.isEmpty()}">
-									<s:hidden name="documentsProxy[%{#status.index}].type.id" value="%{id}"></s:hidden>
+									<s:hidden name="documentsProxy[%{#status.index}].type.id"
+										value="%{id}"></s:hidden>
 									<s:if test="mandatory">
 										<s:file name="documentsProxy[%{#status.index}].uploads"
 											value="%{documentsProxy[#status.index].uploads}"
-											cssClass="button validateDocs" required="true" />
+											cssClass="button validateDocs" required="true"
+											data-accepts="${allowedFileExt}" data-size="${maxFileSize}" />
 									</s:if>
 									<s:else>
 										<s:file name="documentsProxy[%{#status.index}].uploads"
 											value="%{documentsProxy[#status.index].uploads}"
-											cssClass="button" />
+											cssClass="button" data-accepts="${allowedFileExt}"
+											data-size="${maxFileSize}" />
 									</s:else>
 								</s:if> <s:elseif
 									test="%{!otherDocuments[#status.index].files.isEmpty()}">
 									<s:iterator value="%{documentsProxy[#status.index].files}">
 										<s:hidden name="documentsProxy[%{#status.index}].type.id"></s:hidden>
 										<s:if test="%{allowEditDocument}">
-										<s:file name="documentsProxy[%{#status.index}].uploads"
-											value="%{documentsProxy[#status.index].uploads}"
-											cssClass="button" />
-									<a
-											href="javascript:viewDocument('<s:property value="fileStoreId"/>')">
-											<s:property value="%{fileName}" />
-										</a> 
+											<s:file name="documentsProxy[%{#status.index}].uploads"
+												value="%{documentsProxy[#status.index].uploads}"
+												cssClass="button" data-accepts="${allowedFileExt}"
+												data-size="${maxFileSize}" />
+											<a
+												href="javascript:viewDocument('<s:property value="fileStoreId"/>')">
+												<s:property value="%{fileName}" />
+											</a>
 										</s:if>
 										<s:else>
-										 <a
-											href="javascript:viewDocument('<s:property value="fileStoreId"/>')">
-											<s:property value="%{fileName}" />
-										</a> </s:else>
+											<a
+												href="javascript:viewDocument('<s:property value="fileStoreId"/>')">
+												<s:property value="%{fileName}" />
+											</a>
+										</s:else>
 									</s:iterator>
 								</s:elseif> <s:else>
-								<s:hidden name="documentsProxy[%{#status.index}].type.id"></s:hidden>
+									<s:hidden name="documentsProxy[%{#status.index}].type.id"></s:hidden>
 									<s:file name="documentsProxy[%{#status.index}].uploads"
 										value="%{documentsProxy[#status.index].uploads}"
-										cssClass="button" />
+										cssClass="button" data-accepts="${allowedFileExt}"
+										data-size="${maxFileSize}" />
 								</s:else></td>
 						</tr>
 					</s:iterator>
@@ -128,38 +134,5 @@
 				+ "&moduleName=PTIS";
 		window.open(sUrl, "window",
 				'scrollbars=yes,resizable=no,height=400,width=400,status=yes');
-	}
-
-	jQuery(".doctable input:file")
-			.change(
-					function() {
-						var fileName = jQuery(this).val();
-						var fileInput = jQuery(this);
-						var maxSize = 5242880; //file size  in bytes(5MB)
-						var inMB = maxSize / 1024 / 1024;
-						if (fileInput.get(0).files.length) {
-							var fileSize = this.files[0].size; // in bytes
-							if (fileSize > maxSize) {
-								bootbox.alert('File size should not exceed '
-										+ inMB + ' MB!');
-								fileInput.replaceWith(fileInput.val('').clone(
-										true));
-								return false;
-							}
-						}
-						if (fileName) {
-							jQuery(this)
-									.after(
-											"<a href='javascript:void(0);' onclick='clearSelectedFile(this);' class='fileclear'><span class='tblactionicon delete'><i class='fa fa-times-circle'></i></span></a>");
-						} else {
-							if (jQuery(this).next().is("span")) {
-								jQuery(this).next().remove();
-							}
-						}
-					});
-
-	function clearSelectedFile(obj) {
-		jQuery(obj).parent().find('input:file').val('');
-		jQuery(obj).remove();
 	}
 </script>
