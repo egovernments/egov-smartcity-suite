@@ -48,6 +48,7 @@
 
 package org.egov.mrs.web.controller.application.registration;
 
+import org.egov.infra.utils.StringUtils;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.MarriageDocument;
 import org.egov.mrs.domain.entity.MarriageRegistration;
@@ -205,6 +206,8 @@ public class MarriageFormValidator implements Validator {
                 NOTEMPTY_MRG_RESIDENCE_ADDRESS);
 
         if (registration != null) {
+        	if(!"Residence".equalsIgnoreCase(registration.getVenue()) && StringUtils.isBlank(registration.getPlaceOfMarriage()))
+        		errors.rejectValue("placeOfMarriage", "Notempty.mrg.place.of.mrg");
             validateBrideInformation(errors, registration);
             validateBrideGroomInformation(errors, registration);
             validateDocumentAttachments(errors, registration);
