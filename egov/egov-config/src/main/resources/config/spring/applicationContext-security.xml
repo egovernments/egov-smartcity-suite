@@ -74,7 +74,9 @@
         <constructor-arg name="headerWriters">
             <list>
                 <bean class="org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter"/>
-                <bean class="org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter"/>
+                <bean class="org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter">
+                    <constructor-arg value="SAMEORIGIN"/>
+                </bean>
                 <bean class="org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter"/>
                 <bean class="org.springframework.security.web.header.writers.HstsHeaderWriter"/>
                 <bean class="org.springframework.security.web.header.writers.XContentTypeOptionsHeaderWriter"/>
