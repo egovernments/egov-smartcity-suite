@@ -55,130 +55,138 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 @XStreamAlias("account")
 public class BillAccountDetails implements Comparable<BillAccountDetails> {
 
-    public enum PURPOSE {
-        ARREAR_AMOUNT, CURRENT_AMOUNT, ADVANCE_AMOUNT, ARREAR_LATEPAYMENT_CHARGES, CURRENT_LATEPAYMENT_CHARGES, CHEQUE_BOUNCE_PENALTY, REBATE, OTHERS, SERVICETAX, CG_SERVICETAX, SG_SERVICETAX
-    };
+	public enum PURPOSE {
+		ARREAR_AMOUNT, CURRENT_AMOUNT, ADVANCE_AMOUNT, ARREAR_LATEPAYMENT_CHARGES, CURRENT_LATEPAYMENT_CHARGES, CHEQUE_BOUNCE_PENALTY, REBATE, OTHERS, SERVICETAX, CG_SERVICETAX, SG_SERVICETAX
+	};
 
-    @XStreamAsAttribute
-    private final String glCode;
+	@XStreamAsAttribute
+	private final String glCode;
 
-    @XStreamAsAttribute
-    private final Integer order;
+	@XStreamAsAttribute
+	private final Integer order;
 
-    @XStreamAsAttribute
-    private final String description;
+	@XStreamAsAttribute
+	private final String description;
 
-    @XStreamAlias("crAmount")
-    private final BigDecimal crAmount;
-    @XStreamAlias("drAmount")
-    private final BigDecimal drAmount;
-    private final String functionCode;
+	@XStreamAlias("crAmount")
+	private final BigDecimal crAmount;
+	@XStreamAlias("drAmount")
+	private final BigDecimal drAmount;
 
-    @XStreamAsAttribute
-    private final Boolean isActualDemand;
+	private BigDecimal cramountToBePaid = BigDecimal.ZERO;
 
-    @XStreamAsAttribute
-    private final PURPOSE purpose;
+	private final String functionCode;
 
-    @XStreamAsAttribute
-    private Integer groupId;
+	@XStreamAsAttribute
+	private final Boolean isActualDemand;
 
-    public BillAccountDetails(final String glCode, final Integer order, final BigDecimal crAmount,
-            final BigDecimal drAmount, final String functionCode, final String description, final Boolean isActualDemand,
-            final PURPOSE purpose) {
-        this.glCode = glCode;
-        this.order = order;
-        this.crAmount = crAmount;
-        this.drAmount = drAmount;
-        this.functionCode = functionCode;
-        this.description = description;
-        this.isActualDemand = isActualDemand;
-        this.purpose = purpose;
-    }
+	@XStreamAsAttribute
+	private final PURPOSE purpose;
 
-    public BillAccountDetails(final String glCode, final Integer order, final BigDecimal crAmount,
-            final BigDecimal drAmount, final String functionCode, final String description, final Boolean isActualDemand,
-            final PURPOSE purpose, final Integer groupId) {
-        this.glCode = glCode;
-        this.order = order;
-        this.crAmount = crAmount;
-        this.drAmount = drAmount;
-        this.functionCode = functionCode;
-        this.description = description;
-        this.isActualDemand = isActualDemand;
-        this.purpose = purpose;
-        this.groupId = groupId;
-    }
+	@XStreamAsAttribute
+	private Integer groupId = 0;
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(order).append(",").append(glCode).append(",").append(crAmount).append(",").append(crAmount)
-                .append(",").append(description).append(",").append(isActualDemand);
-        return sb.toString();
-    }
+	public BillAccountDetails(final String glCode, final Integer order, final BigDecimal crAmount,
+			final BigDecimal drAmount, final String functionCode, final String description,
+			final Boolean isActualDemand, final PURPOSE purpose) {
+		this.glCode = glCode;
+		this.order = order;
+		this.crAmount = crAmount;
+		this.drAmount = drAmount;
+		this.functionCode = functionCode;
+		this.description = description;
+		this.isActualDemand = isActualDemand;
+		this.purpose = purpose;
+	}
 
-    public String getGlCode() {
-        return glCode;
-    }
+	public BillAccountDetails(final String glCode, final Integer order, final BigDecimal crAmount,
+			final BigDecimal drAmount, final String functionCode, final String description,
+			final Boolean isActualDemand, final PURPOSE purpose, final Integer groupId) {
+		this(glCode, order, crAmount, drAmount, functionCode, description, isActualDemand, purpose);
+		this.groupId = groupId;
+	}
 
-    public Integer getOrder() {
-        return order;
-    }
+	public BillAccountDetails(final String glCode, final Integer order, final BigDecimal crAmount,
+			final BigDecimal drAmount, final String functionCode, final String description,
+			final Boolean isActualDemand, final PURPOSE purpose, final BigDecimal cramountToBePaid) {
+		this(glCode, order, crAmount, drAmount, functionCode, description, isActualDemand, purpose);
+		this.cramountToBePaid = cramountToBePaid;
+	}
 
-    public BigDecimal getDrAmount() {
-        return drAmount;
-    }
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		sb.append(order).append(",").append(glCode).append(",").append(crAmount).append(",").append(crAmount)
+				.append(",").append(description).append(",").append(isActualDemand);
+		return sb.toString();
+	}
 
-    public BigDecimal getCrAmount() {
-        return crAmount;
-    }
+	public String getGlCode() {
+		return glCode;
+	}
 
-    public String getFunctionCode() {
-        return functionCode;
-    }
+	public Integer getOrder() {
+		return order;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public BigDecimal getDrAmount() {
+		return drAmount;
+	}
 
-    public Boolean getIsActualDemand() {
-        return isActualDemand;
-    }
+	public BigDecimal getCrAmount() {
+		return crAmount;
+	}
 
-    public PURPOSE getPurpose() {
-        return purpose;
-    }
+	public String getFunctionCode() {
+		return functionCode;
+	}
 
-    @Override
-    public int compareTo(final BillAccountDetails obj) {
-        return order - obj.order;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj instanceof BillAccountDetails) {
-            final BillAccountDetails account = (BillAccountDetails) obj;
-            if (glCode.equals(account.glCode) && order.equals(account.order) && crAmount.equals(account.crAmount)
-                    && drAmount.equals(account.drAmount) && description.equals(account.description)
-                    && functionCode.equals(account.functionCode) && isActualDemand.equals(account.isActualDemand))
-                return true;
-        }
-        return false;
-    }
+	public Boolean getIsActualDemand() {
+		return isActualDemand;
+	}
 
-    /*
-     * (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
-    @Override
-    public int hashCode() {
-        return glCode.hashCode() + order.hashCode() + crAmount.hashCode() + drAmount.hashCode()
-                + description.hashCode() + functionCode.hashCode() + isActualDemand.hashCode();
-    }
+	public PURPOSE getPurpose() {
+		return purpose;
+	}
 
-    public Integer getGroupId() {
-        return groupId;
-    }
+	@Override
+	public int compareTo(final BillAccountDetails obj) {
+		return order - obj.order;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (obj instanceof BillAccountDetails) {
+			final BillAccountDetails account = (BillAccountDetails) obj;
+			if (glCode.equals(account.glCode) && order.equals(account.order) && crAmount.equals(account.crAmount)
+					&& drAmount.equals(account.drAmount) && description.equals(account.description)
+					&& functionCode.equals(account.functionCode) && isActualDemand.equals(account.isActualDemand))
+				return true;
+		}
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return glCode.hashCode() + order.hashCode() + crAmount.hashCode() + drAmount.hashCode() + description.hashCode()
+				+ functionCode.hashCode() + isActualDemand.hashCode();
+	}
+
+	public Integer getGroupId() {
+		return groupId;
+	}
+
+	public BigDecimal getCramountToBePaid() {
+		return cramountToBePaid;
+	}
 
 }

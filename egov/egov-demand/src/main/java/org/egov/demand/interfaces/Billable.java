@@ -143,5 +143,7 @@ public interface Billable {
      * not, depending on the use case. In such cases, this method may be used to alter the value.
      */
     void setCallbackForApportion(Boolean b);
+    
+    BigDecimal getMinAmountPayable();
 
 }

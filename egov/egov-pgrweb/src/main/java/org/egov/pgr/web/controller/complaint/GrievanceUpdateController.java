@@ -181,7 +181,7 @@ public class GrievanceUpdateController {
 
     @GetMapping(COMPLAINT_UPDATE_SUCCESS)
     public ModelAndView successView(@ModelAttribute Complaint complaint) {
-        return new ModelAndView("update-success", COMPLAINT_ATTRIB, complaint);
+        return new ModelAndView(COMPLAINT_UPDATE_SUCCESS, COMPLAINT_ATTRIB, complaint);
     }
 
     private void prepareUpdateView(@ModelAttribute final Complaint complaint, final Model model) {

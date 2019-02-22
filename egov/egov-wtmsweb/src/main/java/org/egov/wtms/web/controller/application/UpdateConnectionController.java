@@ -146,6 +146,7 @@ import org.egov.wtms.autonumber.WorkOrderNumberGenerator;
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.DonationDetails;
 import org.egov.wtms.masters.entity.enums.ClosureType;
+import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.MeterCostService;
 import org.egov.wtms.masters.service.RoadCategoryService;
 import org.egov.wtms.utils.WaterTaxNumberGenerator;
@@ -529,6 +530,13 @@ public class UpdateConnectionController extends GenericConnectionController {
 
         if (isNotBlank(workFlowAction))
             request.getSession().setAttribute(WORKFLOW_ACTION, workFlowAction);
+                
+        if (ConnectionType.METERED.equals(waterConnectionDetails.getConnectionType()))
+            meterCostService.validateMeterMakeForPipesize(waterConnectionDetails.getPipeSize().getId());
+        
+        if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType()))
+        	waterConnectionDetailsService.validateWaterRateAndDonationHeader(waterConnectionDetails); 
+               
 
         if (request.getParameter(DONATION_AMOUNT) != null)
             donationCharges = Double.valueOf(request.getParameter(DONATION_AMOUNT));

@@ -846,22 +846,27 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         String nextAction = "";
         Assignment assignment;
 
-        if (citizenPortalUser || !propertyByEmployee
-                || ANONYMOUS_USER.equalsIgnoreCase(transferOwnerService.getLoggedInUser().getName())) {
-            currentState = getCurrentStateForThirdPartyWF(propertyMutation);
-            assignment = transferOwnerService.getAssignmentForThirdPartyByMutationType(propertyMutation, basicproperty, user);
-            approverPositionId = assignment.getPosition().getId();
-            approverName = assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
-            wfInitiator = setInitiatorForThirdPartyByMutationType(propertyMutation, assignment);
-            approverDesignation = assignment.getDesignation().getName();
-        } else {
-            if (null != approverPositionId && approverPositionId != -1) {
-                assignment = assignmentService.getAssignmentsForPosition(approverPositionId, new Date())
-                        .get(0);
-                approverDesignation = assignment.getDesignation().getName();
-            }
-            currentState = null;
-        }
+		if (citizenPortalUser || !propertyByEmployee
+				|| ANONYMOUS_USER.equalsIgnoreCase(transferOwnerService.getLoggedInUser().getName())) {
+			currentState = getCurrentStateForThirdPartyWF(propertyMutation);
+			assignment = transferOwnerService.getAssignmentForThirdPartyByMutationType(propertyMutation, basicproperty,
+					user);
+			if (assignment == null && propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER))
+				addActionError(getText("error.approver.inactive"));
+			else {
+				approverPositionId = assignment.getPosition().getId();
+				approverName = assignment.getEmployee().getName().concat("~")
+						.concat(assignment.getPosition().getName());
+				wfInitiator = setInitiatorForThirdPartyByMutationType(propertyMutation, assignment);
+				approverDesignation = assignment.getDesignation().getName();
+			}
+		} else {
+			if (null != approverPositionId && approverPositionId != -1) {
+				assignment = assignmentService.getAssignmentsForPosition(approverPositionId, new Date()).get(0);
+				approverDesignation = assignment.getDesignation().getName();
+			}
+			currentState = null;
+		}
 
         List<Assignment> loggedInUserAssign;
         String loggedInUserDesignation = "";

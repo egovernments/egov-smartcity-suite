@@ -537,7 +537,7 @@ public class WaterTaxCollection extends TaxCollection {
             waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                     WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN, WaterTaxConstants.MODULETYPE));
             Long approvalPosition = Long.valueOf(0);
-            if (!waterConnectionDetails.getStateHistory().isEmpty() && waterConnectionDetails.getStateHistory() != null)
+            if (!waterConnectionDetails.getStateHistory().isEmpty() && waterConnectionDetails.getStateHistory() != null){
                 Collections.reverse(waterConnectionDetails.getStateHistory());
             stateHistory = waterConnectionDetails.getStateHistory().get(0);
             final Position owner = stateHistory.getOwnerPosition();
@@ -547,6 +547,7 @@ public class WaterTaxCollection extends TaxCollection {
                     .getInitialisedWorkFlowBean();
             applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(waterConnectionDetails,
                     approvalPosition, "Receipt Cancelled", WaterTaxConstants.NEWCONNECTION, null);
+            }
         }
 
     }

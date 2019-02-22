@@ -80,13 +80,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Transactional(readOnly = true)
 public class AgencyWiseBillable extends AbstractBillable implements Billable {
-    
+
     public static final String FEECOLLECTIONMESSAGE = "Fee Collection : Agency Name-";
     private static final String CITY_BOUNDARY_TYPE = "City";
     private String referenceNumber;
     private String transanctionReferenceNumber;
     @Autowired
     private ModuleService moduleService;
+
     private AgencyWiseCollection agencyWiseCollection;
     @Autowired
     private HierarchyTypeService hierarchyTypeService;
@@ -314,5 +315,10 @@ public class AgencyWiseBillable extends AbstractBillable implements Billable {
     public void setTransanctionReferenceNumber(String transanctionReferenceNumber) {
         this.transanctionReferenceNumber = transanctionReferenceNumber;
     }
+    
+    @Override
+	public BigDecimal getMinAmountPayable() {
+		return BigDecimal.ZERO;
+	}
 
 }

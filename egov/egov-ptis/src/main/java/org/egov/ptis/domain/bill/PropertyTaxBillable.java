@@ -47,11 +47,27 @@
  */
 package org.egov.ptis.domain.bill;
 
+import static org.egov.demand.interfaces.LatePayPenaltyCalculator.LPPenaltyCalcType.SIMPLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_MUTATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_PROPERTYTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_VACANTLANDTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.egov.commons.Installment;
 import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.dao.EgDemandDao;
-import org.egov.demand.interfaces.Billable;
 import org.egov.demand.interfaces.LatePayPenaltyCalculator;
 import org.egov.demand.interfaces.RebateCalculator;
 import org.egov.demand.model.AbstractBillable;
@@ -82,29 +98,12 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import static org.egov.demand.interfaces.LatePayPenaltyCalculator.LPPenaltyCalcType.SIMPLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_MUTATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_PROPERTYTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_VACANTLANDTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
-
 /**
  * @author satyam
  */
 @Service("propertyTaxBillable")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class PropertyTaxBillable extends AbstractBillable implements Billable, LatePayPenaltyCalculator,
+public class PropertyTaxBillable extends AbstractBillable implements LatePayPenaltyCalculator,
         RebateCalculator {
 
     private static final String STRING_DEPARTMENT_CODE = "REV";
@@ -127,6 +126,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     private String transanctionReferenceNumber;
     private Boolean isNagarPanchayat;
     private Date receiptDate;
+    private BigDecimal minAmountPayable;
 
     @Autowired
     private EgDemandDao egDemandDAO;
@@ -637,4 +637,13 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     public void setReceiptDate(Date receiptDate) {
         this.receiptDate = receiptDate;
     }
+    
+    @Override
+	public BigDecimal getMinAmountPayable() {
+		return minAmountPayable;
+	}
+
+	public void setMinAmountPayable(BigDecimal minAmountPayable) {
+		this.minAmountPayable = minAmountPayable;
+	}
 }

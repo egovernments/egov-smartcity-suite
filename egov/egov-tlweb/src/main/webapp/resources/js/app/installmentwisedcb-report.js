@@ -190,7 +190,7 @@ function searchInstallmentwiseDCB(event) {
                     "sTitle": "Current"
                 }, {
                     "data": "total_demand",
-                    "name": "currentdemand",
+                    "name": "currentDemand",
                     "sTitle": "Total"
                 }, {
                     "data": "arr_coll",
@@ -204,7 +204,7 @@ function searchInstallmentwiseDCB(event) {
                     "sTitle": "Current"
                 }, {
                     "data": "total_coll",
-                    "name": "currentcollection",
+                    "name": "currentCollection",
                     "sTitle": "Total"
                 }, {
                     "data": "arr_balance",

@@ -84,6 +84,7 @@ import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.FeeMatrixDetail;
+import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseDocument;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.LicenseSubCategoryDetails;
@@ -423,8 +424,9 @@ public class TradeLicenseService {
         for (EgDemandDetails demandDetail : license.getDemand().getEgDemandDetails())
             if (DEMAND_REASON_CATEGORY_FEE.equals(demandDetail.getReasonCategory()))
                 reasonWiseDemandDetails.put(demandDetail.getEgDemandReason(), demandDetail);
-
-        license.setLicenseAppType(licenseAppTypeService.getLicenseAppTypeByCode(RENEW_APPTYPE_CODE));
+        LicenseAppType originalAppType = license.getLicenseAppType();
+        LicenseAppType renewAppType = licenseAppTypeService.getLicenseAppTypeByCode(RENEW_APPTYPE_CODE);
+        license.setLicenseAppType(renewAppType);
         for (FeeMatrixDetail feeMatrixDetail : feeMatrixService.getLicenseFeeDetails(license, installment.getFromDate())) {
             String feeType = feeMatrixDetail.getFeeMatrix().getFeeType().getName();
             EgDemandReason demandReason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
@@ -442,6 +444,10 @@ public class TradeLicenseService {
 
         }
         license.recalculateBaseDemand();
+        if (originalAppType == null || originalAppType.getCode().equals(NEW_APPTYPE_CODE))
+            license.setLicenseAppType(renewAppType);
+        else
+            license.setLicenseAppType(originalAppType);
         licenseRepository.save(license);
     }
 

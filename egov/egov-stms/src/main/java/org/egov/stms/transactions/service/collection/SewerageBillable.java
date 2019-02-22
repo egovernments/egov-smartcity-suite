@@ -84,14 +84,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Transactional(readOnly = true)
 public class SewerageBillable extends AbstractBillable implements Billable {
-    private static final Logger LOGGER = Logger.getLogger(SewerageBillable.class);
 
     @Autowired
     private ModuleService moduleService;
 
     private SewerageApplicationDetails sewerageApplicationDetails;
 
- 
+
     private AssessmentDetails assessmentDetails;
     private Long userId;
     private EgBillType billType;
@@ -101,7 +100,7 @@ public class SewerageBillable extends AbstractBillable implements Billable {
 
     @Autowired
     private EgBillDao egBillDAO;
-    
+
     @Override
     public String getBillPayee() {
         return buildOwnerFullName(getAssessmentDetails().getOwnerNames());
@@ -109,14 +108,14 @@ public class SewerageBillable extends AbstractBillable implements Billable {
 
     @Override
     public String getBillAddress() {
-         return buildAddressDetails(assessmentDetails);
+        return buildAddressDetails(assessmentDetails);
     }
 
     @Override
     public EgDemand getCurrentDemand() {
-        if(getSewerageApplicationDetails()!=null && getSewerageApplicationDetails().getCurrentDemand()!=null)
+        if (getSewerageApplicationDetails() != null && getSewerageApplicationDetails().getCurrentDemand() != null)
             return getSewerageApplicationDetails().getCurrentDemand();
-        
+
         return null;
     }
 
@@ -124,11 +123,12 @@ public class SewerageBillable extends AbstractBillable implements Billable {
     public String getConsumerType() {
         return "";
     }
+
     @Override
     public List<EgDemand> getAllDemands() {
         List<EgDemand> demands = null;
         if (getCurrentDemand() != null) {
-            demands = new ArrayList<EgDemand>();
+            demands = new ArrayList<>();
             demands.add(getCurrentDemand());
         }
         return demands;
@@ -138,8 +138,12 @@ public class SewerageBillable extends AbstractBillable implements Billable {
     public EgBillType getBillType() {
         if (billType == null)
             billType = egBillDAO.getBillTypeByCode(SewerageTaxConstants.BILL_TYPE_AUTO);
-           
+
         return billType;
+    }
+
+    public void setBillType(final EgBillType billType) {
+        this.billType = billType;
     }
 
     @Override
@@ -156,10 +160,10 @@ public class SewerageBillable extends AbstractBillable implements Billable {
 
     @Override
     public String getBoundaryType() {
-        
+
         if (getAssessmentDetails() != null && getAssessmentDetails().getBoundaryDetails() != null)
             return getAssessmentDetails().getBoundaryDetails().getWardBoundaryType();
-        
+
         return "Ward";
     }
 
@@ -205,7 +209,7 @@ public class SewerageBillable extends AbstractBillable implements Billable {
 
     @Override
     public Boolean getPartPaymentAllowed() {
-        if (getSewerageApplicationDetails()!=null && getSewerageApplicationDetails().getConnection().getStatus()!=null
+        if (getSewerageApplicationDetails() != null && getSewerageApplicationDetails().getConnection().getStatus() != null
                 && getSewerageApplicationDetails().getConnection().getStatus().equals(SewerageConnectionStatus.ACTIVE))
             return true;
         else
@@ -214,9 +218,6 @@ public class SewerageBillable extends AbstractBillable implements Billable {
 
     @Override
     public String getServiceCode() {
-      /*  if (getSewerageApplicationDetails().getStatus().getCode().equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN))
-            return SewerageTaxConstants.EST_STRING_SERVICE_CODE;
-        else*/
         return SewerageTaxConstants.STRING_SERVICE_CODE;
     }
 
@@ -236,7 +237,11 @@ public class SewerageBillable extends AbstractBillable implements Billable {
 
     @Override
     public Long getUserId() {
-        return ApplicationThreadLocals.getUserId() == null ? null : Long.valueOf(ApplicationThreadLocals.getUserId()); 
+        return ApplicationThreadLocals.getUserId() == null ? null : ApplicationThreadLocals.getUserId();
+    }
+
+    public void setUserId(final Long userId) {
+        this.userId = userId;
     }
 
     @Override
@@ -254,10 +259,10 @@ public class SewerageBillable extends AbstractBillable implements Billable {
 
     @Override
     public String getCollModesNotAllowed() {
-            
-            StringBuilder collectionModesNotAllowed = new StringBuilder();
-            collectionModesNotAllowed.append(CollectionConstants.INSTRUMENTTYPE_BANK);
-            return collectionModesNotAllowed.toString();
+
+        StringBuilder collectionModesNotAllowed = new StringBuilder();
+        collectionModesNotAllowed.append(CollectionConstants.INSTRUMENTTYPE_BANK);
+        return collectionModesNotAllowed.toString();
     }
 
     @Override
@@ -267,7 +272,7 @@ public class SewerageBillable extends AbstractBillable implements Billable {
 
     @Override
     public Boolean isCallbackForApportion() {
-        if (getSewerageApplicationDetails()!=null && getSewerageApplicationDetails().getConnection().getStatus()!=null
+        if (getSewerageApplicationDetails() != null && getSewerageApplicationDetails().getConnection().getStatus() != null
                 && getSewerageApplicationDetails().getConnection().getStatus().equals(SewerageConnectionStatus.ACTIVE))
             return true;
         else
@@ -279,21 +284,12 @@ public class SewerageBillable extends AbstractBillable implements Billable {
         isCallbackForApportion = b;
     }
 
-    public void setUserId(final Long userId) {
-        this.userId = userId;
-    }
-
-    public void setBillType(final EgBillType billType) {
-        this.billType = billType;
-    }
-
     public String buildOwnerFullName(final Set<OwnerName> ownerSet) {
         if (ownerSet == null)
             throw new ApplicationRuntimeException("Property Owner set is null...");
         String ownerFullName = "";
-        final Set<String> ownerNameSet = new HashSet<String>();
+        final Set<String> ownerNameSet = new HashSet<>();
         for (final OwnerName propOwnerInfo : ownerSet)
-            // User propOwner = propOwnerInfo.getOwner();
             if (propOwnerInfo.getOwnerName() != null && !propOwnerInfo.getOwnerName().trim().equals(""))
                 if (!ownerNameSet.contains(propOwnerInfo.getOwnerName().trim())) {
                     if (!ownerFullName.trim().equals(""))
@@ -307,13 +303,12 @@ public class SewerageBillable extends AbstractBillable implements Billable {
 
     public String buildAddressDetails(final AssessmentDetails assessmentDetails) {
         final StringBuilder address = new StringBuilder();
-         
-       if(assessmentDetails!=null)  {
+
+        if (assessmentDetails != null) {
             final BoundaryDetails boundaryDetails = assessmentDetails.getBoundaryDetails();
-            if(assessmentDetails.getPropertyAddress() !=null && !"".equals(assessmentDetails.getPropertyAddress())){
-                address.append( assessmentDetails.getPropertyAddress() );
-            }
-            else{
+            if (assessmentDetails.getPropertyAddress() != null && !"".equals(assessmentDetails.getPropertyAddress())) {
+                address.append(assessmentDetails.getPropertyAddress());
+            } else {
                 if (boundaryDetails.getZoneName() != null)
                     address.append(boundaryDetails.getZoneName());
                 if (boundaryDetails.getWardName() != null)
@@ -325,7 +320,7 @@ public class SewerageBillable extends AbstractBillable implements Billable {
                 if (boundaryDetails.getStreetName() != null)
                     address.append(", ").append(boundaryDetails.getStreetName());
             }
-       }
+        }
         return address.toString();
     }
 
@@ -353,6 +348,7 @@ public class SewerageBillable extends AbstractBillable implements Billable {
     public void setReferenceNumber(final String referenceNumber) {
         this.referenceNumber = referenceNumber;
     }
+
     @Override
     public String getTransanctionReferenceNumber() {
         return transanctionReferenceNumber;
@@ -364,7 +360,11 @@ public class SewerageBillable extends AbstractBillable implements Billable {
 
     @Override
     public String getEmailId() {
-
         return null;
-    }    
+    }
+
+    @Override
+    public BigDecimal getMinAmountPayable() {
+        return getPartPaymentAllowed() ? BigDecimal.ZERO : getTotalAmount();
+    }
 }

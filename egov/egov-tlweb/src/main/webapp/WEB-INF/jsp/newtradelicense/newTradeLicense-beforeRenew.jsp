@@ -59,9 +59,9 @@
                 <s:actionerror/>
             </div>
         </s:if>
-        <s:if test="%{hasActionMessages()}">
+        <s:if test="%{message != null}">
             <div class="messagestyle">
-                <s:actionmessage theme="simple"/>
+                <c:out value="${message}"/>
             </div>
         </s:if>
         <s:form id="licenseForm" action="newTradeLicense-renewal" theme="simple" name="renewForm"

@@ -174,7 +174,8 @@ public class PTBillServiceImpl extends BillServiceInterface {
         }
 
         String key;
-        BigDecimal balance;
+        BigDecimal balance =  BigDecimal.ZERO;
+        BigDecimal minAmountPayable =  BigDecimal.ZERO;
         BigDecimal earlyPayRebate = BigDecimal.ZERO;
         DateTime installmentDate;
         BillDetailBean billDetailBean;
@@ -199,6 +200,8 @@ public class PTBillServiceImpl extends BillServiceInterface {
 
         for (final EgDemandDetails demandDetail : ptDemand.getEgDemandDetails()) {
             balance = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
+            if(billable.getPartPaymentAllowed())
+        		minAmountPayable= minAmountPayable.add(balance);
             reason = demandDetail.getEgDemandReason();
             installment = reason.getEgInstallmentMaster();
             reasonMasterCode = reason.getEgDemandReasonMaster().getCode();
@@ -217,6 +220,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
                 }
             }
         }
+        billable.setMinAmountPayable(minAmountPayable);
         addBillDetailsForRebate(billDetails, earlyPayRebate, currInstallments, orderMap);
 
         getPenaltyAndRebateDmd(billDetails, billable, installmentPenaltyAndRebate, ptDemand, orderMap);

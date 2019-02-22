@@ -1,8 +1,8 @@
 <%--
-  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+  ~ eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2018  eGovernments Foundation
+  ~     Copyright (C) <2019>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,13 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
-  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
-  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
-  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~           Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~           Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~           derived works should carry eGovernments Foundation logo on the top right corner.
   ~
-  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
-  ~            For any further queries on attribution, including queries on brand guidelines,
-  ~            please contact contact@egovernments.org
+  ~ 	       For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~ 	       For any further queries on attribution, including queries on brand guidelines,
+  ~           please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -53,19 +53,22 @@
     <title>Trade License</title>
 </head>
 <body onload="refreshInbox()">
-<s:if test="%{hasErrors()}">
-    <div class="alert alert-danger view-content">
-        <s:actionerror/>
+<s:form action="newTradeLicense" theme="simple">
+    <s:if test="%{hasErrors()}">
+        <div class="alert alert-danger view-content">
+            <s:actionerror/>
+            <s:fielderror/>
+        </div>
+    </s:if>
+    <s:if test="%{hasActionMessages()}">
+        <div class="alert alert-info view-content">
+            <s:actionmessage/>
+        </div>
+    </s:if>
+    <div class="text-center">
+        <input type="button" value="Close" onclick="javascript:window.close()" class="button"/>
     </div>
-</s:if>
-<c:if test="${message != null}">
-    <div class="alert alert-info view-content">
-        <c:out value="${message}"/>
-    </div>
-</c:if>
-<div class="text-center">
-    <input type="button" value="Close" onclick="window.close()" class="button"/>
-</div>
+</s:form>
 </body>
 
 </html>

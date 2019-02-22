@@ -47,6 +47,9 @@
  */
 package org.egov.demand.interfaces;
 
+import java.util.Date;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.model.EgBill;
@@ -55,10 +58,6 @@ import org.egov.demand.model.EgDemand;
 import org.egov.demand.utils.DemandUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
 
 /**
  * This is an abstract which will be overridden by individual Bill service
@@ -118,19 +117,13 @@ public abstract class BillServiceInterface {
         bill.setDisplayMessage(billObj.getDisplayMessage());
         bill.setEmailId(billObj.getEmailId());
 
-        if (currentDemand != null && currentDemand.getMinAmtPayable() != null) {
-            bill.setMinAmtPayable(currentDemand.getMinAmtPayable());
-        } else {
-            bill.setMinAmtPayable(BigDecimal.ZERO);
-        }
-
         // Get it from the concrete implementation
         List<EgBillDetails> bd = getBilldetails(billObj);
         for (EgBillDetails billdetails : bd) {
             bill.addEgBillDetails(billdetails);
             billdetails.setEgBill(bill);
         }
-
+        bill.setMinAmtPayable(billObj.getMinAmountPayable());
         bill.setConsumerId(billObj.getConsumerId());
         bill.setConsumerType(billObj.getConsumerType());
         bill.setCallBackForApportion(billObj.isCallbackForApportion());

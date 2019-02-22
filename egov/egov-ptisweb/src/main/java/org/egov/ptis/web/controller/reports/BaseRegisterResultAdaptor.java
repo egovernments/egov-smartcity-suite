@@ -108,10 +108,11 @@ public class BaseRegisterResultAdaptor implements DataTableJsonAdapter<PropertyM
 
 			BigDecimal currTotal = BigDecimal.ZERO;
 
-			final BigDecimal currColl = baseRegisterResultObj.getAggrCurrFirstHalfColl() != null
-					? baseRegisterResultObj.getAggrCurrFirstHalfColl()
-					: BigDecimal.ZERO.add(baseRegisterResultObj.getAggrCurrSecondHalfColl() != null
-							? baseRegisterResultObj.getAggrCurrSecondHalfColl() : BigDecimal.ZERO);
+			final BigDecimal currColl = baseRegisterResultObj.getAggrCurrFirstHalfColl() == null
+					? BigDecimal.ZERO.add(((baseRegisterResultObj.getAggrCurrSecondHalfColl() == null) ? BigDecimal.ZERO 
+							: baseRegisterResultObj.getAggrCurrSecondHalfColl()))
+					: baseRegisterResultObj.getAggrCurrFirstHalfColl()
+							.add(baseRegisterResultObj.getAggrCurrSecondHalfColl());
 
 			final BigDecimal totalColl = currColl.add(baseRegisterResultObj.getAggrArrColl() != null
 					? baseRegisterResultObj.getAggrArrColl() : BigDecimal.ZERO);
