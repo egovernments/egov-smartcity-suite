@@ -216,7 +216,7 @@ public class PropertyService {
     private static final String AMOUNT = "amount";
     private static final String ARREAR_TAX = "ARREAR_TAX";
     private static final String CURR_TAX = "CURR_TAX";
-    private static final String AND_PMV_HOUSE_NO_LIKE = " and pmv.houseNo like ? ";
+    private static final String AND_PMV_HOUSE_NO_LIKE = " and pmv.houseNo like ?";
     private static final String WHERE_PMV_IS_ACTIVE_TRUE = "where pmv.isActive = true ";
     private static final String SELECT_COUNT_DISTINCT_PMV = "select count(distinct pmv) ";
     private static final String SELECT_DISTINCT_PMV = "select distinct pmv ";
@@ -2805,7 +2805,7 @@ public class PropertyService {
             params.add(wardId);
         }
         if (houseNum != null && !houseNum.trim().isEmpty()) {
-            where.append(AND_PMV_HOUSE_NO_LIKE);
+            where.append(AND_PMV_HOUSE_NO_LIKE).append(++i);
             params.add(houseNum + "%");
         }
         if (ownerName != null && !ownerName.trim().isEmpty()) {
@@ -2834,7 +2834,7 @@ public class PropertyService {
             params.add(locationId);
         }
         if (houseNo != null && !houseNo.trim().isEmpty()) {
-            where.append(AND_PMV_HOUSE_NO_LIKE);
+            where.append(AND_PMV_HOUSE_NO_LIKE).append(++i);
             params.add(houseNo + "%");
         }
         if (ownerName != null && !ownerName.trim().isEmpty()) {
@@ -2883,7 +2883,7 @@ public class PropertyService {
             params.add("%" + ownerName.toUpperCase() + "%");
         }
         if (StringUtils.isNotBlank(doorNo)) {
-            where.append(AND_PMV_HOUSE_NO_LIKE);
+            where.append(AND_PMV_HOUSE_NO_LIKE).append(++i);
             params.add(doorNo + "%");
         }
 
