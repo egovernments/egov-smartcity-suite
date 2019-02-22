@@ -117,12 +117,14 @@
 										<input type="file" id="file${status.index}"
 											data-idx="${status.index}"
 											name="documents[${status.index}].file"
-											class="file-ellipsis upload-file" required="true">
+											class="file-ellipsis upload-file" required="true"
+											data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 									</c:when>
 									<c:otherwise>
 										<input type="file" id="file${status.index}"
 											name="documents[${status.index}].file"
-											class="file-ellipsis upload-file">
+											class="file-ellipsis upload-file"
+											data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 									</c:otherwise>
 								</c:choose>
 								<form:errors path="documents[${status.index}].file"
@@ -139,7 +141,3 @@
 		</c:forEach>
 	</c:when>
 </c:choose>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/js/app/documentsupload.js'/>"></script>
-
-

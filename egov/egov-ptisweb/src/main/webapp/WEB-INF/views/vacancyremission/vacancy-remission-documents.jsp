@@ -54,11 +54,9 @@
 
 <c:choose>
 	<c:when test="${!documentsList.isEmpty()}">
-	<div class="panel-heading">
-	  <div class="panel-title">
-									New Documents to attach
-									</div>
-									</div>
+		<div class="panel-heading">
+			<div class="panel-title">New Documents to attach</div>
+		</div>
 		<div class="form-group col-sm-12 view-content header-color hidden-xs">
 			<table class="tablebottom doctable" width="100%" border="0"
 				cellpadding="0" cellspacing="0">
@@ -72,8 +70,7 @@
 					<div class="col-sm-3 text-center">
 						<spring:message code="lbl.document.upload" />
 						(<span class="mandatory"></span> )
-					</div>
-					<%-- <div class="col-sm-3 text-center">
+					</div> <%-- <div class="col-sm-3 text-center">
 						<spring:message code="lbl.documentname" />
 					</div> --%>
 				</td>
@@ -81,12 +78,12 @@
 			</table>
 		</div>
 		<c:choose>
-		<c:when test="${attachedDocuments.size()>0}" >
-		<c:set var="index" value="${attachedDocuments.size()}"></c:set>
-		</c:when>
-		<c:otherwise>
+			<c:when test="${attachedDocuments.size()>0}">
+				<c:set var="index" value="${attachedDocuments.size()}"></c:set>
+			</c:when>
+			<c:otherwise>
 				<c:set var="index" value="0"></c:set>
-		</c:otherwise>
+			</c:otherwise>
 		</c:choose>
 		<c:forEach var="docs" items="${documentsList}" varStatus="status">
 
@@ -100,7 +97,7 @@
 									<c:when test="${docs.mandatory}">
 										<input type="checkbox" checked disabled>&nbsp;<c:out
 											value="${index + 1}" />
-											<%-- <c:set var="index" value="${index}"></c:set> --%>
+										<%-- <c:set var="index" value="${index}"></c:set> --%>
 									</c:when>
 									<c:otherwise>
 										<input type="checkbox" disabled>&nbsp;<c:out
@@ -111,8 +108,8 @@
 							<div class="col-sm-3 add-margin check-text text-center">
 								<c:choose>
 									<c:when test="${docs.mandatory}">
-										<input type="checkbox" id="check${index}" checked
-											disabled>&nbsp;<c:out value="${docs.name}" />
+										<input type="checkbox" id="check${index}" checked disabled>&nbsp;<c:out
+											value="${docs.name}" />
 									</c:when>
 									<c:otherwise>
 										<input type="checkbox" id="check${index}" disabled>&nbsp;<c:out
@@ -122,26 +119,26 @@
 								<form:hidden id="documents${index}.type.id"
 									path="documents[${index}].type.id" value="${docs.id}" />
 								<form:hidden id="documents${index}.type.name"
-									path="documents[${index}].type.name"
-									value="${docs.name}" />
+									path="documents[${index}].type.name" value="${docs.name}" />
 							</div>
 							<div class="col-sm-3 add-margin text-center">
 								<c:choose>
 
 									<c:when test="${docs.mandatory}">
-										<input type="file" id="file${index}"
-											data-idx="${index}"
+										<input type="file" id="file${index}" data-idx="${index}"
 											name="documents[${index}].file"
-											class="file-ellipsis upload-file" required="true">
+											class="file-ellipsis upload-file" required="true"
+											data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 									</c:when>
 									<c:otherwise>
 										<input type="file" id="file${index}"
 											name="documents[${index}].file"
-											class="file-ellipsis upload-file">
+											class="file-ellipsis upload-file"
+											data-accepts="${allowedFileExt}" data-size="${maxFileSize}">
 									</c:otherwise>
 									<%-- <c:forEach items="${documents[#index].files}"> --%>
-										 
-									<%-- </c:forEach> --%>	
+
+									<%-- </c:forEach> --%>
 								</c:choose>
 								<form:errors path="documents[${index}].file"
 									cssClass="add-margin error-msg" />
@@ -149,8 +146,7 @@
 									<spring:message code="lbl.document.size" />
 									<font size="1"> </font>
 								</div>
-							</div>
-							<c:set var="index" value="${index+1}"></c:set>
+							</div> <c:set var="index" value="${index+1}"></c:set>
 						</td>
 					</tr>
 				</table>
@@ -158,7 +154,3 @@
 		</c:forEach>
 	</c:when>
 </c:choose>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/js/app/documentsupload.js?rnd=${app_release_no}'/>"></script>
-
-

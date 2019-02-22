@@ -123,12 +123,16 @@
 												<c:when test="${docs.mandatory}">
 													<input type="file" id="file${index}" data-idx="${index}"
 														name="taxExemptionDocumentsProxy[${index}].file"
-														class="file-ellipsis upload-file" required="true">
+														class="file-ellipsis upload-file" required="true"
+														data-accepts="${allowedFileExt}"
+														data-size="${maxFileSize}">
 												</c:when>
 												<c:otherwise>
 													<input type="file" id="file${index}"
 														name="taxExemptionDocumentsProxy[${index}].file"
-														class="file-ellipsis upload-file">
+														class="file-ellipsis upload-file"
+														data-accepts="${allowedFileExt}"
+														data-size="${maxFileSize}">
 												</c:otherwise>
 											</c:choose>
 										</c:when>
@@ -138,7 +142,9 @@
 													<c:forEach items="${worshipDocs[index].files}" var="file">
 														<input type="file" id="file${index}"
 															name="taxExemptionDocumentsProxy[${index}].file"
-															class="file-ellipsis upload-file">
+															class="file-ellipsis upload-file"
+															data-accepts="${allowedFileExt}"
+															data-size="${maxFileSize}">
 														<a
 															href="javascript:viewDocument('<c:out value="${file.fileStoreId}"/>')">
 															<c:out value="${file.fileName}" />
@@ -148,7 +154,9 @@
 												<c:otherwise>
 													<input type="file" id="file${index}"
 														name="taxExemptionDocumentsProxy[${index}].file"
-														class="file-ellipsis upload-file">
+														class="file-ellipsis upload-file"
+														data-accepts="${allowedFileExt}"
+														data-size="${maxFileSize}">
 												</c:otherwise>
 											</c:choose>
 										</c:otherwise>
@@ -168,7 +176,3 @@
 		</div>
 	</c:when>
 </c:choose>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/js/app/documentsupload.js?rnd=${app_release_no}'/>"></script>
-
-
