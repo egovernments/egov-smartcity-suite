@@ -642,6 +642,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         model.addAttribute("currentPropertyTaxDue", currentPropertyTaxDue);
         model.addAttribute("arrearPropertyTaxDue", arrearPropertyTaxDue);
         model.addAttribute("currentWaterTaxDue", currentWaterTaxDue);
+        model.addAttribute("property", basicProperty.getProperty());
         if (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0) {
             model.addAttribute("taxDuesErrorMsg", "Above tax dues must be payed before initiating "
                     + APPLICATION_TYPE_TAX_EXEMTION);
