@@ -250,7 +250,7 @@ public class SearchReceiptAction extends BaseFormAction {
         if (getToDate() != null)
             query.setParameter("toDate", DateUtils.add(toDate, Calendar.DATE, 1), TemporalType.DATE);
         if (getServiceTypeId() != -1)
-            query.setParameter("serviceType", Long.valueOf(getServiceTypeId()));
+            query.setParameter("serviceId", Long.valueOf(getServiceTypeId()));
         if (!getServiceClass().equals("-1"))
             query.setParameter("serviceType", getServiceClass());
         if (getUserId() != -1)
