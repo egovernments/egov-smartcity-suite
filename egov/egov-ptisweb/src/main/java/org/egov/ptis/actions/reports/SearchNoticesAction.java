@@ -385,7 +385,7 @@ public class SearchNoticesAction extends SearchFormAction {
     @SkipValidation
     @Action(value = "/searchNotices-showNotice")
     public String showNotice() throws IOException {
-        final PtNotice ptNotice = (PtNotice) entityManager.createNamedQuery("getNoticeByNoticeNo").setParameter("noticeNo", noticeNumber);
+        final PtNotice ptNotice = (PtNotice) entityManager.createNamedQuery("getNoticeByNoticeNo").setParameter("noticeNo", noticeNumber).getSingleResult();
         if (ptNotice == null) {
             addActionError(getText("DocMngr.file.unavailable"));
             return INDEX;
