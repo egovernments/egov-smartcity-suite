@@ -69,7 +69,7 @@
 	<br />
 	<div class="buttonbottom">
 			<input type="button" name="button2" id="button2"
-					value="Close" class="button" onclick="window.close();
+					value="Close" class="button" onclick="window.close();" />
 	</div>
 </s:form>
 </body>
