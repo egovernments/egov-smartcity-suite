@@ -87,17 +87,17 @@
 							code="lbl.husband.name" /></label>
 
 					<div class="col-sm-3 add-margin">
-						<form:input id="husbandName" path="husband.name.firstName"
+						<form:input id="husbandName" path="husbandName"
 							type="text" cssClass="form-control is_valid_alphabet" />
-						<form:errors path="husband.name.firstName" cssClass="error-msg" />
+						<form:errors path="husbandName" cssClass="error-msg" />
 					</div>
 					<label for="field1" class="col-sm-2 control-label"><spring:message
 							code="lbl.wife.name" /></label>
 
 					<div class="col-sm-3 add-margin">
-						<form:input id="wifeName" path="wife.name.firstName" type="text"
+						<form:input id="wifeName" path="wifeName" type="text"
 							cssClass="form-control is_valid_alphabet" />
-						<form:errors path="wife.name.firstName" cssClass="error-msg" />
+						<form:errors path="wifeName" cssClass="error-msg" />
 					</div>
 				</div>
 
@@ -136,7 +136,7 @@
 							<form:options items="${marriageRegistrationUnit}" itemValue="id"
 								itemLabel="name" />
 						</form:select>
-						<form:errors path="marriageRegistrationUnit.id"
+						<form:errors path="marriageRegistrationUnit"
 							cssClass="add-margin error-msg" />
 					</div>
 					<label for="dateOfMarriage" class="col-sm-2 control-label"><spring:message

@@ -61,8 +61,8 @@ public class MarriageRegistrationSearchFilter {
     private String husbandName;
 	@SafeHtml
     private String wifeName;
-    private String dateOfMarriage;
-    private String applicationDate;
+    private Date dateOfMarriage;
+    private Date applicationDate;
     @SafeHtml
     private String marriageRegistrationType;
     private Date fromDate;
@@ -72,6 +72,12 @@ public class MarriageRegistrationSearchFilter {
     private String registrationUnitName;
     private Long registrationUnitZone;
     private boolean isRegistrationUnitActive;
+    @SafeHtml
+    private String certificateNo;
+    @SafeHtml
+    private String certificateType;
+    @SafeHtml
+    private String frequency;
     
     private String errorMessage;
 
@@ -99,11 +105,11 @@ public class MarriageRegistrationSearchFilter {
         this.wifeName = wifeName;
     }
 
-    public String getApplicationDate() {
+    public Date getApplicationDate() {
         return applicationDate;
     }
 
-    public void setApplicationDate(String applicationDate) {
+    public void setApplicationDate(Date applicationDate) {
         this.applicationDate = applicationDate;
     }
 
@@ -115,11 +121,11 @@ public class MarriageRegistrationSearchFilter {
         this.marriageRegistrationType = marriageRegistrationType;
     }
 
-    public String getDateOfMarriage() {
+    public Date getDateOfMarriage() {
         return dateOfMarriage;
     }
 
-    public void setDateOfMarriage(String dateOfMarriage) {
+    public void setDateOfMarriage(Date dateOfMarriage) {
         this.dateOfMarriage = dateOfMarriage;
     }
 
@@ -179,6 +185,30 @@ public class MarriageRegistrationSearchFilter {
 		this.isRegistrationUnitActive = isRegistrationUnitActive;
 	}
 
+	public String getCertificateNo() {
+		return certificateNo;
+	}
+
+	public void setCertificateNo(String certificateNo) {
+		this.certificateNo = certificateNo;
+	}
+	
+	public String getCertificateType() {
+		return certificateType;
+	}
+
+	public void setCertificateType(String certificateType) {
+		this.certificateType = certificateType;
+	}
+	
+	public String getFrequency() {
+		return frequency;
+	}
+
+	public void setFrequency(String frequency) {
+		this.frequency = frequency;
+	}
+	
 	public String getErrorMessage() {
 		return errorMessage;
 	}

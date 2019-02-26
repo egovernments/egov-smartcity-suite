@@ -59,11 +59,13 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.StringUtils;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.reports.service.MarriageRegistrationReportsService;
 import org.egov.mrs.autonumber.MarriageCertificateNumberGenerator;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageRegistration;
+import org.egov.mrs.domain.entity.MarriageRegistrationSearchFilter;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.entity.RegistrationCertificate;
 import org.egov.mrs.domain.enums.MarriageCertificateType;
@@ -421,44 +423,44 @@ public class MarriageCertificateService {
     }
 
     @SuppressWarnings("unchecked")
-    public List<MarriageCertificate> searchMarriageCertificates(final MarriageCertificate certificate) {
+    public List<MarriageCertificate> searchMarriageCertificates(final MarriageRegistrationSearchFilter searchFilter) {
         final Criteria criteria = getCurrentSession().createCriteria(MarriageCertificate.class, CERTIFICATE);
         final List<MarriageCertificate> certificateResultList = new ArrayList<>();
-        if (certificate.getRegistration().getRegistrationNo() != null) {
+        if (StringUtils.isNotBlank(searchFilter.getRegistrationNo())) {
             criteria.createAlias(CERTIFICATE_DOT_REGISTRATION, REGISTRATION);
             criteria.add(Restrictions.eq(REGISTRATION_DOT_REGISTRATION_NO,
-                    certificate.getRegistration().getRegistrationNo().trim()));
+            		searchFilter.getRegistrationNo().trim()));
         }
-        buildSearchCriteriaForMrgCertificate(certificate, criteria);
+        buildSearchCriteriaForMrgCertificate(searchFilter, criteria);
         certificateResultList.addAll(criteria.list());
         // To fetch reissue certificate details along with registration
         // certificate details when searching
         // using registration number
-        if (certificate.getRegistration().getRegistrationNo() != null) {
+        if (StringUtils.isNotBlank(searchFilter.getRegistrationNo())) {
             final Criteria criteriaForReissue = getCurrentSession().createCriteria(MarriageCertificate.class, "cert");
             criteriaForReissue.createAlias("cert.reIssue", "reIssue").createAlias(RE_ISSUE_DOT_REGISTRATION, "reg");
             criteriaForReissue.add(
-                    Restrictions.eq("reg.registrationNo", certificate.getRegistration().getRegistrationNo().trim()));
-            buildSearchCriteriaForMrgCertificate(certificate, criteriaForReissue);
+                    Restrictions.eq("reg.registrationNo", searchFilter.getRegistrationNo().trim()));
+            buildSearchCriteriaForMrgCertificate(searchFilter, criteriaForReissue);
             certificateResultList.addAll(criteriaForReissue.list());
         }
 
         return certificateResultList;
     }
 
-    private void buildSearchCriteriaForMrgCertificate(final MarriageCertificate certificate, final Criteria criteria) {
-        if (certificate.getCertificateNo() != null)
+    private void buildSearchCriteriaForMrgCertificate(final MarriageRegistrationSearchFilter searchFilter, final Criteria criteria) {
+        if (StringUtils.isNotBlank(searchFilter.getCertificateNo()))
             criteria.add(
-                    Restrictions.ilike("certificateNo", certificate.getCertificateNo().trim(), MatchMode.ANYWHERE));
-        if (certificate.getCertificateType() != null)
-            criteria.add(Restrictions.eq("certificateType", certificate.getCertificateType()));
-        if (certificate.getFromDate() != null)
+                    Restrictions.ilike("certificateNo", searchFilter.getCertificateNo().trim(), MatchMode.ANYWHERE));
+        if (StringUtils.isNotBlank(searchFilter.getCertificateType()))
+            criteria.add(Restrictions.eq("certificateType", MarriageCertificateType.valueOf(searchFilter.getCertificateType())));
+        if (searchFilter.getFromDate() != null)
             criteria.add(Restrictions.ge(CERTIFICATE_DATE,
-                    marriageRegistrationReportsService.resetFromDateTimeStamp(certificate.getFromDate())));
-        if (certificate.getToDate() != null)
+                    marriageRegistrationReportsService.resetFromDateTimeStamp(searchFilter.getFromDate())));
+        if (searchFilter.getToDate() != null)
             criteria.add(Restrictions.le(CERTIFICATE_DATE,
-                    marriageRegistrationReportsService.resetToDateTimeStamp(certificate.getToDate())));
-        if (certificate.getFrequency() != null && "LATEST".equalsIgnoreCase(certificate.getFrequency()))
+                    marriageRegistrationReportsService.resetToDateTimeStamp(searchFilter.getToDate())));
+        if (searchFilter.getFrequency() != null && "LATEST".equalsIgnoreCase(searchFilter.getFrequency()))
             criteria.addOrder(Order.desc("createdDate"));
     }
 

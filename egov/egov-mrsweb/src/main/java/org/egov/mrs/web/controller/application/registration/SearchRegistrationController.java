@@ -59,6 +59,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Role;
@@ -82,6 +83,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -97,7 +100,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = {"/registration"})
 public class SearchRegistrationController {
 
-    private static final String DATA = "{ \"data\":";
+    private static final String SEARCH_FILTER = "searchFilter";
+	private static final String DATA = "{ \"data\":";
     private static final String REGISTRATION = "registration";
     private final MarriageRegistrationService marriageRegistrationService;
     private final SecurityUtils securityUtils;
@@ -126,7 +130,7 @@ public class SearchRegistrationController {
 
         final List<Role> operatorRoles = securityUtils.getCurrentUser().getRoles().stream()
                 .filter(role -> "Collection Operator".equalsIgnoreCase(role.getName())).collect(Collectors.toList());
-        model.addAttribute(REGISTRATION, new MarriageRegistration());
+        model.addAttribute(SEARCH_FILTER, new MarriageRegistrationSearchFilter());
         final boolean isCollectionOperator = operatorRoles == null || operatorRoles.isEmpty() ? false : true;
         model.addAttribute("isCollectionOperator", isCollectionOperator);
         prepareSearchForm(model);
@@ -138,7 +142,7 @@ public class SearchRegistrationController {
 
         final List<Role> operatorRoles = securityUtils.getCurrentUser().getRoles().stream()
                 .filter(role -> "Collection Operator".equalsIgnoreCase(role.getName())).collect(Collectors.toList());
-        model.addAttribute(REGISTRATION, new MarriageRegistration());
+        model.addAttribute(SEARCH_FILTER, new MarriageRegistrationSearchFilter());
         final boolean isCollectionOperator = operatorRoles == null || operatorRoles.isEmpty() ? false : true;
         model.addAttribute("isCollectionOperator", isCollectionOperator);
         prepareSearchForm(model);
@@ -156,77 +160,164 @@ public class SearchRegistrationController {
 
     @RequestMapping(value = "/collectmrfee", method = RequestMethod.GET)
     public String showSearchApprovedforFee(final Model model) {
-        model.addAttribute(REGISTRATION, new MarriageRegistration());
+    	model.addAttribute(SEARCH_FILTER, new MarriageRegistrationSearchFilter());
         model.addAttribute("mode", "collectmrfee");
         prepareSearchForm(model);
         return "registration-search-forfee";
     }
 
-    @RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseBody
-    public String search(final Model model, @ModelAttribute final MarriageRegistration registration) {
-        final List<MarriageRegistration> searchResultList = marriageRegistrationService.searchMarriageRegistrations(registration);
-        return new StringBuilder(DATA)
-                .append(toJSON(searchResultList, MarriageRegistration.class, MarriageRegistrationJsonAdaptor.class)).append("}")
-                .toString();
-    }
+	@RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+	@ResponseBody
+	public String search(final Model model,
+			@Valid @ModelAttribute(SEARCH_FILTER) MarriageRegistrationSearchFilter searchFilter,
+			BindingResult resultBinder) {
+		if (resultBinder.hasErrors()) {
+			List<MarriageRegistrationSearchFilter> errors = new ArrayList<>();
+			MarriageRegistrationSearchFilter searchRequest;
+			String criteriaName;
+			for (ObjectError error : resultBinder.getAllErrors()) {
+				searchRequest = new MarriageRegistrationSearchFilter();
+				criteriaName = error.getCodes()[0].split("\\.")[2];
+				searchRequest
+						.setErrorMessage(new StringBuilder().append("Invalid input for ")
+								.append("husbandName".equalsIgnoreCase(criteriaName) ? "Bridegroom Name"
+										: "wifeName".equalsIgnoreCase(criteriaName) ? "Bride Name" : criteriaName)
+								.toString());
+				errors.add(searchRequest);
+			}
+			return new StringBuilder("{ \"error\":").append(toJSON((errors))).append("}").toString();
+		} else {
+			final List<MarriageRegistration> searchResultList = marriageRegistrationService
+					.searchMarriageRegistrations(searchFilter);
+			return new StringBuilder(DATA)
+					.append(toJSON(searchResultList, MarriageRegistration.class, MarriageRegistrationJsonAdaptor.class))
+					.append("}").toString();
+		}
+	}
 
-    @RequestMapping(value = "/searchApproved", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseBody
-    public String searchRegisterStatusMarriageRecords(final Model model,
-            @ModelAttribute final MarriageRegistration registration) {
-        final List<MarriageRegistration> searchResultList = marriageRegistrationService.searchRegistrationByStatus(registration,
-                MarriageRegistration.RegistrationStatus.REGISTERED.toString());
-        return new StringBuilder(DATA)
-                .append(toJSON(searchResultList, MarriageRegistration.class, MarriageRegistrationJsonAdaptor.class)).append("}")
-                .toString();
-    }
+	@RequestMapping(value = "/searchApproved", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+	@ResponseBody
+	public String searchRegisterStatusMarriageRecords(final Model model,
+			@Valid @ModelAttribute final MarriageRegistrationSearchFilter mrSearchFilter, BindingResult resultBinder) {
+		if (resultBinder.hasErrors()) {
+			List<MarriageRegistrationSearchFilter> errors = new ArrayList<>();
+			MarriageRegistrationSearchFilter searchRequest;
+			String criteriaName;
+			for (ObjectError error : resultBinder.getAllErrors()) {
+				searchRequest = new MarriageRegistrationSearchFilter();
+				criteriaName = error.getCodes()[0].split("\\.")[2];
+				searchRequest
+						.setErrorMessage(new StringBuilder().append("Invalid input for ")
+								.append("husbandName".equalsIgnoreCase(criteriaName) ? "Bridegroom Name"
+										: "wifeName".equalsIgnoreCase(criteriaName) ? "Bride Name" : criteriaName)
+								.toString());
+				errors.add(searchRequest);
+			}
+			return new StringBuilder("{ \"error\":").append(toJSON((errors))).append("}").toString();
+		} else {
+			final List<MarriageRegistration> searchResultList = marriageRegistrationService.searchRegistrationByStatus(
+					mrSearchFilter, MarriageRegistration.RegistrationStatus.REGISTERED.toString());
+			return new StringBuilder(DATA)
+					.append(toJSON(searchResultList, MarriageRegistration.class, MarriageRegistrationJsonAdaptor.class))
+					.append("}").toString();
+		}
+	}
 
-    @RequestMapping(value = "/collectmrfeeajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseBody
-    public String searchMarriageRegistrationsForFeeCollection(final Model model,
-            @ModelAttribute final MarriageRegistration registration) {
-        final List<MarriageRegistration> searchResultList = marriageRegistrationService
-                .searchMarriageRegistrationsForFeeCollection(registration);
-        final List<MarriageRegistration> newSearchResultList = new ArrayList<>();
-        for (final MarriageRegistration mr : searchResultList)
-            if (mr != null && !mr.isFeeCollected())
-                newSearchResultList.add(mr);
-        return new StringBuilder(DATA)
-                .append(toJSON(newSearchResultList, MarriageRegistration.class, MarriageRegistrationJsonAdaptor.class))
-                .append("}")
-                .toString();
-    }
+	@RequestMapping(value = "/collectmrfeeajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+	@ResponseBody
+	public String searchMarriageRegistrationsForFeeCollection(final Model model,
+			@Valid @ModelAttribute MarriageRegistrationSearchFilter searchFilter, BindingResult resultBinder) {
+		if (resultBinder.hasErrors()) {
+			List<MarriageRegistrationSearchFilter> errors = new ArrayList<>();
+			MarriageRegistrationSearchFilter searchRequest;
+			String criteriaName;
+			for (ObjectError error : resultBinder.getAllErrors()) {
+				searchRequest = new MarriageRegistrationSearchFilter();
+				criteriaName = error.getCodes()[0].split("\\.")[2];
+				searchRequest
+						.setErrorMessage(new StringBuilder().append("Invalid input for ")
+								.append("husbandName".equalsIgnoreCase(criteriaName) ? "Bridegroom Name"
+										: "wifeName".equalsIgnoreCase(criteriaName) ? "Bride Name" : criteriaName)
+								.toString());
+				errors.add(searchRequest);
+			}
+			return new StringBuilder("{ \"error\":").append(toJSON((errors))).append("}").toString();
+		} else {
+			final List<MarriageRegistration> searchResultList = marriageRegistrationService
+					.searchMarriageRegistrationsForFeeCollection(searchFilter);
+			final List<MarriageRegistration> newSearchResultList = new ArrayList<>();
+			for (final MarriageRegistration mr : searchResultList)
+				if (mr != null && !mr.isFeeCollected())
+					newSearchResultList.add(mr);
+			return new StringBuilder(DATA).append(
+					toJSON(newSearchResultList, MarriageRegistration.class, MarriageRegistrationJsonAdaptor.class))
+					.append("}").toString();
+		}
+	}
 
-    @RequestMapping(value = "/collectmrreissuefeeajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseBody
-    public String searchApprovedMarriageReIssueRecordsForFee(final Model model,
-            @ModelAttribute final MarriageRegistrationSearchFilter mrSearchFilter) {
-        final List<ReIssue> searchResultList = marriageRegistrationService
-                .searchApprovedReIssueRecordsForFeeCollection(mrSearchFilter);
-        final List<ReIssue> newSearchResultList = new ArrayList<>();
-        for (final ReIssue mrr : searchResultList)
-            if (mrr != null && !mrr.isFeeCollected())
-                newSearchResultList.add(mrr);
-        return new StringBuilder(DATA).append(toJSON(newSearchResultList, ReIssue.class, MarriageReIssueJsonAdaptor.class))
-                .append("}")
-                .toString();
-    }
+	@RequestMapping(value = "/collectmrreissuefeeajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+	@ResponseBody
+	public String searchApprovedMarriageReIssueRecordsForFee(final Model model,
+			@Valid @ModelAttribute final MarriageRegistrationSearchFilter mrSearchFilter, BindingResult resultBinder) {
+		if (resultBinder.hasErrors()) {
+			List<MarriageRegistrationSearchFilter> errors = new ArrayList<>();
+			MarriageRegistrationSearchFilter searchRequest;
+			String criteriaName;
+			for (ObjectError error : resultBinder.getAllErrors()) {
+				searchRequest = new MarriageRegistrationSearchFilter();
+				criteriaName = error.getCodes()[0].split("\\.")[2];
+				searchRequest
+						.setErrorMessage(new StringBuilder().append("Invalid input for ")
+								.append("husbandName".equalsIgnoreCase(criteriaName) ? "Bridegroom Name"
+										: "wifeName".equalsIgnoreCase(criteriaName) ? "Bride Name" : criteriaName)
+								.toString());
+				errors.add(searchRequest);
+			}
+			return new StringBuilder("{ \"error\":").append(toJSON((errors))).append("}").toString();
+		} else {
+			final List<ReIssue> searchResultList = marriageRegistrationService
+					.searchApprovedReIssueRecordsForFeeCollection(mrSearchFilter);
+			final List<ReIssue> newSearchResultList = new ArrayList<>();
+			for (final ReIssue mrr : searchResultList)
+				if (mrr != null && !mrr.isFeeCollected())
+					newSearchResultList.add(mrr);
+			return new StringBuilder(DATA)
+					.append(toJSON(newSearchResultList, ReIssue.class, MarriageReIssueJsonAdaptor.class)).append("}")
+					.toString();
+		}
+	}
 
-    @RequestMapping(value = "/searchregisteredrecord", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseBody
-    public String searchRegisteredStatusMarriageRecords(final Model model,
-            @ModelAttribute final MarriageRegistration registration) {
-        final List<MarriageRegistration> searchResultList = marriageRegistrationService.searchRegistrationByStatus(registration,
-                MarriageRegistration.RegistrationStatus.REGISTERED.toString());
-        return new StringBuilder(DATA)
-                .append(toJSON(searchResultList, MarriageRegistration.class, MarriageRegistrationJsonAdaptor.class)).append("}")
-                .toString();
-    }
+	@RequestMapping(value = "/searchregisteredrecord", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+	@ResponseBody
+	public String searchRegisteredStatusMarriageRecords(final Model model,
+			@Valid @ModelAttribute final MarriageRegistrationSearchFilter mrSearchFilter, BindingResult resultBinder) {
+		if (resultBinder.hasErrors()) {
+			List<MarriageRegistrationSearchFilter> errors = new ArrayList<>();
+			MarriageRegistrationSearchFilter searchRequest;
+			String criteriaName;
+			for (ObjectError error : resultBinder.getAllErrors()) {
+				searchRequest = new MarriageRegistrationSearchFilter();
+				criteriaName = error.getCodes()[0].split("\\.")[2];
+				searchRequest
+						.setErrorMessage(new StringBuilder().append("Invalid input for ")
+								.append("husbandName".equalsIgnoreCase(criteriaName) ? "Bridegroom Name"
+										: "wifeName".equalsIgnoreCase(criteriaName) ? "Bride Name" : criteriaName)
+								.toString());
+				errors.add(searchRequest);
+			}
+			return new StringBuilder("{ \"error\":").append(toJSON((errors))).append("}").toString();
+		} else {
+			final List<MarriageRegistration> searchResultList = marriageRegistrationService.searchRegistrationByStatus(
+					mrSearchFilter, MarriageRegistration.RegistrationStatus.REGISTERED.toString());
+			return new StringBuilder(DATA)
+					.append(toJSON(searchResultList, MarriageRegistration.class, MarriageRegistrationJsonAdaptor.class))
+					.append("}").toString();
+		}
+	}
 
     @RequestMapping(value = "/reissuecertificate", method = RequestMethod.GET)
     public String reissueCertificateSearch(final Model model, final HttpServletRequest request) {
-        model.addAttribute(REGISTRATION, new MarriageRegistration());
+    	model.addAttribute(SEARCH_FILTER, new MarriageRegistrationSearchFilter());
         prepareSearchForm(model);
         return "registration-search-certificateissue";
     }
@@ -234,27 +325,43 @@ public class SearchRegistrationController {
     @RequestMapping(value = "/searchcertificates", method = RequestMethod.GET)
     public String showReportForm(final Model model) {
 
-        model.addAttribute("certificate", new MarriageCertificate());
+        model.addAttribute(SEARCH_FILTER, new MarriageRegistrationSearchFilter());
         model.addAttribute("certificateType", MarriageCertificateType.values());
         return "registration-search-certificate";
     }
 
-    @RequestMapping(value = "/searchcertificates", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseBody
-    public String searchApprovedMarriageRecords(final Model model, @ModelAttribute final MarriageCertificate certificate) {
-        final List<MarriageCertificate> searchResultList = marriageCertificateService.searchMarriageCertificates(certificate);
-        int noOfToDaysToPrint = 0;
-        final List<AppConfigValues> appConfigValues = appConfigValuesService
-                .getConfigValuesByModuleAndKey(MODULE_NAME, NOOFDAYSTOPRINT);
-        if (appConfigValues != null && appConfigValues.get(0).getValue() != null)
-            noOfToDaysToPrint = Integer.parseInt(appConfigValues.get(0).getValue());
+	@RequestMapping(value = "/searchcertificates", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+	@ResponseBody
+	public String searchApprovedMarriageRecords(final Model model,
+			@Valid @ModelAttribute final MarriageRegistrationSearchFilter searchFilter, BindingResult resultBinder) {
+		if (resultBinder.hasErrors()) {
+			List<MarriageRegistrationSearchFilter> errors = new ArrayList<>();
+			MarriageRegistrationSearchFilter searchRequest;
+			String criteriaName;
+			for (ObjectError error : resultBinder.getAllErrors()) {
+				searchRequest = new MarriageRegistrationSearchFilter();
+				criteriaName = error.getCodes()[0].split("\\.")[2];
+				searchRequest.setErrorMessage(
+						new StringBuilder().append("Invalid input for ").append(criteriaName).toString());
+				errors.add(searchRequest);
+			}
+			return new StringBuilder("{ \"error\":").append(toJSON((errors))).append("}").toString();
+		} else {
+			final List<MarriageCertificate> searchResultList = marriageCertificateService
+					.searchMarriageCertificates(searchFilter);
+			int noOfToDaysToPrint = 0;
+			final List<AppConfigValues> appConfigValues = appConfigValuesService
+					.getConfigValuesByModuleAndKey(MODULE_NAME, NOOFDAYSTOPRINT);
+			if (appConfigValues != null && appConfigValues.get(0).getValue() != null)
+				noOfToDaysToPrint = Integer.parseInt(appConfigValues.get(0).getValue());
 
-        for (final MarriageCertificate certficateobj : searchResultList)
-            certficateobj.setPrintCertificateResrictionDays(noOfToDaysToPrint);
-        return new StringBuilder(DATA)
-                .append(toJSON(searchResultList, MarriageCertificate.class, MarriageCerftificateJsonAdaptor.class)).append("}")
-                .toString();
-    }
+			for (final MarriageCertificate certficateobj : searchResultList)
+				certficateobj.setPrintCertificateResrictionDays(noOfToDaysToPrint);
+			return new StringBuilder(DATA)
+					.append(toJSON(searchResultList, MarriageCertificate.class, MarriageCerftificateJsonAdaptor.class))
+					.append("}").toString();
+		}
+	}
 
     @RequestMapping(value = "/printcertficate/{id}")
     @ResponseBody

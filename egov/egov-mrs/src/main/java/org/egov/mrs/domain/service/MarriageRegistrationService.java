@@ -691,18 +691,18 @@ public class MarriageRegistrationService {
     }
 
     @SuppressWarnings("unchecked")
-    public List<MarriageRegistration> searchMarriageRegistrations(final MarriageRegistration registration) {
+    public List<MarriageRegistration> searchMarriageRegistrations(final MarriageRegistrationSearchFilter searchFilter) {
         final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class, MARRIAGE_REGISTRATION);
-        buildMarriageRegistrationSearchCriteria(registration, criteria);
+        buildMarriageRegistrationSearchCriteria(searchFilter, criteria);
         return criteria.list();
     }
 
     @SuppressWarnings("unchecked")
-    public List<MarriageRegistration> searchMarriageRegistrationsForFeeCollection(final MarriageRegistration registration)
+    public List<MarriageRegistration> searchMarriageRegistrationsForFeeCollection(final MarriageRegistrationSearchFilter searchFilter)
             {
         final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class, MARRIAGE_REGISTRATION)
                 .createAlias("marriageRegistration.status", STATUS);
-        buildMarriageRegistrationSearchCriteria(registration, criteria);
+        buildMarriageRegistrationSearchCriteria(searchFilter, criteria);
         criteria.add(Restrictions.in(STATUS_DOT_CODE, MarriageRegistration.RegistrationStatus.CREATED.name(),
                 MarriageRegistration.RegistrationStatus.APPROVED.name()));
         return criteria.list();
@@ -737,12 +737,12 @@ public class MarriageRegistrationService {
             criteria.createAlias("registration.wife", "wife").add(
                     Restrictions.ilike("wife.name.fullname", mrSearchFilter.getWifeName(), MatchMode.ANYWHERE));
         if (mrSearchFilter.getApplicationDate() != null)
-            criteria.add(Restrictions.between(RE_ISSUE_APPLICATION_DATE, toDateUsingDefaultPattern(mrSearchFilter.getApplicationDate()),
-                    org.apache.commons.lang3.time.DateUtils.addDays(toDateUsingDefaultPattern(mrSearchFilter.getApplicationDate()), 1)));
+            criteria.add(Restrictions.between(RE_ISSUE_APPLICATION_DATE, mrSearchFilter.getApplicationDate(),
+                   mrSearchFilter.getApplicationDate()));
         if (mrSearchFilter.getDateOfMarriage() != null)
             criteria.add(
-                    Restrictions.between("registration.dateOfMarriage", toDateUsingDefaultPattern(mrSearchFilter.getDateOfMarriage()),
-                            org.apache.commons.lang3.time.DateUtils.addDays(toDateUsingDefaultPattern(mrSearchFilter.getDateOfMarriage()), 0)));
+                    Restrictions.between("registration.dateOfMarriage", mrSearchFilter.getDateOfMarriage(),
+                            mrSearchFilter.getDateOfMarriage()));
         if (mrSearchFilter.getFromDate() != null)
             criteria.add(Restrictions.ge(RE_ISSUE_APPLICATION_DATE,
                     marriageRegistrationReportsService.resetFromDateTimeStamp(mrSearchFilter.getFromDate())));
@@ -753,39 +753,36 @@ public class MarriageRegistrationService {
             criteria.add(Restrictions.eq("marriageRegistrationUnit.id", mrSearchFilter.getMarriageRegistrationUnit()));
     }
 
-    private void buildMarriageRegistrationSearchCriteria(final MarriageRegistration registration, final Criteria criteria)
-            {
-        if (registration.getRegistrationNo() != null)
-            criteria.add(Restrictions.ilike("marriageRegistration.registrationNo", registration.getRegistrationNo(),
-                    MatchMode.ANYWHERE));
-        if (registration.getApplicationNo() != null)
-            criteria.add(Restrictions.ilike("marriageRegistration.applicationNo", registration.getApplicationNo(),
-                    MatchMode.ANYWHERE));
-        if (registration.getHusband() != null && registration.getHusband().getName() != null
-                && !"null".equals(registration.getHusband().getFullName()) && registration.getHusband().getFullName() != null)
-            criteria.createAlias("marriageRegistration.husband", "husband").add(
-                    Restrictions.ilike("husband.name.fullname", registration.getHusband().getFullName(),
-                            MatchMode.ANYWHERE));
-        if (registration.getWife() != null && registration.getWife().getName() != null
-                && !"null".equals(registration.getWife().getFullName()) && registration.getWife().getFullName() != null)
-            criteria.createAlias("marriageRegistration.wife", "wife").add(
-                    Restrictions.ilike("wife.name.fullname", registration.getWife().getFullName(),
-                            MatchMode.ANYWHERE));
-        if (registration.getApplicationDate() != null)
-            criteria.add(Restrictions.between(MARRIAGE_REGISTRATION_DOT_APPLICATION_DATE, registration.getApplicationDate(),
-                    org.apache.commons.lang3.time.DateUtils.addDays(registration.getApplicationDate(), 1)));
-        if (registration.getDateOfMarriage() != null)
-            criteria.add(Restrictions.between("marriageRegistration.dateOfMarriage", registration.getDateOfMarriage(),
-                    org.apache.commons.lang3.time.DateUtils.addDays(registration.getDateOfMarriage(), 0)));
-        if (registration.getFromDate() != null)
-            criteria.add(Restrictions.ge(MARRIAGE_REGISTRATION_DOT_APPLICATION_DATE,
-                    marriageRegistrationReportsService.resetFromDateTimeStamp(registration.getFromDate())));
-        if (registration.getToDate() != null)
-            criteria.add(Restrictions.le(MARRIAGE_REGISTRATION_DOT_APPLICATION_DATE,
-                    marriageRegistrationReportsService.resetToDateTimeStamp(registration.getToDate())));
-        if (null != registration.getMarriageRegistrationUnit() && registration.getMarriageRegistrationUnit().getId() != null)
-            criteria.add(Restrictions.eq("marriageRegistrationUnit.id", registration.getMarriageRegistrationUnit().getId()));
-    }
+	private void buildMarriageRegistrationSearchCriteria(final MarriageRegistrationSearchFilter mrSearchFilter,
+			final Criteria criteria) {
+		if (StringUtils.isNotBlank(mrSearchFilter.getRegistrationNo()))
+			criteria.add(Restrictions.ilike("marriageRegistration.registrationNo", mrSearchFilter.getRegistrationNo(),
+					MatchMode.ANYWHERE));
+		if (StringUtils.isNotBlank(mrSearchFilter.getApplicationNo()))
+			criteria.add(Restrictions.ilike("marriageRegistration.applicationNo", mrSearchFilter.getApplicationNo(),
+					MatchMode.ANYWHERE));
+		if (StringUtils.isNotBlank(mrSearchFilter.getHusbandName()))
+			criteria.createAlias("marriageRegistration.husband", "husband").add(
+					Restrictions.ilike("husband.name.fullname", mrSearchFilter.getHusbandName(), MatchMode.ANYWHERE));
+		if (StringUtils.isNotBlank(mrSearchFilter.getWifeName()))
+			criteria.createAlias("marriageRegistration.wife", "wife")
+					.add(Restrictions.ilike("wife.name.fullname", mrSearchFilter.getWifeName(), MatchMode.ANYWHERE));
+		if (mrSearchFilter.getApplicationDate() != null)
+			criteria.add(Restrictions.between(MARRIAGE_REGISTRATION_DOT_APPLICATION_DATE,
+					mrSearchFilter.getApplicationDate(),
+					org.apache.commons.lang3.time.DateUtils.addDays(mrSearchFilter.getApplicationDate(), 1)));
+		if (mrSearchFilter.getDateOfMarriage() != null)
+			criteria.add(Restrictions.between("marriageRegistration.dateOfMarriage", mrSearchFilter.getDateOfMarriage(),
+					org.apache.commons.lang3.time.DateUtils.addDays(mrSearchFilter.getDateOfMarriage(), 0)));
+		if (mrSearchFilter.getFromDate() != null)
+			criteria.add(Restrictions.ge(MARRIAGE_REGISTRATION_DOT_APPLICATION_DATE,
+					marriageRegistrationReportsService.resetFromDateTimeStamp(mrSearchFilter.getFromDate())));
+		if (mrSearchFilter.getToDate() != null)
+			criteria.add(Restrictions.le(MARRIAGE_REGISTRATION_DOT_APPLICATION_DATE,
+					marriageRegistrationReportsService.resetToDateTimeStamp(mrSearchFilter.getToDate())));
+		if (mrSearchFilter.getMarriageRegistrationUnit() != null)
+			criteria.add(Restrictions.eq("marriageRegistrationUnit.id", mrSearchFilter.getMarriageRegistrationUnit()));
+	}
 
     /**
      * @param registration
@@ -860,12 +857,12 @@ public class MarriageRegistrationService {
     }
 
     @SuppressWarnings("unchecked")
-    public List<MarriageRegistration> searchRegistrationByStatus(final MarriageRegistration registration, final String status)
+    public List<MarriageRegistration> searchRegistrationByStatus(final MarriageRegistrationSearchFilter mrSearchFilter, final String status)
             {
 
         final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class, MARRIAGE_REGISTRATION)
                 .createAlias("marriageRegistration.status", STATUS);
-        buildMarriageRegistrationSearchCriteria(registration, criteria);
+        buildMarriageRegistrationSearchCriteria(mrSearchFilter, criteria);
         if (status != null)
             criteria.add(Restrictions.in(STATUS_DOT_CODE, status));
         return criteria.list();

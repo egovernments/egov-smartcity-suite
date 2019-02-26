@@ -61,26 +61,29 @@ $(document)
 
 					function callAjaxSearch() {
 						$('.report-section').removeClass('display-hide');
-						var reportdatatable = $("#registration_table")
-								.dataTable(
-										{
-											ajax : {
-												url : "/mrs/registration/search",
-												type : "POST",
-												beforeSend : function() {
-													$('.loader-class')
-															.modal(
-																	'show',
-																	{
-																		backdrop : 'static'
-																	});
-												},
-												"data" : getFormData($('form')),
-												complete : function() {
-													$('.loader-class').modal(
-															'hide');
-												}
-											},
+						$.ajax({
+							url : "/mrs/registration/search",
+							type : "POST",
+							dataType: "json",
+							beforeSend : function() {
+								$('.loader-class')
+										.modal(
+												'show',
+												{
+													backdrop : 'static'
+												});
+							},
+							"data" : getFormData($('form')),
+							complete : function() {
+								$('.loader-class').modal(
+										'hide');
+							},
+							success: function (response) {
+								if(response.data){
+									 $('#searchResultsDiv').show();
+									 $('#searchResultsLabelDiv').show();
+									 reportdatatable = $('#registration_table').dataTable({
+											"aaData" : response.data,
 											"bDestroy" : true,
 											"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
 											"aLengthMenu" : [
@@ -167,10 +170,33 @@ $(document)
 															}
 														}
 
-													} ]
-
+													} ]				
 										});
-
+									$('#errorsDiv').hide();
+								} else if (response.error){
+									$('#errorsDiv').show();
+									$("#errorTable").dataTable({
+						    			"aaData":response.error,
+						    			"bDestroy": true,
+						    			"autoWidth": true, searching: false, paging: false, info: false,
+						    			"columns" : [
+						    		      { "data" : "errorMessage", "title":"Errors"},
+						    			  ],
+						                  "columnDefs": [
+						                                 {"className": "dt-center", "targets": "_all"}
+						                               ],
+						                               "createdRow": function( row, data, dataIndex){
+						                                    $(row).css('color', '#FF0000');
+						                                 }
+						    			});
+						            $('#searchResultsDiv').hide();
+						            $('#searchResultsLabelDiv').hide();
+								}
+							}, 
+							error: function (response) {
+								console.log(" ------------ failed ------------ ");
+							}
+						});
 					}
 
 					$(document).on('change', '.dropchange', function() {

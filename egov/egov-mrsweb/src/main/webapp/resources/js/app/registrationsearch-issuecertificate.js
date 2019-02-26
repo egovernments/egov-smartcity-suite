@@ -61,87 +61,116 @@ $(document).ready( function () {
 	
 	function callAjaxSearch(url) {
 		$('.report-section').removeClass('display-hide');
-		var reportdatatable =	$("#registration_table")
-				.dataTable(
-						{
-							ajax : {
-								url : url,
-								type : "POST",
-								beforeSend:function(){
-									$('.loader-class').modal('show', {backdrop: 'static'});
-								},
-								"data" : getFormData($('form')),
-								complete:function(){
-									$('.loader-class').modal('hide');
+		$.ajax({
+			url : url,
+			type: "POST",
+			dataType: "json",
+			beforeSend : function() {
+				$('.loader-class').modal('show', {
+					backdrop : 'static'
+				});
+			},
+			data : getFormData(jQuery('form')),
+			complete : function() {
+				$('.loader-class').modal('hide');
+			},
+			success : function (response) {
+				if(response.data){
+					 $('#searchResultsDiv').show();
+					 $('#searchResultsLabelDiv').show();
+					 reportdatatable =	$("#registration_table").dataTable({
+						"aaData":response.data,
+						"bDestroy" : true,
+						"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
+						"aLengthMenu" : [
+								[ 10, 25, 50, -1 ],
+								[ 10, 25, 50, "All" ] ],
+						"oTableTools" : {
+							"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+							"aButtons" : [ "xls", "pdf",
+									"print" ]
+						},
+						aaSorting : [],
+						columns : [{
+							"data" : "registrationNo",
+							render: function(data, type, row, meta){
+								 if(row.registrationNo == 'undefined' || row.registrationNo == '')
+								 {
+								 return "N/A";
+								 } else{
+									 return row.registrationNo;
+								 }
+						},
+							"sClass" : "text-left"
+						}, {
+							"data" : "applicationNo",
+							render : function(data,
+									type, row, meta) {
+								if (row.applicationNo == 'undefined'
+										|| row.applicationNo == '') {
+									return "N/A";
+								} else {
+									return row.applicationNo;
 								}
 							},
-							"bDestroy" : true,
-							"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
-							"aLengthMenu" : [
-									[ 10, 25, 50, -1 ],
-									[ 10, 25, 50, "All" ] ],
-							"oTableTools" : {
-								"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-								"aButtons" : [ "xls", "pdf",
-										"print" ]
-							},
-							aaSorting : [],
-							columns : [{
-								"data" : "registrationNo",
-								render: function(data, type, row, meta){
-									 if(row.registrationNo == 'undefined' || row.registrationNo == '')
-									 {
-									 return "N/A";
-									 } else{
-										 return row.registrationNo;
-									 }
-							},
-								"sClass" : "text-left"
-							}, {
-								"data" : "applicationNo",
-								render : function(data,
-										type, row, meta) {
-									if (row.applicationNo == 'undefined'
-											|| row.applicationNo == '') {
-										return "N/A";
-									} else {
-										return row.applicationNo;
-									}
-								},
-								"sClass" : "text-left"
-							}, {
-								"data" : "registrationDate",
-								"sClass" : "text-left"
-							}, {
-								"data" : "dateOfMarriage",
-								"sClass" : "text-left"
-							}, {
-								"data" : "husbandName",
-								"sClass" : "text-left"
-							}, {
-								"data" : "wifeName",
-								"sClass" : "text-left"
-							}, {
-								"data" : "feePaid",
-								"sClass" : "text-left"
-							},{
-								"data" : "status",
-								"sClass" : "text-left"
-							},{
-								"data" : "marriageRegistrationUnit",
-								"sClass" : "text-left"
-							},
-							{
-								"data" : null,
-							    sortable: false,
-							    "render": function ( data, type, row, meta ) {
-								        return '<button type="button" class="btn btn-xs btn-secondary reissue" value='+updateurl+row.id +'><span class="glyphicon glyphicon-edit"></span>&nbsp;Re Issue Certificate</button>';
-								        
-							    }
-							
-							}]
-							
-						});
+							"sClass" : "text-left"
+						}, {
+							"data" : "registrationDate",
+							"sClass" : "text-left"
+						}, {
+							"data" : "dateOfMarriage",
+							"sClass" : "text-left"
+						}, {
+							"data" : "husbandName",
+							"sClass" : "text-left"
+						}, {
+							"data" : "wifeName",
+							"sClass" : "text-left"
+						}, {
+							"data" : "feePaid",
+							"sClass" : "text-left"
+						},{
+							"data" : "status",
+							"sClass" : "text-left"
+						},{
+							"data" : "marriageRegistrationUnit",
+							"sClass" : "text-left"
+						},
+						{
+							"data" : null,
+						    sortable: false,
+						    "render": function ( data, type, row, meta ) {
+							        return '<button type="button" class="btn btn-xs btn-secondary reissue" value='+updateurl+row.id +'><span class="glyphicon glyphicon-edit"></span>&nbsp;Re Issue Certificate</button>';
+							        
+						    }
+						
+						}]
+					 });
+					 $('#errorsDiv').hide();
+				} else if (response.error){
+					$('#errorsDiv').show();
+					$("#errorTable").dataTable({
+		    			"aaData":response.error,
+		    			"bDestroy": true,
+		    			"autoWidth": true, searching: false, paging: false, info: false,
+		    			"columns" : [
+		    		      { "data" : "errorMessage", "title":"Errors"},
+		    			  ],
+		                  "columnDefs": [
+		                                 {"className": "dt-center", "targets": "_all"}
+		                               ],
+		                               "createdRow": function( row, data, dataIndex){
+		                                    $(row).css('color', '#FF0000');
+		                                 }
+		    			});
+		            $('#searchResultsDiv').hide();
+		            $('#searchResultsLabelDiv').hide();
+				}
+			},
+			error : function (response) {
+				console.log(" ------------ failed ------------ ");
+			}
+		});
 	}
 
 	$(document).on('click','.reissue',function(){

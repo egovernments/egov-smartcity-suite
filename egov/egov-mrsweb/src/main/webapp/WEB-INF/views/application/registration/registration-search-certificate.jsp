@@ -54,7 +54,7 @@
 
 <form:form method="post" action=""
 	class="form-horizontal form-groups-bordered"
-	id="form-registrationstatus" modelAttribute="certificate">
+	id="form-registrationstatus" modelAttribute="searchFilter">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
@@ -97,9 +97,9 @@
 
 						<div class="col-sm-3 add-margin">
 							<form:input id="registrationNo"
-								path="registration.registrationNo" type="text"
+								path="registrationNo" type="text"
 								cssClass="form-control low-width is_valid_alphnumeric" />
-							<form:errors path="registration.registrationNo"
+							<form:errors path="registrationNo"
 								cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label"> Frequency </label>
@@ -158,9 +158,9 @@
 </div>
 
 <div class="row display-hide report-section" id="table_container">
-	<div class="col-md-12 table-header text-left">The Certificate
+	<div class="col-md-12 table-header text-left" id="searchResultsLabelDiv">The Certificate
 		Search result is</div>
-	<div class="col-md-12 form-group report-table-container">
+	<div class="col-md-12 form-group report-table-container" id="searchResultsDiv">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="marriagecertificate_table">
 			<thead>
@@ -177,6 +177,10 @@
 			<tbody>
 			</tbody>
 		</table>
+	</div>
+	<div class="col-md-12 form-group" id="errorsDiv">
+		<table class="table table-bordered datatable dt-responsive"
+			id="errorTable" ></table>
 	</div>
 </div>
 
