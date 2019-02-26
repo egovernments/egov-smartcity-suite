@@ -47,13 +47,31 @@
  */
 package org.egov.egf.web.actions.voucher;
 
+import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.*;
+import org.egov.commons.CVoucherHeader;
+import org.egov.commons.Functionary;
+import org.egov.commons.Fund;
+import org.egov.commons.Fundsource;
+import org.egov.commons.Scheme;
+import org.egov.commons.SubScheme;
+import org.egov.commons.Vouchermis;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.egf.commons.VoucherSearchUtil;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -68,17 +86,18 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.services.payment.PaymentService;
+import org.egov.utils.CancelBillAndVoucher;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
-import org.hibernate.type.*;
+import org.hibernate.type.DateType;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
+import org.hibernate.type.TimestampType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import java.math.BigInteger;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 @ParentPackage("egov")
 @Results({
@@ -356,7 +375,7 @@ public class CancelVoucherAction extends BaseFormAction {
             case FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL: {
 
                 final Query query = session.createQuery(cancelVhQuery);
-                query.setParameter("modifiedby", loggedInUser, LongType.INSTANCE)
+                query.setParameter("modifiedby", loggedInUser, IntegerType.INSTANCE)
                         .setParameter("modifiedDate", modifiedDate, TimestampType.INSTANCE)
                         .setParameter("vhId", selectedVhs[i], LongType.INSTANCE)
                         .setParameter("vhStatus", FinancialConstants.CANCELLEDVOUCHERSTATUS, IntegerType.INSTANCE);
@@ -373,7 +392,7 @@ public class CancelVoucherAction extends BaseFormAction {
             case FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT: {
                 final Query query = session.createQuery(cancelVhQuery)
                         .setParameter("vhId", selectedVhs[i], LongType.INSTANCE)
-                        .setParameter("modifiedby", loggedInUser, LongType.INSTANCE)
+                        .setParameter("modifiedby", loggedInUser, IntegerType.INSTANCE)
                         .setParameter("modifiedDate", modifiedDate, TimestampType.INSTANCE)
                         .setParameter("vhStatus", FinancialConstants.CANCELLEDVOUCHERSTATUS, IntegerType.INSTANCE);
                 query.executeUpdate();
@@ -385,7 +404,7 @@ public class CancelVoucherAction extends BaseFormAction {
             case FinancialConstants.STANDARD_VOUCHER_TYPE_CONTRA: {
                 final Query query = session.createQuery(cancelVhQuery);
                 query.setParameter("vhId", selectedVhs[i], LongType.INSTANCE)
-                        .setParameter("modifiedby", loggedInUser, LongType.INSTANCE)
+                        .setParameter("modifiedby", loggedInUser, IntegerType.INSTANCE)
                         .setParameter("modifiedDate", modifiedDate, TimestampType.INSTANCE)
                         .setParameter("vhStatus", FinancialConstants.CANCELLEDVOUCHERSTATUS, IntegerType.INSTANCE);
                 query.executeUpdate();
@@ -394,7 +413,7 @@ public class CancelVoucherAction extends BaseFormAction {
                     vhId = voucherObj.getId();
                     final Query queryFnd = session.createQuery(cancelVhByCGNQuery);
                     queryFnd.setParameter("vhId", vhId, LongType.INSTANCE)
-                            .setParameter("modifiedby", loggedInUser, LongType.INSTANCE)
+                            .setParameter("modifiedby", loggedInUser, IntegerType.INSTANCE)
                             .setParameter("modifiedDate", modifiedDate, DateType.INSTANCE)
                             .setParameter("vhStatus", FinancialConstants.CANCELLEDVOUCHERSTATUS, IntegerType.INSTANCE);
                     queryFnd.executeUpdate();
@@ -404,7 +423,7 @@ public class CancelVoucherAction extends BaseFormAction {
             case FinancialConstants.STANDARD_VOUCHER_TYPE_RECEIPT: {
                 final Query query = session.createQuery(cancelVhQuery);
                 query.setParameter("vhId", selectedVhs[i], LongType.INSTANCE)
-                        .setParameter("modifiedby", loggedInUser, LongType.INSTANCE)
+                        .setParameter("modifiedby", loggedInUser, IntegerType.INSTANCE)
                         .setParameter("modifiedDate", modifiedDate, TimestampType.INSTANCE)
                         .setParameter("vhStatus", FinancialConstants.CANCELLEDVOUCHERSTATUS, IntegerType.INSTANCE);
                 query.executeUpdate();

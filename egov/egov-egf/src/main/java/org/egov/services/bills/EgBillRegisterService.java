@@ -47,6 +47,12 @@
  */
 package org.egov.services.bills;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -66,22 +72,29 @@ import org.egov.model.bills.EgBillregister;
 import org.egov.model.voucher.WorkflowBean;
 import org.egov.pims.commons.Position;
 import org.egov.services.voucher.JournalVoucherActionHelper;
+import org.egov.utils.CancelBillAndVoucher;
 import org.egov.utils.CheckListHelper;
 import org.egov.utils.FinancialConstants;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.query.Query;
+import org.hibernate.type.LongType;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.exilant.eGov.src.domain.BillRegisterBean;
 
 @Service
 @Transactional(readOnly = true)
 public class EgBillRegisterService extends PersistenceService<EgBillregister, Long> {
-    final private static Logger LOGGER = Logger.getLogger(JournalVoucherActionHelper.class);
+    private static final String CANCEL_QUERY_STR = " billstatus=:billStatus, statusid=:statusId ";
+    private static final String STATUS_QUERY_STR = "moduletype=:moduleType and description=:description";
+    private static final String BILL_STATUS = "billStatus";
+    private static final String DESCRIPTION = "description";
+    private static final String MODULE_TYPE = "moduleType";
+    private static final Logger LOGGER = Logger.getLogger(JournalVoucherActionHelper.class);
     private static final String FAILED = "Transaction failed";
     private static final String EXCEPTION_WHILE_SAVING_DATA = "Exception while saving data";
     @Autowired
@@ -96,9 +109,13 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
     private PersistenceService persistenceService;
     @Autowired
     private EisCommonService eisCommonService;
-
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    @Autowired
+    private BillsService billsService;
+    @Autowired
+    private CancelBillAndVoucher cancelBillAndVoucher;
+   
 
     public EgBillRegisterService() {
         super(EgBillregister.class);
@@ -244,10 +261,87 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
         }
         return billregister;
     }
+    
+    @SuppressWarnings("deprecation")
+    @Transactional
+    public Map<String, Object> cancelBills(final List<BillRegisterBean> billListDisplay, final String expType) {
+        final Map<String, Object> map = new HashMap<>();
+        EgBillregister billRegister;
+        final Long[] idList = new Long[billListDisplay.size()];
+        int i = 0;
+        int idListLength = 0;
+        final List<Long> ids = new ArrayList<>();
+        final List<String> billNumbers = new ArrayList<>();
+        final Map<String, Object> statusQueryMap = new HashMap<>();
+        final Map<String, Object> cancelQueryMap = new HashMap<>();
+        final StringBuilder statusQuery = new StringBuilder(
+                "from EgwStatus where ");
+        final StringBuilder cancelQuery = new StringBuilder(
+                "Update eg_billregister set ");
+        for (final BillRegisterBean billRgistrBean : billListDisplay)
+            if (billRgistrBean.getIsSelected()) {
+                idList[i++] = Long.parseLong(billRgistrBean.getId());
+                idListLength++;
+            }
+        if (expType == null || expType.equalsIgnoreCase("") || FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT.equalsIgnoreCase(expType)) {
+            statusQuery.append(STATUS_QUERY_STR);
+            statusQueryMap.put(MODULE_TYPE, FinancialConstants.CONTINGENCYBILL_FIN);
+            statusQueryMap.put(DESCRIPTION, FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS);
+            cancelQuery.append(CANCEL_QUERY_STR);
+            cancelQueryMap.put(BILL_STATUS, FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS);
+        } else if (FinancialConstants.STANDARD_EXPENDITURETYPE_SALARY
+                .equalsIgnoreCase(expType)) {
+            statusQuery.append(STATUS_QUERY_STR);
+            statusQueryMap.put(MODULE_TYPE, FinancialConstants.SALARYBILL);
+            statusQueryMap.put(DESCRIPTION, FinancialConstants.SALARYBILL_CANCELLED_STATUS);
+            cancelQuery.append(CANCEL_QUERY_STR);
+            cancelQueryMap.put(BILL_STATUS, FinancialConstants.SALARYBILL_CANCELLED_STATUS);
+        } else if (FinancialConstants.STANDARD_EXPENDITURETYPE_PURCHASE.equalsIgnoreCase(expType)) {
+            statusQuery.append(STATUS_QUERY_STR);
+            statusQueryMap.put(MODULE_TYPE, FinancialConstants.SUPPLIERBILL);
+            statusQueryMap.put(DESCRIPTION, FinancialConstants.SUPPLIERBILL_CANCELLED_STATUS);
+            cancelQuery.append(CANCEL_QUERY_STR);
+            cancelQueryMap.put(BILL_STATUS, FinancialConstants.SUPPLIERBILL_CANCELLED_STATUS);
+        } else if (FinancialConstants.STANDARD_EXPENDITURETYPE_WORKS.equalsIgnoreCase(expType)) {
+            statusQuery.append(STATUS_QUERY_STR);
+            statusQueryMap.put(MODULE_TYPE, FinancialConstants.CONTRACTORBILL);
+            statusQueryMap.put(DESCRIPTION, FinancialConstants.CONTRACTORBILL_CANCELLED_STATUS);
+            cancelQuery.append(CANCEL_QUERY_STR);
+            cancelQueryMap.put(BILL_STATUS, FinancialConstants.CONTRACTORBILL_CANCELLED_STATUS);
+        }
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug(" Status Query - " + statusQuery.toString());
+        final Query query = persistenceService.getSession().createQuery(statusQuery.toString());
+        statusQueryMap.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
+        final EgwStatus status = (EgwStatus) query.uniqueResult();
+        if (idListLength != 0) {
+            for (i = 0; i < idListLength; i++) {
+                billRegister = billsService.getBillRegisterById(idList[i].intValue());
+                final boolean value = cancelBillAndVoucher.canCancelBill(billRegister);
+                if (!value) {
+                    billNumbers.add(billRegister.getBillnumber());
+                    continue;
+                }
+                ids.add(idList[i]);
+            }
+            cancelQuery.append(" where id in (:ids)");
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug(" Cancel Query - " + cancelQuery.toString());
+            final NativeQuery totalNativeQuery = getSession()
+                    .createNativeQuery(cancelQuery.toString());
+            totalNativeQuery.setParameter("statusId", Long.valueOf(status.getId()), LongType.INSTANCE);
+            cancelQueryMap.entrySet().forEach(entry -> totalNativeQuery.setParameter(entry.getKey(), entry.getValue()));
+            totalNativeQuery.setParameterList("ids", ids);
+            if (!ids.isEmpty())
+                totalNativeQuery.executeUpdate();
+        }
+        map.put("ids", ids);
+        map.put("billNumbers", billNumbers);
+        return map;
+    }
 
     private Assignment getWorkflowInitiator(final EgBillregister billregister) {
-        Assignment wfInitiator = assignmentService.findByEmployeeAndGivenDate(billregister.getCreatedBy().getId(), new Date())
+        return assignmentService.findByEmployeeAndGivenDate(billregister.getCreatedBy().getId(), new Date())
                 .get(0);
-        return wfInitiator;
     }
 }

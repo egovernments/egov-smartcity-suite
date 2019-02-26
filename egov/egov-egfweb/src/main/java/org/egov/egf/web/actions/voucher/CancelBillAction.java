@@ -47,13 +47,21 @@
  */
 package org.egov.egf.web.actions.voucher;
 
-import com.exilant.eGov.src.domain.BillRegisterBean;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -61,48 +69,38 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.model.bills.EgBillregister;
-import org.egov.services.bills.BillsService;
+import org.egov.services.bills.EgBillRegisterService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
-import org.hibernate.type.LongType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
+import com.exilant.eGov.src.domain.BillRegisterBean;
 
 @Results({ @Result(name = "search", location = "cancelBill-search.jsp") })
 public class CancelBillAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger
             .getLogger(CancelBillAction.class);
-    @Autowired
-    private BillsService billsService;
     private String billNumber;
     private String fromDate;
     private String toDate;
     private Fund fund = new Fund();
     private Department deptImpl = new Department();
     private String expType;
-    private List<BillRegisterBean> billListDisplay = new ArrayList<BillRegisterBean>();
+    private transient List<BillRegisterBean> billListDisplay = new ArrayList<>();
     private boolean afterSearch = false;
     Integer loggedInUser = ApplicationThreadLocals.getUserId().intValue();
     public final SimpleDateFormat formatter = new SimpleDateFormat(
             "dd/MM/yyyy", Constants.LOCALE);
-
     @Autowired
     @Qualifier("persistenceService")
-    private PersistenceService persistenceService;
-
+    private transient PersistenceService persistenceService;
     @Autowired
-    private DepartmentService departmentService;
+    private transient DepartmentService departmentService;
     @Autowired
-    private CancelBillAndVoucher cancelBillAndVoucher;
+    private transient EgBillRegisterService egBillRegisterService;
 
     @Override
     public Object getModel() {
@@ -334,86 +332,12 @@ public class CancelBillAction extends BaseFormAction {
         return "search";
     }
 
+    @SuppressWarnings("unchecked")
     @Action(value = "/voucher/cancelBill-cancelBill")
     public String cancelBill() {
-        new Date();
-        EgBillregister billRegister;
-
-        final Long[] idList = new Long[billListDisplay.size()];
-        int i = 0, idListLength = 0;
-        List ids = new ArrayList();
-        final Map<String, Object> statusQueryMap = new HashMap<>();
-        final Map<String, Object> cancelQueryMap = new HashMap<>();
-        final StringBuilder statusQuery = new StringBuilder(
-                "from EgwStatus where ");
-        final StringBuilder cancelQuery = new StringBuilder(
-                "Update eg_billregister set ");
-        for (final BillRegisterBean billRgistrBean : billListDisplay)
-            if (billRgistrBean.getIsSelected()) {
-                idList[i++] = Long.parseLong(billRgistrBean.getId());
-                idListLength++;
-            }
-        if (expType == null || expType.equalsIgnoreCase("")) {
-            statusQuery.append("moduletype=:moduleType and description=:description");
-            statusQueryMap.put("moduleType", FinancialConstants.CONTINGENCYBILL_FIN);
-            statusQueryMap.put("description", FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS);
-            cancelQuery.append(" billstatus=:billStatus, statusid=:statusId ");
-            cancelQueryMap.put("billStatus", FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS);
-        } else if (FinancialConstants.STANDARD_EXPENDITURETYPE_SALARY
-                .equalsIgnoreCase(expType)) {
-            statusQuery.append("moduletype=:moduleType and description=:description");
-            statusQueryMap.put("moduleType", FinancialConstants.SALARYBILL);
-            statusQueryMap.put("description", FinancialConstants.SALARYBILL_CANCELLED_STATUS);
-            cancelQuery.append(" billstatus=:billStatus, statusid=:statusId ");
-            cancelQueryMap.put("billStatus", FinancialConstants.SALARYBILL_CANCELLED_STATUS);
-        } else if (FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT.equalsIgnoreCase(expType)) {
-            statusQuery.append("moduletype=:moduleType and description=:description");
-            statusQueryMap.put("moduleType", FinancialConstants.CONTINGENCYBILL_FIN);
-            statusQueryMap.put("description", FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS);
-            cancelQuery.append(" billstatus=:billStatus, statusid=:statusId ");
-            cancelQueryMap.put("billStatus", FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS);
-        } else if (FinancialConstants.STANDARD_EXPENDITURETYPE_PURCHASE.equalsIgnoreCase(expType)) {
-            statusQuery.append("moduletype=:moduleType and description=:description");
-            statusQueryMap.put("moduleType", FinancialConstants.SUPPLIERBILL);
-            statusQueryMap.put("description", FinancialConstants.SUPPLIERBILL_CANCELLED_STATUS);
-            cancelQuery.append(" billstatus=:billStatus, statusid=:statusId ");
-            cancelQueryMap.put("billStatus", FinancialConstants.SUPPLIERBILL_CANCELLED_STATUS);
-        } else if (FinancialConstants.STANDARD_EXPENDITURETYPE_WORKS.equalsIgnoreCase(expType)) {
-            statusQuery.append("moduletype=:moduleType and description=:description");
-            statusQueryMap.put("moduleType", FinancialConstants.CONTRACTORBILL);
-            statusQueryMap.put("description", FinancialConstants.CONTRACTORBILL_CANCELLED_STATUS);
-            cancelQuery.append(" billstatus=:billStatus, statusid=:statusId ");
-            cancelQueryMap.put("billStatus", FinancialConstants.CONTRACTORBILL_CANCELLED_STATUS);
-        }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug(" Status Query - " + statusQuery.toString());
-        final Query query = persistenceService.getSession().createQuery(statusQuery.toString());
-        statusQueryMap.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
-        final EgwStatus status = (EgwStatus) query.uniqueResult();
-        persistenceService.getSession();
-        if (idListLength != 0) {
-            for (i = 0; i < idListLength; i++) {
-                billRegister = billsService.getBillRegisterById(idList[i].intValue());
-                final boolean value = cancelBillAndVoucher.canCancelBill(billRegister);
-                if (!value) {
-                    addActionMessage(getText("cancel.bill.failure", new String[] { billRegister.getBillnumber() }));
-                    continue;
-                }
-                ids.add(idList[i]);
-            }
-            cancelQuery.append(" where id in (:ids)");
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug(" Cancel Query - " + cancelQuery.toString());
-            final NativeQuery totalNativeQuery = persistenceService.getSession()
-                    .createNativeQuery(cancelQuery.toString());
-            totalNativeQuery.setParameter("statusId", Long.valueOf(status.getId()), LongType.INSTANCE);
-            cancelQueryMap.entrySet().forEach(entry -> totalNativeQuery.setParameter(entry.getKey(), entry.getValue()));
-            totalNativeQuery.setParameterList("ids", ids);
-            if (!ids.isEmpty())
-                totalNativeQuery.executeUpdate();
-        }
-
-        if (!ids.isEmpty())
+        final Map<String, Object> map = egBillRegisterService.cancelBills(billListDisplay, expType);
+        ((List<String>) map.get("billNumbers")).forEach(rec -> addActionMessage(getText("cancel.bill.failure", new String[] {rec})));
+        if (!((List<Long>) map.get("ids")).isEmpty())
             addActionMessage(getText("cancel.bill.success"));
 
         prepareBeforeSearch();

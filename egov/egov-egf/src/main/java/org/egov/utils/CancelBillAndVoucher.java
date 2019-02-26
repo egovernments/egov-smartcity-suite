@@ -46,7 +46,7 @@
  *
  */
 
-package org.egov.egf.web.actions.voucher;
+package org.egov.utils;
 
 import org.egov.commons.CVoucherHeader;
 import org.egov.model.bills.EgBillregister;
