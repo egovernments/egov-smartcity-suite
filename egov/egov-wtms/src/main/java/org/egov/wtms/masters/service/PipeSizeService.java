@@ -116,6 +116,11 @@ public class PipeSizeService {
     public List<PipeSize> getAllActivePipeSize() {
         return pipeSizeRepository.findByActiveTrueOrderByCodeAsc();
     }
+    
+    public List<PipeSize> getAllActivePipeSizeByPropertyType(Long propertyType) {
+    	return pipeSizeRepository.getAllPipeSizesByPropertyType(propertyType);
+    }
+
 
     public List<PipeSize> getAllPipeSizesByPropertyType(final Long propertyType) {
         return pipeSizeRepository.getAllPipeSizesByPropertyType(propertyType);

@@ -123,6 +123,10 @@ public class UsageTypeService {
     public List<UsageType> getActiveUsageTypes() {
         return usageTypeRepository.findByActiveTrueOrderByNameAsc();
     }
+    
+    public List<UsageType> getActiveUsageTypesByPropertyType(Long propertyType) {
+        return usageTypeRepository.getAllActiveUsageTypesByPropertyType(propertyType);
+    }
 
     public List<UsageType> getAllActiveUsageTypesByPropertyType(final Long propertyType) {
         return usageTypeRepository.getAllActiveUsageTypesByPropertyType(propertyType);

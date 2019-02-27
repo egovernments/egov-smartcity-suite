@@ -123,6 +123,10 @@ public class ConnectionCategoryService {
     public List<ConnectionCategory> getAllActiveConnectionCategory() {
         return connectionCategoryRepository.findByActiveTrueOrderByNameAsc();
     }
+    
+    public List<ConnectionCategory> getAllActiveConnectionCategoryByPropertyType(Long propertyType) {
+        return connectionCategoryRepository.getAllActiveCategoryTypesByPropertyType(propertyType);
+    }
 
     public List<ConnectionCategory> getAllActiveCategoryTypesByPropertyType(final Long propertyType,
             final String connectionType) {

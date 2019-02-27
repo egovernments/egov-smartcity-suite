@@ -414,9 +414,9 @@ public class UpdateConnectionController extends GenericConnectionController {
         model.addAttribute("statuscode", waterConnectionDetails.getStatus().getCode());
         model.addAttribute("isCommissionerLoggedIn", isCommissionerLoggedIn);
         model.addAttribute("isSanctionedDetailEnable", isSanctionedDetailEnable);
-        model.addAttribute("usageTypes", usageTypeService.getActiveUsageTypes());
-        model.addAttribute("connectionCategories", connectionCategoryService.getAllActiveConnectionCategory());
-        model.addAttribute("pipeSizes", pipeSizeService.getAllActivePipeSize());
+        model.addAttribute("usageTypes", usageTypeService.getActiveUsageTypesByPropertyType(waterConnectionDetails.getPropertyType().getId()));
+        model.addAttribute("connectionCategories", connectionCategoryService.getAllActiveConnectionCategoryByPropertyType(waterConnectionDetails.getPropertyType().getId()));
+        model.addAttribute("pipeSizes", pipeSizeService.getAllActivePipeSizeByPropertyType(waterConnectionDetails.getPropertyType().getId()));
         model.addAttribute("typeOfConnection", waterConnectionDetails.getApplicationType().getCode());
         model.addAttribute("ownerPosition", waterConnectionDetails.getState().getOwnerPosition().getId());
         return NEWCONNECTION_EDIT;
