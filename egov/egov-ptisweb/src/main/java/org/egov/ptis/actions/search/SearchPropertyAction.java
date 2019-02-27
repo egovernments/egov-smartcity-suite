@@ -848,18 +848,23 @@ public class SearchPropertyAction extends SearchFormAction {
                 searchResultMap.put("enableVRApproval",
                         String.valueOf(propertyTaxUtil.enableVRApproval(basicProperty.getUpicNo())));
                 if (!property.getIsExemptedFromTax()) {
-                    searchResultMap.put(CURR_FIRST_HALF_DEMAND, demandCollMap.get(CURR_FIRSTHALF_DMD_STR).toString());
-                    searchResultMap.put(CURR_SECOND_HALF_DEMAND, demandCollMap.get(CURR_SECONDHALF_DMD_STR).toString());
+                    searchResultMap.put(CURR_FIRST_HALF_DEMAND,
+                            demandCollMap.get(CURR_FIRSTHALF_DMD_STR).setScale(0, BigDecimal.ROUND_CEILING).toString());
+                    searchResultMap.put(CURR_SECOND_HALF_DEMAND,
+                            demandCollMap.get(CURR_SECONDHALF_DMD_STR).setScale(0, BigDecimal.ROUND_CEILING).toString());
                     searchResultMap.put(ARR_DEMAND_DUE,
-                            demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)).toString());
+                            (demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)))
+                                    .setScale(0, BigDecimal.ROUND_CEILING).toString());
                     searchResultMap.put(
                             CURR_FIRST_HALF_DEMAND_DUE,
-                            demandCollMap.get(CURR_FIRSTHALF_DMD_STR)
-                                    .subtract(demandCollMap.get(CURR_FIRSTHALF_COLL_STR)).toString());
+                            (demandCollMap.get(CURR_FIRSTHALF_DMD_STR)
+                                    .subtract(demandCollMap.get(CURR_FIRSTHALF_COLL_STR))).setScale(0, BigDecimal.ROUND_CEILING)
+                                            .toString());
                     searchResultMap.put(
                             CURR_SECOND_HALF_DEMAND_DUE,
-                            demandCollMap.get(CURR_SECONDHALF_DMD_STR)
-                                    .subtract(demandCollMap.get(CURR_SECONDHALF_COLL_STR)).toString());
+                            (demandCollMap.get(CURR_SECONDHALF_DMD_STR)
+                                    .subtract(demandCollMap.get(CURR_SECONDHALF_COLL_STR))).setScale(0, BigDecimal.ROUND_CEILING)
+                                            .toString());
                 } else {
                     searchResultMap.put(CURR_FIRST_HALF_DEMAND, "0");
                     searchResultMap.put(CURR_FIRST_HALF_DEMAND_DUE, "0");
