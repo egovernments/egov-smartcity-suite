@@ -602,8 +602,8 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                             LOGGER.debug("queryString" + queryString);
                         List<Object> payTo = getSession().createNativeQuery(queryString.toString())
                                 .setParameter("vhId", chqAssgn.getVoucherid(), LongType.INSTANCE)
-                                .setParameter("detailTypeId", detailTypeKeyAmtObj[0], ObjectType.INSTANCE)
-                                .setParameter("detailKeyId", detailTypeKeyAmtObj[1], ObjectType.INSTANCE)
+                                .setParameter("detailTypeId", detailTypeKeyAmtObj[0])
+                                .setParameter("detailKeyId", detailTypeKeyAmtObj[1])
                                 .setParameterList("statusId", statusId, IntegerType.INSTANCE)
                                 .list();
                         if (payTo == null || payTo.size() == 0) {
@@ -674,8 +674,8 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                             LOGGER.debug("ALREADY ASSIGNED: Querying for " + queryString);
                         List<Object> payTo = getSession().createNativeQuery(queryString.toString())
                                 .setParameter("vhId", chqAssgn.getVoucherid())
-                                .setParameter("detailTypeId", obj[0], ObjectType.INSTANCE)
-                                .setParameter("detailKeyId", obj[1], ObjectType.INSTANCE)
+                                .setParameter("detailTypeId", obj[0])
+                                .setParameter("detailKeyId", obj[1])
                                 .setParameterList("statusId",statusId, IntegerType.INSTANCE)
                                 .list();
                         if (payTo == null || payTo.size() == 0) {
@@ -832,8 +832,8 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                             LOGGER.debug("ASSIGNED BUT SURRENDARD: Inside detailTypeKeyAmtList loop- " + queryString);
                         final List<Object[]> instrumentStatus = getSession().createNativeQuery(queryString.toString())
                                 .setParameter("vhId", chqAssgn.getVoucherid(), LongType.INSTANCE)
-                                .setParameter("detailTypeId", detailTypeKeyAmtObj[0], ObjectType.INSTANCE)
-                                .setParameter("detailKeyId", detailTypeKeyAmtObj[1], ObjectType.INSTANCE)
+                                .setParameter("detailTypeId", detailTypeKeyAmtObj[0])
+                                .setParameter("detailKeyId", detailTypeKeyAmtObj[1])
                                 .list();
                         if (instrumentStatus == null
                                 || instrumentStatus.size() == 0
@@ -930,8 +930,8 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                             LOGGER.debug("ASSIGNED BUT SURRENDARD: detailTypeKeyAmtList  checking " + queryString);
                         final List<Object[]> instrumentStatus = getSession().createNativeQuery(queryString.toString())
                                 .setParameter("vhId", chqAssgn.getVoucherid(), LongType.INSTANCE)
-                                .setParameter("detailtypeid", obj[0], ObjectType.INSTANCE)
-                                .setParameter("detailkeyid", obj[1], ObjectType.INSTANCE)
+                                .setParameter("detailtypeid", obj[0])
+                                .setParameter("detailkeyid", obj[1])
                                 .list();
                         if (instrumentStatus == null
                                 || instrumentStatus.size() == 0

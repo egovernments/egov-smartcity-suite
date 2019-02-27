@@ -720,13 +720,13 @@ public class PaymentAction extends BasePaymentAction {
         final Query sBillQuery = getPersistenceService().getSession().createQuery(sBillSql.toString());
         mainQueryParams.entrySet().forEach(entry -> sBillQuery.setParameter(entry.getKey(), entry.getValue()));
         sqlParams.entrySet().forEach(entry -> sBillQuery.setParameter(entry.getKey(), entry.getValue()));
-        sBillQuery.setParameterList("billStatus", Arrays.asList(egwStatus, egwStatus1), ObjectType.INSTANCE);
+        sBillQuery.setParameterList("billStatus", Arrays.asList(egwStatus, egwStatus1));
         salaryBillList = sBillQuery.list();
 
         final Query sBillQuery1 = getPersistenceService().getSession().createQuery(sBillSql1.toString());
         mainQuery1Params.entrySet().forEach(entry -> sBillQuery1.setParameter(entry.getKey(), entry.getValue()));
         sqlParams.entrySet().forEach(entry -> sBillQuery1.setParameter(entry.getKey(), entry.getValue()));
-        sBillQuery1.setParameterList("billStatus", Arrays.asList(egwStatus, egwStatus1), ObjectType.INSTANCE);
+        sBillQuery1.setParameterList("billStatus", Arrays.asList(egwStatus, egwStatus1));
 
         if (salaryBillList != null)
             salaryBillList.addAll(sBillQuery1.list());
@@ -768,13 +768,13 @@ public class PaymentAction extends BasePaymentAction {
         final Query pBillQuery = getPersistenceService().getSession().createQuery(pBillSql.toString());
         mainQueryParams.entrySet().forEach(entry -> pBillQuery.setParameter(entry.getKey(), entry.getValue()));
         sqlParams.entrySet().forEach(entry -> pBillQuery.setParameter(entry.getKey(), entry.getValue()));
-        pBillQuery.setParameterList("billStatus", Arrays.asList(egwStatus), ObjectType.INSTANCE);
+        pBillQuery.setParameterList("billStatus", Arrays.asList(egwStatus));
         pensionBillList = pBillQuery.list();
 
         final Query pBillQuery1 = getPersistenceService().getSession().createQuery(pBillSql1.toString());
         mainQuery1Params.entrySet().forEach(entry -> pBillQuery1.setParameter(entry.getKey(), entry.getValue()));
         sqlParams.entrySet().forEach(entry -> pBillQuery1.setParameter(entry.getKey(), entry.getValue()));
-        pBillQuery1.setParameterList("billStatus", Arrays.asList(egwStatus), ObjectType.INSTANCE);
+        pBillQuery1.setParameterList("billStatus", Arrays.asList(egwStatus));
 
         if (pensionBillList != null)
             pensionBillList.addAll(pBillQuery1.list());
@@ -868,13 +868,13 @@ public class PaymentAction extends BasePaymentAction {
 
         final Query tnebBillQuery = getPersistenceService().getSession().createQuery(tnebBillSql.toString());
         tnebBillQuery.setParameter("expenditureType", FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, StringType.INSTANCE)
-                .setParameterList("billStatus", Arrays.asList(egwStatus, egwStatus1), ObjectType.INSTANCE);
+                .setParameterList("billStatus", Arrays.asList(egwStatus, egwStatus1));
         sqlParams.entrySet().forEach(entry -> tnebBillQuery.setParameter(entry.getKey(), entry.getValue()));
         contingentBillList = new Page(tnebBillQuery, 1, 500).getList();
 
         final Query tnebBillQuery1 = getPersistenceService().getSession().createQuery(tnebBillSql1.toString());
         tnebBillQuery1.setParameter("expenditureType", FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, StringType.INSTANCE)
-                .setParameterList("billStatus", Arrays.asList(egwStatus, egwStatus1), ObjectType.INSTANCE);
+                .setParameterList("billStatus", Arrays.asList(egwStatus, egwStatus1));
         sqlParams.entrySet().forEach(entry -> tnebBillQuery1.setParameter(entry.getKey(), entry.getValue()));
 
         if (contingentBillList != null)
