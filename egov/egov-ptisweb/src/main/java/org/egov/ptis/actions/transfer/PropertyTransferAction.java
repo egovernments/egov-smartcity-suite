@@ -66,6 +66,8 @@ import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.State;
@@ -848,9 +850,12 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 			currentState = getCurrentStateForThirdPartyWF(propertyMutation);
 			assignment = transferOwnerService.getAssignmentForThirdPartyByMutationType(propertyMutation, basicproperty,
 					user);
-			if (assignment == null && propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER))
-				addActionError(getText("error.approver.inactive"));
-			else {
+			if (assignment == null && propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER)){
+				 checkForMandatoryDocuments();
+			throw new ValidationException(
+					Arrays.asList(new ValidationError("POSITION_EXPIRED",
+							"POSITION_EXPIRED")));
+			}else {
 				approverPositionId = assignment.getPosition().getId();
 				approverName = assignment.getEmployee().getName().concat("~")
 						.concat(assignment.getPosition().getName());
