@@ -853,8 +853,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 			if (assignment == null && propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER)){
 				 checkForMandatoryDocuments();
 			throw new ValidationException(
-					Arrays.asList(new ValidationError("POSITION_EXPIRED",
-							"POSITION_EXPIRED")));
+					Arrays.asList(new ValidationError(POSITION_EXPIRED,
+							POSITION_EXPIRED)));
 			}else {
 				approverPositionId = assignment.getPosition().getId();
 				approverName = assignment.getEmployee().getName().concat("~")
