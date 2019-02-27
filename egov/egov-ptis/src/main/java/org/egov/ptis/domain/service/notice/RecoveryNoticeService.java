@@ -414,7 +414,6 @@ public class RecoveryNoticeService {
 
     private void validateOwnerCertificate(final List<String> errors, final BasicProperty basicProperty) {
         validateCertificate(errors, basicProperty);
-        validateDemandBillExistance(errors, basicProperty);
     }
 
     private List<String> validateDemandBill(final BasicProperty basicProperty, final List<String> errors) {
