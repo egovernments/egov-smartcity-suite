@@ -3817,29 +3817,6 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 
     }
 
-    /**
-     * @param paymentVoucherId
-     * @return updates the generalledger remittancedate to null of bill voucher when remittance payment is cancelled
-     */
-    public int backUpdateRemittanceDateInGL(final Long paymentVoucherId) {
-        int count;
-        final StringBuilder sql = new StringBuilder("update   generalledger set remittancedate=null where remittancedate is  not null and  id in ")
-                .append("(select generalledgerid from generalledgerdetail where id in ")
-                .append("(select gldtlid from eg_remittance_gldtl where  id in")
-                .append(" (select remittancegldtlid from eg_remittance_detail where remittanceid in")
-                .append(" (select id from eg_remittance where paymentvhid=:paymentVoucherId))))");
-
-        count = getSession().createNativeQuery(sql.toString()).setParameter("paymentVoucherId", paymentVoucherId, LongType.INSTANCE).executeUpdate();
-        if (count == 0) {
-            // This is for non control codes
-            final StringBuilder sql1 = new StringBuilder(" update generalledger set remittancedate = null where id in ")
-                    .append(" (select generalledgerid from eg_remittance_detail where remittanceid in ")
-                    .append(" (select id from eg_remittance where paymentvhid =:paymentVoucherId))");
-            count = getSession().createNativeQuery(sql1.toString()).setParameter("paymentVoucherId", paymentVoucherId, LongType.INSTANCE).executeUpdate();
-        }
-        return count;
-    }
-
     public Position getSuperiourPositionByPosition() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside getSuperiourPositionByPosition...");

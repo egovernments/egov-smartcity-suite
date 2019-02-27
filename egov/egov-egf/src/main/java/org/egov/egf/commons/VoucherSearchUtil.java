@@ -286,8 +286,8 @@ public class VoucherSearchUtil {
         }
         if (voucherHeader.getVoucherNumber() != null
                 && !voucherHeader.getVoucherNumber().equals("")) {
-            sql.append(" and vh.voucherNumber like '%:voucherNumber%'");
-            params.put("voucherNumber", voucherHeader.getVoucherNumber());
+            sql.append(" and vh.voucherNumber like :voucherNumber");
+            params.put("voucherNumber", "%" + voucherHeader.getVoucherNumber() + "%");
         }
         if (fromDate != null) {
             sql.append(" and vh.voucherDate >= :fromDate");
