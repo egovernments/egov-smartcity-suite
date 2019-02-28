@@ -49,7 +49,6 @@ package org.egov.pgr.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.pims.commons.Position;
-import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -67,7 +66,6 @@ import static org.egov.pgr.entity.EscalationHierarchy.SEQ_ESCALATIONHIERARCHY;
 @Entity
 @Table(name = "egpgr_escalationhierarchy")
 @SequenceGenerator(name = SEQ_ESCALATIONHIERARCHY, sequenceName = SEQ_ESCALATIONHIERARCHY, allocationSize = 1)
-@Immutable
 public class EscalationHierarchy extends AbstractAuditable {
 
     protected static final String SEQ_ESCALATIONHIERARCHY = "SEQ_EGPGR_ESCALATIONHIERARCHY";
@@ -78,7 +76,7 @@ public class EscalationHierarchy extends AbstractAuditable {
 
     @NotNull
     @ManyToOne(fetch = EAGER, optional = false)
-    @JoinColumn(name = "fromposition")
+    @JoinColumn(name = "fromposition", updatable = false)
     private Position fromPosition;
 
     @NotNull

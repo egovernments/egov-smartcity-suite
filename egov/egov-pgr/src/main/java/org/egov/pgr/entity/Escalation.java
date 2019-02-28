@@ -50,7 +50,6 @@ package org.egov.pgr.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.pims.commons.Designation;
-import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -70,7 +69,6 @@ import static org.egov.pgr.entity.Escalation.SEQ_ESCALATION;
 @Entity
 @Table(name = "egpgr_escalation")
 @SequenceGenerator(name = SEQ_ESCALATION, sequenceName = SEQ_ESCALATION, allocationSize = 1)
-@Immutable
 public class Escalation extends AbstractAuditable {
 
     protected static final String SEQ_ESCALATION = "SEQ_EGPGR_ESCALATION";
@@ -82,7 +80,7 @@ public class Escalation extends AbstractAuditable {
 
     @NotNull
     @ManyToOne(fetch = LAZY, optional = false)
-    @JoinColumn(name = "complaint_type_id")
+    @JoinColumn(name = "complaint_type_id", updatable = false)
     private ComplaintType complaintType;
 
     @NotNull
