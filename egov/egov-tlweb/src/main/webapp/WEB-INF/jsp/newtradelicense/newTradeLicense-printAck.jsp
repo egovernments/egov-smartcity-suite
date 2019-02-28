@@ -51,28 +51,26 @@
 <html>
 <head>
     <title>
+        New License Acknowledgement
     </title>
 
 </head>
 
 <body>
 <s:form name="certificateform" action="newTradeLicense" theme="simple">
-<s:if test="%{hasErrors()}">
-    <div class="errorstyle">
-        <s:actionerror/>
-    </div>
-</s:if>
-<iframe src="/tl/reportViewer?reportId=<s:property value='reportId'/>" width="98%"
-        height="70%">
+    <s:if test="%{hasErrors()}">
+        <div class="errorstyle">
+            <s:actionerror/>
+        </div>
+    </s:if>
+    <iframe src="/tl/reportViewer?reportId=<s:property value='reportId'/>" width="98%" height="70%">
     <p>Your browser does not support iframes.</p>
-
+    </iframe>
     <br/>
     <div class="buttonbottom">
         <input name="buttonClose" type="button" class="button"
                id="buttonClose" value="Close" onclick="window.close()"/>
-        &nbsp;
-
     </div>
-    </s:form>
+</s:form>
 </body>
 </html>

@@ -131,4 +131,4 @@
 $('.panel-group').on('hidden.bs.collapse', toggleIcon);
 $('.panel-group').on('shown.bs.collapse', toggleIcon);
 </script>
-<script src="<cdn:url  value='/resources/js/app/license-support-docs.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/support-documents.js?rnd=${app_release_no}'/>"></script>

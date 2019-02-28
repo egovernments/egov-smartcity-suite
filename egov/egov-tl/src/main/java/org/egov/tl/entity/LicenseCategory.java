@@ -50,10 +50,10 @@ package org.egov.tl.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.annotations.Immutable;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -74,7 +74,6 @@ import static org.egov.tl.entity.LicenseCategory.SEQ_CATEGORY;
 @Table(name = "EGTL_MSTR_CATEGORY")
 @Unique(fields = {"name", "code"}, enableDfltMsg = true)
 @SequenceGenerator(name = SEQ_CATEGORY, sequenceName = SEQ_CATEGORY, allocationSize = 1)
-@Immutable
 public class LicenseCategory extends AbstractAuditable {
     protected static final String SEQ_CATEGORY = "SEQ_EGTL_MSTR_CATEGORY";
     private static final long serialVersionUID = 2997222319085575846L;
@@ -93,6 +92,7 @@ public class LicenseCategory extends AbstractAuditable {
     @Length(max = 5)
     @SafeHtml
     @Pattern(regexp = MASTER_DATA_CODE, message = INVALID_MASTER_DATA_CODE)
+    @Column(updatable = false)
     private String code;
 
     public String getName() {

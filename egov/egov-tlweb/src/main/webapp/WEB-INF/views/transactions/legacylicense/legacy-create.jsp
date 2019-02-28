@@ -199,7 +199,6 @@
     </script>
     <script type="text/javascript"
             src="<cdn:url  value='/resources/js/app/legacy-license.js?rnd=${app_release_no}'/>"></script>
-    <script type="text/javascript"
-            src="<cdn:url  value='/resources/js/app/license-support-docs.js?rnd=${app_release_no}'/>"></script>
+    <script src="<cdn:url  value='/resources/js/app/support-documents.js?rnd=${app_release_no}'/>"></script>
     <script type="text/javascript"
             src="<cdn:url  value='/resources/js/app/trade-license.js?rnd=${app_release_no}'/>"></script>

@@ -54,14 +54,21 @@
 <html>
 <head>
     <title>Acknowledgement Slip for Trade License</title>
+    <style>
+        @media print {
+            .printbtn {
+                display: none;
+            }
+        }
+    </style>
 </head>
 <body onload="refreshInbox()">
-<div id="main" class="printable">
+<div id="main">
     <div class="row">
         <div class="col-md-12">
             <s:form name="certificateform" action="viewTradeLicense">
                 <s:push value="model">
-                    <div class="panel panel-primary" data-collapsed="0">
+                    <div class="panel panel-primary printable" data-collapsed="0">
                         <div class="panel-heading">
                             <div class="panel-title text-center no-float">
                                 <s:text name="license.acknowledgement.slip.for.new">
@@ -148,14 +155,14 @@
                                 Pay License Fee</button>
                         </s:if>
                         <s:if test="%{hasCscOperatorRole()}">
-                            <button type="button" name="PrintAck" id="PrintAck" class="btn btn-default"
+                            <button type="button" id="print" class="btn btn-default printbtn"
                                     onclick="window.open('/tl/newtradelicense/newtradelicense-printAck.action?model.id=<s:property value="%{id}"/>'
                                             , '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" >Print</button>
                         </s:if>
                         <s:else>
-                            <button type="button" id="print" class="btn btn-default" onclick="window.print();">Print</button>
+                            <button type="button" id="print" class="btn btn-default printbtn" onclick="window.print();">Print</button>
                         </s:else>
-                        <button type="button" id="closebn" class="btn btn-default" onclick="window.close();">Close</button>
+                        <button type="button" id="closebn" class="btn btn-default printbtn" onclick="window.close();">Close</button>
                     </div>
                 </s:push>
             </s:form>
