@@ -67,8 +67,6 @@
         </constructor-arg>
         <property name="accessDeniedHandler" ref="accessDeniedHandler"/>
     </bean>
-    
-    <bean id="customParser" class="org.egov.infra.web.struts.parser.CustomMultipartParser" scope="prototype"/>
 
     <bean id="headerWriterFilter" class="org.springframework.security.web.header.HeaderWriterFilter">
         <constructor-arg name="headerWriters">

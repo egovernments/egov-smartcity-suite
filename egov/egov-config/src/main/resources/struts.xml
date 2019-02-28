@@ -70,7 +70,7 @@
 	<constant name="struts.custom.i18n.resources" value="messages/common-errors,messages/common-labels,custom" />
 	<constant name="struts.locale" value="en_IN" />
 	<constant name="struts.multipart.maxSize" value="26214400" />
-	<constant name="struts.multipart.parser" value="customParser" />
+	<constant name="struts.multipart.parser" value="springMultipartParser" />
 	<constant name="struts.convention.action.mapAllMatches" value="true" />
 	<constant name="struts.convention.default.parent.package" value="egov" />
 	<!-- Comma separated list of regular expressions of jar URLs to be scanned -->
@@ -83,7 +83,11 @@
 	<constant name="struts.convention.package.locators" value="actions" />
 	<!-- This makes the URL for an action like HelloWorldAction.java be /helloWorld.action 
 		rather than /hello-world By default Struts2 uses the SEOActionNameBuilder. -->
-	<bean type="org.apache.struts2.convention.ActionNameBuilder" name="defaultActionNameBuilder" class="org.apache.struts2.convention.DefaultActionNameBuilder" />
+	<bean type="org.apache.struts2.convention.ActionNameBuilder" name="defaultActionNameBuilder"
+		  class="org.apache.struts2.convention.DefaultActionNameBuilder" />
+	<bean type="org.apache.struts2.dispatcher.multipart.MultiPartRequest" name="springMultipartParser"
+		  class="org.egov.infra.web.struts.parser.SpringMultipartParser" scope="prototype"/>
+
 	<constant name="struts.convention.actionNameBuilder" value="defaultActionNameBuilder" />
 	<constant name="struts.convention.action.name.lowercase" value="true"/>
 	<!-- <constant name="struts.convention.action.alwaysMapExecute" value="false"/> -->
