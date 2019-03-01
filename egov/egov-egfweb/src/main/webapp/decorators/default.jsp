@@ -58,6 +58,10 @@
     <c:if test="${analyticsEnabled}">
         <c:out value="${analyticsConfig}" escapeXml="false"/>
     </c:if>
+    <c:if test="${empty maxFileSize}">
+	    <spring:eval expression="@environment.getProperty('egf.max.file.size')" scope="application" var="maxFileSize"/>
+	    <spring:eval expression="@environment.getProperty('egf.allowed.file.ext')" scope="application" var="allowedFileExt"/>
+	</c:if>
     <%@ include file="/includes/meta.jsp" %>
     <meta name="_csrf" content="${_csrf.token}"/>
     <meta name="_csrf_header" content="${_csrf.headerName}"/>
