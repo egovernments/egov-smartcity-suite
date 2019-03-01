@@ -127,5 +127,5 @@ $(document).ready(function () {
 
 function viewDocument(fileStoreId) {
     var sUrl = "/egi/downloadfile?fileStoreId="+fileStoreId+"&moduleName=TL";
-    window.open(sUrl,"_self",'scrollbars=yes,resizable=no,height=400,width=400,status=yes');
+    window.open(sUrl,"_blank",'width=900, height=700, top=300, left=260,scrollbars=yes,resizable=yes,status=no');
 }
