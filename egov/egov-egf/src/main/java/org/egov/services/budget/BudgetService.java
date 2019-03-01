@@ -47,6 +47,11 @@
  */
 package org.egov.services.budget;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.EgwStatus;
@@ -71,16 +76,12 @@ import org.egov.pims.model.PersonalInformation;
 import org.egov.utils.EGovConfig;
 import org.hibernate.query.Query;
 import org.hibernate.type.DateType;
+import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 
 /**
  * @author Manikanta
@@ -383,7 +384,7 @@ public class BudgetService extends PersistenceService<Budget, Long> {
                 .createNativeQuery(
                         "update egf_budget set status = :approvedStatus where status =:createdStatus and  materializedPath like :mPath")
                 .setParameter("mPath", materializedPath.concat("%"), StringType.INSTANCE)
-                .setParameter("approvedStatus", approvedStatus.getId(), LongType.INSTANCE)
-                .setParameter("createdStatus", createdStatus.getId(), LongType.INSTANCE).executeUpdate();
+                .setParameter("approvedStatus", approvedStatus.getId(), IntegerType.INSTANCE)
+                .setParameter("createdStatus", createdStatus.getId(), IntegerType.INSTANCE).executeUpdate();
     }
 }
