@@ -114,7 +114,7 @@ public class FileValidator {
     }
 
     private Pattern validFileExtensionPattern(String moduleName) {
-        String acceptableNamePattern = FILE_NAME.replace("%s", settings.getProperty(moduleName, ALLOWED_FILE_EXT_KEY_SUFFIX));
+        String acceptableNamePattern = FILE_NAME.replace("[a-zA-Z]", settings.getProperty(moduleName, ALLOWED_FILE_EXT_KEY_SUFFIX));
         return FILE_NAME_PATTERN
                 .computeIfAbsent(acceptableNamePattern, val -> Pattern.compile(acceptableNamePattern, CASE_INSENSITIVE));
     }

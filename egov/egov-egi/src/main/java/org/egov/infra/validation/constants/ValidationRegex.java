@@ -61,7 +61,7 @@ public class ValidationRegex {
     public static final String PAN_NUMBER = "[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}";
     public static final String NUMERIC = "[0-9]+$";
     public static final String DATEFORMAT = "(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)[0-9]{2}";
-    public static final String FILE_NAME = "^[\\w\\[\\]()\\-\\s]{1,245}.(%s){1,9}$";
+    public static final String FILE_NAME = "^[\\w\\[\\]()\\-\\s]{1,245}.([a-zA-Z]){1,9}$";
     public static final String UNSIGNED_NUMERIC = "^\\d*\\.?\\d*$";
     public static final String MASTER_DATA_CODE = "^[a-zA-Z0-9]+(([_-][a-zA-Z0-9])?[a-zA-Z0-9]*)*$";
     public static final String NAME_WITH_SPECIAL_CHARS = "^[a-zA-Z]+(([ ()/-_][a-zA-Z])?[a-zA-Z]*)*$";
