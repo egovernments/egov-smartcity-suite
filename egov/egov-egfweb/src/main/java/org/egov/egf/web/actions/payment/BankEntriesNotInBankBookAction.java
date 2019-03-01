@@ -192,39 +192,39 @@ public class BankEntriesNotInBankBookAction extends BasePaymentAction {
         final StringBuilder query = new StringBuilder();
         final StringBuilder subQuery = new StringBuilder();
         if (bankaccount != null) {
-            subQuery.append("and be.bankaccountid =:bankaccount");
+            subQuery.append(" and be.bankaccountid =:bankaccount");
             queryParams.put("bankaccount", bankaccount);
         }
         if (voucherHeader.getVouchermis().getDepartmentid() != null) {
-            subQuery.append("and bemis.departmentid = :deptId");
+            subQuery.append(" and bemis.departmentid = :deptId");
             queryParams.put("deptId", voucherHeader.getVouchermis().getDepartmentid().getId());
         }
         if (voucherHeader.getFundId() != null) {
-            subQuery.append("and bemis.fundid = :fundId");
+            subQuery.append(" and bemis.fundid = :fundId");
             queryParams.put("fundId", voucherHeader.getFundId().getId());
         }
         if (voucherHeader.getVouchermis().getSchemeid() != null) {
-            subQuery.append("and bemis.schemeid = :schemeId");
+            subQuery.append(" and bemis.schemeid = :schemeId");
             queryParams.put("schemeId", voucherHeader.getVouchermis().getSchemeid().getId());
         }
         if (voucherHeader.getVouchermis().getSubschemeid() != null) {
-            subQuery.append("and bemis.subschemeid = :subSchemeId");
+            subQuery.append(" and bemis.subschemeid = :subSchemeId");
             queryParams.put("subSchemeId", voucherHeader.getVouchermis().getSubschemeid().getId());
         }
         if (voucherHeader.getVouchermis().getFundsource() != null) {
-            subQuery.append("and bemis.fundsourceid = :fundSourceId");
+            subQuery.append(" and bemis.fundsourceid = :fundSourceId");
             queryParams.put("fundSourceId", voucherHeader.getVouchermis().getFundsource().getId());
         }
         if (voucherHeader.getVouchermis().getDivisionid() != null) {
-            subQuery.append("and bemis.divisionid = :divisionId");
+            subQuery.append(" and bemis.divisionid = :divisionId");
             queryParams.put("divisionId", voucherHeader.getVouchermis().getDivisionid().getId());
         }
         if (voucherHeader.getVouchermis().getFunctionary() != null) {
-            subQuery.append("and bemis.functionaryid = :functionaryId");
+            subQuery.append(" and bemis.functionaryid = :functionaryId");
             queryParams.put("functionaryId", voucherHeader.getVouchermis().getFunctionary().getId());
         }
         if (voucherHeader.getVouchermis().getFunction() != null) {
-            subQuery.append("and bemis.functionid = :functionId");
+            subQuery.append(" and bemis.functionid = :functionId");
             queryParams.put("functionId", voucherHeader.getVouchermis().getFunction().getId());
         }
 
