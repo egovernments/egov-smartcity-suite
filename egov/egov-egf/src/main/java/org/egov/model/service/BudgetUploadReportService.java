@@ -113,15 +113,16 @@ public class BudgetUploadReportService {
                           final Long deptId) {
 
         StringBuilder subQuery = new StringBuilder("");
-        String reMaterializedPathQuery = "", beMaterializedPathQuery = "";
+        String reMaterializedPathQuery = "";
+        String beMaterializedPathQuery = "";
         Map<String, Object> params = new HashMap<>();
         if (reMaterializedPath != null) {
             reMaterializedPathQuery = " and bd.materializedpath like :reMaterializedPath";
-            params.put("reMaterializedPath", reMaterializedPath);
+            params.put("reMaterializedPath", reMaterializedPath + "%");
         }
         if (beMaterializedPath != null) {
             beMaterializedPathQuery = " and bd.materializedpath like :beMaterializedPath ";
-            params.put("beMaterializedPath", beMaterializedPath);
+            params.put("beMaterializedPath", beMaterializedPath + "%");
         }
         if (fundId != null) {
             subQuery.append(" and bd.fund = :fundId");
