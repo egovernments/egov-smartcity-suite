@@ -169,4 +169,4 @@
 <jsp:include page="../common/process-owner-reassignment.jsp"/>
 <script type="text/javascript"
         src="<cdn:url  value='/resources/js/app/license-approval-detail.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url  value='/resources/js/app/view-support-documents.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/support-documents.js?rnd=${app_release_no}'/>"></script>

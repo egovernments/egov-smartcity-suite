@@ -48,7 +48,7 @@
 
 <%@ include file="/includes/taglibs.jsp" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<script src="<cdn:url  value='/resources/js/app/view-support-documents.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/support-documents.js?rnd=${app_release_no}'/>"></script>
 <html>
 <head>
     <title><s:text name="page.title.viewtrade"/></title>
