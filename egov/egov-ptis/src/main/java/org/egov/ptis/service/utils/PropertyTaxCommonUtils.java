@@ -461,7 +461,7 @@ public class PropertyTaxCommonUtils {
      * @return boolean
      */
     public Boolean isCorporation() {
-        final City city = (City) entityManager.createQuery("from City").getSingleResult();
+        final City city = (City) getSession().createQuery("from City").getSingleResult();
         return city.getGrade().equals(PropertyTaxConstants.CITY_GRADE_CORPORATION) ? true : false;
     }
 
