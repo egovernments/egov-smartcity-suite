@@ -132,7 +132,7 @@
 						class="greybox"><span class="mandatory1">*</span></span></td>
 					<egov:ajaxdropdown id="branchId" fields="['Text','Value']"
 						dropdownId="branchId"
-						url="/voucher/common-ajaxLoadBankBranchesByBank.action" />
+						url="voucher/common-ajaxLoadBankBranchesByBank.action" />
 					<td class="greybox"><s:select name="bankId" id="bankId"
 							list="dropdownData.bankList" listKey="id" listValue="name"
 							headerKey="" headerValue="----Choose----"
@@ -141,7 +141,7 @@
 						class="greybox"><span class="mandatory1">*</span></span></td>
 					<egov:ajaxdropdown id="accountId" fields="['Text','Value']"
 						dropdownId="accountId"
-						url="/voucher/common-ajaxLoadBankAccountsByBranch.action" />
+						url="voucher/common-ajaxLoadBankAccountsByBranch.action" />
 					<td class="greybox"><s:select name="branchId" id="branchId"
 							list="dropdownData.branchList" listKey="id"
 							listValue="branchname" headerKey="" headerValue="----Choose----"

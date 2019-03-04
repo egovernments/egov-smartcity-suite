@@ -508,15 +508,15 @@ public class AutoReconcileHelper {
         for (final AutoReconcileBean bean : detailList) {
             int updated = -1;
             try {
-                updateQuery.setParameter("statusId", statusId, LongType.INSTANCE);
-                updateQuery.setParameter("accountId", accountId, LongType.INSTANCE);
+                updateQuery.setParameter("statusId", statusId, IntegerType.INSTANCE);
+                updateQuery.setParameter("accountId", accountId, IntegerType.INSTANCE);
 
                 updateQuery.setParameter("instrumentNo", bean.getInstrumentNo(), StringType.INSTANCE);
                 updateQuery.setParameter("userId", ApplicationThreadLocals.getUserId().intValue(), IntegerType.INSTANCE);
 
                 updateQuery2.setParameter("txDate", bean.getTxDate(), DateType.INSTANCE);
                 updateQuery2.setParameter("reconciliationDate", reconciliationDate, DateType.INSTANCE);
-                updateQuery2.setParameter("accountId", accountId, LongType.INSTANCE);
+                updateQuery2.setParameter("accountId", accountId, IntegerType.INSTANCE);
 
                 updateQuery2.setParameter("instrumentNo", bean.getInstrumentNo(), StringType.INSTANCE);
                 updateQuery2.setParameter("userId", ApplicationThreadLocals.getUserId().intValue(), IntegerType.INSTANCE);
@@ -645,15 +645,15 @@ public class AutoReconcileHelper {
         for (final AutoReconcileBean bean : CSLList) {
             int updated = -1;
             try {
-                updateQuery.setParameter("statusId", statusId, LongType.INSTANCE);
-                updateQuery.setParameter("accountId", accountId, LongType.INSTANCE);
+                updateQuery.setParameter("statusId", statusId, IntegerType.INSTANCE);
+                updateQuery.setParameter("accountId", accountId, IntegerType.INSTANCE);
 
                 updateQuery.setParameter("cslNo", bean.getCSLno(), StringType.INSTANCE);
                 updateQuery.setParameter("userId", ApplicationThreadLocals.getUserId().intValue(), IntegerType.INSTANCE);
 
                 updateQuery2.setParameter("txDate", bean.getTxDate(), DateType.INSTANCE);
                 updateQuery2.setParameter("reconciliationDate", reconciliationDate, DateType.INSTANCE);
-                updateQuery2.setParameter("accountId", accountId, LongType.INSTANCE);
+                updateQuery2.setParameter("accountId", accountId, IntegerType.INSTANCE);
 
                 updateQuery2.setParameter("cslNo", bean.getCSLno(), StringType.INSTANCE);
                 updateQuery2.setParameter("userId", ApplicationThreadLocals.getUserId().intValue(), IntegerType.INSTANCE);
@@ -781,7 +781,7 @@ public class AutoReconcileHelper {
         statmentsNotInBankBookQry.setParameter("fromDate", fromDate, DateType.INSTANCE)
                 .setParameter("toDate", toDate, DateType.INSTANCE)
                 .setParameter("multipleEntryErrorMessage", BRS_MESSAGE_MORE_THAN_ONE_MATCH, StringType.INSTANCE)
-                .setParameter("accountId", accountId, LongType.INSTANCE);
+                .setParameter("accountId", accountId, IntegerType.INSTANCE);
         statementsNotInBankBookList = statmentsNotInBankBookQry.list();
         notInBooktotalDebit = BigDecimal.ZERO;
         notInBooktotalCredit = BigDecimal.ZERO;
@@ -832,7 +832,7 @@ public class AutoReconcileHelper {
         entriesNotInBankStamentQry.setParameter("fromDate", finYearStartDate, DateType.INSTANCE)
                 .setParameter("toDate", toDate, DateType.INSTANCE)
                 .setParameter("action", BRS_ACTION_TO_BE_PROCESSED_MANUALLY, StringType.INSTANCE)
-                .setParameter("accountId", accountId, LongType.INSTANCE)
+                .setParameter("accountId", accountId, IntegerType.INSTANCE)
                 .setParameter("multipleEntryErrorMessage", BRS_MESSAGE_MORE_THAN_ONE_MATCH, StringType.INSTANCE);
         entriesNotInBankStament = entriesNotInBankStamentQry.list();
 
@@ -882,7 +882,7 @@ public class AutoReconcileHelper {
         entriesNotInBankStamentQry.setParameter("fromDate", finYearStartDate, DateType.INSTANCE)
                 .setParameter("toDate", toDate, DateType.INSTANCE)
                 .setParameter("action", BRS_ACTION_TO_BE_PROCESSED_MANUALLY, StringType.INSTANCE)
-                .setParameter("accountId", accountId, LongType.INSTANCE)
+                .setParameter("accountId", accountId, IntegerType.INSTANCE)
                 .setParameter("multipleEntryErrorMessage", BRS_MESSAGE_MORE_THAN_ONE_MATCH, StringType.INSTANCE);
         final List<AutoReconcileBean> entriesNotInBankStament1 = entriesNotInBankStamentQry.list();
         if (entriesNotInBankStament1.size() > 0) {
@@ -919,7 +919,7 @@ public class AutoReconcileHelper {
         statmentsfoundButNotProcessedQry.setParameter("fromDate", fromDate, DateType.INSTANCE)
                 .setParameter("toDate", toDate, DateType.INSTANCE)
                 .setParameter("multipleEntryErrorMessage", BRS_MESSAGE_MORE_THAN_ONE_MATCH, StringType.INSTANCE)
-                .setParameter("accountId", accountId, LongType.INSTANCE);
+                .setParameter("accountId", accountId, IntegerType.INSTANCE);
         statementsFoundButNotProcessed = statmentsfoundButNotProcessedQry.list();
         notprocessedDebit = BigDecimal.ZERO;
         notprocessedCredit = BigDecimal.ZERO;
@@ -1025,10 +1025,10 @@ public class AutoReconcileHelper {
             final NativeQuery paymentDuplicateChequesQuery = persistenceService.getSession().createNativeQuery(duplicates.toString());
             paymentDuplicateChequesQuery.addScalar("instrumentNo")
                     .addScalar("debit")
-                    .addScalar("accountId", LongType.INSTANCE)
+                    .addScalar("accountId", IntegerType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(AutoReconcileBean.class))
                     .setParameter("action", BRS_ACTION_TO_BE_PROCESSED, StringType.INSTANCE)
-                    .setParameter("accountId", accountId, LongType.INSTANCE);
+                    .setParameter("accountId", accountId, IntegerType.INSTANCE);
             final List<AutoReconcileBean> duplicatePaymentCheques = paymentDuplicateChequesQuery.list();
 
             StringBuilder backUpdateDuplicatePaymentquery = new StringBuilder();
@@ -1060,7 +1060,7 @@ public class AutoReconcileHelper {
                     .addScalar("credit")
                     .addScalar("accountId", LongType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(AutoReconcileBean.class));
-            receiptsDuplicateChequesQuery.setParameter("accountId", accountId, LongType.INSTANCE);
+            receiptsDuplicateChequesQuery.setParameter("accountId", accountId, IntegerType.INSTANCE);
             final List<AutoReconcileBean> duplicateReceiptsCheques = receiptsDuplicateChequesQuery.list();
 
             StringBuilder backUpdateDuplicateReceiptsQuery = new StringBuilder();
