@@ -290,7 +290,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
         String accountDetail = "";
         if (accounts.getChartOfAccountDetails() == null)
             return;
-        chartOfAccountsService.getSession().flush();
+        //chartOfAccountsService.getSession().flush();
         //persistenceService.setType(CChartOfAccountDetail.class);
         try {
             for (final Accountdetailtype row : accountDetailType) {
@@ -301,7 +301,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
                     if (next == null || next.getDetailTypeId().getId().equals(row.getId())) {
                         iterator.remove();
                         chartOfAccountDetailService.delete(chartOfAccountDetailService.findById(next.getId(), false));
-                        persistenceService.getSession().flush();
+                        //persistenceService.getSession().flush();
                     }
                 }
             }
@@ -405,7 +405,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
             }
         }
 
-        chartOfAccountsService.getSession().flush();
+        //chartOfAccountsService.getSession().flush();
     }
 
     List<Accountdetailtype> getAccountDetailTypeToBeDeleted(final List<Accountdetailtype> accountDetailType,
