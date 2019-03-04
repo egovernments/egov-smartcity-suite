@@ -269,7 +269,17 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
         final PaymentResponse sbimopsResponse = new DefaultPaymentResponse();
 
         CloseableHttpResponse response = reconciliationResponse(onlinePayment);
-
+        
+        try {
+            CloseableHttpResponse response_debug = reconciliationResponse(onlinePayment);
+            InputStreamReader inputStreamReader = new InputStreamReader(response_debug.getEntity().getContent());
+            BufferedReader reader_debug = new BufferedReader(inputStreamReader);
+            LOGGER.error("Reconciliation response:"+reader_debug.readLine());
+        } catch (IOException e) {
+            LOGGER.error("SBIMOPS reconciliation, error while reading the response content", e);
+            throw new ApplicationRuntimeException(" SBIMOPS reconciliation, error while reading the response content", e);
+        }
+       
         if (response == null) {
             LOGGER.info("Sbimops reconciliation response is null");
             throw new ApplicationRuntimeException("SBIMOPS reconciliation response is null.");
@@ -352,6 +362,8 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
 
         if (LOGGER.isInfoEnabled())
             LOGGER.info("SBIMOPS reconciliation request parameters:" + requestJson.toString());
+       
+        LOGGER.error("Request for reconciliation:" + requestJson.toString());
         return requestJson.toString();
     }
 
@@ -363,7 +375,7 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
 
             ObjectMapper objectMapper = new ObjectMapper();
             Map<String, Map<String, Object>> responseMap = null;
-
+           
             try {
                 responseMap = objectMapper.readValue(reader.readLine(),
                         new TypeReference<Map<String, Map<String, Object>>>() {
