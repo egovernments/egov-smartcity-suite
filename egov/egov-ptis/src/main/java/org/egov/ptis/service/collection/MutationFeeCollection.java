@@ -47,7 +47,7 @@
  */
 package org.egov.ptis.service.collection;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_RULE_FULL_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_CLOSED_MUTATION_RECEIPT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER_FEE_COLLECTED;
@@ -135,7 +135,7 @@ public class MutationFeeCollection extends TaxCollection {
 
     private void updateTransitionForFullTransfer(final BillReceiptInfo bri, final PropertyMutation propertyMutation) {
         if (bri.getEvent().equals(EVENT_RECEIPT_CREATED)
-                && propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER)
+                && propertyMutation.getType().equalsIgnoreCase(ADDITIONAL_RULE_FULL_TRANSFER)
                 && !TRANSFER_FEE_COLLECTED.equalsIgnoreCase(propertyMutation.getCurrentState().getValue())) {
             final WorkFlowMatrix wFMatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(),
                     null, null, propertyMutation.getType(), propertyMutation.getCurrentState().getValue(), null);

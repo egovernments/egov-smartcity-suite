@@ -120,11 +120,11 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
                 "applicationSource", "${applicationSource}", "meesevaApplicationNumber",
                 "${meesevaApplicationNumber}", "meesevaServiceCode", "${meesevaServiceCode}", "type",
                 MUTATION_TYPE_REGISTERED_TRANSFER }),
-        @Result(name = ADDTIONAL_RULE_FULL_TRANSFER, type = "redirectAction", location = "new", params = {
+        @Result(name = ADDITIONAL_RULE_FULL_TRANSFER, type = "redirectAction", location = "new", params = {
                 "namespace", "${actionNamespace}", "assessmentNo", "${assessmentNum}", "applicationType", "${applicationType}",
                 "applicationSource", "${applicationSource}", "meesevaApplicationNumber",
                 "${meesevaApplicationNumber}", "meesevaServiceCode", "${meesevaServiceCode}", "type",
-                ADDTIONAL_RULE_FULL_TRANSFER }),
+                ADDITIONAL_RULE_FULL_TRANSFER }),
         @Result(name = "ackForRegistration", type = "redirectAction", location = "redirectForPayment", params = {
                 "namespace", "${actionNamespace}", "mutationId", "${mutationId}", "applicationType", "${applicationType}",
                 "applicationSource", "${applicationSource}" }),
@@ -500,7 +500,7 @@ public class SearchPropertyAction extends SearchFormAction {
             } else
                 return APPLICATION_TYPE_EDIT_COLLECTION;
         if (APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType)) {
-            if (SecurityUtils.userAnonymouslyAuthenticated() && ADDTIONAL_RULE_FULL_TRANSFER.equalsIgnoreCase(mutationType)) {
+            if (SecurityUtils.userAnonymouslyAuthenticated() && ADDITIONAL_RULE_FULL_TRANSFER.equalsIgnoreCase(mutationType)) {
                 final PropertyMutation propertyMutation = propertyMutationDAO
                         .getPropertyLatestMutationForAssessmentNo(assessmentNum);
                 if (propertyMutation != null && propertyMutation.getState() != null && basicProperty.isUnderWorkflow()
@@ -1038,7 +1038,7 @@ public class SearchPropertyAction extends SearchFormAction {
     public String fullTransfer() {
         setActionNamespace("/property/transfer");
         setApplicationType(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
-        setMutationType(ADDTIONAL_RULE_FULL_TRANSFER);
+        setMutationType(ADDITIONAL_RULE_FULL_TRANSFER);
         if (SecurityUtils.userAnonymouslyAuthenticated())
             if (loggedUserIsMeesevaUser)
                 setApplicationSource(SOURCE_MEESEVA);

@@ -328,7 +328,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             if (STRUCTURED.equals(taxDueOrStruc))
                 return COMMON_FORM;
 
-            if (!ADDTIONAL_RULE_FULL_TRANSFER.equalsIgnoreCase(propertyMutation.getType())) {
+            if (!ADDITIONAL_RULE_FULL_TRANSFER.equalsIgnoreCase(propertyMutation.getType())) {
                 if (isEligibleLoggedUser()) {
                     loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
                     if (loggedUserIsMeesevaUser)
@@ -400,7 +400,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         transitionWorkFlow(propertyMutation);
         propertyMutation.setSource(propertyTaxCommonUtils.setSourceOfProperty(securityUtils.getCurrentUser(),
                 ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())));
-        if (getNatureOfTask().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER)) {
+        if (getNatureOfTask().equalsIgnoreCase(ADDITIONAL_RULE_FULL_TRANSFER)) {
             propertyMutation.setMutationReason(transferOwnerService.getPropertyTransferReasonsByCode(MUTATION_REASON_CODE_SALE));
         }
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
@@ -425,7 +425,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         setAckMessage("Transfer of ownership data saved successfully in the system and forwarded to : ");
         setAssessmentNoMessage(WITH_ASSESSMENT_NUMBER);
 
-        if (ADDTIONAL_RULE_FULL_TRANSFER.equalsIgnoreCase(propertyMutation.getType())) {
+        if (ADDITIONAL_RULE_FULL_TRANSFER.equalsIgnoreCase(propertyMutation.getType())) {
             propertyOwner = basicproperty.getFullOwnerName();
             return ACK_FOR_REGISTRATION;
         } else if (!loggedUserIsMeesevaUser)
@@ -548,7 +548,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public String reject() {
         if (isRejectionNotAllowed()) {
             addActionError(getText("error.mutation.reject.notallowed"));
-            if (propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER))
+            if (propertyMutation.getType().equalsIgnoreCase(ADDITIONAL_RULE_FULL_TRANSFER))
                 return VIEW;
             else
                 return EDIT;
@@ -581,7 +581,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 || TAX_COLLECTOR_DESGN.equalsIgnoreCase(loggedInUserDesignation)
                 || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(loggedInUserDesignation))
             wfInitiator = transferOwnerService.getWorkflowInitiator(propertyMutation);
-        if (propertyMutation.getType().equals(ADDTIONAL_RULE_FULL_TRANSFER)
+        if (propertyMutation.getType().equals(ADDITIONAL_RULE_FULL_TRANSFER)
                 || (wfInitiator != null || JUNIOR_ASSISTANT.equalsIgnoreCase(loggedInUserDesignation)
                         || SENIOR_ASSISTANT.equalsIgnoreCase(loggedInUserDesignation))) {
             transitionWorkFlow(propertyMutation);
@@ -609,7 +609,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     private boolean isRejectionNotAllowed() {
         return ("Rejected".equals(propertyMutation.getState().getValue())
-                || propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER))
+                || propertyMutation.getType().equalsIgnoreCase(ADDITIONAL_RULE_FULL_TRANSFER))
                 && propertyMutation.getReceiptNum() != null && !receiptCanceled;
     }
 
@@ -850,7 +850,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 			currentState = getCurrentStateForThirdPartyWF(propertyMutation);
 			assignment = transferOwnerService.getAssignmentForThirdPartyByMutationType(propertyMutation, basicproperty,
 					user);
-			if (assignment == null && propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER)){
+			if (assignment == null && propertyMutation.getType().equalsIgnoreCase(ADDITIONAL_RULE_FULL_TRANSFER)){
 				 checkForMandatoryDocuments();
 			throw new ValidationException(
 					Arrays.asList(new ValidationError(POSITION_EXPIRED,
@@ -900,7 +900,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             wfInitiator = transferOwnerService.getWorkflowInitiator(propertyMutation);
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
             if (wfInitiator.getPosition().equals(propertyMutation.getState().getOwnerPosition())
-                    || propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER)) {
+                    || propertyMutation.getType().equalsIgnoreCase(ADDITIONAL_RULE_FULL_TRANSFER)) {
                 propertyMutation.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withDateInfo(currentDate.toDate()).withNextAction(null)
                         .withOwner(propertyMutation.getCurrentState().getOwnerPosition());
@@ -1087,7 +1087,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private String getNatureOfTask() {
         return ADDTIONAL_RULE_REGISTERED_TRANSFER.equals(getAdditionalRule())
                 ? NATURE_REGISTERED_TRANSFER
-                : ADDTIONAL_RULE_FULL_TRANSFER.equals(getAdditionalRule())
+                : ADDITIONAL_RULE_FULL_TRANSFER.equals(getAdditionalRule())
                         ? NATURE_FULL_TRANSFER
                         : ADDTIONAL_RULE_PARTIAL_TRANSFER
                                 .equals(getAdditionalRule())
@@ -1097,11 +1097,11 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     private String getCurrentStateForThirdPartyWF(PropertyMutation propertyMutation) {
 
-        return propertyMutation.getType().equals(ADDTIONAL_RULE_FULL_TRANSFER) ? "NEW" : "Created";
+        return propertyMutation.getType().equals(ADDITIONAL_RULE_FULL_TRANSFER) ? "NEW" : "Created";
     }
 
     private Assignment setInitiatorForThirdPartyByMutationType(PropertyMutation propertyMutation, Assignment assignment) {
-        return propertyMutation.getType().equals(ADDTIONAL_RULE_FULL_TRANSFER) ? null : assignment;
+        return propertyMutation.getType().equals(ADDITIONAL_RULE_FULL_TRANSFER) ? null : assignment;
     }
 
     private BigDecimal getWaterTaxDues() {
