@@ -313,6 +313,18 @@ public class CommonWaterTaxSearchController {
                 return COMMON_FORM_SEARCH;
             }
         if (isNotBlank(applicationType) && applicationType.equals(SEARCH_MENUTREE_APPLICATIONTYPE_CLOSURE))
+            
+            if (waterConnectionDetailsService.getconnectionStatusForPropertyidentifier(waterConnectionDetails.getConnection().getPropertyIdentifier()).equals(ConnectionStatus.INPROGRESS.toString()))
+            {
+                model.addAttribute(MODE, ERROR_MODE);
+                model.addAttribute(APPLICATIONTYPE, applicationType);
+                resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_CLOSURE_NOT_ALLOWED, new String[] { waterConnectionDetails.getApplicationType().getName(),
+                        waterConnectionDetails.getApplicationNumber() },ERR_CLOSURE_NOT_ALLOWED);
+                return COMMON_FORM_SEARCH;
+            }
+            else
+            {
+            
             if (isNotBlank(waterConnectionDetails.getCloseConnectionType())
                     && waterConnectionDetails.getCloseConnectionType().equals(PERMENENTCLOSECODE)) {
             	if(APPLICATION_STATUS_CLOSERSANCTIONED.equals(waterConnectionDetails.getStatus().getCode()))
@@ -355,7 +367,7 @@ public class CommonWaterTaxSearchController {
                         ERR_CLOSURE_NOT_ALLOWED);
                 return COMMON_FORM_SEARCH;
               }
-
+             }
         if (isNotBlank(applicationType) && applicationType.equals(RECONNECTION))
 
             if (waterConnectionDetails.getCloseConnectionType() != null && waterConnectionDetails.getCloseConnectionType().equals(PERMENENTCLOSECODE)) {

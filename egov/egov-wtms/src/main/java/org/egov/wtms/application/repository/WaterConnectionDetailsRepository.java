@@ -160,4 +160,7 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
 
     @Query("select wcd from WaterConnectionDetails wcd  where wcd.connection.id  in (select wc.id from WaterConnection wc where wc.propertyIdentifier = :propertyId) ")
     List<WaterConnectionDetails> getAllConnectionDetailsByPropertyID(@Param("propertyId") String propertyId);
+       
+    @Query("select wcd.connectionStatus from WaterConnectionDetails wcd where wcd.connection in(select wc.id from WaterConnection wc where wc.parentConnection in (select wc.parentConnection from WaterConnection wc where wc.propertyIdentifier = :PropertyIdentifier))")
+    String getconnectionStatusForPropertyidentifier(@Param("PropertyIdentifier") String PropertyIdentifier);
 }
