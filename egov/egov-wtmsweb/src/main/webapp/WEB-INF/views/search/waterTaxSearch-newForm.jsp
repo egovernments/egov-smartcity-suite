@@ -108,7 +108,7 @@
                             <div class="col-md-4 add-margin">
                                 <input type="text" name="oldConsumerNumber" id="oldConsumerNumber"
                                        class="form-control patternvalidation" 
-                                       maxlength="15" id="app-oldcode"/>
+                                       maxlength="50" id="app-oldcode"/>
                             </div>
                         </div>
                     </c:if>
