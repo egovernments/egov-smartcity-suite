@@ -77,7 +77,7 @@
 		<div class="col-sm-3">
           <form:hidden path="zone" id="txt-zoneid" />
 			
-			<form:input path="zone.name" id="txt-zone" type="text" class="form-control low-width patternvalidation" readonly="true" data-pattern="decimalvalue" placeholder="" autocomplete="off" required="required"/>
+			<form:input path="zone.name" id="txt-zone" type="text" class="form-control low-width patternvalidation" disabled="true" data-pattern="decimalvalue" placeholder="" autocomplete="off" required="required"/>
             <form:errors path="zone" cssClass="add-margin error-msg"/>
 		</div>
 		</div>
