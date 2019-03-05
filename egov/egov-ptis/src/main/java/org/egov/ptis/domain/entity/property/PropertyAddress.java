@@ -47,8 +47,13 @@
  */
 package org.egov.ptis.domain.entity.property;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.AddressType;
+
+import static java.util.stream.Collectors.joining;
+
+import java.util.stream.Stream;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -62,6 +67,14 @@ public class PropertyAddress extends Address {
     
     public PropertyAddress() {
         setType(AddressType.PROPERTYADDRESS);
+    }
+    
+    @Override
+    public String toString() {
+        return Stream
+                .of(getHouseNoBldgApt(), getAreaLocalitySector(), getStreetRoadLine(), getLandmark(),
+                        getCityTownVillage(), getPostOffice(), getSubdistrict(), getDistrict(), getState(), getCountry(), getPinCode())
+                .filter(StringUtils::isNotBlank).collect(joining(", "));
     }
 
 }
