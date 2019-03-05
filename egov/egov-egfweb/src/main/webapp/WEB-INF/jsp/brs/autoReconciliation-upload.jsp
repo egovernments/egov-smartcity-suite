@@ -80,6 +80,11 @@
 		
 		
 		document.forms[0].action='autoReconciliation-upload.action';
+		$(document.forms[0]).append($('<input>', {
+            type : 'hidden',
+            name : '${_csrf.parameterName}',
+            value : '${_csrf.token}'
+        }));
         document.forms[0].submit();
      	
 	}

@@ -53,11 +53,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.egov.egf.commons.bank.service.CreateBankService;
 import org.egov.egf.commons.bankbranch.service.CreateBankBranchService;
-import org.egov.egf.web.actions.brs.AutoReconcileHelper;
 import org.egov.egf.web.controller.bankstatement.adaptor.DocumentUploadJsonAdaptor;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.model.bills.DocumentUpload;
 import org.egov.model.brs.BankStatementUploadFile;
+import org.egov.services.brs.AutoReconcileService;
 import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -87,7 +87,7 @@ public class BankStatementUploadSearchController {
     @Autowired
     private CreateBankBranchService createBankBranchService;
     @Autowired
-    private AutoReconcileHelper autoReconcileHelper;
+    private AutoReconcileService autoReconcileHelper;
     @Autowired
     private FileStoreService fileStoreService;
 

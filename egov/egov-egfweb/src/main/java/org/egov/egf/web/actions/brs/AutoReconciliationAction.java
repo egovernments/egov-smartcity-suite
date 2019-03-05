@@ -61,6 +61,7 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.model.brs.AutoReconcileBean;
+import org.egov.services.brs.AutoReconcileService;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,7 +134,7 @@ public class AutoReconciliationAction extends BaseFormAction {
     private BigDecimal notInStatementNet;
     private BigDecimal bankBookBalance;
     @Autowired
-    private AutoReconcileHelper autoReconcileHelper;
+    private AutoReconcileService autoReconcileHelper;
     
     @Autowired
     private BankHibernateDAO bankHibernateDAO;

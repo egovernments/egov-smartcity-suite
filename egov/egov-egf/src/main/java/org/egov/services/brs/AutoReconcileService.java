@@ -46,7 +46,7 @@
  *
  */
 
-package org.egov.egf.web.actions.brs;
+package org.egov.services.brs;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
@@ -95,10 +95,11 @@ import java.util.*;
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class AutoReconcileHelper {
+@Transactional(readOnly = true)
+public class AutoReconcileService {
 
     private static final String DID_NOT_FIND_MATCH_IN_BANKBOOK = "did not find match in Bank Book  (InstrumentHeader)";
-    private static final Logger LOGGER = LoggerFactory.getLogger(AutoReconciliationAction.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AutoReconcileService.class);
     private static final int ACCOUNTNUMBER_ROW_INDEX = 2;
     private static final int STARTOF_DETAIL_ROW_INDEX = 8;
     private static final int TXNDT_INDEX = 1;
@@ -358,9 +359,10 @@ public class AutoReconcileHelper {
 
     private boolean alreadyUploaded(final String dateStr) {
         final List list = persistenceService.getSession()
-                .createNativeQuery("select id from egf_brs_bankstatements where accountid=:accountId and txdate=to_date(:date, dateInDotFormat)")
+                .createNativeQuery("select id from egf_brs_bankstatements where accountid=:accountId and txdate=to_date(:date, :dateInDotFormat)")
                 .setParameter("accountId", accountId, IntegerType.INSTANCE)
                 .setParameter("date", dateStr, StringType.INSTANCE)
+                .setParameter("dateInDotFormat", dateInDotFormat, StringType.INSTANCE)
                 .list();
         if (list.size() >= 1)
             return true;
@@ -467,7 +469,7 @@ public class AutoReconcileHelper {
 
         StringBuilder statusQury = new StringBuilder();
         statusQury.append("select id from EgwStatus where upper(moduletype)=upper(:instrument) and")
-                .append("upper(description)=upper(:description)");
+                .append(" upper(description)=upper(:description)");
         final Query query = persistenceService.getSession().createQuery(statusQury.toString())
                 .setParameter("instrument", "instrument", StringType.INSTANCE)
                 .setParameter("description", FinancialConstants.INSTRUMENT_RECONCILED_STATUS, StringType.INSTANCE);
@@ -601,7 +603,7 @@ public class AutoReconcileHelper {
                 .setParameter("type", type, StringType.INSTANCE)
                 .setParameter("fromDate", fromDate, DateType.INSTANCE)
                 .setParameter("toDate", toDate, DateType.INSTANCE)
-                .setParameter("accountId", accountId, LongType.INSTANCE);
+                .setParameter("accountId", accountId, IntegerType.INSTANCE);
         markQuery.executeUpdate();
     }
 
@@ -856,6 +858,7 @@ public class AutoReconcileHelper {
         // LOGGER.error("notInStatementTotalCredit=="+notInStatementTotalCredit+"           "+"notInStatementTotalDebit=="+notInStatementTotalDebit
         // +"notInStatementNet                       "+notInStatementNet);
         // for match
+        entriesNotInBankStamentStr = new StringBuilder();
         entriesNotInBankStamentStr.append("select  sum(instrumentamount) as \"credit\"  from egf_instrumentheader  where bankaccountid=:accountId and instrumentdate BETWEEN")
                 .append(" :fromDate and :toDate and ispaycheque='0' and id_status=(select id from egw_status where moduletype='Instrument' and description='Deposited')")
                 .append(" and instrumentnumber is not null and instrumentamount is not null and instrumentnumber||'-'||instrumentamount")
@@ -1020,7 +1023,7 @@ public class AutoReconcileHelper {
             duplicates.append("select instrumentNo,debit,accountId")
                     .append(String.format(" from %s", TABLENAME))
                     .append(" where accountId=:accountId and debit>0 and action=:action")
-                    .append("' group by  instrumentNo,debit,accountId having count(*)>1");
+                    .append(" group by  instrumentNo,debit,accountId having count(*)>1");
 
             final NativeQuery paymentDuplicateChequesQuery = persistenceService.getSession().createNativeQuery(duplicates.toString());
             paymentDuplicateChequesQuery.addScalar("instrumentNo")
@@ -1049,6 +1052,7 @@ public class AutoReconcileHelper {
 
             }
             // this portion is for receipts instrumentNo,credit,accountId combination should be unique else mark it duplicate
+            duplicates = new StringBuilder();
             duplicates.append("select instrumentNo,credit,accountId")
                     .append(String.format(" from %s", TABLENAME))
                     .append(" where accountid=:accountId and  credit>0 and action=:action")
