@@ -225,40 +225,36 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
                 if (entry.length == 2)
                     responseMap.put(entry[0].trim(), entry[1].trim());
             }
-            if (responseMap.containsKey(SBIMOPS_DTID) && responseMap.containsKey(SBIMOPS_STATUS)) {
-                sbiPaymentResponse.setAuthStatus(getTransactionStatus(responseMap.get(SBIMOPS_STATUS)));
-                if (isNotBlank(sbiPaymentResponse.getAuthStatus()) &&
-                        sbiPaymentResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_FAILED)
-                        && (!responseMap.get(SBIMOPS_STATUS).equals("F")))
-                    LOGGER.error("CFMSFAILED TRANSACTION RESPONSE: " + response);
-                sbiPaymentResponse.setErrorDescription(responseMap.get(SBIMOPS_STATUS));
-                final String[] consumercodeTransactionId = responseMap.get(SBIMOPS_DTID)
-                        .split(CollectionConstants.SEPARATOR_HYPHEN);
-                sbiPaymentResponse.setReceiptId(consumercodeTransactionId[0]);
-                sbiPaymentResponse.setAdditionalInfo6(consumercodeTransactionId[1]);
 
-                if (sbiPaymentResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS)) {
-                    sbiPaymentResponse.setTxnAmount(new BigDecimal(responseMap.get(SBIMOPS_TA)));
-                    sbiPaymentResponse.setTxnReferenceNo(responseMap.get(SBIMOPS_CFMS_TRID));
-                    final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("ddMMyyyyHHmmss", Locale.getDefault());
-                    Date transDate = null;
-                    try {
-                        transDate = simpleDateFormat.parse(responseMap.get(SBIMOPS_BANKTIME_STAMP));
-                        sbiPaymentResponse.setTxnDate(transDate);
-                    } catch (final ParseException e) {
-                        LOGGER.error(
-                                "Error in parsing transaction date [" + responseMap.get(SBIMOPS_BANKTIME_STAMP)
-                                        + "]",
-                                e);
-                        throw new ApplicationRuntimeException(".transactiondate.parse.error", e);
-                    }
-                    if (LOGGER.isDebugEnabled())
-                        LOGGER.debug("End SbimopsAdaptor-parsePaymentResponse");
+            sbiPaymentResponse.setAuthStatus(getTransactionStatus(responseMap.get(SBIMOPS_STATUS)));
+            if (isNotBlank(sbiPaymentResponse.getAuthStatus()) &&
+                    sbiPaymentResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_FAILED)
+                    && (!responseMap.get(SBIMOPS_STATUS).equals("F")))
+                LOGGER.error("CFMSFAILED TRANSACTION RESPONSE: " + response);
+            sbiPaymentResponse.setErrorDescription(responseMap.get(SBIMOPS_STATUS));
+            final String[] consumercodeTransactionId = responseMap.get(SBIMOPS_DTID)
+                    .split(CollectionConstants.SEPARATOR_HYPHEN);
+            sbiPaymentResponse.setReceiptId(consumercodeTransactionId[0]);
+            sbiPaymentResponse.setAdditionalInfo6(consumercodeTransactionId[1]);
 
+            if (sbiPaymentResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS)) {
+                sbiPaymentResponse.setTxnAmount(new BigDecimal(responseMap.get(SBIMOPS_TA)));
+                sbiPaymentResponse.setTxnReferenceNo(responseMap.get(SBIMOPS_CFMS_TRID));
+                final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("ddMMyyyyHHmmss", Locale.getDefault());
+                Date transDate = null;
+                try {
+                    transDate = simpleDateFormat.parse(responseMap.get(SBIMOPS_BANKTIME_STAMP));
+                    sbiPaymentResponse.setTxnDate(transDate);
+                } catch (final ParseException e) {
+                    LOGGER.error(
+                            "Error in parsing transaction date [" + responseMap.get(SBIMOPS_BANKTIME_STAMP)
+                                    + "]",
+                            e);
+                    throw new ApplicationRuntimeException(".transactiondate.parse.error", e);
                 }
-            } else {
-                LOGGER.info("Sbimops relatime transaction response not contains transaction id or status");
-                throw new ApplicationRuntimeException("SBIMOPS response not contains transaction id or status");
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("End SbimopsAdaptor-parsePaymentResponse");
+
             }
         } else {
             LOGGER.info("Sbimops relatime transaction response is null or empty");
@@ -278,40 +274,17 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
             LOGGER.info("Sbimops reconciliation response is null");
             throw new ApplicationRuntimeException("SBIMOPS reconciliation response is null.");
         } else {
-            Map<String, String> responseParameterMap = null;
-            try {
-                responseParameterMap = prepareResponseMap(response);
-            } catch (final ApplicationRuntimeException ex) {
-                // Remove this code after fixing production issue.
-                LOGGER.error("Parsing error Request:" + prepeareReconciliationRequest(onlinePayment));
-                CloseableHttpResponse response_debug = reconciliationResponse(onlinePayment);
-                try {
-                    if (response_debug != null) {
-                        InputStreamReader inputStreamReader = new InputStreamReader(response_debug.getEntity().getContent());
-                        BufferedReader reader_debug = new BufferedReader(inputStreamReader);
-                        LOGGER.error("Parsing error Response:" + reader_debug.readLine());
-                    }
-                } catch (UnsupportedOperationException | IOException e) {
-                    LOGGER.error("SBIMOPS reconciliation, error while reading the response content", e);
-                }
-            }
-            if (LOGGER.isInfoEnabled())
-                LOGGER.info("Sbimops reconciliation transaction response : " + responseParameterMap.toString());
+            final Map<String, String> responseParameterMap = prepareResponseMap(response);
             sbimopsResponse.setAdditionalInfo6(onlinePayment.getReceiptHeader().getConsumerCode().replace("-", "")
                     .replace("/", ""));
             sbimopsResponse.setReceiptId(onlinePayment.getReceiptHeader().getId().toString());
-
             if (responseParameterMap != null && responseParameterMap.containsKey(SBIMOPS_STATUS.toUpperCase())) {
+                if (LOGGER.isInfoEnabled())
+                    LOGGER.info("Sbimops reconciliation transaction response : " + responseParameterMap.toString());
+
                 final String transactionStatus = responseParameterMap.get(SBIMOPS_STATUS.toUpperCase());
                 sbimopsResponse.setAuthStatus(getTransactionStatus(transactionStatus));
                 sbimopsResponse.setErrorDescription(transactionStatus);
-
-                if (isNotBlank(sbimopsResponse.getAuthStatus()) &&
-                        sbimopsResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_FAILED)
-                        && (!responseParameterMap.get(SBIMOPS_STATUS.toUpperCase()).equals("F"))) {
-                    LOGGER.error("Request for failed transaction response:" + prepeareReconciliationRequest(onlinePayment));
-                    LOGGER.error("CFMSFAILED TRANSACTION RESPONSE: " + responseParameterMap.toString());
-                }
                 if (sbimopsResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS)) {
                     sbimopsResponse
                             .setTxnAmount(new BigDecimal(Double.valueOf(responseParameterMap.get(SBIMOPS_TAMT))));
@@ -379,14 +352,11 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
 
         if (LOGGER.isInfoEnabled())
             LOGGER.info("SBIMOPS reconciliation request parameters:" + requestJson.toString());
-
-        LOGGER.error("Request for reconciliation:" + requestJson.toString());
         return requestJson.toString();
     }
 
     private Map<String, String> prepareResponseMap(CloseableHttpResponse response) {
         try {
-
             InputStreamReader inputStreamReader = new InputStreamReader(response.getEntity().getContent());
             BufferedReader reader = new BufferedReader(inputStreamReader);
 
@@ -415,8 +385,8 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
             }
         } catch (IOException e) {
             LOGGER.error("SBIMOPS reconciliation, error while reading the response content", e);
-            throw new ApplicationRuntimeException(" SBIMOPS reconciliation, error while reading the response content", e);
         }
+        return null;
     }
 
     /**
