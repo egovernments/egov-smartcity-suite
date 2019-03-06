@@ -111,21 +111,20 @@
 </div>
 
 <div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left">Search Result</div>
 	<div class="col-md-12 report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl" id="tblSearchTrade">
 			<thead>
 				<tr>
-					<th>Application Number</th>
-					<th>TL Number</th>
-					<th>Trade Owner</th>
-					<th>Mobile Number</th>
-                    <th>Status</th>
-					<th>PT Assessment No.</th>
-					<th>Arrears Demand</th>
-					<th>Current Demand</th>
-					<th>Total Collection</th>
-					<th>Action</th>
+					<th><spring:message code="license.applicationnumber"/></th>
+					<th><spring:message code="lbl.license.no"/></th>
+					<th><spring:message code="lbl.trade.owner"/></th>
+					<th><spring:message code="search.licensee.mobileNo"/></th>
+					<th><spring:message code="search.license.status"/></th>
+					<th><spring:message code="search.license.propertyNo"/></th>
+					<th><spring:message code="lbl.arrears.fee"/></th>
+					<th><spring:message code="lbl.current.fee"/></th>
+					<th><spring:message code="lbl.total.fee.collected"/></th>
+					<th><spring:message code="lbl.action"/></th>
 				</tr>
 			</thead>
 		</table>
