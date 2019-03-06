@@ -102,7 +102,7 @@ public class MarriageRegistration extends StateAware<Position> {
     private MarriageAct marriageAct;
 
     @SafeHtml
-    @Length(max = 100)
+    @Length(max = 300)
     @NotNull
     private String placeOfMarriage;
 
@@ -111,7 +111,7 @@ public class MarriageRegistration extends StateAware<Position> {
     private String venue;
 
     @NotNull
-    @Length(max = 100)
+    @Length(max = 300)
     private String street;
 
     @NotNull
