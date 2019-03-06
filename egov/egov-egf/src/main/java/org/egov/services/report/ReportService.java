@@ -187,13 +187,13 @@ public abstract class ReportService {
                 && balanceSheet.getDepartment().getId() != null
                 && balanceSheet.getDepartment().getId() != 0) {
             query.append(" and ts.departmentid=:deptId");
-            queryParams.put("deptId", balanceSheet.getDepartment().getId().toString());
+            queryParams.put("deptId", balanceSheet.getDepartment().getId());
         }
         if (balanceSheet.getFunction() != null
                 && balanceSheet.getFunction().getId() != null
                 && balanceSheet.getFunction().getId() != 0) {
             query.append(" and ts.functionid=:functionId");
-            queryParams.put("functionId", balanceSheet.getFunction().getId().toString());
+            queryParams.put("functionId", balanceSheet.getFunction().getId());
         }
 /*        if (balanceSheet.getFunctionary() != null
                 && balanceSheet.getFunctionary().getId() != null
@@ -209,7 +209,7 @@ public abstract class ReportService {
                 && balanceSheet.getFund().getId() != null
                 && balanceSheet.getFund().getId() != 0) {
             query.append(" and ts.fundid=:fundId");
-            queryParams.put("fundId", balanceSheet.getFund().getId().toString());
+            queryParams.put("fundId", balanceSheet.getFund().getId());
         }
         queryMap.put(query.toString(), queryParams);
         return queryMap;
