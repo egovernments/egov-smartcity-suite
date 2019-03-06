@@ -127,6 +127,8 @@ public class PreApprovedActionHelper {
             else
             {
                 voucherHeader = journalVoucherActionHelper.transitionWorkFlow(voucherHeader, workflowBean);
+                if (!voucherHeader.isValidApprover())
+                    return voucherHeader;
                 voucherService.applyAuditing(voucherHeader.getState());
             }
             voucherService.persist(voucherHeader);

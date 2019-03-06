@@ -241,8 +241,10 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
             if (null == billregister.getState()) {
                 final WorkFlowMatrix wfmatrix = billRegisterWorkflowService.getWfMatrix(billregister.getStateType(), null,
                         null, null, workflowBean.getCurrentState(), null);
-                if (!eisCommonService.isValidAppover(wfmatrix, pos))
-                	return billregister;
+                if (!eisCommonService.isValidAppover(wfmatrix, pos)) {
+                    billregister.setValidApprover(Boolean.FALSE);
+                    return billregister;
+                }
                 billregister.transition().start().withSenderName(user.getName())
                         .withComments(workflowBean.getApproverComments())
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
