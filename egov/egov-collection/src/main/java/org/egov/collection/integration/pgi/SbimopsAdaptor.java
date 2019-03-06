@@ -274,30 +274,53 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
             LOGGER.info("Sbimops reconciliation response is null");
             throw new ApplicationRuntimeException("SBIMOPS reconciliation response is null.");
         } else {
-            final Map<String, String> responseParameterMap = prepareResponseMap(response);
+            Map<String, String> responseParameterMap = null;
+            try {
+                responseParameterMap = prepareResponseMap(response);
+            } catch (final ApplicationRuntimeException ex) {
+                // Remove this code after fixing production issue.
+                LOGGER.error("Parsing error Request:" + prepeareReconciliationRequest(onlinePayment));
+                CloseableHttpResponse response_debug = reconciliationResponse(onlinePayment);
+                try {
+                    if (response_debug != null) {
+                        InputStreamReader inputStreamReader = new InputStreamReader(response_debug.getEntity().getContent());
+                        BufferedReader reader_debug = new BufferedReader(inputStreamReader);
+                        LOGGER.error("Parsing error Response:" + reader_debug.readLine());
+                    }
+                } catch (UnsupportedOperationException | IOException e) {
+                    LOGGER.error("SBIMOPS reconciliation, error while reading the response content", e);
+                }
+            }
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("Sbimops reconciliation transaction response : " + responseParameterMap.toString());
             sbimopsResponse.setAdditionalInfo6(onlinePayment.getReceiptHeader().getConsumerCode().replace("-", "")
                     .replace("/", ""));
             sbimopsResponse.setReceiptId(onlinePayment.getReceiptHeader().getId().toString());
-            final String transactionStatus = responseParameterMap.get(SBIMOPS_STATUS.toUpperCase());
-            sbimopsResponse.setAuthStatus(getTransactionStatus(transactionStatus));
-            sbimopsResponse.setErrorDescription(transactionStatus);
 
-            if (isNotBlank(sbimopsResponse.getAuthStatus()) &&
-                    sbimopsResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_FAILED)
-                    && (!responseParameterMap.get(SBIMOPS_STATUS.toUpperCase()).equals("F"))) {
-                LOGGER.error("Request for failed transaction response:" + prepeareReconciliationRequest(onlinePayment));
-                LOGGER.error("CFMSFAILED TRANSACTION RESPONSE: " + responseParameterMap.toString());
-            }
-            if (sbimopsResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS)) {
-                sbimopsResponse
-                        .setTxnAmount(new BigDecimal(Double.valueOf(responseParameterMap.get(SBIMOPS_TAMT))));
-                sbimopsResponse.setTxnReferenceNo(responseParameterMap.get(SBIMOPS_CFMSID).toString());
-                // CFMS is not sending the bank transaction date. Setting receipt date as transaction date.
-                sbimopsResponse.setTxnDate(onlinePayment.getReceiptHeader().getReceiptDate());
-                if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("End SbimopsAdaptor-parsePaymentResponse");
+            if (responseParameterMap != null & responseParameterMap.containsKey(SBIMOPS_STATUS.toUpperCase())) {
+                final String transactionStatus = responseParameterMap.get(SBIMOPS_STATUS.toUpperCase());
+                sbimopsResponse.setAuthStatus(getTransactionStatus(transactionStatus));
+                sbimopsResponse.setErrorDescription(transactionStatus);
+
+                if (isNotBlank(sbimopsResponse.getAuthStatus()) &&
+                        sbimopsResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_FAILED)
+                        && (!responseParameterMap.get(SBIMOPS_STATUS.toUpperCase()).equals("F"))) {
+                    LOGGER.error("Request for failed transaction response:" + prepeareReconciliationRequest(onlinePayment));
+                    LOGGER.error("CFMSFAILED TRANSACTION RESPONSE: " + responseParameterMap.toString());
+                }
+                if (sbimopsResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS)) {
+                    sbimopsResponse
+                            .setTxnAmount(new BigDecimal(Double.valueOf(responseParameterMap.get(SBIMOPS_TAMT))));
+                    sbimopsResponse.setTxnReferenceNo(responseParameterMap.get(SBIMOPS_CFMSID).toString());
+                    // CFMS is not sending the bank transaction date. Setting receipt date as transaction date.
+                    sbimopsResponse.setTxnDate(onlinePayment.getReceiptHeader().getReceiptDate());
+                    if (LOGGER.isDebugEnabled())
+                        LOGGER.debug("End SbimopsAdaptor-parsePaymentResponse");
+                }
+            } else {
+                // If not getting the status in the response then keep the transaction as pending
+                sbimopsResponse.setAuthStatus(getTransactionStatus(CollectionConstants.PGI_AUTHORISATION_CODE_PENDING));
+                sbimopsResponse.setErrorDescription(CollectionConstants.PGI_AUTHORISATION_CODE_PENDING);
             }
             return sbimopsResponse;
         }
@@ -352,6 +375,8 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
 
         if (LOGGER.isInfoEnabled())
             LOGGER.info("SBIMOPS reconciliation request parameters:" + requestJson.toString());
+
+        LOGGER.error("Request for reconciliation:" + requestJson.toString());
         return requestJson.toString();
     }
 

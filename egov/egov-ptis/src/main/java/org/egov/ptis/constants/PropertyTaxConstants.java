@@ -731,7 +731,7 @@ public interface PropertyTaxConstants {
     public static final String ADDTIONAL_RULE_BIFURCATE_ASSESSMENT = "BIFURCATE ASSESSMENT";
     public static final String ADDTIONAL_RULE_PROPERTY_TRANSFER = "PROPERTY TRANSFER";
     public static final String ADDTIONAL_RULE_PARTIAL_TRANSFER = "PARTIAL TRANSFER";
-    public static final String ADDTIONAL_RULE_FULL_TRANSFER = "FULL TRANSFER";
+    public static final String ADDITIONAL_RULE_FULL_TRANSFER = "FULL TRANSFER";
     public static final String ADDTIONAL_RULE_REGISTERED_TRANSFER = "REGISTERED TRANSFER";
     public static final String WFSTATUS = "WFSTATUS";
     public static final String WFOWNER = "WFOWNER";

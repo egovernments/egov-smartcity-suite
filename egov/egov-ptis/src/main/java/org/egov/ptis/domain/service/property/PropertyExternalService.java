@@ -770,7 +770,7 @@ public class PropertyExternalService {
                 totalAmountToBePaid = totalAmountToBePaid.subtract(billDetails.getDrAmount());
             }
         }
-
+        totalAmountToBePaid = totalAmountToBePaid.setScale(0, BigDecimal.ROUND_CEILING);
         final CollectionHelper collectionHelper = new CollectionHelper(egBill);
         final Map<String, String> paymentDetailsMap = new HashMap<>();
         paymentDetailsMap.put(TOTAL_AMOUNT, payPropertyTaxDetails.getPaymentAmount().toString());

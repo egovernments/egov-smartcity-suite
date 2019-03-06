@@ -220,7 +220,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
                 }
             }
         }
-        billable.setMinAmountPayable(minAmountPayable);
+        billable.setMinAmountPayable(minAmountPayable.setScale(0, BigDecimal.ROUND_CEILING));
         addBillDetailsForRebate(billDetails, earlyPayRebate, currInstallments, orderMap);
 
         getPenaltyAndRebateDmd(billDetails, billable, installmentPenaltyAndRebate, ptDemand, orderMap);

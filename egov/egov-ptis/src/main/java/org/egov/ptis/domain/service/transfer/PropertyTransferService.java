@@ -84,7 +84,6 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
-import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.Document;
@@ -116,6 +115,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -128,11 +130,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_REGISTERED_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
+import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_AUTO;
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.MUTATIONRS_DECREE_BY_CIVIL_COURT;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_FULL_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_REGISTERED_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_MUTATION_RSN;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_GENERATE_TRANSFER_NOTICE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
 
 public class PropertyTransferService {
 
@@ -259,7 +270,7 @@ public class PropertyTransferService {
         propertyMutation.setMutationDate(new Date());
         propertyService.updateIndexes(propertyMutation, propertyMutation.getType()
                 .equalsIgnoreCase(ADDTIONAL_RULE_REGISTERED_TRANSFER)
-                        ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER);
+                ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER);
         waterChargesIntegrationService.updateConsumerIndex(propertyService.loadAssessmentDetails(basicProperty));
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(propertyMutation.getSource()))
             propertyService.updatePortal(propertyMutation, propertyMutation.getType()
@@ -270,7 +281,7 @@ public class PropertyTransferService {
 
     @Transactional
     public void updatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation,
-            final String oldTransferReason) {
+                                       final String oldTransferReason) {
         processAndStoreDocument(propertyMutation, oldTransferReason);
         updateMutationFee(propertyMutation);
         defineDocumentValue(propertyMutation);
@@ -279,7 +290,7 @@ public class PropertyTransferService {
         updateMutationReason(propertyMutation);
         propertyService.updateIndexes(propertyMutation, propertyMutation.getType()
                 .equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_REGISTERED_TRANSFER)
-                        ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER);
+                ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER);
         mutationRegistrationService.persist(propertyMutation.getMutationRegistrationDetails());
         basicPropertyService.persist(basicProperty);
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(propertyMutation.getSource()))
@@ -293,7 +304,7 @@ public class PropertyTransferService {
         updateMutationFee(propertyMutation);
         propertyService.updateIndexes(propertyMutation, propertyMutation.getType()
                 .equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_REGISTERED_TRANSFER)
-                        ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER);
+                ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER);
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(propertyMutation.getSource()))
             propertyService.updatePortal(propertyMutation, propertyMutation.getType()
                     .equalsIgnoreCase(ADDTIONAL_RULE_REGISTERED_TRANSFER)
@@ -312,7 +323,7 @@ public class PropertyTransferService {
     }
 
     public double calculateMutationFee(final double marketValue, final String transferReason,
-            final PropertyMutation propertyMutation) {
+                                       final PropertyMutation propertyMutation) {
         final int transferedInMonths = Months.monthsBetween(
                 new LocalDate(propertyMutation.getMutationDate()).withDayOfMonth(1),
                 new LocalDate(propertyMutation.getDeedDate()).withDayOfMonth(1)).getMonths();
@@ -358,7 +369,7 @@ public class PropertyTransferService {
     }
 
     public ReportOutput generateAcknowledgement(final BasicProperty basicProperty,
-            final PropertyMutation propertyMutation) {
+                                                final PropertyMutation propertyMutation) {
         final Map<String, Object> reportParams = new HashMap<>();
         final PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();
         ackBean.setUlbLogo(cityService.getCityLogoURL());
@@ -368,20 +379,20 @@ public class PropertyTransferService {
             ackBean.setApplicationType(PropertyTaxConstants.ALL_READY_REGISTER);
             ackBean.setTransferpropertyText("");
             ackBean.setTransferpropertyTextEnd("");
-			ackBean.setNoOfDays(((PtApplicationType) entityManager.createNamedQuery(PtApplicationType.BY_CODE)
-					.setParameter("code", "REGISTERED TRANSFER").getSingleResult()).getResolutionTime().toString());
+            ackBean.setNoOfDays(((PtApplicationType) entityManager.createNamedQuery(PtApplicationType.BY_CODE)
+                    .setParameter("code", "REGISTERED TRANSFER").getSingleResult()).getResolutionTime().toString());
         } else if (propertyMutation.getType().equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_PARTIAL_TRANSFER)) {
             ackBean.setApplicationType(PropertyTaxConstants.PARTT);
             ackBean.setTransferpropertyText(PropertyTaxConstants.TTTEXT);
             ackBean.setTransferpropertyTextEnd(PropertyTaxConstants.TTTEXTEND);
-			ackBean.setNoOfDays(((PtApplicationType) entityManager.createNamedQuery(PtApplicationType.BY_CODE)
-					.setParameter("code", "PARTIAL TRANSFER").getSingleResult()).getResolutionTime().toString());
-        } else if (propertyMutation.getType().equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER)) {
+            ackBean.setNoOfDays(((PtApplicationType) entityManager.createNamedQuery(PtApplicationType.BY_CODE)
+                    .setParameter("code", "PARTIAL TRANSFER").getSingleResult()).getResolutionTime().toString());
+        } else if (propertyMutation.getType().equalsIgnoreCase(PropertyTaxConstants.ADDITIONAL_RULE_FULL_TRANSFER)) {
             ackBean.setApplicationType(PropertyTaxConstants.FULLTT);
             ackBean.setTransferpropertyText(PropertyTaxConstants.TTTEXT);
             ackBean.setTransferpropertyTextEnd(PropertyTaxConstants.TTTEXTEND);
             ackBean.setNoOfDays(((PtApplicationType) entityManager.createNamedQuery(PtApplicationType.BY_CODE)
-					.setParameter("code", "FULL TRANSFER").getSingleResult()).getResolutionTime().toString());
+                    .setParameter("code", "FULL TRANSFER").getSingleResult()).getResolutionTime().toString());
         }
         ackBean.setApplicationNo(propertyMutation.getApplicationNo());
         ackBean.setApplicationDate(DateUtils.getDefaultFormattedDate(propertyMutation.getMutationDate()));
@@ -400,8 +411,8 @@ public class PropertyTransferService {
 
     @Transactional
     public ReportOutput generateTransferNotice(final BasicProperty basicProperty,
-            final PropertyMutation propertyMutation, final String actionType,
-            final boolean isCorporation) {
+                                               final PropertyMutation propertyMutation, final String actionType,
+                                               final boolean isCorporation) {
         final PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_MUTATION_CERTIFICATE,
                 propertyMutation.getApplicationNo());
         ReportOutput reportOutput = new ReportOutput();
@@ -424,7 +435,7 @@ public class PropertyTransferService {
             basicProperty.setUnderWorkflow(false);
             propertyService.updateIndexes(propertyMutation, propertyMutation.getType()
                     .equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_REGISTERED_TRANSFER)
-                            ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER);
+                    ? NATURE_REGISTERED_TRANSFER : NATURE_FULL_TRANSFER);
         } else {
             final PropertyAckNoticeInfo noticeBean = new PropertyAckNoticeInfo();
             noticeBean.setMunicipalityName(cityService.getMunicipalityName());
@@ -498,7 +509,7 @@ public class PropertyTransferService {
     }
 
     private void createUserIfNotExist(final PropertyMutation propertyMutation,
-            final List<PropertyMutationTransferee> transferees) {
+                                      final List<PropertyMutationTransferee> transferees) {
         propertyMutation.getTransfereeInfos().clear();
         for (final PropertyMutationTransferee transferee : transferees) {
             if (transferee != null) {
@@ -554,8 +565,8 @@ public class PropertyTransferService {
     private void processAndStoreDocument(final PropertyMutation propertyMutation, final String oldTransferReason) {
         if (StringUtils.isNotBlank(oldTransferReason)
                 && Arrays
-                        .asList(propertyMutation.getMutationReason().getCode(), oldTransferReason)
-                        .contains("SUCCESSION")
+                .asList(propertyMutation.getMutationReason().getCode(), oldTransferReason)
+                .contains("SUCCESSION")
                 && !oldTransferReason.equals(propertyMutation.getMutationReason().getCode()))
             propertyMutation.getDocuments().clear();
         if (propertyMutation.getDocuments().isEmpty() && !propertyMutation.getDocumentsProxy().isEmpty())
@@ -636,7 +647,7 @@ public class PropertyTransferService {
     }
 
     public PropertyMutation initiatePropertyTransfer(final BasicProperty basicproperty, final PropertyMutation propertyMutation,
-            final HashMap<String, String> meesevaParams) {
+                                                     final HashMap<String, String> meesevaParams) {
         initiatePropertyTransfer(basicproperty, propertyMutation);
         return propertyMutation;
     }
@@ -674,7 +685,7 @@ public class PropertyTransferService {
      * @throws ParseException
      */
     public NewPropertyDetails createPropertyMutation(final String assessmentNumber, final String mutationReasonCode,
-            final String deedNo, final String deedDate, final List<OwnerDetails> ownerDetailsList)
+                                                     final String deedNo, final String deedDate, final List<OwnerDetails> ownerDetailsList)
             throws ParseException {
         PropertyMutation propertyMutation = new PropertyMutation();
         NewPropertyDetails newPropertyDetails = null;
@@ -720,7 +731,7 @@ public class PropertyTransferService {
      * @return
      */
     private List<PropertyMutationTransferee> getTransfereesInfoList(final PropertyMutation propertyMutation,
-            final List<OwnerDetails> ownerDetailsList) {
+                                                                    final List<OwnerDetails> ownerDetailsList) {
         final List<PropertyMutationTransferee> transfereeInfoList = new ArrayList<>();
         for (final OwnerDetails ownerDetais : ownerDetailsList) {
             final PropertyMutationTransferee transfereeInfo = new PropertyMutationTransferee();
@@ -858,13 +869,13 @@ public class PropertyTransferService {
      * @return Assignment
      */
     public Assignment getAssignmentForThirdPartyByMutationType(final PropertyMutation propertyMutation,
-            final BasicProperty basicproperty, final User user) {
+                                                               final BasicProperty basicproperty, final User user) {
         if (propertyService.isCscOperator(user)) {
-            if (propertyMutation.getType().equals(PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER))
+            if (propertyMutation.getType().equals(PropertyTaxConstants.ADDITIONAL_RULE_FULL_TRANSFER))
                 return propertyTaxCommonUtils.getCommissionerAsgnForFullTransfer();
             else
                 return propertyService.getMappedAssignmentForCscOperator(basicproperty);
-        } else if (propertyMutation.getType().equals(PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER))
+        } else if (propertyMutation.getType().equals(PropertyTaxConstants.ADDITIONAL_RULE_FULL_TRANSFER))
             return propertyTaxCommonUtils.getCommissionerAsgnForFullTransfer();
         else
             return propertyService.getUserPositionByZone(basicproperty, false);
