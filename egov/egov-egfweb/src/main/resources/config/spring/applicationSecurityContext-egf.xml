@@ -78,7 +78,7 @@
                 <security:filter-chain pattern="/report/incomeExpenditureReport*.action" filters="none"/>
                 <security:filter-chain pattern="/report/balanceSheetReport*.action" filters="none"/>
                 <security:filter-chain pattern="/voucher/preApprovedVoucher-loadvoucherview.action" filters="none"/>
-                <security:filter-chain pattern="/payment/payment-view.action" filters="csrfFilter"/>
+                <!-- <security:filter-chain pattern="/payment/payment-view.action" filters="csrfFilter"/> -->
                 <security:filter-chain pattern="/report/billPaymentVoucherPrint*.action" filters="none"/>
                 <security:filter-chain pattern="/deduction/remitRecovery-beforeView.action" filters="none"/>
                 <security:filter-chain pattern="/bill/contingentBill-beforeView.action" filters="none"/>

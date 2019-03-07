@@ -290,11 +290,11 @@
 																			id="bankbranch" list="dropdownData.bankbranchList"
 																			listKey="id" listValue="bank.name+'-'+branchname"
 																			headerKey="-1" headerValue="----Choose----"
-																			onchange="loadBankAccount(this)"
+																			onchange="loadBankAccount(false)"
 																			value="%{bankbranch}" /></td>
 																	<egov:ajaxdropdown id="bankaccount"
 																		fields="['Text','Value']" dropdownId="bankaccount"
-																		url="voucher/common-ajaxLoadBankAccounts.action" />
+																		url="voucher/common-ajaxLoadBankAccounts.action" afterSuccess="setBankAccount"/>
 																	<td class="bluebox"><s:text
 																			name="payment.bankaccount" /><span
 																		class="mandatory1">*</span></td>
@@ -303,7 +303,7 @@
 																			list="dropdownData.bankaccountList" listKey="id"
 																			listValue="accountnumber+'---'+accounttype"
 																			headerKey="-1" headerValue="----Choose----"
-																			onChange="populateAvailableBalance(this);"
+																			onChange="populateAvailableBalance();"
 																			value="%{bankaccount}" /></td>
 																	<egov:updatevalues id="availableBalance"
 																		fields="['Text']"
@@ -549,17 +549,29 @@
 		}
 		
 		var vFixedDecimal = 2;
-		function loadBankAccount(obj)
-		{
+		var load = false;
+		function loadBankAccount(ld)
+		{	
+			load = ld;
 			var fund = 0;
 			<s:if test="%{shouldShowHeaderField('fund')}">
 				fund = <s:property value="%{billregister.egBillregistermis.fund.id}"/>;
 			</s:if>
 			var vTypeOfAccount = '<s:property value="%{typeOfAccount}"/>';
 			var billSubType = '<s:property value="%{billSubType}"/>';
+			var obj = document.getElementById("bankbranch");
 			populatebankaccount({branchId:obj.options[obj.selectedIndex].value+'&date='+new Date(), typeOfAccount:vTypeOfAccount,fundId:fund,billSubType:billSubType} );
 			//populatebankaccount({branchId:obj.options[obj.selectedIndex].value+'&date='+new Date()});
 		}
+		
+		function setBankAccount(req, res) {
+			var bankaccount = '<s:property value="%{bankaccount}"/>';
+			document.getElementById("bankaccount").value = bankaccount; 
+			if (load) {
+				populateAvailableBalance();
+			}
+		}
+
 		function updateHidden(obj)
 		{
 			if(obj.value=='' || isNaN(obj.value))
@@ -596,18 +608,18 @@
 		}
 
 
-		function populateAvailableBalance(accnumObj) 
+		function populateAvailableBalance() 
 		{
 					if (document.getElementById('voucherdate').value == '') {
 						bootbox.alert("Please Select the Voucher Date!!");
 						accnumObj.options.value = -1;
 						return;
 					}
-					if (accnumObj.options[accnumObj.selectedIndex].value == -1)
+					if ($("#bankaccount").val() == -1)
 						document.getElementById('availableBalance').value = '';
 					else
 						populateavailableBalance({
-							bankaccount : accnumObj.options[accnumObj.selectedIndex].value,
+							bankaccount : $("#bankaccount").val(),
 							voucherDate : document.getElementById('voucherdate').value
 									+ '&date=' + new Date()
 						});
@@ -642,6 +654,11 @@
 			if (jQuery("#bankBalanceCheck") == null || jQuery("#bankBalanceCheck").val() == "") {
 				disableForm();
 			}
+			<s:if test="%{bankbranch}">
+				<s:if test="%{bankaccount}">
+					loadBankAccount(true);
+				</s:if>
+			</s:if>
 		}
 		function onSubmit()
 		{

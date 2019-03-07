@@ -265,6 +265,8 @@ public class PaymentActionHelper {
                     FinancialConstants.CREATEDVOUCHERSTATUS);
         } else {
             paymentService.transitionWorkFlow(paymentheader, workflowBean);
+            if (!paymentheader.isValidApprover())
+                return paymentheader;
             paymentService.applyAuditing(paymentheader.getState());
         }
         paymentService.persist(paymentheader);

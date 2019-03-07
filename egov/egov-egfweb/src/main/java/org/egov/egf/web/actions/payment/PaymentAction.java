@@ -47,8 +47,21 @@
  */
 package org.egov.egf.web.actions.payment;
 
-import com.exilant.eGov.src.transactions.VoucherTypeForULB;
-import com.opensymphony.xwork2.validator.annotations.Validation;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -56,11 +69,17 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.*;
+import org.egov.commons.Bankaccount;
+import org.egov.commons.Bankbranch;
+import org.egov.commons.CFunction;
+import org.egov.commons.CVoucherHeader;
+import org.egov.commons.EgwStatus;
+import org.egov.commons.Fund;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.service.FunctionService;
 import org.egov.commons.utils.BankAccountType;
+import org.egov.egf.commons.CommonsUtil;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -70,6 +89,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.Page;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -91,16 +111,12 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.query.Query;
-import org.hibernate.type.ObjectType;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import com.exilant.eGov.src.transactions.VoucherTypeForULB;
+import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @ParentPackage("egov")
 @Validation
@@ -110,8 +126,11 @@ import java.util.*;
         @Result(name = "balance", location = "payment-balance.jsp"),
         @Result(name = "modify", location = "payment-modify.jsp"),
         @Result(name = "form", location = "payment-form.jsp"), @Result(name = "view", location = "payment-view.jsp"),
-        @Result(name = "list", location = "payment-list.jsp") })
+        @Result(name = "list", location = "payment-list.jsp"),
+        @Result(name = PaymentAction.UNAUTHORIZED, location = "../workflow/unauthorized.jsp")})
 public class PaymentAction extends BasePaymentAction {
+    protected static final String UNAUTHORIZED = "unuthorized";
+    private static final String INVALID_APPROVER = "invalid.approver";
     private final static String FORWARD = "Forward";
     private static final long serialVersionUID = 1L;
     private String expType, fromDate, toDate, mode, voucherdate, paymentMode, contractorIds = "", supplierIds = "",
@@ -137,6 +156,10 @@ public class PaymentAction extends BasePaymentAction {
     private DepartmentService departmentService;
     @Autowired
     private FunctionService functionService;
+    @Autowired
+    private SecurityUtils securityUtils;
+    @Autowired
+    private CommonsUtil commonsUtil;
 
     private Integer bankaccount, bankbranch;
     private Integer departmentId;
@@ -1088,6 +1111,10 @@ public class PaymentAction extends BasePaymentAction {
                 billregister.getEgBillregistermis()
                         .setFunction(functionService.findOne(Long.valueOf(parameters.get("function")[0].toString())));
             paymentheader = paymentService.createPayment(parameters, billList, billregister, workflowBean);
+            if (!paymentheader.isValidApprover()) {
+                addActionError(getText(INVALID_APPROVER));
+                return "form";
+            }
             miscBillList = paymentActionHelper.getPaymentBills(paymentheader);
             // sendForApproval();// this should not be called here as it is
             // public method which is called from jsp submit
@@ -1147,7 +1174,11 @@ public class PaymentAction extends BasePaymentAction {
         // this is to check if is not the create mode
         populateWorkflowBean();
         paymentheader = paymentActionHelper.sendForApproval(paymentheader, workflowBean);
-        paymentActionHelper.getPaymentBills(paymentheader);
+        miscBillList = paymentActionHelper.getPaymentBills(paymentheader);
+        if (!paymentheader.isValidApprover()) {
+            addActionError(getText(INVALID_APPROVER));
+            return VIEW;
+        }
         if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             addActionMessage(getText("payment.voucher.rejected", new String[] {
                     paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
@@ -1181,6 +1212,9 @@ public class PaymentAction extends BasePaymentAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting view...");
         paymentheader = getPayment();
+        
+        if (!commonsUtil.isApplicationOwner(securityUtils.getCurrentUser(), paymentheader))
+            return UNAUTHORIZED;
         /*
          * if (paymentheader.getState().getValue() != null && !paymentheader.getState().getValue().isEmpty() &&
          * paymentheader.getState().getValue().contains("Rejected")) { if (LOGGER.isDebugEnabled()) LOGGER.debug("Completed view."
@@ -1727,7 +1761,7 @@ public class PaymentAction extends BasePaymentAction {
         final List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
                 "DataEntryCutOffDate");
         if (cutOffDateconfigValue != null && !cutOffDateconfigValue.isEmpty()) {
-            if (null == paymentheader || null == paymentheader.getId()
+            if (null == paymentheader || null == paymentheader.getId() || null == paymentheader.getCurrentState()
                     || paymentheader.getCurrentState().getValue().endsWith("NEW"))
                 validActions = Arrays.asList(FORWARD, FinancialConstants.CREATEANDAPPROVE);
             else if (paymentheader.getCurrentState() != null)

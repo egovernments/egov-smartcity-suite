@@ -55,6 +55,7 @@ import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -76,6 +77,8 @@ public class Paymentheader extends StateAware<Position> {
     private Bankaccount bankaccount;
     private BigDecimal paymentAmount;
     private DrawingOfficer drawingOfficer;
+    @Transient
+    private Boolean validApprover = Boolean.TRUE;
 
     @Override
     public Long getId() {
@@ -157,4 +160,11 @@ public class Paymentheader extends StateAware<Position> {
         this.drawingOfficer = drawingOfficer;
     }
 
+    public Boolean isValidApprover() {
+        return validApprover;
+    }
+
+    public void setValidApprover(Boolean validApprover) {
+        this.validApprover = validApprover;
+    }
 }
