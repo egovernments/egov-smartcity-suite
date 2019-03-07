@@ -108,7 +108,8 @@ public class MarriageRegistration extends StateAware<Position> {
     private MarriageAct marriageAct;
 
     @SafeHtml
-    @Length(max = 100)
+    @Length(max = 300)
+    @NotNull
     private String placeOfMarriage;
 
     @SafeHtml
@@ -116,8 +117,8 @@ public class MarriageRegistration extends StateAware<Position> {
     private String venue;
 
     @NotNull
+    @Length(max = 300)
     @SafeHtml
-    @Length(max = 100)
     private String street;
 
     @NotNull
@@ -242,7 +243,7 @@ public class MarriageRegistration extends StateAware<Position> {
     @Column(name = "serialno", unique = true)
     @Pattern(regexp = NUMERIC, message = INVALID_NUMERIC)
     private String serialNo;
-    
+
     @SafeHtml
     @Pattern(regexp = NUMERIC, message = INVALID_NUMERIC)
     private String pageNo;
@@ -254,7 +255,7 @@ public class MarriageRegistration extends StateAware<Position> {
     @SafeHtml
     @Length(max = 15)
     private String source;
-    
+
     @Transient
     private boolean validApprover = true;
 

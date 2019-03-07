@@ -236,5 +236,5 @@ function goToAction(obj,uid, id) {
         window.open("/tl/license/generate-provisionalcertificate/" + uid);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Closure Endorsement Notice')
         window.open("/tl/license/closure/endorsementnotice/" + id, 'cen' + id);
-
+    $(obj).val('');
 }

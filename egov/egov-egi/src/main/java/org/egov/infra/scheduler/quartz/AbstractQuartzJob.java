@@ -65,7 +65,6 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 import javax.annotation.Resource;
 import java.util.List;
 
-import static java.lang.String.format;
 import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.egov.infra.utils.ApplicationConstant.MDC_APPNAME_KEY;
@@ -77,7 +76,6 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractQuartzJob.class);
     private static final long serialVersionUID = -3575280953294411371L;
-    private static final String APPNAME_FORMAT = "%s-%s";
 
     @Resource(name = "cities")
     private transient List<String> cities;
@@ -97,7 +95,7 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
     @Override
     protected void executeInternal(JobExecutionContext jobCtx) throws JobExecutionException {
         try {
-            MDC.put(MDC_APPNAME_KEY, format(APPNAME_FORMAT, moduleName, jobCtx.getJobDetail().getKey().getName()));
+            MDC.put(MDC_APPNAME_KEY, moduleName.toUpperCase());
             for (String tenant : this.cities) {
                 MDC.put(MDC_ULBCODE_KEY, tenant);
                 MDC.put(MDC_UID_KEY, randomUUID().toString());
