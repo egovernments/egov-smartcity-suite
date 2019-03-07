@@ -120,7 +120,7 @@
 	</label>
 	<div class="col-sm-3">
 		<form:input path="street" id="txt-street" type="text"
-			data-pattern="alphabetwithspecialcharacters"
+			data-pattern="alphanumericwithspecialcharacters"
 			class="form-control low-width patternvalidation" placeholder=""
 			maxlength="100" autocomplete="off" required="required" />
 		<form:errors path="street" cssClass="add-margin error-msg" />
@@ -216,6 +216,7 @@
 		<div class="col-sm-3">
 
 			<form:input path="placeOfMarriage" id="txt-placeofmrg" type="text"
+				data-pattern="alphanumericwithspecialcharacters"
 				class="form-control low-width patternvalidation addremoverequired"
 				maxlength="100" placeholder="" autocomplete="off" />
 

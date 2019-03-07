@@ -191,7 +191,7 @@
 		<form:textarea path="${witness}.contactInfo.residenceAddress"
 			id="${witness}.contactInfo.residenceAddress" type="text"
 			class="form-control low-width patternvalidation witness"
-			data-pattern="alphabetwithspecialcharacters" maxlength="250"
+			data-pattern="alphanumericwithspecialcharacters" maxlength="250"
 			placeholder="" autocomplete="off" required="required" />
 		<form:errors path="${witness}.contactInfo.residenceAddress"
 			cssClass="add-margin error-msg" />

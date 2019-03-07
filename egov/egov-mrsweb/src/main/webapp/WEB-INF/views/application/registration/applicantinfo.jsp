@@ -250,7 +250,7 @@
 		<form:textarea path="${applicant}.contactInfo.residenceAddress"
 			id="${applicant}.contactInfo.residenceAddress" type="text"
 			class="form-control low-width patternvalidation"
-			data-pattern="alphabetwithspecialcharacters" maxlength="250"
+			data-pattern="alphanumericwithspecialcharacters" maxlength="250"
 			placeholder="" autocomplete="off" required="required" />
 		<form:errors path="${applicant}.contactInfo.residenceAddress"
 			cssClass="add-margin error-msg" />
@@ -260,7 +260,7 @@
 	</label>
 	<div class="col-sm-3">
 		<form:input path="${applicant}.street" id="txt-street" type="text"
-		    data-pattern="alphabetwithspecialcharacters"
+		    data-pattern="alphanumericwithspecialcharacters"
 			class="form-control low-width patternvalidation" placeholder=""
 			maxlength="100" autocomplete="off" required="required" />
 		<form:errors path="${applicant}.street"
@@ -301,7 +301,7 @@
 		<form:textarea path="${applicant}.contactInfo.officeAddress"
 			id="${applicant}.contactInfo.officeAddress" type="text"
 			class="form-control low-width patternvalidation"
-			data-pattern="alphabetwithspecialcharacters" maxlength="250"
+			data-pattern="alphanumericwithspecialcharacters" maxlength="250"
 			placeholder="" autocomplete="off" required="required" />
 		<form:errors path="${applicant}.contactInfo.officeAddress"
 			cssClass="add-margin error-msg" />

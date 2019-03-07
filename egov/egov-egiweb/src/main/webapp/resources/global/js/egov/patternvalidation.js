@@ -76,7 +76,7 @@ var regexp_alphanumeric = /[^a-zA-Z0-9 ]/g;
 var regexp_alphanumericdot = /[^a-zA-Z0-9 .]/g;
 
 //This will allow you to enter alphabets and numbers with specified special characters like dot(.), slash(/), hash(#), ampersand(&), plus(+), minus(-). If you need some additional special characters, add those characters to the corresponding regular expression. (eg: data-pattern="alphanumericwithspecialcharacters")
-var regexp_alphanumericspecialcharacters = /[^a-zA-Z0-9_@./#&+-]/g;
+var regexp_alphanumericspecialcharacters = /[^a-zA-Z0-9 _@./#&+-]/g;
 
 //This will allow you to enter alphabets and numbers with space, hyphen(-) and underscore(_). (eg: data-pattern="alphanumericwithspacehyphenunderscore")
 var regexp_alphanumerichyphenunderscore = /[^a-zA-Z0-9 _-]/g;

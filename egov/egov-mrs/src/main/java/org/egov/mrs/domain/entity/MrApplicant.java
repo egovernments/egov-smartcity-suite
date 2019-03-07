@@ -65,7 +65,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHANUMERIC_WITH_SPECIAL_CHARS;
 import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHANUMERIC_WITH_SPECIAL_CHARS;
 
 import java.io.IOException;
 import java.util.Base64;
@@ -170,16 +172,19 @@ public class MrApplicant extends AbstractAuditable {
     @NotNull
     @SafeHtml
     @Length(max = 100)
+    @Pattern(regexp = ALPHANUMERIC_WITH_SPECIAL_CHARS, message = INVALID_ALPHANUMERIC_WITH_SPECIAL_CHARS)
     private String street;
 
     @NotNull
     @SafeHtml
     @Length(max = 100)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String locality;
 
     @NotNull
     @SafeHtml
     @Length(max = 30)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String city;
 
     @Transient

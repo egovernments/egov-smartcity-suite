@@ -75,8 +75,10 @@ import java.util.List;
 import java.util.Set;
 
 import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHANUMERIC_WITH_SPECIAL_CHARS;
 import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_NUMERIC;
 import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHANUMERIC_WITH_SPECIAL_CHARS;
 import static org.egov.infra.validation.constants.ValidationRegex.NUMERIC;
 import static org.egov.mrs.domain.entity.MarriageRegistration.SEQ_REGISTRATION;
 
@@ -110,6 +112,7 @@ public class MarriageRegistration extends StateAware<Position> {
     @SafeHtml
     @Length(max = 300)
     @NotNull
+    @Pattern(regexp = ALPHANUMERIC_WITH_SPECIAL_CHARS, message = INVALID_ALPHANUMERIC_WITH_SPECIAL_CHARS)
     private String placeOfMarriage;
 
     @SafeHtml
@@ -119,6 +122,7 @@ public class MarriageRegistration extends StateAware<Position> {
     @NotNull
     @Length(max = 300)
     @SafeHtml
+    @Pattern(regexp = ALPHANUMERIC_WITH_SPECIAL_CHARS, message = INVALID_ALPHANUMERIC_WITH_SPECIAL_CHARS)
     private String street;
 
     @NotNull
@@ -146,7 +150,6 @@ public class MarriageRegistration extends StateAware<Position> {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "registration")
     @Size(max = 4)
-    @Valid
     @OrderBy("id")
     private List<MarriageWitness> witnesses = new LinkedList<>();
 
