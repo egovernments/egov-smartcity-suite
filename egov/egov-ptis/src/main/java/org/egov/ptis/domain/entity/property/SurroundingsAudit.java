@@ -57,6 +57,7 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGPT_SURROUNDINGS_AUDIT")
@@ -75,12 +76,20 @@ public class SurroundingsAudit extends AbstractAuditable {
     @NotNull
     @Column(name = "id_basic_property")
     private Long basicproperty;
+  
+    @SafeHtml
     @Column(name = "north_bounded")
     private String northBoundary;
+   
+    @SafeHtml
     @Column(name = "south_bounded")
     private String southBoundary;
+   
+    @SafeHtml
     @Column(name = "east_bounded")
     private String eastBoundary;
+ 
+    @SafeHtml
     @Column(name = "west_bounded")
     private String westBoundary;
 

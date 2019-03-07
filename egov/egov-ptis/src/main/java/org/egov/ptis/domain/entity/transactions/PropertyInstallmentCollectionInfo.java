@@ -49,6 +49,7 @@
 package org.egov.ptis.domain.entity.transactions;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -68,9 +69,6 @@ import java.util.Date;
 @SequenceGenerator(name = PropertyInstallmentCollectionInfo.SEQ_INSTALLMENT_COLLECTION_INFO, sequenceName = PropertyInstallmentCollectionInfo.SEQ_INSTALLMENT_COLLECTION_INFO, allocationSize = 1)
 public class PropertyInstallmentCollectionInfo extends AbstractAuditable {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 886538954647871439L;
     protected static final String SEQ_INSTALLMENT_COLLECTION_INFO = "SEQ_EGPT_INSTALLMENT_COLLECTION_INFO";
 
@@ -86,11 +84,14 @@ public class PropertyInstallmentCollectionInfo extends AbstractAuditable {
     @Column(name = "collectiondate")
     private Date collectionDate;
 
+    @SafeHtml
     @Column(name = "receiptnumber")
     private String receiptNumber;
 
+    @SafeHtml
     @Column(name = "collectionmode")
     private String collectionMode;
+
     private BigDecimal amount;
 
     @Override

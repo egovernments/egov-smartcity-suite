@@ -63,9 +63,6 @@ import javax.persistence.Table;
 @SequenceGenerator(name = TaxExemptionReason.SEQ_TAX_EXEMPTION_REASON, sequenceName = TaxExemptionReason.SEQ_TAX_EXEMPTION_REASON, allocationSize = 1)
 public class TaxExemptionReason extends AbstractAuditable {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
 
     public static final String SEQ_TAX_EXEMPTION_REASON = "SEQ_EGPT_EXEMPTION_REASON";

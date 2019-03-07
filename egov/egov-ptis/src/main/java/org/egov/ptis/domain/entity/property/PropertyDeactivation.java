@@ -49,6 +49,7 @@
 package org.egov.ptis.domain.entity.property;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -83,10 +84,12 @@ public class PropertyDeactivation extends AbstractAuditable {
     @Column(name = "basicproperty")
     private Long basicproperty;
 
+    @SafeHtml
     @NotNull
     @Column(name = "original_asmt")
     private String originalAssessment;
 
+    @SafeHtml
     @NotNull
     @Column(name = "deact_reason")
     private String reasonMaster;

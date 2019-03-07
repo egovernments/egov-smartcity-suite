@@ -49,6 +49,7 @@
 package org.egov.ptis.domain.entity.property;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -62,16 +63,17 @@ import javax.persistence.Table;
 @SequenceGenerator(name = PropertyDepartment.SEQ_PROPERTY_DEPARTMENT, sequenceName = PropertyDepartment.SEQ_PROPERTY_DEPARTMENT, allocationSize = 1)
 public class PropertyDepartment extends AbstractAuditable {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 470812002366621080L;
     public static final String SEQ_PROPERTY_DEPARTMENT = "SEQ_EGPT_DEPARTMENT";
 
     @Id
     @GeneratedValue(generator = SEQ_PROPERTY_DEPARTMENT, strategy = GenerationType.SEQUENCE)
     private Long id;
+
+    @SafeHtml
     private String name;
+
+    @SafeHtml
     private String category;
 
     @Override

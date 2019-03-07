@@ -58,6 +58,7 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGPT_APARTMENT")
@@ -74,9 +75,11 @@ public class Apartment extends AbstractAuditable {
     private Long id;
 
     @NotNull
+    @SafeHtml
     private String name;
 
     @NotNull
+    @SafeHtml
     private String code;
 
     private Double builtUpArea;
@@ -102,9 +105,11 @@ public class Apartment extends AbstractAuditable {
     private Integer totalNonResidentialProperties;
 
     @NotNull
+    @SafeHtml
     private String sourceOfWater;
 
     @NotNull
+    @SafeHtml
     private String type;
 
     private Boolean active;

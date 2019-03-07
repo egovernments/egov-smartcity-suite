@@ -463,7 +463,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                 try {
                     flr.setOccupancyDate(new SimpleDateFormat("dd/MM/yyyy").parse(instStartDt));
                 } catch (final ParseException e) {
-                    e.printStackTrace();
+                    logger.error("Error while parsing the installment start date", e);
                 }
             floorNoStr[i] = FLOOR_MAP.get(flr.getFloorNo());
             i++;

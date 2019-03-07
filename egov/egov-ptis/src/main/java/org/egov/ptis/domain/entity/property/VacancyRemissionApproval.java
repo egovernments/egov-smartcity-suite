@@ -49,6 +49,7 @@ package org.egov.ptis.domain.entity.property;
 
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -78,11 +79,13 @@ public class VacancyRemissionApproval extends StateAware<Position> {
     @JoinColumn(name = "vacancyremission", nullable = false)
     private VacancyRemission vacancyRemission;
 
+    @SafeHtml
     @NotNull
     private String comments;
 
     private Date checkinDate;
 
+    @SafeHtml
     private String status;
 
     private Date approvalDate;

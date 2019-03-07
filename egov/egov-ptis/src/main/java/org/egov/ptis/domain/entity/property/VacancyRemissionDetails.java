@@ -48,6 +48,7 @@
 package org.egov.ptis.domain.entity.property;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -64,9 +65,9 @@ import java.util.Date;
 @Entity
 @Table(name = "egpt_vacancy_remission_details")
 @SequenceGenerator(name = VacancyRemissionDetails.SEQ_VACANCY_REMISSION_DETAILS, sequenceName = VacancyRemissionDetails.SEQ_VACANCY_REMISSION_DETAILS, allocationSize = 1)
-public class VacancyRemissionDetails extends AbstractAuditable{
+public class VacancyRemissionDetails extends AbstractAuditable {
 
-	private static final long serialVersionUID = 1521640343172434474L;
+    private static final long serialVersionUID = 1521640343172434474L;
 
     public static final String SEQ_VACANCY_REMISSION_DETAILS = "SEQ_EGPT_VACANCY_REMISSION_DETAILS";
 
@@ -78,44 +79,45 @@ public class VacancyRemissionDetails extends AbstractAuditable{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vacancyremission", nullable = false)
     private VacancyRemission vacancyRemission;
-    
+
+    @SafeHtml
     @NotNull
     private String comments;
-    
-	private Date checkinDate;
-    
-	@Override
-	protected void setId(Long id) {
-		this.id = id;
-	}
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    private Date checkinDate;
 
-	public VacancyRemission getVacancyRemission() {
-		return vacancyRemission;
-	}
+    @Override
+    protected void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setVacancyRemission(VacancyRemission vacancyRemission) {
-		this.vacancyRemission = vacancyRemission;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public String getComments() {
-		return comments;
-	}
+    public VacancyRemission getVacancyRemission() {
+        return vacancyRemission;
+    }
 
-	public void setComments(String comments) {
-		this.comments = comments;
-	}
+    public void setVacancyRemission(VacancyRemission vacancyRemission) {
+        this.vacancyRemission = vacancyRemission;
+    }
 
-	public Date getCheckinDate() {
-		return checkinDate;
-	}
+    public String getComments() {
+        return comments;
+    }
 
-	public void setCheckinDate(Date checkinDate) {
-		this.checkinDate = checkinDate;
-	}
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
+    public Date getCheckinDate() {
+        return checkinDate;
+    }
+
+    public void setCheckinDate(Date checkinDate) {
+        this.checkinDate = checkinDate;
+    }
 
 }

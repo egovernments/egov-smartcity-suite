@@ -68,9 +68,6 @@ import java.math.BigDecimal;
 @SequenceGenerator(name = PropertyInstallmentDemandInfo.SEQ_INSTALLMENT_DEMAND_INFO, sequenceName = PropertyInstallmentDemandInfo.SEQ_INSTALLMENT_DEMAND_INFO, allocationSize = 1)
 public class PropertyInstallmentDemandInfo extends AbstractAuditable {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 403786043368830355L;
     protected static final String SEQ_INSTALLMENT_DEMAND_INFO = "SEQ_EGPT_INSTALLMENT_DEMAND_INFO";
 
@@ -84,10 +81,12 @@ public class PropertyInstallmentDemandInfo extends AbstractAuditable {
     private AssessmentTransactions assessmentTransactions;
 
     private Installment installment;
+
     private BigDecimal demand;
 
     @Column(name = "totalcollection")
     private BigDecimal totalCollection;
+
     private BigDecimal advance;
 
     @Column(name = "writeoff")

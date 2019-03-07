@@ -73,83 +73,83 @@ import java.util.Set;
 @Entity
 @Table(name = "EGPT_APPLICATION_TYPE")
 @SequenceGenerator(name = PtApplicationType.SEQ_APPLICATION_TYPE, sequenceName = PtApplicationType.SEQ_APPLICATION_TYPE, allocationSize = 1)
-@NamedQuery(name=PtApplicationType.BY_CODE, query="Select apt from PtApplicationType apt where apt.code= :code")
+@NamedQuery(name = PtApplicationType.BY_CODE, query = "Select apt from PtApplicationType apt where apt.code= :code")
 public class PtApplicationType extends AbstractAuditable {
 
-	protected static final String SEQ_APPLICATION_TYPE = "SEQ_EGPT_APPLICATION_TYPE";
-	private static final long serialVersionUID = 1L;
-	public static final String BY_CODE = "BY_CODE";
+    protected static final String SEQ_APPLICATION_TYPE = "SEQ_EGPT_APPLICATION_TYPE";
+    private static final long serialVersionUID = 1L;
+    public static final String BY_CODE = "BY_CODE";
 
-	@Id
-	@GeneratedValue(generator = SEQ_APPLICATION_TYPE, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_APPLICATION_TYPE, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@NotNull
-	@SafeHtml
-	@Column(name = "code", unique = true)
-	private String code;
+    @NotNull
+    @SafeHtml
+    @Column(name = "code", unique = true)
+    private String code;
 
-	@NotNull
-	@SafeHtml
-	@Column(name = "name", unique = true)
-	private String name;
+    @NotNull
+    @SafeHtml
+    @Column(name = "name", unique = true)
+    private String name;
 
-	@NotNull
-	@Column(name = "resolutiontime")
-	private Long resolutionTime;
+    @NotNull
+    @Column(name = "resolutiontime")
+    private Long resolutionTime;
 
-	@SafeHtml
-	private String description;
+    @SafeHtml
+    private String description;
 
-	@OneToMany(mappedBy = "applicationType", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<DocumentType> documentTypes;
+    @OneToMany(mappedBy = "applicationType", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<DocumentType> documentTypes;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public Set<DocumentType> getDocumentTypes() {
-		return documentTypes;
-	}
+    public Set<DocumentType> getDocumentTypes() {
+        return documentTypes;
+    }
 
-	public void setDocumentTypes(Set<DocumentType> documentTypes) {
-		this.documentTypes = documentTypes;
-	}
+    public void setDocumentTypes(Set<DocumentType> documentTypes) {
+        this.documentTypes = documentTypes;
+    }
 
-	public Long getResolutionTime() {
-		return resolutionTime;
-	}
+    public Long getResolutionTime() {
+        return resolutionTime;
+    }
 
-	public void setResolutionTime(Long resolutionTime) {
-		this.resolutionTime = resolutionTime;
-	}
+    public void setResolutionTime(Long resolutionTime) {
+        this.resolutionTime = resolutionTime;
+    }
 
 }

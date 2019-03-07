@@ -58,7 +58,7 @@ import javax.persistence.Table;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
-
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Unique(fields = { "caseNo" }, enableDfltMsg = true)
@@ -69,40 +69,42 @@ public class PropertyCourtCase extends AbstractAuditable {
     private static final long serialVersionUID = 1L;
     public static final String SEQ_EGPT_COURTCASES = "SEQ_EGPT_COURTCASES";
 
+    @SafeHtml
     @Column(name = "ASSESSMENTNO")
     private String assessmentNo;
 
+    @SafeHtml
     @Column(name = "CASENO")
     private String caseNo;
-    
+
     @Id
     @GeneratedValue(generator = SEQ_EGPT_COURTCASES, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-	public String getAssessmentNo() {
-		return assessmentNo;
-	}
+    public String getAssessmentNo() {
+        return assessmentNo;
+    }
 
-	public void setAssessmentNo(String assessmentNo) {
-		this.assessmentNo = assessmentNo;
-	}
+    public void setAssessmentNo(String assessmentNo) {
+        this.assessmentNo = assessmentNo;
+    }
 
-	public String getCaseNo() {
-		return caseNo;
-	}
+    public String getCaseNo() {
+        return caseNo;
+    }
 
-	public void setCaseNo(String caseNo) {
-		this.caseNo = caseNo;
-	}
+    public void setCaseNo(String caseNo) {
+        this.caseNo = caseNo;
+    }
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
 }

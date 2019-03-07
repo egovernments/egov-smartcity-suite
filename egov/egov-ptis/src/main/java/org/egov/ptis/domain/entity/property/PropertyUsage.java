@@ -62,6 +62,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.SafeHtml;
 
 /**
  * <p>
@@ -86,10 +87,12 @@ public class PropertyUsage extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_PROPERTY_USAGE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @SafeHtml
     @Audited
     @Column(name = "USG_NAME")
     private String usageName;
 
+    @SafeHtml
     @Audited
     @Column(name = "CODE")
     private String usageCode;

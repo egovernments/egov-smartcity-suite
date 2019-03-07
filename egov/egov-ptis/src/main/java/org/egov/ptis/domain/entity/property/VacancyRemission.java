@@ -49,6 +49,7 @@ package org.egov.ptis.domain.entity.property;
 
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -81,6 +82,7 @@ public class VacancyRemission extends StateAware<Position> {
     @Column(name = "vacancy_todate")
     private Date vacancyToDate;
 
+    @SafeHtml
     @NotNull
     @Column(name = "vacancy_comments")
     private String vacancyComments;
@@ -92,6 +94,7 @@ public class VacancyRemission extends StateAware<Position> {
     @Column(name = "status")
     private String status;
 
+    @SafeHtml
     @Column(name = "applicationno")
     private String applicationNumber;
 
@@ -103,9 +106,11 @@ public class VacancyRemission extends StateAware<Position> {
     @JoinTable(name = "egpt_vacancy_remission_docs", joinColumns = @JoinColumn(name = "vacancyremission"), inverseJoinColumns = @JoinColumn(name = "document"))
     private List<Document> documents = new ArrayList<>();
 
+    @SafeHtml
     @Transient
     private String meesevaApplicationNumber;
 
+    @SafeHtml
     @Column(name = "source")
     private String source;
 

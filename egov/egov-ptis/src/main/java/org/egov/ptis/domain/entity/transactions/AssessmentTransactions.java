@@ -53,6 +53,7 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -68,9 +69,6 @@ import java.util.Date;
 @SequenceGenerator(name = AssessmentTransactions.SEQ_ASSESSMENT_TRANSACTIONS, sequenceName = AssessmentTransactions.SEQ_ASSESSMENT_TRANSACTIONS, allocationSize = 1)
 public class AssessmentTransactions extends AbstractAuditable {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = -7715514846393024158L;
     protected static final String SEQ_ASSESSMENT_TRANSACTIONS = "SEQ_EGPT_ASSESSMENT_TRANSACTIONS";
 
@@ -84,25 +82,35 @@ public class AssessmentTransactions extends AbstractAuditable {
     @Column(name = "property")
     private PropertyImpl property;
 
+    @SafeHtml
     @Column(name = "transactiontype")
     private String transactionType;
+
     private Boundary zone;
+
     private Boundary ward;
+
     private Boundary street;
+
     private Boundary block;
+
     private Boundary locality;
 
     @Column(name = "electionward")
     private Boundary electionWard;
 
+    @SafeHtml
     @Column(name = "ownersname")
     private String ownerName;
 
+    @SafeHtml
     @Column(name = "doorno")
     private String doorNo;
 
     @Column(name = "propertytype")
     private PropertyTypeMaster propertyType;
+
+    @SafeHtml
     private String usage;
 
     @Column(name = "tax_effectivedate")

@@ -67,6 +67,7 @@ import javax.validation.constraints.NotNull;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name= "egpt_aadharseeding")
@@ -89,14 +90,17 @@ public class AadharSeeding extends StateAware<Position>{
     @OneToMany(mappedBy = "aadharSeeding", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<AadharSeedingDetails> aadharSeedingDetails = new LinkedList<>();
     
+    @SafeHtml
     private String status;
     
     private Boolean flag;
     
     private Boolean isAadharValid;
     
+    @SafeHtml
     private String responseCode;
 
+    @SafeHtml
     private String bhudharId;
     
     public BasicPropertyImpl getBasicProperty() {

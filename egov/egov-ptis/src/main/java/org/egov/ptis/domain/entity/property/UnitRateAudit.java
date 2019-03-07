@@ -49,6 +49,7 @@ package org.egov.ptis.domain.entity.property;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -73,7 +74,6 @@ public class UnitRateAudit extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_UNIT_RATE_AUDIT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    
     @Column(name = "id_struct_cl")
     private Long structureClassification;
 
@@ -87,12 +87,14 @@ public class UnitRateAudit extends AbstractAuditable {
     @Column(name = "id_category")
     private Long categoryId;
 
+    @SafeHtml
     @Column(name = "action")
     private String action;
-    
+
+    @SafeHtml
     @Column(name = "category_name")
     private String categoryName;
-    
+
     @Override
     public Long getId() {
         return id;
@@ -150,5 +152,5 @@ public class UnitRateAudit extends AbstractAuditable {
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
     }
-  
+
 }

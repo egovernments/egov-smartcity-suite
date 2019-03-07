@@ -49,6 +49,7 @@ package org.egov.ptis.domain.entity.property;
 
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
@@ -66,26 +67,36 @@ public class Document extends AbstractAuditable {
 
     public static final String SEQ_DOCUMENT = "SEQ_EGPT_DOCUMENT";
     private static final long serialVersionUID = 7655384098687964458L;
+    
     @Id
     @GeneratedValue(generator = SEQ_DOCUMENT, strategy = GenerationType.SEQUENCE)
     private Long id;
+
     @ManyToOne
     @JoinColumn(name = "type")
     private DocumentType type;
+
+    @SafeHtml
     private String description;
+
     @Temporal(TemporalType.DATE)
     private Date docDate;
+
     private boolean enclosed;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "egpt_document_files", joinColumns = @JoinColumn(name = "document"), inverseJoinColumns = @JoinColumn(name = "filestore"))
     private Set<FileStoreMapper> files = new HashSet<>();
 
     @Transient
     private MultipartFile[] file;
+
     @Transient
     private List<File> uploads = new ArrayList<>();
+
     @Transient
     private List<String> uploadsFileName = new ArrayList<>();
+
     @Transient
     private List<String> uploadsContentType = new ArrayList<>();
 

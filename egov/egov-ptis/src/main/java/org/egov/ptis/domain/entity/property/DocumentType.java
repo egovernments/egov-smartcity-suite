@@ -49,6 +49,7 @@ package org.egov.ptis.domain.entity.property;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.ptis.domain.entity.enums.TransactionType;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -67,15 +68,21 @@ import javax.persistence.Table;
 @SequenceGenerator(name = DocumentType.EQ_DOCUMENT_TYPE, sequenceName = DocumentType.EQ_DOCUMENT_TYPE, allocationSize = 1)
 @NamedQuery(name = DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE, query = "Select doctypes from DocumentType doctypes WHERE transactionType= :transactionType")
 public class DocumentType extends AbstractPersistable<Long> {
+    
     public static final String EQ_DOCUMENT_TYPE = "SEQ_EGPT_DOCUMENT_TYPE";
     public static final String DOCUMENTTYPE_BY_TRANSACTION_TYPE = "DOCUMENTTYPE_BY_TRANSACTION_TYPE";
     private static final long serialVersionUID = -8493641513653418834L;
+
     @Id
     @GeneratedValue(generator = EQ_DOCUMENT_TYPE, strategy = GenerationType.SEQUENCE)
     private Long id;
+
+    @SafeHtml
     private String name;
+
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
+
     private boolean mandatory;
 
     @ManyToOne
