@@ -132,5 +132,9 @@
         </div>
     </div>
 </div>
+<c:if test="${empty maxFileSize}">
+    <spring:eval expression="@environment.getProperty('eis.max.file.size')" scope="application" var="maxFileSize"/>
+    <spring:eval expression="@environment.getProperty('eis.allowed.file.ext')" scope="application" var="allowedFileExt"/>
+</c:if>
 </body>
 </html>

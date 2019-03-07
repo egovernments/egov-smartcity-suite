@@ -109,7 +109,7 @@
                                 <table id="uploadertbl" width="100%"><tbody>
                                 <tr id="row1">
                                     <td>
-                                        <input type="file" name="file" id="file1" onchange="isValidFile(this.id)" class="padding-10">
+                                        <input type="file" name="file" id="file1" onchange="isValidFile(this.id)" data-accepts="${allowedFileExt}" data-size="${maxFileSize}" class="padding-10">
                                     </td>
                                 </tr>
                                 </tbody></table>
