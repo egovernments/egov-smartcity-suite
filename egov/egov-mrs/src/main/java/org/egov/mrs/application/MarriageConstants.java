@@ -141,7 +141,7 @@ public class MarriageConstants {
     public static final String MRS_DEFAULT_FUND_SRC_CODE = "MARRIAGE_DEFAULT_FUND_SRC_CODE";
     public static final String MRS_DEFAULT_FUND_CODE = "MARRIAGE_DEFAULT_FUND_CODE";
 
-    public static final String APPROVAL_COMMENT = "approvalComment";
+    public static final String APPROVAL_COMMENT = "approvalComent";
     public static final String APPLICATION_NUMBER = "applicationNumber";
     public static final String FILE_STORE_ID_APPLICATION_NUMBER = "fileStoreIdApplicationNumber";
     
