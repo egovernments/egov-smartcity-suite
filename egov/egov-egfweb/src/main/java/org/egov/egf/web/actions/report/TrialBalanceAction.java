@@ -328,23 +328,23 @@ public class TrialBalanceAction extends BaseFormAction {
         }
 
         if (null != rb.getDepartmentId()) {
-            misDeptCond = " and mis.DEPARTMENTID= :departmentId";
-            tsDeptCond = " and DEPARTMENTID= :departmentId";
+            misDeptCond = " and mis.DEPARTMENTID=:departmentId";
+            tsDeptCond = " and DEPARTMENTID=:departmentId";
             deptQueryParams.put("departmentId", rb.getDepartmentId());
         }
         if (null != rb.getFunctionaryId()) {
-            functionaryCond = " and mis.FUNCTIONARYID= :functionaryId";
-            tsfunctionaryCond = " and FUNCTIONARYID= :functionaryId";
+            functionaryCond = " and mis.FUNCTIONARYID=:functionaryId";
+            tsfunctionaryCond = " and FUNCTIONARYID=:functionaryId";
             functionaryQueryParams.put("functionaryId", rb.getFunctionaryId());
         }
         if (null != rb.getFunctionId()) {
-            functionIdCond = " and gl.voucherheaderid in (select distinct(voucherheaderid) from generalledger where functionid =:functionId)";
-            tsFunctionIdCond = " and FUNCTIONID= functionId";
+            functionIdCond = " and gl.voucherheaderid in (select distinct(voucherheaderid) from generalledger gl where gl.functionid=:functionId)";
+            tsFunctionIdCond = " and FUNCTIONID=:functionId";
             functionQueryParams.put("functionId", rb.getFunctionId());
         }
         if (null != rb.getDivisionId()) {
-            fieldIdCond = " and mis.divisionId= :divisionId";
-            tsFieldIdCond = " and divisionId= :divisionId";
+            fieldIdCond = " and mis.divisionId=:divisionId";
+            tsFieldIdCond = " and divisionId=:divisionId";
             divisionQueryParams.put("divisionId", rb.getDivisionId());
         }
         String defaultStatusExclude = null;
@@ -645,23 +645,23 @@ public class TrialBalanceAction extends BaseFormAction {
         }
 
         if (null != rb.getDepartmentId()) {
-            misDeptCond = " and mis.DepartmentId= :departmentId";
-            tsDeptCond = " and ts.DepartmentId= :departmentId";
+            misDeptCond = " and mis.DepartmentId=:departmentId";
+            tsDeptCond = " and ts.DepartmentId=:departmentId";
             deptQuertParams.put("departmentId", rb.getDepartmentId());
         }
         if (null != rb.getFunctionaryId()) {
-            functionaryCond = " and mis.FunctionaryId= :functionaryId";
-            tsfunctionaryCond = " and ts.FunctionaryId= :functionaryId";
+            functionaryCond = " and mis.FunctionaryId=:functionaryId";
+            tsfunctionaryCond = " and ts.FunctionaryId=:functionaryId";
             functionaryQueryParams.put("functionaryId", rb.getFunctionaryId());
         }
         if (null != rb.getFunctionId()) {
-            functionIdCond = " and gl.functionid =:functionId";
-            tsFunctionIdCond = " and ts.FUNCTIONID= :functionId";
+            functionIdCond = " and gl.functionid=:functionId";
+            tsFunctionIdCond = " and ts.FUNCTIONID=:functionId";
             functionQueryParams.put("functionId", rb.getFunctionId());
         }
         if (null != rb.getDivisionId()) {
-            misdivisionIdCond = " and mis.divisionId= :divisionId";
-            tsdivisionIdCond = " and ts.divisionId= :divisionId";
+            misdivisionIdCond = " and mis.divisionId=:divisionId";
+            tsdivisionIdCond = " and ts.divisionId=:divisionId";
             divisionQueryParams.put("divisionId", rb.getDivisionId());
         }
         String defaultStatusExclude = null;
@@ -777,10 +777,10 @@ public class TrialBalanceAction extends BaseFormAction {
                 .setResultTransformer(Transformers.aliasToBean(TrialBalanceBean.class));
         currentDebitCreditQry.setParameter("fundId", rb.getFundId(), IntegerType.INSTANCE);
 
-        deptQuertParams.entrySet().forEach(entry -> tillDateOPBQry.setParameter(entry.getKey(), entry.getValue()));
-        functionaryQueryParams.entrySet().forEach(entry -> tillDateOPBQry.setParameter(entry.getKey(), entry.getValue()));
-        functionQueryParams.entrySet().forEach(entry -> tillDateOPBQry.setParameter(entry.getKey(), entry.getValue()));
-        divisionQueryParams.entrySet().forEach(entry -> tillDateOPBQry.setParameter(entry.getKey(), entry.getValue()));
+        deptQuertParams.entrySet().forEach(entry -> currentDebitCreditQry.setParameter(entry.getKey(), entry.getValue()));
+        functionaryQueryParams.entrySet().forEach(entry -> currentDebitCreditQry.setParameter(entry.getKey(), entry.getValue()));
+        functionQueryParams.entrySet().forEach(entry -> currentDebitCreditQry.setParameter(entry.getKey(), entry.getValue()));
+        divisionQueryParams.entrySet().forEach(entry -> currentDebitCreditQry.setParameter(entry.getKey(), entry.getValue()));
 
         currentDebitCreditQry.setParameter("fromDate", rb.getFromDate(), DateType.INSTANCE)
                 .setParameter("toDate", rb.getToDate(), DateType.INSTANCE);
