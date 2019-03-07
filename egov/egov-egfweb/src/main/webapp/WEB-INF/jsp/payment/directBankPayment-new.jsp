@@ -306,6 +306,7 @@
 	onload="onLoadTask_new();loadDropDownCodesExcludingCashAndBank();loadDropDownCodesFunction();">
 	<s:form action="directBankPayment" theme="css_xhtml" name="dbpform"
 		validate="true">
+		<input type="hidden" id="csrfTokenValue" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 		<s:push value="model">
 			<jsp:include page="../budget/budgetHeader.jsp">
 				<jsp:param value="Direct Bank Payment" name="heading" />
