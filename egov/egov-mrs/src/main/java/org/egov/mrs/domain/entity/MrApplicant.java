@@ -87,6 +87,7 @@ public class MrApplicant extends AbstractAuditable {
     private Long id;
 
     @Embedded
+    @Valid
     private Name name;
 
     @SafeHtml

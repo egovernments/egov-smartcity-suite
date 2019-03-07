@@ -491,8 +491,8 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
      */
     @RequestMapping(value = "/modify-approved", method = POST)
     public String modifyRegisteredApplication(@RequestParam final Long id,
-    		@Valid @ModelAttribute final MarriageRegistration registration, final Model model,
-            final HttpServletRequest request, final BindingResult errors) {
+    		@Valid @ModelAttribute final MarriageRegistration registration, final BindingResult errors, 
+    		final Model model, final HttpServletRequest request) {
         if (registration.getSource().equals(Source.CHPK.toString())) {
             registration.getWitnesses().clear();
             registration.setZone(null);
