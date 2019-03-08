@@ -54,12 +54,7 @@ import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.interfaces.BillServiceInterface;
 import org.egov.demand.interfaces.Billable;
-import org.egov.demand.model.EgBill;
-import org.egov.demand.model.EgBillDetails;
-import org.egov.demand.model.EgDemand;
-import org.egov.demand.model.EgDemandDetails;
-import org.egov.demand.model.EgDemandReason;
-import org.egov.demand.model.EgDemandReasonMaster;
+import org.egov.demand.model.*;
 import org.egov.demand.utils.DemandConstants;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
@@ -81,25 +76,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_REBATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_ADVANCE;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_ADVANCE;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_MUTATION_FEE;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.MAX_ADVANCES_ALLOWED;
-import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_FEE_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 public class PTBillServiceImpl extends BillServiceInterface {
     private static final Logger LOGGER = Logger.getLogger(PTBillServiceImpl.class);
@@ -133,6 +112,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
 
     @Autowired
     private FinancialUtil financialUtil;
+    private boolean waiverEnabled;
 
     @Override
     public String getBillXML(final Billable billObj) {
@@ -142,13 +122,14 @@ public class PTBillServiceImpl extends BillServiceInterface {
     }
 
     /**
-     * Setting the EgBillDetails to generate XML as a part of Erpcollection
-     * Integration
+     * Setting the EgBillDetails to generate XML as a part of Erpcollection Integration
      *
      * @see org.egov.demand.interfaces.BillServiceInterface
      */
     @Override
     public List<EgBillDetails> getBilldetails(final Billable billObj) {
+        // waiverEnabled if app_config if there and there id zero receipts after GO date
+        waiverEnabled = propertyTaxUtil.isEligibleforWaiver(Boolean.TRUE, billObj.getConsumerId());
         final List<EgBillDetails> billDetails = new ArrayList<>();
         LOGGER.debug("Entered method getBilldetails : " + billObj);
         EgBillDetails billdetail;
@@ -174,8 +155,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
         }
 
         String key;
-        BigDecimal balance =  BigDecimal.ZERO;
-        BigDecimal minAmountPayable =  BigDecimal.ZERO;
+        BigDecimal balance;
         BigDecimal earlyPayRebate = BigDecimal.ZERO;
         DateTime installmentDate;
         BillDetailBean billDetailBean;
@@ -184,7 +164,8 @@ public class PTBillServiceImpl extends BillServiceInterface {
         String reasonMasterCode;
         final BasicProperty basicProperty = billable.getBasicProperty();
         final Property activeProperty = basicProperty.getProperty();
-        TreeMap<Installment, PenaltyAndRebate> installmentPenaltyAndRebate = (TreeMap<Installment, PenaltyAndRebate>) billable.getCalculatedPenalty();
+        TreeMap<Installment, PenaltyAndRebate> installmentPenaltyAndRebate = (TreeMap<Installment, PenaltyAndRebate>) billable
+                .getCalculatedPenalty();
         Map<String, Installment> currInstallments = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
 
         Date advanceStartDate = DateUtils.addYears(currInstallments.get(CURRENTYEAR_FIRST_HALF).getFromDate(), 1);
@@ -200,8 +181,6 @@ public class PTBillServiceImpl extends BillServiceInterface {
 
         for (final EgDemandDetails demandDetail : ptDemand.getEgDemandDetails()) {
             balance = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
-            if(billable.getPartPaymentAllowed())
-        		minAmountPayable= minAmountPayable.add(balance);
             reason = demandDetail.getEgDemandReason();
             installment = reason.getEgInstallmentMaster();
             reasonMasterCode = reason.getEgDemandReasonMaster().getCode();
@@ -220,7 +199,6 @@ public class PTBillServiceImpl extends BillServiceInterface {
                 }
             }
         }
-        billable.setMinAmountPayable(minAmountPayable.setScale(0, BigDecimal.ROUND_CEILING));
         addBillDetailsForRebate(billDetails, earlyPayRebate, currInstallments, orderMap);
 
         getPenaltyAndRebateDmd(billDetails, billable, installmentPenaltyAndRebate, ptDemand, orderMap);
@@ -284,7 +262,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
 
     /**
      * Creates the advance bill details
-     * 
+     *
      * @param billDetails
      * @param orderMap
      * @param currentInstallmentDemand
@@ -298,9 +276,8 @@ public class PTBillServiceImpl extends BillServiceInterface {
 
         BillDetailBean billDetailBean = null;
         /*
-         * Advance will be created with current year second half installment.
-         * While fetching advance collection, we will pass current year second
-         * half installment
+         * Advance will be created with current year second half installment. While fetching advance collection, we will pass
+         * current year second half installment
          */
         BigDecimal advanceCollection = demandGenericDAO.getBalanceByDmdMasterCodeInst(ptDemand, DEMANDRSN_CODE_ADVANCE,
                 getModule(), dmdDetInstallment);
@@ -348,8 +325,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
         final EgDemandDetails penDmdDtls = getPenaltyDmdDtls(billable, installment);
         EgDemandDetails insertPenDmdDetail = null;
 
-        final boolean thereIsPenalty = penalty != null
-                && penalty.compareTo(BigDecimal.ZERO) != 0 ? true : false;
+        final boolean thereIsPenalty = penalty != null && penalty.compareTo(BigDecimal.ZERO) != 0;
         final DateTime installmentDate = new DateTime(installment.getInstallmentYear().getTime());
 
         // Checking whether to impose penalty or not
@@ -363,8 +339,11 @@ public class PTBillServiceImpl extends BillServiceInterface {
                 key = installmentDate.getMonthOfYear() + "/" + installmentDate.getYear() + "-"
                         + DEMANDRSN_CODE_PENALTY_FINES;
                 final BillDetailBean billDetailBean = new BillDetailBean(installment, orderMap.get(key), key, penalty,
-                        GLCODE_FOR_PENALTY, PropertyTaxConstants.DEMANDRSN_STR_PENALTY_FINES, Integer.valueOf(1),
+                        GLCODE_FOR_PENALTY, PropertyTaxConstants.DEMANDRSN_STR_PENALTY_FINES, 1,
                         definePurpose(penDmdDtls));
+                if (waiverEnabled) {
+                    billDetailBean.setIsActualDemand(0);
+                }
                 billDetails.add(createBillDet(billDetailBean));
             }
         }
@@ -406,7 +385,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
 
     /**
      * Method used to insert demand details in EgDemandDetail table.
-     * 
+     *
      * @param demandReason
      * @param amount
      * @param inst
@@ -525,7 +504,8 @@ public class PTBillServiceImpl extends BillServiceInterface {
 
     public String definePurpose(EgDemandDetails demandDetail) {
         String purpose = PURPOSE.OTHERS.toString();
-       if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY)) {
+        if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY)) {
             return PURPOSE.CHEQUE_BOUNCE_PENALTY.toString();
         }
         Map<String, Installment> currInstallments = propertyTaxUtil.getInstallmentsForCurrYear(new Date());

@@ -49,6 +49,7 @@ package org.egov.ptis.client.integration.utils;
 
 import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
+import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.integration.models.BillAccountDetails;
 import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
 import org.egov.collection.integration.models.BillDetails;
@@ -199,10 +200,17 @@ public class CollectionHelper {
 	        }
         }else{
 	        for (EgBillDetails billDet : billDetails) {
-	            receiptDetails.add(initReceiptDetail(billDet.getGlcode(),
-	                    BigDecimal.ZERO, // billDet.getCrAmount(),
-	                    billDet.getCrAmount().subtract(billDet.getDrAmount()), billDet.getDrAmount(),
-	                    billDet.getDescription(), billDet.getPurpose()));
+	            // pass consumerID using ReceiptHeader
+                ReceiptHeader rh = new ReceiptHeader();
+                rh.setConsumerCode(billDet.getEgBill().getConsumerId());
+
+                ReceiptDetail rd = initReceiptDetail(billDet.getGlcode(),
+                        BigDecimal.ZERO, // billDet.getCrAmount(),
+                        billDet.getCrAmount().subtract(billDet.getDrAmount()), billDet.getDrAmount(),
+                        billDet.getDescription(), billDet.getPurpose());
+                rd.setReceiptHeader(rh);
+
+	            receiptDetails.add(rd);
 	        }
         	SpringBeanUtil.getPropertyTaxCollection().apportionPaidAmount(String.valueOf(bill.getId()), amountPaid,
         			receiptDetails);

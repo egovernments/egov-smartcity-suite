@@ -111,6 +111,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -118,17 +120,14 @@ import javax.persistence.PersistenceContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.RandomStringGenerator;
 import org.apache.log4j.Logger;
+import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.dao.DemandGenericHibDao;
 import org.egov.demand.dao.EgBillDao;
-import org.egov.demand.model.DepreciationMaster;
-import org.egov.demand.model.EgBill;
-import org.egov.demand.model.EgBillType;
-import org.egov.demand.model.EgDemand;
-import org.egov.demand.model.EgDemandDetails;
-import org.egov.demand.model.EgDemandReason;
+import org.egov.demand.model.*;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.service.AssignmentService;
@@ -183,6 +182,7 @@ import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.domain.service.property.RebateService;
 import org.egov.ptis.master.service.TaxRatesService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
@@ -225,6 +225,8 @@ public class PropertyTaxUtil {
     @Autowired
     private ModuleService moduleService;
     @Autowired
+    private ReceiptHeaderService receiptHeaderService;
+    @Autowired
     private InstallmentHibDao installmentDao;
     @Autowired
     private PtDemandDao ptDemandDAO;
@@ -253,6 +255,9 @@ public class PropertyTaxUtil {
     private TaxRatesService taxRatesService;
     @Autowired
     DepartmentService departmentService;
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
+
 
     public void setPersistenceService(final PersistenceService persistenceService) {
         this.persistenceService = persistenceService;
@@ -285,7 +290,7 @@ public class PropertyTaxUtil {
     }
 
     public EgDemandReason getDemandReasonByCodeAndInstallment(final String demandReasonCode,
-            final Installment installment) {
+                                                              final Installment installment) {
         return (EgDemandReason) persistenceService.findByNamedQuery(QUERY_DEMANDREASONBY_CODE_AND_INSTALLMENTID,
                 demandReasonCode, installment.getId());
     }
@@ -403,7 +408,7 @@ public class PropertyTaxUtil {
     }
 
     public HashMap<String, Integer> generateOrderForDemandDetails(final Set<EgDemandDetails> demandDetails,
-            final PropertyTaxBillable billable, final List<Installment> advanceInstallments) {
+                                                                  final PropertyTaxBillable billable, final List<Installment> advanceInstallments) {
 
         final Map<Date, String> instReasonMap = new TreeMap<>();
         final HashMap<String, Integer> orderMap = new HashMap<>();
@@ -592,7 +597,6 @@ public class PropertyTaxUtil {
      *
      * @param fromDate the from date
      * @param toDate the to date
-     * @return the number of months
      * @return
      */
     public static int getMonthsBetweenDates(final Date fromDate, final Date toDate) {
@@ -620,7 +624,7 @@ public class PropertyTaxUtil {
      * collection CURR_COLL_STR - Arrear Installment demand ARR_COLL_STR - Arrear Installment demand
      *
      * @param property
-     * @return Map<String, BigDecimal>
+     * @return Map<String , BigDecimal>
      */
     public Map<String, BigDecimal> getDemandAndCollection(final Property property) {
         final Map<String, BigDecimal> demandCollMap = new HashMap<>();
@@ -644,7 +648,7 @@ public class PropertyTaxUtil {
             installment = installmentDao.findById(instId, false);
             reason = listObj[5].toString();
             if (currDemand.getEgInstallmentMaster().equals(installment)) {
-                if (listObj[2] != null && (new BigDecimal((Double) listObj[2])).compareTo(BigDecimal.ZERO) != 0)
+                if (listObj[2] != null && new BigDecimal((Double) listObj[2]).compareTo(BigDecimal.ZERO) != 0)
                     currCollection = currCollection.add(new BigDecimal(listObj[2].toString()));
                 currentRebate = currentRebate.add(new BigDecimal(listObj[3].toString()));
                 currDmd = currDmd.add(new BigDecimal(listObj[1].toString()));
@@ -652,7 +656,7 @@ public class PropertyTaxUtil {
                 secondHalfTax = secondHalfTax.add(new BigDecimal(listObj[1].toString()));
             else {
                 arrDmd = arrDmd.add(new BigDecimal((Double) listObj[1]));
-                if (listObj[2] != null && (new BigDecimal((Double) listObj[2])).compareTo(BigDecimal.ZERO) != 0)
+                if (listObj[2] != null && new BigDecimal((Double) listObj[2]).compareTo(BigDecimal.ZERO) != 0)
                     arrColelection = arrColelection.add(new BigDecimal(listObj[2].toString()));
                 arrearRebate = arrearRebate.add(new BigDecimal(listObj[3].toString()));
             }
@@ -706,9 +710,8 @@ public class PropertyTaxUtil {
         String ownerAddress = "";
         for (final PropertyOwnerInfo owner : ownerSet) {
             final List<Address> addresses = owner.getOwner().getAddress();
-            for (final Address address : addresses) {
+            for (final Address address : addresses)
                 ownerAddress = address.toString();
-            }
         }
         return ownerAddress;
     }
@@ -722,7 +725,8 @@ public class PropertyTaxUtil {
      * @return Date the occupancy date
      */
     public Date getPropertyOccupancyDate(final Property property) {
-        return property.getPropertyDetail().getDateOfCompletion() == null ? property.getEffectiveDate() : property
+        return property.getPropertyDetail().getDateOfCompletion() == null ? property.getEffectiveDate()
+                : property
                 .getPropertyDetail().getDateOfCompletion();
     }
 
@@ -780,7 +784,7 @@ public class PropertyTaxUtil {
     }
 
     public Map<String, Map<Installment, BigDecimal>> prepareReasonWiseDenandAndCollection(final Property property,
-            final Installment currentInstallment) {
+                                                                                          final Installment currentInstallment) {
         final Map<Installment, BigDecimal> installmentWiseDemand = new TreeMap<>();
         final Map<Installment, BigDecimal> installmentWiseCollection = new TreeMap<>();
         final Map<String, Map<Installment, BigDecimal>> demandAndCollection = new HashMap<>();
@@ -830,7 +834,7 @@ public class PropertyTaxUtil {
      */
     @SuppressWarnings("unchecked")
     public Map<String, Map<String, BigDecimal>> prepareDemandDetForView(final Property property,
-            final Installment currentInstallment) {
+                                                                        final Installment currentInstallment) {
         final Map<String, Map<String, BigDecimal>> dCBDetails = new TreeMap<>();
         final Map<String, BigDecimal> firstHalfReasonDemandDetails = new HashMap<>();
         final Map<String, BigDecimal> secondHalfReasonDemandDetails = new HashMap<>();
@@ -941,7 +945,7 @@ public class PropertyTaxUtil {
     }
 
     private boolean isFirstDataEntry(final String prevPropMutationCode, final String mutationCode,
-            final Property prevProperty) {
+                                     final Property prevProperty) {
 
         final List<String> mutationCodes = Arrays.asList(PropertyTaxConstants.MUTATION_CODE_NEW,
                 PropertyTaxConstants.PROPERTY_MODIFY_REASON_OBJ);
@@ -1046,8 +1050,8 @@ public class PropertyTaxUtil {
      * @return
      */
     public Query prepareQueryforCollectionSummaryReport(final String fromDate, final String toDate,
-            final String collMode, final String transMode, final String mode, final String boundaryId,
-            final String propTypeCategoryId, final Long zoneId, final Long wardId, final Long blockId) {
+                                                        final String collMode, final String transMode, final String mode, final String boundaryId,
+                                                        final String propTypeCategoryId, final Long zoneId, final Long wardId, final Long blockId) {
         String srchQryStr = "";
         String baseQry = "";
         String orderbyQry = "";
@@ -1064,19 +1068,16 @@ public class PropertyTaxUtil {
             if (isNotBlank(toDate) && !toDate.equals("DD/MM/YYYY"))
                 srchQryStr = srchQryStr + "and (cast(cs.receiptDate as date)) <= to_date('" + toDate
                         + "', 'DD/MM/YYYY') ";
-            if (isNotBlank(collMode) && !collMode.equals("-1")) {
+            if (isNotBlank(collMode) && !collMode.equals("-1"))
                 srchQryStr = srchQryStr + "and cs.collectionType ='" + collMode + "' ";
-            }
-            if (isNotBlank(transMode) && !transMode.equals("-1")) {
+            if (isNotBlank(transMode) && !transMode.equals("-1"))
                 srchQryStr = srchQryStr + "and (cs.paymentMode ='" + transMode + "' OR cs.paymentMode like '%' || '"
                         + transMode + "' || '%')";
-            }
             if (mode.equals(USAGEWISE)) {
-                if (isNotBlank(propTypeCategoryId) && !propTypeCategoryId.equals("-1")) {
+                if (isNotBlank(propTypeCategoryId) && !propTypeCategoryId.equals("-1"))
                     srchQryStr = srchQryStr
                             + "and cs.property.propertyDetail in (select floor.propertyDetail from Floor floor where floor.propertyUsage = '"
                             + propTypeCategoryId + "')) ";
-                }
                 if (zoneId != null && zoneId != -1)
                     srchQryStr = srchQryStr + " and cs.zoneId.id =" + zoneId;
                 if (wardId != null && wardId != -1)
@@ -1086,24 +1087,20 @@ public class PropertyTaxUtil {
                 orderbyQry = "order by cs.property.propertyDetail.categoryType";
             }
             if (mode.equals(ZONEWISE)) {
-                if (isNotBlank(boundaryId) && !boundaryId.equals("-1")) {
+                if (isNotBlank(boundaryId) && !boundaryId.equals("-1"))
                     srchQryStr = srchQryStr + "and cs.zoneId.id =" + boundaryId;
-                }
                 orderbyQry = " and cs.zoneId.boundaryType.name = 'Zone' order by cs.zoneId.boundaryNum";
             } else if (mode.equals(WARDWISE)) {
-                if (isNotBlank(boundaryId) && !boundaryId.equals("-1")) {
+                if (isNotBlank(boundaryId) && !boundaryId.equals("-1"))
                     srchQryStr = srchQryStr + "and cs.wardId.id =" + boundaryId;
-                }
                 orderbyQry = " and cs.wardId.boundaryType.name = 'Ward' order by cs.wardId.boundaryNum";
             } else if (mode.equals(BLOCKWISE)) {
-                if (isNotBlank(boundaryId) && !boundaryId.equals("-1")) {
+                if (isNotBlank(boundaryId) && !boundaryId.equals("-1"))
                     srchQryStr = srchQryStr + "and cs.areaId.id =" + boundaryId;
-                }
                 orderbyQry = " and cs.areaId.boundaryType.name = 'Block' order by cs.areaId.boundaryNum";
             } else if (mode.equals(LOCALITYWISE)) {
-                if (isNotBlank(boundaryId) && !boundaryId.equals("-1")) {
+                if (isNotBlank(boundaryId) && !boundaryId.equals("-1"))
                     srchQryStr = srchQryStr + "and cs.localityId.id =" + boundaryId;
-                }
                 orderbyQry = "  order by cs.localityId.boundaryNum";
             }
             srchQryStr = baseQry + srchQryStr + orderbyQry;
@@ -1124,7 +1121,7 @@ public class PropertyTaxUtil {
      * @return
      */
     public Query prepareQueryforTitleTransferReport(final Long zoneId, final Long wardId, final Long areaId,
-            final String fromDate, final String toDate) {
+                                                    final String fromDate, final String toDate) {
         final SimpleDateFormat sdf = new SimpleDateFormat(DD_MM_YYYY);
         final StringBuilder query = new StringBuilder();
         new PropertyMutation();
@@ -1158,11 +1155,9 @@ public class PropertyTaxUtil {
     }
 
     /**
-     * @ Description : gets the property tax arrear amount for a property
-     *
      * @param basicPropId
      * @param finyear
-     * @return
+     * @return @ Description : gets the property tax arrear amount for a property
      */
     @SuppressWarnings("unchecked")
     public BigDecimal getPropertyTaxDetails(final Long basicPropId, final CFinancialYear finyear) {
@@ -1185,7 +1180,7 @@ public class PropertyTaxUtil {
     }
 
     public Map<String, BigDecimal> prepareDemandDetForWorkflowProperty(final Property property,
-            final Installment dmdInstallment, final Installment dmdDetInstallment) {
+                                                                       final Installment dmdInstallment, final Installment dmdDetInstallment) {
         final Map<String, BigDecimal> dCBDetails = new HashMap<>();
         String demandReason = "";
         Installment installment = null;
@@ -1204,9 +1199,8 @@ public class PropertyTaxUtil {
         List<Ptdemand> ptDemandList = entityManager.unwrap(Session.class).createQuery(query).setEntity("property", property)
                 .setEntity("installment", dmdInstallment).list();
         Ptdemand ptDemand = new Ptdemand();
-        if (!ptDemandList.isEmpty()) {
+        if (!ptDemandList.isEmpty())
             ptDemand = ptDemandList.get(0);
-        }
 
         for (final EgDemandDetails dmdDet : ptDemand.getEgDemandDetails()) {
 
@@ -1246,9 +1240,9 @@ public class PropertyTaxUtil {
         else {
             final VacancyRemission vacancyRemission = remissionList.get(remissionList.size() - 1);
             if (vacancyRemission != null)
-                if (vacancyRemission.getStatus().equalsIgnoreCase(PropertyTaxConstants.VR_STATUS_APPROVED)) {
+                if (vacancyRemission.getStatus().equalsIgnoreCase(PropertyTaxConstants.VR_STATUS_APPROVED))
                     vrFlag = true;
-                } else if (vacancyRemission.getStatus().equalsIgnoreCase(
+                else if (vacancyRemission.getStatus().equalsIgnoreCase(
                         PropertyTaxConstants.VR_STATUS_REJECTION_ACK_GENERATED))
                     vrFlag = true;
         }
@@ -1258,7 +1252,7 @@ public class PropertyTaxUtil {
     public boolean enableMonthlyUpdate(final String upicNo) {
         boolean monthlyUpdateFlag = false;
         final VacancyRemission vacancyRemission = getLatestApprovedVR(upicNo);
-        if (vacancyRemission != null) {
+        if (vacancyRemission != null)
             if (vacancyRemission.getVacancyRemissionDetails().isEmpty()
                     && DateUtils.noOfMonthsBetween(vacancyRemission.getVacancyFromDate(), new Date()) == 1)
                 monthlyUpdateFlag = true;
@@ -1272,7 +1266,6 @@ public class PropertyTaxUtil {
                 if (detailsSize % 5 == 0 && vacancyRemission.getVacancyToDate().compareTo(new Date()) > 0)
                     monthlyUpdateFlag = false;
             }
-        }
         return monthlyUpdateFlag;
     }
 
@@ -1280,7 +1273,7 @@ public class PropertyTaxUtil {
         final String query = "from VacancyRemission vr where vr.basicProperty.upicNo= :upicNo and vr.status = 'APPROVED' order by createdDate desc";
         final List<VacancyRemission> vacancyRemissions = entityManager.unwrap(Session.class).createQuery(query)
                 .setParameter(UPIC_NO, upicNo).list();
-        return (vacancyRemissions != null && !vacancyRemissions.isEmpty()) ? vacancyRemissions.get(0) : null;
+        return vacancyRemissions != null && !vacancyRemissions.isEmpty() ? vacancyRemissions.get(0) : null;
     }
 
     public boolean enableVRApproval(final String upicNo) {
@@ -1295,9 +1288,9 @@ public class PropertyTaxUtil {
     }
 
     /**
-     * @Description : checks if the parent property has any child which is in workflow
      * @param upicNo of the parent property
      * @return boolean
+     * @Description : checks if the parent property has any child which is in workflow
      */
     public boolean checkForParentUsedInBifurcation(final String upicNo) {
         boolean isChildUnderWorkflow = false;
@@ -1345,7 +1338,7 @@ public class PropertyTaxUtil {
      * @return
      */
     public Query prepareQueryforDefaultersReport(final Long wardId, final String fromDemand, final String toDemand,
-            final Integer limit, final String ownerShipType, final String proptype) {
+                                                 final Integer limit, final String ownerShipType, final String proptype) {
         final StringBuilder query = new StringBuilder(300);
         final Map<String, Object> params = new HashMap<>();
         query.append(
@@ -1393,7 +1386,7 @@ public class PropertyTaxUtil {
     }
 
     private void appendFromToDmd(final String fromDemand, final String toDemand, final StringBuilder query,
-            final Map<String, Object> params, final String arrearBalanceCond, final String and) {
+                                 final Map<String, Object> params, final String arrearBalanceCond, final String and) {
         if (isFromDemand(fromDemand, toDemand)) {
             query.append(and + arrearBalanceCond + " >= :fromDemand");
             params.put("fromDemand", BigDecimal.valueOf(Long.valueOf(isNotBlank(fromDemand) ? fromDemand : "0")));
@@ -1480,10 +1473,10 @@ public class PropertyTaxUtil {
      * @param property
      * @param effectiveInstallment
      * @param demandInstallment
-     * @return Map<String, BigDecimal>
+     * @return Map<String , BigDecimal>
      */
     public Map<String, BigDecimal> getTaxDetailsForInstallment(final Property property, final Installment effectiveInstallment,
-            final Installment demandInstallment) {
+                                                               final Installment demandInstallment) {
         final Map<String, BigDecimal> taxDetailsMap = new HashMap<>();
         final String query = "select ptd from Ptdemand ptd " + "inner join fetch ptd.egDemandDetails dd "
                 + "inner join fetch dd.egDemandReason dr " + "inner join fetch dr.egDemandReasonMaster drm "
@@ -1497,9 +1490,9 @@ public class PropertyTaxUtil {
         for (final EgDemandDetails dmdDet : ptDemand.getEgDemandDetails())
             if (dmdDet.getInstallmentStartDate().equals(effectiveInstallment.getFromDate())
                     && !dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                            .equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES)
+                    .equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES)
                     && !dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                            .equalsIgnoreCase(DEMANDRSN_CODE_ADVANCE))
+                    .equalsIgnoreCase(DEMANDRSN_CODE_ADVANCE))
                 taxDetailsMap.put(dmdDet.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(),
                         dmdDet.getAmount());
         return taxDetailsMap;
@@ -1507,6 +1500,7 @@ public class PropertyTaxUtil {
 
     /**
      * Returns a list of Installments for tax calculation, based on the effective date
+     *
      * @param effectiveDate
      * @return List of Installments
      */
@@ -1561,7 +1555,7 @@ public class PropertyTaxUtil {
     }
 
     public ReportOutput generateCitizenCharterAcknowledgement(final String propertyId, final String applicationType,
-            final String serviceType, final String applicationNo) {
+                                                              final String serviceType, final String applicationNo) {
         final SimpleDateFormat sdf = new SimpleDateFormat(DD_MM_YYYY);
         ReportRequest reportInput;
         Long resolutionTime;
@@ -1578,7 +1572,7 @@ public class PropertyTaxUtil {
         reportParams.put(AS_ON_DATE, sdf.format(new Date()));
         reportParams.put(ULB_NAME, city.getPreferences().getMunicipalityName());
         reportParams.put(CITY_NAME, city.getName());
-        if (!(Arrays.asList(REVISION_PETETION, VACANCY_REMISSION, GENERAL_REVISION_PETETION_APPTYPE)).contains(applicationType))
+        if (!Arrays.asList(REVISION_PETETION, VACANCY_REMISSION, GENERAL_REVISION_PETETION_APPTYPE).contains(applicationType))
             reportParams.put(ACK_NO, basicProperty.getWFProperty().getApplicationNo());
         else
             reportParams.put(ACK_NO, applicationNo);
@@ -1624,18 +1618,18 @@ public class PropertyTaxUtil {
                 + " and dr.id_installment = inst.id and dd.id_demand =:currentDemandId and inst.id in (:installments) and drm.code in (:codes)";
 
         Object amount = 0;
-        if (currentDemand != null) {
+        if (currentDemand != null)
             amount = persistenceService.getSession().createSQLQuery(selectQuery)
                     .setLong("currentDemandId", currentDemand.getId())
                     .setParameterList("installments", Arrays.asList(currentFirstHalf.getId(), currentSecondHalf.getId()))
                     .setParameterList("codes", DEMAND_REASONS_FOR_REBATE_CALCULATION).uniqueResult();
-        }
         return amount != null ? new BigDecimal((Double) amount) : BigDecimal.ZERO;
     }
 
     /**
      * API returns the percentage of tax difference between GIS survey tax and application tax Current second half taxes,
      * excluding UAC penalty will be considered for the comparison
+     *
      * @param propertyImpl
      * @return BigDecimal
      */
@@ -1651,27 +1645,24 @@ public class PropertyTaxUtil {
             if (gisPtdemand != null) {
                 Map<String, Installment> gisPropYearInstMap = getInstallmentsForCurrYear(
                         gisPtdemand.getEgInstallmentMaster().getFromDate());
-                for (EgDemandDetails demandDetails : gisPtdemand.getEgDemandDetails()) {
+                for (EgDemandDetails demandDetails : gisPtdemand.getEgDemandDetails())
                     if (gisPropYearInstMap.get(CURRENTYEAR_SECOND_HALF).getFromDate()
                             .equals(demandDetails.getInstallmentStartDate())
                             &&
                             !PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY
                                     .equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
                         gisHalfYrTax = gisHalfYrTax.add(demandDetails.getAmount());
-                }
             }
         }
         Ptdemand ptdemand = propertyImpl.getPtDemandSet().iterator().next();
-        if (ptdemand != null) {
-            for (EgDemandDetails demandDetails : ptdemand.getEgDemandDetails()) {
+        if (ptdemand != null)
+            for (EgDemandDetails demandDetails : ptdemand.getEgDemandDetails())
                 if (currYearInstMap.get(CURRENTYEAR_SECOND_HALF).getFromDate().equals(demandDetails.getInstallmentStartDate()) &&
                         !PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY
                                 .equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
                     applHalfYrTax = applHalfYrTax.add(demandDetails.getAmount());
-            }
-        }
         if (gisHalfYrTax.compareTo(BigDecimal.ZERO) > 0)
-            taxDiffPerc = ((gisHalfYrTax.subtract(applHalfYrTax)).multiply(BIGDECIMAL_100)).divide(gisHalfYrTax,
+            taxDiffPerc = gisHalfYrTax.subtract(applHalfYrTax).multiply(BIGDECIMAL_100).divide(gisHalfYrTax,
                     BigDecimal.ROUND_HALF_UP);
 
         if (gisProperty != null)
@@ -1681,5 +1672,79 @@ public class PropertyTaxUtil {
 
     public BigDecimal getTaxRates() {
         return taxRatesService.getTaxRateByDemandReasonCode(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX);
+    }
+
+
+    public boolean isEligibleforWaiver(Boolean paymentTypeFullPayment, String consumerCode) {
+        Date cutOffDate = new Date();
+        boolean hasReceiptAfterCutoffDate = false;
+        boolean configPenaltyWaiverEnabled = isEligibleforWaiver(cutOffDate) && paymentTypeFullPayment.booleanValue();
+        if (!configPenaltyWaiverEnabled)
+            return configPenaltyWaiverEnabled;
+
+        Ptdemand pd = ptDemandDAO.getNonHistoryCurrDmdForProperty( basicPropertyDAO.getBasicPropertyByPropertyID(consumerCode).getProperty());
+        for(EgDemandDetails dd: pd.getEgDemandDetails()) {
+            for(EgdmCollectedReceipt cr: dd.getEgdmCollectedReceipts()) {
+                if(!cr.isCancelled() && cr.getReceiptDate().compareTo(cutOffDate) >= 0) {
+                    hasReceiptAfterCutoffDate = true;
+                    break;
+                }
+            }
+            if(hasReceiptAfterCutoffDate) {
+                break;
+            }
+        }
+
+        return paymentTypeFullPayment.booleanValue() && !hasReceiptAfterCutoffDate;
+    }
+
+    /**
+     * If receipt is eligible for property tax waiver Based on AppConfigValue APPCONFIG_PENALTY_WAIVER_ENABLED is YES and current
+     * date > APPCONFIG_PENALTY_WAIVER_CUTOFF_DATE
+     */
+    public boolean isEligibleforWaiver(Date outCutOffDate) {
+        final SimpleDateFormat dateFormat = new SimpleDateFormat(DD_MM_YYYY);
+
+        String penaltyWaiverEnabledConfig = propertyTaxCommonUtils.getAppConfigValue(
+                PropertyTaxConstants.APPCONFIG_PENALTY_WAIVER_ENABLED,
+                PropertyTaxConstants.PTMODULENAME).toUpperCase();
+        String penaltyWaiverCutoffConfig = propertyTaxCommonUtils.getAppConfigValue(
+                PropertyTaxConstants.APPCONFIG_PENALTY_WAIVER_CUTOFF_DATE,
+                PropertyTaxConstants.PTMODULENAME);
+        Date cutOffDate;
+        Date today = new Date();
+        try {
+            cutOffDate = dateFormat.parse(penaltyWaiverCutoffConfig);
+        } catch (ParseException e) {
+            LOGGER.error(String.format("Invalid app config, %s=%s, %s=%s",
+                    PropertyTaxConstants.APPCONFIG_PENALTY_WAIVER_ENABLED, penaltyWaiverEnabledConfig,
+                    PropertyTaxConstants.APPCONFIG_PENALTY_WAIVER_CUTOFF_DATE, penaltyWaiverCutoffConfig ));
+            throw new ApplicationRuntimeException(String.format("Invalid app_config %s, value: %s, it must be of the form %s",
+                    PropertyTaxConstants.APPCONFIG_PENALTY_WAIVER_CUTOFF_DATE, penaltyWaiverCutoffConfig, DD_MM_YYYY));
+        }
+        if (outCutOffDate != null)
+            outCutOffDate.setTime(cutOffDate.getTime());
+
+        boolean isEligible = penaltyWaiverEnabledConfig.equalsIgnoreCase(PropertyTaxConstants.STR_YES) && today.compareTo(cutOffDate) >= 0;
+        return isEligible;
+    }
+
+    // Used to relate demand_details with receipt number
+    public String makeRemarkWithRcptNo(String remark, String rcptNo) {
+        if (remark == null)
+            remark = "";
+        return String.format("%s #RCPT(%s)", remark, rcptNo);
+    }
+
+    // To retrieve the relation between demand_details and receipt number when penalty receipt-details are not passed
+    public String getRcptNoFromRemark(String remark) {
+        final Pattern rcptX = Pattern.compile("#RCPT\\(([^)]+)\\)");
+        Matcher matcher = rcptX.matcher(remark);
+        matcher.find();
+        try {
+            return matcher.group(1);
+        } catch (IllegalStateException ex) {
+        }
+        return "";
     }
 }

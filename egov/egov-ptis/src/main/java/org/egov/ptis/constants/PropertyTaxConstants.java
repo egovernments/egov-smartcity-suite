@@ -132,6 +132,9 @@ public interface PropertyTaxConstants {
     public static final String BUILT_UP_PROPERTY = "BuiltUpProperty";
     public static final String VACANT_PROPERTY = "VacantProperty";
     public static final String APARTMENT_PROPERTY = "Apartment";
+    
+    public static final String APPCONFIG_PENALTY_WAIVER_ENABLED = "PENALTY_WAIVER_ENABLED";
+    public static final String APPCONFIG_PENALTY_WAIVER_CUTOFF_DATE = "PENALTY_WAIVER_CUTOFF_DATE";
 
     // objection status CODE values
     public static final String OBJECTION_MODULE = "PTObejction";

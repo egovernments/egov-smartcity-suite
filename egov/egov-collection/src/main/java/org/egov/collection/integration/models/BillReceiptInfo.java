@@ -181,4 +181,10 @@ public interface BillReceiptInfo {
      * @return receipt instrument type
      */
     public abstract String getReceiptInstrumentType();
+    
+    /**
+     * @return receipt consumer code
+     */
+    public String getConsumerCode();
+
 }
