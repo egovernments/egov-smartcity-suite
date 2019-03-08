@@ -516,7 +516,7 @@ public class PropertyTaxCollection extends TaxCollection {
 
         boolean didPenaltyWaivedOff = billRcptImpl.getReceiptMisc().getReceiptHeader().getReceiptDetails()
                 .stream().anyMatch(
-                        receiptDetail -> isPenaltyReceipt(receiptDetail) && receiptDetail.getIsActualDemand()
+                        receiptDetail -> isPenaltyReceipt(receiptDetail) && !receiptDetail.getIsActualDemand()
                                 && receiptDetail.getCramount().compareTo(ZERO) == 0);
 
         // Undo all waived off only if penalty is waived off for current receipt !!!
