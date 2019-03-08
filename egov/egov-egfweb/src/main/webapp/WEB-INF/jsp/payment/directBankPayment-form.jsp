@@ -51,14 +51,14 @@
 <script type="text/javascript"
 	src="/egi/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}"></script>
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+<input type="hidden" id="csrfTokenValue" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 <tr>
 	<td class="greybox"></td>
 	<td class="greybox"><s:text name="bank" /> <span class="greybox"><span
 			class="mandatory1">*</span></span></td>
 	<egov:ajaxdropdown id="bankId" fields="['Text','Value']"
 		dropdownId="bankId"
-		url="voucher/common-ajaxLoadBanksByFundAndType.action" />
+		url="voucher/common-ajaxLoadBanksByFundAndType.action"/>
 	<td class="greybox"><s:select name="commonBean.bankId" id="bankId"
 			list="dropdownData.bankList" listKey="bankBranchId"
 			listValue="bankBranchName" headerKey="" headerValue="----Choose----"
@@ -73,7 +73,7 @@
 <tr>
 	<td class="bluebox" width="10%"></td>
 	<egov:ajaxdropdown id="accountNumber" fields="['Text','Value']"
-		dropdownId="accountNumber"
+		dropdownId="accountNumber" afterSuccess="setBankAccount"
 		url="voucher/common-ajaxLoadBankAccounts.action" />
 	<td class="bluebox" width="22%"><s:text name="account.number" /><span
 		class="bluebox"><span class="mandatory1">*</span></span></td>

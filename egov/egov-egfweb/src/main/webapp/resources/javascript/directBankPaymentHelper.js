@@ -88,7 +88,7 @@ function populateNarration(accnumObj) {
 	var bankbranchId = bankbranchObj.options[bankbranchObj.selectedIndex].value;
 	var index = bankbranchId.indexOf("-");
 	var branchId = bankbranchId.substring(index + 1, bankbranchId.length);
-    var csrfToken = document.getElementById('csrfTokenForTDSReport').value;
+    var csrfToken = document.getElementById('csrfTokenValue').value;
 	var url = '../voucher/common-loadAccNumNarration.action?accnum=' + accnum+'&_csrf='+csrfToken
 			+ '&branchId=' + branchId;
 	YAHOO.util.Connect.asyncRequest('POST', url, postTypeFrom, null);

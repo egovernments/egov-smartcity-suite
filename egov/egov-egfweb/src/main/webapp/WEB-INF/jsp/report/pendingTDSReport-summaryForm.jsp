@@ -175,7 +175,7 @@ function getData(){
 	isValid = validateData();
 	if(isValid == false)
 		return false;
-    var csrfToken = document.getElementById('csrfTokenForTDSReport').value;
+    var csrfToken = document.getElementById('csrfTokenValue').value;
 	var url = '/EGF/report/pendingTDSReport-ajaxLoadSummaryData.action?skipPrepare=true&asOnDate='+asOnDate+'&department.id='+
 							department+'&fund.id='+fund+'&partyName='+partyName+'&recovery.id='+recovery+'&detailKey='+detailKey+'&_csrf='+csrfToken;
 	YAHOO.util.Connect.asyncRequest('POST', url, callback, null);
@@ -190,7 +190,7 @@ function exportXls(){
 	var recovery =  document.getElementById('recovery').value;
 	var detailKey =  document.getElementById('detailKey').value;
 	var partyName =  document.getElementById('partyName').value;
-    var csrfToken = document.getElementById('csrfTokenForTDSReport').value;
+    var csrfToken = document.getElementById('csrfTokenValue').value;
 	window.open('/EGF/report/pendingTDSReport-exportSummaryXls.action?skipPrepare=true&asOnDate='+asOnDate+'&department.id='+department+'&fund.id='+fund+
 	'&recovery.id='+recovery+'&detailKey='+detailKey+'&partyName='+partyName+'&_csrf='+csrfToken,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
 }
@@ -202,7 +202,7 @@ function exportPdf(){
 	var recovery =  document.getElementById('recovery').value;
 	var detailKey =  document.getElementById('detailKey').value;
 	var partyName =  document.getElementById('partyName').value;
-    var csrfToken = document.getElementById('csrfTokenForTDSReport').value;
+    var csrfToken = document.getElementById('csrfTokenValue').value;
 	window.open('/EGF/report/pendingTDSReport-exportSummaryPdf.action?skipPrepare=true&asOnDate='+asOnDate+'&department.id='+department+'&fund.id='+
 	fund+'&recovery.id='+recovery+'&detailKey='+detailKey+'&partyName='+partyName+'&_csrf='+csrfToken,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
 }

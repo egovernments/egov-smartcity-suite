@@ -68,6 +68,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 public class VoucherSearchUtil {
@@ -89,14 +90,15 @@ public class VoucherSearchUtil {
         final Map.Entry<String, Map<String, Object>> filterQueryEntry = filterQueryMap.entrySet().iterator().next();
         final StringBuilder sql = new StringBuilder(filterQueryEntry.getKey());
         final Map<String, Object> params = filterQueryEntry.getValue();
-        StringBuilder statusExclude = new StringBuilder(excludeVoucherStatus());
+        List<Integer> statusExclude = Arrays.stream(excludeVoucherStatus().split(",")).map(Integer::valueOf).collect(Collectors.toList());
         final boolean modeIsNotBlank = null != mode && !StringUtils.isBlank(mode);
         if (modeIsNotBlank) {
             if ("edit".equalsIgnoreCase(mode))
                 sql.append(" and (vh.isConfirmed is null or vh.isConfirmed != 1)");
             else if ("reverse".equalsIgnoreCase(mode))
                 sql.append(" and vh.isConfirmed = 1");
-            statusExclude.append(",").append(FinancialConstants.REVERSEDVOUCHERSTATUS.toString()).append(",").append(FinancialConstants.REVERSALVOUCHERSTATUS);
+            statusExclude.add(FinancialConstants.REVERSEDVOUCHERSTATUS);
+            statusExclude.add(FinancialConstants.REVERSALVOUCHERSTATUS);
         }
 
         if (modeIsNotBlank && "edit".equalsIgnoreCase(mode)
@@ -182,9 +184,10 @@ public class VoucherSearchUtil {
             }
             return voucherList;
         } else {
-            Query qry5 = persistenceService.getSession().createQuery(new StringBuilder(" from CVoucherHeader vh where vh.status not in (")
-                    .append(statusExclude).append(") ").append(sql).append(" order by vh.voucherNumber ").toString());
+            Query qry5 = persistenceService.getSession().createQuery(new StringBuilder(" from CVoucherHeader vh where vh.status not in (:statusExclude) ")
+                    .append(sql).append(" order by vh.voucherNumber ").toString());
             params.entrySet().forEach(entry -> qry5.setParameter(entry.getKey(), entry.getValue()));
+            qry5.setParameterList("statusExclude", statusExclude);
             voucherList = qry5.list();
         }
         return voucherList;

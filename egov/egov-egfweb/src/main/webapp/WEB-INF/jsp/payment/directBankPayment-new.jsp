@@ -423,9 +423,11 @@ function onLoadTask_new()
 		if (jQuery("#bankBalanceCheck") == null || jQuery("#bankBalanceCheck").val() == "") {
 			disableForm();
 		}
+		populateAccNum();
 }
 
-function populateAccNum(branch){
+function populateAccNum(){
+	var branch = document.getElementById("bankId");
 	var fundObj = document.getElementById('fundId');
 	var bankbranchId = branch.options[branch.selectedIndex].value;
 	var index=bankbranchId.indexOf("-");
@@ -435,6 +437,10 @@ function populateAccNum(branch){
 	var vTypeOfAccount = '<s:property value="%{typeOfAccount}"/>';
 	
 	populateaccountNumber({fundId: fundObj.options[fundObj.selectedIndex].value,bankId:bankId,branchId:brId,typeOfAccount:vTypeOfAccount})
+}
+function setBankAccount(req, res) {
+	var accountNumber = '<s:property value="%{commonBean.accountNumberId}"/>';
+	document.getElementById("accountNumber").value = accountNumber; 
 }
 function onSubmit()
 {

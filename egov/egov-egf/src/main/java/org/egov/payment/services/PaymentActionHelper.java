@@ -85,6 +85,7 @@ import org.egov.pims.commons.Position;
 import org.egov.services.payment.MiscbilldetailService;
 import org.egov.services.payment.PaymentService;
 import org.egov.utils.FinancialConstants;
+import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,6 +134,7 @@ public class PaymentActionHelper {
                                                  CVoucherHeader billVhId, CommonBean commonBean,
                                                  List<VoucherDetails> billDetailslist, List<VoucherDetails> subLedgerlist, WorkflowBean workflowBean) {
         try {
+            persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
             voucherHeader = createVoucherAndledger(voucherHeader, commonBean, billDetailslist, subLedgerlist);
             paymentheader = paymentService.createPaymentHeader(voucherHeader,
                     Integer.valueOf(commonBean.getAccountNumberId()), commonBean
@@ -142,6 +144,9 @@ public class PaymentActionHelper {
                         commonBean.getDocumentId());
             createMiscBillDetail(billVhId, commonBean, voucherHeader);
             paymentheader = sendForApproval(paymentheader, workflowBean);
+            if (!paymentheader.isValidApprover())
+                return paymentheader;
+            persistenceService.getSession().flush();
         } catch (final ValidationException e) {
             LOGGER.error(e.getMessage(), e);
             final List<ValidationError> errors = new ArrayList<ValidationError>();
