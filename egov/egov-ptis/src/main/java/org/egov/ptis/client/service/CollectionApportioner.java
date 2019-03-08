@@ -47,9 +47,18 @@
  */
 package org.egov.ptis.client.service;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_CURRENTTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_TAXREBATE;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
-import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
@@ -59,12 +68,6 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.math.BigDecimal;
-import java.util.*;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_CURRENTTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_TAXREBATE;
 
 public class CollectionApportioner {
 
@@ -106,18 +109,6 @@ public class CollectionApportioner {
             }
 
             canWaiveOff = propertyTaxUtil.isEligibleforWaiver(amtPaid.compareTo(totalCrAmountToBePaid.subtract(totalPenalty)) >= 0, consumerId);
-
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(String.format(
-                        "penalty.waiver,canWaiveOff: %s, propertyTaxUtil != null: %s, fullPayment: %s amtPaid: %s, totalCrAmountToBePaid: %s - totalPenalty: %s = %s",
-                        canWaiveOff,
-                        propertyTaxUtil != null,
-                        (amtPaid.compareTo(totalCrAmountToBePaid.subtract(totalPenalty)) >= 0) + "",
-                        amtPaid,
-                        totalCrAmountToBePaid,
-                        totalPenalty,
-                        totalCrAmountToBePaid.subtract(totalPenalty)));
-            }
 
             Amount balance = new Amount(amtPaid);
             BigDecimal crAmountToBePaid = null;
@@ -166,8 +157,7 @@ public class CollectionApportioner {
             }
 
             LOGGER.info("receiptDetails after apportioning: " + receiptDetails);
-        } catch (Throwable ex) {
-            ex.printStackTrace();
+        } catch (Exception ex) {
             throw ex;
         }
     }

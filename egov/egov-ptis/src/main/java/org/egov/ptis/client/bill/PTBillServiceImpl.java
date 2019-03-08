@@ -339,7 +339,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
                 key = installmentDate.getMonthOfYear() + "/" + installmentDate.getYear() + "-"
                         + DEMANDRSN_CODE_PENALTY_FINES;
                 final BillDetailBean billDetailBean = new BillDetailBean(installment, orderMap.get(key), key, penalty,
-                        GLCODE_FOR_PENALTY, PropertyTaxConstants.DEMANDRSN_STR_PENALTY_FINES, 1,
+                        GLCODE_FOR_PENALTY, DEMANDRSN_STR_PENALTY_FINES, 1,
                         definePurpose(penDmdDtls));
                 if (waiverEnabled) {
                     billDetailBean.setIsActualDemand(0);
@@ -505,7 +505,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
     public String definePurpose(EgDemandDetails demandDetail) {
         String purpose = PURPOSE.OTHERS.toString();
         if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY)) {
+                .equalsIgnoreCase(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY)) {
             return PURPOSE.CHEQUE_BOUNCE_PENALTY.toString();
         }
         Map<String, Installment> currInstallments = propertyTaxUtil.getInstallmentsForCurrYear(new Date());

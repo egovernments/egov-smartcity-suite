@@ -477,14 +477,14 @@ public class PropertyTaxCollection extends TaxCollection {
             for (EgDemandDetails egdd : allPenaltyDemands) {
 
                 BigDecimal amtRebate = egdd.getAmount().subtract(egdd.getAmtCollected());
-                if (amtRebate.compareTo(BigDecimal.ZERO) == 1) {
+                if (amtRebate.compareTo(ZERO) == 1) {
                     egdd.setAmtRebate(amtRebate);
                     egdd.setAmtCollected(egdd.getAmount());
                     demanddetailsDao.update(egdd);
                 }
             }
 
-        if (rebateAmount.compareTo(BigDecimal.ZERO) > 0) {
+        if (rebateAmount.compareTo(ZERO) > 0) {
             demandDetail = installmentWiseDemandDetailsByReason.get(currInstallments.get(CURRENTYEAR_FIRST_HALF).getDescription())
                     .get(PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX);
             if (demandDetail == null)
@@ -516,8 +516,8 @@ public class PropertyTaxCollection extends TaxCollection {
 
         boolean didPenaltyWaivedOff = billRcptImpl.getReceiptMisc().getReceiptHeader().getReceiptDetails()
                 .stream().anyMatch(
-                        receiptDetail -> isPenaltyReceipt(receiptDetail) && receiptDetail.getIsActualDemand() == false
-                                && receiptDetail.getCramount().compareTo(BigDecimal.ZERO) == 0);
+                        receiptDetail -> isPenaltyReceipt(receiptDetail) && receiptDetail.getIsActualDemand()
+                                && receiptDetail.getCramount().compareTo(ZERO) == 0);
 
         // Undo all waived off only if penalty is waived off for current receipt !!!
         if (didPenaltyWaivedOff)
@@ -791,7 +791,6 @@ public class PropertyTaxCollection extends TaxCollection {
      * @param upicNo
      * @return EgDemand
      */
-    @SuppressWarnings("unchecked")
     public EgDemand getCurrentDemand(final Long billId) {
         LOGGER.debug("Entered into getCurrentDemand");
 

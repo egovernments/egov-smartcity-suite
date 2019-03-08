@@ -49,7 +49,6 @@ package org.egov.collection.integration.models;
 
 import java.math.BigDecimal;
 
-import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.utils.FinancialsUtil;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
