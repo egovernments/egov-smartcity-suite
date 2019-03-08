@@ -209,7 +209,7 @@ var fileformatsinclude = ['pdf','jpeg','jpg','png','gif'];
 			var fileSize = this.files[0].size; // in bytes
 			var charlen = (this.value.split('/').pop().split('\\').pop()).length;
 			if(charlen > 255){
-				bootbox.alert('Document name should not exceed 50 characters!');
+				bootbox.alert('Document name should not exceed 255 characters!');
 				fileInput.replaceWith(fileInput.val('').clone(true));
 				return false;			
 			} 
