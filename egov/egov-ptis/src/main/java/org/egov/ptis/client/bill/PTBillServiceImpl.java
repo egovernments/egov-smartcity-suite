@@ -128,8 +128,8 @@ public class PTBillServiceImpl extends BillServiceInterface {
      */
     @Override
     public List<EgBillDetails> getBilldetails(final Billable billObj) {
-        // waiverEnabled if app_config if there and there id zero receipts after GO date
-        waiverEnabled = propertyTaxUtil.isEligibleforWaiver(Boolean.TRUE, billObj.getConsumerId());
+        // waiverEnabled is false, if not Mutation Fee Payment check against app_config and there is zero receipts after GO date
+        waiverEnabled = false;
         final List<EgBillDetails> billDetails = new ArrayList<>();
         LOGGER.debug("Entered method getBilldetails : " + billObj);
         EgBillDetails billdetail;
@@ -152,6 +152,10 @@ public class PTBillServiceImpl extends BillServiceInterface {
             billdetail.setFunctionCode(financialUtil.getFunctionCode());
             billDetails.add(billdetail);
             return billDetails;
+        }
+        
+        if (!billable.isMutationFeePayment()) {
+            waiverEnabled = propertyTaxUtil.isEligibleforWaiver(Boolean.TRUE, billObj.getConsumerId());
         }
 
         String key;
