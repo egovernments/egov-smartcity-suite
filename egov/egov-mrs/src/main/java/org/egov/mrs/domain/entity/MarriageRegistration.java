@@ -111,8 +111,6 @@ public class MarriageRegistration extends StateAware<Position> {
 
     @SafeHtml
     @Length(max = 300)
-    @NotNull
-    @Pattern(regexp = ALPHANUMERIC_WITH_SPECIAL_CHARS, message = INVALID_ALPHANUMERIC_WITH_SPECIAL_CHARS)
     private String placeOfMarriage;
 
     @SafeHtml

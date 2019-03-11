@@ -63,6 +63,7 @@ import org.springframework.validation.Validator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHANUMERIC_WITH_SPECIAL_CHARS;
 import static org.egov.mrs.application.MarriageConstants.CF_STAMP;
 import static org.egov.mrs.application.MarriageConstants.MOM;
 
@@ -206,8 +207,15 @@ public class MarriageFormValidator implements Validator {
                 NOTEMPTY_MRG_RESIDENCE_ADDRESS);
 
         if (registration != null) {
-        	if(!"Residence".equalsIgnoreCase(registration.getVenue()) && StringUtils.isBlank(registration.getPlaceOfMarriage()))
+        	if(!"Residence".equalsIgnoreCase(registration.getVenue()) && StringUtils.isBlank(registration.getPlaceOfMarriage())){
         		errors.rejectValue("placeOfMarriage", "Notempty.mrg.place.of.mrg");
+        		if(StringUtils.isNotBlank(registration.getPlaceOfMarriage())){
+        			pattern = Pattern.compile(ALPHANUMERIC_WITH_SPECIAL_CHARS);
+                    matcher = pattern.matcher(registration.getPlaceOfMarriage());
+                    if (!matcher.matches())
+                        errors.rejectValue("placeOfMarriage", "invalid.pattern.alphanumeric.with.special.chars");
+        		}
+        	}
             validateBrideInformation(errors, registration);
             validateBrideGroomInformation(errors, registration);
             validateDocumentAttachments(errors, registration);

@@ -53,8 +53,8 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+	<context:property-placeholder/>
     <import resource="applicationSecurityContext-mrs.xml"/>
-    <context:property-placeholder/>
     <context:component-scan base-package="org.egov.mrs.web">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
