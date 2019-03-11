@@ -473,11 +473,6 @@ public class WaterConnectionDetailsService {
 	public List<DocumentNames> getAllActiveDocumentNames(ApplicationType applicationType) {
 		return documentNamesService.getAllActiveDocumentNamesByApplicationType(applicationType);
 	}
-	
-	public String getconnectionStatusForPropertyidentifier(String PropertyIdentifier){
-	       return waterConnectionDetailsRepository.getconnectionStatusForPropertyidentifier(PropertyIdentifier);
-	}
-	
 
 	public WaterConnectionDetails findByApplicationNumberOrConsumerCodeAndStatus(String number,
 			ConnectionStatus connectionStatus) {

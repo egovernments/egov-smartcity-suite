@@ -125,6 +125,7 @@ public class WaterTaxConstants {
     public static final String ROLE_CITIZEN = "CITIZEN";
     public static final String ROLE_OPERATOR = "Operator";
     public static final String ROLE_PUBLIC = "PUBLIC";
+    public static final String ROLE_BANKCOLLECTOROPERATOR = "Bank Collection Operator";
     public static final String ROLE_ADMIN = "Property Administrator";
     public static final String ROLE_MEESEVA_OPERATOR = "MeeSeva Operator";
 
