@@ -343,6 +343,7 @@ public class PropertyTaxCollection extends TaxCollection {
             final EgDemand demand, final BillReceiptInfo billRcptInfo) {
         LOGGER.debug("Entering method saveCollectionDetails");
         BigDecimal rebateAmount = BigDecimal.ZERO;
+        boolean canWaiveOff = false;
         for (final ReceiptAccountInfo accInfo : accountDetails)
             if (accInfo.getDescription() != null)
                 if (accInfo.getDescription().contains("REBATE"))
@@ -409,6 +410,8 @@ public class PropertyTaxCollection extends TaxCollection {
 
         EgDemandDetails demandDetail = null;
 
+        canWaiveOff = propertyTaxUtil.isEligibleforWaiver(totalAmount.compareTo(restAmountToBePaid) >= 0, billRcptInfo.getConsumerCode());
+
         for (final ReceiptAccountInfo rcptAccInfo : accountDetails)
             if (rcptAccInfo.getDescription() != null && !rcptAccInfo.getDescription().isEmpty())
                 if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
@@ -473,7 +476,7 @@ public class PropertyTaxCollection extends TaxCollection {
                             + rcptAccInfo.getCrAmount());
                 }
 
-        if (propertyTaxUtil.isEligibleforWaiver(totalAmount.compareTo(restAmountToBePaid) >= 0, billRcptInfo.getConsumerCode()))
+        if (canWaiveOff)
             for (EgDemandDetails egdd : allPenaltyDemands) {
 
                 BigDecimal amtRebate = egdd.getAmount().subtract(egdd.getAmtCollected());
