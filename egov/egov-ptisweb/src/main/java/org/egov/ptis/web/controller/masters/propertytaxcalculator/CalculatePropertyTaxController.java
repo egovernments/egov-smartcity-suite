@@ -54,7 +54,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.egov.ptis.bean.FloorDetails;
+import org.egov.ptis.bean.FloorDetailsInfo;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.master.service.CalculatePropertyTaxService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,7 +80,7 @@ public class CalculatePropertyTaxController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public  Map<String, String> propertyTaxCalculatorResult(@ModelAttribute("propertyTaxCalculator") final FloorDetails floorDetails, final Model model,
+    public  Map<String, String> propertyTaxCalculatorResult(@ModelAttribute("propertyTaxCalculator") final FloorDetailsInfo floorDetails, final Model model,
             @Valid final BindingResult errors, final HttpServletRequest request) throws TaxCalculatorExeption {
         Map<String, String> resultString = new ConcurrentHashMap<>();
         try{

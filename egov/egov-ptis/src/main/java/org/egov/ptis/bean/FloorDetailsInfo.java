@@ -51,7 +51,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class FloorDetails {
+public class FloorDetailsInfo {
 
     private Long zoneId;
     private Long classificationId;
@@ -61,7 +61,8 @@ public class FloorDetails {
     private Date constructionDate;
     private Float constructedPlinthArea;
     private Float plinthAreaInBuildingPlan;
-    private List<FloorDetails> floorTemp = new ArrayList<>();
+    private Date occupancyDate = new Date();
+    private List<FloorDetailsInfo> floorTemp = new ArrayList<>();
 
     public Date getConstructionDate() {
         return constructionDate;
@@ -87,11 +88,11 @@ public class FloorDetails {
         this.plinthAreaInBuildingPlan = plinthAreaInBuildingPlan;
     }
 
-    public List<FloorDetails> getFloorTemp() {
+    public List<FloorDetailsInfo> getFloorTemp() {
         return floorTemp;
     }
 
-    public void setFloorTemp(List<FloorDetails> floorTemp) {
+    public void setFloorTemp(List<FloorDetailsInfo> floorTemp) {
         this.floorTemp = floorTemp;
     }
 
@@ -133,5 +134,13 @@ public class FloorDetails {
 
     public void setFloorId(String floorId) {
         this.floorId = floorId;
+    }
+
+    public Date getOccupancyDate() {
+        return occupancyDate;
+    }
+
+    public void setOccupancyDate(Date occupancyDate) {
+        this.occupancyDate = occupancyDate;
     }
 }

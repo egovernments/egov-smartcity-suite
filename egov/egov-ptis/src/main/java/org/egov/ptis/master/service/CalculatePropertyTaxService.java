@@ -61,7 +61,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYP
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -71,7 +70,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.ptis.bean.FloorDetails;
+import org.egov.ptis.bean.FloorDetailsInfo;
 import org.egov.ptis.client.service.calculator.APTaxCalculator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
@@ -92,68 +91,70 @@ import org.springframework.ui.Model;
 @Service
 @Transactional
 public class CalculatePropertyTaxService {
-    
+
     @Autowired
     private BoundaryService boundaryService;
-    
+
     @Autowired
     private StructureClassificationService structureClassificationService;
 
     @Autowired
     private PropertyUsageService propertyUsageService;
-    
+
     @Autowired
     private PropertyOccupationService propertyOccupationService;
-    
+
     @Autowired
     PropertyTaxUtil propertyTaxUtil;
-    
+
     @Autowired
     private APTaxCalculator apTaxCalculator;
 
     @Autowired
     private PropertyTypeMasterDAO propertyTypeMasterDAO;
-    
+
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
-    
+
     public void addModelAttributes(final Model model) {
         final List<Boundary> zoneList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE,
                 REVENUE_HIERARCHY_TYPE);
         final List<StructureClassification> buildingClassifications = structureClassificationService.getAllActiveStructureTypes();
         final List<PropertyUsage> usageList = propertyUsageService.getAllActiveMixedPropertyUsages();
-        Map<Long,String> zones = new ConcurrentHashMap<>();
-        Map<Long,String> classifications = new ConcurrentHashMap<>();
-        Map<Long,String> usages = new ConcurrentHashMap<>();
-        Map<Long,String> occupations = new ConcurrentHashMap<>();
-        for(Boundary zone: zoneList){
+        Map<Long, String> zones = new ConcurrentHashMap<>();
+        Map<Long, String> classifications = new ConcurrentHashMap<>();
+        Map<Long, String> usages = new ConcurrentHashMap<>();
+        Map<Long, String> occupations = new ConcurrentHashMap<>();
+        for (Boundary zone : zoneList) {
             zones.put(zone.getId(), zone.getName());
         }
-        
-        for(StructureClassification classification: buildingClassifications){
+
+        for (StructureClassification classification : buildingClassifications) {
             classifications.put(classification.getId(), classification.getTypeName());
         }
-        for(PropertyUsage usage: usageList){
+        for (PropertyUsage usage : usageList) {
             usages.put(usage.getId(), usage.getUsageName());
         }
-        for(PropertyOccupation occupation: propertyOccupationService.getAllPropertyOccupations()){
+        for (PropertyOccupation occupation : propertyOccupationService.getAllPropertyOccupations()) {
             occupations.put(occupation.getId(), occupation.getOccupation());
         }
-        model.addAttribute("floorDetails", new FloorDetails());
+        model.addAttribute("floorDetails", new FloorDetailsInfo());
         model.addAttribute("zoneId", zones);
         model.addAttribute("classificationId", classifications);
         model.addAttribute("usageId", usages);
         model.addAttribute("occupationId", occupations);
-        model.addAttribute("floorId",FLOOR_MAP);
-        model.addAttribute("occupancyId",occupations);
+        model.addAttribute("floorId", FLOOR_MAP);
+        model.addAttribute("occupancyId", occupations);
     }
-    
-    public Map<String, String> calculateTaxes(FloorDetails taxCalculatorRequest) throws TaxCalculatorExeption {
+
+    public Map<String, String> calculateTaxes(FloorDetailsInfo taxCalculatorRequest) throws TaxCalculatorExeption {
         PropertyTypeMaster propertyTypeMaster = propertyTypeMasterDAO.getPropertyTypeMasterByCode(OWNERSHIP_TYPE_PRIVATE);
-        Map<Installment, TaxCalculationInfo> instTaxMap =  apTaxCalculator.calculatePropertyTax(boundaryService.getBoundaryById(taxCalculatorRequest.getZoneId()), taxCalculatorRequest.getFloorTemp(), propertyTypeMaster, new Date());
+        Map<Installment, TaxCalculationInfo> instTaxMap = apTaxCalculator.calculatePropertyTax(
+                boundaryService.getBoundaryById(taxCalculatorRequest.getZoneId()), taxCalculatorRequest.getFloorTemp(),
+                propertyTypeMaster, new Date());
         return getCurrentHalfyearTaxRates(instTaxMap, propertyTypeMaster);
     }
-    
+
     public Map<String, String> getCurrentHalfyearTaxRates(final Map<Installment, TaxCalculationInfo> instTaxMap,
             final PropertyTypeMaster propTypeMstr) {
         final Map<String, String> taxDetails = new LinkedHashMap<>();
@@ -184,7 +185,8 @@ public class CalculatePropertyTaxService {
                 else if (miscTax.getTaxName() == DEMANDRSN_CODE_PRIMARY_SERVICE_CHARGES)
                     serviceCharges = serviceCharges.add(miscTax.getTotalCalculatedTax());
 
-        BigDecimal totalTax = genTax.setScale(0, BigDecimal.ROUND_HALF_UP).add(unAuthPenalty.setScale(0, BigDecimal.ROUND_HALF_UP))
+        BigDecimal totalTax = genTax.setScale(0, BigDecimal.ROUND_HALF_UP)
+                .add(unAuthPenalty.setScale(0, BigDecimal.ROUND_HALF_UP))
                 .add(eduTax.setScale(0, BigDecimal.ROUND_HALF_UP)).add(vacLandTax.setScale(0, BigDecimal.ROUND_HALF_UP))
                 .add(libCess.setScale(0, BigDecimal.ROUND_HALF_UP)).add(sewrageTax.setScale(0, BigDecimal.ROUND_HALF_UP))
                 .add(serviceCharges.setScale(0, BigDecimal.ROUND_HALF_UP));
@@ -193,29 +195,28 @@ public class CalculatePropertyTaxService {
                 vacLandTax, sewrageTax, serviceCharges);
         return taxDetails;
     }
-    
+
     public void setTaxDetailsToMap(final PropertyTypeMaster propTypeMstr, final Map<String, String> taxDetails,
             final BigDecimal annualValue, final BigDecimal totalPropertyTax, BigDecimal genTax, BigDecimal libCess,
             BigDecimal eduTax, BigDecimal unAuthPenalty, BigDecimal vacLandTax, BigDecimal sewrageTax,
             BigDecimal serviceCharges) {
-        taxDetails.put("Annual Rental Value", propertyTaxCommonUtils.formatAmount(annualValue)); 
+        taxDetails.put("Annual Rental Value", propertyTaxCommonUtils.formatAmount(annualValue));
         if (OWNERSHIP_TYPE_VAC_LAND.equalsIgnoreCase(propTypeMstr.getCode()))
-        taxDetails.put("Vacant Land Tax", propertyTaxCommonUtils.formatAmount(vacLandTax)); 
-            else{
-                taxDetails.put("Property Tax", propertyTaxCommonUtils.formatAmount(genTax));
-                taxDetails.put("Education Tax", propertyTaxCommonUtils.formatAmount(eduTax));
-            }
-        taxDetails.put("Library Cess", propertyTaxCommonUtils.formatAmount(libCess)); 
+            taxDetails.put("Vacant Land Tax", propertyTaxCommonUtils.formatAmount(vacLandTax));
+        else {
+            taxDetails.put("Property Tax", propertyTaxCommonUtils.formatAmount(genTax));
+            taxDetails.put("Education Tax", propertyTaxCommonUtils.formatAmount(eduTax));
+        }
+        taxDetails.put("Library Cess", propertyTaxCommonUtils.formatAmount(libCess));
         final Boolean isCorporation = propertyTaxUtil.isCorporation();
         if (isCorporation)
-            taxDetails.put("Sewrage Tax", propertyTaxCommonUtils.formatAmount(sewrageTax)); 
+            taxDetails.put("Sewrage Tax", propertyTaxCommonUtils.formatAmount(sewrageTax));
         if (isCorporation && propertyTaxUtil.isPrimaryServiceApplicable())
-            taxDetails.put("Service Charges", propertyTaxCommonUtils.formatAmount(serviceCharges)); 
+            taxDetails.put("Service Charges", propertyTaxCommonUtils.formatAmount(serviceCharges));
         if (!OWNERSHIP_TYPE_VAC_LAND.equalsIgnoreCase(propTypeMstr.getCode()))
             taxDetails.put("Unauthorized Penalty", propertyTaxCommonUtils.formatAmount(unAuthPenalty));
-        
+
         taxDetails.put("Total Tax", propertyTaxCommonUtils.formatAmount(totalPropertyTax));
     }
-    
-   
+
 }

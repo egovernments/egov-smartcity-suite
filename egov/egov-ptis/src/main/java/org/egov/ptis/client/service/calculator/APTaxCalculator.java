@@ -89,7 +89,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.ptis.bean.FloorDetails;
+import org.egov.ptis.bean.FloorDetailsInfo;
 import org.egov.ptis.client.handler.TaxCalculationInfoXmlHandler;
 import org.egov.ptis.client.model.calculator.APMiscellaneousTax;
 import org.egov.ptis.client.model.calculator.APTaxCalculationInfo;
@@ -598,7 +598,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
                 2, BigDecimal.ROUND_HALF_UP);
     }
     
-    public Map<Installment, TaxCalculationInfo> calculatePropertyTax(final Boundary zone,final List<FloorDetails> floorDetails,final PropertyTypeMaster propertyTypeMaster,
+    public Map<Installment, TaxCalculationInfo> calculatePropertyTax(final Boundary zone,final List<FloorDetailsInfo> floorDetails,final PropertyTypeMaster propertyTypeMaster,
             final Date occupationDate) throws TaxCalculatorExeption {
         BigDecimal totalNetArv;
         BoundaryCategory boundaryCategory;
@@ -618,7 +618,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
             totalNetArv = BigDecimal.ZERO;
             final APTaxCalculationInfo taxCalculationInfo = addPropertyInfo(zone.getName(), propertyTypeMaster.getType());
             if (betweenOrBefore(occupationDate, installment.getFromDate(), installment.getToDate())) {
-                for (final FloorDetails floorDetail : floorDetails){
+                for (final FloorDetailsInfo floorDetail : floorDetails){
                     final Area builtUpArea = new Area();
                     builtUpArea.setArea(floorDetail.getConstructedPlinthArea());
                     final Area buildingPlanPlinthArea = new Area();

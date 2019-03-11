@@ -113,6 +113,7 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.bean.AssessmentInfo;
+import org.egov.ptis.bean.FloorDetailsInfo;
 import org.egov.ptis.bean.FloorInfo;
 import org.egov.ptis.bean.SurveyAssessmentDetails;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
@@ -188,6 +189,7 @@ import org.egov.ptis.domain.repository.vacancyremission.VacancyRemissionReposito
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.master.service.ApartmentService;
+import org.egov.ptis.master.service.CalculatePropertyTaxService;
 import org.egov.ptis.master.service.FloorTypeService;
 import org.egov.ptis.master.service.PropertyOccupationService;
 import org.egov.ptis.master.service.PropertyUsageService;
@@ -214,7 +216,6 @@ public class PropertyExternalService {
     public static final Integer FLAG_TAX_DETAILS = 1;
     public static final Integer FLAG_FULL_DETAILS = 2;
     private static final String FORWARD_SUCCESS_COMMENT = "Application has been created by GIS Survey system.";
-    private static final String TAX_CALCULATIONS_EFFECTIVE_DATE = "01/10/2017";
     private static final String HALF_YEARLY_TAX = "halfYearlyTax";
     private static final String ARV = "ARV";
 
@@ -271,9 +272,6 @@ public class PropertyExternalService {
     private ModuleService moduleService;
 
     @Autowired
-    private PersistenceService persistenceService;
-
-    @Autowired
     PropertyUsageService propertyUsageService;
 
     @Autowired
@@ -303,10 +301,13 @@ public class PropertyExternalService {
     private PropertyOccupationService propertyOccupationService;
     @Autowired
     private TaxExemptionReasonService taxExemptionReasonService;
-    @Autowired 
+    @Autowired
     private DepartmentService departmentService;
     @Autowired
     private PropertyStatusHibernateDAO propertyStatusHibernateDAO;
+
+    @Autowired
+    private CalculatePropertyTaxService calculatePropertyTaxService;
 
     private PropertyImpl propty = new PropertyImpl();
 
@@ -364,7 +365,7 @@ public class PropertyExternalService {
         BasicProperty basicProperty = basicPropertyDAO
                 .getAllBasicPropertyByPropertyID(assessmentDetail.getPropertyID());
         final ErrorDetails errorDetails = new ErrorDetails();
-		if (null != basicProperty && null != basicProperty.getProperty()) {
+        if (null != basicProperty && null != basicProperty.getProperty()) {
             assessmentDetail.setStatus(basicProperty.isActive());
             if (status.equals(BasicPropertyStatus.ACTIVE)) {
                 if (basicProperty.isActive()) {
@@ -959,9 +960,9 @@ public class PropertyExternalService {
 
     public List<MasterCodeNamePairDetails> getReasonsForChangeProperty(final String reason) {
         final List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<>(0);
-		final List<PropertyMutationMaster> propMutationMasterList = propertyMutationMasterDAO
-				.getAllPropertyMutationMastersByType(reason);
-		if (null != propMutationMasterList)
+        final List<PropertyMutationMaster> propMutationMasterList = propertyMutationMasterDAO
+                .getAllPropertyMutationMastersByType(reason);
+        if (null != propMutationMasterList)
             for (final PropertyMutationMaster propMutationMaster : propMutationMasterList) {
                 final MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
                 mstrCodeNamePairDetails.setCode(propMutationMaster.getCode());
@@ -1313,7 +1314,8 @@ public class PropertyExternalService {
         // Set isBillCreated property value as false
         basicProperty.setIsBillCreated(STATUS_BILL_NOTCREATED);
         // Set PropertyMutationMaster object
-        PropertyMutationMaster propertyMutationMaster = propertyMutationMasterDAO.getPropertyMutationMasterByCode(viewPropertyDetails.getMutationReason());
+        PropertyMutationMaster propertyMutationMaster = propertyMutationMasterDAO
+                .getPropertyMutationMasterByCode(viewPropertyDetails.getMutationReason());
         basicProperty.setPropertyMutationMaster(propertyMutationMaster);
         // Creating Property Address object
         final Boundary block = getBoundaryByNumberAndType(viewPropertyDetails.getBlockName(), BLOCK, REVENUE_HIERARCHY_TYPE);
@@ -1573,8 +1575,8 @@ public class PropertyExternalService {
             if (StringUtils.isNotBlank(floorDetails.getFloorNoCode()))
                 floor.setFloorNo(Integer.valueOf(floorDetails.getFloorNoCode()));
             if (StringUtils.isNotBlank(floorDetails.getBuildClassificationCode()))
-				floor.setStructureClassification(structureClassificationService
-						.getClassificationByCode(floorDetails.getBuildClassificationCode()));
+                floor.setStructureClassification(structureClassificationService
+                        .getClassificationByCode(floorDetails.getBuildClassificationCode()));
             if (StringUtils.isNotBlank(floorDetails.getNatureOfUsageCode()))
                 floor.setPropertyUsage(propertyUsageService.getUsageByCode(floorDetails.getNatureOfUsageCode()));
             if (StringUtils.isNotBlank(floorDetails.getOccupancyCode()))
@@ -2361,16 +2363,17 @@ public class PropertyExternalService {
             surveyBean.setAgeOfCompletion(propService.getSlaValue(APPLICATION_TYPE_ALTER_ASSESSENT));
             if (activeProperty != null) {
                 Ptdemand activePtDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(activeProperty);
-                Map<String, Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(gisPtdemand.getEgInstallmentMaster().getFromDate());
+                Map<String, Installment> yearwiseInstMap = propertyTaxUtil
+                        .getInstallmentsForCurrYear(gisPtdemand.getEgInstallmentMaster().getFromDate());
                 Date firstInstStartDate = yearwiseInstMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF).getFromDate();
                 Date secondInstStartDate = yearwiseInstMap.get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF).getFromDate();
                 for (EgDemandDetails demandDetail : activePtDemand.getEgDemandDetails()) {
                     if (firstInstStartDate.equals(demandDetail.getInstallmentStartDate())
-                            || secondInstStartDate.equals(demandDetail.getInstallmentStartDate()) 
-                                                                && !PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES.equalsIgnoreCase(
-                                                                                demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
-                                                                && !PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY.equalsIgnoreCase(
-                                                                                demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                            || secondInstStartDate.equals(demandDetail.getInstallmentStartDate())
+                                    && !PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES.equalsIgnoreCase(
+                                            demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
+                                    && !PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY.equalsIgnoreCase(
+                                            demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
                         activeTax = activeTax.add(demandDetail.getAmount());
                 }
                 surveyBean.setSystemTax(activeTax);
@@ -2413,8 +2416,8 @@ public class PropertyExternalService {
         propertyImpl.setSource(SOURCE_SURVEY);
         propertyImpl.getPropertyDetail().setOccupancyCertificationNo(viewPropertyDetails.getOccupancyCertificationNo());
         propertyImpl.getPropertyDetail().setOccupancyCertificationDate(viewPropertyDetails.getOccupancyCertificationDate());
-		final PropertyMutationMaster propMutMstr = propertyMutationMasterDAO
-				.getPropertyMutationMasterByCode(PROPERTY_MODIFY_REASON_ADD_OR_ALTER);
+        final PropertyMutationMaster propMutMstr = propertyMutationMasterDAO
+                .getPropertyMutationMasterByCode(PROPERTY_MODIFY_REASON_ADD_OR_ALTER);
         basicProperty.setPropertyMutationMaster(propMutMstr);
 
         if (!propertyTypeMaster.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
@@ -2750,7 +2753,8 @@ public class PropertyExternalService {
         basicProperty.setLongitude(viewPropertyDetails.getLongitude());
 
         // Set PropertyMutationMaster object
-        final PropertyMutationMaster propertyMutationMaster = propertyMutationMasterDAO.getPropertyMutationMasterByCode(viewPropertyDetails.getMutationReason());
+        final PropertyMutationMaster propertyMutationMaster = propertyMutationMasterDAO
+                .getPropertyMutationMasterByCode(viewPropertyDetails.getMutationReason());
         basicProperty.setPropertyMutationMaster(propertyMutationMaster);
         // need to pass parent property index, in case of bifurcation
         if (propertyMutationMaster.getCode().equals(PROP_CREATE_RSN_BIFUR) || viewPropertyDetails.getIsExtentAppurtenantLand())
@@ -2903,11 +2907,11 @@ public class PropertyExternalService {
 
             if (betweenOrBefore(convertStringToDate(floorDetails.getOccupancyDate()), installment.getFromDate(),
                     installment.getToDate())) {
-				categories = (List<BoundaryCategory>) entityManager.createNamedQuery(QUERY_BASERATE_BY_OCCUPANCY_ZONE)
-						.setParameter("boundary", zone.getId()).setParameter("usage", usage.getId())
-						.setParameter("structure", sc.getId())
-						.setParameter("fromDate", convertStringToDate(floorDetails.getOccupancyDate()))
-						.setParameter("toDate", installment.getToDate()).getResultList();
+                categories = (List<BoundaryCategory>) entityManager.createNamedQuery(QUERY_BASERATE_BY_OCCUPANCY_ZONE)
+                        .setParameter("boundary", zone.getId()).setParameter("usage", usage.getId())
+                        .setParameter("structure", sc.getId())
+                        .setParameter("fromDate", convertStringToDate(floorDetails.getOccupancyDate()))
+                        .setParameter("toDate", installment.getToDate()).getResultList();
                 if (categories.isEmpty()) {
                     isActive = Boolean.TRUE;
                 }
@@ -3030,23 +3034,25 @@ public class PropertyExternalService {
         if (propertyImpl != null) {
             if (StringUtils.isNotBlank(propertyImpl.getReferenceId()))
                 taxCalculatorResponse.setReferenceId(propertyImpl.getReferenceId());
-
+            Map<String, String> taxDetailsMap = new HashMap<>();
             Map<String, BigDecimal> calculationsMap = getARVAndTaxDetails(propService, propertyImpl,
                     currYearInstMap.get(CURRENTYEAR_SECOND_HALF), false);
             taxCalculatorResponse.setExistingARV(calculationsMap.get(ARV));
             taxCalculatorResponse.setExistingHalfYearlyTax(calculationsMap.get(HALF_YEARLY_TAX));
-            Date effectiveDate = DateUtils.getDate(TAX_CALCULATIONS_EFFECTIVE_DATE, DATE_FORMAT_DDMMYYY);
             propertyImpl.setReferenceId(taxCalculatorRequest.getReferenceId());
-            prepareFloorDetailsForTaxCalculation(taxCalculatorRequest, propertyImpl, effectiveDate);
-            Date completionDate = getCompletionDate(propService, propertyImpl);
+            FloorDetailsInfo floorDetails = prepareFloorDetails(taxCalculatorRequest, basicProperty);
             try {
-                propService.createDemand(propertyImpl, completionDate);
+                taxDetailsMap = calculatePropertyTaxService.calculateTaxes(floorDetails);
             } catch (TaxCalculatorExeption e) {
                 LOGGER.error("create : There are no Unit rates defined for chosen combinations", e);
             }
             calculationsMap = getARVAndTaxDetails(propService, propertyImpl, currYearInstMap.get(CURRENTYEAR_SECOND_HALF), true);
-            taxCalculatorResponse.setCalculatedARV(calculationsMap.get(ARV));
-            taxCalculatorResponse.setNewHalfYearlyTax(calculationsMap.get(HALF_YEARLY_TAX));
+            taxCalculatorResponse.setCalculatedARV(
+                    new BigDecimal(taxDetailsMap.get("Annual Rental Value").replaceAll("[a-zA-Z,]", "").trim()));
+            taxCalculatorResponse
+                    .setNewHalfYearlyTax(new BigDecimal(taxDetailsMap.get("Total Tax").replaceAll("[a-zA-Z,]", "").trim())
+                            .subtract(new BigDecimal(
+                                    taxDetailsMap.get("Unauthorized Penalty").replaceAll("[a-zA-Z,]", "").trim())));
 
             if (taxCalculatorResponse.getExistingHalfYearlyTax().compareTo(ZERO) > 0)
                 taxVariance = ((taxCalculatorResponse.getNewHalfYearlyTax()
@@ -3064,6 +3070,27 @@ public class PropertyExternalService {
             taxCalculatorResponse.setArvVariance(arvVariance);
         }
         return taxCalculatorResponse;
+    }
+
+    private FloorDetailsInfo prepareFloorDetails(TaxCalculatorRequest taxCalculatorRequest, BasicProperty basicProperty)
+            throws ParseException {
+        FloorDetailsInfo floorDetails = new FloorDetailsInfo();
+        floorDetails.setZoneId(basicProperty.getPropertyID().getZone().getId());
+        floorDetails.setOccupancyDate(
+                DateUtils.getDate(taxCalculatorRequest.getFloorDetails().get(0).getOccupancyDate(), "dd-MM-yyyy"));
+        List<Floor> floorList = getFloorList(taxCalculatorRequest.getFloorDetails());
+        for (Floor floor : floorList) {
+            FloorDetailsInfo floorDetailsInfo = new FloorDetailsInfo();
+            floorDetailsInfo.setClassificationId(floor.getStructureClassification().getId());
+            floorDetailsInfo.setConstructedPlinthArea((floor.getBuiltUpArea().getArea()));
+            floorDetailsInfo.setConstructionDate((floor.getConstructionDate()));
+            floorDetailsInfo.setFloorId((floor.getFloorNo().toString()));
+            floorDetailsInfo.setOccupancyId((floor.getPropertyOccupation().getId()));
+            floorDetailsInfo.setPlinthAreaInBuildingPlan((floor.getBuildingPlanPlinthArea().getArea()));
+            floorDetailsInfo.setUsageId((floor.getPropertyUsage().getId()));
+            floorDetails.getFloorTemp().add(floorDetailsInfo);
+        }
+        return floorDetails;
     }
 
     private Map<String, BigDecimal> getARVAndTaxDetails(PropertyService propService, PropertyImpl propertyImpl,
@@ -3086,20 +3113,6 @@ public class PropertyExternalService {
         }
 
         return calculationDetailsMap;
-    }
-
-    private void prepareFloorDetailsForTaxCalculation(TaxCalculatorRequest taxCalculatorRequest, PropertyImpl propertyImpl,
-            Date effectiveDate)
-            throws ParseException {
-        if (taxCalculatorRequest.getFloorDetails() != null && !taxCalculatorRequest.getFloorDetails().isEmpty()) {
-            propertyImpl.getPropertyDetail().getFloorDetails().clear();
-            List<Floor> floorList = getFloorList(taxCalculatorRequest.getFloorDetails());
-            for (Floor floor : floorList)
-                floor.setDepreciationMaster(propertyTaxUtil.getDepreciationByDate(floor.getConstructionDate(),
-                        effectiveDate));
-            propertyImpl.getPropertyDetail().setFloorDetails(floorList);
-            propertyImpl.getPropertyDetail().setFloorDetailsProxy(propertyImpl.getPropertyDetail().getFloorDetails());
-        }
     }
 
     public BasicProperty fetchBasicProperty(String assessmentNo, String oldAssessmentNo) {
