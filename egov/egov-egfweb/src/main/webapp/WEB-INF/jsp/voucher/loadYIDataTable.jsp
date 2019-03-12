@@ -294,13 +294,14 @@
 // logic to re-populate the account code in the account code drop down in the subledger table data grid.
 // basicaly required when validation fails.
 function populateslDropDown(){
+	var csrfToken = document.getElementById('csrfTokenValue').value;
 	var accountCodes=new Array();
 	for(var i=0;i<billDetailTableIndex+1;i++){
 	if(null != document.getElementById('billDetailslist['+i+'].glcodeDetail')){
 		accountCodes[i] = document.getElementById('billDetailslist['+i+'].glcodeDetail').value;
 	}
 	}
-	var url = path+'/voucher/common-getDetailCode.action?accountCodes='+accountCodes;
+	var url = path+'/voucher/common-getDetailCode.action?accountCodes='+accountCodes+'&_csrf='+csrfToken;
 	var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackJV, null);
 }
 var callbackJV = {
@@ -359,7 +360,8 @@ var loadDetailType = function(index) {
 		var subledgerid=document.getElementById('subLedgerlist['+index+'].glcode.id');
 		var accountCode = subledgerid.options[subledgerid.selectedIndex].text;
 		document.getElementById('subLedgerlist['+index+'].subledgerCode').value =accountCode;
-		var url = path+'/voucher/common-getDetailType.action?accountCode='+accountCode+'&index='+index;
+		var csrfToken = document.getElementById('csrfTokenValue').value;
+		var url = path+'/voucher/common-getDetailType.action?accountCode='+accountCode+'&index='+index+'&_csrf='+csrfToken;;
 		var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postType, null);
 };
 var postType = {

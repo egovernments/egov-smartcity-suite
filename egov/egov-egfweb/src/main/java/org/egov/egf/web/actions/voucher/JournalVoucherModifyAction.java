@@ -60,11 +60,13 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.egf.commons.CommonsUtil;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -94,14 +96,18 @@ import java.util.*;
 
 @ParentPackage("egov")
 @Results({
-        @Result(name = "editVoucher", location = "journalVoucherModify-editVoucher.jsp"),
+        @Result(name = JournalVoucherModifyAction.EDIT_VOUCHER, location = "journalVoucherModify-editVoucher.jsp"),
         @Result(name = "view", location = "journalVoucherModify-view.jsp"),
-        @Result(name = "message", location = "journalVoucherModify-message.jsp")
+        @Result(name = "message", location = "journalVoucherModify-message.jsp"),
+        @Result(name = JournalVoucherModifyAction.UNAUTHORIZED, location = "../workflow/unauthorized.jsp")
 })
 public class JournalVoucherModifyAction extends BaseVoucherAction {
 
+    protected static final String EDIT_VOUCHER = "editVoucher";
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(JournalVoucherModifyAction.class);
+    private static final String INVALID_APPROVER = "invalid.approver";
+    protected static final String UNAUTHORIZED = "unuthorized";
     private VoucherService voucherService;
     private List<VoucherDetails> billDetailslist;
     private List<VoucherDetails> subLedgerlist;
@@ -143,6 +149,12 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
 
     @Autowired
     private DepartmentService departmentService;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
+    
+    @Autowired
+    private CommonsUtil commonsUtil;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -170,6 +182,8 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
             voucherHeader = (CVoucherHeader) getPersistenceService().find(VOUCHERQUERY, Long.valueOf(voucherHeaderId));
         final Map<String, Object> vhInfoMap = voucherService.getVoucherInfo(voucherHeader.getId());
         voucherHeader = (CVoucherHeader) vhInfoMap.get(Constants.VOUCHERHEADER);
+        if (!commonsUtil.isApplicationOwner(securityUtils.getCurrentUser(), voucherHeader))
+            return UNAUTHORIZED;
         try {
             if (voucherHeader != null && voucherHeader.getState() != null)
                 if (voucherHeader.getState().getValue().contains("Rejected")) {
@@ -199,10 +213,10 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
             return "view";
         }
 
-        return "editVoucher";
+        return EDIT_VOUCHER;
     }
 
-    @ValidationErrorPage(value = "editVoucher")
+    @ValidationErrorPage(value = EDIT_VOUCHER)
     public String saveAndPrint() throws Exception {
         try {
             saveMode = "saveprint";
@@ -259,7 +273,7 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
 
     }
 
-    @ValidationErrorPage(value = "editVoucher")
+    @ValidationErrorPage(value = EDIT_VOUCHER)
     @SuppressWarnings("deprecation")
     @Action(value = "/voucher/journalVoucherModify-update")
     public String update() {
@@ -290,6 +304,11 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
             if (!validateData(billDetailslist, subLedgerlist)) {
                 voucherHeader = journalVoucherActionHelper.editVoucher(billDetailslist, subLedgerlist, voucherHeader,
                         voucherTypeBean, workflowBean, parameters.get("totaldbamount")[0]);
+                if (!voucherHeader.isValidApprover()) {
+                    setOneFunctionCenterValue();
+                    addActionError(getText(INVALID_APPROVER));
+                    return EDIT_VOUCHER;
+                }
                 target = "success";
             }
             else {

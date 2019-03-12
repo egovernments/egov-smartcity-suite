@@ -82,6 +82,7 @@
 					Loading...
 				</div>
 			</div>
+			<input type="hidden" id="csrfTokenValue" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 			<jsp:include page="../budget/budgetHeader.jsp">
 				<jsp:param name="heading" value="Journal voucher -Modify" />
 			</jsp:include>

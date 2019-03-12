@@ -235,7 +235,7 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
                         .setParameter("id", generalLedger.getId())
                         .list();
                 for (final CGeneralLedgerDetail generalLedgerDetail : glDetailList) {
-                    getSession().createQuery("delete from EG_REMITTANCE_GLDTL where GLDTLID = :gldetailId")
+                    getSession().createNativeQuery("delete from EG_REMITTANCE_GLDTL where GLDTLID = :gldetailId")
                             .setParameter("gldetailId", Integer.valueOf(generalLedgerDetail.getId().toString()), IntegerType.INSTANCE)
                             .executeUpdate();
                 }

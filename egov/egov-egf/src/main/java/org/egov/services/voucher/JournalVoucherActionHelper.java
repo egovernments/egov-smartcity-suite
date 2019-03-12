@@ -128,6 +128,8 @@ public class JournalVoucherActionHelper {
                 voucherHeader.setStatus(FinancialConstants.CREATEDVOUCHERSTATUS);
             } else {
                 voucherHeader = transitionWorkFlow(voucherHeader, workflowBean);
+                if (!voucherHeader.isValidApprover())
+                    return voucherHeader;
                 voucherService.applyAuditing(voucherHeader.getState());
             }
             voucherService.create(voucherHeader);
@@ -151,7 +153,6 @@ public class JournalVoucherActionHelper {
             throws Exception {
         try {
             voucherHeader = voucherService.updateVoucherHeader(voucherHeader, voucherTypeBean);
-
             voucherService.deleteGLDetailByVHId(voucherHeader.getId());
             voucherHeader.getGeneralLedger().removeAll(voucherHeader.getGeneralLedger());
             final List<Transaxtion> transactions = voucherService.postInTransaction(billDetailslist, subLedgerlist,
@@ -178,6 +179,8 @@ public class JournalVoucherActionHelper {
 
             }
             voucherHeader = transitionWorkFlow(voucherHeader, workflowBean);
+            if (!voucherHeader.isValidApprover())
+                return voucherHeader;
             voucherService.applyAuditing(voucherHeader.getState());
             voucherService.persist(voucherHeader);
         } catch (final ValidationException e) {
@@ -230,6 +233,10 @@ public class JournalVoucherActionHelper {
             if (null == voucherHeader.getState()) {
                 final WorkFlowMatrix wfmatrix = voucherHeaderWorkflowService.getWfMatrix(voucherHeader.getStateType(), null,
                         null, null, workflowBean.getCurrentState(), null);
+                if (!eisCommonService.isValidAppover(wfmatrix, pos)) {
+                    voucherHeader.setValidApprover(Boolean.FALSE);
+                    return voucherHeader;
+                }
                 voucherHeader.transition().start().withSenderName(user.getName())
                         .withComments(workflowBean.getApproverComments())
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)

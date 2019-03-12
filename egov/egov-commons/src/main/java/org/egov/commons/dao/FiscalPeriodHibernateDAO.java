@@ -50,6 +50,7 @@ package org.egov.commons.dao;
 import org.apache.log4j.Logger;
 import org.egov.commons.CFiscalPeriod;
 import org.hibernate.query.Query;
+import org.hibernate.type.DateType;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -124,7 +125,7 @@ public class FiscalPeriodHibernateDAO   implements FiscalPeriodDAO {
     public CFiscalPeriod getFiscalPeriodByDate(Date voucherDate) {
         Query query = getCurrentSession().createQuery(
                 "from CFiscalPeriod fp where  :voucherDate between fp.startingDate and fp.endingDate");
-        query.setDate("voucherDate", voucherDate);
+        query.setParameter("voucherDate", voucherDate, DateType.INSTANCE);
         query.setCacheable(true);
         return (CFiscalPeriod) query.uniqueResult();
     }

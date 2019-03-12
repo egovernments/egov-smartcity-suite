@@ -88,9 +88,9 @@ import java.util.List;
 
 @ParentPackage("egov")
 @Results({ @Result(name = JournalVoucherAction.NEW, location = "journalVoucher-new.jsp") })
-public class JournalVoucherAction extends BaseVoucherAction
-{
+public class JournalVoucherAction extends BaseVoucherAction {
     private static final Logger LOGGER = Logger.getLogger(JournalVoucherAction.class);
+    private static final String INVALID_APPROVER = "invalid.approver";
     private static final long serialVersionUID = 1L;
     private List<VoucherDetails> billDetailslist;
     private List<VoucherDetails> subLedgerlist;
@@ -214,7 +214,10 @@ public class JournalVoucherAction extends BaseVoucherAction
                 populateWorkflowBean();
                 voucherHeader = journalVoucherActionHelper.createVoucher(billDetailslist, subLedgerlist, voucherHeader,
                         voucherTypeBean, workflowBean);
-
+                if (!voucherHeader.isValidApprover()) {
+                    addActionError(getText(INVALID_APPROVER));
+                    return NEW;
+                }
                 if (!cutOffDate.isEmpty() && cutOffDate!=null )
                 {
                     try {
@@ -323,7 +326,7 @@ public class JournalVoucherAction extends BaseVoucherAction
         List<String> validActions = Collections.emptyList();
         if (cutOffDateconfigValue != null && !cutOffDateconfigValue.isEmpty())
         {
-            if (null == voucherHeader || null == voucherHeader.getId()
+            if (null == voucherHeader || null == voucherHeader.getId() || null == voucherHeader.getCurrentState()
                     || voucherHeader.getCurrentState().getValue().endsWith("NEW")) {
                 validActions = Arrays.asList(FinancialConstants.BUTTONFORWARD, FinancialConstants.CREATEANDAPPROVE);
             } else {

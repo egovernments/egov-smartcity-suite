@@ -72,6 +72,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
 import org.egov.commons.dao.ChartOfAccountsDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.commons.dao.FiscalPeriodDAO;
 import org.egov.commons.dao.FunctionDAO;
 import org.egov.commons.service.ChartOfAccountDetailService;
 import org.egov.commons.utils.EntityType;
@@ -96,7 +97,6 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
-import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -205,6 +205,9 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
     
     @Autowired
     private CancelBillAndVoucher cancelBillAndVoucher;
+    
+    @Autowired
+    private FiscalPeriodDAO fiscalPeriodDAO; 
 
     public VoucherService(final Class<CVoucherHeader> voucherHeader) {
         super(voucherHeader);
@@ -650,14 +653,13 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
         // no need to change voucher number if onlydate is changed since
         // vouchernumber-sequence is for the year not for month
         try {
-            final String fiscalPeriodIdStr = eGovernCommon
-                    .getFiscalPeriod(DateUtils.getFormattedDate(voucherHeader.getVoucherDate(), "dd-MMM-yyyy"));
+            final CFiscalPeriod fiscalPeriod = fiscalPeriodDAO.getFiscalPeriodByDate(voucherHeader.getVoucherDate());
+            final String fiscalPeriodIdStr = fiscalPeriod != null ? fiscalPeriod.getId().toString() : null;
             if (null == fiscalPeriodIdStr)
                 throw new ApplicationRuntimeException(
                         "Voucher Date not within an open period or Financial year not open for posting, fiscalPeriod := "
                                 + fiscalPeriodIdStr);
-            voucherHeader
-                    .setFiscalPeriodId(Integer.parseInt(fiscalPeriodIdStr));
+            voucherHeader.setFiscalPeriodId(Integer.valueOf(fiscalPeriod.getId().intValue()));
             if (!voucherHeader.getFundId().equals(existingVH.getFundId())) {
 
                 final String strVoucherNumber = voucherHelper
@@ -682,9 +684,6 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
                     existingVH.getVoucherDate())) {
                 // A financial Year can have multiple fiscalPeriod so comparing
                 // previous and new financial year id
-                final CFiscalPeriod fiscalPeriod = (CFiscalPeriod) persistenceService
-                        .find(" from CFiscalPeriod where id=?1",
-                                Long.valueOf(fiscalPeriodIdStr));
                 final String financialYearId = financialYearDAO
                         .getFinancialYearId(Constants.DDMMYYYYFORMAT2
                                 .format(existingVH.getVoucherDate()));
