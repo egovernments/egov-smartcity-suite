@@ -159,6 +159,8 @@ public class OnlineReceiptAction extends BaseFormAction {
     private String[] transactionDate;
     private String[] statusCode;
     private String[] remarks;
+    private BigDecimal minimumAmount;
+    
     @Autowired
     private ApplicationContext beanProvider;
 
@@ -460,6 +462,8 @@ public class OnlineReceiptAction extends BaseFormAction {
 
                 receiptHeader = collectionCommon.initialiseReceiptModelWithBillInfo(collDetails, fund, dept);
                 setRefNumber(receiptHeader.getReferencenumber());
+                minimumAmount = receiptHeader.getMinimumAmount() == null ? 
+                        BigDecimal.ZERO: receiptHeader.getMinimumAmount();
                 totalAmountToBeCollected = totalAmountToBeCollected.add(receiptHeader.getTotalAmountToBeCollected());
                 setReceiptDetailList(new ArrayList<>(receiptHeader.getReceiptDetails()));
 
@@ -899,6 +903,10 @@ public class OnlineReceiptAction extends BaseFormAction {
 
     public void setIsTransactionPending(Boolean isTransactionPending) {
         this.isTransactionPending = isTransactionPending;
+    }
+
+    public BigDecimal getMinimumAmount() {
+        return minimumAmount;
     }
 
 }

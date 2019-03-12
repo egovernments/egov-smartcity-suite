@@ -123,7 +123,10 @@ function populateapportioningamountnew(){
 		return false;
 	}
 	if(collectiontotal < billingtotal && checkpartpaymentvalue=='true'){
-		 var minimumAmt=document.forms[0].totalAmountToBeCollected.value;
+		var minimumAmt=parseInt(document.forms[0].minimumAmount.value);
+		if((isNaN(minimumAmt)) || minimumAmt==null ){
+		    minimumAmt=0;
+		}
 		 if(collectiontotal < minimumAmt){
 	     	document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.paytlessthanmin.errormessage" />'+': ' + minimumAmt+ '<br>';
 	     	dom.get("receipt_error_area").style.display="block";
@@ -483,6 +486,8 @@ function onLoad(){
 									<s:hidden id="refNumber" value="%{refNumber}" name="refNumber" />
 									<s:hidden id="isTransactionPending" value="%{isTransactionPending}" 
 									name="isTransactionPending"/>
+									<s:hidden label="minimumAmount" id="minimumAmount"
+									  value="%{minimumAmount}" name="minimumAmount"/>
 									<%
 									    int i = 1;
 									%>
