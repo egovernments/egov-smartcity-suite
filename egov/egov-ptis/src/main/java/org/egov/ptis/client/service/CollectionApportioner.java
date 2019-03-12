@@ -47,9 +47,6 @@
  */
 package org.egov.ptis.client.service;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_CURRENTTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_TAXREBATE;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,7 +63,6 @@ import org.egov.demand.model.EgBillDetails;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.ptis.client.util.PropertyTaxUtil;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class CollectionApportioner {
@@ -76,19 +72,16 @@ public class CollectionApportioner {
     public static final String STRING_ADVANCE = "ADVANCE";
     private static final Logger LOGGER = Logger.getLogger(CollectionApportioner.class);
     private boolean isEligibleForCurrentRebate;
-    private boolean isEligibleForAdvanceRebate;
-
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
 
     public CollectionApportioner(boolean isEligibleForCurrentRebate, boolean isEligibleForAdvanceRebate,
-                                 BigDecimal rebate) {
+            BigDecimal rebate) {
         this.isEligibleForCurrentRebate = isEligibleForCurrentRebate;
-        this.isEligibleForAdvanceRebate = isEligibleForAdvanceRebate;
-        // this.rebate = rebate;
     }
 
-    public void apportion(BigDecimal amtPaid, List<ReceiptDetail> receiptDetails, Map<String, BigDecimal> instDmdMap, String consumerId) {
+    public void apportion(BigDecimal amtPaid, List<ReceiptDetail> receiptDetails, Map<String, BigDecimal> instDmdMap,
+            String consumerId) {
         try {
             LOGGER.info("receiptDetails before apportioning amount " + amtPaid + ": " + receiptDetails);
             Boolean isFullPayment = Boolean.FALSE;
@@ -99,24 +92,27 @@ public class CollectionApportioner {
             for (final ReceiptDetail receiptDetail : receiptDetails) {
                 if (!PURPOSE.ADVANCE_AMOUNT.toString().equals(receiptDetail.getPurpose()))
                     totalCrAmountToBePaid = totalCrAmountToBePaid.add(receiptDetail.getCramountToBePaid());
-                if (isPenaltyReceipt(receiptDetail)) {
+                if (isPenaltyReceipt(receiptDetail))
                     totalPenalty = totalPenalty.add(receiptDetail.getCramountToBePaid());
-                }
             }
 
-            if (amtPaid.compareTo(totalCrAmountToBePaid) >= 0 && isEligibleForCurrentRebate) {
+            if (amtPaid.compareTo(totalCrAmountToBePaid) >= 0 && isEligibleForCurrentRebate)
                 isFullPayment = Boolean.TRUE;
-            }
 
-            canWaiveOff = propertyTaxUtil.isEligibleforWaiver(amtPaid.compareTo(totalCrAmountToBePaid.subtract(totalPenalty)) >= 0, consumerId);
+            canWaiveOff = propertyTaxUtil
+                    .isEligibleforWaiver(amtPaid.compareTo(totalCrAmountToBePaid.subtract(totalPenalty)) >= 0, consumerId);
 
             Amount balance = new Amount(amtPaid);
             BigDecimal crAmountToBePaid = null;
             for (ReceiptDetail rd : receiptDetails) {
                 // For partial payment, we revert IsActualDemand to true
-                if (!canWaiveOff && rd.getIsActualDemand() == Boolean.FALSE && isPenaltyReceipt(rd)) {
-                    rd.setIsActualDemand(Boolean.TRUE);
-                }
+                if (isPenaltyReceipt(rd))
+                    // FROM REST API isActualDemand NULL, so normalize before its too late
+                    // ( only for penalty receipts now, others are null, handled their by taking value from EgBillDetails )
+                    if (canWaiveOff)
+                        rd.setIsActualDemand(Boolean.FALSE);
+                    else
+                        rd.setIsActualDemand(Boolean.TRUE);
 
                 if (balance.isZero()) {
                     // nothing left to apportion
@@ -127,24 +123,21 @@ public class CollectionApportioner {
                 crAmountToBePaid = rd.getCramountToBePaid();
 
                 if (rd.getDescription().contains(REBATE_STR)) {
-                    if (isFullPayment) {
+                    if (isFullPayment)
                         balance = balance.minus(crAmountToBePaid);
-                    } else {
+                    else
                         rd.setDramount(BigDecimal.ZERO);
-                    }
                 } else if (canWaiveOff && isPenaltyReceipt(rd)) {
                     // Skip Penalty Heads
                     rd.zeroDrAndCrAmounts();
                     continue;
-                } else {
-                    if (balance.isLessThanOrEqualTo(crAmountToBePaid)) {
-                        // partial or exact payment
-                        rd.setCramount(balance.amount);
-                        balance = Amount.ZERO;
-                    } else { // excess payment
-                        rd.setCramount(crAmountToBePaid);
-                        balance = balance.minus(crAmountToBePaid);
-                    }
+                } else if (balance.isLessThanOrEqualTo(crAmountToBePaid)) {
+                    // partial or exact payment
+                    rd.setCramount(balance.amount);
+                    balance = Amount.ZERO;
+                } else { // excess payment
+                    rd.setCramount(crAmountToBePaid);
+                    balance = balance.minus(crAmountToBePaid);
                 }
                 LOGGER.info(String.format("apportion; bottom of loop"));
             }
@@ -158,13 +151,13 @@ public class CollectionApportioner {
 
             LOGGER.info("receiptDetails after apportioning: " + receiptDetails);
         } catch (Exception ex) {
-            LOGGER.error("Apportioning failed: excess payment!",ex);
+            LOGGER.error("Apportioning failed: excess payment!", ex);
         }
     }
 
     public List<ReceiptDetail> reConstruct(final BigDecimal amountPaid, final List<EgBillDetails> billDetails,
-                                           FunctionHibernateDAO functionDAO, ChartOfAccountsHibernateDAO chartOfAccountsDAO) {
-        final List<ReceiptDetail> receiptDetails = new ArrayList<ReceiptDetail>(0);
+            FunctionHibernateDAO functionDAO, ChartOfAccountsHibernateDAO chartOfAccountsDAO) {
+        final List<ReceiptDetail> receiptDetails = new ArrayList<>(0);
         LOGGER.info("receiptDetails before reApportion amount " + amountPaid + ": " + receiptDetails);
         LOGGER.info("billDetails before reApportion " + billDetails);
         Amount balance = new Amount(amountPaid);
@@ -173,15 +166,13 @@ public class CollectionApportioner {
 
         if (isEligibleForCurrentRebate) {
             BigDecimal totalCrAmountToBePaid = BigDecimal.ZERO;
-            for (final EgBillDetails billDetail : billDetails) {
+            for (final EgBillDetails billDetail : billDetails)
                 if (PURPOSE.REBATE.toString().equals(billDetail.getPurpose()))
                     totalCrAmountToBePaid = totalCrAmountToBePaid.subtract(billDetail.getDrAmount());
                 else if (!PURPOSE.ADVANCE_AMOUNT.toString().equals(billDetail.getPurpose()))
                     totalCrAmountToBePaid = totalCrAmountToBePaid.add(billDetail.getCrAmount());
-            }
-            if (amountPaid.compareTo(totalCrAmountToBePaid) >= 0) {
+            if (amountPaid.compareTo(totalCrAmountToBePaid) >= 0)
                 isFullPayment = Boolean.TRUE;
-            }
         }
 
         Collections.sort(billDetails, (b1, b2) -> b1.getOrderNo().compareTo(b2.getOrderNo()));
@@ -194,16 +185,14 @@ public class CollectionApportioner {
             receiptDetail.setOrdernumber(Long.valueOf(billDetail.getOrderNo()));
             receiptDetail.setDescription(billDetail.getDescription());
             receiptDetail.setIsActualDemand(true);
-            if (billDetail.getFunctionCode() != null) {
+            if (billDetail.getFunctionCode() != null)
                 receiptDetail.setFunction(functionDAO.getFunctionByCode(billDetail.getFunctionCode()));
-            }
             receiptDetail.setAccounthead(chartOfAccountsDAO.getCChartOfAccountsByGlCode(glCode));
             receiptDetail.setCramountToBePaid(crAmountToBePaid);
-            if (billDetail.getDescription().contains(REBATE_STR)) {
+            if (billDetail.getDescription().contains(REBATE_STR))
                 receiptDetail.setDramount(billDetail.getDrAmount());
-            } else {
+            else
                 receiptDetail.setDramount(BigDecimal.ZERO);
-            }
 
             if (balance.isZero()) {
                 // nothing left to apportion
@@ -213,23 +202,20 @@ public class CollectionApportioner {
             }
 
             if (receiptDetail.getDescription().contains(REBATE_STR)) {
-                if (isFullPayment) {
+                if (isFullPayment)
                     balance = balance.minus(crAmountToBePaid);
-                } else {
+                else
                     receiptDetail.setDramount(BigDecimal.ZERO);
-                }
                 receiptDetail.setCramount(BigDecimal.ZERO);
-            } else {
-                if (balance.isLessThanOrEqualTo(crAmountToBePaid)) {
-                    // partial or exact payment
-                    receiptDetail.setCramount(balance.amount);
-                    receiptDetail.setCramountToBePaid(crAmountToBePaid);
-                    balance = Amount.ZERO;
-                } else { // excess payment
-                    receiptDetail.setCramount(crAmountToBePaid);
-                    receiptDetail.setCramountToBePaid(crAmountToBePaid);
-                    balance = balance.minus(crAmountToBePaid);
-                }
+            } else if (balance.isLessThanOrEqualTo(crAmountToBePaid)) {
+                // partial or exact payment
+                receiptDetail.setCramount(balance.amount);
+                receiptDetail.setCramountToBePaid(crAmountToBePaid);
+                balance = Amount.ZERO;
+            } else { // excess payment
+                receiptDetail.setCramount(crAmountToBePaid);
+                receiptDetail.setCramountToBePaid(crAmountToBePaid);
+                balance = balance.minus(crAmountToBePaid);
             }
             receiptDetails.add(receiptDetail);
         }
@@ -248,23 +234,6 @@ public class CollectionApportioner {
     private boolean isPenaltyReceipt(ReceiptDetail receiptDetail) {
         return PURPOSE.ARREAR_LATEPAYMENT_CHARGES.toString().equals(receiptDetail.getPurpose())
                 || PURPOSE.CURRENT_LATEPAYMENT_CHARGES.toString().equals(receiptDetail.getPurpose());
-    }
-
-    private boolean isArrear(String glCode) {
-        return !GLCODES_FOR_CURRENTTAX.contains(glCode) && !glCode.equals(GLCODE_FOR_TAXREBATE);
-    }
-
-    private boolean isCurrent(String glCode) {
-        return GLCODES_FOR_CURRENTTAX.contains(glCode);
-    }
-
-    private boolean isAdvance(String glCode) {
-        return glCode.equals(PropertyTaxConstants.GLCODE_FOR_ADVANCE);
-    }
-
-    private boolean isRebate(String glCode) {
-        return glCode.equals(GLCODE_FOR_TAXREBATE)
-                || glCode.equalsIgnoreCase(PropertyTaxConstants.GLCODE_FOR_ADVANCE_REBATE);
     }
 
     private static class Amount {
@@ -295,28 +264,8 @@ public class CollectionApportioner {
             return amount.compareTo(bd) <= 0;
         }
 
-        private boolean isLessThan(BigDecimal bd) {
-            return amount.compareTo(bd) < 0;
-        }
-
-        private boolean isGreaterThanOrEqualToZero() {
-            return isGreaterThanOrEqualTo(BigDecimal.ZERO);
-        }
-
         private Amount minus(BigDecimal bd) {
             return new Amount(amount.subtract(bd));
-        }
-
-        private Amount plus(BigDecimal bd) {
-            return new Amount(amount.add(bd));
-        }
-
-        private Amount multiply(BigDecimal bd) {
-            return new Amount(amount.multiply(bd));
-        }
-
-        private Amount divide(BigDecimal bd) {
-            return new Amount(amount.divide(bd));
         }
 
     }
@@ -326,7 +275,6 @@ public class CollectionApportioner {
     }
 
     void setEligibleForAdvanceRebate(boolean isEligibleForAdvanceRebate) {
-        this.isEligibleForAdvanceRebate = isEligibleForAdvanceRebate;
     }
 
     public void setPropertyTaxUtil(PropertyTaxUtil propertyTaxUtil) {
