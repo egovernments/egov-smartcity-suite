@@ -288,6 +288,11 @@ var callback = {
 }
 function loadSearch(){
 	document.cancelVoucher.action = "${pageContext.request.contextPath}/voucher/cancelVoucher-search.action";
+	$(document.cancelVoucher).append($('<input>', {
+		type : 'hidden',
+		name : '${_csrf.parameterName}',
+		value : '${_csrf.token}'
+	}));
 	document.cancelVoucher.submit();
 	}
 
@@ -295,6 +300,11 @@ function fieldReset()
 {
 
 	document.cancelVoucher.action = "${pageContext.request.contextPath}/voucher/cancelVoucher-beforeSearch.action";
+	$(document.cancelVoucher).append($('<input>', {
+		type : 'hidden',
+		name : '${_csrf.parameterName}',
+		value : '${_csrf.token}'
+	}));
 	document.cancelVoucher.submit();
 	/* document.getElementById('voucherNumber').value="";
 	document.getElementById('fundId').value=-1;
