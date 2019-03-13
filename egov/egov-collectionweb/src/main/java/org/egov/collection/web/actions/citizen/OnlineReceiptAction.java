@@ -55,6 +55,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -356,17 +357,24 @@ public class OnlineReceiptAction extends BaseFormAction {
                         newReceiptDetail.setDramount(receiptDetail.getDramount());
                         existingReceiptDetails.add(newReceiptDetail);
                     }
-                final List<ReceiptDetail> reconstructedList = collectionsUtil.reconstructReceiptDetail(receipts[i],
+                final List<ReceiptDetail> reapportionedList = collectionsUtil.reconstructReceiptDetail(onlinePaymentReceiptHeader,
                         existingReceiptDetails);
 
+                List<ReceiptDetail> reconstructedList = new ArrayList<ReceiptDetail>();
+                if (reapportionedList != null && !reapportionedList.isEmpty()) {
+                    reconstructedList = reapportionedList;
+                } else {
+                    reconstructedList = existingReceiptDetails;
+                }
+                
                 ReceiptDetail debitAccountDetail = null;
-                if (reconstructedList != null) {
+                if (reconstructedList != null && !reconstructedList.isEmpty()) {
                     DebitAccountHeadDetailsService debitAccountHeadService = (DebitAccountHeadDetailsService) beanProvider
                             .getBean(collectionsUtil.getBeanNameForDebitAccountHead());
                     debitAccountDetail = debitAccountHeadService.addDebitAccountHeadDetails(receipts[i].getTotalAmount(),
                             receipts[i], BigDecimal.ZERO, receipts[i].getTotalAmount(),
                             CollectionConstants.INSTRUMENTTYPE_ONLINE);
-                }
+                }   
 
                 receiptHeaderService.reconcileOnlineSuccessPayment(receipts[i], transDate, getTransactionId()[i],
                         receipts[i].getTotalAmount(), null, reconstructedList, debitAccountDetail);
