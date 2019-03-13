@@ -47,27 +47,19 @@
  */
 package org.egov.services.zuulproxy.filter;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.netflix.zuul.ZuulFilter;
+import com.netflix.zuul.context.RequestContext;
+import com.netflix.zuul.util.HTTPRequestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.security.authentication.userdetail.CurrentUser;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.services.config.properties.ServicesApplicationProperties;
 import org.egov.services.wrapper.CustomRequestWrapper;
 import org.egov.services.zuulproxy.models.Role;
@@ -80,12 +72,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.netflix.zuul.ZuulFilter;
-import com.netflix.zuul.context.RequestContext;
-import com.netflix.zuul.util.HTTPRequestUtils;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 
 public class ZuulProxyFilter extends ZuulFilter {
 
@@ -99,7 +97,7 @@ public class ZuulProxyFilter extends ZuulFilter {
     private static final String SERVICES_CONTEXTROOT = "/services";
     private static final String REQUEST_URI = "requestURI";
     private static final String SERVICES_APPLICATION_PROPERTIES = "servicesApplicationProperties";
-    private static final String SECURITY_UTILS = "securityUtils";
+    private static final String USER_SERVICE = "userService";
     private static final String ENVIRONMENT = "environment";
     private static final String TENANT_ID = "tenantId";
     private static final String SESSION_ID = "sessionId";
@@ -188,21 +186,22 @@ public class ZuulProxyFilter extends ZuulFilter {
                 log.info("TenantId from getRequestQueryParams() " + ctx.getRequestQueryParams().get(TENANT_ID).toString());
 
             final String userInfo = getUserInfo(request, springContext, tenantId);
-
-            // Adding userInfo to Response header - to show or hide some of the UI components based on user roles
+            
+            //Adding userInfo to Response header - to show or hide some of the UI components based on user roles 
             ctx.addZuulResponseHeader(USER_INFO_FIELD_NAME, userInfo);
 
             if (log.isInfoEnabled())
-                if (request.getSession() != null)
+                if(request.getSession() != null)
                     log.info("SESSION ID " + request.getSession().getId());
 
             if (shouldPutUserInfoOnHeaders(ctx)) {
                 ctx.addZuulRequestHeader(USER_INFO_FIELD_NAME, userInfo);
-                if (request.getSession() != null)
+                if(request.getSession() != null)
                     ctx.addZuulRequestHeader(SESSION_ID, request.getSession().getId());
 
-            } else {
-                if (request.getSession() != null)
+            }
+            else {
+                if(request.getSession() != null)
                     ctx.addZuulRequestHeader(SESSION_ID, request.getSession().getId());
                 appendUserInfoToRequestBody(ctx, userInfo);
             }
@@ -251,12 +250,11 @@ public class ZuulProxyFilter extends ZuulFilter {
             log.info("userInfo is from the session... " + userInfoJson);
 
         if (StringUtils.isBlank(userInfoJson)) {
-            SecurityUtils securityUtils = (SecurityUtils) springContext.getBean(SECURITY_UTILS);
-            final CurrentUser userDetails = new CurrentUser(securityUtils.getCurrentUser());
+            final UserService userService = (UserService) springContext.getBean(USER_SERVICE);
+            final CurrentUser userDetails = new CurrentUser(
+                    userService.getUserByUsername(request.getRemoteUser()));
 
             final User user = userDetails.getUser();
-            if (user != null)
-                log.error("ZuulProxyFilter username: " + user.getUsername());
 
             final List<Role> roles = new ArrayList<Role>();
             userDetails.getUser().getRoles().forEach(authority -> roles.add(new Role(authority.getName())));
