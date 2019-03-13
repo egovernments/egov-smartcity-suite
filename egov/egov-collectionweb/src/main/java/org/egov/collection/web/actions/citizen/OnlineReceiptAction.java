@@ -357,7 +357,7 @@ public class OnlineReceiptAction extends BaseFormAction {
                         newReceiptDetail.setDramount(receiptDetail.getDramount());
                         existingReceiptDetails.add(newReceiptDetail);
                     }
-                final List<ReceiptDetail> reapportionedList = collectionsUtil.reconstructReceiptDetail(onlinePaymentReceiptHeader,
+                final List<ReceiptDetail> reapportionedList = collectionsUtil.reconstructReceiptDetail(receipts[i],
                         existingReceiptDetails);
 
                 List<ReceiptDetail> reconstructedList = new ArrayList<ReceiptDetail>();
