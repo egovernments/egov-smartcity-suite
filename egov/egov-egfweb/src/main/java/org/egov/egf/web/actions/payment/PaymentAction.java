@@ -1095,6 +1095,13 @@ public class PaymentAction extends BasePaymentAction {
     @Action(value = "/payment/payment-create")
     public String create() {
         try {
+            populateWorkflowBean();
+            if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+                if (!commonsUtil.isValidApprover(paymentheader, workflowBean.getApproverPositionId())) {
+                    addActionError(getText(INVALID_APPROVER));
+                    return "form";
+                }
+            }
             final String vdate = parameters.get("voucherdate")[0];
             final Date paymentVoucherDate = DateUtils.parseDate(vdate,"dd/MM/yyyy");
             final String voucherDate = formatter1.format(paymentVoucherDate);
@@ -1103,7 +1110,6 @@ public class PaymentAction extends BasePaymentAction {
             paymentActionHelper.setbillRegisterFunction(billregister, cFunctionobj);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Starting createPayment...");
-            populateWorkflowBean();
             if (parameters.get("department") != null)
                 billregister.getEgBillregistermis().setEgDepartment(
                         departmentService.getDepartmentById(Long.valueOf(parameters.get("department")[0].toString())));
@@ -1111,10 +1117,6 @@ public class PaymentAction extends BasePaymentAction {
                 billregister.getEgBillregistermis()
                         .setFunction(functionService.findOne(Long.valueOf(parameters.get("function")[0].toString())));
             paymentheader = paymentService.createPayment(parameters, billList, billregister, workflowBean);
-            if (!paymentheader.isValidApprover()) {
-                addActionError(getText(INVALID_APPROVER));
-                return "form";
-            }
             miscBillList = paymentActionHelper.getPaymentBills(paymentheader);
             // sendForApproval();// this should not be called here as it is
             // public method which is called from jsp submit
@@ -1173,12 +1175,14 @@ public class PaymentAction extends BasePaymentAction {
             paymentheader = getPayment();
         // this is to check if is not the create mode
         populateWorkflowBean();
+        if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            if (!commonsUtil.isValidApprover(paymentheader, workflowBean.getApproverPositionId())) {
+                addActionError(getText(INVALID_APPROVER));
+                return VIEW;
+            }
+        }
         paymentheader = paymentActionHelper.sendForApproval(paymentheader, workflowBean);
         miscBillList = paymentActionHelper.getPaymentBills(paymentheader);
-        if (!paymentheader.isValidApprover()) {
-            addActionError(getText(INVALID_APPROVER));
-            return VIEW;
-        }
         if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             addActionMessage(getText("payment.voucher.rejected", new String[] {
                     paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));

@@ -77,8 +77,6 @@ public class Paymentheader extends StateAware<Position> {
     private Bankaccount bankaccount;
     private BigDecimal paymentAmount;
     private DrawingOfficer drawingOfficer;
-    @Transient
-    private Boolean validApprover = Boolean.TRUE;
 
     @Override
     public Long getId() {
@@ -160,11 +158,4 @@ public class Paymentheader extends StateAware<Position> {
         this.drawingOfficer = drawingOfficer;
     }
 
-    public Boolean isValidApprover() {
-        return validApprover;
-    }
-
-    public void setValidApprover(Boolean validApprover) {
-        this.validApprover = validApprover;
-    }
 }

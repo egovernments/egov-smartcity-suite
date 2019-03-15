@@ -295,12 +295,14 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                                 voucherHeader.getId());
                 voucherHeader.setId(null);
                 populateWorkflowBean();
+                if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+                    if (!commonsUtil.isValidApprover(paymentheader, workflowBean.getApproverPositionId())) {
+                        addActionError(getText(INVALID_APPROVER));
+                        return NEW;
+                    }
+                }
                 paymentheader = paymentActionHelper.createDirectBankPayment(paymentheader, voucherHeader, billVhId,
                         commonBean, billDetailslist, subLedgerlist, workflowBean);
-                if (!paymentheader.isValidApprover()) {
-                    addActionError(getText(INVALID_APPROVER));
-                    return NEW;
-                }
                 showMode = "create";
 
                 if (!cutOffDate.isEmpty() && cutOffDate != null)
@@ -914,11 +916,13 @@ public class DirectBankPaymentAction extends BasePaymentAction {
             paymentheader = getPayment();
 
         populateWorkflowBean();
-        paymentheader = paymentActionHelper.sendForApproval(paymentheader, workflowBean);
-        if (!paymentheader.isValidApprover()) {
-            addActionError(getText(INVALID_APPROVER));
-            return view();
+        if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            if (!commonsUtil.isValidApprover(paymentheader, workflowBean.getApproverPositionId())) {
+                addActionError(getText(INVALID_APPROVER));
+                return view();
+            }
         }
+        paymentheader = paymentActionHelper.sendForApproval(paymentheader, workflowBean);
         if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             addActionMessage(getText("payment.voucher.rejected", new String[] {
                     paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));

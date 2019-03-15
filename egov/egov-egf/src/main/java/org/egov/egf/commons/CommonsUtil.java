@@ -87,8 +87,7 @@ public class CommonsUtil {
         final WorkFlowMatrix wfmatrix = workflowService.getWfMatrix(state.getStateType(), null, null, null, currentState, null);
         if (null != approverPositionId && approverPositionId != -1) {
             Position pos = (Position) positionMasterService.getPositionById(approverPositionId);
-            if (eisCommonService.isValidAppover(wfmatrix, pos))
-                return Boolean.TRUE;
+            return eisCommonService.isValidAppover(wfmatrix, pos);
         }
         return Boolean.FALSE;
     }

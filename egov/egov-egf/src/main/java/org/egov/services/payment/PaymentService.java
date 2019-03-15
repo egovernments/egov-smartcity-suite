@@ -101,7 +101,6 @@ import org.egov.services.report.FundFlowService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.FlushMode;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
@@ -115,7 +114,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.FlushModeType;
 import javax.persistence.PersistenceContext;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -281,7 +279,6 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                                        final List<PaymentBean> billList,
                                        final EgBillregister billregister, WorkflowBean workflowBean)
             throws ApplicationRuntimeException, ValidationException {
-        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting createPayment...");
         Paymentheader paymentheader = null;
@@ -424,13 +421,10 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                         FinancialConstants.CREATEDVOUCHERSTATUS);
             } else {
                 paymentheader = transitionWorkFlow(paymentheader, workflowBean);
-                if (!paymentheader.isValidApprover())
-                    return paymentheader;
                 applyAuditing(paymentheader.getState());
                 applyAuditing(paymentheader);
             }
             update(paymentheader);
-            persistenceService.getSession().flush();
         } catch (final ValidationException e) {
 
             LOGGER.error(e.getMessage(), e);
@@ -530,10 +524,6 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                 final WorkFlowMatrix wfmatrix = paymentHeaderWorkflowService
                         .getWfMatrix(paymentheader.getStateType(), null, null,
                                 null, workflowBean.getCurrentState(), null);
-                if (!eisCommonService.isValidAppover(wfmatrix, pos)) {
-                    paymentheader.setValidApprover(Boolean.FALSE);
-                    return paymentheader;
-                }
                 paymentheader.transition().start()
                         .withSenderName(user.getName())
                         .withComments(workflowBean.getApproverComments())
@@ -556,10 +546,6 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                                 null, paymentheader.getCurrentState()
                                         .getValue(),
                                 null);
-                if (!eisCommonService.isValidAppover(wfmatrix, pos)) {
-                    paymentheader.setValidApprover(Boolean.FALSE);
-                    return paymentheader;
-                }
                 paymentheader.transition().progressWithStateCopy().withSenderName(user.getName())
                         .withComments(workflowBean.getApproverComments())
                         .withStateValue(wfmatrix.getNextState())
