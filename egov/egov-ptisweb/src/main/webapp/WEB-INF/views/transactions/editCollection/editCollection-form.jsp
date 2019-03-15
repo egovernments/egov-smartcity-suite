@@ -232,7 +232,7 @@ body {
 											test="${demandDetailBeans[demandInfoStatus.index].reasonMaster != 'Penalty Fines'}">
 											<script>
 												bootbox
-														.alert("Sum of Actual collection and Revised collection is less than or equal to Actual demand");
+														.alert("Sum of Actual Collection and Revised Collection should be less than or equal to Actual Demand");
 											</script>
 										</c:if>
 									</c:when>
