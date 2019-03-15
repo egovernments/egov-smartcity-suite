@@ -167,11 +167,12 @@
 				</c:choose>
 			</div>
 		</div>
+		<c:if test="${!citizenRole }" >
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.entered.through"/></div>
-			<c:choose>
-				<c:when test="${not empty waterConnectionDetails.source}">
-					<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.source}" /></div>
+				<c:choose>
+				<c:when test="${not empty waterConnectionDetails.connectionReason}">
+					<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.connectionReason}" /></div>
 				</c:when>
 				<c:otherwise>
 					<c:choose>
@@ -183,6 +184,7 @@
 				</c:otherwise>
 			</c:choose>	
 		</div>	
+		</c:if>
 		
 	</div>
 
