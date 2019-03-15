@@ -82,78 +82,73 @@ public class CollectionApportioner {
 
     public void apportion(BigDecimal amtPaid, List<ReceiptDetail> receiptDetails, Map<String, BigDecimal> instDmdMap,
             String consumerId) {
-        try {
-            LOGGER.info("receiptDetails before apportioning amount " + amtPaid + ": " + receiptDetails);
-            Boolean isFullPayment = Boolean.FALSE;
-            boolean canWaiveOff = false;
+        LOGGER.info("receiptDetails before apportioning amount " + amtPaid + ": " + receiptDetails);
+        Boolean isFullPayment = Boolean.FALSE;
+        boolean canWaiveOff = false;
 
-            BigDecimal totalCrAmountToBePaid = BigDecimal.ZERO;
-            BigDecimal totalPenalty = BigDecimal.ZERO;
-            for (final ReceiptDetail receiptDetail : receiptDetails) {
-                if (!PURPOSE.ADVANCE_AMOUNT.toString().equals(receiptDetail.getPurpose()))
-                    totalCrAmountToBePaid = totalCrAmountToBePaid.add(receiptDetail.getCramountToBePaid());
-                if (isPenaltyReceipt(receiptDetail))
-                    totalPenalty = totalPenalty.add(receiptDetail.getCramountToBePaid());
-            }
-
-            if (amtPaid.compareTo(totalCrAmountToBePaid) >= 0 && isEligibleForCurrentRebate)
-                isFullPayment = Boolean.TRUE;
-
-            canWaiveOff = propertyTaxUtil
-                    .isEligibleforWaiver(amtPaid.compareTo(totalCrAmountToBePaid.subtract(totalPenalty)) >= 0, consumerId);
-
-            Amount balance = new Amount(amtPaid);
-            BigDecimal crAmountToBePaid = null;
-            for (ReceiptDetail rd : receiptDetails) {
-                // For partial payment, we revert IsActualDemand to true
-                if (isPenaltyReceipt(rd))
-                    // FROM REST API isActualDemand NULL, so normalize before its too late
-                    // ( only for penalty receipts now, others are null, handled their by taking value from EgBillDetails )
-                    if (canWaiveOff)
-                        rd.setIsActualDemand(Boolean.FALSE);
-                    else
-                        rd.setIsActualDemand(Boolean.TRUE);
-
-                if (balance.isZero()) {
-                    // nothing left to apportion
-                    rd.zeroDrAndCrAmounts();
-                    continue;
-                }
-
-                crAmountToBePaid = rd.getCramountToBePaid();
-
-                if (rd.getDescription().contains(REBATE_STR)) {
-                    if (isFullPayment)
-                        balance = balance.minus(crAmountToBePaid);
-                    else
-                        rd.setDramount(BigDecimal.ZERO);
-                } else if (canWaiveOff && isPenaltyReceipt(rd)) {
-                    // Skip Penalty Heads
-                    rd.zeroDrAndCrAmounts();
-                    continue;
-                } else if (balance.isLessThanOrEqualTo(crAmountToBePaid)) {
-                    // partial or exact payment
-                    rd.setCramount(balance.amount);
-                    balance = Amount.ZERO;
-                } else { // excess payment
-                    rd.setCramount(crAmountToBePaid);
-                    balance = balance.minus(crAmountToBePaid);
-                }
-                LOGGER.info(String.format("apportion; bottom of loop"));
-            }
-
-            if (balance.isGreaterThanZero()) {
-                LOGGER.error("Apportioning failed: excess payment!");
-                throw new ValidationException(Arrays.asList(new ValidationError(
-                        "Paid Amount is greater than Total Amount to be paid",
-                        "Paid Amount is greater than Total Amount to be paid")));
-            }
-
-            LOGGER.info("receiptDetails after apportioning: " + receiptDetails);
-        } catch (Exception ex) {
-            LOGGER.error("Apportioning failed: excess payment!", ex);
-            throw ex;
+        BigDecimal totalCrAmountToBePaid = BigDecimal.ZERO;
+        BigDecimal totalPenalty = BigDecimal.ZERO;
+        for (final ReceiptDetail receiptDetail : receiptDetails) {
+            if (!PURPOSE.ADVANCE_AMOUNT.toString().equals(receiptDetail.getPurpose()))
+                totalCrAmountToBePaid = totalCrAmountToBePaid.add(receiptDetail.getCramountToBePaid());
+            if (isPenaltyReceipt(receiptDetail))
+                totalPenalty = totalPenalty.add(receiptDetail.getCramountToBePaid());
         }
+
+        if (amtPaid.compareTo(totalCrAmountToBePaid) >= 0 && isEligibleForCurrentRebate)
+            isFullPayment = Boolean.TRUE;
+
+        canWaiveOff = propertyTaxUtil
+                .isEligibleforWaiver(amtPaid.compareTo(totalCrAmountToBePaid.subtract(totalPenalty)) >= 0, consumerId);
+
+        Amount balance = new Amount(amtPaid);
+        BigDecimal crAmountToBePaid = null;
+        for (ReceiptDetail rd : receiptDetails) {
+            // For partial payment, we revert IsActualDemand to true
+            if (isPenaltyReceipt(rd))
+                // FROM REST API isActualDemand NULL, so normalize before its too late
+                // ( only for penalty receipts now, others are null, handled their by taking value from EgBillDetails )
+                if (canWaiveOff)
+                    rd.setIsActualDemand(Boolean.FALSE);
+                else
+                    rd.setIsActualDemand(Boolean.TRUE);
+
+            if (balance.isZero()) {
+                // nothing left to apportion
+                rd.zeroDrAndCrAmounts();
+                continue;
+            }
+
+            crAmountToBePaid = rd.getCramountToBePaid();
+
+            if (rd.getDescription().contains(REBATE_STR)) {
+                if (isFullPayment)
+                    balance = balance.minus(crAmountToBePaid);
+                else
+                    rd.setDramount(BigDecimal.ZERO);
+            } else if (canWaiveOff && isPenaltyReceipt(rd)) {
+                // Skip Penalty Heads
+                rd.zeroDrAndCrAmounts();
+                continue;
+            } else if (balance.isLessThanOrEqualTo(crAmountToBePaid)) {
+                // partial or exact payment
+                rd.setCramount(balance.amount);
+                balance = Amount.ZERO;
+            } else { // excess payment
+                rd.setCramount(crAmountToBePaid);
+                balance = balance.minus(crAmountToBePaid);
+            }
+            LOGGER.info(String.format("apportion; bottom of loop"));
+        }
+
+        if (balance.isGreaterThanZero()) {
+            LOGGER.error("Apportioning failed: excess payment!");
+            throw new ValidationException(Arrays.asList(new ValidationError(
+                    "Paid Amount is greater than Total Amount to be paid",
+                    "Paid Amount is greater than Total Amount to be paid")));
+        }
+
+        LOGGER.info("receiptDetails after apportioning: " + receiptDetails);
     }
 
     public List<ReceiptDetail> reConstruct(final BigDecimal amountPaid, final List<EgBillDetails> billDetails,
