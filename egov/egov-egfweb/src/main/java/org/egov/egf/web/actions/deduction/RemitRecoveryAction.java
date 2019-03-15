@@ -50,9 +50,20 @@
  */
 package org.egov.egf.web.actions.deduction;
 
-import com.exilant.GLEngine.ChartOfAccounts;
-import com.exilant.GLEngine.Transaxtion;
-import com.opensymphony.xwork2.validator.annotations.Validation;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -61,7 +72,16 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
-import org.egov.commons.*;
+import org.egov.commons.Bank;
+import org.egov.commons.Bankaccount;
+import org.egov.commons.CFunction;
+import org.egov.commons.CVoucherHeader;
+import org.egov.commons.Functionary;
+import org.egov.commons.Fund;
+import org.egov.commons.Fundsource;
+import org.egov.commons.Scheme;
+import org.egov.commons.SubScheme;
+import org.egov.commons.Vouchermis;
 import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.service.BankAccountService;
@@ -70,6 +90,7 @@ import org.egov.commons.utils.EntityType;
 import org.egov.dao.voucher.VoucherHibernateDAO;
 import org.egov.deduction.model.EgRemittance;
 import org.egov.deduction.model.EgRemittanceDetail;
+import org.egov.egf.commons.CommonsUtil;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.egf.web.actions.payment.BasePaymentAction;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -78,6 +99,7 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -104,24 +126,21 @@ import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.Map.Entry;
+import com.exilant.GLEngine.ChartOfAccounts;
+import com.exilant.GLEngine.Transaxtion;
+import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @ParentPackage("egov")
 @Validation
 @Results({ @Result(name = RemitRecoveryAction.NEW, location = "remitRecovery-" + RemitRecoveryAction.NEW + ".jsp"),
         @Result(name = "messages", location = "remitRecovery-messages.jsp"),
         @Result(name = "view", location = "remitRecovery-view.jsp"),
-        @Result(name = "remitDetail", location = "remitRecovery-remitDetail.jsp") })
+        @Result(name = RemitRecoveryAction.REMIT_DETAIL, location = "remitRecovery-remitDetail.jsp"),
+        @Result(name = RemitRecoveryAction.UNAUTHORIZED, location = "../workflow/unauthorized.jsp")})
 public class RemitRecoveryAction extends BasePaymentAction {
-
-    private static final String DESIGNATION_ID = "designationId";
-    private static final String DESIGNATION_NAME = "designationName";
-    private static final String DESIGNATION_LIST = "designationList";
+    protected static final String REMIT_DETAIL = "remitDetail";
+    private static final String INVALID_APPROVER = "invalid.approver";
+    protected static final String UNAUTHORIZED = "unuthorized";
     private static final String UNCHECKED = "unchecked";
     private static final String MESSAGES = "messages";
     private static final long serialVersionUID = 1L;
@@ -192,6 +211,10 @@ public class RemitRecoveryAction extends BasePaymentAction {
     private BankAccountService bankAccountService;
     @Autowired
     private BankHibernateDAO bankHibernateDAO;
+    @Autowired
+    private CommonsUtil commonsUtil;
+    @Autowired
+    private SecurityUtils securityUtils;
     
     public BigDecimal getBalance() {
         return balance;
@@ -315,7 +338,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
             LOGGER.debug("RemitRecoveryAction | remit | end");
         if (getBankBalanceCheck() == null || "".equals(getBankBalanceCheck()))
             addActionMessage(getText("payment.bankbalance.controltype"));
-        return "remitDetail";
+        return REMIT_DETAIL;
     }
 
     private void prepareListRemitBean(final String selectedRows) {
@@ -325,21 +348,27 @@ public class RemitRecoveryAction extends BasePaymentAction {
 
     }
 
-    @ValidationErrorPage(value = "remitDetail")
+    @ValidationErrorPage(value = REMIT_DETAIL)
     @Action(value = "/deduction/remitRecovery-create")
     public String create() {
         try {
+            populateWorkflowBean();
+            prepareListRemitBean(selectedRows);
+            if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+                if (!commonsUtil.isValidApprover(paymentheader, workflowBean.getApproverPositionId())) {
+                    addActionError(getText(INVALID_APPROVER));
+                    return REMIT_DETAIL;
+                }
+            }
             final String vdate = parameters.get("voucherDate")[0];
             final Date date1 = sdf1.parse(vdate);
             final String voucherDate = formatter1.format(date1);
             String cutOffDate1 = null;
-            prepareListRemitBean(selectedRows);
             validateFields();
             voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
             voucherHeader.setName(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE);
             final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
             recovery = (Recovery) persistenceService.find("from Recovery where id=?1", remittanceBean.getRecoveryId());
-            populateWorkflowBean();
             paymentheader = paymentActionHelper.createRemittancePayment(paymentheader, voucherHeader,
                     Integer.valueOf(commonBean.getAccountNumberId()), getModeOfPayment(),
                     remittanceBean.getTotalAmount(), listRemitBean, recovery, remittanceBean, remittedTo, workflowBean,
@@ -451,6 +480,14 @@ public class RemitRecoveryAction extends BasePaymentAction {
     public String sendForApproval() {
         paymentheader = paymentService.find("from Paymentheader where id=?1", Long.valueOf(paymentid));
         populateWorkflowBean();
+        if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            if (!commonsUtil.isValidApprover(paymentheader, workflowBean.getApproverPositionId())) {
+                voucherHeader.setId(paymentheader.getVoucherheader().getId());
+                prepareForViewModifyReverse();
+                addActionError(getText(INVALID_APPROVER));
+                return VIEW;
+            }
+        }
         paymentheader = paymentActionHelper.sendForApproval(paymentheader, workflowBean);
 
         if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
@@ -475,6 +512,8 @@ public class RemitRecoveryAction extends BasePaymentAction {
     @Action(value = "/deduction/remitRecovery-viewInboxItem")
     public String viewInboxItem() {
         paymentheader = paymentService.find("from Paymentheader where id=?1", Long.valueOf(paymentid));
+        if (!commonsUtil.isApplicationOwner(securityUtils.getCurrentUser(), paymentheader))
+            return UNAUTHORIZED;
         /*
          * if (paymentheader.getState().getValue() != null && !paymentheader.getState().getValue().isEmpty() &&
          * paymentheader.getState().getValue().contains("Reject")) {

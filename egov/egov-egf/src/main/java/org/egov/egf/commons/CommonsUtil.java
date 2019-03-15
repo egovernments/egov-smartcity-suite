@@ -48,10 +48,15 @@
 
 package org.egov.egf.commons;
 
+import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 /**
@@ -62,11 +67,29 @@ import org.springframework.stereotype.Component;
 @Component
 public class CommonsUtil {
 
-	@Autowired
-	private PositionMasterService positionMasterService;
+    @Autowired
+    private PositionMasterService positionMasterService;
+    @Autowired
+    private EisCommonService eisCommonService;
+    @Autowired
+    @Qualifier("workflowService")
+    private SimpleWorkflowService<?> workflowService;
 
-	public Boolean isApplicationOwner(User currentUser, StateAware<?> state) {
-		return positionMasterService.getPositionsForEmployee(currentUser.getId())
-				.contains(state.getCurrentState().getOwnerPosition());
-	}
+    public Boolean isApplicationOwner(final User currentUser, final StateAware<?> state) {
+        return positionMasterService.getPositionsForEmployee(currentUser.getId())
+                .contains(state.getCurrentState().getOwnerPosition());
+    }
+
+    public Boolean isValidApprover(final StateAware<?> state, final Long approverPositionId) {
+        String currentState = null;
+        if (state.getCurrentState() != null)
+            currentState = state.getCurrentState().getValue();
+        final WorkFlowMatrix wfmatrix = workflowService.getWfMatrix(state.getStateType(), null, null, null, currentState, null);
+        if (null != approverPositionId && approverPositionId != -1) {
+            Position pos = (Position) positionMasterService.getPositionById(approverPositionId);
+            if (eisCommonService.isValidAppover(wfmatrix, pos))
+                return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
+    }
 }
