@@ -151,7 +151,7 @@ public class CollectionApportioner {
 
             LOGGER.info("receiptDetails after apportioning: " + receiptDetails);
         } catch (Exception ex) {
-            LOGGER.error("Apportioning failed", ex);
+            LOGGER.error("Apportioning failed: excess payment!", ex);
             throw ex;
         }
     }
