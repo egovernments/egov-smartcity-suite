@@ -317,7 +317,7 @@
 											<div align="center">
 
 												<a
-													href="/../collection/citizen/onlineReceipt-viewReceipt.action?receiptNumber=<c:out value="${rcpt.receiptNumber}" />&consumerCode=<c:out value="${consumerCode}" />&serviceCode=WT"
+													href="/../collection/citizen/onlineReceipt-viewReceipt.action?receiptNumber=<c:out value="${actr.receiptNumber}" />&consumerCode=<c:out value="${consumerCode}" />&serviceCode=WT"
 													target="_blank"> <c:out value="${actr.receiptNumber}" />
 												</a>
 

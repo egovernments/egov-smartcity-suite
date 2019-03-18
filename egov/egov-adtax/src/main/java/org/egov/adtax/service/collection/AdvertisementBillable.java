@@ -78,246 +78,257 @@ import org.springframework.transaction.annotation.Transactional;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Transactional(readOnly = true)
 public class AdvertisementBillable extends AbstractBillable implements Billable {
-    private String referenceNumber;
-    private String transanctionReferenceNumber;
+	private String referenceNumber;
+	private String transanctionReferenceNumber;
 
-    @Autowired
-    private ModuleService moduleService;
+	@Autowired
+	private ModuleService moduleService;
 
-    private Advertisement advertisement;
-    private String collectionType;
-    @Autowired
-    private EgBillDao egBillDAO;
-    @Autowired
-    private SecurityUtils securityUtils;
-    @Override
-    public String getBillPayee() {
-        AdvertisementPermitDetail advPermit=advertisement.getActiveAdvertisementPermit();
-        if (advertisement != null)
-        { 
-            if (collectionType != null && advPermit != null
-                    && AdvertisementTaxConstants.ADVERTISEMENT_COLLECTION_TYPE.equalsIgnoreCase(collectionType)) {
-                
-                return (advPermit.getAgency() != null && advPermit.getAgency().getName()!=null? advPermit.getAgency().getName():(advPermit.getOwnerDetail()!=null ? advPermit.getOwnerDetail(): " ") );
-            } else
-            {
-                return advPermit != null
-                        && advPermit.getAgency() != null && advPermit.getAgency().getName()!=null ? advPermit.getAgency().getName() : " ";
-            }
-        }
-        return null;
-    }
+	private Advertisement advertisement;
+	private String collectionType;
+	@Autowired
+	private EgBillDao egBillDAO;
+	@Autowired
+	private SecurityUtils securityUtils;
 
-    @Override
-    public String getBillAddress() {
-        AdvertisementPermitDetail advPermit=advertisement.getActiveAdvertisementPermit();
-        if (advertisement != null){
-            if (collectionType != null && AdvertisementTaxConstants.ADVERTISEMENT_COLLECTION_TYPE.equalsIgnoreCase(collectionType))
-                return (advPermit!=null && advPermit.getAgency() != null && advPermit.getAgency().getAddress()!=null) ? advPermit.getAgency().getAddress() : ( advPermit != null && advPermit.getOwnerDetail()!=null?advPermit.getOwnerDetail():" ");
-            else
-            {
-            //     advPermit=  advertisement.getActiveAdvertisementPermit();
-                return advPermit!=null && advPermit.getAgency() != null && advPermit.getAgency().getAddress()!=null ? advPermit.getAgency().getAddress() : " ";
-            }
-        }
-        return null;
-    }
+	@Override
+	public String getBillPayee() {
+		AdvertisementPermitDetail advPermit = advertisement.getActiveAdvertisementPermit();
+		if (advertisement != null) {
+			if (collectionType != null && advPermit != null
+					&& AdvertisementTaxConstants.ADVERTISEMENT_COLLECTION_TYPE.equalsIgnoreCase(collectionType)) {
 
-    @Override
-    public EgDemand getCurrentDemand() {
-        return advertisement != null ? advertisement.getDemandId() : null;
-    }
-   
-    @Override
-    public String getEmailId() {
-        return "";
-    }
+				return (advPermit.getAgency() != null && advPermit.getAgency().getName() != null
+						? advPermit.getAgency().getName()
+						: (advPermit.getOwnerDetail() != null ? advPermit.getOwnerDetail() : " "));
+			} else {
+				return advPermit != null && advPermit.getAgency() != null && advPermit.getAgency().getName() != null
+						? advPermit.getAgency().getName() : " ";
+			}
+		}
+		return null;
+	}
 
+	@Override
+	public String getBillAddress() {
+		AdvertisementPermitDetail advPermit = advertisement.getActiveAdvertisementPermit();
+		if (advertisement != null) {
+			if (collectionType != null
+					&& AdvertisementTaxConstants.ADVERTISEMENT_COLLECTION_TYPE.equalsIgnoreCase(collectionType))
+				return (advPermit != null && advPermit.getAgency() != null
+						&& advPermit.getAgency().getAddress() != null) ? advPermit.getAgency().getAddress()
+								: (advPermit != null && advPermit.getOwnerDetail() != null ? advPermit.getOwnerDetail()
+										: " ");
+			else {
+				// advPermit= advertisement.getActiveAdvertisementPermit();
+				return advPermit != null && advPermit.getAgency() != null && advPermit.getAgency().getAddress() != null
+						? advPermit.getAgency().getAddress() : " ";
+			}
+		}
+		return null;
+	}
 
-    @Override
-    public List<EgDemand> getAllDemands() {
-        final List<EgDemand> demands = new ArrayList<EgDemand>();
-        if (getCurrentDemand() != null)
-            demands.add(getCurrentDemand());
-        return demands;
-    }
+	@Override
+	public EgDemand getCurrentDemand() {
+		return advertisement != null ? advertisement.getDemandId() : null;
+	}
 
-    @Override
-    public EgBillType getBillType() {
-        return egBillDAO.getBillTypeByCode(AdvertisementTaxConstants.BILL_TYPE_AUTO);
+	@Override
+	public String getEmailId() {
+		return "";
+	}
 
-    }
-    
-    public EgBillType getBillTypeByCode(final String typeCode) {
-        return egBillDAO.getBillTypeByCode(typeCode);
-    }
-    
-    @Override
-    public Date getBillLastDueDate() {
-        return DateUtils.today();
-    }
+	@Override
+	public List<EgDemand> getAllDemands() {
+		final List<EgDemand> demands = new ArrayList<EgDemand>();
+		if (getCurrentDemand() != null)
+			demands.add(getCurrentDemand());
+		return demands;
+	}
 
-    @Override
-    public Long getBoundaryNum() {
-        if (advertisement != null && advertisement.getWard() != null)
-            return advertisement.getWard().getBoundaryNum();
-        return null;
-    }
+	@Override
+	public EgBillType getBillType() {
+		return egBillDAO.getBillTypeByCode(AdvertisementTaxConstants.BILL_TYPE_AUTO);
 
-    @Override
-    public String getBoundaryType() {
+	}
 
-        if (advertisement != null  &&  advertisement.getWard() != null && advertisement.getWard().getBoundaryType()!=null)
-            return advertisement.getWard().getBoundaryType().getName();
-        return null;
-    }
+	public EgBillType getBillTypeByCode(final String typeCode) {
+		return egBillDAO.getBillTypeByCode(typeCode);
+	}
 
-    @Override
-    public String getDepartmentCode() {
-        return AdvertisementTaxConstants.STRING_DEPARTMENT_CODE;
-    }
+	@Override
+	public Date getBillLastDueDate() {
+		return DateUtils.today();
+	}
 
-    @Override
-    public BigDecimal getFunctionaryCode() {
-        return new BigDecimal(AdvertisementTaxConstants.DEFAULT_FUNCTIONARY_CODE);
-    }
+	@Override
+	public Long getBoundaryNum() {
+		if (advertisement != null && advertisement.getWard() != null)
+			return advertisement.getWard().getBoundaryNum();
+		return null;
+	}
 
-    @Override
-    public String getFundCode() {
-        return AdvertisementTaxConstants.DEFAULT_FUND_CODE;
-    }
+	@Override
+	public String getBoundaryType() {
 
-    @Override
-    public String getFundSourceCode() {
-        return AdvertisementTaxConstants.DEFAULT_FUNCTIONARY_CODE;
-    }
+		if (advertisement != null && advertisement.getWard() != null
+				&& advertisement.getWard().getBoundaryType() != null)
+			return advertisement.getWard().getBoundaryType().getName();
+		return null;
+	}
 
-    @Override
-    public Date getIssueDate() {
-        return new Date();
-    }
+	@Override
+	public String getDepartmentCode() {
+		return AdvertisementTaxConstants.STRING_DEPARTMENT_CODE;
+	}
 
-    @Override
-    public Date getLastDate() {
-        return advertisement!=null && 
-                advertisement.getPenaltyCalculationDate() != null ? advertisement.getPenaltyCalculationDate() : null;
-    }
+	@Override
+	public BigDecimal getFunctionaryCode() {
+		return new BigDecimal(AdvertisementTaxConstants.DEFAULT_FUNCTIONARY_CODE);
+	}
 
-    @Override
-    public Module getModule() {
-        return moduleService.getModuleByName(AdvertisementTaxConstants.MODULE_NAME);
-    }
+	@Override
+	public String getFundCode() {
+		return AdvertisementTaxConstants.DEFAULT_FUND_CODE;
+	}
 
-    @Override
-    public Boolean getOverrideAccountHeadsAllowed() {
-        return Boolean.FALSE;
-    }
+	@Override
+	public String getFundSourceCode() {
+		return AdvertisementTaxConstants.DEFAULT_FUNCTIONARY_CODE;
+	}
 
-    @Override
-    public Boolean getPartPaymentAllowed() {
-        return Boolean.FALSE;
-    }
+	@Override
+	public Date getIssueDate() {
+		return new Date();
+	}
 
-    @Override
-    public String getServiceCode() {
-        return AdvertisementTaxConstants.SERVICE_CODE;
-    }
+	@Override
+	public Date getLastDate() {
+		return advertisement != null && advertisement.getPenaltyCalculationDate() != null
+				? advertisement.getPenaltyCalculationDate() : null;
+	}
 
-    @Override
-    public BigDecimal getTotalAmount() {
-        BigDecimal balance = BigDecimal.ZERO;
+	@Override
+	public Module getModule() {
+		return moduleService.getModuleByName(AdvertisementTaxConstants.MODULE_NAME);
+	}
 
-        if (advertisement != null && advertisement.getDemandId() != null)
-            for (final EgDemandDetails det : advertisement.getDemandId().getEgDemandDetails()) {
-                final BigDecimal dmdAmt = det.getAmount();
-                final BigDecimal collAmt = det.getAmtCollected();
-                balance = balance.add(dmdAmt.subtract(collAmt));
-            }
-        return balance;
-    }
+	@Override
+	public Boolean getOverrideAccountHeadsAllowed() {
+		return Boolean.FALSE;
+	}
 
-    @Override
-    public Long getUserId() {
-        return ApplicationThreadLocals.getUserId() == null ? securityUtils.getCurrentUser().getId() : Long.valueOf(ApplicationThreadLocals.getUserId());
-    }
-    
-    
-    @Override
-    public String getDescription() {
-        final StringBuffer description = new StringBuffer();
+	@Override
+	public Boolean getPartPaymentAllowed() {
+		return Boolean.FALSE;
+	}
 
-        if (advertisement != null ) {
-            description.append(AdvertisementTaxConstants.FEECOLLECTIONMESSAGE);
-            description.append(advertisement.getAdvertisementNumber() != null ? advertisement.getAdvertisementNumber() : "");
-        }
-        return description.toString();
-    }
+	@Override
+	public String getServiceCode() {
+		return AdvertisementTaxConstants.SERVICE_CODE;
+	}
 
-    @Override
-    public String getDisplayMessage() {
-        return AdvertisementTaxConstants.FEECOLLECTION;
-    }
+	@Override
+	public BigDecimal getTotalAmount() {
+		BigDecimal balance = BigDecimal.ZERO;
 
-    @Override
-    public String getCollModesNotAllowed() {
-        return StringUtils.EMPTY;
-    }
+		if (advertisement != null && advertisement.getDemandId() != null)
+			for (final EgDemandDetails det : advertisement.getDemandId().getEgDemandDetails()) {
+				final BigDecimal dmdAmt = det.getAmount();
+				final BigDecimal collAmt = det.getAmtCollected();
+				balance = balance.add(dmdAmt.subtract(collAmt));
+			}
+		return balance;
+	}
 
-    @Override
-    public String getConsumerId() {
-        if (advertisement != null)
-            return advertisement.getId().toString();
-        return null;
-    }
+	@Override
+	public Long getUserId() {
+		return ApplicationThreadLocals.getUserId() == null ? securityUtils.getCurrentUser().getId()
+				: Long.valueOf(ApplicationThreadLocals.getUserId());
+	}
 
-    @Override
-    public Boolean isCallbackForApportion() {
-        return Boolean.FALSE;
-    }
+	@Override
+	public String getDescription() {
+		final StringBuffer description = new StringBuffer();
 
-    @Override
-    public void setCallbackForApportion(final Boolean b) {
-        throw new IllegalArgumentException("Apportioning is always TRUE and shouldn't be changed");
+		if (advertisement != null) {
+			description.append(AdvertisementTaxConstants.FEECOLLECTIONMESSAGE);
+			description.append(
+					advertisement.getAdvertisementNumber() != null ? advertisement.getAdvertisementNumber() : "");
+		}
+		return description.toString();
+	}
 
-    }
-  
+	@Override
+	public String getDisplayMessage() {
+		return AdvertisementTaxConstants.FEECOLLECTION;
+	}
 
-    public Advertisement getAdvertisement() {
-        return advertisement;
-    }
+	@Override
+	public String getCollModesNotAllowed() {
+		return StringUtils.EMPTY;
+	}
 
-    public void setAdvertisement(Advertisement advertisement) {
-        this.advertisement = advertisement;
-    }
+	@Override
+	public String getConsumerId() {
+		if (advertisement != null)
+			return advertisement.getId().toString();
+		return null;
+	}
 
-    public String getCollectionType() {
-        return collectionType;
-    }
+	@Override
+	public Boolean isCallbackForApportion() {
+		return Boolean.FALSE;
+	}
 
-    public void setCollectionType(final String collectionType) {
-        this.collectionType = collectionType;
-    }
+	@Override
+	public void setCallbackForApportion(final Boolean b) {
+		throw new IllegalArgumentException("Apportioning is always TRUE and shouldn't be changed");
 
-    @Override
-    public String getReferenceNumber() {
-        return referenceNumber;
-    }
+	}
 
-    public void setReferenceNumber(final String referenceNumber) {
-        this.referenceNumber = referenceNumber;
-    }
+	public Advertisement getAdvertisement() {
+		return advertisement;
+	}
 
-    @Override
-    public String getConsumerType() {
-        return "";
-    }
-    @Override
-    public String getTransanctionReferenceNumber() {
-        return transanctionReferenceNumber;
-    }
+	public void setAdvertisement(Advertisement advertisement) {
+		this.advertisement = advertisement;
+	}
 
-    public void setTransanctionReferenceNumber(String transanctionReferenceNumber) {
-        this.transanctionReferenceNumber = transanctionReferenceNumber;
-    }
-    
+	public String getCollectionType() {
+		return collectionType;
+	}
+
+	public void setCollectionType(final String collectionType) {
+		this.collectionType = collectionType;
+	}
+
+	@Override
+	public String getReferenceNumber() {
+		return referenceNumber;
+	}
+
+	public void setReferenceNumber(final String referenceNumber) {
+		this.referenceNumber = referenceNumber;
+	}
+
+	@Override
+	public String getConsumerType() {
+		return "";
+	}
+
+	@Override
+	public String getTransanctionReferenceNumber() {
+		return transanctionReferenceNumber;
+	}
+
+	public void setTransanctionReferenceNumber(String transanctionReferenceNumber) {
+		this.transanctionReferenceNumber = transanctionReferenceNumber;
+	}
+
+	@Override
+	public BigDecimal getMinAmountPayable() {
+		return getPartPaymentAllowed() ? BigDecimal.ZERO : getTotalAmount();
+	}
+
 }

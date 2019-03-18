@@ -68,61 +68,115 @@
 </style>
 <div class="row">
     <div class="col-md-12">
-        <div class="panel panel-primary" data-collapsed="0">
-            <div class="panel-heading">
-                <div class="panel-title"><spring:message code="title.demand.generation"/></div>
-            </div>
-
-            <div class="panel-body">
-                <form:form role="form" id="generatedemand" name="generatedemand"
-                           cssClass="form-horizontal form-groups-bordered" method="post">
-                    <div class="form-group">
-                        <label class="col-sm-6 control-label"><spring:message
-                                code="lbl.financialyear"/> </label>
-                        <div class="col-sm-4">
-                            <input type="hidden" value="${installmentYear}" id="installmentYear">
-                            <label class="col-sm-4 control-label text-left">${installmentYear}</label>
-                        </div>
+        <c:choose>
+            <c:when test="${not empty error}">
+                <div class="panel panel-primary" data-collapsed="0">
+                    <div class="panel-heading">
+                        <div class="panel-title"><spring:message code="title.demand.generation"/></div>
                     </div>
-                    <div class="form-group add-margin">
-                        <div class="col-sm-12 text-center">
-                            <button type="button" class='btn btn-primary' id="genDmdBtn">
-                                <spring:message code='lbl.generate.demand'/>
-                            </button>&nbsp;&nbsp;&nbsp;
+
+                    <div class="panel-body">
+                        <div class="form-group add-margin">
+                            <div class="alert alert-danger" role="alert">
+                                <spring:message code="${error}" arguments="${finYear}"/>
+                            </div>
+                        </div>
+                        <div class="form-group add-margin text-center">
                             <button type="button" class="btn btn-default" data-dismiss="modal"
                                     onclick="window.close();">
                                 <spring:message code='lbl.close'/></button>
                         </div>
                     </div>
+                </div>
+            </c:when>
+            <c:otherwise>
+                <script>
+                    var pending = ${pending};
+                    var logDetails = '${demandGenerationLogDetails}';
+                    var licenseIds = [];
+                </script>
+                <div class="panel panel-primary" data-collapsed="0">
+                    <div class="panel-heading">
+                        <div class="panel-title"><spring:message code="title.demand.generation"/></div>
+                    </div>
 
-                    <div class="progress-div text-center form-group display-hide">
+                    <div class="panel-body">
+                        <form:form role="form" id="generatedemand" name="generatedemand"
+                                   cssClass="form-horizontal form-groups-bordered" method="post">
+                            <c:choose>
+                                <c:when test="${pending}">
+                                    <div class="form-group add-margin">
+                                        <div class="alert alert-danger" role="alert">
+                                            <spring:message code="TL-008"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group add-margin text-center">
+                                        <button type="button" class='btn btn-primary' id="show-pending-btn">
+                                            <spring:message code='lbl.pending.demand'/>
+                                        </button>&nbsp;&nbsp;&nbsp;
+                                        <button type="button" class="btn btn-default" data-dismiss="modal"
+                                                onclick="window.close();">
+                                            <spring:message code='lbl.close'/></button>
+                                    </div>
+                                    <div class="col-md-12form-group report-table-container display-hide">
+                                        <table class="table table-bordered datatable dt-responsive table-hover multiheadertbl"
+                                               id="tbldemandgenerate">
+                                        </table>
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="form-group">
+                                        <label class="col-sm-6 control-label"><spring:message
+                                                code="lbl.financialyear"/> </label>
+                                        <div class="col-sm-4">
+                                            <input type="hidden" value="${installmentYear}" id="installmentYear">
+                                            <label class="col-sm-4 control-label text-left">${installmentYear}</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group add-margin">
+                                        <div class="col-sm-12 text-center">
+                                            <button type="button" class='btn btn-primary' id="genDmdBtn">
+                                                <spring:message code='lbl.generate.demand'/>
+                                            </button>&nbsp;&nbsp;&nbsp;
+                                            <button type="button" class="btn btn-default" data-dismiss="modal"
+                                                    onclick="window.close();">
+                                                <spring:message code='lbl.close'/></button>
+                                        </div>
+                                    </div>
 
-                        <div class="alert alert-info" role="alert">
-                            <div id="progress-status"><spring:message code="lbl.generate.demand.wait"/></div>
-                            <div class="progress center-block" style="width:300px">
-                                <div class="progress-bar progress-bar-striped active" role="progressbar"
-                                     aria-valuenow="0" aria-valuemin="0" aria-valuemax="${licenseIds.size()}">
-                                    <div class="progress-bar-title"></div>
-                                </div>
-                            </div>
-                            <div id="progress-footer"><spring:message code="lbl.generate.demand.info"/></div>
+                                    <div class="progress-div text-center form-group display-hide">
+
+                                        <div class="alert alert-info" role="alert">
+                                            <div id="progress-status"><spring:message code="lbl.generate.demand.wait"/></div>
+                                            <div class="progress center-block" style="width:300px">
+                                                <div class="progress-bar progress-bar-striped active" role="progressbar"
+                                                     aria-valuenow="0" aria-valuemin="0" aria-valuemax="${licenseIds.size()}">
+                                                    <div class="progress-bar-title"></div>
+                                                </div>
+                                            </div>
+                                            <div id="progress-footer"><spring:message code="lbl.generate.demand.info"/></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12form-group report-table-container display-hide">
+                                        <table class="table table-bordered datatable dt-responsive table-hover multiheadertbl"
+                                               id="tbldemandgenerate">
+                                        </table>
+                                    </div>
+                                    <script>
+                                        licenseIds = ${licenseIds};
+                                    </script>
+                                </c:otherwise>
+                            </c:choose>
+                        </form:form>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="alert alert-warning">
+                            <spring:message code="msg.demand.gen.footer"/>
                         </div>
                     </div>
-                    <div class="col-md-12form-group report-table-container display-hide">
-
-                        <table class="table table-bordered datatable dt-responsive table-hover multiheadertbl"
-                               id="tbldemandgenerate">
-                        </table>
-                    </div>
-
-                </form:form>
-            </div>
-            <div class="panel-footer">
-                <div class="alert alert-warning">
-                    <spring:message code="msg.demand.gen.footer" />
                 </div>
-            </div>
-        </div>
+            </c:otherwise>
+        </c:choose>
     </div>
 </div>
 <link rel="stylesheet"
@@ -149,8 +203,4 @@
         src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.html5.min.js' context='/egi'/>"></script>
 <script
         src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.print.min.js' context='/egi'/>"></script>
-<script>
-    var licenseIds = ${licenseIds};
-    var logDetails = '${demandGenerationLogDetails}';
-</script>
 <script src="<cdn:url  value='/resources/js/app/demand-generation-bulk.js?rnd=${app_release_no}'/>"></script>

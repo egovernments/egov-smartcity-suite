@@ -319,4 +319,9 @@ public class AgencyWiseBillable extends AbstractBillable implements Billable {
         this.transanctionReferenceNumber = transanctionReferenceNumber;
     }
     
+    @Override
+	public BigDecimal getMinAmountPayable() {
+		return BigDecimal.ZERO;
+	}
+    
 }

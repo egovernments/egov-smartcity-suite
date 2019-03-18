@@ -122,6 +122,17 @@ function populateapportioningamountnew(){
 		dom.get("receipt_error_area").style.display="block";
 		return false;
 	}
+	if(collectiontotal < billingtotal && checkpartpaymentvalue=='true'){
+		var minimumAmt=parseInt(document.forms[0].minimumAmount.value);
+		if((isNaN(minimumAmt)) || minimumAmt==null ){
+		    minimumAmt=0;
+		}
+		 if(collectiontotal < minimumAmt){
+	     	document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.paytlessthanmin.errormessage" />'+': ' + minimumAmt+ '<br>';
+	     	dom.get("receipt_error_area").style.display="block";
+	     	return false;
+	     }
+	}
 	if(dom.get("callbackForApportioning").value=="false")
 	{
 		if(initialSetting=="true"){
@@ -247,8 +258,15 @@ function calculateCreditTotal(){
 }
 
 function validateOnlineReceipt(){
-	populateapportioningamountnew();
-	var amount=dom.get("paymentAmount").value;
+	 var validation=populateapportioningamountnew();
+     if(validation==false){
+    	 if(validation==false &&  document.getElementById("receipt_error_area").innerHTML!=''){
+    			document.getElementById("receipt_error_area").style.display="block";
+    			window.scroll(0,0);
+    		}
+            return false;
+        }  
+ 	var amount=dom.get("paymentAmount").value;
 	var billingtotal=dom.get("totalAmountToBeCollected").value;
 	document.getElementById("receipt_error_area").innerHTML='';
 	dom.get("receipt_error_area").style.display="none";
@@ -468,6 +486,8 @@ function onLoad(){
 									<s:hidden id="refNumber" value="%{refNumber}" name="refNumber" />
 									<s:hidden id="isTransactionPending" value="%{isTransactionPending}" 
 									name="isTransactionPending"/>
+									<s:hidden label="minimumAmount" id="minimumAmount"
+									  value="%{minimumAmount}" name="minimumAmount"/>
 									<%
 									    int i = 1;
 									%>

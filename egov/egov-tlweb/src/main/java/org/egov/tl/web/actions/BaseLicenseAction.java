@@ -161,6 +161,8 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     @Autowired
     protected transient LicenseDocumentTypeService licenseDocumentTypeService;
 
+    protected String message;
+
     public BaseLicenseAction() {
         this.addRelatedEntity("boundary", Boundary.class);
         this.addRelatedEntity("parentBoundary", Boundary.class);
@@ -184,7 +186,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
             licenseApplicationService.createWithMeseva(license, workflowBean);
         } else {
             licenseApplicationService.create(license, workflowBean);
-            addActionMessage(this.getText("license.submission.succesful") + license().getApplicationNumber());
+            setMessage(this.getText("license.submission.succesful") + license().getApplicationNumber());
         }
         return tradeLicenseService.currentUserIsMeeseva() ? MEESEVA_RESULT_ACK : ACKNOWLEDGEMENT;
     }
@@ -198,7 +200,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
         if (license().isNewWorkflow()) {
             WorkFlowMatrix wfmatrix = licenseApplicationService.getWorkflowAPI(license(), workflowBean);
             if (!license().getCurrentState().getValue().equals(wfmatrix.getCurrentState())) {
-                addActionMessage(this.getText(WF_ITEM_PROCESSED));
+                setMessage(this.getText(WF_ITEM_PROCESSED));
                 return MESSAGE;
             }
             if (GENERATE_PROVISIONAL_CERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
@@ -218,13 +220,13 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
             if (!GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
                 WorkFlowMatrix wfmatrix = tradeLicenseService.getWorkFlowMatrixApi(license(), workflowBean);
                 if (!license().getCurrentState().getValue().equals(wfmatrix.getCurrentState())) {
-                    addActionMessage(this.getText(WF_ITEM_PROCESSED));
+                    setMessage(this.getText(WF_ITEM_PROCESSED));
                     return MESSAGE;
                 }
             }
             if (GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())
                     && license().getCurrentState().isEnded()) {
-                addActionMessage(this.getText(WF_ITEM_PROCESSED));
+                setMessage(this.getText(WF_ITEM_PROCESSED));
                 return MESSAGE;
             }
             processWorkflow();
@@ -274,7 +276,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
             licenseApplicationService.renewWithMeeseva(license(), workflowBean);
         } else {
             licenseApplicationService.renew(license(), workflowBean);
-            addActionMessage(this.getText("license.renew.submission.succesful")
+            setMessage(this.getText("license.renew.submission.succesful")
                     + " " + license().getApplicationNumber());
         }
         return tradeLicenseService.currentUserIsMeeseva() ? MEESEVA_RESULT_ACK : ACKNOWLEDGEMENT;
@@ -317,18 +319,18 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
 
     private void successMessage() {
         if (BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-            addActionMessage(this.getText("license.approved.success"));
+            setMessage(this.getText("license.approved.success"));
         } else if (BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             List<Assignment> assignments = assignmentService.getAssignmentsForPosition(workflowBean.getApproverPositionId());
             String nextDesgn = assignments.isEmpty() ? EMPTY : assignments.get(0).getDesignation().getName();
             String userName = assignments.isEmpty() ? EMPTY : assignments.get(0).getEmployee().getName();
-            addActionMessage(this.getText("license.sent") + " " + nextDesgn + " - " + userName);
+            setMessage(this.getText("license.sent") + " " + nextDesgn + " - " + userName);
         } else if (BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             rejectActionMessage();
         } else if (BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-            addActionMessage(this.getText(LICENSE_REJECT) + license().getApplicationNumber());
+            setMessage(this.getText(LICENSE_REJECT) + license().getApplicationNumber());
         } else if (BUTTONGENERATEDCERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-            addActionMessage(this.getText("license.certifiacte.print.complete.recorded"));
+            setMessage(this.getText("license.certifiacte.print.complete.recorded"));
         }
     }
 
@@ -339,10 +341,10 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
                 Designation designation = currentOwner.getDeptDesig().getDesignation();
                 List<Assignment> assignments = assignmentService.getAssignmentsForPosition(currentOwner.getId());
                 String userName = assignments.isEmpty() ? EMPTY : assignments.get(0).getEmployee().getName();
-                addActionMessage(new StringBuilder(25).append(this.getText("license.rejectedfirst"))
+                setMessage(new StringBuilder(25).append(this.getText("license.rejectedfirst"))
                         .append(SPACE).append(designation.getName() + " - ").append(userName).toString());
             } else {
-                addActionMessage(this.getText(LICENSE_REJECT) + license().getApplicationNumber());
+                setMessage(this.getText(LICENSE_REJECT) + license().getApplicationNumber());
             }
 
         } else {
@@ -354,12 +356,12 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
             }
             if (license().getState().getValue().contains(WORKFLOW_STATE_REJECTED)) {
                 Position creatorPosition = license().getState().getInitiatorPosition();
-                addActionMessage(new StringBuilder(25).append(this.getText("license.rejectedfirst"))
+                setMessage(new StringBuilder(25).append(this.getText("license.rejectedfirst"))
                         .append(SPACE).append(creatorPosition.getDeptDesig().getDesignation().getName() + " - ")
                         .append(user == null ? EMPTY : user.getName()).toString());
 
             } else {
-                addActionMessage(this.getText(LICENSE_REJECT) + license().getApplicationNumber());
+                setMessage(this.getText(LICENSE_REJECT) + license().getApplicationNumber());
             }
         }
     }
@@ -388,7 +390,7 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     // forwards here
     @SkipValidation
     public String showForApproval() {
-        getSession().put("model.id", license().getId());
+        getModel().setId(license().getId());
         String result = APPROVE_PAGE;
         setRoleName(securityUtils.getCurrentUser().getRoles().toString());
         if (license().isNewApplication()) {
@@ -601,4 +603,13 @@ public abstract class BaseLicenseAction extends GenericWorkFlowAction {
     public boolean currentUserIsCitizenOrAnonymous() {
         return securityUtils.currentUserIsCitizen() || SecurityUtils.currentUserIsAnonymous();
     }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(final String message) {
+        this.message = message;
+    }
+
 }

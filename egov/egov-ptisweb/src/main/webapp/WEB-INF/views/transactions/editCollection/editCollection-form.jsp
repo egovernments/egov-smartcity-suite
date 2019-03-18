@@ -84,6 +84,28 @@ body {
 				"#Penalty-Fines-" + rowidx + "-actualDemand").val();
 		var actualcollection = jQuery(
 				"#Penalty-Fines-" + rowidx + "-actualCollection").val();
+	
+	if (taxvalue && parseInt(actualcollection) != 0) {
+			if (penaltyamount != '') {
+				if ((parseInt(actualcollection) + parseInt(penaltycollection)) > Number(penaltyamount)) {
+
+					bootbox
+							.alert("Sum of Actual Collection and Revised Collections should be equal to Revised Demand.");
+					jQuery("#Penalty-Fines-" + rowidx + "-rvsdCollection").val(
+							"");
+					jQuery("#Penalty-Fines-" + rowidx + "-rvsdAmount").val("");
+					return false;
+				}
+			} else {
+				if ((parseInt(actualcollection) + parseInt(penaltycollection)) > Number(existingpenalty)) {
+					bootbox
+							.alert("Sum of Actual Collection and Revised Collections should be equal to Actual Demand.");
+					jQuery("#Penalty-Fines-" + rowidx + "-rvsdCollection").val(
+							"");
+					return false;
+				}
+			}
+		}
 		if (taxvalue && (Number(existingpenalty) != Number(actualcollection))) {
 			if (penaltycollection == '') {
 				intransaction = true;
@@ -197,7 +219,24 @@ body {
 										path="demandDetailBeans[${demandInfoStatus.index}].isCollectionEditable" />
 									<form:errors path="demandDetailBeans[${demandInfoStatus.index}].revisedCollection" cssClass="add-margin error-msg" />
 								</c:when>
-								<c:otherwise>
+									<c:when
+										test="${demandDetailBeans[demandInfoStatus.index].actualCollection +demandDetailBeans[demandInfoStatus.index].revisedCollection > demandDetailBeans[demandInfoStatus.index].actualAmount}">
+										<form:input
+											path="demandDetailBeans[${demandInfoStatus.index}].revisedCollection"
+											onblur="checkPenaltyCollection(this);validNumber(this);"
+											id="${taxName}-${taxId}-rvsdCollection" data-idx="${taxId}"
+											cssClass="form-control" />
+										<form:hidden
+											path="demandDetailBeans[${demandInfoStatus.index}].isCollectionEditable" />
+										<c:if
+											test="${demandDetailBeans[demandInfoStatus.index].reasonMaster != 'Penalty Fines'}">
+											<script>
+												bootbox
+														.alert("Sum of Actual Collection and Revised Collection should be less than or equal to Actual Demand");
+											</script>
+										</c:if>
+									</c:when>
+									<c:otherwise>
 									<form:input path="demandDetailBeans[${demandInfoStatus.index}].revisedCollection" onblur="checkPenaltyCollection(this);validNumber(this);" id="${taxName}-${taxId}-rvsdCollection" data-idx="${taxId}" cssClass="form-control" />
 									<form:hidden
 										path="demandDetailBeans[${demandInfoStatus.index}].isCollectionEditable" />

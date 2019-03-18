@@ -47,151 +47,165 @@
   --%>
 
 
-<%@ page contentType="text/html" language="java"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<%@ page contentType="text/html" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 <div class="row">
-	<div class="col-md-12">
-		<form:form class="form-horizontal form-groups-bordered" action="" id="demandnoticesearchForm" modelAttribute="demandnoticesearchForm" method="get">
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-						<strong><spring:message code='license.demand.notice.search' /></strong>
-					</div>
-				</div>
-				<div class="panel-body"></div>
-
-				<div class="form-group">
-					<label class="col-sm-3 control-label text-right"> <spring:message code='search.licensee.no' /></label>
-					<div class="col-sm-3 add-margin">
-						<input type="text" id="licenseNumber"class="form-control typeahead" placeholder="" autocomplete="off"/>
-						<form:hidden path="licenseNumber" id="licenseNumber"/>
-					</div>
-					<label class="col-sm-2 control-label text-right"> <spring:message code='license.oldlicensenum' /></label>
-					<div class="col-sm-3 add-margin">
-						<input type="text" id="oldLicenseNumber" class="form-control typeahead" placeholder="" autocomplete="off" />
-					    <form:hidden path="oldLicenseNumber" id="oldLicenseNumber"/>
-				  </div>
-				</div>
-				<div class="form-group">
-					<label class="col-sm-3 control-label text-right"> <spring:message code='search.license.category' /></label>
-					<div class="col-sm-3 add-margin">
-						<form:select path="categoryId" id="category" cssClass="form-control" cssErrorClass="form-control error">
-							<form:option value="">
-								<spring:message code="lbl.category.select" />
-							</form:option>
-							<form:options items="${categoryList}" itemValue="id" itemLabel="name" />
-						</form:select>
-					</div>
-					<label class="col-sm-2 control-label text-right"> <spring:message code='search.license.subCategory' /></label>
-					<div class="col-sm-3 add-margin">
-						<select id="subCategory" class="form-control select2" />
-						<form:hidden path="subCategoryId" id="subCategoryId"/>
-						<label id="subCategory-error" class="error display-hide" for="subCategory">Required</label>
-					</div>
-				</div>
-				<div class="form-group">
-				<label class="col-sm-3 control-label text-right"> <spring:message code='baseregister.ward'/></label>
-                    <div class="col-sm-3 add-margin">
-                        <form:select path="wardId" id="wardId" cssClass="form-control" cssErrorClass="form-control error">
-                            <form:option value="">
-                                <spring:message code="lbl.select"/>
-                            </form:option>
-                            <form:options items="${revenueWards}" itemValue="id" itemLabel="name"/>
-                        </form:select>
+    <div class="col-md-12">
+        <div class="panel panel-primary" data-collapsed="0">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <strong><spring:message code='license.demand.notice.search'/></strong>
+                </div>
+            </div>
+            <div class="panel-body">
+                <form:form class="form-horizontal form-groups-bordered" action="" id="demandnoticesearchForm"
+                           modelAttribute="demandnoticesearchForm" method="get">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"> <spring:message
+                                code='search.licensee.no'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <input type="text" id="licenseNumber" class="form-control typeahead" placeholder=""
+                                   autocomplete="off"/>
+                            <form:hidden path="licenseNumber" id="licenseNumber"/>
+                        </div>
+                        <label class="col-sm-2 control-label text-right"> <spring:message
+                                code='license.oldlicensenum'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <input type="text" id="oldLicenseNumber" class="form-control typeahead" placeholder=""
+                                   autocomplete="off"/>
+                            <form:hidden path="oldLicenseNumber" id="oldLicenseNumber"/>
+                        </div>
                     </div>
-                    <label class="col-sm-2 control-label text-right"> <spring:message code='lbl.admin.ward'/></label>
-                    <div class="col-sm-3 add-margin">
-                        <form:select path="electionWard" id="electionWard" cssClass="form-control" cssErrorClass="form-control error">
-                            <form:option value="">
-                                <spring:message code="lbl.select"/>
-                            </form:option>
-                            <form:options items="${adminWards}" itemValue="id" itemLabel="name"/>
-                        </form:select>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"> <spring:message
+                                code='search.license.category'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <form:select path="categoryId" id="category" cssClass="form-control"
+                                         cssErrorClass="form-control error">
+                                <form:option value="">
+                                    <spring:message code="lbl.category.select"/>
+                                </form:option>
+                                <form:options items="${categoryList}" itemValue="id" itemLabel="name"/>
+                            </form:select>
+                        </div>
+                        <label class="col-sm-2 control-label text-right"> <spring:message
+                                code='search.license.subCategory'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <select id="subCategory" class="form-control select2"/>
+                            <form:hidden path="subCategoryId" id="subCategoryId"/>
+                            <label id="subCategory-error" class="error display-hide" for="subCategory">Required</label>
+                        </div>
                     </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"> <spring:message
+                                code='baseregister.ward'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <form:select path="wardId" id="wardId" cssClass="form-control"
+                                         cssErrorClass="form-control error">
+                                <form:option value="">
+                                    <spring:message code="lbl.select"/>
+                                </form:option>
+                                <form:options items="${revenueWards}" itemValue="id" itemLabel="name"/>
+                            </form:select>
+                        </div>
+                        <label class="col-sm-2 control-label text-right"> <spring:message
+                                code='lbl.admin.ward'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <form:select path="electionWard" id="electionWard" cssClass="form-control"
+                                         cssErrorClass="form-control error">
+                                <form:option value="">
+                                    <spring:message code="lbl.select"/>
+                                </form:option>
+                                <form:options items="${adminWards}" itemValue="id" itemLabel="name"/>
+                            </form:select>
+                        </div>
 
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label text-right"> <spring:message code='lbl.locality'/></label>
                         <div class="col-sm-3 add-margin">
-                            <form:select path="localityId" id="localityId" cssClass="form-control" cssErrorClass="form-control error">
+                            <form:select path="localityId" id="localityId" cssClass="form-control"
+                                         cssErrorClass="form-control error">
                                 <form:option value="">
                                     <spring:message code="lbl.select"/>
                                 </form:option>
                                 <form:options items="${localityList}" itemValue="id" itemLabel="name"/>
                             </form:select>
                         </div>
-                    <label class="col-sm-2 control-label text-right"> <spring:message code='search.license.status' /></label>
-                    <div class="col-sm-3 add-margin">
-						<form:select path="statusId" id="status" cssClass="form-control" cssErrorClass="form-control error">
-							<form:option value="">
-								<spring:message code="lbl.category.select" />
-							</form:option>
-							<form:options items="${statusList}" itemValue="id" itemLabel="name" />
-						</form:select>
-					</div>
-
                     </div>
-			</div>
-			<div class="row">
-				<div class="text-center">
-					<button type="button" id="btnsearch" class="btn btn-primary">
-						<spring:message code="lbl.search" />
-					</button>
-					<button type="reset" class="btn btn-default"><spring:message code="lbl.reset" /></button>
-					<button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();">
-						<spring:message code="lbl.close" />
-					</button>
-				</div>
-			</div>
-		</form:form>
-	</div>
-</div>
 
-<div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left">Search Result</div>
-	<div class="col-md-12 form-group report-table-container">
-		<table class="table table-bordered table-hover multiheadertbl" id="tblSearchTradefornotice">
-			<thead>
-				<tr>
-				    <th>Application No.</th>
-					<th>License No.</th>
-					<th>Old License No.</th>
-					<th>Trade Title</th>
-					<th>Category</th>
-					<th>Subcategory</th>
-					<th>Trade Owner</th>
-					<th>Mobile Number</th>
-					<th>Revenue Ward</th>
-					<th>Election Ward</th>
-					<th>License Fee (Arrears)</th>
-					<th>License Penalty (Arrears )</th>
-					<th>License Fee (Current)</th>
-					<th>Status</th>
-					<th>Process OWner</th>
-				</tr>
-			</thead>
-		</table>
-	</div>
+                    <div class="row">
+                        <div class="text-center">
+                            <button type="button" id="btnsearch" class="btn btn-primary">
+                                <spring:message code="lbl.search"/>
+                            </button>
+                            <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal"
+                                    onclick="window.close();">
+                                <spring:message code="lbl.close"/>
+                            </button>
+                        </div>
+                    </div>
+                </form:form>
+                <br/>
+                <br/>
+                <div class="row display-hide report-section">
+                    <div class="col-md-12 report-table-container">
+                        <table class="table table-bordered table-hover multiheadertbl" id="tblSearchTradefornotice">
+                            <thead>
+                            <tr>
+                                <th><spring:message code="lbl.application.no"/></th>
+                                <th><spring:message code="lbl.license.no"/></th>
+                                <th><spring:message code="license.oldlicensenum"/></th>
+                                <th><spring:message code="lbl.trade.name"/></th>
+                                <th><spring:message code="lbl.licensecategory"/></th>
+                                <th><spring:message code="lbl.subcategory"/></th>
+                                <th><spring:message code="lbl.trade.owner"/></th>
+                                <th><spring:message code="search.licensee.mobileNo"/></th>
+                                <th><spring:message code="lbl.rev.ward"/></th>
+                                <th><spring:message code="lbl.election.ward"/></th>
+                                <th><spring:message code="lbl.license.fee.arrear"/></th>
+                                <th><spring:message code="lbl.license.fee.penalty.arrear"/></th>
+                                <th><spring:message code="lbl.license.fee.current"/></th>
+                                <th><spring:message code="lbl.status"/></th>
+                                <th><spring:message code="lbl.wf.process.owner"/></th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+                <div class="row display-hide report-section">
+                    <div class="text-center">
+                        <button type="button" id="btngeneratePDF" class="btn btn-primary">
+                            <spring:message code="lbl.generatePDF"/>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <div class="alert alert-warning">
+                    <spring:message code="msg.demand.notice.gen.footer" htmlEscape="false"/>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="row display-hide report-section">
-<div class="text-center">
-					<button type="button" id="btngeneratePDF" class="btn btn-primary">
-						<spring:message code="lbl.generatePDF" />
-					</button>
-					</div>
-					</div>
 <link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
+      href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
 <link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+      href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+<link rel="stylesheet"
+      href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/fixedColumns.dataTables.min.css' context='/egi'/>">
 <script type="text/javascript"
-	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+        src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+        src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<cdn:url  value='/resources/js/app/trade-license-demand-notice-search.js?rnd=${app_release_no}'/>"></script>
+        src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/extensions/fixed columns/dataTables.fixedColumns.min.js' context='/egi'/>"></script>
+<script type="text/javascript"
+        src="<cdn:url  value='/resources/js/app/trade-license-demand-notice-search.js?rnd=${app_release_no}'/>"></script>
 

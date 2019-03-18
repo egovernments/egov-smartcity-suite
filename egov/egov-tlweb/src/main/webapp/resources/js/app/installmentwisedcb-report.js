@@ -107,6 +107,17 @@ function searchInstallmentwiseDCB(event) {
     $('#report-footer').show();
     event.preventDefault();
     $("#tblinstallmentdcb").dataTable().fnDestroy();
+    if ($('#ward').val() != null) {
+        var wardid = "";
+        $("#ward option:selected").each(function () {
+            var $this = $(this);
+            wardid = wardid + $this.val() + ",";
+        });
+        wardid = wardid.substring(0, wardid.length - 1);
+    }
+    else if (!$('#ward').val())
+        var wardid = "";
+
     tableContainer.on('preXhr.dt', function (e, settings, data) {
         pramdata = data;
     }).dataTable({
@@ -142,7 +153,8 @@ function searchInstallmentwiseDCB(event) {
                         "args": JSON.stringify(args),
                         "licenseNumber": $('#licensenumber').val(),
                         "installment": $('#financialyear').val(),
-                        'activeLicense': $('#activeLicense').val()
+                        'activeLicense': $('#activeLicense').val(),
+                        "wardId":wardid
                     }
                 }
             },
@@ -178,7 +190,7 @@ function searchInstallmentwiseDCB(event) {
                     "sTitle": "Current"
                 }, {
                     "data": "total_demand",
-                    "name": "currentdemand",
+                    "name": "currentDemand",
                     "sTitle": "Total"
                 }, {
                     "data": "arr_coll",
@@ -192,7 +204,7 @@ function searchInstallmentwiseDCB(event) {
                     "sTitle": "Current"
                 }, {
                     "data": "total_coll",
-                    "name": "currentcollection",
+                    "name": "currentCollection",
                     "sTitle": "Total"
                 }, {
                     "data": "arr_balance",

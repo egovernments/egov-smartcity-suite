@@ -47,6 +47,25 @@
  */
 package org.egov.ptis.web.controller.mobile;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_AUTO;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_TYPE_PROPERTY_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.CHECK_PROPERTY_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.MOBILE_PAYMENT_INCORRECT_BILL_DATA;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_DEMAND_AMOUNT_GREATER_MSG;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_EXEMPTED_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTY_TAX_ASSESSMENT_NOT_FOUND;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_VACANTLAND_ASSESSMENT_NOT_FOUND;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_WRONG_CATEGORY;
+
+import java.math.BigDecimal;
+import java.text.ParseException;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.integration.models.BillInfo.COLLECTIONTYPE;
 import org.egov.collection.integration.models.BillInfoImpl;
@@ -72,24 +91,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
-import java.text.ParseException;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_AUTO;
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_TYPE_PROPERTY_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.MOBILE_PAYMENT_INCORRECT_BILL_DATA;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_DEMAND_AMOUNT_GREATER_MSG;
-import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND;
-import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_EXEMPTED_PROPERTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTY_TAX_ASSESSMENT_NOT_FOUND;
-import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_VACANTLAND_ASSESSMENT_NOT_FOUND;
-import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_WRONG_CATEGORY;
-import static org.egov.ptis.constants.PropertyTaxConstants.CHECK_PROPERTY_CATEGORY;
 
 @Controller
 @RequestMapping(value = {"/public/mobile", "/mobile"})
@@ -230,7 +231,7 @@ public class MobilePaymentController {
     }
     
     private String checkPropertyCategory(String propType) {
-        if (propType == OWNERSHIP_TYPE_VAC_LAND)
+        if (OWNERSHIP_TYPE_VAC_LAND.equals(propType))
             return CATEGORY_TYPE_VACANTLAND_TAX;
         else
             return CATEGORY_TYPE_PROPERTY_TAX;

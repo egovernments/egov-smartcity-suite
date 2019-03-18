@@ -48,7 +48,6 @@
 
 package org.egov.tl.service;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -83,6 +82,7 @@ import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.FeeMatrixDetail;
+import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseDocument;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.LicenseSubCategoryDetails;
@@ -426,14 +426,15 @@ public class TradeLicenseService {
         for (EgDemandDetails demandDetail : license.getDemand().getEgDemandDetails())
             if (DEMAND_REASON_CATEGORY_FEE.equals(demandDetail.getReasonCategory()))
                 reasonWiseDemandDetails.put(demandDetail.getEgDemandReason(), demandDetail);
-
-        license.setLicenseAppType(licenseAppTypeService.getLicenseAppTypeByCode(RENEW_APPTYPE_CODE));
+        LicenseAppType originalAppType = license.getLicenseAppType();
+        LicenseAppType renewAppType = licenseAppTypeService.getLicenseAppTypeByCode(RENEW_APPTYPE_CODE);
+        license.setLicenseAppType(renewAppType);
         for (FeeMatrixDetail feeMatrixDetail : feeMatrixService.getLicenseFeeDetails(license, installment.getFromDate())) {
             String feeType = feeMatrixDetail.getFeeMatrix().getFeeType().getName();
             EgDemandReason demandReason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
                     demandGenericDao.getDemandReasonMasterByCode(feeType, module), installment, module);
             if (demandReason == null)
-                throw new ValidationException("TL-007", "Demand demandReason missing for " + feeType);
+                throw new ValidationException("TL-007", "Demand Reason missing for " + feeType);
             EgDemandDetails licenseDemandDetail = reasonWiseDemandDetails.get(demandReason);
             BigDecimal tradeAmt = calculateFeeByRateType(license, feeMatrixDetail);
             if (licenseDemandDetail == null)
@@ -445,6 +446,10 @@ public class TradeLicenseService {
 
         }
         license.recalculateBaseDemand();
+        if (originalAppType == null || originalAppType.getCode().equals(NEW_APPTYPE_CODE))
+            license.setLicenseAppType(renewAppType);
+        else
+            license.setLicenseAppType(originalAppType);
         licenseRepository.save(license);
     }
 
@@ -889,8 +894,8 @@ public class TradeLicenseService {
     @ReadOnly
     public List<DemandNoticeForm> getLicenseDemandNotices(DemandNoticeForm demandNoticeForm) {
         Criteria searchCriteria = entityManager.unwrap(Session.class).createCriteria(TradeLicense.class);
-        searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat").createAlias("tradeName", "subcat")
-                .createAlias("status", "licstatus").createAlias("natureOfBusiness", "nob")
+        searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat")
+                .createAlias("tradeName", "subcat").createAlias("natureOfBusiness", "nob")
                 .createAlias("demand", "licDemand").createAlias("licenseAppType", "appType")
                 .add(Restrictions.ne("appType.code", CLOSURE_APPTYPE_CODE));
         if (isNotBlank(demandNoticeForm.getLicenseNumber()))
@@ -911,10 +916,6 @@ public class TradeLicenseService {
         if (demandNoticeForm.getLocalityId() != null)
             searchCriteria.createAlias("boundary", "locality")
                     .add(Restrictions.eq("locality.id", demandNoticeForm.getLocalityId()));
-        if (demandNoticeForm.getStatusId() == null)
-            searchCriteria.add(Restrictions.ne("licstatus.statusCode", StringUtils.upperCase("CAN")));
-        else
-            searchCriteria.add(Restrictions.eq("status.id", demandNoticeForm.getStatusId()));
         searchCriteria
                 .add(Restrictions.eq("isActive", true))
                 .add(Restrictions.eq("nob.name", PERMANENT_NATUREOFBUSINESS))

@@ -222,7 +222,7 @@ public class BudgetLoadAction extends BaseFormAction {
             final FileStoreMapper originalFileStore = fileStoreService.store(budgetInXls,
                     budgetOriginalFileName,
                     budgetInXlsContentType, FinancialConstants.MODULE_NAME_APPCONFIG,false);
-
+            persistenceService.applyAuditing(originalFileStore);
             persistenceService.persist(originalFileStore);
             originalFileStoreId = originalFileStore.getFileStoreId();
 
@@ -321,6 +321,7 @@ public class BudgetLoadAction extends BaseFormAction {
                     budgetOutPutFileName,
                     budgetInXlsContentType, FinancialConstants.MODULE_NAME_APPCONFIG);
 
+            persistenceService.applyAuditing(outPutFileStore);
             persistenceService.persist(outPutFileStore);
 
             outPutFileStoreId = outPutFileStore.getFileStoreId();
@@ -387,6 +388,7 @@ public class BudgetLoadAction extends BaseFormAction {
             final FileStoreMapper outPutFileStore = fileStoreService.store(budgetInXls,
                     budgetOutPutFileName,
                     budgetInXlsContentType, FinancialConstants.MODULE_NAME_APPCONFIG);
+            persistenceService.applyAuditing(outPutFileStore);
             persistenceService.persist(outPutFileStore);
 
             outPutFileStoreId = outPutFileStore.getFileStoreId();

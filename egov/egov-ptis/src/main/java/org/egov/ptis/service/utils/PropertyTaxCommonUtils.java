@@ -561,7 +561,7 @@ public class PropertyTaxCommonUtils {
             for (final String desg : designation) {
                 final Long deptId = departmentService.getDepartmentByName(dept).getId();
                 final Long desgId = designationService.getDesignationByName(desg).getId();
-                assignment = assignmentService.findByDepartmentAndDesignation(deptId, desgId);
+                assignment = assignmentService.findAllAssignmentsByDeptDesigAndDates(deptId, desgId, new Date());
                 if (!assignment.isEmpty())
                     break;
             }

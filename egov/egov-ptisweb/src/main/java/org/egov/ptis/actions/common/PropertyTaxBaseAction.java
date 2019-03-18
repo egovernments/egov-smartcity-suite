@@ -51,7 +51,58 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static java.math.BigDecimal.ZERO;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
+import static org.egov.ptis.constants.PropertyTaxConstants.ALTERATION_OF_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_DEMAND_VOUCHER_GENERATION_REQUIRED;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_GIS_THIRDPARTY_CHECKBOX_REQUIRED;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATIONTYPEBYNATUREOFTASK;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.BILL_COLLECTOR_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_MIXED;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESIGNATIONS;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DOCUMENT_TYPE_THIRD_PARTY_SURVEY;
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
+import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATUREOFTASKBYADDITIONALRULE;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_USAGE_RESIDENCE;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
+import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
+import static org.egov.ptis.constants.PropertyTaxConstants.TAX_COLLECTOR_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.VACANTLAND_MIN_CUR_CAPITALVALUE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITAL_SIGNATURE_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
+
 import java.io.File;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -186,7 +237,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     protected boolean showCheckboxForGIS = false;
     protected boolean thirdPartyCheckbox = false;
     protected boolean disableThirdPartyCheckbox = false;
-    
+
     @Autowired
     protected FinancialUtil financialUtil;
 
@@ -369,7 +420,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         boolean buildingPlanNoValidationAdded;
         boolean buildingPlanDateValidationAdded;
         boolean buildingPlanPlinthAreaValidationAdded;
-        if (!propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND) && !floorList.isEmpty())
+        if (!propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND) && !floorList.isEmpty()) {
             for (final Floor floor : floorList) {
                 List<String> msgParams;
                 if (floor != null) {
@@ -463,9 +514,10 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     if (null != modifyRsn && null != propCompletionDate && floor.getOccupancyDate() != null
                             && !DateUtils.compareDates(floor.getOccupancyDate(), propCompletionDate))
                         addActionError(getText("modify.builtup.occDate.validate", msgParams));
-
                 }
             }
+            validateEffectiveDate(floorList);
+        }
     }
 
     /**
@@ -721,7 +773,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         }
         return designation;
     }
-    
+
     public void validateApproverDetails() {
         if (WFLOW_ACTION_STEP_FORWARD.equals(workFlowAction) || WFLOW_ACTION_STEP_SAVE.equals(workFlowAction))
             if (null != approverPositionId && approverPositionId == -1)
@@ -1004,31 +1056,32 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             return Boolean.FALSE;
     }
 
-	public void enableActionsForGIS(final PropertyImpl property, final List<DocumentType> documentTypes) {
-		String appConfigValue = propertyTaxCommonUtils.getAppConfigValue(APPCONFIG_GIS_THIRDPARTY_CHECKBOX_REQUIRED,
-				PTMODULENAME);
-		if (StringUtils.isNotBlank(property.getState().getNextAction()) && property.getState().getNextAction().endsWith(WF_STATE_COMMISSIONER_APPROVAL_PENDING)
-				&& property.getSurveyVariance().compareTo(BigDecimal.TEN) > 0) {
-			showCheckboxForGIS = true;
-			if (property.isThirdPartyVerified())
-				thirdPartyCheckbox = true;
-		}
-		if (property.isThirdPartyVerified() && property.getState().getValue().endsWith(":".concat(WF_STATE_REJECTED))
-				&& WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING
-						.equalsIgnoreCase(property.getState().getNextAction())) {
-			showCheckboxForGIS = true;
-			if (PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER
-					.equalsIgnoreCase(property.getPropertyModifyReason()) && property.isThirdPartyVerified())
-				thirdPartyCheckbox = true;
-			for (final DocumentType docType : documentTypes)
-				if (DOCUMENT_TYPE_THIRD_PARTY_SURVEY.equalsIgnoreCase(docType.getName()))
-					docType.setMandatory(true);
-		}
-		if ("N".equalsIgnoreCase(appConfigValue))
-			disableThirdPartyCheckbox = true;
-		else
-			disableThirdPartyCheckbox = false;
-	}
+    public void enableActionsForGIS(final PropertyImpl property, final List<DocumentType> documentTypes) {
+        String appConfigValue = propertyTaxCommonUtils.getAppConfigValue(APPCONFIG_GIS_THIRDPARTY_CHECKBOX_REQUIRED,
+                PTMODULENAME);
+        if (StringUtils.isNotBlank(property.getState().getNextAction())
+                && property.getState().getNextAction().endsWith(WF_STATE_COMMISSIONER_APPROVAL_PENDING)
+                && property.getSurveyVariance().compareTo(BigDecimal.TEN) > 0) {
+            showCheckboxForGIS = true;
+            if (property.isThirdPartyVerified())
+                thirdPartyCheckbox = true;
+        }
+        if (property.isThirdPartyVerified() && property.getState().getValue().endsWith(":".concat(WF_STATE_REJECTED))
+                && WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING
+                        .equalsIgnoreCase(property.getState().getNextAction())) {
+            showCheckboxForGIS = true;
+            if (PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER
+                    .equalsIgnoreCase(property.getPropertyModifyReason()) && property.isThirdPartyVerified())
+                thirdPartyCheckbox = true;
+            for (final DocumentType docType : documentTypes)
+                if (DOCUMENT_TYPE_THIRD_PARTY_SURVEY.equalsIgnoreCase(docType.getName()))
+                    docType.setMandatory(true);
+        }
+        if ("N".equalsIgnoreCase(appConfigValue))
+            disableThirdPartyCheckbox = true;
+        else
+            disableThirdPartyCheckbox = false;
+    }
 
     public void validateOwnerDetails(final PropertyImpl property) {
         for (final PropertyOwnerInfo owner : property.getBasicProperty().getPropertyOwnerInfoProxy())
@@ -1058,9 +1111,17 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 }
         }
     }
-    
-    public String getDemandVoucherAppConfigValue(){
+
+    public String getDemandVoucherAppConfigValue() {
         return propertyTaxCommonUtils.getAppConfigValue(APPCONFIG_DEMAND_VOUCHER_GENERATION_REQUIRED, PTMODULENAME);
+    }
+
+    public void validateEffectiveDate(final List<Floor> floorList) {
+        Date firstFloorEffectiveDate = floorList.get(0).getOccupancyDate();
+        boolean allSameDate = floorList.stream().filter(floor -> floor.getOccupancyDate() != null)
+                .allMatch(floor -> floor.getOccupancyDate().equals(firstFloorEffectiveDate));
+        if (!allSameDate)
+            addActionError(getText("different.effective.date.present"));
     }
 
     public WorkflowBean getWorkflowBean() {
@@ -1278,20 +1339,20 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         this.showCheckboxForGIS = showCheckboxForGIS;
     }
 
-	public boolean isDisableThirdPartyCheckbox() {
-		return disableThirdPartyCheckbox;
-	}
+    public boolean isDisableThirdPartyCheckbox() {
+        return disableThirdPartyCheckbox;
+    }
 
-	public void setDisableThirdPartyCheckbox(boolean disableThirdPartyCheckbox) {
-		this.disableThirdPartyCheckbox = disableThirdPartyCheckbox;
-	}
+    public void setDisableThirdPartyCheckbox(boolean disableThirdPartyCheckbox) {
+        this.disableThirdPartyCheckbox = disableThirdPartyCheckbox;
+    }
 
-	public boolean isThirdPartyCheckbox() {
-		return thirdPartyCheckbox;
-	}
+    public boolean isThirdPartyCheckbox() {
+        return thirdPartyCheckbox;
+    }
 
-	public void setThirdPartyCheckbox(boolean thirdPartyCheckbox) {
-		this.thirdPartyCheckbox = thirdPartyCheckbox;
-	}
+    public void setThirdPartyCheckbox(boolean thirdPartyCheckbox) {
+        this.thirdPartyCheckbox = thirdPartyCheckbox;
+    }
 
 }

@@ -73,6 +73,9 @@
 				<security:filter-chain pattern="/citizen/onlineReceipt-saveNew.action" filters="none" />
 				<security:filter-chain pattern="/citizen/onlineReceipt-acceptMessageFromPaymentGateway.action" filters="none" />
 				<security:filter-chain pattern="/citizen/onlineReceipt-view.action" filters="none" />
+				<security:filter-chain pattern="/citizen/onlinePaymentReport" filters="none"/>
+                <security:filter-chain pattern="/citizen/onlinePaymentReport/result" filters="none"/>
+                <security:filter-chain pattern="/citizen/getUlbNamesByDistrict" filters="none"/>
 				<security:filter-chain pattern="/public/**" filters="none"/>
 				<security:filter-chain pattern="/reportViewer/**" filters="none" />
 				<security:filter-chain pattern="/reports/collectionSummary-criteria.action" filters="none" />

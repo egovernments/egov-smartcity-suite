@@ -241,6 +241,7 @@ public class DemandNoticeService {
         return penaltylist.toString();
     }
 
+    @Transactional(readOnly = true, timeout = 7200)
     public ReportOutput generateBulkDemandNotice(DemandNoticeForm searchRequest) {
         ReportOutput reportOutput = new ReportOutput();
         reportOutput.setReportName("demand_notices");

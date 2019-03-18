@@ -1,3 +1,4 @@
+
 /*
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
@@ -45,30 +46,68 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.restapi.web.rest;
+package org.egov.ptis.domain.entity.property;
 
-import org.springframework.web.bind.annotation.RestController;
+import java.io.Serializable;
+import java.math.BigDecimal;
 
-@RestController
-public class RestWaterConnectionSearchController {
+// @SuppressWarnings("serial")
+public abstract class ViewLegacyDemand implements Serializable {
 
-   /* @Autowired
-    private SearchService searchService;
+	private static final long serialVersionUID = 5488717224503418632L;
+	protected String year;
+	protected BigDecimal arrearPenalty;
+	protected String propertyId;
+	protected BigDecimal currentTax;
+	protected BigDecimal arrearTax;
+	protected BigDecimal totalTax;
 
-    @RequestMapping(value = "/watercharges/searchconnection", method = RequestMethod.POST)
-    @ResponseBody
-    public String searchConnection(@RequestBody final WaterConnectionSearchRequest searchRequest) {
-        final SearchResult searchResult = searchService.search(asList(Index.WATERCHARGES.toString()),
-                asList(IndexType.CONNECTIONSEARCH.toString()), searchRequest.searchQuery(),
-                searchRequest.searchFilters(), Sort.NULL, Page.NULL);
-        return convertSearchResultToJson(searchResult);
+	public void setPropertyId(String propertyId) {
+		this.propertyId = propertyId;
+	}
 
-    }
+	public BigDecimal getArrearTax() {
+		return arrearTax;
+	}
 
-    private String convertSearchResultToJson(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(SearchResult.class, new ConnectionSearchAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
-    }*/
+	public void setArrearTax(BigDecimal arrearTax) {
+		this.arrearTax = arrearTax;
+	}
+
+	public BigDecimal getCurrentTax() {
+		return currentTax;
+	}
+
+	public BigDecimal getArrearPenalty() {
+		return arrearPenalty;
+	}
+
+	public String getYear() {
+		return year;
+	}
+
+	public String getPropertyId() {
+		return propertyId;
+	}
+
+	public void setCurrentTax(BigDecimal currentTax) {
+		this.currentTax = currentTax;
+	}
+
+	public void setArrearPenalty(BigDecimal arrearPenalty) {
+		this.arrearPenalty = arrearPenalty;
+	}
+
+	public void setYear(String year) {
+		this.year = year;
+	}
+
+	public BigDecimal getTotalTax() {
+		return totalTax;
+	}
+
+	public void setTotalTax(BigDecimal totalTax) {
+		this.totalTax = totalTax;
+	}
+
 }

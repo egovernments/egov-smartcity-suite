@@ -228,7 +228,6 @@ public class PropertyTransferService {
     @Transactional
     public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
         propertyMutation.setBasicProperty(basicProperty);
-        propertyMutation.setProperty(basicProperty.getActiveProperty());
         defineDocumentValue(propertyMutation);
         for (final PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo())
             propertyMutation.getTransferorInfos().add(ownerInfo.getOwner());
@@ -401,7 +400,7 @@ public class PropertyTransferService {
             ackBean.setTransferpropertyTextEnd(PropertyTaxConstants.TTTEXTEND);
             ackBean.setNoOfDays(ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "PARTIAL TRANSFER")
                     .getResolutionTime().toString());
-        } else if (propertyMutation.getType().equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER)) {
+        } else if (propertyMutation.getType().equalsIgnoreCase(PropertyTaxConstants.ADDITIONAL_RULE_FULL_TRANSFER)) {
             ackBean.setApplicationType(PropertyTaxConstants.FULLTT);
             ackBean.setTransferpropertyText(PropertyTaxConstants.TTTEXT);
             ackBean.setTransferpropertyTextEnd(PropertyTaxConstants.TTTEXTEND);
@@ -709,7 +708,6 @@ public class PropertyTransferService {
         propertyMutation.setDeedDate(propertyService.convertStringToDate(deedDate));
         propertyMutation.setMutationReason(mutationMaster);
         propertyMutation.setBasicProperty(basicProperty);
-        propertyMutation.setProperty(basicProperty.getActiveProperty());
         transitionWorkFlow(propertyMutation);
         basicPropertyService.applyAuditing(propertyMutation);
         basicProperty.getPropertyMutations().add(propertyMutation);
@@ -886,11 +884,11 @@ public class PropertyTransferService {
     public Assignment getAssignmentForThirdPartyByMutationType(final PropertyMutation propertyMutation,
             final BasicProperty basicproperty, final User user) {
         if (propertyService.isCscOperator(user)) {
-            if (propertyMutation.getType().equals(PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER))
+            if (propertyMutation.getType().equals(PropertyTaxConstants.ADDITIONAL_RULE_FULL_TRANSFER))
                 return propertyTaxCommonUtils.getCommissionerAsgnForFullTransfer();
             else
                 return propertyService.getMappedAssignmentForCscOperator(basicproperty);
-        } else if (propertyMutation.getType().equals(PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER))
+        } else if (propertyMutation.getType().equals(PropertyTaxConstants.ADDITIONAL_RULE_FULL_TRANSFER))
             return propertyTaxCommonUtils.getCommissionerAsgnForFullTransfer();
         else
             return propertyService.getUserPositionByZone(basicproperty, false);

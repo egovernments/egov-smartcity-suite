@@ -49,11 +49,14 @@ package org.egov.tl.web.controller.transactions.demand;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
+import org.egov.tl.entity.DemandGenerationLog;
 import org.egov.tl.entity.DemandGenerationLogDetail;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.contracts.DemandGenerationRequest;
 import org.egov.tl.service.DemandGenerationService;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.web.response.adaptor.DemandGenerationResponseAdaptor;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -62,12 +65,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.egov.tl.entity.enums.ProcessStatus.INCOMPLETE;
+import static org.egov.tl.utils.Constants.LICENSE_STATUS_CANCELLED;
 import static org.egov.tl.utils.Constants.MESSAGE;
 
 @Controller
@@ -87,11 +94,28 @@ public class DemandGenerationController {
     @GetMapping("generate")
     public String newForm(Model model) {
         CFinancialYear financialYear = financialYearService.getLatestFinancialYear();
-        model.addAttribute("demandGenerationLogDetails",
-                toJSON(demandGenerationService.getDemandGenerationLog(financialYear).getDetails(),
+        if (financialYear == null) {
+            DateTime currentFinYear = new DateTime();
+            DateTime finYear = currentFinYear.plusYears(1);
+            model.addAttribute("error", "error.financial.year.not.defined");
+            model.addAttribute("finYear", currentFinYear.toString("yyyy") + "-" + finYear.toString("yy"));
+        } else {
+            DemandGenerationLog demandGenerationLog = demandGenerationService.getDemandGenerationLog(financialYear);
+            if (demandGenerationLog.getInstallmentYear().equals(financialYear.getFinYearRange())) {
+                model.addAttribute("demandGenerationLogDetails", toJSON(demandGenerationLog.getDetails(),
                         DemandGenerationLogDetail.class, DemandGenerationResponseAdaptor.class));
-        model.addAttribute("licenseIds", tradeLicenseService.getLicenseIdsForDemandGeneration(financialYear));
-        model.addAttribute("installmentYear", financialYear.getFinYearRange());
+                model.addAttribute("licenseIds", tradeLicenseService.getLicenseIdsForDemandGeneration(financialYear));
+                model.addAttribute("installmentYear", financialYear.getFinYearRange());
+                model.addAttribute("pending", false);
+            } else {
+                model.addAttribute("demandGenerationLogDetails", toJSON(demandGenerationLog.getDetails()
+                                .stream()
+                                .filter(detail -> detail.getStatus().equals(INCOMPLETE))
+                                .collect(Collectors.toList()),
+                        DemandGenerationLogDetail.class, DemandGenerationResponseAdaptor.class));
+                model.addAttribute("pending", true);
+            }
+        }
         return "demand-generate";
     }
 
@@ -108,15 +132,26 @@ public class DemandGenerationController {
     }
 
     @GetMapping("generate/{licenseId}")
-    public String generateDemandForLicense(@PathVariable Long licenseId, Model model) {
-        model.addAttribute("licenseNumber", tradeLicenseService.getLicenseById(licenseId).getLicenseNumber());
-        model.addAttribute("financialYear", financialYearService.getLatestFinancialYear().getFinYearRange());
+    public String generateDemandForLicense(@PathVariable Long licenseId, @RequestParam(required = false) boolean forPrevYear,
+                                           Model model) {
+        TradeLicense license = tradeLicenseService.getLicenseById(licenseId);
+        if (license == null) {
+            model.addAttribute("message", "error.license.not.found");
+        } else if (!license.getIsActive()) {
+            demandGenerationService.markDemandGenerationLogAsCompleted(license, LICENSE_STATUS_CANCELLED);
+        } else {
+            model.addAttribute("licenseNumber", license.getLicenseNumber());
+            model.addAttribute("forPrevYear", forPrevYear);
+            model.addAttribute("financialYear", forPrevYear ? license.getDemand().getEgInstallmentMaster().getFinYearRange() :
+                    financialYearService.getLatestFinancialYear().getFinYearRange());
+        }
         return "demandgenerate-result";
     }
 
     @PostMapping("generate/{licenseId}")
-    public String generateDemandForLicense(@PathVariable Long licenseId, RedirectAttributes redirectAttrs) {
-        boolean generationStatus = demandGenerationService.generateLicenseDemand(licenseId);
+    public String generateDemandForLicense(@PathVariable Long licenseId, @RequestParam boolean forPrevYear,
+                                           RedirectAttributes redirectAttrs) {
+        boolean generationStatus = demandGenerationService.generateLicenseDemand(licenseId, forPrevYear);
         redirectAttrs.addFlashAttribute(MESSAGE, generationStatus ?
                 "msg.demand.generation.completed" : "msg.demand.generation.incomplete");
         return "redirect:/demand/generate/" + licenseId;

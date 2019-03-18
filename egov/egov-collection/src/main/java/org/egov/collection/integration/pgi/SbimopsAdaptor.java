@@ -75,6 +75,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.egov.collection.config.properties.CollectionApplicationProperties;
@@ -226,35 +227,36 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
                     responseMap.put(entry[0].trim(), entry[1].trim());
             }
 
-            sbiPaymentResponse.setAuthStatus(getTransactionStatus(responseMap.get(SBIMOPS_STATUS)));
-            if (isNotBlank(sbiPaymentResponse.getAuthStatus()) &&
-                    sbiPaymentResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_FAILED)
-                    && (!responseMap.get(SBIMOPS_STATUS).equals("F")))
-                LOGGER.error("CFMSFAILED TRANSACTION RESPONSE: " + response);
-            sbiPaymentResponse.setErrorDescription(responseMap.get(SBIMOPS_STATUS));
-            final String[] consumercodeTransactionId = responseMap.get(SBIMOPS_DTID)
-                    .split(CollectionConstants.SEPARATOR_HYPHEN);
-            sbiPaymentResponse.setReceiptId(consumercodeTransactionId[0]);
-            sbiPaymentResponse.setAdditionalInfo6(consumercodeTransactionId[1]);
+            if (responseMap.containsKey(SBIMOPS_STATUS) && responseMap.containsKey(SBIMOPS_DTID)) {
+                sbiPaymentResponse.setAuthStatus(getTransactionStatus(responseMap.get(SBIMOPS_STATUS)));
+                sbiPaymentResponse.setErrorDescription(responseMap.get(SBIMOPS_STATUS));
+                final String[] consumercodeTransactionId = responseMap.get(SBIMOPS_DTID)
+                        .split(CollectionConstants.SEPARATOR_HYPHEN);
+                sbiPaymentResponse.setReceiptId(consumercodeTransactionId[0]);
+                sbiPaymentResponse.setAdditionalInfo6(consumercodeTransactionId[1]);
 
-            if (sbiPaymentResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS)) {
-                sbiPaymentResponse.setTxnAmount(new BigDecimal(responseMap.get(SBIMOPS_TA)));
-                sbiPaymentResponse.setTxnReferenceNo(responseMap.get(SBIMOPS_CFMS_TRID));
-                final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("ddMMyyyyHHmmss", Locale.getDefault());
-                Date transDate = null;
-                try {
-                    transDate = simpleDateFormat.parse(responseMap.get(SBIMOPS_BANKTIME_STAMP));
-                    sbiPaymentResponse.setTxnDate(transDate);
-                } catch (final ParseException e) {
-                    LOGGER.error(
-                            "Error in parsing transaction date [" + responseMap.get(SBIMOPS_BANKTIME_STAMP)
-                                    + "]",
-                            e);
-                    throw new ApplicationRuntimeException(".transactiondate.parse.error", e);
+                if (sbiPaymentResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS)) {
+                    sbiPaymentResponse.setTxnAmount(new BigDecimal(responseMap.get(SBIMOPS_TA)));
+                    sbiPaymentResponse.setTxnReferenceNo(responseMap.get(SBIMOPS_CFMS_TRID));
+                    final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("ddMMyyyyHHmmss", Locale.getDefault());
+                    Date transDate = null;
+                    try {
+                        transDate = simpleDateFormat.parse(responseMap.get(SBIMOPS_BANKTIME_STAMP));
+                        sbiPaymentResponse.setTxnDate(transDate);
+                    } catch (final ParseException e) {
+                        LOGGER.error(
+                                "Error in parsing transaction date [" + responseMap.get(SBIMOPS_BANKTIME_STAMP)
+                                        + "]",
+                                e);
+                        throw new ApplicationRuntimeException(".transactiondate.parse.error", e);
+                    }
+                    if (LOGGER.isDebugEnabled())
+                        LOGGER.debug("End SbimopsAdaptor-parsePaymentResponse");
                 }
-                if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("End SbimopsAdaptor-parsePaymentResponse");
-
+            }
+            else{
+                LOGGER.error(" DTID/Status are not found in the response.Sbimops realtime transaction response : " + response);
+                throw new ApplicationRuntimeException("Sbimops DTID/Status are not found in the response.");
             }
         } else {
             LOGGER.info("Sbimops relatime transaction response is null or empty");
@@ -275,29 +277,29 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
             throw new ApplicationRuntimeException("SBIMOPS reconciliation response is null.");
         } else {
             final Map<String, String> responseParameterMap = prepareResponseMap(response);
-            if (LOGGER.isInfoEnabled())
-                LOGGER.info("Sbimops reconciliation transaction response : " + responseParameterMap.toString());
             sbimopsResponse.setAdditionalInfo6(onlinePayment.getReceiptHeader().getConsumerCode().replace("-", "")
                     .replace("/", ""));
             sbimopsResponse.setReceiptId(onlinePayment.getReceiptHeader().getId().toString());
-            final String transactionStatus = responseParameterMap.get(SBIMOPS_STATUS.toUpperCase());
-            sbimopsResponse.setAuthStatus(getTransactionStatus(transactionStatus));
-            sbimopsResponse.setErrorDescription(transactionStatus);
-
-            if (isNotBlank(sbimopsResponse.getAuthStatus()) &&
-                    sbimopsResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_FAILED)
-                    && (!responseParameterMap.get(SBIMOPS_STATUS.toUpperCase()).equals("F"))) {
-                LOGGER.error("Request for failed transaction response:" + prepeareReconciliationRequest(onlinePayment));
-                LOGGER.error("CFMSFAILED TRANSACTION RESPONSE: " + responseParameterMap.toString());
-            }
-            if (sbimopsResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS)) {
-                sbimopsResponse
-                        .setTxnAmount(new BigDecimal(Double.valueOf(responseParameterMap.get(SBIMOPS_TAMT))));
-                sbimopsResponse.setTxnReferenceNo(responseParameterMap.get(SBIMOPS_CFMSID).toString());
-                // CFMS is not sending the bank transaction date. Setting receipt date as transaction date.
-                sbimopsResponse.setTxnDate(onlinePayment.getReceiptHeader().getReceiptDate());
-                if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("End SbimopsAdaptor-parsePaymentResponse");
+            if (responseParameterMap != null && responseParameterMap.containsKey(SBIMOPS_STATUS.toUpperCase())) {
+                if (LOGGER.isInfoEnabled())
+                    LOGGER.info("Sbimops reconciliation transaction response : " + responseParameterMap.toString());
+                LOGGER.error("SBIMOPSRECON Response:"+ responseParameterMap.toString());
+                final String transactionStatus = responseParameterMap.get(SBIMOPS_STATUS.toUpperCase());
+                sbimopsResponse.setAuthStatus(getTransactionStatus(transactionStatus));
+                sbimopsResponse.setErrorDescription(transactionStatus);
+                if (sbimopsResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS)) {
+                    sbimopsResponse
+                            .setTxnAmount(new BigDecimal(Double.valueOf(responseParameterMap.get(SBIMOPS_TAMT))));
+                    sbimopsResponse.setTxnReferenceNo(responseParameterMap.get(SBIMOPS_CFMSID).toString());
+                    // CFMS is not sending the bank transaction date. Setting receipt date as transaction date.
+                    sbimopsResponse.setTxnDate(onlinePayment.getReceiptHeader().getReceiptDate());
+                    if (LOGGER.isDebugEnabled())
+                        LOGGER.debug("End SbimopsAdaptor-parsePaymentResponse");
+                }
+            } else {
+                // If not getting the status in the response then keep the transaction as pending
+                sbimopsResponse.setAuthStatus(getTransactionStatus(CollectionConstants.PGI_AUTHORISATION_CODE_PENDING));
+                sbimopsResponse.setErrorDescription(CollectionConstants.PGI_AUTHORISATION_CODE_PENDING);
             }
             return sbimopsResponse;
         }
@@ -349,7 +351,7 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
         final JsonObject requestJson = new JsonObject();
         deptCodeJson.add(SBIMOPS_ROW, transactionIdJson);
         requestJson.add(SBIMOPS_RECORDSET, deptCodeJson);
-
+        LOGGER.error("SBIMOPSRECON Request:"+transactionId.toString());
         if (LOGGER.isInfoEnabled())
             LOGGER.info("SBIMOPS reconciliation request parameters:" + requestJson.toString());
         return requestJson.toString();
@@ -357,7 +359,6 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
 
     private Map<String, String> prepareResponseMap(CloseableHttpResponse response) {
         try {
-
             InputStreamReader inputStreamReader = new InputStreamReader(response.getEntity().getContent());
             BufferedReader reader = new BufferedReader(inputStreamReader);
 
@@ -384,10 +385,12 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
                 responseParameterMap.forEach((key, value) -> responseSbimopsMap.put(key, value.toString()));
                 return responseSbimopsMap;
             }
+        } catch (JsonParseException e) {
+            LOGGER.error("SBIMOPS reconciliation, error while parsing the response content", e);
         } catch (IOException e) {
             LOGGER.error("SBIMOPS reconciliation, error while reading the response content", e);
-            throw new ApplicationRuntimeException(" SBIMOPS reconciliation, error while reading the response content", e);
         }
+        return null;
     }
 
     /**

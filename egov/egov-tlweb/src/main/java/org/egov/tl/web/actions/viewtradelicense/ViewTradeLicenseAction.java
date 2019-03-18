@@ -69,7 +69,6 @@ import static org.egov.tl.utils.Constants.REPORT_PAGE;
 })
 public class ViewTradeLicenseAction extends BaseLicenseAction {
     private static final long serialVersionUID = 1L;
-    private static final String MODEL_ID = "model.id";
 
     private Long licenseId;
     private String digiSignedFile;
@@ -105,7 +104,6 @@ public class ViewTradeLicenseAction extends BaseLicenseAction {
     @ValidationErrorPage(REPORT_PAGE)
     @Action(value = "/viewtradelicense/viewTradeLicense-generateCertificate")
     public String generateCertificate() {
-        setLicenseIdIfServletRedirect();
         tradeLicense = tradeLicenseService.getLicenseById(license().getId());
         if (isNotBlank(tradeLicense.getCertificateFileId())) {
             setDigiSignedFile(license().getCertificateFileId());
@@ -120,17 +118,9 @@ public class ViewTradeLicenseAction extends BaseLicenseAction {
     @ValidationErrorPage(REPORT_PAGE)
     @Action(value = "/viewtradelicense/generate-provisional-certificate")
     public String generateProvisionalCertificate() {
-        setLicenseIdIfServletRedirect();
         tradeLicense = tradeLicenseService.getLicenseById(license().getId());
         reportId = reportViewerUtil.addReportToTempCache(tradeLicenseService.generateLicenseCertificate(license(), true));
         return REPORT_PAGE;
-    }
-
-    private void setLicenseIdIfServletRedirect() {
-        if (tradeLicense.getId() == null && getSession().get(MODEL_ID) != null) {
-            tradeLicense.setId((Long) getSession().get(MODEL_ID));
-            getSession().remove(MODEL_ID);
-        }
     }
 
     public Long getLicenseId() {

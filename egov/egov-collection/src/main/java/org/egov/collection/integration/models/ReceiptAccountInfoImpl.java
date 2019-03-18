@@ -63,11 +63,10 @@ public class ReceiptAccountInfoImpl implements ReceiptAccountInfo {
      * This is used to check if an account is a revenue account.
      */
     private boolean isRevenueAccount;
-        /**
+    /**
      * The private instance of receipt detail. This is used by all public getters.
      */
     private ReceiptDetail receiptDetail;
-    
 
     /**
      * Creates the receipt account info for given receipt detail.
@@ -195,11 +194,19 @@ public class ReceiptAccountInfoImpl implements ReceiptAccountInfo {
         return receiptDetail.getPurpose() == null ? "" : receiptDetail.getPurpose();
     }
 
- 
     @Override
     public Long getGroupId() {
-        return receiptDetail.getGroupId() ;
+        return receiptDetail.getGroupId();
     }
 
-  
+    // For waive off we want to know if it is isActualDemand
+
+    /**
+     * @see org.egov.collection.integration.models.ReceiptAccountInfo::getIsActualDemand
+     */
+    @Override
+    public Boolean getIsActualDemand() {
+        return receiptDetail.getIsActualDemand();
+    }
+
 }

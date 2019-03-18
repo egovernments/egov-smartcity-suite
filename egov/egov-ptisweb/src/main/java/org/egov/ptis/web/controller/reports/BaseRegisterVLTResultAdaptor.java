@@ -116,9 +116,9 @@ public class BaseRegisterVLTResultAdaptor implements DataTableJsonAdapter<Proper
                 currPenaltyFine = currPenaltyFine.add(baseRegisterResultObj.getAggrCurrSecondHalfPenaly());
 
             final BigDecimal currentColl = baseRegisterResultObj.getAggrCurrFirstHalfColl() == null
-                    ? BigDecimal.ZERO.add(baseRegisterResultObj.getAggrCurrSecondHalfColl() == null
-                            ? BigDecimal.ZERO : baseRegisterResultObj.getAggrCurrSecondHalfColl())
-                    : baseRegisterResultObj.getAggrCurrFirstHalfColl();
+                    ? BigDecimal.ZERO.add(((baseRegisterResultObj.getAggrCurrSecondHalfColl() == null)
+                            ? BigDecimal.ZERO : baseRegisterResultObj.getAggrCurrSecondHalfColl()))
+                    : baseRegisterResultObj.getAggrCurrFirstHalfColl().add(baseRegisterResultObj.getAggrCurrSecondHalfColl());
 
             final BigDecimal arrColl = baseRegisterResultObj.getAggrArrColl() != null
                     ? baseRegisterResultObj.getAggrArrColl() : BigDecimal.ZERO;
@@ -131,7 +131,8 @@ public class BaseRegisterVLTResultAdaptor implements DataTableJsonAdapter<Proper
             jsonObject.addProperty("oldAssessmentNo",
                     StringUtils.isNotBlank(baseRegisterResultObj.getOldMuncipalNum())
                             ? baseRegisterResultObj.getOldMuncipalNum() : "NA");
-            jsonObject.addProperty("sitalArea", baseRegisterResultObj.getSitalArea().setScale(2, BigDecimal.ROUND_HALF_UP));
+			jsonObject.addProperty("sitalArea", baseRegisterResultObj.getSitalArea() != null
+					? baseRegisterResultObj.getSitalArea().setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO);
             jsonObject.addProperty("ward", baseRegisterResultObj.getWard().getBoundaryNum());
             jsonObject.addProperty("ownerName", baseRegisterResultObj.getOwnerName());
             jsonObject.addProperty("surveyNo", StringUtils.isNotBlank(baseRegisterResultObj.getSurveyNo())

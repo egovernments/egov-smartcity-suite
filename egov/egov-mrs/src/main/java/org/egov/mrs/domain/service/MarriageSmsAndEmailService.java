@@ -47,6 +47,7 @@
  */
 package org.egov.mrs.domain.service;
 
+import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -117,20 +118,24 @@ public class MarriageSmsAndEmailService {
                             .equalsIgnoreCase(MarriageRegistration.RegistrationStatus.DIGITALSIGNED.toString()))) {
                 msgKey = MSG_KEY_SMS_REGISTRATION_REGISTERED; 
                 referenceNumber = registration.getRegistrationNo();
-            } else if (registration.getStatus() != null && (registration.getStatus().getCode()
+                
+            } else if (!Source.CHPK.toString().equalsIgnoreCase(registration.getSource()) & registration.getStatus() != null && (registration.getStatus().getCode()
                     .equalsIgnoreCase(MarriageRegistration.RegistrationStatus.APPROVED.toString()))){
                 msgKey = MSG_KEY_SMS_REGISTRATION_APPROVED;
                 referenceNumber = registration.getRegistrationNo();
                 
             }
-                
-            final String message = buildEmailMessage(registration, msgKey, referenceNumber);
-            if (registration.getHusband() != null && registration.getHusband().getContactInfo() != null
-                    && registration.getHusband().getContactInfo().getMobileNo() != null)
-                notificationService.sendSMS(registration.getHusband().getContactInfo().getMobileNo(), message);
-            if (registration.getWife() != null && registration.getWife().getContactInfo() != null
-                    && registration.getWife().getContactInfo().getMobileNo() != null)
-                notificationService.sendSMS(registration.getWife().getContactInfo().getMobileNo(), message);
+            
+            if(!(Source.CHPK.toString().equalsIgnoreCase(registration.getSource()) & registration.getStatus() != null && (registration.getStatus().getCode()
+                    .equalsIgnoreCase(MarriageRegistration.RegistrationStatus.APPROVED.toString())))){
+            	final String message = buildEmailMessage(registration, msgKey, referenceNumber);
+                if (registration.getHusband() != null && registration.getHusband().getContactInfo() != null
+                        && registration.getHusband().getContactInfo().getMobileNo() != null)
+                    notificationService.sendSMS(registration.getHusband().getContactInfo().getMobileNo(), message);
+                if (registration.getWife() != null && registration.getWife().getContactInfo() != null
+                        && registration.getWife().getContactInfo().getMobileNo() != null)
+                    notificationService.sendSMS(registration.getWife().getContactInfo().getMobileNo(), message);
+            }
         }
     }
 

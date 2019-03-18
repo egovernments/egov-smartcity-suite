@@ -146,6 +146,7 @@ import org.egov.wtms.autonumber.WorkOrderNumberGenerator;
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.DonationDetails;
 import org.egov.wtms.masters.entity.enums.ClosureType;
+import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.MeterCostService;
 import org.egov.wtms.masters.service.RoadCategoryService;
 import org.egov.wtms.utils.WaterTaxNumberGenerator;
@@ -413,9 +414,9 @@ public class UpdateConnectionController extends GenericConnectionController {
         model.addAttribute("statuscode", waterConnectionDetails.getStatus().getCode());
         model.addAttribute("isCommissionerLoggedIn", isCommissionerLoggedIn);
         model.addAttribute("isSanctionedDetailEnable", isSanctionedDetailEnable);
-        model.addAttribute("usageTypes", usageTypeService.getActiveUsageTypes());
-        model.addAttribute("connectionCategories", connectionCategoryService.getAllActiveConnectionCategory());
-        model.addAttribute("pipeSizes", pipeSizeService.getAllActivePipeSize());
+        model.addAttribute("usageTypes", usageTypeService.getAllActiveUsageTypesByPropertyType(waterConnectionDetails.getPropertyType().getId()));
+        model.addAttribute("connectionCategories", connectionCategoryService.getAllActiveCategoryTypesByPropertyType(waterConnectionDetails.getPropertyType().getId(), waterConnectionDetails.getApplicationType().getCode()));
+        model.addAttribute("pipeSizes", pipeSizeService.getAllPipeSizesByPropertyType(waterConnectionDetails.getPropertyType().getId()));
         model.addAttribute("typeOfConnection", waterConnectionDetails.getApplicationType().getCode());
         model.addAttribute("ownerPosition", waterConnectionDetails.getState().getOwnerPosition().getId());
         return NEWCONNECTION_EDIT;
@@ -529,6 +530,13 @@ public class UpdateConnectionController extends GenericConnectionController {
 
         if (isNotBlank(workFlowAction))
             request.getSession().setAttribute(WORKFLOW_ACTION, workFlowAction);
+                
+        if (ConnectionType.METERED.equals(waterConnectionDetails.getConnectionType()))
+            meterCostService.validateMeterMakeForPipesize(waterConnectionDetails.getPipeSize().getId());
+        
+        if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType()))
+        	waterConnectionDetailsService.validateWaterRateAndDonationHeader(waterConnectionDetails); 
+               
 
         if (request.getParameter(DONATION_AMOUNT) != null)
             donationCharges = Double.valueOf(request.getParameter(DONATION_AMOUNT));

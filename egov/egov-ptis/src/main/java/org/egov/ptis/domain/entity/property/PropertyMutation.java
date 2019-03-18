@@ -47,6 +47,13 @@
  */
 package org.egov.ptis.domain.entity.property;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_WIFE;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
@@ -54,13 +61,6 @@ import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.GuardianRelation;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_WIFE;
 
 /**
  * @author subhash
@@ -79,7 +79,6 @@ public class PropertyMutation extends StateAware<Position> {
     private String applicationNo;
     private String applicantName;
     private BasicProperty basicProperty;
-    private Property property;
     private List<User> transferorInfos = new ArrayList<>();
     private List<PropertyMutationTransferee> transfereeInfos = new ArrayList<>();
     private List<PropertyMutationTransferee> transfereeInfosProxy = new ArrayList<>();
@@ -205,14 +204,6 @@ public class PropertyMutation extends StateAware<Position> {
 
     public void setBasicProperty(final BasicProperty basicProperty) {
         this.basicProperty = basicProperty;
-    }
-
-    public Property getProperty() {
-        return property;
-    }
-
-    public void setProperty(final Property property) {
-        this.property = property;
     }
 
     public List<User> getTransferorInfos() {

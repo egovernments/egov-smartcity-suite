@@ -115,4 +115,11 @@ public interface ReceiptAccountInfo {
      * @return the group id of the credit amount
      */
     public abstract Long getGroupId();
+
+    /**
+     * P.S. This is needed for waived off penalty For Waived off penalty: cramount & dramount is 0, isActualDemand is false but
+     * cramounttobepaid is unaltered
+     * @return if it is actual demand
+     */
+    public abstract Boolean getIsActualDemand();
 }

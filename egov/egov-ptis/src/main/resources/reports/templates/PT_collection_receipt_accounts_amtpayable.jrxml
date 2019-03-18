@@ -46,8 +46,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   -->
-<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2017-05-05T14:27:20 -->
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PT_collection_receipt_accounts_amtpayable" language="groovy" pageWidth="257" pageHeight="802" columnWidth="257" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" uuid="d6dde3bd-46d2-4d95-aed5-b446b5d9af4e">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -86,6 +85,9 @@
 	</field>
 	<field name="purpose" class="java.lang.String">
 		<fieldDescription><![CDATA[Purpose of the amount paid]]></fieldDescription>
+	</field>
+	<field name="isActualDemand" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Wheather it is an actual demand]]></fieldDescription>
 	</field>
 	<sortField name="orderNumber"/>
 	<variable name="totalAmount" class="java.math.BigDecimal" calculation="Sum">
@@ -131,7 +133,7 @@
 		<variableExpression><![CDATA[$V{to_date}.substring($V{to_date}.length()-1)]]></variableExpression>
 	</variable>
 	<variable name="totalamounttobepaid" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[!("ADVANCE_AMOUNT".equals($F{purpose}) || "REBATE".equals($F{purpose})) ? ($F{creditAmountToBePaid}) : BigDecimal.ZERO]]></variableExpression>
+		<variableExpression><![CDATA[!("ADVANCE_AMOUNT".equals($F{purpose}) || "REBATE".equals($F{purpose}) || ($F{isActualDemand} == Boolean.FALSE && ( "ARREAR_LATEPAYMENT_CHARGES".equals($F{purpose}) || "CURRENT_LATEPAYMENT_CHARGES".equals($F{purpose}))) ) ? ($F{creditAmountToBePaid}) : BigDecimal.ZERO]]></variableExpression>
 	</variable>
 	<variable name="totalpaid" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[!("ADVANCE_AMOUNT".equals($F{purpose})) ? ($F{crAmount}) : BigDecimal.ZERO]]></variableExpression>

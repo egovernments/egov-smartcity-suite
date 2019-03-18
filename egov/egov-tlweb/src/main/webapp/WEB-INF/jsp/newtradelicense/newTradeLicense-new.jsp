@@ -392,6 +392,7 @@
                 <s:hidden id="applicationDate" name="applicationDate"/>
                 <s:hidden id="mode" name="mode" value="%{mode}"/>
                 <s:hidden id="currentWfstate" name="currentWfstate" value="%{state.value}"/>
+                <s:hidden name="model.id" id="tlid"/>
                 <s:hidden name="id" id="id"/>
                 <s:hidden name="feeTypeId" id="feeTypeId"/>
                 <input type="hidden" name="applicationNo" value="${param.applicationNo}" id="applicationNo"/>

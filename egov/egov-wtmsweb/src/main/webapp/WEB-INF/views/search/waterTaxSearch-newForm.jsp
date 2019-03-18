@@ -102,16 +102,14 @@
                             <form:errors path="propertyid" cssClass="error-msg"/>
                         </div>
                     </div>
-                    <c:if test="${!citizenRole}">
                         <div class="form-group">
                             <label class="col-md-4 control-label"> <spring:message code="lbl.oldconsumerno"/></label>
                             <div class="col-md-4 add-margin">
                                 <input type="text" name="oldConsumerNumber" id="oldConsumerNumber"
-                                       class="form-control patternvalidation" data-pattern="number"
-                                       maxlength="15" id="app-oldcode"/>
+                                       class="form-control patternvalidation" 
+                                       maxlength="50" id="app-oldcode"/>
                             </div>
                         </div>
-                    </c:if>
                     <div class="form-group">
                         <label class="col-md-4 control-label"> <spring:message
                                 code="lbl.assessee.name"/></label>

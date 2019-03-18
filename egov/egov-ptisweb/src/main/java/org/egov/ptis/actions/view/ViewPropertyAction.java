@@ -326,9 +326,9 @@ public class ViewPropertyAction extends BaseFormAction {
                         .getPropertyMutationByApplicationNo(appNo);
                 setBasicProperty(propertyMutation.getBasicProperty());
                 setHistoryMap(propService.populateHistory(propertyMutation));
-                property = (PropertyImpl) propertyMutation.getProperty();
+                property = (PropertyImpl) propertyMutation.getBasicProperty().getProperty();
                 property.setDocuments(propertyMutation.getDocuments());
-                if (propertyMutation.getMutationReason().getType().equals(ADDTIONAL_RULE_FULL_TRANSFER)) {
+                if (propertyMutation.getMutationReason().getType().equals(ADDITIONAL_RULE_FULL_TRANSFER)) {
                     viewMap.put(DOCUMENTNO, propertyMutation.getMutationRegistrationDetails().getDocumentNo());
                     viewMap.put(DOCUMENTDATE, propertyMutation.getMutationRegistrationDetails().getDocumentDate());
                 }

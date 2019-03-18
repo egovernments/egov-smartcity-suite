@@ -120,11 +120,11 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
                 "applicationSource", "${applicationSource}", "meesevaApplicationNumber",
                 "${meesevaApplicationNumber}", "meesevaServiceCode", "${meesevaServiceCode}", "type",
                 MUTATION_TYPE_REGISTERED_TRANSFER }),
-        @Result(name = ADDTIONAL_RULE_FULL_TRANSFER, type = "redirectAction", location = "new", params = {
+        @Result(name = ADDITIONAL_RULE_FULL_TRANSFER, type = "redirectAction", location = "new", params = {
                 "namespace", "${actionNamespace}", "assessmentNo", "${assessmentNum}", "applicationType", "${applicationType}",
                 "applicationSource", "${applicationSource}", "meesevaApplicationNumber",
                 "${meesevaApplicationNumber}", "meesevaServiceCode", "${meesevaServiceCode}", "type",
-                ADDTIONAL_RULE_FULL_TRANSFER }),
+                ADDITIONAL_RULE_FULL_TRANSFER }),
         @Result(name = "ackForRegistration", type = "redirectAction", location = "redirectForPayment", params = {
                 "namespace", "${actionNamespace}", "mutationId", "${mutationId}", "applicationType", "${applicationType}",
                 "applicationSource", "${applicationSource}" }),
@@ -337,10 +337,17 @@ public class SearchPropertyAction extends SearchFormAction {
             }
         }
         if (Arrays.asList(APPLICATION_TYPE_ALTER_ASSESSENT, APPLICATION_TYPE_TAX_EXEMTION,
-                APPLICATION_TYPE_DEMOLITION, APPLICATION_TYPE_AMALGAMATION, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP,
-                APPLICATION_TYPE_VACANCY_REMISSION, APPLICATION_TYPE_GRP).contains(applicationType)) {
+                APPLICATION_TYPE_DEMOLITION, APPLICATION_TYPE_AMALGAMATION, APPLICATION_TYPE_VACANCY_REMISSION, APPLICATION_TYPE_GRP).contains(applicationType)) {
             String errorMessage = propertyService.validationForBifurcation(null, basicProperty,
                     PROPERTY_MODIFY_REASON_ADD_OR_ALTER);
+            if (StringUtils.isNotBlank(errorMessage)) {
+                addActionError(getText(errorMessage));
+                return COMMON_FORM;
+            }
+        } 
+        if (Arrays.asList(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP).contains(applicationType)) {
+            String errorMessage = propertyService.validationForBifurcation(null, basicProperty,
+                    PROP_MUTATION_RSN);
             if (StringUtils.isNotBlank(errorMessage)) {
                 addActionError(getText(errorMessage));
                 return COMMON_FORM;
@@ -493,7 +500,7 @@ public class SearchPropertyAction extends SearchFormAction {
             } else
                 return APPLICATION_TYPE_EDIT_COLLECTION;
         if (APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType)) {
-            if (SecurityUtils.userAnonymouslyAuthenticated() && ADDTIONAL_RULE_FULL_TRANSFER.equalsIgnoreCase(mutationType)) {
+            if (SecurityUtils.userAnonymouslyAuthenticated() && ADDITIONAL_RULE_FULL_TRANSFER.equalsIgnoreCase(mutationType)) {
                 final PropertyMutation propertyMutation = propertyMutationDAO
                         .getPropertyLatestMutationForAssessmentNo(assessmentNum);
                 if (propertyMutation != null && propertyMutation.getState() != null && basicProperty.isUnderWorkflow()
@@ -841,18 +848,23 @@ public class SearchPropertyAction extends SearchFormAction {
                 searchResultMap.put("enableVRApproval",
                         String.valueOf(propertyTaxUtil.enableVRApproval(basicProperty.getUpicNo())));
                 if (!property.getIsExemptedFromTax()) {
-                    searchResultMap.put(CURR_FIRST_HALF_DEMAND, demandCollMap.get(CURR_FIRSTHALF_DMD_STR).toString());
-                    searchResultMap.put(CURR_SECOND_HALF_DEMAND, demandCollMap.get(CURR_SECONDHALF_DMD_STR).toString());
+                    searchResultMap.put(CURR_FIRST_HALF_DEMAND,
+                            demandCollMap.get(CURR_FIRSTHALF_DMD_STR).setScale(0, BigDecimal.ROUND_CEILING).toString());
+                    searchResultMap.put(CURR_SECOND_HALF_DEMAND,
+                            demandCollMap.get(CURR_SECONDHALF_DMD_STR).setScale(0, BigDecimal.ROUND_CEILING).toString());
                     searchResultMap.put(ARR_DEMAND_DUE,
-                            demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)).toString());
+                            (demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)))
+                                    .setScale(0, BigDecimal.ROUND_CEILING).toString());
                     searchResultMap.put(
                             CURR_FIRST_HALF_DEMAND_DUE,
-                            demandCollMap.get(CURR_FIRSTHALF_DMD_STR)
-                                    .subtract(demandCollMap.get(CURR_FIRSTHALF_COLL_STR)).toString());
+                            (demandCollMap.get(CURR_FIRSTHALF_DMD_STR)
+                                    .subtract(demandCollMap.get(CURR_FIRSTHALF_COLL_STR))).setScale(0, BigDecimal.ROUND_CEILING)
+                                            .toString());
                     searchResultMap.put(
                             CURR_SECOND_HALF_DEMAND_DUE,
-                            demandCollMap.get(CURR_SECONDHALF_DMD_STR)
-                                    .subtract(demandCollMap.get(CURR_SECONDHALF_COLL_STR)).toString());
+                            (demandCollMap.get(CURR_SECONDHALF_DMD_STR)
+                                    .subtract(demandCollMap.get(CURR_SECONDHALF_COLL_STR))).setScale(0, BigDecimal.ROUND_CEILING)
+                                            .toString());
                 } else {
                     searchResultMap.put(CURR_FIRST_HALF_DEMAND, "0");
                     searchResultMap.put(CURR_FIRST_HALF_DEMAND_DUE, "0");
@@ -1026,7 +1038,7 @@ public class SearchPropertyAction extends SearchFormAction {
     public String fullTransfer() {
         setActionNamespace("/property/transfer");
         setApplicationType(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
-        setMutationType(ADDTIONAL_RULE_FULL_TRANSFER);
+        setMutationType(ADDITIONAL_RULE_FULL_TRANSFER);
         if (SecurityUtils.userAnonymouslyAuthenticated())
             if (loggedUserIsMeesevaUser)
                 setApplicationSource(SOURCE_MEESEVA);

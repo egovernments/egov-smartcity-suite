@@ -87,4 +87,16 @@ public interface CrossHierarchyRepository extends JpaRepository<CrossHierarchy, 
                                                        @Param("boundaryName") String boundaryName);
 
     List<CrossHierarchy> findByParentIdAndChildId(Long parentId, Long childId);
+
+    @Query("select ch.child from CrossHierarchy ch where UPPER(ch.childType.name)= UPPER(:childBoundaryType) " +
+            "and UPPER(ch.childType.hierarchyType.name) =UPPER(:childHierarchyType) " +
+            "and UPPER(ch.parentType.name)= UPPER(:boundaryTypeName) " +
+            "and UPPER(ch.parentType.hierarchyType.name) = UPPER(:hierarchyTypeName) " +
+            "and UPPER(ch.parent.name) = UPPER(:boundaryName)")
+    List<Boundary> findChildBoundariesByBoundarytypeAndHierarchyTypeAndParentBoundary(@Param("childBoundaryType") String childBoundaryType,
+                                                                                      @Param("childHierarchyType") String childHierarchyType,
+                                                                                      @Param("boundaryTypeName") String boundaryTypeName,
+                                                                                      @Param("hierarchyTypeName") String hierarchyTypeName,
+                                                                                      @Param("boundaryName") String boundaryName);
+
 }

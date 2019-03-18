@@ -66,7 +66,6 @@
 <script type="text/javascript">
 
 jQuery.noConflict();
-
 var isDatepickerOpened=false;
 jQuery(document).ready(function() {
   	 
@@ -155,21 +154,21 @@ function calculateCollectionTotal(){
 		
 		for(var m=0;m<chequetablelen;m++){
 			if(getControlInBranch(chequetable.rows[m],'instrumentChequeAmount')!=null){
-				chequeamount=eval(getControlInBranch(chequetable.rows[m],'instrumentChequeAmount').value);
+				chequeamount=parseInt(getControlInBranch(chequetable.rows[m],'instrumentChequeAmount').value);
 				chequeamount = isNaN(chequeamount)?0:chequeamount;
 				collectiontotal=collectiontotal+chequeamount;
 			}
 		}//end of for loop
 
-		cashamount=eval(document.getElementById("instrHeaderCash.instrumentAmount").value);
+		cashamount=parseInt(document.getElementById("instrHeaderCash.instrumentAmount").value);     
 		cashamount = isNaN(cashamount)?0:cashamount;
 		collectiontotal=collectiontotal+cashamount;
 		
-		cardamount=eval(document.getElementById("instrHeaderCard.instrumentAmount").value);
+		cardamount=parseInt(document.getElementById("instrHeaderCard.instrumentAmount").value);
 		cardamount = isNaN(cardamount)?0:cardamount;
 		collectiontotal=collectiontotal+cardamount;
 		
-		bankamount=eval(document.getElementById("instrHeaderBank.instrumentAmount").value);
+		bankamount=parseInt(document.getElementById("instrHeaderBank.instrumentAmount").value);
 		bankamount = isNaN(bankamount)?0:bankamount;
 		collectiontotal=collectiontotal+bankamount;
 
@@ -193,8 +192,8 @@ function calculateCreditTotal(){
 	//this step is done to populate credit amount
         for(var j=0;j<noofaccounts; j++)
 	{
-		var receivedAmount=eval(document.getElementById('receiptDetailList['+j+'].cramount').value);
-		var rebateAmount=eval(document.getElementById('receiptDetailList['+j+'].dramount').value);
+		var receivedAmount=parseInt(document.getElementById('receiptDetailList['+j+'].cramount').value);
+		var rebateAmount=parseInt(document.getElementById('receiptDetailList['+j+'].dramount').value);
 		creditamount = isNaN(receivedAmount)?0:receivedAmount;
 		debitamount =  isNaN(rebateAmount)?0:rebateAmount;
 		credittotal=credittotal+creditamount;
@@ -250,8 +249,8 @@ function validate()
 		{
 			var advanceRebatePresent=document.getElementById('receiptDetailList['+j+'].isActualDemand').value;			
 			var amounttobecollected=document.getElementById('receiptDetailList['+j+'].cramountToBePaid').value;
-			totalCreditAmountToBePaid = eval(totalCreditAmountToBePaid)+eval(amounttobecollected);
-			if(advanceRebatePresent==0){
+			totalCreditAmountToBePaid = parseInt(totalCreditAmountToBePaid)+parseInt(amounttobecollected);
+			if(advanceRebatePresent=="false"){
 				zeroAccHeads=true;
 			}
 		}
@@ -289,7 +288,7 @@ function validate()
 			}
 			else
 			{
-			    cashamount=eval(cashamount);
+			    cashamount=parseInt(cashamount);
 				if(cashamount==0){
 					document.getElementById("receipt_error_area").innerHTML+=
 					'<s:text name="billreceipt.missingcashamount.errormessage" />'+ '<br>';
@@ -335,7 +334,7 @@ function validate()
 				validation = false;
 			}
 			else{
-				cardamount=eval(cardamount);
+				cardamount=parseInt(cardamount);
 				if(cardamount==0){
 					document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.missingcardamount.errormessage" />'+ '<br>';
 					validation = false;
@@ -394,7 +393,7 @@ function validate()
 				validation = false;
 			}
 			else{
-				bankamount=eval(bankamount);
+				bankamount=parseInt(bankamount);
 				if(bankamount==0){
 					document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.missingbankchallanamount.errormessage" />'+ '<br>';
 					validation = false;
@@ -435,7 +434,7 @@ function validate()
 				if(getControlInBranch(chequetable.rows[m],'instrumentChequeAmount')!=null)
 				{
 					chequeamount=getControlInBranch(chequetable.rows[m],'instrumentChequeAmount').value;
-					chequeamount=eval(chequeamount);
+					chequeamount=parseInt(chequeamount);
 	    				collectiontotal=collectiontotal+chequeamount;
 	    			}
 			}//end of for loop
@@ -454,7 +453,7 @@ function validate()
 			}
 			else
 			{
-			    onlineamount=eval(onlineamount);
+			    onlineamount=parseInt(onlineamount);
 				if(onlineamount==0){
 					document.getElementById("receipt_error_area").innerHTML+=
 					'<s:text name="billreceipt.invalidcreditamount.errormessage" />'+ '<br>';
@@ -469,7 +468,7 @@ function validate()
 	var credittotal=calculateCreditTotal();
 	var checkoverridevalue=document.getElementById("overrideAccountHeads").value;
 	var advancePaymentAllowed=false;
-	var minimumAmt=eval(document.getElementById("minimumAmount").value);
+	var minimumAmt=parseInt(document.getElementById("minimumAmount").value);
 	if(minimumAmt==null){
 	    minimumAmt=0;
 	}
@@ -519,7 +518,7 @@ function validate()
    	}
 	
    	<s:if test="%{!isBillSourcemisc()}"> 
-	 if(eval(document.getElementById("totalamountdisplay").value)>eval(document.getElementById("totalamounttobepaid").value)){
+	 if(parseInt(document.getElementById("totalamountdisplay").value)>parseInt(document.getElementById("totalamounttobepaid").value)){
 		 var r = confirm('Collected amount is more than the amount to be paid. Do you want to collect advance amount?');
 		 if(r !=true)
 			 validation = false;
@@ -661,7 +660,7 @@ function verifyChequeDetails(table,len1)
 	    			}
 				}
 				else{
-					chequeamount=eval(chequeamount);
+					chequeamount=parseInt(chequeamount);
 					if(chequeamount==0){
 	    				if(instrAmountErrMsg==""){
 	    		    		instrAmountErrMsg='<s:text name="billreceipt.missingchequeamount.errormessage" />' + '<br>';
@@ -702,8 +701,8 @@ function checkaccountheaderwiseamount()
 	
 	for(var j=0;j<accountscount; j++)
 	{
-		var tobecollectedamount=eval(document.getElementById('receiptDetailList['+j+'].cramountToBePaid').value);
-		var amountreceived=eval(document.getElementById('receiptDetailList['+j+'].cramount').value);
+		var tobecollectedamount=parseInt(document.getElementById('receiptDetailList['+j+'].cramountToBePaid').value);
+		var amountreceived=parseInt(document.getElementById('receiptDetailList['+j+'].cramount').value);
 		if(isNaN(amountreceived)){
 		    document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.invalidcreditamount.errormessage" />' + '<br>';
 			return false;
@@ -823,9 +822,9 @@ function checkandcalculatecredittotal(index,elem){
 	document.getElementById("receipt_error_area").style.display="none";
 	for(var j=0;j<accountscount;j++)
 	{
-		var tobecollectedamount=eval(document.getElementById('receiptDetailList['+j+'].cramountToBePaid').value);
-		var receivedAmount=eval(document.getElementById('receiptDetailList['+j+'].cramount').value);
-		var rebateamount=eval(document.getElementById('receiptDetailList['+j+'].dramount').value);		
+		var tobecollectedamount=parseInt(document.getElementById('receiptDetailList['+j+'].cramountToBePaid').value);
+		var receivedAmount=parseInt(document.getElementById('receiptDetailList['+j+'].cramount').value);
+		var rebateamount=parseInt(document.getElementById('receiptDetailList['+j+'].dramount').value);		
 
 		if(receivedAmount>tobecollectedamount && tobecollectedamount>0)
 		{

@@ -49,7 +49,7 @@
 $(document).ready(function () {
     var tbl = $("#tbldemandgenerate").DataTable({
         dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l>" +
-        "<'col-md-3 col-xs-6 text-left'B><'col-md-5 col-xs-6 text-right'p>>",
+            "<'col-md-3 col-xs-6 text-left'B><'col-md-5 col-xs-6 text-right'p>>",
         "autoWidth": false,
         "bDestroy": true,
         responsive: true,
@@ -96,6 +96,20 @@ $(document).ready(function () {
             }, {
                 "data": "status",
                 "sTitle": "Status"
+            }, {
+                "data": function (row, type, set, meta) {
+                    return {
+                        id: row.licenseId
+                    };
+                },
+                'sClass': "text-center",
+                "bSortable": false,
+                "target": -1,
+                "render": function (data, type, row) {
+                    return pending ? '<span class="add-padding">' +
+                        '<button type="button" class="btn btn-xs btn-secondary" id="'+data.id+'" onclick="tryDemandGen(this)">Regenerate</button>' : '';
+                },
+                "visible" : pending
             }]
     });
 
@@ -150,6 +164,12 @@ $(document).ready(function () {
             });
     };
 
+    $("#show-pending-btn").click(function () {
+        tbl.clear();
+        $('.report-table-container').show();
+        tbl.rows.add((typeof logDetails == 'string') ? $.parseJSON(logDetails) : logDetails).draw();
+    });
+
     $("#genDmdBtn").click(function () {
         $('.report-table-container').show();
         tbl.clear();
@@ -165,5 +185,10 @@ $(document).ready(function () {
 
 function openTradeLicense(obj) {
     window.open("/tl/viewtradelicense/viewTradeLicense-view.action?id=" + $(obj).data('eleval'), '',
+        'scrollbars=yes,width=1000,height=700,status=yes');
+}
+
+function tryDemandGen(obj) {
+    window.open("/tl/demand/generate/" + $(obj).attr('id')+"?forPrevYear=true", '',
         'scrollbars=yes,width=1000,height=700,status=yes');
 }

@@ -49,7 +49,9 @@ package org.egov.ptis.service.DemandBill;
 
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.ViewLegacyDemand;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -71,4 +73,7 @@ public interface DemandBillService {
     
     public Map<String, Object> getDemandBillDetails(BasicProperty basicProperty);
     
+    public List<ViewLegacyDemand> getOldDemandData(String propertyId);
+
+	   
 }

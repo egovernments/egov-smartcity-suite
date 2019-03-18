@@ -123,7 +123,7 @@ public class ConnectionCategoryService {
     public List<ConnectionCategory> getAllActiveConnectionCategory() {
         return connectionCategoryRepository.findByActiveTrueOrderByNameAsc();
     }
-
+    
     public List<ConnectionCategory> getAllActiveCategoryTypesByPropertyType(final Long propertyType,
             final String connectionType) {
         if (connectionType.equals(WaterTaxConstants.ADDNLCONNECTION))

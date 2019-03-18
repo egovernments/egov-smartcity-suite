@@ -55,6 +55,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -159,6 +160,8 @@ public class OnlineReceiptAction extends BaseFormAction {
     private String[] transactionDate;
     private String[] statusCode;
     private String[] remarks;
+    private BigDecimal minimumAmount;
+    
     @Autowired
     private ApplicationContext beanProvider;
 
@@ -352,19 +355,27 @@ public class OnlineReceiptAction extends BaseFormAction {
                         newReceiptDetail.setCramount(receiptDetail.getCramount());
                         newReceiptDetail.setAccounthead(receiptDetail.getAccounthead());
                         newReceiptDetail.setDramount(receiptDetail.getDramount());
+                        newReceiptDetail.setPurpose(receiptDetail.getPurpose());
                         existingReceiptDetails.add(newReceiptDetail);
                     }
-                final List<ReceiptDetail> reconstructedList = collectionsUtil.reconstructReceiptDetail(receipts[i],
+                final List<ReceiptDetail> reapportionedList = collectionsUtil.reconstructReceiptDetail(receipts[i],
                         existingReceiptDetails);
 
+                List<ReceiptDetail> reconstructedList = new ArrayList<ReceiptDetail>();
+                if (reapportionedList != null && !reapportionedList.isEmpty()) {
+                    reconstructedList = reapportionedList;
+                } else {
+                    reconstructedList = existingReceiptDetails;
+                }
+                
                 ReceiptDetail debitAccountDetail = null;
-                if (reconstructedList != null) {
+                if (reconstructedList != null && !reconstructedList.isEmpty()) {
                     DebitAccountHeadDetailsService debitAccountHeadService = (DebitAccountHeadDetailsService) beanProvider
                             .getBean(collectionsUtil.getBeanNameForDebitAccountHead());
                     debitAccountDetail = debitAccountHeadService.addDebitAccountHeadDetails(receipts[i].getTotalAmount(),
                             receipts[i], BigDecimal.ZERO, receipts[i].getTotalAmount(),
                             CollectionConstants.INSTRUMENTTYPE_ONLINE);
-                }
+                }   
 
                 receiptHeaderService.reconcileOnlineSuccessPayment(receipts[i], transDate, getTransactionId()[i],
                         receipts[i].getTotalAmount(), null, reconstructedList, debitAccountDetail);
@@ -460,6 +471,8 @@ public class OnlineReceiptAction extends BaseFormAction {
 
                 receiptHeader = collectionCommon.initialiseReceiptModelWithBillInfo(collDetails, fund, dept);
                 setRefNumber(receiptHeader.getReferencenumber());
+                minimumAmount = receiptHeader.getMinimumAmount() == null ? 
+                        BigDecimal.ZERO: receiptHeader.getMinimumAmount();
                 totalAmountToBeCollected = totalAmountToBeCollected.add(receiptHeader.getTotalAmountToBeCollected());
                 setReceiptDetailList(new ArrayList<>(receiptHeader.getReceiptDetails()));
 
@@ -899,6 +912,10 @@ public class OnlineReceiptAction extends BaseFormAction {
 
     public void setIsTransactionPending(Boolean isTransactionPending) {
         this.isTransactionPending = isTransactionPending;
+    }
+
+    public BigDecimal getMinimumAmount() {
+        return minimumAmount;
     }
 
 }

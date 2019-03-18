@@ -48,9 +48,14 @@
 package org.egov.tl.repository;
 
 import org.egov.tl.entity.DemandGenerationLogDetail;
+import org.egov.tl.entity.enums.ProcessStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 
 public interface DemandGenerationLogDetailRepository extends JpaRepository<DemandGenerationLogDetail, Long> {
 
     DemandGenerationLogDetail findByDemandGenerationLogIdAndLicenseId(Long logId, Long licenseId);
+
+    List<DemandGenerationLogDetail> findByLicenseIdAndStatus(Long licenseId, ProcessStatus status);
 }

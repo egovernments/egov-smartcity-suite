@@ -47,28 +47,25 @@
   --%>
 
 <%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld" %>
-<%@ page language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
     <title>Trade License</title>
 </head>
 <body onload="refreshInbox()">
-<s:form action="newTradeLicense" theme="simple">
-    <s:if test="%{hasErrors()}">
-        <div class="alert alert-danger view-content">
-            <s:actionerror/>
-            <s:fielderror/>
-        </div>
-    </s:if>
-    <s:if test="%{hasActionMessages()}">
-        <div class="alert alert-info view-content">
-            <s:actionmessage/>
-        </div>
-    </s:if>
-    <div class="text-center">
-        <input type="button" value="Close" onclick="javascript:window.close()" class="button"/>
+<s:if test="%{hasErrors()}">
+    <div class="alert alert-danger view-content">
+        <s:actionerror/>
     </div>
-</s:form>
+</s:if>
+<c:if test="${message != null}">
+    <div class="alert alert-info view-content">
+        <c:out value="${message}"/>
+    </div>
+</c:if>
+<div class="text-center">
+    <input type="button" value="Close" onclick="window.close()" class="button"/>
+</div>
 </body>
 
 </html>

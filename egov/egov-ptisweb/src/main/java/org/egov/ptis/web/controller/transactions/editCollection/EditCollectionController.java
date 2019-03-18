@@ -209,8 +209,13 @@ public class EditCollectionController {
                     dmdDetails.setAmount(dmdDetailBean.getRevisedAmount() != null ? dmdDetailBean.getRevisedAmount()
                             : BigDecimal.ZERO);
                 if (isUpdateCollection)
-                    dmdDetails.setAmtCollected(dmdDetailBean.getRevisedCollection() != null
-                            ? dmdDetailBean.getRevisedCollection() : BigDecimal.ZERO);
+					dmdDetails
+							.setAmtCollected(dmdDetailBean.getRevisedCollection() != null
+									? ((dmdDetailBean.getActualCollection() != null)
+											? dmdDetailBean.getRevisedCollection()
+													.add(dmdDetailBean.getActualCollection())
+											: dmdDetailBean.getRevisedCollection())
+									: BigDecimal.ZERO);
                 if (isUpdateAmount || isUpdateCollection) {
                     persistReceipt = Boolean.TRUE;
                     dmdDetails.setModifiedDate(new Date());
@@ -253,7 +258,7 @@ public class EditCollectionController {
                                 "revised.collection.greater.than.reviseddemand");
                         errors.rejectValue(String.format(REVISED_COLLECTION_FIELD, i),
                                 "revised.demand.less.than.revisedcollection");
-                    } else if (dd.getRevisedCollection().compareTo(dd.getRevisedAmount()) < 0)
+                    } else if (dd.getRevisedCollection().add(dd.getActualCollection()).compareTo(dd.getRevisedAmount()) < 0)
                         errors.rejectValue(String.format(REVISED_COLLECTION_FIELD, i), ERROR_PENALTY_NOT_COLLECTED);
                     editingCollection = Boolean.TRUE;
                     totalRevisedCollection = totalRevisedCollection.add(dd.getRevisedCollection());
@@ -262,15 +267,15 @@ public class EditCollectionController {
                     if (dd.getActualCollection().compareTo(dd.getRevisedAmount()) > 0)
                         errors.rejectValue("demandDetailBeans[" + i + "].revisedAmount",
                                 "actual.collection.greater.than.reviseddemand");
-                    else if (dd.getRevisedCollection() != null && dd.getRevisedCollection().compareTo(dd.getRevisedAmount()) < 0
-                            || dd.getActualCollection().compareTo(dd.getRevisedAmount()) < 0)
+                    else if (dd.getRevisedCollection() != null && dd.getRevisedCollection().add(dd.getActualCollection()).compareTo(dd.getRevisedAmount()) < 0
+                            || dd.getActualCollection().add(dd.getActualCollection()).compareTo(dd.getRevisedAmount()) < 0)
                         errors.rejectValue(String.format(REVISED_COLLECTION_FIELD, i), ERROR_PENALTY_NOT_COLLECTED);
                     editingCollection = Boolean.TRUE;
                 } else if (dd.getRevisedCollection() != null) {
                     if (dd.getRevisedCollection().compareTo(dd.getActualAmount()) > 0)
                         errors.rejectValue(String.format(REVISED_COLLECTION_FIELD, i),
                                 "revised.collection.greater.than.actualdemand");
-                    else if (dd.getRevisedCollection().compareTo(dd.getActualAmount()) < 0)
+                    else if (dd.getRevisedCollection().add(dd.getActualCollection()).compareTo(dd.getActualAmount()) < 0)
                         errors.rejectValue(String.format(REVISED_COLLECTION_FIELD, i), ERROR_PENALTY_NOT_COLLECTED);
                     editingCollection = Boolean.TRUE;
                     totalRevisedCollection = totalRevisedCollection.add(dd.getRevisedCollection());

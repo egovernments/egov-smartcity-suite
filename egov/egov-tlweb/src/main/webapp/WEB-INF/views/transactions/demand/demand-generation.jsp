@@ -68,6 +68,7 @@
                         <div class="panel-heading">
                             <div class="panel-title">
                                 <input type="hidden" name="licenseNumber" value="${licenseNumber}">
+                                <input type="hidden" name="forPrevYear" value="${forPrevYear}">
                                 <strong>Are you sure to generate demand for the license <c:out value="${licenseNumber}"/> for the installment year <c:out value="${financialYear}"/></strong>
                             </div>
                         </div>

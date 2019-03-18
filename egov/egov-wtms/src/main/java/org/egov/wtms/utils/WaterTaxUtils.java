@@ -137,6 +137,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTIONALLOW
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REASSIGNMENT;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_ADMIN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_BANKCOLLECTOROPERATOR;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_APPROVERROLE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_CITIZEN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_CSCOPERTAOR;
@@ -740,9 +741,19 @@ public class WaterTaxUtils {
     public Boolean isRoleAdmin(final User user) {
         return compareUserRoleWithParameter(user, ROLE_ADMIN);
     }
+    
+    public Boolean isRoleBankCollectorOperator(final User user) {
+        return compareUserRoleWithParameter(user, ROLE_BANKCOLLECTOROPERATOR);
+    }
 
-    public boolean compareUserRoleWithParameter(User user, String userRole) {
-        return user.getRoles().stream().anyMatch(role -> role != null && role.getName().equalsIgnoreCase(userRole));
+    public boolean compareUserRoleWithParameter(User user, String... userRole) {
+        Boolean roleCheck = Boolean.FALSE;
+        for(String roleCompare : userRole){
+            roleCheck=user.getRoles().stream().anyMatch(role -> role != null && role.getName().equalsIgnoreCase(roleCompare));
+            if (roleCheck)
+                break;
+        }
+        return roleCheck;
     }
 
     private String getConfigurationValueByKey(String key) {

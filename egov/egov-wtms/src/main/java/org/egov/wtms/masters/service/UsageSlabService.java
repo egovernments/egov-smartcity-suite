@@ -60,6 +60,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.validation.ValidationException;
+
 import java.util.List;
 
 @Service
@@ -74,6 +76,8 @@ public class UsageSlabService {
 
     @Transactional
     public void save(final UsageSlab usageSlab) {
+    	if(usageSlab.getFromVolume()==0)
+    		throw new ValidationException("err.slab.start.range.not.valid");
         usageSlabRepository.save(usageSlab);
     }
 

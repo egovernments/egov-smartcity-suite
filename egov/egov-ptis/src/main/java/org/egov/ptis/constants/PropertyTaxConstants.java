@@ -132,6 +132,9 @@ public interface PropertyTaxConstants {
     public static final String BUILT_UP_PROPERTY = "BuiltUpProperty";
     public static final String VACANT_PROPERTY = "VacantProperty";
     public static final String APARTMENT_PROPERTY = "Apartment";
+    
+    public static final String APPCONFIG_PENALTY_WAIVER_ENABLED = "PENALTY_WAIVER_ENABLED";
+    public static final String APPCONFIG_PENALTY_WAIVER_CUTOFF_DATE = "PENALTY_WAIVER_CUTOFF_DATE";
 
     // objection status CODE values
     public static final String OBJECTION_MODULE = "PTObejction";
@@ -741,7 +744,7 @@ public interface PropertyTaxConstants {
     public static final String ADDTIONAL_RULE_BIFURCATE_ASSESSMENT = "BIFURCATE ASSESSMENT";
     public static final String ADDTIONAL_RULE_PROPERTY_TRANSFER = "PROPERTY TRANSFER";
     public static final String ADDTIONAL_RULE_PARTIAL_TRANSFER = "PARTIAL TRANSFER";
-    public static final String ADDTIONAL_RULE_FULL_TRANSFER = "FULL TRANSFER";
+    public static final String ADDITIONAL_RULE_FULL_TRANSFER = "FULL TRANSFER";
     public static final String ADDTIONAL_RULE_REGISTERED_TRANSFER = "REGISTERED TRANSFER";
     public static final String WFSTATUS = "WFSTATUS";
     public static final String WFOWNER = "WFOWNER";
@@ -1258,6 +1261,7 @@ public interface PropertyTaxConstants {
 
     public static final String THIRD_PARTY_DEMAND_AMOUNT_GREATER_CODE = "PTIS-REST-46";
     public static final String THIRD_PARTY_DEMAND_AMOUNT_GREATER_MSG= "Paid Amount is greater than Total Amount to be paid";
+    public static final String THIRD_PARTY_DEMAND_AMOUNT_LESSER_MSG= "Paid Amount is lesser than Total Amount to be paid";
     
     public static final String THIRD_PARTY_AMOUNT_HAVING_DECIMALS_CODE = "PTIS-REST-47";
     public static final String THIRD_PARTY_AMOUNT_HAVING_DECIMALS_MSG= "Paid amount in decimal is not accepted.";

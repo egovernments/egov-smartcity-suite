@@ -85,7 +85,9 @@ import static org.egov.tl.utils.Constants.*;
 @ParentPackage("egov")
 @Results({@Result(name = NewTradeLicenseAction.NEW, location = "newTradeLicense-new.jsp"),
         @Result(name = ACKNOWLEDGEMENT, location = "newTradeLicense-acknowledgement.jsp"),
-        @Result(name = MESSAGE, location = "newTradeLicense-message.jsp"),
+        @Result(name = NewTradeLicenseAction.ERROR, location = "newTradeLicense-error.jsp"),
+        @Result(name = NewTradeLicenseAction.SUCCESS, location = "newTradeLicense-message.jsp"),
+        @Result(name = MESSAGE, type = "redirectAction", location = "success", params = {"message", "${message}"}),
         @Result(name = BEFORE_RENEWAL, location = "newTradeLicense-beforeRenew.jsp"),
         @Result(name = PRINTACK, location = "newTradeLicense-printAck.jsp")})
 public class NewTradeLicenseAction extends BaseLicenseAction {
@@ -93,7 +95,6 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     private static final long serialVersionUID = 1L;
 
     private String mode;
-    private String message;
     private String renewAppType;
     private transient List<LicenseDocumentType> documentTypes = new ArrayList<>();
     private transient Map<String, String> ownerShipTypeMap;
@@ -144,7 +145,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @Override
     @Action(value = "/newtradelicense/newTradeLicense-showForApproval")
     @SkipValidation
-    @ValidationErrorPage(MESSAGE)
+    @ValidationErrorPage(ERROR)
     public String showForApproval() {
         documentTypes = this.licenseDocumentTypeService.getDocumentTypesByApplicationType(license().getLicenseAppType());
         if (!license().isNewWorkflow()) {
@@ -209,7 +210,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
     @Override
     @SkipValidation
     @Action(value = "/newtradelicense/newTradeLicense-beforeRenew")
-    @ValidationErrorPage(MESSAGE)
+    @ValidationErrorPage(ERROR)
     public String beforeRenew() {
         prepareNewForm();
         documentTypes = licenseDocumentTypeService.getDocumentTypesForRenewApplicationType();
@@ -313,16 +314,8 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         }
     }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(final String message) {
-        this.message = message;
-    }
 
     public void prepareSave() {
-        tradeLicense.setId((Long) getSession().get("model.id"));
         prepareNewForm();
     }
 
@@ -332,12 +325,16 @@ public class NewTradeLicenseAction extends BaseLicenseAction {
         supportDocumentsValidationForApproval(tradeLicense);
         addNewDocuments();
         tradeLicenseService.save(tradeLicense);
-        addActionMessage(this.getText("license.saved.succesful"));
+        setMessage(this.getText("license.saved.succesful"));
         return MESSAGE;
     }
 
     public void prepareApprove() {
-        tradeLicense.setId((Long) getSession().get("model.id"));
         prepareNewForm();
+    }
+
+    @Action(value = "/newtradelicense/success")
+    public String successPage() {
+        return SUCCESS;
     }
 }

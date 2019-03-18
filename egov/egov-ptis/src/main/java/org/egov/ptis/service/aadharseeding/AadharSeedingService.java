@@ -52,7 +52,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.CIVILCOURTDECREE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_RULE_FULL_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_REASON_CODE_PARTISION;
 import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_REASON_CODE_SALE;
 import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_REASON_CODE_TITLEDEED;
@@ -178,7 +178,7 @@ public class AadharSeedingService extends GenericWorkFlowController {
                 .append("where mv.latitude is not null and mv.longitude is not null and mv.sitalArea > 10 and mv.basicPropertyID not in")
                 .append("(select basicPropertyID from PropertyMaterlizeView where usage <>'VACANTLAND' and totalBuiltUpArea <= 0) ")
                 .append("and mv.basicPropertyID in(select p.basicProperty from PropertyImpl p where ")
-                .append("p.propertyDetail.structure=false and p.status in('A','I') and p.id not in(select m.property from PropertyMutation m ")
+                .append("p.propertyDetail.structure=false and p.status in('A','I') and p.basicProperty not in(select m.basicProperty from PropertyMutation m ")
                 .append("where m.state.status <> 2) and p.basicProperty not in(select psv.referenceBasicProperty from PropertyStatusValues psv ")
                 .append("where psv.referenceBasicProperty is not null and psv.referenceBasicProperty.underWorkflow = true)) and ")
                 .append("mv.basicPropertyID not in(select basicProperty from AadharSeeding where status <> 'CANCELED') and mv.locality not in(select id from")
@@ -335,7 +335,7 @@ public class AadharSeedingService extends GenericWorkFlowController {
                 formData.setDocNo(StringUtils.isBlank(mutation.getDecreeNumber()) ? "N/A" : mutation.getDecreeNumber());
                 formData.setDocDate(mutation.getDecreeDate());
                 formData.setDocumentType(DOCTYPEBYMUTATIONREASON.get(mutation.getMutationReason().getCode()));
-            } else if (mutation.getType().equals(ADDTIONAL_RULE_FULL_TRANSFER)) {
+            } else if (mutation.getType().equals(ADDITIONAL_RULE_FULL_TRANSFER)) {
                 formData.setDocNo(mutation.getMutationRegistrationDetails().getDocumentNo());
                 formData.setDocDate(mutation.getMutationRegistrationDetails().getDocumentDate());
                 formData.setDocumentType(DOCTYPEBYMUTATIONREASON.get(mutation.getMutationReason().getCode()));

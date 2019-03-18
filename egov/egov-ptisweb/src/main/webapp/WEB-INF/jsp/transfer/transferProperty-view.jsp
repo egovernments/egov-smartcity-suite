@@ -90,7 +90,7 @@
 		 if(<s:property value="%{!mutationFeePaid}"/> && state == '<s:property value="%{model.state.nextAction}"/>'){
 			document.getElementById('Forward').style.visibility = 'hidden';
 		} 
-		if('<s:property value="%{type}" />' == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@ADDTIONAL_RULE_FULL_TRANSFER}" />'){
+		if('<s:property value="%{type}" />' == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@ADDITIONAL_RULE_FULL_TRANSFER}" />'){
 			document.getElementById('Reject').value="Cancel";
 		}
 		var userDesign = '<s:property value="%{currentDesignation}"/>';

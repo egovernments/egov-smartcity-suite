@@ -307,4 +307,9 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
     public void setTransanctionReferenceNumber(String transanctionReferenceNumber) {
         this.transanctionReferenceNumber = transanctionReferenceNumber;
     }
+    
+    @Override
+	public BigDecimal getMinAmountPayable() {
+		return getTotalAmount();
+	}
 }
