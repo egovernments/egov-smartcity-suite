@@ -56,7 +56,6 @@ import org.egov.commons.CFunction;
 import org.egov.commons.CVoucherHeader;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -106,8 +105,6 @@ public class JournalVoucherActionHelper {
     @Autowired
     @Qualifier("chartOfAccounts")
     private ChartOfAccounts chartOfAccounts;
-    @Autowired
-    private EisCommonService eisCommonService;
 
     @Transactional
     public CVoucherHeader createVoucher(List<VoucherDetails> billDetailslist, List<VoucherDetails> subLedgerlist,
@@ -128,8 +125,6 @@ public class JournalVoucherActionHelper {
                 voucherHeader.setStatus(FinancialConstants.CREATEDVOUCHERSTATUS);
             } else {
                 voucherHeader = transitionWorkFlow(voucherHeader, workflowBean);
-                if (!voucherHeader.isValidApprover())
-                    return voucherHeader;
                 voucherService.applyAuditing(voucherHeader.getState());
             }
             voucherService.create(voucherHeader);
@@ -179,8 +174,6 @@ public class JournalVoucherActionHelper {
 
             }
             voucherHeader = transitionWorkFlow(voucherHeader, workflowBean);
-            if (!voucherHeader.isValidApprover())
-                return voucherHeader;
             voucherService.applyAuditing(voucherHeader.getState());
             voucherService.persist(voucherHeader);
         } catch (final ValidationException e) {
@@ -233,10 +226,6 @@ public class JournalVoucherActionHelper {
             if (null == voucherHeader.getState()) {
                 final WorkFlowMatrix wfmatrix = voucherHeaderWorkflowService.getWfMatrix(voucherHeader.getStateType(), null,
                         null, null, workflowBean.getCurrentState(), null);
-                if (!eisCommonService.isValidAppover(wfmatrix, pos)) {
-                    voucherHeader.setValidApprover(Boolean.FALSE);
-                    return voucherHeader;
-                }
                 voucherHeader.transition().start().withSenderName(user.getName())
                         .withComments(workflowBean.getApproverComments())
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
@@ -251,10 +240,6 @@ public class JournalVoucherActionHelper {
                 }
                 final WorkFlowMatrix wfmatrix = voucherHeaderWorkflowService.getWfMatrix(voucherHeader.getStateType(), null,
                         null, null, voucherHeader.getCurrentState().getValue(), null);
-                if (!eisCommonService.isValidAppover(wfmatrix, pos)) {
-                    voucherHeader.setValidApprover(Boolean.FALSE);
-                    return voucherHeader;
-                }
                 voucherHeader.transition().progressWithStateCopy().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction(wfmatrix.getNextAction());

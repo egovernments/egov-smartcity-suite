@@ -149,8 +149,6 @@ public class EgBillregister extends StateAware<Position> implements java.io.Seri
     @SafeHtml
     @Transient
     private String approvalComent;
-    @Transient
-    private Boolean validApprover = Boolean.TRUE;
 
     public EgBillregister() {
     }
@@ -487,12 +485,4 @@ public class EgBillregister extends StateAware<Position> implements java.io.Seri
         CREATED, APPROVED, REJECTED, CANCELLED
     }
 
-	public Boolean isValidApprover() {
-		return validApprover;
-	}
-
-	public void setValidApprover(Boolean validApprover) {
-		this.validApprover = validApprover;
-	}
-    
 }

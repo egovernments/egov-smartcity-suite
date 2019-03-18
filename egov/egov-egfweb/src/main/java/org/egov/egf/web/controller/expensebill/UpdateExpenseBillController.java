@@ -204,6 +204,15 @@ public class UpdateExpenseBillController extends BaseBillController {
                 && !request.getParameter(APPROVAL_POSITION).isEmpty())
             approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
 
+        if (workFlowAction != null && FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workFlowAction)) {
+            if (!commonsUtil.isValidApprover(egBillregister, approvalPosition)) {
+                model.addAttribute("errorMessage", INVALID_APPROVER);
+                prepareBillDetailsForView(egBillregister);
+                expenseBillService.validateSubledgeDetails(egBillregister);
+                return populateOnException(egBillregister, model, request);
+            }
+        }
+        
         if (egBillregister.getState() != null
                 && (FinancialConstants.WORKFLOW_STATE_REJECTED.equals(egBillregister.getState().getValue())
                 || financialUtils.isBillEditable(egBillregister.getState()))) {
@@ -235,10 +244,6 @@ public class UpdateExpenseBillController extends BaseBillController {
                 if (null != workFlowAction) {
                     updatedEgBillregister = expenseBillService.update(egBillregister, approvalPosition, approvalComment, null,
                             workFlowAction, mode);
-                    if (!egBillregister.isValidApprover()) {
-                    	model.addAttribute("errorMessage", INVALID_APPROVER);
-                    	return populateOnException(updatedEgBillregister, model, request);
-                    }
                 }
             } catch (final ValidationException e) {
                 return populateOnException(egBillregister, model, request);

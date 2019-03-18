@@ -66,6 +66,7 @@ import org.egov.commons.CFunction;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.autonumber.ExpenseBillNumberGenerator;
+import org.egov.egf.commons.CommonsUtil;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -171,6 +172,9 @@ public class ContingentBillAction extends BaseBillAction {
 
     @Autowired
     private AutonumberServiceBeanResolver beanResolver;
+    
+    @Autowired
+    private CommonsUtil commonsUtil;
 
     @Override
     public StateAware getModel() {
@@ -354,6 +358,13 @@ public class ContingentBillAction extends BaseBillAction {
         if (LOGGER.isInfoEnabled())
             LOGGER.info(billDetailsTableCreditFinal);
         try {
+            populateWorkflowBean();
+            if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+                if (!commonsUtil.isValidApprover(bill, workflowBean.getApproverPositionId())) {
+                    addActionError(getText(INVALID_APPROVER));
+                    return NEW;
+                }
+            }
             voucherHeader.setVoucherDate(commonBean.getBillDate());
             voucherHeader.setVoucherNumber(commonBean.getBillNumber());
             String voucherDate = formatter1.format(voucherHeader.getVoucherDate());
@@ -379,12 +390,7 @@ public class ContingentBillAction extends BaseBillAction {
                 if (!isBillNumUnique(commonBean.getBillNumber()))
                     throw new ValidationException(Arrays.asList(new ValidationError("bill number", "Duplicate Bill Number : "
                             + commonBean.getBillNumber())));
-            populateWorkflowBean();
             bill = egBillRegisterService.createBill(bill, workflowBean, checkListsTable);
-            if (!bill.isValidApprover()) {
-            	addActionError(getText(INVALID_APPROVER));
-            	return NEW;
-            }
             addActionMessage(getText("cbill.transaction.succesful") + bill.getBillnumber());
             billRegisterId = bill.getId();
 

@@ -117,17 +117,13 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
     private String message = "";
     private VoucherTypeBean voucherTypeBean;
     public static final String EXEPMSG = "Exception occured in voucher service while updating voucher ";
-    private Integer departmentId;
     private String wfitemstate;
     private VoucherHelper voucherHelper;
-    // private boolean isRejectedVoucher=false;
 
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
     @Autowired
-    private ChartOfAccounts chartOfAccounts;
-    private ChartOfAccounts engine;
     private static final String ACTIONNAME = "actionName";
     private SimpleWorkflowService<CVoucherHeader> voucherWorkflowService;
     private String methodName = "";
@@ -279,6 +275,16 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
     public String update() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("JournalVoucherModifyAction | updateVoucher | Start");
+        populateWorkflowBean();
+        if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            if (!commonsUtil.isValidApprover(voucherHeader, workflowBean.getApproverPositionId())) {
+                if (voucherHeader.getId() == null)
+                    voucherHeader = (CVoucherHeader) voucherService.findById(Long.parseLong(parameters.get(VHID)[0]), false);
+                setOneFunctionCenterValue();
+                addActionError(getText(INVALID_APPROVER));
+                return EDIT_VOUCHER;
+            }
+        }
         target = "";
         loadSchemeSubscheme();
 
@@ -287,7 +293,6 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
             voucherHeader.setId(Long.valueOf(parameters.get(VHID)[0]));
         validateBeforeEdit(voucherHeader);
         CVoucherHeader oldVh = voucherHeader;
-        populateWorkflowBean();
         if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             voucherHeader = (CVoucherHeader) voucherService.findById(Long.parseLong(parameters.get(VHID)[0]), false);
             sendForApproval();
@@ -304,11 +309,6 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
             if (!validateData(billDetailslist, subLedgerlist)) {
                 voucherHeader = journalVoucherActionHelper.editVoucher(billDetailslist, subLedgerlist, voucherHeader,
                         voucherTypeBean, workflowBean, parameters.get("totaldbamount")[0]);
-                if (!voucherHeader.isValidApprover()) {
-                    setOneFunctionCenterValue();
-                    addActionError(getText(INVALID_APPROVER));
-                    return EDIT_VOUCHER;
-                }
                 target = "success";
             }
             else {
@@ -434,7 +434,6 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
     @SuppressWarnings("unchecked")
     private void loadApproverUser(final String type) {
         final String scriptName = "billvoucher.nextDesg";
-        departmentId = voucherService.getCurrentDepartment().getId().intValue();
         final Map<String, Object> map = voucherService.getDesgByDeptAndType(type, scriptName);
         if (null == map.get("wfitemstate")) {
             // If the department is mandatory show the logged in users assigned department only.

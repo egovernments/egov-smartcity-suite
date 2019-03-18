@@ -604,8 +604,16 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
             String cutOffDate1 = null;
             egBillregister = billsService.getBillRegisterById(Integer.valueOf(parameters.get(BILLID)[0]));
             validateBillVoucherDate(egBillregister,voucherHeader);
-            getMasterDataForBill();
             populateWorkflowBean();
+            getMasterDataForBill();
+            if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+                if (!commonsUtil.isValidApprover(voucherHeader, workflowBean.getApproverPositionId())) {
+                    voucher();
+                    mode = "";
+                    addActionError(getText(INVALID_APPROVER));
+                    return "billview";
+                }
+            }
             voucherHeader = preApprovedActionHelper.createVoucherFromBill(voucherHeader, workflowBean,
                     Long.parseLong(parameters.get(BILLID)[0]), voucherNumber, voucherHeader.getVoucherDate());
             if (!cutOffDate.isEmpty() && cutOffDate != null) {
@@ -723,13 +731,15 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
         try {
             voucherHeader = (CVoucherHeader) voucherService.findById(Long.parseLong(parameters.get(VHID)[0]), false);
             populateWorkflowBean();
-            voucherHeader = preApprovedActionHelper.sendForApproval(voucherHeader, workflowBean);
-            if (!voucherHeader.isValidApprover()) {
-                addActionError(getText(INVALID_APPROVER));
-                getHeaderMandateFields();
-                getMasterDataForBillVoucher();
-                return getResult();
+            if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+                if (!commonsUtil.isValidApprover(voucherHeader, workflowBean.getApproverPositionId())) {
+                    addActionError(getText(INVALID_APPROVER));
+                    getHeaderMandateFields();
+                    getMasterDataForBillVoucher();
+                    return getResult();
+                }
             }
+            voucherHeader = preApprovedActionHelper.sendForApproval(voucherHeader, workflowBean);
             type = billsService.getBillTypeforVoucher(voucherHeader);
             if (null == type)
                 type = "default";

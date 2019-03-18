@@ -159,9 +159,6 @@ public class CVoucherHeader extends StateAware<Position> {
     @SafeHtml
     @Transient
     private String voucherNumType;
-    
-    @Transient
-    private Boolean validApprover = Boolean.TRUE;
 
     @Override
     public Long getId() {
@@ -520,14 +517,6 @@ public class CVoucherHeader extends StateAware<Position> {
 
     public void setVoucherNumType(final String voucherNumType) {
         this.voucherNumType = voucherNumType;
-    }
-
-    public Boolean isValidApprover() {
-        return validApprover;
-    }
-
-    public void setValidApprover(Boolean validApprover) {
-        this.validApprover = validApprover;
     }
     
 }

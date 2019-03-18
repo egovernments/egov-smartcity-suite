@@ -319,8 +319,6 @@ public class ExpenseBillService {
                 createExpenseBillRegisterWorkflowTransition(updatedegBillregister, approvalPosition, approvalComent,
                         additionalRule,
                         workFlowAction);
-                if (!updatedegBillregister.isValidApprover())
-                	return updatedegBillregister;
             }
             updatedegBillregister = expenseBillRepository.save(updatedegBillregister);
         } else {
@@ -332,8 +330,6 @@ public class ExpenseBillService {
                 createExpenseBillRegisterWorkflowTransition(egBillregister, approvalPosition, approvalComent,
                         additionalRule,
                         workFlowAction);
-                if (!egBillregister.isValidApprover())
-                	return egBillregister;
             }
             updatedegBillregister = expenseBillRepository.save(egBillregister);
         }
@@ -439,11 +435,6 @@ public class ExpenseBillService {
                 wfmatrix = egBillregisterRegisterWorkflowService.getWfMatrix(egBillregister.getStateType(), null,
                         null, additionalRule, currState, null);
                 
-                if (!eisCommonService.isValidAppover(wfmatrix, wfInitiator.getPosition())) {
-                    egBillregister.setValidApprover(Boolean.FALSE);
-                    return;
-                }
-
                 if (stateValue.isEmpty())
                     stateValue = wfmatrix.getNextState();
 
@@ -479,11 +470,6 @@ public class ExpenseBillService {
                 wfmatrix = egBillregisterRegisterWorkflowService.getWfMatrix(egBillregister.getStateType(), null,
                         null, additionalRule, egBillregister.getCurrentState().getValue(), null);
 
-                if (!eisCommonService.isValidAppover(wfmatrix, wfInitiator.getPosition())) {
-                    egBillregister.setValidApprover(Boolean.FALSE);
-                    return;
-                }
-                
                 if (stateValue.isEmpty())
                     stateValue = wfmatrix.getNextState();
 
