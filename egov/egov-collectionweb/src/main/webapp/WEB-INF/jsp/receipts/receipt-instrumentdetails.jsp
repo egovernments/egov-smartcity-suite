@@ -63,7 +63,7 @@ apportionLoadFailureHandler= function(){
 	{
 	    // total of actual amt to be credited - can be removed
 		var billingtotal=document.forms[0].totalAmntToBeCollected.value;
-		var checkpartpaymentvalue=document.getElementById("partPaymentAllowed").value;
+	    var checkpartpaymentvalue=document.getElementById("partPaymentAllowed").value;
 		var checkoverridevalue=document.getElementById("overrideAccountHeads").value;
 		var collectiontotal=0,cashamount=0,chequeamount=0,cardamount=0,bankamount=0;
 
@@ -363,10 +363,13 @@ function validateTransactionNumber()
 	<td class="bluebox" width="21%"><s:text
 			name="billreceipt.payment.instrumentAmount" /><span
 		class="mandatory1">*</span></td>
-	<td class="bluebox" colspan="3"><s:textfield
+	<td class="bluebox" colspan="3">
+	 <input style="display:none" type="text"> 
+	 <input style="display:none" type="password">
+		<s:textfield
 			label="instrumentAmount" id="instrHeaderCash.instrumentAmount"
 			name="instrHeaderCash.instrumentAmount" maxlength="14" size="18"
-			cssClass="form-control patternvalidation text-right"
+			cssClass="form-control patternvalidation text-right" autocomplete="off"
 			data-pattern="number" placeholder="0"
 			onblur="callpopulateapportioningamountforbills();setCashInstrumentDetails(this);"
 			onkeyup="callpopulateapportioningamountforbills();setCashInstrumentDetails(this);" /></td>
@@ -398,7 +401,7 @@ function validateTransactionNumber()
 									class="mandatory1">*</span></td>
 								<td class="bluebox"><s:textfield label="instrumentNumber"
 										id="instrumentChequeNumber" maxlength="6" cssClass="form-control patternvalidation"
-										 data-pattern="number" 
+										 data-pattern="number"  autocomplete="off"
 										name="instrumentProxyList[0].instrumentNumber" size="18" /></td>
 								<td class="bluebox"><s:text
 										name="billreceipt.payment.chequedddate" /><span
@@ -480,6 +483,7 @@ function validateTransactionNumber()
 									<td class="bluebox2" width="20%"><s:textfield
 											label="instrumentNumber" id="instrumentChequeNumber"
 											maxlength="6"  cssClass="form-control patternvalidation" data-pattern="number" 
+											 autocomplete="off"
 											name="instrumentProxyList[%{#instrstatus.index}].instrumentNumber"
 											size="18" /></td>
 									<td class="bluebox2" width="23%"><s:text
@@ -519,7 +523,7 @@ function validateTransactionNumber()
 									<td class="bluebox2"><s:textfield label="instrumentAmount"
 											id="instrumentChequeAmount" maxlength="14"
 											name="instrumentProxyList[%{#instrstatus.index}].instrumentAmount"
-											size="18"
+											size="18"  autocomplete="off"
 											cssClass="form-control patternvalidation text-right"
 											data-pattern="number" placeholder="0"
 											onblur="callpopulateapportioningamountforbills();"
@@ -568,21 +572,25 @@ function validateTransactionNumber()
 									name="billreceipt.payment.cardno" /><span class="mandatory1">*</span></td>
 							<td class="bluebox"><s:textfield
 									label="instrHeaderCard.instrumentNumber"
-									id="instrHeaderCard.instrumentNumber" maxlength="4"
+									id="instrHeaderCard.instrumentNumber" maxlength="4" autocomplete="off"
 									name="instrHeaderCard.instrumentNumber"
 									value="%{instrHeaderCard.instrumentNumber}" size="18" /></td>
 							<td class="bluebox"><s:text
 									name="billreceipt.payment.transactionnumber" /><span
 								class="mandatory1">*</span></td>
-							<td class="bluebox"><s:textfield
+							<td class="bluebox">
+							<input style="display:none" type="password"> 
+							     <s:textfield 
 									label="instrHeaderCard.transactionNumber"
-									id="instrHeaderCard.transactionNumber" maxlength="14"
-									name="instrHeaderCard.transactionNumber" size="18"
+									id="instrHeaderCard.transactionNumber" maxlength="14" 
+									name="instrHeaderCard.transactionNumber" size="18" autocomplete="off"
 									value="%{instrHeaderCard.transactionNumber}" onblur="validateTransactionNumber();" /></td>
 								<td class="bluebox"><s:text
 									name="billreceipt.payment.reenter.transactionnumber" /><span
 								class="mandatory1">*</span></td>									
-							<td class="bluebos"> <s:password id="confirmtransactionNumber"  maxlength="14"
+							<td class="bluebox">
+							 <input style="display:none" type="password"> 
+							<s:password id="confirmtransactionNumber"  maxlength="14"  autocomplete="off"
 							                   name ="confirmtransactionNumber"  size="18" onblur="validateTransactionNumber();" /></td>		
 						</tr>
 
@@ -699,7 +707,7 @@ function validateTransactionNumber()
 									id="instrHeaderOnline.instrumentAmount"
 									name="instrHeaderOnline.instrumentAmount" maxlength="14"
 									size="18" cssClass="form-control patternvalidation text-right"
-									data-pattern="number" placeholder="0"
+									data-pattern="number" placeholder="0"  autocomplete="off"
 									onblur="callpopulateapportioningamountforbills();setOnlineInstrumentDetails(this);"
 									onkeyup="callpopulateapportioningamountforbills();setOnlineInstrumentDetails(this);" /></td>
 						</tr>
