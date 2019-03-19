@@ -104,7 +104,7 @@ function populateapportioningamountnew(){
 		var advanceRebatePresent=document.getElementById('receiptDetailList['+j+'].isActualDemand').value;
 		var amounttobecollected=document.getElementById('receiptDetailList['+j+'].cramountToBePaid').value;
 		totalCreditAmountToBePaid = eval(totalCreditAmountToBePaid)+eval(amounttobecollected);
-		if(advanceRebatePresent==0){
+		if(advanceRebatePresent=="false"){
 			zeroAccHeads=true;
 		}
 	}
@@ -318,6 +318,12 @@ function validateOnlineReceipt(){
 		window.scroll(0,0);
 		validation=false;
 	}
+	if(zeroAccHeads==true && billingtotal>0 && amount>billingtotal){
+		document.getElementById("receipt_error_area").innerHTML+='<s:text name="onlineReceipts.greatercollectioamounterror.errormessage" />' + '<br>';
+		dom.get("receipt_error_area").style.display="block";
+		window.scroll(0,0);
+		validation=false;
+	}
 	if(dom.get("paymentServiceId").value=="-1"){
 		document.getElementById("receipt_error_area").innerHTML+='<s:text name="onlineReceipts.selectpaymentgateway.errormessage" />' + '<br>';
 		dom.get("receipt_error_area").style.display="block";
@@ -425,7 +431,13 @@ function onLoad(){
     <div class="errorstyle">
       <s:actionmessage/>
     </div>
-</s:if>  
+</s:if> 
+<s:if test="%{hasErrors()}">
+	 <div class="errorstyle">
+	      <s:actionerror/>
+	      <s:fielderror/>
+	  </div>
+</s:if> 
 
 	<div class="maincontainer">
 		<s:form theme="simple" name="collDetails"

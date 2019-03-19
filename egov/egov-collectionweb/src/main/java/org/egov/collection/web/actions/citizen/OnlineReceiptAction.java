@@ -175,6 +175,7 @@ public class OnlineReceiptAction extends BaseFormAction {
         return NEW;
     }
 
+    @ValidationErrorPage(value = "new")
     @Action(value = "/citizen/onlineReceipt-saveNew")
     public String saveNew() {
         /**
