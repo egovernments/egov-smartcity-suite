@@ -152,7 +152,7 @@ public class DemandActivationSchedulerService {
                 .setParameter("pastDate", dateEffectiveDaysPast)
                 .setString("noticeType", PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE)
                 .setEntity("currInstallment", propertyTaxCommonUtils.getCurrentInstallment())
-                .setMaxResults(50).list();
+                .setMaxResults(100).list();
 
         LOGGER.debug("Exting from getQueryString");
         return properties;
