@@ -100,7 +100,7 @@ public class SewerageChargeCalculationServiceImpl implements SewerageChargeCalcu
                         return amountForNonResidential != null ? amountForResidential.add(amountForNonResidential)
                                 : amountForResidential;
                     else
-                        return amountForNonResidential != null ? amountForNonResidential : ZERO;
+                        return amountForNonResidential == null ? ZERO : amountForNonResidential;
                 } else {
                     noOfClosets = RESIDENTIAL.equals(sewerageConnectionDetail.getPropertyType())
                             ? sewerageConnectionDetail.getNoOfClosetsResidential()
@@ -111,7 +111,7 @@ public class SewerageChargeCalculationServiceImpl implements SewerageChargeCalcu
                 }
             }
         }
-        return amount != null ? amount : ZERO;
+        return amount == null ? ZERO : amount;
     }
 
     @Override
@@ -194,6 +194,6 @@ public class SewerageChargeCalculationServiceImpl implements SewerageChargeCalcu
                 }
             }
         }
-        return sewerageRate != null ? sewerageRate : ZERO;
+        return sewerageRate == null ? ZERO : sewerageRate;
     }
 }

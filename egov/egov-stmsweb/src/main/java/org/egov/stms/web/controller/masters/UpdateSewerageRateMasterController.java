@@ -92,17 +92,17 @@ public class UpdateSewerageRateMasterController {
                          final RedirectAttributes redirectAttrs, final BindingResult errors) throws ParseException {
         final SimpleDateFormat newFormat = new SimpleDateFormat(DATEFORMATHYPEN);
         final String todaysDate = newFormat.format(new Date());
-        final Date currentDate = newFormat.parse(todaysDate);
-
         final String effectiveFromDate = newFormat.format(sewerageRatesMaster.getFromDate());
-        final Date effectiveDate = newFormat.parse(effectiveFromDate);
+
 
         Boolean isMultipleClosetRatesAllowed = sewerageRatesMasterService.getMultipleClosetAppconfigValue();
         sewerageMasterDataValidator.validate(sewerageRatesMaster, errors, isMultipleClosetRatesAllowed);
         if (errors.hasErrors()) {
             model.addAttribute("sewerageRateMaster", sewerageRatesMaster);
-            return !isMultipleClosetRatesAllowed ? SEWERAGE_MONTHLY_RATES_UPDATE : SEWERAGE_MULTIPLE_CLOSET_UPDATE;
+            return isMultipleClosetRatesAllowed ? SEWERAGE_MULTIPLE_CLOSET_UPDATE : SEWERAGE_MONTHLY_RATES_UPDATE;
         }
+        final Date currentDate = newFormat.parse(todaysDate);
+        final Date effectiveDate = newFormat.parse(effectiveFromDate);
         if (effectiveDate.compareTo(currentDate) < 0) {
             model.addAttribute(MESSAGE, "msg.seweragerate.modification.rejected");
             return SEWERAGE_MONTHLY_RATES_UPDATE;

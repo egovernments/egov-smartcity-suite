@@ -80,9 +80,8 @@ public class SewerageMasterDataValidator extends SewerageApplicationCommonValida
     private static final String SEWERAGE_NOOFCLOSETS_NONDUPLICATE = "err.validate.duplicatenoofclosets";
     private static final String FROMDATE = "fromDate";
     private static final String NOTEMPTY_SEWERAGE_MONTHLY_RATE = "notempty.sewerage.monthlyrate";
-
-    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-    SimpleDateFormat newFormat = new SimpleDateFormat("dd-MM-yyyy");
+    private static final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    private static final SimpleDateFormat newFormat = new SimpleDateFormat("dd-MM-yyyy");
 
     @Autowired
     private DonationMasterService donationMasterService;
@@ -96,13 +95,13 @@ public class SewerageMasterDataValidator extends SewerageApplicationCommonValida
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "propertyType", NOTEMPTY_SEWERAGE_PROPERTYTYPE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, FROMDATE, NOTEMPTY_SEWERAGE_FROMDATE);
-        if (!swgRateappconfig)
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "monthlyRate", NOTEMPTY_SEWERAGE_MONTHLY_RATE);
-        else {
+        if (swgRateappconfig) {
             List<Integer> noOfClosets = new ArrayList<>();
             for (int i = 0; i < sewerageRatesMaster.getSewerageDetailMaster().size(); i++)
                 validateClosets(errors, sewerageRatesMaster, noOfClosets, i);
-        }
+        } else
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "monthlyRate", NOTEMPTY_SEWERAGE_MONTHLY_RATE);
+
         try {
             if (sewerageRatesMaster.getFromDate() != null) {
                 final Date currentDate = newFormat.parse(newFormat.format(new Date()));
