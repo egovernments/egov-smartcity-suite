@@ -47,6 +47,8 @@
  */
 package org.egov.restapi.model;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,20 +56,35 @@ import java.util.List;
 public class ContractorHelper implements Serializable {
 
     private static final long serialVersionUID = -1433064701524657608L;
+    @SafeHtml
     private String code;
+    @SafeHtml
     private String name;
+    @SafeHtml
     private String correspondenceAddress;
+    @SafeHtml
     private String paymentAddress;
+    @SafeHtml
     private String contactPerson;
+    @SafeHtml
     private String email;
+    @SafeHtml
     private String narration;
+    @SafeHtml
     private String panNumber;
+    @SafeHtml
     private String tinNumber;
+    @SafeHtml
     private String bankName;
+    @SafeHtml
     private String ifscCode;
+    @SafeHtml
     private String bankAccount;
+    @SafeHtml
     private String pwdApprovalCode;
+    @SafeHtml
     private String exemptionName;
+    @SafeHtml
     private String mobileNumber;
     private List<ContractorDetailsRequest> contractorDetails = new ArrayList<>();
 

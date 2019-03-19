@@ -47,17 +47,26 @@
  */
 package org.egov.restapi.model;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 import javax.validation.constraints.NotBlank;
 
 public class BudgetCheck {
 
     @NotBlank(message = "ULB code must be present")
+    @SafeHtml
     private String ulbCode;
+    @SafeHtml
     private String departmentCode;
+    @SafeHtml
     private String functionCode;
+    @SafeHtml
     private String schemeCode;
+    @SafeHtml
     private String subSchemeCode;
+    @SafeHtml
     private String fundCode;
+    @SafeHtml
     private String budgetHeadName;
 
     public String getUlbCode() {

@@ -47,6 +47,8 @@
  */
 package org.egov.restapi.model;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -57,6 +59,7 @@ public class BillDetails implements Serializable {
      */
     private static final long serialVersionUID = -5127775461515959368L;
 
+    @SafeHtml
     private String glcode;
 
     private BigDecimal debitAmount;

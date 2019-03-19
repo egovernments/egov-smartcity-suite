@@ -47,6 +47,8 @@
  */
 package org.egov.restapi.model;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -59,20 +61,32 @@ public class BillRegister implements Serializable {
      *
      */
     private static final long serialVersionUID = -1433064701524657608L;
+    @SafeHtml
     private String projectCode;
     private Date billDate;
+    @SafeHtml
     private String billType;
+    @SafeHtml
     private String nameOfWork;
+    @SafeHtml
     private String payTo;
     private BigDecimal billAmount;
+    @SafeHtml
     private String narration;
+    @SafeHtml
     private String partyBillNumber;
     private Date partyBillDate;
+    @SafeHtml
     private String departmentCode;
+    @SafeHtml
     private String functionCode;
+    @SafeHtml
     private String schemeCode;
+    @SafeHtml
     private String subSchemeCode;
+    @SafeHtml
     private String fundCode;
+    @SafeHtml
     private String checkListUrl;
     private List<BillDetails> billDetails = new ArrayList<>();
     private List<BillPayeeDetails> billPayeeDetails = new ArrayList<>();

@@ -47,16 +47,23 @@
  */
 package org.egov.restapi.model;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 import java.io.Serializable;
 import java.util.Date;
 
 public class ContractorDetailsRequest implements Serializable {
 
     private static final long serialVersionUID = -1433064701524657608L;
+    @SafeHtml
     private String departmentCode;
+    @SafeHtml
     private String registrationNumber;
+    @SafeHtml
     private String status;
+    @SafeHtml
     private String contractorClass;
+    @SafeHtml
     private String contractorCategory;
     private Date startDate;
     private Date endDate;

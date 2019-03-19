@@ -47,12 +47,16 @@
  */
 package org.egov.restapi.model;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 import java.io.Serializable;
 
 public class BudgetGroupHelper implements Serializable {
 
     private static final long serialVersionUID = -1433064701524657608L;
+    @SafeHtml
     private String[] accountCode;
+    @SafeHtml
     private String name;
 
     public String getName() {

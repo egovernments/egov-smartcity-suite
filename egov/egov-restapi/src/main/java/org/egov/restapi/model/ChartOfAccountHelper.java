@@ -47,17 +47,23 @@
  */
 package org.egov.restapi.model;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 import java.io.Serializable;
 
 public class ChartOfAccountHelper implements Serializable {
 
     private static final long serialVersionUID = -1433064701524657608L;
+    @SafeHtml
     private String glCode;
+    @SafeHtml
     private String name;
+    @SafeHtml
     private String purpose;
     private boolean budgetCheckReqired;
     private Character type;
     private boolean functionReqired;
+    @SafeHtml
     private String[] subledgerType;
 
     public String getGlCode() {

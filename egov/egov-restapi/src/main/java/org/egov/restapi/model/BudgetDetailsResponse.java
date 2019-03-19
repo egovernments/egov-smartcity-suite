@@ -47,15 +47,22 @@
  */
 package org.egov.restapi.model;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 import java.math.BigDecimal;
 
 public class BudgetDetailsResponse {
-
+    @SafeHtml
     private String departmentName;
+    @SafeHtml
     private String functionName;
+    @SafeHtml
     private String fundName;
+    @SafeHtml
     private String budgetHead;
+    @SafeHtml
     private String schemeName;
+    @SafeHtml
     private String subschemeName;
     private BigDecimal availableBalance;
     private BigDecimal budgetAllocated;
