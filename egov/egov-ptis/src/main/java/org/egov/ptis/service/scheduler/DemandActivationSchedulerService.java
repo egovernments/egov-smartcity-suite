@@ -140,7 +140,7 @@ public class DemandActivationSchedulerService {
 
         final String stringQuery = "SELECT ptd FROM PtNotice n, PtNotice pvr, Ptdemand ptd LEFT JOIN FETCH ptd.egptProperty p "
                 + "LEFT JOIN FETCH p.basicProperty bp WHERE n.basicProperty = bp AND pvr.basicProperty = bp AND bp.active = true "
-                + "AND bp.status.statusCode <> :bpStatus AND p.status = 'I' AND ptd.egInstallmentMaster = :currInstallment "
+                + "AND p.status = 'I' AND ptd.egInstallmentMaster = :currInstallment "
                 + "AND pvr.noticeType = :noticeType AND n.noticeDate > p.createdDate AND pvr.noticeDate > p.createdDate "
                 + "AND n.noticeDate < :pastDate AND pvr.noticeDate < :pastDate ";
 
@@ -148,7 +148,6 @@ public class DemandActivationSchedulerService {
 
         @SuppressWarnings("unchecked")
         final List<Ptdemand> properties = basicPropertyService.getSession().createQuery(stringQuery)
-                .setString("bpStatus", PropertyTaxConstants.STATUS_OBJECTED_STR)
                 .setParameter("pastDate", dateEffectiveDaysPast)
                 .setString("noticeType", PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE)
                 .setEntity("currInstallment", propertyTaxCommonUtils.getCurrentInstallment())
