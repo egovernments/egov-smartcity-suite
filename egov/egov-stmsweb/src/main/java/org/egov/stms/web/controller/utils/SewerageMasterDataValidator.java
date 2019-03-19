@@ -48,17 +48,18 @@
 
 package org.egov.stms.web.controller.utils;
 
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.stms.masters.entity.DonationMaster;
 import org.egov.stms.masters.entity.SewerageRatesMaster;
 import org.egov.stms.masters.service.DonationMasterService;
 import org.egov.stms.masters.service.SewerageRatesMasterService;
 import org.jfree.util.Log;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -73,7 +74,6 @@ public class SewerageMasterDataValidator extends SewerageApplicationCommonValida
     private static final String NOTEMPTY_SEWERAGE_FROMDATE = "notempty.sewerage.fromdate";
     private static final String NOTEMPTY_SEWERAGE_NOOFCLOSETS = "notempty.sewerage.noofclosets";
     private static final String NOTEMPTY_SEWERAGE_DONATIONAMT = "notempty.sewerage.donationamount";
-    private static final Logger LOG = LoggerFactory.getLogger(SewerageMasterDataValidator.class);
     private static final String SEWERAGE_FROMDATE_LESSTHAN_CURRENTDATE = "err.validate.effective.date";
     private static final String SEWERAGE_FROMDATE_LESSTHAN_ACTIVEDATE = "err.fromdate.lessthan.activedate";
     private static final String SEWERAGE_NOOFCLOSETS_NONZERO = "err.numberofclosets.reject.0";
@@ -90,19 +90,24 @@ public class SewerageMasterDataValidator extends SewerageApplicationCommonValida
     @Autowired
     private SewerageRatesMasterService sewerageRatesMasterService;
 
+
     // validate sewerage monthly rate screen inputs
     public void validateMonthlyRate(final SewerageRatesMaster sewerageRatesMaster, final Boolean swgRateappconfig, final Errors errors) {
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "propertyType", NOTEMPTY_SEWERAGE_PROPERTYTYPE);
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "fromDate", NOTEMPTY_SEWERAGE_FROMDATE);
-        if (swgRateappconfig)
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "monthlyRate", NOTEMPTY_SEWERAGE_MONTHLY_RATE);
-
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, FROMDATE, NOTEMPTY_SEWERAGE_FROMDATE);
+        if (!swgRateappconfig)
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "monthlyRate", NOTEMPTY_SEWERAGE_MONTHLY_RATE);
+        else {
+            List<Integer> noOfClosets = new ArrayList<>();
+            for (int i = 0; i < sewerageRatesMaster.getSewerageDetailMaster().size(); i++)
+                validateClosets(errors, sewerageRatesMaster, noOfClosets, i);
+        }
         try {
             if (sewerageRatesMaster.getFromDate() != null) {
                 final Date currentDate = newFormat.parse(newFormat.format(new Date()));
                 final List<SewerageRatesMaster> sewerageRateList = sewerageRatesMasterService.getLatestActiveRecord(
-                        sewerageRatesMaster.getPropertyType(), true);
+                        sewerageRatesMaster.getPropertyType());
                 if (!sewerageRateList.isEmpty()) {
                     final SewerageRatesMaster activeRecord = sewerageRateList.get(0);
                     validateSewerageRateFromDate(sewerageRatesMaster, errors, currentDate, activeRecord);
@@ -116,20 +121,52 @@ public class SewerageMasterDataValidator extends SewerageApplicationCommonValida
 
     // validate sewerage effective from rate
     private void validateSewerageRateFromDate(final SewerageRatesMaster sewerageRatesMaster, final Errors errors,
-            final Date currentDate, final SewerageRatesMaster activeRecord) {
+                                              final Date currentDate, final SewerageRatesMaster activeRecord) {
         if (activeRecord.getFromDate().compareTo(currentDate) <= 0
                 && sewerageRatesMaster.getFromDate().compareTo(currentDate) < 0)
             errors.rejectValue(FROMDATE, SEWERAGE_FROMDATE_LESSTHAN_CURRENTDATE);
         else if (activeRecord.getFromDate().compareTo(new Date()) >= 0
                 && sewerageRatesMaster.getFromDate().compareTo(activeRecord.getFromDate()) < 0)
             errors.rejectValue(FROMDATE, SEWERAGE_FROMDATE_LESSTHAN_ACTIVEDATE,
-                    new String[] { formatter.format(activeRecord.getFromDate()) },
+                    new String[]{formatter.format(activeRecord.getFromDate())},
                     SEWERAGE_FROMDATE_LESSTHAN_ACTIVEDATE);
     }
 
-    // validate sewerage monthly rate update screen inputs
-    public void validateSewerageMonthlyRateUpdate(final SewerageRatesMaster sewerageRatesMaster, final Errors errors) {
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "monthlyRate", "notempty.sewerage.monthlyrate");
+    public void validate(@ModelAttribute SewerageRatesMaster sewerageRatesMaster, BindingResult errors, Boolean isMultipleClosetRatesAllowed) {
+        if (isMultipleClosetRatesAllowed)
+            validateMultipleClosetRateMaster(errors, sewerageRatesMaster);
+        else
+            validateSewerageMonthlyRateUpdate(errors);
+    }
+
+    private void validateMultipleClosetRateMaster(final Errors errors, final SewerageRatesMaster sewerageRatesMaster) {
+        List<Integer> noOfClosets = new ArrayList<>();
+        for (int i = 0; i < sewerageRatesMaster.getSewerageDetailMaster().size(); i++) {
+            if (sewerageRatesMaster.getSewerageDetailMaster().get(i).getNoOfClosets() == null)
+                errors.rejectValue("sewerageDetailMaster[" + i + "].noOfClosets", NOTEMPTY_SEWERAGE_NOOFCLOSETS);
+            if (sewerageRatesMaster.getSewerageDetailMaster().get(i).getAmount() == null)
+                errors.rejectValue("sewerageDetailMaster[" + i + "].amount", NOTEMPTY_SEWERAGE_DONATIONAMT);
+            validateClosets(errors, sewerageRatesMaster, noOfClosets, i);
+        }
+    }
+
+    private void validateSewerageMonthlyRateUpdate(final Errors errors) {
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "monthlyRate", NOTEMPTY_SEWERAGE_MONTHLY_RATE);
+    }
+
+    private void validateClosets(final Errors errors, final SewerageRatesMaster sewerageRatesMaster,
+                                 final List<Integer> noOfClosetArray,
+                                 final int i) {
+        if (sewerageRatesMaster.getSewerageDetailMaster().get(i).getNoOfClosets() != null
+                && !sewerageRatesMaster.getSewerageDetailMaster().get(i).isMarkedForRemoval())
+            if (sewerageRatesMaster.getSewerageDetailMaster().get(i).getNoOfClosets() == 0)
+                errors.rejectValue("sewerageDetailMaster[" + i + "].noOfClosets", SEWERAGE_NOOFCLOSETS_NONZERO);
+            else if (noOfClosetArray.contains(sewerageRatesMaster.getSewerageDetailMaster().get(i).getNoOfClosets()))
+                errors.rejectValue("sewerageDetailMaster[" + i + "].noOfClosets", SEWERAGE_NOOFCLOSETS_NONDUPLICATE,
+                        new String[]{sewerageRatesMaster.getSewerageDetailMaster().get(i).getNoOfClosets().toString()},
+                        null);
+            else
+                noOfClosetArray.add(sewerageRatesMaster.getSewerageDetailMaster().get(i).getNoOfClosets());
     }
 
     // validate sewerage donation master screen input
@@ -157,7 +194,7 @@ public class SewerageMasterDataValidator extends SewerageApplicationCommonValida
                 for (int i = 0; i < donationMaster.getDonationDetail().size(); i++)
                     validateNumberOfClosets(errors, donationMaster, noOfClosetArray, i);
             } catch (final ParseException e) {
-                LOG.error("Parse Exception" + e);
+                throw new ApplicationRuntimeException("Error parsing date in dd-MM-yyyy format", e);
             }
 
         }
@@ -177,14 +214,14 @@ public class SewerageMasterDataValidator extends SewerageApplicationCommonValida
 
     // validate donation master number of closets
     private void validateNumberOfClosets(final Errors errors, final DonationMaster donationMaster,
-            final List<Integer> noOfClosetArray,
-            final int i) {
+                                         final List<Integer> noOfClosetArray,
+                                         final int i) {
         if (donationMaster.getDonationDetail().get(i).getNoOfClosets() != null)
             if (donationMaster.getDonationDetail().get(i).getNoOfClosets() == 0)
                 errors.rejectValue("donationDetail[" + i + "].noOfClosets", SEWERAGE_NOOFCLOSETS_NONZERO);
             else if (noOfClosetArray.contains(donationMaster.getDonationDetail().get(i).getNoOfClosets()))
                 errors.rejectValue("donationDetail[" + i + "].noOfClosets", SEWERAGE_NOOFCLOSETS_NONDUPLICATE,
-                        new String[] { donationMaster.getDonationDetail().get(i).getNoOfClosets().toString() },
+                        new String[]{donationMaster.getDonationDetail().get(i).getNoOfClosets().toString()},
                         null);
             else
                 noOfClosetArray.add(donationMaster.getDonationDetail().get(i).getNoOfClosets());
@@ -192,8 +229,8 @@ public class SewerageMasterDataValidator extends SewerageApplicationCommonValida
 
     // validate donation master screen effective from date
     private void validateDonationMasterFromDate(final Errors errors, final DonationMaster donationMaster,
-            final SimpleDateFormat formatter,
-            final Date currentDate, final List<DonationMaster> donationList) {
+                                                final SimpleDateFormat formatter,
+                                                final Date currentDate, final List<DonationMaster> donationList) {
         final DonationMaster existingActiveRecord = donationList.get(0);
         if (existingActiveRecord.getFromDate().compareTo(currentDate) <= 0
                 && donationMaster.getFromDate().compareTo(currentDate) < 0)
@@ -202,7 +239,8 @@ public class SewerageMasterDataValidator extends SewerageApplicationCommonValida
         else if (existingActiveRecord.getFromDate().compareTo(new Date()) >= 0
                 && donationMaster.getFromDate().compareTo(existingActiveRecord.getFromDate()) < 0)
             errors.rejectValue(FROMDATE, SEWERAGE_FROMDATE_LESSTHAN_ACTIVEDATE,
-                    new String[] { formatter.format(existingActiveRecord.getFromDate()) }, SEWERAGE_FROMDATE_LESSTHAN_ACTIVEDATE);
+                    new String[]{formatter.format(existingActiveRecord.getFromDate())}, SEWERAGE_FROMDATE_LESSTHAN_ACTIVEDATE);
     }
+
 
 }

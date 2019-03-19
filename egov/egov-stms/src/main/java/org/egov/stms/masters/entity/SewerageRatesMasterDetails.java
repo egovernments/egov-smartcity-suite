@@ -47,22 +47,19 @@
  */
 package org.egov.stms.masters.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+
+import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
+
+import static org.egov.stms.masters.entity.SewerageRatesMasterDetails.SEQ_SEWERAGERATEDETAILMASTER;
 
 @Entity
 @Table(name = "egswtax_sewerageratedetail_master")
-@SequenceGenerator(name = SewerageRatesMasterDetails.SEQ_SEWERAGERATEDETAILMASTER, sequenceName = SewerageRatesMasterDetails.SEQ_SEWERAGERATEDETAILMASTER, allocationSize = 1)
-public class SewerageRatesMasterDetails {
+@SequenceGenerator(name = SEQ_SEWERAGERATEDETAILMASTER, sequenceName = SEQ_SEWERAGERATEDETAILMASTER, allocationSize = 1)
+public class SewerageRatesMasterDetails extends AbstractPersistable<Long> {
     public static final String SEQ_SEWERAGERATEDETAILMASTER = "SEQ_EGSWTAX_SEWERAGERATEDETAIL_MASTER";
 
     @Id
@@ -80,7 +77,10 @@ public class SewerageRatesMasterDetails {
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "sewerageratemaster", nullable = false)
-    private SewerageRatesMaster sewerageratemaster;
+    private SewerageRatesMaster sewerageRateMaster;
+
+    @Transient
+    private boolean markedForRemoval;
 
     public Long getId() {
         return id;
@@ -106,29 +106,33 @@ public class SewerageRatesMasterDetails {
         this.amount = amount;
     }
 
-    public SewerageRatesMaster getSewerageratemaster() {
-        return sewerageratemaster;
+    public SewerageRatesMaster getSewerageRateMaster() {
+        return sewerageRateMaster;
     }
 
-    public void setSewerageratemaster(final SewerageRatesMaster sewerageratemaster) {
-        this.sewerageratemaster = sewerageratemaster;
+    public void setSewerageRateMaster(SewerageRatesMaster sewerageRateMaster) {
+        this.sewerageRateMaster = sewerageRateMaster;
+    }
+
+    public boolean isMarkedForRemoval() {
+        return markedForRemoval;
+    }
+
+    public void setMarkedForRemoval(boolean markedForRemoval) {
+        this.markedForRemoval = markedForRemoval;
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final SewerageRatesMasterDetails other = (SewerageRatesMasterDetails) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        return true;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SewerageRatesMasterDetails that = (SewerageRatesMasterDetails) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(sewerageRateMaster, that.sewerageRateMaster);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, sewerageRateMaster);
+    }
 }

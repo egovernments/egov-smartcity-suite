@@ -46,85 +46,88 @@
   ~
   --%>
 
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 <form:form method="get" action=""
-	class="form-horizontal form-groups-bordered"
-	modelAttribute="sewerageRatesMaster" id="sewerageRatesMasterform">
-	<div class="row">
-		<div class="col-md-12">
-			<c:if test="${not empty message}">
-				<div class="alert alert-success" role="alert">
-					<spring:message code="${message}" />
-				</div>
-			</c:if>
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-					<strong><spring:message code="lbl.sewerage.rates.details"></spring:message></strong>
-					</div>
-				</div>
-				<div class="panel-body">
-					<div class="row add-border">
-						<div class="col-md-3 col-xs-6 add-margin">
-							<spring:message code="lbl.propertytype" />
-						</div>
-						<div id="propertyType"
-							class="col-md-3 col-xs-6 add-margin view-content">
-							<c:out value="${sewerageRatesMaster.propertyType}" />
-						</div>
-						<div  class="col-md-3 col-xs-6 add-margin">
-							<spring:message code="lbl.effective.fromdate" />
-						</div>
-						<div class="col-md-3 col-xs-6 add-margin view-content">
-							<fmt:formatDate pattern="dd/MM/yyyy"
-								value="${sewerageRatesMaster.fromDate}" />
-						</div>
-					</div>
-				</div>
-			</div>
-			<div>
-				<table class="table table-bordered" id="seweragerateMasterViewTable" style="width:50%; margin:0 auto;">
-					<thead>
-						<tr>
-							<th class="text-center"><spring:message code="lbl.noofclosets"/></th>
-							<th class="text-right"><spring:message code="lbl.monthlyrate" /></th>	
-						</tr>	
-					</thead>
-					<tbody>
-						<c:forEach var="sewerageRates" items="${sewerageRatesMaster.sewerageDetailmaster}" varStatus="status" >
-							<tr>
-								<td>
-									<input type="text" class="form-control patternvalidation donationRatesNoOfClosets" 
-									style="text-align: center; font-size: 12px;" data-pattern="number" 
-									id="sewerageDetailmaster[${status.index}].noOfClosets" 
-									value="${sewerageRates.noOfClosets}"  name="sewerageDetailmaster[${status.index}].noOfClosets" 
-									maxlength="8" required="required" readonly="readonly"/>
-								</td>
-								<td>
-									<input type="text" class="form-control patternvalidation donationRatesAmount" 
-									id="sewerageDetailmaster[${status.index}].amount"  
-									style="text-align: right; font-size: 12px;" value="${sewerageRates.amount}" data-pattern="decimalvalue" 
-									name="sewerageDetailmaster[${status.index}].amount"  maxlength="8" required="required"  readonly="readonly"/>
-								</td>
-							</tr>
-						</c:forEach>
-					</tbody>
-				</table>
-			</div>
-		</div>
-	</div>
-	</br>
-	<div class="row text-center">
-		<div class="row">
-			<a href="javascript:void(0)" class="btn btn-default"
-				onclick="self.close()"><spring:message code="lbl.close" /></a>
-		</div>
-	</div>
+           class="form-horizontal form-groups-bordered"
+           modelAttribute="sewerageRatesMaster" id="sewerageRatesMasterform">
+    <div class="row">
+        <div class="col-md-12">
+            <c:if test="${not empty message}">
+                <div class="alert alert-success" role="alert">
+                    <spring:message code="${message}"/>
+                </div>
+            </c:if>
+            <div class="panel panel-primary" data-collapsed="0">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <strong><spring:message code="lbl.sewerage.rates.details"></spring:message></strong>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="row add-border">
+                        <div class="col-md-3 col-xs-6 add-margin">
+                            <spring:message code="lbl.propertytype"/>
+                        </div>
+                        <div id="propertyType"
+                             class="col-md-3 col-xs-6 add-margin view-content">
+                            <c:out value="${sewerageRatesMaster.propertyType}"/>
+                        </div>
+                        <div class="col-md-3 col-xs-6 add-margin">
+                            <spring:message code="lbl.effective.fromdate"/>
+                        </div>
+                        <div class="col-md-3 col-xs-6 add-margin view-content">
+                            <fmt:formatDate pattern="dd/MM/yyyy"
+                                            value="${sewerageRatesMaster.fromDate}"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <table class="table table-bordered" id="seweragerateMasterViewTable" style="width:50%; margin:0 auto;">
+                    <thead>
+                    <tr>
+                        <th class="text-center"><spring:message code="lbl.noofclosets"/></th>
+                        <th class="text-right"><spring:message code="lbl.monthlyrate"/></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <c:forEach var="sewerageRates" items="${sewerageRatesMaster.sewerageDetailMaster}"
+                               varStatus="status">
+                        <tr>
+                            <td>
+                                <input type="text" class="form-control patternvalidation donationRatesNoOfClosets"
+                                       style="text-align: center; font-size: 12px;" data-pattern="number"
+                                       id="sewerageDetailMaster[${status.index}].noOfClosets"
+                                       value="${sewerageRates.noOfClosets}"
+                                       name="sewerageDetailMaster[${status.index}].noOfClosets"
+                                       maxlength="8" required="required" readonly="readonly"/>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control patternvalidation donationRatesAmount"
+                                       id="sewerageDetailMaster[${status.index}].amount"
+                                       style="text-align: right; font-size: 12px;" value="${sewerageRates.amount}"
+                                       data-pattern="decimalvalue"
+                                       name="sewerageDetailMaster[${status.index}].amount" maxlength="8"
+                                       required="required" readonly="readonly"/>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    </br>
+    <div class="row text-center">
+        <div class="row">
+            <a href="javascript:void(0)" class="btn btn-default"
+               onclick="self.close()"><spring:message code="lbl.close"/></a>
+        </div>
+    </div>
 </form:form>
-<script
-	src="<cdn:url  value='/resources/js/masters/sewerageRatesSuccess.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/js/masters/sewerageRatesSuccess.js?rnd=${app_release_no}'/>"></script>

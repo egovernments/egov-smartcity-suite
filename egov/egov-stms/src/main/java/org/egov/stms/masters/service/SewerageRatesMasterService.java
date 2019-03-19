@@ -48,12 +48,13 @@
 package org.egov.stms.masters.service;
 
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.stms.masters.entity.SewerageRatesMaster;
 import org.egov.stms.masters.entity.SewerageRatesMasterDetails;
 import org.egov.stms.masters.entity.enums.PropertyType;
 import org.egov.stms.masters.pojo.SewerageRatesSearch;
 import org.egov.stms.masters.repository.SewerageRatesMasterRepository;
+import org.egov.stms.utils.SewerageTaxUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
@@ -71,6 +72,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static org.egov.stms.utils.constants.SewerageTaxConstants.ACTIVE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FROMDATE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGE_MONTHLY_RATES;
+
+
 @Service
 @Transactional(readOnly = true)
 public class SewerageRatesMasterService {
@@ -78,7 +84,7 @@ public class SewerageRatesMasterService {
     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
     @Autowired
-    private AppConfigValueService appConfigValuesService;
+    private SewerageTaxUtils sewerageTaxUtils;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -96,12 +102,20 @@ public class SewerageRatesMasterService {
     }
 
     @Transactional
+    public SewerageRatesMaster updateMultipleClosetRates(final SewerageRatesMaster sewerageRatesMaster) {
+        sewerageRatesMaster.getSewerageDetailMaster().removeIf(SewerageRatesMasterDetails::isMarkedForRemoval);
+        for (SewerageRatesMasterDetails sewerageRatesMasterDetails : sewerageRatesMaster.getSewerageDetailMaster())
+            sewerageRatesMasterDetails.setSewerageRateMaster(sewerageRatesMaster);
+        return sewerageRatesMasterRepository.saveAndFlush(sewerageRatesMaster);
+    }
+
+    @Transactional
     public SewerageRatesMaster update(final SewerageRatesMaster sewerageRatesMaster) {
         return sewerageRatesMasterRepository.saveAndFlush(sewerageRatesMaster);
     }
 
     public List<SewerageRatesMaster> findAll() {
-        return sewerageRatesMasterRepository.findAll(new Sort(Sort.Direction.DESC, "propertyType", "fromDate"));
+        return sewerageRatesMasterRepository.findAll(new Sort(Sort.Direction.DESC, "propertyType", FROMDATE));
     }
 
     public List<SewerageRatesMaster> findAllByConnectionType(final PropertyType propertyType) {
@@ -113,20 +127,20 @@ public class SewerageRatesMasterService {
     }
 
     public SewerageRatesMaster findByPropertyTypeAndFromDateAndActive(final PropertyType propertyType, final Date fromDate,
-            final boolean active) {
+                                                                      final boolean active) {
         return sewerageRatesMasterRepository.findByPropertyTypeAndFromDateAndActive(propertyType, fromDate, active);
     }
 
     public SewerageRatesMaster findByPropertyTypeAndActive(final PropertyType propertyType,
-            final boolean active) {
+                                                           final boolean active) {
         return sewerageRatesMasterRepository.findByPropertyTypeAndActive(propertyType, active);
     }
 
-    public Double getSewerageMonthlyRatesByPropertytype(PropertyType propertyType) {
+    public Double getSewerageMonthlyRatesByPropertyType(PropertyType propertyType) {
         return sewerageRatesMasterRepository.getSewerageMonthlyRatesByPropertytype(propertyType);
     }
 
-    public List<SewerageRatesMaster> getLatestActiveRecord(final PropertyType propertyType, final boolean active) {
+    public List<SewerageRatesMaster> getLatestActiveRecord(final PropertyType propertyType) {
 
         return sewerageRatesMasterRepository.getLatestActiveRecord(propertyType, true, new Date());
     }
@@ -135,109 +149,68 @@ public class SewerageRatesMasterService {
         return sewerageRatesMasterRepository.findFromDateByPropertyType(propertyType);
     }
 
-    public List<SewerageRatesSearch> getSewerageMasters(final PropertyType propertyType, final String date, final String status) {
-        List<SewerageRatesSearch> sewerageMasterSearchRecords = new ArrayList<SewerageRatesSearch>();
-        final List<SewerageRatesMaster> sewerageMasterRecords = searchConnectionRecordsBySearchParams(propertyType, date, status);
+    public List<SewerageRatesSearch> getSewerageMasters(SewerageRatesSearch sewerageRatesSearch) {
+        List<SewerageRatesSearch> sewerageMasterSearchRecords = new ArrayList<>();
+        final List<SewerageRatesMaster> sewerageMasterRecords = searchConnectionRecordsBySearchParams(sewerageRatesSearch);
         for (SewerageRatesMaster sewerageMasterRecord : sewerageMasterRecords) {
-            SewerageRatesSearch swsearch = new SewerageRatesSearch();
-            swsearch.setPropertyType(sewerageMasterRecord.getPropertyType().toString());
-            swsearch.setMonthlyRate(sewerageMasterRecord.getMonthlyRate());
-            swsearch.setFromDate(sewerageMasterRecord.getFromDate().toString());
-            swsearch.setModifiedDate(sewerageMasterRecord.getLastModifiedDate().toString());
-            swsearch.setId(sewerageMasterRecord.getId());
-            swsearch.setActive(sewerageMasterRecord.isActive());
-            sewerageMasterSearchRecords.add(swsearch);
+            SewerageRatesSearch sewerageRateSearch = new SewerageRatesSearch();
+            sewerageRateSearch.setPropertyType(sewerageMasterRecord.getPropertyType().toString());
+            sewerageRateSearch.setMonthlyRate(sewerageMasterRecord.getMonthlyRate());
+            sewerageRateSearch.setFromDate(sewerageMasterRecord.getFromDate().toString());
+            sewerageRateSearch.setModifiedDate(sewerageMasterRecord.getLastModifiedDate().toString());
+            sewerageRateSearch.setId(sewerageMasterRecord.getId());
+            sewerageRateSearch.setActive(sewerageMasterRecord.isActive());
+            sewerageMasterSearchRecords.add(sewerageRateSearch);
 
-            String todaysdate = myFormat.format(new Date());
+            String todaysDate = myFormat.format(new Date());
             String effectiveFromDate = myFormat.format(sewerageMasterRecord.getFromDate());
 
-            if (effectiveFromDate.compareTo(todaysdate) < 0) {
-                swsearch.setEditable(false);
+            if (effectiveFromDate.compareTo(todaysDate) < 0) {
+                sewerageRateSearch.setEditable(false);
             } else {
-                swsearch.setEditable(true);
+                sewerageRateSearch.setEditable(true);
             }
-
         }
-
         return sewerageMasterSearchRecords;
     }
 
-    // TODO : Clean code..
-    public List<SewerageRatesMaster> searchConnectionRecordsBySearchParams(final PropertyType propertyType, final String date,
-            final String status) {
-
+    public List<SewerageRatesMaster> searchConnectionRecordsBySearchParams(SewerageRatesSearch sewerageRatesSearch) {
         final Criteria connectionCriteria = entityManager.unwrap(Session.class)
                 .createCriteria(SewerageRatesMaster.class, "donation");
-
-        if (null != propertyType) {
+        if (sewerageRatesSearch.getPropertyType() != null) {
+            PropertyType propertyType = PropertyType.valueOf(sewerageRatesSearch.getPropertyType());
             connectionCriteria.add(Restrictions.eq("propertyType", propertyType));
         }
-        if (null != date) {
-            String formattedDate = null;
-            Date fDate = null;
+        if (sewerageRatesSearch.getFromDate() != null) {
+            Date fDate;
             try {
-                formattedDate = formatter.format(myFormat.parse(date));
-                fDate = formatter.parse(formattedDate);
-
+                final SimpleDateFormat dateFormatterWithSlash = new SimpleDateFormat("dd/MM/yyyy");
+                String effectiveFromDate = formatter.format(dateFormatterWithSlash.parse(sewerageRatesSearch.getFromDate()));
+                fDate = formatter.parse(effectiveFromDate);
             } catch (ParseException e) {
-
+                throw new ApplicationRuntimeException(
+                        "From Date format should be in dd-MM-yyyy", e);
             }
-            connectionCriteria.add(Restrictions.eq("fromDate", fDate));
+            connectionCriteria.add(Restrictions.eq(FROMDATE, fDate));
         }
-        if (null != status) {
-            if (status.equals("ACTIVE")) {
-                boolean var = true;
-                connectionCriteria.add(Restrictions.eq("active", var));
-            } else {
-                boolean var = false;
-                connectionCriteria.add(Restrictions.eq("active", var));
-            }
+        if (sewerageRatesSearch.getStatus() == null) {
+            connectionCriteria.add(Restrictions.eq(ACTIVE, true));
+        } else if ("ACTIVE".equals(sewerageRatesSearch.getStatus())) {
+            connectionCriteria.add(Restrictions.eq(ACTIVE, true));
         } else {
-            boolean a = true;
-            connectionCriteria.add(Restrictions.eq("active", a));
+            connectionCriteria.add(Restrictions.eq(ACTIVE, false));
         }
-        connectionCriteria.addOrder(Order.desc("fromDate"));
+        connectionCriteria.addOrder(Order.desc(FROMDATE));
         return connectionCriteria.list();
     }
 
-    public AppConfigValues getAppConfigValuesForSeweargeRate(final String moduleName, final String keyName) {
-        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, keyName);
-        return !appConfigValues.isEmpty() ? appConfigValues.get(0) : null;
-    }
-
-    @Transactional
-    public void updateSewerageRateMaster(final SewerageRatesMaster sewerageRateMaster, final SewerageRatesMaster sewerageRateMstr,
-            final List<SewerageRatesMasterDetails> existingSewerageDetailList) {
-        if (!existingSewerageDetailList.isEmpty()) {
-
-            for (final SewerageRatesMasterDetails dtlObject : existingSewerageDetailList)
-                if (!sewerageRateMaster.getSewerageDetailmaster().contains(dtlObject))
-                    sewerageRateMstr.deleteSewerageRateDetail(dtlObject);
-            for (final SewerageRatesMasterDetails dtlMaster : sewerageRateMaster.getSewerageDetailmaster())
-                if (dtlMaster.getId() == null) {
-                    final SewerageRatesMasterDetails sewerageDetailObject = new SewerageRatesMasterDetails();
-                    sewerageDetailObject.setNoOfClosets(dtlMaster.getNoOfClosets());
-                    sewerageDetailObject.setAmount(dtlMaster.getAmount());
-                    sewerageDetailObject.setSewerageratemaster(sewerageRateMstr);
-                    sewerageRateMstr.addSewerageRateDetail(sewerageDetailObject);
-                } else if (dtlMaster.getId() != null && existingSewerageDetailList.contains(dtlMaster))
-                    updateSewerageRatedetail(sewerageRateMstr, dtlMaster);
-        }
-        update(sewerageRateMstr);
-    }
-
-    private void updateSewerageRatedetail(final SewerageRatesMaster sewerageMstr, final SewerageRatesMasterDetails dtlMaster) {
-        for (final SewerageRatesMasterDetails dtlObject : sewerageMstr.getSewerageDetailmaster())
-            if (dtlObject.getId().equals(dtlMaster.getId())) {
-                dtlObject.setAmount(dtlMaster.getAmount());
-                dtlObject.setNoOfClosets(dtlMaster.getNoOfClosets());
-            }
-
-    }
-
-    public Double getSewerageMonthlyRatesByPropertytype(Integer noOfClosetsResidential, PropertyType propertyType) {
+    public Double getSewerageMonthlyRatesByClosetsAndPropertyType(Integer noOfClosetsResidential, PropertyType propertyType) {
         return sewerageRatesMasterRepository.getSewerageMonthlyRatesBytNoOfClosetsAndPropertytype(noOfClosetsResidential,
                 propertyType);
     }
 
+    public Boolean getMultipleClosetAppconfigValue() {
+        final AppConfigValues appconfigvalue = sewerageTaxUtils.getAppConfigValues(SEWERAGE_MONTHLY_RATES);
+        return appconfigvalue != null && "YES".equalsIgnoreCase(appconfigvalue.getValue()) ? true : false;
+    }
 }
