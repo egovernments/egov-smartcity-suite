@@ -73,6 +73,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,7 +114,7 @@ public class FinancialMasterService {
         return functionHelpers;
     }
 
-    private void createFunctionHelper(final List<FunctionHelper> functionHelpers, final CFunction cFunction) {
+    private void createFunctionHelper(final List<FunctionHelper> functionHelpers, @Valid final CFunction cFunction) {
         final FunctionHelper functionHelper = new FunctionHelper();
         functionHelper.setCode(cFunction.getCode());
         functionHelper.setName(cFunction.getName());

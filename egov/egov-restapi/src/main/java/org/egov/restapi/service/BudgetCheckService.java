@@ -76,6 +76,8 @@ import org.egov.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
+
 @Service
 public class BudgetCheckService {
 
@@ -103,7 +105,7 @@ public class BudgetCheckService {
     @Autowired
     private DepartmentService departmentService;
 
-    public List<RestErrors> validateMandatoryFields(final BudgetCheck budgetCheck) {
+    public List<RestErrors> validateMandatoryFields(@Valid final BudgetCheck budgetCheck) {
         RestErrors restErrors;
         final List<RestErrors> errors = new ArrayList<>();
         if (StringUtils.isBlank(budgetCheck.getDepartmentCode())
@@ -137,7 +139,7 @@ public class BudgetCheckService {
         return errors;
     }
 
-    public String getPlanningBudgetAvailable(final BudgetCheck budgetCheck) {
+    public String getPlanningBudgetAvailable(@Valid final BudgetCheck budgetCheck) {
         BigDecimal budgetAvailable;
         final Scheme scheme = schemeService.findByCode(budgetCheck.getSchemeCode());
         final SubScheme subScheme = subSchemeService.findByCode(budgetCheck.getSubSchemeCode());
@@ -161,7 +163,7 @@ public class BudgetCheckService {
         return budgetAvailable.toString();
     }
     
-    public List<BudgetDetail> getBudgetAvailableDetails(final BudgetCheck budgetCheck) {
+    public List<BudgetDetail> getBudgetAvailableDetails(@Valid final BudgetCheck budgetCheck) {
         List<BudgetDetail> budgetDetails;
         Scheme scheme = null;
         SubScheme subScheme = null;
@@ -196,7 +198,7 @@ public class BudgetCheckService {
         return budgetDetails;
     }
 
-    public BigDecimal getAllocatedBudget(final BudgetCheck budgetCheck) {
+    public BigDecimal getAllocatedBudget(@Valid final BudgetCheck budgetCheck) {
         BigDecimal  budgetAmountForYear, planningPercentForYear;
         final Scheme scheme = schemeService.findByCode(budgetCheck.getSchemeCode());
         final SubScheme subScheme = subSchemeService.findByCode(budgetCheck.getSubSchemeCode());
@@ -252,7 +254,7 @@ public class BudgetCheckService {
         }
     }
     
-    public List<RestErrors> validateBudget(BudgetCheck budgetCheck) {
+    public List<RestErrors> validateBudget(@Valid BudgetCheck budgetCheck) {
         List<RestErrors> errors = new ArrayList<>();
         RestErrors restErrors;
         if (budgetCheck.getDepartmentCode() != null

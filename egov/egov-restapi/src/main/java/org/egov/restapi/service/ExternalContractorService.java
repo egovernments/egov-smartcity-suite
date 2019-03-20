@@ -70,6 +70,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.Valid;
+
 @Service
 @Transactional(readOnly = true)
 public class ExternalContractorService {
@@ -109,7 +111,7 @@ public class ExternalContractorService {
         return createContractorData(contractor);
     }
 
-    public List<RestErrors> validateContactorToCreate(final ContractorHelper contractorHelper) {
+    public List<RestErrors> validateContactorToCreate(@Valid final ContractorHelper contractorHelper) {
         List<RestErrors> errors = new ArrayList<>();
         RestErrors restErrors = null;
         errors = validateMandatoryFields(contractorHelper, errors);
@@ -126,7 +128,7 @@ public class ExternalContractorService {
         return errors;
     }
 
-    private List<RestErrors> validateMandatoryFields(final ContractorHelper contractorHelper, List<RestErrors> errors) {
+    private List<RestErrors> validateMandatoryFields(@Valid final ContractorHelper contractorHelper, List<RestErrors> errors) {
         RestErrors restErrors = null;
         if (StringUtils.isBlank(contractorHelper.getCode())) {
             restErrors = new RestErrors();
@@ -226,7 +228,7 @@ public class ExternalContractorService {
         return errors;
     }
 
-    private List<RestErrors> validateNonMandatorFields(final ContractorHelper contractorHelper, final List<RestErrors> errors,
+    private List<RestErrors> validateNonMandatorFields(@Valid final ContractorHelper contractorHelper, final List<RestErrors> errors,
             RestErrors restErrors) {
         if (StringUtils.isNotBlank(contractorHelper.getCorrespondenceAddress())
                 && !contractorHelper.getCorrespondenceAddress().matches(ALPHANUMERICWITHALLSPECIALCHAR)) {
@@ -308,7 +310,8 @@ public class ExternalContractorService {
         return errors;
     }
 
-    public List<RestErrors> validateContactorToUpdate(final ContractorHelper contractorHelper) {
+    public List<RestErrors> validateContactorToUpdate(@Valid final ContractorHelper contractorHelper) {
+
         List<RestErrors> errors = new ArrayList<>();
         RestErrors restErrors = null;
         if (StringUtils.isNotBlank(contractorHelper.getCode())) {
@@ -325,20 +328,20 @@ public class ExternalContractorService {
         return errors;
     }
 
-    public Contractor populateContractorToCreate(final ContractorHelper contractorHelper) {
+    public Contractor populateContractorToCreate(@Valid final ContractorHelper contractorHelper) {
         final Contractor contractor = new Contractor();
         populateContractor(contractorHelper, contractor);
 
         return contractor;
     }
 
-    public Contractor populateContractorToUpdate(final ContractorHelper contractorHelper) {
+    public Contractor populateContractorToUpdate(@Valid final ContractorHelper contractorHelper) {
         final Contractor contractor = contractorService.getContractorByCode(contractorHelper.getCode());
         populateContractor(contractorHelper, contractor);
         return contractor;
     }
 
-    private void populateContractor(final ContractorHelper contractorHelper, final Contractor contractor) {
+    private void populateContractor(@Valid final ContractorHelper contractorHelper, final Contractor contractor) {
         contractor.setCode(contractorHelper.getCode());
         contractor.setName(contractorHelper.getName());
         if (StringUtils.isNotBlank(contractorHelper.getBankName()))
@@ -368,7 +371,7 @@ public class ExternalContractorService {
         populateContractorDetails(contractorHelper, contractor);
     }
 
-    private void populateContractorDetails(final ContractorHelper contractorHelper, final Contractor contractor) {
+    private void populateContractorDetails(@Valid final ContractorHelper contractorHelper, final Contractor contractor) {
         contractor.getContractorDetails().clear();
         if (!contractorHelper.getContractorDetails().isEmpty())
             for (ContractorDetailsRequest cd : contractorHelper.getContractorDetails()) {
@@ -393,11 +396,11 @@ public class ExternalContractorService {
             }
     }
 
-    public Contractor saveContractor(final Contractor contractor) {
+    public Contractor saveContractor(@Valid final Contractor contractor) {
         return contractorService.createContractor(contractor);
     }
 
-    public Contractor updateContractor(final Contractor contractor) {
+    public Contractor updateContractor(@Valid final Contractor contractor) {
         return contractorService.updateContractor(contractor);
     }
 
@@ -411,12 +414,12 @@ public class ExternalContractorService {
         return contractorHelpers;
     }
 
-    private void createContractorData(final List<ContractorHelper> contractorHelpers, final Contractor contractor) {
+    private void createContractorData(final List<ContractorHelper> contractorHelpers, @Valid final Contractor contractor) {
         final ContractorHelper contractorHelper = createContractorData(contractor);
         contractorHelpers.add(contractorHelper);
     }
 
-    private ContractorHelper createContractorData(final Contractor contractor) {
+    private ContractorHelper createContractorData(@Valid final Contractor contractor) {
         final ContractorHelper contractorHelper = new ContractorHelper();
         contractorHelper.setCode(contractor.getCode());
         contractorHelper.setName(contractor.getName());
@@ -438,7 +441,7 @@ public class ExternalContractorService {
         return contractorHelper;
     }
 
-    private void populateContractorDetailsData(final Contractor contractor, final ContractorHelper contractorHelper) {
+    private void populateContractorDetailsData(@Valid final Contractor contractor, @Valid final ContractorHelper contractorHelper) {
         if (!contractor.getContractorDetails().isEmpty()) {
             for (ContractorDetail c : contractor.getContractorDetails()) {
                 if (c != null) {
@@ -473,7 +476,7 @@ public class ExternalContractorService {
         }
     }
 
-    private void createContractorHeaderData(final Contractor contractor, final ContractorHelper contractorHelper) {
+    private void createContractorHeaderData(@Valid final Contractor contractor, @Valid final ContractorHelper contractorHelper) {
         if (StringUtils.isNotBlank(contractor.getCorrespondenceAddress()))
             contractorHelper.setCorrespondenceAddress(contractor.getCorrespondenceAddress());
         else
@@ -498,7 +501,7 @@ public class ExternalContractorService {
         populateContractorDataToView(contractor, contractorHelper);
     }
 
-    private void populateContractorDataToView(final Contractor contractor, final ContractorHelper contractorHelper) {
+    private void populateContractorDataToView(@Valid final Contractor contractor, @Valid final ContractorHelper contractorHelper) {
         if (StringUtils.isNotBlank(contractor.getPanNumber()))
             contractorHelper.setPanNumber(contractor.getPanNumber());
         else

@@ -85,6 +85,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -147,7 +148,7 @@ public class BillService {
         return entityManager.unwrap(Session.class);
     }
 
-    public List<RestErrors> validateBillRegister(final BillRegister billRegister) {
+    public List<RestErrors> validateBillRegister(@Valid final BillRegister billRegister) {
         final List<RestErrors> errors = new ArrayList<>();
         RestErrors restErrors;
         validateMandatoryFields(billRegister, errors);
@@ -219,7 +220,7 @@ public class BillService {
         return errors;
     }
 
-    private void validateMandatoryFields(final BillRegister billRegister, final List<RestErrors> errors) {
+    private void validateMandatoryFields(@Valid final BillRegister billRegister, final List<RestErrors> errors) {
         RestErrors restErrors;
         if (StringUtils.isBlank(billRegister.getDepartmentCode())
                 || departmentService.getDepartmentByCode(billRegister.getDepartmentCode()) == null) {
@@ -262,7 +263,7 @@ public class BillService {
 
     }
 
-    private void validateBillDates(final BillRegister billRegister, final List<RestErrors> errors) {
+    private void validateBillDates(@Valid final BillRegister billRegister, final List<RestErrors> errors) {
         final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         RestErrors restErrors;
         if (billRegister.getBillDate() == null) {
@@ -296,7 +297,7 @@ public class BillService {
         }
     }
 
-    private void validateBillDetails(final BillRegister billRegister, final List<RestErrors> errors) {
+    private void validateBillDetails(@Valid final BillRegister billRegister, final List<RestErrors> errors) {
         RestErrors restErrors;
         if (billRegister.getBillDetails() == null || billRegister.getBillDetails().isEmpty()) {
             restErrors = new RestErrors();
@@ -312,7 +313,7 @@ public class BillService {
             validateDetails(billRegister, errors);
     }
 
-    private void validateDetails(final BillRegister billRegister, final List<RestErrors> errors) {
+    private void validateDetails(@Valid final BillRegister billRegister, final List<RestErrors> errors) {
         RestErrors restErrors;
         Accountdetailtype projectCodeAccountDetailType = null;
         Boolean isProjectCodeSubledger = false;
@@ -431,7 +432,7 @@ public class BillService {
         }
     }
 
-    private void validateBillPayeeDetails(final BillRegister billRegister, final List<RestErrors> errors) {
+    private void validateBillPayeeDetails(@Valid final BillRegister billRegister, final List<RestErrors> errors) {
         RestErrors restErrors;
         if (billRegister.getBillPayeeDetails() == null || billRegister.getBillPayeeDetails().isEmpty()) {
             restErrors = new RestErrors();
@@ -544,7 +545,7 @@ public class BillService {
         }
     }
 
-    public void populateBillRegister(final EgBillregister egBillregister, final BillRegister billRegister)
+    public void populateBillRegister(@Valid final EgBillregister egBillregister, @Valid final BillRegister billRegister)
             throws ClassNotFoundException {
         populateEgBillregister(egBillregister, billRegister);
         populateEgBillregisterMis(egBillregister, billRegister);
@@ -553,7 +554,7 @@ public class BillService {
             populateEgBilldetails(egBillregister, details, billRegister);
     }
 
-    private void populateEgBillregister(final EgBillregister egBillregister, final BillRegister billRegister) {
+    private void populateEgBillregister(@Valid final EgBillregister egBillregister, @Valid final BillRegister billRegister) {
         egBillregister.setBilldate(billRegister.getBillDate());
         egBillregister.setBilltype(billRegister.getBillType());
         egBillregister.setBillamount(billRegister.getBillAmount());
@@ -563,7 +564,7 @@ public class BillService {
                 WorksConstants.APPROVED));
     }
 
-    private void populateEgBillregisterMis(final EgBillregister egBillregister, final BillRegister billRegister) {
+    private void populateEgBillregisterMis(@Valid final EgBillregister egBillregister, @Valid final BillRegister billRegister) {
         final EgBillregistermis egBillregistermis = new EgBillregistermis();
         egBillregistermis.setFunction(functionService.findByCode(billRegister.getFunctionCode()));
         egBillregistermis.setFund(fundService.findByCode(billRegister.getFundCode()));
@@ -588,8 +589,8 @@ public class BillService {
      * Bill details population is currently handled for Works Bills, separate population logic should be written if other bills
      * has to be supported
      */
-    private void populateEgBilldetails(final EgBillregister egBillregister, final BillDetails details,
-                                       final BillRegister billRegister) throws ClassNotFoundException {
+    private void populateEgBilldetails(@Valid final EgBillregister egBillregister, @Valid final BillDetails details,
+                                       @Valid final BillRegister billRegister) throws ClassNotFoundException {
         final EgBilldetails egBilldetails = new EgBilldetails();
         Accountdetailtype contractorAccountDetailType;
         Accountdetailtype projectCodeAccountDetailType;
@@ -620,8 +621,8 @@ public class BillService {
     }
 
     @SuppressWarnings("unchecked")
-    private void populateEgBillPayeedetails(final EgBilldetails egBilldetails, final BillPayeeDetails payeeDetails,
-                                            final BillDetails details) throws ClassNotFoundException {
+    private void populateEgBillPayeedetails(@Valid final EgBilldetails egBilldetails, @Valid final BillPayeeDetails payeeDetails,
+                                            @Valid final BillDetails details) throws ClassNotFoundException {
         final EgBillPayeedetails billPayeedetails = new EgBillPayeedetails();
         if (payeeDetails.getGlcode() != null && payeeDetails.getGlcode().equals(details.getGlcode())) {
             if (payeeDetails.getCreditAmount() != null && payeeDetails.getCreditAmount().longValue() > 0)
@@ -649,13 +650,13 @@ public class BillService {
         }
     }
 
-    public void createProjectCode(final BillRegister billRegister) {
+    public void createProjectCode(@Valid final BillRegister billRegister) {
         final ProjectCode projectCode = projectCodeService.findActiveProjectCodeByCode(billRegister.getProjectCode());
         if (projectCode == null)
             projectCodeService.createProjectCode(billRegister.getProjectCode(), billRegister.getNameOfWork());
     }
 
-    public EgBillregister createBill(final EgBillregister egBillregister) {
+    public EgBillregister createBill(@Valid final EgBillregister egBillregister) {
         return expenseBillService.create(egBillregister, null, null, null, "Create And Approve");
     }
 
