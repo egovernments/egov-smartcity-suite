@@ -3965,19 +3965,16 @@ public class PropertyService {
         /**
          * CHANGE START
          *
-         * COPY REBATE COLUMN WHILE COPYING
-         * MODIFIED AS PART OF PROPERTY TAX WAIVER GO 53
+         * COPY REBATE COLUMN WHILE COPYING MODIFIED AS PART OF PROPERTY TAX WAIVER GO 53
          */
 
-        HashMap <Installment,HashMap<String,BigDecimal>> threeWayMap = new HashMap<>();
+        HashMap<Installment, HashMap<String, BigDecimal>> threeWayMap = new HashMap<>();
 
         /**
          * CHANGE END
          */
 
-
         if (ptDemandOld != null) {
-
 
             for (final EgDemandDetails dmdDetails : ptDemandOld.getEgDemandDetails()) {
                 totalColl = totalColl.add(dmdDetails.getAmtCollected());
@@ -3986,8 +3983,7 @@ public class PropertyService {
             /**
              * CHANGE START
              *
-             * COPY REBATE COLUMN WHILE COPYING
-             * MODIFIED AS PART OF PROPERTY TAX WAIVER GO 53
+             * COPY REBATE COLUMN WHILE COPYING MODIFIED AS PART OF PROPERTY TAX WAIVER GO 53
              */
             final Map<Installment, Set<EgDemandDetails>> installmentWiseDemandDetailsOld = getEgDemandDetailsSetByInstallment(
                     ptDemandOld.getEgDemandDetails());
@@ -3996,13 +3992,17 @@ public class PropertyService {
 
             for (final Installment installment : installments) {
                 for (final String demandReason : DEMAND_REASONS) {
-                    final EgDemandDetails oldDemandDetail = getEgDemandDetailsForReason(installmentWiseDemandDetailsOld.get(installment), demandReason);
-                    if(oldDemandDetail == null) { continue; }
+                    final EgDemandDetails oldDemandDetail = getEgDemandDetailsForReason(
+                            installmentWiseDemandDetailsOld.get(installment), demandReason);
+                    if (oldDemandDetail == null) {
+                        continue;
+                    }
                     LOGGER.debug(format("penalty.waiver installment: %s, oldDemandDetail: %s", installment, oldDemandDetail));
-                    if(oldDemandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(DEMANDRSN_CODE_PENALTY_FINES)) {
-                        HashMap<String,BigDecimal> hm = new HashMap<>();
+                    if (oldDemandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                            .equals(DEMANDRSN_CODE_PENALTY_FINES)) {
+                        HashMap<String, BigDecimal> hm = new HashMap<>();
                         hm.put(demandReason, oldDemandDetail.getAmtRebate());
-                        threeWayMap.put(installment, hm );
+                        threeWayMap.put(installment, hm);
                     }
                 }
             }
@@ -4029,16 +4029,15 @@ public class PropertyService {
                     /**
                      * CHANGE START
                      *
-                     * COPY REBATE COLUMN WHILE COPYING
-                     * MODIFIED AS PART OF PROPERTY TAX WAIVER GO 53
+                     * COPY REBATE COLUMN WHILE COPYING MODIFIED AS PART OF PROPERTY TAX WAIVER GO 53
                      */
                     LOGGER.debug(format(
                             "penalty.waiver installment: %s, demandReason: %s, threeWayMap.get(installment): %s",
                             installment,
                             demandReason,
-                            threeWayMap.get(installment)
-                    ));
-                    if(demandReason.equals(DEMANDRSN_CODE_PENALTY_FINES) && threeWayMap.get(installment) != null) {
+                            threeWayMap.get(installment)));
+                    if (newDemandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                            .equals(DEMANDRSN_CODE_PENALTY_FINES) && threeWayMap.get(installment) != null) {
                         BigDecimal amtWaivedOff = threeWayMap.get(installment).get(demandReason);
                         newDemandDetail.setAmtRebate(amtWaivedOff);
                     }
@@ -4060,14 +4059,14 @@ public class PropertyService {
                     advanceDemandDetails.getAmtCollected().add(totalColl);
             }
         }
-//        if(ptDemandOld != null && ptDemandNew != null ) {
-//            Set<EgDemandDetails>  oldEgDd = ptDemandOld.getEgDemandDetails();
-//            Set<EgDemandDetails>  newEgDd = ptDemandNew.getEgDemandDetails();
-//
-//            for(EgDemandDetails edd:oldEgDd) {
-//
-//            }
-//        }
+        // if(ptDemandOld != null && ptDemandNew != null ) {
+        // Set<EgDemandDetails> oldEgDd = ptDemandOld.getEgDemandDetails();
+        // Set<EgDemandDetails> newEgDd = ptDemandNew.getEgDemandDetails();
+        //
+        // for(EgDemandDetails edd:oldEgDd) {
+        //
+        // }
+        // }
     }
 
     /**
