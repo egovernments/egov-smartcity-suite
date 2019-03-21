@@ -214,6 +214,7 @@ public class WaterTaxSearchService {
         List<String> connectionActions = new ArrayList<>();
 
         if (publicRole && ACTIVE.equals(connection.getStatus())) {
+            connectionActions.add(COLLECT_CHARGES);
             connectionActions.add(VIEW_DCB_SCREEN);
         } else if (superUserRole) {
             connectionActions.add(VIEW_DCB_SCREEN);
