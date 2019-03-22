@@ -4036,8 +4036,8 @@ public class PropertyService {
                             installment,
                             demandReason,
                             threeWayMap.get(installment)));
-                    if (newDemandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                            .equals(DEMANDRSN_CODE_PENALTY_FINES) && threeWayMap.get(installment) != null) {
+                    if (newDemandDetail != null && demandReason.equals(DEMANDRSN_CODE_PENALTY_FINES)
+                            && threeWayMap.get(installment) != null) {
                         BigDecimal amtWaivedOff = threeWayMap.get(installment).get(demandReason);
                         newDemandDetail.setAmtRebate(amtWaivedOff);
                     }
