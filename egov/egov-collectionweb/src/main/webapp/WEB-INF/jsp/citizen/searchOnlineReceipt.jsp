@@ -62,7 +62,7 @@ function onBodyLoad(){
 	var el = document.forms[0].elements;
 	
 	for (i = 0; i < cnt.length; i++){
-		if(paymentstatus[i].value=='Success' || paymentstatus[i].value=='Failure' || paymentstatus[i].value=='Refunded'){  
+		if(paymentstatus[i].value=='Success' || paymentstatus[i].value=='Refunded'){  
 		    statuscode[i].setAttribute('disabled',true);
 		    txId[i].setAttribute('disabled',true);
 		    txDate[i].setAttribute('disabled',true);
@@ -140,7 +140,7 @@ function transitionStates(){
 	       		document.getElementById("stateerror"+(i+1)).style.display = "none";
 	       }
 	    }
-	    if(paymentstatus[i].value=='Pending'){
+	    if(paymentstatus[i].value=='Pending' || paymentstatus[i].value=='Failure'){
 	    	if(!(statuscode[i].value==-1 || statuscode[i].value=='ONLINE_STATUS_SUCCESS' || 
 	    	    statuscode[i].value=='ONLINE_STATUS_REFUNDED' || 
 	    	    statuscode[i].value=='TO_BE_REFUNDED')){
