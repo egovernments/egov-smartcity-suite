@@ -129,7 +129,6 @@ $('#ward').change(function(){
 		data: {
 			wardId : jQuery('#ward').val()
 		},
-		cache: false,
 		dataType: "json",
 		success: function (response) {
 			jQuery('#block').html("");

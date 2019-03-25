@@ -102,7 +102,7 @@
 		if (rejectbutton != null && rejectbutton == 'Approve') {
 			$('#approvalComent').removeAttr('required');
 		}
-		document.forms[0].submit;
+        $('form').submit;
 		return true;
 	}
 </script>

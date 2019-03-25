@@ -112,7 +112,7 @@ $(document).ready(function()
 					  }
 					  else if ($('form').valid()){
 						  validateWorkFlowApprover(action);
-						  document.forms[0].submit();
+                          $('form').submit();
 					  }
 				}
 				
@@ -131,7 +131,7 @@ $(document).ready(function()
 						  }
 						  else {
 							  validateWorkFlowApprover(action);
-							  document.forms[0].submit();
+                              $('form').submit();
 						  }
 					}
 					
@@ -140,7 +140,7 @@ $(document).ready(function()
 		}  
 		 
 		 if((action == 'Generate Estimation Notice')) {
-			 document.forms[0].submit();	
+             $('form').submit();
 		 }
 		 else if(status=='WORKORDERGENERATED') {
 			 if(!validateTapExecutionDate())
@@ -149,7 +149,7 @@ $(document).ready(function()
 		 
 		validateWorkFlowApprover(action); 
 		if($('form').valid())
-			document.forms[0].submit();	
+            $('form').submit();
 		return;
 	});	
 		
