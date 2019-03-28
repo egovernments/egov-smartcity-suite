@@ -535,8 +535,10 @@ public class UpdateConnectionController extends GenericConnectionController {
             meterCostService.validateMeterMakeForPipesize(waterConnectionDetails.getPipeSize().getId());
         
         if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType()))
+        {
+            if(!(waterConnectionDetails.getApplicationType().getCode().equals("CLOSINGCONNECTION")))
         	waterConnectionDetailsService.validateWaterRateAndDonationHeader(waterConnectionDetails); 
-               
+        }      
 
         if (request.getParameter(DONATION_AMOUNT) != null)
             donationCharges = Double.valueOf(request.getParameter(DONATION_AMOUNT));
