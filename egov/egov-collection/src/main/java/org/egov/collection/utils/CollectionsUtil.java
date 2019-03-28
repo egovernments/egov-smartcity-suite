@@ -53,6 +53,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -73,7 +74,9 @@ import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.BillReceiptInfoReq;
 import org.egov.collection.integration.models.BillReceiptReq;
+import org.egov.collection.integration.models.ReceiptAccountDetailsResponse;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
+import org.egov.collection.integration.models.ReconstructReceiptDetailsRequest;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.commons.Bankbranch;
 import org.egov.commons.CFinancialYear;
@@ -795,6 +798,7 @@ public class CollectionsUtil {
         ReceiptAmountInfo receiptAmountInfo = null;
         try {
             receiptAmountInfo = restTemplate.postForObject(url, billReceiptInfoReq, ReceiptAmountInfo.class);
+
         } catch (final Exception e) {
             final String errMsg = "Exception while updateReceiptDetailsAndGetReceiptAmountInfo for bill number  ["
                     + billReceipt.getBillReferenceNum() + "]!";
@@ -897,10 +901,40 @@ public class CollectionsUtil {
 
     public List<ReceiptDetail> reconstructReceiptDetail(final ReceiptHeader receiptHeader,
             final List<ReceiptDetail> receiptDetailList) {
-        final BillingIntegrationService billingService = (BillingIntegrationService) getBean(receiptHeader.getService()
-                .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
-        return billingService.reconstructReceiptDetail(receiptHeader.getReferencenumber(),
-                receiptHeader.getTotalAmount(), receiptDetailList);
+        List<ReceiptDetail> reconstructedReceiptDetail = Collections.EMPTY_LIST;
+        if (receiptHeader.getService().getCode().equals(CollectionConstants.SERVICECODE_LAMS)) {
+            reconstructedReceiptDetail = getReconstructReceiptDetailsMS(receiptHeader, receiptDetailList);
+        } else {
+            final BillingIntegrationService billingService = (BillingIntegrationService) getBean(receiptHeader.getService()
+                    .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
+            reconstructedReceiptDetail = billingService.reconstructReceiptDetail(receiptHeader.getReferencenumber(),
+                    receiptHeader.getTotalAmount(), receiptDetailList);
+        }
+        return reconstructedReceiptDetail;
+    }
+
+    private List<ReceiptDetail> getReconstructReceiptDetailsMS(final ReceiptHeader receiptHeader,
+            final List<ReceiptDetail> receiptDetailList) {
+        final RestTemplate restTemplate = new RestTemplate();
+        // Prepare request
+        ReconstructReceiptDetailsRequest reconstructReceiptDetailsRequest = new ReconstructReceiptDetailsRequest();
+        reconstructReceiptDetailsRequest.setRequestInfo(microserviceUtils.createRequestInfo());
+        reconstructReceiptDetailsRequest.setTotalAmount(receiptHeader.getTotalAmount());
+        reconstructReceiptDetailsRequest.setBillId(receiptHeader.getReferencenumber());
+        reconstructReceiptDetailsRequest.setTenantId(microserviceUtils.getTanentId());
+
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("reconstruct receipt details - before calling LAMS");
+        final String url = collectionApplicationProperties.getLamsServiceUrl().concat(
+                collectionApplicationProperties
+                        .getReconstructReceiptDetailUrl(receiptHeader.getService().getCode().toLowerCase()));
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("reconstruct receipt details - url:" + url);
+        ReceiptAmountInfo receiptAmountInfo = null;
+        ReceiptAccountDetailsResponse receiptAccountDetailsResponse = restTemplate.postForObject(url,
+                reconstructReceiptDetailsRequest, ReceiptAccountDetailsResponse.class);
+        return receiptAccountDetailsResponse == null ? Collections.EMPTY_LIST
+                : receiptAccountDetailsResponse.getReceiptDetailsList();
     }
 
     public Date getRemittanceVoucherDate(final Date receiptDate) {
