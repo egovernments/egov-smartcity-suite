@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -54,7 +54,7 @@ import org.egov.collection.entity.ReceiptDetail;
 
 public class ReceiptAccountDetailsResponse {
 
-    List<ReceiptDetail> receiptDetailsList= new ArrayList<>();
+    List<ReceiptDetail> receiptDetailsList = new ArrayList<>();
 
     public List<ReceiptDetail> getReceiptDetailsList() {
         return receiptDetailsList;

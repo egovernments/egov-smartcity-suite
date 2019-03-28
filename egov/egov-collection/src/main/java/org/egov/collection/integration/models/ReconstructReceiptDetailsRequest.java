@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -57,9 +57,9 @@ public class ReconstructReceiptDetailsRequest {
     @JsonProperty("RequestInfo")
     private RequestInfo requestInfo;
 
-     private String billId;
-     private BigDecimal totalAmount;
-     private String tenantId = null;
+    private String billId;
+    private BigDecimal totalAmount;
+    private String tenantId = null;
 
     public RequestInfo getRequestInfo() {
         return requestInfo;
