@@ -89,6 +89,7 @@ public class DCBReportResult {
     private BigDecimal clctn_currentST = BigDecimal.ZERO;
     private BigDecimal clctn_currentVLT = BigDecimal.ZERO;
     private BigDecimal clctn_currentPSCT = BigDecimal.ZERO;
+    private BigDecimal waivedOffPT = BigDecimal.ZERO;
     private String houseNo;
     private String ownerName;
     private BigInteger assessmentCount;
@@ -401,6 +402,14 @@ public class DCBReportResult {
         this.clctn_currentPSCT = clctn_currentPSCT;
     }
 
+    public BigDecimal getWaivedOffPT() {
+        return waivedOffPT;
+    }
+
+    public void setWaivedOffPT(BigDecimal waivedOffPT) {
+        this.waivedOffPT = waivedOffPT;
+    }
+
     public String getBasicPropertyId() {
         return basicPropertyId;
     }
@@ -423,9 +432,7 @@ public class DCBReportResult {
 
     public void setBoundaryId(final Integer boundaryId) {
         this.boundaryId = boundaryId;
-    }
-
-    public String getHouseNo() {
+    }public String getHouseNo() {
         return houseNo; 
     }
 

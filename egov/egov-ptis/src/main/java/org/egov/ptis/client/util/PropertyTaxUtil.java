@@ -1343,8 +1343,8 @@ public class PropertyTaxUtil {
         final Map<String, Object> params = new HashMap<>();
         query.append(
                 "select pmv from PropertyMaterlizeView pmv where pmv.propertyId is not null and pmv.isActive = true and pmv.isExempted=false ");
-        final String arrearBalanceCond = " ((pmv.aggrArrDmd - pmv.aggrArrColl) + ((pmv.aggrCurrFirstHalfDmd + pmv.aggrCurrSecondHalfDmd) - (pmv.aggrCurrFirstHalfColl + pmv.aggrCurrSecondHalfColl))) ";
-        final String arrearBalanceNotZeroCond = " and ((pmv.aggrArrDmd - pmv.aggrArrColl) + ((pmv.aggrCurrFirstHalfDmd + pmv.aggrCurrSecondHalfDmd) - (pmv.aggrCurrFirstHalfColl + pmv.aggrCurrSecondHalfColl)))>0 ";
+        final String arrearBalanceCond = " ((pmv.aggrArrDmd - pmv.aggrArrColl) + ((pmv.aggrCurrFirstHalfDmd + pmv.aggrCurrSecondHalfDmd) - (pmv.aggrCurrFirstHalfColl + pmv.aggrCurrSecondHalfColl)) - pmv.waivedoffAmount) ";
+        final String arrearBalanceNotZeroCond = " and ((pmv.aggrArrDmd - pmv.aggrArrColl) + ((pmv.aggrCurrFirstHalfDmd + pmv.aggrCurrSecondHalfDmd) - (pmv.aggrCurrFirstHalfColl + pmv.aggrCurrSecondHalfColl)) - pmv.waivedoffAmount)>0 ";
         String orderByClause = " order by ";
         final String and = " and ";
         final String ownerType = "ownerType";
@@ -1729,22 +1729,4 @@ public class PropertyTaxUtil {
         return isEligible;
     }
 
-    // Used to relate demand_details with receipt number
-    public String makeRemarkWithRcptNo(String remark, String rcptNo) {
-        if (remark == null)
-            remark = "";
-        return String.format("%s #RCPT(%s)", remark, rcptNo);
-    }
-
-    // To retrieve the relation between demand_details and receipt number when penalty receipt-details are not passed
-    public String getRcptNoFromRemark(String remark) {
-        final Pattern rcptX = Pattern.compile("#RCPT\\(([^)]+)\\)");
-        Matcher matcher = rcptX.matcher(remark);
-        matcher.find();
-        try {
-            return matcher.group(1);
-        } catch (IllegalStateException ex) {
-        }
-        return "";
-    }
 }

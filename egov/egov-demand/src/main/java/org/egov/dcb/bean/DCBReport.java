@@ -198,6 +198,11 @@ public class DCBReport {
 							totalRebate = totalRebate.add(record.getValue()
 									.getRebates().get(fieldName));
 						}
+						// Add penalty waiver
+						if (fieldName.equals(FINES)) {
+							totalRebate = totalRebate.add(record.getValue()
+									.getRebates().get(fieldName));
+						}
 						if (fieldName.equals(WTTAX)) {
                                                     totalDmdTax = totalDmdTax.add(record.getValue()
                                                                     .getDemands().get(fieldName));

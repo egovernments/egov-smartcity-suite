@@ -231,6 +231,9 @@ function callAjaxByBoundary() {
 							"data" : "clctnCurrentPFT",
 							"sTitle" : "Penalty On Current"
 						}, {
+                            "data" : "waivedOffPT",
+                            "sTitle" : "Penalty Waived off"
+                        }, {
 							"data" : "clctnCurrentTotal",
 							"sTitle" : "Current Total"
 						}, {
@@ -262,12 +265,12 @@ function callAjaxByBoundary() {
 					if (data.length > 0) {
 						for(var i=3;i<=22;i++)
 						{
-						  updateTotalFooter(i, api);	
+						  updateTotalFooter(i, api);
 						}
 					}
-				}, 
+				},
 				"aoColumnDefs" : [ {
-					"aTargets" : [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22], 
+					"aTargets" : [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22],
 					"mRender" : function(data, type, full) {
 						return formatNumberInr(data);    
 					}

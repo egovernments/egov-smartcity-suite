@@ -75,7 +75,7 @@
 					<th rowspan="2"><spring:message code="lbl.OwnerName" /></th>
 					<th rowspan="2"><spring:message code="lbl.assessment.count" /></th>
 					<th colspan="7"><spring:message code="lbl.actual.demand" /></th>
-					<th colspan="7"><spring:message code="lbl.actual.collection" /></th>
+					<th colspan="8"><spring:message code="lbl.actual.collection" /></th>
 					<th colspan="5"><spring:message code="lbl.balance"/></th>
 				</tr>
 
@@ -92,6 +92,7 @@
 					<th><spring:message code="lbl.arreartotal"/></th>
 					<th><spring:message code="lbl.current.propertytax"/></th>
 					<th><spring:message code="lbl.current.penalty"/></th>
+					<th><spring:message code="lbl.waived"/></th>
 					<th><spring:message code="lbl.current.total"/></th>
 					<th><spring:message code="lbl.total.collection"/></th>
 					<th><spring:message code="lbl.arrear.propertytax"/></th>
@@ -104,6 +105,7 @@
 			<tfoot id="report-footer">
 				<tr>
 					<td>Total</td>
+					<td></td>
 					<td></td>
 					<td></td>
 					<td></td>

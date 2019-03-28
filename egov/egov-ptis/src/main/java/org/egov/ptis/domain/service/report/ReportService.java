@@ -65,6 +65,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.RegionalHeirarchy;
@@ -124,6 +125,7 @@ public class ReportService {
     private static final String EWSHS = "EWSHS";
     private static final String PRIVATE = "PRIVATE";
     private static final String ABOVE_FIVE_YEARS = "Above 5 Years";
+    private static final Logger LOGGER = Logger.getLogger(ReportService.class);
     final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
     private PersistenceService propPerServ;
 
@@ -640,7 +642,8 @@ public class ReportService {
             commonFromQry = commonFromQry + ", eg_boundary boundary ";
         commonFromQry = commonFromQry + courtCaseTable + " where pi.isactive = true and pi.isexempted = false " + courtCaseQry;
 
-        finalCommonQry = "cast(COALESCE(sum(pi.ARREAR_DEMAND),0) as numeric) as \"dmnd_arrearPT\","
+        finalCommonQry = " cast(COALESCE(sum(pi.waivedoff_amount),0) as numeric) as \"waivedOffPT\","
+                + "cast(COALESCE(sum(pi.ARREAR_DEMAND),0) as numeric) as \"dmnd_arrearPT\","
                 + " cast(COALESCE(sum(pi.pen_aggr_arrear_demand),0) AS numeric) as \"dmnd_arrearPFT\", cast(COALESCE(sum(pi.annualdemand),0) AS numeric) as \"dmnd_currentPT\", "
                 + " cast(COALESCE(sum(pi.pen_aggr_current_firsthalf_demand),0)+COALESCE(sum(pi.pen_aggr_current_secondhalf_demand),0) AS numeric) as \"dmnd_currentPFT\","
                 + " cast(COALESCE(sum(pi.ARREAR_COLLECTION),0) AS numeric) as \"clctn_arrearPT\", cast(COALESCE(sum(pi.pen_aggr_arr_coll),0) AS numeric) as \"clctn_arrearPFT\","
@@ -979,6 +982,7 @@ public class ReportService {
             boundaryQry.append(" and pi.wardid = " + boundaryId);
         if (apartmentId != -1 && apartmentId != null && apartmentId != 0)
             whereQry.append(" and pd.apartment = " + apartmentId);
+        finalCommonQry.append(" cast(COALESCE(sum(pi.waivedoff_amount),0) as numeric) as \"waivedOffPT\",");
         finalCommonQry.append(" cast(COALESCE(sum(pi.ARREAR_DEMAND),0) as numeric) as \"dmndArrearPT\",");
         finalCommonQry.append(
                 " cast(COALESCE(sum(pi.pen_aggr_arrear_demand),0) AS numeric) as \"dmndArrearPFT\", cast(COALESCE(sum(pi.annualdemand),0) AS numeric) as \"dmndCurrentPT\", ");
@@ -1000,7 +1004,9 @@ public class ReportService {
         }
         queryStr.append(finalSelectQry).append(finalCommonQry).append(commonFromQry).append(whereQry)
                 .append(boundaryQry).append(finalGrpQry);
-        final SQLQuery sqlQuery = propertyTaxCommonUtils.getSession().createSQLQuery(queryStr.toString());
+        String query = queryStr.toString();
+        LOGGER.debug(String.format("theta.debug prepareQueryForApartmentDCBReport SQL: \n %s \n", query));
+        final SQLQuery sqlQuery = propertyTaxCommonUtils.getSession().createSQLQuery(query);
         sqlQuery.setResultTransformer(new AliasToBeanResultTransformer(ApartmentDCBReportResult.class));
         return sqlQuery.list();
     }
