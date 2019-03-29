@@ -125,8 +125,6 @@ public class ReportService {
     private static final String EWSHS = "EWSHS";
     private static final String PRIVATE = "PRIVATE";
     private static final String ABOVE_FIVE_YEARS = "Above 5 Years";
-    private static final Logger LOGGER = Logger.getLogger(ReportService.class);
-    final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
     private PersistenceService propPerServ;
 
     @Autowired
