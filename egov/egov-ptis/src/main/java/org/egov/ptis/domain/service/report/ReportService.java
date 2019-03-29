@@ -1004,9 +1004,7 @@ public class ReportService {
         }
         queryStr.append(finalSelectQry).append(finalCommonQry).append(commonFromQry).append(whereQry)
                 .append(boundaryQry).append(finalGrpQry);
-        String query = queryStr.toString();
-        LOGGER.debug(String.format("theta.debug prepareQueryForApartmentDCBReport SQL: \n %s \n", query));
-        final SQLQuery sqlQuery = propertyTaxCommonUtils.getSession().createSQLQuery(query);
+        final SQLQuery sqlQuery = propertyTaxCommonUtils.getSession().createSQLQuery(queryStr.toString());
         sqlQuery.setResultTransformer(new AliasToBeanResultTransformer(ApartmentDCBReportResult.class));
         return sqlQuery.list();
     }

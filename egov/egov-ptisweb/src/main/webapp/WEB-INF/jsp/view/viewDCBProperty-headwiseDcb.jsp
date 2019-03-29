@@ -102,7 +102,7 @@
 									</td>
 									<td class="blueborderfortd">
 										<div align="center">
-											<span class="bold"><s:text name="rebate_waiver" />
+											<span class="bold"><s:text name="Rebate" />
 											</span>
 										</div>
 									</td>
@@ -113,8 +113,8 @@
 									</td>
 								</tr>
 								<s:set value="0" var="advance" />
+								<s:set value="0" var="advrebate" />
 								<s:iterator value="dcbReport.getRecords()" var="dcbreportmap">
-								    <s:set value="0" var="advrebate" />
 									<s:set value="0" var="instDmdTotal" />
 									<s:set value="0" var="instCollTotal" />
 									<s:set value="0" var="instRebateTotal" />
@@ -150,13 +150,11 @@
 											</td>
 											<td class="blueborderfortd">
 												<div align="right">
-
-                                                    <s:set var="installment_fld_collection" value="value.getCollections()[#fieldnames]" />
-                                                    <s:set var="installment_fld_rebate" value="value.getRebates()[#fieldnames]" />
-												    <c:set var="cllctn_minus_rbt" value="${installment_fld_collection - installment_fld_rebate}" />
-
-												    <fmt:formatNumber value="${cllctn_minus_rbt}"/>
-													<c:set value="${instCollTotal + cllctn_minus_rbt}" var="instCollTotal" />
+													<s:text name="format.money">
+														<s:param value="value.getCollections()[#fieldnames]" />
+														<s:set value="value.getCollections()[#fieldnames]" var="instColl"/>
+														<c:set value="${instCollTotal + instColl}" var="instCollTotal"/>
+													</s:text>
 												</div>
 											</td>
 											<td class="blueborderfortd">

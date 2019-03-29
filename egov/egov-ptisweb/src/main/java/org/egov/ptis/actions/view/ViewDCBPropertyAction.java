@@ -148,8 +148,8 @@ import org.springframework.context.ApplicationContext;
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
     
-//    @Autowired
-//    private DemandBillService demandBillService;
+    @Autowired
+    private DemandBillService demandBillService;
 
     public ViewDCBPropertyAction() {
     }
@@ -377,7 +377,7 @@ import org.springframework.context.ApplicationContext;
    
    @Action(value = "/view/viewDCBProperty-legacyDemand") 
     public String getOldDemandData() {
-//	   setDemandList(demandBillService.getOldDemandData(basicProperty.getUpicNo()));
+	   setDemandList(demandBillService.getOldDemandData(basicProperty.getUpicNo()));    	
        return LEGACY_DEMAND;
 		}
     

@@ -130,8 +130,101 @@ function callAjaxByBoundary() {
 	var courtCase = false;
 	propTypes = jQuery('#propTypes').val();
 	courtCase = jQuery('#courtCase').val(); 
-	modeVal = jQuery('#mode').val(); 
-	
+	modeVal = jQuery('#mode').val();
+
+	var columnsDefinition = [{
+        "data": function (row, type, set, meta) {
+            if (modeVal != 'property') {
+                return { name: row.boundaryName, id: row.boundaryId };
+            }
+            else {
+                return { name: row.assessmentNo, id: row.assessmentNo };
+            }
+        },
+        "render": function (data, type, row) {
+            return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,mode);" data-hiddenele="boundaryId" data-eleval="'
+                + data.id + '">' + data.name + '</a>';
+        },
+        "sTitle": "Name"
+    }, {
+        "data": "houseNo",
+        "sTitle": "Door No"
+    }, {
+        "data": "ownerName",
+        "sTitle": "Owner Name"
+    }, {
+        "data": "assessmentCount",
+        "sTitle": "Assessment Count"
+    }, {
+        "data": "dmnd_arrearPT",
+        "sTitle": "Arrear Property Tax"
+    }, {
+        "data": "dmnd_arrearPFT",
+        "sTitle": "Penalty On Arrear"
+    }, {
+        "data": "dmnd_arrearTotal",
+        "sTitle": "Arrear Total"
+    }, {
+        "data": "dmnd_currentPT",
+        "sTitle": "Current Property Tax"
+    }, {
+        "data": "dmnd_currentPFT",
+        "sTitle": "Penalty On Current"
+    }, {
+        "data": "dmnd_currentTotal",
+        "sTitle": "Current Total"
+    }, {
+        "data": "totalDemand",
+        "sTitle": "Total Demand"
+    }, {
+        "data": "clctn_arrearPT",
+        "sTitle": "Arrear Property Tax"
+    }, {
+        "data": "clctn_arrearPFT",
+        "sTitle": "Penalty On Arrear"
+    }, {
+        "data": "clctn_arrearTotal",
+        "sTitle": "Arrear Total"
+    }, {
+        "data": "clctn_currentPT",
+        "sTitle": "Current Property Tax"
+    }, {
+        "data": "clctn_currentPFT",
+        "sTitle": "Penalty On Current"
+    }, {
+        "data": "clctn_currentTotal",
+        "sTitle": "Current Total"
+    }, {
+        "data": "waivedOffPT",
+        "sTitle": "Waiver"
+    }, {
+        "data": "totalCollection",
+        "sTitle": "Total Collection"
+    }, {
+        "data": "bal_arrearPT",
+        "sTitle": "Arrear Property Tax"
+    }, {
+        "data": "bal_arrearPFT",
+        "sTitle": "Penalty On Arrear"
+    }, {
+        "data": "bal_currentPT",
+        "sTitle": "Current Property Tax"
+    }, {
+        "data": "bal_currentPFT",
+        "sTitle": "Penalty On Current"
+    }, {
+        "data": "totalPTBalance",
+        "sTitle": "Total PropertyTax Balance"
+    }];
+
+    var aTargetIndices = [];
+    for(var i = 3; i < columnsDefinition; i++) {
+        aTargetIndices.push(i);
+    }
+    // console.assert(aTargetIndices.length === [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23])
+    // console.assert(aTargetIndices[0] === 3)
+    // console.assert(aTargetIndices[aTargetIndices.length-1] === 23)
+
 	if(modeVal=='ward'){
 		boundary_Id = jQuery('#wardId').val();
 		temp=modeVal+"~"+boundary_Id;
@@ -184,90 +277,7 @@ function callAjaxByBoundary() {
 						               }],
 				},"fnRowCallback" : function(row, data, index) {
 				},
-				columns : [{
-							"data" : function(row, type, set, meta){
-								if(modeVal!='property'){
-									return { name:row.boundaryName, id:row.boundaryId };
-								}
-								else {
-									return { name:row.assessmentNo, id:row.assessmentNo };
-								}
-							},
-							"render" : function(data, type, row) {
-								return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,mode);" data-hiddenele="boundaryId" data-eleval="'
-										+ data.id + '">' + data.name + '</a>';
-							},
-							"sTitle" : "Name"
-						}, {
-							"data" : "houseNo",
-							"sTitle" : "Door No"
-						}, {
-							"data" : "ownerName",
-							"sTitle" : "Owner Name"
-						}, {
-							"data" : "assessmentCount",
-							"sTitle" : "Assessment Count"
-						}, {
-							"data" : "dmnd_arrearPT",
-							"sTitle" : "Arrear Property Tax"
-						}, {
-							"data" : "dmnd_arrearPFT",
-							"sTitle" : "Penalty On Arrear"
-						}, {
-							"data" : "dmnd_arrearTotal",
-							"sTitle" : "Arrear Total"
-						}, {
-							"data" : "dmnd_currentPT",
-							"sTitle" : "Current Property Tax"
-						}, {
-							"data" : "dmnd_currentPFT",
-							"sTitle" : "Penalty On Current"
-						}, {
-							"data" : "dmnd_currentTotal",
-							"sTitle" : "Current Total"
-						}, {
-							"data" : "totalDemand",
-							"sTitle" : "Total Demand"
-						}, {
-							"data" : "clctn_arrearPT",
-							"sTitle" : "Arrear Property Tax"
-						}, {
-							"data" : "clctn_arrearPFT",
-							"sTitle" : "Penalty On Arrear"
-						}, {
-							"data" : "clctn_arrearTotal",
-							"sTitle" : "Arrear Total"
-						}, {
-							"data" : "clctn_currentPT",
-							"sTitle" : "Current Property Tax"
-						}, {
-							"data" : "clctn_currentPFT",
-							"sTitle" : "Penalty On Current"
-						}, {
-							"data" : "clctn_currentTotal",
-							"sTitle" : "Current Total"
-						}, {
-							"data" : "waivedOffPT",
-							"sTitle" : "Waiver"
-						}, {
-							"data" : "totalCollection",
-							"sTitle" : "Total Collection"
-						}, {
-							"data" : "bal_arrearPT",
-							"sTitle" : "Arrear Property Tax"
-						}, {
-							"data" : "bal_arrearPFT",
-							"sTitle" : "Penalty On Arrear"
-						}, {
-							"data" : "bal_currentPT",
-							"sTitle" : "Current Property Tax"
-						}, {
-							"data" : "bal_currentPFT",
-							"sTitle" : "Penalty On Current"
-						}, {
-							"data" : "totalPTBalance",
-							"sTitle" : "Total PropertyTax Balance"
-						}],
+				columns : columnsDefinition,
 				"footerCallback" : function(row, data, start, end, display) {
 					var api = this.api(), data;
 					if (data.length == 0) {
@@ -276,14 +286,14 @@ function callAjaxByBoundary() {
 						jQuery('#report-footer').show();
 					}
 					if (data.length > 0) {
-						for(var i=3;i<=23;i++)
+						for(var i=3;i<columnsDefinition.length; i++)
 						{
 						  updateTotalFooter(i, api);	
 						}
 					}
 				}, 
 				"aoColumnDefs" : [ {
-					"aTargets" : [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],
+					"aTargets" : aTargetIndices,
 					"mRender" : function(data, type, full) {
 						return formatNumberInr(data);    
 					}
