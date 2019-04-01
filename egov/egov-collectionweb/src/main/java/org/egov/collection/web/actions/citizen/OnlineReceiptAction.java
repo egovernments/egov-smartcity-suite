@@ -55,7 +55,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -84,7 +83,6 @@ import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionCommon;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.collection.utils.FinancialsUtil;
-import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
@@ -162,7 +160,7 @@ public class OnlineReceiptAction extends BaseFormAction {
     private String[] statusCode;
     private String[] remarks;
     private BigDecimal minimumAmount;
-    
+
     @Autowired
     private ApplicationContext beanProvider;
 
@@ -369,7 +367,7 @@ public class OnlineReceiptAction extends BaseFormAction {
                 } else {
                     reconstructedList = existingReceiptDetails;
                 }
-                
+
                 ReceiptDetail debitAccountDetail = null;
                 if (reconstructedList != null && !reconstructedList.isEmpty()) {
                     DebitAccountHeadDetailsService debitAccountHeadService = (DebitAccountHeadDetailsService) beanProvider
@@ -377,10 +375,10 @@ public class OnlineReceiptAction extends BaseFormAction {
                     debitAccountDetail = debitAccountHeadService.addDebitAccountHeadDetails(receipts[i].getTotalAmount(),
                             receipts[i], BigDecimal.ZERO, receipts[i].getTotalAmount(),
                             CollectionConstants.INSTRUMENTTYPE_ONLINE);
-                }   
+                }
 
                 receiptHeaderService.reconcileOnlineSuccessPayment(receipts[i], transDate, getTransactionId()[i],
-                        receipts[i].getTotalAmount(), null, reconstructedList, debitAccountDetail);
+                        receipts[i].getTotalAmount(), null, reconstructedList, debitAccountDetail, getRemarks()[i]);
 
                 LOGGER.debug("Manually reconciled a success online payment");
             }
@@ -473,8 +471,7 @@ public class OnlineReceiptAction extends BaseFormAction {
 
                 receiptHeader = collectionCommon.initialiseReceiptModelWithBillInfo(collDetails, fund, dept);
                 setRefNumber(receiptHeader.getReferencenumber());
-                minimumAmount = receiptHeader.getMinimumAmount() == null ? 
-                        BigDecimal.ZERO: receiptHeader.getMinimumAmount();
+                minimumAmount = receiptHeader.getMinimumAmount() == null ? BigDecimal.ZERO : receiptHeader.getMinimumAmount();
                 totalAmountToBeCollected = totalAmountToBeCollected.add(receiptHeader.getTotalAmountToBeCollected());
                 setReceiptDetailList(new ArrayList<>(receiptHeader.getReceiptDetails()));
 

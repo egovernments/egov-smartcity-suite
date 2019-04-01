@@ -135,7 +135,7 @@ public class SearchOnlineReceiptAction extends BaseFormAction {
                 " select distinct onlinePayment from org.egov.collection.entity.OnlinePayment onlinePayment");
         final StringBuilder criteria = new StringBuilder();
         final StringBuilder joinString = new StringBuilder();
-        final StringBuilder whereString = new StringBuilder();// " order by receipt.createdDate desc");
+        final StringBuilder whereString = new StringBuilder("order by onlinePayment.receiptHeader.id desc");
         final ArrayList<Object> params = new ArrayList<Object>();
         if (getReferenceId() != null) {
             criteria.append("onlinePayment.receiptHeader.id = ? ");

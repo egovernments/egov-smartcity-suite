@@ -1260,7 +1260,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         CollectionConstants.ONLINEPAYMENT_STATUS_CODE_SUCCESS));
         persist(receiptHeader);
         LOGGER.debug("Persisted receipt after receiving success message from the payment gateway");
-        return updateFinancialAndBillingSystem(receiptHeader,null);
+        return updateFinancialAndBillingSystem(receiptHeader, null);
     }
 
     @Transactional
@@ -1321,7 +1321,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     @Transactional
     public ReceiptHeader reconcileOnlineSuccessPayment(final ReceiptHeader onlinePaymentReceiptHeader,
             final Date txnDate, final String txnRefNo, final BigDecimal txnAmount, final String txnAuthStatus,
-            final List<ReceiptDetail> reconstructedList, final ReceiptDetail debitAccountDetail) {
+            final List<ReceiptDetail> reconstructedList, final ReceiptDetail debitAccountDetail, final String remarks) {
 
         if (reconstructedList != null) {
             onlinePaymentReceiptHeader.getReceiptDetails().clear();
@@ -1335,7 +1335,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
         }
         return createOnlineSuccessPayment(onlinePaymentReceiptHeader, txnDate, txnRefNo, txnAmount, txnAuthStatus,
-                null);
+                remarks);
 
     }
 

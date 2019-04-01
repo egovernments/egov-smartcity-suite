@@ -91,6 +91,8 @@ public class ReconciliationService {
     @Autowired
     private ApplicationContext beanProvider;
 
+    public static final String RECONCILE_REMARKS = "Schedular Reconciled";
+
     /**
      * This method processes the success message arriving from the payment gateway. The receipt status is changed from PENDING to
      * APPROVED and the online transaction status is changed from PENDING to SUCCCESS. The authorization status for success(0300)
@@ -149,8 +151,7 @@ public class ReconciliationService {
 
         receiptHeaderService.reconcileOnlineSuccessPayment(onlinePaymentReceiptHeader, paymentResponse.getTxnDate(),
                 paymentResponse.getTxnReferenceNo(), paymentResponse.getTxnAmount(), paymentResponse.getAuthStatus(),
-                reconstructedList,
-                debitAccountDetail);
+                reconstructedList, debitAccountDetail, RECONCILE_REMARKS);
         LOGGER.debug("Persisted receipt after receiving success message from the payment gateway");
 
     }
@@ -168,11 +169,11 @@ public class ReconciliationService {
         receiptHeader.setStatus(collectionsUtil
                 .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_FAILED));
         EgwStatus paymentStatus;
-        if (receiptHeader.getOnlinePayment().getService().getCode().equals(CollectionConstants.SERVICECODE_AXIS) 
+        if (receiptHeader.getOnlinePayment().getService().getCode().equals(CollectionConstants.SERVICECODE_AXIS)
                 && CollectionConstants.AXIS_ABORTED_STATUS_CODE.equals(paymentResponse.getAuthStatus()))
             paymentStatus = collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
                     CollectionConstants.ONLINEPAYMENT_STATUS_CODE_ABORTED);
-        else if (receiptHeader.getOnlinePayment().getService().getCode().equals(CollectionConstants.SERVICECODE_ATOM) 
+        else if (receiptHeader.getOnlinePayment().getService().getCode().equals(CollectionConstants.SERVICECODE_ATOM)
                 && CollectionConstants.ATOM_AUTHORISATION_CODE_REFUNDED.equals(paymentResponse.getAuthStatus()))
             paymentStatus = collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
                     CollectionConstants.ONLINEPAYMENT_STATUS_CODE_REFUNDED);
