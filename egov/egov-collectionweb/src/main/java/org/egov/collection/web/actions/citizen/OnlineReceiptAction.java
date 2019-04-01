@@ -84,6 +84,7 @@ import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionCommon;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.collection.utils.FinancialsUtil;
+import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
@@ -299,7 +300,7 @@ public class OnlineReceiptAction extends BaseFormAction {
 
             onlinePaymentReceiptHeader = receiptHeaderService.createOnlineSuccessPayment(onlinePaymentReceiptHeader,
                     paymentResponse.getTxnDate(), paymentResponse.getTxnReferenceNo(), paymentResponse.getTxnAmount(),
-                    paymentResponse.getAuthStatus(), null, null);
+                    paymentResponse.getAuthStatus(), null);
             receiptResponse = "SUCCESS|" + onlinePaymentReceiptHeader.getReceiptnumber();
         }
     }
