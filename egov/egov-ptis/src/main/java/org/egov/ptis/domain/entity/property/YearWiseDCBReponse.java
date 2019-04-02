@@ -75,6 +75,11 @@ public class YearWiseDCBReponse {
     private BigDecimal currentPenBalance;
     private BigDecimal totalBalance;
 
+    private BigDecimal waivedoffAmount;
+    private BigDecimal exemptedAmount;
+    private BigDecimal writeoffAmount;
+    private BigDecimal courtcaseAmount;
+
     public String getDrillDownType() {
         return drillDownType;
     }
@@ -257,6 +262,38 @@ public class YearWiseDCBReponse {
 
     public void setDoorNo(String doorNo) {
         this.doorNo = doorNo;
+    }
+
+    public BigDecimal getWaivedoffAmount() {
+        return waivedoffAmount;
+    }
+
+    public void setWaivedoffAmount(BigDecimal waivedoffAmount) {
+        this.waivedoffAmount = waivedoffAmount;
+    }
+
+    public BigDecimal getExemptedAmount() {
+        return exemptedAmount;
+    }
+
+    public void setExemptedAmount(BigDecimal exemptedAmount) {
+        this.exemptedAmount = exemptedAmount;
+    }
+
+    public BigDecimal getWriteoffAmount() {
+        return writeoffAmount;
+    }
+
+    public void setWriteoffAmount(BigDecimal writeoffAmount) {
+        this.writeoffAmount = writeoffAmount;
+    }
+
+    public BigDecimal getCourtcaseAmount() {
+        return courtcaseAmount;
+    }
+
+    public void setCourtcaseAmount(BigDecimal courtcaseAmount) {
+        this.courtcaseAmount = courtcaseAmount;
     }
 
 }

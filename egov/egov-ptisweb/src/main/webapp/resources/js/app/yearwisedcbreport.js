@@ -266,6 +266,18 @@ function callAjaxByBoundary() {
 							"data" : "totalCollection",
 							"sTitle" : "Total Collection"
 						}, {
+                           	"data": "waivedoffAmount",
+                           	"sTitle" : "Waivedoff Amount"
+                       }, {
+                            "data": "exemptedAmount",
+                            "sTitle" : "Exempted Amount"
+                       }, {
+                            "data": "writeoffAmount",
+                            "sTitle" : "Writeoff Amount"
+                       }, {
+                            "data": "courtcaseAmount",
+                            "sTitle" : "Court Cases"
+                       }, {
 							"data" : "arrearBalance",
 							"sTitle" : "Arrear Property Tax"
 						}, {
