@@ -904,6 +904,12 @@ public class CollectionsUtil {
         List<ReceiptDetail> reconstructedReceiptDetail = Collections.EMPTY_LIST;
         if (receiptHeader.getService().getCode().equals(CollectionConstants.SERVICECODE_LAMS)) {
             reconstructedReceiptDetail = getReconstructReceiptDetailsMS(receiptHeader, receiptDetailList);
+            // Revert the code after complete integration.
+            if (reconstructedReceiptDetail != null && !reconstructedReceiptDetail.isEmpty()) {
+                for(ReceiptDetail receiptDetail: reconstructedReceiptDetail)
+                    LOGGER.error("RECEIPT DETAILS: "+receiptDetail.toString());   
+            } else 
+                LOGGER.error("LAMS reconstructed receipt details empty.");
         } else {
             final BillingIntegrationService billingService = (BillingIntegrationService) getBean(receiptHeader.getService()
                     .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
