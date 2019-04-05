@@ -1481,14 +1481,16 @@ public class WaterConnectionDetailsService {
 
 	@Transactional
 	public Boolean updateStatus(List<WaterConnectionDetails> connectionDetailsList) {
+	    Installment executionInstallment;
 		if (!connectionDetailsList.isEmpty()) {
 			for (WaterConnectionDetails waterConnectionDetails : connectionDetailsList) {
 				waterConnectionDetails = updateApplicationStatus(waterConnectionDetails);
 				if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())
-						&& APPLICATION_STATUS_SANCTIONED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))
-					connectionDemandService.updateDemandForNonmeteredConnection(waterConnectionDetails, null, null,
+						&& APPLICATION_STATUS_SANCTIONED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())){
+				    executionInstallment = connectionDemandService.getCurrentInstallment(PROPERTY_MODULE_NAME, null, waterConnectionDetails.getExecutionDate());
+					connectionDemandService.updateDemandForNonmeteredConnection(waterConnectionDetails, executionInstallment, null,
 							WF_STATE_TAP_EXECUTION_DATE_BUTTON);
-
+				}
 				waterConnectionDetailsRepository.save(waterConnectionDetails);
 				waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, null);
 				updatePortalMessage(waterConnectionDetails);

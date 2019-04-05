@@ -582,6 +582,9 @@ public class WaterTaxUtils {
         return persistenceService.findAllByNamedQuery(QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR, startDate, startDate, PTMODULENAME);
     }
 
+    public List<Installment> getInstallmentsbetweenFromAndTodate(Date fromDate, Date toDate){
+        return installmentDao.getInstallmentsByModuleBetweenFromDateAndToDate(moduleService.getModuleByName(PTMODULENAME), fromDate, toDate);
+    }
     public List<Installment> getInstallmentsForCurrYear(Date currDate) {
         return installmentDao.getAllInstallmentsByModuleAndStartDate(moduleService.getModuleByName(PTMODULENAME), currDate);
     }

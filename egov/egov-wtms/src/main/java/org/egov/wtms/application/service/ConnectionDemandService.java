@@ -718,7 +718,7 @@ public class ConnectionDemandService {
         if (installment == null)
             installment = getCurrentInstallment(PROPERTY_MODULE_NAME, null, new Date());
         if (workFlowAction != null && workFlowAction.equals(WaterTaxConstants.WF_STATE_TAP_EXECUTION_DATE_BUTTON))
-            installemntStartDate = new Date();
+            installemntStartDate = waterConnectionDetails.getExecutionDate();
 
         else if (reconnInSameInstallment != null) {
             if (reconnInSameInstallment)
@@ -731,10 +731,11 @@ public class ConnectionDemandService {
         CFinancialYear finYear = financialYearDAO.getFinancialYearByDate(new Date());
         numberOfMonths = DateUtils.noOfMonthsBetween(installemntStartDate, finYear.getEndingDate());
         if (numberOfMonths >= 6)
-            installmentList = waterTaxUtils.getInstallmentsForCurrYear(finYear.getStartingDate());
+            installmentList = waterTaxUtils.getInstallmentsbetweenFromAndTodate(installemntStartDate, finYear.getEndingDate());
         else
             installmentList.add(installment);
 
+        Collections.sort(installmentList);
         EgDemandDetails demandDetails;
         WaterRatesDetails waterRatesDetails = getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
         EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
