@@ -79,12 +79,15 @@ import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.collection.integration.models.ReconstructReceiptDetailsRequest;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.commons.Bankbranch;
+import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.CFunction;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.commons.exception.NoSuchObjectException;
 import org.egov.eis.entity.Assignment;
@@ -210,6 +213,9 @@ public class CollectionsUtil {
 
     @Autowired
     private transient EmployeeService employeeService;
+
+    @Autowired
+    private FunctionHibernateDAO functionDAO;
 
     /**
      * Returns the Status object for given status code for a receipt
@@ -906,9 +912,9 @@ public class CollectionsUtil {
             reconstructedReceiptDetail = getReconstructReceiptDetailsMS(receiptHeader, receiptDetailList);
             // Revert the code after complete integration.
             if (reconstructedReceiptDetail != null && !reconstructedReceiptDetail.isEmpty()) {
-                for(ReceiptDetail receiptDetail: reconstructedReceiptDetail)
-                    LOGGER.error("RECEIPT DETAILS: "+receiptDetail.toString());   
-            } else 
+                for (ReceiptDetail receiptDetail : reconstructedReceiptDetail)
+                    LOGGER.error("RECEIPT DETAILS: " + receiptDetail.toString());
+            } else
                 LOGGER.error("LAMS reconstructed receipt details empty.");
         } else {
             final BillingIntegrationService billingService = (BillingIntegrationService) getBean(receiptHeader.getService()
@@ -931,6 +937,7 @@ public class CollectionsUtil {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("reconstruct receipt details - before calling LAMS");
+
         final String url = collectionApplicationProperties.getLamsServiceUrl().concat(
                 collectionApplicationProperties
                         .getReconstructReceiptDetailUrl(receiptHeader.getService().getCode().toLowerCase()));
@@ -939,8 +946,19 @@ public class CollectionsUtil {
         ReceiptAmountInfo receiptAmountInfo = null;
         ReceiptAccountDetailsResponse receiptAccountDetailsResponse = restTemplate.postForObject(url,
                 reconstructReceiptDetailsRequest, ReceiptAccountDetailsResponse.class);
-        return receiptAccountDetailsResponse == null ? Collections.EMPTY_LIST
-                : receiptAccountDetailsResponse.getReceiptDetailsList();
+        if (receiptAccountDetailsResponse == null)
+            return Collections.EMPTY_LIST;
+        // Setting chartofaccounts and functionary
+        else {
+            for (ReceiptDetail receiptDetail : receiptAccountDetailsResponse.getReceiptDetailsList()) {
+                final CChartOfAccounts account = chartOfAccountsHibernateDAO
+                        .getCChartOfAccountsByGlCode(receiptDetail.getAccounthead().getGlcode());
+                final CFunction function = functionDAO.getFunctionByCode(receiptDetail.getFunction().getCode());
+                receiptDetail.setAccounthead(account);
+                receiptDetail.setFunction(function);
+            }
+            return receiptAccountDetailsResponse.getReceiptDetailsList();
+        }
     }
 
     public Date getRemittanceVoucherDate(final Date receiptDate) {
