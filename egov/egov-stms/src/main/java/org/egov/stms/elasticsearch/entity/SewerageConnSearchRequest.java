@@ -65,6 +65,7 @@ public class SewerageConnSearchRequest extends DataTableSearchRequest {
     private Boolean legacy;
     private String fromDate;
     private String toDate;
+    private String searchType;
 
     public String getModuleName() {
         return moduleName;
@@ -154,7 +155,7 @@ public class SewerageConnSearchRequest extends DataTableSearchRequest {
         this.consumerNumber = consumerNumber;
     }
 
-    public Boolean getLegacy() {
+    public Boolean isLegacy() {
         return legacy;
     }
 
@@ -178,4 +179,11 @@ public class SewerageConnSearchRequest extends DataTableSearchRequest {
         this.toDate = toDate;
     }
 
+    public String getSearchType() {
+        return searchType;
+    }
+
+    public void setSearchType(String searchType) {
+        this.searchType = searchType;
+    }
 }

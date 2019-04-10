@@ -250,7 +250,7 @@ jQuery(document).ready(function($) {
 						        };
 						    },
 						    "render": function (data, type, row) {
-						    	return '<a onclick="window.open(\'/stms/existing/sewerage/view/'
+						    	return '<a onclick="window.open(\'/stms/application/view/'
 						    	+row.applicationNumber+'/'+row.propertyId+'\')" href="javascript:void(0);">'
 						    	+data.name+'</a>';
 						    },

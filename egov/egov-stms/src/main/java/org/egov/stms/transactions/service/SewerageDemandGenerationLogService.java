@@ -149,9 +149,9 @@ public class SewerageDemandGenerationLogService {
                 if (isEmpty(sewrageList))
                     sewrageList.add(logDetail.getSewerageApplicationDetails().getApplicationNumber());
                 else if (!sewrageList.contains(logDetail.getSewerageApplicationDetails().getApplicationNumber())){
-                    if (SewerageProcessStatus.COMPLETED.equals(logDetail.getStatus()))
+                    if (COMPLETED.equals(logDetail.getStatus()))
                         noOfSuccess++;
-                    else if (SewerageProcessStatus.INCOMPLETE.equals(logDetail.getStatus()))
+                    else if (INCOMPLETE.equals(logDetail.getStatus()))
                         noOfFailure++;
                 }
                 sewrageList.add(logDetail.getSewerageApplicationDetails().getApplicationNumber());
@@ -169,8 +169,7 @@ public class SewerageDemandGenerationLogService {
         final List<SewerageDemandStatusDetails> resultList = new ArrayList<>();
         SewerageDemandStatusDetails statusObject;
         for (final SewerageDemandGenerationLogDetail detail : logDetail)
-            if (!detailList.contains(detail.getSewerageApplicationDetails().getApplicationNumber())) {
-
+            if (!detailList.contains(detail.getSewerageApplicationDetails().getId())) {
                 statusObject = new SewerageDemandStatusDetails();
                 statusObject.setFinancialYear(demandGenerationLog.getInstallmentYear());
                 final SewerageApplicationDetails sewerageApplicationDetails = detail.getSewerageApplicationDetails();
@@ -179,9 +178,9 @@ public class SewerageDemandGenerationLogService {
                 statusObject.setStatus(detail.getStatus().toString());
                 statusObject.setDetails(detail.getDetail());
 
-                if (SewerageProcessStatus.COMPLETED.equals(detail.getStatus()))
+                if (COMPLETED.equals(detail.getStatus()))
                     successRecordsList.add(statusObject);
-                else if (SewerageProcessStatus.INCOMPLETE.equals(detail.getStatus()))
+                else if (INCOMPLETE.equals(detail.getStatus()))
                     failedRecordsList.add(statusObject);
                 detailList.add(detail.getSewerageApplicationDetails().getId());
             }

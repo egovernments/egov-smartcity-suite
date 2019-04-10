@@ -47,26 +47,25 @@
  */
 package org.egov.stms.web.controller.application;
 
-import org.egov.infra.admin.master.entity.Role;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
+import org.egov.stms.transactions.service.SewerageConnectionService;
+import org.egov.stms.transactions.service.SewerageThirdPartyServices;
 import org.egov.stms.utils.SewerageTaxUtils;
-import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
+
+import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_CSCOPERTAOR;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_ULBOPERATOR;
 
 @Controller
 @RequestMapping(value = "/application")
@@ -74,17 +73,22 @@ public class ViewSewerageApplicationController {
 
     @Autowired
     private SewerageApplicationDetailsService sewerageApplicationDetailsService;
+
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;
+
     @Autowired
     private SecurityUtils securityUtils;
+
     @Autowired
-    private UserService userService;
+    private SewerageThirdPartyServices sewerageThirdPartyServices;
+
+    @Autowired
+    private SewerageConnectionService sewerageConnectionService;
 
     @RequestMapping(value = "/view/{applicationNumber}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String applicationNumber, final HttpServletRequest request) {
-        SewerageApplicationDetails details = null;
-        details = sewerageApplicationDetailsService.findByApplicationNumberAndConnectionStatus(applicationNumber,
+        SewerageApplicationDetails details = sewerageApplicationDetailsService.findByApplicationNumberAndConnectionStatus(applicationNumber,
                 SewerageConnectionStatus.ACTIVE);
         if (details == null)
             details = sewerageApplicationDetailsService.findByApplicationNumberAndConnectionStatus(applicationNumber,
@@ -92,48 +96,36 @@ public class ViewSewerageApplicationController {
         if (details == null)
             details = sewerageApplicationDetailsService.findByApplicationNumber(applicationNumber);
         model.addAttribute("sewerageApplicationDetails", details);
-//        model.addAttribute("connectionType",
-//                sewerageApplicationDetailsService.getConnectionTypesMap().get(details.getConnectionType().name()));
-//        model.addAttribute("feeDetails", connectionDemandService.getSplitFee(details));
         model.addAttribute("checkOperator", sewerageTaxUtils.checkCollectionOperatorRole());
-        model.addAttribute("citizenRole", sewerageTaxUtils.getCitizenUserRole());
-        final BigDecimal waterTaxDueforParent = sewerageApplicationDetailsService.getTotalAmount(details);
-        model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
+        model.addAttribute("citizenRole", sewerageTaxUtils.hasCitizenRole());
+        model.addAttribute("waterTaxDueforParent", sewerageApplicationDetailsService.getTotalAmount(details));
         model.addAttribute("mode", "search");
         return "application-view";
     }
 
+    @GetMapping("/view/{consumernumber}/{assessmentnumber}")
+    public ModelAndView view(@PathVariable final String consumernumber, @PathVariable final String assessmentnumber,
+                             final Model model, final ModelMap modelMap, final HttpServletRequest request) {
+        SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
+                .findByApplicationNumber(consumernumber);
+        final AssessmentDetails propertyOwnerDetails = sewerageThirdPartyServices.getPropertyDetails(assessmentnumber,
+                request);
+        if (propertyOwnerDetails != null)
+            modelMap.addAttribute("propertyOwnerDetails", propertyOwnerDetails);
+        model.addAttribute("applicationHistory",
+                sewerageApplicationDetailsService.populateHistory(sewerageApplicationDetails));
+        model.addAttribute("documentNamesList",
+                sewerageConnectionService.getSewerageApplicationDoc(sewerageApplicationDetails));
+        return new ModelAndView("viewseweragedetails", "sewerageApplicationDetails", sewerageApplicationDetails);
+    }
+
     @ModelAttribute("cscUserRole")
     public String getCurrentUserRole() {
-        String cscUserRole = "";
-        User currentUser = null;
-
-        if (ApplicationThreadLocals.getUserId() != null)
-            currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
-        else
-            currentUser = securityUtils.getCurrentUser();
-
-        for (final Role userrole : currentUser.getRoles())
-            if (userrole.getName().equals(SewerageTaxConstants.ROLE_CSCOPERTAOR)) {
-                cscUserRole = userrole.getName();
-                break;
-            }
-        return cscUserRole;
+        return securityUtils.getCurrentUser().hasRole(ROLE_CSCOPERTAOR) ? ROLE_ULBOPERATOR : "";
     }
 
     @ModelAttribute("ulbUserRole")
     public String getUlbOperatorUserRole() {
-        String userRole = "";
-        User currentUser = null;
-        if (ApplicationThreadLocals.getUserId() != null)
-            currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
-        else
-            currentUser = securityUtils.getCurrentUser();
-        for (final Role userrole : currentUser.getRoles())
-            if (userrole.getName().equals(SewerageTaxConstants.ROLE_ULBOPERATOR)) {
-                userRole = userrole.getName();
-                break;
-            }
-        return userRole;
+        return securityUtils.getCurrentUser().hasRole(ROLE_ULBOPERATOR) ? ROLE_ULBOPERATOR : "";
     }
 }

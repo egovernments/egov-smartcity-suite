@@ -57,14 +57,9 @@ import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.utils.SewerageExecutionResultAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +67,8 @@ import java.util.List;
 import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.REVENUE_WARD;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
 @RequestMapping(value = "/transactions")
@@ -97,13 +94,13 @@ public class SewerageExecuteConnectionController {
         return new SewerageExecutionResult();
     }
 
-    @RequestMapping(value = "/connexecutionsearch", method = RequestMethod.GET)
+    @GetMapping("/connexecutionsearch")
     public String showExecutionConnection(final Model model) {
         model.addAttribute("applicationtype", sewerageApplicationTypeRepository.findAll());
         return "sewerageExecution-search";
     }
 
-    @RequestMapping(value = "/ajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @PostMapping(value = "/ajaxsearch", produces = TEXT_PLAIN_VALUE)
     @ResponseBody
     public String executeSewerage(@ModelAttribute SewerageExecutionResult sewerageExecutionResult) {
         List<SewerageExecutionResult> connectionExecutionList = sewerageIndexService
@@ -112,18 +109,18 @@ public class SewerageExecuteConnectionController {
                 SewerageExecutionResultAdapter.class)).append("}").toString();
     }
 
-    @RequestMapping(value = "/connexecutionupdate", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/connexecutionupdate", consumes = APPLICATION_JSON_VALUE)
     @ResponseBody
     public String updateData(@RequestBody SewerageBulkExecutionResponse sewerageBulkExecutionResponse) {
         List<SewerageApplicationDetails> sewerageApplicationDetailsList = new ArrayList<>();
-        String validationstatus = sewerageIndexService.validateDate(sewerageBulkExecutionResponse,
+        String validationStatus = sewerageIndexService.validateDate(sewerageBulkExecutionResponse,
                 sewerageApplicationDetailsList);
         Boolean updateStatus = sewerageIndexService.update(sewerageApplicationDetailsList);
         String response;
         if (sewerageBulkExecutionResponse.getSewerageExecutionResult().length <= 0) {
             response = "EmptyList";
-        } else if (!validationstatus.isEmpty()) {
-            response = validationstatus;
+        } else if (!validationStatus.isEmpty()) {
+            response = validationStatus;
         } else if (!updateStatus) {
             response = "UpdateExecutionFailed";
         } else

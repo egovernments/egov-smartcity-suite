@@ -210,7 +210,7 @@ function submitButton() {
 					  { title : "pt assesmentno", targets: [2], data: "assessmentNumber", visible: false},
 					  {title : 'S.H.S.C Number',class : 'row-detail', data : 'shscNumber',
 			        	   "render": function ( data, type, row, meta ) {
-					            return '<a onclick="openPopup(\'/stms/existing/sewerage/view/'+row.applicationNumber+'/'+row.assessmentNumber+'\')" href="javascript:void(0);">'+data+'</a>';} },
+					            return '<a onclick="openPopup(\'/stms/application/view/'+row.applicationNumber+'/'+row.assessmentNumber+'\')" href="javascript:void(0);">'+data+'</a>';} },
 					  { title : "Applicant Name", data: "applicantName"},
 					  { title : "Application Type", data: "applicationType"},
 					  { title : "Property type", data: "propertyType"},

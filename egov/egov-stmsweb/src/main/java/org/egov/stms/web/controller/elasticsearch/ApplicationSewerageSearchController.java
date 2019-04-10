@@ -53,13 +53,11 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.stms.elasticsearch.entity.SewerageConnSearchRequest;
 import org.egov.stms.elasticsearch.entity.SewerageSearchResult;
 import org.egov.stms.entity.es.SewerageIndex;
 import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
 import org.egov.stms.service.es.SeweragePaginationService;
-import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.entity.SewerageConnection;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
 import org.egov.stms.transactions.service.SewerageConnectionService;
@@ -71,15 +69,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -104,61 +95,48 @@ public class ApplicationSewerageSearchController {
     @Autowired
     private SeweragePaginationService seweragePaginationService;
 
-    @ModelAttribute
-    public SewerageConnSearchRequest searchRequest() {
-        return new SewerageConnSearchRequest();
-    }
-
-    @RequestMapping(method = RequestMethod.GET)
-    public String newSearchForm(final Model model) {
-        return "sewerageTaxSearch-form";
-    }
-
-    @RequestMapping(value = "/legacysearch", method = RequestMethod.GET)
-    public String newLeagacySearchForm(final Model model) {
-        model.addAttribute("legacy", true);
-        return "sewerageTaxSearch-form";
-    }
-
     @ModelAttribute("revenueWards")
     public List<Boundary> revenueWardList() {
         return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 REVENUE_WARD, REVENUE_HIERARCHY_TYPE);
     }
 
-    @RequestMapping(value = "/view/{consumernumber}/{assessmentnumber}", method = RequestMethod.GET)
-    public ModelAndView view(@PathVariable final String consumernumber, @PathVariable final String assessmentnumber,
-                             final Model model, final ModelMap modelMap, final HttpServletRequest request) {
-        SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
-                .findByApplicationNumber(consumernumber);
-        final AssessmentDetails propertyOwnerDetails = sewerageThirdPartyServices.getPropertyDetails(assessmentnumber,
-                request);
-        if (propertyOwnerDetails != null)
-            modelMap.addAttribute("propertyOwnerDetails", propertyOwnerDetails);
-        model.addAttribute("applicationHistory",
-                sewerageApplicationDetailsService.populateHistory(sewerageApplicationDetails));
-        model.addAttribute("documentNamesList",
-                sewerageConnectionService.getSewerageApplicationDoc(sewerageApplicationDetails));
-        return new ModelAndView("viewseweragedetails", "sewerageApplicationDetails", sewerageApplicationDetails);
+    @GetMapping
+    public String newSearchForm(final Model model) {
+        SewerageConnSearchRequest sewerageConnSearchRequest = new SewerageConnSearchRequest();
+        sewerageConnSearchRequest.setSearchType("searchConnection");
+        model.addAttribute("sewerageConnSearchRequest", sewerageConnSearchRequest);
+        return "sewerageTaxSearch-form";
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @GetMapping("/legacysearch")
+    public String newLeagacySearchForm(final Model model) {
+        SewerageConnSearchRequest sewerageConnSearchRequest = new SewerageConnSearchRequest();
+        sewerageConnSearchRequest.setSearchType("legacySearch");
+        model.addAttribute("sewerageConnSearchRequest", sewerageConnSearchRequest);
+        return "sewerageTaxSearch-form";
+    }
+
+    @PostMapping
     @ResponseBody
     public DataTable<SewerageSearchResult> searchApplication(@ModelAttribute final SewerageConnSearchRequest searchRequest) {
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         if (cityWebsite != null)
             searchRequest.setUlbName(cityWebsite.getName());
-        if (searchRequest.getShscNumber() != null) {
+        final List<SewerageSearchResult> searchResultFormatted = new ArrayList<>();
+        if ("legacySearch".equals(searchRequest.getSearchType()))
+            searchRequest.setLegacy(true);
+        else if (searchRequest.getShscNumber() != null) {
             SewerageConnection sewerageConnection = sewerageConnectionService
                     .findByShscNumberAndStatusList(searchRequest.getShscNumber(),
                             Arrays.asList(SewerageConnectionStatus.INPROGRESS, SewerageConnectionStatus.ACTIVE, SewerageConnectionStatus.CLOSED));
             searchRequest.setLegacy(sewerageConnection.getLegacy());
         }
-        final List<SewerageSearchResult> searchResultFomatted = new ArrayList<>();
+
         final Pageable pageable = new PageRequest(searchRequest.pageNumber(),
                 searchRequest.pageSize(), searchRequest.orderDir(), searchRequest.orderBy());
-        Page<SewerageIndex> searchResult = seweragePaginationService.searchResultObj(searchRequest, searchResultFomatted);
-        return new DataTable<>(new PageImpl<>(searchResultFomatted, pageable, searchResult.getTotalElements()),
+        Page<SewerageIndex> searchResult = seweragePaginationService.searchResultObj(searchRequest, searchResultFormatted);
+        return new DataTable<>(new PageImpl<>(searchResultFormatted, pageable, searchResult.getTotalElements()),
                 searchRequest.draw());
     }
 }

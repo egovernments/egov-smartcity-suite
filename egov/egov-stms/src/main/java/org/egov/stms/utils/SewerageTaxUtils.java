@@ -48,6 +48,7 @@
 package org.egov.stms.utils;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -55,7 +56,6 @@ import org.egov.commons.dao.InstallmentDao;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
-import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
@@ -66,14 +66,11 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.workflow.entity.State;
-import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.AssessmentDetails;
@@ -81,13 +78,11 @@ import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.ptis.wtms.PropertyIntegrationService;
 import org.egov.stms.masters.entity.SewerageApplicationType;
-import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
@@ -117,12 +112,6 @@ public class SewerageTaxUtils {
 
     @Autowired
     private DesignationService designationService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private PositionMasterService positionMasterService;
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -175,15 +164,15 @@ public class SewerageTaxUtils {
 
     public String getApproverName(final Long approvalPosition) {
         Assignment assignment = null;
-        List<Assignment> asignList;
+
         if (approvalPosition != null)
             assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
+        List<Assignment> assignmentList = new ArrayList<>();
         if (assignment != null) {
-            asignList = new ArrayList<>();
-            asignList.add(assignment);
+            assignmentList.add(assignment);
         } else
-            asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
-        return !asignList.isEmpty() ? asignList.get(0).getEmployee().getName() : "";
+            assignmentList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
+        return !assignmentList.isEmpty() ? assignmentList.get(0).getEmployee().getName() : "";
     }
 
     public Position getZonalLevelClerkForLoggedInUser(final String asessmentNumber) {
@@ -192,9 +181,9 @@ public class SewerageTaxUtils {
         Assignment assignmentObj = null;
         final Boundary boundaryObj = boundaryService.getBoundaryById(assessmentDetails.getBoundaryDetails()
                 .getAdminWardId());
-        assignmentObj = getUserPositionByZone(asessmentNumber, assessmentDetails, boundaryObj);
+        assignmentObj = getUserPositionByZone(boundaryObj);
 
-        return assignmentObj != null ? assignmentObj.getPosition() : null;
+        return assignmentObj == null ? null : assignmentObj.getPosition();
     }
 
     /**
@@ -207,195 +196,51 @@ public class SewerageTaxUtils {
      * @param boundaryObj
      * @return Assignment
      */
-    public Assignment getUserPositionByZone(final String asessmentNumber, final AssessmentDetails assessmentDetails,
-                                            final Boundary boundaryObj) {
-        final String designationStr = getDesignationForThirdPartyUser();
-        final String departmentStr = getDepartmentForWorkFlow();
-        final String[] department = departmentStr.split(",");
-        final String[] designation = designationStr.split(",");
+    public Assignment getUserPositionByZone(final Boundary boundaryObj) {
+        List<Designation> designationList= getDesignationForThirdPartyUser();
+        List<Department> departmentList = getDepartmentForWorkFlow();
         List<Assignment> assignment = new ArrayList<>();
-        for (final String dept : department) {
-            for (final String desg : designation) {
-                assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
-                                .getDepartmentByName(dept).getId(), designationService.getDesignationByName(desg).getId(),
-                        boundaryObj.getId());
+
+        for (final Department dept : departmentList)
+            for (final Designation desg : designationList) {
+                assignment = assignmentService.
+                        findByDepartmentDesignationAndBoundary(dept.getId(), desg.getId(), boundaryObj.getId());
                 if (!assignment.isEmpty())
                     break;
             }
-            if (!assignment.isEmpty())
-                break;
-        }
         return !assignment.isEmpty() ? assignment.get(0) : null;
     }
 
-    public String getDesignationForThirdPartyUser() {
+    public List<Designation> getDesignationForThirdPartyUser() {
         String designation = "";
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 MODULE_NAME, CLERKDESIGNATIONFORCSCOPERATOR);
         if (null != appConfigValue && !appConfigValue.isEmpty())
             designation = appConfigValue.get(0).getValue();
-        return designation;
+        return designationService.
+                getDesignationsByNames(Arrays.asList(StringUtils.upperCase(designation).split(",")));
     }
 
-    public String getDepartmentForWorkFlow() {
+    public List<Department> getDepartmentForWorkFlow() {
         String department = "";
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 MODULE_NAME, SEWERAGETAXWORKFLOWDEPARTEMENT);
         if (null != appConfigValue && !appConfigValue.isEmpty())
             department = appConfigValue.get(0).getValue();
-        return department;
-    }
-
-    public Long getApproverPosition(final String designationName,
-                                    final SewerageApplicationDetails sewerageApplicationDetails) {
-        final Set<StateHistory<Position>> stateHistoryList = sewerageApplicationDetails.getState().getHistory();
-        Long approverPosition = 0l;
-        final String[] desgnArray = designationName.split(",");
-        User currentUser = null;
-        if (stateHistoryList != null && !stateHistoryList.isEmpty()) {
-            currentUser = userService.getUserById(sewerageApplicationDetails.getCreatedBy().getId());
-            if (currentUser != null && sewerageApplicationDetails.getConnection().getLegacy()) {
-                for (final Role userrole : currentUser.getRoles())
-                    if (userrole.getName().equals(ROLE_SUPERUSER)) {
-                        final Position positionuser = getZonalLevelClerkForLoggedInUser(sewerageApplicationDetails
-                                .getConnectionDetail().getPropertyIdentifier());
-                        approverPosition = positionuser.getId();
-                        break;
-                    }
-            } else {
-                for (final StateHistory stateHistory : stateHistoryList)
-                    if (stateHistory.getOwnerPosition() != null) {
-                        final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(
-                                stateHistory.getOwnerPosition().getId(), new Date());
-                        for (final Assignment assgn : assignmentList)
-                            for (final String str : desgnArray)
-                                if (assgn.getDesignation().getName().equalsIgnoreCase(str)) {
-                                    approverPosition = stateHistory.getOwnerPosition().getId();
-                                    break;
-                                }
-
-                    }
-                if (approverPosition == 0) {
-                    final State stateObj = sewerageApplicationDetails.getState();
-                    final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(stateObj
-                            .getOwnerPosition().getId(), new Date());
-                    for (final Assignment assgn : assignmentList)
-                        if (assgn.getDesignation().getName().equalsIgnoreCase(designationName)) {
-                            approverPosition = stateObj.getOwnerPosition().getId();
-                            break;
-                        }
-                }
-
-            }
-
-        } else {
-            currentUser = userService.getUserById(sewerageApplicationDetails.getCreatedBy().getId());
-            if (currentUser != null && sewerageApplicationDetails.getConnection().getLegacy()) {
-                for (final Role userrole : currentUser.getRoles())
-                    if (userrole.getName().equals(ROLE_SUPERUSER)) {
-                        final Position positionuser = getZonalLevelClerkForLoggedInUser(sewerageApplicationDetails
-                                .getConnectionDetail().getPropertyIdentifier());
-                        approverPosition = positionuser.getId();
-                        break;
-                    }
-            } else {
-                final Position posObjToClerk = positionMasterService
-                        .getCurrentPositionForUser(sewerageApplicationDetails.getCreatedBy().getId());
-                approverPosition = posObjToClerk.getId();
-            }
-        }
-        return approverPosition;
-    }
-
-    public Position getCityLevelExecutiveEngineerPosition(final String execEnggDesgn) {
-        String execEnggDesgnName = "";
-        final String[] degnName = execEnggDesgn.split(",");
-        if (degnName.length > 1)
-            execEnggDesgnName = degnName[0];
-        else
-            execEnggDesgnName = execEnggDesgn;
-        final Designation desgnObj = designationService.getDesignationByName(execEnggDesgn);
-        if (execEnggDesgn.equals("Executive engineer")) {
-            final Department deptObj = departmentService
-                    .getDepartmentByName(ROLE_EXECUTIVEDEPARTEMNT);
-            List<Assignment> assignlist = null;
-            assignlist = assignmentService.getAssignmentsByDeptDesigAndDates(deptObj.getId(), desgnObj.getId(),
-                    new Date(), new Date());
-            if (assignlist.isEmpty())
-                assignlist = assignmentService.getAllPositionsByDepartmentAndDesignationForGivenRange(null,
-                        desgnObj.getId(), new Date());
-            if (assignlist.isEmpty())
-                assignlist = assignmentService.getAllActiveAssignments(desgnObj.getId());
-
-            return assignlist.get(0).getPosition();
-        } else
-            return !assignmentService.findPrimaryAssignmentForDesignationName(execEnggDesgnName).isEmpty() ? assignmentService
-                    .findPrimaryAssignmentForDesignationName(execEnggDesgnName).get(0).getPosition()
-                    : null;
-    }
-
-    public Position getCityLevelDeputyEngineerPosition(final String deputyEngineerDesgn) {
-        String deputydesgnname = "";
-        final String[] degnName = deputyEngineerDesgn.split(",");
-        if (degnName.length > 1)
-            deputydesgnname = degnName[0];
-        else
-            deputydesgnname = deputyEngineerDesgn;
-        final Designation desgnObj = designationService.getDesignationByName(deputyEngineerDesgn);
-        if (deputyEngineerDesgn.equalsIgnoreCase("Deputy executive engineer")) {
-            final Department deptObj = departmentService
-                    .getDepartmentByName(ROLE_DEPUTYDEPARTEMNT);
-            List<Assignment> assignlist = null;
-            assignlist = assignmentService.getAssignmentsByDeptDesigAndDates(deptObj.getId(), desgnObj.getId(),
-                    new Date(), new Date());
-            if (assignlist.isEmpty())
-                assignlist = assignmentService.getAllPositionsByDepartmentAndDesignationForGivenRange(null,
-                        desgnObj.getId(), new Date());
-            if (assignlist.isEmpty())
-                assignlist = assignmentService.getAllActiveAssignments(desgnObj.getId());
-
-            return assignlist.get(0).getPosition();
-        } else
-            return !assignmentService.findPrimaryAssignmentForDesignationName(deputydesgnname).isEmpty() ? assignmentService
-                    .findPrimaryAssignmentForDesignationName(deputydesgnname).get(0).getPosition()
-                    : null;
+        return departmentService.
+                getDepartmentsByNames(Arrays.asList(StringUtils.upperCase(department).split(",")));
     }
 
     public String getCityCode() {
         return ApplicationThreadLocals.getCityCode();
     }
 
-    // allowing only for CollectionOperator to collect Fees
-    @ModelAttribute(value = "checkOperator")
     public Boolean checkCollectionOperatorRole() {
-        Boolean isCSCOperator = false;
-        // as per Adoni allowing collection for ULB Operator
-        if (ApplicationThreadLocals.getUserId() != null) {
-            final User userObj = userService.getUserById(ApplicationThreadLocals.getUserId());
-            if (userObj != null)
-                for (final Role role : userObj.getRoles())
-                    if (role != null && role.getName().contains(ROLE_COLLECTIONOPERATOR)) {
-                        isCSCOperator = true;
-                        break;
-                    }
-        }
-        return isCSCOperator;
+        return securityUtils.getCurrentUser().hasRole(ROLE_COLLECTIONOPERATOR);
     }
 
-    public Boolean getCitizenUserRole() {
-        Boolean citizenrole = Boolean.FALSE;
-        if (ApplicationThreadLocals.getUserId() != null) {
-            final User currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
-            if (currentUser.getRoles().isEmpty() && securityUtils.getCurrentUser().getUsername().equals("anonymous"))
-                citizenrole = Boolean.TRUE;
-            for (final Role userrole : currentUser.getRoles())
-                if (userrole != null && userrole.getName().equals(ROLE_CITIZEN)) {
-                    citizenrole = Boolean.TRUE;
-                    break;
-                }
-        } else
-            citizenrole = Boolean.TRUE;
-        return citizenrole;
+    public Boolean hasCitizenRole() {
+        return securityUtils.currentUserIsCitizen() || SecurityUtils.currentUserIsAnonymous();
     }
 
     public boolean isInspectionFeeCollectionRequired() {
@@ -405,15 +250,8 @@ public class SewerageTaxUtils {
                 && inspectionFeeCollectionRqd.getValue().equals("YES");
     }
 
-    public List<Role> getLoginUserRoles() {
-
-        final List<Role> roleList = new ArrayList<>();
-        if (ApplicationThreadLocals.getUserId() != null) {
-            final User currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
-            for (final Role userrole : currentUser.getRoles())
-                roleList.add(userrole);
-        }
-        return roleList;
+    public Set<Role> getLoginUserRoles() {
+        return securityUtils.getCurrentUser().getRoles();
     }
 
     public String getMunicipalityName() {
@@ -421,14 +259,13 @@ public class SewerageTaxUtils {
     }
 
     public List<Installment> getInstallmentsForCurrYear(final Date currDate) {
-        final Module module = moduleService.getModuleByName(MODULE_NAME);
-        return installmentDao.getAllInstallmentsByModuleAndStartDate(module, currDate);
+        return installmentDao.getAllInstallmentsByModuleAndStartDate(getModule(), currDate);
     }
 
     public List<Installment> getInstallmentsByModuleDesc(final int year) {
         return installmentDao
                 .getInstallmentsByModuleAndInstallmentYearOrderByInstallmentYearDescending(
-                        moduleService.getModuleByName(MODULE_NAME), year);
+                        getModule(), year);
     }
 
     public Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
@@ -457,13 +294,16 @@ public class SewerageTaxUtils {
     }
 
     public Integer getSlaAppConfigValues(SewerageApplicationType applicationType) {
-        String keyName;
-        if (applicationType.getCode() == NEWSEWERAGECONNECTION)
-            keyName = SLAFORNEWSEWERAGECONNECTION;
-        else
-            keyName = applicationType.getCode() == CHANGEINCLOSETS ? SLAFORCHANGEINCLOSET : SLAFORCLOSURECONNECTION;
+        String keyName = getSlaKeyName(applicationType);
         final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME, keyName);
-        return !appConfigValues.isEmpty() ? Integer.valueOf(appConfigValues.get(0).getValue()) : 0;
+        return appConfigValues.isEmpty() ? 0 : Integer.valueOf(appConfigValues.get(0).getValue());
+    }
+
+    private String getSlaKeyName(SewerageApplicationType applicationType) {
+        if (applicationType.getCode() == NEWSEWERAGECONNECTION)
+            return SLAFORNEWSEWERAGECONNECTION;
+        else
+            return applicationType.getCode() == CHANGEINCLOSETS ? SLAFORCHANGEINCLOSET : SLAFORCLOSURECONNECTION;
     }
 
     public AppConfigValues getAppConfigValues(final String keyName) {

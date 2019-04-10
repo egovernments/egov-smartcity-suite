@@ -49,12 +49,13 @@ package org.egov.stms.transactions.service;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
+import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.dao.EgDemandDao;
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.stms.entity.SewerageTaxBatchDemandGenerate;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.repository.SewerageTaxBatchDemandGenRepository;
+import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -62,6 +63,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -79,17 +81,16 @@ public class SewerageBatchDemandGenService {
     private SewerageDemandService sewerageDemandService;
 
     @Autowired
-    private AppConfigValueService appConfigValuesService;
-
-    @Autowired
     private SewerageTaxBatchDemandGenRepository sewerageTaxBatchDemandGenRepository;
 
     @Autowired
     private TransactionTemplate transactionTemplate;
 
-    public SewerageTaxBatchDemandGenerate getBatchDemandGenById(final Long id) {
-        return sewerageTaxBatchDemandGenRepository.findOne(id);
-    }
+    @Autowired
+    private InstallmentDao installmentDao;
+
+    @Autowired
+    private SewerageTaxUtils sewerageTaxUtils;
 
     public List<SewerageTaxBatchDemandGenerate> findActiveBatchDemands() {
         return sewerageTaxBatchDemandGenRepository.findByActiveTrueOrderByCreatedDate();
@@ -107,28 +108,21 @@ public class SewerageBatchDemandGenService {
 
     public int generateSewerageDemandForNextFinYear() {
         Integer[] recordsResult = null;
-
         List<SewerageTaxBatchDemandGenerate> sewerageBatchDmdGenResult = findActiveBatchDemands();
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("SewerageBatchDmdGenResult " + sewerageBatchDmdGenResult.size());
         }
-
         if (!sewerageBatchDmdGenResult.isEmpty()) {
-
-            final AppConfigValues totalRecordToFeatch = appConfigValuesService.getConfigValuesByModuleAndKey(
-                    SewerageTaxConstants.MODULE_NAME, SewerageTaxConstants.TOTALRESULTTOBEFETCH).get(0);
+            final AppConfigValues totalRecordToFetch = sewerageTaxUtils.getAppConfigValues(SewerageTaxConstants.TOTALRESULTTOBEFETCH);
             if (LOGGER.isInfoEnabled()) {
-                LOGGER.info(
-                        "*************************************** totalRecordToFeatch records " + totalRecordToFeatch.getValue());
+                LOGGER.info("*************************************** totalRecordToFetch records " + totalRecordToFetch.getValue());
             }
             SewerageTaxBatchDemandGenerate sewerageDmdGen = sewerageBatchDmdGenResult.get(0);
-
             /*
              * GET LIST OF DEMANDS WHICH ARE PERMANENT AND BASED ON FINANCIAL YEAR, GET Sewerage Applications. Check count, if
              * count greater than 300 then
              */
             if (sewerageDmdGen != null && sewerageDmdGen.getInstallment() != null) {
-
                 List<Installment> previousInstallment = sewerageDemandService.getPreviousInstallment(sewerageDmdGen
                         .getInstallment().getToDate());
 
@@ -142,7 +136,7 @@ public class SewerageBatchDemandGenService {
 
                     List<SewerageApplicationDetails> sewerageApplnsDetails = sewerageApplicationDetailsService
                             .findActiveSewerageApplnsByCurrentInstallmentAndNumberOfResultToFetch(
-                                    previousInstallment.get(0), Integer.valueOf(totalRecordToFeatch.getValue()));
+                                    previousInstallment.get(0), Integer.valueOf(totalRecordToFetch.getValue()));
                     for (SewerageApplicationDetails applicationDetails : sewerageApplnsDetails) {
                         applicationDetails.getDemandConnections().get(0).setDemand(egDemandDao
                                 .findById(applicationDetails.getDemandConnections().get(0).getDemand().getId(), false));
@@ -152,7 +146,6 @@ public class SewerageBatchDemandGenService {
                             sewerageApplnsDetails, previousInstallment, sewerageDmdGenerationInstallment);
 
                 }
-
                 sewerageDmdGen.setActive(false);
                 sewerageDmdGen.setTotalRecords(
                         (recordsResult != null && recordsResult.length > 0 && recordsResult[0] != null) ? recordsResult[0] : 0);
@@ -171,8 +164,22 @@ public class SewerageBatchDemandGenService {
             }
 
         }
-
         return (recordsResult != null && recordsResult.length >= 2 && recordsResult[1] != null) ? recordsResult[1] : 0;
     }
 
+    public List<Installment> getLastYearInstallments() {
+        return installmentDao.fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(
+                sewerageTaxUtils.getModule(), new Date(), 1);
+    }
+
+    public List<Installment> getNextYearInstallments(List<Installment> installmentList) {
+        return installmentDao.fetchNextInstallmentsByModuleAndDate(
+                sewerageTaxUtils.getModule(),
+                installmentList.get(0).getFromDate());
+    }
+
+    public Installment getInstallment(String financialYear) {
+        return installmentDao.getInsatllmentByModuleAndDescription(
+                sewerageTaxUtils.getModule(), financialYear);
+    }
 }

@@ -70,11 +70,12 @@
 						<span class="mandatory"></span>
 						</label>
 						<div class="col-sm-3 add-margin">
-							<form:select path="financialYear" data-first-option="false"	id="financialyear" cssClass="form-control"  >
+							<form:select path="financialYear" data-first-option="false"	id="financialyear" cssClass="form-control" required="required">
 								<form:option value=""><spring:message code="lbl.select" /></form:option>
 								<form:options items="${financialYear}" itemLabel="description" itemValue="description"/>
 							</form:select>
-						</div>	
+							<form:errors path="financialYear" cssClass="error-msg" />
+						</div>
 					</div>		
        		
 	            </div>

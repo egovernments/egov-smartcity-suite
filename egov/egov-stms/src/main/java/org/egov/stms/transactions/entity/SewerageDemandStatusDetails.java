@@ -48,7 +48,10 @@
 
 package org.egov.stms.transactions.entity;
 
+import javax.validation.constraints.NotNull;
+
 public class SewerageDemandStatusDetails {
+    @NotNull
     private String financialYear;
     private String status;
     private String sewerageApplicationNumber;

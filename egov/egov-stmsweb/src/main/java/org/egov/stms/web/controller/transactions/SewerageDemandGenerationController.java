@@ -48,9 +48,6 @@
 package org.egov.stms.web.controller.transactions;
 
 import org.egov.commons.Installment;
-import org.egov.commons.dao.InstallmentDao;
-import org.egov.infra.admin.master.service.ModuleService;
-import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.stms.entity.SewerageDemandGenerationLog;
 import org.egov.stms.entity.SewerageDemandGenerationLogDetail;
 import org.egov.stms.entity.SewerageTaxBatchDemandGenerate;
@@ -61,45 +58,26 @@ import org.egov.stms.transactions.service.SewerageDemandGenerationLogService;
 import org.egov.stms.web.adapter.SewerageDemandResponseStatusAdapter;
 import org.egov.stms.web.adapter.SewerageDemandStatusDetailsAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import java.text.ParseException;
+import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
 @RequestMapping(value = "/transactions")
 public class SewerageDemandGenerationController {
 
-    private static final String SEWERAGE_TAX_MANAGEMENT = "Sewerage Tax Management";
     private static final String DEMAND_STATUS_FORM = "sewerage-demand-status";
+    private static final String GENERATE_DEMAND_FORM = "seweragedemand-generate";
     private static final String DATA = "{\"data\":";
-
-    @Autowired
-    @Qualifier("fileStoreService")
-    protected FileStoreService fileStoreService;
-
-    @Autowired
-    private ModuleService moduleService;
-
-    @Autowired
-    private InstallmentDao installmentDao;
 
     @Autowired
     private SewerageBatchDemandGenService sewerageBatchDemandGenService;
@@ -108,70 +86,56 @@ public class SewerageDemandGenerationController {
     private SewerageDemandGenerationLogService sewerageDemandGenerationLogService;
 
     @ModelAttribute("financialYear")
-    public List<Installment> financialyear(final Installment installment) throws ParseException {
-
-        final List<Installment> installmentList = installmentDao.fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(
-                moduleService.getModuleByName(SEWERAGE_TAX_MANAGEMENT), new Date(), 1);
-
-        if (installmentList!=null && !installmentList.isEmpty())
-            return installmentDao.fetchNextInstallmentsByModuleAndDate(
-                    moduleService.getModuleByName(SEWERAGE_TAX_MANAGEMENT),
-                    installmentList.get(0).getFromDate());
+    public List<Installment> getFinancialYears() {
+        final List<Installment> installmentList = sewerageBatchDemandGenService.getLastYearInstallments();
+        if (installmentList != null && !installmentList.isEmpty())
+            return sewerageBatchDemandGenService.getNextYearInstallments(installmentList);
         return installmentList;
     }
 
-    @RequestMapping(value = "/generatedemand", method = GET)
-    public String search(final Model model, @ModelAttribute final SewerageDemandStatusDetails sewerageDemandStatusDetails) {
-
-        return "seweragedemand-generate";
+    @GetMapping("/generatedemand")
+    public String search(@ModelAttribute final SewerageDemandStatusDetails sewerageDemandStatusDetails) {
+        return GENERATE_DEMAND_FORM;
     }
 
-    @RequestMapping(value = "/generatedemand", method = POST)
-    public String generateDemand(final Model model, @ModelAttribute final SewerageDemandStatusDetails sewerageDemandStatusDetails,
-            final RedirectAttributes redirectAttributes, final BindingResult resultBinder) {
+    @PostMapping("/generatedemand")
+    public String generateDemand(final Model model, @Valid @ModelAttribute final SewerageDemandStatusDetails sewerageDemandStatusDetails,
+                                 BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
 
-        Installment installment;
+        if (bindingResult.hasErrors())
+            return GENERATE_DEMAND_FORM;
 
-        if (sewerageDemandStatusDetails.getFinancialYear() != null)
-            installment = installmentDao.getInsatllmentByModuleAndDescription(
-                    moduleService.getModuleByName(SEWERAGE_TAX_MANAGEMENT), sewerageDemandStatusDetails.getFinancialYear());
-        else {
-            return "seweragedemand-generate";
-        }
-
+        Installment installment = sewerageBatchDemandGenService.getInstallment(sewerageDemandStatusDetails.getFinancialYear());
         if (installment != null) {
             final SewerageTaxBatchDemandGenerate sewerageBatchDemandGenerate = new SewerageTaxBatchDemandGenerate();
             sewerageBatchDemandGenerate.setActive(true);
             sewerageBatchDemandGenerate.setInstallment(installment);
             sewerageBatchDemandGenerate.setJobName("Generate Demand For " + installment.getDescription());
             sewerageBatchDemandGenService.createSewerageTaxBatchDemandGenerate(sewerageBatchDemandGenerate);
-        }
-
-        redirectAttributes.addFlashAttribute("message", "msg.demand.Scheduled");// CHANGE MESSAGE AS SCHEDULED
-
-        model.addAttribute("sewerageDemandStatusDetails", sewerageDemandStatusDetails);
-        return "generate-success";
+            redirectAttributes.addFlashAttribute("message", "msg.demand.Scheduled");// CHANGE MESSAGE AS SCHEDULED
+            model.addAttribute("sewerageDemandStatusDetails", sewerageDemandStatusDetails);
+            return "generate-success";
+        } else
+            return GENERATE_DEMAND_FORM;
     }
 
-    @RequestMapping(value = "/seweragedemand-status", method = GET)
+    @GetMapping("/seweragedemand-status")
     public String viewDemand(@ModelAttribute final SewerageDemandStatusDetails sewerageDemandStatusDetails) {
         return DEMAND_STATUS_FORM;
     }
 
-    @RequestMapping(value = "/seweragedemand-status", method = POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @PostMapping(value = "/seweragedemand-status", produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String getDemandGenerationStatus(@ModelAttribute final SewerageDemandStatusDetails sewerageDemandStatusDetails,
-            @RequestParam final String financialYear, final HttpServletRequest request) {
+    public String getDemandGenerationStatus(
+            @ModelAttribute final SewerageDemandStatusDetails sewerageDemandStatusDetails,
+            @RequestParam final String financialYear) {
         final List<SewerageDemandStatusDetails> resultList = new ArrayList<>();
-
         if (financialYear != null) {
             final List<SewerageDemandGenerationLog> generationLogList = sewerageDemandGenerationLogService
                     .getDemandGenerationLogListByInstallmentYear(financialYear);
-
             if (generationLogList != null && !generationLogList.isEmpty()) {
                 final SewerageDemandStatusDetails demandStatus = sewerageDemandGenerationLogService
                         .getDemandStatusResult(generationLogList);
-
                 demandStatus.setFinancialYear(financialYear);
                 resultList.add(demandStatus);
             }
@@ -182,14 +146,15 @@ public class SewerageDemandGenerationController {
                 .toString();
     }
 
-    @RequestMapping(value = "/seweragedemand-status-records-view/{financialYear}", method = GET)
-    public String viewDemandStatusOfRecords(@ModelAttribute final SewerageDemandStatusDetails sewerageDemandStatusDetails,
+    @GetMapping("/seweragedemand-status-records-view/{financialYear}")
+    public String viewDemandStatusOfRecords(
+            @ModelAttribute final SewerageDemandStatusDetails sewerageDemandStatusDetails,
             @PathVariable final String financialYear, final Model model) {
         model.addAttribute("financialYear", financialYear);
-        return "seweragestatus-view"; 
+        return "seweragestatus-view";
     }
 
-    @RequestMapping(value = "/seweragedemand-status-records-view/", method = POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @PostMapping(value = "/seweragedemand-status-records-view/", produces = TEXT_PLAIN_VALUE)
     @ResponseBody
     public String viewDemandStatus(@RequestParam("financialyear") final String financialyear, final Model model) {
         List<SewerageDemandStatusDetails> resultList;
@@ -212,7 +177,6 @@ public class SewerageDemandGenerationController {
                     outputList.addAll(resultList);
                 }
             }
-
         }
         return new StringBuilder(DATA)
                 .append(toJSON(outputList, SewerageDemandStatusDetails.class, SewerageDemandStatusDetailsAdapter.class))
@@ -220,24 +184,23 @@ public class SewerageDemandGenerationController {
                 .toString();
     }
 
-    @RequestMapping(value = "/seweragedemand-batch", method = POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @PostMapping(value = "/seweragedemand-batch", produces = TEXT_PLAIN_VALUE)
     @ResponseBody
     public String getDemandGeneration(@ModelAttribute final SewerageDemandStatusResponse sewerageDemandStatusDetails,
-            final HttpServletRequest request, @RequestParam final String financialYear, final Model model) {
-        final List<SewerageDemandStatusResponse> batchresultList = new ArrayList<>();
-        final List<SewerageTaxBatchDemandGenerate> batchList = sewerageBatchDemandGenService.findActiveBatchDemands();
-        if (batchList != null)
-            for (final SewerageTaxBatchDemandGenerate batch : batchList) {
-
-                final SewerageDemandStatusResponse batchobj = new SewerageDemandStatusResponse();
-                batchobj.setJobname(batch.getJobName());
-                batchobj.setCreatedDate(batch.getCreatedDate());
-                batchobj.setFinancialYear(financialYear);
-                batchobj.setStatus("Demand Generation is scheduled and waiting for completion");
-                batchresultList.add(batchobj);
+                                      @RequestParam final String financialYear) {
+        final List<SewerageDemandStatusResponse> searchBatchList = new ArrayList<>();
+        final List<SewerageTaxBatchDemandGenerate> activeBatchList = sewerageBatchDemandGenService.findActiveBatchDemands();
+        if (activeBatchList != null)
+            for (final SewerageTaxBatchDemandGenerate batch : activeBatchList) {
+                final SewerageDemandStatusResponse batchObj = new SewerageDemandStatusResponse();
+                batchObj.setJobname(batch.getJobName());
+                batchObj.setCreatedDate(batch.getCreatedDate());
+                batchObj.setFinancialYear(financialYear);
+                batchObj.setStatus("Demand Generation is scheduled and waiting for completion");
+                searchBatchList.add(batchObj);
             }
         return new StringBuilder(DATA)
-                .append(toJSON(batchresultList, SewerageDemandStatusResponse.class, SewerageDemandResponseStatusAdapter.class))
+                .append(toJSON(searchBatchList, SewerageDemandStatusResponse.class, SewerageDemandResponseStatusAdapter.class))
                 .append("}")
                 .toString();
     }

@@ -59,11 +59,12 @@ import java.lang.reflect.Type;
 public class SewerageExecutionResultAdapter implements JsonSerializer<SewerageExecutionResult> {
     @Override
     public JsonElement serialize(final SewerageExecutionResult sewerageExecutionResult, final Type type,
-            final JsonSerializationContext jsc) {
+                                 final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         if (sewerageExecutionResult != null) {
             jsonObject.addProperty("applicationnumber", StringUtils.emptyIfNull(sewerageExecutionResult.getApplicationNumber()));
             jsonObject.addProperty("shscnumber", StringUtils.emptyIfNull(sewerageExecutionResult.getShscNumber()));
+            jsonObject.addProperty("propertyIdentifier", StringUtils.emptyIfNull(sewerageExecutionResult.getPropertyIdentifier()));
             jsonObject.addProperty("ownername",
                     StringUtils.emptyIfNull(sewerageExecutionResult.getOwnerName()));
             jsonObject.addProperty("applicationDate", StringUtils.emptyIfNull(sewerageExecutionResult.getApplicationDate()));
