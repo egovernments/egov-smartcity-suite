@@ -51,7 +51,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.stms.elasticsearch.entity.SewerageBulkExecutionResponse;
 import org.egov.stms.elasticsearch.entity.SewerageExecutionResult;
-import org.egov.stms.masters.repository.SewerageApplicationTypeRepository;
+import org.egov.stms.masters.service.SewerageApplicationTypeService;
 import org.egov.stms.service.es.SewerageIndexService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.utils.SewerageExecutionResultAdapter;
@@ -59,7 +59,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,7 +86,7 @@ public class SewerageExecuteConnectionController {
     @Autowired
     private BoundaryService boundaryService;
     @Autowired
-    private SewerageApplicationTypeRepository sewerageApplicationTypeRepository;
+    private SewerageApplicationTypeService sewerageApplicationTypeService;
 
     @ModelAttribute("revenueWards")
     public List<Boundary> revenueWardList() {
@@ -96,7 +101,7 @@ public class SewerageExecuteConnectionController {
 
     @GetMapping("/connexecutionsearch")
     public String showExecutionConnection(final Model model) {
-        model.addAttribute("applicationtype", sewerageApplicationTypeRepository.findAll());
+        model.addAttribute("applicationtype", sewerageApplicationTypeService.findAll());
         return "sewerageExecution-search";
     }
 
@@ -116,15 +121,7 @@ public class SewerageExecuteConnectionController {
         String validationStatus = sewerageIndexService.validateDate(sewerageBulkExecutionResponse,
                 sewerageApplicationDetailsList);
         Boolean updateStatus = sewerageIndexService.update(sewerageApplicationDetailsList);
-        String response;
-        if (sewerageBulkExecutionResponse.getSewerageExecutionResult().length <= 0) {
-            response = "EmptyList";
-        } else if (!validationStatus.isEmpty()) {
-            response = validationStatus;
-        } else if (!updateStatus) {
-            response = "UpdateExecutionFailed";
-        } else
-            response = "Success";
-        return response;
+        return sewerageBulkExecutionResponse.getSewerageExecutionResult().length <= 0 ? "EmptyList" :
+                !validationStatus.isEmpty() ? validationStatus : !updateStatus ? "UpdateExecutionFailed" : "Success";
     }
 }

@@ -133,13 +133,10 @@ public class SewerageTaxUtils {
      * @return false by default. If configuration value is Yes, then returns true.
      */
     public Boolean isNewConnectionAllowedIfPTDuePresent() {
-
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 MODULE_NAME, NEWCONNECTIONALLOWEDIFPTDUE);
-
         if (appConfigValue != null && !appConfigValue.isEmpty())
             return "YES".equalsIgnoreCase(appConfigValue.get(0).getValue());
-
         return false;
     }
 
@@ -164,15 +161,14 @@ public class SewerageTaxUtils {
 
     public String getApproverName(final Long approvalPosition) {
         Assignment assignment = null;
-
         if (approvalPosition != null)
             assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
         List<Assignment> assignmentList = new ArrayList<>();
-        if (assignment != null) {
-            assignmentList.add(assignment);
-        } else
+        if (assignment == null) {
             assignmentList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
-        return !assignmentList.isEmpty() ? assignmentList.get(0).getEmployee().getName() : "";
+        } else
+            assignmentList.add(assignment);
+        return assignmentList.isEmpty() ? "" : assignmentList.get(0).getEmployee().getName();
     }
 
     public Position getZonalLevelClerkForLoggedInUser(final String asessmentNumber) {
@@ -182,7 +178,6 @@ public class SewerageTaxUtils {
         final Boundary boundaryObj = boundaryService.getBoundaryById(assessmentDetails.getBoundaryDetails()
                 .getAdminWardId());
         assignmentObj = getUserPositionByZone(boundaryObj);
-
         return assignmentObj == null ? null : assignmentObj.getPosition();
     }
 
@@ -197,7 +192,7 @@ public class SewerageTaxUtils {
      * @return Assignment
      */
     public Assignment getUserPositionByZone(final Boundary boundaryObj) {
-        List<Designation> designationList= getDesignationForThirdPartyUser();
+        List<Designation> designationList = getDesignationForThirdPartyUser();
         List<Department> departmentList = getDepartmentForWorkFlow();
         List<Assignment> assignment = new ArrayList<>();
 
@@ -215,7 +210,7 @@ public class SewerageTaxUtils {
         String designation = "";
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 MODULE_NAME, CLERKDESIGNATIONFORCSCOPERATOR);
-        if (null != appConfigValue && !appConfigValue.isEmpty())
+        if (appConfigValue != null && !appConfigValue.isEmpty())
             designation = appConfigValue.get(0).getValue();
         return designationService.
                 getDesignationsByNames(Arrays.asList(StringUtils.upperCase(designation).split(",")));
@@ -225,7 +220,7 @@ public class SewerageTaxUtils {
         String department = "";
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 MODULE_NAME, SEWERAGETAXWORKFLOWDEPARTEMENT);
-        if (null != appConfigValue && !appConfigValue.isEmpty())
+        if (appConfigValue != null && !appConfigValue.isEmpty())
             department = appConfigValue.get(0).getValue();
         return departmentService.
                 getDepartmentsByNames(Arrays.asList(StringUtils.upperCase(department).split(",")));

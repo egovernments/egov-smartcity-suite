@@ -56,12 +56,9 @@ import org.egov.infra.web.support.ui.DataTable;
 import org.egov.stms.elasticsearch.entity.SewerageConnSearchRequest;
 import org.egov.stms.elasticsearch.entity.SewerageSearchResult;
 import org.egov.stms.entity.es.SewerageIndex;
-import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
 import org.egov.stms.service.es.SeweragePaginationService;
 import org.egov.stms.transactions.entity.SewerageConnection;
-import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
 import org.egov.stms.transactions.service.SewerageConnectionService;
-import org.egov.stms.transactions.service.SewerageThirdPartyServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -69,13 +66,20 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.stms.masters.entity.enums.SewerageConnectionStatus.ACTIVE;
+import static org.egov.stms.masters.entity.enums.SewerageConnectionStatus.CLOSED;
+import static org.egov.stms.masters.entity.enums.SewerageConnectionStatus.INPROGRESS;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.REVENUE_WARD;
 
 @Controller
@@ -85,13 +89,9 @@ public class ApplicationSewerageSearchController {
     @Autowired
     private CityService cityService;
     @Autowired
-    private SewerageApplicationDetailsService sewerageApplicationDetailsService;
-    @Autowired
     private BoundaryService boundaryService;
     @Autowired
     private SewerageConnectionService sewerageConnectionService;
-    @Autowired
-    private SewerageThirdPartyServices sewerageThirdPartyServices;
     @Autowired
     private SeweragePaginationService seweragePaginationService;
 
@@ -129,7 +129,7 @@ public class ApplicationSewerageSearchController {
         else if (searchRequest.getShscNumber() != null) {
             SewerageConnection sewerageConnection = sewerageConnectionService
                     .findByShscNumberAndStatusList(searchRequest.getShscNumber(),
-                            Arrays.asList(SewerageConnectionStatus.INPROGRESS, SewerageConnectionStatus.ACTIVE, SewerageConnectionStatus.CLOSED));
+                            Arrays.asList(INPROGRESS, ACTIVE, CLOSED));
             searchRequest.setLegacy(sewerageConnection.getLegacy());
         }
 
