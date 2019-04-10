@@ -45,55 +45,70 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.services.bills;
 
-import org.egov.commons.CVoucherHeader;
-import org.egov.dao.billpayment.BillAndPaymentDetailsDAO;
-import org.egov.dao.bills.EgBillRegisterHibernateDAO;
-import org.egov.egf.model.BillPayment.BillPaymentDetails;
-import org.egov.model.bills.EgBillregister;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+package org.egov.egf.model.BillPayment;
 
-import java.util.List;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
-@Transactional(readOnly = true)
-public class BillsService {
-    
-    @Autowired
-    private EgBillRegisterHibernateDAO egBillRegisterHibernateDAO;
-    @Autowired
-    private BillAndPaymentDetailsDAO billAndPaymentDetailsDAO;
-    public EgBillregister createBillRegister(final EgBillregister billregister)
-    {
-        return (EgBillregister) egBillRegisterHibernateDAO.create(billregister);
+public class PaymentVoucherInfo implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5631091411039325012L;
+    private String paymentVoucherNumber;
+    private Date paymentVoucherDate;
+    private String paymentVoucherStatus;
+    private BigDecimal paymentAmount;
+    private String chequeRefNumber;
+    private Date chequeDate;
+
+    public String getPaymentVoucherNumber() {
+        return paymentVoucherNumber;
     }
 
-    public EgBillregister updateBillRegister(final EgBillregister billregister)
-    {
-        return (EgBillregister) egBillRegisterHibernateDAO.update(billregister);
+    public void setPaymentVoucherNumber(String paymentVoucherNumber) {
+        this.paymentVoucherNumber = paymentVoucherNumber;
     }
 
-    public EgBillregister getBillRegisterById(final Integer billid)
-    {
-        return (EgBillregister) egBillRegisterHibernateDAO.findById(new Long(billid), false);
+    public Date getPaymentVoucherDate() {
+        return paymentVoucherDate;
     }
 
-    public List<String> getDistExpType()
-    {
-        return egBillRegisterHibernateDAO.getDistinctEXpType();
+    public void setPaymentVoucherDate(Date paymentVoucherDate) {
+        this.paymentVoucherDate = paymentVoucherDate;
     }
 
-    public String getBillTypeforVoucher(final CVoucherHeader voucherHeader)
-    {
-        return egBillRegisterHibernateDAO.getBillTypeforVoucher(voucherHeader);
+    public String getPaymentVoucherStatus() {
+        return paymentVoucherStatus;
     }
 
-    public String getBillSubTypeforVoucher(final CVoucherHeader voucherHeader) {
-        return egBillRegisterHibernateDAO.getBillSubTypeforVoucher(voucherHeader);
+    public void setPaymentVoucherStatus(String paymentVoucherStatus) {
+        this.paymentVoucherStatus = paymentVoucherStatus;
     }
 
-    public BillPaymentDetails getBillAndPaymentDetails(String billNo) throws Exception{
-        return billAndPaymentDetailsDAO.getBillAndPaymentDetails(billNo);
+    public BigDecimal getPaymentAmount() {
+        return paymentAmount;
+    }
+
+    public void setPaymentAmount(BigDecimal paymentAmount) {
+        this.paymentAmount = paymentAmount;
+    }
+
+    public String getChequeRefNumber() {
+        return chequeRefNumber;
+    }
+
+    public void setChequeRefNumber(String chequeRefNumber) {
+        this.chequeRefNumber = chequeRefNumber;
+    }
+
+    public Date getChequeDate() {
+        return chequeDate;
+    }
+
+    public void setChequeDate(Date chequeDate) {
+        this.chequeDate = chequeDate;
     }
 }

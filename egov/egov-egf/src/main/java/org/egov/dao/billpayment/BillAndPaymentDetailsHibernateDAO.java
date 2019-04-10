@@ -1,39 +1,222 @@
 package org.egov.dao.billpayment;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.egf.model.BillPaymentDetails;
-import org.hibernate.Query;
+import org.apache.log4j.Logger;
+import org.egov.egf.model.BillPayment.BillVoucherInfo;
+import org.egov.egf.model.BillPayment.BillInfo;
+import org.egov.egf.model.BillPayment.BillPaymentDetails;
+import org.egov.egf.model.BillPayment.PaymentStatus;
+import org.egov.egf.model.BillPayment.PaymentVoucherInfo;
+import org.egov.egf.model.BillPayment.PaymentsInfo;
+import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.utils.FinancialConstants;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.hibernate.transform.Transformers;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class BillAndPaymentDetailsHibernateDAO implements BillAndPaymentDetailsDAO{
+public class BillAndPaymentDetailsHibernateDAO implements BillAndPaymentDetailsDAO {
+	private static final Logger LOG = Logger.getLogger(BillAndPaymentDetailsDAO.class);
+
+	@Autowired
+	CityService cityService;
 
 	@PersistenceContext
-    private EntityManager entityManager;
+	private EntityManager entityManager;
 
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
-	
-   @Override
-	public List<BillPaymentDetails> getBillAndPaymentDetails(String billNo) {
-		StringBuilder queryString = new StringBuilder("SELECT DISTINCT mbd.billVoucherHeader.voucherNumber AS billVoucherNo,"
-    			+ " mbd.payVoucherHeader.voucherNumber AS paymentVoucherNo,mbd.paidamount AS paymentAmount,"
-    			+ " mbd.payVoucherHeader.voucherDate AS voucherDate,iv.instrumentHeaderId.instrumentNumber AS chequRefNo"
-    			+ " FROM Miscbilldetail AS mbd,InstrumentVoucher AS iv,EgBillregister AS egbr,InstrumentHeader AS instrumentHeader"
-    			+ " WHERE mbd.payVoucherHeader.id= iv.voucherHeaderId.id and iv.instrumentHeaderId.id=instrumentHeader.id and "
-    			+ " egbr.billnumber=mbd.billnumber and "
-    			+ " mbd.billnumber =:billNo AND egbr.status.code =:billStatus");
-    		Query query = getCurrentSession().createQuery(queryString.toString());  
-    		query.setParameter("billNo", billNo);
-    		query.setParameter("billStatus", "Approved");
-    		return query.setResultTransformer(Transformers.aliasToBean(BillPaymentDetails.class)).list();
+	public Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
+
+	public static final String APPROVED = "APPROVED";
+	public static final String CANCELLED = "CANCELLED";
+	public static final String IN_PROGRESS = "IN_PROGRESS";
+
+	@Override
+	public BillPaymentDetails getBillAndPaymentDetails(String billNo) throws Exception {
+
+		/** setting up return object **/
+		BillPaymentDetails bpd = new BillPaymentDetails();
+		bpd.setCityCode(ApplicationThreadLocals.getCityCode());
+		bpd.setCityname(ApplicationThreadLocals.getCityName());
+
+		String status = "", statusMessage = "";
+
+		StringBuilder queryString = new StringBuilder(
+				"select \n" + "    br.billnumber, \n" + "    br.billdate,\n" + "    br.billamount as grossAmount ,\n"
+						+ "    br.billstatus,\n" + "    brm.narration\n" + "from eg_billregister br\n"
+						+ "join eg_billregistermis brm\n" + "on brm.billid = br.id\n" + "where br.billnumber=:billNo");
+
+		LOG.debug(queryString);
+
+		SQLQuery query = getCurrentSession().createSQLQuery(queryString.toString());
+		query.setParameter("billNo", billNo);
+		Object[] row = (Object[]) query.uniqueResult();
+
+		if (row != null && ((String) row[3]).equalsIgnoreCase(FinancialConstants.CONTRACTORBILL_APPROVED_STATUS)) {
+
+			status = APPROVED;
+			statusMessage = "The bill is approved";
+
+			String tpBillNo = "";
+			Date billDate = (Date) row[1];
+			BigDecimal grossAmount = (BigDecimal) row[2];
+
+			StringBuilder queryString1 = new StringBuilder("select sum(bd.creditamount) as netAmount\n" + "from \n"
+					+ "    eg_billregister br\n" + "    join eg_billdetails bd on br.id = bd.billid\n"
+					+ "    join chartofaccounts coa on coa.id = bd.glcodeid\n"
+					+ "    join eg_appconfig_values cvalues on cvalues.value = cast(coa.purposeid as text)\n"
+					+ "    join eg_appconfig config on config.id = cvalues.key_id\n" + "where \n"
+					+ "    br.billnumber=:billNo\n" + "    and config.key_name = :keyName \n"
+					+ "    and bd.creditamount > 0;\n" + "");
+
+			LOG.debug(queryString1);
+			SQLQuery query1 = getCurrentSession().createSQLQuery(queryString1.toString());
+			query1.setParameter("billNo", billNo);
+			query1.setParameter("keyName", "worksBillPurposeIds");
+
+			BigDecimal netAmount, deductionAmount;
+			netAmount = (BigDecimal) query1.uniqueResult();
+			if (netAmount != null) {
+				deductionAmount = grossAmount.subtract(netAmount);
+			} else {
+				return null;
+			}
+
+			/** setting up return object **/
+			BillInfo bi = new BillInfo();
+			bi.setBillDate(billDate);
+			bi.setBillNumber(billNo);
+			bi.setTpBillNo(tpBillNo);
+			bi.setGrossAmount(grossAmount);
+			bi.setDeduction(deductionAmount);
+			bi.setNetAmount(netAmount);
+			bpd.setBillInfo(bi);
+
+			StringBuilder queryString2 = new StringBuilder("select  \n" + "    vh.vouchernumber,\n"
+					+ "    vh.voucherdate,\n" + "    case vh.status \n" + "        when 0 then 'CREATED'\n"
+					+ "        when 4 then 'CANCELLED'\n" + "        when 5 then 'APPROVED'\n"
+					+ "    end as voucherStatus\n" + "from \n" + "    miscbilldetail mbd \n"
+					+ "    join voucherheader vh on vh.id = mbd.billvhid \n" + "where \n" + "    billnumber=:billNo");
+
+			LOG.debug(queryString2);
+			SQLQuery query2 = getCurrentSession().createSQLQuery(queryString2.toString());
+			query2.setParameter("billNo", billNo);
+			Object[] row2 = (Object[]) query2.uniqueResult();
+
+			if (row2 != null) {
+				LOG.debug(Arrays.toString(row2));
+			} else {
+				LOG.debug("row2 is null!");
+			}
+
+			if (row2 != null
+					&& ((String) row2[2]).equalsIgnoreCase(FinancialConstants.CONTRACTORBILL_APPROVED_STATUS)) {
+
+				status = APPROVED;
+				statusMessage = "The bill voucher is approved";
+
+				String voucherNumber = (String) row2[0];
+				Date voucherDate = (Date) row2[1];
+				String voucherStatus = (String) row2[3];
+
+				/** setting up return object **/
+				BillVoucherInfo bv = new BillVoucherInfo();
+				bv.setBillVoucherDate(voucherDate);
+				bv.setBillVoucherNumber(voucherNumber);
+				bv.setBillVoucherStatus(voucherStatus);
+				bpd.setBillVoucher(bv);
+
+				StringBuilder queryString3 = new StringBuilder("select  \n" + "vh.vouchernumber,\n"
+						+ "vh.voucherdate,\n" + "case vh.status \n" + " when 0 then 'CREATED'\n"
+						+ " when 4 then 'CANCELLED'\n" + " when 5 then 'APPROVED'\n" + "end as voucherStatus,\n"
+						+ "paymentamount, \n" + "ih.instrumentnumber chequeNumber,\n"
+						+ "ih.instrumentdate chequeDate,\n" + "ih.instrumentamount chequeAmount\n" + "from \n"
+						+ "    miscbilldetail mbd \n" + "    join voucherheader vh on vh.id = mbd.payvhid \n"
+						+ "    left join paymentheader ph on ph.voucherheaderid = vh.id\n"
+						+ "    left join egf_instrumentvoucher iv on iv.voucherheaderid = vh.id\n"
+						+ "    left join egf_instrumentheader ih on ih.id = iv.instrumentheaderid\n"
+						+ "    left join egf_instrumenttype it on it.id = ih.instrumenttype and it.type = 'cheque'\n"
+						+ "where  \n" + "    billnumber=:billNo");
+
+				LOG.debug(queryString3);
+
+				SQLQuery query3 = getCurrentSession().createSQLQuery(queryString3.toString());
+				query.setParameter("billNo", billNo);
+				List<Object[]> rows = (List<Object[]>) query3.list();
+
+				PaymentsInfo pi = new PaymentsInfo();
+				bpd.setPaymentsInfo(pi);
+
+				BigDecimal paidAmount = BigDecimal.ZERO;
+				ArrayList<PaymentVoucherInfo> alPvs = new ArrayList<>();
+
+				for (int i = 0; i < rows.size(); i++) {
+					Object[] row3 = rows.get(i);
+					String paymentVoucherNumber = (String) row3[0];
+					Date paymentVoucherDate = (Date) row3[1];
+					String paymentVoucherStatus = (String) row3[2];
+					BigDecimal paymentAmount = (BigDecimal) row3[3];
+					String chequeNumber = (String) row3[4];
+					Date chequeDate = (Date) row3[5];
+
+					paidAmount = paidAmount.add(paymentAmount);
+
+					/** setting up return object **/
+
+					PaymentVoucherInfo pv = new PaymentVoucherInfo();
+					pv.setPaymentAmount(paymentAmount);
+					pv.setPaymentVoucherDate(paymentVoucherDate);
+					pv.setPaymentVoucherNumber(paymentVoucherNumber);
+					pv.setPaymentVoucherStatus(paymentVoucherStatus);
+					pv.setChequeRefNumber(chequeNumber);
+					pv.setChequeDate(chequeDate);
+					alPvs.add(pv);
+				}
+
+				/** setting up return object **/
+				pi.setBillAmountPaid(paidAmount);
+				pi.setPendingBillAmount(grossAmount.subtract(paidAmount));
+				pi.setPaymentVouchers(alPvs);
+
+			}
+			if (row2 != null
+					&& ((String) row2[2]).equalsIgnoreCase(FinancialConstants.CONTRACTORBILL_CANCELLED_STATUS)) {
+				status = CANCELLED;
+				statusMessage = "The bill is cancelled";
+			} else {
+				status = IN_PROGRESS;
+				statusMessage = "In progress";
+			}
+
+		} else {
+			if (row[3] != null
+					&& ((String) row[3]).equalsIgnoreCase(FinancialConstants.CONTRACTORBILL_CANCELLED_STATUS)) {
+				status = CANCELLED;
+				statusMessage = "The bill is cancelled";
+			} else {
+				status = IN_PROGRESS;
+				statusMessage = "In progress";
+			}
+		}
+
+		/** setting up return object **/
+		PaymentStatus st = new PaymentStatus();
+		st.setStatusCode(status);
+		st.setStatusMessage(statusMessage);
+		bpd.setStatus(st);
+
+		return bpd;
 	}
 
 }

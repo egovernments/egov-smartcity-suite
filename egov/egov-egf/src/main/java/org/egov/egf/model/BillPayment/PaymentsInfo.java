@@ -45,55 +45,45 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.services.bills;
 
-import org.egov.commons.CVoucherHeader;
-import org.egov.dao.billpayment.BillAndPaymentDetailsDAO;
-import org.egov.dao.bills.EgBillRegisterHibernateDAO;
-import org.egov.egf.model.BillPayment.BillPaymentDetails;
-import org.egov.model.bills.EgBillregister;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+package org.egov.egf.model.BillPayment;
 
-import java.util.List;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 
-@Transactional(readOnly = true)
-public class BillsService {
-    
-    @Autowired
-    private EgBillRegisterHibernateDAO egBillRegisterHibernateDAO;
-    @Autowired
-    private BillAndPaymentDetailsDAO billAndPaymentDetailsDAO;
-    public EgBillregister createBillRegister(final EgBillregister billregister)
-    {
-        return (EgBillregister) egBillRegisterHibernateDAO.create(billregister);
+public class PaymentsInfo implements Serializable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4793389448506220484L;
+
+    private BigDecimal billAmountPaid;
+    private BigDecimal pendingBillAmount;
+    private ArrayList<PaymentVoucherInfo> paymentVouchers = new ArrayList<>();
+
+    public BigDecimal getBillAmountPaid() {
+        return billAmountPaid;
     }
 
-    public EgBillregister updateBillRegister(final EgBillregister billregister)
-    {
-        return (EgBillregister) egBillRegisterHibernateDAO.update(billregister);
+    public void setBillAmountPaid(BigDecimal billAmountPaid) {
+        this.billAmountPaid = billAmountPaid;
     }
 
-    public EgBillregister getBillRegisterById(final Integer billid)
-    {
-        return (EgBillregister) egBillRegisterHibernateDAO.findById(new Long(billid), false);
+    public BigDecimal getPendingBillAmount() {
+        return pendingBillAmount;
     }
 
-    public List<String> getDistExpType()
-    {
-        return egBillRegisterHibernateDAO.getDistinctEXpType();
+    public void setPendingBillAmount(BigDecimal pendingBillAmount) {
+        this.pendingBillAmount = pendingBillAmount;
     }
 
-    public String getBillTypeforVoucher(final CVoucherHeader voucherHeader)
-    {
-        return egBillRegisterHibernateDAO.getBillTypeforVoucher(voucherHeader);
+    public ArrayList<PaymentVoucherInfo> getPaymentVouchers() {
+        return paymentVouchers;
     }
 
-    public String getBillSubTypeforVoucher(final CVoucherHeader voucherHeader) {
-        return egBillRegisterHibernateDAO.getBillSubTypeforVoucher(voucherHeader);
-    }
-
-    public BillPaymentDetails getBillAndPaymentDetails(String billNo) throws Exception{
-        return billAndPaymentDetailsDAO.getBillAndPaymentDetails(billNo);
+    public void setPaymentVouchers(ArrayList<PaymentVoucherInfo> paymentVouchers) {
+        this.paymentVouchers = paymentVouchers;
     }
 }

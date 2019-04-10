@@ -45,55 +45,32 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.services.bills;
 
-import org.egov.commons.CVoucherHeader;
-import org.egov.dao.billpayment.BillAndPaymentDetailsDAO;
-import org.egov.dao.bills.EgBillRegisterHibernateDAO;
-import org.egov.egf.model.BillPayment.BillPaymentDetails;
-import org.egov.model.bills.EgBillregister;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+package org.egov.egf.model.BillPayment;
 
-import java.util.List;
+import java.io.Serializable;
 
-@Transactional(readOnly = true)
-public class BillsService {
-    
-    @Autowired
-    private EgBillRegisterHibernateDAO egBillRegisterHibernateDAO;
-    @Autowired
-    private BillAndPaymentDetailsDAO billAndPaymentDetailsDAO;
-    public EgBillregister createBillRegister(final EgBillregister billregister)
-    {
-        return (EgBillregister) egBillRegisterHibernateDAO.create(billregister);
+public class PaymentStatus implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7657869131691760693L;
+    private String statusCode;
+    private String statusMessage;
+
+    public String getStatusCode() {
+        return statusCode;
     }
 
-    public EgBillregister updateBillRegister(final EgBillregister billregister)
-    {
-        return (EgBillregister) egBillRegisterHibernateDAO.update(billregister);
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
     }
 
-    public EgBillregister getBillRegisterById(final Integer billid)
-    {
-        return (EgBillregister) egBillRegisterHibernateDAO.findById(new Long(billid), false);
+    public String getStatusMessage() {
+        return statusMessage;
     }
 
-    public List<String> getDistExpType()
-    {
-        return egBillRegisterHibernateDAO.getDistinctEXpType();
-    }
-
-    public String getBillTypeforVoucher(final CVoucherHeader voucherHeader)
-    {
-        return egBillRegisterHibernateDAO.getBillTypeforVoucher(voucherHeader);
-    }
-
-    public String getBillSubTypeforVoucher(final CVoucherHeader voucherHeader) {
-        return egBillRegisterHibernateDAO.getBillSubTypeforVoucher(voucherHeader);
-    }
-
-    public BillPaymentDetails getBillAndPaymentDetails(String billNo) throws Exception{
-        return billAndPaymentDetailsDAO.getBillAndPaymentDetails(billNo);
+    public void setStatusMessage(String statusMessage) {
+        this.statusMessage = statusMessage;
     }
 }

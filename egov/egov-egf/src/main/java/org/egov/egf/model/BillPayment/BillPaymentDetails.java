@@ -45,55 +45,75 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.services.bills;
 
-import org.egov.commons.CVoucherHeader;
-import org.egov.dao.billpayment.BillAndPaymentDetailsDAO;
-import org.egov.dao.bills.EgBillRegisterHibernateDAO;
-import org.egov.egf.model.BillPayment.BillPaymentDetails;
-import org.egov.model.bills.EgBillregister;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+package org.egov.egf.model.BillPayment;
 
-import java.util.List;
+import java.io.Serializable;
 
-@Transactional(readOnly = true)
-public class BillsService {
-    
-    @Autowired
-    private EgBillRegisterHibernateDAO egBillRegisterHibernateDAO;
-    @Autowired
-    private BillAndPaymentDetailsDAO billAndPaymentDetailsDAO;
-    public EgBillregister createBillRegister(final EgBillregister billregister)
-    {
-        return (EgBillregister) egBillRegisterHibernateDAO.create(billregister);
+public class BillPaymentDetails implements Serializable {
+
+    private static final long serialVersionUID = -1433064709876657608L;
+
+    private String cityCode;
+    private String cityname;
+    private PaymentStatus status;
+    private BillInfo billInfo;
+    private BillVoucherInfo billVoucher;
+    private PaymentsInfo paymentsInfo;
+
+    public String getCityCode() {
+        return cityCode;
     }
 
-    public EgBillregister updateBillRegister(final EgBillregister billregister)
-    {
-        return (EgBillregister) egBillRegisterHibernateDAO.update(billregister);
+    public void setCityCode(String cityCode) {
+        this.cityCode = cityCode;
     }
 
-    public EgBillregister getBillRegisterById(final Integer billid)
-    {
-        return (EgBillregister) egBillRegisterHibernateDAO.findById(new Long(billid), false);
+    public String getCityname() {
+        return cityname;
     }
 
-    public List<String> getDistExpType()
-    {
-        return egBillRegisterHibernateDAO.getDistinctEXpType();
+    public void setCityname(String cityname) {
+        this.cityname = cityname;
     }
 
-    public String getBillTypeforVoucher(final CVoucherHeader voucherHeader)
-    {
-        return egBillRegisterHibernateDAO.getBillTypeforVoucher(voucherHeader);
+    public PaymentStatus getStatus() {
+        return status;
     }
 
-    public String getBillSubTypeforVoucher(final CVoucherHeader voucherHeader) {
-        return egBillRegisterHibernateDAO.getBillSubTypeforVoucher(voucherHeader);
+    public void setStatus(PaymentStatus status) {
+        this.status = status;
     }
 
-    public BillPaymentDetails getBillAndPaymentDetails(String billNo) throws Exception{
-        return billAndPaymentDetailsDAO.getBillAndPaymentDetails(billNo);
+    public BillInfo getBillInfo() {
+        return billInfo;
     }
+
+    public void setBillInfo(BillInfo billInfo) {
+        this.billInfo = billInfo;
+    }
+
+    public BillVoucherInfo getBillVoucher() {
+        return billVoucher;
+    }
+
+    public void setBillVoucher(BillVoucherInfo billVoucher) {
+        this.billVoucher = billVoucher;
+    }
+
+    public PaymentsInfo getPaymentsInfo() {
+        return paymentsInfo;
+    }
+
+    public void setPaymentsInfo(PaymentsInfo paymentsInfo) {
+        this.paymentsInfo = paymentsInfo;
+    }
+
+    @Override
+    public String toString() {
+        return "cityCode: " + getCityCode() + "\ncityName: " + getCityname() + "\nstatus: " + getStatus()
+                + "\nbillInfo: " + getBillInfo() + "\nbillVoucher: " + getBillVoucher() + "\npaymentsInfo: "
+                + getPaymentsInfo();
+    }
+
 }

@@ -45,55 +45,43 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.services.bills;
 
-import org.egov.commons.CVoucherHeader;
-import org.egov.dao.billpayment.BillAndPaymentDetailsDAO;
-import org.egov.dao.bills.EgBillRegisterHibernateDAO;
-import org.egov.egf.model.BillPayment.BillPaymentDetails;
-import org.egov.model.bills.EgBillregister;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+package org.egov.egf.model.BillPayment;
 
-import java.util.List;
+import java.io.Serializable;
+import java.util.Date;
 
-@Transactional(readOnly = true)
-public class BillsService {
-    
-    @Autowired
-    private EgBillRegisterHibernateDAO egBillRegisterHibernateDAO;
-    @Autowired
-    private BillAndPaymentDetailsDAO billAndPaymentDetailsDAO;
-    public EgBillregister createBillRegister(final EgBillregister billregister)
-    {
-        return (EgBillregister) egBillRegisterHibernateDAO.create(billregister);
+public class BillVoucherInfo implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5870511659872409327L;
+    private String billVoucherNumber;
+    private Date billVoucherDate;
+    private String billVoucherStatus;
+
+    public String getBillVoucherNumber() {
+        return billVoucherNumber;
     }
 
-    public EgBillregister updateBillRegister(final EgBillregister billregister)
-    {
-        return (EgBillregister) egBillRegisterHibernateDAO.update(billregister);
+    public void setBillVoucherNumber(String billVoucherNumber) {
+        this.billVoucherNumber = billVoucherNumber;
     }
 
-    public EgBillregister getBillRegisterById(final Integer billid)
-    {
-        return (EgBillregister) egBillRegisterHibernateDAO.findById(new Long(billid), false);
+    public Date getBillVoucherDate() {
+        return billVoucherDate;
     }
 
-    public List<String> getDistExpType()
-    {
-        return egBillRegisterHibernateDAO.getDistinctEXpType();
+    public void setBillVoucherDate(Date billVoucherDate) {
+        this.billVoucherDate = billVoucherDate;
     }
 
-    public String getBillTypeforVoucher(final CVoucherHeader voucherHeader)
-    {
-        return egBillRegisterHibernateDAO.getBillTypeforVoucher(voucherHeader);
+    public String getBillVoucherStatus() {
+        return billVoucherStatus;
     }
 
-    public String getBillSubTypeforVoucher(final CVoucherHeader voucherHeader) {
-        return egBillRegisterHibernateDAO.getBillSubTypeforVoucher(voucherHeader);
+    public void setBillVoucherStatus(String billVoucherStatus) {
+        this.billVoucherStatus = billVoucherStatus;
     }
 
-    public BillPaymentDetails getBillAndPaymentDetails(String billNo) throws Exception{
-        return billAndPaymentDetailsDAO.getBillAndPaymentDetails(billNo);
-    }
 }

@@ -59,6 +59,7 @@ public class BillRegister implements Serializable {
      *
      */
     private static final long serialVersionUID = -1433064701524657608L;
+    private String tpBillNo;
     private String projectCode;
     private Date billDate;
     private String billType;
@@ -212,5 +213,13 @@ public class BillRegister implements Serializable {
     public void setCheckListUrl(String checkListUrl) {
         this.checkListUrl = checkListUrl;
     }
+
+	public String getTpBillNo() {
+		return tpBillNo;
+	}
+
+	public void setTpBillNo(String tpBillNo) {
+		this.tpBillNo = tpBillNo;
+	}
 
 }

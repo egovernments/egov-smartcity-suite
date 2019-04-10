@@ -453,6 +453,14 @@ public class RestApiConstants {
     public static final String THIRD_PARTY_ERR_CODE_SUBLEDGER_DETAILS_REQUIRED = "EGF-REST-41";
     public static final String THIRD_PARTY_ERR_MSG_SUBLEDGER_DETAILS_REQUIRED = "is subledger code in bill details, So Bill Payee details required ";
     
+    public static final String THIRD_PARTY_ERR_CODE_NO_TP_BILL_NO = "EGF-REST-42";
+    public static final String THIRD_PARTY_ERR_MSG_NO_TP_BILL_NO = "tpBillNo is mandatory in the request.";
+    
+    public static final String THIRD_PARTY_ERR_CODE_TP_BILL_NO_ALREADY_EXISTS = "EGF-REST-43";
+    public static final String THIRD_PARTY_ERR_MSG_TP_BILL_NO_ALREADY_EXISTS = "tpBillNo already exists in the system.";
+    
+    public static final String THIRD_PARTY_ERR_CODE_GENERIC_ERROR = "EGF-REST-32";
+    
     public static final String THIRD_PARTY_ERR_CODE_NOT_EXIST_CONTRACTOR = "EGWORKS-CONTRACTOR-1";
     public static final String THIRD_PARTY_ERR_MSG_NOT_EXIST_CONTRACTOR = "No contractor exists with given contractor code";
 

@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,55 +45,46 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.services.bills;
 
-import org.egov.commons.CVoucherHeader;
-import org.egov.dao.billpayment.BillAndPaymentDetailsDAO;
-import org.egov.dao.bills.EgBillRegisterHibernateDAO;
-import org.egov.egf.model.BillPayment.BillPaymentDetails;
-import org.egov.model.bills.EgBillregister;
+package org.egov.model.service;
+
+import org.egov.model.bills.ThirdPartyBillIntegration;
+import org.egov.model.repository.ThirdPartyBillIntegrationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+/**
+ * @author tamal
+ */
 
+@Service
 @Transactional(readOnly = true)
-public class BillsService {
-    
+public class ThirdPartyBillIntegrationService {
+
+    private final ThirdPartyBillIntegrationRepository tpbiRepository;
+
     @Autowired
-    private EgBillRegisterHibernateDAO egBillRegisterHibernateDAO;
-    @Autowired
-    private BillAndPaymentDetailsDAO billAndPaymentDetailsDAO;
-    public EgBillregister createBillRegister(final EgBillregister billregister)
-    {
-        return (EgBillregister) egBillRegisterHibernateDAO.create(billregister);
+    public ThirdPartyBillIntegrationService(final ThirdPartyBillIntegrationRepository tpbiRepository) {
+        this.tpbiRepository = tpbiRepository;
     }
 
-    public EgBillregister updateBillRegister(final EgBillregister billregister)
-    {
-        return (EgBillregister) egBillRegisterHibernateDAO.update(billregister);
+    @Transactional
+    public void createThirdPartyBillIntegration(final ThirdPartyBillIntegration tpbi) {
+        tpbiRepository.save(tpbi);
     }
 
-    public EgBillregister getBillRegisterById(final Integer billid)
-    {
-        return (EgBillregister) egBillRegisterHibernateDAO.findById(new Long(billid), false);
+    @Transactional
+    public void updateThirdPartyBillIntegration(final ThirdPartyBillIntegration tpbi) {
+        tpbiRepository.save(tpbi);
     }
 
-    public List<String> getDistExpType()
-    {
-        return egBillRegisterHibernateDAO.getDistinctEXpType();
+    public ThirdPartyBillIntegration getTpBillByBillNo(final String tpBillNo) {
+        return tpbiRepository.findByBillNo(tpBillNo);
     }
 
-    public String getBillTypeforVoucher(final CVoucherHeader voucherHeader)
-    {
-        return egBillRegisterHibernateDAO.getBillTypeforVoucher(voucherHeader);
-    }
-
-    public String getBillSubTypeforVoucher(final CVoucherHeader voucherHeader) {
-        return egBillRegisterHibernateDAO.getBillSubTypeforVoucher(voucherHeader);
-    }
-
-    public BillPaymentDetails getBillAndPaymentDetails(String billNo) throws Exception{
-        return billAndPaymentDetailsDAO.getBillAndPaymentDetails(billNo);
+    @Transactional
+    public void deleteThirdPartyBillIntegration(final ThirdPartyBillIntegration tpbi) {
+        tpbiRepository.delete(tpbi);
     }
 }
