@@ -195,6 +195,9 @@ public class DCBReport {
 									.getDemands().get(fieldName));
 							totalColTax = totalColTax.add(record.getValue()
 									.getCollections().get(fieldName));
+						}
+						// Rebate for general tax & penalty ( waiver )
+						if (fieldName.equals(TAX) || fieldName.equals(FINES)) {
 							totalRebate = totalRebate.add(record.getValue()
 									.getRebates().get(fieldName));
 						}

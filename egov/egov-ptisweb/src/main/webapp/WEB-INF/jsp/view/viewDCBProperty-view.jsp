@@ -254,7 +254,7 @@
 									</th>
 
 									<th class="bluebgheadtd" width="10%" align="center" colspan="1">
-										<s:text name="Rebate" />
+										<s:text name="rebate_waiver" />
 									</th>
 
 									<th class="bluebgheadtd" width="20%" align="center" colspan="3">
@@ -357,24 +357,30 @@
 											</c:if>
 										</s:iterator>
 
-										<s:iterator value="dcbReport.getFieldNames()" var="fieldnames">
+										<s:set value="0" var="rebate_waiver" />
 
-											<c:if
-												test="${fieldnames != 'Advance Collection' && fieldnames != 'PENALTY' && fieldnames != 'FINES'}">
-												<td class="blueborderfortd">
-													<div align="right">
-														<s:text name="format.money">
-															<s:param value="value.getRebates()[#fieldnames]" />
-														</s:text>
-													</div>
-												</td>
-											</c:if>
-											<c:if
-												test="${fieldnames != 'Advance Collection' && fieldnames != 'Fines'}">
-												<s:set value="value.getRebates()[#fieldnames]" var="advreb" />
-												<c:set value="${advrebate + advreb}" var="advrebate" />
-											</c:if>
-										</s:iterator>
+                                        <s:iterator value="dcbReport.getFieldNames()" var="fieldnames">
+                                            <s:set value="%{dbg_counter1 + 1}" var="dbg_counter1" />
+                                            <c:if
+                                                test="${fieldnames != 'Advance Collection' && fieldnames != 'PENALTY'}">
+                                                <s:set var="trbt" value="%{#rebate_waiver + value.getRebates()[#fieldnames]}" />
+                                                <s:set var="rebate_waiver" value="%{#trbt}" />
+                                            </c:if>
+
+                                            <c:if
+                                                test="${fieldnames != 'Advance Collection' && fieldnames != 'Fines'}">
+                                                <s:set value="value.getRebates()[#fieldnames]" var="advreb" />
+                                                <c:set value="${advrebate + advreb}" var="advrebate" />
+                                            </c:if>
+                                        </s:iterator>
+
+                                        <td class="blueborderfortd">
+                                            <div align="right">
+                                                <s:text name="format.money">
+                                                    <s:param value="#rebate_waiver" />
+                                                </s:text>
+                                            </div>
+                                        </td>
 
 										<s:iterator value="dcbReport.getFieldNames()" var="fieldnames">
 											<c:if
@@ -389,6 +395,23 @@
 											</c:if>
 										</s:iterator>
 									</tr>
+
+									<!-- <tr>
+                                        <s:iterator value="dcbReport.getFieldNames()" var="fieldnames">
+                                            <td class="blueborderfortd">
+                                                <s:property /> (<s:text name="format.money"><s:param value="value.getRebates()[#fieldnames]" /></s:text>)
+                                            </td>
+                                        </s:iterator>
+                                        <s:iterator value="dcbReport.getFieldNames()" var="fieldnames">
+                                            <td class="blueborderfortd">
+                                            </td>
+                                        </s:iterator>
+                                        <s:iterator value="dcbReport.getFieldNames()" var="fieldnames">
+                                            <td class="blueborderfortd">
+                                            </td>
+                                        </s:iterator>
+                                    </tr> -->
+
 								</s:iterator>
 								<tr>
 									<td class="blueborderfortd">
@@ -623,12 +646,12 @@
 													value="Head Wise DCB" class="buttonsubmit"
 													onclick="openHeadwiseDCBWindow();" />
 												<s:if test="%{basicProperty.source == 'M'}">
-													<input type="button" name="button4" id="button4"
+													<!-- <input type="button" name="button4" id="button4"
 														value="Show Old Receipts" class="buttonsubmit"
 														onclick="openShowReceipts();" />
 														<input type="button" name="button5" id="button5"
 														value="Show Old Demand" class="buttonsubmit"
-														onclick="openShowCollections();" />
+														onclick="openShowCollections();" /> -->
 												</s:if>
 												
 											</s:if>

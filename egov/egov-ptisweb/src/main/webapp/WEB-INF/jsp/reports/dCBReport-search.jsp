@@ -126,7 +126,7 @@
 							 <th rowspan="2">Owner Name</th>
 							 <th rowspan="2">Assessment Count</th>
                              <th colspan="7">Demand</th>
-                             <th colspan="7">Collection</th>
+                             <th colspan="8">Collection</th>
                              <th colspan="5">Balance</th>
                             </tr>
 
@@ -162,6 +162,7 @@
 									LibraryCess</th> -->
 								<th>Penalty
 									On Current</th>
+								<th>Waiver</th>
 								<th>Current
 									Total</th>
 								<th>Total
@@ -179,6 +180,7 @@
 						 <tfoot id="report-footer">
 							<tr>
 								<td>Total</td>
+								<td></td>
 								<td></td>
 								<td></td>
 								<td></td>

@@ -261,6 +261,9 @@ function callAjaxByBoundary() {
 							"data" : "clctn_currentTotal",
 							"sTitle" : "Current Total"
 						}, {
+                            "data" : "waivedOffPT",
+                            "sTitle" : "Waiver"
+                        }, {
 							"data" : "totalCollection",
 							"sTitle" : "Total Collection"
 						}, {
@@ -287,14 +290,14 @@ function callAjaxByBoundary() {
 						jQuery('#report-footer').show();
 					}
 					if (data.length > 0) {
-						for(var i=3;i<=22;i++)
+						for(var i=3;i<=23;i++)
 						{
 						  updateTotalFooter(i, api);	
 						}
 					}
 				}, 
 				"aoColumnDefs" : [ {
-					"aTargets" : [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22], 
+					"aTargets" : [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],
 					"mRender" : function(data, type, full) {
 						return formatNumberInr(data);    
 					}

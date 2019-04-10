@@ -341,12 +341,14 @@
 								<th>Penalty</th>
 								<th>Arrear Penalty Amount</th>
 								<th>Penalty Total</th>
+								<th>Waiver</th>
 								<th>Grand Total</th>
 							</tr>
 						</thead>
 						<tfoot id="report-footer">
 							<tr>
 								<td>Total</td>
+								<td></td>
 								<td></td>
 								<td></td>
 								<td></td>

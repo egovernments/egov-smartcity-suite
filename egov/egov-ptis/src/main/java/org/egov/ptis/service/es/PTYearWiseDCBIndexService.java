@@ -106,6 +106,11 @@ public class PTYearWiseDCBIndexService {
     private static final String VLT_CODE = "Vacant Land";
     private static final String EWHS_CODE = "EWSHS";
 
+    private static final String WAIVEDOFF_AMOUNT = "waivedoffAmount";
+    private static final String EXEMPTED_AMOUNT = "exemptedAmount";
+    private static final String WRITEOFF_AMOUNT = "writeoffAmount";
+    private static final String COURTCASE_AMOUNT = "courtcaseAmount";
+
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
@@ -201,6 +206,15 @@ public class PTYearWiseDCBIndexService {
                             .add(new BigDecimal(responseFields.get(ARREAR_INTEREST_COLLECTION).toString())
                                     .add(new BigDecimal(responseFields.get(CURRENT_COLLECTION).toString()))
                                     .add(new BigDecimal(responseFields.get(CURRENT_INTEREST_COLLECTION).toString())))));
+            serviceWiseResponse.setWaivedoffAmount(
+                    new BigDecimal(responseFields.get(WAIVEDOFF_AMOUNT).toString()));
+            serviceWiseResponse.setExemptedAmount(
+                    new BigDecimal(responseFields.get(EXEMPTED_AMOUNT).toString()));
+            serviceWiseResponse.setWriteoffAmount(
+                    new BigDecimal(responseFields.get(WRITEOFF_AMOUNT).toString()));
+            serviceWiseResponse.setCourtcaseAmount(
+                    new BigDecimal(responseFields.get(COURTCASE_AMOUNT).toString()));
+
             serviceWiseResponse.setDrillDownType(responseFields.get("assessmentNo").toString());
             dcbData.add(serviceWiseResponse);
         }
@@ -309,6 +323,15 @@ public class PTYearWiseDCBIndexService {
                                                     BigDecimal.ROUND_HALF_UP))
                                             .add(BigDecimal.valueOf(currentPenCollected.getValue()).setScale(0,
                                                     BigDecimal.ROUND_HALF_UP))))));
+            serviceWiseResponse.setWaivedoffAmount(
+                    new BigDecimal(entry.getAggregations().get(WAIVEDOFF_AMOUNT).toString()));
+            serviceWiseResponse.setExemptedAmount(
+                    new BigDecimal(entry.getAggregations().get(EXEMPTED_AMOUNT).toString()));
+            serviceWiseResponse.setWriteoffAmount(
+                    new BigDecimal(entry.getAggregations().get(WRITEOFF_AMOUNT).toString()));
+            serviceWiseResponse.setCourtcaseAmount(
+                    new BigDecimal(entry.getAggregations().get(COURTCASE_AMOUNT).toString()));
+
 
             serviceWiseResponse.setDrillDownType(entry.getKeyAsString());
             serviceWiseResponses.add(serviceWiseResponse);

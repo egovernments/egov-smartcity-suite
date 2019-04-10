@@ -148,6 +148,7 @@ public class BaseRegisterResultAdaptor implements DataTableJsonAdapter<PropertyM
 			jsonObject.addProperty("arrearColl", baseRegisterResultObj.getAggrArrColl() != null
 					? baseRegisterResultObj.getAggrArrColl() : BigDecimal.ZERO);
 			jsonObject.addProperty("totalColl", totalColl);
+			jsonObject.addProperty("waivedOffPT", baseRegisterResultObj.getWaivedoffAmount() != null ? baseRegisterResultObj.getWaivedoffAmount() : BigDecimal.ZERO);
 
 			if (!valuesMap.isEmpty()) {
 				jsonObject.addProperty("generalTax", valuesMap.get(TOTAL_CURR_PROPERTY_TAX) != null
