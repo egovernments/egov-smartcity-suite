@@ -47,6 +47,8 @@
  */
 package org.egov.stms.transactions.service;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.time.DateUtils.addDays;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.*;
@@ -81,7 +83,6 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
@@ -156,7 +157,7 @@ public class SewerageApplicationDetailsService {
     private static final String APP_TYPE = "appType";
 
     private static final Logger LOG = LoggerFactory.getLogger(SewerageApplicationDetailsService.class);
-    private static final String STMS_APPLICATION_VIEW = "/stms/existing/sewerage/view/%s/%s";
+    private static final String STMS_APPLICATION_VIEW = "/stms/application/view/%s/%s";
     private static final String STMS_APPLICATION_UPDATE = "/stms/transactions/citizenupdate/%s";
     private static final String APPLICATION_WORKFLOW_INITIALIZATION_DONE = "applicationWorkflowCustomDefaultImpl initialization is done";
     private static final String DEPARTMENT = "department";
@@ -205,9 +206,6 @@ public class SewerageApplicationDetailsService {
 
     @Autowired
     private DocumentTypeMasterService documentTypeMasterService;
-
-    @Autowired
-    private AppConfigValueService appConfigValuesService;
 
     @Autowired
     private ReportService reportService;
@@ -540,15 +538,13 @@ public class SewerageApplicationDetailsService {
             applicationIndex.setOwnerName(user == null ? EMPTY : user.getUsername() + "::" + user.getName());
 
             // mark application index as closed on Connection Sanction
-            if (sewerageApplicationDetails.getStatus().getCode()
-                    .equals(APPLICATION_STATUS_SANCTIONED)) {
+            if (APPLICATION_STATUS_SANCTIONED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())) {
                 applicationIndex.setApproved(ApprovalStatus.APPROVED);
                 applicationIndex.setClosed(ClosureStatus.YES);
             }
             // mark application index as rejected and closed on Connection
             // cancellation
-            else if (sewerageApplicationDetails.getStatus().getCode()
-                    .equals(APPLICATION_STATUS_CANCELLED)) {
+            else if (APPLICATION_STATUS_CANCELLED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())) {
                 applicationIndex.setApproved(ApprovalStatus.REJECTED);
                 applicationIndex.setClosed(ClosureStatus.YES);
             }
@@ -708,11 +704,11 @@ public class SewerageApplicationDetailsService {
                             .equalsIgnoreCase(APPLICATION_STATUS_INITIALAPPROVED))
                         sewerageDemandService.updateDemandOnChangeInClosets(oldSewerageAppDtls,
                                 sewerageApplicationDetails.getConnectionFees(),
-                                sewerageApplicationDetails.getCurrentDemand(), Boolean.TRUE);
+                                sewerageApplicationDetails.getCurrentDemand(), TRUE);
                     else
                         sewerageDemandService.updateDemandOnChangeInClosets(oldSewerageAppDtls,
                                 sewerageApplicationDetails.getConnectionFees(),
-                                sewerageApplicationDetails.getCurrentDemand(), Boolean.FALSE);
+                                sewerageApplicationDetails.getCurrentDemand(), FALSE);
             } else
                 sewerageDemandService.updateDemand(sewerageApplicationDetails.getConnectionFees(),
                         sewerageApplicationDetails.getCurrentDemand());
@@ -888,8 +884,8 @@ public class SewerageApplicationDetailsService {
             final ReportOutput reportOutput, final HttpServletRequest request, final HttpSession session) {
 
         // Generate closure notice number and date
-        if (sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_DEEAPPROVED)
-                && sewerageApplicationDetails.getApplicationType().getCode().equalsIgnoreCase(CLOSESEWERAGECONNECTION)
+        if (APPLICATION_STATUS_DEEAPPROVED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
+                && CLOSESEWERAGECONNECTION.equalsIgnoreCase(sewerageApplicationDetails.getApplicationType().getCode())
                 && APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)) {
             final SewerageCloseConnectionNoticeNumberGenerator closeConnectionNoticeNumberGenerator = beanResolver
                     .getAutoNumberServiceFor(SewerageCloseConnectionNoticeNumberGenerator.class);
@@ -901,8 +897,8 @@ public class SewerageApplicationDetailsService {
         }
 
         // Application status change
-        if (null != sewerageApplicationDetails && null != sewerageApplicationDetails.getStatus()
-                && null != sewerageApplicationDetails.getStatus().getCode())
+        if (sewerageApplicationDetails != null && sewerageApplicationDetails.getStatus() != null
+                && sewerageApplicationDetails.getStatus().getCode() != null)
             if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction))
                 sewerageApplicationDetails
                         .setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_REJECTED, MODULETYPE));
@@ -910,26 +906,30 @@ public class SewerageApplicationDetailsService {
                 sewerageApplicationDetails.getConnection().setStatus(SewerageConnectionStatus.ACTIVE);
                 sewerageApplicationDetails
                         .setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_CANCELLED, MODULETYPE));
-            } else if (sewerageApplicationDetails.getStatus().getCode().equals(APPLICATION_STATUS_CREATED))
+            } else if (APPLICATION_STATUS_CREATED.equals(sewerageApplicationDetails.getStatus().getCode()))
                 sewerageApplicationDetails
                         .setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_INITIALAPPROVED, MODULETYPE));
-            else if (sewerageApplicationDetails.getStatus().getCode().equals(APPLICATION_STATUS_INITIALAPPROVED))
+            else if (APPLICATION_STATUS_INITIALAPPROVED.equals(sewerageApplicationDetails.getStatus().getCode()))
                 sewerageApplicationDetails
                         .setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_DEEAPPROVED, MODULETYPE));
-            else if ((sewerageApplicationDetails.getStatus().getCode().equals(APPLICATION_STATUS_DEEAPPROVED) ||
-                    sewerageApplicationDetails.getState().getValue().equalsIgnoreCase(WF_STATE_EE_APPROVED))
-                    && workFlowAction.equals(APPROVEWORKFLOWACTION)) {
+            else if (APPLICATION_STATUS_DEEAPPROVED.equals(sewerageApplicationDetails.getStatus().getCode())
+                    && WFLOW_ACTION_STEP_FORWARD.equals(workFlowAction))
+                sewerageApplicationDetails
+                        .setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_EEAPPROVED, MODULETYPE));
+            else if ((sewerageApplicationDetails.getStatus().getCode().equals(APPLICATION_STATUS_DEEAPPROVED)
+                    || WF_STATE_EE_APPROVED.equalsIgnoreCase(sewerageApplicationDetails.getState().getValue())
+                    && APPROVEWORKFLOWACTION.equals(workFlowAction))) {
                 // Make Connection status closed on EE approval
                 sewerageApplicationDetails.getConnection().setStatus(SewerageConnectionStatus.CLOSED);
                 sewerageApplicationDetails.setActive(true);
                 sewerageApplicationDetails.setStatus(
                         sewerageTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_CLOSERSANCTIONED, MODULETYPE));
-            } else if (sewerageApplicationDetails.getStatus().getCode().equals(APPLICATION_STATUS_REJECTED))
+            } else if (APPLICATION_STATUS_REJECTED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()))
                 sewerageApplicationDetails
                         .setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_CREATED, MODULETYPE));
 
         // Generate the sewerage notices based on type of notice and save into DB.
-        if (sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_CLOSERSANCTIONED)
+        if (APPLICATION_STATUS_CLOSERSANCTIONED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
                 && APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)) {
             final SewerageNotice sewerageNotice = sewerageNoticeService.generateReportForCloseConnection(
                     sewerageApplicationDetails,

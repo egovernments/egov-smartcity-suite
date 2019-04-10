@@ -93,11 +93,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -149,11 +145,11 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
                 .findByApplicationNumber(applicationNumber);
     }
 
-    @RequestMapping(value = "/closeSewerageConnection-update/{applicationNumber}", method = RequestMethod.GET)
+    @GetMapping("/closeSewerageConnection-update/{applicationNumber}")
     public String view(final Model model, @PathVariable final String applicationNumber, final HttpServletRequest request) {
         final SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
                 .findByApplicationNumber(applicationNumber);
-        model.addAttribute("sewerageApplcationDetails", sewerageApplicationDetails);
+        model.addAttribute(SEWERAGE_APPLICATION_DETAILS, sewerageApplicationDetails);
 
         final AssessmentDetails propertyOwnerDetails = sewerageThirdPartyServices
                 .getPropertyDetails(sewerageApplicationDetails.getConnection().getShscNumber(), request);
@@ -176,7 +172,7 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
         return "closeSewerageConnection";
     }
 
-    @RequestMapping(value = "/closeSewerageConnection-update/{applicationNumber}", method = RequestMethod.POST)
+    @PostMapping("/closeSewerageConnection-update/{applicationNumber}")
     public String update(@Valid @ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
                          final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
                          final HttpServletRequest request, final HttpSession session, final Model model, @RequestParam String workFlowAction,
@@ -244,7 +240,6 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
 
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                 .getCurrentUser().getId(), new Date(), new Date());
-        String nextDesign = "";
         Assignment assignObj = null;
         List<Assignment> asignList = null;
         if (approvalPosition == null || approvalPosition == 0)
@@ -257,7 +252,7 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
             asignList.add(assignObj);
         } else if (assignObj == null && approvalPosition != null)
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
-        nextDesign = asignList != null && !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
+        String nextDesign = asignList != null && !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
         final String pathVars = sewerageApplicationDetails.getApplicationNumber() + ","
                 + sewerageTaxUtils.getApproverName(approvalPosition) + ","
                 + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
@@ -265,7 +260,7 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
         return "redirect:/transactions/closeConnection-success?pathVars=" + pathVars;
     }
 
-    @RequestMapping(value = "/viewcloseconnectionnotice/{applicationNumber}", method = RequestMethod.GET)
+    @GetMapping("/viewcloseconnectionnotice/{applicationNumber}")
     public ResponseEntity<byte[]> viewCloseConnectionNotice(
             @ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
             final HttpSession session, final HttpServletResponse response, final HttpServletRequest request) {
