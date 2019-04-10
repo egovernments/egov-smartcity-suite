@@ -144,6 +144,7 @@ public class BaseRegisterVLTResultAdaptor implements DataTableJsonAdapter<Proper
             jsonObject.addProperty("isExempted", baseRegisterResultObj.getIsExempted() ? "Yes" : "No");
             jsonObject.addProperty("propertyTaxFirstHlf", baseRegisterResultObj.getAggrCurrFirstHalfDmd() == null
                     ? BigDecimal.ZERO : baseRegisterResultObj.getAggrCurrFirstHalfDmd());
+            jsonObject.addProperty("waivedOffPT", baseRegisterResultObj.getWaivedoffAmount() != null ? baseRegisterResultObj.getWaivedoffAmount() : BigDecimal.ZERO);
 
             if (!valuesMap.isEmpty()) {
                 jsonObject.addProperty("libraryCessTaxFirstHlf", valuesMap.get(CURR_FIRST_HALF_LIB_CESS) == null

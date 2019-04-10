@@ -80,6 +80,7 @@ public class ApartmentDCBReportHelperAdaptor implements JsonSerializer<Apartment
             jsonObject.addProperty("clctnArrearPT", apartmentDCBReportObj.getClctnArrearPT());
             jsonObject.addProperty("clctnArrearPFT", apartmentDCBReportObj.getClctnArrearPFT());
             jsonObject.addProperty("clctnArrearTotal", apartmentDCBReportObj.getClctnArrearTotal());
+            jsonObject.addProperty("waivedOffPT", apartmentDCBReportObj.getWaivedOffPT());
 
             jsonObject.addProperty("clctnCurrentPT", apartmentDCBReportObj.getClctnCurrentPT());
             jsonObject.addProperty("clctnCurrentPFT", apartmentDCBReportObj.getClctnCurrentPFT()); 

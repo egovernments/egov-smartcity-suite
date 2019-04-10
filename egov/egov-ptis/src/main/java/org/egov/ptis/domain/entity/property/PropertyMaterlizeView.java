@@ -88,7 +88,13 @@ public class PropertyMaterlizeView implements Serializable {
     private BigDecimal aggrCurrSecondHalfPenaly;
     private BigDecimal aggrCurrSecondHalfPenalyColl; 
     private BigDecimal arrearDemand;
-    private BigDecimal arrearCollection; 
+    private BigDecimal arrearCollection;
+
+    private BigDecimal waivedoffAmount;
+    private BigDecimal exemptedAmount;
+    private BigDecimal writeoffAmount;
+    private BigDecimal courtcaseAmount;
+
     private String gisRefNo;
     private Set<InstDmdCollMaterializeView> instDmdColl;
     private BigDecimal alv;
@@ -449,7 +455,39 @@ public class PropertyMaterlizeView implements Serializable {
     public void setArrearCollection(BigDecimal arrearCollection) {
         this.arrearCollection = arrearCollection;
     }
-    
+
+    public BigDecimal getWaivedoffAmount() {
+        return waivedoffAmount;
+    }
+
+    public void setWaivedoffAmount(BigDecimal waivedoffAmount) {
+        this.waivedoffAmount = waivedoffAmount;
+    }
+
+    public BigDecimal getExemptedAmount() {
+        return exemptedAmount;
+    }
+
+    public void setExemptedAmount(BigDecimal exemptedAmount) {
+        this.exemptedAmount = exemptedAmount;
+    }
+
+    public BigDecimal getWriteoffAmount() {
+        return writeoffAmount;
+    }
+
+    public void setWriteoffAmount(BigDecimal writeoffAmount) {
+        this.writeoffAmount = writeoffAmount;
+    }
+
+    public BigDecimal getCourtcaseAmount() {
+        return courtcaseAmount;
+    }
+
+    public void setCourtcaseAmount(BigDecimal courtcaseAmount) {
+        this.courtcaseAmount = courtcaseAmount;
+    }
+
     public Boolean getIsUnderCourtCase() {
         return isUnderCourtCase;
     }
