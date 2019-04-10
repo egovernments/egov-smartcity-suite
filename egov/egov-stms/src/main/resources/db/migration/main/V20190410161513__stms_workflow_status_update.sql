@@ -1,0 +1,1 @@
+Insert into egw_status (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'SEWERAGETAXAPPLICATION','Executive Engineer Approved',now(),'EEAPPROVED',19);
