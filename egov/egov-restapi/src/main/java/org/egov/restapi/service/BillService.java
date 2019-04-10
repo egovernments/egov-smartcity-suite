@@ -127,7 +127,7 @@ public class BillService {
 
     @Autowired
     private DepartmentService departmentService;
-    
+
     @Autowired
     private ThirdPartyBillIntegrationService tpbiService;
 
@@ -202,26 +202,26 @@ public class BillService {
             restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_SCHEME);
             errors.add(restErrors);
         }
-        if(StringUtils.isNotBlank(billRegister.getFundCode())){
+        if (StringUtils.isNotBlank(billRegister.getFundCode())) {
             List<Fund> fundCode = fundService.getByIsActive(true);
             boolean isValidFundCode = false;
-            for(Fund fund : fundCode){
-                if(fund.getCode().equals(billRegister.getFundCode())){
+            for (Fund fund : fundCode) {
+                if (fund.getCode().equals(billRegister.getFundCode())) {
                     isValidFundCode = true;
                 }
             }
-            if(!isValidFundCode){
+            if (!isValidFundCode) {
                 restErrors = new RestErrors();
                 restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_VALID_FUND_CODE);
                 restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_VALID_FUND_CODE);
                 errors.add(restErrors);
             }
         }
-        if(StringUtils.isNotBlank(billRegister.getPartyBillNumber())){
+        if (StringUtils.isNotBlank(billRegister.getPartyBillNumber())) {
             Pattern pattern = Pattern.compile("^[a-zA-Z\\d-/]+$", Pattern.CASE_INSENSITIVE);
             Matcher matcher = pattern.matcher(billRegister.getPartyBillNumber());
             boolean isValidBillNumber = matcher.find();
-            if (!isValidBillNumber){
+            if (!isValidBillNumber) {
                 restErrors = new RestErrors();
                 restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_VALID_BILLNUMBER);
                 restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_VALID_BILLNUMBER);
@@ -236,20 +236,20 @@ public class BillService {
     }
 
     private void validateTpBillNoAlreadyExists(BillRegister billRegister, List<RestErrors> errors) {
-    		// TODO: Do we need to search with SOURCE as well ?
-		ThirdPartyBillIntegration tpbi = tpbiService.getTpBillByBillNo(billRegister.getTpBillNo());
-		RestErrors restErrors;
-		if(tpbi !=null) {
-			restErrors = new RestErrors();
+        // TODO: Do we need to search with SOURCE as well ?
+        ThirdPartyBillIntegration tpbi = tpbiService.getTpBillByBillNo(billRegister.getTpBillNo());
+        RestErrors restErrors;
+        if (tpbi != null) {
+            restErrors = new RestErrors();
             restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_TP_BILL_NO_ALREADY_EXISTS);
             restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_TP_BILL_NO_ALREADY_EXISTS);
             errors.add(restErrors);
-		}
-	}
+        }
+    }
 
-	private void validateMandatoryFields(final BillRegister billRegister, final List<RestErrors> errors) {
+    private void validateMandatoryFields(final BillRegister billRegister, final List<RestErrors> errors) {
         RestErrors restErrors;
-        
+
         if (StringUtils.isBlank(billRegister.getTpBillNo())) {
             restErrors = new RestErrors();
             restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_TP_BILL_NO);
@@ -311,7 +311,7 @@ public class BillService {
             restErrors.setErrorMessage(
                     sdf.format(billRegister.getBillDate()) + " - " + RestApiConstants.THIRD_PARTY_ERR_MSG_DATE_CANNOT_BE_FUTTURE);
             errors.add(restErrors);
-        }else
+        } else
             try {
                 financialYearHibernateDAO.getFinancialYearByDate(billRegister.getBillDate());
             } catch (final Exception e) {
@@ -556,19 +556,21 @@ public class BillService {
                 }
             }
 
-        Map<String,BigDecimal> amountMap = new HashMap<>();
+        Map<String, BigDecimal> amountMap = new HashMap<>();
         for (final BillPayeeDetails billPayeeDetails : billRegister.getBillPayeeDetails()) {
             if (amountMap.get(billPayeeDetails.getGlcode()) == null) {
                 amountMap.put(billPayeeDetails.getGlcode(), billPayeeDetails.getCreditAmount());
-            }else{
-                if(billPayeeDetails.getCreditAmount() != null && billPayeeDetails.getCreditAmount().doubleValue() > 0){
-                    amountMap.put(billPayeeDetails.getGlcode(), amountMap.get(billPayeeDetails.getGlcode()).add(billPayeeDetails.getCreditAmount()));
+            } else {
+                if (billPayeeDetails.getCreditAmount() != null && billPayeeDetails.getCreditAmount().doubleValue() > 0) {
+                    amountMap.put(billPayeeDetails.getGlcode(),
+                            amountMap.get(billPayeeDetails.getGlcode()).add(billPayeeDetails.getCreditAmount()));
                 }
             }
         }
-        for(final BillDetails billDetails : billRegister.getBillDetails()){
-            if(billDetails.getCreditAmount() != null && billDetails.getCreditAmount().doubleValue() > 0){
-                if (amountMap.containsKey(billDetails.getGlcode()) && amountMap.get(billDetails.getGlcode()).compareTo(billDetails.getCreditAmount()) != 0) {
+        for (final BillDetails billDetails : billRegister.getBillDetails()) {
+            if (billDetails.getCreditAmount() != null && billDetails.getCreditAmount().doubleValue() > 0) {
+                if (amountMap.containsKey(billDetails.getGlcode())
+                        && amountMap.get(billDetails.getGlcode()).compareTo(billDetails.getCreditAmount()) != 0) {
                     restErrors = new RestErrors();
                     restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_MATCHING_CREDIT_AMOUNT);
                     restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_MATCHING_CREDIT_AMOUNT + " - "
@@ -624,7 +626,7 @@ public class BillService {
      * has to be supported
      */
     private void populateEgBilldetails(final EgBillregister egBillregister, final BillDetails details,
-                                       final BillRegister billRegister) throws ClassNotFoundException {
+            final BillRegister billRegister) throws ClassNotFoundException {
         final EgBilldetails egBilldetails = new EgBilldetails();
         Accountdetailtype contractorAccountDetailType;
         Accountdetailtype projectCodeAccountDetailType;
@@ -656,7 +658,7 @@ public class BillService {
 
     @SuppressWarnings("unchecked")
     private void populateEgBillPayeedetails(final EgBilldetails egBilldetails, final BillPayeeDetails payeeDetails,
-                                            final BillDetails details) throws ClassNotFoundException {
+            final BillDetails details) throws ClassNotFoundException {
         final EgBillPayeedetails billPayeedetails = new EgBillPayeedetails();
         if (payeeDetails.getGlcode() != null && payeeDetails.getGlcode().equals(details.getGlcode())) {
             if (payeeDetails.getCreditAmount() != null && payeeDetails.getCreditAmount().longValue() > 0)
@@ -697,7 +699,5 @@ public class BillService {
     public BillPaymentDetails getBillAndPaymentDetails(String billNo) throws Exception {
         return billsService.getBillAndPaymentDetails(billNo);
     }
-
-
 
 }

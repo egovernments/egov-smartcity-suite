@@ -68,6 +68,7 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.DateUtils;
 import org.egov.model.bills.EgBillregister;
+import org.egov.model.service.ThirdPartyBillIntegrationService;
 import org.egov.restapi.model.BillDetails;
 import org.egov.restapi.model.BillPayeeDetails;
 import org.egov.restapi.model.BillRegister;
@@ -145,6 +146,9 @@ public class BillServiceTest extends AbstractContextControllerTest<BillService> 
 
     @InjectMocks
     private BillService billService;
+    
+    @Mock
+    private ThirdPartyBillIntegrationService tpbiService;
 
     @Mock
     private HttpServletRequest request;
@@ -295,7 +299,7 @@ public class BillServiceTest extends AbstractContextControllerTest<BillService> 
     @Test
     public void shouldValidateBillRegister() {
         errors = billService.validateBillRegister(billRegister);
-        assertEquals(1, errors.size());
+        assertEquals(2, errors.size());
     }
 
     @Test
@@ -320,8 +324,9 @@ public class BillServiceTest extends AbstractContextControllerTest<BillService> 
         billRegister.setDepartmentCode("");
         billRegister.setFunctionCode("");
         billRegister.setFundCode("");
+        billRegister.setTpBillNo("");
         errors = billService.validateBillRegister(billRegister);
-        assertEquals(6, errors.size());
+        assertEquals(7, errors.size());
     }
 
     @Test
@@ -331,7 +336,7 @@ public class BillServiceTest extends AbstractContextControllerTest<BillService> 
         when(financialYearHibernateDAO.getFinancialYearByDate(Matchers.any()))
                 .thenThrow(new ApplicationRuntimeException("Financial Year is not active For Posting."));
         errors = billService.validateBillRegister(billRegister);
-        assertEquals(3, errors.size());
+        assertEquals(4, errors.size());
     }
 
     @Test
@@ -339,7 +344,7 @@ public class BillServiceTest extends AbstractContextControllerTest<BillService> 
         billRegister.setNameOfWork("Building Contruction\n'");
         when(projectCodeService.findActiveProjectCodeByCode(Matchers.anyString())).thenReturn(null);
         errors = billService.validateBillRegister(billRegister);
-        assertEquals(2, errors.size());
+        assertEquals(3, errors.size());
     }
 
     @Test
@@ -347,21 +352,21 @@ public class BillServiceTest extends AbstractContextControllerTest<BillService> 
         billRegister.getBillDetails().clear();
         billRegister.getBillPayeeDetails().clear();
         errors = billService.validateBillRegister(billRegister);
-        assertEquals(3, errors.size());
+        assertEquals(4, errors.size());
     }
 
     @Test
     public void shouldGiveErrorsIfInvalidGlcode() {
         when(chartOfAccountsService.getByGlCode(Matchers.anyString())).thenReturn(null);
         errors = billService.validateBillRegister(billRegister);
-        assertEquals(5, errors.size());
+        assertEquals(6, errors.size());
     }
 
     @Test
     public void shouldGiveErrorsIfInvalidDetailGlcode() {
         chartOfAccount1.setClassification(1l);
         errors = billService.validateBillRegister(billRegister);
-        assertEquals(3, errors.size());
+        assertEquals(4, errors.size());
     }
 
     @Test
@@ -369,7 +374,7 @@ public class BillServiceTest extends AbstractContextControllerTest<BillService> 
         billRegister.getBillDetails().get(0).setDebitAmount(new BigDecimal(-1000));
         billRegister.getBillDetails().get(1).setCreditAmount(new BigDecimal(-1000));
         errors = billService.validateBillRegister(billRegister);
-        assertEquals(5, errors.size());
+        assertEquals(6, errors.size());
     }
 
     @Test
@@ -380,6 +385,6 @@ public class BillServiceTest extends AbstractContextControllerTest<BillService> 
         billRegister.getBillPayeeDetails().get(0).setCreditAmount(null);
         billRegister.getBillPayeeDetails().get(0).setDebitAmount(null);
         errors = billService.validateBillRegister(billRegister);
-        assertEquals(5, errors.size());
+        assertEquals(6, errors.size());
     }
 }

@@ -57,6 +57,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -84,6 +85,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 @RestController
@@ -146,7 +148,8 @@ public class CreateBillController {
 
                 // Save in bill integration table
 
-                Object source = request.getSession().getAttribute(SOURCE);
+                HttpSession session = request.getSession();
+                Object source = session != null ? session.getAttribute(SOURCE) : null;
                 if (source == null) {
                     source = "WMS";
                 }
@@ -182,8 +185,10 @@ public class CreateBillController {
         }
         jsonObject.addProperty("successMessage", "Works Bill created Successfully");
         jsonObject.addProperty("billNumber", billNumber);
+        JsonArray jsonArray = new JsonArray();
+        jsonArray.add(jsonObject); 
         response.setStatus(HttpServletResponse.SC_CREATED);
-        return jsonObject.toString();
+        return jsonArray.toString();
     }
 
     /**

@@ -59,6 +59,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.egov.model.bills.EgBillregister;
+import org.egov.model.service.ThirdPartyBillIntegrationService;
 import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.RestErrors;
 import org.egov.restapi.service.BillService;
@@ -86,6 +87,9 @@ public class CreateBillControllerTest extends AbstractContextControllerTest<Crea
     
     @InjectMocks
     private CreateBillController createBillController;
+    
+    @Mock
+    private ThirdPartyBillIntegrationService tpbiService;
 
     private List<RestErrors> errors;
 
@@ -118,7 +122,8 @@ public class CreateBillControllerTest extends AbstractContextControllerTest<Crea
                 "UTF-8");
         when(billService.validateBillRegister(Matchers.anyObject())).thenReturn(errors);
         responseJson = createBillController.createContractorBill(requestJson,request, response);
-        final JSONObject jsonObject = new JSONObject(responseJson);
+        final JSONArray jsonArray = new JSONArray(responseJson);
+        final JSONObject jsonObject = jsonArray.getJSONObject(0);
         assertEquals(egBillregister.getBillnumber(), jsonObject.get("billNumber"));
     }
 
