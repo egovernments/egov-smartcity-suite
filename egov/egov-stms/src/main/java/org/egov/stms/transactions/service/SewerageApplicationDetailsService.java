@@ -916,9 +916,9 @@ public class SewerageApplicationDetailsService {
                     && WFLOW_ACTION_STEP_FORWARD.equals(workFlowAction))
                 sewerageApplicationDetails
                         .setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_EEAPPROVED, MODULETYPE));
-            else if ((sewerageApplicationDetails.getStatus().getCode().equals(APPLICATION_STATUS_DEEAPPROVED)
+            else if (APPLICATION_STATUS_DEEAPPROVED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
                     || WF_STATE_EE_APPROVED.equalsIgnoreCase(sewerageApplicationDetails.getState().getValue())
-                    && APPROVEWORKFLOWACTION.equals(workFlowAction))) {
+                    && APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)) {
                 // Make Connection status closed on EE approval
                 sewerageApplicationDetails.getConnection().setStatus(SewerageConnectionStatus.CLOSED);
                 sewerageApplicationDetails.setActive(true);

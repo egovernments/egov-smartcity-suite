@@ -93,7 +93,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -110,23 +115,17 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
     private static final String APPROVAL_POSITION = "approvalPosition";
 
     private static final Logger LOGGER = Logger.getLogger(SewerageCloseUpdateConnectionController.class);
-
-    @Autowired
-    private SewerageApplicationDetailsService sewerageApplicationDetailsService;
-
-    @Autowired
-    private SewerageTaxUtils sewerageTaxUtils;
-
-    @Autowired
-    private SecurityUtils securityUtils;
-
-    @Autowired
-    private AssignmentService assignmentService;
-
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
-
+    @Autowired
+    private SewerageApplicationDetailsService sewerageApplicationDetailsService;
+    @Autowired
+    private SewerageTaxUtils sewerageTaxUtils;
+    @Autowired
+    private SecurityUtils securityUtils;
+    @Autowired
+    private AssignmentService assignmentService;
     @Autowired
     private SewerageThirdPartyServices sewerageThirdPartyServices;
 
@@ -241,18 +240,17 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                 .getCurrentUser().getId(), new Date(), new Date());
         Assignment assignObj = null;
-        List<Assignment> asignList = null;
+        List<Assignment> assignmentList = new ArrayList<>();
         if (approvalPosition == null || approvalPosition == 0)
             approvalPosition = assignmentService.getPrimaryAssignmentForUser(sewerageApplicationDetails.getCreatedBy().getId())
                     .getPosition().getId();
         if (approvalPosition != null)
             assignObj = assignmentService.getPrimaryAssignmentForPositon(approvalPosition);
         if (assignObj != null) {
-            asignList = new ArrayList<>();
-            asignList.add(assignObj);
+            assignmentList.add(assignObj);
         } else if (assignObj == null && approvalPosition != null)
-            asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
-        String nextDesign = asignList != null && !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
+            assignmentList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
+        String nextDesign = assignmentList.isEmpty() ? "" : assignmentList.get(0).getDesignation().getName();
         final String pathVars = sewerageApplicationDetails.getApplicationNumber() + ","
                 + sewerageTaxUtils.getApproverName(approvalPosition) + ","
                 + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
