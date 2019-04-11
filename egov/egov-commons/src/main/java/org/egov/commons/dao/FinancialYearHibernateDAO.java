@@ -333,7 +333,7 @@ public class FinancialYearHibernateDAO implements FinancialYearDAO {
     
     /* (non-Javadoc)
      * @see org.egov.commons.dao.FinancialYearDAO#getFinancialYearsAfterFromDate(java.util.Date)
-     *  * returns active FY from the given date
+     *  * returns FY from the given date
      * example: 01-04-2016 is given then it will return 2016-17,2017-18 and so on till previous financial year
      */
     public List<CFinancialYear> getFinancialYearsAfterFromDate(Date date) {
@@ -342,7 +342,7 @@ public class FinancialYearHibernateDAO implements FinancialYearDAO {
         cal.add(Calendar.YEAR, -1);
         Query query = getCurrentSession()
                 .createQuery(
-                        " from CFinancialYear cfinancialyear where cfinancialyear.startingDate >=:sDate  and cfinancialyear.startingDate <=:cDate and cfinancialyear.endingDate >=:eDate and isActive=true order by finYearRange desc ");
+                        " from CFinancialYear cfinancialyear where cfinancialyear.startingDate >=:sDate  and cfinancialyear.startingDate <=:cDate and cfinancialyear.endingDate >=:eDate order by finYearRange desc ");
         query.setDate("sDate", date);
         query.setDate("cDate", cal.getTime());
         query.setDate("eDate", cal.getTime());
