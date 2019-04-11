@@ -366,9 +366,14 @@
 												test="${fieldnames != 'Advance Collection' && fieldnames != 'Fines'}">
 												<td class="blueborderfortd">
 													<div align="right">
-                                                        <s:set var="collection_minus_rbt" value="%{value.getCollections()[#fieldnames] -  #rebate_waiver}" />
+													    <c:if test="${fieldnames == 'FINES'}">
+                                                            <s:set var="collection" value="%{value.getCollections()[#fieldnames] -  #rebate_waiver}" />
+													    </c:if>
+													    <c:if test="${fieldnames != 'FINES'}">
+                                                            <s:set var="collection" value="%{value.getCollections()[#fieldnames]}" />
+                                                        </c:if>
                                                         <s:text name="format.money">
-                                                            <s:param value="#collection_minus_rbt" />
+                                                            <s:param value="#collection" />
                                                         </s:text>
 													</div>
 												</td>
