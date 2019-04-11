@@ -338,7 +338,7 @@ public class FinancialYearHibernateDAO implements FinancialYearDAO {
      */
     public List<CFinancialYear> getFinancialYearsAfterFromDate(Date date) {
         Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
+        cal.setTime(new Date());
         cal.add(Calendar.YEAR, -1);
         Query query = getCurrentSession()
                 .createQuery(
