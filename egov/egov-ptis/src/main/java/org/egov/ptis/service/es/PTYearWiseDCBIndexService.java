@@ -205,19 +205,19 @@ public class PTYearWiseDCBIndexService {
                                     .add(new BigDecimal(responseFields.get(CURRENT_INTEREST_COLLECTION).toString())))));
             serviceWiseResponse.setWaivedoffAmount(
                     new BigDecimal(
-                            Optional.ofNullable(responseFields.get(WAIVEDOFF_AMOUNT)).orElse("").toString()
+                            Optional.ofNullable(responseFields.get(WAIVEDOFF_AMOUNT)).orElse("0").toString()
                     ));
             serviceWiseResponse.setExemptedAmount(
                     new BigDecimal(
-                            Optional.ofNullable(responseFields.get(EXEMPTED_AMOUNT)).orElse("").toString()
+                            Optional.ofNullable(responseFields.get(EXEMPTED_AMOUNT)).orElse("0").toString()
                     ));
             serviceWiseResponse.setWriteoffAmount(
                     new BigDecimal(
-                            Optional.ofNullable(responseFields.get(WRITEOFF_AMOUNT)).orElse("").toString()
+                            Optional.ofNullable(responseFields.get(WRITEOFF_AMOUNT)).orElse("0").toString()
                     ));
             serviceWiseResponse.setCourtcaseAmount(
                     new BigDecimal(
-                            Optional.ofNullable(responseFields.get(COURTCASE_AMOUNT)).orElse("").toString()
+                            Optional.ofNullable(responseFields.get(COURTCASE_AMOUNT)).orElse("0").toString()
                     ));
 
             serviceWiseResponse.setDrillDownType(responseFields.get("assessmentNo").toString());
