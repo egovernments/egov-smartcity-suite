@@ -65,6 +65,7 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
+import org.egov.commons.entity.Source;
 import org.egov.dcb.bean.ChequePayment;
 import org.egov.egf.expensebill.service.ExpenseBillService;
 import org.egov.egf.model.BillPayment.BillPaymentDetails;
@@ -150,12 +151,15 @@ public class CreateBillController {
 
                 HttpSession session = request.getSession();
                 Object source = session != null ? session.getAttribute(SOURCE) : null;
+                String strSource;
                 if (source == null) {
-                    source = "WMS";
+                	strSource = Source.SOFTTECHWMS.toString();
+                }else {
+                	strSource = source.toString();
                 }
                 ThirdPartyBillIntegration tpbi = new ThirdPartyBillIntegration();
                 tpbi.setEgBill(savedBillregister);
-                tpbi.setSource((String) source);
+                tpbi.setSource(strSource);
                 tpbi.setTpbillno(billRegister.getTpBillNo());
 
                 tpbiService.createThirdPartyBillIntegration(tpbi);
