@@ -219,7 +219,8 @@ public class DCBReport {
 							totalLpayPnlty = totalLpayPnlty.add(record
 									.getValue().getDemands().get(fieldName));
 							totalColLpayPnlty = totalColLpayPnlty.add(record.getValue()
-									.getCollections().get(fieldName));
+									.getCollections().get(fieldName))
+									.subtract(record.getValue().getRebates().get(fieldName));
 						}
 						if (fieldName.equals(ADVANCE)) {
 							totalAdvance = totalAdvance.add(record
