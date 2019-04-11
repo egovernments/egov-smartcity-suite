@@ -52,10 +52,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_PR
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
@@ -207,13 +204,21 @@ public class PTYearWiseDCBIndexService {
                                     .add(new BigDecimal(responseFields.get(CURRENT_COLLECTION).toString()))
                                     .add(new BigDecimal(responseFields.get(CURRENT_INTEREST_COLLECTION).toString())))));
             serviceWiseResponse.setWaivedoffAmount(
-                    new BigDecimal(responseFields.get(WAIVEDOFF_AMOUNT).toString()));
+                    new BigDecimal(
+                            Optional.ofNullable(responseFields.get(WAIVEDOFF_AMOUNT)).orElse("").toString()
+                    ));
             serviceWiseResponse.setExemptedAmount(
-                    new BigDecimal(responseFields.get(EXEMPTED_AMOUNT).toString()));
+                    new BigDecimal(
+                            Optional.ofNullable(responseFields.get(EXEMPTED_AMOUNT)).orElse("").toString()
+                    ));
             serviceWiseResponse.setWriteoffAmount(
-                    new BigDecimal(responseFields.get(WRITEOFF_AMOUNT).toString()));
+                    new BigDecimal(
+                            Optional.ofNullable(responseFields.get(WRITEOFF_AMOUNT)).orElse("").toString()
+                    ));
             serviceWiseResponse.setCourtcaseAmount(
-                    new BigDecimal(responseFields.get(COURTCASE_AMOUNT).toString()));
+                    new BigDecimal(
+                            Optional.ofNullable(responseFields.get(COURTCASE_AMOUNT)).orElse("").toString()
+                    ));
 
             serviceWiseResponse.setDrillDownType(responseFields.get("assessmentNo").toString());
             dcbData.add(serviceWiseResponse);
