@@ -344,23 +344,9 @@
 												</td>
 											</c:if>
 										</s:iterator>
-										<s:iterator value="dcbReport.getFieldNames()" var="fieldnames">
-											<c:if
-												test="${fieldnames != 'Advance Collection' && fieldnames != 'Fines'}">
-												<td class="blueborderfortd">
-													<div align="right">
-														<s:text name="format.money">
-															<s:param value="value.getCollections()[#fieldnames]" />
-														</s:text>
-													</div>
-												</td>
-											</c:if>
-										</s:iterator>
 
 										<s:set value="0" var="rebate_waiver" />
-
                                         <s:iterator value="dcbReport.getFieldNames()" var="fieldnames">
-                                            <s:set value="%{dbg_counter1 + 1}" var="dbg_counter1" />
                                             <c:if
                                                 test="${fieldnames != 'Advance Collection' && fieldnames != 'PENALTY'}">
                                                 <s:set var="trbt" value="%{#rebate_waiver + value.getRebates()[#fieldnames]}" />
@@ -373,6 +359,21 @@
                                                 <c:set value="${advrebate + advreb}" var="advrebate" />
                                             </c:if>
                                         </s:iterator>
+
+
+										<s:iterator value="dcbReport.getFieldNames()" var="fieldnames">
+											<c:if
+												test="${fieldnames != 'Advance Collection' && fieldnames != 'Fines'}">
+												<td class="blueborderfortd">
+													<div align="right">
+                                                        <s:set var="collection_minus_rbt" value="%{value.getCollections()[#fieldnames] -  #rebate_waiver}" />
+                                                        <s:text name="format.money">
+                                                            <s:param value="#collection_minus_rbt" />
+                                                        </s:text>
+													</div>
+												</td>
+											</c:if>
+										</s:iterator>
 
                                         <td class="blueborderfortd">
                                             <div align="right">
