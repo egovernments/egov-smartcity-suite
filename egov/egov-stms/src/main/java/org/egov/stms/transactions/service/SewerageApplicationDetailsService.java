@@ -645,7 +645,7 @@ public class SewerageApplicationDetailsService {
     @Transactional
     public SewerageApplicationDetails updateSewerageApplicationDetails(
             final SewerageApplicationDetails sewerageApplicationDetails, final Long approvalPosition,
-            final String approvalComent, final String additionalRule, final String workFlowAction, final String mode,
+            final String approvalComment, final String additionalRule, final String workFlowAction, final String mode,
             final ReportOutput reportOutput, final HttpServletRequest request, final HttpSession session) {
 
         // In change in closet if demand reduced, sewerage tax collection shld not be done. Hence directly fwd application from
@@ -753,7 +753,7 @@ public class SewerageApplicationDetailsService {
             LOG.debug(APPLICATION_WORKFLOW_INITIALIZATION_DONE);
 
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(updatedSewerageApplicationDetails,
-                approvalPosition, approvalComent, additionalRule, workFlowAction);
+                approvalPosition, approvalComment, additionalRule, workFlowAction);
 
         if (sewerageApplicationDetails.getApplicationType().getCode().equalsIgnoreCase(CHANGEINCLOSETS)
                 && sewerageApplicationDetails.getParent() != null)
@@ -764,11 +764,11 @@ public class SewerageApplicationDetailsService {
         if (APPLICATION_STATUS_COLLECTINSPECTIONFEE.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
                 || APPLICATION_STATUS_DEEAPPROVED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
                 || APPLICATION_STATUS_CREATED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())) {
-            sewerageApplicationDetails.setApprovalComent(approvalComent);
+            sewerageApplicationDetails.setApprovalComent(approvalComment);
             sewerageConnectionSmsAndEmailService.sendSmsAndEmail(sewerageApplicationDetails, request);
         } else if (APPLICATION_STATUS_FINALAPPROVED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
                 || APPLICATION_STATUS_REJECTED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())) {
-            sewerageApplicationDetails.setApprovalComent(approvalComent);
+            sewerageApplicationDetails.setApprovalComent(approvalComment);
             sewerageConnectionSmsAndEmailService.sendSmsAndEmail(sewerageApplicationDetails, request);
         }
 
@@ -884,8 +884,7 @@ public class SewerageApplicationDetailsService {
             final ReportOutput reportOutput, final HttpServletRequest request, final HttpSession session) {
 
         // Generate closure notice number and date
-        if (APPLICATION_STATUS_DEEAPPROVED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
-                && CLOSESEWERAGECONNECTION.equalsIgnoreCase(sewerageApplicationDetails.getApplicationType().getCode())
+        if (CLOSESEWERAGECONNECTION.equalsIgnoreCase(sewerageApplicationDetails.getApplicationType().getCode())
                 && APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)) {
             final SewerageCloseConnectionNoticeNumberGenerator closeConnectionNoticeNumberGenerator = beanResolver
                     .getAutoNumberServiceFor(SewerageCloseConnectionNoticeNumberGenerator.class);

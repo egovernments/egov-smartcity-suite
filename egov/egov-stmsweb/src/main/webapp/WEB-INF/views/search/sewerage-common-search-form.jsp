@@ -75,7 +75,7 @@
 								code="lbl.shsc.number" /></label>
 						<div class="col-sm-3 col-md-3 add-margin">
 							<input type="text" name="shscNumber" id="shscNumber"
-								class="form-control is_valid_number" maxlength="11"
+								class="form-control is_valid_number" maxlength="10"
 								id="app-appcodo" />
 						</div>
 					</div>

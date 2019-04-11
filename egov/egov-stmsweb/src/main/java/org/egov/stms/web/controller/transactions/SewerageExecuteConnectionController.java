@@ -69,6 +69,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.REVENUE_WARD;
@@ -122,6 +123,6 @@ public class SewerageExecuteConnectionController {
                 sewerageApplicationDetailsList);
         Boolean updateStatus = sewerageIndexService.update(sewerageApplicationDetailsList);
         return sewerageBulkExecutionResponse.getSewerageExecutionResult().length <= 0 ? "EmptyList" :
-                !validationStatus.isEmpty() ? validationStatus : !updateStatus ? "UpdateExecutionFailed" : "Success";
+                isBlank(validationStatus) ? (updateStatus ? "Success" : "UpdateExecutionFailed") : validationStatus;
     }
 }
