@@ -238,6 +238,11 @@ public class PTYearWiseDCBIndexService {
         Sum arrearPenCollected;
         Sum currentCollected;
         Sum currentPenCollected;
+        Sum waivedOffAmount;
+        Sum writeOffAmount;
+        Sum exemptedAmount;
+        Sum courtCaseAmount;
+
         Terms aggTerms = response.getAggregations().get(aggregationTerms);
         List<YearWiseDCBReponse> serviceWiseResponses = new ArrayList<>();
         for (Terms.Bucket entry : aggTerms.getBuckets()) {
@@ -250,6 +255,11 @@ public class PTYearWiseDCBIndexService {
             arrearPenCollected = entry.getAggregations().get(ARREAR_INTEREST_COLLECTION);
             currentCollected = entry.getAggregations().get(CURRENT_COLLECTION);
             currentPenCollected = entry.getAggregations().get(CURRENT_INTEREST_COLLECTION);
+            waivedOffAmount = entry.getAggregations().get(WAIVEDOFF_AMOUNT);
+            exemptedAmount = entry.getAggregations().get(EXEMPTED_AMOUNT);
+            writeOffAmount = entry.getAggregations().get(WRITEOFF_AMOUNT);
+            courtCaseAmount = entry.getAggregations().get(COURTCASE_AMOUNT);
+
             serviceWiseResponse.setCount(entry.getDocCount());
             serviceWiseResponse
                     .setArrearDemand(BigDecimal.valueOf(arrearDemand.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
@@ -323,20 +333,19 @@ public class PTYearWiseDCBIndexService {
                                                     BigDecimal.ROUND_HALF_UP))
                                             .add(BigDecimal.valueOf(currentPenCollected.getValue()).setScale(0,
                                                     BigDecimal.ROUND_HALF_UP))))));
-            serviceWiseResponse.setWaivedoffAmount(
-                    new BigDecimal(entry.getAggregations().get(WAIVEDOFF_AMOUNT).toString()));
-            serviceWiseResponse.setExemptedAmount(
-                    new BigDecimal(entry.getAggregations().get(EXEMPTED_AMOUNT).toString()));
-            serviceWiseResponse.setWriteoffAmount(
-                    new BigDecimal(entry.getAggregations().get(WRITEOFF_AMOUNT).toString()));
-            serviceWiseResponse.setCourtcaseAmount(
-                    new BigDecimal(entry.getAggregations().get(COURTCASE_AMOUNT).toString()));
 
+            serviceWiseResponse.setWaivedoffAmount(BigDecimal.valueOf(waivedOffAmount.getValue()).setScale(0,
+                    BigDecimal.ROUND_HALF_UP));
+            serviceWiseResponse.setExemptedAmount(BigDecimal.valueOf(exemptedAmount.getValue()).setScale(0,
+                    BigDecimal.ROUND_HALF_UP));
+            serviceWiseResponse.setWriteoffAmount(BigDecimal.valueOf(writeOffAmount.getValue()).setScale(0,
+                    BigDecimal.ROUND_HALF_UP));
+            serviceWiseResponse.setCourtcaseAmount(BigDecimal.valueOf(courtCaseAmount.getValue()).setScale(0,
+                    BigDecimal.ROUND_HALF_UP));
 
             serviceWiseResponse.setDrillDownType(entry.getKeyAsString());
             serviceWiseResponses.add(serviceWiseResponse);
         }
-
         return serviceWiseResponses;
     }
 
@@ -350,8 +359,12 @@ public class PTYearWiseDCBIndexService {
                 .subAggregation(AggregationBuilders.sum(CURR_INTEREST_DMD).field(CURR_INTEREST_DMD))
                 .subAggregation(AggregationBuilders.sum(ARREAR_COLLECTION).field(ARREAR_COLLECTION))
                 .subAggregation(AggregationBuilders.sum(ARREAR_INTEREST_COLLECTION).field(ARREAR_INTEREST_COLLECTION))
-                .subAggregation(AggregationBuilders.sum(CURRENT_COLLECTION).field(CURRENT_COLLECTION)).subAggregation(
-                        AggregationBuilders.sum(CURRENT_INTEREST_COLLECTION).field(CURRENT_INTEREST_COLLECTION));
+                .subAggregation(AggregationBuilders.sum(CURRENT_COLLECTION).field(CURRENT_COLLECTION))
+                .subAggregation(AggregationBuilders.sum(CURRENT_INTEREST_COLLECTION).field(CURRENT_INTEREST_COLLECTION))
+                .subAggregation(AggregationBuilders.sum(WAIVEDOFF_AMOUNT).field(WAIVEDOFF_AMOUNT))
+                .subAggregation(AggregationBuilders.sum(EXEMPTED_AMOUNT).field(EXEMPTED_AMOUNT))
+                .subAggregation(AggregationBuilders.sum(WRITEOFF_AMOUNT).field(WRITEOFF_AMOUNT))
+                .subAggregation(AggregationBuilders.sum(COURTCASE_AMOUNT).field(COURTCASE_AMOUNT));
 
     }
 
