@@ -342,10 +342,9 @@ public class FinancialYearHibernateDAO implements FinancialYearDAO {
         cal.add(Calendar.YEAR, -1);
         Query query = getCurrentSession()
                 .createQuery(
-                        " from CFinancialYear cfinancialyear where cfinancialyear.startingDate >=:sDate  and cfinancialyear.startingDate <=:cDate and cfinancialyear.endingDate >=:eDate order by finYearRange desc ");
+                        " from CFinancialYear cfinancialyear where cfinancialyear.startingDate >=:sDate  and cfinancialyear.startingDate <=:cDate order by finYearRange desc ");
         query.setDate("sDate", date);
         query.setDate("cDate", cal.getTime());
-        query.setDate("eDate", cal.getTime());
         return query.list();
     }
 
