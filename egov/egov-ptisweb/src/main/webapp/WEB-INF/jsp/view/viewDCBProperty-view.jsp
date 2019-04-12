@@ -346,11 +346,15 @@
 										</s:iterator>
 
 										<s:set value="0" var="rebate_waiver" />
+										<s:set value="0" var="waiver" />
 										<s:iterator value="dcbReport.getFieldNames()" var="fieldnames">
 											<c:if
 												test="${fieldnames != 'Advance Collection' && fieldnames != 'PENALTY' && fieldnames != 'Early Payment Rebate'}">
 												<s:set var="trbt" value="%{#rebate_waiver + value.getRebates()[#fieldnames]}" />
 												<s:set var="rebate_waiver" value="%{#trbt}" />
+											</c:if>
+											<c:if test="${fieldnames == 'FINES'}">
+											    <s:set var="waiver" value="%{#waiver + value.getRebates()[#fieldnames]}" />
 											</c:if>
 
 											<c:if
@@ -367,7 +371,7 @@
 												<td class="blueborderfortd">
 													<div align="right">
 														<c:if test="${fieldnames == 'FINES'}">
-															<s:set var="collection" value="%{value.getCollections()[#fieldnames] -  #rebate_waiver}" />
+															<s:set var="collection" value="%{value.getCollections()[#fieldnames] -  #waiver}" />
 														</c:if>
 														<c:if test="${fieldnames != 'FINES'}">
 															<s:set var="collection" value="%{value.getCollections()[#fieldnames]}" />
