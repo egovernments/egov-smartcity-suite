@@ -255,9 +255,6 @@ public class ZuulProxyFilter extends ZuulFilter {
             final CurrentUser userDetails = new CurrentUser(securityUtils.getCurrentUser());
 
             final User user = userDetails.getUser();
-            if (user != null)
-                log.error("ZuulProxyFilter username: " + user.getUsername());
-
             final List<Role> roles = new ArrayList<Role>();
             userDetails.getUser().getRoles().forEach(authority -> roles.add(new Role(authority.getName())));
 

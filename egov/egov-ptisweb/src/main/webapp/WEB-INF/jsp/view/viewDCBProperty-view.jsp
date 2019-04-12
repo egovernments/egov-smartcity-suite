@@ -346,6 +346,7 @@
 										</s:iterator>
 
 										<s:set value="0" var="rebate_waiver" />
+
 										<s:set value="0" var="waiver" />
 										<s:iterator value="dcbReport.getFieldNames()" var="fieldnames">
 											<c:if
@@ -413,6 +414,7 @@
 											</td>
 										</s:iterator>
 									</tr> -->
+
 								</s:iterator>
 								<tr>
 									<td class="blueborderfortd">
