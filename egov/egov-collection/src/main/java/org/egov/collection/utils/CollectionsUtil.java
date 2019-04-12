@@ -60,6 +60,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.egov.collection.config.properties.CollectionApplicationProperties;
@@ -948,7 +949,7 @@ public class CollectionsUtil {
                 reconstructReceiptDetailsRequest, ReceiptAccountDetailsResponse.class);
         if (receiptAccountDetailsResponse == null)
             return Collections.EMPTY_LIST;
-        // Setting chartofaccounts and functionary
+        // Setting chartofaccounts and function
         else {
             for (ReceiptDetail receiptDetail : receiptAccountDetailsResponse.getReceiptDetailsList()) {
                 final CChartOfAccounts account = chartOfAccountsHibernateDAO
@@ -1129,6 +1130,21 @@ public class CollectionsUtil {
             bankBranchArrayList.add(newBankbranch);
         }
         return bankBranchArrayList;
+    }
+
+    public TreeMap<Long, String> getUserList() {
+        TreeMap<Long, String> userMap = new TreeMap<>();
+        StringBuilder queryString = new StringBuilder(
+                "select distinct(u.id) as userrid,u.name as name from egcl_collectionheader ch,"
+                        + " eg_user u where ch.createdby=u.id and u.type not in('CITIZEN','SYSTEM') order by u.name");
+
+        final Query query = persistenceService.getSession().createSQLQuery(queryString.toString());
+        List<Object[]> queryResult = query.list();
+        for (int i = 0; i < queryResult.size(); i++) {
+            final Object[] result = queryResult.get(i);
+            userMap.put(Long.valueOf(result[0].toString()), result[1].toString());
+        }
+        return userMap;
     }
 
     public String getJurisdictionBoundary() {

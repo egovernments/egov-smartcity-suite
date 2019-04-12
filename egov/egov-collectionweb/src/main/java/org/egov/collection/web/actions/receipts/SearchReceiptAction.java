@@ -47,6 +47,13 @@
  */
 package org.egov.collection.web.actions.receipts;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.TreeMap;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -63,13 +70,6 @@ import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.TreeMap;
-
 @ParentPackage("egov")
 @Results({
         @Result(name = SearchReceiptAction.SUCCESS, location = "searchReceipt.jsp")
@@ -84,13 +84,14 @@ public class SearchReceiptAction extends SearchFormAction {
     private Date fromDate;
     private Date toDate;
     private Integer searchStatus = -1;
-    private String target = "new";
+    private String target = NEW;
     private String manualReceiptNumber;
     private List resultList;
     private String serviceClass = "-1";
     private TreeMap<String, String> serviceClassMap = new TreeMap<String, String>();
     private CollectionsUtil collectionsUtil;
     private Integer branchId;
+    private TreeMap<Long, String> userMap = new TreeMap<>();
 
     @Autowired
     private AssignmentService assignmentService;
@@ -145,12 +146,12 @@ public class SearchReceiptAction extends SearchFormAction {
         setPage(1);
         serviceTypeId = -1;
         userId = (long) -1;
-        receiptNumber = "";
+        receiptNumber = CollectionConstants.BLANK;
         fromDate = null;
         toDate = null;
-        instrumentType = "";
+        instrumentType = CollectionConstants.BLANK;
         searchStatus = -1;
-        manualReceiptNumber = "";
+        manualReceiptNumber = CollectionConstants.BLANK;
         serviceClass = "-1";
         branchId = -1;
         return SUCCESS;
@@ -162,8 +163,7 @@ public class SearchReceiptAction extends SearchFormAction {
         setupDropdownDataExcluding();
         addDropdownData("instrumentTypeList",
                 getPersistenceService().findAllBy("from InstrumentType i where i.isActive = true order by type"));
-        addDropdownData("userList",
-                getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_CREATEDBYUSERS_OF_RECEIPTS));
+        userMap = collectionsUtil.getUserList();
         serviceClassMap.putAll(CollectionConstants.SERVICE_TYPE_CLASSIFICATION);
         serviceClassMap.remove(CollectionConstants.SERVICE_TYPE_PAYMENT);
         addDropdownData("serviceTypeList", Collections.EMPTY_LIST);
@@ -178,8 +178,9 @@ public class SearchReceiptAction extends SearchFormAction {
 
     public List getReceiptStatuses() {
         return persistenceService.findAllBy(
-                "from EgwStatus s where moduletype=? and code != ? order by description",
-                ReceiptHeader.class.getSimpleName(), CollectionConstants.RECEIPT_STATUS_CODE_PENDING);
+                "from EgwStatus s where moduletype=? and code not in(?,?) order by description",
+                ReceiptHeader.class.getSimpleName(), CollectionConstants.RECEIPT_STATUS_CODE_PENDING,
+                CollectionConstants.RECEIPT_STATUS_CODE_FAILED);
     }
 
     @Override
@@ -231,8 +232,9 @@ public class SearchReceiptAction extends SearchFormAction {
         final String orderByString = " group by receipt.receiptdate,receipt.id  order by receipt.receiptdate desc";
 
         // Get only those receipts whose status is NOT PENDING
-        final StringBuilder criteriaString = new StringBuilder(" where receipt.status.code != ? ");
+        final StringBuilder criteriaString = new StringBuilder(" where receipt.status.code not in (?,?) ");
         params.add(CollectionConstants.RECEIPT_STATUS_CODE_PENDING);
+        params.add(CollectionConstants.RECEIPT_STATUS_CODE_FAILED);
 
         if (StringUtils.isNotBlank(getInstrumentType())) {
             fromString.append(" inner join receipt.receiptInstrument as instruments ");
@@ -343,5 +345,13 @@ public class SearchReceiptAction extends SearchFormAction {
 
     public void setBranchId(Integer branchId) {
         this.branchId = branchId;
+    }
+
+    public TreeMap<Long, String> getUserMap() {
+        return userMap;
+    }
+
+    public void setUserMap(TreeMap<Long, String> userMap) {
+        this.userMap = userMap;
     }
 }
