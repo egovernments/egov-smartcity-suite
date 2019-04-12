@@ -334,7 +334,7 @@
 
 										<s:iterator value="dcbReport.getFieldNames()" var="fieldnames">
 											<c:if
-												test="${fieldnames != 'Advance Collection' && fieldnames != 'Fines'}">
+												test="${fieldnames != 'Advance Collection' && fieldnames != 'Fines' && fieldnames != 'Early Payment Rebate'}">
 												<td class="blueborderfortd">
 													<div align="right">
 														<s:text name="format.money">
@@ -348,13 +348,13 @@
 										<s:set value="0" var="rebate_waiver" />
 										<s:iterator value="dcbReport.getFieldNames()" var="fieldnames">
 											<c:if
-												test="${fieldnames != 'Advance Collection' && fieldnames != 'PENALTY'}">
+												test="${fieldnames != 'Advance Collection' && fieldnames != 'PENALTY' && fieldnames != 'Early Payment Rebate'}">
 												<s:set var="trbt" value="%{#rebate_waiver + value.getRebates()[#fieldnames]}" />
 												<s:set var="rebate_waiver" value="%{#trbt}" />
 											</c:if>
 
 											<c:if
-												test="${fieldnames != 'Advance Collection' && fieldnames != 'Fines'}">
+												test="${fieldnames != 'Advance Collection' && fieldnames != 'Fines' && fieldnames != 'Early Payment Rebate'}">
 												<s:set value="value.getRebates()[#fieldnames]" var="advreb" />
 												<c:set value="${advrebate + advreb}" var="advrebate" />
 											</c:if>
@@ -363,7 +363,7 @@
 
 										<s:iterator value="dcbReport.getFieldNames()" var="fieldnames">
 											<c:if
-												test="${fieldnames != 'Advance Collection' && fieldnames != 'Fines'}">
+												test="${fieldnames != 'Advance Collection' && fieldnames != 'Fines' && fieldnames != 'Early Payment Rebate'}">
 												<td class="blueborderfortd">
 													<div align="right">
 														<c:if test="${fieldnames == 'FINES'}">
@@ -390,7 +390,7 @@
 
 										<s:iterator value="dcbReport.getFieldNames()" var="fieldnames">
 											<c:if
-												test="${fieldnames != 'Advance Collection' && fieldnames != 'Fines'}">
+												test="${fieldnames != 'Advance Collection' && fieldnames != 'Fines' && fieldnames != 'Early Payment Rebate'}">
 												<td class="blueborderfortd">
 													<div align="right">
 														<s:text name="format.money">
@@ -408,16 +408,7 @@
 												<s:property /> (<s:text name="format.money"><s:param value="value.getRebates()[#fieldnames]" /></s:text>)
 											</td>
 										</s:iterator>
-										<s:iterator value="dcbReport.getFieldNames()" var="fieldnames">
-											<td class="blueborderfortd">
-											</td>
-										</s:iterator>
-										<s:iterator value="dcbReport.getFieldNames()" var="fieldnames">
-											<td class="blueborderfortd">
-											</td>
-										</s:iterator>
 									</tr> -->
-
 								</s:iterator>
 								<tr>
 									<td class="blueborderfortd">
@@ -542,7 +533,7 @@
 
 									<s:iterator value="dcbReport.getFieldNames()" var="FieldNames">
 										<c:if
-											test="${FieldNames != 'Advance Collection' && FieldNames != 'Fines'}">
+											test="${FieldNames != 'Advance Collection' && FieldNames != 'Fines' && FieldNames != 'Early Payment Rebate'}">
 											<td class="blueborderfortd">
 												<div align="right">
 													<span class="bold"> <s:text name="format.money">
