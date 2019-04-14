@@ -392,7 +392,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
         bulkBillGenerationCron.setJobDetail(jobDetail.getObject());
         bulkBillGenerationCron.setGroup("PTIS_TRIGGER_GROUP");
         bulkBillGenerationCron.setName("PTIS_BULK_BILL_GEN_" + modulo + "_TRIGGER");
-        bulkBillGenerationCron.setCronExpression("0 */5 * * * ?");
+        bulkBillGenerationCron.setCronExpression("0 */3 * * * ?");
         bulkBillGenerationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
         return bulkBillGenerationCron;
     }
