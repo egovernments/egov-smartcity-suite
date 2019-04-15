@@ -108,7 +108,6 @@ public class EditOwnerDetailsController {
     private PropertyService propertyService;
     @Autowired
     transient SecurityUtils securityUtils;
-	private String errMsg;
     @ModelAttribute
     public PropertyOwner getPropertyOwner(@PathVariable final String assessmentNo) {
         final PropertyOwner propertyOwner = new PropertyOwner();
@@ -128,6 +127,7 @@ public class EditOwnerDetailsController {
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
 		List<OwnerAudit> ownerAuditList;
 		Boolean enableEditOwner = Boolean.FALSE;
+		String errMsg=null;
 		for (final Role role : securityUtils.getCurrentUser().getRoles()) {
 			if (PropertyTaxConstants.ROLE_PTADMINISTRATOR.equalsIgnoreCase(role.getName())) {
 				enableEditOwner = Boolean.TRUE;
@@ -149,7 +149,7 @@ public class EditOwnerDetailsController {
         ownerAuditList = ownerAuditService.setOwnerAuditDetails(basicProperty);
 		propertyOwner.setOwnerAudit(ownerAuditList);
 		model.addAttribute("propertyOwner", propertyOwner);
-		if (!errMsg.isEmpty()) {
+		if (errMsg!=null) {
 			model.addAttribute(ERROR_MSG, errMsg);
 			return VALIDATION_MESSAGE;
 		} else
