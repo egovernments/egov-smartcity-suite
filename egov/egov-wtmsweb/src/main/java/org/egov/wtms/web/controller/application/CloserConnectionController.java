@@ -95,6 +95,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_CANCELLED;
 
 @Controller
 @RequestMapping(value = "/application")
@@ -177,6 +178,15 @@ public class CloserConnectionController extends GenericConnectionController {
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         workflowContainer.setAdditionalRule(WaterTaxConstants.CLOSECONNECTION);
         prepareWorkflow(model, waterConnectionDetails, workflowContainer);
+        if ("CSCUSER".equalsIgnoreCase(securityUtils.getCurrentUser().getUsername())
+                && waterConnectionDetails.getCurrentState() != null
+                && WF_STATE_CANCELLED.equalsIgnoreCase(waterConnectionDetails.getCurrentState().getValue())) {
+            List<String> validActions = (List<String>) model.asMap().get("validActionList");
+            if (validActions.isEmpty()) {
+                validActions = Arrays.asList("Forward");
+                model.addAttribute("validActionList", validActions);    
+            }
+        }
         model.addAttribute("radioButtonMap", Arrays.asList(ClosureType.values()));
         model.addAttribute("loggedInCSCUser", waterTaxUtils.getCurrentUserRole());
         model.addAttribute(WATERCONNECTIONDETAILS, waterConnectionDetails);
