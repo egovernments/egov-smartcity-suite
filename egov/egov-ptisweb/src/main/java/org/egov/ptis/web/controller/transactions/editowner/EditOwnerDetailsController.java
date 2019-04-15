@@ -57,10 +57,13 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.GuardianRelation;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.bean.PropertyOwner;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.OwnerAudit;
@@ -89,6 +92,8 @@ public class EditOwnerDetailsController {
     protected static final String OWNERDETAILS_FROM = "ownerdetails-form";
     protected static final String OWNERDETAILS_SUCCESS = "ownerdetails-success";
     private static final String ERROR_MSG = "errorMsg";
+    private static final String UNAUTHORISED_ROLE = "error.unauthorised.role";
+    protected static final String VALIDATION_MESSAGE = "propertyValidationForSpring";
 
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
@@ -101,7 +106,9 @@ public class EditOwnerDetailsController {
 
     @Autowired
     private PropertyService propertyService;
-
+    @Autowired
+    transient SecurityUtils securityUtils;
+	private String errMsg;
     @ModelAttribute
     public PropertyOwner getPropertyOwner(@PathVariable final String assessmentNo) {
         final PropertyOwner propertyOwner = new PropertyOwner();
@@ -119,8 +126,18 @@ public class EditOwnerDetailsController {
     public String newForm(@ModelAttribute final PropertyOwner propertyOwner, final Model model,
             @PathVariable final String assessmentNo, @RequestParam final String mode) {
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-        List<OwnerAudit> ownerAuditList;
-        String pageTitle = setPageTitle(mode);
+		List<OwnerAudit> ownerAuditList;
+		Boolean enableEditOwner = Boolean.FALSE;
+		for (final Role role : securityUtils.getCurrentUser().getRoles()) {
+			if (PropertyTaxConstants.ROLE_PTADMINISTRATOR.equalsIgnoreCase(role.getName())) {
+				enableEditOwner = Boolean.TRUE;
+				break;
+			}
+		}
+		if (enableEditOwner != Boolean.TRUE && mode.equalsIgnoreCase("editOwnerDetails")) {
+			errMsg = UNAUTHORISED_ROLE;
+		}
+		String pageTitle = setPageTitle(mode);
         model.addAttribute("pageTitle", pageTitle);
         model.addAttribute("guardianRelations", Arrays.asList(GuardianRelation.values()));
         model.addAttribute("gender", Gender.values());
@@ -130,10 +147,14 @@ public class EditOwnerDetailsController {
         model.addAttribute("existingDoorNumber", address.getHouseNoBldgApt());
         model.addAttribute("pinCode", address.getPinCode());
         ownerAuditList = ownerAuditService.setOwnerAuditDetails(basicProperty);
-        propertyOwner.setOwnerAudit(ownerAuditList);
-        model.addAttribute("propertyOwner", propertyOwner);
-        model.addAttribute(ERROR_MSG, "");
-        return OWNERDETAILS_FROM;
+		propertyOwner.setOwnerAudit(ownerAuditList);
+		model.addAttribute("propertyOwner", propertyOwner);
+		if (!errMsg.isEmpty()) {
+			model.addAttribute(ERROR_MSG, errMsg);
+			return VALIDATION_MESSAGE;
+		} else
+			model.addAttribute(ERROR_MSG, "");
+		return OWNERDETAILS_FROM;
     }
 
     @PostMapping
