@@ -110,8 +110,9 @@ import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -131,26 +132,19 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
     private static final String NEWCONNECTION_EDIT = "newconnection-edit";
     private static final String INSPECTIONDATE = "inspectionDate";
     private static final String APPROVAL_POSITION = "approvalPosition";
-
-    @Autowired
-    private SewerageReassignService sewerageReassignService;
-
     @Autowired
     private final SewerageApplicationDetailsService sewerageApplicationDetailsService;
-
-    @Autowired
-    private SewerageTaxUtils sewerageTaxUtils;
-
-    @Autowired
-    private SecurityUtils securityUtils;
-
-    @Autowired
-    private AssignmentService assignmentService;
-
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
-
+    @Autowired
+    private SewerageReassignService sewerageReassignService;
+    @Autowired
+    private SewerageTaxUtils sewerageTaxUtils;
+    @Autowired
+    private SecurityUtils securityUtils;
+    @Autowired
+    private AssignmentService assignmentService;
     @Autowired
     private FeesDetailMasterService feesDetailMasterService;
 
@@ -200,7 +194,7 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
     }
 
 
-    @RequestMapping(value = "/citizenupdate/{applicationNumber}", method = RequestMethod.GET)
+    @GetMapping("/citizenupdate/{applicationNumber}")
     public String citizenview(final Model model, @PathVariable final String applicationNumber, final HttpServletRequest request) {
         Boolean isInspectionFeePaid = Boolean.FALSE;
         final SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
@@ -231,7 +225,7 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
 
     }
 
-    @RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.GET)
+    @GetMapping("/update/{applicationNumber}")
     public String view(final Model model, @PathVariable final String applicationNumber, final HttpServletRequest request) {
         final SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
                 .findByApplicationNumber(applicationNumber);
@@ -374,7 +368,7 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
         }
     }
 
-    @RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.POST)
+    @PostMapping("/update/{applicationNumber}")
     public String update(@Valid @ModelAttribute SewerageApplicationDetails sewerageApplicationDetails,
                          final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
                          final HttpServletRequest request, final HttpSession session, final Model model,
