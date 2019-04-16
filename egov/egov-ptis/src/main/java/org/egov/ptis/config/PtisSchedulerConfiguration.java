@@ -194,7 +194,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
     public BulkBillGenerationJob bulkBillGenerationJob0() {
         BulkBillGenerationJob bulkBillGenerationJob = new BulkBillGenerationJob();
         bulkBillGenerationJob.setModulo(0);
-        bulkBillGenerationJob.setBillsCount(50);
+        bulkBillGenerationJob.setBillsCount(100);
         return bulkBillGenerationJob;
     }
 
@@ -202,7 +202,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
     public BulkBillGenerationJob bulkBillGenerationJob1() {
         BulkBillGenerationJob bulkBillGenerationJob = new BulkBillGenerationJob();
         bulkBillGenerationJob.setModulo(1);
-        bulkBillGenerationJob.setBillsCount(50);
+        bulkBillGenerationJob.setBillsCount(100);
         return bulkBillGenerationJob;
     }
 
@@ -210,7 +210,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
     public BulkBillGenerationJob bulkBillGenerationJob2() {
         BulkBillGenerationJob bulkBillGenerationJob = new BulkBillGenerationJob();
         bulkBillGenerationJob.setModulo(2);
-        bulkBillGenerationJob.setBillsCount(50);
+        bulkBillGenerationJob.setBillsCount(100);
         return bulkBillGenerationJob;
     }
 
@@ -218,7 +218,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
     public BulkBillGenerationJob bulkBillGenerationJob3() {
         BulkBillGenerationJob bulkBillGenerationJob = new BulkBillGenerationJob();
         bulkBillGenerationJob.setModulo(3);
-        bulkBillGenerationJob.setBillsCount(50);
+        bulkBillGenerationJob.setBillsCount(100);
         return bulkBillGenerationJob;
     }
 
@@ -226,7 +226,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
     public BulkBillGenerationJob bulkBillGenerationJob4() {
         BulkBillGenerationJob bulkBillGenerationJob = new BulkBillGenerationJob();
         bulkBillGenerationJob.setModulo(4);
-        bulkBillGenerationJob.setBillsCount(50);
+        bulkBillGenerationJob.setBillsCount(100);
         return bulkBillGenerationJob;
     }
     
@@ -234,7 +234,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
     public BulkBillGenerationJob bulkBillGenerationJob5() {
         BulkBillGenerationJob bulkBillGenerationJob = new BulkBillGenerationJob();
         bulkBillGenerationJob.setModulo(5);
-        bulkBillGenerationJob.setBillsCount(50);
+        bulkBillGenerationJob.setBillsCount(100);
         return bulkBillGenerationJob;
     }
     
@@ -242,7 +242,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
     public BulkBillGenerationJob bulkBillGenerationJob6() {
         BulkBillGenerationJob bulkBillGenerationJob = new BulkBillGenerationJob();
         bulkBillGenerationJob.setModulo(6);
-        bulkBillGenerationJob.setBillsCount(50);
+        bulkBillGenerationJob.setBillsCount(100);
         return bulkBillGenerationJob;
     }
     
@@ -250,7 +250,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
     public BulkBillGenerationJob bulkBillGenerationJob7() {
         BulkBillGenerationJob bulkBillGenerationJob = new BulkBillGenerationJob();
         bulkBillGenerationJob.setModulo(7);
-        bulkBillGenerationJob.setBillsCount(50);
+        bulkBillGenerationJob.setBillsCount(100);
         return bulkBillGenerationJob;
     }
     
@@ -258,7 +258,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
     public BulkBillGenerationJob bulkBillGenerationJob8() {
         BulkBillGenerationJob bulkBillGenerationJob = new BulkBillGenerationJob();
         bulkBillGenerationJob.setModulo(8);
-        bulkBillGenerationJob.setBillsCount(50);
+        bulkBillGenerationJob.setBillsCount(100);
         return bulkBillGenerationJob;
     }
     
@@ -266,7 +266,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
     public BulkBillGenerationJob bulkBillGenerationJob9() {
         BulkBillGenerationJob bulkBillGenerationJob = new BulkBillGenerationJob();
         bulkBillGenerationJob.setModulo(9);
-        bulkBillGenerationJob.setBillsCount(50);
+        bulkBillGenerationJob.setBillsCount(100);
         return bulkBillGenerationJob;
     }
 
@@ -392,7 +392,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
         bulkBillGenerationCron.setJobDetail(jobDetail.getObject());
         bulkBillGenerationCron.setGroup("PTIS_TRIGGER_GROUP");
         bulkBillGenerationCron.setName("PTIS_BULK_BILL_GEN_" + modulo + "_TRIGGER");
-        bulkBillGenerationCron.setCronExpression("0 */3 * * * ?");
+        bulkBillGenerationCron.setCronExpression("0 */5 * * * ?");
         bulkBillGenerationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
         return bulkBillGenerationCron;
     }
