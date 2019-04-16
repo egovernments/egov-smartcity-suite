@@ -103,11 +103,12 @@ public class BillAndPaymentDetailsHibernateDAO implements BillAndPaymentDetailsD
 			bi.setNetAmount(netAmount);
 			bpd.setBillInfo(bi);
 
-			StringBuilder queryString2 = new StringBuilder("select  \n" + "    vh.vouchernumber,\n"
-					+ "    vh.voucherdate,\n" + "    case vh.status \n" + "        when 0 then 'CREATED'\n"
-					+ "        when 4 then 'CANCELLED'\n" + "        when 5 then 'APPROVED'\n"
-					+ "    end as voucherStatus\n" + "from \n" + "    miscbilldetail mbd \n"
-					+ "    join voucherheader vh on vh.id = mbd.billvhid \n" + "where \n" + "    billnumber=:billNo");
+			StringBuilder queryString2 = new StringBuilder("select vh.vouchernumber, vh.voucherdate, case vh.status when 5 then 'CREATED' ")
+					.append("when 4 then 'CANCELLED' when 0 then 'APPROVED' end as voucherStatus ")
+					.append("from voucherheader vh ") 
+					.append("join eg_billregistermis egbmis on egbmis.voucherheaderid = vh.id ")
+					.append("join eg_billregister egbireg on egbireg.id = egbmis.billid ")
+					.append("where egbireg.billnumber=:billNo ");
 
 			LOG.debug(queryString2);
 			SQLQuery query2 = getCurrentSession().createSQLQuery(queryString2.toString());
@@ -128,7 +129,7 @@ public class BillAndPaymentDetailsHibernateDAO implements BillAndPaymentDetailsD
 
 				String voucherNumber = (String) row2[0];
 				Date voucherDate = (Date) row2[1];
-				String voucherStatus = (String) row2[3];
+				String voucherStatus = (String) row2[2];
 
 				/** setting up return object **/
 				BillVoucherInfo bv = new BillVoucherInfo();
@@ -138,8 +139,8 @@ public class BillAndPaymentDetailsHibernateDAO implements BillAndPaymentDetailsD
 				bpd.setBillVoucher(bv);
 
 				StringBuilder queryString3 = new StringBuilder("select  \n" + "vh.vouchernumber,\n"
-						+ "vh.voucherdate,\n" + "case vh.status \n" + " when 0 then 'CREATED'\n"
-						+ " when 4 then 'CANCELLED'\n" + " when 5 then 'APPROVED'\n" + "end as voucherStatus,\n"
+						+ "vh.voucherdate,\n" + "case vh.status \n" + " when 5 then 'CREATED'\n"
+						+ " when 4 then 'CANCELLED'\n" + " when 0 then 'APPROVED'\n" + "end as voucherStatus,\n"
 						+ "paymentamount, \n" + "ih.instrumentnumber chequeNumber,\n"
 						+ "ih.instrumentdate chequeDate,\n" + "ih.instrumentamount chequeAmount\n" + "from \n"
 						+ "    miscbilldetail mbd \n" + "    join voucherheader vh on vh.id = mbd.payvhid \n"
@@ -152,7 +153,7 @@ public class BillAndPaymentDetailsHibernateDAO implements BillAndPaymentDetailsD
 				LOG.debug(queryString3);
 
 				SQLQuery query3 = getCurrentSession().createSQLQuery(queryString3.toString());
-				query.setParameter("billNo", billNo);
+				query3.setParameter("billNo", billNo);
 				List<Object[]> rows = (List<Object[]>) query3.list();
 
 				PaymentsInfo pi = new PaymentsInfo();
