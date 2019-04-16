@@ -134,7 +134,8 @@ public class EditOwnerDetailsController {
 				break;
 			}
 		}
-		if (enableEditOwner != Boolean.TRUE && mode.equalsIgnoreCase("editOwnerDetails")) {
+		if (enableEditOwner != Boolean.TRUE
+				&& (mode.equalsIgnoreCase("editOwnerDetails") || mode.equalsIgnoreCase(DOORNO_EDIT_MODE))) {
 			errMsg = UNAUTHORISED_ROLE;
 		}
 		String pageTitle = setPageTitle(mode);
