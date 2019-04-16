@@ -548,13 +548,6 @@ public class WaterConnectionDetailsService {
 		State<Position> state = waterConnectionDetails.getState();
 		HashMap<String, Object> map = new HashMap<>(0);
 		if (state != null) {
-			map.put("date", state.getDateInfo());
-			map.put("comments", state.getComments() == null ? EMPTY : state.getComments());
-			map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
-			map.put(STATUS, state.getValue());
-			getUserAndDepartmentHistory(state.getOwnerUser(), null, map, state.getOwnerPosition());
-			historyTable.add(map);
-
 			if (!waterConnectionDetails.getStateHistory().isEmpty())
 				Collections.reverse(waterConnectionDetails.getStateHistory());
 			for (StateHistory<Position> stateHistory : waterConnectionDetails.getStateHistory()) {
@@ -569,6 +562,12 @@ public class WaterConnectionDetailsService {
 				getUserAndDepartmentHistory(user, stateHistory, historyMap, owner);
 				historyTable.add(historyMap);
 			}
+			map.put("date", state.getDateInfo());
+                        map.put("comments", state.getComments() == null ? EMPTY : state.getComments());
+                        map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
+                        map.put(STATUS, state.getValue());
+                        getUserAndDepartmentHistory(state.getOwnerUser(), null, map, state.getOwnerPosition());
+                        historyTable.add(map);
 		}
 		return historyTable;
 	}
