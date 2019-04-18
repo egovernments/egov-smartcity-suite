@@ -68,7 +68,12 @@
 						<spring:message code="lbl.assmtno" />
 					</div>
 					<div class="col-md-3 col-xs-3 add-margin view-content">
+					<s:if test="%{!property.basicProperty.upicNo.isEmpty()}">
 						<c:out value="${property.basicProperty.upicNo}"/>
+						</s:if>
+						<s:else>
+						<c:out value="${assessmentNo}"/>
+						</s:else>
 					</div>
 				</div>	
 				<div class="row add-border">	
@@ -82,7 +87,12 @@
 						<spring:message code="lbl.doorNumber" />
 					</div>
 					<div class="col-md-3 col-xs-3 add-margin view-content">
+					<s:if test="%{!property.basicProperty.address.houseNoBldgApt.isEmpty()}">
 						<strong><c:out value="${property.basicProperty.address.houseNoBldgApt}"/></strong>
+						</s:if>
+						<s:else>
+						<strong><c:out value="${doorNo}"/></strong>
+						</s:else>
 					</div>
 				</div>	
 				<div class="row add-border">	
