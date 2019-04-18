@@ -3732,11 +3732,12 @@ public class PropertyService {
 
         final PropertyStatusValues propStatVal = (PropertyStatusValues) propPerServ.find(
                 "from PropertyStatusValues psv where psv.basicProperty=? order by createdDate desc", basicProperty);
+       if(parentPropId !=null && !parentPropId.isEmpty()){
         final BasicProperty referenceBasicProperty = (BasicProperty) propPerServ
                 .find("from BasicPropertyImpl bp where bp.upicNo=?", parentPropId);
         if (referenceBasicProperty != null)
             propStatVal.setReferenceBasicProperty(referenceBasicProperty);
-
+       }
     }
 
     /**
