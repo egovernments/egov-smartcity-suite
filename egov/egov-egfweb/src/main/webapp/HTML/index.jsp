@@ -59,7 +59,7 @@
 
 
 	<TITLE>eGov Financials</TITLE>	
-	<LINK rel="stylesheet" type="text/css" href="<c:url value="/commoncss/egov.css" />
+	<LINK rel="stylesheet" type="text/css" href="<c:url value="/commoncss/egov.css" />" />
 	
 	
 </HEAD>

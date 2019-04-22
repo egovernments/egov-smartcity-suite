@@ -169,7 +169,7 @@
 											onclick="javascript:window.close()" class="buttonsubmit" />
 
 									</tr>
-								</table
+								</table>
 							</div>
 							<br> <input type="hidden" id="selectedInstr"
 								name="selectedInstr" /> <input type="hidden" id="name"

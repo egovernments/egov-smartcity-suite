@@ -47,5 +47,4 @@
   --%>
 
 
-<input type="hidden" id="deleted" name="deleted"
-	value='<s:property value="deleted">' />
+<input type="hidden" id="deleted" name="deleted" value='<s:property value="deleted"></s:property>' />

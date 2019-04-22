@@ -61,7 +61,7 @@
 							<th class="bluebgheadtd">Cheque/RTGS Number</th>
 							<th class="bluebgheadtd">Cheque/RTGS Date</th>
 							<th class="bluebgheadtd">Cheque/RTGS Amount</th>
-							<th class="bluebgheadtd">Cheque/RTGS Status</th
+							<th class="bluebgheadtd">Cheque/RTGS Status</th>
 						</tr>
 						<s:iterator value="chequeDetails" status="stat" var="p">
 							<tr>
