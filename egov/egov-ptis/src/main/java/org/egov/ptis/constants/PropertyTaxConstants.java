@@ -1767,6 +1767,8 @@ public interface PropertyTaxConstants {
     
     public static final String DOCUMENT_TYPE_PHOTO_OF_ASSESSMENT = "Photo Of Assessment";
     
+    public static final String APPCONFIG_PTIS_BULKBILL_GENERATION_SCHEDULER_ENABLED = "PTIS_BULKBILL_GENERATION_SCHEDULER_ENABLED";
+    
     
     public static final HashMap<String, String> DOCTYPEBYMUTATIONREASON = new HashMap<String, String>() {
         {
