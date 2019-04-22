@@ -160,6 +160,8 @@ public class OnlineReceiptAction extends BaseFormAction {
     private String[] statusCode;
     private String[] remarks;
     private BigDecimal minimumAmount;
+    private String displayMsg;
+    private String payeeName;
 
     @Autowired
     private ApplicationContext beanProvider;
@@ -471,6 +473,12 @@ public class OnlineReceiptAction extends BaseFormAction {
 
                 receiptHeader = collectionCommon.initialiseReceiptModelWithBillInfo(collDetails, fund, dept);
                 setRefNumber(receiptHeader.getReferencenumber());
+                setConsumerCode(isNotBlank(receiptHeader.getConsumerCode()) ? receiptHeader.getConsumerCode()
+                        : CollectionConstants.BLANK);
+                setDisplayMsg(isNotBlank(receiptHeader.getDisplayMsg()) ? receiptHeader.getDisplayMsg()
+                        : CollectionConstants.BLANK);
+                setPayeeName(isNotBlank(receiptHeader.getPayeeName()) ? receiptHeader.getPayeeName()
+                        : CollectionConstants.BLANK);
                 minimumAmount = receiptHeader.getMinimumAmount() == null ? BigDecimal.ZERO : receiptHeader.getMinimumAmount();
                 totalAmountToBeCollected = totalAmountToBeCollected.add(receiptHeader.getTotalAmountToBeCollected());
                 setReceiptDetailList(new ArrayList<>(receiptHeader.getReceiptDetails()));
@@ -915,6 +923,22 @@ public class OnlineReceiptAction extends BaseFormAction {
 
     public BigDecimal getMinimumAmount() {
         return minimumAmount;
+    }
+
+    public String getDisplayMsg() {
+        return displayMsg;
+    }
+
+    public void setDisplayMsg(String displayMsg) {
+        this.displayMsg = displayMsg;
+    }
+
+    public String getPayeeName() {
+        return payeeName;
+    }
+
+    public void setPayeeName(String payeeName) {
+        this.payeeName = payeeName;
     }
 
 }
