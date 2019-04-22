@@ -47,6 +47,12 @@
  */
 package org.egov.collection.web.actions.citizen;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -56,12 +62,6 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.models.ServiceDetails;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 
 @ParentPackage("egov")
 @Results({
@@ -124,6 +124,7 @@ public class SearchOnlineReceiptAction extends BaseFormAction {
         statusCodes.add(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_SUCCESS);
         statusCodes.add(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_TO_BE_REFUNDED);
         statusCodes.add(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_REFUNDED);
+        statusCodes.add(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_FAILURE);
         return persistenceService.findAllByNamedQuery(
                 CollectionConstants.QUERY_STATUSES_FOR_MODULE_AND_CODES,
                 OnlinePayment.class.getSimpleName(), statusCodes);

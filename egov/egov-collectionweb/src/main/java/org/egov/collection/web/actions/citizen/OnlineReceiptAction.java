@@ -386,25 +386,23 @@ public class OnlineReceiptAction extends BaseFormAction {
             }
 
             if (CollectionConstants.ONLINEPAYMENT_STATUS_CODE_TO_BE_REFUNDED.equals(getStatusCode()[i])
-                    || CollectionConstants.ONLINEPAYMENT_STATUS_CODE_REFUNDED.equals(getStatusCode()[i])) {
+                    || CollectionConstants.ONLINEPAYMENT_STATUS_CODE_REFUNDED.equals(getStatusCode()[i])
+                    || CollectionConstants.ONLINEPAYMENT_STATUS_CODE_FAILURE.equals(getStatusCode()[i])) {
                 receipts[i].setStatus(collectionsUtil
                         .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_FAILED));
-
-                receipts[i].getOnlinePayment().setTransactionNumber(getTransactionId()[i]);
-                receipts[i].getOnlinePayment().setTransactionAmount(receipts[i].getTotalAmount());
-                receipts[i].getOnlinePayment().setTransactionDate(transDate);
                 receipts[i].getOnlinePayment().setRemarks(getRemarks()[i]);
 
-                // set online payment status as TO BE REFUNDED/REFUNDED
-                if (getStatusCode()[i].equals(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_TO_BE_REFUNDED))
-                    receipts[i].getOnlinePayment().setStatus(
-                            collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
-                                    CollectionConstants.ONLINEPAYMENT_STATUS_CODE_TO_BE_REFUNDED));
-                else
-                    receipts[i].getOnlinePayment().setStatus(
-                            collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
-                                    CollectionConstants.ONLINEPAYMENT_STATUS_CODE_REFUNDED));
+                if (CollectionConstants.ONLINEPAYMENT_STATUS_CODE_TO_BE_REFUNDED.equals(getStatusCode()[i])
+                        || CollectionConstants.ONLINEPAYMENT_STATUS_CODE_REFUNDED.equals(getStatusCode()[i])) {
+                    receipts[i].getOnlinePayment().setTransactionNumber(getTransactionId()[i]);
+                    receipts[i].getOnlinePayment().setTransactionAmount(receipts[i].getTotalAmount());
+                    receipts[i].getOnlinePayment().setTransactionDate(transDate);
+                }
 
+                // set online payment status as TO BE REFUNDED/REFUNDED/FALURE
+                receipts[i].getOnlinePayment().setStatus(
+                        collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
+                                getStatusCode()[i]));
                 receiptHeaderService.persist(receipts[i]);
 
                 LOGGER.debug("Manually reconciled an online payment to " + getStatusCode()[i] + " state.");

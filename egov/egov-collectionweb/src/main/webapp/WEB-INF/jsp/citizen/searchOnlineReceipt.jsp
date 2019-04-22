@@ -140,10 +140,23 @@ function transitionStates(){
 	       		document.getElementById("stateerror"+(i+1)).style.display = "none";
 	       }
 	    }
+	    if(paymentstatus[i].value=='Failure'){
+	    	if(!(statuscode[i].value==-1 || statuscode[i].value=='ONLINE_STATUS_SUCCESS')){
+	    		if(valErrorMsg1==""){
+	    		    valErrorMsg1='<s:text name="onlinereceipt.manualrecon.failure.errormsg" />' + '<br>';
+	    		}
+	    	    // dom.get("stateerror"+(i+1)).style.display='';
+	    	    document.getElementById("stateerror"+(i+1)).style.display = "block";
+	    	    validation=false;
+	    	}
+	    	else{
+	    		document.getElementById("stateerror"+(i+1)).style.display = "none";
+	    	}
+	    }
 	    if(paymentstatus[i].value=='Pending' || paymentstatus[i].value=='Failure'){
 	    	if(!(statuscode[i].value==-1 || statuscode[i].value=='ONLINE_STATUS_SUCCESS' || 
 	    	    statuscode[i].value=='ONLINE_STATUS_REFUNDED' || 
-	    	    statuscode[i].value=='TO_BE_REFUNDED')){
+	    	    statuscode[i].value=='TO_BE_REFUNDED' || statuscode[i].value=='ONLINE_STATUS_FAILURE')){
 	    			if(valErrorMsg3==""){ 
 	    		    	valErrorMsg3='<s:text name="onlinereceipt.manualrecon.pending.errormsg" />' + '<br>';
 	    			}
