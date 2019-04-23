@@ -379,6 +379,9 @@ public class ContingentBillAction extends BaseBillAction {
             // update DirectBankPayment source path
             headerDetails.put(VoucherConstant.SOURCEPATH, "/EGF/bill/contingentBill-beforeView.action?billRegisterId=");
             final EgBillregistermis mis = new EgBillregistermis();
+            if(mis.getEgDepartment() == null){
+            	throw new ValidationException(Arrays.asList(new ValidationError("department", "Department is mandatory")));
+            }
             bill = setBillDetailsFromHeaderDetails(bill, mis, true);
             bill = createBillDetails(bill);
             validateLedgerAndSubledger();
