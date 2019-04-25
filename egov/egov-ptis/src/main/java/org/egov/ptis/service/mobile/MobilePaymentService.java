@@ -54,7 +54,7 @@ public class MobilePaymentService {
         String redirectUrl = "";
         final BillInfoImpl billInfo = getBillInfo(assessmentNo, amountToBePaid, category);
 
-        final EgBill egBill = egBillDAO.findById((Long.valueOf(billInfo.getPayees().get(0).getBillDetails().get(0).getRefNo())),
+        final EgBill egBill = egBillDAO.findById(Long.valueOf(billInfo.getPayees().get(0).getBillDetails().get(0).getRefNo()),
                 false);
 
         if (billInfo != null) {
