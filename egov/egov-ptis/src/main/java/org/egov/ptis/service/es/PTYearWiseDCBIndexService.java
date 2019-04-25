@@ -52,7 +52,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_PR
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
@@ -109,6 +112,7 @@ public class PTYearWiseDCBIndexService {
     private static final String COURTCASE_AMOUNT = "courtcaseAmount";
     private static final String ARREAR_BALANCE = "arrearBalance";
     private static final String ARREAR_INTEREST_BALANCE = "arrearPenBalance";
+    private static final String CURRENT_INTEREST_BALANCE = "currentPenBalance";
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
@@ -193,30 +197,26 @@ public class PTYearWiseDCBIndexService {
             serviceWiseResponse.setArrearPenBalance(new BigDecimal(responseFields.get(ARREAR_INTEREST_BALANCE).toString()));
             serviceWiseResponse.setCurrentBalance(new BigDecimal(responseFields.get(CURRENT_DMD).toString())
                     .subtract(new BigDecimal(responseFields.get(CURRENT_COLLECTION).toString())));
-            serviceWiseResponse.setCurrentPenBalance(new BigDecimal(responseFields.get(CURR_INTEREST_DMD).toString())
-                    .subtract(new BigDecimal(responseFields.get(CURRENT_INTEREST_COLLECTION).toString())));
+            serviceWiseResponse.setCurrentPenBalance(new BigDecimal(responseFields.get(CURRENT_INTEREST_BALANCE).toString()));
             serviceWiseResponse.setTotalBalance(new BigDecimal(responseFields.get(ARREAR_BALANCE).toString())
                     .add(new BigDecimal(responseFields.get(ARREAR_INTEREST_BALANCE).toString())
                             .add(new BigDecimal(responseFields.get(CURRENT_DMD).toString())
-                                    .add(new BigDecimal(responseFields.get(CURR_INTEREST_DMD).toString()))))
-                    .subtract(new BigDecimal(responseFields.get(CURRENT_COLLECTION).toString())
-                                    .add(new BigDecimal(responseFields.get(CURRENT_INTEREST_COLLECTION).toString()))));
+                                    .add(new BigDecimal(responseFields.get(CURRENT_INTEREST_BALANCE).toString()))))
+                    .subtract(new BigDecimal(responseFields.get(CURRENT_COLLECTION).toString())));
             serviceWiseResponse.setWaivedoffAmount(
                     new BigDecimal(
-                            responseFields.get(WAIVEDOFF_AMOUNT) == null ? "0" : responseFields.get(WAIVEDOFF_AMOUNT).toString()
-                    ));
+                            responseFields.get(WAIVEDOFF_AMOUNT) == null ? "0"
+                                    : responseFields.get(WAIVEDOFF_AMOUNT).toString()));
             serviceWiseResponse.setExemptedAmount(
                     new BigDecimal(
-                            responseFields.get(EXEMPTED_AMOUNT) == null ? "0" : responseFields.get(EXEMPTED_AMOUNT).toString()
-                    ));
+                            responseFields.get(EXEMPTED_AMOUNT) == null ? "0" : responseFields.get(EXEMPTED_AMOUNT).toString()));
             serviceWiseResponse.setWriteoffAmount(
                     new BigDecimal(
-                            responseFields.get(WRITEOFF_AMOUNT) == null ? "0" : responseFields.get(WRITEOFF_AMOUNT).toString()
-                    ));
+                            responseFields.get(WRITEOFF_AMOUNT) == null ? "0" : responseFields.get(WRITEOFF_AMOUNT).toString()));
             serviceWiseResponse.setCourtcaseAmount(
                     new BigDecimal(
-                            responseFields.get(COURTCASE_AMOUNT) == null ? "0" : responseFields.get(COURTCASE_AMOUNT).toString()
-                    ));
+                            responseFields.get(COURTCASE_AMOUNT) == null ? "0"
+                                    : responseFields.get(COURTCASE_AMOUNT).toString()));
 
             serviceWiseResponse.setDrillDownType(responseFields.get("assessmentNo").toString());
             dcbData.add(serviceWiseResponse);
@@ -247,6 +247,7 @@ public class PTYearWiseDCBIndexService {
         Sum courtCaseAmount;
         Sum arrearBalance;
         Sum arrearPenBalance;
+        Sum currentPenBalance;
 
         Terms aggTerms = response.getAggregations().get(aggregationTerms);
         List<YearWiseDCBReponse> serviceWiseResponses = new ArrayList<>();
@@ -266,6 +267,7 @@ public class PTYearWiseDCBIndexService {
             courtCaseAmount = entry.getAggregations().get(COURTCASE_AMOUNT);
             arrearBalance = entry.getAggregations().get(ARREAR_BALANCE);
             arrearPenBalance = entry.getAggregations().get(ARREAR_INTEREST_BALANCE);
+            currentPenBalance = entry.getAggregations().get(CURRENT_INTEREST_BALANCE);
 
             serviceWiseResponse.setCount(entry.getDocCount());
             serviceWiseResponse
@@ -321,23 +323,15 @@ public class PTYearWiseDCBIndexService {
                             .subtract(BigDecimal.valueOf(currentCollected.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)));
 
             serviceWiseResponse
-                    .setCurrentPenBalance(BigDecimal.valueOf(currentPenDemand.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)
-                            .subtract(
-                                    BigDecimal.valueOf(currentPenCollected.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)));
+                    .setCurrentPenBalance(BigDecimal.valueOf(currentPenBalance.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
 
-            serviceWiseResponse.setTotalBalance(BigDecimal.valueOf(arrearDemand.getValue()).setScale(0,
-                    BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(arrearPenDemand.getValue()).setScale(0,
+            serviceWiseResponse.setTotalBalance(BigDecimal.valueOf(arrearBalance.getValue()).setScale(0,
+                    BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(arrearPenBalance.getValue()).setScale(0,
                             BigDecimal.ROUND_HALF_UP)
                             .add(BigDecimal.valueOf(currentDemand.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP))
-                            .add(BigDecimal.valueOf(currentPenDemand.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)
-                                    .subtract(BigDecimal.valueOf(arrearCollected.getValue()).setScale(0,
-                                            BigDecimal.ROUND_HALF_UP)
-                                            .add(BigDecimal.valueOf(arrearPenCollected.getValue()).setScale(0,
-                                                    BigDecimal.ROUND_HALF_UP))
-                                            .add(BigDecimal.valueOf(currentCollected.getValue()).setScale(0,
-                                                    BigDecimal.ROUND_HALF_UP))
-                                            .add(BigDecimal.valueOf(currentPenCollected.getValue()).setScale(0,
-                                                    BigDecimal.ROUND_HALF_UP))))));
+                            .add(BigDecimal.valueOf(currentPenBalance.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)
+                                    .subtract(BigDecimal.valueOf(currentCollected.getValue()).setScale(0,
+                                            BigDecimal.ROUND_HALF_UP)))));
 
             serviceWiseResponse.setWaivedoffAmount(BigDecimal.valueOf(waivedOffAmount.getValue()).setScale(0,
                     BigDecimal.ROUND_HALF_UP));
@@ -371,7 +365,8 @@ public class PTYearWiseDCBIndexService {
                 .subAggregation(AggregationBuilders.sum(WRITEOFF_AMOUNT).field(WRITEOFF_AMOUNT))
                 .subAggregation(AggregationBuilders.sum(COURTCASE_AMOUNT).field(COURTCASE_AMOUNT))
                 .subAggregation(AggregationBuilders.sum(ARREAR_BALANCE).field(ARREAR_BALANCE))
-                .subAggregation(AggregationBuilders.sum(ARREAR_INTEREST_BALANCE).field(ARREAR_INTEREST_BALANCE));
+                .subAggregation(AggregationBuilders.sum(ARREAR_INTEREST_BALANCE).field(ARREAR_INTEREST_BALANCE))
+                .subAggregation(AggregationBuilders.sum(CURRENT_INTEREST_BALANCE).field(CURRENT_INTEREST_BALANCE));
 
     }
 
