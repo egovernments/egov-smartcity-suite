@@ -63,16 +63,20 @@ import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_W
 
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.egov.collection.integration.models.BillInfo.COLLECTIONTYPE;
 import org.egov.collection.integration.models.BillInfoImpl;
 import org.egov.collection.integration.pgi.PaymentRequest;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgDemandDetails;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.integration.utils.CollectionHelper;
@@ -84,6 +88,7 @@ import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.service.collection.PropertyTaxCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -98,6 +103,7 @@ public class MobilePaymentController {
 
     private static final String PAYTAX_FORM = "mobilePayment-form";
     private static final String ERROR_MSG="errorMsg";
+    private static final Logger LOGGER = Logger.getLogger(MobilePaymentController.class);
 
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
@@ -137,7 +143,7 @@ public class MobilePaymentController {
                           @PathVariable final String mobileNumber, @PathVariable final String emailId,
                           @PathVariable final String category, final HttpServletRequest request) {
         String redirectUrl = "";
-        if (!basicPropertyDAO.isAssessmentNoExist(assessmentNo)) {
+        if (!basicPropertyDAO.isAssessmentNoExist(assessmentNo) || !ApplicationThreadLocals.getCityCode().equals(ulbCode)) {
             model.addAttribute(ERROR_MSG, THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND);
             return PROPERTY_VALIDATION;
         }
@@ -185,7 +191,17 @@ public class MobilePaymentController {
         }
         try {
             final BillInfoImpl billInfo = getBillInfo(assessmentNo, amountToBePaid, category);
+            
+            final EgBill egBill = egBillDAO.findById((Long.valueOf(billInfo.getPayees().get(0).getBillDetails().get(0).getRefNo())), false);
+
             if (billInfo != null) {
+                if (!basicPropertyDAO.isAssessmentNoExist(assessmentNo) || !egBill.getConsumerId().equals(assessmentNo)) {
+                    LOGGER.error("ULB code or assessment number does not match!");
+                    throw new ValidationException(
+                            Arrays.asList(new ValidationError("ULB code or assessment number does not match",
+                                    "ULB code or assessment number does not match",
+                                    new String[] { ApplicationThreadLocals.getCityCode(), assessmentNo })));
+                }
                 final PaymentRequest paymentRequest = SpringBeanUtil.getCollectionIntegrationService()
                         .processMobilePayments(billInfo);
                 if (paymentRequest != null) {

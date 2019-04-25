@@ -112,8 +112,10 @@ import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.notification.service.NotificationService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.MoneyUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -179,19 +181,21 @@ public class PropertyTaxCollection extends TaxCollection {
     }
 
     @Override
-    public void updateDemandDetails(final BillReceiptInfo billRcptInfo) throws ApplicationRuntimeException {
+    public void updateDemandDetails(final BillReceiptInfo billRcptInfo) throws ApplicationRuntimeException, ValidationException {
         totalAmount = billRcptInfo.getTotalAmount();
         currInstallment = propertyTaxCommonUtils.getCurrentInstallment();
         LOGGER.debug("updateDemandDetails : Updating Demand Details Started, billRcptInfo : " + billRcptInfo);
         try {
             final EgDemand demand = getCurrentDemand(Long.valueOf(billRcptInfo.getBillReferenceNum()));
+            final EgBill egBill = egBillDAO.findById((Long.valueOf(billRcptInfo.getBillReferenceNum())), false);
             final String assessmentNo = ((BillReceiptInfoImpl) billRcptInfo).getReceiptMisc().getReceiptHeader()
                     .getConsumerCode();
-            if (!basicPropertyDAO.isAssessmentNoExist(assessmentNo)) {
+            if (!basicPropertyDAO.isAssessmentNoExist(assessmentNo) || !egBill.getConsumerId().equals(assessmentNo)) {
                 LOGGER.error("ULB code or assessment number does not match!");
                 throw new ValidationException(
                         Arrays.asList(new ValidationError("ULB code or assessment number does not match",
-                                "ULB code or assessment number does not match")));
+                                "ULB code or assessment number does not match",
+                                new String[] { ApplicationThreadLocals.getCityCode(), assessmentNo })));
             }
             LOGGER.info("updateDemandDetails : Demand before proceeding : " + demand);
             LOGGER.info("updateDemandDetails : collection back update started for property : " + assessmentNo
@@ -410,7 +414,8 @@ public class PropertyTaxCollection extends TaxCollection {
 
         EgDemandDetails demandDetail = null;
 
-        canWaiveOff = propertyTaxUtil.isEligibleforWaiver(totalAmount.compareTo(restAmountToBePaid) >= 0, billRcptInfo.getConsumerCode());
+        canWaiveOff = propertyTaxUtil.isEligibleforWaiver(totalAmount.compareTo(restAmountToBePaid) >= 0,
+                billRcptInfo.getConsumerCode());
 
         for (final ReceiptAccountInfo rcptAccInfo : accountDetails)
             if (rcptAccInfo.getDescription() != null && !rcptAccInfo.getDescription().isEmpty())
@@ -504,7 +509,7 @@ public class PropertyTaxCollection extends TaxCollection {
         LOGGER.debug("Exiting method saveCollectionDetails");
     }
 
-     /**
+    /**
      * Reconciles the collection for respective account heads thats been paid with given cancel receipt
      *
      * @param demand
