@@ -1465,7 +1465,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             }
             if (bankaccount != null && bankaccount != -1) {
                 sql.append(" and  ih.bankAccountId.id=? ");
-                params.add(bankaccount);
+                params.add(Long.valueOf(bankaccount));
             }
             if (isNotBlank(instrumentNumber)) {
                 sql.append(" and  ih.transactionNumber=? ");
@@ -1473,7 +1473,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             }
             if (department != null && department != -1) {
                 sql.append(" and  iv.voucherHeaderId.vouchermis.departmentid.id=? ");
-                params.add(department);
+                params.add(Long.valueOf(department));
             }
             if (isNotBlank(voucherHeader.getVoucherNumber())) {
                 sql.append(" and  iv.voucherHeaderId.voucherNumber=? ");
