@@ -181,7 +181,8 @@ public class MobilePaymentController {
     }
 
     private String checkPropertyCategory(String propType) {
-        if (OWNERSHIP_TYPE_VAC_LAND.equals(propType))
+        //TODO - fix me
+        if (propType == OWNERSHIP_TYPE_VAC_LAND)
             return CATEGORY_TYPE_VACANTLAND_TAX;
         else
             return CATEGORY_TYPE_PROPERTY_TAX;
