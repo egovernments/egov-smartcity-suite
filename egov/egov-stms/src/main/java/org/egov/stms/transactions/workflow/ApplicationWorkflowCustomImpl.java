@@ -71,7 +71,30 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import static org.egov.stms.utils.constants.SewerageTaxConstants.*;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_REJECTED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_STEP_CANCEL;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.ANONYMOUS_USER;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_INSPECTIONFEE_COLLECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPROVEWORKFLOWACTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_PAYMENTDONE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_EE_APPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_CONNECTION_EXECUTION_BUTTON;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_SANCTIONED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULETYPE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_DEPUTY_EXE_APPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS_NOCOLLECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_FINALAPPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.NEWSEWERAGECONNECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_ASSISTANT_APPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WFPA_REJECTED_INSPECTIONFEE_COLLECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_INSPECTIONFEE_PENDING;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_INSPECTIONFEE_COLLECTED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_CONNECTION_CLOSE_BUTTON;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_CLOSECONNECTION_NOTICEGENERATION_PENDING;
 
 /**
  * The Class ApplicationCommonWorkflow.
@@ -101,11 +124,6 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
     @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<SewerageApplicationDetails> sewerageApplicationWorkflowService;
-
-    @Autowired
-    public ApplicationWorkflowCustomImpl() {
-
-    }
 
     @Override
     public void createCommonWorkflowTransition(final SewerageApplicationDetails sewerageApplicationDetails) {
@@ -138,7 +156,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
             sewerageApplicationDetails.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approverComment).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfWork);
         } else {
-            if (null != approverPosition && approverPosition != -1 && !approverPosition.equals(Long.valueOf(0)))
+            if (approverPosition != null && approverPosition > 0)
                 pos = positionMasterService.getPositionById(approverPosition);
             else
                 pos = wfInitiator.getPosition();
@@ -314,7 +332,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         String approverComment = workflowContainer.getApproverComments();
         Long approverPosition = workflowContainer.getApproverPositionId();
 
-        if (null != sewerageApplicationDetails.getId()) {
+        if (sewerageApplicationDetails.getId() != null) {
             wfInitiator = sewerageWorkflowService.getWorkFlowInitiator(sewerageApplicationDetails);
         }
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
@@ -329,7 +347,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
             sewerageApplicationDetails.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approverComment).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfWork);
         } else {
-            if (approverPosition != null && approverPosition != -1 && !approverPosition.equals(Long.valueOf(0)))
+            if (approverPosition != null && approverPosition > 0)
                 pos = positionMasterService.getPositionById(approverPosition);
             else
                 pos = wfInitiator.getPosition();
@@ -355,7 +373,8 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         .withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfWork);
             } else if (WF_STATE_CONNECTION_CLOSE_BUTTON.equalsIgnoreCase(workFlowAction)) {
                 wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
-                        null, null, additionalRule, sewerageApplicationDetails.getCurrentState().getValue(), WF_STATE_CLOSECONNECTION_NOTICEGENERATION_PENDING);
+                        null, null, additionalRule,
+                        sewerageApplicationDetails.getCurrentState().getValue(), WF_STATE_CLOSECONNECTION_NOTICEGENERATION_PENDING);
                 if (wfmatrix.getNextAction().equalsIgnoreCase("END"))
                     sewerageApplicationDetails.transition().end()
                             .withSenderName(user.getUsername() + "::" + user.getName())

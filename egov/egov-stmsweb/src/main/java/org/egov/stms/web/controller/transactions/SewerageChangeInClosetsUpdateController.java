@@ -101,14 +101,38 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.SmartValidator;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import static java.math.BigDecimal.ZERO;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.*;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_REJECTED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WFPA_REJECTED_INSPECTIONFEE_COLLECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.getPipeScrewSizes;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_INITIALAPPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_INSPECTIONFEEPAID;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS_NOCOLLECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_DEEAPPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_SEWERAGETAX_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_DONATIONCHARGE_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_ADVANCE_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CREATED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_FEECOLLECTIONPENDING;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_STEP_FORWARD;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_ESTIMATION_NOTICE_BUTTON;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.PREVIEWWORKFLOWACTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.NEWSEWERAGECONNECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_CONNECTION_EXECUTION_BUTTON;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_CLOSERACKNOWLDGEENT_BUTTON;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_STEP_CANCEL;
 
 @Controller
 @RequestMapping(value = "/transactions")
@@ -122,8 +146,8 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
     private static final String SHOW_APPROVAL_DETAILS = "showApprovalDtls";
     private static final String EDIT = "edit";
     private static final Logger LOG = LoggerFactory.getLogger(SewerageChangeInClosetsUpdateController.class);
-
-    private final SewerageApplicationDetailsService sewerageApplicationDetailsService;
+    @Autowired
+    private SewerageApplicationDetailsService sewerageApplicationDetailsService;
 
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;
@@ -168,12 +192,7 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
     private SewerageWorkflowService sewerageWorkflowService;
 
     @Autowired
-    public SewerageChangeInClosetsUpdateController(
-            final SewerageApplicationDetailsService sewerageApplicationDetailsService,
-            final DepartmentService departmentService, final SmartValidator validator) {
-        this.sewerageApplicationDetailsService = sewerageApplicationDetailsService;
-        this.departmentService = departmentService;
-    }
+    private DepartmentService departmentService;
 
     @ModelAttribute("sewerageApplicationDetails")
     public SewerageApplicationDetails getSewerageApplicationDetails(@PathVariable final String applicationNumber) {
@@ -450,7 +469,7 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
                     .getCurrentUser().getId(), new Date(), new Date());
             String nextDesign;
             Assignment assignObj = null;
-            List<Assignment> asignList = null;
+            List<Assignment> asignList = new ArrayList<>();
 
             if (approvalPosition == null || approvalPosition == 0) {
                 Assignment workflowInitiatorAssignment = sewerageWorkflowService.getWorkFlowInitiator(sewerageApplicationDetails);
@@ -462,17 +481,16 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
             if (approvalPosition != null)
                 assignObj = assignmentService.getPrimaryAssignmentForPositon(approvalPosition);
             if (assignObj != null) {
-                asignList = new ArrayList<>();
                 asignList.add(assignObj);
             } else if (assignObj == null && approvalPosition != null)
                 asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
 
-            nextDesign = asignList != null && !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : EMPTY;
+            nextDesign = asignList.isEmpty() ? EMPTY : asignList.get(0).getDesignation().getName();
 
             final String pathVars = sewerageApplicationDetails.getApplicationNumber() + ","
                     + sewerageTaxUtils.getApproverName(approvalPosition) + ","
-                    + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : EMPTY) + ","
-                    + (nextDesign != null ? nextDesign : EMPTY);
+                    + (currentUserAssignment == null ? EMPTY : currentUserAssignment.getDesignation().getName()) + ","
+                    + (nextDesign == null ? EMPTY : nextDesign);
             return "redirect:/transactions/changeInClosets-success?pathVars=" + pathVars;
         } else
             return loadViewData(model, request, sewerageApplicationDetails);

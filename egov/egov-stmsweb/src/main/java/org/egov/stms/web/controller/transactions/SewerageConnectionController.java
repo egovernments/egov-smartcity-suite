@@ -217,8 +217,6 @@ public class SewerageConnectionController extends GenericWorkFlowController {
                          final HttpServletRequest request, final Model model,
                          @RequestParam("files") final MultipartFile[] files) {
         sewerageApplicationValidator.validateSewerageNewApplication(sewerageApplicationDetails, resultBinder, request);
-        final Boolean isEmployee = securityUtils.currentUserIsEmployee();
-        final boolean citizenPortalUser = securityUtils.currentUserIsCitizen();
         final List<SewerageApplicationDetailsDocument> applicationDocs = new ArrayList<>();
         int i = 0;
         if (!sewerageApplicationDetails.getAppDetailsDocument().isEmpty())
@@ -235,6 +233,8 @@ public class SewerageConnectionController extends GenericWorkFlowController {
             model.addAttribute("mode", null);
             return "newconnection-form";
         }
+        final Boolean isEmployee = securityUtils.currentUserIsEmployee();
+        final boolean citizenPortalUser = securityUtils.currentUserIsCitizen();
         if (!sewerageApplicationDetails.hasState()) {
             updateSourceAndStatus(sewerageApplicationDetails, isEmployee, citizenPortalUser);
         }

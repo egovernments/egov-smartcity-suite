@@ -314,7 +314,7 @@ public class SewerageTaxUtils {
     public List<AppConfigValues> getThirdPartyUserRoles() {
         final List<AppConfigValues> appConfigValueList = appConfigValuesService.getConfigValuesByModuleAndKey(
                 MODULE_NAME, SEWERAGEROLEFORNONEMPLOYEE);
-        return !appConfigValueList.isEmpty() ? appConfigValueList : Collections.emptyList();
+        return appConfigValueList.isEmpty() ? Collections.emptyList() : appConfigValueList;
     }
 
     public boolean isReassignEnabled() {

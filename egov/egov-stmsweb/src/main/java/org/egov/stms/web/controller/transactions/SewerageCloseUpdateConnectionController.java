@@ -173,7 +173,6 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
     public String update(@Valid @ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
                          final BindingResult resultBinder, final HttpServletRequest request, final HttpSession session, final Model model,
                          @RequestParam("files") final MultipartFile[] files, final HttpServletResponse response) {
-        Long approvalPosition = sewerageApplicationDetails.getWorkflowContainer().getApproverPositionId();
         String workFlowAction = sewerageApplicationDetails.getWorkflowContainer().getWorkFlowAction();
 
         sewerageApplicationValidator.validateUpdateClosureApplication(sewerageApplicationDetails, resultBinder, workFlowAction);
@@ -224,6 +223,7 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
                 .getCurrentUser().getId(), new Date(), new Date());
         Assignment assignObj = null;
         List<Assignment> assignmentList = new ArrayList<>();
+        Long approvalPosition = sewerageApplicationDetails.getWorkflowContainer().getApproverPositionId();
         if (approvalPosition == null || approvalPosition == 0)
             approvalPosition = assignmentService.getPrimaryAssignmentForUser(sewerageApplicationDetails.getCreatedBy().getId())
                     .getPosition().getId();

@@ -81,8 +81,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.egov.infra.persistence.entity.enums.UserType.EMPLOYEE;
 import static org.egov.infra.utils.StringUtils.upperCase;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.*;
-
+import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULE_NAME;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGE_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGE_DEPARTEMENT_FOR_REASSIGNMENT;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGE_WORKFLOWDESIGNATION_FOR_CSCOPERATOR;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGEROLEFORNONEMPLOYEE;
 @Service
 @Transactional(readOnly = true)
 public class SewerageWorkflowService {

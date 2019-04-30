@@ -160,12 +160,18 @@ public class SewerageApplicationDetailsService {
     private static final String STMS_APPLICATION_UPDATE = "/stms/transactions/citizenupdate/%s";
     private static final String APPLICATION_WORKFLOW_INITIALIZATION_DONE = "applicationWorkflowCustomDefaultImpl initialization is done";
     private static final String DEPARTMENT = "department";
-    protected SewerageApplicationDetailsRepository sewerageApplicationDetailsRepository;
+    private static final String NEW_STATE = "NEW";
+
+    @Autowired
+    private SewerageApplicationDetailsRepository sewerageApplicationDetailsRepository;
+
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;
+
     @Autowired
     @Qualifier("parentMessageSource")
     private MessageSource stmsMessageSource;
+
     @Autowired
     private AssignmentService assignmentService;
 
@@ -211,12 +217,6 @@ public class SewerageApplicationDetailsService {
 
     @Autowired
     private PortalInboxService portalInboxService;
-
-    @Autowired
-    public SewerageApplicationDetailsService(
-            final SewerageApplicationDetailsRepository sewerageApplicationDetailsRepository) {
-        this.sewerageApplicationDetailsRepository = sewerageApplicationDetailsRepository;
-    }
 
     public SewerageApplicationDetails findBy(final Long id) {
         return sewerageApplicationDetailsRepository.findOne(id);
@@ -618,7 +618,7 @@ public class SewerageApplicationDetailsService {
                 modelParams.put(MODE, "edit");
             else if (currentState.equalsIgnoreCase(WF_STATE_REJECTED))
                 modelParams.put(MODE, "editOnReject");
-            else if ("NEW".equalsIgnoreCase(currentState) && (APPLICATION_STATUS_CSCCREATED
+            else if (NEW_STATE.equalsIgnoreCase(currentState) && (APPLICATION_STATUS_CSCCREATED
                     .equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
                     || APPLICATION_STATUS_ANONYMOUSCREATED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()) || APPLICATION_STATUS_CITIZENCREATED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())))
                 modelParams.put(MODE, "closetview");
@@ -793,11 +793,11 @@ public class SewerageApplicationDetailsService {
                         sewerageApplicationDetails, session, request);
                 if (sewerageNotice != null)
                     sewerageApplicationDetails.addNotice(sewerageNotice);
-            } else if ("NEW".equalsIgnoreCase(sewerageApplicationDetails.getState().getValue())
+            } else if (NEW_STATE.equalsIgnoreCase(sewerageApplicationDetails.getState().getValue())
                     && (APPLICATION_STATUS_CSCCREATED
                     .equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
-                    || (APPLICATION_STATUS_ANONYMOUSCREATED
-                    .equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())))) {
+                    || APPLICATION_STATUS_ANONYMOUSCREATED
+                    .equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()))) {
                 if (sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
                     sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
                             APPLICATION_STATUS_COLLECTINSPECTIONFEE, MODULETYPE));
@@ -806,11 +806,11 @@ public class SewerageApplicationDetailsService {
                     sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
                             APPLICATION_STATUS_CREATED, MODULETYPE));
                 }
-            } else if ((APPLICATION_STATUS_FEECOLLECTIONPENDING.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()))) {
+            } else if (APPLICATION_STATUS_FEECOLLECTIONPENDING.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())) {
                 sewerageApplicationDetails.setStatus(
                         sewerageTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_INSPECTIONFEEPAID, MODULETYPE));
             } else if ((sewerageApplicationDetails.getStatus().getCode().equals(APPLICATION_STATUS_CREATED))
-                    || (sewerageApplicationDetails.getStatus().getCode().equals(APPLICATION_STATUS_INSPECTIONFEEPAID) && !sewerageApplicationDetails.getState().getValue().equalsIgnoreCase("NEW")))
+                    || (sewerageApplicationDetails.getStatus().getCode().equals(APPLICATION_STATUS_INSPECTIONFEEPAID) && !sewerageApplicationDetails.getState().getValue().equalsIgnoreCase(NEW_STATE)))
                 sewerageApplicationDetails
                         .setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_INITIALAPPROVED, MODULETYPE));
             else if (sewerageApplicationDetails.getStatus().getCode().equals(APPLICATION_STATUS_COLLECTINSPECTIONFEE))

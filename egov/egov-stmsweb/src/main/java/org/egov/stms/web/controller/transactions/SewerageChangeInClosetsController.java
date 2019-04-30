@@ -92,7 +92,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -104,9 +109,10 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
     private static final String MESSAGE = "message";
     private static final String COMMON_ERROR_PAGE = "common-error";
     private static final String PTASSESSMENT_NUMBER = "ptAssessmentNo";
-    private final SewerageApplicationDetailsService sewerageApplicationDetailsService;
     @Autowired
-    private final SewerageTaxUtils sewerageTaxUtils;
+    private SewerageTaxUtils sewerageTaxUtils;
+    @Autowired
+    private SewerageApplicationDetailsService sewerageApplicationDetailsService;
     @Autowired
     private SecurityUtils securityUtils;
     @Autowired
@@ -130,14 +136,6 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
     @Autowired
     private MessageSource messageSource;
 
-
-    @Autowired
-    public SewerageChangeInClosetsController(final SewerageApplicationDetailsService sewerageApplicationDetailsService,
-                                             final SewerageTaxUtils sewerageTaxUtils) {
-        this.sewerageApplicationDetailsService = sewerageApplicationDetailsService;
-        this.sewerageTaxUtils = sewerageTaxUtils;
-    }
-
     @GetMapping("/modifyConnection/{shscNumber}")
     public String showNewApplicationForm(@ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
                                          @PathVariable final String shscNumber, final Model model, final HttpServletRequest request,
@@ -147,7 +145,6 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
         final SewerageConnection sewerageConnection = sewerageConnectionService.findByShscNumber(shscNumber);
         final SewerageApplicationDetails sewerageApplicationDetailsFromDB = sewerageApplicationDetailsService
                 .findByShscNumberAndIsActive(shscNumber);
-        final Boolean isCitizenPortalUser = securityUtils.currentUserIsCitizen();
         if (isNotBlank(shscNumber)) {
             applicationDetails = sewerageApplicationDetailsService.isApplicationInProgress(shscNumber);
             if (applicationDetails != null)
@@ -198,7 +195,7 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
         sewerageApplicationDetails.setApplicationType(applicationType);
         sewerageApplicationDetails.setApplicationDate(new Date());
         final boolean inspectionFeeCollectionRequired = sewerageTaxUtils.isInspectionFeeCollectionRequired();
-        prepareChangeForm(sewerageApplicationDetails, shscNumber, model, isCitizenPortalUser);
+        prepareChangeForm(sewerageApplicationDetails, shscNumber, model, securityUtils.currentUserIsCitizen());
         if (inspectionFeeCollectionRequired)
             createSewerageConnectionFee(sewerageApplicationDetails, SewerageTaxConstants.FEE_INSPECTIONCHARGE);
         return "changeInClosetsConnection-form";
@@ -232,7 +229,6 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
         sewerageApplicationDetails.getConnectionDetail().setPropertyIdentifier(request.getParameter(PTASSESSMENT_NUMBER));
         sewerageApplicationValidator.validateChangeInClosetsApplication(sewerageApplicationDetails, resultBinder, request);
         final Boolean citizenPortalUser = securityUtils.currentUserIsCitizen();
-        final Boolean isEmployee = securityUtils.currentUserIsEmployee();
         final List<SewerageApplicationDetailsDocument> applicationDocs = new ArrayList<>();
         int i = 0;
         if (!sewerageApplicationDetails.getAppDetailsDocument().isEmpty())
@@ -252,7 +248,7 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
          * If inspection fee required to be collected, then change status to fee collection pending.
          */
         if (sewerageApplicationDetails.getState() == null)
-            if (isEmployee) {
+            if (securityUtils.currentUserIsEmployee()) {
                 sewerageApplicationDetails.setSource(Source.SYSTEM.name());
                 if (sewerageTaxUtils.isInspectionFeeCollectionRequired())
                     sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
@@ -292,22 +288,21 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
             }
         } else {
             Assignment assignObj = null;
-            List<Assignment> asignList = null;
+            List<Assignment> asignList = new ArrayList<>();
             if (approvalPosition != null)
                 assignObj = assignmentService.getPrimaryAssignmentForPositon(approvalPosition);
 
             if (assignObj != null) {
-                asignList = new ArrayList<>();
                 asignList.add(assignObj);
             } else if (assignObj == null && approvalPosition != null)
                 asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
 
-            nextDesignation = asignList != null && !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : EMPTY;
+            nextDesignation = asignList.isEmpty() ? EMPTY : asignList.get(0).getDesignation().getName();
         }
         final String pathVars = newSewerageApplicationDetails.getApplicationNumber() + ","
                 + sewerageTaxUtils.getApproverName(approvalPosition) + ","
                 + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : EMPTY) + ","
-                + (nextDesignation != null ? nextDesignation : EMPTY);
+                + (nextDesignation == null ? EMPTY : nextDesignation);
         String message = messageSource.getMessage("msg.success.forward",
                 new String[]{null != approverName ? approverName.concat("~").concat(nextDesignation) : EMPTY,
                         newSewerageApplicationDetails.getApplicationNumber()},
