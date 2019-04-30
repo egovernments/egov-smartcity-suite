@@ -49,6 +49,7 @@ package org.egov.stms.transactions.entity;
 
 import org.egov.commons.EgwStatus;
 import org.egov.demand.model.EgDemand;
+import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
@@ -138,7 +139,6 @@ public class SewerageApplicationDetails extends StateAware<Position> {
     @JoinColumn(name = "connectiondetail", nullable = false)
     private SewerageConnectionDetail connectionDetail;
 
-    // TODO : Remove this after supporting multiple document attachments
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "filestoreid")
     private FileStoreMapper fileStore;
@@ -187,6 +187,9 @@ public class SewerageApplicationDetails extends StateAware<Position> {
     private List<SewerageDemandDetail> demandDetailBeanList = new ArrayList<>();
 
     private String closeConnectionReason;
+
+    @Transient
+    private transient WorkflowContainer workflowContainer = new WorkflowContainer();
 
     @Override
     public Long getId() {
@@ -489,9 +492,15 @@ public class SewerageApplicationDetails extends StateAware<Position> {
         this.rejectionDate = rejectionDate;
     }
 
+    public WorkflowContainer getWorkflowContainer() {
+        return workflowContainer;
+    }
+
+    public void setWorkflowContainer(WorkflowContainer workflowContainer) {
+        this.workflowContainer = workflowContainer;
+    }
+
     public enum WorkFlowState {
         CREATED, CHECKED, APPROVED, REJECTED, CANCELLED;
     }
-
-
 }

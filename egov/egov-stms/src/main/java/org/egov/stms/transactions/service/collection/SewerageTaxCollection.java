@@ -83,7 +83,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static java.math.BigDecimal.ZERO;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.*;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_INSPECTIONFEEPAID;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULETYPE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.COLLECTION_REMARKS;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_STEP_FORWARD;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_FEEPAID;
 
 @Service
 @Transactional(readOnly = true)

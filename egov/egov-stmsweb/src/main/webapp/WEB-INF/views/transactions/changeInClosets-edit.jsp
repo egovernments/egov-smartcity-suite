@@ -53,39 +53,24 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-<form:form role="form"
-	action='/stms/transactions/modifyConnection-update/${sewerageApplicationDetails.applicationNumber}'
-	method="post" modelAttribute="sewerageApplicationDetails"
-	id="editSewerageChangeInClosetsForm"
-	cssClass="form-horizontal form-groups-bordered"
-	enctype="multipart/form-data">
+<form:form role="form" action='/stms/transactions/modifyConnection-update/${sewerageApplicationDetails.applicationNumber}'
+		   method="post" modelAttribute="sewerageApplicationDetails" id="editSewerageChangeInClosetsForm"
+		   cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 	<form:hidden id="mode" path="" name="mode" value="${mode}" />
-	<form:hidden id="showApprovalDtls" path="" name="showApprovalDtls"
-		value="${showApprovalDtls}" />
-	<form:hidden path="" id="approvalPositionExist"
-		value="${approvalPositionExist}" />
-	<form:hidden path="status.code" id="statuscode"
-		value="${sewerageApplicationDetails.status.code}" />
-	<form:hidden path="state" id="wfstate"
-		value="${sewerageApplicationDetails.state.id}" />
+	<form:hidden id="showApprovalDtls" path="" name="showApprovalDtls" value="${showApprovalDtls}" />
+	<form:hidden path="" id="approvalPositionExist" value="${approvalPositionExist}" />
+	<form:hidden path="status.code" id="statuscode"	value="${sewerageApplicationDetails.status.code}" />
+	<form:hidden path="state" id="wfstate" value="${sewerageApplicationDetails.state.id}" />
 	<input type="hidden" id="sewerageInspectionDate"
-		value='<fmt:formatDate value="${sewerageApplicationDetails.fieldInspections[0].inspectionDate}" pattern="dd/MM/yyyy"/>' />
-	<input type="hidden" id="currentUser" value="${currentUser}" />
-	<input type="hidden" id="sewerageTaxDue" value="${sewerageTaxDue}"
-		name="sewerageTaxDue" />
-	<input type="hidden" id="estimationChargesExists"
-		value="${estimationChargesExists}" />
-	<form:hidden path="" id="workFlowAction" name="workFlowAction" />
-	<form:hidden path="applicationType" id="applicationType"
-		value="${sewerageApplicationDetails.applicationType.id}" />
-	<form:hidden path="connection.status" id="connection.status"
-		value="${sewerageApplicationDetails.connection.status}" />
-	<input type="hidden" value="" id="removedInspectRowId"
-		name="removedInspectRowId" />
-	<input type="hidden" value="" id="removedEstimationDtlRowId"
-		name="removedEstimationDtlRowId" />
-	<c:if
-		test="${sewerageApplicationDetails.status.code =='COLLECTINSPECTIONFEE'}">
+		   value='<fmt:formatDate value="${sewerageApplicationDetails.fieldInspections[0].inspectionDate}"
+		   pattern="dd/MM/yyyy"/>' />
+	<input type="hidden" id="sewerageTaxDue" value="${sewerageTaxDue}" name="sewerageTaxDue" />
+	<input type="hidden" id="estimationChargesExists" value="${estimationChargesExists}" />
+	<form:hidden path="applicationType" id="applicationType" value="${sewerageApplicationDetails.applicationType.id}" />
+	<form:hidden path="connection.status" id="connection.status" value="${sewerageApplicationDetails.connection.status}" />
+	<input type="hidden" value="" id="removedInspectRowId" name="removedInspectRowId" />
+	<input type="hidden" value="" id="removedEstimationDtlRowId" name="removedEstimationDtlRowId" />
+	<c:if test="${sewerageApplicationDetails.status.code =='COLLECTINSPECTIONFEE'}">
 		<div data-collapsed="0">
 			<div class="panel-heading">
 				<div style="color: red; font-size: 16px;" align="center">
@@ -94,8 +79,7 @@
 			</div>
 		</div>
 	</c:if>
-	<c:if
-		test="${sewerageApplicationDetails.status.code =='ESTIMATIONNOTICEGENERATED'}">
+	<c:if test="${sewerageApplicationDetails.status.code =='ESTIMATIONNOTICEGENERATED'}">
 		<div data-collapsed="0">
 			<div class="panel-heading">
 				<div style="color: red; font-size: 16px;" align="center">
@@ -104,7 +88,6 @@
 			</div>
 		</div>
 	</c:if>
-
 	<c:choose>
 		<c:when test="${mode =='editOnReject'}">
 			<jsp:include page="applicantdetails.jsp"></jsp:include>
@@ -128,9 +111,7 @@
 					<jsp:include page="seweragechargesdetails.jsp" />
 				</c:otherwise>
 			</c:choose>
-
-			<c:if
-				test="${sewerageApplicationDetails.status.code == 'WORKORDERGENERATED'}">
+			<c:if test="${sewerageApplicationDetails.status.code == 'WORKORDERGENERATED'}">
 				<jsp:include page="connectionexecutiondetails-form.jsp"></jsp:include>
 			</c:if>
 			<jsp:include page="applicationhistory-view.jsp"></jsp:include>
@@ -140,12 +121,11 @@
 		<jsp:include page="../common/commonWorkflowMatrix.jsp" />
 	</c:if>
 	<c:choose>
-		<c:when
-			test="${(isInspectionFeePaid==null && sewerageApplicationDetails.status.code !='ESTIMATIONNOTICEGENERATED') || isInspectionFeePaid }">
+		<c:when test="${(isInspectionFeePaid==null && sewerageApplicationDetails.status.code !='ESTIMATIONNOTICEGENERATED')
+		|| isInspectionFeePaid }">
 			<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 		</c:when>
 		<c:otherwise>
-
 			<div class="buttonbottom" align="center">
 				<input type="button" name="button2" id="button2" value="Close"
 					class="btn btn-default" onclick="window.close();" />
@@ -154,10 +134,8 @@
 	</c:choose>
 	<div class="row text-center">
 		<div class="add-margin">
-			<c:if
-				test="${sewerageApplicationDetails.status.code == 'FINALAPPROVED' }">
-				<a href="javascript:void(0)" class="btn btn-default"
-					onclick="renderWorkOrderPdf()">Preview</a>
+			<c:if test="${sewerageApplicationDetails.status.code == 'FINALAPPROVED' }">
+				<a href="javascript:void(0)" class="btn btn-default" onclick="renderWorkOrderPdf()">Preview</a>
 			</c:if>
 		</div>
 	</div>
@@ -167,9 +145,9 @@
 <script src="<cdn:url  value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script src="<cdn:url  value='/resources/javascript/helper.js?rnd=${app_release_no}'/>"></script>
 
-
 <script type="text/javascript">
 function renderWorkOrderPdf() {
-    window.open("/stms/transactions/workordernotice?pathVar=${sewerageApplicationDetails.applicationNumber}", '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+    window.open("/stms/transactions/workordernotice?pathVar=${sewerageApplicationDetails.applicationNumber}",
+		'', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 </script>

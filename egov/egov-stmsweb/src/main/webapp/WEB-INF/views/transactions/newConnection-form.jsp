@@ -59,7 +59,7 @@
 			modelAttribute="sewerageApplicationDetails" id="newSewerageConnectionform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
+			<form:hidden path="workflowContainer.workFlowAction" id="workFlowAction" name="workflowContainer.workFlowAction"/>
 			<form:hidden path="applicationType" id="applicationType" value="${sewerageApplicationDetails.applicationType.id}"/>
 			<form:hidden path="" id="applicationCode" value="${sewerageApplicationDetails.applicationType.code}"/>
 			<form:hidden path="connection.status" id="connection.status" value="${sewerageApplicationDetails.connection.status}"/>

@@ -52,10 +52,8 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -72,8 +70,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPCONFKEY_REASSIGN_BUTTONENABLED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULE_NAME;
 
 @Service
 public class SewerageReassignService {
@@ -97,9 +93,6 @@ public class SewerageReassignService {
 
     @Autowired
     private SewerageWorkflowService sewerageWorkflowService;
-
-    @Autowired
-    private AppConfigValueService appConfigValuesService;
 
     public User getLoggedInUser() {
         return securityUtils.getCurrentUser();
@@ -141,12 +134,4 @@ public class SewerageReassignService {
             return StringUtils.EMPTY;
         }
     }
-
-    public boolean isReassignEnabled() {
-        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(
-                MODULE_NAME,
-                APPCONFKEY_REASSIGN_BUTTONENABLED);
-        return !appConfigValues.isEmpty() && "YES".equals(appConfigValues.get(0).getValue()) ? true : false;
-    }
-
 }

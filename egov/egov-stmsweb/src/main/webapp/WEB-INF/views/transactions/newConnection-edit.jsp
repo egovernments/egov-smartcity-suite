@@ -75,12 +75,10 @@
 		value="${sewerageApplicationDetails.state.id}" />
 	<input type="hidden" id="sewerageInspectionDate"
 		value='<fmt:formatDate value="${sewerageApplicationDetails.fieldInspections[0].inspectionDate}" pattern="dd/MM/yyyy"/>' />
-	<input type="hidden" id="currentUser" value="${currentUser}" />
 	<input type="hidden" id="sewerageTaxDue" value="${sewerageTaxDue}"
 		name="sewerageTaxDue" />
 	<input type="hidden" id="estimationChargesExists"
 		value="${estimationChargesExists}" />
-	<form:hidden path="" id="workFlowAction" name="workFlowAction" />
 	<form:hidden path="applicationType" id="applicationType"
 		value="${sewerageApplicationDetails.applicationType.id}" />
 	<form:hidden path="connection.status" id="connection.status"

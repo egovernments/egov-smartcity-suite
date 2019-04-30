@@ -80,10 +80,8 @@ public class SewerageTaxConstants {
     public static final String APPLICATION_STATUS_WOGENERATED = "WORKORDERGENERATED";
     public static final String APPLICATION_STATUS_CANCELLED = "CANCELLED";
     public static final String APPLICATION_STATUS_SANCTIONED = "SANCTIONED";
-    public static final String APPLICATION_STATUS_INSPECTIONFEEPENDING = "INSPECTIONFEEPENDING";
     public static final String APPLICATION_STATUS_INSPECTIONFEEPAID = "INSPECTIONFEEPAID";
     public static final String APPLICATION_STATUS_INITIALAPPROVED = "INITIALAPPROVED";
-    public static final String APPLICATION_STATUS_FIELDINSPECTED = "FIELDINSPECTED";
     public static final String APPLICATION_STATUS_REJECTED = "REJECTED";
     public static final String APPLICATION_STATUS_DEEAPPROVED = "DEEAPPROVED";
     public static final String APPLICATION_STATUS_EEAPPROVED = "EEAPPROVED";
@@ -96,11 +94,9 @@ public class SewerageTaxConstants {
 
     // workflow related - start
     public static final String COLLECTION_REMARKS = "Collection done";
-    public static final String WORKFLOWTYPE_DISPLAYNAME = "Sewerage Connection";
 
     // current states
     public static final String WF_STATE_REJECTED = "Rejected";
-    public static final String WF_CLOSE_COONNECTION_STATE_REJECTED = " Close Connection Rejected";
     public static final String WF_STATE_CLERK_APPROVED = "Clerk Approved";
     public static final String WF_STATE_DEPUTY_EXE_APPROVED = "Deputy Exe Engineer Approved";
     public static final String WF_STATE_ASSISTANT_APPROVED = "Assistant Engineer Approved";
@@ -119,7 +115,6 @@ public class SewerageTaxConstants {
     public static final String WF_ESTIMATION_NOTICE_BUTTON = "Generate Estimation Notice";
     public static final String WF_STATE_CONNECTION_EXECUTION_BUTTON = "Execute Connection";
     public static final String WF_CLOSERACKNOWLDGEENT_BUTTON = "Generate Acknowledgement";
-    public static final String WF_WORKORDER_BUTTON = "Generate Work Order";
     public static final String WF_STATE_CONNECTION_CLOSE_BUTTON = "Generate Close Connection Notice";
 
     // Pendingactions
@@ -132,14 +127,10 @@ public class SewerageTaxConstants {
     public static final String SEWERAGETAXWORKFLOWDEPARTEMENT = "DEPARTMENTFORWORKFLOW";
 
     // designations
-    public static final String DESIGNATION_DEPUTY_EXE_ENGINEER = "deputy executive engineer";
-    public static final String DESIGNATION_EXE_ENGINEER = "executive engineer";
     public static final String DESIGNATION_COMMISSIONER = "Commissioner";
 
     // User roles
     public static final String ROLE_SUPERUSER = "SYSTEM";
-    public static final String ROLE_EXECUTIVEDEPARTEMNT = "Engineering";
-    public static final String ROLE_DEPUTYDEPARTEMNT = "Engineering";
     public static final String ROLE_CSCOPERTAOR = "CSC Operator";
     public static final String ROLE_ULBOPERATOR = "ULB Operator";
     public static final String ROLE_COLLECTIONOPERATOR = "Collection Operator";
@@ -150,19 +141,15 @@ public class SewerageTaxConstants {
     public static final String ROLE_SEWERAGETAX_REPORTVIEWER = "Sewerage Tax Report Viewer";
     public static final String ROLE_STMS_VIEW_ACCESS_ROLE = "STMS_VIEW_ACCESS_ROLE";
 
-    public static final String MODE = "mode";
     public static final String APPROVAL_POSITION = "approvalPosition";
-    public static final String APPROVAL_COMMENT = "approvalComment";
     public static final String WORKFLOW_ACTION = "workFlowAction";
 
-    public static final String SUBMITWORKFLOWACTION = "Submit";
     public static final String APPROVEWORKFLOWACTION = "Approve";
 
     public static final String PREVIEWWORKFLOWACTION = "Preview";
 
     public static final String VIEW = "View";
     public static final String COLLECTDONATIONCHARHGES = "Collect Fee";
-    public static final String GENERATEREJECTIONNOTICE = "Generate Rejection Notice";
     public static final String VIEWURL = "/stms/application/view/{consumerno}/{assessmentno}";
     public static final String COLLECTDONATIONCHARHGESURL = "/stms/collection/generatebill/{consumerno}/{assessmentno}";
     public static final String VIEWDCBURL = "/stms/reports/sewerageRateReportView/{consumerno}/{assessmentno}";
@@ -172,30 +159,6 @@ public class SewerageTaxConstants {
     public static final String MODIFYLEGACYCONNECTION = "Modify Legacy Connection";
     public static final String GENERATEBEMANDBILLURL = "/stms/reports/generate-sewerage-demand-bill/{consumerno}/{assessmentno}";
     public static final String MODIFYLEGACYCONNECTIONURL = "/stms/transactions/sewerage/sewerageLegacyApplication-updateForm/{consumerno}/{assessmentno}";
-    // Elastic Search Constants
-    public static final String SEARCHABLE_SHSCNO = "searchable.shscnumber";
-    public static final String CLAUSES_CITYNAME = "clauses.cityname";
-    public static final String SEARCHABLE_CONSUMER_NAME = "searchable.consumername";
-    public static final String CLAUSES_MOBILENO = "clauses.mobilenumber";
-    public static final String CLAUSES_DOORNO = "clauses.doorno";
-    public static final String CLAUSES_REVWARD_NAME = "clauses.revwardname";
-    public static final String CLAUSES_APPLICATION_DATE = "clauses.applicationdate";
-    public static final String SEARCHABLE_WO_NOTICE = "searchable.workordernumber";
-    public static final String SEARCHABLE_EM_NOTICE = "searchable.estimationnumber";
-    public static final String SEARCHABLE_DEMAND_BILL = "searchable.demandbillnumber";
-    public static final String CLAUSES_WO_NOTICE_DATE = "clauses.workorderdate";
-    public static final String CLAUSES_EM_NOTICE_DATE = "clauses.estimationdate";
-    public static final String CLAUSES_DEMAND_BILL_DATE = "clauses.demandbilldate";
-    public static final String CLAUSES_CHANNEL = "clauses.channel";
-    public static final String CLAUSES_RECEIPT = "clauses.receiptcreator";
-    public static final String CLAUSES_BILLING_SERVICE = "clauses.billingservice";
-    public static final String CLAUSES_STATUS = "clauses.status";
-    public static final String SEARCHABLE_RECEIPT_DATE = "searchable.receiptdate";
-    public static final String CLAUSES_PROPERTY_TYPE = "clauses.propertytype";
-    public static final String CLAUSES_ISACTIVE = "clauses.isactive";
-    public static final String SEARCHABLE_APPLICATIONNO = "searchable.consumernumber";
-    public static final String CLAUSES_APPLICATIONNO = "clauses.applicationnumber";
-    public static final String CLAUSES_CC_NOTICE_DATE = "clauses.closurenoticedate";
     // Fees Master Code - start
     public static final String FEES_ESTIMATIONCHARGES_CODE = "ESTIMATIONCHARGE";
     public static final String FEES_DONATIONCHARGE_CODE = "DONATIONCHARGE";
@@ -208,22 +171,14 @@ public class SewerageTaxConstants {
     public static final String BILL_TYPE_AUTO = "AUTO";
     public static final String STRING_DEPARTMENT_CODE = "REV";
     public static final String STRING_SERVICE_CODE = "STAX";
-    public static final String EST_STRING_SERVICE_CODE = "SWT-EST";
     public static final String DEFAULT_FUNCTIONARY_CODE = "1";
     public static final String DEFAULT_FUND_SRC_CODE = "01";
     public static final String DEFAULT_FUND_CODE = "01";
     public static final String DISPLAY_MESSAGE = "Sewerage Tax Collection";
-    public static final String COLLECTION_WF_ACTION = null;
     public static final String VIEWDCB = "View DCB";
-    public static final String TOTALDEMAND = "Total Demand";
-    public static final String TOTALCOLLECTED = "Total Colleced";
-    public static final String PENDINGDEMANDAMOUNT = "Pending Demand Amount";
-    public static final String PENALTYAMOUNT = "Penalty Amount";
-    public static final String ESTIMATIONCHARGE = "Estimation Charge";
-    public static final String DONATIONCHARGE = "Donation Charge";
+
     public static final String INSPECTIONCHARGE = "Inspection Charges";
-    public static final String SEWERAGETAX = "Sewerage Tax";
-    public static final String INSTALLMENT = "Installment";
+
     public static final String ARREARSEWERAGETAX = "ArrearSewrgeTax";
     public static final String CHANGENOOFCLOSET = "Change number of seats";
     public static final String CHANGENOOFCLOSETURL = "/stms/transactions/modifyConnection/{shscNumber}";
@@ -234,10 +189,8 @@ public class SewerageTaxConstants {
     // Sms And Email Code For New Connection
     public static final String SMSEMAILTYPENEWCONNCREATE = "newconnectioncreate";
     public static final String SMSEMAILTYPENEWCONNCREATEFORNOINSFEE = "newconnectioncreatefornoinsfee";
-    public static final String SMSEMAILTYPENEWCONNESTNOTICE = "newconnectionestmationnotice";
     public static final String SMSEMAILTYPENEWCONNDEEAPPROVE = "newconnectiondeeapprove";
     public static final String SMSEMAILTYPENEWCONNFEEPAID = "newconnectionfeepaid";
-    public static final String SMSEMAILTYPENEWCONNEXECUTION = "newconnectionexecutiondate";
     public static final String SMSEMAILTYPENEWCONNFINALAPPROVE = "newconnectionfinalapprove";
     public static final String SMSEMAILTYPECLOSINGCONNAPPROVE = "closureofconnectionapprove";
     public static final String SMSEMAILTYPECLOSINGCONNSANCTIONED = "closureofconnectionsanctioned";
@@ -245,12 +198,9 @@ public class SewerageTaxConstants {
     // Sms And Email Code For Change In Closets
     public static final String SMSEMAILTYPE_CHANGEINCLOSETS_CONN = "changeinclosetsofconnectionupdate";
     public static final String SMSEMAILTYPE_CHANGEINCLOSETS_CONN_NOINSFEE = "changeinclosetsofconnectionupdatefornoinsfee";
-    public static final String SMSEMAILTYPE_CHANGEINCLOSETS_CONN_ESTNOTICE = "changeinclosetsofconnectionestmationnotice";
     public static final String SMSEMAILTYPE_CHANGEINCLOSETS_CONN_DEEAPPROVE = "changeinclosetsofconnectiondeeapprove";
     public static final String SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FEEPAID = "changeinclosetsofconnectionfeepaid";
-    public static final String SMSEMAILTYPE_CHANGEINCLOSETS_CONN_EXECUTION = "changeinclosetsofconnectionexecutiondate";
     public static final String SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FINALAPPROVE = "changeinclosetsofconnectionfinalapprove";
-    public static final String SMSEMAILTYPE_CHANGEINCLOSETS_CONN_APPROVE = "changeinclosetsofconnectionapprove";
     public static final String SMSEMAILTYPE_CHANGEINCLOSETS_CONN_SANCTIONED = "changeinclosetsofconnectionsanctioned";
     public static final String SMSEMAILTYPE_CHANGEINCLOSETS_CONN_REJECT = "changeinclosetsofconnectionreject";
     // Sms And Email Code For Close Sewerage Connection
@@ -291,14 +241,12 @@ public class SewerageTaxConstants {
     public static final String EDIT_DONATION_CHARGE = "EDIT_DONATION_CHARGE";
     public static final String MODIFYLEGACYCONNECTIONACTIONDROPDOWN = "MODIFYLEGACYCONNECTION";
     //CSC operator related constants
-    public static final String CSC_OPERATOR_ROLE = "CSC Operator";
     public static final String SEWERAGE_WORKFLOWDESIGNATION_FOR_CSCOPERATOR = "SEWERAGEDESIGNATIONFORCSCOPERATORWORKFLOW";
     public static final String SEWERAGE_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR = "SEWERAGEDEPARTMENTFORCSCOPERATORWORKFLOW";
     public static final String SEWERAGEROLEFORNONEMPLOYEE = "SEWERAGEROLEFORNONEMPLOYEE";
     public static final String APPLICATION_PDF = "application/pdf";
     public static final String APPLICATION_STATUS_CSCCREATED = "CSCCREATED";
     //Online
-    public static final String ONLINE = "Online";
     public static final String ANONYMOUS_USER = "Anonymous";
     public static final String APPLICATION_STATUS_ANONYMOUSCREATED = "ANONYMOUSCREATED";
     //Citizen
@@ -326,10 +274,11 @@ public class SewerageTaxConstants {
     public static final String FROMDATE = "fromDate";
     public static final String ACTIVE = "active";
     public static final String DATEFORMATHYPEN = "dd-MM-yyyy";
-    public static final String DATEFORMATSLASH = "dd/MM/yyyy";
     public static final String SEWERAGE_RATES_SUCCESS_PAGE = "redirect:/masters/getseweragerates/";
     public static final String MESSAGE = "message";
+    public static final String COMMON_ERROR = "common-error";
     private static final Map<Integer, Integer> PIPE_SCREW_SIZE = new LinkedHashMap<>();
+
     static {
         PIPE_SCREW_SIZE.put(1, 1);
         PIPE_SCREW_SIZE.put(2, 2);

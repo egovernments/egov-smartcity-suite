@@ -150,15 +150,6 @@ public class SewerageTaxUtils {
                 asessmentNumber, flagDetail, BasicPropertyStatus.ACTIVE);
     }
 
-    public Boolean getCurrentUserRole(final User currentUser) {
-        /*
-         * Boolean applicationByOthers = false; for (final Role userrole : currentUser.getRoles()) for (final AppConfigValues
-         * appconfig : getThirdPartyUserRoles()) if (userrole != null && userrole.getName().equals(appconfig.getValue())) {
-         * applicationByOthers = true; break; } return applicationByOthers;
-         */
-        return true;
-    }
-
     public String getApproverName(final Long approvalPosition) {
         Assignment assignment = null;
         if (approvalPosition != null)
@@ -308,5 +299,28 @@ public class SewerageTaxUtils {
 
     public Module getModule() {
         return moduleService.getModuleByName(MODULE_NAME);
+    }
+
+    public Boolean isEmployee(final User user) {
+        List<String> appConfigValueList = getThirdPartyUserRoles().stream().map(AppConfigValues::getValue)
+                .collect(Collectors.toList());
+        return user.hasAnyRole(Arrays.toString(appConfigValueList.toArray())) ? false : true;
+    }
+
+    public Boolean isCitizenPortalUser(final User user) {
+        return user.hasRole(ROLE_CITIZEN);
+    }
+
+    public List<AppConfigValues> getThirdPartyUserRoles() {
+        final List<AppConfigValues> appConfigValueList = appConfigValuesService.getConfigValuesByModuleAndKey(
+                MODULE_NAME, SEWERAGEROLEFORNONEMPLOYEE);
+        return !appConfigValueList.isEmpty() ? appConfigValueList : Collections.emptyList();
+    }
+
+    public boolean isReassignEnabled() {
+        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(
+                MODULE_NAME,
+                APPCONFKEY_REASSIGN_BUTTONENABLED);
+        return !appConfigValues.isEmpty() && "YES".equals(appConfigValues.get(0).getValue()) ? true : false;
     }
 }

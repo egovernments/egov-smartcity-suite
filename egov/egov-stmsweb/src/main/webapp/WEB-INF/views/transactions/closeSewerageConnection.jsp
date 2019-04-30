@@ -62,7 +62,7 @@
 			<form:hidden path="applicationType" id="applicationType" value="${sewerageApplicationDetails.applicationType.id}"/> 
 			<form:hidden path="connection.status" id="connection.status" value="${sewerageApplicationDetails.connection.status}"/>
 			<form:hidden path="connectionDetail.id" id="connectionDetail" value="${sewerageApplicationDetails.connectionDetail.id}"/> 
-			<form:hidden path="" id="workFlowAction" name="workFlowAction"/> 
+			<form:hidden path="workflowContainer.workFlowAction" id="workFlowAction" name="workflowContainer.workFlowAction"/>
 			<form:hidden path="" id="appStatus" value="${sewerageApplicationDetails.status.code}"/> 
 	 	    <input type="hidden" name="shscNumber" id="shscNumber" value="${shscNumber}">  
 			<input type="hidden" name="validateIfPTDueExists" id="validateIfPTDueExists" value="${validateIfPTDueExists}"> 

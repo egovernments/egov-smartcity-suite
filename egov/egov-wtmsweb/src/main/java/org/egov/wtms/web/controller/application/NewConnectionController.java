@@ -512,7 +512,7 @@ public class NewConnectionController extends GenericConnectionController {
 
     private void sewerageApplicationCreate(WaterConnectionDetails waterConnectionDetails, HttpServletRequest request,
             String workFlowAction, MultipartFile[] files, SewerageApplicationDetails sewerageDetails,
-            Long approvalPosition, String approvalComent) {
+            Long approvalPosition, String approvalComment) {
 
         sewerageDetails.setApplicationDate(waterConnectionDetails.getSewerageApplicationDetails().getApplicationDate());
         sewerageDetails.setConnectionFees(waterConnectionDetails.getSewerageApplicationDetails().getConnectionFees());
@@ -523,10 +523,13 @@ public class NewConnectionController extends GenericConnectionController {
         sewerageDetails.getConnection()
                 .setStatus(waterConnectionDetails.getSewerageApplicationDetails().getConnection().getStatus());
         sewerageDetails.setCreatedBy(securityUtils.getCurrentUser());
+        sewerageDetails.getWorkflowContainer().setWorkFlowAction(workFlowAction);
+        sewerageDetails.getWorkflowContainer().setApproverPositionId(approvalPosition);
+        sewerageDetails.getWorkflowContainer().setApproverComments(approvalComment);
+        sewerageDetails.getWorkflowContainer().setAdditionalRule(sewerageDetails.getApplicationType().getCode());
         // sewerage application create
         sewerageDetailsService
-                .createNewSewerageConnection(sewerageDetails, approvalPosition, approvalComent,
-                        sewerageDetails.getApplicationType().getCode(), files, workFlowAction, request);
+                .createNewSewerageConnection(sewerageDetails, files, request);
     }
 
 }

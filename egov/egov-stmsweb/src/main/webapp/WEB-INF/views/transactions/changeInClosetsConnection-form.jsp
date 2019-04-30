@@ -68,7 +68,7 @@
 			<input type="hidden" name="validateIfPTDueExists" id="validateIfPTDueExists" value="${validateIfPTDueExists}"> 
 			<input type="hidden" name="approvalPosOnValidate" id="approvalPosOnValidate" value="${approvalPosOnValidate}">  
 			<input type="hidden" name="ptAssessmentNo" id="ptAssessmentNo" value="${ptAssessmentNo}">  
-			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
+			<form:hidden path="workflowContainer.workFlowAction" id="workFlowAction" name="workflowContainer.workFlowAction"/>
 		   <form:hidden id="documentName" path="" value="${documentName}"/> 
 		   
 			<div class="panel-body custom-form ">

@@ -54,19 +54,8 @@ import org.egov.stms.transactions.entity.SewerageApplicationDetails;
  */
 public interface ApplicationWorkflowCustom {
 
-    /**
-     * Creates the matrix workflow transition.
-     * @param sewerageApplicationDetails - for sewerage connection details
-     * @param approvalPosition - approval position
-     * @param approvalComent - approval comment
-     * @param additionalRule - additional rule
-     * @param workFlowAction - workflow action
-     */
-    public void createCommonWorkflowTransition(SewerageApplicationDetails sewerageApplicationDetails,
-            Long approvalPosition, String approvalComent, String additionalRule,
-            String workFlowAction);
+    void createCommonWorkflowTransition(SewerageApplicationDetails sewerageApplicationDetails);
 
-    void createCloseConnectionWorkflowTransition(SewerageApplicationDetails sewerageApplicationDetails,
-            Long approvalPosition, String approvalComent, String additionalRule, String workFlowAction);
+    void createCloseConnectionWorkflowTransition(SewerageApplicationDetails sewerageApplicationDetails);
 
 }
