@@ -115,7 +115,7 @@
 						<tr>
 							<td class="bluebox"><s:text name="bill.Number" /></td>
 							<td class="bluebox"><s:textfield name="billNumber"
-									id="billNumber" maxlength="50" value="%{billNumber}" /></td>
+									id="billNumber" maxlength="50" value="%{billNumber}" onblur="changeBillNumber()" /></td>
 							<td class="bluebox"></td>
 							<td class="bluebox"></td>
 						</tr>
@@ -197,39 +197,44 @@ function onloadtask(){
 
 function validate()
 {
-	
 	var expType=document.getElementById('expType').value;
+	var expTypeValue = document.getElementById('expType').value;
+	var sel = document.getElementById("expType");
+	var expTypeText = sel.options[sel.selectedIndex].text;
 	
-	
-
 	if(expType == "-1"){
 		bootbox.alert("Please select Bill Type");
 		return false;
-		}
-	
+	}
+	if((expTypeValue == "Expense" || expTypeValue == "Works" || expTypeValue == "Purchase") && 
+			(expTypeText == "Expense" || expTypeText == "Works" || expTypeText == "Purchase")){
+		
+	}else{
+		document.getElementById('lblError').innerHTML = "Please select correct expenditure type";
+		return false;
+	}
 	
 	 document.billVoucher.action='${pageContext.request.contextPath}/voucher/billVoucher-lists.action';
 	 document.billVoucher.submit();
-
    
-document.getElementById('expType').disabled=false;
-return true;
+	document.getElementById('expType').disabled=false;
+	return true;
 }
 
-
-	
-
-	function resetForm()
-	{
-
-		document.getElementById("expType").value=-1;
-		document.getElementById("departmentid").value=-1;
-		document.getElementById("voucherDateFrom").value="";
-		document.getElementById("voucherDateTo").value="";
-		document.getElementById("billNumber").value="";
-		
-	
+function resetForm(){
+	document.getElementById("expType").value=-1;
+	document.getElementById("departmentid").value=-1;
+	document.getElementById("voucherDateFrom").value="";
+	document.getElementById("voucherDateTo").value="";
+	document.getElementById("billNumber").value="";	
+}
+function changeBillNumber(){
+	var billNum = document.getElementById('billNumber').value;
+	if(billNum!=""){
+		var billNumber = billNum.replace(/[^a-z0-9/-]/gi,'');
+		document.getElementById("billNumber").value = billNumber;	
 	}
+}
 </script>
 </body>
 
