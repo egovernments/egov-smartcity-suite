@@ -211,8 +211,22 @@
 	function validate(){
 	
 		document.getElementById('lblError').innerHTML ="";
-		if(document.getElementById('expType').value == -1){
+		var expTypeValue = document.getElementById('expType').value;
+		var sel = document.getElementById("expType");
+		var expTypeText = sel.options[sel.selectedIndex].text;
+		var fundValue = document.getElementById('fundId').value;
+		var selFund = document.getElementById("fundId");
+		var fundText = selFund.options[sel.selectedIndex].text;
+		
+		if(expTypeValue == -1){
 			document.getElementById('lblError').innerHTML = "Please select expenditure type";
+			return false;
+		}
+		if((expTypeValue == "Expense" || expTypeValue == "Works" || expTypeValue == "Purchase") && 
+				(expTypeText == "Expense" || expTypeText == "Works" || expTypeText == "Purchase")){
+			
+		}else{
+			document.getElementById('lblError').innerHTML = "Please select correct expenditure type";
 			return false;
 		}
 		if(document.getElementById('billDateFrom').value.trim().length == 0){
@@ -221,10 +235,15 @@
 		}
 		if(document.getElementById('billDateTo').value.trim().length == 0){
 			document.getElementById('lblError').innerHTML = "Please select bill to date";
-			return false;
-			
+			return false;			
 		}
-
+		if((fundValue == 1 || fundValue == 2) && (fundText == "Municipal Fund" || fundText == "")){
+			
+		}else{
+			document.getElementById('lblError').innerHTML = "Please select correct Fund";
+			return false;
+		}
+		
 		var fromDate=document.getElementById('billDateFrom').value;
 		var toDate=document.getElementById('billDateTo').value;
 		if(!DateValidation(fromDate,toDate))
@@ -313,6 +332,10 @@ function changeMandatoryField()
 	{
 		if(jQuery('#billnumber').val()!="")
 			{
+				var billNum = jQuery('#billnumber').val();
+				var billNumber = billNum.replace(/[^a-z0-9/-]/gi,'');
+				jQuery('#billnumber').val(billNumber);
+				
 				jQuery("#fromDateMandatory").html("");
 				jQuery("#toDateMandatory").html("");
 				jQuery("#fundDateMandatory").html("");
