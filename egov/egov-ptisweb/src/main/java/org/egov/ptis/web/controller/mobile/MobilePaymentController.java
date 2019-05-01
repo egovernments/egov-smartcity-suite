@@ -67,6 +67,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
@@ -171,7 +172,20 @@ public class MobilePaymentController {
                 return PROPERTY_VALIDATION;
             }
         } catch (final ValidationException e) {
-
+            StringBuffer buffer = new StringBuffer();
+            boolean first = true;
+            for (final ValidationError ve : e.getErrors()) {
+                if (!first) {
+                    // TODO remove UI related tags
+                    buffer.append("<div class=\"mandatory\" style=\"text-align: center;\">\n" +
+                            "\t\t\t\t\t<strong>\n");
+                }
+                buffer.append(ve.getMessage());
+                buffer.append("</strong></div>");
+                buffer.append("<br>\n");
+                first = false;
+            }
+            model.addAttribute(ERROR_MSG, buffer.toString());
             return PROPERTY_VALIDATION;
         } catch (final Exception e) {
 
@@ -181,7 +195,7 @@ public class MobilePaymentController {
     }
 
     private String checkPropertyCategory(String propType) {
-        //TODO - fix me
+        // TODO - fix me
         if (propType == OWNERSHIP_TYPE_VAC_LAND)
             return CATEGORY_TYPE_VACANTLAND_TAX;
         else

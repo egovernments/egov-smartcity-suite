@@ -650,8 +650,10 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
                 receiptHeader.getService().getCode(),
                 receiptHeader.getConsumerCode(), CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
         if (!pendingOnlinePayments.isEmpty())
-            throw new ApplicationRuntimeException(
-                    "The transaction is in pending status and we are working with the banker to reconcile it.Please try after sometime.");
+            throw new ValidationException(
+                    Arrays.asList(new ValidationError(
+                            "The transaction is in pending status and we are working with the banker to reconcile it.Please try after sometime.",
+                            "The transaction is in pending status and we are working with the banker to reconcile it.Please try after sometime.")));
 
         if (totalAmountToBeCollected.compareTo(BigDecimal.ZERO) == -1) {
             LOGGER.info("Amount to be collected is less than zero, hence cannot proceed.");
