@@ -93,7 +93,9 @@
 			$('#approvalComent').removeAttr('required');
 		}
 		if (workflowaction != null && workflowaction == 'Approve') {
-			$('#approvalComent').removeAttr('required');
+            $('#approvalDepartment').removeAttr('required');
+            $('#approvalDesignation').removeAttr('required');
+            $('#approvalPosition').removeAttr('required');
 		}
 		document.forms[0].submit;
 		return true;
