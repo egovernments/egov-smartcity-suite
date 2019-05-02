@@ -292,7 +292,7 @@ function callAjaxByBoundary() {
 						jQuery('#report-footer').show();
 					}
 					if (data.length > 0) {
-						for(var i=3;i<=22;i++)
+						for(var i=3;i<=23;i++)
 						{
 						  updateTotalFooter(i, api);	
 						}
