@@ -516,11 +516,11 @@ function onLoad(){
 													<td width="20%"><span class="boldblue"><s:text
 																name="billreceipt.billnumber" /></span></td>
 													<td width="20%"><span class="boldblue"><s:text
-																name="billreceipt.additionalinfo" /></span></td>
+																name="onlineReceipt.description" /></span></td>
 													<td width="20%"><span class="boldblue"><s:text
-																name="billreceipt.consumerNo" /></span></td>
+																name="onlineReceipt.id" /></span></td>
 													<td width="30%"><span class="boldblue"><s:text
-																name="billreceipt.payeename.description" /></span></td>
+																name="onlineReceipt.payeename" /></span></td>
 													<td class="textholderl"><div id="bobcontent-title"
 															class="billdetailaction">
 															<s:text name="billreceipt.accountdetails" />
