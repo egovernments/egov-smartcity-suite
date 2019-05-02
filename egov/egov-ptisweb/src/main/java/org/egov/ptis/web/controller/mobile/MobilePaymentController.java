@@ -88,6 +88,7 @@ public class MobilePaymentController {
 
     private static final String PAYTAX_FORM = "mobilePayment-form";
     private static final String ERROR_MSG = "errorMsg";
+    private static final String ERROR_MSG_LIST="errorMsgList";
 
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
@@ -172,20 +173,7 @@ public class MobilePaymentController {
                 return PROPERTY_VALIDATION;
             }
         } catch (final ValidationException e) {
-            StringBuffer buffer = new StringBuffer();
-            boolean first = true;
-            for (final ValidationError ve : e.getErrors()) {
-                if (!first) {
-                    // TODO remove UI related tags
-                    buffer.append("<div class=\"mandatory\" style=\"text-align: center;\">\n" +
-                            "\t\t\t\t\t<strong>\n");
-                }
-                buffer.append(ve.getMessage());
-                buffer.append("</strong></div>");
-                buffer.append("<br>\n");
-                first = false;
-            }
-            model.addAttribute(ERROR_MSG, buffer.toString());
+            model.addAttribute(ERROR_MSG_LIST, e.getErrors());
             return PROPERTY_VALIDATION;
         } catch (final Exception e) {
 
