@@ -87,7 +87,7 @@
 					<td class="bluebox"></td>
 					<td class="bluebox"><s:text name="payment.billnumber" /></td>
 					<td class="bluebox"><s:textfield name="billNumber"
-							id="billNumber" maxlength="25" value="%{billNumber}" /></td>
+							id="billNumber" maxlength="25" value="%{billNumber}" onblur="changeBillNumber()" /></td>
 					<td class="bluebox"></td>
 					<td class="bluebox"></td>
 				</tr>
@@ -186,6 +186,15 @@
 				element.options[element.length] = new Option('Pension', 'Pension');
 				element.disabled = true;
 			</s:if>
+		
+			function changeBillNumber(){
+				var billNum = document.getElementById('billNumber').value;
+				if(billNum !=""){
+					var billNumber = billNum.replace(/[^a-z0-9/-]/gi,'');
+					document.getElementById('billNumber').value = billNumber;
+				}
+			}
+			
 		</script>
 </body>
 </html>
