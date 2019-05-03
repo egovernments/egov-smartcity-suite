@@ -223,7 +223,7 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
 
     @Query(" select ASSIGN from Assignment ASSIGN inner join ASSIGN.employee as EMP inner join EMP.jurisdictions as JRDN "
             + " where ASSIGN.department.id=:deptId and ASSIGN.designation.id in :desigIds and ASSIGN.fromDate<=current_date and ASSIGN.toDate>=current_date "
-            + " and JRDN.boundary.id in :boundaryIds and ASSIGN.employee.active=true order by ASSIGN.primary desc")
+            + " and JRDN.boundary.id in :boundaryIds and ASSIGN.employee.active=true and JRDN.boundary.active = true order by ASSIGN.primary desc")
     List<Assignment> findByDepartmentAndDesignationsAndBoundaries(@Param("deptId") final Long deptId,
                                                                   @Param("desigIds") final List<Long> desigIds, @Param("boundaryIds") final Set<Long> boundaryIds);
 }
