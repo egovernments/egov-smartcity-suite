@@ -47,13 +47,15 @@
  */
 package org.egov.collection.web.actions.citizen;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -76,7 +78,8 @@ public class SearchOnlineReceiptAction extends BaseFormAction {
     private Date toDate;
     private Integer searchTransactionStatus = -1;
     private List<OnlinePayment> results = new ArrayList<OnlinePayment>(0);
-    private String target = "new";
+    private String target = NEW;
+    private String consumerCode;
 
     @Override
     public Object getModel() {
@@ -96,6 +99,7 @@ public class SearchOnlineReceiptAction extends BaseFormAction {
         toDate = null;
         searchTransactionStatus = -1;
         referenceId = null;
+        consumerCode = null;
         return SUCCESS;
     }
 
@@ -161,9 +165,13 @@ public class SearchOnlineReceiptAction extends BaseFormAction {
             criteria.append(getJoinOperand(criteria)).append(" onlinePayment.receiptHeader.service.serviceCategory.id = ? ");
             params.add(getServiceTypeId());
         }
+        if (isNotBlank(getConsumerCode())) {
+            criteria.append(getJoinOperand(criteria)).append("onlinePayment.receiptHeader.consumerCode = ? ");
+            params.add(getConsumerCode());
+        }
 
-        queryString.append(StringUtils.isBlank(joinString.toString()) ? "" : joinString);
-        queryString.append(StringUtils.isBlank(criteria.toString()) ? "" : " where ").append(criteria);
+        queryString.append(isBlank(joinString.toString()) ? CollectionConstants.BLANK : joinString);
+        queryString.append(isBlank(criteria.toString()) ? CollectionConstants.BLANK : " where ").append(criteria);
         queryString.append(whereString);
 
         results = getPersistenceService().findAllBy(queryString.toString(), params.toArray());
@@ -173,7 +181,7 @@ public class SearchOnlineReceiptAction extends BaseFormAction {
     }
 
     private String getJoinOperand(final StringBuilder criteria) {
-        return StringUtils.isBlank(criteria.toString()) ? "" : " and ";
+        return isBlank(criteria.toString()) ? CollectionConstants.BLANK : " and ";
     }
 
     public List<OnlinePayment> getResults() {
@@ -222,6 +230,14 @@ public class SearchOnlineReceiptAction extends BaseFormAction {
 
     public String getTarget() {
         return target;
+    }
+
+    public String getConsumerCode() {
+        return consumerCode;
+    }
+
+    public void setConsumerCode(String consumerCode) {
+        this.consumerCode = consumerCode;
     }
 
 }

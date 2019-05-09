@@ -410,6 +410,8 @@ function callAjax(paymentServiceId){
 function onLoad(){
 	if(dom.get("isTransactionPending").value == "true")
 	    document.getElementById("button2").disabled = true; // If any  transactions in pending statu then Disable the Pay Online button.
+	document.getElementById("bobcontent").style.display = 'none';
+	document.getElementById("bobcontent-title").style.display = 'none';    
 }
  </script>
 <style type="text/css">
