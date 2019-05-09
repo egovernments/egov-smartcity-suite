@@ -586,12 +586,14 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
             reportParams.put("HouseNo", objection.getBasicProperty().getUpicNo());
             reportParams.put("wardNumber", objection.getBasicProperty().getBoundary() != null
                     ? objection.getBasicProperty().getBoundary().getName() : "");
-            reportParams.put("HalfYearPropertyTaxTo", currentDemand.get(CURR_SECONDHALF_DMD_STR).setScale(2));
-            reportParams.put("HalfYearPropertyTaxFrom", earlierDemand.get(CURR_SECONDHALF_DMD_STR).setScale(2));
-            reportParams.put("AnnualPropertyTaxTo",
-                    currentDemand.get(CURR_SECONDHALF_DMD_STR).multiply(BigDecimal.valueOf(2)).setScale(2).toString());
-            reportParams.put("AnnualPropertyTaxFrom",
-                    earlierDemand.get(CURR_SECONDHALF_DMD_STR).multiply(BigDecimal.valueOf(2)).setScale(2).toString());
+			reportParams.put("HalfYearPropertyTaxTo",
+					currentDemand.get(CURR_SECONDHALF_DMD_STR).setScale(2, BigDecimal.ROUND_HALF_UP));
+			reportParams.put("HalfYearPropertyTaxFrom",
+					earlierDemand.get(CURR_SECONDHALF_DMD_STR).setScale(2, BigDecimal.ROUND_HALF_UP));
+			reportParams.put("AnnualPropertyTaxTo", currentDemand.get(CURR_SECONDHALF_DMD_STR)
+					.multiply(BigDecimal.valueOf(2)).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+			reportParams.put("AnnualPropertyTaxFrom", earlierDemand.get(CURR_SECONDHALF_DMD_STR)
+					.multiply(BigDecimal.valueOf(2)).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
 
             reportRequest = new ReportRequest(REPORT_TEMPLATENAME_REVISIONPETITION_ENDORSEMENT, objection,
                     reportParams);
