@@ -143,8 +143,9 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.regno" /> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="regno"
-								class="form-control text-left patternvalidation"
+							<form:input path="regno" onkeypress="return replaceSpecialChar(event)"
+								class="form-control text-left patternvalidation enteredValue" onkeyup="isSpecialChar()"
+									onblur="isSpecialChar()"
 								data-pattern="alphanumeric" maxlength="25" />
 							<form:errors path="regno" cssClass="error-msg" />
 						</div>
