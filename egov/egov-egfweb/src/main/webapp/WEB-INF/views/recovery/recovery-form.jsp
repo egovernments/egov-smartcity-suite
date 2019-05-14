@@ -140,7 +140,8 @@
 								code="lbl.remitted" /> <span class="mandatory1">*</span></label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="remitted" required="required"
-								class="form-control mandatory text-left patternvalidation"
+								class="form-control mandatory text-left patternvalidation isValidInput" onkeypress="return replaceSpecialChar(event)" 
+								onkeyup="isSpecialChar()" onblur="isSpecialChar()"
 								data-pattern="alphanumeric" maxlength="100" />
 							<form:errors path="remitted" cssClass="error-msg" />
 						</div>
@@ -148,7 +149,8 @@
 								code="lbl.ifsccode" /> </label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="ifscCode"
-								class="form-control text-left patternvalidation"
+								class="form-control text-left patternvalidation isValidInput" onkeypress="return replaceSpecialChar(event)" 
+								onkeyup="isSpecialChar()" onblur="isSpecialChar()"
 								data-pattern="alphanumeric" maxlength="16" />
 							<form:errors path="ifscCode" cssClass="error-msg" />
 						</div>
@@ -159,7 +161,8 @@
 								code="lbl.accountnumber" /> </label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="accountNumber"
-								class="form-control text-left patternvalidation"
+								class="form-control text-left patternvalidation isValidInput" onkeypress="return replaceSpecialChar(event)" 
+								onkeyup="isSpecialChar()" onblur="isSpecialChar()"
 								data-pattern="alphanumeric" maxlength="32" />
 							<form:errors path="accountNumber" cssClass="error-msg" />
 						</div>
@@ -186,9 +189,28 @@
         return ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8 || k == 32 || (k >= 48 && k <= 57));
     }
     function isSpecialChar(){
-        var valueEntered = document.getElementById('type').value;
-        var replacedValue = valueEntered.replace(/[!$%^&*()_+|~=`{}\[\]":'\;<>?,.@#]/gi, '');
-        document.getElementById('type').value = replacedValue;
+        var recoveryType = document.getElementById('type').value;
+        var remittedTo = document.getElementById('remitted').value;
+        var ifscCode = document.getElementById('ifscCode').value;
+        var accNumber = document.getElementById('accountNumber').value;
+        var replacedValue = "";
+        
+        if(recoveryType != ""){
+        	replacedValue = recoveryType.replace(/[!$%^&*()_+|~=`{}\[\]":'\;<>?,.@#]/gi, '');
+        	document.getElementById('type').value = replacedValue;
+        }
+        if(remittedTo != ""){
+        	replacedValue = remittedTo.replace(/[!$%^&*()_+|~=`{}\[\]":'\;<>?,.@#]/gi, '');
+            document.getElementById('remitted').value = replacedValue;
+        }
+        if(ifscCode != ""){
+        	replacedValue = ifscCode.replace(/[!$%^&*()_+|~=`{}\[\]":'\;<>?,.@#]/gi, '');
+        	document.getElementById('ifscCode').value = replacedValue;
+        }
+        if(accNumber != ""){
+        	replacedValue = accNumber.replace(/[!$%^&*()_+|~=`{}\[\]":'\;<>?,.@#]/gi, '');
+        	document.getElementById('accountNumber').value = replacedValue;
+        }         
     }
     function isValidReoveryName(){
         var valueEntered = document.getElementById('recoveryName').value;
