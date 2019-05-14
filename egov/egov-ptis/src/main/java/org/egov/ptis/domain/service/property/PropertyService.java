@@ -981,7 +981,7 @@ public class PropertyService {
 
         final Map<String, Ptdemand> oldPtdemandMap = getPtdemandsAsInstMap(oldProperty.getPtDemandSet());
         final Map<String, Ptdemand> newPtdemandMap = getPtdemandsAsInstMap(newProperty.getPtDemandSet());
-        String previousInstallment=null;
+
         Ptdemand ptDemandOld;
         Ptdemand ptDemandNew;
 
@@ -1023,13 +1023,9 @@ public class PropertyService {
             }
         };
 
-		for (Entry<String, Ptdemand> lastEntry : oldPtdemandMap.entrySet()) {
-			previousInstallment = lastEntry.getKey();
-		}
-
 		ptDemandOld = oldPtdemandMap.get(installment.getDescription());
 		if (ptDemandOld == null) {
-			ptDemandOld = oldPtdemandMap.get(previousInstallment);
+			ptDemandOld = oldPtdemandMap.get(new TreeMap(oldPtdemandMap).lastEntry().getKey());
 		}
         ptDemandNew = newPtdemandMap.get(installment.getDescription());
 
@@ -1106,7 +1102,7 @@ public class PropertyService {
 		if (installment.equals(installment)) {
 			Ptdemand ptdOld = oldPtdemandMap.get(installment.getDescription());
 			if (ptdOld == null) {
-				ptdOld = oldPtdemandMap.get(previousInstallment);
+				ptdOld = oldPtdemandMap.get(new TreeMap(oldPtdemandMap).lastEntry().getKey());
 			}
 			final Ptdemand ptdNew = newPtdemandMap.get(installment.getDescription());
 			ptdNew.setAmtCollected(ptdOld.getAmtCollected());
