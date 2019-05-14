@@ -68,6 +68,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -980,7 +981,7 @@ public class PropertyService {
 
         final Map<String, Ptdemand> oldPtdemandMap = getPtdemandsAsInstMap(oldProperty.getPtDemandSet());
         final Map<String, Ptdemand> newPtdemandMap = getPtdemandsAsInstMap(newProperty.getPtDemandSet());
-
+        String previousInstallment=null;
         Ptdemand ptDemandOld;
         Ptdemand ptDemandNew;
 
@@ -1022,7 +1023,14 @@ public class PropertyService {
             }
         };
 
-        ptDemandOld = oldPtdemandMap.get(installment.getDescription());
+		for (Entry<String, Ptdemand> lastEntry : oldPtdemandMap.entrySet()) {
+			previousInstallment = lastEntry.getKey();
+		}
+
+		ptDemandOld = oldPtdemandMap.get(installment.getDescription());
+		if (ptDemandOld == null) {
+			ptDemandOld = oldPtdemandMap.get(previousInstallment);
+		}
         ptDemandNew = newPtdemandMap.get(installment.getDescription());
 
         LOGGER.info("instList==========" + instList);
@@ -1095,11 +1103,14 @@ public class PropertyService {
         }
 
         // forwards the base collection for current installment Ptdemand
-        if (installment.equals(installment)) {
-            final Ptdemand ptdOld = oldPtdemandMap.get(installment.getDescription());
-            final Ptdemand ptdNew = newPtdemandMap.get(installment.getDescription());
-            ptdNew.setAmtCollected(ptdOld.getAmtCollected());
-        }
+		if (installment.equals(installment)) {
+			Ptdemand ptdOld = oldPtdemandMap.get(installment.getDescription());
+			if (ptdOld == null) {
+				ptdOld = oldPtdemandMap.get(previousInstallment);
+			}
+			final Ptdemand ptdNew = newPtdemandMap.get(installment.getDescription());
+			ptdNew.setAmtCollected(ptdOld.getAmtCollected());
+		}
 
         LOGGER.info("Exit from PropertyService.createAllDmdDeatails, Modify Adjustments for "
                 + oldProperty.getBasicProperty().getUpicNo() + " And installment : " + installment + "\n\n"
