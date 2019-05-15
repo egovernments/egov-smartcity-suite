@@ -73,8 +73,8 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBillregister;
-import org.egov.model.bills.ThirdPartyBillIntegration;
-import org.egov.model.service.ThirdPartyBillIntegrationService;
+import org.egov.model.bills.BillIntegration;
+import org.egov.model.service.BillIntegrationService;
 import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.BillRegister;
 import org.egov.restapi.model.RestErrors;
@@ -100,7 +100,7 @@ public class CreateBillController {
     private ExpenseBillService expenseBillService;
 
     @Autowired
-    private ThirdPartyBillIntegrationService tpbiService;
+    private BillIntegrationService tpbiService;
 
     private static final String SOURCE = "source";
 
@@ -157,12 +157,12 @@ public class CreateBillController {
                 }else {
                 	strSource = source.toString();
                 }
-                ThirdPartyBillIntegration tpbi = new ThirdPartyBillIntegration();
+                BillIntegration tpbi = new BillIntegration();
                 tpbi.setEgBill(savedBillregister);
                 tpbi.setSource(strSource);
                 tpbi.setTpbillno(billRegister.getTpBillNo());
 
-                tpbiService.createThirdPartyBillIntegration(tpbi);
+                tpbiService.createBillIntegration(tpbi);
             }
         } catch (final ValidationException e) {
             LOG.error(e.getStackTrace());

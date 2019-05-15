@@ -59,7 +59,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.egov.model.bills.EgBillregister;
-import org.egov.model.service.ThirdPartyBillIntegrationService;
+import org.egov.model.service.BillIntegrationService;
 import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.RestErrors;
 import org.egov.restapi.service.BillService;
@@ -89,7 +89,7 @@ public class CreateBillControllerTest extends AbstractContextControllerTest<Crea
     private CreateBillController createBillController;
     
     @Mock
-    private ThirdPartyBillIntegrationService tpbiService;
+    private BillIntegrationService tpbiService;
 
     private List<RestErrors> errors;
 

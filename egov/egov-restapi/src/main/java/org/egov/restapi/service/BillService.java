@@ -83,8 +83,8 @@ import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.bills.EgBillregistermis;
-import org.egov.model.bills.ThirdPartyBillIntegration;
-import org.egov.model.service.ThirdPartyBillIntegrationService;
+import org.egov.model.bills.BillIntegration;
+import org.egov.model.service.BillIntegrationService;
 import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.BillDetails;
 import org.egov.restapi.model.BillPayeeDetails;
@@ -129,7 +129,7 @@ public class BillService {
     private DepartmentService departmentService;
 
     @Autowired
-    private ThirdPartyBillIntegrationService tpbiService;
+    private BillIntegrationService tpbiService;
 
     @Autowired
     private AccountdetailtypeService accountdetailtypeService;
@@ -237,7 +237,7 @@ public class BillService {
 
     private void validateTpBillNoAlreadyExists(BillRegister billRegister, List<RestErrors> errors) {
         // TODO: Do we need to search with SOURCE as well ?
-        ThirdPartyBillIntegration tpbi = tpbiService.getTpBillByBillNo(billRegister.getTpBillNo());
+        BillIntegration tpbi = tpbiService.getTpBillByBillNo(billRegister.getTpBillNo());
         RestErrors restErrors;
         if (tpbi != null) {
             restErrors = new RestErrors();

@@ -46,45 +46,27 @@
  *
  */
 
-package org.egov.model.service;
+package org.egov.model.repository;
 
-import org.egov.model.bills.ThirdPartyBillIntegration;
-import org.egov.model.repository.ThirdPartyBillIntegrationRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import static org.hibernate.jpa.QueryHints.HINT_CACHEABLE;
+
+import javax.persistence.QueryHint;
+
+import org.egov.model.bills.BillIntegration;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author tamal
  */
+@Repository
+public interface BillIntegrationRepository extends JpaRepository<BillIntegration, Long> {
 
-@Service
-@Transactional(readOnly = true)
-public class ThirdPartyBillIntegrationService {
+    @QueryHints({ @QueryHint(name = HINT_CACHEABLE, value = "true") })
+    @Query("select t from BillIntegration t where upper(t.tpbillno)=:tpbillno")
+    BillIntegration findByBillNo(@Param("tpbillno") String tpBillNo);
 
-    private final ThirdPartyBillIntegrationRepository tpbiRepository;
-
-    @Autowired
-    public ThirdPartyBillIntegrationService(final ThirdPartyBillIntegrationRepository tpbiRepository) {
-        this.tpbiRepository = tpbiRepository;
-    }
-
-    @Transactional
-    public void createThirdPartyBillIntegration(final ThirdPartyBillIntegration tpbi) {
-        tpbiRepository.save(tpbi);
-    }
-
-    @Transactional
-    public void updateThirdPartyBillIntegration(final ThirdPartyBillIntegration tpbi) {
-        tpbiRepository.save(tpbi);
-    }
-
-    public ThirdPartyBillIntegration getTpBillByBillNo(final String tpBillNo) {
-        return tpbiRepository.findByBillNo(tpBillNo);
-    }
-
-    @Transactional
-    public void deleteThirdPartyBillIntegration(final ThirdPartyBillIntegration tpbi) {
-        tpbiRepository.delete(tpbi);
-    }
 }

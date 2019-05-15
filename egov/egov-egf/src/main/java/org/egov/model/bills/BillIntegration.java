@@ -48,7 +48,7 @@
 
 package org.egov.model.bills;
 
-import static org.egov.model.bills.ThirdPartyBillIntegration.SEQ_TPBILLINTEGRATION;
+import static org.egov.model.bills.BillIntegration.SEQ_BILLINTEGRATION;
 
 import java.util.Objects;
 
@@ -70,15 +70,15 @@ import org.hibernate.validator.constraints.SafeHtml;
 import com.google.gson.annotations.Expose;
 
 @Entity
-@Table(name = "eg_third_party_bill_integration")
-@SequenceGenerator(name = SEQ_TPBILLINTEGRATION, sequenceName = SEQ_TPBILLINTEGRATION, allocationSize = 1)
-public class ThirdPartyBillIntegration extends AbstractAuditable {
+@Table(name = "egf_bill_integration")
+@SequenceGenerator(name = SEQ_BILLINTEGRATION, sequenceName = SEQ_BILLINTEGRATION, allocationSize = 1)
+public class BillIntegration extends AbstractAuditable {
 
-    public static final String SEQ_TPBILLINTEGRATION = "SEQ_EG_TPBILLINTEGRATION";
+    public static final String SEQ_BILLINTEGRATION = "SEQ_EGF_BILLINTEGRATION";
     private static final long serialVersionUID = 7630238192598939863L;
     @Expose
     @Id
-    @GeneratedValue(generator = SEQ_TPBILLINTEGRATION, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_BILLINTEGRATION, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(name = "tp_bill_no")
@@ -133,9 +133,9 @@ public class ThirdPartyBillIntegration extends AbstractAuditable {
     public boolean equals(Object other) {
         if (this == other)
             return true;
-        if (!(other instanceof ThirdPartyBillIntegration))
+        if (!(other instanceof BillIntegration))
             return false;
-        ThirdPartyBillIntegration that = (ThirdPartyBillIntegration) other;
+        BillIntegration that = (BillIntegration) other;
         return Objects.equals((getSource() + getTpbillno() + egBill.getId()),
                 (that.getSource() + that.getTpbillno() + that.egBill.getId()));
     }

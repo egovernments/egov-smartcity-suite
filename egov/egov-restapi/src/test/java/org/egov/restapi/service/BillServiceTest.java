@@ -68,7 +68,7 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.DateUtils;
 import org.egov.model.bills.EgBillregister;
-import org.egov.model.service.ThirdPartyBillIntegrationService;
+import org.egov.model.service.BillIntegrationService;
 import org.egov.restapi.model.BillDetails;
 import org.egov.restapi.model.BillPayeeDetails;
 import org.egov.restapi.model.BillRegister;
@@ -148,7 +148,7 @@ public class BillServiceTest extends AbstractContextControllerTest<BillService> 
     private BillService billService;
     
     @Mock
-    private ThirdPartyBillIntegrationService tpbiService;
+    private BillIntegrationService tpbiService;
 
     @Mock
     private HttpServletRequest request;

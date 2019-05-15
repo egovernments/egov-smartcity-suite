@@ -46,27 +46,45 @@
  *
  */
 
-package org.egov.model.repository;
+package org.egov.model.service;
 
-import static org.hibernate.jpa.QueryHints.HINT_CACHEABLE;
-
-import javax.persistence.QueryHint;
-
-import org.egov.model.bills.ThirdPartyBillIntegration;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.QueryHints;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import org.egov.model.bills.BillIntegration;
+import org.egov.model.repository.BillIntegrationRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author tamal
  */
-@Repository
-public interface ThirdPartyBillIntegrationRepository extends JpaRepository<ThirdPartyBillIntegration, Long> {
 
-    @QueryHints({ @QueryHint(name = HINT_CACHEABLE, value = "true") })
-    @Query("select t from ThirdPartyBillIntegration t where upper(t.tpbillno)=:tpbillno")
-    ThirdPartyBillIntegration findByBillNo(@Param("tpbillno") String tpBillNo);
+@Service
+@Transactional(readOnly = true)
+public class BillIntegrationService {
 
+    private final BillIntegrationRepository tpbiRepository;
+
+    @Autowired
+    public BillIntegrationService(final BillIntegrationRepository tpbiRepository) {
+        this.tpbiRepository = tpbiRepository;
+    }
+
+    @Transactional
+    public void createBillIntegration(final BillIntegration tpbi) {
+        tpbiRepository.save(tpbi);
+    }
+
+    @Transactional
+    public void updateBillIntegration(final BillIntegration tpbi) {
+        tpbiRepository.save(tpbi);
+    }
+
+    public BillIntegration getTpBillByBillNo(final String tpBillNo) {
+        return tpbiRepository.findByBillNo(tpBillNo);
+    }
+
+    @Transactional
+    public void deleteBillIntegration(final BillIntegration tpbi) {
+        tpbiRepository.delete(tpbi);
+    }
 }
