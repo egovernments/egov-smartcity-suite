@@ -473,9 +473,9 @@ public class PropertyTaxCollection extends TaxCollection {
                             rebateAmount = BigDecimal.ZERO;
                         }
                     }
-
+                       //Passing Receipt Amount instead of Demand Detail Amount
                     persistCollectedReceipts(demandDetail, billRcptInfo.getReceiptNum(), totalAmount,
-                            billRcptInfo.getReceiptDate(), demandDetail.getAmtCollected());
+                            billRcptInfo.getReceiptDate(), rcptAccInfo.getCrAmount());
                     LOGGER.info("Persisted demand and receipt details for tax : " + reason + " installment : "
                             + instDesc + " with receipt No : " + billRcptInfo.getReceiptNum() + " for Rs. "
                             + rcptAccInfo.getCrAmount());
