@@ -133,7 +133,7 @@ public class ValidationUtil {
 
     @Autowired
     private VacantLandPlotAreaRepository vacantLandPlotAreaRepository;
-    
+
     @Autowired
     private ApplicationContext beanProvider;
 
@@ -143,6 +143,8 @@ public class ValidationUtil {
     private static final String GUARDIAN_PATTERN = "^[\\p{L} .'-]+$";
     private static final String CAMEL_CASE_PATTERN = "([A-Z]+[a-z]+\\w+)+";
     private static final String DIGITS_FLOAT_INT_DBL = "[-+]?[0-9]*\\.?[0-9]+";
+
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
 
     /**
      * Validates Property Transfer request
@@ -459,7 +461,7 @@ public class ValidationUtil {
                         final BasicProperty basicProperty = basicPropertyDAO
                                 .getBasicPropertyByPropertyID(createPropDetails.getAssessmentNumber());
                         zoneNo = basicProperty.getPropertyID().getZone().getBoundaryNum().toString();
-                        if(!propertyExternalService.isBoundaryActive(zoneNo, ZONE,
+                        if (!propertyExternalService.isBoundaryActive(zoneNo, ZONE,
                                 REVENUE_HIERARCHY_TYPE)) {
                             errorDetails.setErrorCode(INACTIVE_ZONE_CODE);
                             errorDetails.setErrorMessage(INACTIVE_ZONE_REQ_MSG);
@@ -607,8 +609,8 @@ public class ValidationUtil {
                     }
             }
         }
-        
-        if(electionWard != null){
+
+        if (electionWard != null) {
             PropertyID propertyID = new PropertyID();
             propertyID.setElectionBoundary(electionWard);
             PropertyImpl property = new PropertyImpl();
@@ -622,20 +624,20 @@ public class ValidationUtil {
         return errorDetails;
     }
 
-    private ErrorDetails validateAssignment(PropertyImpl property){
+    private ErrorDetails validateAssignment(PropertyImpl property) {
         ErrorDetails errorDetails = new ErrorDetails();
         PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
         Assignment assignment = propertyExternalService.getAssignment(property, propService);
-        if(assignment == null){
+        if (assignment == null) {
             errorDetails.setErrorCode(ASSIGNMENT_NULL_ERROR_CODE);
             errorDetails.setErrorMessage(ASSIGNMENT_NULL_ERROR_MSG);
         }
         return errorDetails;
-        
+
     }
+
     public Date convertStringToDate(final String dateInString) throws ParseException {
-        final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-        return sdf.parse(dateInString);
+        return DATE_FORMAT.parse(dateInString);
     }
 
     /**
@@ -1065,7 +1067,7 @@ public class ValidationUtil {
             PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
             String errorMessage = propService.validationForBifurcation(null, bp,
                     PROPERTY_MODIFY_REASON_ADD_OR_ALTER);
-            if (StringUtils.isNotBlank(errorMessage)){
+            if (StringUtils.isNotBlank(errorMessage)) {
                 errorDetails.setErrorCode(BIFURCATION_ERROR_CODE);
                 errorDetails.setErrorMessage(BIFURCATION_ERROR_MSG);
                 return errorDetails;
@@ -1267,21 +1269,21 @@ public class ValidationUtil {
         }
         return errorDetails;
     }
-    
-    public ErrorDetails validateDocumentUploadRequest(DocumentDetailsRequest documentDetail, String applicationNo){
-    	ErrorDetails errorDetails = new ErrorDetails();
-    	Property property = propertyExternalService.getPropertyByApplicationNo(applicationNo);
-    	if(property == null){
-    		errorDetails.setErrorCode(APPLICATION_NO_INVALID_CODE);
+
+    public ErrorDetails validateDocumentUploadRequest(DocumentDetailsRequest documentDetail, String applicationNo) {
+        ErrorDetails errorDetails = new ErrorDetails();
+        Property property = propertyExternalService.getPropertyByApplicationNo(applicationNo);
+        if (property == null) {
+            errorDetails.setErrorCode(APPLICATION_NO_INVALID_CODE);
             errorDetails.setErrorMessage(APPLICATION_NO_INVALID_MSG);
             return errorDetails;
-    	}
-    	if(documentDetail.getPhotoFile() == null){
-    		errorDetails.setErrorCode(DOCUMENT_TYPE_DETAILS_REQ_CODE);
+        }
+        if (documentDetail.getPhotoFile() == null) {
+            errorDetails.setErrorCode(DOCUMENT_TYPE_DETAILS_REQ_CODE);
             errorDetails.setErrorMessage(DOCUMENT_TYPE_DETAILS_REQ_MSG);
             return errorDetails;
-    	}
-    	return errorDetails;
+        }
+        return errorDetails;
     }
 
 }
