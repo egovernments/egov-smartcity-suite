@@ -212,7 +212,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
         BigDecimal currentInstDemand = BigDecimal.ZERO;
         for (EgDemandDetails dmdDet : ptDemand.getEgDemandDetails()) {
             if (isDmdForCurrYrSecHalf(currInstallments, dmdDet)
-                    && !dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(PENALTY_DMD_RSN_CODE)) {
+                    && !dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES)) {
                 currentInstDemand = currentInstDemand.add(dmdDet.getAmount());
             }
         }
