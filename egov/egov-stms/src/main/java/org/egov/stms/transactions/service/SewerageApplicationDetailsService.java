@@ -842,10 +842,10 @@ public class SewerageApplicationDetailsService {
             else if (sewerageApplicationDetails.getStatus().getCode().equals(APPLICATION_STATUS_WOGENERATED)) {
                 sewerageApplicationDetails
                         .setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_SANCTIONED, MODULETYPE));
+                sewerageApplicationDetails.setActive(true);
                 // Make Connection status active on connection execution
                 if (sewerageApplicationDetails.getConnection().getStatus().equals(SewerageConnectionStatus.INPROGRESS))
                     sewerageApplicationDetails.getConnection().setStatus(SewerageConnectionStatus.ACTIVE);
-                sewerageApplicationDetails.setActive(true);
             } else if (sewerageApplicationDetails.getStatus().getCode().equals(APPLICATION_STATUS_REJECTED))
                 if (sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
                     if (sewerageApplicationDetails.getCurrentDemand().getAmtCollected()
@@ -930,8 +930,8 @@ public class SewerageApplicationDetailsService {
                     && WFLOW_ACTION_STEP_FORWARD.equals(workFlowAction))
                 sewerageApplicationDetails
                         .setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_EEAPPROVED, MODULETYPE));
-            else if (APPLICATION_STATUS_DEEAPPROVED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
-                    || WF_STATE_EE_APPROVED.equalsIgnoreCase(sewerageApplicationDetails.getState().getValue())
+            else if ((APPLICATION_STATUS_DEEAPPROVED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
+                    || WF_STATE_EE_APPROVED.equalsIgnoreCase(sewerageApplicationDetails.getState().getValue()))
                     && APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)) {
                 // Make Connection status closed on EE approval
                 sewerageApplicationDetails.getConnection().setStatus(SewerageConnectionStatus.CLOSED);

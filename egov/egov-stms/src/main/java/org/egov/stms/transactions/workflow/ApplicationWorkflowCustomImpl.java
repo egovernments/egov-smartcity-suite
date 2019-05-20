@@ -146,15 +146,19 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         }
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
             // rejection in b.w workflow, send application to the creator
-            sewerageApplicationDetails.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
+            sewerageApplicationDetails.transition().progressWithStateCopy()
+                    .withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approverComment)
                     .withStateValue(WF_STATE_REJECTED).withDateInfo(currentDate.toDate())
                     .withOwner(wfInitiator.getPosition()).withNextAction("Application Rejected")
                     .withNatureOfTask(natureOfWork);
         } else if (WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workFlowAction)) {
             // Incase of reject / cancel from the creator, end the workflow
-            sewerageApplicationDetails.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                    .withComments(approverComment).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfWork);
+            sewerageApplicationDetails.transition().end()
+                    .withSenderName(user.getUsername() + "::" + user.getName())
+                    .withComments(approverComment)
+                    .withDateInfo(currentDate.toDate())
+                    .withNatureOfTask(natureOfWork);
         } else {
             if (approverPosition != null && approverPosition > 0)
                 pos = positionMasterService.getPositionById(approverPosition);
@@ -163,7 +167,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
 
             Boolean cscOperatorLoggedIn = sewerageWorkflowService.isCscOperator(user);
             Boolean citizenPortalUser = sewerageTaxUtils.isCitizenPortalUser(user);
-            if (null == sewerageApplicationDetails.getState()
+            if (sewerageApplicationDetails.getState() == null
                     && (cscOperatorLoggedIn || citizenPortalUser
                     || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getUsername()))) {
                 if (cscOperatorLoggedIn)

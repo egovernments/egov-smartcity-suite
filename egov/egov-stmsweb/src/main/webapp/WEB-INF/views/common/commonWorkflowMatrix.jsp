@@ -50,6 +50,26 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+
+<form:hidden path="workflowContainer.currentDesignation" id="currentDesignation" name="workflowContainer.currentDesignation" value="${sewerageApplicationDetails.workflowContainer.currentDesignation}"/>
+<form:hidden path="workflowContainer.additionalRule" id="additionalRule" name="workflowContainer.additionalRule" value="${sewerageApplicationDetails.workflowContainer.additionalRule}"/>
+<form:hidden  path="workflowContainer.amountRule" id="amountRule" name="workflowContainer.amountRule" value="${sewerageApplicationDetails.workflowContainer.amountRule}"/>
+<form:hidden path="workflowContainer.workFlowDepartment" id="workFlowDepartment" name="workflowContainer.workFlowDepartment" value="${sewerageApplicationDetails.workflowContainer.workFlowDepartment}"/>
+<form:hidden path="workflowContainer.pendingActions" id="pendingActions" name="workflowContainer.pendingActions" value="${pendingActions}"/>
+<form:hidden path="" name="stateType" id="stateType" value="${stateType}"/>
+<form:hidden path="workflowContainer.workFlowAction" id="workFlowAction" name="workflowContainer.workFlowAction"/>
+<c:if test="${currentState!= 'null'}">
+	<c:choose>
+		<c:when test="${!'Closed'.equalsIgnoreCase(currentState)}">
+			<form:hidden path="workflowContainer.currentState" id="currentState" name="workflowContainer.currentState"
+						 value="${sewerageApplicationDetails.state.value}"/>
+		</c:when>
+		<c:otherwise>
+			<form:hidden path="workflowContainer.currentState" id="currentState" name="workflowContainer.currentState"
+						 value=""/>
+		</c:otherwise>
+	</c:choose>
+</c:if>
 <c:if test="${nextAction !='END'}" >
 	<div class="panel panel-primary" data-collapsed="0" >
 		<div class="panel-heading">
@@ -58,69 +78,45 @@
 			</div>
 		</div>
 		<div class="panel-body">
-	<c:if test="${currentState!= 'null'}">
-		<c:choose>
-			<c:when test="${!'Closed'.equalsIgnoreCase(currentState)}">
-			 <form:hidden path="workflowContainer.currentState" id="currentState" name="workflowContainer.currentState"
-						  value="${sewerageApplicationDetails.state.value}"/>
-			</c:when>
-			<c:otherwise>
-				<form:hidden path="workflowContainer.currentState" id="currentState" name="workflowContainer.currentState"
-                             value=""/>
-			</c:otherwise>
-		</c:choose>
-	</c:if>
-			<form:hidden path="workflowContainer.currentDesignation" id="currentDesignation" name="workflowContainer.currentDesignation" value="${sewerageApplicationDetails.workflowContainer.currentDesignation}"/>
-			<form:hidden path="workflowContainer.additionalRule" id="additionalRule" name="workflowContainer.additionalRule" value="${sewerageApplicationDetails.workflowContainer.additionalRule}"/>
-			<form:hidden  path="workflowContainer.amountRule" id="amountRule" name="workflowContainer.amountRule" value="${sewerageApplicationDetails.workflowContainer.amountRule}"/>
-			<form:hidden path="workflowContainer.workFlowDepartment" id="workFlowDepartment" name="workflowContainer.workFlowDepartment" value="${sewerageApplicationDetails.workflowContainer.workFlowDepartment}"/>
-			<form:hidden path="workflowContainer.pendingActions" id="pendingActions" name="workflowContainer.pendingActions" value="${pendingActions}"/>
-			<%-- <form:hidden path="" id="approverName" name="approverName" /> --%>
-			<form:hidden path="" name="stateType" id="stateType" value="${stateType}"/>
-			<form:hidden path="workflowContainer.workFlowAction" id="workFlowAction" name="workflowContainer.workFlowAction"/>
-			<%-- <c:choose>
-				<c:when test="${mode == null}">	 --%>
 			<div class="row show-row"  id="approverDetailHeading">
-				<div class="show-row form-group" >
-					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.approverdepartment"/><span class="mandatory"></span></label>
-					<div class="col-sm-3 add-margin">
-						<form:select path="workflowContainer.approverDepartment" data-first-option="false" name="workflowContainer.approverDepartment"
-							id="approvalDepartment" cssClass="form-control"
-							cssErrorClass="form-control error" required="required">
-							<form:option value="">
-								<spring:message code="lbl.select" />
-							</form:option>
-							<form:options items="${approvalDepartmentList}" itemValue="id"
-								itemLabel="name" />
-						</form:select>
-					</div>
-					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.approverdesignation"/><span class="mandatory"></span></label>
-					<div class="col-sm-3 add-margin">
-						<form:select path="workflowContainer.approverDesignation" data-first-option="false" name="workflowContainer.approverDesignation"
-							id="approvalDesignation" cssClass="form-control" onfocus="callAlertForDepartment();"
-							cssErrorClass="form-control error" required="required">
-							<form:option value="">
-								<spring:message code="lbl.select" />
-							</form:option>
+					<div class="show-row form-group" >
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.approverdepartment"/><span class="mandatory"></span></label>
+						<div class="col-sm-3 add-margin">
+							<form:select path="workflowContainer.approverDepartment" data-first-option="false" name="workflowContainer.approverDepartment"
+								id="approvalDepartment" cssClass="form-control"
+								cssErrorClass="form-control error" required="required">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:options items="${approvalDepartmentList}" itemValue="id"
+									itemLabel="name" />
+							</form:select>
+						</div>
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.approverdesignation"/><span class="mandatory"></span></label>
+						<div class="col-sm-3 add-margin">
+							<form:select path="workflowContainer.approverDesignation" data-first-option="false" name="workflowContainer.approverDesignation"
+								id="approvalDesignation" cssClass="form-control" onfocus="callAlertForDepartment();"
+								cssErrorClass="form-control error" required="required">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
 
+							</form:select>
+						</div>
+					</div>
+					<div class="show-row form-group">
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.approver"/><span class="mandatory"></span></label>
+						<div class="col-sm-3 add-margin">
+						<form:select path="workflowContainer.approverPositionId" data-first-option="false"
+							id="approvalPosition" name="workflowContainer.approverPositionId" cssClass="form-control" onfocus="callAlertForDesignation();"
+							cssErrorClass="form-control error" required="required">
+							<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
 						</form:select>
+						</div>
 					</div>
 				</div>
-				<div class="show-row form-group">
-					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.approver"/><span class="mandatory"></span></label>
-					<div class="col-sm-3 add-margin">
-					<form:select path="workflowContainer.approverPositionId" data-first-option="false"
-						id="approvalPosition" name="workflowContainer.approverPositionId" cssClass="form-control" onfocus="callAlertForDesignation();"
-						cssErrorClass="form-control error" required="required">
-						<form:option value="">
-								<spring:message code="lbl.select" />
-							</form:option>
-					</form:select>
-					</div>
-				</div>
-			</div>
-				<%-- </c:when>
-			</c:choose> --%>
 			<div class="row">
 				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.comments"/></label>
 				<div class="col-sm-8 add-margin">

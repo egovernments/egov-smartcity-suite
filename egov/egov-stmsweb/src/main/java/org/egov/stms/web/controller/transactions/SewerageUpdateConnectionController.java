@@ -354,7 +354,6 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
                                   final HttpServletRequest request) {
         final String assessmentNumber = sewerageApplicationDetails.getConnectionDetail()
                 .getPropertyIdentifier();
-
         final AssessmentDetails propertyOwnerDetails = sewerageThirdPartyServices.getPropertyDetails(assessmentNumber,
                 request);
         if (propertyOwnerDetails != null)
@@ -372,7 +371,6 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
                 connectionFee.setAmount(feeDetailMaster.getAmount().doubleValue());
             connectionFee.setApplicationDetails(sewerageApplicationDetails);
             sewerageApplicationDetails.getConnectionFees().add(connectionFee);
-
         }
     }
 
@@ -382,7 +380,6 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
                          final HttpSession session, final Model model, @RequestParam("files") final MultipartFile[] files) {
         String mode = EMPTY;
         String workFlowAction = sewerageApplicationDetails.getWorkflowContainer().getWorkFlowAction();
-
         sewerageApplicationValidator.validateNewApplicationUpdate(sewerageApplicationDetails, resultBinder, workFlowAction);
 
         if (workFlowAction != null && WF_STATE_CONNECTION_EXECUTION_BUTTON.equalsIgnoreCase(workFlowAction)) {
@@ -407,17 +404,14 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
             return NEWCONNECTION_EDIT;
         }
 
-        if ((sewerageApplicationDetails.getStatus().getCode()
-                .equalsIgnoreCase(APPLICATION_STATUS_CREATED)
-                || sewerageApplicationDetails.getStatus().getCode()
-                .equalsIgnoreCase(APPLICATION_STATUS_INSPECTIONFEEPAID) || sewerageApplicationDetails.getStatus().getCode()
-                .equalsIgnoreCase(APPLICATION_STATUS_FEECOLLECTIONPENDING) || sewerageApplicationDetails.getStatus().getCode()
-                .equalsIgnoreCase(APPLICATION_STATUS_INITIALAPPROVED) ||
-                sewerageApplicationDetails.getStatus().getCode()
-                        .equalsIgnoreCase(APPLICATION_STATUS_DEEAPPROVED))
+        if ((sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_CREATED)
+                || sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_INSPECTIONFEEPAID)
+                || sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_FEECOLLECTIONPENDING)
+                || sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_INITIALAPPROVED)
+                || sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_DEEAPPROVED))
                 && "edit".equalsIgnoreCase(mode))
-            if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_FORWARD)
-                    || workFlowAction.equalsIgnoreCase(WF_ESTIMATION_NOTICE_BUTTON)) {
+            if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workFlowAction)
+                    || WF_ESTIMATION_NOTICE_BUTTON.equalsIgnoreCase(workFlowAction)) {
 
                 final List<SewerageConnectionEstimationDetails> existingSewerage = populateEstimationDetails(
                         sewerageApplicationDetails);
@@ -439,13 +433,10 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
                         .getId());
             }
 
-        if (sewerageApplicationDetails.getStatus().getCode() != null &&
-                sewerageApplicationDetails.getStatus().getCode()
-                        .equalsIgnoreCase(APPLICATION_STATUS_INITIALAPPROVED)
-                || sewerageApplicationDetails.getStatus().getCode()
-                .equalsIgnoreCase(APPLICATION_STATUS_DEEAPPROVED)
-                || sewerageApplicationDetails.getStatus().getCode()
-                .equalsIgnoreCase(APPLICATION_STATUS_INSPECTIONFEEPAID)
+        if (sewerageApplicationDetails.getStatus().getCode() != null
+                && sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_INITIALAPPROVED)
+                || sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_DEEAPPROVED)
+                || sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_INSPECTIONFEEPAID)
                 && !workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT))
             populateDonationSewerageTax(sewerageApplicationDetails);
         if (!resultBinder.hasErrors()) {
@@ -455,7 +446,8 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
                         .equals(NEWSEWERAGECONNECTION))
                     return "redirect:/transactions/workorder?pathVar="
                             + sewerageApplicationDetails.getApplicationNumber();
-                sewerageApplicationDetailsService.updateSewerageApplicationDetails(sewerageApplicationDetails, mode, request, session);
+                sewerageApplicationDetailsService
+                        .updateSewerageApplicationDetails(sewerageApplicationDetails, mode, request, session);
             } catch (final ValidationException e) {
                 throw new ValidationException(e);
             }
