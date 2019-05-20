@@ -82,7 +82,7 @@ import org.egov.collection.config.properties.CollectionApplicationProperties;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptHeader;
-import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.models.ServiceDetails;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,8 +130,6 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
 
     @Autowired
     private CollectionApplicationProperties collectionApplicationProperties;
-    @Autowired
-    private CityService cityService;
 
     /**
      * This method invokes APIs to frame request object for the payment service passed as parameter
@@ -157,10 +155,10 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
         requestParameterMap.put(SBIMOPS_RID, receiptHeader.getConsumerCode());
         requestParameterMap.put(SBIMOPS_TA, receiptHeader.getTotalAmount().toString());
         final StringBuilder chStringBuilder = new StringBuilder((String.format(SBIMOPS_HOA_FORMAT,
-                collectionApplicationProperties.sbimopsHoa(cityService.getCityCode(), billServiceCode))).replace(' ',
+                collectionApplicationProperties.sbimopsHoa(ApplicationThreadLocals.getCityCode(), billServiceCode))).replace(' ',
                         '0'));
         chStringBuilder.append(CollectionConstants.SEPARATOR_COMMA)
-                .append(collectionApplicationProperties.sbimopsDdocode(cityService.getCityCode()))
+                .append(collectionApplicationProperties.sbimopsDdocode(ApplicationThreadLocals.getCityCode()))
                 .append(CollectionConstants.SEPARATOR_COMMA)
                 .append(collectionApplicationProperties.sbimopsServiceCode(billServiceCode))
                 .append(CollectionConstants.SEPARATOR_COMMA)
