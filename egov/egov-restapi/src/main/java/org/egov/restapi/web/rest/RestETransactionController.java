@@ -60,6 +60,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.restapi.model.ETransactionResponse;
@@ -99,7 +100,7 @@ public class RestETransactionController {
      * Formats a JSON representing the Errors
      *
      * @param ve A ValidationException containing list of ValidationError
-     * @return String representing the list of ValidationError in Json
+     * @return String representing the list of ValidationError in JSON
      */
     private String makeValidationErrorJson(ValidationException ve) {
         JsonObject resultObject = new JsonObject();
@@ -114,7 +115,7 @@ public class RestETransactionController {
         }
         errorObject.addProperty("type", "validation_error");
         errorObject.add("details", validationErrorList);
-        resultObject.addProperty("message", "Request Validation Error Occurred.");
+        resultObject.addProperty("message", "Request Validation Failed.");
         resultObject.add("error", errorObject);
         return resultObject.toString();
     }
@@ -140,13 +141,19 @@ public class RestETransactionController {
         try {
             Date fromDate = validationUtil.convertStringToDate(request.get(PARAM_FROM_DATE).getAsString());
             Date toDate = validationUtil.convertStringToDate(request.get(PARAM_TO_DATE).getAsString());
+            if (fromDate.equals(toDate)) {
+                fromDate = DateUtils.startOfDay(fromDate);
+                toDate = DateUtils.endOfDay(toDate);
+            } else if (DateUtils.compareDates(fromDate, toDate)) {
+                throw new ValidationException(
+                        new ValidationError(
+                                "INVALID_DATE_RANGE",
+                                format("%s must be greater or equal to %s", PARAM_TO_DATE, PARAM_FROM_DATE)));
+            }
             return Pair.of(fromDate, toDate);
         } catch (ParseException | AssertionError ex) {
 
-            String validationMessage = format("Expected date in %s format",
-                    ValidationUtil.DATE_FORMAT.toPattern());
-
-            LOGGER.warn(format("%s: %s; requestJson: %s", "INVALID_DATE", validationMessage, requestJson));
+            String validationMessage = format("Expected date in %s format", "dd-MM-yyyy");
 
             throw new ValidationException(
                     new ValidationError(
@@ -171,15 +178,23 @@ public class RestETransactionController {
             tnxInfoList = eTransactionService.getETransactionCount(fromToDatePair.getFirst(), fromToDatePair.getSecond());
 
         } catch (JsonSyntaxException syntaxEx) {
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.warn(format("JSON Syntax Error: %s;\nrequestJson: %s", API_STATISTICS, requestJson));
-            }
+
+            if (LOGGER.isInfoEnabled())
+                LOGGER.info(format("JSON Syntax Error: %s; requestJson: %s Error: %s",
+                        API_STATISTICS,
+                        requestJson,
+                        syntaxEx.getMessage()));
+            // As we may not need to catch & log same error twice
             return makeValidationErrorJson(
                     new ValidationException(new ValidationError(JSON_CONVERSION_ERROR_CODE, "Invalid JSON")));
         } catch (ValidationException validationEx) {
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.warn(format("ValidationException: %s,\nrequestJson: %s", API_STATISTICS, requestJson));
-            }
+
+            if (LOGGER.isInfoEnabled())
+                LOGGER.info(format("ValidationException: %s, requestJson: %s  Error: %s",
+                        API_STATISTICS,
+                        requestJson,
+                        validationEx.getErrors()));
+
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return makeValidationErrorJson(validationEx);
         }

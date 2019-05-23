@@ -143,8 +143,8 @@ public class ValidationUtil {
     private static final String GUARDIAN_PATTERN = "^[\\p{L} .'-]+$";
     private static final String CAMEL_CASE_PATTERN = "([A-Z]+[a-z]+\\w+)+";
     private static final String DIGITS_FLOAT_INT_DBL = "[-+]?[0-9]*\\.?[0-9]+";
-
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+    private static final Pattern DATE_PATTERN = Pattern.compile("([0-3][0-9])-((0[0-9])|(1[0-2]))-(\\d\\d\\d\\d)");
+    private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
 
     /**
      * Validates Property Transfer request
@@ -636,7 +636,18 @@ public class ValidationUtil {
 
     }
 
+    /**
+     * Validate using regex and parse the date
+     * @param dateInString
+     * @return Date
+     * @throws ParseException
+     */
     public Date convertStringToDate(final String dateInString) throws ParseException {
+        DATE_FORMAT.setLenient(false);
+        Matcher matcher = DATE_PATTERN.matcher(dateInString);
+        if (!matcher.matches()) {
+            throw new ParseException("Invalid date", 0);
+        }
         return DATE_FORMAT.parse(dateInString);
     }
 
