@@ -54,6 +54,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -88,6 +89,7 @@ public class RestETransactionController {
     public static final String API_STATISTICS = "/public/transaction/statistics";
     public static final String PARAM_FROM_DATE = "fromDate";
     public static final String PARAM_TO_DATE = "toDate";
+    public static final String PARAM_ULB_CODE = "ulbCode";
     private static final Logger LOGGER = Logger.getLogger(RestETransactionController.class);
 
     @Autowired
@@ -121,45 +123,57 @@ public class RestETransactionController {
     }
 
     /**
-     * Parses Input JSON and return a date range as {@code Pair<Date, Date>}
-     * @param requestJson JSON string containing PARAM_FROM_DATE & PARAM_TO_DATE keys
+     * Parses Input JSON and return a date range as {@code Pair<Date, Date>}, also validate ulbCode against
+     * ApplicationThreadLocals
+     * @param requestJson JSON string containing PARAM_ULB_CODE, PARAM_FROM_DATE & PARAM_TO_DATE keys
      * @return pair/tuple of (fromDate, toDate)
      */
     private Pair<Date, Date> parseRequestAndGetDateRange(String requestJson) {
+        List<ValidationError> validationErrorList = new ArrayList<>(3);
         JsonParser parser = new JsonParser();
         JsonElement jsonElement = parser.parse(requestJson);
-        if (!jsonElement.isJsonObject()) {
-            throw new ValidationException(new ValidationError(JSON_CONVERSION_ERROR_CODE, "Expected a a Json Object."));
-        }
-        JsonObject request = jsonElement.getAsJsonObject();
-        if (!request.has(PARAM_FROM_DATE) || !request.has(PARAM_TO_DATE)) {
-            throw new ValidationException(
-                    new ValidationError(
-                            JSON_CONVERSION_ERROR_CODE,
-                            format("Expected json object key %s & %s", PARAM_FROM_DATE, PARAM_TO_DATE)));
-        }
-        try {
-            Date fromDate = validationUtil.convertStringToDate(request.get(PARAM_FROM_DATE).getAsString());
-            Date toDate = validationUtil.convertStringToDate(request.get(PARAM_TO_DATE).getAsString());
-            if (fromDate.equals(toDate)) {
-                fromDate = DateUtils.startOfDay(fromDate);
-                toDate = DateUtils.endOfDay(toDate);
-            } else if (DateUtils.compareDates(fromDate, toDate)) {
-                throw new ValidationException(
-                        new ValidationError(
-                                "INVALID_DATE_RANGE",
-                                format("%s must be greater or equal to %s", PARAM_TO_DATE, PARAM_FROM_DATE)));
+        validationUtil.validateRequiredFields(validationErrorList, jsonElement, PARAM_ULB_CODE, PARAM_FROM_DATE, PARAM_TO_DATE);
+
+        Date fromDate = null;
+        Date toDate = null;
+
+        if (validationErrorList.isEmpty()) {
+            try {
+                JsonObject requestObject = jsonElement.getAsJsonObject();
+                String ulbCode = requestObject.get(PARAM_ULB_CODE).getAsString().trim();
+                String fromDateString = requestObject.get(PARAM_FROM_DATE).getAsString();
+                String toDateString = requestObject.get(PARAM_TO_DATE).getAsString();
+
+                fromDate = validationUtil.convertStringToDate(fromDateString);
+                toDate = validationUtil.convertStringToDate(toDateString);
+
+                if (fromDate.equals(toDate)) {
+                    fromDate = DateUtils.startOfDay(fromDate);
+                    toDate = DateUtils.endOfDay(toDate);
+                }
+                // Cap toDate to now
+                Date now = DateUtils.now();
+                if (org.apache.commons.lang3.time.DateUtils.isSameDay(toDate, now)) {
+                    toDate = now;
+                }
+
+                validationUtil.validateETransactionRequest(validationErrorList, ulbCode, fromDate, toDate);
+
+            } catch (ParseException ex) {
+                validationErrorList.add(new ValidationError("INVALID_DATE", "Expected date in dd-MM-yyyy format"));
+            } catch (Exception ex) {
+                LOGGER.error("Unforeseen error while parsing input JSON", ex);
+                validationErrorList.add(new ValidationError("CODE_ERROR", "An unknown error has occured"));
             }
-            return Pair.of(fromDate, toDate);
-        } catch (ParseException | AssertionError ex) {
-
-            String validationMessage = format("Expected date in %s format", "dd-MM-yyyy");
-
-            throw new ValidationException(
-                    new ValidationError(
-                            "INVALID_DATE",
-                            validationMessage));
         }
+
+        if (!validationErrorList.isEmpty()) {
+            throw new ValidationException(validationErrorList);
+        }
+
+        // IMPORTANT! fromDate & toDate is not null in this line.
+        // After line 140 (fromDate==null && toDate==null) and validationErrorList.isEmpty() are exclusive
+        return Pair.of(fromDate, toDate);
     }
 
     @RequestMapping(value = API_STATISTICS, method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
@@ -184,7 +198,7 @@ public class RestETransactionController {
                         API_STATISTICS,
                         requestJson,
                         syntaxEx.getMessage()));
-            // As we may not need to catch & log same error twice
+            // Not throwing as we may not need to catch & log same error twice
             return makeValidationErrorJson(
                     new ValidationException(new ValidationError(JSON_CONVERSION_ERROR_CODE, "Invalid JSON")));
         } catch (ValidationException validationEx) {

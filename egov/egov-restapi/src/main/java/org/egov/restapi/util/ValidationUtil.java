@@ -72,6 +72,9 @@ import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.ptis.client.service.calculator.APTaxCalculator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -94,6 +97,7 @@ import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.master.service.PropertyUsageService;
 import org.egov.ptis.master.service.StructureClassificationService;
+import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.AssessmentRequest;
 import org.egov.restapi.model.AssessmentsDetails;
 import org.egov.restapi.model.CreatePropertyDetails;
@@ -105,6 +109,9 @@ import org.egov.restapi.model.VacantLandDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 @Service
 public class ValidationUtil {
@@ -137,14 +144,19 @@ public class ValidationUtil {
     @Autowired
     private ApplicationContext beanProvider;
 
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+    private static final Pattern DATE_PATTERN = Pattern.compile("([0-3][0-9])-((0[0-9])|(1[0-2]))-(\\d\\d\\d\\d)");
+
     private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     private static final String PINCODE_PATTERN = "^[1-9][0-9]{5}$";
     private static final String GUARDIAN_PATTERN = "^[\\p{L} .'-]+$";
     private static final String CAMEL_CASE_PATTERN = "([A-Z]+[a-z]+\\w+)+";
     private static final String DIGITS_FLOAT_INT_DBL = "[-+]?[0-9]*\\.?[0-9]+";
-    private static final Pattern DATE_PATTERN = Pattern.compile("([0-3][0-9])-((0[0-9])|(1[0-2]))-(\\d\\d\\d\\d)");
-    private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+
+    static {
+        DATE_FORMAT.setLenient(false);
+    }
 
     /**
      * Validates Property Transfer request
@@ -636,6 +648,55 @@ public class ValidationUtil {
 
     }
 
+    /*
+     * Appends ValidationError to @param errorList
+     */
+    public void validateRequiredFields(final List<ValidationError> errorList, final JsonElement object, final String... keys) {
+        if (!object.isJsonObject()) {
+            errorList.add(new ValidationError(JSON_CONVERSION_ERROR_CODE, "Expected a Object."));
+            return;
+        }
+        JsonObject jsonObject = object.getAsJsonObject();
+        for (final String key : keys) {
+            if (!jsonObject.has(key)) {
+                errorList.add(new ValidationError("MISSING_KEY", "Required \"" + key + "\""));
+            }
+            JsonElement valueElement = jsonObject.get(key);
+            if (valueElement.isJsonNull()) {
+                errorList.add(new ValidationError("NO_NULL_KEY", "Key \"" + key + "\" must not be null"));
+            }
+        }
+    }
+
+    /*
+     * Appends ValidationError to @param errorList
+     */
+    public void validateETransactionRequest(final List<ValidationError> errorList, String ulbCode, Date fromDate, Date toDate) {
+        if (StringUtils.isBlank(ulbCode)) {
+            errorList.add(new ValidationError("NO_EMPTY_FIELD", RestApiConstants.THIRD_PARTY_ERR_CODE_ULBCODE_NO_REQ_MSG));
+        } else if (!ApplicationThreadLocals.getCityCode().equals(ulbCode)) {
+            errorList.add(new ValidationError(RestApiConstants.THIRD_PARTY_ERR_CODE_ULBCODE_NO_REQUIRED, "Invalid ULB Code"));
+        }
+
+        if (DateUtils.compareDates(fromDate, toDate)) {
+            errorList.add(new ValidationError("INVALID_DATE_RANGE", "toDate must be greater or equal to fromDate"));
+        }
+        Date endOfToday = DateUtils.endOfToday().toDate();
+        Date maxDate;
+        String maxDateParam;
+        if (DateUtils.compareDates(fromDate, toDate)) {
+            maxDate = fromDate;
+            maxDateParam = "fromDate";
+        } else {
+            maxDate = toDate;
+            maxDateParam = "toDate";
+        }
+        if (!maxDate.equals(endOfToday) && DateUtils.compareDates(maxDate, endOfToday)) {
+            errorList.add(new ValidationError("NO_FUTURE_DATE", String.format("%s(%s) must be less or equal to today (%s)",
+                    maxDateParam, convertDateToString(maxDate), convertDateToString(endOfToday))));
+        }
+    }
+
     /**
      * Validate using regex and parse the date
      * @param dateInString
@@ -643,12 +704,19 @@ public class ValidationUtil {
      * @throws ParseException
      */
     public Date convertStringToDate(final String dateInString) throws ParseException {
-        DATE_FORMAT.setLenient(false);
+
         Matcher matcher = DATE_PATTERN.matcher(dateInString);
         if (!matcher.matches()) {
             throw new ParseException("Invalid date", 0);
         }
         return DATE_FORMAT.parse(dateInString);
+    }
+
+    /**
+     * Convert date to string in dd-MM-yyyy format
+     */
+    public String convertDateToString(final Date date) {
+        return DATE_FORMAT.format(date);
     }
 
     /**
