@@ -50,6 +50,7 @@ package org.egov.ptis.domain.repository.vacancyremission;
 import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
+import org.egov.ptis.domain.entity.property.VacancyRemissionApproval;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -86,4 +87,7 @@ public interface VacancyRemissionRepository extends JpaRepository<VacancyRemissi
     
     @Query("select vr from VacancyRemission vr where vr.applicationNumber=:appNo")
     VacancyRemission getVRByApplicationNo(@Param("appNo") String name);
+    
+    @Query("select vra from VacancyRemissionApproval vra where vra.vacancyRemission=:vacancyRemission order by vra.id desc ")
+    List<VacancyRemissionApproval> getLatestVacancyApproval(@Param("vacancyRemission") Object name); 
 }
