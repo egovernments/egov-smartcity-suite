@@ -741,7 +741,7 @@ public class VacancyRemissionService {
         return reportOutput;
     }
 
-    public VacancyRemissionApproval getFinlaApprovalDate(VacancyRemission vacancyRemission){
+    public VacancyRemissionApproval getLatestVacancyRemissionApproval(VacancyRemission vacancyRemission){
     	final List<VacancyRemissionApproval> approvedList = vacancyRemissionRepository
                 .getLatestVacancyApproval(vacancyRemission);
     	VacancyRemissionApproval vacancyRemissionApproval=null;
@@ -793,7 +793,7 @@ public class VacancyRemissionService {
             BigDecimal halfYearTax = currentDemand.get(CURR_SECONDHALF_DMD_STR);
             BigDecimal newTax = BigDecimal.ZERO;
             financialYear = propertyTaxUtil.getFinancialYearforDate(new Date());
-            final Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(getFinlaApprovalDate(vacancyRemission).getApprovalDate());
+            final Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(getLatestVacancyRemissionApproval(vacancyRemission).getApprovalDate());
             final Installment installmentFirstHalf = installmentMap.get(CURRENTYEAR_FIRST_HALF);
             final Installment installmentSecondHalf = installmentMap.get(CURRENTYEAR_SECOND_HALF);
             Ptdemand currPtDemand = getCurrentPTDemand(installmentFirstHalf, vacancyRemission.getBasicProperty().getActiveProperty().getPtDemandSet());
@@ -828,7 +828,7 @@ public class VacancyRemissionService {
     }
 
     private boolean isApprovedInFirstHalf(VacancyRemission vacancyRemission, final Installment installmentFirstHalf) {
-        return DateUtils.between(getFinlaApprovalDate(vacancyRemission).getApprovalDate(),
+        return DateUtils.between(getLatestVacancyRemissionApproval(vacancyRemission).getApprovalDate(),
                 installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate());
     }
 
