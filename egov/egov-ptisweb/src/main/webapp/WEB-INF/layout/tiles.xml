@@ -619,4 +619,16 @@
         <put-attribute name="page-title" value="lbl.aadhar.approve" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/aadharseeding/aadharseeding-approvalform.jsp"/>
     </definition>
+    <definition name="courtVerdict-form" extends="base_layout">
+       <put-attribute name="page-title" value="lbl.cv.courtVerdict" cascade="true"/>
+       <put-attribute name="body" value="/WEB-INF/views/transactions/courtverdict/courtverdict-form.jsp"/>
+    </definition>
+    <definition name="courtVerdict-success" extends="base_layout">
+       <put-attribute name="page-title" value="lbl.cv.courtVerdict" cascade="true"/>
+       <put-attribute name="body" value="/WEB-INF/views/transactions/courtverdict/courtverdict-success.jsp"/>
+    </definition>
+    <definition name="courtVerdict-view" extends="base_layout">
+       <put-attribute name="page-title" value="lbl.cv.courtVerdict" cascade="true"/>
+       <put-attribute name="body" value="/WEB-INF/views/transactions/courtverdict/courtverdict-view.jsp"/>
+    </definition>
 </tiles-definitions> 

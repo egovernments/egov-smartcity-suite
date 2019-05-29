@@ -47,9 +47,26 @@
  */
 package org.egov.ptis.web.controller.common;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_MIXED;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.property.AmalgamatedPropInfo;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
@@ -64,18 +81,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_MIXED;
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND_STR;
-
 @Controller
 @RequestMapping(value = "/common")
 public class AjaxCommonController {
@@ -88,6 +93,9 @@ public class AjaxCommonController {
 
     @Autowired
     private PropertyUsageService propertyUsageService;
+
+    @Autowired
+	private PropertyTypeMasterDAO propTyprMasterDAO;
 
     /**
      * Provides the details of the property for amalgamation
@@ -180,4 +188,16 @@ public class AjaxCommonController {
         return propUsageList;
     }
 
+    @RequestMapping(value = "/getcategorybypropertytype", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<String, String> getCategoryByPropertyType(@RequestParam("propType") final String propType) {
+    	Map<String, String> propTypeCategoryMap = new TreeMap<>();
+        
+        if (propType.equals(OWNERSHIP_TYPE_VAC_LAND))
+            propTypeCategoryMap.putAll(VAC_LAND_PROPERTY_TYPE_CATEGORY); 
+        else 
+            propTypeCategoryMap.putAll(NON_VAC_LAND_PROPERTY_TYPE_CATEGORY);
+        
+        return propTypeCategoryMap;
+    }
 }

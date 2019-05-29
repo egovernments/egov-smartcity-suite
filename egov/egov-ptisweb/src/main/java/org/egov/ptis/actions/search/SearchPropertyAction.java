@@ -152,6 +152,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @Result(name = APPLICATION_TYPE_ADD_DEMAND, type = "redirectAction", location = "addDemand-newAddForm", params = {
                 "namespace", "/edit", "propertyId", "${assessmentNum}" }),
         @Result(name = APPLICATION_TYPE_EDIT_COLLECTION, type = "redirect", location = "../editCollection/editForm/${assessmentNum}"),
+        @Result(name = APPLICATION_TYPE_COURT_VERDICT, type = "redirect", location = "../courtVerdict/viewForm/${assessmentNum}"),
         @Result(name = APPLICATION_TYPE_DEMOLITION, type = "redirect", location = "../property/demolition/${assessmentNum}/${applicationSource}", params = {
                 "meesevaApplicationNumber", "${meesevaApplicationNumber}" }),
         @Result(name = APPLICATION_TYPE_EDIT_OWNER, type = "redirect", location = "../editowner/${assessmentNum}", params = {
@@ -1019,7 +1020,11 @@ public class SearchPropertyAction extends SearchFormAction {
         setApplicationType(APPLICATION_TYPE_EDIT_COLLECTION);
         return commonForm();
     }
-
+    @Action(value = "/search/searchproperty-courtverdict")
+    public String courtVerdict() {
+        setApplicationType(APPLICATION_TYPE_COURT_VERDICT);
+        return commonForm();
+    }
     @Action(value = "/search/searchproperty-editdemand")
     public String editDemand() {
         setApplicationType(APPLICATION_TYPE_EDIT_DEMAND);

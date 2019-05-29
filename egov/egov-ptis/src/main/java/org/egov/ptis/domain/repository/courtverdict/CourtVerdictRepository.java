@@ -45,19 +45,13 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.ptis.domain.repository.courtcase;
+package org.egov.ptis.domain.repository.courtverdict;
 
-import java.util.List;
-
-import org.egov.ptis.domain.entity.property.PropertyCourtCase;
+import org.egov.ptis.domain.entity.property.CourtVerdict;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PropertyCourtCaseRepository extends JpaRepository<PropertyCourtCase, Long> {
+public interface CourtVerdictRepository extends JpaRepository<CourtVerdict, Long> {
 
-	public List<PropertyCourtCase> findByAssessmentNo(String assessmentNo);
-	
-	public PropertyCourtCase getByAssessmentNo(String assessmentNo);
-	
 }

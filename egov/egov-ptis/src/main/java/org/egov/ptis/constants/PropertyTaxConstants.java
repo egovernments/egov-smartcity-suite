@@ -1328,6 +1328,7 @@ public interface PropertyTaxConstants {
     public static final String APPLICATION_TYPE_EDIT_MOBILE_NO = "Edit_mobileno";
     public static final String APPLICATION_TYPE_EDIT_DOOR_NO = "Edit_doorno";
     public static final String APPLICATION_TYPE_EDIT_COLLECTION = "Edit_Collection";
+    public static final String APPLICATION_TYPE_COURT_VERDICT = "Court_Verdict";
     public static final String APPLICATION_TYPE_MODIFY_DATA_ENTRY = "Edit_Data_Entry";
     public static final String APPLICATION_TYPE_MEESEVA_GRP = "Meeseva_General_Revision_Petition";
     public static final String APPLICATION_TYPE_MEESEVA_RP = "Meeseva_Revision_Petition";
@@ -1431,6 +1432,7 @@ public interface PropertyTaxConstants {
     public static final String NATURE_REGISTERED_TRANSFER = "Registered Transfer";
     public static final String NATURE_FULL_TRANSFER = "Full Transfer";
     public static final String NATURE_PARTIAL_TRANSFER = "Partial Transfer";
+    public static final String NATURE_COURT_VERDICT = "Court Verdict";
     public static final String CITY_GRADE_CORPORATION = "Corp";
     public static final String VACANTLAND_MIN_CUR_CAPITALVALUE = "500";
     public static final String WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING = "UD Revenue Inspector Approval Pending";

@@ -89,6 +89,11 @@ public class PropertyCourtCaseService {
         return propertyCourtCaseRepository.findByAssessmentNo(assessmentNo);
     }
     
+    @ReadOnly
+    public PropertyCourtCase getByAssessmentNo(String assessmentNo) {
+        return propertyCourtCaseRepository.getByAssessmentNo(assessmentNo);
+    }
+    
     public void addModelAttributes(final Model model, BasicProperty basicProperty) {
 		String ownerName = "";
         List<PropertyOwnerInfo> ownerInfoList = basicProperty.getPropertyOwnerInfo();

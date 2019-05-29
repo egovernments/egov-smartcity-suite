@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<%--
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -45,38 +44,53 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
-  -->
-<!DOCTYPE hibernate-mapping PUBLIC
-   "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+  --%>
 
-<hibernate-mapping>
-	<class name="org.egov.ptis.domain.entity.property.PropertyTypeMaster"
-		table="EGPT_PROPERTY_TYPE_MASTER" mutable="false">
-		<id name="id" column="ID" type="java.lang.Long">
-			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-				<param name="sequence_name">PK_EGPT_PROPERTYTYPE_MASTER</param>
-			</generator>
-		</id>
-		<property name="createdDate" type="java.util.Date">
-			<column name="CREATED_DATE" not-null="true" />
-		</property>
-		<property name="modifiedDate" type="java.util.Date">
-			<column name="MODIFIED_DATE" not-null="true" />
-		</property>
-		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User"
-			cascade="all">
-			<column name="CREATED_BY" />
-		</many-to-one>
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User"
-			cascade="all">
-			<column name="MODIFIED_BY" />
-		</many-to-one>
-		<property name="type" column="PROPERTY_TYPE" type="string" />
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<style>
+body {
+	font-family: regular !important;
+	font-size: 14px;
+}
+</style>
+<script
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
+<script
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 
-		<property name="factor" column="TYPE_FACTOR" type="float" />
-		<property name="code" column="CODE" type="string" />
-		<property name="orderNo" column="ORDERNO" type="integer" />
+<div class="row" id="page-content">
+	<div class="col-md-12">
+		<div class="panel" data-collapsed="0">
+			<div class="panel-body">
+				<form:form method="post"
+					class="form-horizontal form-groups-bordered"
+					modelAttribute="courtVerdict" id="courtVerdictAckForm">
+					<div class="panel panel-primary" data-collapsed="0">
+						<div class="panel-heading">
+							<div class="panel-title" style="text-align: center;">
+								<strong>${successMessage}</strong>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="text-center">
+							<c:if test="${showAckBtn}">
+								<a href="/ptis/courtverdict/printAck/${propertyId}"
+									class="btn btn-default">Generate Acknowledgment</a>
+							</c:if>
+							<a href="javascript:void(0)" class="btn btn-default"
+								onclick="self.close()"><spring:message code="lbl.close" /></a>
+						</div>
+					</div>
+				</form:form>
+			</div>
+		</div>
+	</div>
+</div>
 
-	</class>
-</hibernate-mapping>

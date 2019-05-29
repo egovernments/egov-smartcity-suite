@@ -119,6 +119,14 @@
          <constructor-arg index="0" ref="vacancyRemissionPersistenceService"/>
     </bean>
     
+    <bean id="courtVerdictPersistenceService" parent="abstractPersistenceService">
+        <constructor-arg name="type" value="org.egov.ptis.domain.entity.property.CourtVerdict" />
+    </bean>
+    
+    <bean id="CourtVerdictInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+         <constructor-arg index="0" ref="courtVerdictPersistenceService"/>
+    </bean>
+    
     <bean id="vacancyRemissionApprovalPersistenceService" parent="abstractPersistenceService">
         <constructor-arg name="type" value="org.egov.ptis.domain.entity.property.VacancyRemissionApproval" />
     </bean>

@@ -377,6 +377,19 @@ public class PropertyTaxCommonUtils {
         }
         return wfInitiatorAssignment;
     }
+    public Assignment getWorkflowInitiatorAsRO(final Long userId) {
+        Assignment wfInitiatorAssignment = null;
+        if (userId != null) {
+            final List<Assignment> assignmentList = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(userId);
+            for (final Assignment assignment : assignmentList)
+                if (assignment.getDesignation().getName().equals(PropertyTaxConstants.REVENUE_OFFICER_DESGN)
+                        && assignment.getEmployee().isActive()) {
+                    wfInitiatorAssignment = assignment;
+                    break;
+                }
+        }
+        return wfInitiatorAssignment;
+    }
 
     public String getCurrentHalfyearTax(final HashMap<Installment, TaxCalculationInfo> instTaxMap,
                                         final PropertyTypeMaster propTypeMstr) {

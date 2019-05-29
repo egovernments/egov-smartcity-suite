@@ -45,61 +45,79 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.ptis.web.controller.transactions.courtverdict;
 
-package org.egov.ptis.web.controller.transactions.courtcase;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_COURT_VERDICT;
+
+import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
-import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.domain.entity.property.PropertyCourtCase;
-import org.egov.ptis.master.service.PropertyCourtCaseService;
+import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.ptis.domain.entity.property.CourtVerdict;
+import org.egov.ptis.domain.service.courtverdict.CourtVerdictService;
+import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 
 @Controller
-@RequestMapping(value = "/markascourtcase/{assessmentNo}")
-public class MarkAsCourtCaseController {
-
-    protected static final String MARKASCOURTCASE_FROM = "markAsCourtCase-form";
-    protected static final String MARKASCOURTCASE_SUCCESS = "markascourtcase-success";
-    private static final String ERROR_MSG = "errorMsg";
+@RequestMapping("/courtVerdict/update/{id}")
+public class UpdateCourtVerdictController extends GenericWorkFlowController {
 
     @Autowired
-    private BasicPropertyDAO basicPropertyDAO;
-
+    private CourtVerdictService courtVerdictService;
     @Autowired
-    private PropertyCourtCaseService propertyCourtcaseService;
-    
+    private PropertyService propertyService;
+    @Autowired
+    private SecurityUtils securityUtils;
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    @Autowired
+    private PropertyService propService;
+
+    @ModelAttribute
+    public CourtVerdict courtVerdictModel(@PathVariable Long id) {
+        return courtVerdictService.getCourtVerdictById(id);
+
+    }
+
     @GetMapping
-    public String newForm(@ModelAttribute final PropertyCourtCase propertyCourtCase, final Model model,
-            @PathVariable String assessmentNo) {
-        BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-        propertyCourtcaseService.addModelAttributes(model, basicProperty);
-        propertyCourtCase.setAssessmentNo(assessmentNo);
-        model.addAttribute("propertyCourtCase", propertyCourtCase);
-        model.addAttribute(ERROR_MSG, "");
-        return MARKASCOURTCASE_FROM;
-    }
+    public String view(@ModelAttribute CourtVerdict courtVerdict, Model model, HttpServletRequest request) {
+        boolean citizenPortalUser = false;
 
-    @PostMapping
-    public String updateOwnerDetails(@ModelAttribute final PropertyCourtCase propertyCourtCase,
-            final RedirectAttributes redirectAttrs, final BindingResult errors, final Model model,
-            final HttpServletRequest request, @RequestParam String caseNo) {
-            propertyCourtCase.setCaseNo(caseNo);      
-        	propertyCourtcaseService.save(propertyCourtCase);
-            return MARKASCOURTCASE_SUCCESS;
-        
-    }
+        User loggedInUser = securityUtils.getCurrentUser();
+        citizenPortalUser = propertyService.isCitizenPortalUser(loggedInUser);
+        List<HashMap<String, Object>> historyMap;
 
+        model.addAttribute("courtVerdict", courtVerdict);
+        model.addAttribute("property", courtVerdict.getProperty());
+        model.addAttribute("citizenPortalUser", citizenPortalUser);
+        model.addAttribute("currentState", courtVerdict.getCurrentState().getValue());
+        model.addAttribute("transactionType", APPLICATION_TYPE_COURT_VERDICT);
+        model.addAttribute("stateAwareId", courtVerdict.getId());
+        model.addAttribute("stateType", courtVerdict.getClass().getSimpleName());
+        model.addAttribute("endorsementNotices",
+                propertyTaxCommonUtils.getEndorsementNotices(courtVerdict.getApplicationNumber()));
+        model.addAttribute("loggedUserIsEmployee", propertyService.isEmployee(loggedInUser));
+        prepareWorkflow(model, courtVerdict, new WorkflowContainer());
+
+        if (courtVerdict.getId() != null && courtVerdict.getState() != null) {
+            historyMap = propService.populateHistory(courtVerdict);
+            model.addAttribute("historyMap", historyMap);
+            model.addAttribute("state", courtVerdict.getState());
+        }
+
+        return "courtVerdict-view";
+
+    }
 }

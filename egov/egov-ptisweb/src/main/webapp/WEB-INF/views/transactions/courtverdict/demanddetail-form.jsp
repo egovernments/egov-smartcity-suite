@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<%--
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -45,38 +44,59 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
-  -->
-<!DOCTYPE hibernate-mapping PUBLIC
-   "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+  --%>
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-primary" data-collapsed="0"
+			style="text-align: left">
+			<div class="panel-heading">
+				<div class="panel-title">
+					<spring:message code="lbl.cv.dmndDet" />
+				</div>
+			</div>
+			<div class="panel-body">
+				<div align="center"
+					class="overflow-x-scroll floors-tbl-freeze-column-div">
+					<table class="table table-bordered" width="100%" id="demandDetails">
+						<tr>
+							<th class="bluebgheadtd"><spring:message
+									code="lbl.cv.instlmnt" /></th>
+							<th class="bluebgheadtd">Tax Name</th>
+							<th class="bluebgheadtd"><spring:message
+									code="lbl.cv.dmndAmt" /></th>
+							<th class="bluebgheadtd"><spring:message
+									code="lbl.cv.uncolldmndAmt" /></th>
+							<th class="bluebgheadtd"><spring:message
+									code="lbl.cv.collection" /></th>
+							<th class="bluebgheadtd"><spring:message
+									code="lbl.cv.adjustAmt" /></th>
+						</tr>
+						<c:forEach items="${dmndDetails}" var="demandDetails"
+							varStatus="status">
 
-<hibernate-mapping>
-	<class name="org.egov.ptis.domain.entity.property.PropertyTypeMaster"
-		table="EGPT_PROPERTY_TYPE_MASTER" mutable="false">
-		<id name="id" column="ID" type="java.lang.Long">
-			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-				<param name="sequence_name">PK_EGPT_PROPERTYTYPE_MASTER</param>
-			</generator>
-		</id>
-		<property name="createdDate" type="java.util.Date">
-			<column name="CREATED_DATE" not-null="true" />
-		</property>
-		<property name="modifiedDate" type="java.util.Date">
-			<column name="MODIFIED_DATE" not-null="true" />
-		</property>
-		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User"
-			cascade="all">
-			<column name="CREATED_BY" />
-		</many-to-one>
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User"
-			cascade="all">
-			<column name="MODIFIED_BY" />
-		</many-to-one>
-		<property name="type" column="PROPERTY_TYPE" type="string" />
+							<tr>
+								<td class="greybox">
+									<c:if
+										test="${dmndDetails[status.index].installment.id == dmndDetails[status.index-1].installment.id}">
+									&nbsp;
+									</c:if> <c:if
+										test="${dmndDetails[status.index].installment.id != dmndDetails[status.index-1].installment.id}">
+									
+										${demandDetails.installment}
+										
+								</c:if>
+								</td>
+								<td class="greybox">${demandDetails.reasonMaster}</td>
+								<td class="greybox">${demandDetails.actualAmount}</td>
+								<td class="greybox"><input align="center" type="text" style="width:80%" path="demandDetailBeanList[${status.index }].revisedAmount"/></td>
+								<td class="greybox">${demandDetails.actualCollection}</td>
+								<td class="greybox"><input align="center" type="text" style="width:80%" path="demandDetailBeanList[${status.index }].revisedCollection" /></td>
 
-		<property name="factor" column="TYPE_FACTOR" type="float" />
-		<property name="code" column="CODE" type="string" />
-		<property name="orderNo" column="ORDERNO" type="integer" />
-
-	</class>
-</hibernate-mapping>
+							</tr>
+						</c:forEach>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
