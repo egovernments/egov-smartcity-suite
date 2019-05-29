@@ -48,55 +48,50 @@
 
 package org.egov.restapi.web.rest;
 
-import static java.lang.String.format;
-import static org.egov.restapi.constants.RestApiConstants.JSON_CONVERSION_ERROR_CODE;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.restapi.model.ETransactionRequest;
 import org.egov.restapi.model.ETransactionResponse;
 import org.egov.restapi.service.ETransactionService;
 import org.egov.restapi.util.JsonConvertor;
-import org.egov.restapi.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
- * Controller to Publish(Read-only) electronic transaction statistics
+ * Controller to Publish(Read-only) electronic transaction statistics See:
+ * {@link #getETransactionStatistics(ETransactionRequest, HttpServletResponse)}
  */
 @RestController
+@SuppressWarnings("unused")
 public class RestETransactionController {
 
     public static final String API_STATISTICS = "/public/transaction/statistics";
-    public static final String PARAM_FROM_DATE = "fromDate";
-    public static final String PARAM_TO_DATE = "toDate";
-    public static final String PARAM_ULB_CODE = "ulbCode";
     private static final Logger LOGGER = Logger.getLogger(RestETransactionController.class);
 
     @Autowired
     ETransactionService eTransactionService;
-
-    @Autowired
-    ValidationUtil validationUtil;
 
     /**
      * Formats a JSON representing the Errors
@@ -113,6 +108,13 @@ public class RestETransactionController {
             JsonObject jsonError = new JsonObject();
             jsonError.addProperty("key", validationError.getKey());
             jsonError.addProperty("message", validationError.getMessage());
+            String args[] = validationError.getArgs();
+            int args_i = 0;
+            if (args.length % 2 == 0) {
+                while (args_i < args.length) {
+                    jsonError.addProperty(args[args_i++], args[args_i++]);
+                }
+            }
             validationErrorList.add(jsonError);
         }
         errorObject.addProperty("type", "validation_error");
@@ -122,97 +124,51 @@ public class RestETransactionController {
         return resultObject.toString();
     }
 
-    /**
-     * Parses Input JSON and return a date range as {@code Pair<Date, Date>}, also validate ulbCode against
-     * ApplicationThreadLocals
-     * @param requestJson JSON string containing PARAM_ULB_CODE, PARAM_FROM_DATE & PARAM_TO_DATE keys
-     * @return pair/tuple of (fromDate, toDate)
-     */
-    private Pair<Date, Date> parseRequestAndGetDateRange(String requestJson) {
-        List<ValidationError> validationErrorList = new ArrayList<>(3);
-        JsonParser parser = new JsonParser();
-        JsonElement jsonElement = parser.parse(requestJson);
-        validationUtil.validateRequiredFields(validationErrorList, jsonElement, PARAM_ULB_CODE, PARAM_FROM_DATE, PARAM_TO_DATE);
+    @ExceptionHandler(Throwable.class)
+    @SuppressWarnings("unused")
+    public ResponseEntity<String> handleAllException(Throwable ex) {
+        ResponseEntity.BodyBuilder bodyBuilder = ResponseEntity
+                .badRequest()
+                .contentType(MediaType.APPLICATION_JSON);
+        if (ex instanceof ValidationException) {
+            return bodyBuilder.body(makeValidationErrorJson((ValidationException) ex));
+        } else if (ex instanceof MethodArgumentNotValidException) {
+            MethodArgumentNotValidException manve = (MethodArgumentNotValidException) ex;
+            BindingResult bindingResult = manve.getBindingResult();
 
-        Date fromDate = null;
-        Date toDate = null;
+            List<ObjectError> objectErrorList = bindingResult.getAllErrors();
+            List<ValidationError> veList = new ArrayList<>(objectErrorList.size());
+            ValidationException ve = new ValidationException(veList);
 
-        if (validationErrorList.isEmpty()) {
-            try {
-                JsonObject requestObject = jsonElement.getAsJsonObject();
-                String ulbCode = requestObject.get(PARAM_ULB_CODE).getAsString().trim();
-                String fromDateString = requestObject.get(PARAM_FROM_DATE).getAsString();
-                String toDateString = requestObject.get(PARAM_TO_DATE).getAsString();
-
-                fromDate = validationUtil.convertStringToDate(fromDateString);
-                toDate = validationUtil.convertStringToDate(toDateString);
-
-                if (fromDate.equals(toDate)) {
-                    fromDate = DateUtils.startOfDay(fromDate);
-                    toDate = DateUtils.endOfDay(toDate);
+            for (ObjectError oe : objectErrorList) {
+                if (oe instanceof FieldError) {
+                    FieldError fe = (FieldError) oe;
+                    veList.add(new ValidationError(fe.getField(), fe.getDefaultMessage(), "code", oe.getCode()));
+                } else {
+                    veList.add(new ValidationError(oe.getObjectName(), oe.getDefaultMessage(), "code", oe.getCode()));
                 }
-                // Cap toDate to now
-                Date now = DateUtils.now();
-                if (org.apache.commons.lang3.time.DateUtils.isSameDay(toDate, now)) {
-                    toDate = now;
-                }
-
-                validationUtil.validateETransactionRequest(validationErrorList, ulbCode, fromDate, toDate);
-
-            } catch (ParseException ex) {
-                validationErrorList.add(new ValidationError("INVALID_DATE", "Expected date in dd-MM-yyyy format"));
-            } catch (Exception ex) {
-                LOGGER.error("Unforeseen error while parsing input JSON", ex);
-                validationErrorList.add(new ValidationError("CODE_ERROR", "An unknown error has occured"));
             }
+            return bodyBuilder.body(makeValidationErrorJson(ve));
+        } else {
+            LOGGER.warn("An unknown exception caught", ex);
+            return bodyBuilder.body(
+                    "{\"message\": \"An Error Occurred\", \"error\": \"" + ex.getMessage().replaceAll("[\"]", "\\\\\"") + "\"}");
         }
-
-        if (!validationErrorList.isEmpty()) {
-            throw new ValidationException(validationErrorList);
-        }
-
-        // IMPORTANT! fromDate & toDate is not null in this line.
-        // After line 140 (fromDate==null && toDate==null) and validationErrorList.isEmpty() are exclusive
-        return Pair.of(fromDate, toDate);
     }
 
     @RequestMapping(value = API_STATISTICS, method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public String getETransactionStatistics(@RequestBody final String requestJson,
+    @SuppressWarnings("unused")
+    public String getETransactionStatistics(@Valid @RequestBody final ETransactionRequest request,
             final HttpServletResponse response) {
 
-        List<ETransactionResponse> tnxInfoList;
-        try {
-
-            Pair<Date, Date> fromToDatePair = parseRequestAndGetDateRange(requestJson);
-
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(format("parsed dates; from: %s, to: %s", fromToDatePair.getFirst(), fromToDatePair.getSecond()));
-            }
-
-            tnxInfoList = eTransactionService.getETransactionCount(fromToDatePair.getFirst(), fromToDatePair.getSecond());
-
-        } catch (JsonSyntaxException syntaxEx) {
-
-            if (LOGGER.isInfoEnabled())
-                LOGGER.info(format("JSON Syntax Error: %s; requestJson: %s Error: %s",
-                        API_STATISTICS,
-                        requestJson,
-                        syntaxEx.getMessage()));
-            // Not throwing as we may not need to catch & log same error twice
-            return makeValidationErrorJson(
-                    new ValidationException(new ValidationError(JSON_CONVERSION_ERROR_CODE, "Invalid JSON")));
-        } catch (ValidationException validationEx) {
-
-            if (LOGGER.isInfoEnabled())
-                LOGGER.info(format("ValidationException: %s, requestJson: %s  Error: %s",
-                        API_STATISTICS,
-                        requestJson,
-                        validationEx.getErrors()));
-
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return makeValidationErrorJson(validationEx);
+        Date fromDate = request.getParsedFromDate();
+        Date toDate = request.getParsedToDate();
+        if(fromDate.equals(toDate)) {
+            toDate = DateUtils.endOfDay(toDate);
         }
+        return JsonConvertor
+                .convert(eTransactionService.getETransactionCount(fromDate, toDate));
 
-        return JsonConvertor.convert(tnxInfoList);
     }
+
 }
