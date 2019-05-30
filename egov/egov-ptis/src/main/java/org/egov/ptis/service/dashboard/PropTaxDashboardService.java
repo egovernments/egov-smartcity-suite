@@ -68,6 +68,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.infra.admin.master.entity.es.CityIndex;
@@ -79,10 +80,13 @@ import org.egov.ptis.bean.dashboard.*;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.service.property.CollectionAchievementsService;
+import org.egov.ptis.scheduler.CollectionAchievementsJob;
 import org.egov.ptis.service.es.CollectionIndexElasticSearchService;
 import org.egov.ptis.service.es.PropertyTaxElasticSearchIndexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * Service to provide APIs for CM Dashboard
@@ -108,6 +112,11 @@ public class PropTaxDashboardService {
     
     @Autowired
     private CollectionAchievementsService collectionAchievementsService;
+    
+    @Autowired
+    private TransactionTemplate transactionTemplate;
+    
+    private static final Logger LOGGER = Logger.getLogger(CollectionAchievementsJob.class);
 
     /**
      * Gives the State-City information across all ULBs
@@ -369,9 +378,21 @@ public class PropTaxDashboardService {
      * @param currFinYear
      */
     public void pushAchievements() {
+    	LOGGER.error("entering pushAchievements method");
         List<TaxPayerDetails> taxPayersList = prepareDataToLoadAchievementsIndex();
-        for (TaxPayerDetails taxPayerDetails : taxPayersList)
-            collectionAchievementsService.createAchievementsIndex(taxPayerDetails);
+        for (TaxPayerDetails taxPayerDetails : taxPayersList){
+                  final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
+                  txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+                  try {
+                      txTemplate.execute(result -> {
+                    	  collectionAchievementsService.createAchievementsIndex(taxPayerDetails);
+                          return Boolean.TRUE;
+                      });
+                  } catch (final Exception e) {
+                      LOGGER.error("Error while pushing data to CollectionAchievements index " + e);
+                  }
+              }
+            
     }
     
     /**
