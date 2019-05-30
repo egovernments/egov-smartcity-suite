@@ -81,7 +81,8 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
 /**
- * Controller to Publish(Read-only) electronic transaction statistics
+ * Controller to Publish(Read-only) electronic transaction statistics See:
+ * {@link #getETransactionStatistics(String, HttpServletResponse)}
  */
 @RestController
 public class RestETransactionController {
@@ -137,7 +138,7 @@ public class RestETransactionController {
         Date fromDate = null;
         Date toDate = null;
 
-        if (validationErrorList.isEmpty()) {
+        if (validationErrorList.isEmpty())
             try {
                 JsonObject requestObject = jsonElement.getAsJsonObject();
                 String ulbCode = requestObject.get(PARAM_ULB_CODE).getAsString().trim();
@@ -147,17 +148,10 @@ public class RestETransactionController {
                 fromDate = validationUtil.convertStringToDate(fromDateString);
                 toDate = validationUtil.convertStringToDate(toDateString);
 
-                if (fromDate.equals(toDate)) {
-                    fromDate = DateUtils.startOfDay(fromDate);
-                    toDate = DateUtils.endOfDay(toDate);
-                }
-                // Cap toDate to now
-                Date now = DateUtils.now();
-                if (org.apache.commons.lang3.time.DateUtils.isSameDay(toDate, now)) {
-                    toDate = now;
-                }
+                // set toDate to endOfDay of that date time
+                toDate = DateUtils.endOfDay(toDate);
 
-                validationUtil.validateETransactionRequest(validationErrorList, ulbCode, fromDate, toDate);
+                eTransactionService.validateETransactionRequest(validationErrorList, ulbCode, fromDate, toDate);
 
             } catch (ParseException ex) {
                 validationErrorList.add(new ValidationError("INVALID_DATE", "Expected date in dd-MM-yyyy format"));
@@ -165,14 +159,9 @@ public class RestETransactionController {
                 LOGGER.error("Unforeseen error while parsing input JSON", ex);
                 validationErrorList.add(new ValidationError("CODE_ERROR", "An unknown error has occured"));
             }
-        }
 
-        if (!validationErrorList.isEmpty()) {
+        if (!validationErrorList.isEmpty())
             throw new ValidationException(validationErrorList);
-        }
-
-        // IMPORTANT! fromDate & toDate is not null in this line.
-        // After line 140 (fromDate==null && toDate==null) and validationErrorList.isEmpty() are exclusive
         return Pair.of(fromDate, toDate);
     }
 
@@ -185,9 +174,8 @@ public class RestETransactionController {
 
             Pair<Date, Date> fromToDatePair = parseRequestAndGetDateRange(requestJson);
 
-            if (LOGGER.isDebugEnabled()) {
+            if (LOGGER.isDebugEnabled())
                 LOGGER.debug(format("parsed dates; from: %s, to: %s", fromToDatePair.getFirst(), fromToDatePair.getSecond()));
-            }
 
             tnxInfoList = eTransactionService.getETransactionCount(fromToDatePair.getFirst(), fromToDatePair.getSecond());
 

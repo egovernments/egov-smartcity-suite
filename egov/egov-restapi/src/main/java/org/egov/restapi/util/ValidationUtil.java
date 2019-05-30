@@ -72,8 +72,6 @@ import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.ptis.client.service.calculator.APTaxCalculator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -97,7 +95,6 @@ import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.master.service.PropertyUsageService;
 import org.egov.ptis.master.service.StructureClassificationService;
-import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.AssessmentRequest;
 import org.egov.restapi.model.AssessmentsDetails;
 import org.egov.restapi.model.CreatePropertyDetails;
@@ -160,7 +157,7 @@ public class ValidationUtil {
 
     /**
      * Validates Property Transfer request
-     * 
+     *
      * @param propertyTransferDetails
      * @return
      */
@@ -649,7 +646,7 @@ public class ValidationUtil {
     }
 
     /*
-     * Appends ValidationError to @param errorList
+     * @param errorList Appends ValidationError to errorList
      */
     public void validateRequiredFields(final List<ValidationError> errorList, final JsonElement object, final String... keys) {
         if (!object.isJsonObject()) {
@@ -657,44 +654,13 @@ public class ValidationUtil {
             return;
         }
         JsonObject jsonObject = object.getAsJsonObject();
-        for (final String key : keys) {
-            if (!jsonObject.has(key)) {
+        for (final String key : keys)
+            if (jsonObject.has(key)) {
+                JsonElement valueElement = jsonObject.get(key);
+                if (valueElement.isJsonNull() || StringUtils.isEmpty(valueElement.getAsString()))
+                    errorList.add(new ValidationError("NO_NULL_KEY", "Key \"" + key + "\" must not be null or blank"));
+            } else
                 errorList.add(new ValidationError("MISSING_KEY", "Required \"" + key + "\""));
-            }
-            JsonElement valueElement = jsonObject.get(key);
-            if (valueElement.isJsonNull()) {
-                errorList.add(new ValidationError("NO_NULL_KEY", "Key \"" + key + "\" must not be null"));
-            }
-        }
-    }
-
-    /*
-     * Appends ValidationError to @param errorList
-     */
-    public void validateETransactionRequest(final List<ValidationError> errorList, String ulbCode, Date fromDate, Date toDate) {
-        if (StringUtils.isBlank(ulbCode)) {
-            errorList.add(new ValidationError("NO_EMPTY_FIELD", RestApiConstants.THIRD_PARTY_ERR_CODE_ULBCODE_NO_REQ_MSG));
-        } else if (!ApplicationThreadLocals.getCityCode().equals(ulbCode)) {
-            errorList.add(new ValidationError(RestApiConstants.THIRD_PARTY_ERR_CODE_ULBCODE_NO_REQUIRED, "Invalid ULB Code"));
-        }
-
-        if (DateUtils.compareDates(fromDate, toDate)) {
-            errorList.add(new ValidationError("INVALID_DATE_RANGE", "toDate must be greater or equal to fromDate"));
-        }
-        Date endOfToday = DateUtils.endOfToday().toDate();
-        Date maxDate;
-        String maxDateParam;
-        if (DateUtils.compareDates(fromDate, toDate)) {
-            maxDate = fromDate;
-            maxDateParam = "fromDate";
-        } else {
-            maxDate = toDate;
-            maxDateParam = "toDate";
-        }
-        if (!maxDate.equals(endOfToday) && DateUtils.compareDates(maxDate, endOfToday)) {
-            errorList.add(new ValidationError("NO_FUTURE_DATE", String.format("%s(%s) must be less or equal to today (%s)",
-                    maxDateParam, convertDateToString(maxDate), convertDateToString(endOfToday))));
-        }
     }
 
     /**
@@ -706,9 +672,8 @@ public class ValidationUtil {
     public Date convertStringToDate(final String dateInString) throws ParseException {
 
         Matcher matcher = DATE_PATTERN.matcher(dateInString);
-        if (!matcher.matches()) {
+        if (!matcher.matches())
             throw new ParseException("Invalid date", 0);
-        }
         return DATE_FORMAT.parse(dateInString);
     }
 

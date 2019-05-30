@@ -58,7 +58,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.ETransactionResponse;
+import org.egov.restapi.util.ValidationUtil;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -98,16 +103,18 @@ public class ETransactionService {
     private static final Map<String, Pair<Long, String>> FIELD_NAME_TO_SID_DESCRIPTION_MAP = new HashMap<String, Pair<Long, String>>(
             35) {
 
+        private static final long serialVersionUID = 8214999325840656456L;
+
         {
             put("Complaint", Pair.of(1L, "Number of complaint registered"));
-            put("Collection", Pair.of(2L, "Number of payment collected"));
+            put("Collection", Pair.of(2L, "Number of online payment collected"));
             put("Marriage Registration - CERTIFICATEISSUE", Pair.of(3L, "Marriage Registration - Certificate Issue"));
             put("Marriage Registration - REGISTRATION", Pair.of(4L, "Marriage Registration Fee Collection"));
             put("PT Mutation Fee", Pair.of(5L, "PT Mutation Fee Collection"));
             put("Property Tax (On Land)", Pair.of(6L, "Property Tax (On Land) Collection"));
-            put("Property Tax - Alter_Assessment", Pair.of(7L, "Property Tax - Alter Assessment"));
+            put("Property Tax - Alter_Assessment", Pair.of(7L, "Property Tax - Alter Assessment Application"));
             put("Property Tax - Amalgamation", Pair.of(8L, "Property Tax - Amalgamation Application"));
-            put("Property Tax - Bifuracate_Assessment", Pair.of(9L, "Property Tax - Bifuracate Assessment"));
+            put("Property Tax - Bifuracate_Assessment", Pair.of(9L, "Property Tax - Bifuracate Assessment Application"));
             put("Property Tax - Demolition", Pair.of(10L, "Property Tax - Demolition Application"));
             put("Property Tax - General_Revision_Petition", Pair.of(11L, "Property Tax - General Revision Petition Application"));
             put("Property Tax - New_Assessment", Pair.of(12L, "New Assessment of Property Tax Application"));
@@ -130,6 +137,7 @@ public class ETransactionService {
                     Pair.of(28L, "Water Charges - Regularization connection Application"));
             put("Water Charges", Pair.of(29L, "Water Charges Collection  Application"));
             put("Water Estimation Charges", Pair.of(30L, "Water Estimation Charges Collection Application"));
+            put("Advertisement Tax - Advertisement", Pair.of(31L, "Advertisement Tax Application"));
         }
     };
 
@@ -137,6 +145,9 @@ public class ETransactionService {
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
+
+    @Autowired
+    ValidationUtil validationUtil;
 
     private AggregationBuilder<?> getApplicationsAggregation(Date fromDate, Date toDate) {
         return AggregationBuilders
@@ -254,6 +265,30 @@ public class ETransactionService {
         extractIntoList(tnxInfoList, receipts);
         Collections.sort(tnxInfoList);
         return tnxInfoList;
+    }
+
+    /*
+     * @param errorList Appends ValidationError to errorList
+     */
+    public void validateETransactionRequest(final List<ValidationError> errorList, String ulbCode, Date fromDate, Date toDate) {
+
+        if (DateUtils.compareDates(fromDate, toDate))
+            errorList.add(new ValidationError("INVALID_DATE_RANGE", "toDate must be greater or equal to fromDate"));
+        Date endOfToday = DateUtils.endOfToday().toDate();
+
+        if (toDate.after(endOfToday))
+            errorList.add(new ValidationError("NO_FUTURE_DATE",
+                    String.format("%s(%s) must be less or equal to today (%s)",
+                            "toDate", validationUtil.convertDateToString(toDate),
+                            validationUtil.convertDateToString(endOfToday))));
+        if (fromDate.after(endOfToday))
+            errorList.add(new ValidationError("NO_FUTURE_DATE",
+                    String.format("%s(%s) must be less or equal to today (%s)",
+                            "fromDate", validationUtil.convertDateToString(fromDate),
+                            validationUtil.convertDateToString(endOfToday))));
+        if (!ApplicationThreadLocals.getCityCode().equals(ulbCode))
+            errorList.add(
+                    new ValidationError(RestApiConstants.THIRD_PARTY_ERR_CODE_ULBCODE_NO_REQUIRED, "Invalid ULB Code"));
     }
 
 }
