@@ -52,7 +52,8 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div id="dcbError" class="errorstyle" style="color: red"></div>
-<form:form name="SearchRequest" role="form" action="" modelAttribute="DCBVLTReport" id="workProgressRegisterSearchRequest"
+<form:form name="SearchRequest" role="form" action=""
+	modelAttribute="DCBVLTReport" id="workProgressRegisterSearchRequest"
 	class="form-horizontal form-groups-bordered">
 	<div class="row">
 		<div class="col-md-12">
@@ -63,26 +64,44 @@
 					</div>
 				</div>
 				<input type="hidden" name="mode" id="mode" value="${mode}" />
-			    <input type="hidden" name="boundaryId" id="boundaryId" value="" />
-			    <input type="hidden" name="selectedModeBndry" id="selectedModeBndry" value="" />
+				<!-- 			    <input type="hidden" name="boundaryId" id="boundaryId" value="" /> -->
+				<!-- 			    <input type="hidden" name="selectedModeBndry" id="selectedModeBndry" value="" /> -->
+				<input type="hidden" name="drillDownType" id="drillDownType"
+					value="" /> <input type="hidden" name="selectedModeBndry"
+					id="selectedModeBndry" value="" /> <input type="hidden"
+					name="revenueWardName" id="revenueWardName" value="" />
+
 				<div class="panel-body">
 					<div class="form-group">
-						<label class="col-sm-3 control-label text-right">
-						<spring:message code="lbl.ward" /></label>
+						<label class="col-sm-3 control-label text-right"> <spring:message
+								code="lbl.fin.year" /> :<span class="mandatory1">*</span>
+						</label>
 						<div class="col-sm-3 add-margin">
-							<form:select path="" data-first-option="false" id="wardId" class="form-control">
-								<form:option value="">
-									<spring:message code="lbl.select" />
-								</form:option>
-								<form:options items="${wards}" />
+							<form:select path="" id="year" class="form-control">
+								<form:options items="${year}" itemValue="finYearRange"
+									itemLabel="finYearRange" />
 							</form:select>
 						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-3 control-label text-right">
-						<spring:message	code="lbl.courtcases" /></label>
-						<div class="col-sm-3 add-margin">
-							<form:checkbox path="" name="courtCase" id="courtCase" value="%{courtCase}" onclick="checkCourtCase(this);" />
+						<div class="form-group">
+							<label class="col-sm-3 control-label text-right"> <spring:message
+									code="lbl.ward" /></label>
+							<div class="col-sm-3 add-margin">
+								<form:select path="" id="wardId" class="form-control">
+									<form:option value="">
+										<spring:message code="lbl.default.all" />
+									</form:option>
+									<form:options items="${wards}" itemValue="name"
+										itemLabel="name" />
+								</form:select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label text-right"> <spring:message
+									code="lbl.courtcases" /></label>
+							<div class="col-sm-3 add-margin">
+								<form:checkbox path="" name="courtCase" id="courtCase"
+									value="%{courtCase}" onclick="checkCourtCase(this);" />
+							</div>
 						</div>
 					</div>
 				</div>
@@ -90,6 +109,6 @@
 		</div>
 	</div>
 </form:form>
-<jsp:include page="dcbreportvlt-searchresult.jsp" />
+<jsp:include page="dcbreport-searchresult.jsp" />
 <script type="text/javascript"
 	src="<cdn:url value='/resources/js/app/dcbreportvlt.js?rnd=${app_release_no}'/>"></script>

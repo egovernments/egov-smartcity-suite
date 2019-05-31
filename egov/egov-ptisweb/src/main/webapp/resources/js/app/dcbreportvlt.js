@@ -55,229 +55,251 @@
  */
 
 var reportdatatable;
-jQuery(document).ready(function() { 
+jQuery(document).ready(function() {
 	drillDowntableContainer = jQuery("#tbldcbdrilldown");
 	jQuery('#report-backbutton').hide();
 	setDefaultCourtCaseValue();
 	jQuery('#btnsearch').click(function(e) {
-		$("#dcbError").hide();
-		if(jQuery('#wardId').val()==""){
-			$("#dcbError").html('Please select ward');
-			$("#dcbError").show();
-			return false;
-		}
+		//		$("#dcbError").hide();
+		//		if(jQuery('#wardId').val()==""){
+		//			$("#dcbError").html('Please select ward');
+		//			$("#dcbError").show();
+		//			return false;
+		//		}
+		jQuery('#mode').val('ward');
+		jQuery('#revenueWardName').val('');
 		callAjaxByBoundary();
 	});
-	
+
 	jQuery('#backButton').click(function(e) {
-		var temp=jQuery('#selectedModeBndry').val();
-		var valArray=temp.split('-');
-		if(jQuery('#mode').val()=='property'){
-			if(valArray.length>0){
-				var propVal=valArray[1].split('~');
-				if(propVal.length>0){
+		var temp = jQuery('#selectedModeBndry').val();
+		var valArray = temp.split('-');
+		if (jQuery('#mode').val() == 'property') {
+			if (valArray.length > 0) {
+				var propVal = valArray[1].split('~');
+				if (propVal.length > 0) {
 					jQuery('#mode').val(propVal[0]);
-					jQuery('#boundaryId').val(propVal[1]);
+					jQuery('#drillDownType').val(propVal[1]);
 				}
 				jQuery('#selectedModeBndry').val(valArray[0]);
 			}
-		} else if(jQuery('#mode').val()=='block'){
-			if(valArray.length>0){
-				var blockVal=valArray[0].split('~');
-				if(blockVal.length>0){
+		} else if (jQuery('#mode').val() == 'block') {
+			if (valArray.length > 0) {
+				var blockVal = valArray[0].split('~');
+				if (blockVal.length > 0) {
 					jQuery('#mode').val(blockVal[0]);
-					jQuery('#boundaryId').val(blockVal[1]);
+					jQuery('#drillDownType').val(blockVal[1]);
 				}
 				jQuery('#selectedModeBndry').val('');
+				jQuery('#revenueWardName').val('');
 			}
-		} 
-		callAjaxByBoundary(); 
+		}
+		callAjaxByBoundary();
 	});
 
 });
 
 function setHiddenValueByLink(obj, param) {
-	jQuery('input[name=' + jQuery(obj).data('hiddenele') + ']')
-	.val(jQuery(obj).data('eleval'));   
-	if(param.value=='property'){
-		window.open("../view/viewDCBProperty-displayPropInfo.action?propertyId="+jQuery('#boundaryId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
-	} else{
-	  if(param.value=='ward'){
+	jQuery('input[name=' + jQuery(obj).data('hiddenele') + ']').val(
+			jQuery(obj).data('eleval'));
+	if (param.value == 'property') {
+		window.open(
+				"../view/viewDCBProperty-displayPropInfo.action?propertyId="
+						+ jQuery('#boundaryId').val(), '',
+				'scrollbars=yes,width=1000,height=700,status=yes');
+	} else {
+		if (param.value == 'ward') {
 			jQuery('#mode').val("block");
-		} else if(param.value=='block'){ 
-			jQuery('#mode').val("property");   
-		} 
-		callAjaxByBoundary(); 
+			jQuery('#revenueWardName').val(jQuery(obj).data('eleval'));
+		} else if (param.value == 'block') {
+			jQuery('#mode').val("property");
+		}
+		callAjaxByBoundary();
 	}
 }
 
-function setDefaultCourtCaseValue(){
-	checkCourtCase(document.getElementById("courtCase")); 
+function setDefaultCourtCaseValue() {
+	checkCourtCase(document.getElementById("courtCase"));
 }
 
-function checkCourtCase(obj){
-	if(obj.checked == true)
+function checkCourtCase(obj) {
+	if (obj.checked == true)
 		document.getElementById("courtCase").value = 'true';
 	else
 		document.getElementById("courtCase").value = 'false';
 }
 
 function callAjaxByBoundary() {
-	var modeVal = "";
+	var temp = "";
+	var modeVal = jQuery('#mode').val();
 	var boundary_Id = "";
-	var temp="";
-	var propTypes = "";
+	var ward_id = "";
+	var block_id = "";
 	var courtCase = false;
-	propTypes = jQuery('#propTypes').val();
-	courtCase = jQuery('#courtCase').val(); 
-	modeVal = jQuery('#mode').val();
+	courtCase = jQuery('#courtCase').val();
+	var year = jQuery('#year').val();
+	//	var propertyType = jQuery('#propertyType').val();
 
-	var columnsDefinition = [{
-        "data": function (row, type, set, meta) {
-            if (modeVal != 'property') {
-                return { name: row.boundaryName, id: row.boundaryId };
-            }
-            else {
-                return { name: row.assessmentNo, id: row.assessmentNo };
-            }
-        },
-        "render": function (data, type, row) {
-            return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,mode);" data-hiddenele="boundaryId" data-eleval="'
-                + data.id + '">' + data.name + '</a>';
-        },
-        "sTitle": "Name"
-    }, {
-        "data": "houseNo",
-        "sTitle": "Door No"
-    }, {
-        "data": "ownerName",
-        "sTitle": "Owner Name"
-    }, {
-        "data": "assessmentCount",
-        "sTitle": "Assessment Count"
-    }, {
-        "data": "dmnd_arrearPT",
-        "sTitle": "Arrear Property Tax"
-    }, {
-        "data": "dmnd_arrearPFT",
-        "sTitle": "Penalty On Arrear"
-    }, {
-        "data": "dmnd_arrearTotal",
-        "sTitle": "Arrear Total"
-    }, {
-        "data": "dmnd_currentPT",
-        "sTitle": "Current Property Tax"
-    }, {
-        "data": "dmnd_currentPFT",
-        "sTitle": "Penalty On Current"
-    }, {
-        "data": "dmnd_currentTotal",
-        "sTitle": "Current Total"
-    }, {
-        "data": "totalDemand",
-        "sTitle": "Total Demand"
-    }, {
-        "data": "clctn_arrearPT",
-        "sTitle": "Arrear Property Tax"
-    }, {
-        "data": "clctn_arrearPFT",
-        "sTitle": "Penalty On Arrear"
-    }, {
-        "data": "clctn_arrearTotal",
-        "sTitle": "Arrear Total"
-    }, {
-        "data": "clctn_currentPT",
-        "sTitle": "Current Property Tax"
-    }, {
-        "data": "clctn_currentPFT",
-        "sTitle": "Penalty On Current"
-    }, {
-        "data": "clctn_currentTotal",
-        "sTitle": "Current Total"
-    }, {
-        "data": "waivedOffPT",
-        "sTitle": "Waiver"
-    }, {
-        "data": "totalCollection",
-        "sTitle": "Total Collection"
-    }, {
-        "data": "bal_arrearPT",
-        "sTitle": "Arrear Property Tax"
-    }, {
-        "data": "bal_arrearPFT",
-        "sTitle": "Penalty On Arrear"
-    }, {
-        "data": "bal_currentPT",
-        "sTitle": "Current Property Tax"
-    }, {
-        "data": "bal_currentPFT",
-        "sTitle": "Penalty On Current"
-    }, {
-        "data": "totalPTBalance",
-        "sTitle": "Total PropertyTax Balance"
-    }];
-
-    var aTargetIndices = [];
-    for(var i = 3; i < columnsDefinition; i++) {
-        aTargetIndices.push(i);
-    }
-    // console.assert(aTargetIndices.length === [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23])
-    // console.assert(aTargetIndices[0] === 3)
-    // console.assert(aTargetIndices[aTargetIndices.length-1] === 23)
-
-	if(modeVal=='ward'){
+	if (modeVal == 'ward') {
 		boundary_Id = jQuery('#wardId').val();
-		temp=modeVal+"~"+boundary_Id;
+		temp = modeVal + "~" + boundary_Id;
 		jQuery('#selectedModeBndry').val(temp);
 		jQuery('#report-backbutton').hide();
-	}
-	else{
-		boundary_Id = jQuery('#boundaryId').val(); 
-		temp=jQuery('#selectedModeBndry').val()+"-"+modeVal+"~"+boundary_Id;
+	} else {
+		boundary_Id = jQuery('#drillDownType').val();
+		temp = jQuery('#selectedModeBndry').val() + "-" + modeVal + "~"
+				+ boundary_Id;
 		jQuery('#selectedModeBndry').val(temp);
 		jQuery('#report-backbutton').show();
+	}
+
+	if (modeVal == 'property') {
+		ward_id = jQuery('#revenueWardName').val();
+		block_id = boundary_Id;
+	} else {
+		ward_id = boundary_Id;
 	}
 	jQuery('.report-section').removeClass('display-hide');
 	jQuery('#report-footer').show();
 
-	
 	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "/ptis/report/dcbReportVLT/result",      
-					data : {
-						mode : modeVal,
-						boundaryId : boundary_Id, 
-						courtCase : courtCase,
-					}
+					url : "/ptis/report/dcbReportVLT/result",
+					"contentType" : "application/json",
+					"type" : "POST",
+					"data" : function(d) {
+						return JSON.stringify({
+							"yearIndex" : year,
+							"type" : modeVal,
+							"block" : block_id,
+							"revenueWard" : ward_id,
+							"propertyUsage" : "Vacant Land",
+							"isCourtCase" : courtCase
+						});
+					},
+					"dataSrc" : "yearWiseDCBResponse"
 				},
 				"bDestroy" : true,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
 				"oTableTools" : {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons" : [ 
-					               {
-						             "sExtends": "pdf",
-						             "sTitle": jQuery('#pdfTitle').val(),
-	                                 "sPdfMessage": "DCB Report",
-					                },
-					                {
-							             "sExtends": "xls",
-		                                 "sPdfMessage": "DCB Report",
-		                                 "sTitle": jQuery('#pdfTitle').val(),
-		                                 "fnClick": function ( nButton, oConfig, oFlash ) {
-	                            	    	 reCalculateTotalFooterWhenExport('tbldcbdrilldown');
-	                            		     this.fnSetText(oFlash, this.fnGetTableData(oConfig));
-	                            		 }
-						             },{
-							             "sExtends": "print",
-		                                 "sPdfMessage": "DCB Report",
-		                                 "sTitle": jQuery('#pdfTitle').html(),
-						               }],
-				},"fnRowCallback" : function(row, data, index) {
+					"aButtons" : [
+							{
+								"sExtends" : "pdf",
+								"sTitle" : jQuery('#pdfTitle').val(),
+								"sPdfMessage" : "DCB Report",
+							},
+							{
+								"sExtends" : "xls",
+								"sPdfMessage" : "DCB Report",
+								"sTitle" : jQuery('#pdfTitle').val(),
+								"fnClick" : function(nButton, oConfig, oFlash) {
+									reCalculateTotalFooterWhenExport('tbldcbdrilldown');
+									this.fnSetText(oFlash, this
+											.fnGetTableData(oConfig));
+								}
+							}, {
+								"sExtends" : "print",
+								"sPdfMessage" : "DCB Report",
+								"sTitle" : jQuery('#pdfTitle').html(),
+							} ],
 				},
-				columns : columnsDefinition,
+				"fnRowCallback" : function(row, data, index) {
+				},
+				columns : [
+						{
+							"data" : function(row, type, set, meta) {
+								if (modeVal != 'property') {
+									return {
+										name : row.boundaryName,
+										id : row.boundaryId
+									};
+								} else {
+									return {
+										name : row.assessmentNo,
+										id : row.assessmentNo
+									};
+								}
+							},
+							"render" : function(data, type, row) {
+								return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,mode);" data-hiddenele="drillDownType" data-eleval="'
+										+ row.drillDownType
+										+ '">'
+										+ row.drillDownType + '</a>';
+							},
+							"sTitle" : "Name"
+						}, {
+							"data" : "doorNo",
+							"sTitle" : "Door No"
+						}, {
+							"data" : "ownersName",
+							"sTitle" : "Owner Name"
+						}, {
+							"data" : "count",
+							"sTitle" : "Assessment Count"
+						}, {
+							"data" : "arrearDemand",
+							"sTitle" : "Arrear Property Tax"
+						}, {
+							"data" : "arrearPenDemand",
+							"sTitle" : "Penalty On Arrear"
+						}, {
+							"data" : "arrearTotalDemand",
+							"sTitle" : "Arrear Total"
+						}, {
+							"data" : "currentDemand",
+							"sTitle" : "Current Property Tax"
+						}, {
+							"data" : "currentPenDemand",
+							"sTitle" : "Penalty On Current"
+						}, {
+							"data" : "currentTotalDemand",
+							"sTitle" : "Current Total"
+						}, {
+							"data" : "totalDemand",
+							"sTitle" : "Total Demand"
+						}, {
+							"data" : "arrearCollection",
+							"sTitle" : "Arrear Property Tax"
+						}, {
+							"data" : "arrearPenCollection",
+							"sTitle" : "Penalty On Arrear"
+						}, {
+							"data" : "arrearTotalCollection",
+							"sTitle" : "Arrear Total"
+						}, {
+							"data" : "currentCollection",
+							"sTitle" : "Current Property Tax"
+						}, {
+							"data" : "currentPenCollection",
+							"sTitle" : "Penalty On Current"
+						}, {
+							"data" : "currentTotalCollection",
+							"sTitle" : "Current Total"
+						}, {
+							"data" : "totalCollection",
+							"sTitle" : "Total Collection"
+						}, {
+							"data" : "waivedoffAmount",
+							"sTitle" : "Waived off Amount"
+						}, {
+							"data" : "arrearBalance",
+							"sTitle" : "Arrear Property Tax"
+						}, {
+							"data" : "arrearPenBalance",
+							"sTitle" : "Penalty On Arrear"
+						}, {
+							"data" : "currentBalance",
+							"sTitle" : "Current Property Tax"
+						}, {
+							"data" : "currentPenBalance",
+							"sTitle" : "Penalty On Current"
+						}, {
+							"data" : "totalBalance",
+							"sTitle" : "Total PropertyTax Balance"
+						} ],
 				"footerCallback" : function(row, data, start, end, display) {
 					var api = this.api(), data;
 					if (data.length == 0) {
@@ -286,34 +308,30 @@ function callAjaxByBoundary() {
 						jQuery('#report-footer').show();
 					}
 					if (data.length > 0) {
-						for(var i=3;i<columnsDefinition.length; i++)
-						{
-						  updateTotalFooter(i, api);	
+						for (var i = 3; i <= 23; i++) {
+							updateTotalFooter(i, api);
 						}
 					}
-				}, 
+				},
 				"aoColumnDefs" : [ {
-					"aTargets" : aTargetIndices,
+					"aTargets" : [ 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+							16, 17, 18, 19, 20, 21, 22 ],
 					"mRender" : function(data, type, full) {
-						return formatNumberInr(data);    
+						return formatNumberInr(data);
 					}
 				} ]
 			});
-	
-			if(jQuery("#mode").val() === "property")
-			{
-				reportdatatable.fnSetColumnVis( 1, true );
-				reportdatatable.fnSetColumnVis( 2, true );
-				reportdatatable.fnSetColumnVis( 3, false );
-			}
-			else
-			{
-				reportdatatable.fnSetColumnVis( 1, false );
-				reportdatatable.fnSetColumnVis( 2, false );
-			}
-	
-}
 
+	if (jQuery("#mode").val() === "property") {
+		reportdatatable.fnSetColumnVis(1, true);
+		reportdatatable.fnSetColumnVis(2, true);
+		reportdatatable.fnSetColumnVis(3, false);
+	} else {
+		reportdatatable.fnSetColumnVis(1, false);
+		reportdatatable.fnSetColumnVis(2, false);
+	}
+
+}
 
 function updateTotalFooter(colidx, api) {
 	// Remove the formatting to get integer data for summation
@@ -323,7 +341,7 @@ function updateTotalFooter(colidx, api) {
 	};
 
 	// Total over all pages
-	total = api.column(colidx).data().reduce(function(a, b) { 
+	total = api.column(colidx).data().reduce(function(a, b) {
 		return intVal(a) + intVal(b);
 	});
 
@@ -336,10 +354,8 @@ function updateTotalFooter(colidx, api) {
 
 	// Update footer
 	jQuery(api.column(colidx).footer()).html(
-			formatNumberInr(pageTotal) + ' (' + formatNumberInr(total)
-					+ ')');
+			formatNumberInr(pageTotal) + ' (' + formatNumberInr(total) + ')');
 }
-
 
 //inr formatting number
 function formatNumberInr(x) {

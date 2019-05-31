@@ -113,6 +113,6 @@
 		</div>
 	</div>
 </form:form>
-<jsp:include page="dcbreportvlt-searchresult.jsp" />
+<jsp:include page="dcbreport-searchresult.jsp" />
 <script type="text/javascript"
-	src="<cdn:url value='/resources/js/app/yearwisedcbreport.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/app/dcbreportpt.js?rnd=${app_release_no}'/>"></script>

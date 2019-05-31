@@ -83,7 +83,7 @@ import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PTYearWiseDCBIndexService {
+public class YearWiseDCBIndexService {
 
     private static final String CATEGORY = "consumerType";
     private static final String ARREARDEMAND = "arrearDemand";
@@ -374,7 +374,8 @@ public class PTYearWiseDCBIndexService {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
                 .filter(QueryBuilders.matchQuery(CITY_CODE, ApplicationThreadLocals.getCityCode()));
         boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_UNDER_COURT, serviceRequest.getIsCourtCase()));
-        boolQuery = boolQuery.mustNot(QueryBuilders.termsQuery(CATEGORY, Arrays.asList(EWHS_CODE, VLT_CODE)));
+        if (StringUtils.isBlank(serviceRequest.getPropertyUsage()))
+            boolQuery = boolQuery.mustNot(QueryBuilders.termsQuery(CATEGORY, Arrays.asList(EWHS_CODE, VLT_CODE)));
         if (StringUtils.isNotBlank(serviceRequest.getPropertyUsage()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CATEGORY, serviceRequest.getPropertyUsage()));
         if (GROUP_TYPE_PROPERTY.equalsIgnoreCase(serviceRequest.getType()) && StringUtils.isNotBlank(serviceRequest.getBlock()))
