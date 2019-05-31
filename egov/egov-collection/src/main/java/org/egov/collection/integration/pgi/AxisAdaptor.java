@@ -471,4 +471,9 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
         return responseAxisMap;
     }
 
+    @Override
+    public PaymentResponse repayReconciliation(OnlinePayment onlinePayment) {
+        return createOfflinePaymentRequest(onlinePayment);
+    }
+
 }

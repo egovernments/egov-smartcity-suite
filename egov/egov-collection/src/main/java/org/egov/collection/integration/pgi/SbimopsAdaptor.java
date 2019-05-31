@@ -410,4 +410,9 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
             return CollectionConstants.PGI_AUTHORISATION_CODE_FAILED;
     }
 
+    @Override
+    public PaymentResponse repayReconciliation(OnlinePayment onlinePayment) {
+        return createOfflinePaymentRequest(onlinePayment);
+    }
+
 }

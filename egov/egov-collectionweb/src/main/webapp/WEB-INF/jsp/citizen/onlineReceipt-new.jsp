@@ -412,7 +412,15 @@ function onLoad(){
 	    document.getElementById("button2").disabled = true; // If any  transactions in pending statu then Disable the Pay Online button.
 	document.getElementById("bobcontent").style.display = 'none';
 	document.getElementById("bobcontent-title").style.display = 'none';    
+
 }
+
+function rePay(transactionid){
+	document.forms[0].repayTransactionId.value=transactionid;
+	document.forms[0].action="onlineReceipt-manualReconcile.action";
+	document.forms[0].submit;
+}
+
  </script>
 <style type="text/css">
 <!--
@@ -496,7 +504,9 @@ function onLoad(){
 										value="%{callbackForApportioning}"
 										name="callbackForApportioning" />
 									<s:hidden id="paymentServiceId" value="%{paymentServiceId}"
-										name="paymentServiceId" />
+										name="paymentServiceId" /> 
+								    <s:hidden id="repayTransactionId" value="%{repayTransactionId}"
+										name="repayTransactionId" /> 	
 									<s:hidden id="refNumber" value="%{refNumber}" name="refNumber" />
 									<s:hidden id="isTransactionPending"
 										value="%{isTransactionPending}" name="isTransactionPending" />
@@ -635,8 +645,50 @@ function onLoad(){
 											</div>
 										</td>
 									</tr>
-
-
+								<c:if test="${not empty penidngTransaction}">
+										<tr>
+										
+											<td width="100%" class="greyboxwithlink" colspan=2>
+											<table width="100%" cellpadding="0" cellspacing="0"
+												border="0" align="left">
+												<tr>
+													<td width="20%"><span class="boldblue"><s:text
+																name="onlineReceipt.transactionid" /></span></td>
+													<td width="20%"><span class="boldblue"><s:text
+																name="onlineReceipt.transaction.date" /></span></td>
+													<td width="20%"><span class="boldblue"><s:text
+																name="onlineReceipt.amount" /></span></td>
+													<td width="30%"><span class="boldblue"><s:text
+																name="onlineReceipts.status" /></span></td>
+													
+												</tr>
+												<s:iterator value="%{penidngTransaction}"
+												status="pendingTransaction">
+												<tr>
+														<td class="textholder"><s:property value="%{id}" /></td>
+														<td class="textholder"><s:date
+																		name='createdDate'
+																		format='dd/MM/yyyy' var="createddate" /> <s:property
+																		value="createddate" /></td>
+														<td class="textholder"><fmt:formatNumber
+																		value="${totalAmount}" pattern="#0.00" /></td>
+														<td class="textholder"><s:property
+																		value="%{status.description}" /></td>
+																					<div class="bottombuttonholder" align="middle">
+														
+																			
+														<td>
+														<input type="submit" class="buttonsubmit"  name="repay" id="repay"
+															value="Repay"  onclick='rePay(<s:property value="%{id}"/>);'/>	
+														<%-- 	<s:text name="onlineReceipt.repay" /> --%>
+														</td>				
+														<td width="10%">&nbsp;</td>
+												</tr>
+													</s:iterator>
+											</table>
+										</td>	
+										</c:if>
+								
 									<tr>
 										<!--td class="tablestyle">&nbsp;</td-->
 										<!--td class="tablestyle">&nbsp;</td-->
@@ -660,7 +712,7 @@ function onLoad(){
 												data-pattern="number" placeholder="0"
 												onkeyup="populateapportioningamountnew()"
 												onload="waterMarkInitialize('paymentAmount','0');" /></td>
-									</tr>
+									</tr> 
 
 									<td colspan="2"><span class="mandatory1 padding-5"><s:text
 												name="onlineReceipts.mandatoryfields" /></span></td>
@@ -818,8 +870,6 @@ bobexample.init()
 </script>
 	<script
 		src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
-	<script>
 </body>
-
 
 

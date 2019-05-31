@@ -62,6 +62,7 @@ import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.AccountPayeeDetail;
 import org.egov.collection.entity.BranchUserMap;
+import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptDetailInfo;
 import org.egov.collection.entity.ReceiptHeader;
@@ -825,6 +826,12 @@ public class CollectionCommon {
 
     public void setBranchUserMapService(final PersistenceService<BranchUserMap, Long> branchUserMapService) {
         this.branchUserMapService = branchUserMapService;
+    }
+
+    public PaymentResponse repayReconciliation(ServiceDetails paymentServiceDetails, OnlinePayment onlinePayment) {
+        final PaymentGatewayAdaptor paymentGatewayAdaptor = getPaymentGatewayAdaptor(paymentServiceDetails.getCode());
+
+        return paymentGatewayAdaptor.repayReconciliation(onlinePayment);
     }
 
     /**
