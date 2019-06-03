@@ -413,7 +413,7 @@ public class OnlineReceiptAction extends BaseFormAction {
      * If the online payment is pending, citizen can manually reconcile the transaction.
      * @return
      */
-    @Action(value = "/citizen/onlineReceipt-manualReconcile")
+    @Action(value = "/citizen/onlineReceipt-repay")
     public String repay() {
         if (null != receiptHeader && isNotBlank(receiptHeader.getConsumerCode())
                 && isNotBlank(receiptHeader.getService().getCode()))
@@ -421,7 +421,6 @@ public class OnlineReceiptAction extends BaseFormAction {
                     CollectionConstants.QUERY_ONLINE_PENDING_RECEIPTS_BY_CONSUMERCODE_AND_SERVICECODE,
                     receiptHeader.getService().getCode(),
                     receiptHeader.getConsumerCode(), CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
-        repayTransactionId = null;
         if (getRepayTransactionId() == null || penidngTransaction == null
                 || (getRepayTransactionId() != null && penidngTransaction
                         .stream().noneMatch(pendingReceipt -> pendingReceipt.getId().equals(getRepayTransactionId()))))

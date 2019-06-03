@@ -282,7 +282,6 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
             if (responseParameterMap != null && responseParameterMap.containsKey(SBIMOPS_STATUS.toUpperCase())) {
                 if (LOGGER.isInfoEnabled())
                     LOGGER.info("Sbimops reconciliation transaction response : " + responseParameterMap.toString());
-                LOGGER.error("SBIMOPSRECON Response:" + responseParameterMap.toString());
                 final String transactionStatus = responseParameterMap.get(SBIMOPS_STATUS.toUpperCase());
                 sbimopsResponse.setAuthStatus(getTransactionStatus(transactionStatus));
                 sbimopsResponse.setErrorDescription(transactionStatus);
@@ -350,7 +349,6 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
         final JsonObject requestJson = new JsonObject();
         deptCodeJson.add(SBIMOPS_ROW, transactionIdJson);
         requestJson.add(SBIMOPS_RECORDSET, deptCodeJson);
-        LOGGER.error("SBIMOPSRECON Request:" + transactionId.toString());
         if (LOGGER.isInfoEnabled())
             LOGGER.info("SBIMOPS reconciliation request parameters:" + requestJson.toString());
         return requestJson.toString();

@@ -84,7 +84,6 @@ public interface PaymentGatewayAdaptor {
 
     /**
      * Reconciling the pending online payment transaction
-     * @param service
      * @param onlinePayment
      * @return
      */
