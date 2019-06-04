@@ -316,11 +316,11 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         String nextDesignation;
         if (isNotBlank(workFlowAction)) {
             workflowContainer.setWorkFlowAction(workFlowAction);
-            final Assignment wfInitiator = registrationWorkflowService.getWorkFlowInitiator(marriageRegistration);
-            approverName = wfInitiator.getEmployee().getName();
-            nextDesignation = wfInitiator.getDesignation().getName();
             workflowContainer.setApproverComments(request.getParameter("approvalComent"));
             if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
+            	Assignment wfInitiator = registrationWorkflowService.getWorkFlowInitiator(marriageRegistration);
+                approverName = wfInitiator.getEmployee().getName();
+                nextDesignation = wfInitiator.getDesignation().getName();
                 marriageRegistrationService.rejectRegistration(marriageRegistration, workflowContainer);
                 if (Source.CHPK.name().equalsIgnoreCase(marriageRegistration.getSource()))
                     message = messageSource.getMessage("msg.reject.application",
