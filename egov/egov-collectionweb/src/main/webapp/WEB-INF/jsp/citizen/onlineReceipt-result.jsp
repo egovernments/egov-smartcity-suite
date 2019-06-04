@@ -85,7 +85,9 @@
 	<tr>
 			<td>Transaction Number : <s:property value="%{onlinePaymentReceiptHeader.onlinePayment.transactionNumber}" /></td>
 	</tr> -->
-			<s:if test="%{onlinePaymentReceiptHeader.id!==null }">
+			<s:if test="%{onlinePaymentReceiptHeader.id !=null
+			 && onlinePaymentReceiptHeader.status!=null 
+			 && onlinePaymentReceiptHeader.status.code=='APPROVED'}">
 
 				<div id="paymentInfo"
 					style="text-align: center; padding-bottom: 15px;">
