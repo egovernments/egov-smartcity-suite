@@ -319,7 +319,7 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
         sbimopsReconciliationCron.setJobDetail(jobDetail.getObject());
         sbimopsReconciliationCron.setGroup(COLLECTION_TRIGGER_GROUP);
         sbimopsReconciliationCron.setName(String.format("COLLECTION_SBIMOPS_RECON_%d_TRIGGER", modulo));
-        sbimopsReconciliationCron.setCronExpression("0 0/5 0-6 * * ?");
+        sbimopsReconciliationCron.setCronExpression("0 */50 0-6 * * ?");
         sbimopsReconciliationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
         return sbimopsReconciliationCron;
     }
