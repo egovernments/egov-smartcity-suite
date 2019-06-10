@@ -49,7 +49,9 @@
 package org.egov.stms.service;
 
 import org.egov.stms.entity.SewerageTaxDueDetails;
+import org.egov.stms.masters.entity.enums.PropertyType;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
+import org.egov.stms.transactions.entity.SewerageConnectionDetail;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
 import org.egov.stms.transactions.service.SewerageDemandService;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
@@ -61,6 +63,10 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.egov.stms.masters.entity.enums.PropertyType.MIXED;
+import static org.egov.stms.masters.entity.enums.PropertyType.RESIDENTIAL;
+
 
 @Service
 @Transactional(readOnly = true)
@@ -85,6 +91,7 @@ public class SewerageTaxService {
         if (sewerageList.isEmpty()) {
             sewerageTaxDue = new SewerageTaxDueDetails();
             sewerageTaxDue.setConnectionCount(0);
+            sewerageTaxDue.setNoOfClosets(0);
             sewerageTaxDue.setIsSuccess(false);
             sewerageTaxDue.setErrorCode(SewerageTaxConstants.PROPERTYID_NOT_EXIST_ERR_CODE);
             sewerageTaxDue.setErrorMessage(SewerageTaxConstants.STAXDETAILS_PROPERTYID_NOT_EXIST_ERR_MSG_PREFIX
@@ -92,8 +99,12 @@ public class SewerageTaxService {
         } else {
             sewerageTaxDue = new SewerageTaxDueDetails();
             final HashMap<String, String> consumerCodes = new HashMap<>();
+            Integer noOfClosets = 0;
             for (final SewerageApplicationDetails sewerageApplicationDetails : sewerageList)
                 if (sewerageApplicationDetails.getConnection().getShscNumber() != null) {
+                    SewerageConnectionDetail sewerageConnectionDetail = sewerageApplicationDetails.getConnectionDetail();
+                    PropertyType propertyType = sewerageConnectionDetail.getPropertyType();
+                    noOfClosets += getNoOfClosets(sewerageConnectionDetail, propertyType);
                     sewerageTaxDue = getDueInfo(sewerageApplicationDetails);
                     sewerageTaxDue.setPropertyID(propertyIdentifier);
                     consumerCodes.put(sewerageApplicationDetails.getApplicationType().getCode(),
@@ -106,7 +117,7 @@ public class SewerageTaxService {
                             .add(sewerageTaxDue.getCurrentInstDemand().setScale(2, BigDecimal.ROUND_HALF_UP));
                     totalDue = totalDue.add(sewerageTaxDue.getTotalTaxDue().setScale(2, BigDecimal.ROUND_HALF_UP));
                 }
-
+            sewerageTaxDue.setNoOfClosets(noOfClosets);
             sewerageTaxDue.setArrearDemand(arrDmd);
             sewerageTaxDue.setArrearCollection(arrColl);
             sewerageTaxDue.setCurrentDemand(currDmd);
@@ -125,6 +136,13 @@ public class SewerageTaxService {
                 sewerageTaxDue.setIsInWorkFlow(true);
 
         return sewerageTaxDue;
+    }
+
+    private int getNoOfClosets(SewerageConnectionDetail sewerageConnectionDetail, PropertyType propertyType) {
+        if (MIXED.equals(propertyType))
+            return sewerageConnectionDetail.getNoOfClosetsNonResidential() + sewerageConnectionDetail.getNoOfClosetsResidential();
+        return RESIDENTIAL.equals(propertyType) ? sewerageConnectionDetail.getNoOfClosetsResidential()
+                : sewerageConnectionDetail.getNoOfClosetsNonResidential();
     }
 
     private SewerageTaxDueDetails getDueInfo(final SewerageApplicationDetails sewerageApplicationDetails) {
