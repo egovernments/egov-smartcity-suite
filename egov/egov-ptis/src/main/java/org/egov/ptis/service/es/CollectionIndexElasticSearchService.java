@@ -48,6 +48,45 @@
 
 package org.egov.ptis.service.es;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
+import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_PT;
+import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_VLT;
+import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_WTMS;
+import static org.egov.ptis.constants.PropertyTaxConstants.COLLECTION_INDEX_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_BUILT_UP_PROPERTY_TYPES;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_DISTRICTWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_GRADEWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_REGIONWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_REVENUEINSPECTORWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_REVENUEOFFICERWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_ULBWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_WARDWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_PROPERTY_TYPE_BUILT_UP;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_PROPERTY_TYPE_COURTCASES;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_PROPERTY_TYPE_PRIVATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_USAGE_TYPE_ALL;
+import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_YYYYMMDD;
+import static org.egov.ptis.constants.PropertyTaxConstants.DAY;
+import static org.egov.ptis.constants.PropertyTaxConstants.MONTH;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_EWSHS;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.WEEK;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
@@ -88,19 +127,6 @@ import org.springframework.data.elasticsearch.core.ResultsExtractor;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 @Service
 public class CollectionIndexElasticSearchService {
@@ -190,9 +216,10 @@ public class CollectionIndexElasticSearchService {
      * @return BigDecimal
      */
     public BigDecimal getConsolidatedCollForYears(Date fromDate, Date toDate, String billingService) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
-                .must(QueryBuilders.rangeQuery(RECEIPT_DATE).gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
-                        .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
+                .must(QueryBuilders.rangeQuery(RECEIPT_DATE).gte(dateFormat.format(fromDate))
+                        .lte(dateFormat.format(toDate)).includeUpper(false))
                 .mustNot(QueryBuilders.matchQuery(STATUS, CANCELLED));
 
         if (COLLECION_BILLING_SERVICE_WTMS.equalsIgnoreCase(billingService))
@@ -411,10 +438,11 @@ public class CollectionIndexElasticSearchService {
      */
     public BigDecimal getCollectionBetweenDates(CollectionDetailsRequest collectionDetailsRequest, Date fromDate,
             Date toDate, String cityName, String wardName, String fieldName) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, COLLECTION_INDEX_NAME);
         boolQuery = boolQuery
-                .filter(QueryBuilders.rangeQuery(RECEIPT_DATE).gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
-                        .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
+                .filter(QueryBuilders.rangeQuery(RECEIPT_DATE).gte(dateFormat.format(fromDate))
+                        .lte(dateFormat.format(toDate)).includeUpper(false))
                 .mustNot(QueryBuilders.matchQuery(STATUS, CANCELLED));
         if (StringUtils.isNotBlank(cityName))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CITY_NAME, cityName));
@@ -1135,11 +1163,12 @@ public class CollectionIndexElasticSearchService {
      */
     public Map<String, BigDecimal> getCollectionAndDemandValues(CollectionDetailsRequest collectionDetailsRequest,
             Date fromDate, Date toDate, String indexName, String fieldName, String aggregationField) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, indexName);
         if (indexName.equals(COLLECTION_INDEX_NAME))
             boolQuery = boolQuery
-                    .filter(QueryBuilders.rangeQuery(RECEIPT_DATE).gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
-                            .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
+                    .filter(QueryBuilders.rangeQuery(RECEIPT_DATE).gte(dateFormat.format(fromDate))
+                            .lte(dateFormat.format(toDate)).includeUpper(false))
                     .mustNot(QueryBuilders.matchQuery(STATUS, CANCELLED));
         else
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_ACTIVE, true))
@@ -1179,11 +1208,12 @@ public class CollectionIndexElasticSearchService {
      */
     public StringTerms getIndividualCollections(CollectionDetailsRequest collectionDetailsRequest,
             Date fromDate, Date toDate, String indexName, String aggregationField) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, indexName);
         if (indexName.equals(COLLECTION_INDEX_NAME))
             boolQuery = boolQuery
-                    .filter(QueryBuilders.rangeQuery(RECEIPT_DATE).gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
-                            .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
+                    .filter(QueryBuilders.rangeQuery(RECEIPT_DATE).gte(dateFormat.format(fromDate))
+                            .lte(dateFormat.format(toDate)).includeUpper(false))
                     .mustNot(QueryBuilders.matchQuery(STATUS, CANCELLED));
         else
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_ACTIVE, true))
@@ -1391,10 +1421,11 @@ public class CollectionIndexElasticSearchService {
      */
     private Aggregations getMonthwiseCollectionsForConsecutiveYears(CollectionDetailsRequest collectionDetailsRequest,
             Date fromDate, Date toDate, boolean isForMISReports, String intervalType, String aggregationField) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
         AggregationBuilder aggregationBuilder;
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, COLLECTION_INDEX_NAME);
-        boolQuery = boolQuery.filter(QueryBuilders.rangeQuery(RECEIPT_DATE).gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
-                .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
+        boolQuery = boolQuery.filter(QueryBuilders.rangeQuery(RECEIPT_DATE).gte(dateFormat.format(fromDate))
+                .lte(dateFormat.format(toDate)).includeUpper(false))
                 .mustNot(QueryBuilders.matchQuery(STATUS, CANCELLED));
         //In case of MIS APIs, grouping will be done based on interval type
         if(isForMISReports){
@@ -1489,10 +1520,11 @@ public class CollectionIndexElasticSearchService {
      */
     private Long getTotalReceiptCountsForDates(CollectionDetailsRequest collectionDetailsRequest, Date fromDate,
             Date toDate) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, COLLECTION_INDEX_NAME);
         boolQuery = boolQuery
-                .filter(QueryBuilders.rangeQuery(RECEIPT_DATE).gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
-                        .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
+                .filter(QueryBuilders.rangeQuery(RECEIPT_DATE).gte(dateFormat.format(fromDate))
+                        .lte(dateFormat.format(toDate)).includeUpper(false))
                 .mustNot(QueryBuilders.matchQuery(STATUS, CANCELLED));
 
         SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(COLLECTION_INDEX_NAME)
@@ -1620,6 +1652,7 @@ public class CollectionIndexElasticSearchService {
      */
     private Aggregations getReceiptsCountForConsecutiveYears(CollectionDetailsRequest collectionDetailsRequest,
             Date fromDate, Date toDate) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, COLLECTION_INDEX_NAME);
         boolQuery = boolQuery.mustNot(QueryBuilders.matchQuery(STATUS, CANCELLED));
         AggregationBuilder monthAggregation = AggregationBuilders.dateHistogram(DATE_AGG).field(RECEIPT_DATE)
@@ -1628,8 +1661,8 @@ public class CollectionIndexElasticSearchService {
 
         SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(COLLECTION_INDEX_NAME)
                 .withQuery(boolQuery
-                        .filter(QueryBuilders.rangeQuery(RECEIPT_DATE).gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
-                                .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false)))
+                        .filter(QueryBuilders.rangeQuery(RECEIPT_DATE).gte(dateFormat.format(fromDate))
+                                .lte(dateFormat.format(toDate)).includeUpper(false)))
                 .addAggregation(monthAggregation).build();
 
         return  elasticsearchTemplate.query(searchQueryColl, new ResultsExtractor<Aggregations>() {
@@ -1744,11 +1777,12 @@ public class CollectionIndexElasticSearchService {
 
     public Map<String, BigDecimal> getCollectionAndDemandCountResults(CollectionDetailsRequest collectionDetailsRequest,
             Date fromDate, Date toDate, String indexName, String fieldName, String aggregationField) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, indexName);
         if (indexName.equals(COLLECTION_INDEX_NAME))
             boolQuery = boolQuery
-                    .filter(QueryBuilders.rangeQuery(RECEIPT_DATE).gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
-                            .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
+                    .filter(QueryBuilders.rangeQuery(RECEIPT_DATE).gte(dateFormat.format(fromDate))
+                            .lte(dateFormat.format(toDate)).includeUpper(false))
                     .mustNot(QueryBuilders.matchQuery(STATUS, CANCELLED));
         else if (indexName.equals(PROPERTY_TAX_INDEX_NAME))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_ACTIVE, true))
@@ -2147,8 +2181,9 @@ public class CollectionIndexElasticSearchService {
         String resultDateStr;
         List<String> daysInWeek = new ArrayList<>();
         Date weekStartDate = fromDate;
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
         for (int count = 0; count < 7; count++) {
-            daysInWeek.add(PropertyTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(weekStartDate));
+            daysInWeek.add(dateFormat.format(weekStartDate));
             weekStartDate = DateUtils.addDays(weekStartDate, 1);
         }
 

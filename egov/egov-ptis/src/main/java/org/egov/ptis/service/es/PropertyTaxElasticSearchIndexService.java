@@ -49,6 +49,7 @@
 package org.egov.ptis.service.es;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
+import static org.egov.ptis.constants.PropertyTaxConstants.COLLECTION_ACHIEVEMENTS_INDEX_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_CITYWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_DISTRICTWISE;
@@ -57,11 +58,11 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_RE
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_REVENUEINSPECTORWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_REVENUEOFFICERWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_WARDWISE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DATEFORMATTER_YYYY_MM_DD;
+import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_YYYYMMDD;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_NAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.COLLECTION_ACHIEVEMENTS_INDEX_NAME;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -1146,6 +1147,7 @@ public class PropertyTaxElasticSearchIndexService {
     }
     
     public Aggregations getDemandVarianceAggregations(final Boolean isprimaryDemand,CollectionDetailsRequest collectionDetailsRequest) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
         AggregationBuilder aggregation;
         BoolQueryBuilder boolQuery =filterByTypeForAggregation(collectionDetailsRequest);
         final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
@@ -1156,8 +1158,8 @@ public class PropertyTaxElasticSearchIndexService {
         if (!isprimaryDemand) {
             boolQuery = boolQuery
                     .filter(QueryBuilders.rangeQuery(DEMAND_DATE)
-                            .gte(DATEFORMATTER_YYYY_MM_DD.format(financialYear.getStartingDate()))
-                            .lte(DATEFORMATTER_YYYY_MM_DD.format(financialYear.getEndingDate())).includeUpper(false));
+                            .gte(dateFormat.format(financialYear.getStartingDate()))
+                            .lte(dateFormat.format(financialYear.getEndingDate())).includeUpper(false));
             aggregation = AggregationBuilders.terms(BY_TYPE).field(aggregationField)
                     .subAggregation(AggregationBuilders.terms(BY_APPLICATION).field(APPLICATION_TYPE)
                             .subAggregation(AggregationBuilders.sum(ARREAR_DEMAND).field(ARREAR_DEMAND))
@@ -1167,7 +1169,7 @@ public class PropertyTaxElasticSearchIndexService {
         } else {
             boolQuery = boolQuery
                     .filter(QueryBuilders.rangeQuery(DEMAND_DATE)
-                            .lt(DATEFORMATTER_YYYY_MM_DD.format(financialYear.getStartingDate())).includeUpper(false));
+                            .lt(dateFormat.format(financialYear.getStartingDate())).includeUpper(false));
             aggregation = AggregationBuilders.terms(BY_TYPE).field(aggregationField)
                     .subAggregation(AggregationBuilders.sum(ARREAR_DEMAND).field(ARREAR_DEMAND))
                     .subAggregation(AggregationBuilders.sum(CURRENT_DEMAND).field(CURRENT_DEMAND))

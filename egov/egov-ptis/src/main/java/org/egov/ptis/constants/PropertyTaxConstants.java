@@ -342,45 +342,35 @@ public interface PropertyTaxConstants {
     
 
     // TreeMap for Non Vacant Land types
-    public static final TreeMap<String, String> NON_VAC_LAND_PROPERTY_TYPE_CATEGORY = new TreeMap<String, String>() {
+    public static final Map<String, String> NON_VAC_LAND_PROPERTY_TYPE_CATEGORY = new TreeMap<String, String>() {
         private static final long serialVersionUID = -8758751964576480520L;
-
         {
-            put("RESIDENTIAL", "Residential");
-            put("NON_RESIDENTIAL", "Non Residential");
-            put("MIXED", "Mixed");
+            put(UNITTYPE_RESD, "Residential");
+            put(CATEGORY_NON_RESIDENTIAL, "Non Residential");
+            put(PROPTYPE_MIXED, "Mixed");
         }
     };
 
     // TreeMap for Vacant Land types
-    public static final HashMap<String, String> VAC_LAND_PROPERTY_TYPE_CATEGORY = new HashMap<String, String>() {
+    public static final Map<String, String> VAC_LAND_PROPERTY_TYPE_CATEGORY = new HashMap<String, String>() {
         private static final long serialVersionUID = 4641144830413085281L;
-
         {
-            put("VACANTLAND", "Private Land");
-            put("STATE_GOVT", "State Government Land");
-            put("CENTRAL_GOVT", "Central Government Land");
+            put(CATEGORY_VACANT_LAND, "Private Land");
+            put(OWNERSHIP_TYPE_STATE_GOVT, "State Government Land");
+            put(CATEGORY_CENTRAL_GOVT, "Central Government Land");
         }
     };
 
     public static final Map<String, String> PROPERTY_TYPE_CATEGORIES = new HashMap<String, String>() {
-        /**
-         * 
-         */
         private static final long serialVersionUID = 1L;
-
         {
             putAll(VAC_LAND_PROPERTY_TYPE_CATEGORY);
             putAll(NON_VAC_LAND_PROPERTY_TYPE_CATEGORY);
         }
     };
 
-    public static final TreeMap<String, String> DEVIATION_PERCENTAGE = new TreeMap<String, String>() {
-        /**
-         *
-         */
+    public static final Map<String, String> DEVIATION_PERCENTAGE = new TreeMap<String, String>() {
         private static final long serialVersionUID = 2705261617790275152L;
-
         {
             put("1-10%", "1-10%");
             put("11-25%", "11-25%");
@@ -494,7 +484,7 @@ public interface PropertyTaxConstants {
     public static final String DEMANDRSN_CODE_LIGHTINGTAX_PAYABLE = "LIGHTING TAX-LIGHT TAX";
 
     // HashMap for order of demand reasons to be set in bill
-    public static final HashMap<String, Integer> DEMAND_REASON_ORDER_MAP = new HashMap<String, Integer>() {
+    public static final Map<String, Integer> DEMAND_REASON_ORDER_MAP = new HashMap<String, Integer>() {
         private static final long serialVersionUID = -376251525790947906L;
 
         {
@@ -809,9 +799,10 @@ public interface PropertyTaxConstants {
                 add(glCode.getValue());
         }
     };
+    
     // List for GLCodes for Arrear Taxes
-    @SuppressWarnings("serial")
     public static final List<String> GLCODES_FOR_ARREARTAX = new ArrayList<String>() {
+        private static final long serialVersionUID = 1L;
         {
             for (final Map.Entry<String, String> glCode : GLCODEMAP_FOR_ARREARTAX.entrySet())
                 add(glCode.getValue());
@@ -819,8 +810,8 @@ public interface PropertyTaxConstants {
     };
 
     // HashMap map b/n Demand reason string and code
-    @SuppressWarnings("serial")
-    public static final LinkedHashMap<String, String> BUILTUP_PROPERTY_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
+    public static final Map<String, String> BUILTUP_PROPERTY_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
+        private static final long serialVersionUID = 1L;
         {
             put(DEMANDRSN_STR_GENERAL_TAX, DEMANDRSN_CODE_GENERAL_TAX);
             put(DEMANDRSN_STR_SCAVENGE_TAX, DEMANDRSN_CODE_SCAVENGE_TAX);
@@ -833,8 +824,8 @@ public interface PropertyTaxConstants {
         }
     };
 
-    @SuppressWarnings("serial")
-    public static final LinkedHashMap<String, String> VACANT_PROPERTY_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
+    public static final Map<String, String> VACANT_PROPERTY_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
+        private static final long serialVersionUID = 1L;
         {
             put(DEMANDRSN_STR_VACANT_TAX, DEMANDRSN_CODE_VACANT_TAX);
             put(DEMANDRSN_STR_LIBRARY_CESS, DEMANDRSN_CODE_LIBRARY_CESS);
@@ -870,8 +861,8 @@ public interface PropertyTaxConstants {
     public static final String DOCS_ADDRESS_CHANGE_PROPERTY = "PROPERTY ADDRESS CHANGE";
     public static final String DOCS_DEACTIVATE_PROPERTY = "DEACTIVATE";
 
-    @SuppressWarnings("serial")
     public static final Map<String, String> FLOOR_TYPES = new HashMap<String, String>() {
+        private static final long serialVersionUID = 1L;
         {
             put("Varandah", "Varandah");
             put("Loft", "Loft");
@@ -890,8 +881,8 @@ public interface PropertyTaxConstants {
 
     public static final Integer OPEN_PLOT_UNIT_FLOORNUMBER = -3;
 
-    @SuppressWarnings("serial")
     public static final Map<Integer, String> MONTHS_MAP = new TreeMap<Integer, String>() {
+        private static final long serialVersionUID = 1L;
         {
             put(JANUARY, "Jan");
             put(FEBRUARY, "Feb");
@@ -925,13 +916,13 @@ public interface PropertyTaxConstants {
     public static final String GLCODE_FOR_BIG_RESIDENTIAL_BLDG_TAX_CURRENT = ARREAR_DEMANDRSN_GLCODE;
     public static final String GLCODE_FOR_MUTATION_FEE = "1404009";
 
-    @SuppressWarnings("serial")
     public static final List<String> EDU_EGS_CESS_GLCODE_LIST = new ArrayList<String>() {
+        private static final long serialVersionUID = 1L;
         {
-            add("4312001");
-            add("4312002");
-            add("4312003");
-            add("4312004");
+            add(GLCODE_FOR_EDU_CESS_ARREARS);
+            add(GLCODE_FOR_EDU_CESS_CURRENT);
+            add(GLCODE_FOR_EGS_CESS_ARREARS);
+            add(GLCODE_FOR_EGS_CESS_CURRENT);
         }
     };
 
@@ -939,8 +930,8 @@ public interface PropertyTaxConstants {
 
     public static final String REPORT_START_DATE = "01/04/2012";
 
-    @SuppressWarnings("serial")
     public static final List<String> FLOORNO_WITH_DIFF_MULFACTOR_RESD = new ArrayList<String>() {
+        private static final long serialVersionUID = 1L;
         {
             add("-5");
             add("-4");
@@ -950,8 +941,8 @@ public interface PropertyTaxConstants {
         }
     };
 
-    @SuppressWarnings("serial")
     public static final List<String> FLOORNO_WITH_DIFF_MULFACTOR_NONRESD = new ArrayList<String>() {
+        private static final long serialVersionUID = 1L;
         {
             add("-5");
             add("-4");
@@ -983,8 +974,8 @@ public interface PropertyTaxConstants {
     public static final String AMP_ENCODED_STR = "&amp;";
     public static final String AMP_ACTUAL_STR = "&";
 
-    @SuppressWarnings("serial")
     public static final List<String> DEMAND_RSNS_LIST = new ArrayList<String>() {
+        private static final long serialVersionUID = 1L;
         {
             add(DEMANDRSN_CODE_GENERAL_TAX);
             add(DEMANDRSN_CODE_VACANT_TAX);
@@ -998,14 +989,14 @@ public interface PropertyTaxConstants {
         }
     };
 
-    @SuppressWarnings("serial")
     public static final Map<String, String> waterRates = new HashMap<String, String>() {
+        private static final long serialVersionUID = 1L;
         {
-            put("WATER_METER", "Water Meter");
-            put("GWR_IMPOSED", "GWR to be imposed");
-            put("GWR_NOT_IMPOSED", "GWR not to be imposed");
-            put("WATER_LINE_WITHOUT_METER", "Water Line Without Meter");
-            put("WATER_LINE_WITH_METER20", "Water line without meter 20 mm dia");
+            put(WATER_METER, "Water Meter");
+            put(GWR_IMPOSED, "GWR to be imposed");
+            put(GWR_NOT_IMPOSED, "GWR not to be imposed");
+            put(WATER_LINE_WITHOUT_METER, "Water Line Without Meter");
+            put(WATER_LINE_WITH_METER20, "Water line without meter 20 mm dia");
         }
     };
 
@@ -1082,8 +1073,8 @@ public interface PropertyTaxConstants {
     public static final String MUTATIONRS_REG_WILL="Registered Will Deed";
     public static final String CIVILCOURTDECREE="CIVILCOURTDECREE";
     
-    @SuppressWarnings("serial")
     public static final Map<String, String> SALUTATION = new HashMap<String, String>() {
+        private static final long serialVersionUID = 1L;
         {
             put("-1", "Select");
             put("Mr", "Mr");
@@ -1273,8 +1264,8 @@ public interface PropertyTaxConstants {
     public final static String PAID_BY = "paidBy";
 
     // Collection modes List
-    @SuppressWarnings("serial")
     public static final Map<Character, String> COLL_MODES_MAP = new HashMap<Character, String>() {
+        private static final long serialVersionUID = 1L;
         {
             put(COLLECTION_TYPE_COUNTER, "Counter");
             put(COLLECTION_TYPE_FIELDCOLLECTION, "Field");
@@ -1282,8 +1273,8 @@ public interface PropertyTaxConstants {
         }
     };
     
-    @SuppressWarnings("serial")
     public static final LinkedHashMap<String, String> HEARING_TIMINGS = new LinkedHashMap<String, String>() {
+        private static final long serialVersionUID = 1L;
         {
             put("9.00 AM", "9.00 AM");
             put("9.30 AM", "9.30 AM");
@@ -1432,7 +1423,6 @@ public interface PropertyTaxConstants {
     public static final String NATURE_REGISTERED_TRANSFER = "Registered Transfer";
     public static final String NATURE_FULL_TRANSFER = "Full Transfer";
     public static final String NATURE_PARTIAL_TRANSFER = "Partial Transfer";
-    public static final String NATURE_COURT_VERDICT = "Court Verdict";
     public static final String CITY_GRADE_CORPORATION = "Corp";
     public static final String VACANTLAND_MIN_CUR_CAPITALVALUE = "500";
     public static final String WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING = "UD Revenue Inspector Approval Pending";
@@ -1442,29 +1432,27 @@ public interface PropertyTaxConstants {
     public static final String WF_STATE_ADDITIONAL_MUNICIPAL_COMMISSIONER_APPROVAL_PENDING = "Additional Municipal Commissioner Approval Pending";
     public static final String WF_STATE_MUNICIPAL_COMMISSIONER_APPROVAL_PENDING = "Municipal Commissioner Approval Pending";
     public static final String WF_STATE_MUNICIPAL_COMMISSIONER_APPROVED = "Municipal Commissioner Approved";
-    
-
+    public static final String NATURE_COURT_VERDICT = "Court Verdict";
     public static final String NATURE_OF_USAGE_RESIDENCE = "Residence";
     public static final String GRADE_NAGAR_PANCHAYAT = "NP";
 
     // Tax Rates
 
-    @SuppressWarnings("serial")
     public static final Map<String, String> TAX_RATES = new HashMap<String, String>() {
-
+        private static final long serialVersionUID = 1L;
         {
-            put("VAC_LAND_TAX", "Vacant Land Tax");
-            put("EDU_TAX", "Education Tax");
+            put(DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_STR_VACANT_TAX);
+            put(DEMANDRSN_CODE_EDUCATIONAL_TAX, DEMANDRSN_STR_EDUCATIONAL_TAX);
             put("GEN_TAX_RESD", "General Tax Residential");
-            put("LIB_CESS", "Library Cess");
+            put(DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_STR_LIBRARY_CESS);
             put("GEN_TAX_NR", "General Tax Non Residential");
         }
     };
 
-    @SuppressWarnings("serial")
     public static final List<String> TAX_RATES_TEMP = new ArrayList<String>() {
+        private static final long serialVersionUID = 1L;
         {
-            add("PRIMARY_SER_CHRG");
+            add(DEMANDRSN_CODE_PRIMARY_SERVICE_CHARGES);
             add("SEW_TAX_RESD");
             add("SEW_TAX_NR");
 
@@ -1487,8 +1475,8 @@ public interface PropertyTaxConstants {
     public static final String WRITEOFF_REASON_NOT_TRACED = "Not traced";
     public static final String WRITEOFF_REASON_OTHER_REASONS = "Other reasons";
 
-    @SuppressWarnings("serial")
     public static final List<String> WRITEOFF_REASONS = new ArrayList<String>() {
+        private static final long serialVersionUID = 1L;
         {
             add(APPLICATION_TYPE_DEMOLITION);
             add(WRITEOFF_REASON_ROAD_WIDENING);
@@ -1503,10 +1491,7 @@ public interface PropertyTaxConstants {
     public static final String OWNERSHIP_TYPE_COURT_CASE = "COURT_CASE";
     public static final String OWNERSHIP_TYPE_COURT_CASE_STR = "Court case";
     public static final String OWNERSHIP_TYPE_PRIVATE_DEFAULTERS_STR = "Private(excluding court case)";
-    public static final TreeMap<String, String> OWNERSHIP_OF_PROPERTY_FOR_DEFAULTERS_REPORT = new TreeMap<String, String>() {
-        /**
-         *
-         */
+    public static final Map<String, String> OWNERSHIP_OF_PROPERTY_FOR_DEFAULTERS_REPORT = new TreeMap<String, String>() {
         private static final long serialVersionUID = -8758751964576480520L;
 
         {
@@ -1584,7 +1569,6 @@ public interface PropertyTaxConstants {
     public static final String PTYEARWISEDCBSTARTYEAR = "PTIS_YEAR_WISE_DCB_DATE";
 
     public static final String DATE_FORMAT_YYYYMMDD = "yyyy-MM-dd";
-    public static final SimpleDateFormat DATEFORMATTER_YYYY_MM_DD = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
 	
     public static final String DASHBOARD_GROUPING_DISTRICTWISE = "district";
     public static final String DASHBOARD_GROUPING_ULBWISE = "ulb";
@@ -1615,8 +1599,8 @@ public interface PropertyTaxConstants {
     public static final String APPCONFIG_REASSIGN = "PTIS_REASSIGN_REQUIRED";
     public static final String APPCONFIG_ENDORSEMENT = "PTIS_ENDORSEMENT_REQUIRED";
 
-    @SuppressWarnings("serial")
     public static final List<String> DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST = new ArrayList<String>() {
+        private static final long serialVersionUID = 1L;
         {
             add(OWNERSHIP_TYPE_CENTRAL_GOVT_333_STR);
             add(OWNERSHIP_TYPE_CENTRAL_GOVT_50_STR);
@@ -1624,8 +1608,8 @@ public interface PropertyTaxConstants {
         }
     };
     
-    @SuppressWarnings("serial")
     public static final List<String> DASHBOARD_BUILT_UP_PROPERTY_TYPES = new ArrayList<String>() {
+        private static final long serialVersionUID = 1L;
         {
             
             add(OWNERSHIP_TYPE_PRIVATE_STR);
@@ -1673,8 +1657,9 @@ public interface PropertyTaxConstants {
     public static final String REPORT_PUBLIC_WORSHIP_EXEMPTION_NOTICE = "mainPublicWorshipExemptionNotice";
     public static final String REPORT_OWNERSHIP_CERTIFICATE_MULTIPLE = "OwnershipCertificate_MultipleOwner";
     public static final String REPORT_OWNERSHIP_CERTIFICATE_SINGLE = "OwnershipCertificate_SingleOwner";
-    @SuppressWarnings("serial")
+    
     public static final List<String> RECOVERY_NOTICETYPES = new ArrayList<String>() {
+        private static final long serialVersionUID = 1L;
         {
             add(NOTICE_TYPE_ESD);
             add(NOTICE_TYPE_INVENTORY);
@@ -1684,8 +1669,7 @@ public interface PropertyTaxConstants {
             add(VALUATION_CERTIFICATE);
         }
     };
-    public static final List<String> ASSESSMENT_DOCUMENT_NAMES = ImmutableList.of("Patta Certificate (Issued by Revenue Department)",
-            "Registered Will Document", "Un-registered Will Document", "Decree by Civil Court", "Registered Document", "Un-registered Document / Notary document");
+    
     public static final String DOCUMENT_TYPE_PATTA_CERTIFICATE = "Patta Certificate";
     public static final String DOCUMENT_TYPE_MRO_PROCEEDINGS = "MRO Proceedings";
     public static final String DOCUMENT_TYPE_WILL_DEED = "Will Deed";
@@ -1700,6 +1684,8 @@ public interface PropertyTaxConstants {
     public static final String DOCUMENT_NAME_UNREGD_WILL_DOCUMENT = "Un-registered Will Document";
     public static final String DOCUMENT_NAME_DECREE_BY_CIVILCOURT = "Decree by Civil Court";
     public static final String DOCUMENT_NAME_NOTARY_DOCUMENT = "Un-registered Document / Notary document";
+    public static final List<String> ASSESSMENT_DOCUMENT_NAMES = ImmutableList.of(DOCUMENT_NAME_PATTA_CERTIFICATE,
+            DOCUMENT_NAME_REGD_WILL_DOCUMENT, DOCUMENT_NAME_UNREGD_WILL_DOCUMENT, DOCUMENT_NAME_DECREE_BY_CIVILCOURT, DOCUMENT_TYPE_REGD_DOCUMENT, DOCUMENT_NAME_NOTARY_DOCUMENT);
     public static final List<String> COMMISSIONER_DESIGNATIONS = ImmutableList.of(ASSISTANT_COMMISSIONER_DESIGN,
             ZONAL_COMMISSIONER_DESIGN, DEPUTY_COMMISSIONER_DESIGN, ADDITIONAL_COMMISSIONER_DESIGN, COMMISSIONER_DESGN);
     public static final List<String> ASSISTANT_DESIGNATIONS = ImmutableList.of(JUNIOR_ASSISTANT,
@@ -1748,14 +1734,14 @@ public interface PropertyTaxConstants {
     public static final List<String> NON_VACANT_TAX_DEMAND_REASONS = ImmutableList.of(DEMANDRSN_STR_DRAINAGE_TAX,
             DEMANDRSN_STR_GENERAL_TAX, DEMANDRSN_STR_SCAVENGE_TAX, DEMANDRSN_STR_WATER_TAX, DEMANDRSN_STR_LIGHT_TAX);
     
-    public static final List<String> ASSESSMENT_DOCUMENT_NAMES_RP = ImmutableList.of("Patta Certificate (Issued by Revenue Department)",
-            "Registered Will Document", "Un-registered Will Document", "Decree by Civil Court", "Registered Document");
+    public static final List<String> ASSESSMENT_DOCUMENT_NAMES_RP = ImmutableList.of(DOCUMENT_NAME_PATTA_CERTIFICATE,
+            DOCUMENT_NAME_REGD_WILL_DOCUMENT, DOCUMENT_NAME_UNREGD_WILL_DOCUMENT, MUTATIONRS_DECREE_BY_CIVIL_COURT, DOCUMENT_TYPE_REGD_DOCUMENT);
     
     public static final List<String> APPLICATION_TYPES=ImmutableList.of("New_Assessment","Alter_Assessment");
     public static final List<String> APPLICATION_STATUS=ImmutableList.of("Open","Closed","Approved","Cancelled");
     
-    public static final TreeMap<String, String> SURVEY_APPLICATION_TYPES = new TreeMap<String, String>() {
-
+    public static final Map<String, String> SURVEY_APPLICATION_TYPES = new TreeMap<String, String>() {
+        private static final long serialVersionUID = 1L;
         {
             put(PROP_CREATE_RSN, "New Property");
             put(PROPERTY_MODIFY_REASON_ADD_OR_ALTER, "Addition/Alteration");
@@ -1772,7 +1758,8 @@ public interface PropertyTaxConstants {
     public static final String APPCONFIG_PTIS_BULKBILL_GENERATION_SCHEDULER_ENABLED = "PTIS_BULKBILL_GENERATION_SCHEDULER_ENABLED";
     
     
-    public static final HashMap<String, String> DOCTYPEBYMUTATIONREASON = new HashMap<String, String>() {
+    public static final Map<String, String> DOCTYPEBYMUTATIONREASON = new HashMap<String, String>() {
+        private static final long serialVersionUID = 1L;
         {
             put(CIVILCOURTDECREE, MUTATIONRS_DECREE_BY_CIVIL_COURT);
             put(MUTATION_REASON_CODE_PARTISION, DOCUMENT_TYPE_REGD_DOCUMENT);
@@ -1785,7 +1772,8 @@ public interface PropertyTaxConstants {
         }
     };
     
-    public static final HashMap<String, String> APPLICATIONTYPEBYNATUREOFTASK = new HashMap<String, String>(){
+    public static final Map<String, String> APPLICATIONTYPEBYNATUREOFTASK = new HashMap<String, String>(){
+        private static final long serialVersionUID = 1L;
         {
             put(NATURE_NEW_ASSESSMENT, APPLICATION_TYPE_NEW_ASSESSENT);
             put(NATURE_ALTERATION, APPLICATION_TYPE_ALTER_ASSESSENT);
@@ -1796,7 +1784,9 @@ public interface PropertyTaxConstants {
         }
     };
     
-    public static final HashMap<String, String> NATUREOFTASKBYADDITIONALRULE = new HashMap<String, String>(){
+    public static final Map<String, String> NATUREOFTASKBYADDITIONALRULE = new HashMap<String, String>(){
+        private static final long serialVersionUID = 1L;
+
         {
             put(NEW_ASSESSMENT, NATURE_NEW_ASSESSMENT);
             put(ADDTIONAL_RULE_ALTER_ASSESSMENT, NATURE_ALTERATION);
