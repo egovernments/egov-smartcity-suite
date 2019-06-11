@@ -47,6 +47,15 @@
  */
 package org.egov.ptis.web.controller.reports;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_PT;
+import static org.egov.ptis.constants.PropertyTaxConstants.COLLECTION_INDEX_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_YYYYMMDD;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.entity.es.CollectionDocument;
 import org.egov.commons.EgwStatus;
@@ -78,15 +87,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_PT;
-import static org.egov.ptis.constants.PropertyTaxConstants.COLLECTION_INDEX_NAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.DATEFORMATTER_YYYY_MM_DD;
-import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_YYYYMMDD;
 
 @Controller
 @RequestMapping(value = "/report/dailyCollection")
@@ -163,14 +163,15 @@ public class DailyCollectionReportController {
     }
 
     private BoolQueryBuilder getQueryBasedOnInput(final DailyCollectionReportSearch searchRequest) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
         final Date fromDate = DateUtils.getDate(searchRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
         final Date toDate = org.apache.commons.lang3.time.DateUtils.addDays(
                 DateUtils.getDate(searchRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
                 1);
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
                 .filter(QueryBuilders.matchQuery("billingService", COLLECION_BILLING_SERVICE_PT))
-                .filter(QueryBuilders.rangeQuery("receiptDate").gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
-                        .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false));
+                .filter(QueryBuilders.rangeQuery("receiptDate").gte(dateFormat.format(fromDate))
+                        .lte(dateFormat.format(toDate)).includeUpper(false));
         if (StringUtils.isNotBlank(searchRequest.getCollectionMode()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("channel", searchRequest.getCollectionMode()));
         if (StringUtils.isNotBlank(searchRequest.getCollectionOperator()))

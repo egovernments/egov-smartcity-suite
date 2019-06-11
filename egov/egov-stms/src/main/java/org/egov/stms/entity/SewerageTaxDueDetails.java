@@ -66,6 +66,7 @@ public class SewerageTaxDueDetails {
     private Boolean isSuccess;
     private Boolean isInWorkFlow;
     private BigDecimal currentInstDemand;
+    private Integer noOfClosets;
 
     public Boolean getIsInWorkFlow() {
         return isInWorkFlow;
@@ -171,4 +172,11 @@ public class SewerageTaxDueDetails {
         this.currentInstDemand = currentInstDemand;
     }
 
+    public Integer getNoOfClosets() {
+        return noOfClosets;
+    }
+
+    public void setNoOfClosets(Integer noOfClosets) {
+        this.noOfClosets = noOfClosets;
+    }
 }

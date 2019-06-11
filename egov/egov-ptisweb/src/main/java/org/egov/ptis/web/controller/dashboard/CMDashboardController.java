@@ -48,6 +48,21 @@
 
 package org.egov.ptis.web.controller.dashboard;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_YYYYMMDD;
+import static org.egov.ptis.constants.PropertyTaxConstants.DAY;
+import static org.egov.ptis.constants.PropertyTaxConstants.MONTH;
+import static org.egov.ptis.constants.PropertyTaxConstants.WEEK;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -77,18 +92,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.DAY;
-import static org.egov.ptis.constants.PropertyTaxConstants.MONTH;
-import static org.egov.ptis.constants.PropertyTaxConstants.WEEK;
 
 /**
  * Controller used to provide services for CM Dashboard
@@ -259,6 +262,7 @@ public class CMDashboardController {
                 endDate = endOfMonth.toString(PropertyTaxConstants.DATE_FORMAT_YYYYMMDD);
             } else if (DAY.equalsIgnoreCase(collectionDetailsRequest.getIntervalType())) {
                 // Prepare the first and last days of the week based on the month, year and week of month values
+                SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
                 DateTime date = new DateTime().withYear(Integer.parseInt(collectionDetailsRequest.getYear()))
                         .withMonthOfYear(Integer.parseInt(collectionDetailsRequest.getMonth()));
                 Calendar cal = date.toCalendar(Locale.getDefault());
@@ -267,7 +271,7 @@ public class CMDashboardController {
                 DateTime weekStartDate = new DateTime(cal).withMillisOfDay(0);
                 startDate = weekStartDate.toString(PropertyTaxConstants.DATE_FORMAT_YYYYMMDD);
                 Date weekEndDate = DateUtils.addDays(weekStartDate.toDate(), 6);
-                endDate = PropertyTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(weekEndDate);
+                endDate = dateFormat.format(weekEndDate);
             }
             if (WEEK.equalsIgnoreCase(collectionDetailsRequest.getIntervalType())
                     || DAY.equalsIgnoreCase(collectionDetailsRequest.getIntervalType())) {

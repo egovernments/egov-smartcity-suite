@@ -92,8 +92,8 @@ public class CollectionSummaryHeadWiseAction extends ReportFormAction {
     private static final String EGOV_GLCODE_ID = "EGOV_GLCODE_ID";
     private static final String EGOV_BRANCH_NAME = "EGOV_BRANCH_NAME";
 
-    private Integer statusId;
-    private Long revenueId;
+    private Integer statusId = -1;
+    private Long revenueId = (long) -1;
     private String glCode;
     private final Map<String, String> paymentModes = createPaymentModeList();
     private final Map<String, String> sources = createSourceList();
@@ -177,7 +177,7 @@ public class CollectionSummaryHeadWiseAction extends ReportFormAction {
             setStatusName(statusObj.getDescription());
         }
 
-        if (getRevenueId() != -1) {
+        if (getRevenueId() != null && getRevenueId() != -1) {
             final CChartOfAccounts statusObj = entityManager.find(CChartOfAccounts.class, getRevenueId());
             setGlCodeName(statusObj.getName());
             setGlCode(statusObj.getGlcode());

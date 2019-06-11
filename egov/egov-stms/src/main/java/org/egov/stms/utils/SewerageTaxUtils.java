@@ -304,7 +304,7 @@ public class SewerageTaxUtils {
     public Boolean isEmployee(final User user) {
         List<String> appConfigValueList = getThirdPartyUserRoles().stream().map(AppConfigValues::getValue)
                 .collect(Collectors.toList());
-        return user.hasAnyRole(Arrays.toString(appConfigValueList.toArray())) ? false : true;
+        return !user.hasAnyRole(Arrays.toString(appConfigValueList.toArray()));
     }
 
     public Boolean isCitizenPortalUser(final User user) {
@@ -321,6 +321,6 @@ public class SewerageTaxUtils {
         final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(
                 MODULE_NAME,
                 APPCONFKEY_REASSIGN_BUTTONENABLED);
-        return !appConfigValues.isEmpty() && "YES".equals(appConfigValues.get(0).getValue()) ? true : false;
+        return !appConfigValues.isEmpty() && "YES".equals(appConfigValues.get(0).getValue());
     }
 }

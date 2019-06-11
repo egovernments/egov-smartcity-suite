@@ -48,6 +48,16 @@
 
 package org.egov.ptis.domain.service.report;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_YYYYMMDD;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.DateUtils;
@@ -64,16 +74,6 @@ import org.elasticsearch.search.aggregations.metrics.sum.Sum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.DATEFORMATTER_YYYY_MM_DD;
-import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_YYYYMMDD;
 
 @Service
 public class ServiceTypeReportService {
@@ -158,10 +158,11 @@ public class ServiceTypeReportService {
     }
 
     public BoolQueryBuilder getSearchFilterQuery(WardWiseServiceTypeRequest wardWiseRequest, Date fromDate, Date toDate) {
+       SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
                 .filter(QueryBuilders.matchQuery("cityCode", ApplicationThreadLocals.getCityCode()))
-                .filter(QueryBuilders.rangeQuery(APPLICATION_DATE).gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
-                        .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)));
+                .filter(QueryBuilders.rangeQuery(APPLICATION_DATE).gte(dateFormat.format(fromDate))
+                        .lte(dateFormat.format(toDate)));
         if (StringUtils.isNotBlank(wardWiseRequest.getRevenueWard()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(REVENUE_WARD, wardWiseRequest.getRevenueWard()));
         return boolQuery;
