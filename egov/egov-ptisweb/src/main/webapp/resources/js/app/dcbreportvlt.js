@@ -105,7 +105,7 @@ function setHiddenValueByLink(obj, param) {
 	if (param.value == 'property') {
 		window.open(
 				"../view/viewDCBProperty-displayPropInfo.action?propertyId="
-						+ jQuery('#boundaryId').val(), '',
+						+ jQuery('#drillDownType').val(), '',
 				'scrollbars=yes,width=1000,height=700,status=yes');
 	} else {
 		if (param.value == 'ward') {
