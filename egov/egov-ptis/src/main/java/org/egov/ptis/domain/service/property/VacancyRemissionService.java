@@ -674,8 +674,8 @@ public class VacancyRemissionService {
         /*
          * If VR is done in 1st half, provide 50% rebate on taxes of the 2nd half
          */
-        if (DateUtils.between(new Date(),
-                installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate()))
+        if (DateUtils.between(vacancyRemissionApproval.getApprovalDate(),
+                installmentFirstHalf.getFromDate(), installmentSecondHalf.getToDate()))
             updateDemandDetailsWithRebate(vacancyRemissionApproval.getVacancyRemission(), installmentFirstHalf,
                     installmentSecondHalf);
     }
