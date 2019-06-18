@@ -272,16 +272,15 @@ Browser:-
 [Git]: https://git-scm.com/downloads
 [JDK8 build]: http://www.oracle.com/technetwork/java/javase/downloads
 [eGov Opensource JIRA]: http://issues.egovernments.org/browse/PHOENIX
-[Wildfly Customized]: http://devops.egovernments.org/downloads/wildfly/wildfly-latest.zip
+[Wildfly Customized]: https://wildfly.org/downloads/
 [Eclipse Mars]: https://eclipse.org/downloads/packages/release/Mars/M1
 [Elastic Search]: https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-2.4.1.zip
 [Spring Profiles]: http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-environment
 [Flyway]: http://flywaydb.org/documentation/
-[eGov Tools Repository]: http://downloads.egovernments.org/
 [PostgreSQL]: http://www.postgresql.org/download/
 [Maven]: http://maven.apache.org/download.cgi
 [GPL]: http://www.gnu.org/licenses/
-[FAQ]:http://confluence.egovernments.org/display/FAQ/FAQ
+[FAQ]:https://digit-discuss.atlassian.net/wiki/
 [GHPAGE]:https://egovernments.org/solutions.php
 [versioneye]:https://www.versioneye.com/user/projects/5a0e82590fb24f00104d87b2
 [versioneye img]:https://www.versioneye.com/user/projects/5a0e82590fb24f00104d87b2/badge.svg?style=flat-square
