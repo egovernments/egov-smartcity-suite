@@ -1,0 +1,2 @@
+ALTER TABLE eg_modules ADD COLUMN code VARCHAR(30);
+
