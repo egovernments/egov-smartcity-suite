@@ -292,7 +292,7 @@ public class ContractVoucherController {
         headerDetails.put(VoucherConstant.SOURCEPATH, request.getSource());
         if (request.getDepartment() != null && !request.getDepartment().isEmpty()) {
         	headerDetails.put(VoucherConstant.DEPARTMENTCODE,request.getDepartment());
-        }else if (request.getDepartment() != null)
+        }else if (request.getDepartmentId() != null)
             headerDetails.put(VoucherConstant.DEPARTMENTCODE,
                     departmentService.getDepartmentById(request.getDepartmentId()).getCode());
         if(request.getModule() != null && !request.getModule().isEmpty()) {
