@@ -47,10 +47,14 @@
  */
 package org.egov.restapi.web.rest;
 
+import static java.lang.String.format;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.util.List;
 
+import org.egov.council.entity.MeetingMOM;
+import org.egov.council.service.CouncilMeetingService;
 import org.egov.restapi.model.CouncilMeetingRequest;
 import org.egov.restapi.model.CouncilResolutionsResponse;
 import org.egov.restapi.model.RestErrors;
@@ -59,6 +63,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -67,11 +72,32 @@ public class RestCouncilResolutionsController {
 
     @Autowired
     private CouncilResolutionsService councilResolutionsService;
+    
+    @Autowired
+    private CouncilMeetingService councilMeetingService;
 
     @GetMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public List<CouncilResolutionsResponse> getCouncilResolutionsDetails(final CouncilMeetingRequest councilMeetingRequest) {
         return councilResolutionsService.getResolutionsDetails(councilMeetingRequest);
     }
+    
+	@RequestMapping(value = "/detail", method = GET, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+	public CouncilResolutionsResponse getResolutionDetails(@RequestParam String resolutionNo, @RequestParam String committeeType) {
+		CouncilResolutionsResponse councilResolutionsResponse;
+		MeetingMOM meetingMom = councilMeetingService.findByResolutionNumberAndCommitteeType(resolutionNo, committeeType);
+		if (meetingMom != null) {
+			councilResolutionsResponse = new CouncilResolutionsResponse();
+			councilResolutionsResponse.setResolutionNo(meetingMom.getResolutionNumber());
+			councilResolutionsResponse.setCommitteeType(meetingMom.getAgenda().getCommitteeType().getCode());
+			councilResolutionsResponse.setResolutionDate(meetingMom.getMeeting().getMeetingDate());
+			councilResolutionsResponse
+					.setCouncilResolutionUrl(format("/council/councilmom/view/%d", meetingMom.getMeeting().getId()));
+		} else {
+			councilResolutionsResponse = new CouncilResolutionsResponse();
+			councilResolutionsResponse.setErrorMessage("COUNCIL RESOLUTION DOES NOT EXIST");
+		}
+		return councilResolutionsResponse;
+	}
 
     @ExceptionHandler(RuntimeException.class)
     public RestErrors restErrors(final RuntimeException runtimeException) {

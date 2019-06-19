@@ -48,6 +48,9 @@
 package org.egov.restapi.model;
 
 import java.math.BigDecimal;
+import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class CouncilResolutionsResponse {
 
@@ -61,6 +64,11 @@ public class CouncilResolutionsResponse {
     private String status;
     private BigDecimal sanctionAmount;
     private String gistOfPreamble;
+    
+    @JsonFormat(pattern="dd/MM/yyyy")
+    private Date resolutionDate;
+    private String councilResolutionUrl;
+    private String errorMessage;
 
     public String getMeetingType() {
         return meetingType;
@@ -141,5 +149,29 @@ public class CouncilResolutionsResponse {
     public void setGistOfPreamble(String gistOfPreamble) {
         this.gistOfPreamble = gistOfPreamble;
     }
+
+    public String getCouncilResolutionUrl() {
+		return councilResolutionUrl;
+	}
+
+	public void setCouncilResolutionUrl(String councilResolutionUrl) {
+		this.councilResolutionUrl = councilResolutionUrl;
+	}
+
+	public Date getResolutionDate() {
+		return resolutionDate;
+	}
+
+	public void setResolutionDate(Date resolutionDate) {
+		this.resolutionDate = resolutionDate;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
 
 }
