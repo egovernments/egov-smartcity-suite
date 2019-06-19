@@ -1,2 +1,2 @@
-UPDATE eg_modules SET code = 'PT' where id = 'PTIS';
+UPDATE eg_modules SET code = 'PT' where name = 'PTIS';
 
