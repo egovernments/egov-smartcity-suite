@@ -257,7 +257,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     @Override
     public BigDecimal getTotalAmount() {
         final EgDemand currentDemand = getCurrentDemand();
-        final List instVsAmt = connectionDemandService.getDmdCollAmtInstallmentWise(currentDemand);
+        final List instVsAmt = connectionDemandService.getDmdCollAmtInstallmentWise(currentDemand, null);
         BigDecimal balance = BigDecimal.ZERO;
         for (final Object object : instVsAmt) {
             final Object[] ddObject = (Object[]) object;

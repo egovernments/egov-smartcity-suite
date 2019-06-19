@@ -1155,7 +1155,7 @@ public class WaterConnectionDetailsService {
 		EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
 		BigDecimal balance = ZERO;
 		if (currentDemand != null) {
-			List<Object> instVsAmt = connectionDemandService.getDmdCollAmtInstallmentWise(currentDemand);
+			List<Object> instVsAmt = connectionDemandService.getDmdCollAmtInstallmentWise(currentDemand, null);
 			balance = getAmountByInstallment(instVsAmt);
 		}
 		return balance;

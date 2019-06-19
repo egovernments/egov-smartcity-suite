@@ -403,16 +403,22 @@ public class ConnectionDemandService {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Object> getDmdCollAmtInstallmentWise(EgDemand egDemand) {
-        StringBuilder queryBuilder = new StringBuilder(600);
-        queryBuilder
-                .append("select dmdRes.id,dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, ")
-                .append("sum(dmdDet.amt_rebate) as amt_rebate, inst.start_date from eg_demand_details dmdDet,eg_demand_reason dmdRes, ")
-                .append("eg_installment_master inst,eg_demand_reason_master dmdresmas where dmdDet.id_demand_reason=dmdRes.id ")
-                .append("and dmdDet.id_demand =:dmdId and dmdRes.id_installment = inst.id and dmdresmas.id = dmdres.id_demand_reason_master ")
-                .append("group by dmdRes.id,dmdRes.id_installment, inst.start_date order by inst.start_date ");
-        return getCurrentSession().createSQLQuery(queryBuilder.toString()).setLong("dmdId", egDemand.getId())
-                .list();
+    public List<Object> getDmdCollAmtInstallmentWise(EgDemand egDemand, String effectiveDate) {
+		StringBuilder queryBuilder = new StringBuilder(600);
+		queryBuilder.append(
+				"select dmdRes.id,dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, ")
+				.append("sum(dmdDet.amt_rebate) as amt_rebate, inst.start_date from eg_demand_details dmdDet,eg_demand_reason dmdRes, ")
+				.append("eg_installment_master inst,eg_demand_reason_master dmdresmas where dmdDet.id_demand_reason=dmdRes.id ")
+				.append("and dmdDet.id_demand =:dmdId and dmdRes.id_installment = inst.id and dmdresmas.id = dmdres.id_demand_reason_master ");
+		if (StringUtils.isNotBlank(effectiveDate)) 
+			queryBuilder.append("and cast(inst.start_date as date)<=cast(:effectiveDate as date) ");
+		
+		queryBuilder.append("group by dmdRes.id,dmdRes.id_installment, inst.start_date order by inst.start_date ");
+		Query query = getCurrentSession().createSQLQuery(queryBuilder.toString()).setLong("dmdId", egDemand.getId());
+		if (StringUtils.isNotBlank(effectiveDate))
+			query = query.setString("effectiveDate", effectiveDate);
+		return query.list();
+        
     }
 
     @SuppressWarnings("unchecked")
