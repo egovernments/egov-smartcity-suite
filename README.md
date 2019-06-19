@@ -30,20 +30,20 @@ $ git clone  -b develop --single-branch  https://github.com/egovernments/egov-sm
 ```
 * First time setup which will install the stacks, build the source code, and deploys the artifact to Wildfly
 ```bash
-$ cd ${HOME}/egovgithub/eGov && make all
+$ cd ${HOME}/egovgithub/egov-smartcity-suite && make all
 ```
 -----
 * To install the prerequisites Phoenix stacks
 ```bash
-$ cd ${HOME}/egovgithub/eGov &&  make install
+$ cd ${HOME}/egovgithub/egov-smartcity-suite &&  make install
 ```
 * To build the source code base
 ```bash
-$ cd ${HOME}/egovgithub/eGov && make build
+$ cd ${HOME}/egovgithub/egov-smartcity-suite && make build
 ```
 * To deploy the artifact to WILDFLY
 ```bash
-$ cd ${HOME}/egovgithub/eGov && make deploy
+$ cd ${HOME}/egovgithub/egov-smartcity-suite && make deploy
 ```
 
 ## Manual Setup Instruction
