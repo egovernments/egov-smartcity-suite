@@ -101,4 +101,7 @@ public interface LicenseRepository extends JpaRepository<TradeLicense, Long> {
     TradeLicense findByUid(String uid);
 
     TradeLicense findByDemand(EgDemand demand);
+
+    TradeLicense findByLicenseNumberAndStatusName(String licenseNumber, String status);
+
 }

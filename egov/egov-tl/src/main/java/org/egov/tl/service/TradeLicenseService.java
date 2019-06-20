@@ -81,14 +81,7 @@ import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
-import org.egov.tl.entity.FeeMatrixDetail;
-import org.egov.tl.entity.LicenseAppType;
-import org.egov.tl.entity.LicenseDocument;
-import org.egov.tl.entity.LicenseDocumentType;
-import org.egov.tl.entity.LicenseSubCategoryDetails;
-import org.egov.tl.entity.NatureOfBusiness;
-import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.entity.WorkflowBean;
+import org.egov.tl.entity.*;
 import org.egov.tl.entity.contracts.DemandNoticeForm;
 import org.egov.tl.entity.contracts.OnlineSearchForm;
 import org.egov.tl.entity.contracts.SearchForm;
@@ -338,7 +331,6 @@ public class TradeLicenseService {
             license.recalculateBaseDemand();
         }
         return license;
-
     }
 
     public void applyPenalty(TradeLicense license, EgDemand demand) {
@@ -856,7 +848,7 @@ public class TradeLicenseService {
         if (isNotBlank(searchForm.getApplicationNumber()))
             searchCriteria.add(Restrictions.eq("applicationNumber", searchForm.getApplicationNumber()).ignoreCase());
         if (isNotBlank(searchForm.getLicenseNumber()))
-            searchCriteria.add(Restrictions.eq("licenseNumber", searchForm.getLicenseNumber()).ignoreCase());
+            searchCriteria.add(Restrictions.eq(LICENSE_NUMBER, searchForm.getLicenseNumber()).ignoreCase());
         if (isNotBlank(searchForm.getMobileNo()))
             searchCriteria.add(Restrictions.eq("licc.mobilePhoneNumber", searchForm.getMobileNo()));
         if (isNotBlank(searchForm.getTradeOwnerName()))
@@ -899,7 +891,7 @@ public class TradeLicenseService {
                 .createAlias("demand", "licDemand").createAlias("licenseAppType", "appType")
                 .add(Restrictions.ne("appType.code", CLOSURE_APPTYPE_CODE));
         if (isNotBlank(demandNoticeForm.getLicenseNumber()))
-            searchCriteria.add(Restrictions.eq("licenseNumber", demandNoticeForm.getLicenseNumber()).ignoreCase());
+            searchCriteria.add(Restrictions.eq(LICENSE_NUMBER, demandNoticeForm.getLicenseNumber()).ignoreCase());
         if (isNotBlank(demandNoticeForm.getOldLicenseNumber()))
             searchCriteria
                     .add(Restrictions.eq("oldLicenseNumber", demandNoticeForm.getOldLicenseNumber()).ignoreCase());
@@ -1062,5 +1054,16 @@ public class TradeLicenseService {
 
     public TradeLicense getLicenseByDemand(EgDemand demand) {
         return licenseRepository.findByDemand(demand);
+    }
+
+    public Map<String, String> getLicenseDetailsByLicenseNumberAndStatus(String licenseNumber, String status) {
+        TradeLicense tradeLicense = this.licenseRepository.findByLicenseNumberAndStatusName(licenseNumber, status);
+        HashMap<String, String> licenseDetails = new HashMap<>();
+        licenseDetails.put(LICENSE_NUMBER, tradeLicense.getLicenseNumber());
+        licenseDetails.put("tradeTitle", tradeLicense.getNameOfEstablishment());
+        licenseDetails.put("tradeAddress", tradeLicense.getAddress());
+        licenseDetails.put("applicantName", tradeLicense.getLicensee().getApplicantName());
+        licenseDetails.put("applicantAddress", tradeLicense.getLicensee().getAddress());
+        return licenseDetails;
     }
 }

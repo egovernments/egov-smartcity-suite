@@ -54,14 +54,13 @@ import org.egov.restapi.web.contracts.tradelicense.TradeLicenseDetailResponse;
 import org.egov.tl.service.TradeLicenseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACTIVE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -83,5 +82,10 @@ public class TradeLicenseDetailController {
     @ExceptionHandler(RuntimeException.class)
     public RestErrors restErrors(RuntimeException runtimeException) {
         return new RestErrors("LICENSE NOT EXIST", runtimeException.getMessage());
+    }
+
+    @GetMapping(value = "/licensedetails", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public Map<String, String> getLicenseDetails(TradeLicenseDetailRequest request) {
+        return tradeLicenseService.getLicenseDetailsByLicenseNumberAndStatus(request.getTin(), LICENSE_STATUS_ACTIVE);
     }
 }
