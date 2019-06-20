@@ -525,17 +525,17 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         return propertyService.getWorkflowInitiator(property);
     }
 
-    public BigDecimal getWaterTaxDues(final String assessmentNo, final HttpServletRequest request) {
-        return propertyService.getWaterTaxDues(assessmentNo, request).get(PropertyTaxConstants.WATER_TAX_DUES) == null
+    public BigDecimal getWaterTaxDues(final String assessmentNo,Date effectiveDate, final HttpServletRequest request) {
+        return propertyService.getWaterTaxDues(assessmentNo,effectiveDate, request).get(PropertyTaxConstants.WATER_TAX_DUES) == null
                 ? BigDecimal.ZERO : new BigDecimal(
-                        Double.valueOf((Double) propertyService.getWaterTaxDues(assessmentNo, request)
+                        Double.valueOf((Double) propertyService.getWaterTaxDues(assessmentNo,effectiveDate, request)
                                 .get(PropertyTaxConstants.WATER_TAX_DUES)));
     }
 
-    public Boolean isUnderWtmsWF(final String assessmentNo, final HttpServletRequest request) {
-        return propertyService.getWaterTaxDues(assessmentNo, request).get(PropertyTaxConstants.UNDER_WTMS_WF) == null
+    public Boolean isUnderWtmsWF(final String assessmentNo,Date effectiveDate, final HttpServletRequest request) {
+        return propertyService.getWaterTaxDues(assessmentNo,effectiveDate, request).get(PropertyTaxConstants.UNDER_WTMS_WF) == null
                 ? FALSE
-                : Boolean.valueOf((Boolean) propertyService.getWaterTaxDues(assessmentNo, request)
+                : Boolean.valueOf((Boolean) propertyService.getWaterTaxDues(assessmentNo,effectiveDate, request)
                         .get(PropertyTaxConstants.UNDER_WTMS_WF));
     }
 
@@ -639,7 +639,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         if (!isDemandExist) {
             return NO_DEMAND;
         }
-        final BigDecimal currentWaterTaxDue = getWaterTaxDues(basicProperty.getUpicNo(), request);
+        final BigDecimal currentWaterTaxDue = getWaterTaxDues(basicProperty.getUpicNo(),effectiveDate, request);
         model.addAttribute("assessementNo", basicProperty.getUpicNo());
         model.addAttribute("ownerName", basicProperty.getFullOwnerName());
         model.addAttribute("doorNo", basicProperty.getAddress().getHouseNoBldgApt());

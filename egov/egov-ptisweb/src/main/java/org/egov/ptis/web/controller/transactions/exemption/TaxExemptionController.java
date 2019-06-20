@@ -90,6 +90,8 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -177,6 +179,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
             @RequestParam(required = false) final String meesevaApplicationNumber,
             @RequestParam(required = false) final String applicationSource,
             @PathVariable("assessmentNo") final String assessmentNo) {
+    	Date effectiveDate= new Date();
         BasicProperty basicProperty = property.getBasicProperty();
         boolean isExempted = basicProperty.getActiveProperty().getIsExemptedFromTax();
         User loggedInUser = securityUtils.getCurrentUser();
@@ -204,7 +207,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 model.addAttribute(ERROR_MSG, "error.superstruc.prop.notallowed");
                 return PROPERTY_VALIDATION_FOR_SPRING;
             }
-            if (taxExemptionService.isUnderWtmsWF(basicProperty.getUpicNo(), request)) {
+            if (taxExemptionService.isUnderWtmsWF(basicProperty.getUpicNo(),effectiveDate, request)) {
                 model.addAttribute(ERROR_MSG, "msg.under.wtms.wf.taxexemption");
                 return PROPERTY_VALIDATION_FOR_SPRING;
             } else if (!isExempted) {

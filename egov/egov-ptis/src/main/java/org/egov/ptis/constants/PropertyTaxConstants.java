@@ -1545,7 +1545,8 @@ public interface PropertyTaxConstants {
     public String WTMS_CONNECT_DTLS_RESTURL = "%s/wtms/rest/watertax/connectiondetails/byptno/%s";
     public String WTMS_AMALGAMATE_WATER_CONNECTIONS_URL = "%s/wtms/rest/watertax/updateConnectionForAmulgamation";
     public String STMS_TAXDUE_RESTURL = "%s/stms/rest/seweragetax/dues/%s";
-
+    public String WTMS_TAXDUE_WITH_DATE_RESTURL = "%s/wtms/rest/watertax/due/byptnoanddate/%s,%s";
+    
     public static final String TRANSACTION_TYPE_CREATE = "Create";
     public static final String TRANSACTION_TYPE_DEMOLITION = "Demolition";
 
@@ -1794,6 +1795,17 @@ public interface PropertyTaxConstants {
             put(DEMOLITION, APPLICATION_TYPE_DEMOLITION);
             put(EXEMPTION, NATURE_TAX_EXEMPTION);
             put(AMALGAMATION, APPLICATION_TYPE_AMALGAMATION);
+        }
+    };
+    
+    public static final String FULL_WRITEOFF = "Full Write Off";
+    public static final String PARTIAL_WRITEOFF = "Partial Write Off";
+    public static final Map<String, String> WRITEOFF_TYPES = new TreeMap<String, String>() {
+        private static final long serialVersionUID = 1L;
+        {
+            put(FULL_WRITEOFF, FULL_WRITEOFF);
+            put(PARTIAL_WRITEOFF, PARTIAL_WRITEOFF);
+
         }
     };
     

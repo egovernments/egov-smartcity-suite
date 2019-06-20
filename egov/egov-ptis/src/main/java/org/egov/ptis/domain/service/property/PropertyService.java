@@ -54,6 +54,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -2447,9 +2448,11 @@ public class PropertyService {
      * @param request
      * @return
      */
-    public Map<String, Object> getWaterTaxDues(final String assessmentNo, final HttpServletRequest request) {
-        final String wtmsRestURL = format(WTMS_TAXDUE_RESTURL,
-                WebUtils.extractRequestDomainURL(request, false), assessmentNo);
+    public Map<String, Object> getWaterTaxDues(final String assessmentNo,final Date dueDate, final HttpServletRequest request) {
+    	DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    	String effectiveDate = df.format(dueDate);
+    	final String wtmsRestURL = format(WTMS_TAXDUE_WITH_DATE_RESTURL,
+                WebUtils.extractRequestDomainURL(request, false), assessmentNo,effectiveDate);
         return simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
 
     }
