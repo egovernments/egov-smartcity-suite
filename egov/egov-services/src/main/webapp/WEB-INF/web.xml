@@ -237,6 +237,8 @@
         <url-pattern>/lams-services/*</url-pattern>
         <url-pattern>/lams-web/*</url-pattern>
         <url-pattern>/hr-employee-movement/*</url-pattern>
+        <url-pattern>/egov-notification-sms/*</url-pattern>
+        <url-pattern>/egov-notification-mail/*</url-pattern>
     </servlet-mapping>
 
     <!-- Servlet Declaration Ends -->
@@ -270,6 +272,8 @@
         <url-pattern>/lams-services/*</url-pattern>
         <url-pattern>/lams-web/*</url-pattern>
         <url-pattern>/hr-employee-movement/*</url-pattern>
+        <url-pattern>/egov-notification-sms/*</url-pattern>
+        <url-pattern>/egov-notification-mail/*</url-pattern>
     </filter-mapping>
 
     <welcome-file-list>
