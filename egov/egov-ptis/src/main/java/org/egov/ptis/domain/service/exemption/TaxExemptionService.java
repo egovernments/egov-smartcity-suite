@@ -607,7 +607,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         BigDecimal arrearPropertyTaxDue = BigDecimal.ZERO;
         boolean isDemandExist = false;
         final Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
-        Installment effectiveInst = getEffectiveInst(effectiveDate);
+        Installment effectiveInst = getEffectiveInst(getExemptionEffectivedDate(effectiveDate));
 
         final Ptdemand currDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(basicProperty.getActiveProperty());
         List dmdCollList = new ArrayList();

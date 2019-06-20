@@ -293,18 +293,18 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 model.addAttribute(ERROR_MSG, "error.tenant.exists");
                 return PROPERTY_VALIDATION_FOR_SPRING;
             }
-            if (!property.getBasicProperty().getActiveProperty().getIsExemptedFromTax()) {
-                if (taxExemptionService.getTaxDues(request, model, property.getBasicProperty(),
-                        taxExemptionService.getExemptionEffectivedDate(property.getExemptionDate()))
-                        .equals(DUE))
-                    return TARGET_TAX_DUES;
-                else if (taxExemptionService.getTaxDues(request, model, property.getBasicProperty(),
-                        taxExemptionService.getExemptionEffectivedDate(property.getExemptionDate()))
-                        .equals(NO_DEMAND)) {
-                    model.addAttribute(ERROR_MSG, "error.nodemand.before.effectivedate");
-                    return PROPERTY_VALIDATION_FOR_SPRING;
-                }
-            }
+			if (!property.getBasicProperty().getActiveProperty().getIsExemptedFromTax()) {
+				if (taxExemptionService
+						.getTaxDues(request, model, property.getBasicProperty(), property.getExemptionDate())
+						.equals(DUE))
+					return TARGET_TAX_DUES;
+				else if (taxExemptionService
+						.getTaxDues(request, model, property.getBasicProperty(), property.getExemptionDate())
+						.equals(NO_DEMAND)) {
+					model.addAttribute(ERROR_MSG, "error.nodemand.before.effectivedate");
+					return PROPERTY_VALIDATION_FOR_SPRING;
+				}
+			}
             if (StringUtils.isNotBlank(taxExemptedReason))
                 taxExemptionService.processAndStoreApplicationDocuments((PropertyImpl) property, taxExemptedReason, null);
             if (loggedUserIsMeesevaUser) {
