@@ -2448,14 +2448,28 @@ public class PropertyService {
      * @param request
      * @return
      */
-    public Map<String, Object> getWaterTaxDues(final String assessmentNo,final Date dueDate, final HttpServletRequest request) {
-    	DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-    	String effectiveDate = df.format(dueDate);
-    	final String wtmsRestURL = format(WTMS_TAXDUE_WITH_DATE_RESTURL,
-                WebUtils.extractRequestDomainURL(request, false), assessmentNo,effectiveDate);
-        return simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
+	public Map<String, Object> getWaterTaxDues(final String assessmentNo, final HttpServletRequest request) {
+		final String wtmsRestURL = format(WTMS_TAXDUE_RESTURL, WebUtils.extractRequestDomainURL(request, false),
+				assessmentNo);
+		return simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
 
-    }
+	}
+	
+	/**
+	 * @param assessmentNo
+	 * @param dueDate
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> getWaterTaxDues(final String assessmentNo, final Date dueDate,
+			final HttpServletRequest request) {
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		String effectiveDate = df.format(dueDate);
+		final String wtmsRestURL = format(WTMS_TAXDUE_WITH_DATE_RESTURL,
+				WebUtils.extractRequestDomainURL(request, false), assessmentNo, effectiveDate);
+		return simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
+
+	}
 
     /**
      * Method to validate bifurcation of property either using create assessment or alter assessment
