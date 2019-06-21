@@ -194,6 +194,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
     private static final String BILLID = "billid";
     protected static final String VOUCHEREDIT = "voucheredit";
     private static final String VHID = "vhid";
+    private static final String VHNUMBER = "voucherNumber";
     private static final String CGN = "cgn";
     private static final String VOUCHERQUERY = " from CVoucherHeader where id=?";
     private static final String VOUCHERQUERYBYCGN = " from CVoucherHeader where cgn=?";
@@ -496,13 +497,23 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
 
         billDetails = new HashMap<String, Object>();
         if (parameters.get("from") != null && FinancialConstants.STANDARD_VOUCHER_TYPE_CONTRA.equals(parameters.get("from")[0])) {
-            contraVoucher = (ContraJournalVoucher) persistenceService.find(" from ContraJournalVoucher where id=?",
-                    Long.valueOf(parameters.get(VHID)[0]));
+        	if(parameters.get(VHID) != null) {
+        		contraVoucher = (ContraJournalVoucher) persistenceService.find(" from ContraJournalVoucher where id=?",
+                        Long.valueOf(parameters.get(VHID)[0]));
+			}else { 
+				contraVoucher = (ContraJournalVoucher)
+				persistenceService.find(" from ContraJournalVoucher where voucherHeaderId.voucherNumber=?",parameters.get(VHNUMBER)[0]); 
+			}				 
             voucherHeader = contraVoucher.getVoucherHeaderId();
             from = FinancialConstants.STANDARD_VOUCHER_TYPE_CONTRA;
         } else {
-            voucherHeader = (CVoucherHeader) getPersistenceService().find(VOUCHERQUERY, Long.valueOf(parameters.get(VHID)[0]));
-            from = FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL;
+        	if(parameters.get(VHID) != null) {
+        		voucherHeader = (CVoucherHeader) getPersistenceService().find(VOUCHERQUERY, Long.valueOf(parameters.get(VHID)[0]));
+        	}else{
+        		voucherHeader = (CVoucherHeader) getPersistenceService().find("from CVoucherHeader where voucherNumber=?",
+        				parameters.get(VHNUMBER)[0]);
+        	}
+        	from = FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL;
         }
         getMasterDataForBillVoucher();
         getHeaderMandateFields();
