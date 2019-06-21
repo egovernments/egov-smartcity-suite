@@ -268,13 +268,11 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
 		if (!workFlowAct.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
 			if (!oldProperty.getIsExemptedFromTax() && property.getIsExemptedFromTax()) {
 				if (taxExemptionService
-						.getTaxDues(request, model, property.getBasicProperty(),
-								taxExemptionService.getExemptionEffectivedDate(property.getExemptionDate()))
+						.getTaxDues(request, model, property.getBasicProperty(),property.getExemptionDate())
 						.equals(DUE))
 					return TARGET_TAX_DUES;
 				else if (taxExemptionService
-						.getTaxDues(request, model, property.getBasicProperty(),
-								taxExemptionService.getExemptionEffectivedDate(property.getExemptionDate()))
+						.getTaxDues(request, model, property.getBasicProperty(),property.getExemptionDate())
 						.equals(NO_DEMAND)) {
 					model.addAttribute(ERROR_MSG, "error.nodemand.before.effectivedate");
 					return PROPERTY_VALIDATION_FOR_SPRING;
