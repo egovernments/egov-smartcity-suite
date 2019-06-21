@@ -67,6 +67,7 @@ public interface VoucherConstant {
     public static final String VOUCHERDATE = "voucherdate";
     public static final String VOUCHERNUMBER = "vouchernumber";
     public static final String MODULEID = "moduleid";
+    public static final String MODULE = "module";
     public static final String STATUS = "status";
     public static final String ORIGIONALVOUCHER = "originalvoucher";
     public static final String REFVOUCHER = "refvoucher";
