@@ -23,27 +23,27 @@ This section contains steps that are involved in build and deploy the applicatio
 FAQ related to various deployment and development issues are discussed [here][FAQ]
 
 ## Setup with auto installer
-* Clone the eGov repository (development is done on the develop branch).
+* Clone the egov-smartcity-suite repository (development is done on the develop branch).
 ```bash
 $ mkdir -p ${HOME}/egovgithub && cd egovgithub
 $ git clone  -b develop --single-branch  https://github.com/egovernments/egov-smartcity-suite.git
 ```
 * First time setup which will install the stacks, build the source code, and deploys the artifact to Wildfly
 ```bash
-$ cd ${HOME}/egovgithub/eGov && make all
+$ cd ${HOME}/egovgithub/egov-smartcity-suite && make all
 ```
 -----
 * To install the prerequisites Phoenix stacks
 ```bash
-$ cd ${HOME}/egovgithub/eGov &&  make install
+$ cd ${HOME}/egovgithub/egov-smartcity-suite &&  make install
 ```
 * To build the source code base
 ```bash
-$ cd ${HOME}/egovgithub/eGov && make build
+$ cd ${HOME}/egovgithub/egov-smartcity-suite && make build
 ```
 * To deploy the artifact to WILDFLY
 ```bash
-$ cd ${HOME}/egovgithub/eGov && make deploy
+$ cd ${HOME}/egovgithub/egov-smartcity-suite && make deploy
 ```
 
 ## Manual Setup Instruction
@@ -204,10 +204,10 @@ Always start the wildfly server with the below command to access the application
 ```
 
 ## Developer Guide
-This section gives more details regarding developing and contributing to eGov suit.
+This section gives more details regarding developing and contributing to egov-smartcity-suite.
 
 #### Repository Structure
-`egov` - folder contains all the source code of eGov opensource projects
+`egov` - folder contains all the source code of egov-smartcity-suite opensource projects
 #### Check out sources
 `git clone git@github.com:egovernments/egov-smartcity-suite.git` or `git clone https://github.com/egovernments/egov-smartcity-suite.git`
 #### Prerequisites
