@@ -48,7 +48,7 @@
     - deps
 
 - name: ensure database is created
-  become: yes
+  become: true
   become_user: postgres
   postgresql_db: name={{postgresql_dbname}} owner={{postgresql_dbuser}}
 - name: ensure user has access to database
