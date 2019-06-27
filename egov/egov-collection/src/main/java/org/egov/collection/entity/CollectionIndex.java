@@ -137,7 +137,7 @@ public class CollectionIndex extends AbstractAuditable {
     @Length(max = 50)
     private String installmentTo;
 
-    @Length(max = 256)
+    @Length(max = 512)
     private String consumerName;
 
     private BigDecimal reductionAmount;

@@ -1,0 +1,1 @@
+alter table eg_collectionindex alter column consumername type character varying(512);
