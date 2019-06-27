@@ -1745,7 +1745,12 @@ public class CreateVoucher {
 				cVoucherHeader.setModuleId(Integer.valueOf(headerdetails.get(
 						VoucherConstant.MODULEID).toString()));
 				cVoucherHeader.setIsConfirmed(Integer.valueOf(1));
-			} else {
+			} else if(headerdetails.containsKey(VoucherConstant.MODULE) && headerdetails.get(VoucherConstant.MODULE) != null){
+				String moduleCode =  (String) headerdetails.get(VoucherConstant.MODULE);
+				List<BigInteger> moduleId = getMouldeIdByCode(moduleCode);
+				cVoucherHeader.setModuleId(moduleId.get(0).intValue());	
+			}else {
+			
 				// Fix Me
 				/*
 				 * PersistenceService<AppConfig, Integer> appConfigSer;
@@ -1820,7 +1825,13 @@ public class CreateVoucher {
 
 	// we cannot provide enum for all names so we need to find a way
 	// or code it for all standard type like CJV,SJV,PJV,EJV
-
+	private List<BigInteger> getMouldeIdByCode(final String moduleCode) {
+		final Query qry = persistenceService.getSession().createSQLQuery("select id from eg_modules where code =:code");
+		qry.setParameter("code", moduleCode);
+		List<BigInteger> result = qry.list();
+        return result;
+	}
+	
 	private String getVoucherNumberPrefix(final String type, String vsubtype) {
 
 		// if sub type is null use type
