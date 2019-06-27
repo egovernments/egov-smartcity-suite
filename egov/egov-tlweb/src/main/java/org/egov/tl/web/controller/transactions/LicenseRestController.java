@@ -46,39 +46,29 @@
  *
  */
 
-package org.egov.restapi.web.controller.tradelicense;
+package org.egov.tl.web.controller.transactions;
 
-import org.egov.restapi.model.RestErrors;
-import org.egov.restapi.web.contracts.tradelicense.TradeLicenseDetailRequest;
-import org.egov.restapi.web.contracts.tradelicense.TradeLicenseDetailResponse;
 import org.egov.tl.service.TradeLicenseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
+import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACTIVE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
-@RequestMapping("/tradelicense")
-public class TradeLicenseDetailController {
+@RequestMapping("/rest")
+public class LicenseRestController {
 
     @Autowired
     @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
 
-    @GetMapping(value = "/details", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public List<TradeLicenseDetailResponse> tradeLicenseDetails(TradeLicenseDetailRequest request) {
-        return tradeLicenseService.getLicenses(request.tradeLicenseLike())
-                .parallelStream()
-                .map(TradeLicenseDetailResponse::new)
-                .collect(Collectors.toList());
-    }
 
-    @ExceptionHandler(RuntimeException.class)
-    public RestErrors restErrors(RuntimeException runtimeException) {
-        return new RestErrors("LICENSE NOT EXIST", runtimeException.getMessage());
+    @GetMapping(value = "/licensedetails", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public Map<String, String> getLicenseDetails(@RequestParam String licenseNumber) {
+        return tradeLicenseService.getLicenseDetailsByLicenseNumberAndStatus(licenseNumber, LICENSE_STATUS_ACTIVE);
     }
 }
