@@ -184,7 +184,7 @@
 			<column name="CONSUMERCODE" length="256" />
 		</property>
 		<property name="payeeName" type="string">
-			<column name="payeename" length="256" />
+			<column name="payeename" length="512" />
 		</property>
 		<property name="payeeAddress" type="string">
 			<column name="payeeaddress" length="1024" />
