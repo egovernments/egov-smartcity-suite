@@ -91,6 +91,7 @@ import org.egov.wtms.autonumber.BillReferenceNumberGenerator;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
+import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -121,9 +122,12 @@ public class WaterEstimationChargesPaymentService {
 
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
+    
+    @Autowired
+    private WaterDemandConnectionService waterDemandConnectionService;
 
     public BigDecimal getEstimationDueAmount(WaterConnectionDetails waterConnectionDetails) {
-        EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        EgDemand currentDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
         BigDecimal estimationAmount = ZERO;
         List<String> demandCodes = Arrays.asList(METERED_CHARGES_REASON_CODE, WATERTAXREASONCODE,
                 DEMANDRSN_CODE_ADVANCE, WATERTAX_CONNECTION_CHARGE);
@@ -185,7 +189,7 @@ public class WaterEstimationChargesPaymentService {
     }
 
     public BigDecimal getEstimationAmount(WaterConnectionDetails waterConnectionDetails) {
-        EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        EgDemand currentDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
         BigDecimal estimationAmount = BigDecimal.ZERO;
         List<String> demandCodes = Arrays.asList(METERED_CHARGES_REASON_CODE, WATERTAXREASONCODE,
                 DEMANDRSN_CODE_ADVANCE, WATERTAX_CONNECTION_CHARGE);
@@ -199,7 +203,7 @@ public class WaterEstimationChargesPaymentService {
     }
     
     public BigDecimal setBPLMinimumAmount(WaterConnectionDetails waterConnectionDetails) {
-        EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        EgDemand currentDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
         if(currentDemand!=null)
             for(EgDemandDetails demandDetail: currentDemand.getEgDemandDetails()) {
                 if(WATERTAX_DONATION_CHARGE.equalsIgnoreCase(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()))

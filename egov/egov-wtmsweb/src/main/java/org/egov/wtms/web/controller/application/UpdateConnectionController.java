@@ -151,6 +151,7 @@ import org.egov.wtms.masters.service.MeterCostService;
 import org.egov.wtms.masters.service.RoadCategoryService;
 import org.egov.wtms.utils.WaterTaxNumberGenerator;
 import org.egov.wtms.utils.WaterTaxUtils;
+import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.egov.wtms.web.validator.UpdateWaterConnectionValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -228,6 +229,9 @@ public class UpdateConnectionController extends GenericConnectionController {
 
     @Autowired
     private UpdateWaterConnectionValidator updateWaterConnectionValidator;
+    
+    @Autowired
+    private WaterDemandConnectionService waterDemandConnectionService;
 
     @ModelAttribute
     public WaterConnectionDetails getWaterConnectionDetails(@PathVariable String applicationNumber) {
@@ -269,7 +273,7 @@ public class UpdateConnectionController extends GenericConnectionController {
             model.addAttribute(DONATION_AMOUNT, donationAmount.longValue());
             model.addAttribute(PENALTY_AMOUNT,
                     BigDecimal.valueOf(donationAmount).multiply(penaltyPercent).divide(new BigDecimal(100)));
-            model.addAttribute("currentDemand", waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand());
+            model.addAttribute("currentDemand", waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand());
         }
 
         if (waterTaxUtils.isConnectionInProgress(waterConnectionDetails.getStatus().getCode())
@@ -462,7 +466,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                 (APPLICATION_STATUS_CREATED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) ||
                         APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))
                 &&
-                waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null) {
+                waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand() != null) {
             boolean isWaterChargeDemandPresent = connectionDemandService
                     .checkWaterChargesCurrentDemand(waterConnectionDetails);
             if (isWaterChargeDemandPresent)

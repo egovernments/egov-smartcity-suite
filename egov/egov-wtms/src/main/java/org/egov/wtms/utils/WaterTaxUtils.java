@@ -603,20 +603,6 @@ public class WaterTaxUtils {
         return waterTaxDueforParent.doubleValue();
     }
 
-    public WaterDemandConnection getCurrentDemand(WaterConnectionDetails waterConnectionDetails) {
-        WaterDemandConnection waterdemandConnection = new WaterDemandConnection();
-
-        List<WaterDemandConnection> waterDemandConnectionList = waterDemandConnectionService
-                .findByWaterConnectionDetails(waterConnectionDetails);
-        for (WaterDemandConnection waterDemandConnection : waterDemandConnectionList)
-            if (waterDemandConnection.getDemand().getIsHistory().equalsIgnoreCase(WaterTaxConstants.DEMAND_ISHISTORY_N)) {
-                waterdemandConnection = waterDemandConnection;
-                break;
-            }
-
-        return waterdemandConnection;
-    }
-
     public List<EgDemand> getAllDemand(WaterConnectionDetails waterConnectionDetails) {
         List<EgDemand> demandList = new ArrayList<>();
         List<WaterDemandConnection> waterDemandConnectionList = waterDemandConnectionService

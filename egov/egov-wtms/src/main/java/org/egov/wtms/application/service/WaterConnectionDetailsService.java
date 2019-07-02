@@ -243,6 +243,7 @@ import org.egov.wtms.service.es.WaterChargeDocumentService;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxNumberGenerator;
 import org.egov.wtms.utils.WaterTaxUtils;
+import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -373,6 +374,9 @@ public class WaterConnectionDetailsService {
 
 	@Autowired
 	private WaterConnectionSmsAndEmailService waterConnectionSmsAndEmailService;
+	
+	@Autowired
+	private WaterDemandConnectionService waterDemandConnectionService;
 
 	@Autowired
 	@Qualifier("workflowService")
@@ -1152,7 +1156,7 @@ public class WaterConnectionDetailsService {
 	}
 
 	public BigDecimal getTotalAmount(WaterConnectionDetails waterConnectionDetails) {
-		EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+		EgDemand currentDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
 		BigDecimal balance = ZERO;
 		if (currentDemand != null) {
 			List<Object> instVsAmt = connectionDemandService.getDmdCollAmtInstallmentWise(currentDemand, null);
@@ -1162,7 +1166,7 @@ public class WaterConnectionDetailsService {
 	}
 
 	public BigDecimal getWaterTaxDueAmount(WaterConnectionDetails waterConnectionDetails) {
-		EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+		EgDemand currentDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
 		BigDecimal waterTaxAmount = ZERO;
 		List<String> demandCodes = Arrays.asList(METERED_CHARGES_REASON_CODE, WATERTAXREASONCODE,
 				DEMANDRSN_CODE_ADVANCE, WATERTAX_CONNECTION_CHARGE);
@@ -1175,7 +1179,7 @@ public class WaterConnectionDetailsService {
 	}
 
 	public BigDecimal getTotalAmountTillCurrentFinYear(WaterConnectionDetails waterConnectionDetails) {
-		EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+		EgDemand currentDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
 		BigDecimal balance = ZERO;
 		if (currentDemand != null) {
 			List<Object> instVsAmt = connectionDemandService
@@ -1187,7 +1191,7 @@ public class WaterConnectionDetailsService {
 	}
 
 	public BigDecimal getCurrentDue(WaterConnectionDetails waterConnectionDetails) {
-		EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+		EgDemand currentDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
 		BigDecimal balance = ZERO;
 		if (currentDemand != null) {
 			List<Object> instVsAmt = connectionDemandService
@@ -1249,7 +1253,7 @@ public class WaterConnectionDetailsService {
 	}
 
 	public BigDecimal getTotalAmountTillPreviousFinYear(WaterConnectionDetails waterConnectionDetails) {
-		EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+		EgDemand currentDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
 		BigDecimal balance = ZERO;
 		if (currentDemand != null) {
 			List<Object> instVsAmt = connectionDemandService
@@ -1277,7 +1281,7 @@ public class WaterConnectionDetailsService {
 	}
 
 	public BigDecimal getArrearsDemand(WaterConnectionDetails waterConnectionDetails) {
-		EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+		EgDemand currentDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
 		BigDecimal balance = ZERO;
 		if (currentDemand != null) {
 			List<Object> instVsAmt = connectionDemandService
@@ -1288,7 +1292,7 @@ public class WaterConnectionDetailsService {
 	}
 
 	public BigDecimal getTotalDemandTillCurrentFinYear(WaterConnectionDetails waterConnectionDetails) {
-		EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+		EgDemand currentDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
 		BigDecimal balance = ZERO;
 		if (currentDemand != null) {
 			List<Object> instVsAmt = connectionDemandService

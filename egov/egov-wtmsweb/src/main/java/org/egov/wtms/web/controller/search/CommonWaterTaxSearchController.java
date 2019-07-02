@@ -58,6 +58,7 @@ import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
+import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -121,6 +122,9 @@ public class CommonWaterTaxSearchController {
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDtlsService;
+    
+    @Autowired
+    private WaterDemandConnectionService waterDemandConnectionService;
 
     @ModelAttribute
     public ConnectionSearchRequest searchRequest() {
@@ -438,7 +442,7 @@ public class CommonWaterTaxSearchController {
             }
         if (isNotBlank(applicationType) && applicationType.equals(SEARCH_MENUTREE_APPLICATIONTYPE_COLLECTTAX)) {
             BigDecimal amoutToBeCollected = ZERO;
-            if (waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null)
+            if (waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand() != null)
                 amoutToBeCollected = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
             AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                     waterConnectionDetails.getConnection().getPropertyIdentifier(),

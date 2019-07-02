@@ -85,6 +85,7 @@ import org.egov.wtms.utils.DemandComparatorByInstallmentOrder;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -111,6 +112,8 @@ public class CurrentViewDcbController {
     private WaterTaxUtils waterTaxUtils;
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
+    @Autowired
+    private WaterDemandConnectionService waterDemandConnectionService;
 
     @ModelAttribute("citizenRole")
     public Boolean getCitizenUserRole() {
@@ -173,7 +176,7 @@ public class CurrentViewDcbController {
 
         model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
                 .get(waterConnectionDetails.getConnectionType().name()));
-        if (waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null) {
+        if (waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand() != null) {
             final DCBDisplayInfo dcbDispInfo = currentDcbService.getDcbDispInfo(waterConnectionDetails.getConnectionType());
             final WaterConnectionBillable waterConnectionBillable = (WaterConnectionBillable) context
                     .getBean("waterConnectionBillable");
@@ -184,7 +187,7 @@ public class CurrentViewDcbController {
             waterConnectionBillable.setAssessmentDetails(assessmentDetails);
             dcbService.setBillable(waterConnectionBillable);
             dCBReport = dcbService.getCurrentDCBAndReceipts(dcbDispInfo);
-            final EgDemand demand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+            final EgDemand demand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
             final List<EgDemandDetails> egDemandDetailsList = new ArrayList<>(0);
             egDemandDetailsList.addAll(demand.getEgDemandDetails());
             Collections.sort(egDemandDetailsList, new DemandComparatorByInstallmentOrder());

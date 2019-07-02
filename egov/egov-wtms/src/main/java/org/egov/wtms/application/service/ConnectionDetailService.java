@@ -84,6 +84,7 @@ import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -126,6 +127,9 @@ public class ConnectionDetailService {
 
     @Autowired
     private FinancialYearDAO financialYearDAO;
+    
+    @Autowired
+    private WaterDemandConnectionService waterDemandConnectionService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -389,7 +393,7 @@ public class ConnectionDetailService {
     }
 
     public Map<String, BigDecimal> getDemandCollMap(final WaterConnectionDetails waterConnectionDetails, final String effectiveDate) {
-        final EgDemand currDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        final EgDemand currDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
         Installment installment;
         List<Object> dmdCollList = new ArrayList<>(0);
         Installment currFirstHalf;
@@ -433,7 +437,7 @@ public class ConnectionDetailService {
 
     public Map<String, BigDecimal> getDemandCollMapForPtisIntegration(
             final WaterConnectionDetails waterConnectionDetails, final String moduleName) {
-        final EgDemand currDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        final EgDemand currDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
         Installment installment;
         List<Object> dmdCollList = new ArrayList<>(0);
         Installment currInst;
@@ -468,7 +472,7 @@ public class ConnectionDetailService {
 
     public Map<String, BigDecimal> getDemandCollMapForBill(final WaterConnectionDetails waterConnectionDetails,
             final String moduleName, final String installmentType) {
-        final EgDemand currDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        final EgDemand currDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
         List<Object> dmdCollList = new ArrayList<>(0);
         Integer instId;
         Double balance;

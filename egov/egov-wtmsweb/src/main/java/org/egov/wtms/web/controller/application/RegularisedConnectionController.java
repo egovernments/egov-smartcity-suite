@@ -89,6 +89,7 @@ import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.web.validator.RegularisedConnectionValidator;
+import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -134,6 +135,9 @@ public class RegularisedConnectionController extends GenericConnectionController
 
     @Autowired
     private RegularisedConnectionValidator regularisedConnectionValidator;
+    
+    @Autowired
+    private WaterDemandConnectionService waterDemandConnectionService;
 
     @GetMapping("/regulariseconnection/new")
     public String regulariseConnApplication(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
@@ -322,7 +326,7 @@ public class RegularisedConnectionController extends GenericConnectionController
                 .findByApplicationNumber(applicationNumber);
         if (waterConnectionDetails == null)
             throw new ApplicationRuntimeException("err.application.not.exist");
-        final EgDemand demand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        final EgDemand demand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
         boolean isDemandPresent = false;
         for (final EgDemandDetails demandDetails : demand.getEgDemandDetails())
             if (WATERTAXREASONCODE.equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode())

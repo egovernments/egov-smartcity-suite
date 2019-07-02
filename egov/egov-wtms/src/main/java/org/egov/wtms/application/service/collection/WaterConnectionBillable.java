@@ -66,6 +66,7 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
+import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -118,6 +119,8 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     private WaterTaxUtils waterTaxUtils;
     @Autowired
     private AppConfigValueService appConfigValuesService;
+    @Autowired
+    private WaterDemandConnectionService waterDemandConnectionService;
 
     @Override
     public String getBillPayee() {
@@ -134,7 +137,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public EgDemand getCurrentDemand() {
-        return waterTaxUtils.getCurrentDemand(getWaterConnectionDetails()).getDemand();
+        return waterDemandConnectionService.getCurrentDemand(getWaterConnectionDetails()).getDemand();
     }
 
     @Override
