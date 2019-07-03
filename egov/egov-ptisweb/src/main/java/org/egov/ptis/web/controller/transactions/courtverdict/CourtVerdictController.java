@@ -87,6 +87,7 @@ import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.CourtVerdict;
 import org.egov.ptis.domain.entity.property.PropertyCourtCase;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.egov.ptis.domain.service.courtverdict.CourtVerdictDCBService;
 import org.egov.ptis.domain.service.courtverdict.CourtVerdictService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.master.service.PropertyCourtCaseService;
@@ -120,6 +121,8 @@ public class CourtVerdictController extends GenericWorkFlowController {
     private PropertyCourtCaseService propCourtCaseService;
     @Autowired
     private CourtVerdictService courtVerdictService;
+    @Autowired
+    private CourtVerdictDCBService courtVerdictDCBService;
     @Autowired
     private SecurityUtils securityUtils;
     @Autowired
@@ -168,7 +171,7 @@ public class CourtVerdictController extends GenericWorkFlowController {
             model.addAttribute(PROPERTY, property);
             model.addAttribute(CURRENT_STATE, CREATED);
             model.addAttribute(STATE_TYPE, courtVerdict.getClass().getSimpleName());
-            model.addAttribute(ENDORSEMENT_NOTICE, null);
+            model.addAttribute(ENDORSEMENT_NOTICE, new ArrayList<>());
             model.addAttribute(LOGGED_IN_USER, propertyService.isEmployee(loggedInUser));
             courtVerdictService.addModelAttributes(model, property, request);
 
@@ -177,8 +180,8 @@ public class CourtVerdictController extends GenericWorkFlowController {
 
             List<EgDemandDetails> dmndDetails = new ArrayList<>(demandDetails);
             if (!dmndDetails.isEmpty())
-                dmndDetails = courtVerdictService.sortDemandDetails(dmndDetails);
-            List<DemandDetail> demandDetailBeanList = courtVerdictService.setDemandBeanList(dmndDetails);
+                dmndDetails = courtVerdictDCBService.sortDemandDetails(dmndDetails);
+            List<DemandDetail> demandDetailBeanList = courtVerdictDCBService.setDemandBeanList(dmndDetails);
             courtVerdict.setDemandDetailBeanList(demandDetailBeanList);
             model.addAttribute("dmndDetails", demandDetailBeanList);
             prepareWorkflow(model, courtVerdict, new WorkflowContainer());
@@ -208,7 +211,7 @@ public class CourtVerdictController extends GenericWorkFlowController {
             model.addAttribute(PROPERTY, oldProperty);
             model.addAttribute(CURRENT_STATE, CREATED);
             model.addAttribute(STATE_TYPE, oldCourtVerdict.getClass().getSimpleName());
-            model.addAttribute(ENDORSEMENT_NOTICE, null);
+            model.addAttribute(ENDORSEMENT_NOTICE, new ArrayList<>());
             model.addAttribute(LOGGED_IN_USER, propertyService.isEmployee(loggedInUser));
             courtVerdictService.addModelAttributes(model, oldCourtVerdict.getProperty(), request);
 
@@ -232,7 +235,7 @@ public class CourtVerdictController extends GenericWorkFlowController {
                         approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
 
                     courtVerdictService.updatePropertyDetails(courtVerdict);
-                    PropertyImpl modProperty = courtVerdictService.modifyDemand(property, oldProperty);
+                    PropertyImpl modProperty = courtVerdictDCBService.modifyDemand(property, oldProperty);
 
                     if (modProperty == null)
                         courtVerdict.getBasicProperty().addProperty(property);
@@ -254,7 +257,7 @@ public class CourtVerdictController extends GenericWorkFlowController {
             } else if (action.equalsIgnoreCase(UPDATE_DEMAND_DIRECTLY)) {
                 Long approvalPosition = 0l;
                 String approvalComent = "";
-                errorMessages = courtVerdictService.validateDemand(courtVerdict.getDemandDetailBeanList());
+                errorMessages = courtVerdictDCBService.validateDemand(courtVerdict.getDemandDetailBeanList());
                 if (errorMessages.isEmpty()) {
                     if (request.getParameter(APPROVAL_COMMENT) != null)
                         approvalComent = request.getParameter(APPROVAL_COMMENT);
@@ -265,7 +268,7 @@ public class CourtVerdictController extends GenericWorkFlowController {
                         approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
 
                     courtVerdictService.updatePropertyDetails(courtVerdict);
-                    courtVerdictService.updateDemandDetails(courtVerdict);
+                    courtVerdictDCBService.updateDemandDetails(courtVerdict);
                     courtVerdict.getBasicProperty().addProperty(courtVerdict.getProperty());
                     courtVerdictService.saveCourtVerdict(courtVerdict, approvalPosition, approvalComent, null,
                             workFlowAction, loggedUserIsEmployee);
@@ -295,13 +298,13 @@ public class CourtVerdictController extends GenericWorkFlowController {
                         .getEgDemandDetails();
         List<EgDemandDetails> dmndDetails = new ArrayList<>(demandDetails);
         if (!dmndDetails.isEmpty())
-            dmndDetails = courtVerdictService.sortDemandDetails(dmndDetails);
-        List<DemandDetail> demandDetailBeanList = courtVerdictService.setDemandBeanList(dmndDetails);
+            dmndDetails = courtVerdictDCBService.sortDemandDetails(dmndDetails);
+        List<DemandDetail> demandDetailBeanList = courtVerdictDCBService.setDemandBeanList(dmndDetails);
         courtVerdict.setDemandDetailBeanList(demandDetailBeanList);
         model.addAttribute("dmndDetails", demandDetailBeanList);
         model.addAttribute(PROPERTY, courtVerdict.getBasicProperty().getActiveProperty());
         model.addAttribute(CURRENT_STATE, CREATED);
-        model.addAttribute(ENDORSEMENT_NOTICE, null);
+        model.addAttribute(ENDORSEMENT_NOTICE, new ArrayList<>());
         model.addAttribute(STATE_TYPE, courtVerdict.getClass().getSimpleName());
         model.addAttribute(LOGGED_IN_USER, propertyService.isEmployee(loggedInUser));
         courtVerdictService.addModelAttributes(model, courtVerdict.getProperty(), request);

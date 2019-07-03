@@ -48,45 +48,30 @@
 package org.egov.ptis.web.controller.transactions.courtverdict;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.ACTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_COURT_VERDICT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPROVAL_COMMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPROVAL_POSITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.COURT_VERDICT;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENT_DESG;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENT_STATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.CV_FORM;
 import static org.egov.ptis.constants.PropertyTaxConstants.CV_SUCCESS_FORM;
 import static org.egov.ptis.constants.PropertyTaxConstants.CV_VIEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_DETAIL_LIST;
-import static org.egov.ptis.constants.PropertyTaxConstants.HISTORY_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOGGED_IN_USER;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.RE_ASSESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATE_AWARE_ID;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATE_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.SUCCESS_MSG;
-import static org.egov.ptis.constants.PropertyTaxConstants.TRANSACTION_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.UPDATE_DEMAND_DIRECTLY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_ACTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.ENDORSEMENT_NOTICE;
-
-import java.util.HashMap;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.CourtVerdict;
+import org.egov.ptis.domain.service.courtverdict.CourtVerdictDCBService;
 import org.egov.ptis.domain.service.courtverdict.CourtVerdictService;
-import org.egov.ptis.domain.service.property.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -106,11 +91,9 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
     @Autowired
     private CourtVerdictService courtVerdictService;
     @Autowired
-    private PropertyService propertyService;
+    private CourtVerdictDCBService courtVerdictDCBService;
     @Autowired
     private SecurityUtils securityUtils;
-    @Autowired
-    private PropertyService propService;
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
 
@@ -124,100 +107,41 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
     public String view(@ModelAttribute CourtVerdict courtVerdict, Model model, HttpServletRequest request) {
         String target = null;
         String currState = courtVerdict.getState().getValue();
-
-        User loggedInUser = securityUtils.getCurrentUser();
-        List<HashMap<String, Object>> historyMap;
         String currentDesg = courtVerdictService.getLoggedInUserDesignation(
                 courtVerdict.getCurrentState().getOwnerPosition().getId(),
                 securityUtils.getCurrentUser());
         if (!currState.endsWith(WF_STATE_REJECTED)) {
             if (courtVerdict.getAction().equalsIgnoreCase(RE_ASSESS)) {
-                model.addAttribute(COURT_VERDICT, courtVerdict);
-                model.addAttribute(PROPERTY, courtVerdict.getProperty());
-                model.addAttribute(ACTION, courtVerdict.getAction());
-                model.addAttribute(CURRENT_STATE, courtVerdict.getCurrentState().getValue());
-                model.addAttribute(TRANSACTION_TYPE, APPLICATION_TYPE_COURT_VERDICT);
-                model.addAttribute(STATE_AWARE_ID, courtVerdict.getId());
-                model.addAttribute(STATE_TYPE, courtVerdict.getClass().getSimpleName());
-                model.addAttribute(ENDORSEMENT_NOTICE, null);
-                model.addAttribute(LOGGED_IN_USER, propertyService.isEmployee(loggedInUser));
-                model.addAttribute(CURRENT_DESG, currentDesg);
+                courtVerdictService.addModelAttributesForUpdateCV(courtVerdict, model);
                 courtVerdictService.addModelAttributes(model, courtVerdict.getProperty(), request);
                 WorkflowContainer container = new WorkflowContainer();
                 container.setCurrentDesignation(currentDesg);
                 prepareWorkflow(model, courtVerdict, container);
 
-                if (courtVerdict.getId() != null && courtVerdict.getState() != null) {
-                    historyMap = propService.populateHistory(courtVerdict);
-                    model.addAttribute(HISTORY_MAP, historyMap);
-                    model.addAttribute(STATE, courtVerdict.getState());
-                }
                 target = CV_VIEW;
             } else if (courtVerdict.getAction().equalsIgnoreCase(UPDATE_DEMAND_DIRECTLY)) {
-                model.addAttribute(COURT_VERDICT, courtVerdict);
-                model.addAttribute(PROPERTY, courtVerdict.getProperty());
-                model.addAttribute(ACTION, courtVerdict.getAction());
-                model.addAttribute(CURRENT_STATE, courtVerdict.getCurrentState().getValue());
-                model.addAttribute(TRANSACTION_TYPE, APPLICATION_TYPE_COURT_VERDICT);
-                model.addAttribute(STATE_AWARE_ID, courtVerdict.getId());
-                model.addAttribute(STATE_TYPE, courtVerdict.getClass().getSimpleName());
-                model.addAttribute(ENDORSEMENT_NOTICE, null);
-                courtVerdictService.addDemandDetails(courtVerdict);
+                courtVerdictService.addModelAttributesForUpdateCV(courtVerdict, model);
+                courtVerdictDCBService.addDemandDetails(courtVerdict);
                 model.addAttribute(DEMAND_DETAIL_LIST, courtVerdict.getDemandDetailBeanList());
-                model.addAttribute(LOGGED_IN_USER, propertyService.isEmployee(loggedInUser));
-                model.addAttribute(CURRENT_DESG, currentDesg);
                 courtVerdictService.addModelAttributes(model, courtVerdict.getProperty(), request);
                 prepareWorkflow(model, courtVerdict, new WorkflowContainer());
 
-                if (courtVerdict.getId() != null && courtVerdict.getState() != null) {
-                    historyMap = propService.populateHistory(courtVerdict);
-                    model.addAttribute(HISTORY_MAP, historyMap);
-                    model.addAttribute(STATE, courtVerdict.getState());
-                }
                 target = CV_VIEW;
             }
         } else {
             if (courtVerdict.getAction().equalsIgnoreCase(RE_ASSESS)) {
-                model.addAttribute(COURT_VERDICT, courtVerdict);
-                model.addAttribute(PROPERTY, courtVerdict.getProperty());
-                model.addAttribute(ACTION, courtVerdict.getAction());
-                model.addAttribute(CURRENT_STATE, courtVerdict.getCurrentState().getValue());
-                model.addAttribute(TRANSACTION_TYPE, APPLICATION_TYPE_COURT_VERDICT);
-                model.addAttribute(STATE_AWARE_ID, courtVerdict.getId());
-                model.addAttribute(STATE_TYPE, courtVerdict.getClass().getSimpleName());
-                model.addAttribute(LOGGED_IN_USER, propertyService.isEmployee(loggedInUser));
-                model.addAttribute(ENDORSEMENT_NOTICE, null);
-                model.addAttribute(CURRENT_DESG, currentDesg);
+                courtVerdictService.addModelAttributesForUpdateCV(courtVerdict, model);
                 courtVerdictService.addModelAttributes(model, courtVerdict.getProperty(), request);
                 prepareWorkflow(model, courtVerdict, new WorkflowContainer());
 
-                if (courtVerdict.getId() != null && courtVerdict.getState() != null) {
-                    historyMap = propService.populateHistory(courtVerdict);
-                    model.addAttribute(HISTORY_MAP, historyMap);
-                    model.addAttribute(STATE, courtVerdict.getState());
-                }
                 target = CV_FORM;
             } else if (courtVerdict.getAction().equalsIgnoreCase(UPDATE_DEMAND_DIRECTLY)) {
-                model.addAttribute(COURT_VERDICT, courtVerdict);
-                model.addAttribute(PROPERTY, courtVerdict.getProperty());
-                model.addAttribute(ACTION, courtVerdict.getAction());
-                model.addAttribute(CURRENT_STATE, courtVerdict.getCurrentState().getValue());
-                model.addAttribute(TRANSACTION_TYPE, APPLICATION_TYPE_COURT_VERDICT);
-                model.addAttribute(STATE_AWARE_ID, courtVerdict.getId());
-                model.addAttribute(STATE_TYPE, courtVerdict.getClass().getSimpleName());
-                model.addAttribute(ENDORSEMENT_NOTICE, null);
-                courtVerdictService.addDemandDetails(courtVerdict);
+
+                courtVerdictDCBService.addDemandDetails(courtVerdict);
                 model.addAttribute(DEMAND_DETAIL_LIST, courtVerdict.getDemandDetailBeanList());
-                model.addAttribute(LOGGED_IN_USER, propertyService.isEmployee(loggedInUser));
-                model.addAttribute(CURRENT_DESG, currentDesg);
                 courtVerdictService.addModelAttributes(model, courtVerdict.getProperty(), request);
                 prepareWorkflow(model, courtVerdict, new WorkflowContainer());
 
-                if (courtVerdict.getId() != null && courtVerdict.getState() != null) {
-                    historyMap = propService.populateHistory(courtVerdict);
-                    model.addAttribute(HISTORY_MAP, historyMap);
-                    model.addAttribute(STATE, courtVerdict.getState());
-                }
                 target = CV_FORM;
             }
         }
@@ -249,7 +173,7 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
 
             if (request.getParameter(ACTION).equalsIgnoreCase(UPDATE_DEMAND_DIRECTLY)) {
 
-                courtVerdictService.updateDemand(courtVerdict);
+                courtVerdictDCBService.updateDemand(courtVerdict);
             }
 
             courtVerdictService.saveCourtVerdict(courtVerdict, approvalPosition, approvalComent, null, workFlowAction,
