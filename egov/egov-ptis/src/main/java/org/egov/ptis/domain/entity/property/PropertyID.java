@@ -286,7 +286,8 @@ public class PropertyID extends BaseModel {
         objStr = (getLocality() != null) ? objStr.append("|Locality: ").append(getLocality().getName()) : objStr
                 .append("");
         objStr = (getStreet() != null) ? objStr.append("|Street: ").append(getStreet().getName()) : objStr.append("");
-
+        objStr = (getElectionBoundary() != null) ? objStr.append("|Election Boundary: ").append(getElectionBoundary().getName()) : objStr.append("");
+  
         return objStr.toString();
     }
 }

@@ -71,6 +71,7 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.NumberUtil;
 import org.egov.infra.workflow.entity.State;
@@ -96,11 +97,15 @@ import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.service.DemandBill.DemandBillService;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
@@ -148,12 +153,15 @@ public class PropertyTaxCommonUtils {
 
     @Autowired
     private DepartmentService departmentService;
-        
+
     @Autowired
     private NotificationService notificationService;
-    
+
     @Autowired
     private PropertyMutationDAO propertyMutationDAO;
+
+    @Autowired
+    private SimpleRestClient simpleRestClient;
 
     /**
      * Gives the first half of the current financial year
@@ -260,7 +268,7 @@ public class PropertyTaxCommonUtils {
                 APPCONFIG_DIGITAL_SIGNATURE);
         return !appConfigValues.isEmpty() && "Y".equals(appConfigValues.get(0).getValue()) ? true : false;
     }
-    
+
     public boolean isMuadIntegrationRequired() {
         final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
                 APPCONFIG_MAUD_INTEGRATION_REQUIRED);
@@ -377,6 +385,7 @@ public class PropertyTaxCommonUtils {
         }
         return wfInitiatorAssignment;
     }
+
     public Assignment getWorkflowInitiatorAsRO(final Long userId) {
         Assignment wfInitiatorAssignment = null;
         if (userId != null) {
@@ -392,7 +401,7 @@ public class PropertyTaxCommonUtils {
     }
 
     public String getCurrentHalfyearTax(final HashMap<Installment, TaxCalculationInfo> instTaxMap,
-                                        final PropertyTypeMaster propTypeMstr) {
+            final PropertyTypeMaster propTypeMstr) {
         final Installment currentInstall = getCurrentPeriodInstallment();
         final TaxCalculationInfo calculationInfo = instTaxMap.get(currentInstall);
         final BigDecimal annualValue = calculationInfo.getTotalNetARV();
@@ -427,10 +436,10 @@ public class PropertyTaxCommonUtils {
     }
 
     private String preparResponeString(final PropertyTypeMaster propTypeMstr, final BigDecimal annualValue,
-                                       final BigDecimal totalPropertyTax,
-                                       final BigDecimal vacLandTax, final BigDecimal genTax, final BigDecimal unAuthPenalty, final BigDecimal eduTax,
-                                       final BigDecimal libCess,
-                                       final BigDecimal sewrageTax, final BigDecimal serviceCharges) {
+            final BigDecimal totalPropertyTax,
+            final BigDecimal vacLandTax, final BigDecimal genTax, final BigDecimal unAuthPenalty, final BigDecimal eduTax,
+            final BigDecimal libCess,
+            final BigDecimal sewrageTax, final BigDecimal serviceCharges) {
         final StringBuilder resultString = new StringBuilder(200);
         resultString.append(
                 "Annual Rental Value=" + formatAmount(annualValue) + "~Total Tax=" + formatAmount(totalPropertyTax));
@@ -459,14 +468,14 @@ public class PropertyTaxCommonUtils {
      */
     public String getDateWithSufix(final int dayOfMonth) {
         switch (dayOfMonth < 20 ? dayOfMonth : dayOfMonth % 10) {
-            case 1:
-                return dayOfMonth + "st";
-            case 2:
-                return dayOfMonth + "nd";
-            case 3:
-                return dayOfMonth + "rd";
-            default:
-                return dayOfMonth + "th";
+        case 1:
+            return dayOfMonth + "st";
+        case 2:
+            return dayOfMonth + "nd";
+        case 3:
+            return dayOfMonth + "rd";
+        default:
+            return dayOfMonth + "th";
         }
     }
 
@@ -622,12 +631,12 @@ public class PropertyTaxCommonUtils {
     public List<Long> getPositionForUser(final Long userId) {
         List<Long> positionIds = new ArrayList<>();
         if (userId != null && userId.intValue() != 0) {
-            for(Position position : positionMasterService.getPositionsForEmployee(ApplicationThreadLocals.getUserId()))
+            for (Position position : positionMasterService.getPositionsForEmployee(ApplicationThreadLocals.getUserId()))
                 positionIds.add(position.getId());
         }
         return positionIds;
     }
-    
+
     public void buildMailAndSMS(final Property property) {
         String transactionType;
         String modifyReason = property.getPropertyModifyReason();
@@ -746,13 +755,13 @@ public class PropertyTaxCommonUtils {
         return !(state.getNextAction()).equalsIgnoreCase(WF_STATE_NOTICE_PRINT_PENDING) &&
                 !(state.getNextAction()).equalsIgnoreCase(WFLOW_ACTION_STEP_PRINT_NOTICE);
     }
-    
+
     public boolean isEndorsementEnabled() {
         final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
                 PropertyTaxConstants.APPCONFIG_ENDORSEMENT);
         return !appConfigValues.isEmpty() && "Y".equals(appConfigValues.get(0).getValue()) ? true : false;
     }
-    
+
     /**
      * Returns whether the logged in user is the current owner of the application
      *
@@ -779,7 +788,7 @@ public class PropertyTaxCommonUtils {
         } else
             return Boolean.FALSE;
     }
-    
+
     public List<String> validationForInactiveProperty(BasicProperty basicProperty) {
         String noOfDays;
         String reason = null;
@@ -794,14 +803,14 @@ public class PropertyTaxCommonUtils {
                 reason = "New Assessment";
             else if ("ADD_OR_ALTER".equals(basicProperty.getProperty().getPropertyModifyReason()))
                 reason = "Addition/Alteration";
-            else if("BIFURCATE".equals(basicProperty.getProperty().getPropertyModifyReason()))
-            	reason = "Bifurcation";
+            else if ("BIFURCATE".equals(basicProperty.getProperty().getPropertyModifyReason()))
+                reason = "Bifurcation";
             list.add(reason);
             list.add(DateUtils.getFormattedDate(basicProperty.getModifiedDate(), "dd/MM/yyyy"));
         }
         return list;
     }
-    
+
     public SurroundingsAudit setSurroundingDetails(final BasicProperty basicProperty) {
         SurroundingsAudit oldSurroundings = new SurroundingsAudit();
         PropertyID propertyId = basicProperty.getPropertyID();
@@ -812,7 +821,6 @@ public class PropertyTaxCommonUtils {
         oldSurroundings.setWestBoundary(propertyId.getWestBoundary() != null ? propertyId.getWestBoundary() : null);
         return oldSurroundings;
     }
-    
 
     public PropertyMutation getLatestApprovedMutationForAssessmentNo(String assessmentNo) {
         return propertyMutationDAO.getLatestApprovedMutationForAssessmentNo(assessmentNo);
@@ -823,14 +831,14 @@ public class PropertyTaxCommonUtils {
         query.setParameter("basicPropertyId", basicProperty);
         return query.list().isEmpty() ? null : (PropertyStatusValues) query.list().get(0);
     }
-    
+
     /**
      * Returns sum of all primary tax heads
      *
      * @return BigDecimal
      */
     public BigDecimal getAggregateGenralTax(Map<String, BigDecimal> demandCollMap) {
-        
+
         return nullCheckBigDecimal(demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX))
                 .add(nullCheckBigDecimal(demandCollMap.get(PropertyTaxConstants.DEMANDRSN_STR_LIGHT_TAX)))
                 .add(nullCheckBigDecimal(demandCollMap.get(DEMANDRSN_STR_WATER_TAX)))
@@ -838,7 +846,6 @@ public class PropertyTaxCommonUtils {
                 .add(nullCheckBigDecimal(demandCollMap.get(DEMANDRSN_STR_DRAINAGE_TAX)));
 
     }
-    
 
     /**
      * Returns zero if value is null otherwise value
@@ -850,16 +857,16 @@ public class PropertyTaxCommonUtils {
         return value != null ? value : BigDecimal.ZERO;
     }
 
-    public BigInteger getModuleIdByName(){
-    	BigInteger id = BigInteger.ZERO ;
-    	String selectQuery = " select id from eg_modules where name =:name ";
+    public BigInteger getModuleIdByName() {
+        BigInteger id = BigInteger.ZERO;
+        String selectQuery = " select id from eg_modules where name =:name ";
         final Query qry = getSession().createSQLQuery(selectQuery).setString("name", PropertyTaxConstants.FILESTORE_MODULE_NAME);
         List<Object> list = qry.list();
-        	if(!list.isEmpty())
-        		id = (BigInteger) list.get(0);
-    	return id;
+        if (!list.isEmpty())
+            id = (BigInteger) list.get(0);
+        return id;
     }
-    
+
     public boolean isUnderMutationWorkflow(final BasicProperty basicProperty) {
         boolean underWorkFlow = false;
         if (basicProperty.getPropertyMutations() != null)
@@ -870,4 +877,48 @@ public class PropertyTaxCommonUtils {
             }
         return underWorkFlow;
     }
+
+    /**
+     * Returns Sewerage connection details of an assessment
+     *
+     * @param assessmentNo
+     * @param request
+     * @return
+     */
+    public List<Map<String, Object>> getSewConnDetails(final String assessmentNo, final HttpServletRequest request) {
+        final List<Map<String, Object>> sewerageConnDtls = new ArrayList<>();
+        final String url = request.getRequestURL().toString();
+        final String uri = request.getRequestURI();
+        final String host = url.substring(0, url.indexOf(uri));
+        final String stmsRestURL = String.format(STMS_TAXDUE_RESTURL, host, assessmentNo);
+        final String dtls = simpleRestClient.getRESTResponse(stmsRestURL);
+        JSONObject jsonObj = null;
+        try {
+            jsonObj = new JSONObject(dtls);
+        } catch (final JSONException e1) {
+            LOGGER.error("Error in converting string into json array " + e1);
+        }
+
+        try {
+            final Map<String, Object> newMap = new HashMap<>();
+            for (String key : jsonObj.keySet()) {
+                if ("consumerCode".equals(key)) {
+                    final Map<String, Object> ccMap = new HashMap<>();
+                    JSONObject ccObject = jsonObj.getJSONObject(key);
+                    ccObject.keySet().forEach(e -> {
+                        ccMap.put(e, ccObject.getString(e));
+                    });
+                    newMap.put(key, ccMap);
+
+                } else if (!"propertyID".equals(key))
+                    newMap.put(key, jsonObj.get(key).toString().toLowerCase());
+
+            }
+            sewerageConnDtls.add(newMap);
+        } catch (final JSONException e) {
+            LOGGER.error("Error in converting json array into json object " + e);
+        }
+        return sewerageConnDtls;
+    }
+
 }

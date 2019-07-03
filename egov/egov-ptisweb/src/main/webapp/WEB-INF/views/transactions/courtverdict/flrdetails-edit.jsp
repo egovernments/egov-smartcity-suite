@@ -77,6 +77,12 @@
 								<th class="bluebgheadtd"><spring:message
 										code="lbl.cv.effectFrom" /><span class="mandatory1">*</span></th>
 								<th class="bluebgheadtd"><spring:message
+										code="lbl.cv.unstructuredLand" /><span class="mandatory1">*</span></th>
+								<th class="bluebgheadtd"><spring:message
+										code="lbl.cv.length" /><span class="mandatory1">*</span></th>
+								<th class="bluebgheadtd"><spring:message
+										code="lbl.cv.breadth" /><span class="mandatory1">*</span></th>
+								<th class="bluebgheadtd"><spring:message
 										code="lbl.cv.plinth" /><span class="mandatory1">*</span></th>
 								<th class="bluebgheadtd"><spring:message
 										code="lbl.cv.buildplanNo" /></th>
@@ -130,6 +136,19 @@
 								<td class="greybox"><form:input
 										cssClass="form-control datepicker" id="occupancyDate"
 										path="property.propertyDetail.floorDetailsProxy[0].occupancyDate"
+										cssStyle="width:100%" /></td>
+								<td class="greybox"><form:select cssClass="form-control"
+										path="property.propertyDetail.floorDetailsProxy[0].unstructuredLand"
+										id="usage" cssStyle="width:100%">
+										<form:option value="">--select--</form:option>
+										<form:option value="true">Yes</form:option>
+										<form:option value="false">No</form:option>
+									</form:select></td>
+								<td class="greybox"><form:input cssClass="form-control"
+										path="property.propertyDetail.floorDetailsProxy[0].builtUpArea.length"
+										cssStyle="width:100%" /></td>
+								<td class="greybox"><form:input cssClass="form-control"
+										path="property.propertyDetail.floorDetailsProxy[0].builtUpArea.breadth"
 										cssStyle="width:100%" /></td>
 								<td class="greybox"><form:input cssClass="form-control"
 										path="property.propertyDetail.floorDetailsProxy[0].builtUpArea.area"

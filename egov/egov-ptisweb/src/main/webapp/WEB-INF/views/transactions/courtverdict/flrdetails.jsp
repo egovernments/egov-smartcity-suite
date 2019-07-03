@@ -73,6 +73,12 @@
 							<th class="bluebgheadtd"><spring:message
 									code="lbl.cv.effectFrom" /><span class="mandatory1">*</span></th>
 							<th class="bluebgheadtd"><spring:message
+									code="lbl.cv.unstructuredLand" /><span class="mandatory1">*</span></th>
+							<th class="bluebgheadtd"><spring:message
+									code="lbl.cv.length" /><span class="mandatory1">*</span></th>
+							<th class="bluebgheadtd"><spring:message
+									code="lbl.cv.breadth" /><span class="mandatory1">*</span></th>
+							<th class="bluebgheadtd"><spring:message
 									code="lbl.cv.plinth" /><span class="mandatory1">*</span></th>
 							<th class="bluebgheadtd"><spring:message
 									code="lbl.cv.buildplanNo" /></th>
@@ -117,6 +123,24 @@
 									<div align="center">
 										<span class="bold"><fmt:formatDate type="date"
 												pattern="dd-MM-yyyy" value="${floor.occupancyDate}"></fmt:formatDate></span>
+									</div>
+								</td>
+								<td class="blueborderfortd" style="padding: 2px 2px">
+									<div align="center">
+										<span class="bold"><c:out default="N/A"
+												value="${floor.unstructuredLand}"></c:out></span>
+									</div>
+								</td>
+								<td class="blueborderfortd" style="padding: 2px 2px">
+									<div align="center">
+										<span class="bold"><c:out default="N/A"
+												value="${floor.builtUpArea.length}"></c:out></span>
+									</div>
+								</td>
+								<td class="blueborderfortd" style="padding: 2px 2px">
+									<div align="center">
+										<span class="bold"><c:out default="N/A"
+												value="${floor.builtUpArea.breadth}"></c:out></span>
 									</div>
 								</td>
 								<td class="blueborderfortd" style="padding: 2px 2px">

@@ -51,14 +51,14 @@
 			style="text-align: left">
 			<div class="panel-heading">
 				<div class="panel-title">
+
 					<spring:message code="lbl.cv.dmndDet" />
 				</div>
 			</div>
 			<div class="panel-body">
 				<div align="center"
 					class="overflow-x-scroll floors-tbl-freeze-column-div">
-					<table class="table table-bordered" width="100%"
-						id="demandDetailsTable">
+					<table class="table table-bordered" width="100%" id="demandDetails">
 						<tr>
 							<th class="bluebgheadtd"><spring:message
 									code="lbl.cv.instlmnt" /></th>
@@ -72,17 +72,17 @@
 							<th class="bluebgheadtd"><spring:message
 									code="lbl.cv.adjustAmt" /></th>
 						</tr>
-						<c:forEach items="${dmndDetails}" var="demandDetails"
+						<c:forEach items="${demandDetailList}" var="demandDetails"
 							varStatus="status">
 
 							<tr>
 								<td class="greybox"><form:hidden
 										path="demandDetailBeanList[${status.index }].installment.id" />
 									<c:if
-										test="${dmndDetails[status.index].installment.id == dmndDetails[status.index-1].installment.id}">
+										test="${demandDetailList[status.index].installment.id == demandDetailList[status.index-1].installment.id}">
 									&nbsp;
 									</c:if> <c:if
-										test="${dmndDetails[status.index].installment.id != dmndDetails[status.index-1].installment.id}">
+										test="${demandDetailList[status.index].installment.id != demandDetailList[status.index-1].installment.id}">
 
 										<c:out value="${demandDetails.installment}"></c:out>
 
@@ -90,22 +90,18 @@
 								<td class="greybox"><form:hidden
 										path="demandDetailBeanList[${status.index }].reasonMaster" />
 									<c:out value="${demandDetails.reasonMaster}"></c:out></td>
-								<td class="greybox"><form:input align="center" type="text"
-										style="width:80%"
-										path="demandDetailBeanList[${status.index }].actualAmount"
-										value="${demandDetails.actualAmount}" readonly="true" /></td>
-								<td class="greybox"><form:input id="revisedAmount" align="center" type="text"
-										style="width:80%"
-										path="demandDetailBeanList[${status.index }].revisedAmount"
-										nblur="return calculateAmount(this);" /></td>
-								<td class="greybox"><form:input align="center" type="text"
-										style="width:80%"
-										path="demandDetailBeanList[${status.index }].actualCollection"
-										value="${demandDetails.actualCollection}" readonly="true" /></td>
-								<td class="greybox"><form:input id="revisedCollection"
-										align="center" type="text" style="width:80%"
-										path="demandDetailBeanList[${status.index }].revisedCollection"
-										onblur="return calculateCollectionAmount(this);" /></td>
+								<td class="greybox"><c:out
+										value="${demandDetails.actualAmount}">
+									</c:out></td>
+								<td class="greybox"><c:out
+										value="${demandDetails.revisedAmount}">
+									</c:out></td>
+								<td class="greybox"><c:out
+										value="${demandDetails.actualCollection}">
+									</c:out></td>
+								<td class="greybox"><c:out
+										value="${demandDetails.revisedCollection}">
+									</c:out></td>
 
 							</tr>
 						</c:forEach>

@@ -48,19 +48,20 @@
 package org.egov.ptis.domain.service.courtverdict;
 
 import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+import static java.math.BigDecimal.ZERO;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_COURT_VERDICT;
-import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_MIXED;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESIGNATIONS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEPUTY_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
@@ -71,24 +72,31 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYP
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
+import static org.egov.ptis.constants.PropertyTaxConstants.VACANTLAND_MIN_CUR_CAPITALVALUE;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVAL_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITAL_SIGNATURE_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.persistence.EntityManager;
@@ -97,7 +105,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.poi.ss.formula.functions.T;
+import org.egov.commons.Area;
 import org.egov.commons.Installment;
+import org.egov.commons.dao.InstallmentHibDao;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
@@ -106,20 +118,23 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.notification.service.NotificationService;
-import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
+import org.egov.ptis.bean.demand.DemandDetail;
+import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
-import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.CourtVerdict;
 import org.egov.ptis.domain.entity.property.Floor;
-import org.egov.ptis.domain.entity.property.Property;
-import org.egov.ptis.domain.entity.property.PropertyAddress;
+import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyOccupation;
@@ -185,22 +200,29 @@ public class CourtVerdictService {
     @PersistenceContext
     EntityManager entityManager;
     @Autowired
+    private PersistenceService<T, Serializable> persistenceService;
+    @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<PropertyImpl> propertyWorkflowService;
     @Autowired
     private ApplicationNumberGenerator applicationNo;
-    private Logger logger = Logger.getLogger(getClass());
+    @Autowired
+    private InstallmentHibDao installmentDao;
+    @Autowired
+    private PtDemandDao ptDemandDAO;
+    @Autowired
+    private PTBillServiceImpl ptBillServiceImpl;
+    private static final Logger LOGGER = Logger.getLogger(CourtVerdictService.class);
 
     private String propertyCategory;
 
-    public void addModelAttributes(final Model model, final BasicProperty basicProperty,
+    public void addModelAttributes(final Model model, final PropertyImpl property,
             final HttpServletRequest request) {
 
-        Property property = null;
-        if (null != basicProperty.getProperty())
-            property = basicProperty.getActiveProperty();
-
-        List<Map<String, Object>> wcDetails = propertyService.getWCDetails(basicProperty.getUpicNo(), request);
+        List<Map<String, Object>> wcDetails = propertyService.getWCDetails(property.getBasicProperty().getUpicNo(), request);
+        List<Map<String, Object>> sewConnDetails = propertyTaxCommonUtils.getSewConnDetails(
+                property.getBasicProperty().getUpicNo(),
+                request);
         List<Floor> floor = property.getPropertyDetail().getFloorDetails();
         property.getPropertyDetail().setFloorDetailsProxy(floor);
 
@@ -226,6 +248,7 @@ public class CourtVerdictService {
 
         model.addAttribute("floor", floor);
         model.addAttribute("wcDetails", wcDetails);
+        model.addAttribute("sewConnDetails", sewConnDetails);
         model.addAttribute("localityList", localityList);
         model.addAttribute("zones", zones);
         model.addAttribute("electionWardList", electionWardList);
@@ -253,9 +276,10 @@ public class CourtVerdictService {
         return usageList;
     }
 
-    public Map<String, String> validateProperty(CourtVerdict courtVerdict) {
+    public Map<String, String> validate(CourtVerdict courtVerdict) {
         HashMap<String, String> errorMessages = new HashMap<>();
-
+        Date propCompletionDate = propertyTaxUtil
+                .getLowestInstallmentForProperty(courtVerdict.getBasicProperty().getActiveProperty());
         if (StringUtils.isBlank(courtVerdict.getBasicProperty().getAddress().getAreaLocalitySector()))
             errorMessages.put("areaLocalitySector", "areaLocalitySector.required");
         if (StringUtils.isBlank(courtVerdict.getBasicProperty().getPropertyID().getArea().getName()))
@@ -266,12 +290,170 @@ public class CourtVerdictService {
             errorMessages.put("ward", "ward.required");
         if (courtVerdict.getBasicProperty().getPropertyID().getElectionBoundary().getName() == null)
             errorMessages.put("electionWard", "electionWard.required");
-        if (StringUtils.isBlank(courtVerdict.getBasicProperty().getActiveProperty().getPropertyDetail()
+        if (StringUtils.isBlank(courtVerdict.getProperty().getPropertyDetail()
                 .getPropertyTypeMaster().getType()))
             errorMessages.put("categoryType", "categoryType.required");
-        if (courtVerdict.getBasicProperty().getActiveProperty().getPropertyDetail().getCategoryType() == null)
+        else if (StringUtils.isBlank(courtVerdict.getProperty().getPropertyDetail().getCategoryType()))
             errorMessages.put("propertyType", "propertyType.required");
+        else
+            validateProperty(courtVerdict.getProperty(), courtVerdict.getProperty().getPropertyDetail().getSitalArea(),
+                    courtVerdict.getBasicProperty().getPropertyID().getEastBoundary(),
+                    courtVerdict.getBasicProperty().getPropertyID().getWestBoundary(),
+                    courtVerdict.getBasicProperty().getPropertyID().getSouthBoundary(),
+                    courtVerdict.getBasicProperty().getPropertyID().getNorthBoundary(),
+                    courtVerdict.getProperty().getPropertyDetail().getVacantLandPlotArea().getId(),
+                    courtVerdict.getProperty().getPropertyDetail().getLayoutApprovalAuthority().getId(), errorMessages,
+                    propCompletionDate);
         return errorMessages;
+    }
+
+    private void validateProperty(PropertyImpl property, Area sitalArea, String eastBoundary, String westBoundary,
+            String southBoundary, String northBoundary, Long vacantLandPlotAreaId,
+            Long layoutApprovalAuthorityId, HashMap<String, String> errorMessages, Date propCompletionDate) {
+
+        PropertyTypeMaster propertyTypeMaster = propTypeMasterDAO
+                .getPropertyTypeMasterByCode(property.getPropertyDetail().getPropertyTypeMaster().getCode());
+
+        if (propertyTypeMaster.getType().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND_STR)) {
+            if (null != property.getPropertyDetail())
+                validateVacantProperty(property.getPropertyDetail(), eastBoundary, westBoundary, southBoundary,
+                        northBoundary, vacantLandPlotAreaId, layoutApprovalAuthorityId,
+                        errorMessages, propCompletionDate);
+        } else if (null == property.getId() && TRUE.equals(property.getPropertyDetail().isAppurtenantLandChecked())) {
+            validateVacantProperty(property.getPropertyDetail(), eastBoundary, westBoundary, southBoundary, northBoundary,
+                    vacantLandPlotAreaId, layoutApprovalAuthorityId, errorMessages,
+                    propCompletionDate);
+            validateBuiltUpProperty(property.getPropertyDetail(), sitalArea, errorMessages);
+            validateFloor(propertyTypeMaster, property.getPropertyDetail().getFloorDetailsProxy(), property, sitalArea,
+                    errorMessages);
+        } else {
+            validateBuiltUpProperty(property.getPropertyDetail(), sitalArea, errorMessages);
+            validateFloor(propertyTypeMaster, property.getPropertyDetail().getFloorDetailsProxy(), property, sitalArea,
+                    errorMessages);
+        }
+
+    }
+
+    private void validateFloor(PropertyTypeMaster propertyTypeMaster, List<Floor> floorDetailsProxy, PropertyImpl property,
+            Area sitalArea, HashMap<String, String> errorMessages) {
+
+        if (!propertyTypeMaster.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND) && !floorDetailsProxy.isEmpty()) {
+            for (Floor floor : floorDetailsProxy) {
+                if (floor.getFloorNo() == null || floor.getFloorNo().equals(-10))
+                    errorMessages.put("floorNo", "floorNo.required");
+
+                if (floor.getStructureClassification() == null
+                        || floor.getStructureClassification().getId() == null
+                        || "-1".equals(floor.getStructureClassification().getId().toString()))
+                    errorMessages.put("structureClassif", "structuralclassification.required");
+
+                if (!floor.getUnstructuredLand()) {
+                    if (floor.getBuiltUpArea() == null || floor.getBuiltUpArea().getLength() == null)
+                        errorMessages.put("length", "length.required");
+                    if (floor.getBuiltUpArea() == null || floor.getBuiltUpArea().getBreadth() == null)
+                        errorMessages.put("breadth", "breadth.required");
+                }
+                if (floor.getPropertyUsage() == null || null == floor.getPropertyUsage().getId()
+                        || "-1".equals(floor.getPropertyUsage().getId().toString()))
+                    errorMessages.put("usage", "usage.required");
+
+                if (StringUtils.isNotBlank(floor.getBuildingPermissionNo())) {
+                    if (floor.getBuildingPermissionDate() == null) {
+                        errorMessages.put("buildPermissionDate", "buildpermissiondate.required");
+                    }
+                    if (floor.getBuildingPlanPlinthArea().getArea() == null) {
+                        errorMessages.put("buildPlinthArea", "buildplintharea.required");
+                    }
+                }
+                if (floor.getBuildingPermissionDate() != null) {
+                    if (isBlank(floor.getBuildingPermissionNo())) {
+                        errorMessages.put("buildPermission", "buildpermission.required");
+                    }
+                    if (floor.getBuildingPlanPlinthArea().getArea() == null)
+                        errorMessages.put("buildPlinthArea", "buildplintharea.required");
+                }
+                if (floor.getBuildingPlanPlinthArea().getArea() != null) {
+                    if (floor.getBuildingPermissionDate() == null)
+                        errorMessages.put("buildPermissionDate", "buildpermissiondate.required");
+                    if (isBlank(floor.getBuildingPermissionNo()))
+                        errorMessages.put("buildPermission", "buildpermission.required");
+                }
+                if (floor.getPropertyOccupation() == null || null == floor.getPropertyOccupation().getId()
+                        || "-1".equals(floor.getPropertyOccupation().getId().toString()))
+                    errorMessages.put("occupation", "occupancy.required");
+
+                if (floor.getConstructionDate() == null)
+                    errorMessages.put("constructDate", "constructiondate.required");
+
+                final Date effDate = propertyTaxUtil.getEffectiveDateForProperty(property);
+                if (floor.getOccupancyDate() == null)
+                    errorMessages.put("occupancyDate", "occupancydate.required");
+                if (floor.getOccupancyDate() != null) {
+                    if (floor.getOccupancyDate().after(new Date()))
+                        errorMessages.put("occBeforeNewDate", "dtFlrBeforeCurr.error");
+                    if (floor.getOccupancyDate().before(effDate))
+                        errorMessages.put("occBeforeEffectDate", "constrDate.before.6inst");
+                }
+                if (floor.getOccupancyDate() != null && floor.getConstructionDate() != null
+                        && floor.getOccupancyDate().before(floor.getConstructionDate()))
+                    errorMessages.put("effDateBeforeConstrDate", "effectiveDate.before.constrDate.error");
+
+                if (floor.getBuiltUpArea() == null || floor.getBuiltUpArea().getArea() == null)
+                    errorMessages.put("builtupArea", "builtuparea.required");
+                else if (sitalArea != null
+                        && floor.getBuiltUpArea().getArea() > sitalArea.getArea())
+                    errorMessages.put("builtAreaGtSitalArea", "builtupareavalid.required");
+
+            }
+        }
+    }
+
+    private void validateBuiltUpProperty(PropertyDetail propertyDetail, Area sitalArea, HashMap<String, String> errorMessages) {
+
+    }
+
+    private void validateVacantProperty(PropertyDetail propertyDetail, String eastBoundary, String westBoundary,
+            String southBoundary, String northBoundary, Long vacantLandPlotAreaId,
+            Long layoutApprovalAuthorityId, HashMap<String, String> errorMessages,
+            Date propCompletionDate) {
+
+        if (isBlank(propertyDetail.getSurveyNumber()))
+            errorMessages.put("surveyNo", "mandatory.surveyNo");
+        if (isBlank(propertyDetail.getPattaNumber()))
+            errorMessages.put("pattaNo", "mandatory.pattaNum");
+        if (null == propertyDetail.getSitalArea().getArea())
+            errorMessages.put("sitalArea", "mandatory.vacantLandArea");
+        if (null == propertyDetail.getDateOfCompletion())
+            errorMessages.put("dateOfCompletion", "mandatory.dtOfCmpln");
+        if (null == propertyDetail.getCurrentCapitalValue())
+            errorMessages.put("currCapitalValue", "mandatory.capitalValue");
+        if (null == propertyDetail.getMarketValue())
+            errorMessages.put("marrketValue", "mandatory.marketValue");
+        if (propertyDetail.getCurrentCapitalValue() != null
+                && propertyDetail.getCurrentCapitalValue().compareTo(new BigDecimal(VACANTLAND_MIN_CUR_CAPITALVALUE)) == -1)
+            errorMessages.put("minCapitalValue", "minvalue.capitalValue");
+        if (isBlank(eastBoundary))
+            errorMessages.put("eastBoundary", "mandatory.eastBoundary");
+        if (isBlank(westBoundary))
+            errorMessages.put("westBoundary", "mandatory.westBoundary");
+        if (isBlank(southBoundary))
+            errorMessages.put("southBoundary", "mandatory.southBoundary");
+        if (isBlank(northBoundary))
+            errorMessages.put("northBoundary", "mandatory.northBoundary");
+        if (vacantLandPlotAreaId == null || Long.valueOf(-1).equals(vacantLandPlotAreaId))
+            errorMessages.put("vacantLandPlotArea", "mandatory.vacanland.plotarea");
+        if (layoutApprovalAuthorityId == null || Long.valueOf(-1).equals(layoutApprovalAuthorityId))
+            errorMessages.put("layoutApprovalAuthority", "mandatory.layout.authority");
+        if (!(layoutApprovalAuthorityId == null || Long.valueOf(-1).equals(layoutApprovalAuthorityId)) && !"No Approval"
+                .equals(layoutApprovalAuthorityRepo.findOne(layoutApprovalAuthorityId).getName())) {
+            if (isBlank(propertyDetail.getLayoutPermitNo()))
+                errorMessages.put("layoutPermitNo", "mandatory.layout.permitno");
+            if (propertyDetail.getLayoutPermitDate() == null)
+                errorMessages.put("layoutPermitDate", "mandatory.layout.permitdate");
+        }
+        if (null != propCompletionDate && propertyDetail.getDateOfCompletion() != null
+                && !DateUtils.compareDates(propertyDetail.getDateOfCompletion(), propCompletionDate))
+            errorMessages.put("dtOfCompletionValid", "modify.vacant.completiondate.validate");
     }
 
     @Transactional
@@ -282,7 +464,7 @@ public class CourtVerdictService {
         Position pos = null;
         Assignment wfInitiator = null;
         String currentState;
-        Assignment assignment;
+        Assignment assignment = null;
         String approverDesignation = "";
         String nextAction = null;
         String loggedInUserDesignation = "";
@@ -293,18 +475,24 @@ public class CourtVerdictService {
                     courtVerdict.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
             loggedInUserDesig = !loggedInUserAssign.isEmpty() ? loggedInUserAssign.get(0).getDesignation().getName()
                     : "";
+        } else {
+            assignment = propertyTaxCommonUtils.getWorkflowInitiatorAsRO(user.getId());
+            wfInitiator = assignment;
+            loggedInUserDesig = assignment != null ? assignment.getDesignation().getName()
+                    : "";
         }
         if (SOURCE_ONLINE.equalsIgnoreCase(courtVerdict.getSource()) && ApplicationThreadLocals.getUserId() == null)
             ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
-        if (propertyService.isCitizenPortalUser(user) || !propertyByEmployee
-                || ANONYMOUS_USER.equalsIgnoreCase(user.getName())) {
+
+        if (propertyByEmployee && loggedInUserDesig.contains(REVENUE_OFFICER_DESGN)
+                && !workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
             currentState = "Created";
-            assignment = propertyService.getUserPositionByZone(courtVerdict.getBasicProperty(), false);
-            wfInitiator = assignment;
+            assignment = assignmentService.getAssignmentsForPosition(approvalPosition, new Date()).get(0);
+            approverDesignation = assignment.getDesignation().getName();
             if (null != assignment)
                 approvalPosition = assignment.getPosition().getId();
         } else {
-            currentState = "Created";
+            currentState = null;
             if (null != approvalPosition && approvalPosition != 0) {
                 assignment = assignmentService.getAssignmentsForPosition(approvalPosition, new Date()).get(0);
                 assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
@@ -315,7 +503,6 @@ public class CourtVerdictService {
             loggedInUserDesignation = getLoggedInUserDesignation(
                     courtVerdict.getCurrentState().getOwnerPosition().getId(), securityUtils.getCurrentUser());
         if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workFlowAction)
-                && (courtVerdict.getId() == null || REVENUE_OFFICER_DESGN.contains(loggedInUserDesig))
                 && (COMMISSIONER_DESIGNATIONS.contains(approverDesignation))) {
 
             final String designation = approverDesignation.split(" ")[0];
@@ -323,7 +510,8 @@ public class CourtVerdictService {
         }
 
         if (courtVerdict.getId() != null && courtVerdict.getState() != null)
-            wfInitiator = propertyService.getWorkflowInitiator(courtVerdict.getBasicProperty().getActiveProperty());
+            wfInitiator = assignmentService.getAssignmentsForPosition(courtVerdict.getState().getInitiatorPosition().getId())
+                    .get(0);
         else if (wfInitiator == null)
             wfInitiator = propertyTaxCommonUtils.getWorkflowInitiatorAsRO(user.getId());
 
@@ -335,14 +523,13 @@ public class CourtVerdictService {
                 courtVerdict.setStatus(STATUS_CANCELLED);
                 courtVerdict.getBasicProperty().setUnderWorkflow(FALSE);
             } else {
-                final Assignment assignmentOnreject = getUserAssignmentOnReject(loggedInUserDesignation, courtVerdict);
+                final Assignment assignmentOnreject = getUserAssignmentOnReject(courtVerdict);
                 if (assignmentOnreject != null) {
                     nextAction = "Revenue Officer Approval Pending";
                     wfInitiator = assignmentOnreject;
                 } else
                     nextAction = WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING;
-                final String stateValue = courtVerdict.getCurrentState().getValue().split(":")[0] + ":"
-                        + WF_STATE_REJECTED;
+                final String stateValue = WF_STATE_REJECTED;
                 courtVerdict.transition().progressWithStateCopy()
                         .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
                         .withStateValue(stateValue).withDateInfo(currentDate.toDate())
@@ -351,9 +538,9 @@ public class CourtVerdictService {
             }
 
         } else {
-            if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
+            if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction)) {
                 pos = courtVerdict.getCurrentState().getOwnerPosition();
-            else if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
+            } else if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
                 pos = positionMasterService.getPositionById(approvalPosition);
             WorkFlowMatrix wfmatrix;
             if (null == courtVerdict.getState()) {
@@ -362,17 +549,22 @@ public class CourtVerdictService {
                 courtVerdict.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
                         .withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction() == null
-                                ? getNextAction(courtVerdict.getProperty(), nextAction, workFlowAction)
-                                : wfmatrix.getNextAction())
+                        .withNextAction(nextAction)
                         .withNatureOfTask(NATURE_COURT_VERDICT)
                         .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
                         .withSLA(propertyService.getSlaValue(APPLICATION_TYPE_COURT_VERDICT));
-            } else if (courtVerdict.getCurrentState().getNextAction().equalsIgnoreCase("END"))
+
+            }
+
+            else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
+                courtVerdict.getProperty().setStatus(STATUS_ISACTIVE);
+                courtVerdict.getBasicProperty().getActiveProperty().setStatus(STATUS_ISHISTORY);
+                courtVerdict.getBasicProperty().addProperty(courtVerdict.getProperty());
+                courtVerdict.getBasicProperty().setUnderWorkflow(false);
                 courtVerdict.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNextAction(null)
                         .withOwner(courtVerdict.getCurrentState().getOwnerPosition());
-            else {
+            } else {
 
                 wfmatrix = propertyWorkflowService.getWfMatrix(courtVerdict.getStateType(), null, null, additionalRule,
                         courtVerdict.getCurrentState().getValue(), courtVerdict.getCurrentState().getNextAction(), null,
@@ -380,7 +572,9 @@ public class CourtVerdictService {
                 courtVerdict.transition().progressWithStateCopy()
                         .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                        .withNextAction(StringUtils.isNotBlank(nextAction) ? nextAction : wfmatrix.getNextAction());
+                        .withNextAction(StringUtils.isNotBlank(nextAction)
+                                ? getNextAction(approverDesignation, workFlowAction)
+                                : wfmatrix.getNextAction());
 
                 if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE))
                     buildSMS(courtVerdict, workFlowAction);
@@ -390,20 +584,20 @@ public class CourtVerdictService {
         return courtVerdictRepo.save(courtVerdict);
     }
 
-    private String getNextAction(final PropertyImpl property, final String approverDesignation, String workFlowAction) {
+    private String getNextAction(final String approverDesignation, String workFlowAction) {
         String nextAction = "";
         if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workFlowAction)
-                && COMMISSIONER_DESIGNATIONS.contains(approverDesignation))
-            if (property.getCurrentState().getNextAction().equalsIgnoreCase(WF_STATE_DIGITAL_SIGNATURE_PENDING))
-                nextAction = WF_STATE_DIGITAL_SIGNATURE_PENDING;
-            else {
-                final String designation = approverDesignation.split(" ")[0];
-                if (designation.equalsIgnoreCase(COMMISSIONER_DESGN))
-                    nextAction = WF_STATE_COMMISSIONER_APPROVAL_PENDING;
-                else
-                    nextAction = new StringBuilder().append(designation).append(" ")
-                            .append(WF_STATE_COMMISSIONER_APPROVAL_PENDING).toString();
-            }
+                && COMMISSIONER_DESIGNATIONS.contains(approverDesignation)) {
+
+            final String designation = approverDesignation.split(" ")[0];
+            if (designation.equalsIgnoreCase(COMMISSIONER_DESGN))
+                nextAction = WF_STATE_COMMISSIONER_APPROVAL_PENDING;
+            else if (REVENUE_OFFICER_DESGN.equalsIgnoreCase(approverDesignation))
+                nextAction = WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING;
+            else
+                nextAction = new StringBuilder().append(designation).append(" ")
+                        .append(WF_STATE_COMMISSIONER_APPROVAL_PENDING).toString();
+        }
         return nextAction;
     }
 
@@ -423,15 +617,10 @@ public class CourtVerdictService {
         return nextAction;
     }
 
-    public Assignment getUserAssignmentOnReject(final String loggedInUserDesignation, final CourtVerdict courtVerdict) {
+    public Assignment getUserAssignmentOnReject(final CourtVerdict courtVerdict) {
         Assignment assignmentOnreject = null;
-        if (loggedInUserDesignation.equalsIgnoreCase(REVENUE_OFFICER_DESGN)
-                || loggedInUserDesignation.equalsIgnoreCase(ASSISTANT_COMMISSIONER_DESIGN)
-                || loggedInUserDesignation.equalsIgnoreCase(ADDITIONAL_COMMISSIONER_DESIGN)
-                || loggedInUserDesignation.equalsIgnoreCase(DEPUTY_COMMISSIONER_DESIGN)
-                || loggedInUserDesignation.equalsIgnoreCase(COMMISSIONER_DESGN)
-                || loggedInUserDesignation.equalsIgnoreCase(ZONAL_COMMISSIONER_DESIGN))
-            assignmentOnreject = propertyService.getUserOnRejection(courtVerdict);
+        assignmentOnreject = assignmentService
+                .getAssignmentsForPosition(courtVerdict.getCurrentState().getInitiatorPosition().getId()).get(0);
 
         return assignmentOnreject;
 
@@ -474,6 +663,7 @@ public class CourtVerdictService {
     public CourtVerdict updatePropertyDetails(CourtVerdict courtVerdict) {
         final Character status = STATUS_WORKFLOW;
         courtVerdict.getBasicProperty().setUnderWorkflow(true);
+        courtVerdict.getProperty().setPropertyModifyReason("COURTVERDICT");
         Date propCompletionDate;
         PropertyImpl newProperty;
         newProperty = courtVerdict.getProperty();
@@ -487,7 +677,6 @@ public class CourtVerdictService {
             newProperty.getPropertyDetail().setPropertyType(BUILT_UP_PROPERTY);
 
         setPropertyID(newProperty);
-        updatePropAddress(newProperty.getBasicProperty());
 
         newProperty = propertyService.createProperty(newProperty,
                 newProperty.getPropertyDetail().getSitalArea().getArea().toString(),
@@ -533,16 +722,6 @@ public class CourtVerdictService {
 
     }
 
-    private void updatePropAddress(BasicProperty basicProperty) {
-        Address propAddress = basicProperty.getAddress();
-        propAddress.setHouseNoBldgApt(basicProperty.getAddress().getHouseNoBldgApt());
-        propAddress.setAreaLocalitySector(basicProperty.getPropertyID().getLocality().getName());
-        propAddress.setStreetRoadLine(basicProperty.getPropertyID().getWard().getName());
-        propAddress.setCityTownVillage(ApplicationThreadLocals.getCityName());
-
-        basicProperty.setAddress((PropertyAddress) propAddress);
-    }
-
     private void setPropertyID(PropertyImpl property) {
         PropertyID propertyID = property.getBasicProperty().getPropertyID();
         if (propertyID != null) {
@@ -571,7 +750,6 @@ public class CourtVerdictService {
                 property.getBasicProperty().getPropertyID().setWestBoundary(propertyID.getWestBoundary());
 
         }
-
     }
 
     public PropertyImpl modifyDemand(PropertyImpl newProperty, PropertyImpl oldProperty) {
@@ -581,7 +759,7 @@ public class CourtVerdictService {
             modProperty = (PropertyImpl) propertyService.modifyDemand(newProperty, oldProperty);
         } catch (final TaxCalculatorExeption e) {
 
-            logger.error("forward : There are no Unit rates defined for chosen combinations", e);
+            LOGGER.error("forward : There are no Unit rates defined for chosen combinations", e);
             return newProperty;
         }
         return modProperty;
@@ -591,4 +769,263 @@ public class CourtVerdictService {
         return courtVerdictRepo.findOne(id);
     }
 
+    public void updateDemandDetails(CourtVerdict courtVerdict) {
+
+        Set<EgDemandDetails> demandDetails = propertyService.getCurrrentDemand(courtVerdict.getProperty()).getEgDemandDetails();
+
+        for (final EgDemandDetails dmdDetails : demandDetails)
+            for (final DemandDetail dmdDetailBean : courtVerdict.getDemandDetailBeanList()) {
+                Boolean isUpdateAmount = Boolean.FALSE;
+                Boolean isUpdateCollection = Boolean.FALSE;
+                dmdDetailBean.setInstallment(installmentDao.findById(dmdDetailBean.getInstallment().getId(), false));
+                if (dmdDetailBean.getRevisedAmount() != null
+                        && dmdDetailBean.getInstallment()
+                                .equals(dmdDetails.getEgDemandReason().getEgInstallmentMaster())
+                        && dmdDetails.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
+                                .equalsIgnoreCase(dmdDetailBean.getReasonMaster()))
+                    isUpdateAmount = true;
+
+                if (dmdDetailBean.getRevisedCollection() != null
+                        && dmdDetails.getEgDemand().getEgInstallmentMaster()
+                                .equals(propertyTaxCommonUtils.getCurrentInstallment())
+                        && dmdDetails.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
+                                .equalsIgnoreCase(dmdDetailBean.getReasonMaster())
+                        && dmdDetails.getEgDemandReason().getEgInstallmentMaster()
+                                .equals(dmdDetailBean.getInstallment()))
+                    isUpdateCollection = true;
+
+                if (isUpdateAmount)
+                    dmdDetails.setAmount(dmdDetailBean.getRevisedAmount() != null
+                            ? dmdDetailBean.getActualAmount().subtract(dmdDetailBean.getRevisedAmount())
+                            : BigDecimal.ZERO);
+                if (isUpdateCollection)
+                    dmdDetails.setAmtCollected(
+                            dmdDetailBean.getRevisedCollection() != null ? dmdDetailBean.getRevisedCollection()
+                                    : BigDecimal.ZERO);
+
+                if (isUpdateAmount || isUpdateCollection) {
+                    dmdDetails.setModifiedDate(new Date());
+                    break;
+                }
+            }
+        final List<Ptdemand> currPtdemand;
+        final javax.persistence.Query qry = entityManager.createNamedQuery("QUERY_CURRENT_PTDEMAND");
+        qry.setParameter("basicProperty", courtVerdict.getProperty().getBasicProperty());
+        qry.setParameter("installment", propertyTaxCommonUtils.getCurrentInstallment());
+        currPtdemand = qry.getResultList();
+
+        if (currPtdemand != null) {
+            final Ptdemand ptdemand = (Ptdemand) currPtdemand.get(0).clone();
+            ptdemand.setBaseDemand(getTotalDemand(demandDetails));
+            ptdemand.setEgDemandDetails(demandDetails);
+            ptdemand.setEgptProperty(courtVerdict.getProperty());
+            ptdemand.getDmdCalculations().setCreatedDate(new Date());
+            persistenceService.applyAuditing(ptdemand.getDmdCalculations());
+            courtVerdict.getProperty().getPtDemandSet().clear();
+            courtVerdict.getProperty().getPtDemandSet().add(ptdemand);
+        }
+    }
+
+    private BigDecimal getTotalDemand(Set<EgDemandDetails> dmndDetails) {
+        BigDecimal totalDmd = BigDecimal.ZERO;
+        for (EgDemandDetails newDemandDetails : dmndDetails) {
+            totalDmd = totalDmd.add(newDemandDetails.getAmount());
+        }
+        return totalDmd;
+    }
+
+    public Map<String, String> validateDemand(List<DemandDetail> demandDetailBeanList) {
+
+        HashMap<String, String> errors = new HashMap<>();
+
+        for (final DemandDetail dd : demandDetailBeanList) {
+            dd.setInstallment(installmentDao.findById(dd.getInstallment().getId(), false));
+            if (dd.getRevisedCollection().compareTo(dd.getActualAmount().subtract(dd.getRevisedAmount())) > 0) {
+                errors.put("revisedCollection",
+                        "revised.collection.greater");
+            }
+        }
+        return errors;
+    }
+
+    public void addDemandDetails(CourtVerdict courtVerdict) {
+
+        List<DemandDetail> demandDetailList = getDemandDetails(courtVerdict);
+        courtVerdict.setDemandDetailBeanList(demandDetailList);
+
+    }
+
+    private List<DemandDetail> setDemandBeanList(List<EgDemandDetails> newDmndDetails, List<EgDemandDetails> oldDmndDetails) {
+
+        List<DemandDetail> demandDetailList = new ArrayList<>();
+
+        int i = 0;
+        for (final EgDemandDetails demandDetail : newDmndDetails) {
+            for (final EgDemandDetails oldDemandDetail : oldDmndDetails) {
+                if (oldDemandDetail.getEgDemandReason().getEgInstallmentMaster()
+                        .equals(demandDetail.getEgDemandReason().getEgInstallmentMaster())
+                        && oldDemandDetail.getEgDemandReason().getEgDemandReasonMaster()
+                                .equals(demandDetail.getEgDemandReason().getEgDemandReasonMaster())) {
+                    final Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
+                    final String reasonMaster = demandDetail.getEgDemandReason().getEgDemandReasonMaster()
+                            .getReasonMaster();
+                    final BigDecimal revisedAmount = oldDemandDetail.getAmount().subtract(demandDetail.getAmount());
+                    final BigDecimal revisedCollection = demandDetail.getAmtCollected();
+                    final DemandDetail dmdDtl = createDemandDetailBean(installment, reasonMaster, oldDemandDetail.getAmount(),
+                            revisedAmount,
+                            oldDemandDetail.getAmtCollected(), revisedCollection);
+                    demandDetailList.add(i, dmdDtl);
+
+                    break;
+                }
+            }
+            i++;
+        }
+        return demandDetailList;
+    }
+
+    private DemandDetail createDemandDetailBean(final Installment installment, final String reasonMaster,
+            final BigDecimal amount, final BigDecimal revisedAmount, final BigDecimal amountCollected,
+            final BigDecimal revisedCollection) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered into createDemandDetailBean");
+            LOGGER.debug("createDemandDetailBean - installment=" + installment + ", reasonMaster=" + reasonMaster
+                    + ", amount=" + amount + ", amountCollected=" + amountCollected);
+        }
+
+        final DemandDetail demandDetail = new DemandDetail();
+        demandDetail.setInstallment(installment);
+        demandDetail.setReasonMaster(reasonMaster);
+        demandDetail.setActualAmount(amount);
+        demandDetail.setRevisedAmount(revisedAmount);
+        demandDetail.setActualCollection(amountCollected);
+        demandDetail.setRevisedCollection(revisedCollection);
+        demandDetail.setIsCollectionEditable(true);
+        return demandDetail;
+    }
+
+    public CourtVerdict updateDemand(CourtVerdict courtVerdict) {
+
+        List<DemandDetail> demandDetailList = getDemandDetails(courtVerdict);
+        BigDecimal totalCollectionAmt = BigDecimal.ZERO;
+        for (DemandDetail demandDetail : demandDetailList) {
+            if (demandDetail.getActualCollection().compareTo(demandDetail.getRevisedCollection()) >= 0)
+                totalCollectionAmt = totalCollectionAmt.add(demandDetail.getActualCollection());
+            else
+                totalCollectionAmt = totalCollectionAmt.add(demandDetail.getRevisedCollection());
+        }
+
+        Ptdemand ptDemandNew = propertyService.getCurrrentDemand(courtVerdict.getProperty());
+
+        if (ptDemandNew.getEgDemandDetails() != null) {
+            for (EgDemandDetails egDemandDetails : ptDemandNew.getEgDemandDetails()) {
+
+                totalCollectionAmt = updateCollection(totalCollectionAmt, egDemandDetails);
+            }
+
+            if (totalCollectionAmt.compareTo(BigDecimal.ZERO) > 0) {
+                final Installment currSecondHalf = propertyTaxUtil.getInstallmentsForCurrYear(new Date())
+                        .get(CURRENTYEAR_SECOND_HALF);
+                final EgDemandDetails advanceDemandDetails = ptBillServiceImpl.getDemandDetail(ptDemandNew, currSecondHalf,
+                        DEMANDRSN_CODE_ADVANCE);
+                if (advanceDemandDetails == null) {
+                    final EgDemandDetails dmdDetails = ptBillServiceImpl.insertDemandDetails(DEMANDRSN_CODE_ADVANCE,
+                            totalCollectionAmt, currSecondHalf);
+                    ptDemandNew.getEgDemandDetails().add(dmdDetails);
+                } else
+                    advanceDemandDetails.getAmtCollected().add(totalCollectionAmt);
+            }
+        }
+
+        return courtVerdict;
+    }
+
+    private BigDecimal updateCollection(BigDecimal totalColl, EgDemandDetails newDemandDetail) {
+        BigDecimal remaining = totalColl;
+        if (newDemandDetail != null) {
+            newDemandDetail.setAmtCollected(ZERO);
+            if (remaining.compareTo(BigDecimal.ZERO) > 0) {
+                if (remaining.compareTo(newDemandDetail.getAmount()) <= 0) {
+                    newDemandDetail.setAmtCollected(remaining);
+                    newDemandDetail.setModifiedDate(new Date());
+                    remaining = BigDecimal.ZERO;
+                } else {
+                    newDemandDetail.setAmtCollected(newDemandDetail.getAmount());
+                    newDemandDetail.setModifiedDate(new Date());
+                    remaining = remaining.subtract(newDemandDetail.getAmount());
+                }
+            }
+        }
+        return remaining;
+    }
+
+    public List<DemandDetail> getDemandDetails(CourtVerdict courtVerdict) {
+        Set<EgDemandDetails> newDemandDetails = (ptDemandDAO.getNonHistoryCurrDmdForProperty(courtVerdict.getProperty()))
+                .getEgDemandDetails();
+        Set<EgDemandDetails> oldDemandDetails = (ptDemandDAO
+                .getNonHistoryCurrDmdForProperty(courtVerdict.getBasicProperty().getProperty()))
+                        .getEgDemandDetails();
+        List<EgDemandDetails> newDmndDetails = new ArrayList<>(newDemandDetails);
+        List<EgDemandDetails> oldDmndDetails = new ArrayList<>(oldDemandDetails);
+
+        if (!newDmndDetails.isEmpty())
+            newDmndDetails = sortDemandDetails(newDmndDetails);
+
+        if (!oldDmndDetails.isEmpty())
+            oldDmndDetails = sortDemandDetails(oldDmndDetails);
+
+        return setDemandBeanList(newDmndDetails, oldDmndDetails);
+    }
+
+    public List<DemandDetail> setDemandBeanList(List<EgDemandDetails> demandDetails) {
+
+        List<DemandDetail> demandDetailList = new ArrayList<>();
+
+        for (final EgDemandDetails demandDetail : demandDetails) {
+            final Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
+            final String reasonMaster = demandDetail.getEgDemandReason().getEgDemandReasonMaster()
+                    .getReasonMaster();
+            final DemandDetail dmdDtl = createDemandDetailBean(installment, reasonMaster, demandDetail.getAmount(),
+                    demandDetail.getAmtCollected());
+            demandDetailList.add(dmdDtl);
+        }
+        return demandDetailList;
+    }
+
+    private DemandDetail createDemandDetailBean(final Installment installment, final String reasonMaster,
+            final BigDecimal amount, final BigDecimal amountCollected) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered into createDemandDetailBean");
+            LOGGER.debug("createDemandDetailBean - installment=" + installment + ", reasonMaster=" + reasonMaster
+                    + ", amount=" + amount + ", amountCollected=" + amountCollected);
+        }
+
+        final DemandDetail demandDetail = new DemandDetail();
+        demandDetail.setInstallment(installment);
+        demandDetail.setReasonMaster(reasonMaster);
+        demandDetail.setActualAmount(amount);
+        demandDetail.setActualCollection(amountCollected);
+        demandDetail.setIsCollectionEditable(true);
+        return demandDetail;
+    }
+
+    public List<EgDemandDetails> sortDemandDetails(List<EgDemandDetails> demandDetails) {
+        Collections.sort(demandDetails, new Comparator<EgDemandDetails>() {
+
+            @Override
+            public int compare(EgDemandDetails dmdDtl1, EgDemandDetails dmdDtl2) {
+                return dmdDtl1.getEgDemandReason().getEgInstallmentMaster()
+                        .compareTo(dmdDtl2.getEgDemandReason().getEgInstallmentMaster());
+            }
+
+        }.thenComparing(new Comparator<EgDemandDetails>() {
+
+            @Override
+            public int compare(EgDemandDetails dmdDtl1, EgDemandDetails dmdDtl2) {
+                return dmdDtl1.getEgDemandReason().getEgDemandReasonMaster().getOrderId()
+                        .compareTo(dmdDtl2.getEgDemandReason().getEgDemandReasonMaster().getOrderId());
+            }
+        }));
+        return demandDetails;
+    }
 }

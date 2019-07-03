@@ -79,20 +79,6 @@
 							value="${property.propertyDetail.sitalArea.area.toString()}"></c:out>
 					</div>
 				</div>
-			</div>
-		</div>
-	</div>
-</div>
-<div class="row">
-	<div class="col-md-12">
-		<div class="panel panel-primary" data-collapsed="0"
-			style="text-align: left">
-			<div class="panel-heading">
-				<div class="panel-title">
-					<spring:message code="lbl.cv.bndryDetails" />
-				</div>
-			</div>
-			<div class="panel-body">
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.cv.locality" />
@@ -140,7 +126,7 @@
 
 <c:set var="type"
 	value="${property.propertyDetail.propertyTypeMaster.type}" />
-<c:if test="${ type =='Vacant Land'}">
+<c:if test="${type =='Vacant Land'}">
 	<%@ include file="vaclanddetails.jsp"%>
 </c:if>
 <c:if test="${type !='Vacant Land'}">

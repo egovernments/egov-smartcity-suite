@@ -102,8 +102,6 @@ div.floors-tbl-freeze-column-div {
 		enctype="multipart/form-data" modelAttribute="courtVerdict">
 		<form:hidden path="" name="loggedUserIsEmployee"
 			id="loggedUserIsEmployee" value="${loggedUserIsEmployee}" />
-		<form:hidden path="" id="property" name="property"
-			value="${property.id}" />
 
 		<div class="panel-heading">
 			<ul class="nav nav-tabs" id="tabs">
@@ -184,7 +182,7 @@ div.floors-tbl-freeze-column-div {
 													<spring:message code="lbl.cv.consumerNo" />
 												</div>
 												<div class="col-xs-3 add-margin view-content">
-													<c:out value="${wc.consumerCode }"></c:out>
+													<c:out value="${wc.consumerCode}"></c:out>
 												</div>
 												<div class="col-xs-3 add-margin">
 													<spring:message code="lbl.cv.connStatus" />
@@ -236,29 +234,45 @@ div.floors-tbl-freeze-column-div {
 										<spring:message code="lbl.cv.sewdetails" />
 									</div>
 								</div>
-								<div class="panel-body">
+								<c:if test="${not empty sewConnDetails}">
+									<c:forEach items="${sewConnDetails}" var="sc">
+										<div class="panel-body">
+											<div class="row add-border">
+												<div class="col-xs-3 add-margin">
+													<spring:message code="lbl.cv.sewConnNo" />
+												</div>
+												<div class="col-xs-3 add-margin view-content">
+													<c:out value="${sc.consumerCode.NEWSEWERAGECONNECTION}"></c:out>
+												</div>
+												<div class="col-xs-3 add-margin">
+													<spring:message code="lbl.cv.closets" />
+												</div>
+												<div class="col-xs-3 add-margin view-content">
+													<c:out value="${sc.noOfClosets}"></c:out>
+												</div>
+											</div>
+											<div class="row add-border">
+												<div class="col-xs-3 add-margin">
+													<spring:message code="lbl.cv.hlfyearcharg" />
+												</div>
+												<div class="col-xs-3 add-margin view-content">
+													<c:out value="${sc.currentInstDemand}"></c:out>
+												</div>
+												<div class="col-xs-3 add-margin">
+													<spring:message code="lbl.cv.sewchrgdue" />
+												</div>
+												<div class="col-xs-3 add-margin view-content">
+													<c:out value="${sc.totalTaxDue}"></c:out>
+												</div>
+											</div>
+										</div>
+									</c:forEach>
+								</c:if>
+								<c:if test="${empty sewConnDetails}">
 									<div class="row add-border">
-										<div class="col-xs-3 add-margin">
-											<spring:message code="lbl.cv.sewConnNo" />
-										</div>
-										<div class="col-xs-3 add-margin view-content"></div>
-										<div class="col-xs-3 add-margin">
-											<spring:message code="lbl.cv.closets" />
-										</div>
-										<div class="col-xs-3 add-margin view-content"></div>
+										<div class="col-xs-3">*No Sewerage Connection Details</div>
 									</div>
-									<div class="row add-border">
-										<div class="col-xs-3 add-margin">
-											<spring:message code="lbl.cv.hlfyearcharg" />
-										</div>
-										<div class="col-xs-3 add-margin view-content"></div>
-										<div class="col-xs-3 add-margin">
-											<spring:message code="lbl.cv.sewchrgdue" />
-										</div>
-										<div class="col-xs-3 add-margin view-content"></div>
-									</div>
-								</div>
-
+								</c:if>
 							</div>
 						</div>
 					</div>

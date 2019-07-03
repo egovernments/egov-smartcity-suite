@@ -54,10 +54,43 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <html>
 <head>
-<%-- <script type="text/javascript"
-	src="<cdn:url value='/resources/js/app/courtVerdict.js'/>">
+<script>
+function showCourtVerdictHeaderTab() {
+	document.getElementById('courtverdict_header').style.display = '';
+	setCSSClasses('courtVerdictHeaderTab', 'First Active');
+	setCSSClasses('demandDetailTab', '');
+	hideDemandHeaderTab();
+
+}
+function showDemandHeaderTab() {
+	document.getElementById('demand_header').style.display = '';
+	setCSSClasses('courtVerdictHeaderTab', 'First BeforeActive');
+	setCSSClasses('demandDetailTab', 'Last Active ActiveLast');
+	hidepropertyHeaderTab();
+
+}
+function setCSSClasses(id, classes) {
+	document.getElementById(id).setAttribute('class', classes);
+	document.getElementById(id).setAttribute('className', classes);
+}
+function hidepropertyHeaderTab() {
+	document.getElementById('courtverdict_header').style.display = 'none';
+}
+function hideDemandHeaderTab() {
+	document.getElementById('demand_header').style.display = 'none';
+}
+jQuery(document).ready(function() {
+
+	var action = jQuery('#action').text();
+	if(action =="Update Demand Directly"){
+	jQuery('#demand').show()
+	}
+	else{
+		jQuery('#demand').hide();
+	}
+});
 	
-</script> --%>
+</script> 
 <style>
 div.overflow-x-scroll {
 	overflow-x: scroll;
@@ -103,15 +136,17 @@ div.floors-tbl-freeze-column-div {
 		enctype="multipart/form-data" modelAttribute="courtVerdict">
 		<form:hidden path="" name="loggedUserIsEmployee"
 			id="loggedUserIsEmployee" value="${loggedUserIsEmployee}" />
-		<form:hidden path="" id="property" name="property"
-			value="${property.id}" />
+		<form:hidden path="" id="action" name="action" value="${action}"/>
 
 		<div class="panel-heading">
-
-			<div class="panel-title">
-				<spring:message code="lbl.cv.courtVerdict" />
-			</div>
-
+			<ul class="nav nav-tabs" id="tabs">
+				<li class="First Active"><a data-toggle="tab"
+					href="#courtdetails" data-tabidx="0" aria-expanded="true"><spring:message
+							code="lbl.cv.courtVerdict" /></a></li>
+				<li class="" id="demand"><a data-toggle="tab"
+					href="#demandDetails" data-tabidx="1" aria-expanded="false""><spring:message
+							code="lbl.cv.demand" /></a></li>
+			</ul>
 		</div>
 
 		<div class="panel-body custom-form">
@@ -234,29 +269,45 @@ div.floors-tbl-freeze-column-div {
 										<spring:message code="lbl.cv.sewdetails" />
 									</div>
 								</div>
-								<div class="panel-body">
+								<c:if test="${not empty sewConnDetails}">
+									<c:forEach items="${sewConnDetails}" var="sc">
+										<div class="panel-body">
+											<div class="row add-border">
+												<div class="col-xs-3 add-margin">
+													<spring:message code="lbl.cv.sewConnNo" />
+												</div>
+												<div class="col-xs-3 add-margin view-content">
+													<c:out value="${sc.consumerCode.NEWSEWERAGECONNECTION}"></c:out>
+												</div>
+												<div class="col-xs-3 add-margin">
+													<spring:message code="lbl.cv.closets" />
+												</div>
+												<div class="col-xs-3 add-margin view-content">
+													<c:out value="${sc.noOfClosets}"></c:out>
+												</div>
+											</div>
+											<div class="row add-border">
+												<div class="col-xs-3 add-margin">
+													<spring:message code="lbl.cv.hlfyearcharg" />
+												</div>
+												<div class="col-xs-3 add-margin view-content">
+													<c:out value="${sc.currentInstDemand}"></c:out>
+												</div>
+												<div class="col-xs-3 add-margin">
+													<spring:message code="lbl.cv.sewchrgdue" />
+												</div>
+												<div class="col-xs-3 add-margin view-content">
+													<c:out value="${sc.totalTaxDue}"></c:out>
+												</div>
+											</div>
+										</div>
+									</c:forEach>
+								</c:if>
+								<c:if test="${empty sewConnDetails}">
 									<div class="row add-border">
-										<div class="col-xs-3 add-margin">
-											<spring:message code="lbl.cv.sewConnNo" />
-										</div>
-										<div class="col-xs-3 add-margin view-content"></div>
-										<div class="col-xs-3 add-margin">
-											<spring:message code="lbl.cv.closets" />
-										</div>
-										<div class="col-xs-3 add-margin view-content"></div>
+										<div class="col-xs-3">*No Sewerage Connection Details</div>
 									</div>
-									<div class="row add-border">
-										<div class="col-xs-3 add-margin">
-											<spring:message code="lbl.cv.hlfyearcharg" />
-										</div>
-										<div class="col-xs-3 add-margin view-content"></div>
-										<div class="col-xs-3 add-margin">
-											<spring:message code="lbl.cv.sewchrgdue" />
-										</div>
-										<div class="col-xs-3 add-margin view-content"></div>
-									</div>
-								</div>
-
+								</c:if>
 							</div>
 						</div>
 					</div>
@@ -306,12 +357,15 @@ div.floors-tbl-freeze-column-div {
 					<!-- Assessment Details -->
 					<div id="assmntDetails">
 
-						<%@ include file="assmntDetails.jsp"%>
+						<%@ include file="assmntdetails.jsp"%>
 
 					</div>
+					
 
 				</div>
-
+				<div id="demandDetails" class="tab-pane fade">
+					<%@ include file="demanddetails.jsp"%>
+				</div>
 
 			</div>
 
@@ -321,7 +375,7 @@ div.floors-tbl-freeze-column-div {
 				<tr>
 			</c:if>
 
-			<c:if test="${loggedUserIsEmployee == true && !citizenPortalUser}">
+			<c:if test="${currentDesignation != 'Commissioner'}">
 				<div class="row">
 					<div class="col-md-12">
 						<jsp:include page="/WEB-INF/views/common/commonWorkflowMatrix.jsp" />

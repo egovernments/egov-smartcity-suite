@@ -152,7 +152,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @Result(name = APPLICATION_TYPE_ADD_DEMAND, type = "redirectAction", location = "addDemand-newAddForm", params = {
                 "namespace", "/edit", "propertyId", "${assessmentNum}" }),
         @Result(name = APPLICATION_TYPE_EDIT_COLLECTION, type = "redirect", location = "../editCollection/editForm/${assessmentNum}"),
-        @Result(name = APPLICATION_TYPE_COURT_VERDICT, type = "redirect", location = "../courtVerdict/viewForm/${assessmentNum}"),
+        @Result(name = APPLICATION_TYPE_COURT_VERDICT, type = "redirect", location = "../courtverdict/viewform/${assessmentNum}"),
         @Result(name = APPLICATION_TYPE_DEMOLITION, type = "redirect", location = "../property/demolition/${assessmentNum}/${applicationSource}", params = {
                 "meesevaApplicationNumber", "${meesevaApplicationNumber}" }),
         @Result(name = APPLICATION_TYPE_EDIT_OWNER, type = "redirect", location = "../editowner/${assessmentNum}", params = {

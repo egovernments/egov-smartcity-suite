@@ -175,14 +175,13 @@ function populatePropTypeCategory() {
 			jQuery('#propTypeCategoryId').html("");
 			jQuery('#propTypeCategoryId').append(
 					jQuery('<option>').text('--select--').attr('value', ""));
+
 			jQuery.each(response, function(index, propCat) {
 
 				jQuery('#propTypeCategoryId').append(
 						"<option value='" + index + "'>" + propCat
 								+ "</option>");
-
 			});
-
 		},
 
 		error : function() {
@@ -224,8 +223,8 @@ function viewOrEditToggle(action) {
 	} else {
 		jQuery('#assmntDetails').hide()
 		jQuery('#assmntDetails-edit').show()
-		jQuery('#vacLandDetailsdiv').hide()
-		jQuery('#floorDetailsdiv').show()
+
+		hideOrShowFloorDetails();
 
 		jQuery('#locality').change(function() {
 			populateBoundaries();
@@ -237,20 +236,33 @@ function viewOrEditToggle(action) {
 		jQuery('#propType').change(function() {
 
 			populatePropTypeCategory();
-			var propType = jQuery('#propType').val();
-			if (propType == "VAC_LAND") {
-				jQuery('#vacLandDetailsdiv').show()
-				jQuery('#floorDetailsdiv').hide()
-			} else {
-				jQuery('#vacLandDetailsdiv').hide()
-				jQuery('#floorDetailsdiv').show()
-			}
+			hideOrShowFloorDetails();
+
 		});
+		/*
+		 * jQuery('#propTypeCategoryId').val(jQuery('#propTypeCategoryId
+		 * option:selected').val());
+		 */
+		jQuery("#propTypeCategoryId").val(
+				document.getElementById("propTypeCategory").value);
+		jQuery("#wardId").val(document.getElementById("ward").value);
+		jQuery("#blockId").val(document.getElementById("block").value);
 	}
 	if (action != "Update Demand Directly") {
 		jQuery('#demand').hide()
 	} else {
 		jQuery('#demand').show()
+	}
+}
+
+function hideOrShowFloorDetails() {
+	var propType = jQuery('#propType').val();
+	if (propType == "VAC_LAND") {
+		jQuery('#vacLandDetailsdiv').show()
+		jQuery('#floorDetailsdiv').hide()
+	} else {
+		jQuery('#vacLandDetailsdiv').hide()
+		jQuery('#floorDetailsdiv').show()
 	}
 }
 
@@ -418,5 +430,43 @@ function delFloor(obj) {
 						});
 
 		return true;
+	}
+}
+
+function calculateAmount(obj) {
+
+	var table = document.getElementById("demandDetailsTable");
+	var rowobj = getRow(obj).rowIndex;
+
+	if (document.forms[0].revisedAmount[rowobj - 1] != undefined
+			&& document.forms[0].revisedAmount[rowobj - 1].value != undefined) {
+		for (var j = 0; j <= rowobj - 1; j++) {
+			if (document.forms[0].revisedAmount[j].value == "") {
+
+				bootbox
+						.alert("Please choose its previos Installments. Random selection not allowed.");
+				obj.value = "";
+				return false;
+			}
+		}
+	}
+
+}
+
+function calculateCollectionAmount(obj) {
+
+	var table = document.getElementById("demandDetailsTable");
+	var rowobj = getRow(obj).rowIndex;
+	
+	if (document.forms[0].revisedCollection[rowobj - 1] != undefined
+			&& document.forms[0].revisedCollection[rowobj - 1].value != undefined) {
+		for (var j = 0; j <= rowobj - 1; j++) {
+			if (document.forms[0].revisedCollection[j].value == "") {
+				bootbox
+						.alert("Please choose its previos Installments. Random selection not allowed.");
+				obj.value = "";
+				return false;
+			}
+		}
 	}
 }

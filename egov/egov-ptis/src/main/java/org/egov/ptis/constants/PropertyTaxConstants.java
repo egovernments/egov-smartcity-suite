@@ -77,14 +77,14 @@ import com.google.common.collect.ImmutableMap;
 
 public interface PropertyTaxConstants {
 
-    //take a list of needed things
+    // take a list of needed things
     public static final String APPCONFIG_ISCORPORATION = "IS_CORPORATION";
     public static final String APPCONFIG_ISSEASHORE_ULB = "IS_SEASHORE_ULB";
     public static final String APPCONFIG_IS_PRIMARY_SERVICECHARGES_APPLICABLE = "IS_PRIMARYSERVICECHARGES_APPLICABLE";
     public static final String APPCONFIG_CLOSED_MUTATION_RECEIPT = "CANCEL_RECEIPT_FOR_CLOSED_MUTATION";
     public static final String EDIT_COLL_FOR_CURRYEAR = "EDIT_COLLECTION_FOR_CURRENTYEAR";
     public static final Float SQUARE_YARD_TO_SQUARE_METER_VALUE = 0.836127f;
-    
+
     // General constants used across Clients
     public static final String PTMODULENAME = "Property Tax";
     public static final String DEACTIVATION = "DEACTIVATION";
@@ -132,7 +132,7 @@ public interface PropertyTaxConstants {
     public static final String BUILT_UP_PROPERTY = "BuiltUpProperty";
     public static final String VACANT_PROPERTY = "VacantProperty";
     public static final String APARTMENT_PROPERTY = "Apartment";
-    
+
     public static final String APPCONFIG_PENALTY_WAIVER_ENABLED = "PENALTY_WAIVER_ENABLED";
     public static final String APPCONFIG_PENALTY_WAIVER_CUTOFF_DATE = "PENALTY_WAIVER_CUTOFF_DATE";
 
@@ -155,15 +155,15 @@ public interface PropertyTaxConstants {
     public static final String GRP_RP_HEARING_DATE_FIXED = "fixed";
     public static final String PROPERTY_MODIFY_REASON_REVISION_PETITION = "RP";
     public static final String REVISION_PETITION = "REVISION PETITION";
-    
-    //New RP Changes
+
+    // New RP Changes
     public static final String RP_HEARINGCOMPLETED = "RP:Hearing completed";
     public static final String RP_INSPECTIONVERIFIED = "RP:Inspection verified";
     public static final String RP_INSPECTION_COMPLETE = "RP:Inspection completed";
     public static final String RP_WF_REGISTERED = "RP:Registered";
     public static final String RP_CREATED = "RP:CREATED";
-    
-    //New  GRP Changes
+
+    // New GRP Changes
     public static final String GRP_HEARINGCOMPLETED = "GRP:Hearing completed";
     public static final String GRP_INSPECTIONVERIFIED = "GRP:Inspection verified";
     public static final String GRP_INSPECTION_COMPLETE = "GRP:Inspection completed";
@@ -174,7 +174,7 @@ public interface PropertyTaxConstants {
     public static final String NATURE_OF_WORK_GRP = "GRP";
     public static final String NATURE_OF_WORK_RP = "RP";
     public static final String GRP_STATUS_CODE = "GRP";
-    
+
     public static final String RECOVERY_MODULE = "PTRecovery";
     public static final String RECOVERY_NOTICE155CREATED = "NOTICE155CREATED";
     public static final String RECOVERY_NOTICE155GENERATIONPENDING = "NOTICE155GENERATIONPENDING";
@@ -197,7 +197,7 @@ public interface PropertyTaxConstants {
     public static final String SRCH_DEFAULTER_FROM_AMOUNT = "DEFAULTER_FROM_AMOUNT";
     public static final String SRCH_DEFAULTER_TO_AMOUNT = "DEFAULTER_TO_AMOUNT";
 
-    //Mutation Reason
+    // Mutation Reason
     public static final String MUTATION_REASON_CODE_GIFT = "GIFTDEED";
     public static final String MUTATION_REASON_CODE_WILL = "WILLDEED";
     public static final String MUTATION_REASON_CODE_SALE = "SALEDEED";
@@ -209,7 +209,7 @@ public interface PropertyTaxConstants {
     public static final String MUTATION_REASON_CODE_PARTISION = "PARTISION";
     public static final String MUTATION_REASON_CODE_RELINQUISH = "RELINQUISH";
     public static final String MUTATION_REASON_CODE_PARTITION = "PARTITIOND";
-    
+
     // Property status values
     public static final Character STATUS_ISHISTORY = 'H';
     public static final Character STATUS_ISACTIVE = 'A';
@@ -339,7 +339,6 @@ public interface PropertyTaxConstants {
 
     // Usage Types
     public static final String USAGE_RESIDENTIAL = "RESD";
-    
 
     // TreeMap for Non Vacant Land types
     public static final Map<String, String> NON_VAC_LAND_PROPERTY_TYPE_CATEGORY = new TreeMap<String, String>() {
@@ -424,9 +423,8 @@ public interface PropertyTaxConstants {
     // Others
     public static final String STRING_SEPERATOR = "-";
     /*
-     * it is break date for rent chart and base rate methods, as now we want
-     * only rent chart calculation on system for all the installments, we
-     * changed this date to 2020. its just hack
+     * it is break date for rent chart and base rate methods, as now we want only rent chart calculation on system for all the
+     * installments, we changed this date to 2020. its just hack
      */
     public static final String DATE_CONSTANT = "01/04/2020";
 
@@ -471,7 +469,6 @@ public interface PropertyTaxConstants {
     public static final String DEMANDRSN_STR_SCAVENGE_TAX = "Scavenging Tax";
     public static final String DEMANDRSN_STR_LIGHT_TAX = "Lighting Tax";
     public static final String DEMANDRSN_STR_WATER_TAX = "Water Tax";
-
 
     // Tax Payable constants
     public static final String DEMANDRSN_CODE_GEN_TAX_PAYABLE = "PROPERTY TAX-PROPERTY TAX ON ALL PROPERTIES";
@@ -521,8 +518,8 @@ public interface PropertyTaxConstants {
         private static final long serialVersionUID = 464912402295082366L;
 
         {
-            put(-9,"Cellar");
-            put(-8,"Mezzanine");
+            put(-9, "Cellar");
+            put(-8, "Mezzanine");
             put(-3, "Basement-2");
             put(-2, "Basement-1");
             put(-1, "Stilt Floor");
@@ -577,7 +574,7 @@ public interface PropertyTaxConstants {
             put(48, "48th Floor");
             put(49, "49th Floor");
             put(50, "50th Floor");
-            put(99,"Pent House");
+            put(99, "Pent House");
         }
     };
 
@@ -609,7 +606,7 @@ public interface PropertyTaxConstants {
     public static final String WFLOW_ACTION_NAME_DEMOLITION = "Demolition";
     public static final String WFLOW_ACTION_NAME_EXEMPTION = "Exemption";
     public static final String WFLOW_ACTION_NAME_GRP = "GRP";
-	public static final String APPLICATION_TYPE_WRITE_OFF = "writeOff";
+    public static final String APPLICATION_TYPE_WRITE_OFF = "writeOff";
 
     // WORKFLOW property states
     public static final String WF_STATE_NEW = "New";
@@ -675,7 +672,7 @@ public interface PropertyTaxConstants {
     public static final String PROPERTY_MODIFY_REASON_TAX_EXEMPTION = "TAX EXEMPTION";
     public static final String PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION = "GRP";
     public static final String PROPERTY_MODIFY_REASON_BULK_BOUNDARY = "BULK BOUNDARY UPDATION";
-    
+
     // Constants for Government Properties
     public static final Double STATEGOVT_BUILDING_ALV_PERCENTAGE = Double.valueOf(8.25d);
     public static final Double CENTRALGOVT_BUILDING_ALV_PERCENTAGE = Double.valueOf(9d);
@@ -711,7 +708,7 @@ public interface PropertyTaxConstants {
     public static final String PTVALIDATOR_ROLE = "PTValidator";
     public static final String ROLE_COLLECTION_OPERATOR = "Collection Operator";
     public static final String ROLE_PTADMINISTRATOR = "Property Administrator";
-    public static final String ROLE_DATAENTRY_OPERATOR ="Data Entry Operator";
+    public static final String ROLE_DATAENTRY_OPERATOR = "Data Entry Operator";
 
     // Designations
     public static final String ASSISTANT_DESGN = "Assistant";
@@ -751,8 +748,8 @@ public interface PropertyTaxConstants {
     public static final String ARREAR_DEMANDRSN_GLCODE = "4311004";
     public static final String CURRENT_DEMANDRSN_GLCODE = "4311001";
     // HashMap for GLCodes for Current Taxes
-    public static final ImmutableMap<String, String> GLCODEMAP_FOR_CURRENTTAX = ImmutableMap.<String, String>builder()
-            
+    public static final ImmutableMap<String, String> GLCODEMAP_FOR_CURRENTTAX = ImmutableMap.<String, String> builder()
+
             .put(DEMANDRSN_CODE_GENERAL_TAX, CURRENT_DEMANDRSN_GLCODE)
             .put(DEMANDRSN_CODE_WATER_TAX, CURRENT_DEMANDRSN_GLCODE)
             .put(DEMANDRSN_CODE_SCAVENGE_TAX, CURRENT_DEMANDRSN_GLCODE)
@@ -762,10 +759,10 @@ public interface PropertyTaxConstants {
             .put(DEMANDRSN_CODE_EDUCATIONAL_TAX, CURRENT_DEMANDRSN_GLCODE)
             .put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, CURRENT_DEMANDRSN_GLCODE)
             .build();
-    
+
     // HashMap for GLCodes for Arrear Taxes
-    public static final ImmutableMap<String, String> GLCODEMAP_FOR_ARREARTAX = ImmutableMap.<String, String>builder()
-       
+    public static final ImmutableMap<String, String> GLCODEMAP_FOR_ARREARTAX = ImmutableMap.<String, String> builder()
+
             .put(DEMANDRSN_CODE_GENERAL_TAX, ARREAR_DEMANDRSN_GLCODE)
             .put(DEMANDRSN_CODE_WATER_TAX, ARREAR_DEMANDRSN_GLCODE)
             .put(DEMANDRSN_CODE_SCAVENGE_TAX, ARREAR_DEMANDRSN_GLCODE)
@@ -775,11 +772,10 @@ public interface PropertyTaxConstants {
             .put(DEMANDRSN_CODE_EDUCATIONAL_TAX, ARREAR_DEMANDRSN_GLCODE)
             .put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, ARREAR_DEMANDRSN_GLCODE)
             .build();
-   
 
     // HashMap for GLCodes for Tax Payables
-    public static final ImmutableMap<String, String> GLCODEMAP_FOR_TAX_PAYABLE = ImmutableMap.<String, String>builder()
-       
+    public static final ImmutableMap<String, String> GLCODEMAP_FOR_TAX_PAYABLE = ImmutableMap.<String, String> builder()
+
             .put(DEMANDRSN_CODE_GENERAL_TAX, CURRENT_DEMANDRSN_GLCODE)
             .put(DEMANDRSN_CODE_WATER_TAX, CURRENT_DEMANDRSN_GLCODE)
             .put(DEMANDRSN_CODE_SCAVENGE_TAX, CURRENT_DEMANDRSN_GLCODE)
@@ -789,7 +785,6 @@ public interface PropertyTaxConstants {
             .put(DEMANDRSN_CODE_EDUCATIONAL_TAX, CURRENT_DEMANDRSN_GLCODE)
             .put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, CURRENT_DEMANDRSN_GLCODE)
             .build();
-    
 
     // List for GLCodes for Current Taxes
     public static final List<String> GLCODES_FOR_CURRENTTAX = new ArrayList<String>() {
@@ -800,7 +795,7 @@ public interface PropertyTaxConstants {
                 add(glCode.getValue());
         }
     };
-    
+
     // List for GLCodes for Arrear Taxes
     public static final List<String> GLCODES_FOR_ARREARTAX = new ArrayList<String>() {
         private static final long serialVersionUID = 1L;
@@ -839,7 +834,7 @@ public interface PropertyTaxConstants {
     // 4314208
 
     public static final String GLCODE_FOR_ADVANCE_REBATE = "4314209";
-    public static final String GLCODE_FOR_ADVANCE = "3504101";//3504102
+    public static final String GLCODE_FOR_ADVANCE = "3504101";// 3504102
 
     public static final BigDecimal FIRST_REBATETAX_PERC = new BigDecimal("4");
     public static final BigDecimal SECOND_REBATETAX_PERC = new BigDecimal("2");
@@ -1007,7 +1002,7 @@ public interface PropertyTaxConstants {
     public static final String NOTICE_TYPE_DEMAND_BILL = "Demand Bill";
     public static final String NOTICE_TYPE_RPPROCEEDINGS = "RP Proceedings";
     public static final String NOTICE_TYPE_RPHEARINGS = "RP Hearing Notice";
-    
+
     public static final String CREATE_AUDIT_ACTION = "Create Property";
     public static final String MODIFY_AUDIT_ACTION = "Modify Property";
     public static final String AMALG_AUDIT_ACTION = "Amalgamate Property";
@@ -1069,11 +1064,11 @@ public interface PropertyTaxConstants {
     public static final String MUTATIONRS_OTHERS = "OTHERS";
     public static final String MUTATIONRS_COURT_ORDER = "Court Deed";
     public static final String MUTATIONRS_DECREE_BY_CIVIL_COURT = "Decree by Civil Court";
-    public static final String MUTATIONRS_SUCCESSION="Succession";
-    public static final String MUTATIONRS_UNREG_WILL="Unregistered Will Deed";
-    public static final String MUTATIONRS_REG_WILL="Registered Will Deed";
-    public static final String CIVILCOURTDECREE="CIVILCOURTDECREE";
-    
+    public static final String MUTATIONRS_SUCCESSION = "Succession";
+    public static final String MUTATIONRS_UNREG_WILL = "Unregistered Will Deed";
+    public static final String MUTATIONRS_REG_WILL = "Registered Will Deed";
+    public static final String CIVILCOURTDECREE = "CIVILCOURTDECREE";
+
     public static final Map<String, String> SALUTATION = new HashMap<String, String>() {
         private static final long serialVersionUID = 1L;
         {
@@ -1128,12 +1123,11 @@ public interface PropertyTaxConstants {
     public static final String REPORT_DISTRESS_CORPORATION = "DistressWarrant_Corporation";
     public static final String REPORT_DISTRESS_MUNICIPALITY = "DistressWarrant_Municipality";
     public static final String REPORT_ARREAR_DEMAND_REGISTER = "arreardemand-register";
-    public static final String ADR_REPORT= "ADR Report";
+    public static final String ADR_REPORT = "ADR Report";
 
     // Property Transfer related constants
     public static final String TRANSFER_FEE_COLLECTED = "Transfer Fee Collected";
 
-    
     public static final String THIRD_PARTY_ERR_CODE_SUCCESS = "PTIS-REST-0";
     public static final String THIRD_PARTY_ERR_MSG_SUCCESS = "SUCCESS";
     public static final String THIRD_PARTY_ERR_CODE_INVALIDCREDENTIALS = "PTIS-REST-1";
@@ -1168,7 +1162,7 @@ public interface PropertyTaxConstants {
     public static final String THIRD_PARTY_ERR_CODE_TRANSANCTIONID_VALIDATE = "PTIS-REST-26";
     public static final String THIRD_PARTY_ERR_MSG_TRANSANCTIONID_VALIDATE = "Invalid Request, Used transaction ID is associated";
     public static final String THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND = "Assessment number not found";
-    public static final String CHECK_PROPERTY_CATEGORY="Please enter correct property type";
+    public static final String CHECK_PROPERTY_CATEGORY = "Please enter correct property type";
     public static final String THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_REQUIRED = "PTIS-REST-12";
     public static final String THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_REQUIRED = "Assessment number is required";
     public static final String THIRD_PARTY_ERR_CODE_PAYMENT_MODE_REQUIRED = "PTIS-REST-13";
@@ -1229,37 +1223,37 @@ public interface PropertyTaxConstants {
 
     public static final String THIRD_PARTY_ERR_CODE_BRANCHNAME_REQUIRED = "PTIS-REST-37";
     public static final String THIRD_PARTY_ERR_MSG_BRANCHNAME_REQUIRED = "Branch Name  is required";
-    
+
     public static final String THIRD_PARTY_ERR_CODE_APPLICATION_NO_REQUIRED = "PTIS-REST-38";
     public static final String THIRD_PARTY_ERR_MSG_APPLICATION_NO_REQUIRED = "Application number is required";
-    
+
     public static final String THIRD_PARTY_ERR_CODE_EXCESS_MUTATION_FEE = "PTIS-REST-40";
     public static final String THIRD_PARTY_ERR_MSG_EXCESS_MUTATION_FEE = "Mutation fee entered is excess";
-    
+
     public static final String THIRD_PARTY_ERR_CODE_MUTATION_INVALID = "PTIS-REST-41";
     public static final String THIRD_PARTY_ERR_MSG_MUTATION_INVALID = "There are no mutations done for this assessment number";
-    
+
     public static final String THIRD_PARTY_ERR_CODE_EXEMPTED_PROPERTY = "PTIS-REST-42";
     public static final String THIRD_PARTY_ERR_MSG_EXEMPTED_PROPERTY = "Property is Exempted";
-    
+
     public static final String THIRD_PARTY_ERR_CODE_PROPERTY_TAX_ASSESSMENT_NOT_FOUND = "PTIS-REST-43";
     public static final String THIRD_PARTY_ERR_MSG_PROPERTY_TAX_ASSESSMENT_NOT_FOUND = "There is no Property Tax record found for this assessment";
 
     public static final String THIRD_PARTY_ERR_CODE_VACANTLAND_ASSESSMENT_NOT_FOUND = "PTIS-REST-44";
     public static final String THIRD_PARTY_ERR_MSG_VACANTLAND_ASSESSMENT_NOT_FOUND = "There is no Vacant Land record found for this assessment";
-    
+
     public static final String THIRD_PARTY_ERR_CODE_WRONG_CATEGORY = "PTIS-REST-45";
     public static final String THIRD_PARTY_ERR_MSG_WRONG_CATEGORY = "Invalid Category";
 
     public static final String THIRD_PARTY_DEMAND_AMOUNT_GREATER_CODE = "PTIS-REST-46";
-    public static final String THIRD_PARTY_DEMAND_AMOUNT_GREATER_MSG= "Paid Amount is greater than Total Amount to be paid";
-    public static final String THIRD_PARTY_DEMAND_AMOUNT_LESSER_MSG= "Paid Amount is lesser than Total Amount to be paid";
-    
+    public static final String THIRD_PARTY_DEMAND_AMOUNT_GREATER_MSG = "Paid Amount is greater than Total Amount to be paid";
+    public static final String THIRD_PARTY_DEMAND_AMOUNT_LESSER_MSG = "Paid Amount is lesser than Total Amount to be paid";
+
     public static final String THIRD_PARTY_AMOUNT_HAVING_DECIMALS_CODE = "PTIS-REST-47";
-    public static final String THIRD_PARTY_AMOUNT_HAVING_DECIMALS_MSG= "Paid amount in decimal is not accepted.";
-    
+    public static final String THIRD_PARTY_AMOUNT_HAVING_DECIMALS_MSG = "Paid amount in decimal is not accepted.";
+
     public static final String THIRD_PARTY_DOCS_UPLOAD_SUCCESS_CODE = "PTIS-REST-48";
-    public static final String THIRD_PARTY_DOCS_UPLOAD_SUCCESS_MSG= "Document(s) uploaded successfully.";
+    public static final String THIRD_PARTY_DOCS_UPLOAD_SUCCESS_MSG = "Document(s) uploaded successfully.";
 
     public static final String TOTAL_AMOUNT = "amount";
     public final static String PAID_BY = "paidBy";
@@ -1273,7 +1267,7 @@ public interface PropertyTaxConstants {
             put(COLLECTION_TYPE_ONLINECOLLECTION, "Online");
         }
     };
-    
+
     public static final LinkedHashMap<String, String> HEARING_TIMINGS = new LinkedHashMap<String, String>() {
         private static final long serialVersionUID = 1L;
         {
@@ -1326,9 +1320,9 @@ public interface PropertyTaxConstants {
     public static final String APPLICATION_TYPE_MEESEVA_RP = "Meeseva_Revision_Petition";
     public static final String APPLICATION_TYPE_AMALGAMATION = "Amalgamation";
     public static final String APPLICATION_TYPE_MARKASCOURTCASE = "Mark_As_Court_Case";
-    public static final String DOORNO_EDIT_MODE= "editDoorNo";
-    public static final String MOBILENO_EDIT_MODE= "editMobileNo";
-    public static final String OWNERDETAILS_EDIT_MODE=  "editOwnerDetails";
+    public static final String DOORNO_EDIT_MODE = "editDoorNo";
+    public static final String MOBILENO_EDIT_MODE = "editMobileNo";
+    public static final String OWNERDETAILS_EDIT_MODE = "editOwnerDetails";
 
     // AppConfig values
     public static final String PROPERTYTAX_WORKFLOWDEPARTEMENT = "PROPERTYTAXDEPARTMENTFORWORKFLOW";
@@ -1346,7 +1340,7 @@ public interface PropertyTaxConstants {
     public static final String TARGET_TAX_DUES = "taxdues";
     public static final String PROPERTY_VALIDATION = "propertyValidation";
     public static final String PROPERTY_VALIDATION_FOR_SPRING = "propertyValidationForSpring";
-    
+
     public static final String THIRD_PARTY_PHOTO_OF_ASSESSMENT_CODE = "1";
     public static final String THIRD_PARTY_BUILDING_PERMISSION_COPY_CODE = "2";
     public static final String THIRD_PARTY_ATTESTED_COPY_PROPERTY_DOCUMENT_CODE = "3";
@@ -1364,8 +1358,6 @@ public interface PropertyTaxConstants {
     public static final Character SOURCEOFDATA_SURVEY = 'S';
     public static final Character SOURCEOFDATA_ESEVA = 'E';
     public static final Character SOURCEOFDATA_CARD = 'D';
-    
-    
 
     public static final String ALTERATION_OF_ASSESSMENT = "Alteration of Assessment";
     public static final String BIFURCATION_OF_ASSESSMENT = "Bifurcation of Assessment";
@@ -1398,7 +1390,7 @@ public interface PropertyTaxConstants {
     public static final String VR_APP_STATUS_REJECTED = "VacancyRemission:Rejected";
     public static final String VR_STATUS_MONTHLY_UPDATE = "Monthly Update Pending";
     public static final String NOTICE_TYPE_EXEMPTIONPROCEEDINGS = "Tax Exemption Proceedings";
-    
+
     public static final String VACANTLAND_PROPERTY_CATEGORY = "VACANTLAND";
     public static final String MEESEVA_OPERATOR_ROLE = "MeeSeva Operator";
     public static final String CITIZEN_ROLE = "CITIZEN";
@@ -1512,42 +1504,42 @@ public interface PropertyTaxConstants {
 
     public static final String APPCONFIG_DIGITAL_SIGNATURE = "PTIS_DIGITAL_SIGNATURE_REQUIRED";
     public static final String APPCONFIG_MAUD_INTEGRATION_REQUIRED = "PTIS_MAUD_INTEGRATION_REQUIRED";
-    
+
     public static final String APPCONFIG_CLIENT_SPECIFIC_DMD_BILL = "IS_CLIENT_SPECIFIC_DEMANDBILL";
- 
+
     public static final String SERVICE_CODE_VACANTLANDTAX = "VLT";
     public static final String SERVICE_CODE_PROPERTYTAX = "PT";
     public static final String SERVICE_CODE_MUTATION = "PTMF";
-    
+
     public static final String MUTATION_TYPE_REGISTERED_TRANSFER = "REGISTERED TRANSFER";
-    public static final String PARTT="Transfer of ownership of part of property which needs to be registered in Registration and Stamps Office";
-    public static final String FULLTT="Transfer of ownership of entire property which needs to be registered in Registration and Stamps Office";
-    public static final String ALL_READY_REGISTER ="Transfer of ownership of property which is already registered in Registration and Stamps Office";
-    
-    public static final String TTTEXT=" of the registration is completed";
-    public static final String TTTEXTEND= " in Registration and Stamps Office";
-    
+    public static final String PARTT = "Transfer of ownership of part of property which needs to be registered in Registration and Stamps Office";
+    public static final String FULLTT = "Transfer of ownership of entire property which needs to be registered in Registration and Stamps Office";
+    public static final String ALL_READY_REGISTER = "Transfer of ownership of property which is already registered in Registration and Stamps Office";
+
+    public static final String TTTEXT = " of the registration is completed";
+    public static final String TTTEXTEND = " in Registration and Stamps Office";
+
     public static final String REG_DEPT_WEBSERVICE_USERNAME = "CMDAService1";
     public static final String REG_DEPT_WEBSERVICE_PASSWORD = "CMDAService1";
-    
+
     public static final String MOBILE_PAYMENT_INCORRECT_BILL_DATA = "Bill data is incorrect";
     public static final String APPROVAL_COMMENTS_SUCCESS = "Property has been successfully forwarded.";
-    public static final String CREATE_CURRENT_STATE_BILL_COLLECTOR_APPROVED ="Create:Bill Collector Approved";
+    public static final String CREATE_CURRENT_STATE_BILL_COLLECTOR_APPROVED = "Create:Bill Collector Approved";
     public static final String UD_REVENUE_INSPECTOR_APPROVAL_PENDING = "UD Revenue Inspector Approval Pending";
-    public static final String MODIFY_CURRENT_STATE_BILL_COLLECTOR_APPROVED ="Alter:Bill Collector Approved";
-    	
-    //Collection services
+    public static final String MODIFY_CURRENT_STATE_BILL_COLLECTOR_APPROVED = "Alter:Bill Collector Approved";
+
+    // Collection services
     public static final String CATEGORY_TYPE_PROPERTY_TAX = "PT";
     public static final String CATEGORY_TYPE_VACANTLAND_TAX = "VLT";
     public static final String PROP_DEACT_RSN = "DEACTIVATE";
-    //urls	
+    // urls
     public String WTMS_TAXDUE_RESTURL = "%s/wtms/rest/watertax/due/byptno/%s";
     public String WTMS_TOTALDEMAND_RESTURL = "%s/wtms/rest/watertax/totaldemandamount/";
     public String WTMS_CONNECT_DTLS_RESTURL = "%s/wtms/rest/watertax/connectiondetails/byptno/%s";
     public String WTMS_AMALGAMATE_WATER_CONNECTIONS_URL = "%s/wtms/rest/watertax/updateConnectionForAmulgamation";
     public String STMS_TAXDUE_RESTURL = "%s/stms/rest/seweragetax/dues/%s";
     public String WTMS_TAXDUE_WITH_DATE_RESTURL = "%s/wtms/rest/watertax/due/byptnoanddate/%s,%s";
-    
+
     public static final String TRANSACTION_TYPE_CREATE = "Create";
     public static final String TRANSACTION_TYPE_DEMOLITION = "Demolition";
 
@@ -1571,7 +1563,7 @@ public interface PropertyTaxConstants {
     public static final String PTYEARWISEDCBSTARTYEAR = "PTIS_YEAR_WISE_DCB_DATE";
 
     public static final String DATE_FORMAT_YYYYMMDD = "yyyy-MM-dd";
-	
+
     public static final String DASHBOARD_GROUPING_DISTRICTWISE = "district";
     public static final String DASHBOARD_GROUPING_ULBWISE = "ulb";
     public static final String DASHBOARD_GROUPING_REGIONWISE = "region";
@@ -1584,20 +1576,20 @@ public interface PropertyTaxConstants {
     public static final String DASHBOARD_GROUPING_REVENUEINSPECTORWISE = "revenueinspector";
     public static final String DASHBOARD_GROUPING_REVENUEOFFICERWISE = "revenueofficer";
     public static final String DASHBOARD_GROUPING_FUNCTIONARYWISE = "functionary";
-    
+
     public static final String DASHBOARD_PROPERTY_TYPE_PRIVATE = "Private";
     public static final String DASHBOARD_PROPERTY_TYPE_VACANT_LAND = "Vacant Land";
     public static final String DASHBOARD_PROPERTY_TYPE_STATE_GOVT = "State Government";
     public static final String DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT = "CENTRAL_GOVT";
     public static final String DASHBOARD_PROPERTY_TYPE_COURTCASES = "Courtcases";
     public static final String DASHBOARD_PROPERTY_TYPE_BUILT_UP = "BuiltUp";
-    
+
     public static final String DASHBOARD_USAGE_TYPE_ALL = "ALL";
-    
+
     public static final String WEEK = "week";
     public static final String MONTH = "month";
     public static final String DAY = "day";
-    
+
     public static final String APPCONFIG_REASSIGN = "PTIS_REASSIGN_REQUIRED";
     public static final String APPCONFIG_ENDORSEMENT = "PTIS_ENDORSEMENT_REQUIRED";
 
@@ -1609,11 +1601,11 @@ public interface PropertyTaxConstants {
             add(OWNERSHIP_TYPE_CENTRAL_GOVT_75_STR);
         }
     };
-    
+
     public static final List<String> DASHBOARD_BUILT_UP_PROPERTY_TYPES = new ArrayList<String>() {
         private static final long serialVersionUID = 1L;
         {
-            
+
             add(OWNERSHIP_TYPE_PRIVATE_STR);
             add(OWNERSHIP_TYPE_STATE_GOVT_STR);
             add(OWNERSHIP_TYPE_CENTRAL_GOVT_333_STR);
@@ -1622,8 +1614,8 @@ public interface PropertyTaxConstants {
             add(OWNERSHIP_TYPE_EWSHS);
         }
     };
-    
-    //Recovery notices 
+
+    // Recovery notices
     public static final String NOTICE_TYPE_ESD = "ESD Notice";
     public static final String REPORT_INVENTORY_NOTICE_CORPORATION = "InventoryNotice_Corporation";
     public static final String REPORT_INVENTORY_NOTICE_MUNICIPALITY = "InventoryNotice_Municipality";
@@ -1631,19 +1623,18 @@ public interface PropertyTaxConstants {
     public static final String NOTICE_TYPE_DISTRESS = "Distress Notice";
     public static final String VALUATION_CERTIFICATE = "Valuation Certificate";
     public static final String NOTICE_TYPE_OCCUPIER = "Occupier Notice";
-    public static final String VALUATION_CERTIFICATE_CORPORATION  = "ValuationCertificate_Corporation";
+    public static final String VALUATION_CERTIFICATE_CORPORATION = "ValuationCertificate_Corporation";
     public static final String VALUATION_CERTIFICATE_MUNICIPALITY = "ValuationCertificate_Municipality";
     public static final String NOTICE_TYPE_OC = "Ownership Certificate";
-    public static final String NOTICE_TYPE_ENDORSEMENT = "Endorsement Notice";  
-    public static final String NOTICE_TYPE_SURVEY_COMPARISON="Survey Comparison Document";
-    //esd notice section act and distress section act for corporation use the same constant
+    public static final String NOTICE_TYPE_ENDORSEMENT = "Endorsement Notice";
+    public static final String NOTICE_TYPE_SURVEY_COMPARISON = "Survey Comparison Document";
+    // esd notice section act and distress section act for corporation use the same constant
     public static final String CORPORATION_ESD_NOTICE_SECTION_ACT = "(Issued under Section 269(2) of Municipal Corporations Act,1955 (formerly GHMC Act, 1955)";
-    
+
     public static final String MUNICIPALITY_ESD_NOTICE_SECTION_ACT = "(Issued under Section 91 of A.P. Municipalities Act 1965)";
     public static final String MUNICIPALITY_DISTRESS_NOTICE_SECTION_ACT = "(Issued under Rule 30(3) of Taxation & Finance Rules appended to the A.P. Municipalities Act, 1965)";
-    
-    
-    //exempted proceedings based on exempted reasons
+
+    // exempted proceedings based on exempted reasons
     public static final String NOTICE_TYPE_EXEMPTION = "exemption";
     public static final String EXEMPTION_PUBLIC_WORSHIP = "PUBLIC_WORSHIP";
     public static final String EXEMPTION_CHOULTRY = "CHOULTRY";
@@ -1659,7 +1650,7 @@ public interface PropertyTaxConstants {
     public static final String REPORT_PUBLIC_WORSHIP_EXEMPTION_NOTICE = "mainPublicWorshipExemptionNotice";
     public static final String REPORT_OWNERSHIP_CERTIFICATE_MULTIPLE = "OwnershipCertificate_MultipleOwner";
     public static final String REPORT_OWNERSHIP_CERTIFICATE_SINGLE = "OwnershipCertificate_SingleOwner";
-    
+
     public static final List<String> RECOVERY_NOTICETYPES = new ArrayList<String>() {
         private static final long serialVersionUID = 1L;
         {
@@ -1671,13 +1662,13 @@ public interface PropertyTaxConstants {
             add(VALUATION_CERTIFICATE);
         }
     };
-    
+
     public static final String DOCUMENT_TYPE_PATTA_CERTIFICATE = "Patta Certificate";
     public static final String DOCUMENT_TYPE_MRO_PROCEEDINGS = "MRO Proceedings";
     public static final String DOCUMENT_TYPE_WILL_DEED = "Will Deed";
     public static final String DOCUMENT_TYPE_DECREE_DOCUMENT = "Decree Document";
     public static final String DOCUMENT_TYPE_REGD_DOCUMENT = "Registered Document";
-    public static final String DOCUMENT_TYPE_PHOTO_PROPERTY_HOLDER  = "Photo of Property With Holder";
+    public static final String DOCUMENT_TYPE_PHOTO_PROPERTY_HOLDER = "Photo of Property With Holder";
     public static final String DOCUMENT_NAME_REGD_DOCUMENT = "Registered Document";
     public static final String DOCUMENT_NAME_PATTA_CERTIFICATE = "Patta Certificate (Issued by Revenue Department)";
     public static final String DOCUMENT_NAME_SUCCESSION_DOCUMENT = "Succession Document";
@@ -1687,26 +1678,27 @@ public interface PropertyTaxConstants {
     public static final String DOCUMENT_NAME_DECREE_BY_CIVILCOURT = "Decree by Civil Court";
     public static final String DOCUMENT_NAME_NOTARY_DOCUMENT = "Un-registered Document / Notary document";
     public static final List<String> ASSESSMENT_DOCUMENT_NAMES = ImmutableList.of(DOCUMENT_NAME_PATTA_CERTIFICATE,
-            DOCUMENT_NAME_REGD_WILL_DOCUMENT, DOCUMENT_NAME_UNREGD_WILL_DOCUMENT, DOCUMENT_NAME_DECREE_BY_CIVILCOURT, DOCUMENT_TYPE_REGD_DOCUMENT, DOCUMENT_NAME_NOTARY_DOCUMENT);
+            DOCUMENT_NAME_REGD_WILL_DOCUMENT, DOCUMENT_NAME_UNREGD_WILL_DOCUMENT, DOCUMENT_NAME_DECREE_BY_CIVILCOURT,
+            DOCUMENT_TYPE_REGD_DOCUMENT, DOCUMENT_NAME_NOTARY_DOCUMENT);
     public static final List<String> COMMISSIONER_DESIGNATIONS = ImmutableList.of(ASSISTANT_COMMISSIONER_DESIGN,
             ZONAL_COMMISSIONER_DESIGN, DEPUTY_COMMISSIONER_DESIGN, ADDITIONAL_COMMISSIONER_DESIGN, COMMISSIONER_DESGN);
     public static final List<String> ASSISTANT_DESIGNATIONS = ImmutableList.of(JUNIOR_ASSISTANT,
             SENIOR_ASSISTANT);
     public static final String INTEGRATED_BILL = "Integrated Bill";
-    
-    //Source of Application
+
+    // Source of Application
     public static final String SOURCE_CSC = "CSC";
     public static final String SOURCE_MEESEVA = "MEESEVA";
     public static final String SOURCE_MOBILE = "MOBILE";
     public static final String SOURCE_SYSTEM = "SYSTEM";
     public static final String SOURCE_ONLINE = "ONLINE";
     public static final String SOURCE_SURVEY = "SURVEY";
-    
+
     public static final String APPURTENANT_PROPERTY = "AppurTenantProperty";
-    public static final String ANONYMOUS_USER= "Anonymous";
+    public static final String ANONYMOUS_USER = "Anonymous";
     public static final String WATER_TAX_DUES = "totalTaxDue";
     public static final String UNDER_WTMS_WF = "isInWorkFlow";
-    
+
     public static final String SUPER_STRUCTURE = "Super Structure";
     public static final String GRP_APP_STATUS_REJECTED = "GRP:Rejected";
     public static final String RP_APP_STATUS_REJECTED = "RP:Rejected";
@@ -1714,34 +1706,36 @@ public interface PropertyTaxConstants {
     public static final List<String> DEMAND_REASONS_FOR_REBATE_CALCULATION = ImmutableList.of(DEMANDRSN_CODE_GENERAL_TAX,
             DEMANDRSN_CODE_DRAINAGE_TAX, DEMANDRSN_CODE_SCAVENGE_TAX, DEMANDRSN_CODE_WATER_TAX, DEMANDRSN_CODE_LIGHT_TAX,
             DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_EDUCATIONAL_TAX);
-    
-    public static final List<String> PROPERTY_TYPE_SERVICE_CODES = ImmutableList.of("PT","VLT");
-    public static final List<String> SERVICE_TYPES=ImmutableList.of(APPLICATION_TYPE_NEW_ASSESSENT,APPLICATION_TYPE_ALTER_ASSESSENT,APPLICATION_TYPE_GRP,APPLICATION_TYPE_REVISION_PETITION);
+
+    public static final List<String> PROPERTY_TYPE_SERVICE_CODES = ImmutableList.of("PT", "VLT");
+    public static final List<String> SERVICE_TYPES = ImmutableList.of(APPLICATION_TYPE_NEW_ASSESSENT,
+            APPLICATION_TYPE_ALTER_ASSESSENT, APPLICATION_TYPE_GRP, APPLICATION_TYPE_REVISION_PETITION);
 
     public static final String NOTARY_DOCUMENT_OWNER = "The Holder Of The Premises";
-            
+
     public static final List<String> PROPERTY_TYPE_GOVT_LIST = ImmutableList.of(OWNERSHIP_TYPE_STATE_GOVT,
-			OWNERSHIP_TYPE_CENTRAL_GOVT_333, OWNERSHIP_TYPE_CENTRAL_GOVT_50, OWNERSHIP_TYPE_CENTRAL_GOVT_75);
+            OWNERSHIP_TYPE_CENTRAL_GOVT_333, OWNERSHIP_TYPE_CENTRAL_GOVT_50, OWNERSHIP_TYPE_CENTRAL_GOVT_75);
     public static final String REVISION_PETETION = "REVISION_PETETION";
-    public static final String VACANCY_REMISSION = "VACANCY_REMISSION";  
+    public static final String VACANCY_REMISSION = "VACANCY_REMISSION";
     public static final String GENERAL_REVISION_PETETION_APPTYPE = "GENERAL_REVISION_PETETION";
-        
-    public static final String NOTICE_TEMPLATE_COMPARISON_NOTICE="mainGIS_comparitiveReport";
-    
+
+    public static final String NOTICE_TEMPLATE_COMPARISON_NOTICE = "mainGIS_comparitiveReport";
+
     public static final String DOCUMENT_TYPE_THIRD_PARTY_SURVEY = "Third Party Verification Copy";
 
     public static final List<String> NON_VACANT_TAX_DEMAND_CODES = ImmutableList.of(DEMANDRSN_CODE_DRAINAGE_TAX,
-	        DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_SCAVENGE_TAX, DEMANDRSN_CODE_WATER_TAX, DEMANDRSN_CODE_LIGHT_TAX);
-    
+            DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_SCAVENGE_TAX, DEMANDRSN_CODE_WATER_TAX, DEMANDRSN_CODE_LIGHT_TAX);
+
     public static final List<String> NON_VACANT_TAX_DEMAND_REASONS = ImmutableList.of(DEMANDRSN_STR_DRAINAGE_TAX,
             DEMANDRSN_STR_GENERAL_TAX, DEMANDRSN_STR_SCAVENGE_TAX, DEMANDRSN_STR_WATER_TAX, DEMANDRSN_STR_LIGHT_TAX);
-    
+
     public static final List<String> ASSESSMENT_DOCUMENT_NAMES_RP = ImmutableList.of(DOCUMENT_NAME_PATTA_CERTIFICATE,
-            DOCUMENT_NAME_REGD_WILL_DOCUMENT, DOCUMENT_NAME_UNREGD_WILL_DOCUMENT, MUTATIONRS_DECREE_BY_CIVIL_COURT, DOCUMENT_TYPE_REGD_DOCUMENT);
-    
-    public static final List<String> APPLICATION_TYPES=ImmutableList.of("New_Assessment","Alter_Assessment");
-    public static final List<String> APPLICATION_STATUS=ImmutableList.of("Open","Closed","Approved","Cancelled");
-    
+            DOCUMENT_NAME_REGD_WILL_DOCUMENT, DOCUMENT_NAME_UNREGD_WILL_DOCUMENT, MUTATIONRS_DECREE_BY_CIVIL_COURT,
+            DOCUMENT_TYPE_REGD_DOCUMENT);
+
+    public static final List<String> APPLICATION_TYPES = ImmutableList.of("New_Assessment", "Alter_Assessment");
+    public static final List<String> APPLICATION_STATUS = ImmutableList.of("Open", "Closed", "Approved", "Cancelled");
+
     public static final Map<String, String> SURVEY_APPLICATION_TYPES = new TreeMap<String, String>() {
         private static final long serialVersionUID = 1L;
         {
@@ -1750,16 +1744,15 @@ public interface PropertyTaxConstants {
 
         }
     };
-    
+
     public static final String APPCONFIG_GIS_THIRDPARTY_CHECKBOX_REQUIRED = "PTIS_GIS_THIRDPARTY_CHECKBOX_REQUIRED";
     public static final String APPCONFIG_DEMAND_VOUCHER_GENERATION_REQUIRED = "PTIS_DEMAND_VOUCHER_GENERATION_REQUIRED";
     public static final String APPCONFIG_PT_DEMAND_VOUCHER_GLCODES = "PT_DEMAND_VOUCHER_GLCODES";
-    
+
     public static final String DOCUMENT_TYPE_PHOTO_OF_ASSESSMENT = "Photo Of Assessment";
-    
+
     public static final String APPCONFIG_PTIS_BULKBILL_GENERATION_SCHEDULER_ENABLED = "PTIS_BULKBILL_GENERATION_SCHEDULER_ENABLED";
-    
-    
+
     public static final Map<String, String> DOCTYPEBYMUTATIONREASON = new HashMap<String, String>() {
         private static final long serialVersionUID = 1L;
         {
@@ -1773,8 +1766,8 @@ public interface PropertyTaxConstants {
             put(MUTATION_REASON_CODE_UNREGISTEREDWILL, MUTATIONRS_UNREG_WILL);
         }
     };
-    
-    public static final Map<String, String> APPLICATIONTYPEBYNATUREOFTASK = new HashMap<String, String>(){
+
+    public static final Map<String, String> APPLICATIONTYPEBYNATUREOFTASK = new HashMap<String, String>() {
         private static final long serialVersionUID = 1L;
         {
             put(NATURE_NEW_ASSESSMENT, APPLICATION_TYPE_NEW_ASSESSENT);
@@ -1785,8 +1778,8 @@ public interface PropertyTaxConstants {
             put(APPLICATION_TYPE_AMALGAMATION, APPLICATION_TYPE_AMALGAMATION);
         }
     };
-    
-    public static final Map<String, String> NATUREOFTASKBYADDITIONALRULE = new HashMap<String, String>(){
+
+    public static final Map<String, String> NATUREOFTASKBYADDITIONALRULE = new HashMap<String, String>() {
         private static final long serialVersionUID = 1L;
 
         {
@@ -1798,16 +1791,41 @@ public interface PropertyTaxConstants {
             put(AMALGAMATION, APPLICATION_TYPE_AMALGAMATION);
         }
     };
-    
-	public static final String FULL_WRITEOFF = "Full Write Off";
-	public static final String PARTIAL_WRITEOFF = "Partial Write Off";
-	public static final Map<String, String> WRITEOFF_TYPES = new TreeMap<String, String>() {
-		private static final long serialVersionUID = 1L;
-		{
-			put(FULL_WRITEOFF, FULL_WRITEOFF);
-			put(PARTIAL_WRITEOFF, PARTIAL_WRITEOFF);
 
-		}
-	};
-    
+    public static final String FULL_WRITEOFF = "Full Write Off";
+    public static final String PARTIAL_WRITEOFF = "Partial Write Off";
+    public static final Map<String, String> WRITEOFF_TYPES = new TreeMap<String, String>() {
+        private static final long serialVersionUID = 1L;
+        {
+            put(FULL_WRITEOFF, FULL_WRITEOFF);
+            put(PARTIAL_WRITEOFF, PARTIAL_WRITEOFF);
+
+        }
+    };
+
+    // Court Verdict Constants
+
+    public static final String APPROVAL_COMMENT = "approvalComent";
+    public static final String WF_ACTION = "workFlowAction";
+    public static final String APPROVAL_POSITION = "approvalPosition";
+    public static final String LOGGED_IN_USER = "loggedUserIsEmployee";
+    public static final String SUCCESS_MSG = "successMessage";
+    public static final String CV_SUCCESS_FORM = "courtVerdict-success";
+    public static final String COURT_VERDICT = "courtVerdict";
+    public static final String CURRENT_STATE = "currentState";
+    public static final String STATE_TYPE = "stateType";
+    public static final String CV_FORM = "courtVerdict-form";
+    public static final String CV_VIEW = "courtVerdict-view";
+    public static final String PROPERTY = "property";
+    public static final String ACTION = "action";
+    public static final String CURRENT_DESG = "currentDesignation";
+    public static final String HISTORY_MAP = "historyMap";
+    public static final String STATE = "state";
+    public static final String STATE_AWARE_ID = "stateAwareId";
+    public static final String TRANSACTION_TYPE = "transactionType";
+    public static final String RE_ASSESS = "RE_ASSESS";
+    public static final String UPDATE_DEMAND_DIRECTLY = "UPDATE_DMND_DIRECTLY";
+    public static final String DEMAND_DETAIL_LIST = "demandDetailList";
+    public static final String ENDORSEMENT_NOTICE = "endorsementNotices";
+
 }

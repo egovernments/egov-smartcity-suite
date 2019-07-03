@@ -64,7 +64,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.workflow.entity.StateAware;
@@ -86,17 +85,17 @@ public class CourtVerdict extends StateAware<Position> {
 
     @ManyToOne(targetEntity = PropertyImpl.class, cascade = CascadeType.ALL)
     @NotNull
-    @JoinColumn(name = "property_id")
+    @JoinColumn(name = "property")
     private PropertyImpl property;
 
     @ManyToOne(targetEntity = BasicPropertyImpl.class, cascade = CascadeType.ALL)
     @NotNull
-    @JoinColumn(name = "basicproperty_id", nullable = false)
+    @JoinColumn(name = "basicproperty", nullable = false)
     private BasicPropertyImpl basicProperty;
 
     @ManyToOne(targetEntity = PropertyCourtCase.class, cascade = CascadeType.ALL)
     @NotNull
-    @JoinColumn(name = "id_propertyCourtCase")
+    @JoinColumn(name = "propertyCourtCase")
     private PropertyCourtCase propertyCourtCase;
 
     @Column(name = "status")
@@ -109,7 +108,7 @@ public class CourtVerdict extends StateAware<Position> {
     private String action;
     @Column(name = "applicationno")
     private String applicationNumber;
-    @Transient
+  
     private transient List<DemandDetail> demandDetailBeanList = new ArrayList<>();
 
     public Long getId() {

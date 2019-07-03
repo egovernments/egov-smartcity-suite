@@ -83,10 +83,13 @@
 						<span class="mandatory"></span>
 					</div>
 					<div class="col-xs-3 add-margin view-content">
+						<form:input type="hidden" id="propTypeCategory" path=""
+							value="${property.propertyDetail.categoryType}" />
 						<form:select id="propTypeCategoryId"
 							path="property.propertyDetail.categoryType"
 							name="propTypeCategoryId" cssClass="form-control"
-							cssStyle="width: 100%">
+							cssStyle="width: 100%"
+							value="${property.propertyDetail.categoryType}">
 						</form:select>
 					</div>
 				</div>
@@ -100,20 +103,6 @@
 							path="property.propertyDetail.sitalArea.area" />
 					</div>
 				</div>
-			</div>
-		</div>
-	</div>
-</div>
-<div class="row">
-	<div class="col-md-12">
-		<div class="panel panel-primary" data-collapsed="0"
-			style="text-align: left">
-			<div class="panel-heading">
-				<div class="panel-title">
-					<spring:message code="lbl.property.address.details" />
-				</div>
-			</div>
-			<div class="panel-body">
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.cv.locality" />
@@ -122,7 +111,7 @@
 					<div class="col-xs-3 add-margin view-content">
 						<form:select path="basicProperty.propertyID.locality.id"
 							id="locality" cssStyle="width: 100%" cssClass="form-control"
-							name="locality">
+							name="locality" disabled="true">
 							<form:option value="">--select--</form:option>
 							<c:forEach items="${localityList}" var="locality">
 								<form:option value="${locality.id}">${locality.name}</form:option>
@@ -135,7 +124,8 @@
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<form:select path="basicProperty.propertyID.zone.id" id="zone"
-							name="zone" cssClass="form-control" cssStyle="width: 50%">
+							name="zone" cssClass="form-control" cssStyle="width: 50%"
+							disabled="true">
 							<form:option value="">--select--</form:option>
 							<c:forEach items="${zones}" var="zone">
 								<form:option value="${zone.id}">${zone.name}</form:option>
@@ -149,9 +139,13 @@
 						<span class="mandatory"></span>
 					</div>
 					<div class="col-xs-3 add-margin view-content">
+						<form:input type="hidden" id="ward"
+							path="basicProperty.propertyID.ward.id"
+							value="${basicProperty.propertyID.ward.id}" />
 						<form:select id="wardId" path="basicProperty.propertyID.ward.id"
-							cssStyle="width: 50%" name="wardId" cssClass="form-control"
-							onchange="populateBlock();">
+							cssStyle="width: 100%" name="wardId" cssClass="form-control"
+							onchange="populateBlock();"
+							value="${basicProperty.propertyID.ward.id}" disabled="true">
 						</form:select>
 					</div>
 					<div class="col-xs-3 add-margin">
@@ -159,8 +153,13 @@
 						<span class="mandatory"></span>
 					</div>
 					<div class="col-xs-3 add-margin view-content">
+						<form:input type="hidden" id="block"
+							path="basicProperty.propertyID.area.id"
+							value="${basicProperty.propertyID.area.id}" />
+
 						<form:select id="blockId" path="basicProperty.propertyID.area.id"
-							cssClass="form-control" style="width: 50%" name="blockId">
+							cssClass="form-control" style="width: 50%" name="blockId"
+							value="${basicProperty.propertyID.area.id}" disabled="true">
 						</form:select>
 					</div>
 				</div>
@@ -173,7 +172,7 @@
 						<form:select id="electionWard"
 							path="basicProperty.propertyID.electionBoundary.id"
 							name="electionWard" cssClass="form-control"
-							cssStyle="width: 100%">
+							cssStyle="width: 100%" disabled="true">
 							<form:option value="">--select--</form:option>
 							<c:forEach items="${electionWardList}" var="electionWard">
 								<form:option value="${electionWard.id}">${electionWard.name}</form:option>
