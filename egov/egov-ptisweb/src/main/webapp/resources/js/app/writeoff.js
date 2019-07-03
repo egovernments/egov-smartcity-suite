@@ -46,14 +46,18 @@
  *
  */
 $(document).ready(function() {
-	toggleOtherReason();
+	//toggleOtherReason();
 });
 
-function toggleOtherReason() {
-	var obj = jQuery('#writeOffReason')[0];
-	if (obj.value == 'Other reasons') {
-		jQuery('#otherReasonDiv').show();
-	} else {
-		jQuery('#otherReasonDiv').hide();
-	}
+function checkboxenable() {
+	var enable = jQuery('#fullwriteoffcheckbox').val('');
+	alert(enable);
 }
+/*function toggleOtherReason() {
+ var obj = jQuery('#writeOffReason')[0];
+ if (obj.value == 'Other reasons') {
+ jQuery('#otherReasonDiv').show();
+ } else {
+ jQuery('#otherReasonDiv').hide();
+ }
+ }*/

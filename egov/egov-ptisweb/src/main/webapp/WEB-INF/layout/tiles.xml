@@ -850,4 +850,12 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/transactions/courtverdict/courtverdict-view.jsp" />
 	</definition>
+    <definition name="writeOff-success" extends="base_layout">
+       <put-attribute name="page-title" value="lbl.writeOff.title" cascade="true"/>
+       <put-attribute name="body" value="/WEB-INF/views/transactions/writeOff/writeOff-success.jsp"/>
+    </definition>
+    <definition name="writeOff-view" extends="base_layout">
+       <put-attribute name="page-title" value="lbl.writeOff.title" cascade="true"/>
+       <put-attribute name="body" value="/WEB-INF/views/transactions/writeOff/writeOff-view.jsp"/>
+    </definition>
 </tiles-definitions> 

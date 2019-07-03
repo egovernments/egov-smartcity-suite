@@ -609,6 +609,7 @@ public interface PropertyTaxConstants {
     public static final String WFLOW_ACTION_NAME_DEMOLITION = "Demolition";
     public static final String WFLOW_ACTION_NAME_EXEMPTION = "Exemption";
     public static final String WFLOW_ACTION_NAME_GRP = "GRP";
+	public static final String APPLICATION_TYPE_WRITE_OFF = "writeOff";
 
     // WORKFLOW property states
     public static final String WF_STATE_NEW = "New";
@@ -1435,7 +1436,7 @@ public interface PropertyTaxConstants {
     public static final String NATURE_COURT_VERDICT = "Court Verdict";
     public static final String NATURE_OF_USAGE_RESIDENCE = "Residence";
     public static final String GRADE_NAGAR_PANCHAYAT = "NP";
-
+    public static final String NATURE_WRITE_OFF = "Write Off";
     // Tax Rates
 
     public static final Map<String, String> TAX_RATES = new HashMap<String, String>() {
@@ -1798,15 +1799,15 @@ public interface PropertyTaxConstants {
         }
     };
     
-    public static final String FULL_WRITEOFF = "Full Write Off";
-    public static final String PARTIAL_WRITEOFF = "Partial Write Off";
-    public static final Map<String, String> WRITEOFF_TYPES = new TreeMap<String, String>() {
-        private static final long serialVersionUID = 1L;
-        {
-            put(FULL_WRITEOFF, FULL_WRITEOFF);
-            put(PARTIAL_WRITEOFF, PARTIAL_WRITEOFF);
+	public static final String FULL_WRITEOFF = "Full Write Off";
+	public static final String PARTIAL_WRITEOFF = "Partial Write Off";
+	public static final Map<String, String> WRITEOFF_TYPES = new TreeMap<String, String>() {
+		private static final long serialVersionUID = 1L;
+		{
+			put(FULL_WRITEOFF, FULL_WRITEOFF);
+			put(PARTIAL_WRITEOFF, PARTIAL_WRITEOFF);
 
-        }
-    };
+		}
+	};
     
 }

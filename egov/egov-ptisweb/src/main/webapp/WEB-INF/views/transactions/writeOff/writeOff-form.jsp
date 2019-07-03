@@ -52,112 +52,425 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-<style>
-body
-{
-  font-family:regular !important;
-  font-size:14px;
-}
-</style>
+<%@ include file="/includes/taglibs.jsp"%>
+
+
+<html>
+<head>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/javascript/validations.js'/>"></script>
-<form:form id="WriteOff" method="post"
-	class="form-horizontal form-groups-bordered" modelAttribute="property">
-	<div class="page-container" id="page-container">
-		<div class="main-content">
-			<jsp:include page="../../common/ownerDetailsView.jsp"></jsp:include>
-			<jsp:include page="../../common/propertyAddressDetailsView.jsp"></jsp:include>
-			<jsp:include page="../../common/propertyDetailsView.jsp"></jsp:include>
-			<jsp:include page="../../common/taxDetailsView.jsp"></jsp:include>
-			<div class="row">
-				<div class="col-md-12">
-					<div class="panel panel-primary" data-collapsed="0"
-						style="text-align: left">
-						<div class="panel-heading">
-							<div class="panel-title">
-								<spring:message code="lbl.council.details" />
-							</div>
-						</div>
-						<div class="panel-body">
-							<c:if test="${isCorporation}">
-								<div class="row add-border">
-									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.committee.date" /><span class="mandatory"></span>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/js/app/writeoff.js'/>">
+	
+</script>
+<style>
+body {
+	font-family: regular !important;
+	font-size: 14px;
+}
+
+div.overflow-x-scroll {
+	overflow-x: scroll;
+}
+
+div.floors-tbl-freeze-column-div {
+	margin-right: 80px;
+}
+
+.freeze-action-th {
+	position: absolute;
+	right: 20px;
+	padding: 4px 2px !important;
+	min-height: 40px;
+	min-width: 90px !important;
+	line-height: 30px;
+}
+
+.freeze-action-td {
+	position: absolute;
+	right: 20px;
+	padding: 4px 2px;
+	padding-bottom: 4px;
+	height: 40px;
+	width: 90px;
+}
+
+.postion {
+	padding-left: 50px;
+}
+</style>
+<title><spring:message code="lbl.writeOff.title" /></title>
+</head>
+<body>
+
+	<%-- <c:if test="${not empty errorMsg}">
+		<div class="alert alert-danger" role="alert">
+			<c:forEach var="error" items="${errorMsg}" varStatus="status">
+				<spring:message code="${error.value}" />
+				<br />
+			</c:forEach>
+		</div>
+	</c:if>
+ --%>
+	<form:form method="post" id="writeOffViewForm" commandName="writeoff"
+		theme="simple" enctype="multipart/form-data" modelAttribute="writeOff">
+		<form:hidden path="" name="loggedUserIsEmployee"
+			id="loggedUserIsEmployee" value="${loggedUserIsEmployee}" />
+		<div class="panel-body custom-form">
+			<div class="tab-content">
+
+				<div class="tab-pane fade active in" id="courtdetails">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="panel panel-primary" data-collapsed="0"
+								style="text-align: left">
+								<div class="panel-heading">
+									<div class="panel-title">
+										<spring:message code="lbl.hdr.propertydetails" />
 									</div>
-									<div class="col-xs-3 add-margin view-content">
-										<form:input  path="" name="committeeDate" class="form-control datepicker" data-date-end-date="0d"
-											id="committeeDate" data-inputmask="'mask': 'd/m/y'" required="required" />
+								</div>
+								<div class="panel-body">
+									<div class="row add-border">
+										<div class="col-xs-3 add-margin">
+											<spring:message code="lbl.assmtno" />
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											<c:out value="${property.basicProperty.upicNo}">
+											</c:out>
+										</div>
+										<div class="col-xs-3 add-margin">
+											<spring:message code="lbl.cv.doorNo" />
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											<c:out
+												value="${property.basicProperty.address.houseNoBldgApt }"></c:out>
+										</div>
 									</div>
-									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.committee.regNo" /><span class="mandatory"></span>
-									</div>
-									<div class="col-xs-3 add-margin view-content">
-										<form:input path="" name="committeeRegNo" id="committeeRegNo" maxlength="16" cssClass="form-control" /> 
-									</div>
-								</div>
-							</c:if>
-							<c:if test="${!isCorporation}">
-								<div class="row add-border">
-									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.council.date" /><span class="mandatory"></span>
-									</div>
-									<div class="col-xs-3 add-margin view-content">
-										<form:input  path="" name="committeeDate" class="form-control datepicker" data-date-end-date="0d"
-											id="committeeDate" data-inputmask="'mask': 'd/m/y'" required="required" />
-									</div>
-									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.council.regNo" /><span class="mandatory"></span>
-									</div>
-									<div class="col-xs-3 add-margin view-content">
-										<form:input path="" name="committeeRegNo" id="committeeRegNo" maxlength="16" cssClass="form-control" />
+									<div class="row add-border">
+										<div class="col-xs-3 add-margin">
+											<spring:message code="lbl.cv.ownerName" />
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											<c:out
+												value="${property.basicProperty.primaryOwner.name.toString()} "></c:out>
+										</div>
+										<div class="col-xs-3 add-margin">
+											<spring:message code="lbl.cv.propAdd" />
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											<c:out value="${property.basicProperty.address }"></c:out>
+										</div>
 									</div>
 								</div>
-							</c:if>
-							<div class="row add-border">
-								<div class="col-xs-3 add-margin">
-									<spring:message code="lbl.endInstallment.to.writeoff" /><span class="mandatory"></span>
-								</div>
-								<div class="col-xs-3 add-margin view-content">
-									<form:select path="" id="installments" cssClass="form-control" >
-										<form:option value="">
-											<spring:message code="lbl.select" />
-										</form:option>
-										<form:options items="${installments}" itemLabel="description" itemValue="id"/>
-									</form:select>
-								</div>
-								<div class="col-xs-3 add-margin">
-									<spring:message code="lbl.reason.writeoff" /><span class="mandatory"></span>
-								</div>
-								<div class="col-xs-3 add-margin view-content">
-									<form:select path="" id="writeOffReason" cssClass="form-control" onchange="toggleOtherReason();">
-										<form:option value="">
-											<spring:message code="lbl.select" />
-										</form:option>
-										<form:options items="${writeOffReasons}"/>
-									</form:select>
-								</div>
-							</div>
-							<div class="row add-border" id="otherReasonDiv">
-								<div class="col-xs-3 add-margin">
-									<spring:message code="lbl.other.reason" /><span class="mandatory"></span>
-								</div>
-								<div class="col-xs-3 add-margin view-content">
-									<form:input path="" name="otherReason" id="otherReason" size="256" cssClass="form-control"/>
-								</div>
-								<div class="col-xs-3 add-margin">
-									&nbsp;
-								</div>
-								<div class="col-xs-3 add-margin view-content">
-									&nbsp;
-								</div>
+
 							</div>
 						</div>
 					</div>
+					<!-- Water Connection Details -->
+					<div class="row">
+						<div class="col-md-12">
+							<div class="panel panel-primary" data-collapsed="0"
+								style="text-align: left">
+								<div class="panel-heading">
+									<div class="panel-title">
+										<spring:message code="lbl.cv.wcdetails" />
+									</div>
+								</div>
+								<c:if test="${not empty wcDetails}">
+									<c:forEach items="${wcDetails}" var="wc">
+										<div class="panel-body">
+											<div class="row add-border">
+												<div class="col-xs-3 add-margin">
+													<spring:message code="lbl.cv.consumerNo" />
+												</div>
+												<div class="col-xs-3 add-margin view-content">
+													<c:out value="${wc.consumerCode }"></c:out>
+												</div>
+												<div class="col-xs-3 add-margin">
+													<spring:message code="lbl.cv.connStatus" />
+												</div>
+												<div class="col-xs-3 add-margin view-content">
+													<c:out value="${wc.connectionStatus }"></c:out>
+												</div>
+											</div>
+											<div class="row add-border">
+												<div class="col-xs-3 add-margin">
+													<spring:message code="lbl.cv.connType" />
+												</div>
+												<div class="col-xs-3 add-margin view-content">
+													<c:out value="${wc.connectionType}"></c:out>
+												</div>
+												<div class="col-xs-3 add-margin">
+													<spring:message code="lbl.cv.hlfyearcharg" />
+												</div>
+												<div class="col-xs-3 add-margin view-content">
+													<c:out value=" "></c:out>
+												</div>
+											</div>
+											<div class="row add-border">
+												<div class="col-xs-3 add-margin">
+													<spring:message code="lbl.cv.wtrchrgdue" />
+												</div>
+												<div class="col-xs-3 add-margin view-content">
+													<c:out value="${wc.totalTaxDue}"></c:out>
+												</div>
+											</div>
+										</div>
+									</c:forEach>
+								</c:if>
+								<c:if test="${empty wcDetails}">
+									<div class="row add-border">
+										<div class="col-xs-3">*No Water Tap Connection Details</div>
+									</div>
+								</c:if>
+							</div>
+						</div>
+					</div>
+					<!-- Sewerage Connection Details -->
+					<div class="row">
+						<div class="col-md-12">
+							<div class="panel panel-primary" data-collapsed="0"
+								style="text-align: left">
+								<div class="panel-heading">
+									<div class="panel-title">
+										<spring:message code="lbl.cv.sewdetails" />
+									</div>
+								</div>
+								<div class="panel-body">
+									<div class="row add-border">
+										<div class="col-xs-3 add-margin">
+											<spring:message code="lbl.cv.sewConnNo" />
+										</div>
+										<div class="col-xs-3 add-margin view-content"></div>
+										<div class="col-xs-3 add-margin">
+											<spring:message code="lbl.cv.closets" />
+										</div>
+										<div class="col-xs-3 add-margin view-content"></div>
+									</div>
+									<div class="row add-border">
+										<div class="col-xs-3 add-margin">
+											<spring:message code="lbl.cv.hlfyearcharg" />
+										</div>
+										<div class="col-xs-3 add-margin view-content"></div>
+										<div class="col-xs-3 add-margin">
+											<spring:message code="lbl.cv.sewchrgdue" />
+										</div>
+										<div class="col-xs-3 add-margin view-content"></div>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+					<!-- Write-Off Details -->
+
+					<div class="row">
+						<div class="col-md-12">
+							<div class="panel panel-primary" data-collapsed="0"
+								style="text-align: left">
+								<div class="panel-heading">
+									<div class="panel-title">
+										<spring:message code="lbl.writeOff.details" />
+									</div>
+								</div>
+								<div class="panel-body">
+									<div class="row add-border">
+										<div class="col-xs-2 add-margin">
+											<spring:message code="lbl.writeOffTypes" />
+										</div>
+
+										<div class="col-xs-2 add-margin view-content">
+											<form:select path="" id="types" cssClass="form-control">
+												<!-- onchange="toggleOtherReason(); -->
+												<form:option value="">
+													<spring:message code="lbl.select" />
+												</form:option>
+												<form:options items="${types}" />
+											</form:select>
+										</div>
+										<div class="col-xs-2 add-margin" style="padding-left: 100px;">
+											<spring:message code="lbl.writeOff.reasons" />
+										</div>
+										<div class="col-xs-2 add-margin view-content">
+											<form:select path="" id="reasons" cssClass="form-control">
+												<form:option value="">
+													<spring:message code="lbl.select" />
+												</form:option>
+												<form:options items="${reasons}" />
+											</form:select>
+										</div>
+									</div>
+									<div>
+										<div class="col-xs-3 add-margin">
+											<spring:message code="lbl.writeoff.deactivation.checkbox" />
+											<input type="checkbox" id="fullwriteoffcheckbox"
+												class="check_box" name="checkbox">
+										</div>
+									</div>
+
+								</div>
+
+							</div>
+						</div>
+					</div>
+					<!-- Demand Details -->
+					<div class="row">
+						<div class="col-md-12">
+							<div class="panel panel-primary" data-collapsed="0"
+								style="text-align: left">
+								<div class="panel-heading">
+									<div class="panel-title">
+										<spring:message code="lbl.cv.dmndDet" />
+									</div>
+								</div>
+								<div class="panel-body">
+									<div class="row add-border">
+										<div class="col-xs-2 add-margin">
+											<spring:message code="lbl.installmnt.start" />
+										</div>
+										<div class="col-xs-2 add-margin view-content">
+											<form:select path="" id="installments"
+												cssClass="form-control">
+												<form:option value="">
+													<spring:message code="lbl.select" />
+												</form:option>
+												<form:options items="${installments}" />
+											</form:select>
+										</div>
+										<div class="col-xs-2 add-margin postion">
+											<spring:message code="lbl.installmnt.end" />
+										</div>
+										<div class="col-xs-2 add-margin view-content ">
+											<form:select path="" id="installments"
+												cssClass="form-control ">
+												<form:option value="">
+													<spring:message code="lbl.select" />
+												</form:option>
+												<form:options items="${installments}" />
+											</form:select>
+										</div>
+										<div class="col-xs-2 add-margin postion">
+											<spring:message code="lbl.writeOff.instalmnt" />
+										</div>
+										<div class="col-xs-2 add-margin view-content">
+											<c:out value="${'2000' }"></c:out>
+										</div>
+									</div>
+									<div class="row add-border">
+										<div class="col-xs-2 add-margin">
+											<spring:message code="lbl.dmd.amount" />
+										</div>
+										<div class="col-xs-2 add-margin view-content">
+											<c:out value="${'500' }"></c:out>
+										</div>
+										<div class="col-xs-2 add-margin">
+											<spring:message code="lbl.writeoff.dmd" />
+										</div>
+										<div class="col-xs-2 add-margin view-content">
+											<form:input id="installname" path="resolutionNo" type="text"
+												value="${}" cssClass="form-control is_valid_number"
+												autocomplete="off" required="required" />
+										</div>
+										</br> </br>
+										<div class="col-xs-2 add-margin">
+											<spring:message code="lbl.intrst.amount" />
+										</div>
+										<div class="col-xs-2 add-margin view-content">
+											<c:out value="${'30' }"></c:out>
+										</div>
+										<div class="col-xs-2 add-margin">
+											<spring:message code="lbl.writeOff.intrst" />
+										</div>
+										<div class="col-xs-2 add-margin view-content">
+											<form:input id="resolutionNo" path="resolutionNo" type="text"
+												value="${}" cssClass="form-control is_valid_number"
+												autocomplete="off" required="required" />
+										</div>
+
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+					<!-- Document Details -->
+					<div class="row">
+						<div class="col-md-12">
+							<div class="panel panel-primary" data-collapsed="0"
+								style="text-align: left">
+								<div class="panel-heading">
+									<div class="panel-title">
+										<spring:message code="lbl.doc.details" />
+									</div>
+								</div>
+								<div class="panel-body">
+									<div class="row add-border">
+										<div class="col-xs-2 add-margin postion">
+											<spring:message code="lbl.resolution.type" />
+										</div>
+										<div class="col-xs-2 add-margin view-content"></div>
+										<div class="col-xs-2 add-margin postion">
+											<spring:message code="lbl.resolution.no" />
+										</div>
+										<div class="col-xs-2 add-margin">
+											<form:input id="resolutionNo" path="resolutionNo" type="text"
+												value="${resolutionNo}"
+												cssClass="form-control is_valid_number" autocomplete="off"
+												required="required" />
+										</div>
+										<div class="col-xs-2 add-margin postion">
+											<spring:message code="lbl.resolution.date" />
+										</div>
+										<div class="col-xs-2 add-margin view-content">
+											<form:input path="" name="resolutionDate"
+												class="form-control datepicker" data-date-end-date="0d"
+												id="resolutionDate" data-inputmask="'mask': 'd/m/y'"
+												required="required" />
+										</div>
+										<!-- <div style="padding-top:  20px;"> -->
+										<%-- 	<%@ include file="/WEB-INF/jsp/common/documents-upload.jsp"%></div> --%>
+
+										<div class="col-xs-3 add-margin">
+											<spring:message code="lbl.resolution.doc" />
+										</div>
+										<div class="col-xs-3 add-margin view-content"></div>
+									</div>
+
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+		<c:if test="${state != null}">
+			<tr>
+				<jsp:include page="../../common/workflowHistoryView.jsp" />
+			<tr>
+		</c:if>
+
+		<c:if test="${loggedUserIsEmployee == true && !citizenPortalUser}">
+			<div class="row">
+				<div class="col-md-12">
+					<jsp:include page="/WEB-INF/views/common/commonWorkflowMatrix.jsp" />
 				</div>
 			</div>
-			<jsp:include page="../../common/commonWorkflowMatrix.jsp" />
-			<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
+		</c:if>
+
+		<div id="loadingMask" style="display: none">
+			<p align="center">
+				<img src="/ptis/resources/erp2/images/bar_loader.gif"> <span
+					id="message"><p style="color: red">Please wait....</p></span>
+			</p>
 		</div>
-	</div>
-</form:form>
-<script src="<cdn:url value='/resources/js/app/writeoff.js'/>"></script>
+		<div class="buttonbottom" align="center">
+			<%@ include
+				file="/WEB-INF/views/common/commonWorkflowMatrix-button.jsp"%>
+		</div>
+		</div>
+	</form:form>
+</body>
+</html>
