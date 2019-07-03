@@ -77,6 +77,7 @@ import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterChargesReceiptInfo;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.entity.WaterDemandConnection;
 import org.egov.wtms.application.service.CurrentDcbService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.collection.WaterConnectionBillable;
@@ -176,7 +177,8 @@ public class CurrentViewDcbController {
 
         model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
                 .get(waterConnectionDetails.getConnectionType().name()));
-        if (waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand() != null) {
+        WaterDemandConnection waterDemandConnection = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails);
+        if (waterDemandConnection != null && waterDemandConnection.getDemand() != null) {
             final DCBDisplayInfo dcbDispInfo = currentDcbService.getDcbDispInfo(waterConnectionDetails.getConnectionType());
             final WaterConnectionBillable waterConnectionBillable = (WaterConnectionBillable) context
                     .getBean("waterConnectionBillable");
@@ -187,7 +189,7 @@ public class CurrentViewDcbController {
             waterConnectionBillable.setAssessmentDetails(assessmentDetails);
             dcbService.setBillable(waterConnectionBillable);
             dCBReport = dcbService.getCurrentDCBAndReceipts(dcbDispInfo);
-            final EgDemand demand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
+            final EgDemand demand = waterDemandConnection.getDemand();
             final List<EgDemandDetails> egDemandDetailsList = new ArrayList<>(0);
             egDemandDetailsList.addAll(demand.getEgDemandDetails());
             Collections.sort(egDemandDetailsList, new DemandComparatorByInstallmentOrder());
@@ -213,6 +215,14 @@ public class CurrentViewDcbController {
                     .getTotalAmount(waterConnectionDetails);
             model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
             model.addAttribute("mode", "viewdcb");
+            BigDecimal advance = BigDecimal.ZERO;
+            for(EgDemandDetails demandDetails : demand.getEgDemandDetails()) {
+            	if (WaterTaxConstants.DEMANDRSN_CODE_ADVANCE.equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
+            		advance = advance.add(demandDetails.getAmtCollected());
+                }
+            }
+            if(advance.compareTo(BigDecimal.ZERO) > 0)
+            		model.addAttribute("advance", advance);
         } else {
             model.addAttribute("dcbReport", dCBReport);
             model.addAttribute("waterTaxDueforParent", BigDecimal.ZERO);

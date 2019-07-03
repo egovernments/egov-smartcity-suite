@@ -211,6 +211,25 @@
 										</div>
 									</td>
 								</tr>
+								<tr id="advanceRow">
+									<td class="blueborderfortd">&nbsp;</td>
+									<td class="blueborderfortd">&nbsp;</td>
+									<td class="blueborderfortd">
+										<div align="right">
+											<b>Advance:</b>
+										</div>
+									</td>
+
+									<td class="blueborderfortd">
+										<div align="right">
+
+											<span class="bold"> <c:out
+													value="${advance}" />
+											</span>
+										</div>
+									</td>
+								</tr>
+								
 								<tr>
 									<td class="blueborderfortd">&nbsp;</td>
 									<td class="blueborderfortd">&nbsp;</td>
@@ -376,6 +395,11 @@
 	</div>
 </div>
 <script type="text/javascript">
+
+var advanceAmount = "${advance}";
+if(advanceAmount == "" || advanceAmount == null){
+	$("#advanceRow").hide();
+}
 function onsubmitpay()
 {
 	var consumerNumber=$('#consumerCode').val();
