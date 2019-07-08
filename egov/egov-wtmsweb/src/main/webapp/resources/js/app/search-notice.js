@@ -121,6 +121,7 @@ function merge()
 			'noticeType' : $("#noticetype").val(),
 			'fromDate' : $("#fromDate").val(),
 			'toDate' : $('#toDate').val(),
+			'financialYear' : $('#financialYear').val(),
 			'start':0,
 			'length':4000
 		};
@@ -155,6 +156,7 @@ var params={
 			'noticeType' : $("#noticetype").val(),
 			'fromDate' : $("#fromDate").val(),
 			'toDate' : $('#toDate').val(),
+			'financialYear' : $('#financialYear').val(),
 			'start':0, 
 			'length':4000
 		};
@@ -239,7 +241,8 @@ function loadingReport(e)
 						'assessmentNumber': assessmentNumber,
 						'noticeType' : noticeType,
 						'fromDate' : fromDate,
-						'toDate' : toDate
+						'toDate' : toDate,
+						'financialYear' : $('#financialYear').val()
 					}
 				},
 				"columns" : [
@@ -308,7 +311,8 @@ function getColumnTitleForNumber() {
 		return "Bill Number";
 	else if($('#noticetype').val()==="Sanction Order")
 		return "Sanction Order Number";
-	else if($('#noticetype').val()==="Regularisation Demand Note")
+	else if($('#noticetype').val()==="Regularisation Demand Note"
+		|| $('#noticetype').val()==="Estimation Notice")
 		return "Notice Number";
 }
 
@@ -317,7 +321,8 @@ function getColumnTitleForDate() {
 		return "Bill Date";
 	else if($('#noticetype').val()==="Sanction Order")
 		return "Sanction Order Date";
-	else if($('#noticetype').val()==="Regularisation Demand Note")
+	else if($('#noticetype').val()==="Regularisation Demand Note"
+		|| $('#noticetype').val()==="Estimation Notice")
 		return "Notice Date";
 }
 
@@ -326,7 +331,8 @@ function getNumberData() {
 		return "billNo";
 	else if($('#noticetype').val()==="Sanction Order")
 		return "workOrderNumber";
-	else if($('#noticetype').val()==="Regularisation Demand Note")
+	else if($('#noticetype').val()==="Regularisation Demand Note" 
+		|| $('#noticetype').val()==="Estimation Notice")
 		return "estimationNumber";
 }
 
@@ -335,7 +341,8 @@ function getName() {
 		return "billNo";
 	else if($('#noticetype').val()==="Sanction Order")
 		return "workOrderNumber";
-	else if($('#noticetype').val()==="Regularisation Demand Note")
+	else if($('#noticetype').val()==="Regularisation Demand Note"
+		|| $('#noticetype').val()==="Estimation Notice")
 		return "estimationNumber";
 }
 
@@ -344,7 +351,8 @@ function getDateData() {
 		return "billDate";
 	else if($('#noticetype').val()==="Sanction Order")
 		return "workOrderDate";
-	else if($('#noticetype').val()==="Regularisation Demand Note")
+	else if($('#noticetype').val()==="Regularisation Demand Note"
+		|| $('#noticetype').val()==="Estimation Notice")
 		return "estimationDate";
 }
 

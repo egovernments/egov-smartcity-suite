@@ -211,4 +211,18 @@ public class WaterEstimationChargesPaymentService {
             }
         return ZERO;
     }
+    
+    public BigDecimal getCollectedEstimationCharges(WaterConnectionDetails waterConnectionDetails) {
+        EgDemand currentDemand = waterDemandConnectionService.getCurrentDemand(waterConnectionDetails).getDemand();
+        BigDecimal collectedEstimationCharges = ZERO;
+        List<String> demandCodes = Arrays.asList(METERED_CHARGES_REASON_CODE, WATERTAXREASONCODE,
+                DEMANDRSN_CODE_ADVANCE, WATERTAX_CONNECTION_CHARGE);
+        if (currentDemand != null)
+            for (EgDemandDetails demandDetails : currentDemand.getEgDemandDetails()) {
+                if (!demandCodes.contains(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
+                	collectedEstimationCharges = collectedEstimationCharges.add(demandDetails.getAmtCollected());
+                }
+            }
+        return collectedEstimationCharges;
+    }
 }

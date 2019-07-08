@@ -806,4 +806,9 @@ public class WaterTaxUtils {
     public boolean checkWithApplicationType(String appTypeCode) {
         return Arrays.asList(NEWCONNECTION, ADDNLCONNECTION, CHANGEOFUSE, REGULARIZE_CONNECTION).contains(appTypeCode);
     }
+
+    public Installment getInstallmentForDate(Date date) {
+        return installmentDao.getInsatllmentByModuleForGivenDate(moduleService.getModuleByName(PTMODULENAME), date);
+    }
+    
 }

@@ -72,6 +72,7 @@ public class SearchNoticeDetails {
     private String estimationNumber;
     private String estimationDate;
     private String noticeType;
+    private Long financialYear;
     
     public String getNoticeType() {
         return noticeType;
@@ -240,5 +241,13 @@ public class SearchNoticeDetails {
     public void setFileStoreID(final String fileStoreID) {
         this.fileStoreID = fileStoreID;
     }
+
+	public Long getFinancialYear() {
+		return financialYear;
+	}
+
+	public void setFinancialYear(Long financialYear) {
+		this.financialYear = financialYear;
+	}
 
 }

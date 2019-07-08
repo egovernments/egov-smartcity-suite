@@ -63,6 +63,7 @@ import static org.egov.wtms.masters.entity.enums.ConnectionStatus.INACTIVE;
 import static org.egov.wtms.masters.entity.enums.ConnectionStatus.INPROGRESS;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.AE_APPROVAL_PENDING;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATIONPDFNAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATIONSTATUSCLOSED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_APPROVED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CANCELLED;
@@ -221,6 +222,7 @@ import org.egov.stms.transactions.entity.SewerageConnection;
 import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.egov.wtms.application.entity.ApplicationDocuments;
+import org.egov.wtms.application.entity.EstimationNotice;
 import org.egov.wtms.application.entity.WaterConnExecutionDetails;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -243,7 +245,6 @@ import org.egov.wtms.service.es.WaterChargeDocumentService;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxNumberGenerator;
 import org.egov.wtms.utils.WaterTaxUtils;
-import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -257,6 +258,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -1824,5 +1827,39 @@ public class WaterConnectionDetailsService {
 			connectionAddressCriteria
 					.add(Restrictions.le("connectionDetails.applicationDate", waterConnExecutionDetails.getToDate()));
 		return connectionAddressCriteria.list();
+	}
+	
+	public EstimationNotice addEstimationNoticeToConnectionDetails(WaterConnectionDetails waterConnectionDetails,
+			String estimationNumber) {
+		EstimationNotice estimationNotice = new EstimationNotice();
+		estimationNotice.setEstimationNumber(estimationNumber);
+		estimationNotice.setEstimationNoticeDate(new Date());
+		if (waterConnectionDetails.getEstimationNotices().isEmpty()) {
+			estimationNotice.setOrderNumber(1L);
+			estimationNotice.setHistory(false);
+		} else {
+			estimationNotice.setOrderNumber(waterConnectionDetails.getEstimationNotices().size() + 1L);
+			for (EstimationNotice notice : waterConnectionDetails.getEstimationNotices())
+				notice.setHistory(true);
+			estimationNotice.setHistory(false);
+		}
+		estimationNotice.setInstallment(waterTaxUtils.getInstallmentForDate(new Date()));
+		estimationNotice.setWaterConnectionDetails(waterConnectionDetails);
+		waterConnectionDetails.addEstimationNotices(estimationNotice);
+		return estimationNotice;
+	}
+
+	public void updateConnectionDetailsWithEstimationNotice(WaterConnectionDetails waterConnectionDetails, EstimationNotice estimationNotice,
+			ReportOutput reportOutput) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.parseMediaType(APPLICATIONPDFNAME));
+		headers.add("content-disposition", "inline;filename=EstimationNotice.pdf");
+		String fileName;
+		fileName = SIGNED_DOCUMENT_PREFIX + estimationNotice.getEstimationNumber() + ".pdf";
+		InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
+		FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, APPLICATIONPDFNAME,
+				FILESTORE_MODULECODE);
+		estimationNotice.setEstimationNoticeFileStore(fileStore);
+		updateWaterConnectionDetailsWithFileStore(waterConnectionDetails);
 	}
 }

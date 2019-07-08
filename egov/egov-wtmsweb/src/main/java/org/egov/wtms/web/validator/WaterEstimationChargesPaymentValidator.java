@@ -48,7 +48,9 @@
 
 package org.egov.wtms.web.validator;
 
+import org.egov.wtms.application.entity.EstimationNotice;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.service.EstimationNoticeService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.service.WaterEstimationChargesPaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +69,9 @@ public class WaterEstimationChargesPaymentValidator implements Validator {
 
     @Autowired
     private WaterEstimationChargesPaymentService estimationChargesPaymentService;
+    
+    @Autowired
+    private EstimationNoticeService estimationNoticeService; 
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -87,6 +92,8 @@ public class WaterEstimationChargesPaymentValidator implements Validator {
         WaterConnectionDetails connectionDetails = isNotBlank(applicationNumber)
                 ? waterConnectionDetailsService.findByApplicationNumber(applicationNumber)
                 : waterConnectionDetailsService.findByConsumerCode(consumerNumber);
+        EstimationNotice estimationNotice = estimationNoticeService.getNonHistoryEstimationNoticeForConnection(connectionDetails);
+        
         if (isNotBlank(applicationNumber) && isNotBlank(consumerNumber)) {
             if (connectionDetails == null || connectionDetails.getConnection() == null
                     || !consumerNumber.equals(connectionDetails.getConnection().getConsumerCode())) {
@@ -106,7 +113,7 @@ public class WaterEstimationChargesPaymentValidator implements Validator {
             errors.reject("msg.estimationcharges", "msg.estimationcharges");
             return true;
         }
-        else if (isBlank(connectionDetails.getEstimationNumber())) {
+        else if (estimationNotice == null) {
             errors.reject("msg.estimation.notice.not.generated", "msg.estimation.notice.not.generated");
             return true;
         }

@@ -264,6 +264,10 @@ public class WaterConnectionDetails extends StateAware<Position> {
     @OrderBy("ID DESC")
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<NonMeteredConnBillDetails> nonmeteredBillDetails = new HashSet<>(0);
+    
+    @OrderBy("id")
+    @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<EstimationNotice> estimationNotices = new ArrayList<>(0);
 
     private String closeConnectionType;
 
@@ -803,6 +807,18 @@ public class WaterConnectionDetails extends StateAware<Position> {
 
     public void setUlbMaterial(Boolean ulbMaterial) {
         this.ulbMaterial = ulbMaterial;
+    }
+
+	public List<EstimationNotice> getEstimationNotices() {
+		return estimationNotices;
+	}
+
+	public void setEstimationNotices(List<EstimationNotice> estimationNotices) {
+		this.estimationNotices = estimationNotices;
+	}
+	
+	public void addEstimationNotices(EstimationNotice estimationNotice) {
+		getEstimationNotices().add(estimationNotice);
     }
 
 }

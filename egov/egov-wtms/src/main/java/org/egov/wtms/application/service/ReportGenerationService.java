@@ -47,6 +47,44 @@
  */
 package org.egov.wtms.application.service;
 
+import static java.math.BigDecimal.ZERO;
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
+import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
+import static org.egov.wtms.masters.entity.enums.ConnectionType.NON_METERED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CREATED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSURECONN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSURE_ESTIMATION_NOTICE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTION_WORK_ORDER;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.DESG_COMM_NAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULETYPE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PERMENENTCLOSE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTIONWITHSLASH;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION_ESTIMATION_NOTICE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNED_DOCUMENT_PREFIX;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.TEMPERARYCLOSE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
@@ -74,10 +112,12 @@ import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
+import org.egov.wtms.application.entity.EstimationNotice;
 import org.egov.wtms.application.entity.FieldInspectionDetails;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.autonumber.EstimationNumberGenerator;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
+import org.egov.wtms.service.WaterEstimationChargesPaymentService;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.slf4j.Logger;
@@ -89,44 +129,6 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static java.math.BigDecimal.ZERO;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
-import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
-import static org.egov.wtms.masters.entity.enums.ConnectionType.NON_METERED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CREATED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSURECONN;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSURE_ESTIMATION_NOTICE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTION_WORK_ORDER;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.DESG_COMM_NAME;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULETYPE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.PERMENENTCLOSE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTIONWITHSLASH;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION_ESTIMATION_NOTICE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNED_DOCUMENT_PREFIX;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.TEMPERARYCLOSE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
 
 @Service
 public class ReportGenerationService {
@@ -217,6 +219,12 @@ public class ReportGenerationService {
 
     @Autowired
     private AutonumberServiceBeanResolver beanResolver;
+    
+    @Autowired
+    private EstimationNoticeService estimationNoticeService;
+    
+    @Autowired
+    private WaterEstimationChargesPaymentService waterEstimationChargesPaymentService;
 
     public ReportOutput getReportOutput(WaterConnectionDetails connectionDetails, String workFlowAction) {
         Map<String, Object> reportParams = new ConcurrentHashMap<>(0);
@@ -283,8 +291,8 @@ public class ReportGenerationService {
 
             FieldInspectionDetails inspectionDetails = connectionDetails.getFieldInspectionDetails();
             reportParams.put("estimationDate", toDefaultDateFormat(inspectionDetails.getCreatedDate()));
-            reportParams.put("estimationNumber", isNotBlank(connectionDetails.getEstimationNumber())
-                    ? connectionDetails.getEstimationNumber() : EMPTY);
+        	EstimationNotice estimationNotice = estimationNoticeService.getNonHistoryEstimationNoticeForConnection(connectionDetails);
+            reportParams.put("estimationNumber", (estimationNotice!=null && isNotBlank(estimationNotice.getEstimationNumber())) ? estimationNotice.getEstimationNumber() : EMPTY);
             reportParams.put(PROPERTYID, connectionDetails.getConnection().getPropertyIdentifier());
             reportParams.put(APPLICATION_DATE, toDefaultDateFormat(connectionDetails.getApplicationDate()));
             reportParams.put(DONATION_CHARGES, connectionDetails.getDonationCharges());
@@ -429,7 +437,7 @@ public class ReportGenerationService {
     }
 
     public ReportOutput generateEstimationNoticeReport(WaterConnectionDetails waterConnectionDetails,
-                                                       String cityMunicipalityName, String districtName) {
+                                                       String cityMunicipalityName, String districtName, String estimationNumber) {
         ReportRequest reportInput = null;
         if (waterConnectionDetails != null) {
             Map<String, Object> reportParams = new HashMap<>();
@@ -448,8 +456,8 @@ public class ReportGenerationService {
             reportParams.put(APPLICATION_TYPE, WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()));
             reportParams.put(CITY_NAME, cityMunicipalityName);
             reportParams.put(DISTRICT, districtName);
-            reportParams.put("estimationNumber", isNotBlank(waterConnectionDetails.getEstimationNumber())
-                    ? waterConnectionDetails.getEstimationNumber() : EMPTY);
+            reportParams.put("estimationNumber", isNotBlank(estimationNumber)
+                    ? estimationNumber : EMPTY);
 
             FieldInspectionDetails inspectionDetails = waterConnectionDetails.getFieldInspectionDetails();
             reportParams.put("estimationDate", toDefaultDateFormat(inspectionDetails.getCreatedDate()));
@@ -484,6 +492,72 @@ public class ReportGenerationService {
         return reportOutput;
     }
 
+	public ReportOutput generateNewEstimationNotice(WaterConnectionDetails waterConnectionDetails,
+			String estimationNumber) {
+		ReportRequest reportInput = null;
+		ReportOutput reportOutput;
+		if (waterConnectionDetails != null) {
+			Map<String, Object> reportParams = new HashMap<>();
+			AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
+					waterConnectionDetails.getConnection().getPropertyIdentifier(),
+					PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
+			String[] doorNo = assessmentDetails.getPropertyAddress().split(",");
+			StringBuilder ownerName = new StringBuilder();
+
+			for (OwnerName names : assessmentDetails.getOwnerNames()) {
+				if (assessmentDetails.getOwnerNames().size() > 1)
+					ownerName.append(", ");
+				ownerName.append(names.getOwnerName());
+			}
+
+			reportParams.put(CITY_NAME, cityService.getMunicipalityName());
+			reportParams.put(DISTRICT, cityService.getDistrictName());
+			reportParams.put("estimationNumber", isNotBlank(estimationNumber) ? estimationNumber : EMPTY);
+			reportParams.put("consumerNumber", waterConnectionDetails.getConnection().getConsumerCode());
+			reportParams.put(PROPERTYID, waterConnectionDetails.getConnection().getPropertyIdentifier());
+			reportParams.put(APPLICANT_NAME, ownerName.toString());
+			reportParams.put(ADDRESS, assessmentDetails.getPropertyAddress());
+			reportParams.put(LOCALITY, assessmentDetails.getBoundaryDetails().getLocalityName());
+			reportParams.put(HOUSE_NO, doorNo[0]);
+			reportParams.put("revenueWard", assessmentDetails.getBoundaryDetails().getWardName());
+			reportParams.put("block", assessmentDetails.getBoundaryDetails().getBlockName());
+			reportParams.put("applicationNumber", isNotBlank(waterConnectionDetails.getApplicationNumber()) ? waterConnectionDetails.getApplicationNumber() : EMPTY);
+			reportParams.put("approvalDate", toDefaultDateFormat(waterConnectionDetails.getApprovalDate()));
+			reportParams.put("executionDate", toDefaultDateFormat(waterConnectionDetails.getExecutionDate()));
+			reportParams.put("pipeSize", waterConnectionDetails.getPipeSize().getCode());
+			reportParams.put("category", waterConnectionDetails.getCategory().getName());
+			reportParams.put("usageType", waterConnectionDetails.getUsageType().getName());
+			reportParams.put("monthlyRate", connectionDemandService.getWaterRatesDetailsForDemandUpdate(waterConnectionDetails).getMonthlyRate());
+			double donation = 0;
+			double materialCharges = 0;
+			double totalCharges = 0;
+			FieldInspectionDetails inspectionDetails = waterConnectionDetails.getFieldInspectionDetails();
+			if(waterConnectionDetails.getUlbMaterial()){
+				donation = waterConnectionDetails.getDonationCharges() + inspectionDetails.getSecurityDeposit() + inspectionDetails.getRoadCuttingCharges() + inspectionDetails.getSupervisionCharges();
+				materialCharges = inspectionDetails.getEstimationCharges();
+				totalCharges = donation+materialCharges;
+			} else {
+				donation = waterConnectionDetails.getDonationCharges() + inspectionDetails.getSecurityDeposit() + inspectionDetails.getRoadCuttingCharges();
+				totalCharges = donation;
+			}
+			reportParams.put(DONATION_CHARGES, donation);
+			reportParams.put("materialCharges", materialCharges);
+			reportParams.put("totalCharges", totalCharges);
+			reportParams.put("collectedAmount", waterEstimationChargesPaymentService.getCollectedEstimationCharges(waterConnectionDetails).doubleValue());
+			double balance = waterEstimationChargesPaymentService.getEstimationDueAmount(waterConnectionDetails).doubleValue();
+			reportParams.put("balance", balance);
+			double amountPerInstallment = totalCharges/8;
+			reportParams.put("amountPerInstallment", amountPerInstallment);
+			reportParams.put("dueInstallments", Math.ceil(balance/amountPerInstallment));
+			
+			reportInput = new ReportRequest("GO_estimationNotice",
+						waterConnectionDetails.getEstimationDetails(), reportParams);
+
+		}
+		reportOutput = reportService.createReport(reportInput);
+		return reportOutput;
+	}
+    
     public String getTotalAmntInWords(Double totalCharges) {
         return NumberToWordConverter.amountInWordsWithCircumfix(BigDecimal.valueOf(totalCharges));
     }
@@ -655,24 +729,30 @@ public class ReportGenerationService {
     public ReportOutput generateRegulariseConnDemandNote(final WaterConnectionDetails waterConnectionDetails) {
         ReportOutput reportOutput;
         ReportRequest reportRequest;
-        if (waterConnectionDetails.getEstimationNoticeFileStoreId() == null) {
+    	EstimationNotice estimationNotice = estimationNoticeService.getNonHistoryEstimationNoticeForConnection(waterConnectionDetails);
+
+        if (estimationNotice == null) {
+        	estimationNotice = new EstimationNotice();
             Map<String, Object> reportParams = new HashMap<>();
 
-            EstimationNumberGenerator estimationNumberGenerator;
-            if (waterConnectionDetails.getEstimationNumber() == null) {
-                estimationNumberGenerator = beanResolver.getAutoNumberServiceFor(EstimationNumberGenerator.class);
-                waterConnectionDetails.setEstimationNumber(estimationNumberGenerator.generateEstimationNumber());
-                waterConnectionDetails.setEstimationNoticeDate(new Date());
-            }
+			EstimationNumberGenerator estimationNumberGenerator;
+			estimationNumberGenerator = beanResolver.getAutoNumberServiceFor(EstimationNumberGenerator.class);
+			estimationNotice.setEstimationNumber(estimationNumberGenerator.generateEstimationNumber());
+			estimationNotice.setEstimationNoticeDate(new Date());
+			estimationNotice.setWaterConnectionDetails(waterConnectionDetails);
+			estimationNotice.setInstallment(waterTaxUtils.getInstallmentForDate(new Date()));
+			estimationNotice.setOrderNumber(1l);
+			estimationNotice.setHistory(false);
+			waterConnectionDetails.addEstimationNotices(estimationNotice);
             reportParams = setReglnConnCommonReportParameters(reportParams, waterConnectionDetails);
-            reportParams.put("noticeNumber", waterConnectionDetails.getEstimationNumber());
+            reportParams.put("noticeNumber", estimationNotice.getEstimationNumber());
             reportRequest = new ReportRequest(REGULARISE_CONN_DEMAND_NOTE, waterConnectionDetails, reportParams);
             reportOutput = reportService.createReport(reportRequest);
-            saveRegulariseConnDemandNote(waterConnectionDetails, reportOutput);
+            saveRegulariseConnDemandNote(waterConnectionDetails, estimationNotice, reportOutput);
             waterConnectionDetailsService.updateIndexes(waterConnectionDetails);
         } else
-            reportOutput = getRegulariseConnDemandNote(waterConnectionDetails.getEstimationNoticeFileStoreId());
-        reportOutput.setReportName(waterConnectionDetails.getEstimationNumber());
+            reportOutput = getRegulariseConnDemandNote(estimationNotice.getEstimationNoticeFileStore());
+        reportOutput.setReportName(estimationNotice.getEstimationNumber());
         reportOutput.setReportFormat(ReportFormat.PDF);
         return reportOutput;
     }
@@ -744,13 +824,13 @@ public class ReportGenerationService {
     }
 
     @Transactional
-    public void saveRegulariseConnDemandNote(WaterConnectionDetails waterConnectionDetails, ReportOutput reportOutput) {
+    public void saveRegulariseConnDemandNote(WaterConnectionDetails waterConnectionDetails, EstimationNotice estimationNotice, ReportOutput reportOutput) {
         if (reportOutput != null) {
             String fileName;
-            fileName = SIGNED_DOCUMENT_PREFIX + waterConnectionDetails.getEstimationNumber() + ".pdf";
+            fileName = SIGNED_DOCUMENT_PREFIX + estimationNotice.getEstimationNumber() + ".pdf";
             InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
             FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf", FILESTORE_MODULECODE);
-            waterConnectionDetails.setEstimationNoticeFileStoreId(fileStore);
+            estimationNotice.setEstimationNoticeFileStore(fileStore);
             if (APPLICATION_STATUS_CREATED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))
                 waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_ESTIMATENOTICEGEN,
                         MODULETYPE));
