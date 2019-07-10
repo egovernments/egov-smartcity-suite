@@ -92,7 +92,6 @@ import org.egov.ptis.domain.entity.es.BillCollectorIndex;
 import org.egov.ptis.domain.entity.es.CollectionAchievementsIndex;
 import org.egov.ptis.domain.entity.es.PropertyTaxIndex;
 import org.egov.ptis.repository.es.PropertyTaxIndexRepository;
-import org.egov.ptis.scheduler.CollectionAchievementsJob;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
