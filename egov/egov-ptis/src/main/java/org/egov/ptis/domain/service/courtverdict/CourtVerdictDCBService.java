@@ -113,6 +113,8 @@ public class CourtVerdictDCBService {
     @Autowired
     private PtDemandDao ptDemandDAO;
     @Autowired
+    private CourtVerdictService courtVerdictService;
+    @Autowired
     private PTBillServiceImpl ptBillServiceImpl;
     private static final Logger LOGGER = Logger.getLogger(CourtVerdictService.class);
 
@@ -168,12 +170,7 @@ public class CourtVerdictDCBService {
                     break;
                 }
             }
-        final List<Ptdemand> currPtdemand;
-        final javax.persistence.Query qry = entityManager.createNamedQuery("QUERY_CURRENT_PTDEMAND");
-        qry.setParameter("basicProperty", courtVerdict.getProperty().getBasicProperty());
-        qry.setParameter("installment", propertyTaxCommonUtils.getCurrentInstallment());
-        currPtdemand = qry.getResultList();
-
+       List<Ptdemand> currPtdemand= courtVerdictService.getCurrPtDemand(courtVerdict);
         if (currPtdemand != null) {
             final Ptdemand ptdemand = (Ptdemand) currPtdemand.get(0).clone();
             ptdemand.setBaseDemand(getTotalDemand(demandDetails));

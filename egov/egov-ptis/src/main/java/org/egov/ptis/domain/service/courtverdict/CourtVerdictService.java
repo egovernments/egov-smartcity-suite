@@ -782,11 +782,8 @@ public class CourtVerdictService {
     }
 
     public void setPtDemandSet(CourtVerdict courtVerdict) {
-        final List<Ptdemand> currPtdemand;
-        final javax.persistence.Query qry = entityManager.createNamedQuery("QUERY_CURRENT_PTDEMAND");
-        qry.setParameter("basicProperty", courtVerdict.getProperty().getBasicProperty());
-        qry.setParameter("installment", propertyTaxCommonUtils.getCurrentInstallment());
-        currPtdemand = qry.getResultList();
+
+        List<Ptdemand> currPtdemand=getCurrPtDemand(courtVerdict);
 
         if (currPtdemand != null) {
             final Ptdemand ptdemand = (Ptdemand) currPtdemand.get(0).clone();
@@ -796,5 +793,13 @@ public class CourtVerdictService {
             courtVerdict.getProperty().getPtDemandSet().clear();
             courtVerdict.getProperty().getPtDemandSet().add(ptdemand);
         }
+    }
+    public List<Ptdemand> getCurrPtDemand(CourtVerdict courtVerdict){
+        final List<Ptdemand> currPtdemand;
+        final javax.persistence.Query qry = entityManager.createNamedQuery("QUERY_CURRENT_PTDEMAND");
+        qry.setParameter("basicProperty", courtVerdict.getProperty().getBasicProperty());
+        qry.setParameter("installment", propertyTaxCommonUtils.getCurrentInstallment());
+        currPtdemand = qry.getResultList();
+        return currPtdemand;
     }
 }
