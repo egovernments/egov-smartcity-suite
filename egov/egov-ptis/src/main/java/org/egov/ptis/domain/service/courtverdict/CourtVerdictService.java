@@ -95,6 +95,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -109,6 +110,7 @@ import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.egov.commons.Area;
 import org.egov.commons.Installment;
 import org.egov.eis.entity.Assignment;
@@ -124,9 +126,12 @@ import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
+import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.CourtVerdict;
 import org.egov.ptis.domain.entity.property.Floor;
@@ -135,6 +140,7 @@ import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyOccupation;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
+import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.StructureClassification;
@@ -145,6 +151,7 @@ import org.egov.ptis.domain.repository.master.occupation.PropertyOccupationRepos
 import org.egov.ptis.domain.repository.master.structureclassification.StructureClassificationRepository;
 import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthorityRepository;
 import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
+import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.master.service.PropertyUsageService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
@@ -163,6 +170,8 @@ public class CourtVerdictService {
     private CourtVerdictRepository courtVerdictRepo;
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
+    @Autowired
+    private PropertyPersistenceService basicPropertyService;
     @Autowired
     @Qualifier("parentMessageSource")
     private MessageSource ptisMessageSource;
@@ -194,11 +203,13 @@ public class CourtVerdictService {
     private PositionMasterService positionMasterService;
     @PersistenceContext
     EntityManager entityManager;
+    @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<PropertyImpl> propertyWorkflowService;
     @Autowired
     private ApplicationNumberGenerator applicationNo;
-
+    @Autowired
+    private PersistenceService<T, Serializable> persistenceService;
 
     private String propertyCategory;
 
@@ -438,7 +449,7 @@ public class CourtVerdictService {
 
     @Transactional
     public CourtVerdict saveCourtVerdict(CourtVerdict courtVerdict, Long approvalPosition, final String approvalComent,
-            final String additionalRule, final String workFlowAction, final Boolean propertyByEmployee) {
+            final String additionalRule, final String workFlowAction, final Boolean propertyByEmployee, String action) {
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
         Position pos = null;
@@ -541,6 +552,15 @@ public class CourtVerdictService {
                 courtVerdict.getBasicProperty().getActiveProperty().setStatus(STATUS_ISHISTORY);
                 courtVerdict.getBasicProperty().addProperty(courtVerdict.getProperty());
                 courtVerdict.getBasicProperty().setUnderWorkflow(false);
+                if (action.equalsIgnoreCase("CANCEL_PROP")) {
+                    PropertyStatusValues propStatusValues = propertyService.createPropStatVal(courtVerdict.getBasicProperty(),
+                            PropertyTaxConstants.PROP_DEACT_RSN, null, null, null, null, null);
+                    courtVerdict.getBasicProperty().setActive(false);
+                    courtVerdict.getBasicProperty().setModifiedDate(new Date());
+                    courtVerdict.getBasicProperty().addPropertyStatusValues(propStatusValues);
+                    basicPropertyService.persist(courtVerdict.getBasicProperty());
+
+                }
                 courtVerdict.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNextAction(null)
                         .withOwner(courtVerdict.getCurrentState().getOwnerPosition());
@@ -758,6 +778,23 @@ public class CourtVerdictService {
             historyMap = propertyService.populateHistory(courtVerdict);
             model.addAttribute(HISTORY_MAP, historyMap);
             model.addAttribute(STATE, courtVerdict.getState());
+        }
+    }
+
+    public void setPtDemandSet(CourtVerdict courtVerdict) {
+        final List<Ptdemand> currPtdemand;
+        final javax.persistence.Query qry = entityManager.createNamedQuery("QUERY_CURRENT_PTDEMAND");
+        qry.setParameter("basicProperty", courtVerdict.getProperty().getBasicProperty());
+        qry.setParameter("installment", propertyTaxCommonUtils.getCurrentInstallment());
+        currPtdemand = qry.getResultList();
+
+        if (currPtdemand != null) {
+            final Ptdemand ptdemand = (Ptdemand) currPtdemand.get(0).clone();
+            ptdemand.setEgptProperty(courtVerdict.getProperty());
+            ptdemand.getDmdCalculations().setCreatedDate(new Date());
+            persistenceService.applyAuditing(ptdemand.getDmdCalculations());
+            courtVerdict.getProperty().getPtDemandSet().clear();
+            courtVerdict.getProperty().getPtDemandSet().add(ptdemand);
         }
     }
 }

@@ -45,137 +45,117 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   --%>
-<div class="row">
-	<div class="col-md-12">
-		<div class="panel panel-primary" data-collapsed="0"
-			style="text-align: left">
-			<div class="panel-heading">
-				<div class="panel-title">
-					<spring:message code="lbl.cv.flrDtls" />
-				</div>
-			</div>
-			<div class="panel-body">
-				<div align="center"
-					class="overflow-x-scroll floors-tbl-freeze-column-div">
-					<table width="100%" border="0" cellpadding="0" cellspacing="0"
-						class="table table-bordered" id="floorDetails">
-						<tbody>
-							<tr>
-								<th class="bluebgheadtd"><spring:message
-										code="lbl.cv.floorNo" /><span class="mandatory1">*</span></th>
-								<th class="bluebgheadtd"><spring:message
-										code="lbl.cv.clsfbuild" /><span class="mandatory1"
-									id="constTypeMdtry">*</span></th>
-								<th class="bluebgheadtd"><spring:message
-										code="lbl.cv.usage" /><span class="mandatory1"
-									id="usageMdtry">*</span></th>
-								<th class="bluebgheadtd"><spring:message
-										code="lbl.cv.occupancy" /><span class="mandatory1"
-									id="occMdtry">*</span></th>
-								<th class="bluebgheadtd"><spring:message
-										code="lbl.cv.constDate" /><span class="mandatory1">*</span></th>
-								<th class="bluebgheadtd"><spring:message
-										code="lbl.cv.effectFrom" /><span class="mandatory1">*</span></th>
-								<th class="bluebgheadtd"><spring:message
-										code="lbl.cv.unstructuredLand" /><span class="mandatory1">*</span></th>
-								<th class="bluebgheadtd"><spring:message
-										code="lbl.cv.length" /><span class="mandatory1">*</span></th>
-								<th class="bluebgheadtd"><spring:message
-										code="lbl.cv.breadth" /><span class="mandatory1">*</span></th>
-								<th class="bluebgheadtd"><spring:message
-										code="lbl.cv.plinth" /><span class="mandatory1">*</span></th>
-								<th class="bluebgheadtd"><spring:message
-										code="lbl.cv.buildplanNo" /></th>
-								<th class="bluebgheadtd"><spring:message
-										code="lbl.cv.buildplanDate" /></th>
-								<th class="bluebgheadtd"><spring:message
-										code="lbl.cv.buildplanPlinth" /></th>
-								<th class="bluebgheadtd freeze-action-th"><spring:message
-										code="lbl.cv.addDel" /></th>
-							</tr>
 
-
-							<tr>
-
-								<td class="greybox"><form:select cssClass="form-control"
-										path="property.propertyDetail.floorDetailsProxy[0].floorNo"
-										id="floorNo" cssStyle="width:100%">
-										<form:option value="">--select--</form:option>
-										<c:forEach items="${flrNoMap}" var="flrNoMap">
-											<form:option value="${flrNoMap.key}">${flrNoMap.value}</form:option>
-										</c:forEach>
-									</form:select></td>
-								<td class="greybox"><form:select cssClass="form-control"
-										path="property.propertyDetail.floorDetailsProxy[0].structureClassification.id"
-										id="structure" cssStyle="width:100%">
-										<form:option value="">--select--</form:option>
-										<c:forEach items="${structureList}" var="structure">
-											<form:option value="${structure.id}">${structure.typeName}</form:option>
-										</c:forEach>
-									</form:select></td>
-								<td class="greybox"><form:select cssClass="form-control"
-										path="property.propertyDetail.floorDetailsProxy[0].propertyUsage.id"
-										id="usage" cssStyle="width:100%">
-										<form:option value="">--select--</form:option>
-										<c:forEach items="${usageList}" var="usageList">
-											<form:option value="${usageList.id}">${usageList.usageName}</form:option>
-										</c:forEach>
-									</form:select></td>
-								<td class="greybox"><form:select cssClass="form-control"
-										path="property.propertyDetail.floorDetailsProxy[0].propertyOccupation.id"
-										id="occupation" cssStyle="width:100%">
-										<form:option value="">--select--</form:option>
-										<c:forEach items="${propOccList}" var="occupation">
-											<form:option value="${occupation.id}">${occupation.occupation}</form:option>
-										</c:forEach>
-									</form:select></td>
-								<td class="greybox"><form:input
-										cssClass="form-control datepicker" id="constructionDate"
-										path="property.propertyDetail.floorDetailsProxy[0].constructionDate"
-										cssStyle="width:100%" /></td>
-								<td class="greybox"><form:input
-										cssClass="form-control datepicker" id="occupancyDate"
-										path="property.propertyDetail.floorDetailsProxy[0].occupancyDate"
-										cssStyle="width:100%" /></td>
-								<td class="greybox"><form:select cssClass="form-control"
-										path="property.propertyDetail.floorDetailsProxy[0].unstructuredLand"
-										id="usage" cssStyle="width:100%">
-										<form:option value="">--select--</form:option>
-										<form:option value="true">Yes</form:option>
-										<form:option value="false">No</form:option>
-									</form:select></td>
-								<td class="greybox"><form:input cssClass="form-control"
-										path="property.propertyDetail.floorDetailsProxy[0].builtUpArea.length"
-										cssStyle="width:100%" /></td>
-								<td class="greybox"><form:input cssClass="form-control"
-										path="property.propertyDetail.floorDetailsProxy[0].builtUpArea.breadth"
-										cssStyle="width:100%" /></td>
-								<td class="greybox"><form:input cssClass="form-control"
-										path="property.propertyDetail.floorDetailsProxy[0].builtUpArea.area"
-										cssStyle="width:100%" /></td>
-								<td class="greybox"><form:input cssClass="form-control"
-										path="property.propertyDetail.floorDetailsProxy[0].buildingPermissionNo"
-										cssStyle="width:100%" /></td>
-								<td class="greybox"><form:input
-										cssClass="form-control datepicker"
-										path="property.propertyDetail.floorDetailsProxy[0].buildingPermissionDate" /></td>
-								<td class="greybox"><form:input cssClass="form-control"
-										path="property.propertyDetail.floorDetailsProxy[0].buildingPlanPlinthArea.area"
-										cssStyle="width:100%" /></td>
-								<td class="greybox freeze-action-td" id="AddRemoveFloor"><span
-									id="addF" alt="AddF" class="tblactionicon add"
-									onclick="addFloor(); return false;"> <i
-										class="fa fa-plus-circle"></i>
-								</span> &nbsp; <span id="dDelF" alt="DelF" class="tblactionicon delete"
-									onclick="delFloor(this);return false;"> <i
-										class="fa fa-minus-circle"></i>
-								</span></td>
-							</tr>
-
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"
+	class="tablebottom" id="floorDetailsTable">
+	<tbody>
+		<tr>
+			<th class="bluebgheadtd"><spring:message code="lbl.cv.floorNo" /><span
+				class="mandatory1">*</span></th>
+			<th class="bluebgheadtd"><spring:message code="lbl.cv.clsfbuild" /><span
+				class="mandatory1" id="constTypeMdtry">*</span></th>
+			<th class="bluebgheadtd"><spring:message code="lbl.cv.usage" /><span
+				class="mandatory1" id="usageMdtry">*</span></th>
+			<th class="bluebgheadtd"><spring:message code="lbl.cv.occupancy" /><span
+				class="mandatory1" id="occMdtry">*</span></th>
+			<th class="bluebgheadtd"><spring:message code="lbl.cv.constDate" /><span
+				class="mandatory1">*</span></th>
+			<th class="bluebgheadtd"><spring:message
+					code="lbl.cv.effectFrom" /><span class="mandatory1">*</span></th>
+			<th class="bluebgheadtd"><spring:message
+					code="lbl.cv.unstructuredLand" /><span class="mandatory1">*</span></th>
+			<th class="bluebgheadtd"><spring:message code="lbl.cv.length" /><span
+				class="mandatory1">*</span></th>
+			<th class="bluebgheadtd"><spring:message code="lbl.cv.breadth" /><span
+				class="mandatory1">*</span></th>
+			<th class="bluebgheadtd"><spring:message code="lbl.cv.plinth" /><span
+				class="mandatory1">*</span></th>
+			<th class="bluebgheadtd"><spring:message
+					code="lbl.cv.buildplanNo" /></th>
+			<th class="bluebgheadtd"><spring:message
+					code="lbl.cv.buildplanDate" /></th>
+			<th class="bluebgheadtd"><spring:message
+					code="lbl.cv.buildplanPlinth" /></th>
+			<th class="bluebgheadtd freeze-action-th"><spring:message
+					code="lbl.cv.addDel" /></th>
+		</tr>
+		<c:if test="${property.propertyDetail.floorDetailsProxy.size() != 0 }">
+			<c:forEach items="${property.propertyDetail.floorDetailsProxy}"
+				var="floorDetailsProxy" varStatus="status">
+				<tr  id="floorDetailsRow">
+				<td class="greybox"><form:select cssClass="form-control"
+						path="property.propertyDetail.floorDetailsProxy[${status.index }].floorNo"
+						id="floorNo" cssStyle="width:100%">
+						<form:option value="">--select--</form:option>
+						<c:forEach items="${flrNoMap}" var="flrNoMap">
+							<form:option value="${flrNoMap.key}">${flrNoMap.value}</form:option>
+						</c:forEach>
+					</form:select></td>
+				<td class="greybox"><form:select cssClass="form-control"
+						path="property.propertyDetail.floorDetailsProxy[${status.index }].structureClassification.id"
+						id="structure" cssStyle="width:100%">
+						<form:option value="">--select--</form:option>
+						<c:forEach items="${structureList}" var="structure">
+							<form:option value="${structure.id}">${structure.typeName}</form:option>
+						</c:forEach>
+					</form:select></td>
+				<td class="greybox"><form:select cssClass="form-control"
+						path="property.propertyDetail.floorDetailsProxy[${status.index }].propertyUsage.id"
+						id="usage" cssStyle="width:100%">
+						<form:option value="">--select--</form:option>
+						<c:forEach items="${usageList}" var="usageList">
+							<form:option value="${usageList.id}">${usageList.usageName}</form:option>
+						</c:forEach>
+					</form:select></td>
+				<td class="greybox"><form:select cssClass="form-control"
+						path="property.propertyDetail.floorDetailsProxy[${status.index }].propertyOccupation.id"
+						id="occupation" cssStyle="width:100%">
+						<form:option value="">--select--</form:option>
+						<c:forEach items="${propOccList}" var="occupation">
+							<form:option value="${occupation.id}">${occupation.occupation}</form:option>
+						</c:forEach>
+					</form:select></td>
+				<td class="greybox"><form:input
+						cssClass="form-control datepicker" id="constructionDate"
+						path="property.propertyDetail.floorDetailsProxy[${status.index }].constructionDate"
+						cssStyle="width:100%" /></td>
+				<td class="greybox"><form:input
+						cssClass="form-control datepicker" id="occupancyDate"
+						path="property.propertyDetail.floorDetailsProxy[${status.index }].occupancyDate"
+						cssStyle="width:100%" /></td>
+				<td class="greybox"><form:select cssClass="unstructuredLand form-control"
+						path="property.propertyDetail.floorDetailsProxy[${status.index }].unstructuredLand"
+						id="unstructuredLand" onChange="enableDisableFloorArea(this);" data-idx="${status.index}"
+						cssStyle="width:100%">
+						<form:option value="false">No</form:option>
+						<form:option value="true">Yes</form:option>
+					</form:select></td>
+				<td class="greybox"><form:input cssClass="builtuplength" data-idx="${status.index}"
+						path="property.propertyDetail.floorDetailsProxy[${status.index }].builtUpArea.length"
+						id="builtUpArealength" cssStyle="width:100%" onblur="calculateAreaLength(this);" /></td>
+				<td class="greybox"><form:input cssClass="builtupbreadth" data-idx="${status.index}"
+						path="property.propertyDetail.floorDetailsProxy[${status.index }].builtUpArea.breadth"
+						id="builtUpAreabreadth" cssStyle="width:100%" onblur="calculateAreaBreadth(this);"/></td>
+				<td class="greybox"><form:input cssClass="builtuparea"
+						path="property.propertyDetail.floorDetailsProxy[${status.index }].builtUpArea.area"
+						id="builtUpArea" cssStyle="width:100%" readonly="false"/></td>
+				<td class="greybox"><form:input cssClass="form-control"
+						path="property.propertyDetail.floorDetailsProxy[${status.index }].buildingPermissionNo"
+						cssStyle="width:100%" /></td>
+				<td class="greybox"><form:input
+						cssClass="form-control datepicker"
+						path="property.propertyDetail.floorDetailsProxy[${status.index }].buildingPermissionDate" /></td>
+				<td class="greybox"><form:input cssClass="form-control"
+						path="property.propertyDetail.floorDetailsProxy[${status.index }].buildingPlanPlinthArea.area"
+						cssStyle="width:100%" /></td>
+				<td class="blueborderfortd freeze-action-td"><a
+					href="javascript:void(0);" class="btn-sm btn-default"
+					onclick="addFloors();"><span style="cursor: pointer;"><i
+							class="fa fa-plus"></i></span></a> <span id="deleteFloor"
+					name="deleteFloorBtn" class="btn-sm btn-default"
+					alt="removeFloorBtn"> <i class="fa fa-trash"></i></td>
+				</tr>
+			</c:forEach>
+		</c:if>
+	</tbody>
+</table>

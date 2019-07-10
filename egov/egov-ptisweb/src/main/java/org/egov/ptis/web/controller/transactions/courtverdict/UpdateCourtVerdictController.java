@@ -63,6 +63,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJ
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_ACTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -72,6 +75,7 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.CourtVerdict;
 import org.egov.ptis.domain.service.courtverdict.CourtVerdictDCBService;
 import org.egov.ptis.domain.service.courtverdict.CourtVerdictService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -96,6 +100,8 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
     private SecurityUtils securityUtils;
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     @ModelAttribute
     public CourtVerdict courtVerdictModel(@PathVariable Long id) {
@@ -106,22 +112,35 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
     @GetMapping
     public String view(@ModelAttribute CourtVerdict courtVerdict, Model model, HttpServletRequest request) {
         String target = null;
+        String status = "";
+        String date = "";
         String currState = courtVerdict.getState().getValue();
         String currentDesg = courtVerdictService.getLoggedInUserDesignation(
                 courtVerdict.getCurrentState().getOwnerPosition().getId(),
                 securityUtils.getCurrentUser());
+        List<Map<String, String>> legalCaseDetails = propertyTaxCommonUtils.getLegalCaseDetails(
+                courtVerdict.getPropertyCourtCase().getCaseNo(),
+                request);
+        for (Map<String, String> map : legalCaseDetails) {
+            status = map.get("caseStatus");
+            date = map.get("caseDate");
+        }
         if (!currState.endsWith(WF_STATE_REJECTED)) {
-            if (courtVerdict.getAction().equalsIgnoreCase(RE_ASSESS)) {
+            if (!courtVerdict.getAction().equalsIgnoreCase(UPDATE_DEMAND_DIRECTLY)) {
                 courtVerdictService.addModelAttributesForUpdateCV(courtVerdict, model);
+                model.addAttribute("caseStatus", status);
+                model.addAttribute("caseDate", date);
                 courtVerdictService.addModelAttributes(model, courtVerdict.getProperty(), request);
                 WorkflowContainer container = new WorkflowContainer();
                 container.setCurrentDesignation(currentDesg);
                 prepareWorkflow(model, courtVerdict, container);
 
                 target = CV_VIEW;
-            } else if (courtVerdict.getAction().equalsIgnoreCase(UPDATE_DEMAND_DIRECTLY)) {
+            } else {
                 courtVerdictService.addModelAttributesForUpdateCV(courtVerdict, model);
                 courtVerdictDCBService.addDemandDetails(courtVerdict);
+                model.addAttribute("caseStatus", status);
+                model.addAttribute("caseDate", date);
                 model.addAttribute(DEMAND_DETAIL_LIST, courtVerdict.getDemandDetailBeanList());
                 courtVerdictService.addModelAttributes(model, courtVerdict.getProperty(), request);
                 prepareWorkflow(model, courtVerdict, new WorkflowContainer());
@@ -177,7 +196,7 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
             }
 
             courtVerdictService.saveCourtVerdict(courtVerdict, approvalPosition, approvalComent, null, workFlowAction,
-                    loggedUserIsEmployee);
+                    loggedUserIsEmployee, courtVerdict.getAction());
 
             successMessage = "Court Verdict is approved Successfully by : "
                     + propertyTaxUtil.getApproverUserName(courtVerdict.getState().getOwnerPosition().getId())
@@ -188,7 +207,7 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
         } else if (workFlowAct.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
 
             courtVerdictService.saveCourtVerdict(courtVerdict, approvalPosition, approvalComent, null, workFlowAction,
-                    loggedUserIsEmployee);
+                    loggedUserIsEmployee, courtVerdict.getAction());
 
             successMessage = "Court Verdict rejected and forwarded to :"
                     + propertyTaxUtil.getApproverUserName(courtVerdict.getState().getOwnerPosition().getId())
@@ -201,7 +220,7 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
         } else {
 
             courtVerdictService.saveCourtVerdict(courtVerdict, approvalPosition, approvalComent, null, workFlowAction,
-                    loggedUserIsEmployee);
+                    loggedUserIsEmployee, courtVerdict.getAction());
 
             successMessage = "Court Verdict Saved Successfully in the System and forwarded to :"
                     + propertyTaxUtil.getApproverUserName(courtVerdict.getState().getOwnerPosition().getId())

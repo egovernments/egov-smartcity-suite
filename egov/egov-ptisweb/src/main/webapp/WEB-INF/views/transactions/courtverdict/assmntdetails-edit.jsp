@@ -188,7 +188,24 @@
 </div>
 
 <div id="floorDetailsdiv">
-	<%@ include file="flrdetails-edit.jsp"%>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="panel panel-primary" data-collapsed="0"
+				style="text-align: left">
+				<div class="panel-heading">
+					<div class="panel-title">
+						<spring:message code="lbl.cv.flrDtls" />
+					</div>
+				</div>
+				<div class="panel-body">
+					<div align="center"
+						class="overflow-x-scroll floors-tbl-freeze-column-div">
+						<%@ include file="flrdetails-edit.jsp"%>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 <div id="vacLandDetailsdiv">
 	<%@ include file="vaclanddetails-edit.jsp"%>

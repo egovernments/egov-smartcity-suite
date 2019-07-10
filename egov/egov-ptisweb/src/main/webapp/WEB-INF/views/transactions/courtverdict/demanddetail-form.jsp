@@ -56,7 +56,7 @@
 			</div>
 			<div class="panel-body">
 				<div align="center"
-					class="overflow-x-scroll floors-tbl-freeze-column-div">
+					class="overflow-x-scroll">
 					<table class="table table-bordered" width="100%"
 						id="demandDetailsTable">
 						<tr>
@@ -97,7 +97,7 @@
 								<td class="greybox"><form:input id="revisedAmount" align="center" type="text"
 										style="width:80%"
 										path="demandDetailBeanList[${status.index }].revisedAmount"
-										nblur="return calculateAmount(this);" /></td>
+										onblur="return calculateAmount(this);" /></td>
 								<td class="greybox"><form:input align="center" type="text"
 										style="width:80%"
 										path="demandDetailBeanList[${status.index }].actualCollection"

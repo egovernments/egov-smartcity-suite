@@ -132,6 +132,7 @@ public class CourtVerdictController extends GenericWorkFlowController {
 
     private static final String ERROR_MSG = "errorMsg";
     private static final String CREATED = "Created";
+    private static final String PROPERTY_ID = "propertId";
     private CourtVerdict oldCourtVerdict;
     @Autowired
     private PtDemandDao ptDemandDAO;
@@ -140,10 +141,9 @@ public class CourtVerdictController extends GenericWorkFlowController {
     public CourtVerdict courtVerdict(@PathVariable("assessmentNo") String assessmentNo) {
         CourtVerdict courtVerdict = new CourtVerdict();
         BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-        PropertyCourtCase propCourtCase = propCourtCaseService.getByAssessmentNo(assessmentNo);
-        if (basicProperty != null && propCourtCase != null) {
+        if (basicProperty != null) {
             courtVerdict.setBasicProperty((BasicPropertyImpl) basicProperty);
-            courtVerdict.setPropertyCourtCase(propCourtCase);
+
             PropertyImpl property = (PropertyImpl) basicProperty.getActiveProperty().createPropertyclone();
             courtVerdict.setProperty(property);
 
@@ -152,14 +152,37 @@ public class CourtVerdictController extends GenericWorkFlowController {
     }
 
     @GetMapping(value = "/viewform/{assessmentNo}")
-    public String view(@ModelAttribute CourtVerdict courtVerdict, Model model, final HttpServletRequest request) {
+    public String view(@ModelAttribute CourtVerdict courtVerdict, Model model, final HttpServletRequest request,
+            @PathVariable String assessmentNo) {
 
+        String status = "";
+        String date = "";
         BasicProperty basicProperty = courtVerdict.getBasicProperty();
         PropertyImpl property = courtVerdict.getProperty();
         User loggedInUser = securityUtils.getCurrentUser();
         propertyService.isCitizenPortalUser(loggedInUser);
+        PropertyCourtCase propCourtCase = propCourtCaseService.getByAssessmentNo(assessmentNo);
 
-        if (basicProperty.isUnderWorkflow() || courtVerdict.getPropertyCourtCase() == null
+        if (propCourtCase != null) {
+            List<Map<String, String>> legalCaseDetails = propertyTaxCommonUtils.getLegalCaseDetails(
+                    propCourtCase.getCaseNo(),
+                    request);
+            for (Map<String, String> map : legalCaseDetails) {
+                status = map.get("caseStatus");
+                date = map.get("caseDate");
+            }
+            if (status.equalsIgnoreCase(CREATED)) {
+                model.addAttribute("wfPendingMsg",
+                        "Court Verdict will do when the case status is under Interim Stay/Judgement/Hearing in Progress/ Closed.");
+                return TARGET_WORKFLOW_ERROR;
+            } else
+                courtVerdict.setPropertyCourtCase(propCourtCase);
+        } else {
+            model.addAttribute("wfPendingMsg",
+                    "Could not do Court Verdict now, mark the property under court case");
+            return TARGET_WORKFLOW_ERROR;
+        }
+        if (basicProperty.isUnderWorkflow()
                 || courtVerdict.getCurrentState() != null) {
             model.addAttribute("wfPendingMsg",
                     "Could not do Court Verdict now, property is undergoing some work flow.");
@@ -184,6 +207,8 @@ public class CourtVerdictController extends GenericWorkFlowController {
             List<DemandDetail> demandDetailBeanList = courtVerdictDCBService.setDemandBeanList(dmndDetails);
             courtVerdict.setDemandDetailBeanList(demandDetailBeanList);
             model.addAttribute("dmndDetails", demandDetailBeanList);
+            model.addAttribute("caseStatus", status);
+            model.addAttribute("caseDate", date);
             prepareWorkflow(model, courtVerdict, new WorkflowContainer());
 
         }
@@ -198,6 +223,8 @@ public class CourtVerdictController extends GenericWorkFlowController {
         String target = null;
         PropertyImpl property = courtVerdict.getProperty();
         PropertyImpl oldProperty = oldCourtVerdict.getBasicProperty().getActiveProperty();
+        PropertyCourtCase propCourtCase = propCourtCaseService.getByAssessmentNo(assessmentNo);
+        courtVerdict.setPropertyCourtCase(propCourtCase);
 
         final Boolean loggedUserIsEmployee = Boolean.valueOf(request.getParameter(LOGGED_IN_USER));
         User loggedInUser = securityUtils.getCurrentUser();
@@ -243,14 +270,14 @@ public class CourtVerdictController extends GenericWorkFlowController {
                         courtVerdict.getBasicProperty().addProperty(modProperty);
 
                     courtVerdictService.saveCourtVerdict(courtVerdict, approvalPosition, approvalComent, null,
-                            workFlowAction, loggedUserIsEmployee);
+                            workFlowAction, loggedUserIsEmployee, action);
 
                     final String successMsg = "Court Verdict Saved Successfully in the System and forwarded to : "
                             + propertyTaxUtil.getApproverUserName(courtVerdict.getState().getOwnerPosition().getId())
                             + " with application number : " + courtVerdict.getApplicationNumber();
 
                     model.addAttribute(SUCCESS_MSG, successMsg);
-                    model.addAttribute("propertyId", courtVerdict.getBasicProperty().getUpicNo());
+                    model.addAttribute(PROPERTY_ID, courtVerdict.getBasicProperty().getUpicNo());
                     target = CV_SUCCESS_FORM;
                 } else
                     target = displayErrors(courtVerdict, model, errorMessages, request);
@@ -271,17 +298,43 @@ public class CourtVerdictController extends GenericWorkFlowController {
                     courtVerdictDCBService.updateDemandDetails(courtVerdict);
                     courtVerdict.getBasicProperty().addProperty(courtVerdict.getProperty());
                     courtVerdictService.saveCourtVerdict(courtVerdict, approvalPosition, approvalComent, null,
-                            workFlowAction, loggedUserIsEmployee);
+                            workFlowAction, loggedUserIsEmployee, action);
                     final String successMsg = "Court Verdict Saved Successfully in the System and forwarded to : "
                             + propertyTaxUtil.getApproverUserName(courtVerdict.getState().getOwnerPosition().getId())
                             + " with application number : " + courtVerdict.getApplicationNumber();
 
                     model.addAttribute(SUCCESS_MSG, successMsg);
-                    model.addAttribute("propertyId", courtVerdict.getBasicProperty().getUpicNo());
+                    model.addAttribute(PROPERTY_ID, courtVerdict.getBasicProperty().getUpicNo());
                     target = CV_SUCCESS_FORM;
                 } else
                     target = displayErrors(courtVerdict, model, errorMessages, request);
 
+            } else {
+                Long approvalPosition = 0l;
+                String approvalComent = "";
+                if (errorMessages.isEmpty()) {
+                    if (request.getParameter(APPROVAL_COMMENT) != null)
+                        approvalComent = request.getParameter(APPROVAL_COMMENT);
+                    if (request.getParameter(WF_ACTION) != null)
+                        workFlowAction = request.getParameter(WF_ACTION);
+                    if (request.getParameter(APPROVAL_POSITION) != null
+                            && !request.getParameter(APPROVAL_POSITION).isEmpty())
+                        approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
+
+                    courtVerdictService.updatePropertyDetails(courtVerdict);
+                    courtVerdictService.setPtDemandSet(courtVerdict);
+                    courtVerdict.getBasicProperty().addProperty(courtVerdict.getProperty());
+
+                    courtVerdictService.saveCourtVerdict(courtVerdict, approvalPosition, approvalComent, null,
+                            workFlowAction, loggedUserIsEmployee, action);
+                    final String successMsg = "Court Verdict Saved Successfully in the System and forwarded to : "
+                            + propertyTaxUtil.getApproverUserName(courtVerdict.getState().getOwnerPosition().getId())
+                            + " with application number : " + courtVerdict.getApplicationNumber();
+
+                    model.addAttribute(SUCCESS_MSG, successMsg);
+                    model.addAttribute(PROPERTY_ID, courtVerdict.getBasicProperty().getUpicNo());
+                    target = CV_SUCCESS_FORM;
+                }
             }
 
         }
@@ -307,7 +360,7 @@ public class CourtVerdictController extends GenericWorkFlowController {
         model.addAttribute(ENDORSEMENT_NOTICE, new ArrayList<>());
         model.addAttribute(STATE_TYPE, courtVerdict.getClass().getSimpleName());
         model.addAttribute(LOGGED_IN_USER, propertyService.isEmployee(loggedInUser));
-        courtVerdictService.addModelAttributes(model, courtVerdict.getProperty(), request);
+        courtVerdictService.addModelAttributes(model, courtVerdict.getBasicProperty().getActiveProperty(), request);
         prepareWorkflow(model, courtVerdict, new WorkflowContainer());
 
         return CV_FORM;

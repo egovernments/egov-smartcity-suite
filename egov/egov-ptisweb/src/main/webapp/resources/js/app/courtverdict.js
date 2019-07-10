@@ -265,174 +265,72 @@ function hideOrShowFloorDetails() {
 		jQuery('#floorDetailsdiv').show()
 	}
 }
-
-function addFloor() {
-	var tbl = document.getElementById('floorDetails');
-	var rowO = tbl.rows.length;
-	// bootbox.alert("rowO="+rowO);
-	if (rowO <= 50) {
-		// bootbox.alert("rowO1="+rowO);
-		if (document.getElementById('Floorinfo') != null) {
-			// get Next Row Index to Generate
-			var nextIdx = tbl.rows.length - 1;
-
-			// validate status variable for exiting function
-			var isValid = 1;// for default have success value 0
-
-			// validate existing rows in table
-			jQuery("#floorDetails tr:not(:first)").find('input, select').each(
-					function() {
-						if ((jQuery(this).data('optional') === 0)
-								&& (!jQuery(this).val())) {
-							jQuery(this).focus();
-							bootbox.alert(jQuery(this).data('errormsg'));
-							isValid = 0;// set validation failure
-							return false;
-						}
-					});
-
-			if (isValid === 0) {
-				return false;
-			}
-
-			// Generate all textboxes Id and name with new index
-			jQuery("#Floorinfo").clone().find("input, select").each(
-					function() {
-
-						jQuery(this).attr(
-								{
-									'id' : function(_, id) {
-										return id.replace('[0]', '[' + nextIdx
-												+ ']');
-									},
-									'name' : function(_, name) {
-										return name.replace('[0]', '['
-												+ nextIdx + ']');
-									}
-								}).val('');
-
-						if (jQuery(this).data('calculate')) {
-							jQuery(this).attr(
-									'data-calculate',
-									jQuery(this).data('calculate').replace(
-											'[0]', '[' + nextIdx + ']'));
-						}
-
-						if (jQuery(this).data('result')) {
-							jQuery(this).attr(
-									'data-result',
-									jQuery(this).data('result').replace('[0]',
-											'[' + nextIdx + ']'));
-						}
-						jQuery(this).attr('readOnly', false);
-						// set default selection for dropdown
-						if (jQuery(this).is("select")) {
-							jQuery(this).prop('selectedIndex', 0);
-						}
-
-					}).end().appendTo("#floorDetails");
-
-			jQuery("#floorDetails tr:last td span[alt='AddF']").hide();
-
-			// re-intialize datepicker fields
-			jQuery(".datepicker").datepicker({
-				format : 'dd/mm/yyyy',
-				autoclose : true
-			});
-		}
-	}
-
-}
-function delFloor(obj) {
-	rIndex = getRow(obj).rowIndex;
-	var tbl = document.getElementById('floorDetails');
-	var propType = document.forms[0].propTypeId.options[document.forms[0].propTypeId.selectedIndex].text;
-	var rowo = tbl.rows.length;
-	if (rowo <= 2) {
-		bootbox.alert("This Floor cannot be deleted");
-		return false;
+function enableDisableFloorArea(obj){
+	var rowIdx=jQuery(obj).attr('data-idx');
+	rowIdx = Number(rowIdx) + 1;
+	var unstrLand = jQuery(obj).find('option:selected').val();
+	if(unstrLand === 'true'){
+		jQuery('#floorDetailsTable tbody tr:eq('+rowIdx+')')
+		.find('.builtuplength').val('');
+		jQuery('#floorDetailsTable tbody tr:eq('+rowIdx+')')
+			.find('.builtuplength').attr('disabled', true);
+		jQuery('#floorDetailsTable tbody tr:eq('+rowIdx+')')
+			.find('.builtupbreadth').attr('disabled', true);
+		jQuery('#floorDetailsTable tbody tr:eq('+rowIdx+')')
+		.find('.builtupbreadth').val('');
+		jQuery('#floorDetailsTable tbody tr:eq('+rowIdx+')')
+			.find('.builtuparea').removeAttr('disabled');
 	} else {
-
-		tbl.deleteRow(rIndex);
-
-		jQuery("#floorDetails tr:eq(1) td span[alt='AddF']").show();
-		// starting index for table fields
-		var idx = 0;
-
-		// regenerate index existing inputs in table row
-		jQuery("#floorDetails tr:not(:first)")
-				.each(
-						function() {
-							jQuery(this)
-									.find("input, select")
-									.each(
-											function() {
-												jQuery(this)
-														.attr(
-																{
-																	'id' : function(
-																			_,
-																			id) {
-																		return id
-																				.replace(
-																						/\[.\]/g,
-																						'['
-																								+ idx
-																								+ ']');
-																	},
-																	'name' : function(
-																			_,
-																			name) {
-																		return name
-																				.replace(
-																						/\[.\]/g,
-																						'['
-																								+ idx
-																								+ ']');
-																	}
-																});
-
-												if (jQuery(this).data(
-														'calculate')) {
-													jQuery(this)
-															.attr(
-																	'data-calculate',
-																	jQuery(this)[0].attributes['data-calculate'].nodeValue
-																			.replace(
-																					/\[.\]/g,
-																					'['
-																							+ idx
-																							+ ']'));
-												}
-
-												if (jQuery(this).data('result')) {
-													jQuery(this)
-															.attr(
-																	'data-result',
-																	jQuery(this)[0].attributes['data-result'].nodeValue
-																			.replace(
-																					/\[.\]/g,
-																					'['
-																							+ idx
-																							+ ']'));
-												}
-
-											});
-
-							// hide add option except first row
-							if (idx === 0) {
-								jQuery(this).find('span [alt="AddF"]').show();
-							} else {
-								jQuery(this).find('span [alt="AddF"]').hide();
-							}
-
-							idx++;
-						});
-
-		return true;
+		jQuery('#floorDetailsTable tbody tr:eq('+rowIdx+')')
+			.find('.builtuplength').removeAttr('disabled');
+		jQuery('#floorDetailsTable tbody tr:eq('+rowIdx+')')
+			.find('.builtupbreadth').removeAttr('disabled');
+		var length = jQuery('#floorDetailsTable tbody tr:eq('+rowIdx+')')
+					.find('.builtuplength').val();
+		var breadth = jQuery('#floorDetailsTable tbody tr:eq('+rowIdx+')')
+					.find('.builtupbreadth').val();
+		calculatePlinthArea(length, breadth, rowIdx);
 	}
 }
 
+function calculateAreaLength(obj){
+	var rowIdx=jQuery(obj).data('idx');
+	rowIdx = Number(rowIdx) + 1;
+	var length = jQuery('#floorDetailsTable tbody tr:eq('+rowIdx+')')
+		.find('.builtuplength').val();
+	console.log(jQuery('#floorDetailsTable tbody tr:eq('+rowIdx+')')
+			.find('.builtuplength'));
+	var breadth = jQuery('#floorDetailsTable tbody tr:eq('+rowIdx+')')
+		.find('.builtupbreadth').val();
+	calculatePlinthArea(length, breadth, rowIdx);
+}
+
+function calculateAreaBreadth(obj){
+	var rowIdx=jQuery(obj).data('idx');
+	rowIdx = Number(rowIdx) + 1;
+	var length = jQuery('#floorDetailsTable tbody tr:eq('+rowIdx+')')
+		.find('.builtuplength').val();
+	var breadth = jQuery('#floorDetailsTable tbody tr:eq('+rowIdx+')')
+		.find('.builtupbreadth').val();
+	calculatePlinthArea(length, breadth, rowIdx);
+}
+
+function showHideLengthBreadth(){
+	var tbl=document.getElementById("floorDetailsTable");
+    var tabLength = (tbl.rows.length)-1;
+    for(var i=1;i<=tabLength;i++){
+         enableDisableLengthBreadth(getControlInBranch(tbl.rows[i],'unstructuredLand'));
+    }
+}
+function calculatePlinthArea(length, breadth, rowIdx){
+	if(length != '' && breadth != ''){
+		jQuery('#floorDetailsTable tbody tr:eq('+rowIdx+')')
+			.find('.builtuparea').val(length*breadth);
+	}
+	
+	jQuery('#floorDetailsTable tbody tr:eq('+rowIdx+')')
+	.find('.builtuparea').attr('readonly', 'readonly');
+}
 function calculateAmount(obj) {
 
 	var table = document.getElementById("demandDetailsTable");
@@ -469,4 +367,132 @@ function calculateCollectionAmount(obj) {
 			}
 		}
 	}
+}
+
+function addFloors()
+{
+	var tbl = document.getElementById('floorDetailsTable');
+	var rowO = tbl.rows.length;
+	/*var today = document.getElementById('instStartDtId').value;
+	var dd = today.getDate();
+	var mm = today.getMonth()+1; 
+	var yyyy = today.getFullYear();
+	today = dd+'/'+mm+'/'+yyyy;*/
+	
+	if (rowO <= 50 && document.getElementById('floorDetailsRow') != null) {
+		// get Next Row Index to Generate
+		var nextIdx = tbl.rows.length - 1;
+
+		// validate status variable for exiting function
+		var isValid = 1;// for default have success value 0
+
+		// validate existing rows in table
+		jQuery("#floorDetailsTable tr:not(:first)").find('input, select').each(
+				function() {
+					if ((jQuery(this).data('optional') === 0)
+							&& (!jQuery(this).val())) {
+						jQuery(this).focus();
+						bootbox.alert(jQuery(this).data('errormsg'));
+						isValid = 0;// set validation failure
+						return false;
+					}
+				});
+
+		if (isValid === 0) {
+			return false;
+		}
+
+		// Generate all textboxes Id and name with new index
+		jQuery("#floorDetailsRow").clone().find("input, select").each(
+				function() {
+
+					jQuery(this).attr({
+						'id' : function(_, id) {
+							return id.replace('[0]', '[' + nextIdx + ']');
+						},
+						'name' : function(_, name) {
+							return name.replace('[0]', '[' + nextIdx + ']');
+						}
+					}).val('');
+					if (jQuery(this).attr('data-idx')) {
+						jQuery(this).attr('data-idx', nextIdx);
+					}
+
+					if (jQuery(this).data('calculate')) {
+						jQuery(this).attr(
+								'data-calculate',
+								jQuery(this).data('calculate').replace('[0]',
+										'[' + nextIdx + ']'));
+					}
+
+					if (jQuery(this).data('result')) {
+						jQuery(this).attr(
+								'data-result',
+								jQuery(this).data('result').replace('[0]',
+										'[' + nextIdx + ']'));
+					}
+					jQuery(this).attr('readOnly', false);
+					// set default selection for dropdown
+					if (jQuery(this).is("select")) {
+						jQuery(this).prop('selectedIndex', 0);
+					}
+					if(jQuery(this).hasClass('occupancydate'))
+					{
+						jQuery(this).val(today);
+					}
+					
+				}).end().appendTo("#floorDetailsTable");
+
+		jQuery("#floorDetailsTable tr:last td span[alt='AddF']").hide();
+		reinitializeDatepicker();
+		
+	}
+}
+
+jQuery(document).on('click',"#deleteFloor",function (){
+	var table = document.getElementById('floorDetailsTable');
+    var rowCount = table.rows.length;
+    var counts = rowCount - 1;
+    if(counts==1)
+	{
+		bootbox.alert("This Row cannot be deleted");
+		return false;
+	}else{	
+
+		jQuery(this).closest('tr').remove();		
+		
+		jQuery("#floorDetailsTable tr:eq(1) td span[alt='AddF']").show();
+		//regenerate index existing inputs in table row
+		regenerateIndex('floorDetailsTable');
+		return true;
+	}
+});
+
+function reinitializeDatepicker(){
+	jQuery(".datepicker").datepicker({
+		format: 'dd/mm/yyyy',
+		autoclose:true
+	});
+}
+function regenerateIndex(tableId){
+	var idx=0;
+	jQuery("#"+tableId+" tr:not(:first)").each(function() {
+	jQuery(this).find("input, select").each(function() {
+	   jQuery(this).attr({
+	      'id': function(_, id) {  
+	    	  return id.replace(/\[.\]/g, '['+ idx +']'); 
+	       },
+	      'name': function(_, name) {
+	    	  return name.replace(/\[.\]/g, '['+ idx +']'); 
+	      },
+	   });
+	   
+	   if(jQuery(this).attr('data-idx'))
+		{
+			jQuery(this).attr('data-idx', idx);
+		}
+	  });
+	
+	idx++;
+});
 }

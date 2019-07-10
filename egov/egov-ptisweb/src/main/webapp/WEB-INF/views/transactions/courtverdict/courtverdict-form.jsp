@@ -58,11 +58,11 @@
 	
 </script>
 <style>
-div.overflow-x-scroll {
+.overflow-x-scroll {
 	overflow-x: scroll;
 }
 
-div.floors-tbl-freeze-column-div {
+.floors-tbl-freeze-column-div {
 	margin-right: 80px;
 }
 
@@ -297,13 +297,17 @@ div.floors-tbl-freeze-column-div {
 										<div class="col-xs-3 add-margin">
 											<spring:message code="lbl.cv.caseDate" />
 										</div>
-										<div class="col-xs-3 add-margin view-content"></div>
+										<div class="col-xs-3 add-margin view-content">
+											<c:out value="${caseDate}"></c:out>
+										</div>
 									</div>
 									<div class="row add-border">
 										<div class="col-xs-3 add-margin">
 											<spring:message code="lbl.cv.caseStatus" />
 										</div>
-										<div class="col-xs-3 add-margin view-content"></div>
+										<div class="col-xs-3 add-margin view-content">
+											<c:out value="${caseStatus}"></c:out>
+										</div>
 										<div class="col-xs-3 add-margin">
 											<spring:message code="lbl.cv.action" />
 											<span class="mandatory"></span>

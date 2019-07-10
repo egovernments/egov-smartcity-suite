@@ -74,6 +74,7 @@ import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.NumberUtil;
+import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -90,6 +91,7 @@ import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.SurroundingsAudit;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
+import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
@@ -101,25 +103,39 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.net.URI;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import static org.egov.collection.constants.CollectionConstants.QUERY_RECEIPTS_BY_RECEIPTNUM;
 import static org.egov.ptis.constants.PropertyTaxConstants.*;
+
 
 public class PropertyTaxCommonUtils {
     private static final Logger LOGGER = Logger.getLogger(PropertyTaxCommonUtils.class);
@@ -919,6 +935,61 @@ public class PropertyTaxCommonUtils {
             LOGGER.error("Error in converting json array into json object " + e);
         }
         return sewerageConnDtls;
+    }
+    
+    public List<Map<String, String>> getLegalCaseDetails(final String caseNo, final HttpServletRequest request) {
+        final List<Map<String, String>> legalcaseDtls = new ArrayList<>();
+
+        RestTemplate restTemplate = new RestTemplate();
+        String url = String.format(LCMS_LEGALCASE_DETAILS_RESTURL, WebUtils.extractRequestDomainURL(request, false));
+        URI targetUrl= UriComponentsBuilder.fromUriString(url)                           
+                .queryParam("caseNumber", caseNo)                               
+                .build()                                                
+                .encode()                                           
+                .toUri();
+
+        Cookie[] cookies = request.getCookies();
+        String cookie = "";
+        
+        for (int i = 0; i < cookies.length; i++) {
+            cookie = cookie + cookies[i].getName()+ "="+cookies[i].getValue()+";";
+        }
+        
+        final List<MediaType> mediaTypes = new ArrayList<MediaType>();
+        mediaTypes.add(MediaType.ALL);
+
+                
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.set(HttpHeaders.COOKIE, cookie);
+        requestHeaders.setPragma("no-cache");
+        requestHeaders.setConnection("keep-alive");
+        requestHeaders.setCacheControl("no-cache");
+        requestHeaders.setAccept(mediaTypes);
+        requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        final HttpEntity requestEntity = new HttpEntity<>(requestHeaders);
+        
+        ResponseEntity<LinkedHashMap> result = restTemplate.exchange(targetUrl, HttpMethod.GET, requestEntity, LinkedHashMap.class);
+     
+        JSONObject jsonObj = null;
+        try {
+            jsonObj = new JSONObject(result.getBody());
+        } catch (final JSONException e1) {
+            LOGGER.error("Error in converting string into json array " + e1);
+        }
+
+        try {
+            final Map<String, String> newMap = new HashMap<>();
+            for (String key : jsonObj.keySet()) {
+               
+                newMap.put(key, jsonObj.get(key).toString());
+
+            }
+            legalcaseDtls.add(newMap);
+        } catch (final JSONException e) {
+            LOGGER.error("Error in converting json array into json object " + e);
+        }
+        return legalcaseDtls;
     }
 
 }

@@ -1539,6 +1539,7 @@ public interface PropertyTaxConstants {
     public String WTMS_AMALGAMATE_WATER_CONNECTIONS_URL = "%s/wtms/rest/watertax/updateConnectionForAmulgamation";
     public String STMS_TAXDUE_RESTURL = "%s/stms/rest/seweragetax/dues/%s";
     public String WTMS_TAXDUE_WITH_DATE_RESTURL = "%s/wtms/rest/watertax/due/byptnoanddate/%s,%s";
+    public String LCMS_LEGALCASE_DETAILS_RESTURL = "%s/lcms/legalcase/ajax-caseDetailsByCaseNumber";
 
     public static final String TRANSACTION_TYPE_CREATE = "Create";
     public static final String TRANSACTION_TYPE_DEMOLITION = "Demolition";

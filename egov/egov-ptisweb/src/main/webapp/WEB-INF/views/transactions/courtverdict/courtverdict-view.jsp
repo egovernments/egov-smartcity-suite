@@ -55,42 +55,40 @@
 <html>
 <head>
 <script>
-function showCourtVerdictHeaderTab() {
-	document.getElementById('courtverdict_header').style.display = '';
-	setCSSClasses('courtVerdictHeaderTab', 'First Active');
-	setCSSClasses('demandDetailTab', '');
-	hideDemandHeaderTab();
+	function showCourtVerdictHeaderTab() {
+		document.getElementById('courtverdict_header').style.display = '';
+		setCSSClasses('courtVerdictHeaderTab', 'First Active');
+		setCSSClasses('demandDetailTab', '');
+		hideDemandHeaderTab();
 
-}
-function showDemandHeaderTab() {
-	document.getElementById('demand_header').style.display = '';
-	setCSSClasses('courtVerdictHeaderTab', 'First BeforeActive');
-	setCSSClasses('demandDetailTab', 'Last Active ActiveLast');
-	hidepropertyHeaderTab();
-
-}
-function setCSSClasses(id, classes) {
-	document.getElementById(id).setAttribute('class', classes);
-	document.getElementById(id).setAttribute('className', classes);
-}
-function hidepropertyHeaderTab() {
-	document.getElementById('courtverdict_header').style.display = 'none';
-}
-function hideDemandHeaderTab() {
-	document.getElementById('demand_header').style.display = 'none';
-}
-jQuery(document).ready(function() {
-
-	var action = jQuery('#action').text();
-	if(action =="Update Demand Directly"){
-	jQuery('#demand').show()
 	}
-	else{
-		jQuery('#demand').hide();
+	function showDemandHeaderTab() {
+		document.getElementById('demand_header').style.display = '';
+		setCSSClasses('courtVerdictHeaderTab', 'First BeforeActive');
+		setCSSClasses('demandDetailTab', 'Last Active ActiveLast');
+		hidepropertyHeaderTab();
+
 	}
-});
-	
-</script> 
+	function setCSSClasses(id, classes) {
+		document.getElementById(id).setAttribute('class', classes);
+		document.getElementById(id).setAttribute('className', classes);
+	}
+	function hidepropertyHeaderTab() {
+		document.getElementById('courtverdict_header').style.display = 'none';
+	}
+	function hideDemandHeaderTab() {
+		document.getElementById('demand_header').style.display = 'none';
+	}
+	jQuery(document).ready(function() {
+
+		var action = jQuery('#action').text();
+		if (action == "Update Demand Directly") {
+			jQuery('#demand').show()
+		} else {
+			jQuery('#demand').hide();
+		}
+	});
+</script>
 <style>
 div.overflow-x-scroll {
 	overflow-x: scroll;
@@ -136,7 +134,7 @@ div.floors-tbl-freeze-column-div {
 		enctype="multipart/form-data" modelAttribute="courtVerdict">
 		<form:hidden path="" name="loggedUserIsEmployee"
 			id="loggedUserIsEmployee" value="${loggedUserIsEmployee}" />
-		<form:hidden path="" id="action" name="action" value="${action}"/>
+		<form:hidden path="" id="action" name="action" value="${action}" />
 
 		<div class="panel-heading">
 			<ul class="nav nav-tabs" id="tabs">
@@ -332,13 +330,17 @@ div.floors-tbl-freeze-column-div {
 										<div class="col-xs-3 add-margin">
 											<spring:message code="lbl.cv.caseDate" />
 										</div>
-										<div class="col-xs-3 add-margin view-content"></div>
+										<div class="col-xs-3 add-margin view-content">
+											<c:out value="${caseDate}"></c:out>
+										</div>
 									</div>
 									<div class="row add-border">
 										<div class="col-xs-3 add-margin">
 											<spring:message code="lbl.cv.caseStatus" />
 										</div>
-										<div class="col-xs-3 add-margin view-content"></div>
+										<div class="col-xs-3 add-margin view-content">
+											<c:out value="${caseStatus}"></c:out>
+										</div>
 										<div class="col-xs-3 add-margin">
 											<spring:message code="lbl.cv.action" />
 											<span class="mandatory"></span>
@@ -360,7 +362,7 @@ div.floors-tbl-freeze-column-div {
 						<%@ include file="assmntdetails.jsp"%>
 
 					</div>
-					
+
 
 				</div>
 				<div id="demandDetails" class="tab-pane fade">
