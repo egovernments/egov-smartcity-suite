@@ -154,6 +154,8 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
             if (courtVerdict.getAction().equalsIgnoreCase(RE_ASSESS)) {
                 courtVerdictService.addModelAttributesForUpdateCV(courtVerdict, model);
                 courtVerdictService.addModelAttributes(model, courtVerdict.getProperty(), request);
+                model.addAttribute("caseStatus", status);
+                model.addAttribute("caseDate", date);
                 prepareWorkflow(model, courtVerdict, new WorkflowContainer());
 
                 target = CV_FORM;
