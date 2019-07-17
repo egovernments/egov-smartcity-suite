@@ -117,7 +117,6 @@ import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.ConnectionEstimationDetails;
 import org.egov.wtms.application.entity.DemandDetail;
-import org.egov.wtms.application.entity.EstimationNotice;
 import org.egov.wtms.application.entity.FieldInspectionDetails;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.entity.WaterDemandConnection;
@@ -219,9 +218,6 @@ public class ConnectionDemandService {
 
     @Autowired
     private AppConfigService appConfigService;
-    
-    @Autowired
-    private EstimationNoticeService estimationNoticeService; 
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -877,8 +873,7 @@ public class ConnectionDemandService {
     }
 
     public BindingResult getWaterTaxDue(WaterConnectionDetails waterConnectionDetails, BindingResult resultBinder) {
-    	EstimationNotice estimationNotice = estimationNoticeService.getNonHistoryEstimationNoticeForConnection(waterConnectionDetails);
-        if (estimationNotice == null)
+        if (isBlank(waterConnectionDetails.getEstimationNumber()))
             resultBinder.reject("err.demandnote.not.present");
         else {
             BigDecimal waterChargesDue = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);

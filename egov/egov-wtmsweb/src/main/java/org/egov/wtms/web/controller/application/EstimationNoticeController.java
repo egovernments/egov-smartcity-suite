@@ -59,10 +59,8 @@ import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
-import org.egov.wtms.application.entity.EstimationNotice;
 import org.egov.wtms.application.entity.FieldInspectionDetails;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
-import org.egov.wtms.application.service.EstimationNoticeService;
 import org.egov.wtms.application.service.ReportGenerationService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.utils.PropertyExtnUtils;
@@ -106,9 +104,6 @@ public class EstimationNoticeController {
 
     @Autowired
     private FileStoreService fileStoreService;
-    
-    @Autowired
-    private EstimationNoticeService estimationNoticeService;
 
     @GetMapping(value = "/estimationNotice", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
@@ -123,13 +118,12 @@ public class EstimationNoticeController {
     private ResponseEntity<InputStreamResource> generateEstimationReport(WaterConnectionDetails waterConnectionDetails,
                                                                          HttpSession session) {
         ReportOutput reportOutput = new ReportOutput();
-        if (waterConnectionDetails != null){
-        	EstimationNotice estimationNotice = estimationNoticeService.getNonHistoryEstimationNoticeForConnection(waterConnectionDetails);
-            if (estimationNotice != null) {
-                File file = fileStoreService.fetch(estimationNotice.getEstimationNoticeFileStore(), FILESTORE_MODULECODE);
+        if (waterConnectionDetails != null)
+            if (waterConnectionDetails.getEstimationNoticeFileStoreId() != null) {
+                File file = fileStoreService.fetch(waterConnectionDetails.getEstimationNoticeFileStoreId(), FILESTORE_MODULECODE);
                 reportOutput = new ReportOutput();
                 try {
-                    reportOutput.setReportName(estimationNotice.getEstimationNumber());
+                    reportOutput.setReportName(waterConnectionDetails.getEstimationNumber());
                     reportOutput.setReportOutputData(FileUtils.readFileToByteArray(file));
                     reportOutput.setReportFormat(ReportFormat.PDF);
                 } catch (IOException e) {
@@ -153,7 +147,7 @@ public class EstimationNoticeController {
                 reportParams.put("applicationType", WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()));
                 reportParams.put("cityName", session.getAttribute("citymunicipalityname"));
                 reportParams.put("district", session.getAttribute("districtName"));
-                reportParams.put("estimationNumber", estimationNotice.getEstimationNumber());
+                reportParams.put("estimationNumber", waterConnectionDetails.getEstimationNumber());
                 reportParams.put("donationCharges", waterConnectionDetails.getDonationCharges());
                 FieldInspectionDetails inspectionDetails = waterConnectionDetails.getFieldInspectionDetails();
                 reportParams.put("estimationDate", toDefaultDateFormat(inspectionDetails.getCreatedDate()));
@@ -182,9 +176,8 @@ public class EstimationNoticeController {
                 }
 
                 reportOutput.setReportFormat(ReportFormat.PDF);
-                reportOutput.setReportName(estimationNotice.getEstimationNumber());
+                reportOutput.setReportName(waterConnectionDetails.getEstimationNumber());
             }
-        }
         return reportAsResponseEntity(reportOutput);
     }
 

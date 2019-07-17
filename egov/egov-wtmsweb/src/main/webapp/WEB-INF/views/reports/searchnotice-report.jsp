@@ -186,19 +186,6 @@
 								id="houseNumber" />
 						</div>
 					</div>
-					<div class="form-group">
-						<label for="field-1" class="col-md-4 control-label"><spring:message
-								code="lbl.financial.year" /><span class="mandatory"></span></label>
-						<div class="col-md-4 add-margin">
-							<select name="financialYear" id="financialYear" class="form-control"
-                                        data-first-option="false" required="required">
-                                    <option value="${finYear.startingDate}"></option>
-                                    <c:forEach items="${financialYears}" var="finYear">
-                                        <option value="${finYear.id}">${finYear.finYearRange}</option>
-                                    </c:forEach>
-                            </select>
-						</div>
-					</div> 
 					<div class="form-group text-center">
 
 						<form:button type="button" class="btn btn-primary" id="searchid">

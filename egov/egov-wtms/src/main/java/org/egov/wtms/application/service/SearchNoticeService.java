@@ -50,7 +50,6 @@ package org.egov.wtms.application.service;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.ESTIMATION_NOTICE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARISATION_DEMAND_NOTE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
 
@@ -63,7 +62,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
-import org.egov.commons.CFinancialYear;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
@@ -106,7 +104,7 @@ public class SearchNoticeService {
 
     @ReadOnly
     @SuppressWarnings("unchecked")
-    public List<SearchNoticeDetails> getBillReportDetails(final SearchNoticeDetails searchNoticeDetails, CFinancialYear financialYear) {
+    public List<SearchNoticeDetails> getBillReportDetails(final SearchNoticeDetails searchNoticeDetails) {
         final long startTime = System.currentTimeMillis();
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
@@ -140,11 +138,9 @@ public class SearchNoticeService {
             queryStr.append(" and dcbinfo.applicationtype =:applicationType");
         if (isNotBlank(searchNoticeDetails.getPropertyType()))
             queryStr.append(" and dcbinfo.propertytype =:propertyType");
-        if(financialYear != null)
-        	queryStr.append(" and cast(bill.create_date as date) between cast(:financialStartDate as date) and cast(:financialEndDate as date)");
 
         final Query query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
-        setSearchQueryParameters(searchNoticeDetails, null, null, query, financialYear);
+        setSearchQueryParameters(searchNoticeDetails, null, null, query);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("GenerateConnectionBill -- Search Result " + queryStr.toString());
         query.setResultTransformer(new AliasToBeanResultTransformer(SearchNoticeDetails.class));
@@ -159,7 +155,7 @@ public class SearchNoticeService {
 
     @ReadOnly
     @SuppressWarnings("unchecked")
-    public List<SearchNoticeDetails> getSearchResultList(final SearchNoticeDetails searchNoticeDetails, CFinancialYear financialYear) {
+    public List<SearchNoticeDetails> getSearchResultList(final SearchNoticeDetails searchNoticeDetails) {
         StringBuilder selectQuery = new StringBuilder(1000);
         StringBuilder fromQuery = new StringBuilder(1000);
         StringBuilder whereQuery = new StringBuilder(600);
@@ -167,22 +163,14 @@ public class SearchNoticeService {
         selectQuery.append("select propertytype.name as propertyType, applicationtype.name as applicationType, ")
                 .append("connection.consumercode as hscNo, connectionaddress.ownername as ownerName, connection.propertyIdentifier as assessmentNo, ")
                 .append("conndetails.workordernumber as workOrderNumber, conndetails.workorderdate as workOrderDate, connectionaddress.doornumber as houseNumber, ")
-                .append(" connectionaddress.locality as locality, conndetails.connectiontype as connectiontype ");
-        if (ESTIMATION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()) 
-        		|| REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
-        	selectQuery.append(", en.estimationnumber as estimationNumber, en.estimationnoticedate as estimationDate");
-        else 
-        	selectQuery.append(", CAST(NULL AS character varying) as estimationNumber, CAST(NULL AS date) as estimationDate");
+                .append(" connectionaddress.locality as locality, conndetails.connectiontype as connectiontype, ")
+                .append(" conndetails.estimationnumber as estimationNumber, conndetails.estimationnoticedate as estimationDate");
 
         fromQuery.append(" from egwtr_connection connection INNER JOIN egwtr_connectiondetails conndetails on ")
                 .append("connection.id=conndetails.connection INNER JOIN egwtr_connection_address connectionaddress on ")
                 .append("connectionaddress.connectiondetailsid=conndetails.id INNER JOIN ")
                 .append("egwtr_property_type propertytype on conndetails.propertytype=propertytype.id INNER JOIN ")
                 .append("egwtr_application_type applicationtype on conndetails.applicationtype=applicationtype.id ");
-        if (ESTIMATION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()) 
-        		|| REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
-        	fromQuery.append(" INNER JOIN egwtr_estimation_notice en on conndetails.id = en.CONNECTIONDETAILS ");
-        	
         whereQuery.append(" where ");
         if (isNotBlank(searchNoticeDetails.getRevenueWard()) && isNotBlank(searchNoticeDetails.getZone())) {
             fromQuery.append(" INNER JOIN eg_boundary wardboundary on connectionaddress.revenueward=wardboundary.id ");
@@ -211,20 +199,12 @@ public class SearchNoticeService {
         if (isNotBlank(searchNoticeDetails.getFromDate())) {
             dateArray = searchNoticeDetails.getFromDate().split("/");
             formattedFromDate = dateArray[2] + "-" + dateArray[1] + "-" + dateArray[0];
-            if (ESTIMATION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()) 
-            		|| REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
-            	whereQuery.append(" en.estimationnoticedate >=(cast(:formattedFromDate as date)) and ");
-            else
-            	whereQuery.append(" conndetails.workorderdate >=(cast(:formattedFromDate as date)) and ");
+            whereQuery.append(" conndetails.workorderdate >=(cast(:formattedFromDate as date)) and ");
         }
         if (isNotBlank(searchNoticeDetails.getToDate())) {
             dateArray = searchNoticeDetails.getToDate().split("/");
             formattedToDate = dateArray[2] + "-" + dateArray[1] + "-" + dateArray[0];
-            if (ESTIMATION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()) 
-            		|| REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
-            	whereQuery.append(" en.estimationnoticedate >=(cast(:formattedToDate as date)) and ");
-            else
-            	whereQuery.append(" conndetails.workorderdate <=(cast(:formattedToDate as date)) and ");
+            whereQuery.append(" conndetails.workorderdate <=(cast(:formattedToDate as date)) and ");
         }
 
         if (isNotBlank(searchNoticeDetails.getApplicationType()))
@@ -243,20 +223,10 @@ public class SearchNoticeService {
 
         if (isNotBlank(searchNoticeDetails.getAssessmentNo()))
             whereQuery.append(" connection.propertyIdentifier=:assessmentNumber and ");
-        
-        if(financialYear != null)
-        {
-        	if (ESTIMATION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()) 
-            		|| REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
-        		whereQuery.append(" cast(en.estimationnoticedate as date) between cast(:financialStartDate as date) and cast(:financialEndDate as date) and en.ishistory = false and ");
-        	else 
-        		whereQuery.append(" cast(conndetails.workorderdate as date) between cast(:financialStartDate as date) and cast(:financialEndDate as date) and ");
-        }
-        
         whereQuery.append("conndetails.connectionstatus!=:connectionStatus");
         Query query = entityManager.unwrap(Session.class)
                 .createSQLQuery(selectQuery.append(fromQuery).append(whereQuery).toString());
-        setSearchQueryParameters(searchNoticeDetails, formattedFromDate, formattedToDate, query, financialYear);
+        setSearchQueryParameters(searchNoticeDetails, formattedFromDate, formattedToDate, query);
         query.setParameter("reglnApplicationType", REGULARIZE_CONNECTION);
         query.setParameter("connectionStatus", INACTIVE);
         List<Object[]> objectList = query.list();
@@ -264,7 +234,7 @@ public class SearchNoticeService {
     }
 
     private Query setSearchQueryParameters(final SearchNoticeDetails searchNoticeDetails, String formattedFromDate,
-            String formattedToDate, Query query, CFinancialYear financialYear) {
+            String formattedToDate, Query query) {
         if (isNotBlank(searchNoticeDetails.getZone()))
             query.setParameter(ZONE, searchNoticeDetails.getZone());
         if (isNotBlank(searchNoticeDetails.getRevenueWard()))
@@ -285,10 +255,6 @@ public class SearchNoticeService {
             query.setParameter(HOUSENUMBER, searchNoticeDetails.getHouseNumber());
         if (isNotBlank(searchNoticeDetails.getAssessmentNo()))
             query.setParameter(ASSESSMENT_NUMBER, searchNoticeDetails.getAssessmentNo());
-        if (financialYear != null){
-        	query.setParameter("financialStartDate", financialYear.getStartingDate());
-        	query.setParameter("financialEndDate", financialYear.getEndingDate());
-        }
         return query;
     }
 
@@ -370,7 +336,7 @@ public class SearchNoticeService {
         return query.list();
     }
 
-    public long getTotalCountofBills(final SearchNoticeDetails searchNoticeDetails, CFinancialYear financialYear) {
+    public long getTotalCountofBills(final SearchNoticeDetails searchNoticeDetails) {
 
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append("select count(distinct dcbinfo.hscno)  from egwtr_mv_bill_view dcbinfo"
@@ -397,10 +363,8 @@ public class SearchNoticeService {
             queryStr.append(" and dcbinfo.applicationtype =:applicationType");
         if (isNotBlank(searchNoticeDetails.getPropertyType()))
             queryStr.append(" and dcbinfo.propertytype =:propertyType");
-        if(financialYear != null)
-        	queryStr.append(" and cast(bill.create_date as date) between cast(:financialStartDate as date) and cast(:financialEndDate as date)");
         Query query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
-        setSearchQueryParameters(searchNoticeDetails, null, null, query, financialYear);
+        setSearchQueryParameters(searchNoticeDetails, null, null, query);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("GenerateConnectionBill -- count Result " + queryStr.toString());
         return ((BigInteger) query.uniqueResult()).longValue();
