@@ -73,6 +73,7 @@ import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.CourtVerdict;
+import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.courtverdict.CourtVerdictDCBService;
 import org.egov.ptis.domain.service.courtverdict.CourtVerdictService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
@@ -143,7 +144,9 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
                 model.addAttribute("caseDate", date);
                 model.addAttribute(DEMAND_DETAIL_LIST, courtVerdict.getDemandDetailBeanList());
                 courtVerdictService.addModelAttributes(model, courtVerdict.getProperty(), request);
-                prepareWorkflow(model, courtVerdict, new WorkflowContainer());
+                WorkflowContainer container = new WorkflowContainer();
+                container.setCurrentDesignation(currentDesg);
+                prepareWorkflow(model, courtVerdict, container);
 
                 target = CV_VIEW;
             }
@@ -157,7 +160,8 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
             } else if (courtVerdict.getAction().equalsIgnoreCase(UPDATE_DEMAND_DIRECTLY)) {
 
                 courtVerdictDCBService.addDemandDetails(courtVerdict);
-                model.addAttribute(DEMAND_DETAIL_LIST, courtVerdict.getDemandDetailBeanList());
+                model.addAttribute("dmndDetails", courtVerdict.getDemandDetailBeanList());
+                courtVerdictService.addModelAttributesForUpdateCV(courtVerdict, model);
                 courtVerdictService.addModelAttributes(model, courtVerdict.getProperty(), request);
                 prepareWorkflow(model, courtVerdict, new WorkflowContainer());
 
@@ -218,6 +222,26 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
 
             target = CV_SUCCESS_FORM;
         } else {
+            
+            if(courtVerdict.getAction().equalsIgnoreCase(RE_ASSESS)){
+                courtVerdictService.updatePropertyDetails(courtVerdict);
+                PropertyImpl modProperty = courtVerdictDCBService.modifyDemand(courtVerdict.getProperty(), courtVerdict.getBasicProperty().getActiveProperty());
+
+                if (modProperty == null)
+                    courtVerdict.getBasicProperty().addProperty(courtVerdict.getProperty());
+                else
+                    courtVerdict.getBasicProperty().addProperty(modProperty);
+            }
+            else if(courtVerdict.getAction().equalsIgnoreCase(UPDATE_DEMAND_DIRECTLY)){
+                courtVerdictService.updatePropertyDetails(courtVerdict);
+                courtVerdictDCBService.updateDemandDetails(courtVerdict);
+                courtVerdict.getBasicProperty().addProperty(courtVerdict.getProperty());
+            }
+            else{
+                courtVerdictService.updatePropertyDetails(courtVerdict);
+                courtVerdictService.setPtDemandSet(courtVerdict);
+                courtVerdict.getBasicProperty().addProperty(courtVerdict.getProperty());
+            }
 
             courtVerdictService.saveCourtVerdict(courtVerdict, approvalPosition, approvalComent, null, workFlowAction,
                     loggedUserIsEmployee, courtVerdict.getAction());

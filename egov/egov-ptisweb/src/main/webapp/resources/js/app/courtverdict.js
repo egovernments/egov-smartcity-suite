@@ -141,7 +141,7 @@ function populateUsage() {
 		dataType : "json",
 		success : function(response) {
 
-			jQuery('#floorDetails tbody tr').each(
+			jQuery('#floorDetailsTable tbody tr').each(
 					function() {
 						var select = jQuery(this).find("#usage");
 
@@ -336,9 +336,9 @@ function calculateAmount(obj) {
 	var table = document.getElementById("demandDetailsTable");
 	var rowobj = getRow(obj).rowIndex;
 
-	if (document.forms[0].revisedAmount[rowobj - 1] != undefined
-			&& document.forms[0].revisedAmount[rowobj - 1].value != undefined) {
-		for (var j = 0; j <= rowobj - 1; j++) {
+	if (document.forms[0].revisedAmount[rowobj - 2] != undefined
+			&& document.forms[0].revisedAmount[rowobj - 2].value != undefined) {
+		for (var j = 0; j <= rowobj - 2; j++) {
 			if (document.forms[0].revisedAmount[j].value == "") {
 
 				bootbox
@@ -356,9 +356,9 @@ function calculateCollectionAmount(obj) {
 	var table = document.getElementById("demandDetailsTable");
 	var rowobj = getRow(obj).rowIndex;
 	
-	if (document.forms[0].revisedCollection[rowobj - 1] != undefined
-			&& document.forms[0].revisedCollection[rowobj - 1].value != undefined) {
-		for (var j = 0; j <= rowobj - 1; j++) {
+	if (document.forms[0].revisedCollection[rowobj - 2] != undefined
+			&& document.forms[0].revisedCollection[rowobj - 2].value != undefined) {
+		for (var j = 0; j <= rowobj - 2; j++) {
 			if (document.forms[0].revisedCollection[j].value == "") {
 				bootbox
 						.alert("Please choose its previos Installments. Random selection not allowed.");

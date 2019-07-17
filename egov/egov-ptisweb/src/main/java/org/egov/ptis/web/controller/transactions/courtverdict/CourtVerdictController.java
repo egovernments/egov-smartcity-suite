@@ -133,6 +133,8 @@ public class CourtVerdictController extends GenericWorkFlowController {
     private static final String ERROR_MSG = "errorMsg";
     private static final String CREATED = "Created";
     private static final String PROPERTY_ID = "propertId";
+    private static final String CV_SUCCESS_MSG = "Court Verdict Saved Successfully in the System and forwarded to :";
+
     private CourtVerdict oldCourtVerdict;
     @Autowired
     private PtDemandDao ptDemandDAO;
@@ -220,12 +222,20 @@ public class CourtVerdictController extends GenericWorkFlowController {
     public String save(@ModelAttribute("courtVerdict") CourtVerdict courtVerdict, final RedirectAttributes redirectAttributes,
             final Model model, final HttpServletRequest request, @RequestParam String workFlowAction,
             @PathVariable String assessmentNo) {
+        String status = "";
+        String date = "";
         String target = null;
         PropertyImpl property = courtVerdict.getProperty();
         PropertyImpl oldProperty = oldCourtVerdict.getBasicProperty().getActiveProperty();
         PropertyCourtCase propCourtCase = propCourtCaseService.getByAssessmentNo(assessmentNo);
         courtVerdict.setPropertyCourtCase(propCourtCase);
-
+        List<Map<String, String>> legalCaseDetails = propertyTaxCommonUtils.getLegalCaseDetails(
+                propCourtCase.getCaseNo(),
+                request);
+        for (Map<String, String> map : legalCaseDetails) {
+            status = map.get("caseStatus");
+            date = map.get("caseDate");
+        }
         final Boolean loggedUserIsEmployee = Boolean.valueOf(request.getParameter(LOGGED_IN_USER));
         User loggedInUser = securityUtils.getCurrentUser();
         String action = courtVerdict.getAction();
@@ -239,6 +249,8 @@ public class CourtVerdictController extends GenericWorkFlowController {
             model.addAttribute(CURRENT_STATE, CREATED);
             model.addAttribute(STATE_TYPE, oldCourtVerdict.getClass().getSimpleName());
             model.addAttribute(ENDORSEMENT_NOTICE, new ArrayList<>());
+            model.addAttribute("caseStatus", status);
+            model.addAttribute("caseDate", date);
             model.addAttribute(LOGGED_IN_USER, propertyService.isEmployee(loggedInUser));
             courtVerdictService.addModelAttributes(model, oldCourtVerdict.getProperty(), request);
 
@@ -272,7 +284,7 @@ public class CourtVerdictController extends GenericWorkFlowController {
                     courtVerdictService.saveCourtVerdict(courtVerdict, approvalPosition, approvalComent, null,
                             workFlowAction, loggedUserIsEmployee, action);
 
-                    final String successMsg = "Court Verdict Saved Successfully in the System and forwarded to : "
+                    final String successMsg = CV_SUCCESS_MSG
                             + propertyTaxUtil.getApproverUserName(courtVerdict.getState().getOwnerPosition().getId())
                             + " with application number : " + courtVerdict.getApplicationNumber();
 
@@ -299,7 +311,7 @@ public class CourtVerdictController extends GenericWorkFlowController {
                     courtVerdict.getBasicProperty().addProperty(courtVerdict.getProperty());
                     courtVerdictService.saveCourtVerdict(courtVerdict, approvalPosition, approvalComent, null,
                             workFlowAction, loggedUserIsEmployee, action);
-                    final String successMsg = "Court Verdict Saved Successfully in the System and forwarded to : "
+                    final String successMsg = CV_SUCCESS_MSG
                             + propertyTaxUtil.getApproverUserName(courtVerdict.getState().getOwnerPosition().getId())
                             + " with application number : " + courtVerdict.getApplicationNumber();
 
@@ -327,7 +339,7 @@ public class CourtVerdictController extends GenericWorkFlowController {
 
                     courtVerdictService.saveCourtVerdict(courtVerdict, approvalPosition, approvalComent, null,
                             workFlowAction, loggedUserIsEmployee, action);
-                    final String successMsg = "Court Verdict Saved Successfully in the System and forwarded to : "
+                    final String successMsg = CV_SUCCESS_MSG
                             + propertyTaxUtil.getApproverUserName(courtVerdict.getState().getOwnerPosition().getId())
                             + " with application number : " + courtVerdict.getApplicationNumber();
 
@@ -343,6 +355,15 @@ public class CourtVerdictController extends GenericWorkFlowController {
 
     private String displayErrors(CourtVerdict courtVerdict, Model model, Map<String, String> errorMessages,
             HttpServletRequest request) {
+        String status="";
+        String date="";
+        List<Map<String, String>> legalCaseDetails = propertyTaxCommonUtils.getLegalCaseDetails(
+                courtVerdict.getPropertyCourtCase().getCaseNo(),
+                request);
+        for (Map<String, String> map : legalCaseDetails) {
+            status = map.get("caseStatus");
+            date = map.get("caseDate");
+        }
         User loggedInUser = securityUtils.getCurrentUser();
         model.addAttribute(ERROR_MSG, errorMessages);
         model.addAttribute(COURT_VERDICT, courtVerdict);
@@ -355,6 +376,8 @@ public class CourtVerdictController extends GenericWorkFlowController {
         List<DemandDetail> demandDetailBeanList = courtVerdictDCBService.setDemandBeanList(dmndDetails);
         courtVerdict.setDemandDetailBeanList(demandDetailBeanList);
         model.addAttribute("dmndDetails", demandDetailBeanList);
+        model.addAttribute("caseStatus", status);
+        model.addAttribute("caseDate", date);
         model.addAttribute(PROPERTY, courtVerdict.getBasicProperty().getActiveProperty());
         model.addAttribute(CURRENT_STATE, CREATED);
         model.addAttribute(ENDORSEMENT_NOTICE, new ArrayList<>());

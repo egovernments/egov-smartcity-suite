@@ -79,12 +79,10 @@
 			<th class="bluebgheadtd freeze-action-th"><spring:message
 					code="lbl.cv.addDel" /></th>
 		</tr>
-		<c:if test="${property.propertyDetail.floorDetailsProxy.size() != 0 }">
-			<c:forEach items="${property.propertyDetail.floorDetailsProxy}"
-				var="floorDetailsProxy" varStatus="status">
-				<tr  id="floorDetailsRow">
+		<c:if test="${property.propertyDetail.floorDetailsProxy.size() <= 1 }">
+			<tr id="floorDetailsRow">
 				<td class="greybox"><form:select cssClass="form-control"
-						path="property.propertyDetail.floorDetailsProxy[${status.index }].floorNo"
+						path="property.propertyDetail.floorDetailsProxy[0].floorNo"
 						id="floorNo" cssStyle="width:100%">
 						<form:option value="">--select--</form:option>
 						<c:forEach items="${flrNoMap}" var="flrNoMap">
@@ -92,7 +90,7 @@
 						</c:forEach>
 					</form:select></td>
 				<td class="greybox"><form:select cssClass="form-control"
-						path="property.propertyDetail.floorDetailsProxy[${status.index }].structureClassification.id"
+						path="property.propertyDetail.floorDetailsProxy[0].structureClassification.id"
 						id="structure" cssStyle="width:100%">
 						<form:option value="">--select--</form:option>
 						<c:forEach items="${structureList}" var="structure">
@@ -100,7 +98,7 @@
 						</c:forEach>
 					</form:select></td>
 				<td class="greybox"><form:select cssClass="form-control"
-						path="property.propertyDetail.floorDetailsProxy[${status.index }].propertyUsage.id"
+						path="property.propertyDetail.floorDetailsProxy[0].propertyUsage.id"
 						id="usage" cssStyle="width:100%">
 						<form:option value="">--select--</form:option>
 						<c:forEach items="${usageList}" var="usageList">
@@ -108,7 +106,7 @@
 						</c:forEach>
 					</form:select></td>
 				<td class="greybox"><form:select cssClass="form-control"
-						path="property.propertyDetail.floorDetailsProxy[${status.index }].propertyOccupation.id"
+						path="property.propertyDetail.floorDetailsProxy[0].propertyOccupation.id"
 						id="occupation" cssStyle="width:100%">
 						<form:option value="">--select--</form:option>
 						<c:forEach items="${propOccList}" var="occupation">
@@ -117,36 +115,41 @@
 					</form:select></td>
 				<td class="greybox"><form:input
 						cssClass="form-control datepicker" id="constructionDate"
-						path="property.propertyDetail.floorDetailsProxy[${status.index }].constructionDate"
+						path="property.propertyDetail.floorDetailsProxy[0].constructionDate"
 						cssStyle="width:100%" /></td>
 				<td class="greybox"><form:input
 						cssClass="form-control datepicker" id="occupancyDate"
-						path="property.propertyDetail.floorDetailsProxy[${status.index }].occupancyDate"
+						path="property.propertyDetail.floorDetailsProxy[0].occupancyDate"
 						cssStyle="width:100%" /></td>
-				<td class="greybox"><form:select cssClass="unstructuredLand form-control"
-						path="property.propertyDetail.floorDetailsProxy[${status.index }].unstructuredLand"
-						id="unstructuredLand" onChange="enableDisableFloorArea(this);" data-idx="${status.index}"
-						cssStyle="width:100%">
+				<td class="greybox"><form:select
+						cssClass="unstructuredLand form-control"
+						path="property.propertyDetail.floorDetailsProxy[0].unstructuredLand"
+						id="unstructuredLand" onChange="enableDisableFloorArea(this);"
+						data-idx="0" cssStyle="width:100%">
 						<form:option value="false">No</form:option>
 						<form:option value="true">Yes</form:option>
 					</form:select></td>
-				<td class="greybox"><form:input cssClass="builtuplength" data-idx="${status.index}"
-						path="property.propertyDetail.floorDetailsProxy[${status.index }].builtUpArea.length"
-						id="builtUpArealength" cssStyle="width:100%" onblur="calculateAreaLength(this);" /></td>
-				<td class="greybox"><form:input cssClass="builtupbreadth" data-idx="${status.index}"
-						path="property.propertyDetail.floorDetailsProxy[${status.index }].builtUpArea.breadth"
-						id="builtUpAreabreadth" cssStyle="width:100%" onblur="calculateAreaBreadth(this);"/></td>
+				<td class="greybox"><form:input cssClass="builtuplength"
+						data-idx="0"
+						path="property.propertyDetail.floorDetailsProxy[0].builtUpArea.length"
+						id="builtUpArealength" cssStyle="width:100%"
+						onblur="calculateAreaLength(this);" /></td>
+				<td class="greybox"><form:input cssClass="builtupbreadth"
+						data-idx="0"
+						path="property.propertyDetail.floorDetailsProxy[0].builtUpArea.breadth"
+						id="builtUpAreabreadth" cssStyle="width:100%"
+						onblur="calculateAreaBreadth(this);" /></td>
 				<td class="greybox"><form:input cssClass="builtuparea"
-						path="property.propertyDetail.floorDetailsProxy[${status.index }].builtUpArea.area"
-						id="builtUpArea" cssStyle="width:100%" readonly="false"/></td>
+						path="property.propertyDetail.floorDetailsProxy[0].builtUpArea.area"
+						id="builtUpArea" cssStyle="width:100%" readonly="false" /></td>
 				<td class="greybox"><form:input cssClass="form-control"
-						path="property.propertyDetail.floorDetailsProxy[${status.index }].buildingPermissionNo"
+						path="property.propertyDetail.floorDetailsProxy[0].buildingPermissionNo"
 						cssStyle="width:100%" /></td>
 				<td class="greybox"><form:input
 						cssClass="form-control datepicker"
-						path="property.propertyDetail.floorDetailsProxy[${status.index }].buildingPermissionDate" /></td>
+						path="property.propertyDetail.floorDetailsProxy[0].buildingPermissionDate" /></td>
 				<td class="greybox"><form:input cssClass="form-control"
-						path="property.propertyDetail.floorDetailsProxy[${status.index }].buildingPlanPlinthArea.area"
+						path="property.propertyDetail.floorDetailsProxy[0].buildingPlanPlinthArea.area"
 						cssStyle="width:100%" /></td>
 				<td class="blueborderfortd freeze-action-td"><a
 					href="javascript:void(0);" class="btn-sm btn-default"
@@ -154,6 +157,88 @@
 							class="fa fa-plus"></i></span></a> <span id="deleteFloor"
 					name="deleteFloorBtn" class="btn-sm btn-default"
 					alt="removeFloorBtn"> <i class="fa fa-trash"></i></td>
+			</tr>
+		</c:if>
+		<c:if test="${property.propertyDetail.floorDetailsProxy.size() > 1 }">
+			<c:forEach items="${property.propertyDetail.floorDetailsProxy}"
+				var="floorDetailsProxy" varStatus="status">
+				<tr id="floorDetailsRow">
+					<td class="greybox"><form:select cssClass="form-control"
+							path="property.propertyDetail.floorDetailsProxy[${status.index }].floorNo"
+							id="floorNo" cssStyle="width:100%">
+							<form:option value="">--select--</form:option>
+							<c:forEach items="${flrNoMap}" var="flrNoMap">
+								<form:option value="${flrNoMap.key}">${flrNoMap.value}</form:option>
+							</c:forEach>
+						</form:select></td>
+					<td class="greybox"><form:select cssClass="form-control"
+							path="property.propertyDetail.floorDetailsProxy[${status.index }].structureClassification.id"
+							id="structure" cssStyle="width:100%">
+							<form:option value="">--select--</form:option>
+							<c:forEach items="${structureList}" var="structure">
+								<form:option value="${structure.id}">${structure.typeName}</form:option>
+							</c:forEach>
+						</form:select></td>
+					<td class="greybox"><form:select cssClass="form-control"
+							path="property.propertyDetail.floorDetailsProxy[${status.index }].propertyUsage.id"
+							id="usage" cssStyle="width:100%">
+							<form:option value="">--select--</form:option>
+							<c:forEach items="${usageList}" var="usageList">
+								<form:option value="${usageList.id}">${usageList.usageName}</form:option>
+							</c:forEach>
+						</form:select></td>
+					<td class="greybox"><form:select cssClass="form-control"
+							path="property.propertyDetail.floorDetailsProxy[${status.index }].propertyOccupation.id"
+							id="occupation" cssStyle="width:100%">
+							<form:option value="">--select--</form:option>
+							<c:forEach items="${propOccList}" var="occupation">
+								<form:option value="${occupation.id}">${occupation.occupation}</form:option>
+							</c:forEach>
+						</form:select></td>
+					<td class="greybox"><form:input
+							cssClass="form-control datepicker" id="constructionDate"
+							path="property.propertyDetail.floorDetailsProxy[${status.index }].constructionDate"
+							cssStyle="width:100%" /></td>
+					<td class="greybox"><form:input
+							cssClass="form-control datepicker" id="occupancyDate"
+							path="property.propertyDetail.floorDetailsProxy[${status.index }].occupancyDate"
+							cssStyle="width:100%" /></td>
+					<td class="greybox"><form:select
+							cssClass="unstructuredLand form-control"
+							path="property.propertyDetail.floorDetailsProxy[${status.index }].unstructuredLand"
+							id="unstructuredLand" onChange="enableDisableFloorArea(this);"
+							data-idx="${status.index}" cssStyle="width:100%">
+							<form:option value="false">No</form:option>
+							<form:option value="true">Yes</form:option>
+						</form:select></td>
+					<td class="greybox"><form:input cssClass="builtuplength"
+							data-idx="${status.index}"
+							path="property.propertyDetail.floorDetailsProxy[${status.index }].builtUpArea.length"
+							id="builtUpArealength" cssStyle="width:100%"
+							onblur="calculateAreaLength(this);" /></td>
+					<td class="greybox"><form:input cssClass="builtupbreadth"
+							data-idx="${status.index}"
+							path="property.propertyDetail.floorDetailsProxy[${status.index }].builtUpArea.breadth"
+							id="builtUpAreabreadth" cssStyle="width:100%"
+							onblur="calculateAreaBreadth(this);" /></td>
+					<td class="greybox"><form:input cssClass="builtuparea"
+							path="property.propertyDetail.floorDetailsProxy[${status.index }].builtUpArea.area"
+							id="builtUpArea" cssStyle="width:100%" readonly="false" /></td>
+					<td class="greybox"><form:input cssClass="form-control"
+							path="property.propertyDetail.floorDetailsProxy[${status.index }].buildingPermissionNo"
+							cssStyle="width:100%" /></td>
+					<td class="greybox"><form:input
+							cssClass="form-control datepicker"
+							path="property.propertyDetail.floorDetailsProxy[${status.index }].buildingPermissionDate" /></td>
+					<td class="greybox"><form:input cssClass="form-control"
+							path="property.propertyDetail.floorDetailsProxy[${status.index }].buildingPlanPlinthArea.area"
+							cssStyle="width:100%" /></td>
+					<td class="blueborderfortd freeze-action-td"><a
+						href="javascript:void(0);" class="btn-sm btn-default"
+						onclick="addFloors();"><span style="cursor: pointer;"><i
+								class="fa fa-plus"></i></span></a> <span id="deleteFloor"
+						name="deleteFloorBtn" class="btn-sm btn-default"
+						alt="removeFloorBtn"> <i class="fa fa-trash"></i></td>
 				</tr>
 			</c:forEach>
 		</c:if>

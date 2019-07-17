@@ -197,7 +197,7 @@ public class CourtVerdictDCBService {
 
         for (final DemandDetail dd : demandDetailBeanList) {
             dd.setInstallment(installmentDao.findById(dd.getInstallment().getId(), false));
-            if(dd.getRevisedCollection()!=null){
+            if(dd.getRevisedCollection()!=null && dd.getRevisedAmount()!=null){
             if (dd.getRevisedCollection().compareTo(dd.getActualAmount().subtract(dd.getRevisedAmount())) > 0) {
                 errors.put("revisedCollection",
                         "revised.collection.greater");
@@ -205,7 +205,7 @@ public class CourtVerdictDCBService {
             if(dd.getRevisedAmount().compareTo(dd.getActualAmount())>0)
                 errors.put("revisedDemand", "reviseddmd.gt.actualdmd");
             }
-            else
+            if(dd.getRevisedCollection()==null && dd.getRevisedAmount()!=null)
                 errors.put("revisedCollAmt", "mandatory.revised.collection");
         }
         return errors;

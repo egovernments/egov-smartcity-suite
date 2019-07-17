@@ -81,8 +81,8 @@
 	}
 	jQuery(document).ready(function() {
 
-		var action = jQuery('#action').text();
-		if (action == "Update Demand Directly") {
+		var action = jQuery('#action').val();
+		if (action == "UPDATE_DMND_DIRECTLY") {
 			jQuery('#demand').show()
 		} else {
 			jQuery('#demand').hide();
@@ -134,7 +134,7 @@ div.floors-tbl-freeze-column-div {
 		enctype="multipart/form-data" modelAttribute="courtVerdict">
 		<form:hidden path="" name="loggedUserIsEmployee"
 			id="loggedUserIsEmployee" value="${loggedUserIsEmployee}" />
-		<form:hidden path="" id="action" name="action" value="${action}" />
+		<form:hidden path="action" id="action" name="action" value="${action}" />
 
 		<div class="panel-heading">
 			<ul class="nav nav-tabs" id="tabs">
