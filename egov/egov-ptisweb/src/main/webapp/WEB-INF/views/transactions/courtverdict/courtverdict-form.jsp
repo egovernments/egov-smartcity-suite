@@ -378,5 +378,7 @@
 			</div>
 		</div>
 	</form:form>
+	<script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
+	
 </body>
 </html>

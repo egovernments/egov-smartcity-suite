@@ -164,6 +164,8 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
                 courtVerdictDCBService.addDemandDetails(courtVerdict);
                 model.addAttribute("dmndDetails", courtVerdict.getDemandDetailBeanList());
                 courtVerdictService.addModelAttributesForUpdateCV(courtVerdict, model);
+                model.addAttribute("caseStatus", status);
+                model.addAttribute("caseDate", date);
                 courtVerdictService.addModelAttributes(model, courtVerdict.getProperty(), request);
                 prepareWorkflow(model, courtVerdict, new WorkflowContainer());
 
