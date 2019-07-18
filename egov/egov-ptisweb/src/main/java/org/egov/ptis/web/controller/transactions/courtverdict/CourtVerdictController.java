@@ -226,7 +226,7 @@ public class CourtVerdictController extends GenericWorkFlowController {
         String date = "";
         String target = null;
         PropertyImpl property = courtVerdict.getProperty();
-        PropertyImpl oldProperty = oldCourtVerdict.getBasicProperty().getActiveProperty();
+        PropertyImpl oldProperty = courtVerdict.getBasicProperty().getActiveProperty();
         PropertyCourtCase propCourtCase = propCourtCaseService.getByAssessmentNo(assessmentNo);
         courtVerdict.setPropertyCourtCase(propCourtCase);
         List<Map<String, String>> legalCaseDetails = propertyTaxCommonUtils.getLegalCaseDetails(
