@@ -660,7 +660,7 @@ public class CourtVerdictService {
 
     }
 
-    public CourtVerdict updatePropertyDetails(CourtVerdict courtVerdict) {
+    public CourtVerdict updatePropertyDetails(CourtVerdict courtVerdict, Long plotAreaId, Long layoutAuthorityId) {
         final Character status = STATUS_WORKFLOW;
         courtVerdict.getBasicProperty().setUnderWorkflow(true);
         courtVerdict.getProperty().setPropertyModifyReason("COURTVERDICT");
@@ -671,6 +671,11 @@ public class CourtVerdictService {
                 courtVerdict.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode());
         newProperty.getPropertyDetail().setPropertyTypeMaster(propTypeMaster);
 
+        if (newProperty.getPropertyDetail().getCategoryType() != null) {
+            newProperty.getPropertyDetail().setCategoryType(courtVerdict.getProperty().getPropertyDetail().getCategoryType());
+        } else
+            newProperty.getPropertyDetail()
+                    .setCategoryType(courtVerdict.getBasicProperty().getActiveProperty().getPropertyDetail().getCategoryType());
         if (propTypeMaster.getType().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND_STR))
             newProperty.getPropertyDetail().setPropertyType(VACANT_PROPERTY);
         else
@@ -691,8 +696,8 @@ public class CourtVerdictService {
                         ? newProperty.getPropertyDetail().getWallType().getId() : null,
                 newProperty.getPropertyDetail().getWoodType() != null
                         ? newProperty.getPropertyDetail().getWoodType().getId() : null,
-                null, null, newProperty.getPropertyDetail().getVacantLandPlotArea().getId(),
-                newProperty.getPropertyDetail().getLayoutApprovalAuthority().getId(), Boolean.FALSE);
+                null, null, plotAreaId,
+                layoutAuthorityId, Boolean.FALSE);
 
         if (!newProperty.getPropertyDetail().getPropertyTypeMaster().getCode()
                 .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
@@ -783,7 +788,7 @@ public class CourtVerdictService {
 
     public void setPtDemandSet(CourtVerdict courtVerdict) {
 
-        List<Ptdemand> currPtdemand=getCurrPtDemand(courtVerdict);
+        List<Ptdemand> currPtdemand = getCurrPtDemand(courtVerdict);
 
         if (currPtdemand != null) {
             final Ptdemand ptdemand = (Ptdemand) currPtdemand.get(0).clone();
@@ -794,7 +799,8 @@ public class CourtVerdictService {
             courtVerdict.getProperty().getPtDemandSet().add(ptdemand);
         }
     }
-    public List<Ptdemand> getCurrPtDemand(CourtVerdict courtVerdict){
+
+    public List<Ptdemand> getCurrPtDemand(CourtVerdict courtVerdict) {
         final List<Ptdemand> currPtdemand;
         final javax.persistence.Query qry = entityManager.createNamedQuery("QUERY_CURRENT_PTDEMAND");
         qry.setParameter("basicProperty", courtVerdict.getProperty().getBasicProperty());

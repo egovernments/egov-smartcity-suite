@@ -368,7 +368,28 @@ function calculateCollectionAmount(obj) {
 		}
 	}
 }
-
+function changeHiddenPlotArea(obj){
+	
+	
+	var plotArea = obj.value;
+	jQuery('#courtVerdictViewForm').append(jQuery('<input/>', {
+        id: 'plotAreaId',
+        type: 'hidden',
+        name: 'plotId',
+        value: plotArea
+        }));
+}
+function changeHiddenLayoutAuthority(obj){
+	
+	
+	var layoutAuthority = obj.value;
+	jQuery('#courtVerdictViewForm').append(jQuery('<input/>', {
+        id: 'layoutAuthorityId',
+        type: 'hidden',
+        name: 'layoutId',
+        value: layoutAuthority
+        }));
+}
 function addFloors()
 {
 	var tbl = document.getElementById('floorDetailsTable');

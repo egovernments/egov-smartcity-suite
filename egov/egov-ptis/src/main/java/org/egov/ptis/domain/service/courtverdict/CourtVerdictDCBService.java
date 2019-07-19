@@ -170,16 +170,23 @@ public class CourtVerdictDCBService {
                     break;
                 }
             }
-       List<Ptdemand> currPtdemand= courtVerdictService.getCurrPtDemand(courtVerdict);
-        if (currPtdemand != null) {
-            final Ptdemand ptdemand = (Ptdemand) currPtdemand.get(0).clone();
-            ptdemand.setBaseDemand(getTotalDemand(demandDetails));
-            ptdemand.setEgDemandDetails(demandDetails);
-            ptdemand.setEgptProperty(courtVerdict.getProperty());
-            ptdemand.getDmdCalculations().setCreatedDate(new Date());
-            persistenceService.applyAuditing(ptdemand.getDmdCalculations());
-            courtVerdict.getProperty().getPtDemandSet().clear();
-            courtVerdict.getProperty().getPtDemandSet().add(ptdemand);
+        if (courtVerdict.getState() != null) {
+            for (Ptdemand ptdemand : courtVerdict.getProperty().getPtDemandSet()) {
+
+                ptdemand.setEgDemandDetails(demandDetails);
+            }
+        } else {
+            List<Ptdemand> currPtdemand = courtVerdictService.getCurrPtDemand(courtVerdict);
+            if (currPtdemand != null) {
+                final Ptdemand ptdemand = (Ptdemand) currPtdemand.get(0).clone();
+                ptdemand.setBaseDemand(getTotalDemand(demandDetails));
+                ptdemand.setEgDemandDetails(demandDetails);
+                ptdemand.setEgptProperty(courtVerdict.getProperty());
+                ptdemand.getDmdCalculations().setCreatedDate(new Date());
+                persistenceService.applyAuditing(ptdemand.getDmdCalculations());
+                courtVerdict.getProperty().getPtDemandSet().clear();
+                courtVerdict.getProperty().getPtDemandSet().add(ptdemand);
+            }
         }
     }
 
@@ -197,15 +204,15 @@ public class CourtVerdictDCBService {
 
         for (final DemandDetail dd : demandDetailBeanList) {
             dd.setInstallment(installmentDao.findById(dd.getInstallment().getId(), false));
-            if(dd.getRevisedCollection()!=null && dd.getRevisedAmount()!=null){
-            if (dd.getRevisedCollection().compareTo(dd.getActualAmount().subtract(dd.getRevisedAmount())) > 0) {
-                errors.put("revisedCollection",
-                        "revised.collection.greater");
+            if (dd.getRevisedCollection() != null && dd.getRevisedAmount() != null) {
+                if (dd.getRevisedCollection().compareTo(dd.getActualAmount().subtract(dd.getRevisedAmount())) > 0) {
+                    errors.put("revisedCollection",
+                            "revised.collection.greater");
+                }
+                if (dd.getRevisedAmount().compareTo(dd.getActualAmount()) > 0)
+                    errors.put("revisedDemand", "reviseddmd.gt.actualdmd");
             }
-            if(dd.getRevisedAmount().compareTo(dd.getActualAmount())>0)
-                errors.put("revisedDemand", "reviseddmd.gt.actualdmd");
-            }
-            if(dd.getRevisedCollection()==null && dd.getRevisedAmount()!=null)
+            if (dd.getRevisedCollection() == null && dd.getRevisedAmount() != null)
                 errors.put("revisedCollAmt", "mandatory.revised.collection");
         }
         return errors;

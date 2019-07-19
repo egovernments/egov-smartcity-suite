@@ -62,6 +62,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.SUCCESS_MSG;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
 import static org.egov.ptis.constants.PropertyTaxConstants.UPDATE_DEMAND_DIRECTLY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_ACTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND_STR;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -222,11 +223,22 @@ public class CourtVerdictController extends GenericWorkFlowController {
     public String save(@ModelAttribute("courtVerdict") CourtVerdict courtVerdict, final RedirectAttributes redirectAttributes,
             final Model model, final HttpServletRequest request, @RequestParam String workFlowAction,
             @PathVariable String assessmentNo) {
+        Long plotAreaId = null;
+        Long layoutAuthorityId = null;
+        String action = courtVerdict.getAction();
         String status = "";
         String date = "";
         String target = null;
         PropertyImpl property = courtVerdict.getProperty();
         PropertyImpl oldProperty = courtVerdict.getBasicProperty().getActiveProperty();
+        if (property.getPropertyDetail().getPropertyTypeMaster().getType().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND_STR)
+                && action.equalsIgnoreCase(RE_ASSESS)) {
+            plotAreaId = Long.valueOf(request.getParameter("plotId"));
+            layoutAuthorityId = Long.valueOf(request.getParameter("layoutId"));
+        } else {
+            plotAreaId = courtVerdict.getProperty().getPropertyDetail().getVacantLandPlotArea().getId();
+            layoutAuthorityId = courtVerdict.getProperty().getPropertyDetail().getLayoutApprovalAuthority().getId();
+        }
         PropertyCourtCase propCourtCase = propCourtCaseService.getByAssessmentNo(assessmentNo);
         courtVerdict.setPropertyCourtCase(propCourtCase);
         List<Map<String, String>> legalCaseDetails = propertyTaxCommonUtils.getLegalCaseDetails(
@@ -238,7 +250,6 @@ public class CourtVerdictController extends GenericWorkFlowController {
         }
         final Boolean loggedUserIsEmployee = Boolean.valueOf(request.getParameter(LOGGED_IN_USER));
         User loggedInUser = securityUtils.getCurrentUser();
-        String action = courtVerdict.getAction();
         Map<String, String> errorMessages = new HashMap<>();
         propertyTaxCommonUtils.setSourceOfProperty(loggedInUser, false);
         if (action.isEmpty()) {
@@ -273,7 +284,7 @@ public class CourtVerdictController extends GenericWorkFlowController {
                             && !request.getParameter(APPROVAL_POSITION).isEmpty())
                         approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
 
-                    courtVerdictService.updatePropertyDetails(courtVerdict);
+                    courtVerdictService.updatePropertyDetails(courtVerdict, plotAreaId, layoutAuthorityId);
                     PropertyImpl modProperty = courtVerdictDCBService.modifyDemand(property, oldProperty);
 
                     if (modProperty == null)
@@ -306,7 +317,7 @@ public class CourtVerdictController extends GenericWorkFlowController {
                             && !request.getParameter(APPROVAL_POSITION).isEmpty())
                         approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
 
-                    courtVerdictService.updatePropertyDetails(courtVerdict);
+                    courtVerdictService.updatePropertyDetails(courtVerdict, plotAreaId, layoutAuthorityId);
                     courtVerdictDCBService.updateDemandDetails(courtVerdict);
                     courtVerdict.getBasicProperty().addProperty(courtVerdict.getProperty());
                     courtVerdictService.saveCourtVerdict(courtVerdict, approvalPosition, approvalComent, null,
@@ -333,7 +344,7 @@ public class CourtVerdictController extends GenericWorkFlowController {
                             && !request.getParameter(APPROVAL_POSITION).isEmpty())
                         approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
 
-                    courtVerdictService.updatePropertyDetails(courtVerdict);
+                    courtVerdictService.updatePropertyDetails(courtVerdict, plotAreaId, layoutAuthorityId);
                     courtVerdictService.setPtDemandSet(courtVerdict);
                     courtVerdict.getBasicProperty().addProperty(courtVerdict.getProperty());
 
@@ -355,8 +366,8 @@ public class CourtVerdictController extends GenericWorkFlowController {
 
     private String displayErrors(CourtVerdict courtVerdict, Model model, Map<String, String> errorMessages,
             HttpServletRequest request) {
-        String status="";
-        String date="";
+        String status = "";
+        String date = "";
         List<Map<String, String>> legalCaseDetails = propertyTaxCommonUtils.getLegalCaseDetails(
                 courtVerdict.getPropertyCourtCase().getCaseNo(),
                 request);

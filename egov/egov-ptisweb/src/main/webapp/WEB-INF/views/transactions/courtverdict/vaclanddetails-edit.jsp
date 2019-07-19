@@ -97,7 +97,7 @@
 										cssClass="form-control datepicker"
 										path="property.propertyDetail.dateOfCompletion" /></td>
 								<td class="greybox"><form:select cssClass="form-control"
-										path="property.propertyDetail.vacantLandPlotArea.id">
+										path="" onChange="changeHiddenPlotArea(this)">
 										<form:option value="">--Select--</form:option>
 
 										<c:forEach items="${plotAreaList}" var="plotArea">
@@ -105,7 +105,7 @@
 										</c:forEach>
 									</form:select></td>
 								<td class="greybox"><form:select cssClass="form-control"
-										path="property.propertyDetail.layoutApprovalAuthority.id">
+										path="" onChange="changeHiddenLayoutAuthority(this)">
 										<form:option value="">--Select--</form:option>
 
 										<c:forEach items="${layoutApprovalList}" var="layoutApproval">

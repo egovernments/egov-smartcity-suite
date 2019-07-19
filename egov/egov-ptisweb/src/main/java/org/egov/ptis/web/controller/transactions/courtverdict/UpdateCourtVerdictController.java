@@ -62,6 +62,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APP
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_ACTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 
 import java.util.List;
 import java.util.Map;
@@ -184,10 +186,19 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
         final Boolean loggedUserIsEmployee = Boolean.valueOf(request.getParameter(LOGGED_IN_USER));
         String successMessage = null;
         Long approvalPosition = 0l;
+        Long plotAreaId = null;
+        Long layoutAuthorityId = null;
         String approvalComent = "";
         String workFlowAct = workFlowAction;
         String target = null;
-
+        String currentDesg = courtVerdictService.getLoggedInUserDesignation(
+                courtVerdict.getCurrentState().getOwnerPosition().getId(),
+                securityUtils.getCurrentUser());
+        if (courtVerdict.getProperty().getPropertyDetail().getPropertyTypeMaster().getType()
+                .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND_STR)) {
+            plotAreaId = courtVerdict.getProperty().getPropertyDetail().getVacantLandPlotArea().getId();
+            layoutAuthorityId = courtVerdict.getProperty().getPropertyDetail().getLayoutApprovalAuthority().getId();
+        }
         if (request.getParameter(APPROVAL_COMMENT) != null)
             approvalComent = request.getParameter(APPROVAL_COMMENT);
         if (request.getParameter(WF_ACTION) != null)
@@ -226,23 +237,23 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
 
             target = CV_SUCCESS_FORM;
         } else {
-            
-            if(courtVerdict.getAction().equalsIgnoreCase(RE_ASSESS)){
-                courtVerdictService.updatePropertyDetails(courtVerdict);
-                PropertyImpl modProperty = courtVerdictDCBService.modifyDemand(courtVerdict.getProperty(), courtVerdict.getBasicProperty().getActiveProperty());
+
+            if (courtVerdict.getAction().equalsIgnoreCase(RE_ASSESS) && currentDesg.contains(REVENUE_OFFICER_DESGN)) {
+                courtVerdictService.updatePropertyDetails(courtVerdict, plotAreaId, layoutAuthorityId);
+                PropertyImpl modProperty = courtVerdictDCBService.modifyDemand(courtVerdict.getProperty(),
+                        courtVerdict.getBasicProperty().getActiveProperty());
 
                 if (modProperty == null)
                     courtVerdict.getBasicProperty().addProperty(courtVerdict.getProperty());
                 else
                     courtVerdict.getBasicProperty().addProperty(modProperty);
-            }
-            else if(courtVerdict.getAction().equalsIgnoreCase(UPDATE_DEMAND_DIRECTLY)){
-                courtVerdictService.updatePropertyDetails(courtVerdict);
+            } else if (courtVerdict.getAction().equalsIgnoreCase(UPDATE_DEMAND_DIRECTLY)
+                    && currentDesg.contains(REVENUE_OFFICER_DESGN)) {
+                courtVerdictService.updatePropertyDetails(courtVerdict, plotAreaId, layoutAuthorityId);
                 courtVerdictDCBService.updateDemandDetails(courtVerdict);
                 courtVerdict.getBasicProperty().addProperty(courtVerdict.getProperty());
-            }
-            else{
-                courtVerdictService.updatePropertyDetails(courtVerdict);
+            } else if (courtVerdict.getAction().equalsIgnoreCase("CANCEL_PROP") && currentDesg.contains(REVENUE_OFFICER_DESGN)) {
+                courtVerdictService.updatePropertyDetails(courtVerdict, plotAreaId, layoutAuthorityId);
                 courtVerdictService.setPtDemandSet(courtVerdict);
                 courtVerdict.getBasicProperty().addProperty(courtVerdict.getProperty());
             }
