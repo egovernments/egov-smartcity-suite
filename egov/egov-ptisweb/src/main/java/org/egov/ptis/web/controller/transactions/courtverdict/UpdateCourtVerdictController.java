@@ -153,7 +153,7 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
                 target = CV_VIEW;
             }
         } else {
-            if (courtVerdict.getAction().equalsIgnoreCase(RE_ASSESS)) {
+            if (!courtVerdict.getAction().equalsIgnoreCase(UPDATE_DEMAND_DIRECTLY)) {
                 courtVerdictService.addModelAttributesForUpdateCV(courtVerdict, model);
                 courtVerdictService.addModelAttributes(model, courtVerdict.getProperty(), request);
                 model.addAttribute("caseStatus", status);
@@ -161,7 +161,7 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
                 prepareWorkflow(model, courtVerdict, new WorkflowContainer());
 
                 target = CV_FORM;
-            } else if (courtVerdict.getAction().equalsIgnoreCase(UPDATE_DEMAND_DIRECTLY)) {
+            } else {
 
                 courtVerdictDCBService.addDemandDetails(courtVerdict);
                 model.addAttribute("dmndDetails", courtVerdict.getDemandDetailBeanList());

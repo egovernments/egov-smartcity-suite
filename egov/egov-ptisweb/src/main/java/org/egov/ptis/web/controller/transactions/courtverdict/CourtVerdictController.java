@@ -62,7 +62,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.SUCCESS_MSG;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
 import static org.egov.ptis.constants.PropertyTaxConstants.UPDATE_DEMAND_DIRECTLY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_ACTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -231,13 +231,18 @@ public class CourtVerdictController extends GenericWorkFlowController {
         String target = null;
         PropertyImpl property = courtVerdict.getProperty();
         PropertyImpl oldProperty = courtVerdict.getBasicProperty().getActiveProperty();
-        if (property.getPropertyDetail().getPropertyTypeMaster().getType().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND_STR)
-                && action.equalsIgnoreCase(RE_ASSESS)) {
-            plotAreaId = Long.valueOf(request.getParameter("plotId"));
-            layoutAuthorityId = Long.valueOf(request.getParameter("layoutId"));
+        if (property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
+            if (action.equalsIgnoreCase(RE_ASSESS)) {
+                plotAreaId = Long.valueOf(request.getParameter("plotId"));
+                layoutAuthorityId = Long.valueOf(request.getParameter("layoutId"));
+            } else {
+                plotAreaId = courtVerdict.getProperty().getPropertyDetail().getVacantLandPlotArea().getId();
+                layoutAuthorityId = courtVerdict.getProperty().getPropertyDetail().getLayoutApprovalAuthority().getId();
+
+            }
         } else {
-            plotAreaId = courtVerdict.getProperty().getPropertyDetail().getVacantLandPlotArea().getId();
-            layoutAuthorityId = courtVerdict.getProperty().getPropertyDetail().getLayoutApprovalAuthority().getId();
+            plotAreaId = null;
+            layoutAuthorityId = null;
         }
         PropertyCourtCase propCourtCase = propCourtCaseService.getByAssessmentNo(assessmentNo);
         courtVerdict.setPropertyCourtCase(propCourtCase);
@@ -271,7 +276,7 @@ public class CourtVerdictController extends GenericWorkFlowController {
 
         } else {
             if (action.equalsIgnoreCase(RE_ASSESS)) {
-                errorMessages = courtVerdictService.validate(courtVerdict);
+                errorMessages = courtVerdictService.validate(courtVerdict,plotAreaId,layoutAuthorityId);
                 if (errorMessages.isEmpty()) {
                     Long approvalPosition = 0l;
                     String approvalComent = "";

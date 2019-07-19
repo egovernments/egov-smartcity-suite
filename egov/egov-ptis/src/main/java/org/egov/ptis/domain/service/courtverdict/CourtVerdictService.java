@@ -273,7 +273,7 @@ public class CourtVerdictService {
         return usageList;
     }
 
-    public Map<String, String> validate(CourtVerdict courtVerdict) {
+    public Map<String, String> validate(CourtVerdict courtVerdict, Long plotAreaId, Long layoutAuthorityId) {
         HashMap<String, String> errorMessages = new HashMap<>();
         Date propCompletionDate = propertyTaxUtil
                 .getLowestInstallmentForProperty(courtVerdict.getBasicProperty().getActiveProperty());
@@ -298,8 +298,7 @@ public class CourtVerdictService {
                     courtVerdict.getBasicProperty().getPropertyID().getWestBoundary(),
                     courtVerdict.getBasicProperty().getPropertyID().getSouthBoundary(),
                     courtVerdict.getBasicProperty().getPropertyID().getNorthBoundary(),
-                    courtVerdict.getProperty().getPropertyDetail().getVacantLandPlotArea().getId(),
-                    courtVerdict.getProperty().getPropertyDetail().getLayoutApprovalAuthority().getId(), errorMessages,
+                    plotAreaId, layoutAuthorityId, errorMessages,
                     propCompletionDate);
         return errorMessages;
     }
