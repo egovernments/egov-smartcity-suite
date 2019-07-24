@@ -78,6 +78,7 @@ import org.egov.ptis.domain.entity.property.CourtVerdict;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.courtverdict.CourtVerdictDCBService;
 import org.egov.ptis.domain.service.courtverdict.CourtVerdictService;
+import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -105,7 +106,8 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
     private PropertyTaxUtil propertyTaxUtil;
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
-
+    @Autowired
+    private PropertyService propertyService;
     @ModelAttribute
     public CourtVerdict courtVerdictModel(@PathVariable Long id) {
         return courtVerdictService.getCourtVerdictById(id);
@@ -215,7 +217,10 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
 
                 courtVerdictDCBService.updateDemand(courtVerdict);
             }
+            if (request.getParameter(ACTION).equalsIgnoreCase(RE_ASSESS)) {
 
+                propertyService.copyCollection(courtVerdict.getBasicProperty().getActiveProperty(), courtVerdict.getProperty());
+            }
             courtVerdictService.saveCourtVerdict(courtVerdict, approvalPosition, approvalComent, null, workFlowAction,
                     loggedUserIsEmployee, courtVerdict.getAction());
 
