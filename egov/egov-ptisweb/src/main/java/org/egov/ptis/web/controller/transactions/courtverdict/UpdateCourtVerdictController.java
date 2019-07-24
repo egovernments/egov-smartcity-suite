@@ -55,6 +55,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CV_SUCCESS_FORM;
 import static org.egov.ptis.constants.PropertyTaxConstants.CV_VIEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_DETAIL_LIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOGGED_IN_USER;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.RE_ASSESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.SUCCESS_MSG;
 import static org.egov.ptis.constants.PropertyTaxConstants.UPDATE_DEMAND_DIRECTLY;
@@ -62,8 +64,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APP
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_ACTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 
 import java.util.List;
 import java.util.Map;
@@ -78,7 +78,6 @@ import org.egov.ptis.domain.entity.property.CourtVerdict;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.courtverdict.CourtVerdictDCBService;
 import org.egov.ptis.domain.service.courtverdict.CourtVerdictService;
-import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -106,8 +105,7 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
     private PropertyTaxUtil propertyTaxUtil;
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
-    @Autowired
-    private PropertyService propertyService;
+
     @ModelAttribute
     public CourtVerdict courtVerdictModel(@PathVariable Long id) {
         return courtVerdictService.getCourtVerdictById(id);
@@ -217,10 +215,7 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
 
                 courtVerdictDCBService.updateDemand(courtVerdict);
             }
-            if (request.getParameter(ACTION).equalsIgnoreCase(RE_ASSESS)) {
 
-                propertyService.copyCollection(courtVerdict.getBasicProperty().getActiveProperty(), courtVerdict.getProperty());
-            }
             courtVerdictService.saveCourtVerdict(courtVerdict, approvalPosition, approvalComent, null, workFlowAction,
                     loggedUserIsEmployee, courtVerdict.getAction());
 

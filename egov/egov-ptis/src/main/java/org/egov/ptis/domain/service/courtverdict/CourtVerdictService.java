@@ -551,6 +551,8 @@ public class CourtVerdictService {
                 courtVerdict.getBasicProperty().getActiveProperty().setStatus(STATUS_ISHISTORY);
                 courtVerdict.getBasicProperty().addProperty(courtVerdict.getProperty());
                 courtVerdict.getBasicProperty().setUnderWorkflow(false);
+                propertyService.copyCollection(courtVerdict.getBasicProperty().getActiveProperty(), courtVerdict.getProperty());
+
                 if (action.equalsIgnoreCase("CANCEL_PROP")) {
                     PropertyStatusValues propStatusValues = propertyService.createPropStatVal(courtVerdict.getBasicProperty(),
                             PropertyTaxConstants.PROP_DEACT_RSN, null, null, null, null, null);
@@ -733,7 +735,7 @@ public class CourtVerdictService {
             if (propertyID.getZone() != null)
                 property.getBasicProperty().getPropertyID()
                         .setZone(boundaryService.getBoundaryById(propertyID.getZone().getId()));
-            if (propertyID.getWard()!= null)
+            if (propertyID.getWard() != null)
                 property.getBasicProperty().getPropertyID()
                         .setWard(boundaryService.getBoundaryById(propertyID.getWard().getId()));
             if (propertyID.getLocality() != null)
