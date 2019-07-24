@@ -385,6 +385,23 @@ div.floors-tbl-freeze-column-div {
 				</div>
 			</c:if>
 
+			<c:if test="${currentDesignation == 'Commissioner'}">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="row">
+							<label class="col-sm-3 control-label text-right"><spring:message
+									code="lbl.comments" /></label>
+							<div class="col-sm-6 add-margin">
+								<form:textarea class="form-control" path="" id="approvalComent"
+									name="approvalComent" maxlength="1024" />
+								<small class="error-msg" style="float: right;"> <spring:message
+										code="lbl.comments.maxlength" />
+								</small>
+							</div>
+						</div>
+					</div>
+				</div>
+			</c:if>
 			<div id="loadingMask" style="display: none">
 				<p align="center">
 					<img src="/ptis/resources/erp2/images/bar_loader.gif"> <span

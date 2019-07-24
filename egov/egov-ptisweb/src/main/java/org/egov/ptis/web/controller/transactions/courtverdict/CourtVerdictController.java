@@ -188,7 +188,8 @@ public class CourtVerdictController extends GenericWorkFlowController {
             return TARGET_WORKFLOW_ERROR;
         }
         for (PropertyImpl prop : props) {
-            if(prop.getPropertyModifyReason().equalsIgnoreCase("COURTVERDICT")){
+            if (prop.getPropertyModifyReason().equalsIgnoreCase("COURTVERDICT")
+                    && (prop.getStatus().equals('A') || prop.getStatus().equals('H'))) {
                 model.addAttribute("wfPendingMsg",
                         "Court Verdict is already completed for this property.");
                 return TARGET_WORKFLOW_ERROR;
