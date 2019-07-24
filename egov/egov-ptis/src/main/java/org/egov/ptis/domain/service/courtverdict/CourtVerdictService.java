@@ -705,6 +705,7 @@ public class CourtVerdictService {
         else
             propCompletionDate = newProperty.getPropertyDetail().getDateOfCompletion();
         newProperty.getBasicProperty().setPropOccupationDate(propCompletionDate);
+        newProperty.setEffectiveDate(propCompletionDate);
 
         if (newProperty != null && !newProperty.getDocuments().isEmpty())
             propertyService.processAndStoreDocument(newProperty.getDocuments());
@@ -729,19 +730,19 @@ public class CourtVerdictService {
     private void setPropertyID(PropertyImpl property) {
         PropertyID propertyID = property.getBasicProperty().getPropertyID();
         if (propertyID != null) {
-            if (propertyID.getZone().getId() != null)
+            if (propertyID.getZone() != null)
                 property.getBasicProperty().getPropertyID()
                         .setZone(boundaryService.getBoundaryById(propertyID.getZone().getId()));
-            if (propertyID.getWard().getId() != null)
+            if (propertyID.getWard()!= null)
                 property.getBasicProperty().getPropertyID()
                         .setWard(boundaryService.getBoundaryById(propertyID.getWard().getId()));
-            if (propertyID.getLocality().getId() != null)
+            if (propertyID.getLocality() != null)
                 property.getBasicProperty().getPropertyID()
                         .setLocality(boundaryService.getBoundaryById(propertyID.getLocality().getId()));
-            if (propertyID.getArea().getId() != null)
+            if (propertyID.getArea() != null)
                 property.getBasicProperty().getPropertyID()
                         .setArea(boundaryService.getBoundaryById(propertyID.getArea().getId()));
-            if (propertyID.getElectionBoundary().getId() != null)
+            if (propertyID.getElectionBoundary() != null)
                 property.getBasicProperty().getPropertyID()
                         .setElectionBoundary(boundaryService.getBoundaryById(propertyID.getElectionBoundary().getId()));
             if (propertyID.getNorthBoundary() != null)

@@ -195,7 +195,9 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
                 courtVerdict.getCurrentState().getOwnerPosition().getId(),
                 securityUtils.getCurrentUser());
         if (courtVerdict.getProperty().getPropertyDetail().getPropertyTypeMaster().getType()
-                .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND_STR)) {
+                .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND_STR)
+                && courtVerdict.getProperty().getPropertyDetail().getVacantLandPlotArea() != null
+                && courtVerdict.getProperty().getPropertyDetail().getLayoutApprovalAuthority() != null) {
             plotAreaId = courtVerdict.getProperty().getPropertyDetail().getVacantLandPlotArea().getId();
             layoutAuthorityId = courtVerdict.getProperty().getPropertyDetail().getLayoutApprovalAuthority().getId();
         }
@@ -227,11 +229,16 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
 
             courtVerdictService.saveCourtVerdict(courtVerdict, approvalPosition, approvalComent, null, workFlowAction,
                     loggedUserIsEmployee, courtVerdict.getAction());
-
-            successMessage = "Court Verdict rejected and forwarded to :"
-                    + propertyTaxUtil.getApproverUserName(courtVerdict.getState().getOwnerPosition().getId())
-                    + " with application number "
-                    + courtVerdict.getApplicationNumber();
+            if (currentDesg.contains(REVENUE_OFFICER_DESGN))
+                successMessage = "Court Verdict is completely rejected by :"
+                        + propertyTaxUtil.getApproverUserName(courtVerdict.getState().getOwnerPosition().getId())
+                        + " with application number "
+                        + courtVerdict.getApplicationNumber();
+            else
+                successMessage = "Court Verdict rejected and forwarded to :"
+                        + propertyTaxUtil.getApproverUserName(courtVerdict.getState().getOwnerPosition().getId())
+                        + " with application number "
+                        + courtVerdict.getApplicationNumber();
 
             model.addAttribute(SUCCESS_MSG, successMessage);
 

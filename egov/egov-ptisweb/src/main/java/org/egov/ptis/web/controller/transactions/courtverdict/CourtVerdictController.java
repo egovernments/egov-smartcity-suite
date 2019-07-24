@@ -235,14 +235,12 @@ public class CourtVerdictController extends GenericWorkFlowController {
             if (action.equalsIgnoreCase(RE_ASSESS)) {
                 plotAreaId = Long.valueOf(request.getParameter("plotId"));
                 layoutAuthorityId = Long.valueOf(request.getParameter("layoutId"));
-            } else {
+            } else if (courtVerdict.getProperty().getPropertyDetail().getVacantLandPlotArea() != null
+                    && courtVerdict.getProperty().getPropertyDetail().getLayoutApprovalAuthority() != null) {
                 plotAreaId = courtVerdict.getProperty().getPropertyDetail().getVacantLandPlotArea().getId();
                 layoutAuthorityId = courtVerdict.getProperty().getPropertyDetail().getLayoutApprovalAuthority().getId();
 
             }
-        } else {
-            plotAreaId = null;
-            layoutAuthorityId = null;
         }
         PropertyCourtCase propCourtCase = propCourtCaseService.getByAssessmentNo(assessmentNo);
         courtVerdict.setPropertyCourtCase(propCourtCase);
@@ -276,7 +274,7 @@ public class CourtVerdictController extends GenericWorkFlowController {
 
         } else {
             if (action.equalsIgnoreCase(RE_ASSESS)) {
-                errorMessages = courtVerdictService.validate(courtVerdict,plotAreaId,layoutAuthorityId);
+                errorMessages = courtVerdictService.validate(courtVerdict, plotAreaId, layoutAuthorityId);
                 if (errorMessages.isEmpty()) {
                     Long approvalPosition = 0l;
                     String approvalComent = "";
