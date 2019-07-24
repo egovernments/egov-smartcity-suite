@@ -132,7 +132,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
     @Override
     public List getAllProperties(BasicProperty basicProperty) {
         Query qry = getCurrentSession().createQuery(
-                "from PropertyImpl P where P.basicProperty =:basicProperty  and P.status='N' ");
+                "from PropertyImpl P where P.basicProperty =:basicProperty ");
         qry.setEntity("basicProperty", basicProperty);
         return qry.list();
     }
