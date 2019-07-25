@@ -78,6 +78,7 @@ public class EgDemandDetails implements Serializable, Cloneable {
     private BigDecimal amtRebate = BigDecimal.ZERO;
     private EgDemand egDemand;
     private Long version;
+    private transient Set<EgDemandDetailVariation> egDemandDetailVariation =new HashSet<>();
 
     /**
      * Factory method for convenient creation.
@@ -141,6 +142,7 @@ public class EgDemandDetails implements Serializable, Cloneable {
         clone.setId(null);
         clone.setEgwStatus(null);
         clone.setEgdmCollectedReceipts(new HashSet<>());
+        clone.setEgDemandDetailVariation(new HashSet<>());
         return clone;
     }
 
@@ -326,4 +328,21 @@ public class EgDemandDetails implements Serializable, Cloneable {
     public void setVersion(Long version) {
         this.version = version;
     }
-}
+
+    public Set<EgDemandDetailVariation> getEgDemandDetailVariation() {
+        return egDemandDetailVariation;
+    }
+
+    public void setEgDemandDetailVariation(Set<EgDemandDetailVariation> egDemandDetailVariation) {
+        this.egDemandDetailVariation = egDemandDetailVariation;
+    }
+    
+    public void addEgDemandDetailVariation(EgDemandDetailVariation egDemandDetailVariation) {
+        getEgDemandDetailVariation().add(egDemandDetailVariation);
+    }
+
+    public void removeEgDemandDetailVariation(EgDemandDetailVariation egDemandDetailVariation) {
+        getEgDemandDetailVariation().remove(egDemandDetailVariation);
+    }
+
+  }

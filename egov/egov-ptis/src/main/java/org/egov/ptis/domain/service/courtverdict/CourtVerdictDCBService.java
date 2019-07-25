@@ -50,6 +50,7 @@ package org.egov.ptis.domain.service.courtverdict;
 import static java.math.BigDecimal.ZERO;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -58,6 +59,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -67,9 +69,18 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.formula.functions.T;
+import org.egov.collection.entity.ReceiptDetail;
+import org.egov.collection.integration.models.BillReceiptInfo;
+import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
+import org.egov.demand.dao.DemandGenericDao;
+import org.egov.demand.integration.TaxCollection;
+import org.egov.demand.model.EgDemandDetailVariation;
 import org.egov.demand.model.EgDemandDetails;
+import org.egov.demand.repository.demanddetailvariation.DemandDetailVariationRepository;
+import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.bean.demand.DemandDetail;
@@ -89,7 +100,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CourtVerdictDCBService {
+public class CourtVerdictDCBService extends TaxCollection {
 
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
@@ -116,6 +127,12 @@ public class CourtVerdictDCBService {
     private CourtVerdictService courtVerdictService;
     @Autowired
     private PTBillServiceImpl ptBillServiceImpl;
+    @Autowired
+    private ModuleService moduleDao;
+    @Autowired
+    private DemandDetailVariationRepository demandDetailVariationRepo;
+    @Autowired
+    private DemandGenericDao demandGenericDAO;
     private static final Logger LOGGER = Logger.getLogger(CourtVerdictService.class);
 
     public PropertyImpl modifyDemand(PropertyImpl newProperty, PropertyImpl oldProperty) {
@@ -134,7 +151,7 @@ public class CourtVerdictDCBService {
     public void updateDemandDetails(CourtVerdict courtVerdict) {
 
         Set<EgDemandDetails> demandDetails = propertyService.getCurrrentDemand(courtVerdict.getProperty()).getEgDemandDetails();
-
+        Set<EgDemandDetailVariation> variationSet = new HashSet<>();
         for (final EgDemandDetails dmdDetails : demandDetails)
             for (final DemandDetail dmdDetailBean : courtVerdict.getDemandDetailBeanList()) {
                 Boolean isUpdateAmount = Boolean.FALSE;
@@ -156,10 +173,11 @@ public class CourtVerdictDCBService {
                                 .equals(dmdDetailBean.getInstallment()))
                     isUpdateCollection = true;
 
-                if (isUpdateAmount)
-                    dmdDetails.setAmount(dmdDetailBean.getRevisedAmount() != null
-                            ? dmdDetailBean.getActualAmount().subtract(dmdDetailBean.getRevisedAmount())
-                            : BigDecimal.ZERO);
+                if (isUpdateAmount) {
+                    EgDemandDetailVariation dmdVar = persistDemandDetailVariation(dmdDetails, dmdDetailBean.getRevisedAmount());
+                    variationSet.add(dmdVar);
+                    dmdDetails.setEgDemandDetailVariation(variationSet);
+                }
                 if (isUpdateCollection)
                     dmdDetails.setAmtCollected(
                             dmdDetailBean.getRevisedCollection() != null ? dmdDetailBean.getRevisedCollection()
@@ -188,6 +206,10 @@ public class CourtVerdictDCBService {
                 courtVerdict.getProperty().getPtDemandSet().add(ptdemand);
             }
         }
+    }
+
+    protected Module module() {
+        return moduleDao.getModuleByName(PTMODULENAME);
     }
 
     private BigDecimal getTotalDemand(Set<EgDemandDetails> dmndDetails) {
@@ -239,7 +261,15 @@ public class CourtVerdictDCBService {
                     final Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
                     final String reasonMaster = demandDetail.getEgDemandReason().getEgDemandReasonMaster()
                             .getReasonMaster();
-                    final BigDecimal revisedAmount = oldDemandDetail.getAmount().subtract(demandDetail.getAmount());
+                    BigDecimal revisedAmount = BigDecimal.ZERO;
+                    for (EgDemandDetailVariation demandDetailVariation : demandDetail.getEgDemandDetailVariation()) {
+                        if (demandDetailVariation.getDemandDetail().getId().equals(demandDetail.getId())
+                                && demandDetailVariation.getDramount().compareTo(BigDecimal.ZERO) == 0) {
+                            revisedAmount = demandDetailVariation.getDramount();
+                            break;
+                        }
+                    }
+
                     final BigDecimal revisedCollection = demandDetail.getAmtCollected();
                     final DemandDetail dmdDtl = createDemandDetailBean(installment, reasonMaster, oldDemandDetail.getAmount(),
                             revisedAmount,
@@ -398,4 +428,30 @@ public class CourtVerdictDCBService {
         }));
         return demandDetails;
     }
+
+    @Override
+    public List<ReceiptDetail> reconstructReceiptDetail(String billReferenceNumber, BigDecimal actualAmountPaid,
+            List<ReceiptDetail> receiptDetailList) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String constructAdditionalInfoForReceipt(BillReceiptInfo billReceiptInfo) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ReceiptAmountInfo receiptAmountBifurcation(BillReceiptInfo billReceiptInfo) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void updateDemandDetails(BillReceiptInfo bri) {
+        // TODO Auto-generated method stub
+
+    }
+
 }
