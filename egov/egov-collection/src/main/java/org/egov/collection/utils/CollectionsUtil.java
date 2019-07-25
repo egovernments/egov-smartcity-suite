@@ -120,6 +120,7 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
@@ -1176,11 +1177,11 @@ public class CollectionsUtil {
      */
     public List<ValidationError> validateCollectionApprover(String approverIdPositionId, Long departmentId, Long designationId) {
         try {
-            String ids[] = approverIdPositionId.split("~");
-            if (ids.length != 2) {
+            if (StringUtils.isEmpty(approverIdPositionId) || !approverIdPositionId.contains("~")) {
                 return Collections.singletonList(new ValidationError("submitcollections.validation.select.approver",
                         "Please select a approver while submitting collection."));
             }
+            String ids[] = approverIdPositionId.split("~");
             Long approverId = Long.parseLong(ids[0]);
             Long positionId = Long.parseLong(ids[1]);
 

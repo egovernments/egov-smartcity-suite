@@ -73,6 +73,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -673,10 +674,12 @@ public class CollectionsWorkflowAction extends BaseFormAction {
 
         Long approverId = 0L;
         Long positionId = 0L;
-        String ids[] = approverIdPositionId.split("~");
-        if (ids.length == 2) {
-            approverId = Long.parseLong(ids[0]);
-            positionId = Long.parseLong(ids[1]);
+        if (StringUtils.isNotEmpty(approverIdPositionId)) {
+            String ids[] = approverIdPositionId.split("~");
+            if (ids.length == 2) {
+                approverId = Long.parseLong(ids[0]);
+                positionId = Long.parseLong(ids[1]);
+            }
         }
 
         ReceiptHeaderService.ReceiptApproverSpec receiptApproverSpec = new ReceiptHeaderService.ReceiptApproverSpec(
@@ -716,10 +719,12 @@ public class CollectionsWorkflowAction extends BaseFormAction {
 
         Long approverId = 0L;
         Long positionId = 0L;
-        String ids[] = approverIdPositionId.split("~");
-        if (ids.length == 2) {
-            approverId = Long.parseLong(ids[0]);
-            positionId = Long.parseLong(ids[1]);
+        if (StringUtils.isNotEmpty(approverIdPositionId)) {
+            String ids[] = approverIdPositionId.split("~");
+            if (ids.length == 2) {
+                approverId = Long.parseLong(ids[0]);
+                positionId = Long.parseLong(ids[1]);
+            }
         }
 
         ReceiptHeaderService.ReceiptApproverSpec receiptApproverSpec = new ReceiptHeaderService.ReceiptApproverSpec(
