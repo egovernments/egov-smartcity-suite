@@ -134,7 +134,7 @@ public class CourtVerdictDCBService extends TaxCollection {
     @Autowired
     private DemandGenericDao demandGenericDAO;
     private static final Logger LOGGER = Logger.getLogger(CourtVerdictService.class);
-
+    private static final String COURTCASE="COURT_CASE";
     public PropertyImpl modifyDemand(PropertyImpl newProperty, PropertyImpl oldProperty) {
         PropertyImpl modProperty = null;
 
@@ -174,7 +174,8 @@ public class CourtVerdictDCBService extends TaxCollection {
                     isUpdateCollection = true;
 
                 if (isUpdateAmount) {
-                    EgDemandDetailVariation dmdVar = persistDemandDetailVariation(dmdDetails, dmdDetailBean.getRevisedAmount());
+                    EgDemandDetailVariation dmdVar = persistDemandDetailVariation(dmdDetails, dmdDetailBean.getRevisedAmount(),COURTCASE);
+                    Set<EgDemandDetailVariation> variationSet = new HashSet<>();
                     variationSet.add(dmdVar);
                     dmdDetails.setEgDemandDetailVariation(variationSet);
                 }

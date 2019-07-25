@@ -593,13 +593,12 @@ public abstract class TaxCollection implements BillingIntegrationService {
         return egDmCollectedReceipt;
     }
     
-    protected EgDemandDetailVariation persistDemandDetailVariation(EgDemandDetails dmdDetails, BigDecimal revisedAmount) {
+    protected EgDemandDetailVariation persistDemandDetailVariation(EgDemandDetails dmdDetails, BigDecimal revisedAmount, String code) {
         EgDemandDetailVariation demandDetailVariation = new EgDemandDetailVariation();
         demandDetailVariation.setDemandDetail(dmdDetails);
-        demandDetailVariation.setDemandreasonMaster(demandGenericDAO.getDemandReasonMasterByCode("COURT_CASE", module()));
+        demandDetailVariation.setDemandreasonMaster(demandGenericDAO.getDemandReasonMasterByCode(code, module()));
         demandDetailVariation.setDramount(revisedAmount);
-/*        demandDetailVariationRepo.save(demandDetailVariation);
-*/        return demandDetailVariation;
+        return demandDetailVariation;
     }
 
     /**
