@@ -517,19 +517,20 @@
 									headerValue="--Select--" list="dropdownData.financialYearList"
 									listKey="id" id="finYearId" listValue="finYearRange"
 									label="finYearRange" name="finYearId" value="%{finYearId}" /></td>
-							
-							<td class="bluebox"><s:text name="bankremittance.approver" />:</td>
-							<td class="bluebox"><select name="approverId" id="approver"
-								class="form-control">
-									<option value="-1">--Select--</option>
-									<s:iterator status="istat" value="dropdownData.approverList"
-										var="mapping">
-										<option value='<s:property value="#mapping.approver.id" />'>
-											<s:property value="#mapping.approver.username" />::
-											<s:property value="#mapping.approver.name" />
-										</option>
-									</s:iterator>
-							</select></td>
+                            <s:if test="%{!isBankCollectionRemitter}">
+                                <td class="bluebox"><s:text name="bankremittance.approver" />:</td>
+                                <td class="bluebox"><select name="approverId" id="approver"
+                                    class="form-control">
+                                        <option value="-1">--Select--</option>
+                                        <s:iterator status="istat" value="dropdownData.approverList"
+                                            var="mapping">
+                                            <option value='<s:property value="#mapping.approver.id" />'>
+                                                <s:property value="#mapping.approver.username" />::
+                                                <s:property value="#mapping.approver.name" />
+                                            </option>
+                                        </s:iterator>
+                                </select></td>
+                            </s:if>
 							<td class="bluebox">&nbsp;</td>
 							<td class="bluebox">&nbsp;</td>
 						</tr>

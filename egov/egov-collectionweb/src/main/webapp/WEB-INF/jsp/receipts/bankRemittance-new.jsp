@@ -523,14 +523,16 @@
 									label="finYearRange" name="finYearId" value="%{finYearId}" />
 							</td>
 
-							<td class="bluebox"><s:text name="bankremittance.approver" />:</td>
-							<td class="bluebox">
-							    <s:select
-							        headerKey="-1" headerValue="--Select--"
-                                    name="approverId" id="approverId" cssClass="select"
-                                    list="dropdownData.approverList" listKey="approver.id" listValue="approver.name" value="%{approverId}"
-                                />
-							</td>
+s						    <s:if test="%{!isBankCollectionRemitter}">
+                                <td class="bluebox"><s:text name="bankremittance.approver" />:</td>
+                                <td class="bluebox">
+                                    <s:select
+                                        headerKey="-1" headerValue="--Select--"
+                                        name="approverId" id="approverId" cssClass="select"
+                                        list="dropdownData.approverList" listKey="approver.id" listValue="approver.name" value="%{approverId}"
+                                    />
+                                </td>
+                            </s:if>
 							<td class="bluebox">&nbsp;</td>
 							<td class="bluebox">&nbsp;</td>
 
@@ -633,6 +635,12 @@
 						<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 							title="Department" style="width:10%;text-align: center"
 							value="${currentRow.DEPARTMENTNAME}" />
+
+						<s:if test="%{!isBankCollectionRemitter}">
+                            <display:column headerClass="bluebgheadtd" class="blueborderfortd"
+                                title="Approver" style="width:10%;text-align: center"
+                                value="${currentRow.APPROVERNAME}" />
+                        </s:if>
 							
 						<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 							title="Approver" style="width:10%;text-align: center"
