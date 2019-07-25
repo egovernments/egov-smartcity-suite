@@ -912,10 +912,10 @@ public class CollectionsUtil {
         if (receiptHeader.getService().getCode().equals(CollectionConstants.SERVICECODE_LAMS)) {
             reconstructedReceiptDetail = getReconstructReceiptDetailsMS(receiptHeader, receiptDetailList);
             // Revert the code after complete integration.
-            if (reconstructedReceiptDetail != null && !reconstructedReceiptDetail.isEmpty()) {
+            if (reconstructedReceiptDetail != null && !reconstructedReceiptDetail.isEmpty())
                 for (ReceiptDetail receiptDetail : reconstructedReceiptDetail)
                     LOGGER.error("RECEIPT DETAILS: " + receiptDetail.toString());
-            } else
+            else
                 LOGGER.error("LAMS reconstructed receipt details empty.");
         } else {
             final BillingIntegrationService billingService = (BillingIntegrationService) getBean(receiptHeader.getService()
@@ -1042,7 +1042,8 @@ public class CollectionsUtil {
     public void emailReceiptAsAttachment(final ReceiptHeader receiptHeader, final byte[] attachment) {
         String emailBody = collectionApplicationProperties.getEmailBody();
         emailBody = String.format(emailBody, ApplicationThreadLocals.getCityName(), receiptHeader.getTotalAmount()
-                .toString(), receiptHeader.getService().getName(), receiptHeader.getConsumerCode(), receiptHeader
+                .toString(), receiptHeader.getService().getName(), receiptHeader.getConsumerCode(),
+                receiptHeader
                         .getReceiptdate().toString(),
                 ApplicationThreadLocals.getCityName());
         String emailSubject = collectionApplicationProperties.getEmailSubject();
@@ -1165,6 +1166,42 @@ public class CollectionsUtil {
             return jurValuesId.toString();
         } else
             return "";
+    }
+
+    /**
+     * Validate if the id is non-negative, has a employee for passed approverEmployeeId
+     * @param approverIdPositionId Id of an employee
+     * @return Empty list if validation passed, or a singleton list of ValidationError with the first validation error it
+     * encounters
+     */
+    public List<ValidationError> validateCollectionApprover(String approverIdPositionId, Long departmentId, Long designationId) {
+        try {
+            String ids[] = approverIdPositionId.split("~");
+            if (ids.length != 2) {
+                return Collections.singletonList(new ValidationError("submitcollections.validation.select.approver",
+                        "Please select a approver while submitting collection."));
+            }
+            Long approverId = Long.parseLong(ids[0]);
+            Long positionId = Long.parseLong(ids[1]);
+
+            if (approverId < 0)
+                return Collections.singletonList(new ValidationError("submitcollections.validation.select.approver",
+                        "Please select a approver while submitting collection."));
+            Employee approver = employeeService.getEmployeeById(approverId);
+            if (approver == null)
+                return Collections.singletonList(new ValidationError("submitcollections.validation.select.approver.employee",
+                        "Selected approver is not an employee"));
+            List<Assignment> assignmentList = assignmentService.findByDepartmentAndDesignation(departmentId, designationId);
+            for (Assignment assignment : assignmentList) {
+                if (assignment.getPosition().getId().equals(positionId))
+                    return Collections.emptyList();
+            }
+            return Collections.singletonList(new ValidationError("submitcollections.validation.position.dept.desg",
+                    "Position is not valid for selected Department and Designation"));
+        } catch (NumberFormatException nfe) {
+            return Collections.singletonList(
+                    new ValidationError("submitcollections.validation.invalid.approver", "Invalid approver selected"));
+        }
     }
 
 }

@@ -61,7 +61,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.BranchUserMap;
@@ -121,13 +123,15 @@ public class RemittanceServiceImpl extends RemittanceService {
      * Create Contra Vouchers for String array passed of serviceName, totalCashAmount, totalChequeAmount, totalCardAmount and
      *
      * @param serviceName
+     * @param approverIdArr
      * @param totalCashAmount
      * @param totalAmount
      * @return List of Contra Vouchers Created
      */
     @Transactional
     @Override
-    public List<ReceiptHeader> createCashBankRemittance(final String[] serviceNameArr, final String[] totalCashAmount,
+    public List<ReceiptHeader> createCashBankRemittance(final String[] approverIdArr, final String[] serviceNameArr,
+            final String[] totalCashAmount,
             final String[] totalAmount, final String[] totalCardAmount, final String[] receiptDateArray,
             final String[] fundCodeArray, final String[] departmentCodeArray, final Integer accountNumberId,
             final Integer positionUser, final String[] receiptNumberArray, final Date remittanceDate) {
@@ -148,19 +152,27 @@ public class RemittanceServiceImpl extends RemittanceService {
         final String receiptFundCondition = "and receiptMisc.fund.code = ? ";
         final String receiptDepartmentCondition = "and receiptMisc.department.code = ? ";
         final String receiptSourceCondition = "and receipt.source = ? ";
-        String depositedBranchCondition = "";
+        String depositedBranchCondition = CollectionConstants.BLANK;
+        String receiptApproverCondition = CollectionConstants.BLANK;
         if (collectionsUtil.isBankCollectionRemitter(collectionsUtil.getLoggedInUser())) {
             BranchUserMap branchUserMap = branchUserMapService.findByNamedQuery(
                     CollectionConstants.QUERY_ACTIVE_BRANCHUSER_BY_USER,
                     collectionsUtil.getLoggedInUser().getId());
             depositedBranchCondition = "and receiptMisc.depositedBranch.id=" + branchUserMap.getBankbranch().getId();
-        } else
-            depositedBranchCondition = "and receiptMisc.depositedBranch is null";
+        } else {
+            depositedBranchCondition = " and receiptMisc.depositedBranch is null ";
+            if (approverIdArr.length > 0) {
+                String approverIdListStr = Strings.join(
+                        Arrays.stream(approverIdArr)
+                                .filter(idString -> StringUtils.isNotEmpty(idString)).iterator(),
+                        ',');
+                receiptApproverCondition = " and receipt.lastModifiedBy in (" + approverIdListStr + ") ";
+            }
+        }
 
         final Query cashInHand = persistenceService.getSession().createSQLQuery(cashInHandQueryString);
 
         String cashInHandGLCode = null;
-
         final String createVoucher = collectionsUtil.getAppConfigValue(
                 CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                 CollectionConstants.APPCONFIG_VALUE_CREATEVOUCHER_FOR_REMITTANCE);
@@ -173,7 +185,6 @@ public class RemittanceServiceImpl extends RemittanceService {
                 .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_REMITTED);
         final EgwStatus instrumentStatusReconciled = collectionsUtil.getStatusForModuleAndCode(
                 CollectionConstants.MODULE_NAME_INSTRUMENTHEADER, CollectionConstants.INSTRUMENT_RECONCILED_STATUS);
-
         if (!cashInHand.list().isEmpty())
             cashInHandGLCode = cashInHand.list().get(0).toString();
         collectionsUtil.getVoucherType();
@@ -220,6 +231,8 @@ public class RemittanceServiceImpl extends RemittanceService {
                             "and receipt.status.id=(select id from org.egov.commons.EgwStatus where moduletype=? and code=?) ");
                     cashQueryBuilder.append(receiptSourceCondition);
                     cashQueryBuilder.append(depositedBranchCondition);
+                    cashQueryBuilder.append(receiptApproverCondition);
+
                     final Object arguments[] = new Object[9];
                     arguments[0] = serviceName;
                     try {
@@ -263,7 +276,7 @@ public class RemittanceServiceImpl extends RemittanceService {
             receiptHeader.setStatus(receiptStatusRemitted);
             receiptHeader.setRemittanceReferenceNumber(remittance.getReferenceNumber());
             receiptHeaderService.update(receiptHeader);
-            //receiptHeaderService.updateCollectionIndexAndPushMail(receiptHeader);
+            // receiptHeaderService.updateCollectionIndexAndPushMail(receiptHeader);
         }
         return bankRemitList;
     }
@@ -329,7 +342,7 @@ public class RemittanceServiceImpl extends RemittanceService {
         remittance.setReferenceNumber(collectionsNumberGenerator.generateRemittanceNumber(financialYear));
         remittance.setFund(fundHibernateDAO.fundByCode(fundCode));
         remittance.setFunction(functionHibernateDAO.getFunctionByCode(functionCode));
-        remittance.setCollectionRemittance(new HashSet<ReceiptHeader>(receiptHeadList));
+        remittance.setCollectionRemittance(new HashSet<>(receiptHeadList));
         remittance.setBankAccount(depositedBankAccount);
         if (totalCashAmount != null && totalCashAmount.compareTo(BigDecimal.ZERO) > 0 && cashInHandGLCode != null) {
             remittanceDetailsList
@@ -344,8 +357,8 @@ public class RemittanceServiceImpl extends RemittanceService {
             isChequeAmount = Boolean.TRUE;
         }
         remittanceDetailsList.addAll(getRemittanceDetailsList(BigDecimal.ZERO, totalAmount, serviceGLCode, remittance));
-        remittance.setRemittanceDetails(new HashSet<RemittanceDetail>(remittanceDetailsList));
-        HashSet<RemittanceInstrument> remittanceInstrumentSet = new HashSet<RemittanceInstrument>();
+        remittance.setRemittanceDetails(new HashSet<>(remittanceDetailsList));
+        HashSet<RemittanceInstrument> remittanceInstrumentSet = new HashSet<>();
         remittancePersistService.persist(remittance);
         if (CollectionConstants.YES.equalsIgnoreCase(createVoucher)
                 && (totalCashVoucherAmt.compareTo(BigDecimal.ZERO) > 0
@@ -353,12 +366,10 @@ public class RemittanceServiceImpl extends RemittanceService {
             voucherHeader = createVoucherForRemittance(cashInHandGLCode, chequeInHandGLcode, serviceGLCode,
                     functionCode, totalCashVoucherAmt, totalChequeVoucherAmt, voucherDate, fundCode);
             remittance.setVoucherHeader(voucherHeader);
-            for (ReceiptHeader receiptHeader : receiptHeadList) {
-                for (InstrumentHeader instHead : receiptHeader.getReceiptInstrument()) {
-                    if (!isChequeAmount || (isChequeAmount && instrumentId.contains(instHead.getId().toString())))
+            for (ReceiptHeader receiptHeader : receiptHeadList)
+                for (InstrumentHeader instHead : receiptHeader.getReceiptInstrument())
+                    if (!isChequeAmount || isChequeAmount && instrumentId.contains(instHead.getId().toString()))
                         remittanceInstrumentSet.add(prepareRemittanceInstrument(remittance, instHead));
-                }
-            }
             remittance.setRemittanceInstruments(remittanceInstrumentSet);
             remittancePersistService.persist(remittance);
         }
@@ -370,8 +381,8 @@ public class RemittanceServiceImpl extends RemittanceService {
         remittanceInstrument.setRemittance(remittance);
         remittanceInstrument.setInstrumentHeader(instrumentHeader);
         remittanceInstrument.setReconciled(Boolean.FALSE);
-        remittanceInstrument =  (RemittanceInstrument) persistenceService.persist(remittanceInstrument);
-        return remittanceInstrument;  
+        remittanceInstrument = (RemittanceInstrument) persistenceService.persist(remittanceInstrument);
+        return remittanceInstrument;
     }
 
     public HashMap<String, Object> prepareAccountCodeDetails(final String glCode, final String functionCode,
@@ -418,11 +429,12 @@ public class RemittanceServiceImpl extends RemittanceService {
      * @return List of HashMap
      */
     @Override
-    public List<HashMap<String, Object>> findCashRemittanceDetailsForServiceAndFund(final String boundaryIdList,
+    public List<HashMap<String, Object>> findCashRemittanceDetailsForServiceAndFund(final String approverIdList,
+            final String boundaryIdList,
             final String serviceCodes, final String fundCodes, final Date startDate, final Date endDate) {
 
         final List<HashMap<String, Object>> paramList = new ArrayList<>();
-        final String whereClauseBeforInstumentType = " where ch.id=cm.collectionheader AND "
+        final String whereClauseBeforInstumentType = " WHERE us.id = ch.lastmodifiedby AND ch.id = cm.collectionheader AND "
                 + "fnd.id=cm.fund AND dpt.id=cm.department and ci.INSTRUMENTHEADER=ih.ID and "
                 + "ch.SERVICEDETAILS=sd.ID and ch.ID=ci.COLLECTIONHEADER and ih.INSTRUMENTTYPE=it.ID and ";
 
@@ -440,7 +452,7 @@ public class RemittanceServiceImpl extends RemittanceService {
             whereClause.append(" AND date(ch.receiptdate) between '").append(startDate).append("' and '").append(endDate)
                     .append("' ");
 
-        final String groupByClause = " group by date(ch.RECEIPTDATE),sd.NAME,it.TYPE,fnd.name,dpt.name,fnd.code,dpt.code";
+        final String groupByClause = " group by date(ch.RECEIPTDATE),sd.NAME,it.TYPE,fnd.name,dpt.name,fnd.code,dpt.code,ch.lastmodifiedby,us.name,us.id";
         final String orderBy = " order by RECEIPTDATE";
 
         /**
@@ -449,9 +461,9 @@ public class RemittanceServiceImpl extends RemittanceService {
         final StringBuilder queryStringForCash = new StringBuilder(
                 "SELECT sum(ih.instrumentamount) as INSTRUMENTMAOUNT,date(ch.RECEIPTDATE) AS RECEIPTDATE,")
                         .append("sd.NAME as SERVICENAME,it.TYPE as INSTRUMENTTYPE,fnd.name AS FUNDNAME,dpt.name AS DEPARTMENTNAME,")
-                        .append("fnd.code AS FUNDCODE,dpt.code AS DEPARTMENTCODE from EGCL_COLLECTIONHEADER ch,")
+                        .append("fnd.code AS FUNDCODE,dpt.code AS DEPARTMENTCODE, us.name AS APPROVERNAME, us.id AS APPROVERID from EGCL_COLLECTIONHEADER ch,")
                         .append("EGF_INSTRUMENTHEADER ih,EGCL_COLLECTIONINSTRUMENT ci,EGCL_SERVICEDETAILS sd,")
-                        .append("EGF_INSTRUMENTTYPE it,EGCL_COLLECTIONMIS cm,FUND fnd,EG_DEPARTMENT dpt")
+                        .append("EGF_INSTRUMENTTYPE it,EGCL_COLLECTIONMIS cm,FUND fnd,EG_DEPARTMENT dpt, eg_user us")
                         .append(whereClauseBeforInstumentType + whereClauseForServiceAndFund + "it.TYPE in ('")
                         .append(CollectionConstants.INSTRUMENTTYPE_CASH + "')");
 
@@ -461,10 +473,23 @@ public class RemittanceServiceImpl extends RemittanceService {
                     collectionsUtil.getLoggedInUser().getId());
             queryStringForCash
                     .append(whereClause + " AND cm.depositedbranch=" + branchUserMap.getBankbranch().getId());
-        } else
-            queryStringForCash.append(whereClause
-                    + " AND cm.depositedbranch is null AND ch.CREATEDBY in (select distinct ujl.employee from egeis_jurisdiction ujl where ujl.boundary in ("
-                    + boundaryIdList + "))");
+        } else {
+            // no Mapping
+            if (approverIdList.isEmpty()) {
+                queryStringForCash.append(whereClause)
+                        .append(" AND cm.depositedbranch is null")
+                        .append(" AND ch.CREATEDBY in ")
+                        .append(" (select distinct ujl.employee from egeis_jurisdiction ujl where ujl.boundary in (")
+                        .append(boundaryIdList)
+                        .append(")) ");
+
+            } else {
+                // Has Mapping, wither user selected one approver or we have a comma separated list of approver id's
+                queryStringForCash.append(whereClause).append(" AND ch.lastmodifiedby in (")
+                        .append(approverIdList)
+                        .append(") ");
+            }
+        }
 
         queryStringForCash.append(groupByClause);
 
@@ -486,6 +511,9 @@ public class RemittanceServiceImpl extends RemittanceService {
                 objHashMap.put(CollectionConstants.BANKREMITTANCE_DEPARTMENTCODE, arrayObjectInitialIndex[7]);
                 objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCASHAMOUNT,
                         arrayObjectInitialIndex[0]);
+                objHashMap.put(CollectionConstants.BANKREMITTANCE_APPROVERNAME, arrayObjectInitialIndex[8]);
+                objHashMap.put(CollectionConstants.BANKREMITTANCE_APPROVERID, arrayObjectInitialIndex[9]);
+
             } else {
                 final int checknew = receiptHeaderService.checkIfMapObjectExist(paramList, arrayObjectInitialIndex);
                 if (checknew == -1) {
@@ -497,6 +525,8 @@ public class RemittanceServiceImpl extends RemittanceService {
                     objHashMap.put(CollectionConstants.BANKREMITTANCE_DEPARTMENTCODE, arrayObjectInitialIndex[7]);
                     objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCASHAMOUNT,
                             arrayObjectInitialIndex[0]);
+                    objHashMap.put(CollectionConstants.BANKREMITTANCE_APPROVERNAME, arrayObjectInitialIndex[8]);
+                    objHashMap.put(CollectionConstants.BANKREMITTANCE_APPROVERID, arrayObjectInitialIndex[9]);
                 } else {
                     objHashMap = paramList.get(checknew);
                     paramList.remove(checknew);
@@ -517,7 +547,8 @@ public class RemittanceServiceImpl extends RemittanceService {
      * @return List of HashMap
      */
     @Override
-    public List<HashMap<String, Object>> findChequeRemittanceDetailsForServiceAndFund(final String boundaryIdList,
+    public List<HashMap<String, Object>> findChequeRemittanceDetailsForServiceAndFund(final String approverIdList,
+            final String boundaryIdList,
             final String serviceCodes, final String fundCodes, final Date startDate, final Date endDate) {
 
         final List<HashMap<String, Object>> paramList = new ArrayList<>();
@@ -525,8 +556,8 @@ public class RemittanceServiceImpl extends RemittanceService {
                 "SELECT ih.instrumentamount as INSTRUMENTMAOUNT,date(ch.RECEIPTDATE) AS RECEIPTDATE,")
                         .append(" ch.RECEIPTNUMBER AS RECEIPTNUMBER,ih.INSTRUMENTNUMBER AS INSTRUMENTNUMBER,ih.INSTRUMENTDATE as INSTRUMENTDATE,sd.NAME as SERVICENAME, ")
                         .append("it.TYPE as INSTRUMENTTYPE,fnd.name AS FUNDNAME,dpt.name AS DEPARTMENTNAME,")
-                        .append("fnd.code AS FUNDCODE,dpt.code AS DEPARTMENTCODE,ih.ID as INSTRUMENTID,ih.BANKBRANCHNAME as bankbranchname,bank.NAME as bankname ")
-                        .append(" from EGCL_COLLECTIONHEADER ch,EGF_INSTRUMENTHEADER ih,EGCL_COLLECTIONINSTRUMENT ci,EGCL_SERVICEDETAILS sd,")
+                        .append("fnd.code AS FUNDCODE,dpt.code AS DEPARTMENTCODE,ih.ID as INSTRUMENTID,ih.BANKBRANCHNAME as bankbranchname,bank.NAME as bankname,us.\"name\" AS APPROVERNAME")
+                        .append(" from EGCL_COLLECTIONHEADER ch,EGF_INSTRUMENTHEADER ih,EGCL_COLLECTIONINSTRUMENT ci,EGCL_SERVICEDETAILS sd, eg_user us,")
                         .append("EGF_INSTRUMENTTYPE it,EGCL_COLLECTIONMIS cm,FUND fnd,EG_DEPARTMENT dpt, BANK bank  where ch.id=cm.collectionheader AND ")
                         .append("fnd.id=cm.fund AND dpt.id=cm.department and ci.INSTRUMENTHEADER=ih.ID and ")
                         .append("ch.SERVICEDETAILS=sd.ID and ch.ID=ci.COLLECTIONHEADER and ih.INSTRUMENTTYPE=it.ID and ih.BANKID=bank.ID and")
@@ -551,9 +582,7 @@ public class RemittanceServiceImpl extends RemittanceService {
                     collectionsUtil.getLoggedInUser().getId());
             chequeRemittanceListQuery.append(" AND cm.depositedbranch=" + branchUserMap.getBankbranch().getId());
         } else
-            chequeRemittanceListQuery.append(
-                    " AND cm.depositedbranch is null AND ch.CREATEDBY in (select distinct ujl.employee from egeis_jurisdiction ujl where ujl.boundary in (")
-                    .append(boundaryIdList).append("))");
+            chequeRemittanceListQuery.append(" AND us.id = ch.lastmodifiedby AND ch.lastmodifiedby in (" + approverIdList + ")");
         chequeRemittanceListQuery.append(" order by RECEIPTDATE,bankname ");
         final Query query = receiptHeaderService.getSession()
                 .createSQLQuery(chequeRemittanceListQuery.toString());
@@ -578,6 +607,7 @@ public class RemittanceServiceImpl extends RemittanceService {
                 objHashMap.put(CollectionConstants.BANKREMITTANCE_INSTRUMENTID, arrayObjectInitialIndex[11]);
                 objHashMap.put(CollectionConstants.BANKREMITTANCE_DRAWEE_BANKBRANCH, arrayObjectInitialIndex[12]);
                 objHashMap.put(CollectionConstants.BANKREMITTANCE_DRAWEE_BANK, arrayObjectInitialIndex[13]);
+                objHashMap.put(CollectionConstants.BANKREMITTANCE_APPROVERNAME, arrayObjectInitialIndex[14]);
             } else {
                 final int checknew = receiptHeaderService.checkIfChequeMapObjectExist(paramList, arrayObjectInitialIndex);
                 if (checknew == -1) {
@@ -596,6 +626,7 @@ public class RemittanceServiceImpl extends RemittanceService {
                     objHashMap.put(CollectionConstants.BANKREMITTANCE_INSTRUMENTID, arrayObjectInitialIndex[11]);
                     objHashMap.put(CollectionConstants.BANKREMITTANCE_DRAWEE_BANKBRANCH, arrayObjectInitialIndex[12]);
                     objHashMap.put(CollectionConstants.BANKREMITTANCE_DRAWEE_BANK, arrayObjectInitialIndex[13]);
+                    objHashMap.put(CollectionConstants.BANKREMITTANCE_APPROVERNAME, arrayObjectInitialIndex[14]);
                 } else {
                     objHashMap = paramList.get(checknew);
                     paramList.remove(checknew);
@@ -757,16 +788,15 @@ public class RemittanceServiceImpl extends RemittanceService {
 
         for (final ReceiptHeader receiptHeader : bankRemitList) {
 
-            if (receiptHeader.getReceiptInstrument().size() == 1) {
+            if (receiptHeader.getReceiptInstrument().size() == 1)
                 receiptHeader.setStatus(receiptStatusRemitted);
-            } else {
+            else {
 
                 boolean allInstrumentsRemitted = Boolean.TRUE;
-                for (InstrumentHeader instrumentHead : receiptHeader.getReceiptInstrument()) {
-                    if (!(instrumentIdList.contains(instrumentHead.getId().toString()))
+                for (InstrumentHeader instrumentHead : receiptHeader.getReceiptInstrument())
+                    if (!instrumentIdList.contains(instrumentHead.getId().toString())
                             && instrumentHead.getStatusId().getCode().equals(instrmentStatusNew.getCode()))
                         allInstrumentsRemitted = Boolean.FALSE;
-                }
                 if (allInstrumentsRemitted)
                     receiptHeader.setStatus(receiptStatusRemitted);
                 else

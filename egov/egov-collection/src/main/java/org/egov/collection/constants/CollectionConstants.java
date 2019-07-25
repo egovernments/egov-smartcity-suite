@@ -168,6 +168,7 @@ public final class CollectionConstants {
     public static final String APPCONFIG_VALUE_ROLES_CREATERECEIPT_APPROVEDSTATUS = "ROLES_CREATERECEIPT_APPROVEDSTATUS";
     public static final String APPCONFIG_VALUE_COLLECTIONCREATORRECEIPTCANCELROLE = "COLLECTIONCREATORRECEIPTCANCELROLE";
     public static final String APPCONFIG_VALUE_ISVOUCHERCREATIONONRECEIPTANDSTATUSDISPLAY = "ISVOUCHERCREATIONONRECEIPTANDSTATUSDISPLAY";
+    public static final String APPCONFIG_VALUE_COLLECTION_REMITTER_ROLE = "COLLECTION_REMITTER_ROLE";
 
     // named queries (collections)
     public static final String QUERY_RECEIPTS_FOR_VOUCHERS = "RECEIPTS_FOR_VOUCHERS";
@@ -201,6 +202,7 @@ public final class CollectionConstants {
     public static final String QUERY_SERVICE_CATEGORY_BY_CODE = "SERVICE_CATEGORY_BY_CODE";
     public static final String QUERY_SERVICE_BY_CATEGORY_FOR_TYPE = "SERVICE_BY_CATEGORY_FOR_TYPE";
     public static final String QUERY_RECEIPT_BY_ID_AND_STATUSNOTCANCELLED = "RECEIPT_BY_ID_AND_STATUSNOTCANCELLED";
+    public static final String QUERY_RECEIPTS_BY_ID_LIST_AND_STATUSNOTCANCELLED = "RECEIPTS_BY_ID_LIST_AND_STATUSNOTCANCELLED";
     public static final String QUERY_PENDING_RECEIPT_BY_ID_AND_CONSUMERCODE = "QUERY_PENDING_RECEIPT_BY_ID_AND_CONSUMERCODE";
     public static final String QUERY_PENDING_RECEIPT_BY_ID_AND_CITYCODE = "QUERY_PENDING_RECEIPT_BY_ID_AND_CITYCODE";
 
@@ -352,6 +354,8 @@ public final class CollectionConstants {
     public static final String BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT = "SERVICETOTALONLINEPAYMENTAMOUNT";
     public static final String BANKREMITTANCE_VOUCHERDATE = "VOUCHERDATE";
     public static final String BANKREMITTANCE_RECEIPTDATE = "RECEIPTDATE";
+    public static final String BANKREMITTANCE_APPROVERNAME = "APPROVERNAME";
+    public static final String BANKREMITTANCE_APPROVERID = "APPROVERID";
     public static final String BANKREMITTANCE_SERVICENAME = "SERVICENAME";
     public static final String BANKREMITTANCE_DEPARTMENTCODE_ACCOUNTS = "A";
     public static final String BANKREMITTANCE_FUNDNAME = "FUNDNAME";
@@ -674,5 +678,9 @@ public final class CollectionConstants {
             add("P");
         }
     };
+
+    // Role names
+    public static final String ROLE_COLLECTION_APPROVER = "COLLECTION_APPROVER";
+    public static final String ROLE_COLLECTION_REMITTER = "Remitter";
 
 }

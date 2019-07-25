@@ -272,6 +272,9 @@
 	<![CDATA[
 	select rh from org.egov.collection.entity.ReceiptHeader rh where rh.id = ? and rh.status.code<>'CANCELLED']]>
 	</query>
+	<query name="RECEIPTS_BY_ID_LIST_AND_STATUSNOTCANCELLED">
+	<![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh where rh.id in (:param_0) and rh.status.code<>'CANCELLED']]>
+	</query>
   	
   	<query name="DISTINCT_SERVICE_DETAILS">
     <![CDATA[select distinct rh.service from org.egov.collection.entity.ReceiptHeader rh where rh.status.code<>'CANCELLED']]>

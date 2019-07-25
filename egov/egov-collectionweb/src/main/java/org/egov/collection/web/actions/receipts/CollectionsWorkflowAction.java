@@ -47,26 +47,37 @@
  */
 package org.egov.collection.web.actions.receipts;
 
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.entity.ApproverRemitterMapping;
 import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.service.ApproverRemitterMappingService;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.Employee;
+import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.DesignationService;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.model.instrument.InstrumentHeader;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -86,23 +97,40 @@ import org.springframework.beans.factory.annotation.Autowired;
                 "method", "cancel" }) })
 public class CollectionsWorkflowAction extends BaseFormAction {
 
+    /**
+     * Result for cash submission report (redirects to the cash collection report)
+     */
+    protected static final String SUBMISSION_REPORT_CASH = "submissionReportCash";
+    /**
+     * Result for cheque submission report (redirects to the cheque collection report)
+     */
+    protected static final String SUBMISSION_REPORT_CHEQUE = "submissionReportCheque";
     private static final long serialVersionUID = 1L;
+    /**
+     * Map of instrument type wise amounts for all receipts that are eligible for the workflow
+     */
+    private final Map<String, BigDecimal> instrumentWiseAmounts = new HashMap<>(4);
+    /**
+     * Updates the receipt's status by invoking the workflow action
+     *
+     * @param wfAction Workflow action e.g. submit_for_approval/approve/reject
+     * @param remarks Approval/rejection remarks
+     * @return SUCCESS/ERROR
+     */
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    AssignmentService assignmentService;
 
     /**
      * List of receipt headers to be submitted/approved
      */
     private List<ReceiptHeader> receiptHeaders;
-
     /**
      * Array of selected receipt ids that are to be submitted/approved
      */
     private Long[] receiptIds;
-
-    /**
-     * Map of instrument type wise amounts for all receipts that are eligible for the workflow
-     */
-    private final Map<String, BigDecimal> instrumentWiseAmounts = new HashMap<String, BigDecimal>(4);
-
     /**
      * Total amount of all receipts eligible for the workflow action
      */
@@ -112,64 +140,71 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      * The counter id for which the receipt list is to be submitted/approved.
      */
     private Long counterId = -1l;
-
     /**
      * The user name for which the receipt list is to be submitted/approved.
      */
     private String userName;
-
     /**
      * The service code for which the receipt list is to be submitted/approved.
      */
     private String serviceCode;
-
-    /**
-     * Workflow service for changing the state of the receipt
-     */
-
     /**
      * The collections utility object
      */
     private CollectionsUtil collectionsUtil;
-
     /**
      * Receipt header service
      */
     private ReceiptHeaderService receiptHeaderService;
-
     /**
      * Approval/Rejection remarks
      */
     private String remarks;
-
     /**
      * Workflow action (SUBMIT/APPROVE). Based on this, the JSP can decide to display/hide various buttons
      */
     private String wfAction;
 
+    /**
+     * For capturing dropdown form-fields
+     */
+    private Long approverDepartmentId;
+    private Long approverDesignationId;
+    private String approverIdPositionId;
+
+    private List<Department> departmentList = Collections.emptyList();
+    private List<Designation> designationList = Collections.emptyList();
+    private List<Employee> employeeList = Collections.emptyList();
+    private String receiptDate;
+    private String currentUserDescription;
+    private SortedMap<String, String> paymentModesMap = new TreeMap<>();
+    private String paymentMode = CollectionConstants.ALL;
+    @Autowired
+    private SecurityUtils securityUtils;
+
+    @Autowired
+    private DepartmentService departmentService;
+
+    @Autowired
+    private DesignationService designationService;
+
+    @Autowired
+    private ApproverRemitterMappingService approverRemitterMappingService;
+
+    private String inboxItemDetails;
+
+    /**
+     * Constructor
+     */
+    public CollectionsWorkflowAction() {
+        super();
+    }
+
     public void setWfAction(final String wfAction) {
         this.wfAction = wfAction;
     }
 
-    private String receiptDate;
-    private String approverName;
-    /**
-     * Result for cash submission report (redirects to the cash collection report)
-     */
-    protected static final String SUBMISSION_REPORT_CASH = "submissionReportCash";
-
-    /**
-     * Result for cheque submission report (redirects to the cheque collection report)
-     */
-    protected static final String SUBMISSION_REPORT_CHEQUE = "submissionReportCheque";
-
-    private SortedMap<String, String> paymentModesMap = new TreeMap<>();
-    private String paymentMode = CollectionConstants.ALL;
-
-    @Autowired
-    private SecurityUtils securityUtils;
-    private String inboxItemDetails;
-
+    @SuppressWarnings("unused")
     public String getInboxItemDetails() {
         return inboxItemDetails;
     }
@@ -201,7 +236,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * @param workflow the receipt workflow service
+     * @param receiptHeaderService Workflow the receipt workflow service
      */
     public void setReceiptHeaderService(final ReceiptHeaderService receiptHeaderService) {
         this.receiptHeaderService = receiptHeaderService;
@@ -217,6 +252,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     /**
      * @return true if partial selection is to be allowed for submission/approval, else false
      */
+    @SuppressWarnings("unused")
     public Boolean getAllowPartialSelection() {
         // return wfAction.equals(CollectionConstants.WF_ACTION_SUBMIT);
         if (getIsSubmitAction())
@@ -239,13 +275,6 @@ public class CollectionsWorkflowAction extends BaseFormAction {
         return wfAction.equals(CollectionConstants.WF_ACTION_REJECT);
     }
 
-    /**
-     * Constructor
-     */
-    public CollectionsWorkflowAction() {
-        super();
-    }
-
     @Override
     public Object getModel() {
         return null;
@@ -254,6 +283,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     /**
      * @return the counter id
      */
+    @SuppressWarnings("unused")
     public Long getCounterId() {
         return counterId;
     }
@@ -355,69 +385,49 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * @param Array of receipt Ids
+     * @param receiptIds of receipt Ids
      */
     public void setReceiptIds(final Long[] receiptIds) {
         this.receiptIds = receiptIds;
     }
 
     /**
-     * @param Submission /Approval/Rejection remarks
+     * @param remarks /Approval/Rejection
      */
     public void setRemarks(final String remarks) {
         this.remarks = remarks;
     }
 
-    /**
-     * Updates the receipt's status by invoking the workflow action
-     *
-     * @param wfAction Workflow action e.g. submit_for_approval/approve/reject
-     * @param remarks Approval/rejection remarks
-     * @return SUCCESS/ERROR
-     */
-    private String updateReceiptWorkflowStatus(final String wfAction, final String remarks) {
-        for (final Long receiptId : receiptIds) {
-            // Get the next receipt that is to be updated
-            final ReceiptHeader receiptHeader = receiptHeaderService.findByNamedQuery(
-                    CollectionConstants.QUERY_RECEIPT_BY_ID_AND_STATUSNOTCANCELLED, receiptId);
-            if (receiptHeader != null) {
-                receiptHeaderService.performWorkflow(wfAction, receiptHeader, remarks);
-                approverName = collectionsUtil.getApproverName(receiptHeader.getState().getOwnerPosition());
-            }
-        }
-        // Add the selected receipt ids to sereceiptHeader
-        // Need to find a better mechanism to achieve this.
-        getSession().put(CollectionConstants.SESSION_VAR_RECEIPT_IDS, receiptIds);
-        return SUCCESS;
+    public void setApproverDepartmentId(Long approverDepartmentId) {
+        this.approverDepartmentId = approverDepartmentId;
     }
 
-    private String updateReceiptWorkflowStatusForAll(final String wfAction, final String remarks) {
-        List<Long> positionIds = new ArrayList<Long>();
-        final List<Position> positions = collectionsUtil.getPositionsForEmployee(securityUtils.getCurrentUser());
-        for (Position pos : positions)
-            positionIds.add(pos.getId());
-        receiptHeaders = receiptHeaderService.findAllByPositionAndInboxItemDetails(positionIds, inboxItemDetails);
-        final Position approverPosition = receiptHeaderService.getApproverPosition(receiptHeaders.get(0));
-        receiptIds = new Long[receiptHeaders.size()];
-        int i = 0;
-        for (final ReceiptHeader receiptHeader : receiptHeaders) {
-            if (receiptHeader != null)
-                receiptIds[i] = receiptHeader.getId();
-            i++;
-        }
-        receiptHeaderService.performWorkflowForAllReceipts(wfAction, receiptHeaders, remarks);
-        approverName = collectionsUtil.getApproverName(approverPosition);
-        // Add the selected receipt ids to sereceiptHeader
-        // Need to find a better mechanism to achieve this.
-        getSession().put(CollectionConstants.SESSION_VAR_RECEIPT_IDS, receiptIds);
-        return SUCCESS;
+    @SuppressWarnings("unused")
+    public void setApproverDesignationId(Long approverDesignationId) {
+        this.approverDesignationId = approverDesignationId;
+    }
+
+    @SuppressWarnings("unused")
+    public void setApproverIdPositionId(String approverIdPositionId) {
+        this.approverIdPositionId = approverIdPositionId;
+    }
+
+    public List<Department> getDepartmentList() {
+        return departmentList;
+    }
+
+    public List<Designation> getDesignationList() {
+        return designationList;
+    }
+
+    public List<Employee> getEmployeeList() {
+        return employeeList;
     }
 
     /**
      * Fetches all receipts for set user-counter combination and given status code. Also sets the work flow action code to given
      * value, and calculates the various amounts using the fetched receipts.
      *
-     * @param statusCode Status code for which receipts are to be fetched
      * @param workflowAction Work flow action code
      */
     private void fetchReceipts(final String workflowAction) {// Get
@@ -428,7 +438,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
         // currently logged in user from
         // his/her current counter and are in SUBMITTED status
         final List<Position> positions = collectionsUtil.getPositionsForEmployee(securityUtils.getCurrentUser());
-        List<Long> positionIds = new ArrayList<Long>();
+        List<Long> positionIds = new ArrayList<>();
         for (Position pos : positions)
             positionIds.add(pos.getId());
         receiptHeaders = receiptHeaderService.findAllByPositionAndInboxItemDetails(positionIds, inboxItemDetails);
@@ -453,12 +463,15 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     public String listWorkflow() {
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_CASH, CollectionConstants.INSTRUMENTTYPE_CASH);
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD, CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD);
-        inboxItemDetails = inboxItemDetails.substring(0, (inboxItemDetails.lastIndexOf(CollectionConstants.SEPARATOR_HYPHEN)) + 1)
+        inboxItemDetails = inboxItemDetails.substring(0, inboxItemDetails.lastIndexOf(CollectionConstants.SEPARATOR_HYPHEN) + 1)
                 + paymentMode;
-        if (wfAction != null && wfAction.equals(CollectionConstants.WF_ACTION_APPROVE))
+        if (CollectionConstants.WF_ACTION_APPROVE.equals(wfAction)) {
             fetchReceipts(CollectionConstants.WF_ACTION_APPROVE);
-        else
+        } else {
             fetchReceipts(CollectionConstants.WF_ACTION_SUBMIT);
+            departmentList = getConfiguredDepartmentList();
+            designationList = getConfiguredDesignationList();
+        }
         return INDEX;
     }
 
@@ -487,18 +500,32 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      *
      * @return SUCCESS/ERROR
      */
-    @ValidationErrorPage(value = INDEX)
     @Action(value = "/receipts/collectionsWorkflow-submitCollections")
     public String submitCollections() {
+        List<ValidationError> validationErrorList = collectionsUtil.validateCollectionApprover(approverIdPositionId,
+                approverDepartmentId, approverDesignationId);
+        if (!validationErrorList.isEmpty())
+            throw new ValidationException(validationErrorList);
+
+        currentUserDescription = processReceipts(CollectionConstants.WF_ACTION_SUBMIT, remarks, receiptIds);
+        // SUCCESS jsp shows msg based on wfAction
         wfAction = CollectionConstants.WF_ACTION_SUBMIT;
-        return updateReceiptWorkflowStatus(wfAction, remarks);
+        return SUCCESS;
     }
 
-    @ValidationErrorPage(value = INDEX)
     @Action(value = "/receipts/collectionsWorkflow-submitAllCollections")
     public String submitAllCollections() {
+        List<ValidationError> validationErrorList = collectionsUtil.validateCollectionApprover(approverIdPositionId,
+                approverDepartmentId, approverDesignationId);
+        if (!validationErrorList.isEmpty())
+            throw new ValidationException(validationErrorList);
+
         setInboxItemDetails(inboxItemDetails);
-        return updateReceiptWorkflowStatusForAll(wfAction, remarks);
+        currentUserDescription = processAllReceipts(CollectionConstants.WF_ACTION_SUBMIT, remarks, inboxItemDetails);
+        // SUCCESS jsp shows msg based on wfAction
+        // FIXME: use addActionMessage inplace of wfaction and if's
+        wfAction = CollectionConstants.WF_ACTION_SUBMIT;
+        return SUCCESS;
     }
 
     /**
@@ -508,14 +535,27 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      */
     @Action(value = "/receipts/collectionsWorkflow-approveCollections")
     public String approveCollections() {
+        if (!validateApproverRemitterMap()) {
+            // setting wfAction which is used by listWorkflow
+            wfAction = CollectionConstants.WF_ACTION_APPROVE;
+            return listWorkflow();
+        }
+        currentUserDescription = processReceipts(CollectionConstants.WF_ACTION_APPROVE, remarks, receiptIds);
+        // SUCCESS jsp shows msg based on wfAction
         wfAction = CollectionConstants.WF_ACTION_APPROVE;
-        return updateReceiptWorkflowStatus(wfAction, remarks);
+        return SUCCESS;
     }
 
     @Action(value = "/receipts/collectionsWorkflow-approveAllCollections")
     public String approveAllCollections() {
+        // this set's wfAction which is used by listWorkflow
         setInboxItemDetails(inboxItemDetails);
-        return updateReceiptWorkflowStatusForAll(wfAction, remarks);
+        if (!validateApproverRemitterMap())
+            return listWorkflow();
+        currentUserDescription = processAllReceipts(CollectionConstants.WF_ACTION_APPROVE, remarks, inboxItemDetails);
+        // SUCCESS jsp shows msg based on wfAction
+        wfAction = CollectionConstants.WF_ACTION_APPROVE;
+        return SUCCESS;
     }
 
     /**
@@ -525,8 +565,10 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      */
     @Action(value = "/receipts/collectionsWorkflow-rejectCollections")
     public String rejectCollections() {
+        currentUserDescription = processReceipts(CollectionConstants.WF_ACTION_REJECT, remarks, receiptIds);
+        // SUCCESS jsp shows msg based on wfAction
         wfAction = CollectionConstants.WF_ACTION_REJECT;
-        return updateReceiptWorkflowStatus(wfAction, remarks);
+        return SUCCESS;
     }
 
     /**
@@ -553,6 +595,139 @@ public class CollectionsWorkflowAction extends BaseFormAction {
         }
     }
 
+    @Action(value = "/receipts/workflowApproverAjax")
+    public String workflowApproverAjax() throws IOException {
+
+        String jsonString;
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        List<Assignment> assignmentList = assignmentService.findAllAssignmentsByDeptDesigAndDates(approverDepartmentId,
+                approverDesignationId, new Date());
+        Map<String, String> approverIdPositionName = new HashMap<>();
+
+        // FIXME: pass both position and employee
+        for (Assignment assignment : assignmentList)
+            if (assignment.getEmployee().isActive())
+                approverIdPositionName.put(
+                        String.format("%s~%s", assignment.getEmployee().getId(), assignment.getPosition().getId()),
+                        assignment.getEmployee().getName().concat("/").concat(assignment.getPosition().getName()));
+        jsonString = objectMapper.writeValueAsString(approverIdPositionName);
+
+        ServletActionContext.getResponse().setContentType("application/json");
+        ServletActionContext.getResponse().getWriter().write(jsonString);
+        return null;
+    }
+
+    private boolean validateApproverRemitterMap() {
+        User currentUser = collectionsUtil.getLoggedInUser();
+        ApproverRemitterMapping remitterMapping = approverRemitterMappingService.findByApproverIdAndIsActive(currentUser.getId(),
+                true);
+        if (remitterMapping == null) {
+            addActionError(getText("approvecollections.validation.approverremitter.map", Arrays.asList(currentUser.getName())));
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Returns configured department List for workflow approver
+     */
+    private List<Department> getConfiguredDepartmentList() {
+        List<AppConfigValues> configuredDepartmentList = collectionsUtil.getAppConfigValues(
+                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                CollectionConstants.COLLECTION_DEPARTMENTFORWORKFLOWAPPROVER);
+        List<Department> departmentList = new ArrayList<>(configuredDepartmentList.size());
+        for (AppConfigValues appConfigValues : configuredDepartmentList)
+            departmentList.add(departmentService.getDepartmentByName(appConfigValues.getValue().toUpperCase()));
+
+        return departmentList;
+    }
+
+    /**
+     * Returns configured Designation List for workflow approver
+     */
+    private List<Designation> getConfiguredDesignationList() {
+        List<AppConfigValues> configuredDesignationList = collectionsUtil.getAppConfigValues(
+                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG, CollectionConstants.COLLECTION_DESIGNATIONFORAPPROVER);
+        List<String> designationNameList = new ArrayList<>(configuredDesignationList.size());
+        for (AppConfigValues appConfigValues : configuredDesignationList)
+            designationNameList.add(appConfigValues.getValue().toUpperCase());
+        return designationService.getDesignationsByNames(designationNameList);
+    }
+
+    /**
+     * Given array of receiptIds it <br>
+     * fetches corresponding List of ReceiptHeader, <br>
+     * calls performWorkflow, persists receiptIds into session and <br>
+     * returns name~username~position of first receiptHeader's currentUser
+     *
+     * @param wfAction
+     * @param remarks
+     * @param receiptIds
+     * @return name~username~position of first receiptHeader's currentUser
+     */
+    private String processReceipts(String wfAction, String remarks, Long[] receiptIds) {
+
+        final List<ReceiptHeader> receiptHeaderList = receiptHeaderService.findReceiptListByIds(
+                CollectionConstants.QUERY_RECEIPTS_BY_ID_LIST_AND_STATUSNOTCANCELLED, receiptIds);
+
+        Long approverId = 0L;
+        Long positionId = 0L;
+        String ids[] = approverIdPositionId.split("~");
+        if (ids.length == 2) {
+            approverId = Long.parseLong(ids[0]);
+            positionId = Long.parseLong(ids[1]);
+        }
+
+        ReceiptHeaderService.ReceiptApproverSpec receiptApproverSpec = new ReceiptHeaderService.ReceiptApproverSpec(
+                positionId, approverId, approverDesignationId, approverDepartmentId, receiptHeaderList, remarks);
+        getSession().put(CollectionConstants.SESSION_VAR_RECEIPT_IDS, receiptIds);
+
+        return receiptHeaderService.performWorkflow(wfAction, receiptApproverSpec);
+    }
+
+    /**
+     * For List of ReceiptHeader <br>
+     * <b>given the inboxItemDetails it calls performWorkflow</b>, <br>
+     * updates class property receiptIds, <br>
+     * persists receiptIds into session and <br>
+     * returns name~username~position of first receiptHeader's currentUser
+     *
+     * @param wfAction
+     * @param remarks
+     * @param inboxItemDetails
+     * @return name~username~position of first receiptHeader's currentUser
+     */
+    private String processAllReceipts(String wfAction, String remarks, String inboxItemDetails) {
+
+        List<Long> positionIds = new ArrayList<>();
+        final List<Position> positions = collectionsUtil.getPositionsForEmployee(securityUtils.getCurrentUser());
+        for (Position pos : positions)
+            positionIds.add(pos.getId());
+        final List<ReceiptHeader> receiptHeaderList = receiptHeaderService.findAllByPositionAndInboxItemDetails(positionIds,
+                inboxItemDetails);
+        receiptIds = new Long[receiptHeaderList.size()];
+        int i = 0;
+        for (final ReceiptHeader receiptHeader : receiptHeaderList) {
+            if (receiptHeader != null)
+                receiptIds[i] = receiptHeader.getId();
+            i++;
+        }
+
+        Long approverId = 0L;
+        Long positionId = 0L;
+        String ids[] = approverIdPositionId.split("~");
+        if (ids.length == 2) {
+            approverId = Long.parseLong(ids[0]);
+            positionId = Long.parseLong(ids[1]);
+        }
+
+        ReceiptHeaderService.ReceiptApproverSpec receiptApproverSpec = new ReceiptHeaderService.ReceiptApproverSpec(
+                positionId, approverId, approverDesignationId, approverDepartmentId, receiptHeaderList, remarks);
+        getSession().put(CollectionConstants.SESSION_VAR_RECEIPT_IDS, receiptIds);
+        return receiptHeaderService.performWorkflow(wfAction, receiptApproverSpec);
+    }
+
     public String getReceiptDate() {
         return receiptDate;
     }
@@ -561,12 +736,12 @@ public class CollectionsWorkflowAction extends BaseFormAction {
         this.receiptDate = receiptDate;
     }
 
-    public String getApproverName() {
-        return approverName;
+    public String getCurrentUserDescription() {
+        return currentUserDescription;
     }
 
-    public void setApproverName(final String approverName) {
-        this.approverName = approverName;
+    public void setCurrentUserDescription(final String currentUserDescription) {
+        this.currentUserDescription = currentUserDescription;
     }
 
     public SortedMap<String, String> getPaymentModesMap() {
