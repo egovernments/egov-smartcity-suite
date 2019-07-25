@@ -151,7 +151,6 @@ public class CourtVerdictDCBService extends TaxCollection {
     public void updateDemandDetails(CourtVerdict courtVerdict) {
 
         Set<EgDemandDetails> demandDetails = propertyService.getCurrrentDemand(courtVerdict.getProperty()).getEgDemandDetails();
-        Set<EgDemandDetailVariation> variationSet = new HashSet<>();
         for (final EgDemandDetails dmdDetails : demandDetails)
             for (final DemandDetail dmdDetailBean : courtVerdict.getDemandDetailBeanList()) {
                 Boolean isUpdateAmount = Boolean.FALSE;
@@ -265,7 +264,7 @@ public class CourtVerdictDCBService extends TaxCollection {
                     BigDecimal revisedAmount = BigDecimal.ZERO;
                     for (EgDemandDetailVariation demandDetailVariation : demandDetail.getEgDemandDetailVariation()) {
                         if (demandDetailVariation.getDemandDetail().getId().equals(demandDetail.getId())
-                                && demandDetailVariation.getDramount().compareTo(BigDecimal.ZERO) == 0) {
+                                && demandDetailVariation.getDramount().compareTo(BigDecimal.ZERO) >= 0) {
                             revisedAmount = demandDetailVariation.getDramount();
                             break;
                         }

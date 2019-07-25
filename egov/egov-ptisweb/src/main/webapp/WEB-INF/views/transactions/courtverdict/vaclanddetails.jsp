@@ -103,7 +103,7 @@
 									</div></td>
 								<td class="blueborderfortd"><div align="center">
 										<fmt:formatDate type="date" pattern="dd-MM-yyyy"
-											value="${property.propertyDetail.updatedTime}"></fmt:formatDate>
+											value="${property.propertyDetail.dateOfCompletion}"></fmt:formatDate>
 									</div></td>
 								<td class="blueborderfortd"><div align="center">
 										<c:out
