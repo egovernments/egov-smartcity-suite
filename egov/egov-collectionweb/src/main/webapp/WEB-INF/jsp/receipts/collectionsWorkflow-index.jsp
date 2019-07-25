@@ -571,6 +571,7 @@ function onChangePaymentMode(obj)
 	<script
 		src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 	<!-- start workflow changes 2 -->
+	<s:if test="%{isSubmitAction == true}">
 	<script>
 
     	var $approverDepartmentElement, $approverDesignationElement, $approverEmployeeElement, $btnSubmitPageElement, $btnSubmitAllElement;
@@ -663,6 +664,7 @@ function onChangePaymentMode(obj)
     		}
     	}
      </script>
+     </s:if>
     <!-- end workflow changes 2 -->
 
 <style>

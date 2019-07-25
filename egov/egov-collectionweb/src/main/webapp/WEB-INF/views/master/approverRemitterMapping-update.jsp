@@ -186,7 +186,8 @@ table {
                     </c:if>
 
                     <c:if test='${mode == "MODIFY"}'>
-                        <form:select path="approverId" value="${approverId}">
+                        <form:hidden path="approverId" value="${approverId}" />
+                        <form:select path="approverId" value="${approverId}" disabled="true">
                             <form:option value="">
                                 <spring:message code="lbl.select.option" />
                             </form:option>

@@ -83,8 +83,9 @@ public class ApproverRemitterMappingService {
     public ApproverRemitterMapping findActiveMappingByApprover(Long approverID) {
         List<ApproverRemitterMapping> activeMaps = mappingRepository.findByApproverIdAndIsActive(approverID, true);
         for (ApproverRemitterMapping map : activeMaps) {
-            if (map.getIsActive())
+            if (map.getIsActive()) {
                 return map;
+            }
         }
         return null;
     }
@@ -131,41 +132,18 @@ public class ApproverRemitterMappingService {
         }
     }
 
-    public boolean validateAndUpdateMapping(ApproverRemitterMappingSpec searchSpec, BindingResult bindingResult) {
-        if (searchSpec.id == null) {
+    public boolean validateAndUpdateMapping(ApproverRemitterMappingSpec mappingSpec, BindingResult bindingResult) {
+        ApproverRemitterMapping mapping;
+        if (mappingSpec.id == null || (mapping = mappingRepository.findOne(mappingSpec.id)) == null) {
             bindingResult.reject("mapping.404", "Mapping not found");
             return false;
         }
-        if (searchSpec.approverId == null) {
-            bindingResult.rejectValue("approverId", "validate.mapping.approver");
-        }
-        if (searchSpec.remitterId == null) {
-            bindingResult.rejectValue("remitterId", "validate.mapping.remitter");
-        }
-
-        ApproverRemitterMapping mapping = mappingRepository.findOne(searchSpec.id);
-        if (mapping == null) {
-            bindingResult.reject("mapping.404", "Mapping not found");
+        validateMapRequest(mappingSpec.id, mappingSpec.approverId, mappingSpec.remitterId, mappingSpec.isActive, bindingResult);
+        if (bindingResult.hasErrors())
             return false;
-        }
 
-        List<ApproverRemitterMapping> mappingList = mappingRepository.findByApproverIdAndIsActive(searchSpec.approverId, true);
-        ApproverRemitterMapping activeMap = null;
-        for (ApproverRemitterMapping map : mappingList) {
-            if (map.getIsActive()) {
-                activeMap = map;
-                break;
-            }
-        }
-        if (searchSpec.isActive
-                && activeMap != null && (activeMap.getId() != mapping.getId()
-                        || activeMap.getRemitter().getId() == searchSpec.remitterId)) {
-            bindingResult.reject("validate.mapping.exists", "An active Mapping already exists");
-            return false;
-        }
-
-        User approver = userService.getUserById(searchSpec.approverId);
-        User remitter = userService.getUserById(searchSpec.remitterId);
+        User approver = userService.getUserById(mappingSpec.approverId);
+        User remitter = userService.getUserById(mappingSpec.remitterId);
         if (approver == null) {
             bindingResult.reject("validate.approver.404", "User for approver not found");
             return false;
@@ -177,23 +155,42 @@ public class ApproverRemitterMappingService {
 
         mapping.setApprover(approver);
         mapping.setRemitter(remitter);
-        mapping.setIsActive(searchSpec.isActive);
+        mapping.setIsActive(mappingSpec.isActive);
         mappingRepository.save(mapping);
         return true;
     }
 
-    private void validateMapSpecForCreate(Long approverId, Long remitterId, Boolean isActive, BindingResult bindingResult) {
-        ApproverRemitterMapping mapping;
-        if ((mapping = mappingRepository.findByApproverIdAndRemitterId(approverId, remitterId)) != null) {
-            if (isActive != null && isActive) {
-                bindingResult.reject("validate.mapping.exists",
-                        "An Active Mapping already exists with approver " + mapping.getApprover().getName());
-            } else if (mapping.getRemitter().getId() == remitterId) {
-                bindingResult.reject("validate.mapping.exists",
-                        String.format("An mapping already exists with same approver (%s) and remitter (%s)",
-                                mapping.getApprover().getName(),
-                                mapping.getRemitter().getName()));
-            }
+    private void validateMapRequest(Long mapId, Long approverId, Long remitterId, Boolean isActive, BindingResult bindingResult) {
+        ApproverRemitterMapping sameMap = null;
+        ApproverRemitterMapping activeMap = null;
+
+        if (approverId == null || approverId < 1) {
+            bindingResult.rejectValue("approverId", "validate.mapping.approver");
+            return;
+        }
+
+        if (remitterId == null || remitterId < 1) {
+            bindingResult.rejectValue("remitterId", "validate.mapping.remitter");
+            return;
+        }
+
+        for (ApproverRemitterMapping map : mappingRepository.findByApproverId(approverId)) {
+            if (map.getIsActive())
+                activeMap = map;
+            if (map.getRemitter().getId().equals(remitterId))
+                sameMap = map;
+        }
+
+        if ((mapId != null &&
+                ((isActive && activeMap != null && !mapId.equals(activeMap.getId()))
+                        || (!isActive && sameMap != null && !mapId.equals(sameMap.getId()))))
+                || (mapId == null && (sameMap != null || activeMap != null))) {
+            ApproverRemitterMapping existingMap = activeMap != null ? activeMap : sameMap;
+            String approverName = existingMap.getApprover().getName();
+            String remitterName = existingMap.getRemitter().getName();
+            bindingResult.reject("validate.mapping.exists",
+                    new String[] { approverName, remitterName },
+                    String.format("Mapping already exists for approver %s and remitter %s", approverName, remitterName));
         }
     }
 
@@ -202,10 +199,14 @@ public class ApproverRemitterMappingService {
             bindingResult.rejectValue("approverIdList", "validation.required", "Please select at least one approver");
             return false;
         }
-        for (Long approverId : spec.approverIdList)
-            validateMapSpecForCreate(approverId, spec.remitterId, spec.isActive, bindingResult);
+
+        for (Long approverId : spec.approverIdList) {
+            validateMapRequest(null, approverId, spec.remitterId, spec.isActive, bindingResult);
+        }
+
         if (bindingResult.hasErrors())
             return false;
+
         List<ApproverRemitterMapping> newMappingList = new ArrayList<>(spec.approverIdList.size());
         for (Long approverId : spec.approverIdList) {
             ApproverRemitterMapping mapping = new ApproverRemitterMapping();
@@ -214,7 +215,9 @@ public class ApproverRemitterMappingService {
             mapping.setIsActive(spec.isActive);
             newMappingList.add(mapping);
         }
+
         mappingRepository.save(newMappingList);
+
         return true;
     }
 
