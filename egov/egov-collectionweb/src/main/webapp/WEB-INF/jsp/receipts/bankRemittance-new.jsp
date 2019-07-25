@@ -523,7 +523,7 @@
 									label="finYearRange" name="finYearId" value="%{finYearId}" />
 							</td>
 
-s						    <s:if test="%{!isBankCollectionRemitter}">
+						    <s:if test="%{!isBankCollectionRemitter}">
                                 <td class="bluebox"><s:text name="bankremittance.approver" />:</td>
                                 <td class="bluebox">
                                     <s:select
