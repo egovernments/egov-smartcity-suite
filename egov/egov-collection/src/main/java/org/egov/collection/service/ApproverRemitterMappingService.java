@@ -185,12 +185,8 @@ public class ApproverRemitterMappingService {
                 ((isActive && activeMap != null && !mapId.equals(activeMap.getId()))
                         || (!isActive && sameMap != null && !mapId.equals(sameMap.getId()))))
                 || (mapId == null && (sameMap != null || activeMap != null))) {
-            ApproverRemitterMapping existingMap = activeMap != null ? activeMap : sameMap;
-            String approverName = existingMap.getApprover().getName();
-            String remitterName = existingMap.getRemitter().getName();
             bindingResult.reject("validate.mapping.exists",
-                    new String[] { approverName, remitterName },
-                    String.format("Mapping already exists for approver %s and remitter %s", approverName, remitterName));
+                    String.format("Mapping already exists"));
         }
     }
 

@@ -452,7 +452,7 @@ public class RemittanceServiceImpl extends RemittanceService {
             whereClause.append(" AND date(ch.receiptdate) between '").append(startDate).append("' and '").append(endDate)
                     .append("' ");
 
-        final String groupByClause = " group by date(ch.RECEIPTDATE),sd.NAME,it.TYPE,fnd.name,dpt.name,fnd.code,dpt.code,ch.lastmodifiedby,us.name,us.id";
+        String groupByClause = " group by date(ch.RECEIPTDATE),sd.NAME,it.TYPE,fnd.name,dpt.name,fnd.code,dpt.code";
         final String orderBy = " order by RECEIPTDATE";
 
         /**
@@ -461,7 +461,7 @@ public class RemittanceServiceImpl extends RemittanceService {
         final StringBuilder queryStringForCash = new StringBuilder(
                 "SELECT sum(ih.instrumentamount) as INSTRUMENTMAOUNT,date(ch.RECEIPTDATE) AS RECEIPTDATE,")
                         .append("sd.NAME as SERVICENAME,it.TYPE as INSTRUMENTTYPE,fnd.name AS FUNDNAME,dpt.name AS DEPARTMENTNAME,")
-                        .append("fnd.code AS FUNDCODE,dpt.code AS DEPARTMENTCODE, us.name AS APPROVERNAME, us.id AS APPROVERID from EGCL_COLLECTIONHEADER ch,")
+                        .append("fnd.code AS FUNDCODE,dpt.code AS DEPARTMENTCODE, max(us.name) AS APPROVERNAME, max(us.id) AS APPROVERID from EGCL_COLLECTIONHEADER ch,")
                         .append("EGF_INSTRUMENTHEADER ih,EGCL_COLLECTIONINSTRUMENT ci,EGCL_SERVICEDETAILS sd,")
                         .append("EGF_INSTRUMENTTYPE it,EGCL_COLLECTIONMIS cm,FUND fnd,EG_DEPARTMENT dpt, eg_user us")
                         .append(whereClauseBeforInstumentType + whereClauseForServiceAndFund + "it.TYPE in ('")
@@ -474,6 +474,7 @@ public class RemittanceServiceImpl extends RemittanceService {
             queryStringForCash
                     .append(whereClause + " AND cm.depositedbranch=" + branchUserMap.getBankbranch().getId());
         } else {
+            groupByClause += ",ch.lastmodifiedby,us.name,us.id";
             // no Mapping
             if (approverIdList.isEmpty()) {
                 queryStringForCash.append(whereClause)
@@ -556,11 +557,12 @@ public class RemittanceServiceImpl extends RemittanceService {
                 "SELECT ih.instrumentamount as INSTRUMENTMAOUNT,date(ch.RECEIPTDATE) AS RECEIPTDATE,")
                         .append(" ch.RECEIPTNUMBER AS RECEIPTNUMBER,ih.INSTRUMENTNUMBER AS INSTRUMENTNUMBER,ih.INSTRUMENTDATE as INSTRUMENTDATE,sd.NAME as SERVICENAME, ")
                         .append("it.TYPE as INSTRUMENTTYPE,fnd.name AS FUNDNAME,dpt.name AS DEPARTMENTNAME,")
-                        .append("fnd.code AS FUNDCODE,dpt.code AS DEPARTMENTCODE,ih.ID as INSTRUMENTID,ih.BANKBRANCHNAME as bankbranchname,bank.NAME as bankname,us.\"name\" AS APPROVERNAME")
+                        .append("fnd.code AS FUNDCODE,dpt.code AS DEPARTMENTCODE,ih.ID as INSTRUMENTID,ih.BANKBRANCHNAME as bankbranchname,bank.NAME as bankname,us.name AS APPROVERNAME")
                         .append(" from EGCL_COLLECTIONHEADER ch,EGF_INSTRUMENTHEADER ih,EGCL_COLLECTIONINSTRUMENT ci,EGCL_SERVICEDETAILS sd, eg_user us,")
                         .append("EGF_INSTRUMENTTYPE it,EGCL_COLLECTIONMIS cm,FUND fnd,EG_DEPARTMENT dpt, BANK bank  where ch.id=cm.collectionheader AND ")
                         .append("fnd.id=cm.fund AND dpt.id=cm.department and ci.INSTRUMENTHEADER=ih.ID and ")
-                        .append("ch.SERVICEDETAILS=sd.ID and ch.ID=ci.COLLECTIONHEADER and ih.INSTRUMENTTYPE=it.ID and ih.BANKID=bank.ID and")
+                        .append("ch.SERVICEDETAILS=sd.ID and ch.ID=ci.COLLECTIONHEADER and ih.INSTRUMENTTYPE=it.ID and ih.BANKID=bank.ID AND")
+                        .append(" us.id = ch.lastmodifiedby AND")
                         .append(" sd.code in (" + serviceCodes + ")" + " and fnd.code in (")
                         .append(fundCodes + ")" + " and  it.TYPE in ('" + CollectionConstants.INSTRUMENTTYPE_CHEQUE + "','")
                         .append(CollectionConstants.INSTRUMENTTYPE_DD)
@@ -582,7 +584,7 @@ public class RemittanceServiceImpl extends RemittanceService {
                     collectionsUtil.getLoggedInUser().getId());
             chequeRemittanceListQuery.append(" AND cm.depositedbranch=" + branchUserMap.getBankbranch().getId());
         } else
-            chequeRemittanceListQuery.append(" AND us.id = ch.lastmodifiedby AND ch.lastmodifiedby in (" + approverIdList + ")");
+            chequeRemittanceListQuery.append(" AND ch.lastmodifiedby in (" + approverIdList + ")");
         chequeRemittanceListQuery.append(" order by RECEIPTDATE,bankname ");
         final Query query = receiptHeaderService.getSession()
                 .createSQLQuery(chequeRemittanceListQuery.toString());

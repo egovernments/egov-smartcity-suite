@@ -59,9 +59,6 @@ section {
 }
 .error-area, 
 .error-area li{
-	color: red;
-	font-size: 16px;
-	font-weight: bold;
 	margin-top: 12px;
 }
 .error-area {
@@ -69,9 +66,14 @@ section {
 }
 
 .error-area {
-    margin: 12px;
-    background: #ffe9e3;
-    padding: 12px;
+    font-size: 11px;
+    color: #F00;
+    text-align: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #FFFFEE;
+    font-family: semibold;
+    border: 1px solid #F00;
 }
 
 #success-msg {
@@ -88,7 +90,7 @@ section {
     <c:if test='${not empty errors}'>
         <ul class="error-area list-unstyled">
             <c:forEach items="${errors}" var="error">
-                <li>${error}</li>
+                <li><span>${error}</span></li>
             </c:forEach>
         </ul>
     </c:if>

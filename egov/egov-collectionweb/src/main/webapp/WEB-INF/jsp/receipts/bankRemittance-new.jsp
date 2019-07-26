@@ -185,7 +185,7 @@
 				document.bankRemittanceForm.totalChequeAmountArray[i].value = "";
 				document.bankRemittanceForm.totalCardAmountArray[i].value = "";
 				document.bankRemittanceForm.totalOnlineAmountArray[i].value = "";
-				document.bankRemittanceForm.receiptDateArray[i].value = "";
+				document.bankRemittanceForm.receiptDateArray[i].value = "";			
 				document.bankRemittanceForm.approverIdArray[i].value = "";
 			}
 			j++;
@@ -636,15 +636,9 @@
 							title="Department" style="width:10%;text-align: center"
 							value="${currentRow.DEPARTMENTNAME}" />
 
-						<s:if test="%{!isBankCollectionRemitter}">
                             <display:column headerClass="bluebgheadtd" class="blueborderfortd"
                                 title="Approver" style="width:10%;text-align: center"
                                 value="${currentRow.APPROVERNAME}" />
-                        </s:if>
-							
-						<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-							title="Approver" style="width:10%;text-align: center"
-							value="${currentRow.APPROVERNAME}" />
 							
 						<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 							title="Total Cash Collection"

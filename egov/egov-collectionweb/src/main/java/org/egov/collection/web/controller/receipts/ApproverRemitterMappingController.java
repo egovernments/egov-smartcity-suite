@@ -1,6 +1,5 @@
 package org.egov.collection.web.controller.receipts;
 
-
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ApproverRemitterMapping;
@@ -39,17 +38,15 @@ public class ApproverRemitterMappingController {
     @Autowired
     CollectionsUtil collectionsUtil;
 
-
     private void prepareSearchModel(final Model model) {
         prepareSearchModel(model, new ApproverRemitterMappingService.ApproverRemitterMappingSpec());
     }
 
     private void prepareSearchModel(final Model model, ApproverRemitterMappingService.ApproverRemitterMappingSpec givenSpec) {
         String remitterRole = collectionsUtil.getAppConfigValue(
-            CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-            CollectionConstants.APPCONFIG_VALUE_COLLECTION_REMITTER_ROLE,
-            CollectionConstants.ROLE_COLLECTION_REMITTER
-        );
+                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                CollectionConstants.APPCONFIG_VALUE_COLLECTION_REMITTER_ROLE,
+                CollectionConstants.ROLE_COLLECTION_REMITTER);
 
         Set<User> approverSet = userService.getUsersByRoleName(CollectionConstants.ROLE_COLLECTION_APPROVER);
         Set<User> activelyMappedApprvSet = mappingService.getActivelyMappedApprover();
@@ -59,7 +56,7 @@ public class ApproverRemitterMappingController {
         model.addAttribute("freeApproverList", approverSet);
         model.addAttribute("activeMappedApproverList", activelyMappedApprvSet);
 
-//    model.addAttribute("approverList", approverSet);
+        // model.addAttribute("approverList", approverSet);
         model.addAttribute("remitterList", userService.getUsersByRoleName(remitterRole));
         model.addAttribute(ATTR_APPROVER_REMITTER_MAPPING_LIST, Collections.emptyList());
     }
@@ -67,7 +64,8 @@ public class ApproverRemitterMappingController {
     private void prepareModelAndViewForEdit(Long mappingId, Model model) {
         ApproverRemitterMapping mapping = mappingService.findById(mappingId);
         if (mapping != null) {
-            ApproverRemitterMappingService.ApproverRemitterMappingSpec remitterMappingSpec = ApproverRemitterMappingService.ApproverRemitterMappingSpec.of(mapping);
+            ApproverRemitterMappingService.ApproverRemitterMappingSpec remitterMappingSpec = ApproverRemitterMappingService.ApproverRemitterMappingSpec
+                    .of(mapping);
             prepareSearchModel(model, remitterMappingSpec);
             ((Set<User>) model.asMap().get("activeMappedApproverList")).remove(mapping.getApprover());
         } else {
@@ -76,26 +74,25 @@ public class ApproverRemitterMappingController {
         model.addAttribute("mode", "MODIFY");
     }
 
-
     @GetMapping("/view")
     public ModelAndView getViewMapping(final Model model) {
         prepareSearchModel(model);
         return new ModelAndView(VIEW_INDEX, model.asMap());
     }
 
-
     @PostMapping("/view")
-    public ModelAndView postViewMapping(@ModelAttribute(ATTR_APPROVER_REMITTER_MAPPING_SPEC) ApproverRemitterMappingService.ApproverRemitterMappingSpec searchSpec, BindingResult bindingResult, Model model) {
+    public ModelAndView postViewMapping(
+            @ModelAttribute(ATTR_APPROVER_REMITTER_MAPPING_SPEC) ApproverRemitterMappingService.ApproverRemitterMappingSpec searchSpec,
+            BindingResult bindingResult, Model model) {
         prepareSearchModel(model, searchSpec);
 
         if (!bindingResult.hasErrors()) {
             model.addAttribute(ATTR_APPROVER_REMITTER_MAPPING_LIST, mappingService.searchMappingBySpec(searchSpec));
         }
 
-//    return "approverRemitterMapping-view";
+        // return "approverRemitterMapping-view";
         return new ModelAndView(VIEW_INDEX, model.asMap());
     }
-
 
     @GetMapping("/modify")
     public ModelAndView getModifyMapping(Model model) {
@@ -107,7 +104,9 @@ public class ApproverRemitterMappingController {
     }
 
     @PostMapping("/modify")
-    public ModelAndView postModifyMapping(@ModelAttribute(ATTR_APPROVER_REMITTER_MAPPING_SPEC) ApproverRemitterMappingService.ApproverRemitterMappingSpec searchSpec, BindingResult bindingResult, Model model) {
+    public ModelAndView postModifyMapping(
+            @ModelAttribute(ATTR_APPROVER_REMITTER_MAPPING_SPEC) ApproverRemitterMappingService.ApproverRemitterMappingSpec searchSpec,
+            BindingResult bindingResult, Model model) {
         this.postViewMapping(searchSpec, bindingResult, model);
         model.addAttribute("mode", "MODIFY");
         model.addAttribute("modifyRequest", new ModifyRequestSpec());
@@ -119,15 +118,15 @@ public class ApproverRemitterMappingController {
         return new ModelAndView(new RedirectView("/collection/receipts/approverRemitterMapping/view"));
     }
 
-
     @PostMapping("/edit")
-    public ModelAndView postEditMappingIndex(@ModelAttribute("modifyRequest") ModifyRequestSpec modifyRequest, BindingResult bindingResult) {
+    public ModelAndView postEditMappingIndex(@ModelAttribute("modifyRequest") ModifyRequestSpec modifyRequest,
+            BindingResult bindingResult) {
         if (modifyRequest.selectedId != null || modifyRequest.selectedId > -1) {
-            return new ModelAndView(new RedirectView("/collection/receipts/approverRemitterMapping/edit/" + modifyRequest.selectedId));
+            return new ModelAndView(
+                    new RedirectView("/collection/receipts/approverRemitterMapping/edit/" + modifyRequest.selectedId));
         }
         return new ModelAndView(new RedirectView("/collection/receipts/approverRemitterMapping/view"));
     }
-
 
     @GetMapping("/edit/{id}")
     public ModelAndView getEditMapping(@PathVariable("id") Long mappingId, Model model) {
@@ -138,11 +137,10 @@ public class ApproverRemitterMappingController {
 
     @PostMapping("/edit/{id}")
     public ModelAndView postEditMapping(
-        @PathVariable("id") Long mappingId,
-        @Valid @ModelAttribute(ATTR_APPROVER_REMITTER_MAPPING_SPEC) ApproverRemitterMappingService.ApproverRemitterMappingSpec searchSpec,
-        BindingResult bindingResult,
-        Model model
-    ) {
+            @PathVariable("id") Long mappingId,
+            @Valid @ModelAttribute(ATTR_APPROVER_REMITTER_MAPPING_SPEC) ApproverRemitterMappingService.ApproverRemitterMappingSpec searchSpec,
+            BindingResult bindingResult,
+            Model model) {
         if (!bindingResult.hasErrors()) {
             // For some reason spring is not setting id to ModelAttribute even as id is getting passed in POST request.
             if (searchSpec.getId() == null) {
@@ -166,21 +164,18 @@ public class ApproverRemitterMappingController {
 
     @GetMapping("/create")
     public ModelAndView getCreateMapping(
-        Model model
-    ) {
+            Model model) {
         model.addAttribute("mode", "CREATE");
         prepareSearchModel(model);
         ModelAndView mav = new ModelAndView("approverRemitterMapping-update", model.asMap());
         return mav;
     }
 
-
     @PostMapping("/create")
     public ModelAndView postCreateMapping(
-        @Valid @ModelAttribute(ATTR_APPROVER_REMITTER_MAPPING_SPEC) ApproverRemitterMappingService.ApproverRemitterMappingSpec searchSpec,
-        BindingResult bindingResult,
-        Model model
-    ) {
+            @Valid @ModelAttribute(ATTR_APPROVER_REMITTER_MAPPING_SPEC) ApproverRemitterMappingService.ApproverRemitterMappingSpec searchSpec,
+            BindingResult bindingResult,
+            Model model) {
         model.addAttribute("mode", "CREATE");
         prepareSearchModel(model, searchSpec);
 
@@ -198,7 +193,6 @@ public class ApproverRemitterMappingController {
         }
         return mav;
     }
-
 
     /**
      * Lightweight POJO to pass the data between UI and backend
@@ -226,9 +220,9 @@ public class ApproverRemitterMappingController {
         @Override
         public String toString() {
             return "ModifyRequestSpec{" +
-                "selectedRow=" + selectedRow +
-                ", selectedId=" + selectedId +
-                '}';
+                    "selectedRow=" + selectedRow +
+                    ", selectedId=" + selectedId +
+                    '}';
         }
     }
 

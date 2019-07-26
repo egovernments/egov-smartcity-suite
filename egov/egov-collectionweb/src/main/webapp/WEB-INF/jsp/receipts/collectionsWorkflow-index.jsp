@@ -471,7 +471,7 @@ function onChangePaymentMode(obj)
                                             <s:select id="approverDepartmentId"
                                                 name="approverDepartmentId" cssClass="form-control"
                                                 list="departmentList" listKey="id" listValue="name"
-                                                headerKey="-1" headerValue="---Select from below---"
+                                                headerKey="-1" headerValue="%{getText('wf.select')}"
                                                 onchange="return onSelectDepartment(event);"
                                             />
 					</div>
@@ -483,7 +483,7 @@ function onChangePaymentMode(obj)
                                             <s:select id="approverDesignationId"
                                                 name="approverDesignationId" cssClass="form-control"
                                                 list="designationList" listKey="id" listValue="name"
-                                                headerKey="-1" headerValue="---Select from below---"
+                                                headerKey="-1" headerValue="%{getText('wf.select')}"
                                                 onchange="return onSelectDesignation(event);"
                                             />				
 					</div>
@@ -497,7 +497,7 @@ function onChangePaymentMode(obj)
                         <s:select id="approverIdPositionId" name="approverIdPositionId"
                             cssClass="form-control"
                             list="employeeList" listKey="id" listValue="name"
-                            headerKey="-1" headerValue="---Select from below---"
+                            headerKey="-1" headerValue="%{getText('wf.select')}"
                             onchange="return onSelectApprover(event);"
                         />
 					</div> 
@@ -571,7 +571,6 @@ function onChangePaymentMode(obj)
 	<script
 		src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 	<!-- start workflow changes 2 -->
-	<s:if test="%{isSubmitAction == true}">
 	<script>
 
     	var $approverDepartmentElement, $approverDesignationElement, $approverEmployeeElement, $btnSubmitPageElement, $btnSubmitAllElement;
@@ -598,7 +597,7 @@ function onChangePaymentMode(obj)
     		for (var i = opts.length - 1; i >= 0; i--) {
     			opts.remove(i);
     		}
-    		opts.add(new Option("---Select from below---", "-1"));
+    		opts.add(new Option('<s:text name="wf.select" />', "-1"));
     	}
 
 
@@ -644,12 +643,18 @@ function onChangePaymentMode(obj)
                 approverDesignationId: $approverDesignationElement.value
             }).done(function(optionsMap) {
                 console.log('optionsMap: employee', optionsMap);
+                var emptyMap = true;
                 for(var key in optionsMap) {
                     $approverEmployeeElement.options.add(new Option(optionsMap[key], key+''));
+                    emptyMap = false;
                 }
                 $approverEmployeeElement.selectedIndex = 0;
+                if (emptyMap) {
+                    $approverEmployeeElement.options[0].text = '<s:text name="wf.no.employee" />'
+                }
             }).fail(function(error) {
                 console.log('error', e);
+                $approverEmployeeElement.options[0].text = '<s:text name="wf.error.employee" />';
             });
     	}
     	function onSelectApprover() {
@@ -663,8 +668,7 @@ function onChangePaymentMode(obj)
     			$btnSubmitAllElement.disabled = true;
     		}
     	}
-     </script>
-     </s:if>
+    </script>
     <!-- end workflow changes 2 -->
 
 <style>
