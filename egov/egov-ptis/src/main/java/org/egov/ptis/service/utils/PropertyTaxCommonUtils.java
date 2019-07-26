@@ -82,6 +82,7 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyMutationDAO;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
@@ -990,6 +991,15 @@ public class PropertyTaxCommonUtils {
             LOGGER.error("Error in converting json array into json object " + e);
         }
         return legalcaseDtls;
+    }
+    
+    public Boolean validateEffectiveDate(final List<Floor> floorList) {
+        Date firstFloorEffectiveDate = floorList.get(0).getOccupancyDate();
+        return floorList.stream()
+                .filter(floor -> floor != null)
+                .filter(floor -> floor.getOccupancyDate() != null)
+                .allMatch(floor -> floor.getOccupancyDate().equals(firstFloorEffectiveDate));
+
     }
 
 }

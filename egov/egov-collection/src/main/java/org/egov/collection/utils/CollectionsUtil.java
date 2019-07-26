@@ -1177,7 +1177,7 @@ public class CollectionsUtil {
      */
     public List<ValidationError> validateCollectionApprover(String approverIdPositionId, Long departmentId, Long designationId) {
         try {
-            if (StringUtils.isEmpty(approverIdPositionId) || !approverIdPositionId.contains("~")) {
+            if (org.apache.commons.lang.StringUtils.isEmpty(approverIdPositionId) || !approverIdPositionId.contains("~")) {
                 return Collections.singletonList(new ValidationError("submitcollections.validation.select.approver",
                         "Please select a approver while submitting collection."));
             }

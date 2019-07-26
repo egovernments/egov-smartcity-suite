@@ -78,7 +78,7 @@ public class EgDemandDetails implements Serializable, Cloneable {
     private BigDecimal amtRebate = BigDecimal.ZERO;
     private EgDemand egDemand;
     private Long version;
-    private transient Set<EgDemandDetailVariation> egDemandDetailVariation =new HashSet<>();
+    private transient Set<DemandDetailVariation> demandDetailVariation =new HashSet<>();
 
     /**
      * Factory method for convenient creation.
@@ -142,7 +142,7 @@ public class EgDemandDetails implements Serializable, Cloneable {
         clone.setId(null);
         clone.setEgwStatus(null);
         clone.setEgdmCollectedReceipts(new HashSet<>());
-        clone.setEgDemandDetailVariation(new HashSet<>());
+        clone.setDemandDetailVariation(new HashSet<>());
         return clone;
     }
 
@@ -329,20 +329,21 @@ public class EgDemandDetails implements Serializable, Cloneable {
         this.version = version;
     }
 
-    public Set<EgDemandDetailVariation> getEgDemandDetailVariation() {
-        return egDemandDetailVariation;
-    }
-
-    public void setEgDemandDetailVariation(Set<EgDemandDetailVariation> egDemandDetailVariation) {
-        this.egDemandDetailVariation = egDemandDetailVariation;
-    }
     
-    public void addEgDemandDetailVariation(EgDemandDetailVariation egDemandDetailVariation) {
-        getEgDemandDetailVariation().add(egDemandDetailVariation);
+    public void addEgDemandDetailVariation(DemandDetailVariation demandDetailVariation) {
+        getDemandDetailVariation().add(demandDetailVariation);
     }
 
-    public void removeEgDemandDetailVariation(EgDemandDetailVariation egDemandDetailVariation) {
-        getEgDemandDetailVariation().remove(egDemandDetailVariation);
+    public void removeEgDemandDetailVariation(DemandDetailVariation demandDetailVariation) {
+        getDemandDetailVariation().remove(demandDetailVariation);
+    }
+
+    public Set<DemandDetailVariation> getDemandDetailVariation() {
+        return demandDetailVariation;
+    }
+
+    public void setDemandDetailVariation(Set<DemandDetailVariation> demandDetailVariation) {
+        this.demandDetailVariation = demandDetailVariation;
     }
 
   }

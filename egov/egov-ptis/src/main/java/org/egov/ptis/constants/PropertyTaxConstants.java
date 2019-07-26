@@ -1828,5 +1828,7 @@ public interface PropertyTaxConstants {
     public static final String UPDATE_DEMAND_DIRECTLY = "UPDATE_DMND_DIRECTLY";
     public static final String DEMAND_DETAIL_LIST = "demandDetailList";
     public static final String ENDORSEMENT_NOTICE = "endorsementNotices";
+    public static final String COURTCASE = "COURT_CASE";
+
 
 }

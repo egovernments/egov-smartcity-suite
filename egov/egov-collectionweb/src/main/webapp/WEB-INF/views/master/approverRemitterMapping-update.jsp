@@ -72,18 +72,16 @@ table {
     color: #cc0000;
     font-size: 11px;
 }
-.error-area, 
-.error-area li,
-.error-area span {
-	color: red;
-	font-size: 16px;
-	font-weight: bold;
-	margin-top: 12px;
-}
+
 .error-area {
     margin: 12px;
-    background: #ffe9e3;
-    padding: 12px;
+    font-size: 11px;
+    color: #F00;
+    text-align: center;
+    padding: 10px;
+    background-color: #FFFFEE;
+    font-family: semibold;
+    border: 1px solid #F00;
 }
 .error-msg {
 	color: #cc0000;
@@ -96,7 +94,8 @@ table {
     var originalValue = {
         approverId: '<c:out value="${approverRemitterMappingSpec.approverId}" />',
         remitterId: '<c:out value="${approverRemitterMappingSpec.remitterId}" />',
-        isActive: '<c:out value="${approverRemitterMappingSpec.isActive}" />'
+        isActive: '<c:out value="${approverRemitterMappingSpec.isActive}" />',
+        approverIdList: ''
     };
 	
     function resetValues() {
@@ -104,7 +103,7 @@ table {
             if(v)
                 jQuery('#' + k).val(v);
             else
-                jQuery('#' + k).val("");
+                jQuery('#' + k).val('');
         })
     }
 
@@ -158,12 +157,16 @@ table {
         <c:if test="${not empty errors}">
             <ul class="error-area list-unstyled">
                 <c:forEach items="${errors}" var="error">
-                    <li>${error}</li>
+                    <li><span>${error}</span></li>
                 </c:forEach>
             </ul>
         </c:if>
 
-        <form:errors element="div" cssClass="error-area add-margin error-msg"/>
+        <div class="error-area">
+        <ul>
+            <form:errors element="li" />
+        </ul>
+        </div>
 
         <table width="100%">
             <tr>
@@ -186,7 +189,8 @@ table {
                     </c:if>
 
                     <c:if test='${mode == "MODIFY"}'>
-                        <form:select path="approverId" value="${approverId}">
+                        <form:hidden path="approverId" value="${approverId}" />
+                        <form:select path="approverId" value="${approverId}" disabled="true">
                             <form:option value="">
                                 <spring:message code="lbl.select.option" />
                             </form:option>

@@ -637,10 +637,11 @@
 						<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 							title="Department" style="width:15%;text-align: center"
 							value="${currentRow.DEPARTMENTNAME}" />
-							
-						<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-							title="Approver" style="width:10%;text-align: center"
-							value="${currentRow.APPROVERNAME}" />
+
+                            <display:column headerClass="bluebgheadtd" class="blueborderfortd"
+                                title="Approver" style="width:10%;text-align: center"
+                                value="${currentRow.APPROVERNAME}" />
+
 						<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 							title="Cheque /DD Amount (Rs)"
 							style="width:10%;text-align: center">

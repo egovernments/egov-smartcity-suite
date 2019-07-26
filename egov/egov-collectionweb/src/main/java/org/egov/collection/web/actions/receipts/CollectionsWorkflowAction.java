@@ -73,7 +73,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -674,7 +673,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
 
         Long approverId = 0L;
         Long positionId = 0L;
-        if (StringUtils.isNotEmpty(approverIdPositionId)) {
+        if (org.apache.commons.lang.StringUtils.isNotEmpty(approverIdPositionId)) {
             String ids[] = approverIdPositionId.split("~");
             if (ids.length == 2) {
                 approverId = Long.parseLong(ids[0]);
@@ -719,7 +718,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
 
         Long approverId = 0L;
         Long positionId = 0L;
-        if (StringUtils.isNotEmpty(approverIdPositionId)) {
+        if (org.apache.commons.lang.StringUtils.isNotEmpty(approverIdPositionId)) {
             String ids[] = approverIdPositionId.split("~");
             if (ids.length == 2) {
                 approverId = Long.parseLong(ids[0]);

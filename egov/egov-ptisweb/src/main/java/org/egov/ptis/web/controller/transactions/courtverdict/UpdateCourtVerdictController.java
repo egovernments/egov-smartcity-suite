@@ -65,6 +65,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJ
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_ACTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -155,6 +156,7 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
         } else {
             if (!courtVerdict.getAction().equalsIgnoreCase(UPDATE_DEMAND_DIRECTLY)) {
                 courtVerdictService.addModelAttributesForUpdateCV(courtVerdict, model);
+                courtVerdict.getProperty().getPropertyDetail().setFloorDetailsProxy(courtVerdict.getProperty().getPropertyDetail().getFloorDetails());
                 courtVerdictService.addModelAttributes(model, courtVerdict.getProperty(), request);
                 model.addAttribute("caseStatus", status);
                 model.addAttribute("caseDate", date);
@@ -191,6 +193,7 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
         String approvalComent = "";
         String workFlowAct = workFlowAction;
         String target = null;
+        Map<String, String> errorMessages = new HashMap<>();
         String currentDesg = courtVerdictService.getLoggedInUserDesignation(
                 courtVerdict.getCurrentState().getOwnerPosition().getId(),
                 securityUtils.getCurrentUser());
@@ -246,6 +249,8 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
         } else {
 
             if (courtVerdict.getAction().equalsIgnoreCase(RE_ASSESS) && currentDesg.contains(REVENUE_OFFICER_DESGN)) {
+                errorMessages = courtVerdictService.validate(courtVerdict, plotAreaId, layoutAuthorityId);
+                if (errorMessages.isEmpty()) {
                 courtVerdictService.updatePropertyDetails(courtVerdict, plotAreaId, layoutAuthorityId);
                 PropertyImpl modProperty = courtVerdictDCBService.modifyDemand(courtVerdict.getProperty(),
                         courtVerdict.getBasicProperty().getActiveProperty());
@@ -254,31 +259,46 @@ public class UpdateCourtVerdictController extends GenericWorkFlowController {
                     courtVerdict.getBasicProperty().addProperty(courtVerdict.getProperty());
                 else
                     courtVerdict.getBasicProperty().addProperty(modProperty);
+                target=successWorkflow(courtVerdict,approvalPosition,approvalComent,workFlowAction,loggedUserIsEmployee,model);
+                }
+                else
+                    target=courtVerdictService.displayErrors(courtVerdict, model, errorMessages, request);
             } else if (courtVerdict.getAction().equalsIgnoreCase(UPDATE_DEMAND_DIRECTLY)
                     && currentDesg.contains(REVENUE_OFFICER_DESGN)) {
+                errorMessages = courtVerdictDCBService.validateDemand(courtVerdict.getDemandDetailBeanList());
+                if (errorMessages.isEmpty()) {
                 courtVerdictService.updatePropertyDetails(courtVerdict, plotAreaId, layoutAuthorityId);
                 courtVerdictDCBService.updateDemandDetails(courtVerdict);
                 courtVerdict.getBasicProperty().addProperty(courtVerdict.getProperty());
+                target=successWorkflow(courtVerdict,approvalPosition,approvalComent,workFlowAction,loggedUserIsEmployee,model);
+                }
+                else
+                    target=courtVerdictService.displayErrors(courtVerdict, model, errorMessages, request);
             } else if (courtVerdict.getAction().equalsIgnoreCase("CANCEL_PROP") && currentDesg.contains(REVENUE_OFFICER_DESGN)) {
                 courtVerdictService.updatePropertyDetails(courtVerdict, plotAreaId, layoutAuthorityId);
                 courtVerdictService.setPtDemandSet(courtVerdict);
                 courtVerdict.getBasicProperty().addProperty(courtVerdict.getProperty());
+                target=successWorkflow(courtVerdict,approvalPosition,approvalComent,workFlowAction,loggedUserIsEmployee,model);
             }
 
-            courtVerdictService.saveCourtVerdict(courtVerdict, approvalPosition, approvalComent, null, workFlowAction,
-                    loggedUserIsEmployee, courtVerdict.getAction());
 
-            successMessage = "Court Verdict Saved Successfully in the System and forwarded to :"
-                    + propertyTaxUtil.getApproverUserName(courtVerdict.getState().getOwnerPosition().getId())
-                    + " with application number "
-                    + courtVerdict.getApplicationNumber();
-
-            model.addAttribute(SUCCESS_MSG, successMessage);
-
-            target = CV_SUCCESS_FORM;
-        }
+       }
 
         return target;
 
+    }
+    public String successWorkflow(CourtVerdict courtVerdict, Long approvalPosition, String approvalComent, String workFlowAction, Boolean loggedUserIsEmployee, Model model){
+        String successMessage = null;
+        courtVerdictService.saveCourtVerdict(courtVerdict, approvalPosition, approvalComent, null, workFlowAction,
+                loggedUserIsEmployee, courtVerdict.getAction());
+
+        successMessage = "Court Verdict Saved Successfully in the System and forwarded to :"
+                + propertyTaxUtil.getApproverUserName(courtVerdict.getState().getOwnerPosition().getId())
+                + " with application number "
+                + courtVerdict.getApplicationNumber();
+
+        model.addAttribute(SUCCESS_MSG, successMessage);
+
+        return CV_SUCCESS_FORM;
     }
 }
