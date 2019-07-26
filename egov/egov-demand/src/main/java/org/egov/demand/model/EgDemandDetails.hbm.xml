@@ -92,11 +92,11 @@
             <one-to-many class="org.egov.demand.model.EgdmCollectedReceipt"/>
         </set>
 
-		<set name="egDemandDetailVariation" cascade="all" table="EG_DEMAND_DETAIL_VARIATION">
+		<set name="demandDetailVariation" cascade="all" table="EG_DEMAND_DETAIL_VARIATION">
 			<key>
 				<column name="DEMAND_DETAIL" not-null="true" />
 			</key>
-			<one-to-many class="org.egov.demand.model.EgDemandDetailVariation" />
+			<one-to-many class="org.egov.demand.model.DemandDetailVariation" />
 		</set>
         <property name="amtRebate" type="java.math.BigDecimal">
             <column name="AMT_REBATE"/>

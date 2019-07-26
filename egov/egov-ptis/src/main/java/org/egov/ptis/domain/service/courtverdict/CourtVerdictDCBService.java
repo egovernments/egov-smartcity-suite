@@ -51,6 +51,7 @@ import static java.math.BigDecimal.ZERO;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.COURTCASE;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -74,11 +75,9 @@ import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
-import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.integration.TaxCollection;
-import org.egov.demand.model.EgDemandDetailVariation;
+import org.egov.demand.model.DemandDetailVariation;
 import org.egov.demand.model.EgDemandDetails;
-import org.egov.demand.repository.demanddetailvariation.DemandDetailVariationRepository;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
@@ -129,12 +128,9 @@ public class CourtVerdictDCBService extends TaxCollection {
     private PTBillServiceImpl ptBillServiceImpl;
     @Autowired
     private ModuleService moduleDao;
-    @Autowired
-    private DemandDetailVariationRepository demandDetailVariationRepo;
-    @Autowired
-    private DemandGenericDao demandGenericDAO;
+
     private static final Logger LOGGER = Logger.getLogger(CourtVerdictService.class);
-    private static final String COURTCASE="COURT_CASE";
+
     public PropertyImpl modifyDemand(PropertyImpl newProperty, PropertyImpl oldProperty) {
         PropertyImpl modProperty = null;
 
@@ -173,10 +169,11 @@ public class CourtVerdictDCBService extends TaxCollection {
                     isUpdateCollection = true;
 
                 if (isUpdateAmount) {
-                    EgDemandDetailVariation dmdVar = persistDemandDetailVariation(dmdDetails, dmdDetailBean.getRevisedAmount(),COURTCASE);
-                    Set<EgDemandDetailVariation> variationSet = new HashSet<>();
+                    DemandDetailVariation dmdVar = persistDemandDetailVariation(dmdDetails, dmdDetailBean.getRevisedAmount(),
+                            COURTCASE);
+                    Set<DemandDetailVariation> variationSet = new HashSet<>();
                     variationSet.add(dmdVar);
-                    dmdDetails.setEgDemandDetailVariation(variationSet);
+                    dmdDetails.setDemandDetailVariation(variationSet);
                 }
                 if (isUpdateCollection)
                     dmdDetails.setAmtCollected(
@@ -262,7 +259,7 @@ public class CourtVerdictDCBService extends TaxCollection {
                     final String reasonMaster = demandDetail.getEgDemandReason().getEgDemandReasonMaster()
                             .getReasonMaster();
                     BigDecimal revisedAmount = BigDecimal.ZERO;
-                    for (EgDemandDetailVariation demandDetailVariation : demandDetail.getEgDemandDetailVariation()) {
+                    for (DemandDetailVariation demandDetailVariation : demandDetail.getDemandDetailVariation()) {
                         if (demandDetailVariation.getDemandDetail().getId().equals(demandDetail.getId())
                                 && demandDetailVariation.getDramount().compareTo(BigDecimal.ZERO) >= 0) {
                             revisedAmount = demandDetailVariation.getDramount();
@@ -453,5 +450,4 @@ public class CourtVerdictDCBService extends TaxCollection {
         // TODO Auto-generated method stub
 
     }
-
 }

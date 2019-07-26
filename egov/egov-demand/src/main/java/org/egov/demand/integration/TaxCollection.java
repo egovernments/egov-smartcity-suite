@@ -72,7 +72,7 @@ import org.egov.demand.model.BillReceipt;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgBillDetails;
 import org.egov.demand.model.EgDemand;
-import org.egov.demand.model.EgDemandDetailVariation;
+import org.egov.demand.model.DemandDetailVariation;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
@@ -593,8 +593,8 @@ public abstract class TaxCollection implements BillingIntegrationService {
         return egDmCollectedReceipt;
     }
     
-    protected EgDemandDetailVariation persistDemandDetailVariation(EgDemandDetails dmdDetails, BigDecimal revisedAmount, String code) {
-        EgDemandDetailVariation demandDetailVariation = new EgDemandDetailVariation();
+    public DemandDetailVariation persistDemandDetailVariation(EgDemandDetails dmdDetails, BigDecimal revisedAmount, String code) {
+        DemandDetailVariation demandDetailVariation = new DemandDetailVariation();
         demandDetailVariation.setDemandDetail(dmdDetails);
         demandDetailVariation.setDemandreasonMaster(demandGenericDAO.getDemandReasonMasterByCode(code, module()));
         demandDetailVariation.setDramount(revisedAmount);

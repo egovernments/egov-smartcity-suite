@@ -87,12 +87,12 @@
 							<th class="bluebgheadtd"><spring:message
 									code="lbl.cv.buildplanPlinth" /></th>
 						</tr>
-						<c:forEach items="${floor}" var="floor">
+						<c:forEach items="${floor}" var="floor" varStatus="status">
 							<tr>
 								<td class="blueborderfortd" style="padding: 2px 2px">
 									<div align="center">
 										<span class="bold"><c:out default="N/A"
-												value="${floor.floorNo}"></c:out></span>
+												value="${floorMap[status.index ]}"></c:out></span>
 									</div>
 								</td>
 								<td class="blueborderfortd" style="padding: 2px 2px">

@@ -209,6 +209,8 @@ public class CourtVerdictController extends GenericWorkFlowController {
             model.addAttribute(STATE_TYPE, courtVerdict.getClass().getSimpleName());
             model.addAttribute(ENDORSEMENT_NOTICE, new ArrayList<>());
             model.addAttribute(LOGGED_IN_USER, propertyService.isEmployee(loggedInUser));
+            property.getPropertyDetail().setFloorDetailsProxy(courtVerdict.getProperty().getPropertyDetail().getFloorDetails());
+
             courtVerdictService.addModelAttributes(model, property, request);
 
             Set<EgDemandDetails> demandDetails = (ptDemandDAO.getNonHistoryCurrDmdForProperty(basicProperty.getProperty()))
@@ -316,7 +318,7 @@ public class CourtVerdictController extends GenericWorkFlowController {
                     model.addAttribute(PROPERTY_ID, courtVerdict.getBasicProperty().getUpicNo());
                     target = CV_SUCCESS_FORM;
                 } else
-                    target = displayErrors(courtVerdict, model, errorMessages, request);
+                    target = courtVerdictService.displayErrors(courtVerdict, model, errorMessages, request);
             } else if (action.equalsIgnoreCase(UPDATE_DEMAND_DIRECTLY)) {
                 Long approvalPosition = 0l;
                 String approvalComent = "";
@@ -343,7 +345,7 @@ public class CourtVerdictController extends GenericWorkFlowController {
                     model.addAttribute(PROPERTY_ID, courtVerdict.getBasicProperty().getUpicNo());
                     target = CV_SUCCESS_FORM;
                 } else
-                    target = displayErrors(courtVerdict, model, errorMessages, request);
+                    target = courtVerdictService.displayErrors(courtVerdict, model, errorMessages, request);
 
             } else {
                 Long approvalPosition = 0l;
@@ -377,40 +379,6 @@ public class CourtVerdictController extends GenericWorkFlowController {
         return target;
     }
 
-    private String displayErrors(CourtVerdict courtVerdict, Model model, Map<String, String> errorMessages,
-            HttpServletRequest request) {
-        String status = "";
-        String date = "";
-        List<Map<String, String>> legalCaseDetails = propertyTaxCommonUtils.getLegalCaseDetails(
-                courtVerdict.getPropertyCourtCase().getCaseNo(),
-                request);
-        for (Map<String, String> map : legalCaseDetails) {
-            status = map.get("caseStatus");
-            date = map.get("caseDate");
-        }
-        User loggedInUser = securityUtils.getCurrentUser();
-        model.addAttribute(ERROR_MSG, errorMessages);
-        model.addAttribute(COURT_VERDICT, courtVerdict);
-        Set<EgDemandDetails> demandDetails = (ptDemandDAO
-                .getNonHistoryCurrDmdForProperty(courtVerdict.getBasicProperty().getProperty()))
-                        .getEgDemandDetails();
-        List<EgDemandDetails> dmndDetails = new ArrayList<>(demandDetails);
-        if (!dmndDetails.isEmpty())
-            dmndDetails = courtVerdictDCBService.sortDemandDetails(dmndDetails);
-        List<DemandDetail> demandDetailBeanList = courtVerdictDCBService.setDemandBeanList(dmndDetails);
-        courtVerdict.setDemandDetailBeanList(demandDetailBeanList);
-        model.addAttribute("dmndDetails", demandDetailBeanList);
-        model.addAttribute("caseStatus", status);
-        model.addAttribute("caseDate", date);
-        model.addAttribute(PROPERTY, courtVerdict.getBasicProperty().getActiveProperty());
-        model.addAttribute(CURRENT_STATE, CREATED);
-        model.addAttribute(ENDORSEMENT_NOTICE, new ArrayList<>());
-        model.addAttribute(STATE_TYPE, courtVerdict.getClass().getSimpleName());
-        model.addAttribute(LOGGED_IN_USER, propertyService.isEmployee(loggedInUser));
-        courtVerdictService.addModelAttributes(model, courtVerdict.getBasicProperty().getActiveProperty(), request);
-        prepareWorkflow(model, courtVerdict, new WorkflowContainer());
 
-        return CV_FORM;
-    }
 
 }

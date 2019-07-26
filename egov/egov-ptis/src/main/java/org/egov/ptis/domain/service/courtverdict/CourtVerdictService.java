@@ -63,6 +63,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESIGNAT
 import static org.egov.ptis.constants.PropertyTaxConstants.COURT_VERDICT;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENT_DESG;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENT_STATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.CV_FORM;
 import static org.egov.ptis.constants.PropertyTaxConstants.ENDORSEMENT_NOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.HISTORY_MAP;
@@ -103,6 +104,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.persistence.EntityManager;
@@ -113,9 +115,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.formula.functions.T;
 import org.egov.commons.Area;
 import org.egov.commons.Installment;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
+import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -128,8 +133,10 @@ import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
+import org.egov.ptis.bean.demand.DemandDetail;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
@@ -164,7 +171,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 
 @Service
-public class CourtVerdictService {
+public class CourtVerdictService extends GenericWorkFlowController {
 
     @Autowired
     private CourtVerdictRepository courtVerdictRepo;
@@ -210,8 +217,14 @@ public class CourtVerdictService {
     private ApplicationNumberGenerator applicationNo;
     @Autowired
     private PersistenceService<T, Serializable> persistenceService;
+    @Autowired
+    private CourtVerdictDCBService courtVerdictDCBService;
+    @Autowired
+    private PtDemandDao ptDemandDAO;
 
     private String propertyCategory;
+    private static final String ERROR_MSG = "errorMsg";
+    private static final String CREATED = "Created";
 
     public void addModelAttributes(final Model model, final PropertyImpl property,
             final HttpServletRequest request) {
@@ -221,7 +234,6 @@ public class CourtVerdictService {
                 property.getBasicProperty().getUpicNo(),
                 request);
         List<Floor> floor = property.getPropertyDetail().getFloorDetails();
-        property.getPropertyDetail().setFloorDetailsProxy(floor);
 
         List<PropertyUsage> usageList;
         TreeMap<Integer, String> flrNoMap = new TreeMap<>();
@@ -242,7 +254,8 @@ public class CourtVerdictService {
 
         List<VacantLandPlotArea> plotAreaList = vacantLandPlotAreaRepo.findAll();
         List<LayoutApprovalAuthority> layoutApprovalList = layoutApprovalAuthorityRepo.findAll();
-
+        String[] floorNoStr = setFloorNoStr(floor);
+        model.addAttribute("floorMap", floorNoStr);
         model.addAttribute("floor", floor);
         model.addAttribute("wcDetails", wcDetails);
         model.addAttribute("sewConnDetails", sewConnDetails);
@@ -399,6 +412,9 @@ public class CourtVerdictService {
                     errorMessages.put("builtAreaGtSitalArea", "builtupareavalid.required");
 
             }
+            boolean sameEffectDate = propertyTaxCommonUtils.validateEffectiveDate(floorDetailsProxy);
+            if (!sameEffectDate)
+                errorMessages.put("sameEffectDate", "different.effective.date.present");
         }
     }
 
@@ -780,12 +796,60 @@ public class CourtVerdictService {
         model.addAttribute(ENDORSEMENT_NOTICE, new ArrayList<>());
         model.addAttribute(LOGGED_IN_USER, propertyService.isEmployee(loggedInUser));
         model.addAttribute(CURRENT_DESG, currentDesg);
-
+        String[] floorNoStr = setFloorNoStr(courtVerdict.getProperty().getPropertyDetail().getFloorDetails());
+        model.addAttribute("floorMap", floorNoStr);
         if (courtVerdict.getId() != null && courtVerdict.getState() != null) {
             historyMap = propertyService.populateHistory(courtVerdict);
             model.addAttribute(HISTORY_MAP, historyMap);
             model.addAttribute(STATE, courtVerdict.getState());
         }
+    }
+
+    public String displayErrors(CourtVerdict courtVerdict, Model model, Map<String, String> errorMessages,
+            HttpServletRequest request) {
+        String status = "";
+        String date = "";
+        List<Map<String, String>> legalCaseDetails = propertyTaxCommonUtils.getLegalCaseDetails(
+                courtVerdict.getPropertyCourtCase().getCaseNo(),
+                request);
+        for (Map<String, String> map : legalCaseDetails) {
+            status = map.get("caseStatus");
+            date = map.get("caseDate");
+        }
+        User loggedInUser = securityUtils.getCurrentUser();
+        model.addAttribute(ERROR_MSG, errorMessages);
+        model.addAttribute(COURT_VERDICT, courtVerdict);
+        Set<EgDemandDetails> demandDetails = (ptDemandDAO
+                .getNonHistoryCurrDmdForProperty(courtVerdict.getBasicProperty().getProperty()))
+                        .getEgDemandDetails();
+        List<EgDemandDetails> dmndDetails = new ArrayList<>(demandDetails);
+        if (!dmndDetails.isEmpty())
+            dmndDetails = courtVerdictDCBService.sortDemandDetails(dmndDetails);
+        List<DemandDetail> demandDetailBeanList = courtVerdictDCBService.setDemandBeanList(dmndDetails);
+        courtVerdict.setDemandDetailBeanList(demandDetailBeanList);
+        model.addAttribute("dmndDetails", demandDetailBeanList);
+        model.addAttribute("caseStatus", status);
+        model.addAttribute("caseDate", date);
+        model.addAttribute(PROPERTY, courtVerdict.getProperty());
+        model.addAttribute(CURRENT_STATE, CREATED);
+        model.addAttribute(ENDORSEMENT_NOTICE, new ArrayList<>());
+        model.addAttribute(STATE_TYPE, courtVerdict.getClass().getSimpleName());
+        model.addAttribute(LOGGED_IN_USER, propertyService.isEmployee(loggedInUser));
+        addModelAttributes(model, courtVerdict.getBasicProperty().getActiveProperty(), request);
+        prepareWorkflow(model, courtVerdict, new WorkflowContainer());
+
+        return CV_FORM;
+    }
+
+    public String[] setFloorNoStr(List<Floor> floors) {
+        String[] floorNoStr = new String[100];
+        int i = 0;
+        for (Floor floor : floors) {
+            floorNoStr[i] = FLOOR_MAP.get(floor.getFloorNo());
+            i++;
+        }
+        return floorNoStr;
+
     }
 
     public void setPtDemandSet(CourtVerdict courtVerdict) {
