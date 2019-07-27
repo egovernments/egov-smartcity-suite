@@ -225,6 +225,10 @@ public class ApproverRemitterMappingService {
         return mappingRepository.findActiveApprovers();
     }
 
+    public List getApprovers(User remiiter) {
+        return mappingRepository.findByRemitterIdAndIsActive(remiiter.getId(), true);
+    }
+
     /**
      * Lightweight POJO to pass the data between UI and backend
      */

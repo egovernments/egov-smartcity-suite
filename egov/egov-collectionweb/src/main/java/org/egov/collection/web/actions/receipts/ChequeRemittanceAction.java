@@ -70,7 +70,7 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ApproverRemitterMapping;
 import org.egov.collection.entity.CollectionBankRemittanceReport;
 import org.egov.collection.entity.ReceiptHeader;
-import org.egov.collection.repository.ApproverRemitterMappingRepository;
+import org.egov.collection.service.ApproverRemitterMappingService;
 import org.egov.collection.service.RemittanceServiceImpl;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.Bankaccount;
@@ -132,7 +132,7 @@ public class ChequeRemittanceAction extends BaseFormAction {
     @Autowired
     private transient BankaccountHibernateDAO bankaccountHibernateDAO;
     @Autowired
-    ApproverRemitterMappingRepository mappingRepository;
+    ApproverRemitterMappingService mappingService;
 
     private Double totalCashAmount;
     private Double totalChequeAmount;
@@ -190,7 +190,7 @@ public class ChequeRemittanceAction extends BaseFormAction {
         } else
             addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
         addDropdownData("financialYearList", financialYearDAO.getAllActivePostingAndNotClosedFinancialYears());
-        addDropdownData("approverList", mappingRepository.findByRemitterId(collectionsUtil.getLoggedInUser().getId()));
+        addDropdownData("approverList", mappingService.getApprovers(collectionsUtil.getLoggedInUser()));
     }
 
     @Action(value = "/receipts/chequeRemittance-listData")

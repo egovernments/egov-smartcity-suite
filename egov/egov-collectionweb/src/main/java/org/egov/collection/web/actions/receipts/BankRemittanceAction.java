@@ -70,7 +70,7 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ApproverRemitterMapping;
 import org.egov.collection.entity.CollectionBankRemittanceReport;
 import org.egov.collection.entity.ReceiptHeader;
-import org.egov.collection.repository.ApproverRemitterMappingRepository;
+import org.egov.collection.service.ApproverRemitterMappingService;
 import org.egov.collection.service.RemittanceServiceImpl;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.Bankaccount;
@@ -128,8 +128,9 @@ public class BankRemittanceAction extends BaseFormAction {
     private transient FinancialYearDAO financialYearDAO;
     @Autowired
     private transient BankaccountHibernateDAO bankaccountHibernateDAO;
+
     @Autowired
-    ApproverRemitterMappingRepository mappingRepository;
+    ApproverRemitterMappingService mappingService;
 
     private Double totalCashAmount;
     private Double totalChequeAmount;
@@ -188,7 +189,7 @@ public class BankRemittanceAction extends BaseFormAction {
             addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
         addDropdownData("financialYearList", financialYearDAO.getAllActivePostingAndNotClosedFinancialYears());
         addDropdownData("approverList",
-                mappingRepository.findByRemitterIdAndIsActive(collectionsUtil.getLoggedInUser().getId(), true));
+            mappingService.getApprovers(collectionsUtil.getLoggedInUser()));
     }
 
     @Action(value = "/receipts/bankRemittance-listData")
@@ -262,7 +263,6 @@ public class BankRemittanceAction extends BaseFormAction {
     @Override
     public void prepare() {
         super.prepare();
-        addDropdownData("approverList", mappingRepository.findAll());
         final String showColumn = collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                 CollectionConstants.APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_SHOWCOLUMNSCARDONLINE);
         if (!showColumn.isEmpty() && showColumn.equals(CollectionConstants.YES))
