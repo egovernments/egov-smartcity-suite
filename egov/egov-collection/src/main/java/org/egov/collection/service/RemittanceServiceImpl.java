@@ -583,7 +583,7 @@ public class RemittanceServiceImpl extends RemittanceService {
                     CollectionConstants.QUERY_ACTIVE_BRANCHUSER_BY_USER,
                     collectionsUtil.getLoggedInUser().getId());
             chequeRemittanceListQuery.append(" AND cm.depositedbranch=" + branchUserMap.getBankbranch().getId());
-        } else
+        } else if(!approverIdList.isEmpty())
             chequeRemittanceListQuery.append(" AND ch.lastmodifiedby in (" + approverIdList + ")");
         chequeRemittanceListQuery.append(" order by RECEIPTDATE,bankname ");
         final Query query = receiptHeaderService.getSession()
