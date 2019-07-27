@@ -221,12 +221,14 @@ public class BankRemittanceAction extends BaseFormAction {
             }
 
             String approverIdList;
-            if (approverId == null || Integer.parseInt(approverId) < 0)
+            if (approverId == null || Integer.parseInt(approverId) < 0) {
                 approverIdList = ((List<ApproverRemitterMapping>) getDropdownData().get("approverList"))
-                        .stream()
-                        .map(m -> m.getApprover().getId().toString())
-                        .collect(Collectors.joining(CollectionConstants.SEPARATOR_COMMA));
-            else
+                    .stream()
+                    .map(m -> m.getApprover().getId().toString())
+                    .collect(Collectors.joining(CollectionConstants.SEPARATOR_COMMA));
+                if(StringUtils.isEmpty(approverIdList) && !isBankCollectionRemitter)
+                    throw new ValidationException(new ValidationError("remittance.noapprovermapped", "No approver mapped to the logged in remitter."));
+            } else
                 approverIdList = approverId;
 
             final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(finYearId);
