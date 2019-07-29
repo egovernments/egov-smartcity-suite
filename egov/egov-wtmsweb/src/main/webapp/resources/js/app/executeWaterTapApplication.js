@@ -401,6 +401,13 @@ $('#update').on('click', function(){
 					bootbox.alert(" Application process time is not defined for this application type and category. Please define using create application process time master and then update execution date.")
 					return false;
 				}
+				
+				else if(response.includes("MaterialsFlaggingNotDone")) {
+					var str = response.split(/[~ ]+/).pop();
+					var res = str.slice(0, str.length - 1) ;
+					bootbox.alert("Non-Metered and Non-BPL Consumers "+res+" have not been flagged on whether ULB has supplied Material or Citizen has Procured on his own. Please flag and then continue to execute.")
+					return false;
+				}
 				else {
 					bootbox.alert("water connection update failed");
 					return false;

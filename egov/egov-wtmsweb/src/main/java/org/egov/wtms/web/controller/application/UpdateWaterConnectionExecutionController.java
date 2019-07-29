@@ -80,6 +80,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class UpdateWaterConnectionExecutionController {
 
 	private static final String ERR_WATER_RATES_NOT_DEFINED = "WaterRatesNotDefined";
+	private static final String MATERIAL_FLAGGING_NOT_DONE = "MaterialsFlaggingNotDone";
 
 	@Autowired
 	private WaterConnectionDetailsService waterConnectionDetailsService;
@@ -142,10 +143,11 @@ public class UpdateWaterConnectionExecutionController {
 	@ResponseBody
 	public String getSearchResult(@RequestBody final WaterConnectionExecutionResponse waterApplicationDetails) {
 		final List<WaterConnectionDetails> connectionDetailsList = new ArrayList<>();
-		final String validationStatus = waterConnectionDetailsService.validateInput(waterApplicationDetails,
-				connectionDetailsList);
+		final String validationStatus = waterConnectionDetailsService.validateInput(waterApplicationDetails, connectionDetailsList);
 		if (ERR_WATER_RATES_NOT_DEFINED.equalsIgnoreCase(validationStatus))
 			return ERR_WATER_RATES_NOT_DEFINED;
+		else if(validationStatus.startsWith(MATERIAL_FLAGGING_NOT_DONE))
+			return validationStatus;
 		final Boolean updateStatus = waterConnectionDetailsService.updateStatus(connectionDetailsList);
 		return waterConnectionDetailsService.getResultStatus(waterApplicationDetails, validationStatus, updateStatus);
 	}

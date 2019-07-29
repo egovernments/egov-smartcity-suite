@@ -172,6 +172,7 @@ import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ValidationException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.EgModules;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.FinancialYearDAO;
@@ -294,6 +295,7 @@ public class WaterConnectionDetailsService {
 	private static final String REQ_METER_SERIAL_NUMBER = "MeterSerialNumberRequired";
 	private static final String ERR_WATER_RATES_NOT_DEFINED = "WaterRatesNotDefined";
 	private static final String INVALID_EXECUTION_DATE = "InvalidExecutionDate";
+	private static final String MATERIAL_FLAGGING_NOT_DONE = "MaterialsFlaggingNotDone";
 
 	@Autowired
 	@Qualifier("fileStoreService")
@@ -1463,10 +1465,17 @@ public class WaterConnectionDetailsService {
 		JSONObject jsonObject = new JSONObject(executionDetailsResponse);
 		JSONArray jsonArray = jsonObject.getJSONArray("executeWaterApplicationDetails");
 		String status = EMPTY;
+		StringBuilder consumerCodes = new StringBuilder();
 		for (int i = 0; i < jsonArray.length(); ++i) {
 			JSONObject jsonObj = jsonArray.getJSONObject(i);
 			WaterConnectionDetails connectionDetails = findBy(jsonObj.getLong("id"));
-			if (connectionDetails != null && validateDonationDetails(connectionDetails)
+			if (ConnectionType.NON_METERED.equals(connectionDetails.getConnectionType())
+					&& !CATEGORY_BPL.equals(connectionDetails.getCategory().getName())
+					&& connectionDetails.getCreatedDate().compareTo(DateUtils.toDateUsingDefaultPattern("09/07/2018")) >= 0
+					&& connectionDetails.getUlbMaterial() == null) {
+				consumerCodes = consumerCodes.append(connectionDetails.getConnection().getConsumerCode()).append(",");
+			}
+			else if (connectionDetails != null && validateDonationDetails(connectionDetails)
 					&& isNotBlank(jsonObj.getString(EXECUTION_DATE))) {
 				connectionDetails
 						.setExecutionDate(DateUtils.toDateUsingDefaultPattern(jsonObj.getString(EXECUTION_DATE)));
@@ -1481,6 +1490,8 @@ public class WaterConnectionDetailsService {
 			} else
 				status = ERR_WATER_RATES_NOT_DEFINED;
 		}
+		if(StringUtils.isNotBlank(consumerCodes)) 
+			status = MATERIAL_FLAGGING_NOT_DONE.concat("~").concat(consumerCodes.toString());
 
 		return status;
 	}
@@ -1849,6 +1860,7 @@ public class WaterConnectionDetailsService {
 		return estimationNotice;
 	}
 
+	@Transactional
 	public void updateConnectionDetailsWithEstimationNotice(WaterConnectionDetails waterConnectionDetails, EstimationNotice estimationNotice,
 			ReportOutput reportOutput) {
 		HttpHeaders headers = new HttpHeaders();
