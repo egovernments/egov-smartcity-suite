@@ -47,54 +47,85 @@
  */
 package org.egov.wtms.web.controller.application;
 
+
+import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
+import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
+import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.egov.wtms.masters.entity.enums.ConnectionType.NON_METERED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CATEGORY_BPL;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.utils.FileStoreUtils;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.EstimationNotice;
 import org.egov.wtms.application.entity.FieldInspectionDetails;
+import org.egov.wtms.application.entity.SearchNoticeDetails;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.EstimationNoticeService;
 import org.egov.wtms.application.service.ReportGenerationService;
+import org.egov.wtms.application.service.SearchNoticeService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.autonumber.EstimationNumberGenerator;
+import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.utils.PropertyExtnUtils;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.egov.wtms.service.WaterEstimationChargesPaymentService;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
-import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
-import static org.egov.wtms.masters.entity.enums.ConnectionType.NON_METERED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
-import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 @Controller
 @RequestMapping(value = "/application")
 public class EstimationNoticeController {
 
     public static final String ESTIMATION_NOTICE = "estimationNotice";
+    
     @Autowired
     private ReportService reportService;
+    
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
 
@@ -102,13 +133,37 @@ public class EstimationNoticeController {
     private WaterConnectionDetailsService waterConnectionDetailsService;
 
     @Autowired
-    private ReportGenerationService reportGenerationService;
-
-    @Autowired
     private FileStoreService fileStoreService;
     
     @Autowired
     private EstimationNoticeService estimationNoticeService;
+    
+	@Autowired
+    private ReportGenerationService reportGenerationService;
+
+    @Autowired
+    private SearchNoticeService searchNoticeService;
+	
+	@Autowired
+    private AutonumberServiceBeanResolver beanResolver;
+	
+	@Autowired
+    private FileStoreUtils fileStoreUtils;
+	
+	@Autowired
+	private WaterEstimationChargesPaymentService waterEstimationChargesPaymentService;
+    
+	@Autowired
+	@Qualifier("parentMessageSource")
+	private MessageSource messageSource;
+	
+    private static final String DATA = "{\"data\":";
+
+    @GetMapping("/generateestimationnotice")
+    public String generateDemandBill(Model model) {
+        model.addAttribute("searchNoticeDetails", new SearchNoticeDetails());
+        return "generateEstimationNotice";
+    }
 
     @GetMapping(value = "/estimationNotice", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
@@ -119,7 +174,6 @@ public class EstimationNoticeController {
                 .findByApplicationNumber(request.getParameter("pathVar"));
         return generateEstimationReport(waterConnectionDetails, session);
     }
-
     private ResponseEntity<InputStreamResource> generateEstimationReport(WaterConnectionDetails waterConnectionDetails,
                                                                          HttpSession session) {
         ReportOutput reportOutput = new ReportOutput();
@@ -194,6 +248,65 @@ public class EstimationNoticeController {
                                                                     HttpSession session) {
         WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
         return generateEstimationReport(waterConnectionDetails, session);
+    }
+    
+    @RequestMapping(value = "/result", method = POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public String searchResult(@ModelAttribute SearchNoticeDetails searchNoticeDetails, BindingResult resultBinder,
+			Model model, final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+		String result = null;
+		String failureMessage = StringUtils.EMPTY;
+
+		WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+				.findActiveConnectionDetailsByConsumerCodeAndApplicationNumber(searchNoticeDetails.getHscNo(),
+						searchNoticeDetails.getApplicationNumber());
+		if (waterConnectionDetails == null) 
+			failureMessage = messageSource.getMessage("err.applicationno.and.consumerno.not.correct", null,
+					Locale.getDefault());
+		else {
+			BigDecimal estimationDues = waterEstimationChargesPaymentService
+					.getEstimationDueAmount(waterConnectionDetails);
+			if (estimationDues.compareTo(BigDecimal.ZERO) == 0)
+				failureMessage = messageSource.getMessage("err.connection.without.due", null, Locale.getDefault());
+			else {
+				boolean isNonMeteredAndNonBPL = false;
+				if (!CATEGORY_BPL.equals(waterConnectionDetails.getCategory().getName())
+						&& ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())
+						&& waterConnectionDetails.getCreatedDate().compareTo(DateUtils.toDateUsingDefaultPattern("09/07/2018")) >= 0
+						&& waterConnectionDetails.getExecutionDate() != null)
+					isNonMeteredAndNonBPL = true;
+
+				if (!isNonMeteredAndNonBPL) {
+					failureMessage = messageSource.getMessage("err.bpl.metered.period.connection", null,
+							Locale.getDefault());
+				}
+			}
+		}
+		
+		if (StringUtils.isNotBlank(failureMessage)) 
+			return String.format("{ \"error\":\" %s \" }", failureMessage);
+		EstimationNumberGenerator estimationNoGen = beanResolver.getAutoNumberServiceFor(EstimationNumberGenerator.class);
+		String estimationNumber = estimationNoGen.generateEstimationNumber();
+		EstimationNotice estimationNotice = waterConnectionDetailsService.addEstimationNoticeToConnectionDetails(waterConnectionDetails, estimationNumber);
+		ReportOutput reportOutput = reportGenerationService.generateNewEstimationNotice(waterConnectionDetails,
+				estimationNumber);
+		if (reportOutput != null)
+			waterConnectionDetailsService.updateConnectionDetailsWithEstimationNotice(waterConnectionDetails,
+					estimationNotice, reportOutput);
+		searchNoticeDetails = searchNoticeService.buildNoticeDetails(waterConnectionDetails);
+		searchNoticeDetails.setEstimationNumber(estimationNotice.getEstimationNumber());
+		searchNoticeDetails.setEstimationDate(toDefaultDateFormat(estimationNotice.getEstimationNoticeDate()));
+		searchNoticeDetails.setFileStoreID(estimationNotice.getEstimationNoticeFileStore().getFileStoreId());
+		List<SearchNoticeDetails> noticeDetailList = new ArrayList<SearchNoticeDetails>();
+		noticeDetailList.add(searchNoticeDetails);
+		result = new StringBuilder(DATA)
+				.append(toJSON(noticeDetailList)).append("}").toString();
+		return result;
+
+	}
+	@RequestMapping(value = "/waterTax/downloadEstimationNotice")
+    public ResponseEntity<InputStreamResource> downloadSignedWorkOrderConnection(@RequestParam final String fileStoreId) {
+        return fileStoreUtils.fileAsResponseEntity(fileStoreId, WaterTaxConstants.FILESTORE_MODULECODE, true);
     }
 
 }

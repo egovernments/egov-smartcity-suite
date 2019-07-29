@@ -489,6 +489,22 @@ public class WaterConnectionDetailsService {
 				.findConnectionDetailsByApplicationNumberOrConsumerCodeAndConnectionStatus(number, number,
 						connectionStatus);
 	}
+	
+	public WaterConnectionDetails findActiveConnectionDetailsByConsumerCodeAndApplicationNumber(String consumerNumber,
+			String applicationNumber) {
+		WaterConnectionDetails waterConnectionDetails = null;
+		if (StringUtils.isNotBlank(consumerNumber) && StringUtils.isNotBlank(applicationNumber)) 
+			waterConnectionDetails = waterConnectionDetailsRepository
+					.findConnectionDetailsByConsumerCodeAndApplicationNumberAndConnectionStatus(consumerNumber,
+							applicationNumber, ACTIVE);
+		else if (StringUtils.isNotBlank(consumerNumber)) 
+			waterConnectionDetails = waterConnectionDetailsRepository
+					.findConnectionDetailsByConsumerCodeAndConnectionStatus(consumerNumber, ACTIVE);
+		else if (StringUtils.isNotBlank(applicationNumber)) 
+			waterConnectionDetails = waterConnectionDetailsRepository
+					.findByApplicationNumberAndConnectionStatus(applicationNumber, ACTIVE);
+		return waterConnectionDetails;
+	}
 
 	public WaterConnectionDetails findByApplicationNumberOrConsumerCode(String number) {
 		return waterConnectionDetailsRepository.findConnectionDetailsByApplicationNumberOrConsumerCode(number, number);

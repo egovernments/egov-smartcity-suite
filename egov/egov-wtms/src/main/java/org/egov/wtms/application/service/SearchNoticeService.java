@@ -406,4 +406,26 @@ public class SearchNoticeService {
         return ((BigInteger) query.uniqueResult()).longValue();
     }
 
+    public SearchNoticeDetails buildNoticeDetails(final WaterConnectionDetails waterConnectionDetails) {
+        SearchNoticeDetails noticeDetails = new SearchNoticeDetails();
+            AssessmentDetails assessmentDetails = null;
+            if (waterConnectionDetails.getConnection().getPropertyIdentifier() != null)
+                assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
+                		waterConnectionDetails.getConnection().getPropertyIdentifier(),
+                        PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
+            if (assessmentDetails != null) {
+                noticeDetails.setAssessmentNo(waterConnectionDetails.getConnection().getPropertyIdentifier());
+                noticeDetails.setHscNo(waterConnectionDetails.getConnection().getConsumerCode());
+                noticeDetails.setConnectionType(waterConnectionDetails.getConnectionType().name());
+                noticeDetails.setHouseNumber(assessmentDetails.getHouseNo());
+                Iterator<OwnerName> nameIterator = assessmentDetails.getOwnerNames().iterator();
+                OwnerName ownerName = null;
+                if (nameIterator != null && nameIterator.hasNext())
+                    ownerName = nameIterator.next();
+                noticeDetails.setOwnerName(ownerName == null ? "N/A" : ownerName.getOwnerName());
+                noticeDetails.setLocality(assessmentDetails.getBoundaryDetails().getLocalityName());
+            }
+        return noticeDetails;
+    }
+    
 }

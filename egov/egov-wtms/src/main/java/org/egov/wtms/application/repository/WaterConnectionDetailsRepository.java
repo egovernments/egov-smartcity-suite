@@ -88,6 +88,11 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
     WaterConnectionDetails findConnectionDetailsByApplicationNumberOrConsumerCodeAndConnectionStatus(
             @Param("consumerCode") String consumerCode, @Param("applicationNumber") String applicationNumber,
             @Param("connectionStatus") ConnectionStatus connectionStatus);
+    
+    @Query("select wcd from WaterConnectionDetails wcd where (wcd.connection.consumerCode =:consumerCode and wcd.applicationNumber =:applicationNumber) and wcd.connectionStatus =:connectionStatus")
+    WaterConnectionDetails findConnectionDetailsByConsumerCodeAndApplicationNumberAndConnectionStatus(
+            @Param("consumerCode") String consumerCode, @Param("applicationNumber") String applicationNumber,
+            @Param("connectionStatus") ConnectionStatus connectionStatus);
 
     @Query("select wcd from WaterConnectionDetails wcd where wcd.connectionStatus not in ('INACTIVE') and (wcd.connection.consumerCode =:consumerCode or wcd.applicationNumber =:applicationNumber)")
     WaterConnectionDetails findConnectionDetailsByApplicationNumberOrConsumerCode(

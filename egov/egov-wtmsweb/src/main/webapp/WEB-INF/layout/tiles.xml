@@ -505,4 +505,9 @@
     	<put-attribute name="page-title" value="title.update.application" cascade="true"></put-attribute>
     	<put-attribute name="body" value="/WEB-INF/views/application/material-demand-view-application.jsp"></put-attribute>
     </definition>
+    
+    <definition name="generateEstimationNotice" extends="base_layout">
+  	  <put-attribute name="page-title" value="title.generateEstimationNotice" cascade="true"></put-attribute>
+  	  <put-attribute name="body" value="/WEB-INF/views/application/generateEstimationNotice.jsp"></put-attribute>  
+    </definition>
 </tiles-definitions>
