@@ -52,6 +52,7 @@ import static java.math.BigDecimal.ZERO;
 import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ESTIMATION_NOTICE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARISATION_DEMAND_NOTE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
@@ -79,13 +80,17 @@ import javax.validation.ValidationException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.wtms.application.entity.EstimationNotice;
 import org.egov.wtms.application.entity.SearchNoticeDetails;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.service.EstimationNoticeService;
 import org.egov.wtms.application.service.SearchNoticeService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.ApplicationType;
@@ -149,7 +154,13 @@ public class SearchNoticeController {
 
     @Autowired
     private FileStoreMapperRepository fileStoreMapperRepository;
+    
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
 
+    @Autowired
+    private EstimationNoticeService estimationNoticeService;
+    
     private static final Logger LOGGER = Logger.getLogger(SearchNoticeController.class);
 
     @RequestMapping(method = GET)
@@ -184,6 +195,10 @@ public class SearchNoticeController {
     public @ModelAttribute("applicationTypes") List<ApplicationType> applicationTypes() {
         return applicationTypeService.findAll();
     }
+    
+    public @ModelAttribute("financialYears") List<CFinancialYear> financialYears(){
+    	return financialYearDAO.getAllActivePostingFinancialYear();
+    }
 
     @ModelAttribute("noticetypeList")
     public List<String> getNoticeTypes() {
@@ -191,6 +206,7 @@ public class SearchNoticeController {
         noticeList.add(DEMAND_BILL);
         noticeList.add(SANCTION_ORDER);
         noticeList.add(REGULARISATION_DEMAND_NOTE);
+        noticeList.add(ESTIMATION_NOTICE);
         return noticeList;
     }
 
@@ -199,19 +215,23 @@ public class SearchNoticeController {
     public void searchResult(final SearchNoticeDetails searchNoticeDetails,
             final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         String result = null;
+        CFinancialYear financialYear = null;
         List<SearchNoticeDetails> generateConnectionBillList = new ArrayList<>();
         final SearchNoticeDetails noticeDetails = build(searchNoticeDetails, request);
+        if(searchNoticeDetails.getFinancialYear() != null)
+        	financialYear = financialYearDAO.getFinancialYearById(searchNoticeDetails.getFinancialYear());
         if (request.getParameter(NOTICE_TYPE) != null)
             if (DEMAND_BILL.equals(request.getParameter(NOTICE_TYPE)))
-                generateConnectionBillList = searchNoticeService.getBillReportDetails(noticeDetails);
+                generateConnectionBillList = searchNoticeService.getBillReportDetails(noticeDetails, financialYear);
             else if (SANCTION_ORDER.equals(request.getParameter(NOTICE_TYPE)))
-                generateConnectionBillList = searchNoticeService.getSearchResultList(noticeDetails);
-            else if (REGULARISATION_DEMAND_NOTE.equals(request.getParameter(NOTICE_TYPE)))
-                generateConnectionBillList = searchNoticeService.getSearchResultList(noticeDetails);
+                generateConnectionBillList = searchNoticeService.getSearchResultList(noticeDetails, financialYear);
+            else if (REGULARISATION_DEMAND_NOTE.equals(request.getParameter(NOTICE_TYPE))
+            		|| ESTIMATION_NOTICE.equalsIgnoreCase(request.getParameter(NOTICE_TYPE)))
+                generateConnectionBillList = searchNoticeService.getSearchResultList(noticeDetails, financialYear);
 
         long foundRows = 0;
         if (DEMAND_BILL.equals(request.getParameter(NOTICE_TYPE)))
-            foundRows = searchNoticeService.getTotalCountofBills(noticeDetails);
+            foundRows = searchNoticeService.getTotalCountofBills(noticeDetails, financialYear);
 
         final int count = generateConnectionBillList.size();
         LOGGER.info("Total count of records-->" + Long.valueOf(count));
@@ -247,13 +267,14 @@ public class SearchNoticeController {
         List<Long> waterChargesDocumentslist;
         final List<String> waterChargesFileStoreId = new ArrayList<>();
         final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(consumerCode);
+    	EstimationNotice estimationNotice = estimationNoticeService.getNonHistoryEstimationNoticeForConnection(waterConnectionDetails);
         if (SANCTION_ORDER.equals(noticeType)) {
             if (waterConnectionDetails != null)
                 waterChargesFileStoreId.add(waterConnectionDetails.getFileStore() != null
                         ? waterConnectionDetails.getFileStore().getFileStoreId() : null);
-        } else if (REGULARISATION_DEMAND_NOTE.equals(noticeType)
-                && waterConnectionDetails.getEstimationNoticeFileStoreId() != null)
-            waterChargesFileStoreId.add(waterConnectionDetails.getEstimationNoticeFileStoreId().getFileStoreId());
+        } else if ((REGULARISATION_DEMAND_NOTE.equals(noticeType) || ESTIMATION_NOTICE.equalsIgnoreCase(request.getParameter(NOTICE_TYPE))) 
+        		&& estimationNotice != null && estimationNotice.getEstimationNoticeFileStore() != null)
+            waterChargesFileStoreId.add(estimationNotice.getEstimationNoticeFileStore().getFileStoreId());
         else {
             waterChargesDocumentslist = searchNoticeService.getDocuments(consumerCode,
                     waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode).getApplicationType()
@@ -268,13 +289,16 @@ public class SearchNoticeController {
             final HttpServletResponse response) {
         final long startTime = System.currentTimeMillis();
         final String noticeType = request.getParameter(NOTICE_TYPE);
+        CFinancialYear financialYear = null;
+        if(searchNoticeDetails.getFinancialYear() != null)
+        	financialYear = financialYearDAO.getFinancialYearById(searchNoticeDetails.getFinancialYear());
         List<SearchNoticeDetails> searchResultList;
         if (noticeType != null && DEMAND_BILL.equalsIgnoreCase(noticeType))
             searchResultList = searchNoticeService
-                    .getBillReportDetails(searchNoticeDetails);
+                    .getBillReportDetails(searchNoticeDetails, financialYear);
         else
             searchResultList = searchNoticeService
-                    .getSearchResultList(searchNoticeDetails);
+                    .getSearchResultList(searchNoticeDetails, financialYear);
 
         mergeAndDownloadNotice(searchResultList, response);
         if (LOGGER.isDebugEnabled())
@@ -371,13 +395,16 @@ public class SearchNoticeController {
             final HttpServletResponse response)
             throws IOException {
         final String noticeType = request.getParameter(NOTICE_TYPE);
+        CFinancialYear financialYear = null;
+        if(searchNoticeDetails.getFinancialYear() != null)
+        	financialYear = financialYearDAO.getFinancialYearById(searchNoticeDetails.getFinancialYear());
         final long startTime = System.currentTimeMillis();
         List<SearchNoticeDetails> noticeList;
         if (DEMAND_BILL.equalsIgnoreCase(noticeType))
             noticeList = searchNoticeService
-                    .getBillReportDetails(searchNoticeDetails);
+                    .getBillReportDetails(searchNoticeDetails, financialYear);
         else
-            noticeList = searchNoticeService.getSearchResultList(searchNoticeDetails);
+            noticeList = searchNoticeService.getSearchResultList(searchNoticeDetails, financialYear);
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Number of Bills : "
@@ -410,11 +437,12 @@ public class SearchNoticeController {
         for (final SearchNoticeDetails noticeDetail : noticeList)
             try {
                 final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(noticeDetail.getHscNo());
+            	EstimationNotice estimationNotice = estimationNoticeService.getNonHistoryEstimationNoticeForConnection(waterConnectionDetails);
                 if (waterConnectionDetails != null && waterConnectionDetails.getFileStore() != null) {
                     String fileStoreId = null;
-                    if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) &&
-                            waterConnectionDetails.getEstimationNoticeFileStoreId() != null)
-                        fileStoreId = waterConnectionDetails.getEstimationNoticeFileStoreId().getFileStoreId();
+                    if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) 
+                    		&& estimationNotice != null && estimationNotice.getEstimationNoticeFileStore() != null)
+                        fileStoreId = estimationNotice.getEstimationNoticeFileStore().getFileStoreId();
                     else if (waterConnectionDetails.getFileStore() != null)
                         fileStoreId = waterConnectionDetails.getFileStore().getFileStoreId();
                     final FileStoreMapper fsm = fileStoreMapperRepository
@@ -440,11 +468,12 @@ public class SearchNoticeController {
         for (final SearchNoticeDetails noticeDetail : searchResultList)
                 try {
                     final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(noticeDetail.getHscNo());
+                	EstimationNotice estimationNotice = estimationNoticeService.getNonHistoryEstimationNoticeForConnection(waterConnectionDetails);
                     if (waterConnectionDetails != null) {
                         String fileStoreId = null;
-                        if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) &&
-                                waterConnectionDetails.getEstimationNoticeFileStoreId() != null)
-                            fileStoreId = waterConnectionDetails.getEstimationNoticeFileStoreId().getFileStoreId();
+                        if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) 
+                        		&& estimationNotice != null && estimationNotice.getEstimationNoticeFileStore() != null)
+                            fileStoreId = estimationNotice.getEstimationNoticeFileStore().getFileStoreId();
                         else if (waterConnectionDetails.getFileStore() != null)
                             fileStoreId = waterConnectionDetails.getFileStore().getFileStoreId();
                         final FileStoreMapper fsm = fileStoreMapperRepository

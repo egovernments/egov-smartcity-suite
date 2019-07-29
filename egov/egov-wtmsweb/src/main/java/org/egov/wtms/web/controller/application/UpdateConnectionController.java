@@ -89,6 +89,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.PENDING_DIGI_SIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PERMENENTCLOSECODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PROCEED_WITHOUT_METER_EST_AMT;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PROCEED_WITHOUT_NONMETER_EST_AMT;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SENIOR_ASSISTANT_DESIGN;
@@ -138,6 +139,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.wtms.application.entity.ApplicationDocuments;
+import org.egov.wtms.application.entity.EstimationNotice;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.ReportGenerationService;
@@ -738,30 +740,24 @@ public class UpdateConnectionController extends GenericConnectionController {
                 throw new ValidationException(e.getMessage());
             }
             if (WF_STATE_BUTTON_GENERATEESTIMATE.equalsIgnoreCase(workFlowAction)) {
-
-                EstimationNumberGenerator estimationNoGen = beanResolver.getAutoNumberServiceFor(EstimationNumberGenerator.class);
-
-                waterConnectionDetails.setEstimationNumber(estimationNoGen.generateEstimationNumber());
-                waterConnectionDetails.setEstimationNoticeDate(new Date());
-
-                String cityMunicipalityName = cityService.getMunicipalityName();
-                String districtName = cityService.getDistrictName();
-                ReportOutput reportOutput = reportGenerationService.generateEstimationNoticeReport(waterConnectionDetails,
-                        cityMunicipalityName, districtName);
-                if (reportOutput != null) {
-                    HttpHeaders headers = new HttpHeaders();
-                    headers.setContentType(MediaType.parseMediaType(APPLICATIONPDFNAME));
-                    headers.add("content-disposition", "inline;filename=EstimationNotice.pdf");
-                    String fileName;
-                    fileName = SIGNED_DOCUMENT_PREFIX + waterConnectionDetails.getEstimationNumber() + ".pdf";
-                    InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
-                    FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, APPLICATIONPDFNAME,
-                            FILESTORE_MODULECODE);
-                    waterConnectionDetails.setEstimationNoticeFileStoreId(fileStore);
-                    waterConnectionDetailsService.updateWaterConnectionDetailsWithFileStore(waterConnectionDetails);
-                }
+            	EstimationNumberGenerator estimationNoGen = beanResolver.getAutoNumberServiceFor(EstimationNumberGenerator.class);
+            	String estimationNumber = estimationNoGen.generateEstimationNumber();
+            	EstimationNotice estimationNotice = waterConnectionDetailsService.addEstimationNoticeToConnectionDetails(waterConnectionDetails, estimationNumber);
+            	ReportOutput reportOutput = reportGenerationService.generateEstimationNoticeReport(waterConnectionDetails,
+                        ApplicationThreadLocals.getCityName(), cityService.getDistrictName(), estimationNumber);
+            	if (reportOutput != null) {
+                        HttpHeaders headers = new HttpHeaders();
+                        headers.setContentType(MediaType.parseMediaType(APPLICATIONPDFNAME));
+                        headers.add("content-disposition", "inline;filename=EstimationNotice.pdf");
+                        String fileName;
+                        fileName = SIGNED_DOCUMENT_PREFIX + estimationNotice.getEstimationNumber() + ".pdf";
+                        InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
+                        FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, APPLICATIONPDFNAME,
+                                FILESTORE_MODULECODE);
+                        estimationNotice.setEstimationNoticeFileStore(fileStore);
+                        waterConnectionDetailsService.updateWaterConnectionDetailsWithFileStore(waterConnectionDetails);
+            	}
                 return "redirect:/application/estimationNotice?pathVar=" + waterConnectionDetails.getApplicationNumber();
-
             }
 
             Assignment currentUserAssignment = assignmentService
