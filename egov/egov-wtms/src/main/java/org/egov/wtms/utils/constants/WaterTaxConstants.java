@@ -467,4 +467,5 @@ public class WaterTaxConstants {
     public static final String SAVE="Save";
     public static final String CREATE="Create";
     public static final String DELETE="Delete";
+    public static final String WCMS_ESTIMATIONNOTICE_GO159_EFFECTIVEDATE="WCMS_ESTIMATIONNOTICE_GO159_EFFECTIVEDATE";
 }

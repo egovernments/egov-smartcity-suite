@@ -161,24 +161,23 @@ public class EstimationNoticeController {
 	@Autowired
 	@Qualifier("parentMessageSource")
 	private MessageSource messageSource;
+
+	@GetMapping("/generateestimationnotice")
+	public String generateDemandBill(Model model) {
+		model.addAttribute("searchNoticeDetails", new SearchNoticeDetails());
+		return "generateEstimationNotice";
+	}
+
+	@GetMapping(value = "/estimationNotice", produces = APPLICATION_PDF_VALUE)
+	@ResponseBody
+	public ResponseEntity<InputStreamResource> generateEstimationNotice(HttpServletRequest request,
+			HttpSession session) {
+
+		WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+				.findByApplicationNumber(request.getParameter("pathVar"));
+		return generateEstimationReport(waterConnectionDetails, session);
+	}
 	
-    private static final String DATA = "{\"data\":";
-
-    @GetMapping("/generateestimationnotice")
-    public String generateDemandBill(Model model) {
-        model.addAttribute("searchNoticeDetails", new SearchNoticeDetails());
-        return "generateEstimationNotice";
-    }
-
-    @GetMapping(value = "/estimationNotice", produces = APPLICATION_PDF_VALUE)
-    @ResponseBody
-    public ResponseEntity<InputStreamResource> generateEstimationNotice(HttpServletRequest request,
-                                                                        HttpSession session) {
-
-        WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByApplicationNumber(request.getParameter("pathVar"));
-        return generateEstimationReport(waterConnectionDetails, session);
-    }
     private ResponseEntity<InputStreamResource> generateEstimationReport(WaterConnectionDetails waterConnectionDetails,
                                                                          HttpSession session) {
         ReportOutput reportOutput = new ReportOutput();
@@ -255,63 +254,69 @@ public class EstimationNoticeController {
         return generateEstimationReport(waterConnectionDetails, session);
     }
     
-    @RequestMapping(value = "/result", method = POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/result", method = POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public String searchResult(@ModelAttribute SearchNoticeDetails searchNoticeDetails, BindingResult resultBinder,
 			Model model, final HttpServletRequest request, final HttpServletResponse response) throws IOException {
-		String result = null;
 		String failureMessage = StringUtils.EMPTY;
 
 		WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
 				.findActiveConnectionDetailsByConsumerCodeAndApplicationNumber(searchNoticeDetails.getHscNo(),
 						searchNoticeDetails.getApplicationNumber());
-		if (waterConnectionDetails == null) 
-			failureMessage = messageSource.getMessage("err.applicationno.and.consumerno.not.correct", null,
-					Locale.getDefault());
-		else {
+		if (waterConnectionDetails != null) {
 			BigDecimal estimationDues = waterEstimationChargesPaymentService
 					.getEstimationDueAmount(waterConnectionDetails);
-			if (estimationDues.compareTo(BigDecimal.ZERO) == 0)
+			if (estimationDues.compareTo(BigDecimal.ZERO) != 0)
 				failureMessage = messageSource.getMessage("err.connection.without.due", null, Locale.getDefault());
 			else {
 				boolean isNonMeteredAndNonBPL = false;
 				if (!CATEGORY_BPL.equals(waterConnectionDetails.getCategory().getName())
 						&& ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())
-						&& waterConnectionDetails.getCreatedDate().compareTo(DateUtils.toDateUsingDefaultPattern("09/07/2018")) >= 0
+						&& waterConnectionDetails.getCreatedDate()
+								.compareTo(DateUtils.toDateUsingDefaultPattern(waterConnectionDetailsService.getGOEffectiveDate())) >= 0
 						&& waterConnectionDetails.getExecutionDate() != null)
 					isNonMeteredAndNonBPL = true;
-
+				
 				if (!isNonMeteredAndNonBPL) {
 					failureMessage = messageSource.getMessage("err.bpl.metered.period.connection", null,
 							Locale.getDefault());
 				}
 			}
-		}
-		
-		if (StringUtils.isNotBlank(failureMessage)) 
+		} else
+			failureMessage = messageSource.getMessage("err.applicationno.and.consumerno.not.correct", null,
+					Locale.getDefault());
+
+		if (StringUtils.isNotBlank(failureMessage))
 			return String.format("{ \"error\":\" %s \" }", failureMessage);
-		EstimationNumberGenerator estimationNoGen = beanResolver.getAutoNumberServiceFor(EstimationNumberGenerator.class);
+		
+		return new StringBuilder("{\"data\":").append(toJSON(preparNoticeDetails(waterConnectionDetails))).append("}")
+				.toString();
+	}
+
+	@RequestMapping(value = "/waterTax/downloadEstimationNotice")
+	public ResponseEntity<InputStreamResource> downloadSignedWorkOrderConnection(
+			@RequestParam final String fileStoreId) {
+		return fileStoreUtils.fileAsResponseEntity(fileStoreId, WaterTaxConstants.FILESTORE_MODULECODE, true);
+	}
+
+	private List<SearchNoticeDetails> preparNoticeDetails(WaterConnectionDetails waterConnectionDetails) {
+		EstimationNumberGenerator estimationNoGen = beanResolver
+				.getAutoNumberServiceFor(EstimationNumberGenerator.class);
 		String estimationNumber = estimationNoGen.generateEstimationNumber();
-		EstimationNotice estimationNotice = waterConnectionDetailsService.addEstimationNoticeToConnectionDetails(waterConnectionDetails, estimationNumber);
+		EstimationNotice estimationNotice = waterConnectionDetailsService
+				.addEstimationNoticeToConnectionDetails(waterConnectionDetails, estimationNumber);
 		ReportOutput reportOutput = reportGenerationService.generateNewEstimationNotice(waterConnectionDetails,
 				estimationNumber, cityService.getMunicipalityName(), cityService.getDistrictName());
 		if (reportOutput != null)
 			waterConnectionDetailsService.updateConnectionDetailsWithEstimationNotice(waterConnectionDetails,
 					estimationNotice, reportOutput);
-		searchNoticeDetails = searchNoticeService.buildNoticeDetails(waterConnectionDetails);
-		searchNoticeDetails.setEstimationNumber(estimationNotice.getEstimationNumber());
-		searchNoticeDetails.setEstimationDate(toDefaultDateFormat(estimationNotice.getEstimationNoticeDate()));
-		searchNoticeDetails.setFileStoreID(estimationNotice.getEstimationNoticeFileStore().getFileStoreId());
+		SearchNoticeDetails noticeDetails = searchNoticeService.buildNoticeDetails(waterConnectionDetails);
+		noticeDetails.setEstimationNumber(estimationNotice.getEstimationNumber());
+		noticeDetails.setEstimationDate(toDefaultDateFormat(estimationNotice.getEstimationNoticeDate()));
+		noticeDetails.setFileStoreID(estimationNotice.getEstimationNoticeFileStore().getFileStoreId());
 		List<SearchNoticeDetails> noticeDetailList = new ArrayList<SearchNoticeDetails>();
-		noticeDetailList.add(searchNoticeDetails);
-		result = new StringBuilder(DATA)
-				.append(toJSON(noticeDetailList)).append("}").toString();
-		return result;
-
+		noticeDetailList.add(noticeDetails);
+		return noticeDetailList;
 	}
-	@RequestMapping(value = "/waterTax/downloadEstimationNotice")
-    public ResponseEntity<InputStreamResource> downloadSignedWorkOrderConnection(@RequestParam final String fileStoreId) {
-        return fileStoreUtils.fileAsResponseEntity(fileStoreId, WaterTaxConstants.FILESTORE_MODULECODE, true);
-    }
 
 }
