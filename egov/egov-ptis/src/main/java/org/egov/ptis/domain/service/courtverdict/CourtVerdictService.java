@@ -292,12 +292,14 @@ public class CourtVerdictService extends GenericWorkFlowController {
                 .getLowestInstallmentForProperty(courtVerdict.getBasicProperty().getActiveProperty());
         if (StringUtils.isBlank(courtVerdict.getBasicProperty().getAddress().getAreaLocalitySector()))
             errorMessages.put("areaLocalitySector", "areaLocalitySector.required");
-        if (StringUtils.isBlank(courtVerdict.getBasicProperty().getPropertyID().getArea().getName()))
+        if (courtVerdict.getBasicProperty().getPropertyID().getArea() == null
+                || StringUtils.isBlank(courtVerdict.getBasicProperty().getPropertyID().getArea().getName()))
             errorMessages.put("block", "blockId.required");
         if (courtVerdict.getBasicProperty().getPropertyID().getZone() == null
                 || courtVerdict.getBasicProperty().getPropertyID().getZone().getName() == null)
             errorMessages.put("zone", "zone.required");
-        if (StringUtils.isBlank(courtVerdict.getBasicProperty().getPropertyID().getWard().getName()))
+        if (courtVerdict.getBasicProperty().getPropertyID().getWard() == null
+                || StringUtils.isBlank(courtVerdict.getBasicProperty().getPropertyID().getWard().getName()))
             errorMessages.put("ward", "ward.required");
         if (courtVerdict.getBasicProperty().getPropertyID().getElectionBoundary() == null
                 || courtVerdict.getBasicProperty().getPropertyID().getElectionBoundary().getName() == null)
