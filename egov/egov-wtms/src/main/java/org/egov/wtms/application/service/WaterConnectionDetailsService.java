@@ -131,6 +131,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.TEMPERARYCLOSECODE
 import static org.egov.wtms.utils.constants.WaterTaxConstants.USERNAME_MEESEVA;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_CONNECTION_CHARGE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WCMS_ESTIMATIONNOTICE_GO159_EFFECTIVEDATE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_CANCEL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_AE_APPROVAL_PENDING;
@@ -183,9 +184,11 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.AssignmentAdaptor;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
+import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
@@ -383,6 +386,9 @@ public class WaterConnectionDetailsService {
 	@Autowired
 	private WaterDemandConnectionService waterDemandConnectionService;
 
+	@Autowired
+    private AppConfigService appConfigService;
+	
 	@Autowired
 	@Qualifier("workflowService")
 	private SimpleWorkflowService<WaterConnectionDetails> waterConnectionWorkflowService;
@@ -1487,7 +1493,7 @@ public class WaterConnectionDetailsService {
 			WaterConnectionDetails connectionDetails = findBy(jsonObj.getLong("id"));
 			if (ConnectionType.NON_METERED.equals(connectionDetails.getConnectionType())
 					&& !CATEGORY_BPL.equals(connectionDetails.getCategory().getName())
-					&& connectionDetails.getCreatedDate().compareTo(DateUtils.toDateUsingDefaultPattern("09/07/2018")) >= 0
+					&& connectionDetails.getCreatedDate().compareTo(DateUtils.toDateUsingDefaultPattern(getGOEffectiveDate())) >= 0
 					&& connectionDetails.getUlbMaterial() == null) {
 				consumerCodes = consumerCodes.append(connectionDetails.getConnection().getConsumerCode()).append(",");
 			}
@@ -1889,5 +1895,14 @@ public class WaterConnectionDetailsService {
 				FILESTORE_MODULECODE);
 		estimationNotice.setEstimationNoticeFileStore(fileStore);
 		updateWaterConnectionDetailsWithFileStore(waterConnectionDetails);
+	}
+	
+	public String getGOEffectiveDate() {
+		String value = EMPTY;
+		AppConfig appConfig = appConfigService.getAppConfigByModuleNameAndKeyName(MODULE_NAME,
+				WCMS_ESTIMATIONNOTICE_GO159_EFFECTIVEDATE);
+		if (appConfig != null && !appConfig.getConfValues().isEmpty())
+			value = appConfig.getConfValues().get(0).getValue().toString();
+		return value;
 	}
 }
