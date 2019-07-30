@@ -294,11 +294,13 @@ public class CourtVerdictService extends GenericWorkFlowController {
             errorMessages.put("areaLocalitySector", "areaLocalitySector.required");
         if (StringUtils.isBlank(courtVerdict.getBasicProperty().getPropertyID().getArea().getName()))
             errorMessages.put("block", "blockId.required");
-        if (courtVerdict.getBasicProperty().getPropertyID().getZone().getName() == null)
+        if (courtVerdict.getBasicProperty().getPropertyID().getZone() == null
+                || courtVerdict.getBasicProperty().getPropertyID().getZone().getName() == null)
             errorMessages.put("zone", "zone.required");
         if (StringUtils.isBlank(courtVerdict.getBasicProperty().getPropertyID().getWard().getName()))
             errorMessages.put("ward", "ward.required");
-        if (courtVerdict.getBasicProperty().getPropertyID().getElectionBoundary().getName() == null)
+        if (courtVerdict.getBasicProperty().getPropertyID().getElectionBoundary() == null
+                || courtVerdict.getBasicProperty().getPropertyID().getElectionBoundary().getName() == null)
             errorMessages.put("electionWard", "electionWard.required");
         if (StringUtils.isBlank(courtVerdict.getProperty().getPropertyDetail()
                 .getPropertyTypeMaster().getType()))
