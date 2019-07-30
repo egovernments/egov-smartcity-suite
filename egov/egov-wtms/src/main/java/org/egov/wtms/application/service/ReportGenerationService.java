@@ -493,7 +493,7 @@ public class ReportGenerationService {
     }
 
 	public ReportOutput generateNewEstimationNotice(WaterConnectionDetails waterConnectionDetails,
-			String estimationNumber) {
+			String estimationNumber, String cityName, String district) {
 		ReportRequest reportInput = null;
 		ReportOutput reportOutput;
 		if (waterConnectionDetails != null) {
@@ -510,8 +510,8 @@ public class ReportGenerationService {
 				ownerName.append(names.getOwnerName());
 			}
 
-			reportParams.put(CITY_NAME, cityService.getMunicipalityName());
-			reportParams.put(DISTRICT, cityService.getDistrictName());
+			reportParams.put(CITY_NAME, cityName);
+			reportParams.put(DISTRICT, district);
 			reportParams.put("estimationNumber", isNotBlank(estimationNumber) ? estimationNumber : EMPTY);
 			reportParams.put("consumerNumber", waterConnectionDetails.getConnection().getConsumerCode());
 			reportParams.put(PROPERTYID, waterConnectionDetails.getConnection().getPropertyIdentifier());
@@ -528,26 +528,25 @@ public class ReportGenerationService {
 			reportParams.put("category", waterConnectionDetails.getCategory().getName());
 			reportParams.put("usageType", waterConnectionDetails.getUsageType().getName());
 			reportParams.put("monthlyRate", connectionDemandService.getWaterRatesDetailsForDemandUpdate(waterConnectionDetails).getMonthlyRate());
-			double donation = 0;
+			
+			FieldInspectionDetails inspectionDetails = waterConnectionDetails.getFieldInspectionDetails();
+			double donation = waterConnectionDetails.getDonationCharges() + inspectionDetails.getSecurityDeposit() + inspectionDetails.getRoadCuttingCharges() + inspectionDetails.getSupervisionCharges();
 			double materialCharges = 0;
 			double totalCharges = 0;
-			FieldInspectionDetails inspectionDetails = waterConnectionDetails.getFieldInspectionDetails();
 			if(waterConnectionDetails.getUlbMaterial()){
-				donation = waterConnectionDetails.getDonationCharges() + inspectionDetails.getSecurityDeposit() + inspectionDetails.getRoadCuttingCharges() + inspectionDetails.getSupervisionCharges();
 				materialCharges = inspectionDetails.getEstimationCharges();
 				totalCharges = donation+materialCharges;
 			} else {
-				donation = waterConnectionDetails.getDonationCharges() + inspectionDetails.getSecurityDeposit() + inspectionDetails.getRoadCuttingCharges();
 				totalCharges = donation;
 			}
 			reportParams.put(DONATION_CHARGES, donation);
 			reportParams.put("materialCharges", materialCharges);
-			reportParams.put("totalCharges", totalCharges);
 			reportParams.put("collectedAmount", waterEstimationChargesPaymentService.getCollectedEstimationCharges(waterConnectionDetails).doubleValue());
 			double balance = waterEstimationChargesPaymentService.getEstimationDueAmount(waterConnectionDetails).doubleValue();
 			reportParams.put("balance", balance);
-			double amountPerInstallment = totalCharges/8;
+			double amountPerInstallment = Math.ceil(totalCharges/8);
 			reportParams.put("amountPerInstallment", amountPerInstallment);
+			reportParams.put("totalCharges", (amountPerInstallment*8));
 			reportParams.put("dueInstallments", Math.ceil(balance/amountPerInstallment));
 			
 			reportInput = new ReportRequest("GO_estimationNotice",

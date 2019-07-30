@@ -1,51 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) 2017  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
-  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
-  ~            derived works should carry eGovernments Foundation logo on the top right corner.
-  ~
-  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
-  ~            For any further queries on attribution, including queries on brand guidelines,
-  ~            please contact contact@egovernments.org
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  ~
-  -->
 <!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="GO_estimationNotice" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="593a2f66-ea7f-45f3-940b-1a00bda5a109">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
@@ -87,14 +40,14 @@
 			<textField>
 				<reportElement x="2" y="10" width="544" height="21" uuid="d4976404-ced8-41d0-9c6c-0c38d2dc718c"/>
 				<textElement textAlignment="Center">
-					<font fontName="Times New Roman" size="16" isBold="true"/>
+					<font fontName="Times New Roman" size="16" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{cityName}+", "+$P{district}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="2" y="36" width="544" height="18" uuid="d336ae9e-64c9-4a14-b21d-1960bdd5c270"/>
 				<textElement textAlignment="Center">
-					<font fontName="Times New Roman" size="14" isBold="true"/>
+					<font fontName="Times New Roman" size="14" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
 				<text><![CDATA[Demand Bill for Water Tap Connection Donation & Material Charges]]></text>
 			</staticText>
@@ -103,21 +56,21 @@
 				<textElement textAlignment="Center">
 					<font fontName="Times New Roman" size="14"/>
 				</textElement>
-				<text><![CDATA[[Sanctioned as per GO MS No. 159 dated 17-05-2018 of MA & UD [USB].]]]></text>
+				<text><![CDATA[[Sanctioned as per GO MS No. 159 dated 17-05-2018 of MA & UD [UBS].]]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement x="10" y="92" width="269" height="18" uuid="faf676cc-f50c-4fbe-a2bc-199d4d992f15"/>
 				<textElement textAlignment="Left" markup="styled">
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Demand Bill No : <style isBold=\"true\"> "+$P{estimationNumber}+" </style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Demand Bill No : <style isBold=\"true\" pdfFontName=\"Times-Bold\"> "+$P{estimationNumber}+" </style>"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="380" y="92" width="166" height="18" uuid="b6707efb-39bd-424c-ada4-e51d40d0911f"/>
-				<textElement textAlignment="Right" markup="none">
+				<textElement textAlignment="Right" markup="styled">
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Date: "+DATEFORMAT(new Date(),"dd/MM/yyyy")]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Date: <style isBold=\"true\" pdfFontName=\"Times-Bold\"> "+DATEFORMAT(new Date(),"dd/MM/yyyy")+" </style>"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="10" y="118" width="25" height="15" uuid="bfef8f7c-e986-4714-93a2-4d21c3f3ad07"/>
@@ -128,52 +81,52 @@
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement x="10" y="134" width="269" height="14" uuid="499a00ad-6f78-4a3d-9ace-808e57f9c001"/>
-				<textElement textAlignment="Left">
+				<textElement textAlignment="Left" markup="styled">
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Consumer No : "+$P{consumerNumber}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Consumer No : <style isBold=\"true\" pdfFontName=\"Times-Bold\"> "+$P{consumerNumber}+" </style>"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="279" y="134" width="267" height="14" uuid="09abb9e9-4f33-48a4-9cc7-76854aa601c3"/>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Right" markup="styled">
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Assessment No:"+$P{propertyID}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Assessment No : <style isBold=\"true\" pdfFontName=\"Times-Bold\"> "+$P{propertyID}+" </style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="10" y="148" width="269" height="15" isPrintWhenDetailOverflows="true" uuid="43e18d82-132f-4e60-af3e-c514f1557462"/>
-				<textElement textAlignment="Left">
+				<textElement textAlignment="Left" markup="styled">
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Name : "+$P{applicantName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Name : <style isBold=\"true\" pdfFontName=\"Times-Bold\"> "+$P{applicantName}+" </style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="279" y="148" width="267" height="15" isPrintWhenDetailOverflows="true" uuid="4154e7f1-99ae-4c50-8f1c-c81619ef6672"/>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Right" markup="styled">
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Revenue Ward :"+$P{revenueWard}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Revenue Ward :<style isBold=\"true\" pdfFontName=\"Times-Bold\"> "+$P{revenueWard}+" </style>"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="279" y="164" width="267" height="14" uuid="7755b207-ff59-4af8-adc6-c94ff926aa30"/>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Right" markup="styled">
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Locality :"+$P{locality}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Locality :<style isBold=\"true\" pdfFontName=\"Times-Bold\"> "+$P{locality}+" </style>"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="10" y="164" width="269" height="14" uuid="743969bf-b326-4842-9d94-7881598cd158"/>
-				<textElement textAlignment="Left">
+				<textElement textAlignment="Left" markup="styled">
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["House No : "+$P{houseNo}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["House No : <style isBold=\"true\" pdfFontName=\"Times-Bold\"> "+$P{houseNo}+" </style>"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="10" y="178" width="269" height="14" uuid="6d6ca90d-c3f6-4a79-a768-6f5f8e9e19a3"/>
-				<textElement textAlignment="Left">
+				<textElement textAlignment="Left" markup="styled">
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Block : "+$P{block}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Block : <style isBold=\"true\" pdfFontName=\"Times-Bold\"> "+$P{block}+" </style>"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="10" y="215" width="120" height="14" uuid="be10b1d0-58b6-492d-84f8-d8959990fc5e"/>
@@ -187,7 +140,7 @@
 				<textElement markup="styled">
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["        As per your request, Water Tap Connection (HSC) vide Application No. <style isBold=\"true\"> "+$P{applicationNumber}+" </style>, has been previously sanctioned on <style isBold=\"true\"> "+$P{approvalDate}+"</style> and executed on <style isBold=\"true\">"+$P{executionDate}+"</style> in your premises, with <style isBold=\"true\">"+$P{pipeSize}+"</style> Pipe Size, under <style isBold=\"true\">"+$P{category}+"</style> Category and <style isBold=\"true\">"+$P{usageType}+"</style> Usage basis on a monthly water charge of <style isBold=\"true\"> Rs."+$P{monthlyRate}+"</style> per month."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["        As per your request, Water Tap Connection (HSC) vide Application No. <style isBold=\"true\" pdfFontName=\"Times-Bold\"> "+$P{applicationNumber}+" </style>, has been previously sanctioned on <style isBold=\"true\" pdfFontName=\"Times-Bold\"> "+$P{approvalDate}+"</style> and executed on <style isBold=\"true\" pdfFontName=\"Times-Bold\">"+$P{executionDate}+"</style> in your premises, with <style isBold=\"true\" pdfFontName=\"Times-Bold\">"+$P{pipeSize}+"</style> Pipe Size, under <style isBold=\"true\" pdfFontName=\"Times-Bold\">"+$P{category}+"</style> Category and <style isBold=\"true\" pdfFontName=\"Times-Bold\">"+$P{usageType}+"</style> Usage basis on a monthly water charge of <style isBold=\"true\" pdfFontName=\"Times-Bold\"> Rs."+$P{monthlyRate}+"</style> per month."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="11" y="297" width="534" height="42" uuid="f09cf9cb-6951-4b90-bc7c-2b4c267f5092"/>
@@ -206,7 +159,7 @@
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement>
-					<font fontName="Times New Roman" size="12" isBold="true"/>
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
 				<text><![CDATA[Sl. No.]]></text>
 			</staticText>
@@ -216,7 +169,7 @@
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement>
-					<font fontName="Times New Roman" size="12" isBold="true"/>
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
 				<text><![CDATA[Item]]></text>
 			</staticText>
@@ -226,7 +179,7 @@
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement>
-					<font fontName="Times New Roman" size="12" isBold="true"/>
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
 				<text><![CDATA[Amount      (in Rs.)]]></text>
 			</staticText>
@@ -296,7 +249,7 @@
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement>
-					<font fontName="Times New Roman" size="12" isBold="true"/>
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
 				<text><![CDATA[3.]]></text>
 			</staticText>
@@ -306,7 +259,7 @@
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement>
-					<font fontName="Times New Roman" size="12" isBold="true"/>
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
 				<text><![CDATA[Total Charges [1+2]]]></text>
 			</staticText>
@@ -316,7 +269,7 @@
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement>
-					<font fontName="Times New Roman" size="12" isBold="true"/>
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{totalCharges}]]></textFieldExpression>
 			</textField>
@@ -451,44 +404,44 @@
 					<pen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font fontName="Times New Roman" size="14" isBold="true"/>
+					<font fontName="Times New Roman" size="14" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
 				<text><![CDATA[Commissioner]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="2" y="88" width="543" height="32" uuid="41a859e8-a028-462b-ace0-5541d6601f3b"/>
 				<textElement textAlignment="Center">
-					<font fontName="Times New Roman" size="12" isBold="true"/>
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Acknowledgement for Demand Bill for Water Tap Connection Donation & Material Charges for - "+$P{cityName}+", "+$P{district}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="3" y="120" width="269" height="18" uuid="e8a78721-869d-43ef-aabb-25a90ae62cf1"/>
-				<textElement textAlignment="Left">
+				<textElement textAlignment="Left" markup="styled">
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Assessment No : "+$P{propertyID}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Assessment No : <style isBold=\"true\" pdfFontName=\"Times-Bold\"> "+$P{propertyID}+" </style>"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="300" y="120" width="244" height="18" uuid="5038f688-4c4e-446f-9159-08d21695ad71"/>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Right" markup="styled">
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Demand Bill No : "+$P{estimationNumber}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Demand Bill No : <style isBold=\"true\" pdfFontName=\"Times-Bold\"> "+$P{estimationNumber}+" </style>"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="3" y="138" width="269" height="18" uuid="4bd35971-54fd-4110-b9b9-9533149df535"/>
-				<textElement textAlignment="Left">
+				<textElement textAlignment="Left" markup="styled">
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Consumer No : "+$P{consumerNumber}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Consumer No : <style isBold=\"true\" pdfFontName=\"Times-Bold\"> "+$P{consumerNumber}+" </style>"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="3" y="156" width="541" height="18" uuid="f401ac6a-872c-4e26-9747-72e49f7ad28c"/>
-				<textElement textAlignment="Left">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="3" y="156" width="541" height="34" uuid="f401ac6a-872c-4e26-9747-72e49f7ad28c"/>
+				<textElement textAlignment="Left" markup="styled">
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Name & Address :".concat($P{applicantName}.concat($P{address}))]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Name and Address : <style isBold=\"true\" pdfFontName=\"Times-Bold\"> "+$P{applicantName}+"</style> , <style isBold=\"true\" pdfFontName=\"Times-Bold\">"+$P{address}+" </style>"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="220" y="205" width="329" height="18" uuid="657a4566-6fa8-4860-86cb-ac10c836edb0"/>
@@ -500,7 +453,7 @@
 			<line>
 				<reportElement x="0" y="76" width="549" height="1" isPrintWhenDetailOverflows="true" uuid="189e5628-7292-481b-ab5d-30ff502a2445"/>
 				<graphicElement>
-					<pen lineStyle="Dashed"/>
+					<pen lineWidth="1.0" lineStyle="Dashed"/>
 				</graphicElement>
 			</line>
 		</band>

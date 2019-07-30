@@ -73,6 +73,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportFormat;
@@ -152,6 +154,9 @@ public class EstimationNoticeController {
 	
 	@Autowired
 	private WaterEstimationChargesPaymentService waterEstimationChargesPaymentService;
+	
+	@Autowired
+    private CityService cityService;
     
 	@Autowired
 	@Qualifier("parentMessageSource")
@@ -289,7 +294,7 @@ public class EstimationNoticeController {
 		String estimationNumber = estimationNoGen.generateEstimationNumber();
 		EstimationNotice estimationNotice = waterConnectionDetailsService.addEstimationNoticeToConnectionDetails(waterConnectionDetails, estimationNumber);
 		ReportOutput reportOutput = reportGenerationService.generateNewEstimationNotice(waterConnectionDetails,
-				estimationNumber);
+				estimationNumber, cityService.getMunicipalityName(), cityService.getDistrictName());
 		if (reportOutput != null)
 			waterConnectionDetailsService.updateConnectionDetailsWithEstimationNotice(waterConnectionDetails,
 					estimationNotice, reportOutput);

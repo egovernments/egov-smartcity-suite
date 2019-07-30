@@ -745,18 +745,9 @@ public class UpdateConnectionController extends GenericConnectionController {
             	EstimationNotice estimationNotice = waterConnectionDetailsService.addEstimationNoticeToConnectionDetails(waterConnectionDetails, estimationNumber);
             	ReportOutput reportOutput = reportGenerationService.generateEstimationNoticeReport(waterConnectionDetails,
                         ApplicationThreadLocals.getCityName(), cityService.getDistrictName(), estimationNumber);
-            	if (reportOutput != null) {
-                        HttpHeaders headers = new HttpHeaders();
-                        headers.setContentType(MediaType.parseMediaType(APPLICATIONPDFNAME));
-                        headers.add("content-disposition", "inline;filename=EstimationNotice.pdf");
-                        String fileName;
-                        fileName = SIGNED_DOCUMENT_PREFIX + estimationNotice.getEstimationNumber() + ".pdf";
-                        InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
-                        FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, APPLICATIONPDFNAME,
-                                FILESTORE_MODULECODE);
-                        estimationNotice.setEstimationNoticeFileStore(fileStore);
-                        waterConnectionDetailsService.updateWaterConnectionDetailsWithFileStore(waterConnectionDetails);
-            	}
+            	if (reportOutput != null) 
+            		waterConnectionDetailsService.updateConnectionDetailsWithEstimationNotice(waterConnectionDetails, estimationNotice, reportOutput);
+            	
                 return "redirect:/application/estimationNotice?pathVar=" + waterConnectionDetails.getApplicationNumber();
             }
 
