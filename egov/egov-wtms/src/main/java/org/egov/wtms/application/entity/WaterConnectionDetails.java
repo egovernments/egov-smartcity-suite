@@ -197,11 +197,6 @@ public class WaterConnectionDetails extends StateAware<Position> {
 
     private String workOrderNumber;
 
-    private String estimationNumber;
-
-    @Temporal(value = TemporalType.DATE)
-    private Date estimationNoticeDate;
-
     private double donationCharges;
     private Boolean legacy = false;
 
@@ -225,10 +220,6 @@ public class WaterConnectionDetails extends StateAware<Position> {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "reconnectionfilestoreid")
     private FileStoreMapper reconnectionFileStore;
-
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "estimationnoticefilestoreid")
-    private FileStoreMapper estimationNoticeFileStoreId;
 
     @ManyToOne
     @JoinColumn(name = "chairPerson")
@@ -573,14 +564,6 @@ public class WaterConnectionDetails extends StateAware<Position> {
         this.workOrderNumber = workOrderNumber;
     }
 
-    public String getEstimationNumber() {
-        return estimationNumber;
-    }
-
-    public void setEstimationNumber(final String estimationNumber) {
-        this.estimationNumber = estimationNumber;
-    }
-
     public ExistingConnectionDetails getExistingConnection() {
         return existingConnection;
     }
@@ -771,22 +754,6 @@ public class WaterConnectionDetails extends StateAware<Position> {
 
     public void setReconnectionFileStore(final FileStoreMapper reconnectionFileStore) {
         this.reconnectionFileStore = reconnectionFileStore;
-    }
-
-    public FileStoreMapper getEstimationNoticeFileStoreId() {
-        return estimationNoticeFileStoreId;
-    }
-
-    public void setEstimationNoticeFileStoreId(final FileStoreMapper estimationNoticeFileStoreId) {
-        this.estimationNoticeFileStoreId = estimationNoticeFileStoreId;
-    }
-
-    public Date getEstimationNoticeDate() {
-        return estimationNoticeDate;
-    }
-
-    public void setEstimationNoticeDate(final Date estimationNoticeDate) {
-        this.estimationNoticeDate = estimationNoticeDate;
     }
 
     public enum WorkFlowState {

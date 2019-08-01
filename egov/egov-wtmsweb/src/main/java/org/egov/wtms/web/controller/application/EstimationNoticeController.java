@@ -54,6 +54,7 @@ import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.egov.wtms.masters.entity.enums.ConnectionType.NON_METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CATEGORY_BPL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -266,11 +267,12 @@ public class EstimationNoticeController {
 		if (waterConnectionDetails != null) {
 			BigDecimal estimationDues = waterEstimationChargesPaymentService
 					.getEstimationDueAmount(waterConnectionDetails);
-			if (estimationDues.compareTo(BigDecimal.ZERO) != 0)
+			if (estimationDues.compareTo(BigDecimal.ZERO) == 0)
 				failureMessage = messageSource.getMessage("err.connection.without.due", null, Locale.getDefault());
 			else {
 				boolean isNonMeteredAndNonBPL = false;
-				if (!CATEGORY_BPL.equals(waterConnectionDetails.getCategory().getName())
+				if (NEWCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+						&& !CATEGORY_BPL.equals(waterConnectionDetails.getCategory().getName())
 						&& ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())
 						&& waterConnectionDetails.getCreatedDate()
 								.compareTo(DateUtils.toDateUsingDefaultPattern(waterConnectionDetailsService.getGOEffectiveDate())) >= 0

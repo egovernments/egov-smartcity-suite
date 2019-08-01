@@ -521,36 +521,45 @@ public class ReportGenerationService {
 			reportParams.put(HOUSE_NO, doorNo[0]);
 			reportParams.put("revenueWard", assessmentDetails.getBoundaryDetails().getWardName());
 			reportParams.put("block", assessmentDetails.getBoundaryDetails().getBlockName());
-			reportParams.put("applicationNumber", isNotBlank(waterConnectionDetails.getApplicationNumber()) ? waterConnectionDetails.getApplicationNumber() : EMPTY);
+			reportParams.put("applicationNumber", isNotBlank(waterConnectionDetails.getApplicationNumber())
+					? waterConnectionDetails.getApplicationNumber() : EMPTY);
 			reportParams.put("approvalDate", toDefaultDateFormat(waterConnectionDetails.getApprovalDate()));
 			reportParams.put("executionDate", toDefaultDateFormat(waterConnectionDetails.getExecutionDate()));
 			reportParams.put("pipeSize", waterConnectionDetails.getPipeSize().getCode());
 			reportParams.put("category", waterConnectionDetails.getCategory().getName());
 			reportParams.put("usageType", waterConnectionDetails.getUsageType().getName());
-			reportParams.put("monthlyRate", connectionDemandService.getWaterRatesDetailsForDemandUpdate(waterConnectionDetails).getMonthlyRate());
-			
+			reportParams.put("monthlyRate", connectionDemandService
+					.getWaterRatesDetailsForDemandUpdate(waterConnectionDetails).getMonthlyRate());
+
 			FieldInspectionDetails inspectionDetails = waterConnectionDetails.getFieldInspectionDetails();
-			double donation = waterConnectionDetails.getDonationCharges() + inspectionDetails.getSecurityDeposit() + inspectionDetails.getRoadCuttingCharges() + inspectionDetails.getSupervisionCharges();
+			double donation = waterConnectionDetails.getDonationCharges() + inspectionDetails.getSecurityDeposit()
+					+ inspectionDetails.getRoadCuttingCharges() + inspectionDetails.getSupervisionCharges();
 			double materialCharges = 0;
 			double totalCharges = 0;
-			if(waterConnectionDetails.getUlbMaterial()){
-				materialCharges = inspectionDetails.getEstimationCharges();
-				totalCharges = donation+materialCharges;
+			Map<String, BigDecimal> estimationAmounts = waterEstimationChargesPaymentService
+					.getEstimationDueDetails(waterConnectionDetails);
+			double balance = estimationAmounts.get("balance").doubleValue();
+			//If ULB provides the materials, then include material charges, else not required
+			if (waterConnectionDetails.getUlbMaterial()) {
+				if (estimationAmounts.get("materialCharges") != null)
+					materialCharges = estimationAmounts.get("materialCharges").doubleValue();
+				totalCharges = donation + materialCharges;
 			} else {
 				totalCharges = donation;
+				balance = balance - estimationAmounts.get("materialCharges").doubleValue();
 			}
 			reportParams.put(DONATION_CHARGES, donation);
 			reportParams.put("materialCharges", materialCharges);
-			reportParams.put("collectedAmount", waterEstimationChargesPaymentService.getCollectedEstimationCharges(waterConnectionDetails).doubleValue());
-			double balance = waterEstimationChargesPaymentService.getEstimationDueAmount(waterConnectionDetails).doubleValue();
+			reportParams.put("collectedAmount", waterEstimationChargesPaymentService
+					.getCollectedEstimationCharges(waterConnectionDetails).doubleValue());
 			reportParams.put("balance", balance);
-			double amountPerInstallment = Math.ceil(totalCharges/8);
+			double amountPerInstallment = Math.ceil(totalCharges / 8);
 			reportParams.put("amountPerInstallment", amountPerInstallment);
-			reportParams.put("totalCharges", (amountPerInstallment*8));
-			reportParams.put("dueInstallments", Math.ceil(balance/amountPerInstallment));
-			
-			reportInput = new ReportRequest("GO_estimationNotice",
-						waterConnectionDetails.getEstimationDetails(), reportParams);
+			reportParams.put("totalCharges", (amountPerInstallment * 8));
+			reportParams.put("dueInstallments", Math.ceil(balance / amountPerInstallment));
+
+			reportInput = new ReportRequest("GO_estimationNotice", waterConnectionDetails.getEstimationDetails(),
+					reportParams);
 
 		}
 		reportOutput = reportService.createReport(reportInput);
