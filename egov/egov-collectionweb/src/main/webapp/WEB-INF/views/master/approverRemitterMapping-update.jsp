@@ -154,19 +154,15 @@ table {
             </c:if>
         </div>
 
-        <c:if test="${not empty errors}">
-            <ul class="error-area list-unstyled">
-                <c:forEach items="${errors}" var="error">
-                    <li><span>${error}</span></li>
-                </c:forEach>
-            </ul>
-        </c:if>
-
-        <div class="error-area">
-        <ul>
-            <form:errors element="li" />
-        </ul>
-        </div>
+        <spring:bind path="approverRemitterMappingSpec">
+            <c:if test="${status.error == true}">
+                <div class="error-area">
+                    <ul>
+                        <form:errors element="li" />
+                    </ul>
+                </div>
+            </c:if>
+        </spring:bind>
 
         <table width="100%">
             <tr>
