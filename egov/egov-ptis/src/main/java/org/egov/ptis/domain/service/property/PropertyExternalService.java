@@ -321,6 +321,7 @@ public class PropertyExternalService {
                 if (flag.equals(FLAG_FULL_DETAILS)) {
                     getAsssessmentDetails(basicProperty, assessmentDetail);
                     loadPropertyDues(property, assessmentDetail);
+                    loadPrimaryMobileAndEmail(basicProperty, assessmentDetail);
                 }
                 if (flag.equals(FLAG_TAX_DETAILS))
                     loadPropertyDues(property, assessmentDetail);
