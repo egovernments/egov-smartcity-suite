@@ -1491,7 +1491,8 @@ public class WaterConnectionDetailsService {
 		for (int i = 0; i < jsonArray.length(); ++i) {
 			JSONObject jsonObj = jsonArray.getJSONObject(i);
 			WaterConnectionDetails connectionDetails = findBy(jsonObj.getLong("id"));
-			if (ConnectionType.NON_METERED.equals(connectionDetails.getConnectionType())
+			if (NEWCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode()) 
+					&& ConnectionType.NON_METERED.equals(connectionDetails.getConnectionType())
 					&& !CATEGORY_BPL.equals(connectionDetails.getCategory().getName())
 					&& connectionDetails.getCreatedDate().compareTo(DateUtils.toDateUsingDefaultPattern(getGOEffectiveDate())) >= 0
 					&& connectionDetails.getUlbMaterial() == null) {
