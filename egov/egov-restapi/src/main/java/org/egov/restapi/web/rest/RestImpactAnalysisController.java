@@ -49,7 +49,7 @@
 package org.egov.restapi.web.rest;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.util.List;
 
@@ -73,7 +73,7 @@ public class RestImpactAnalysisController {
     @Autowired
     ImpactAnalysisService impactAnalysisService;
 
-    @RequestMapping(value = API_IMPACTANALYSIS, method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = API_IMPACTANALYSIS, method = GET, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String getImpactAnalysisData(@RequestParam String date, @RequestParam String interval,
             final HttpServletResponse response) {
         if (LOGGER.isDebugEnabled())
