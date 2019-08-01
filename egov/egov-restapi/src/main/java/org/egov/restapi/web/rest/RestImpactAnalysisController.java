@@ -68,12 +68,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class RestImpactAnalysisController {
 
-    public static final String API_IMPACTANALYSIS_WEEK = "/public/impactanalysis/week";
+    public static final String API_IMPACTANALYSIS = "/public/impactanalysis";
     private static final Logger LOGGER = Logger.getLogger(RestImpactAnalysisController.class);
     @Autowired
     ImpactAnalysisService impactAnalysisService;
 
-    @RequestMapping(value = API_IMPACTANALYSIS_WEEK, method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = API_IMPACTANALYSIS, method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String getImpactAnalysisData(@RequestParam String date, @RequestParam String interval,
             final HttpServletResponse response) {
         if (LOGGER.isDebugEnabled())
