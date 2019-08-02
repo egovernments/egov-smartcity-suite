@@ -265,24 +265,24 @@ public class EstimationNoticeController {
 				.findActiveConnectionDetailsByConsumerCodeAndApplicationNumber(searchNoticeDetails.getHscNo(),
 						searchNoticeDetails.getApplicationNumber());
 		if (waterConnectionDetails != null) {
-			BigDecimal estimationDues = waterEstimationChargesPaymentService
-					.getEstimationDueAmount(waterConnectionDetails);
-			if (estimationDues.compareTo(BigDecimal.ZERO) == 0)
-				failureMessage = messageSource.getMessage("err.connection.without.due", null, Locale.getDefault());
-			else {
-				boolean isNonMeteredAndNonBPL = false;
-				if (NEWCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
-						&& !CATEGORY_BPL.equals(waterConnectionDetails.getCategory().getName())
-						&& ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())
-						&& waterConnectionDetails.getCreatedDate()
-								.compareTo(DateUtils.toDateUsingDefaultPattern(waterConnectionDetailsService.getGOEffectiveDate())) >= 0
-						&& waterConnectionDetails.getExecutionDate() != null)
-					isNonMeteredAndNonBPL = true;
-				
-				if (!isNonMeteredAndNonBPL) {
-					failureMessage = messageSource.getMessage("err.bpl.metered.period.connection", null,
-							Locale.getDefault());
-				}
+			boolean isNonMeteredAndNonBPL = false;
+			if (NEWCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+					&& !CATEGORY_BPL.equals(waterConnectionDetails.getCategory().getName())
+					&& ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())
+					&& waterConnectionDetails.getCreatedDate()
+							.compareTo(DateUtils
+									.toDateUsingDefaultPattern(waterConnectionDetailsService.getGOEffectiveDate())) >= 0
+					&& waterConnectionDetails.getExecutionDate() != null)
+				isNonMeteredAndNonBPL = true;
+
+			if (!isNonMeteredAndNonBPL) {
+				failureMessage = messageSource.getMessage("err.bpl.metered.period.connection", null,
+						Locale.getDefault());
+			} else {
+				BigDecimal estimationDues = waterEstimationChargesPaymentService
+						.getEstimationDueAmount(waterConnectionDetails);
+				if (estimationDues.compareTo(BigDecimal.ZERO) == 0)
+					failureMessage = messageSource.getMessage("err.connection.without.due", null, Locale.getDefault());
 			}
 		} else
 			failureMessage = messageSource.getMessage("err.applicationno.and.consumerno.not.correct", null,
@@ -290,7 +290,7 @@ public class EstimationNoticeController {
 
 		if (StringUtils.isNotBlank(failureMessage))
 			return String.format("{ \"error\":\" %s \" }", failureMessage);
-		
+
 		return new StringBuilder("{\"data\":").append(toJSON(preparNoticeDetails(waterConnectionDetails))).append("}")
 				.toString();
 	}
