@@ -88,6 +88,8 @@ public class ImpactAnalysisService {
     private static final String ASONDATE = "asonDate";
     private static final String FROMDATE = "fromdate";
     private static final String TODATE = "todate";
+    private static final String REVENUEMODULE = "AP";
+    private static final Integer ULB_COUNT = 110;
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
 
@@ -144,13 +146,13 @@ public class ImpactAnalysisService {
     }
 
     private ImpactAnalysisResponse setImpactAnalysisResponse(Aggregations aggregations, String fromDate) {
-        ImpactAnalysisResponse impactAnalysisResponse = new ImpactAnalysisResponse();
+        ImpactAnalysisResponse impactAnalysisResponse = new ImpactAnalysisResponse(REVENUEMODULE, ULB_COUNT);
         impactAnalysisResponse.setReceiptcount(((Sum) aggregations.get(RECEIPTCOUNT)).getValue());
-        impactAnalysisResponse.setReceiptamount(((Sum) aggregations.get(RECEIPTAMOUNT)).getValue());
+        impactAnalysisResponse.setRevenueCollected(((Sum) aggregations.get(RECEIPTAMOUNT)).getValue());
         impactAnalysisResponse.setComplaintcount(((Sum) aggregations.get(COMPLAINTCOUNT)).getValue());
-        impactAnalysisResponse.setCitizenRegistered(((Sum) aggregations.get(CITIZENCOUNT)).getValue());
+        impactAnalysisResponse.setNoOfCitizenRegistered(((Sum) aggregations.get(CITIZENCOUNT)).getValue());
         impactAnalysisResponse.setEmployeeRegistered(((Sum) aggregations.get(EMPLOYEECOUNT)).getValue());
-        impactAnalysisResponse.setApplicationcount(((Sum) aggregations.get(APPLICATIONCOUNT)).getValue());
+        impactAnalysisResponse.setServicesApplied(((Sum) aggregations.get(APPLICATIONCOUNT)).getValue());
         impactAnalysisResponse.setVouchercount(((Sum) aggregations.get(VOUCHERCOUNT)).getValue());
         impactAnalysisResponse.setDate((LocalDate.parse(fromDate, formatter)).atStartOfDay().atZone(ZoneId.systemDefault())
                 .toInstant().toEpochMilli());

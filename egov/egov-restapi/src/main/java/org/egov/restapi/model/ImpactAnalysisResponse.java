@@ -50,14 +50,25 @@ package org.egov.restapi.model;
 
 public class ImpactAnalysisResponse {
     private Long date;
+    private double revenueCollected;
     private double receiptcount;
-    private double receiptamount;
     private double complaintcount;
-    private double citizenRegistered;
+    private double noOfCitizenRegistered;
     private double employeeRegistered;
-    private double applicationcount;
+    private double servicesApplied;
     private double vouchercount;
     private double agreementcount;
+    private String revenueModule;
+    private Integer ulbsCovered;
+
+    public ImpactAnalysisResponse() {
+
+    }
+
+    public ImpactAnalysisResponse(String revenueModule, Integer ulbsCovered) {
+        this.revenueModule = revenueModule;
+        this.ulbsCovered = ulbsCovered;
+    }
 
     public double getReceiptcount() {
         return receiptcount;
@@ -65,14 +76,6 @@ public class ImpactAnalysisResponse {
 
     public void setReceiptcount(double receiptcount) {
         this.receiptcount = receiptcount;
-    }
-
-    public double getReceiptamount() {
-        return receiptamount;
-    }
-
-    public void setReceiptamount(double receiptamount) {
-        this.receiptamount = receiptamount;
     }
 
     public double getComplaintcount() {
@@ -83,28 +86,12 @@ public class ImpactAnalysisResponse {
         this.complaintcount = complaintcount;
     }
 
-    public double getCitizenRegistered() {
-        return citizenRegistered;
-    }
-
-    public void setCitizenRegistered(double citizenRegistered) {
-        this.citizenRegistered = citizenRegistered;
-    }
-
     public double getEmployeeRegistered() {
         return employeeRegistered;
     }
 
     public void setEmployeeRegistered(double employeeRegistered) {
         this.employeeRegistered = employeeRegistered;
-    }
-
-    public double getApplicationcount() {
-        return applicationcount;
-    }
-
-    public void setApplicationcount(double applicationcount) {
-        this.applicationcount = applicationcount;
     }
 
     public double getVouchercount() {
@@ -129,6 +116,46 @@ public class ImpactAnalysisResponse {
 
     public void setAgreementcount(double agreementcount) {
         this.agreementcount = agreementcount;
+    }
+
+    public double getRevenueCollected() {
+        return revenueCollected;
+    }
+
+    public void setRevenueCollected(double revenueCollected) {
+        this.revenueCollected = revenueCollected;
+    }
+
+    public double getNoOfCitizenRegistered() {
+        return noOfCitizenRegistered;
+    }
+
+    public void setNoOfCitizenRegistered(double noOfCitizenRegistered) {
+        this.noOfCitizenRegistered = noOfCitizenRegistered;
+    }
+
+    public double getServicesApplied() {
+        return servicesApplied;
+    }
+
+    public void setServicesApplied(double servicesApplied) {
+        this.servicesApplied = servicesApplied;
+    }
+
+    public String getRevenueModule() {
+        return revenueModule;
+    }
+
+    public void setRevenueModule(String revenueModule) {
+        this.revenueModule = revenueModule;
+    }
+
+    public Integer getUlbsCovered() {
+        return ulbsCovered;
+    }
+
+    public void setUlbsCovered(Integer ulbsCovered) {
+        this.ulbsCovered = ulbsCovered;
     }
 
 }
