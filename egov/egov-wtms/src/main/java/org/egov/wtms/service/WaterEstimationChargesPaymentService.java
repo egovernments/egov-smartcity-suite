@@ -150,8 +150,7 @@ public class WaterEstimationChargesPaymentService {
 				if (!demandCodes.contains(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
 					if (WATER_MATERIAL_CHARGES_REASON_CODE
 							.equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
-						materialCharges = demandDetails.getAmount()
-								.subtract(demandDetails.getAmtRebate().add(demandDetails.getAmtCollected()));
+						materialCharges = demandDetails.getAmount();
 					estimationAmount = estimationAmount.add(demandDetails.getAmount()
 							.subtract(demandDetails.getAmtRebate().add(demandDetails.getAmtCollected())));
 				}
