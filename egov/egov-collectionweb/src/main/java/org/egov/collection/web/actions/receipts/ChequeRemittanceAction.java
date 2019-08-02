@@ -70,7 +70,7 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ApproverRemitterMapping;
 import org.egov.collection.entity.CollectionBankRemittanceReport;
 import org.egov.collection.entity.ReceiptHeader;
-import org.egov.collection.repository.ApproverRemitterMappingRepository;
+import org.egov.collection.service.ApproverRemitterMappingService;
 import org.egov.collection.service.RemittanceServiceImpl;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.Bankaccount;
@@ -132,7 +132,7 @@ public class ChequeRemittanceAction extends BaseFormAction {
     @Autowired
     private transient BankaccountHibernateDAO bankaccountHibernateDAO;
     @Autowired
-    ApproverRemitterMappingRepository mappingRepository;
+    ApproverRemitterMappingService mappingService;
 
     private Double totalCashAmount;
     private Double totalChequeAmount;
@@ -190,7 +190,7 @@ public class ChequeRemittanceAction extends BaseFormAction {
         } else
             addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
         addDropdownData("financialYearList", financialYearDAO.getAllActivePostingAndNotClosedFinancialYears());
-        addDropdownData("approverList", mappingRepository.findByRemitterId(collectionsUtil.getLoggedInUser().getId()));
+        addDropdownData("approverList", mappingService.getApprovers(collectionsUtil.getLoggedInUser()));
     }
 
     @Action(value = "/receipts/chequeRemittance-listData")
@@ -206,8 +206,23 @@ public class ChequeRemittanceAction extends BaseFormAction {
         }
 
         populateRemittanceList();
+
         if (fromDate != null && toDate != null && toDate.before(fromDate))
             addActionError(getText("bankremittance.before.fromdate"));
+
+        String approverIdList = CollectionConstants.BLANK;
+        if (!isBankCollectionRemitter) {
+            if (getDropdownData().get("approverList").isEmpty())
+                addActionError(getText("remittance.noapprovermapped"));
+            if (approverId == null || Integer.parseInt(approverId) < 0) {
+                approverIdList = ((List<ApproverRemitterMapping>) getDropdownData().get("approverList"))
+                        .stream()
+                        .map(m -> m.getApprover().getId().toString())
+                        .collect(Collectors.joining(CollectionConstants.SEPARATOR_COMMA));
+            } else
+                approverIdList = approverId;
+        }
+
         if (!hasErrors() && accountNumberId != null) {
 
             final Query serviceQuery = persistenceService.getSession().createSQLQuery(SERVICE_QUERY);
@@ -217,15 +232,6 @@ public class ChequeRemittanceAction extends BaseFormAction {
             final Query fundQuery = persistenceService.getSession().createSQLQuery(FUND_QUERY);
             fundQuery.setLong("accountNumberId", accountNumberId);
             final String fundCode = fundQuery.list().get(0).toString();
-
-            String approverIdList;
-            if (approverId == null || Integer.parseInt(approverId) < 0)
-                approverIdList = ((List<ApproverRemitterMapping>) getDropdownData().get("approverList"))
-                        .stream()
-                        .map(m -> m.getApprover().getId().toString())
-                        .collect(Collectors.joining(CollectionConstants.SEPARATOR_COMMA));
-            else
-                approverIdList = approverId;
 
             final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(finYearId);
             paramList = remittanceService.findChequeRemittanceDetailsForServiceAndFund(approverIdList,
