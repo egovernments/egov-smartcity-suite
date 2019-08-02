@@ -79,6 +79,7 @@ import org.egov.wtms.application.repository.WaterConnectionRepository;
 import org.egov.wtms.application.rest.WaterChargesDetails;
 import org.egov.wtms.application.rest.WaterTaxDue;
 import org.egov.wtms.masters.entity.ApplicationType;
+import org.egov.wtms.masters.entity.WaterRatesDetails;
 import org.egov.wtms.masters.entity.WaterTaxDetailRequest;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationTypeService;
@@ -362,6 +363,9 @@ public class ConnectionDetailService {
         waterChargesDetails.setUsageType(waterConnectionDetails.getUsageType().getDescription());
         waterChargesDetails.setPropertytype(waterConnectionDetails.getPropertyType().getName());
         waterChargesDetails.setConnectionStatus(waterConnectionDetails.getConnectionStatus().toString());
+        WaterRatesDetails waterRatesDetails = connectionDemandService.getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
+        if(waterRatesDetails!=null)
+        waterChargesDetails.setHalfYearlyTax(BigDecimal.valueOf(waterRatesDetails.getMonthlyRate() * 6));
         if (waterConnectionDetails.getApplicationType() != null
                 && waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION))
             waterChargesDetails.setIsPrimaryConnection(true);

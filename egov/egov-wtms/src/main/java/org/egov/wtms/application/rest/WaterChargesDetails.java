@@ -66,8 +66,9 @@ public class WaterChargesDetails {
     private Long sumpCapacity;
     private String ulbCode;
     private Integer noOfPerson;
+	private BigDecimal halfYearlyTax;
 
-    public String getConnectionStatus() {
+	public String getConnectionStatus() {
         return connectionStatus;
     }
 
@@ -195,5 +196,12 @@ public class WaterChargesDetails {
     public void setUlbCode(String ulbCode) {
         this.ulbCode = ulbCode;
     }
+    public BigDecimal getHalfYearlyTax() {
+		return halfYearlyTax;
+	}
+
+	public void setHalfYearlyTax(BigDecimal halfYearlyTax) {
+		this.halfYearlyTax = halfYearlyTax;
+	}
     
 }
