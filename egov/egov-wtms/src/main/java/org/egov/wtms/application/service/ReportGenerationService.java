@@ -550,12 +550,12 @@ public class ReportGenerationService {
 			}
 			reportParams.put(DONATION_CHARGES, donation);
 			reportParams.put("materialCharges", materialCharges);
+			reportParams.put("totalCharges", totalCharges);
 			reportParams.put("collectedAmount", waterEstimationChargesPaymentService
 					.getCollectedEstimationCharges(waterConnectionDetails).doubleValue());
 			reportParams.put("balance", balance);
 			double amountPerInstallment = Math.ceil(totalCharges / 8);
 			reportParams.put("amountPerInstallment", amountPerInstallment);
-			reportParams.put("totalCharges", (amountPerInstallment * 8));
 			reportParams.put("dueInstallments", Math.ceil(balance / amountPerInstallment));
 
 			reportInput = new ReportRequest("GO_estimationNotice", waterConnectionDetails.getEstimationDetails(),
