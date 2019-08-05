@@ -1860,6 +1860,7 @@ public class WaterConnectionDetailsService {
 		if (waterConnExecutionDetails.getToDate() != null)
 			connectionAddressCriteria
 					.add(Restrictions.le("connectionDetails.applicationDate", waterConnExecutionDetails.getToDate()));
+		connectionAddressCriteria.add(Restrictions.isNull("connectionDetails.ulbMaterial"));
 		return connectionAddressCriteria.list();
 	}
 	
