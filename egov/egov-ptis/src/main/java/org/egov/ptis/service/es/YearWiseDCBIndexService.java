@@ -167,7 +167,8 @@ public class YearWiseDCBIndexService {
             YearWiseDCBReponse serviceWiseResponse = new YearWiseDCBReponse();
             Map<String, Object> responseFields = hit.getSource();
             serviceWiseResponse.setOwnersName(responseFields.get(OWNERS_NAME).toString());
-            serviceWiseResponse.setDoorNo(responseFields.get(DOOR_NO).toString());
+           if (responseFields.get(DOOR_NO)!=null){
+            serviceWiseResponse.setDoorNo(responseFields.get(DOOR_NO).toString());}
             serviceWiseResponse.setArrearDemand(new BigDecimal(responseFields.get(ARREARDEMAND).toString()));
             serviceWiseResponse.setArrearPenDemand(new BigDecimal(responseFields.get(ARREAR_INTEREST_DMD).toString()));
             serviceWiseResponse.setArrearTotalDemand(new BigDecimal(responseFields.get(ARREARDEMAND).toString())
