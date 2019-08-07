@@ -504,15 +504,44 @@ public class WaterTaxUtils {
     }
 
     @Transactional(readOnly = true)
-    public Position getZonalLevelClerkForLoggedInUser(String asessmentNumber) {
-        AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(asessmentNumber,
-                PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
-        Boundary boundaryObj = boundaryService.getBoundaryById(assessmentDetails.getBoundaryDetails().getAdminWardId());
-        Assignment assignmentObj = getUserPositionByZone(boundaryObj);
+	public Position getZonalLevelClerkForLoggedInUser(String asessmentNumber) {
+		String departmentStr = getDepartmentForWorkFlow();
+		String designationStr = getDesignationForThirdPartyUser();
+		Assignment assignmentObj = null;
+		AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(asessmentNumber,
+				PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
+		Boundary boundaryObj = boundaryService.getBoundaryById(assessmentDetails.getBoundaryDetails().getAdminWardId());
+		if (isCSCoperator(securityUtils.getCurrentUser()))
+			assignmentObj = getMappedAssignmentForCscOperator(boundaryObj.getId(), departmentStr, designationStr);
+		if (assignmentObj == null)
+			assignmentObj = getUserPositionByZone(boundaryObj, departmentStr, designationStr);
+		return assignmentObj == null ? null : assignmentObj.getPosition();
+	}
 
-        return assignmentObj == null ? null : assignmentObj.getPosition();
-    }
+	private Assignment getMappedAssignmentForCscOperator(Long boundaryId, String departmentStr, String designationStr) {
+		final String[] department = departmentStr.split(",");
+		final String[] designation = designationStr.split(",");
+		List<Assignment> assignment = new ArrayList<>();
+		if (StringUtils.isNotBlank(departmentStr)) {
+			Long deptId;
+			Long desgId;
+			for (String dept : department) {
+				for (String desg : designation) {
+					deptId = departmentService.getDepartmentByName(dept).getId();
+					desgId = designationService.getDesignationByName(desg).getId();
+					assignment = assignmentService.findAssignmentByDepartmentDesignationAndBoundary(deptId, desgId,
+							boundaryId);
+					if (!assignment.isEmpty())
+						break;
+				}
+				if (!assignment.isEmpty())
+					break;
+			}
+		}
 
+		return !assignment.isEmpty() ? assignment.get(0) : null;
+	}
+    
     /**
      * Getting User assignment based on designation ,department and zone boundary Reading Designation and Department from
      * appconfig values and Values should be 'Senior Assistant,Junior Assistant' for designation and
@@ -524,52 +553,50 @@ public class WaterTaxUtils {
      * @Param assessmentDetails
      */
     @Transactional(readOnly = true)
-    public Assignment getUserPositionByZone(Boundary boundaryObj) {
+	public Assignment getUserPositionByZone(Boundary boundaryObj, String departmentStr, String designationStr) {
 
-        String designationStr = getDesignationForThirdPartyUser();
-        String departmentStr = getDepartmentForWorkFlow();
-        String[] department = departmentStr.split(",");
-        String[] designation = designationStr.split(",");
-        List<Assignment> assignment = new ArrayList<>();
-        for (String dept : department) {
-            for (String desg : designation) {
-                assignment = assignmentService.findByDepartmentDesignationAndBoundary(
-                        departmentService.getDepartmentByName(dept).getId(),
-                        designationService.getDesignationByName(desg).getId(), boundaryObj.getId());
-                if (assignment.isEmpty()) {
-                    // Ward->Zone
-                    if (boundaryObj.getParent() != null && boundaryObj.getParent().getBoundaryType() != null
-                            && boundaryObj.getParent().getBoundaryType().getName().equals(WaterTaxConstants.BOUNDARY_TYPE_ZONE)) {
-                        assignment = assignmentService.findByDeptDesgnAndParentAndActiveChildBoundaries(
-                                departmentService.getDepartmentByName(dept).getId(),
-                                designationService.getDesignationByName(desg).getId(), boundaryObj.getParent().getId());
-                        // Ward->Zone->City
-                        if (assignment.isEmpty() && boundaryObj.getParent() != null
-                                && boundaryObj.getParent().getParent() != null
-                                && boundaryObj.getParent().getParent().getBoundaryType().getName().equals(BOUNDARY_TYPE_CITY)) {
-                            assignment = assignmentService.findByDeptDesgnAndParentAndActiveChildBoundaries(
-                                    departmentService.getDepartmentByName(dept).getId(),
-                                    designationService.getDesignationByName(desg).getId(),
-                                    boundaryObj.getParent().getParent().getId());
-                        }
-                    }
-                    // ward->City mapp
-                    if (assignment.isEmpty() && boundaryObj.getParent() != null
-                            && boundaryObj.getParent().getBoundaryType().getName().equals(BOUNDARY_TYPE_CITY)) {
-                        assignment = assignmentService.findByDeptDesgnAndParentAndActiveChildBoundaries(
-                                departmentService.getDepartmentByName(dept).getId(),
-                                designationService.getDesignationByName(desg).getId(),
-                                boundaryObj.getParent().getId());
-                    }
-                }
-                if (!assignment.isEmpty())
-                    break;
-            }
-            if (!assignment.isEmpty())
-                break;
-        }
-        return assignment.isEmpty() ? null : assignment.get(0);
-    }
+		String[] department = departmentStr.split(",");
+		String[] designation = designationStr.split(",");
+		List<Assignment> assignment = new ArrayList<>();
+		for (String dept : department) {
+			for (String desg : designation) {
+				assignment = assignmentService.findByDepartmentDesignationAndBoundary(
+						departmentService.getDepartmentByName(dept).getId(),
+						designationService.getDesignationByName(desg).getId(), boundaryObj.getId());
+				if (assignment.isEmpty()) {
+					// Ward->Zone
+					if (boundaryObj.getParent() != null && boundaryObj.getParent().getBoundaryType() != null
+							&& boundaryObj.getParent().getBoundaryType().getName()
+									.equals(WaterTaxConstants.BOUNDARY_TYPE_ZONE)) {
+						assignment = assignmentService.findByDeptDesgnAndParentAndActiveChildBoundaries(
+								departmentService.getDepartmentByName(dept).getId(),
+								designationService.getDesignationByName(desg).getId(), boundaryObj.getParent().getId());
+						// Ward->Zone->City
+						if (assignment.isEmpty() && boundaryObj.getParent() != null
+								&& boundaryObj.getParent().getParent() != null && boundaryObj.getParent().getParent()
+										.getBoundaryType().getName().equals(BOUNDARY_TYPE_CITY)) {
+							assignment = assignmentService.findByDeptDesgnAndParentAndActiveChildBoundaries(
+									departmentService.getDepartmentByName(dept).getId(),
+									designationService.getDesignationByName(desg).getId(),
+									boundaryObj.getParent().getParent().getId());
+						}
+					}
+					// ward->City mapp
+					if (assignment.isEmpty() && boundaryObj.getParent() != null
+							&& boundaryObj.getParent().getBoundaryType().getName().equals(BOUNDARY_TYPE_CITY)) {
+						assignment = assignmentService.findByDeptDesgnAndParentAndActiveChildBoundaries(
+								departmentService.getDepartmentByName(dept).getId(),
+								designationService.getDesignationByName(desg).getId(), boundaryObj.getParent().getId());
+					}
+				}
+				if (!assignment.isEmpty())
+					break;
+			}
+			if (!assignment.isEmpty())
+				break;
+		}
+		return assignment.isEmpty() ? null : assignment.get(0);
+	}
 
     // allowing only for CollectionOperator to collect Fees
     @ModelAttribute(value = "checkOperator")
