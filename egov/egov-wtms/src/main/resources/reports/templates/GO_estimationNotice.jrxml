@@ -1,4 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) 2017  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
+  -->
 <!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="GO_estimationNotice" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="593a2f66-ea7f-45f3-940b-1a00bda5a109">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
@@ -36,7 +83,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="343" splitType="Stretch">
+		<band height="553" splitType="Stretch">
 			<textField>
 				<reportElement x="2" y="10" width="544" height="21" uuid="d4976404-ced8-41d0-9c6c-0c38d2dc718c"/>
 				<textElement textAlignment="Center">
@@ -149,12 +196,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA["        As per the agreement, the following Tap connection charges are due for the above Water Tap connection as on this date and you are therefore directed to pay the same immediately to avoid disconnection of the Water Tap:-"]]></textFieldExpression>
 			</textField>
-		</band>
-	</title>
-	<detail>
-		<band height="212" splitType="Stretch">
 			<staticText>
-				<reportElement x="45" y="19" width="34" height="33" uuid="3fcbe5bf-362b-48e6-a457-6a5169ab82ab"/>
+				<reportElement x="40" y="354" width="34" height="33" uuid="3fcbe5bf-362b-48e6-a457-6a5169ab82ab"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 				</box>
@@ -164,7 +207,7 @@
 				<text><![CDATA[Sl. No.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="79" y="19" width="351" height="33" uuid="402a199e-ccd4-496e-aed6-39dc5f290c1f"/>
+				<reportElement x="74" y="354" width="351" height="33" uuid="402a199e-ccd4-496e-aed6-39dc5f290c1f"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 				</box>
@@ -174,7 +217,7 @@
 				<text><![CDATA[Item]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="430" y="19" width="80" height="33" uuid="b361f7c6-8d9f-4844-8630-5695995fb74c"/>
+				<reportElement x="425" y="354" width="80" height="33" uuid="b361f7c6-8d9f-4844-8630-5695995fb74c"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 				</box>
@@ -184,7 +227,7 @@
 				<text><![CDATA[Amount      (in Rs.)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="45" y="52" width="34" height="37" uuid="2fea92fd-e4fb-4455-a32c-a5fa98e9286d"/>
+				<reportElement x="40" y="387" width="34" height="37" uuid="2fea92fd-e4fb-4455-a32c-a5fa98e9286d"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 				</box>
@@ -194,7 +237,7 @@
 				<text><![CDATA[1.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="79" y="52" width="351" height="37" uuid="dc41fca0-90de-424b-84e2-be6b15bd1951"/>
+				<reportElement x="74" y="387" width="351" height="37" uuid="dc41fca0-90de-424b-84e2-be6b15bd1951"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 				</box>
@@ -204,7 +247,7 @@
 				<text><![CDATA[Donation [Donation + Security Deposit + Road Cutting Charges + 15% Supervision Charges]]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="430" y="52" width="80" height="37" uuid="eb2f7b1c-cac7-45ee-b477-16e0721d78a6"/>
+				<reportElement x="425" y="387" width="80" height="37" uuid="eb2f7b1c-cac7-45ee-b477-16e0721d78a6"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 				</box>
@@ -214,7 +257,7 @@
 				<textFieldExpression><![CDATA[$P{donationCharges}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="45" y="89" width="34" height="20" uuid="d0ac12f1-7092-46ce-8c53-66021aa17e91"/>
+				<reportElement x="40" y="424" width="34" height="20" uuid="d0ac12f1-7092-46ce-8c53-66021aa17e91"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 				</box>
@@ -224,7 +267,7 @@
 				<text><![CDATA[2. ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="79" y="89" width="351" height="20" uuid="c0277209-0083-46fe-acc0-f439ffffb57d"/>
+				<reportElement x="74" y="424" width="351" height="20" uuid="c0277209-0083-46fe-acc0-f439ffffb57d"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 				</box>
@@ -234,7 +277,7 @@
 				<text><![CDATA[ Material Charges]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="430" y="89" width="80" height="20" uuid="c29af63b-f9ef-4e86-9bd3-bd6681b13c3f"/>
+				<reportElement x="425" y="424" width="80" height="20" uuid="c29af63b-f9ef-4e86-9bd3-bd6681b13c3f"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 				</box>
@@ -244,7 +287,7 @@
 				<textFieldExpression><![CDATA[$P{materialCharges}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="45" y="109" width="34" height="20" uuid="8ad352d0-0b16-44d5-9317-429cdf646ec5"/>
+				<reportElement x="40" y="444" width="34" height="20" uuid="8ad352d0-0b16-44d5-9317-429cdf646ec5"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 				</box>
@@ -254,7 +297,7 @@
 				<text><![CDATA[3.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="79" y="109" width="351" height="20" uuid="05eb1ba9-8943-48ac-8ee0-1a55fa0ac8de"/>
+				<reportElement x="74" y="444" width="351" height="20" uuid="05eb1ba9-8943-48ac-8ee0-1a55fa0ac8de"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 				</box>
@@ -264,7 +307,7 @@
 				<text><![CDATA[Total Charges [1+2]]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="430" y="109" width="80" height="20" uuid="b2ab6014-671c-42e1-b936-c054efcc2d54"/>
+				<reportElement x="425" y="444" width="80" height="20" uuid="b2ab6014-671c-42e1-b936-c054efcc2d54"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 				</box>
@@ -274,7 +317,7 @@
 				<textFieldExpression><![CDATA[$P{totalCharges}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="45" y="129" width="34" height="20" uuid="f80e9b4b-5934-4895-ad7c-15ed0e36e7ca"/>
+				<reportElement x="40" y="464" width="34" height="20" uuid="f80e9b4b-5934-4895-ad7c-15ed0e36e7ca"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 				</box>
@@ -284,7 +327,7 @@
 				<text><![CDATA[4.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="79" y="129" width="351" height="20" uuid="3e18e8e6-4951-4b81-9eb6-02216e4d46c7"/>
+				<reportElement x="74" y="464" width="351" height="20" uuid="3e18e8e6-4951-4b81-9eb6-02216e4d46c7"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 				</box>
@@ -294,7 +337,7 @@
 				<text><![CDATA[Amount already paid]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="430" y="129" width="80" height="20" uuid="899f8c54-fdd2-4f89-ba26-643170691e7f"/>
+				<reportElement x="425" y="464" width="80" height="20" uuid="899f8c54-fdd2-4f89-ba26-643170691e7f"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 				</box>
@@ -304,7 +347,7 @@
 				<textFieldExpression><![CDATA[$P{collectedAmount}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="45" y="149" width="34" height="20" uuid="4b94a0c1-6d32-4bf0-991a-dd02268e49ce"/>
+				<reportElement x="40" y="484" width="34" height="20" uuid="4b94a0c1-6d32-4bf0-991a-dd02268e49ce"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 				</box>
@@ -314,7 +357,7 @@
 				<text><![CDATA[5.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="79" y="149" width="351" height="20" uuid="6518525e-ed52-4ff5-ac4c-6f158f549a15"/>
+				<reportElement x="74" y="484" width="351" height="20" uuid="6518525e-ed52-4ff5-ac4c-6f158f549a15"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 				</box>
@@ -324,7 +367,7 @@
 				<text><![CDATA[Balance payable[3-4] as on current date]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="430" y="149" width="80" height="20" uuid="fdc92fc2-a92f-4516-9207-82ac5ba5d7a2"/>
+				<reportElement x="425" y="484" width="80" height="20" uuid="fdc92fc2-a92f-4516-9207-82ac5ba5d7a2"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 				</box>
@@ -334,7 +377,7 @@
 				<textFieldExpression><![CDATA[$P{balance}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="45" y="169" width="34" height="20" uuid="b076b678-32d2-4a7c-bf19-523bdd009edd"/>
+				<reportElement x="40" y="504" width="34" height="20" uuid="b076b678-32d2-4a7c-bf19-523bdd009edd"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 				</box>
@@ -344,7 +387,7 @@
 				<text><![CDATA[6.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="79" y="169" width="351" height="20" uuid="6cd8c049-79e3-4bb7-85cc-ec76029eabb3"/>
+				<reportElement x="74" y="504" width="351" height="20" uuid="6cd8c049-79e3-4bb7-85cc-ec76029eabb3"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 				</box>
@@ -354,7 +397,7 @@
 				<text><![CDATA[Amount per installment/half-year [1/8th of Total Charges]]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="430" y="169" width="80" height="20" uuid="336441cb-cdb8-448a-ac57-c142d34e0c49"/>
+				<reportElement x="425" y="504" width="80" height="20" uuid="336441cb-cdb8-448a-ac57-c142d34e0c49"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 				</box>
@@ -364,7 +407,7 @@
 				<textFieldExpression><![CDATA[$P{amountPerInstallment}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="45" y="189" width="34" height="20" uuid="ee4d88d9-c99b-4fc9-b39f-eecd0a517664"/>
+				<reportElement x="40" y="524" width="34" height="20" uuid="ee4d88d9-c99b-4fc9-b39f-eecd0a517664"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 				</box>
@@ -374,7 +417,7 @@
 				<text><![CDATA[7.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="79" y="189" width="351" height="20" uuid="ba7ff125-1e8c-4574-82e6-2e8b8aa2ca77"/>
+				<reportElement x="74" y="524" width="351" height="20" uuid="ba7ff125-1e8c-4574-82e6-2e8b8aa2ca77"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 				</box>
@@ -384,7 +427,7 @@
 				<text><![CDATA[Installments due]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="430" y="189" width="80" height="20" uuid="71c6ab53-4b57-4101-9d4d-ee342621291c"/>
+				<reportElement x="425" y="524" width="80" height="20" uuid="71c6ab53-4b57-4101-9d4d-ee342621291c"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 				</box>
@@ -394,7 +437,7 @@
 				<textFieldExpression><![CDATA[$P{dueInstallments}.intValue()]]></textFieldExpression>
 			</textField>
 		</band>
-	</detail>
+	</title>
 	<summary>
 		<band height="244" splitType="Stretch">
 			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
