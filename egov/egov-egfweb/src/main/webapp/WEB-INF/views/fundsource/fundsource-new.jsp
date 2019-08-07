@@ -72,4 +72,12 @@
 			e.preventDefault();
 		}
 	});
+	function validateFundSource(){
+		var code = $("#code").val();
+		var name = $("#name").val();
+		var replacedCode = code.replace(/[`~!@#$%^&*()_|+\-=÷¿?;:><'",.<>\{\}\[\]\\\/]/gi, '');
+		var replacedName = name.replace(/[`~!@#$%^&*()_|+\-=÷¿?;:><'",.<>\{\}\[\]\\\/]/gi, '');
+		$("#code").val(replacedCode); 
+		$("#name").val(replacedName);
+	}
 </script>
