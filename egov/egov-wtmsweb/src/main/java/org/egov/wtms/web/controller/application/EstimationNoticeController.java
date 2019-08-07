@@ -212,7 +212,10 @@ public class EstimationNoticeController {
                 reportParams.put("applicationType", WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()));
                 reportParams.put("cityName", session.getAttribute("citymunicipalityname"));
                 reportParams.put("district", session.getAttribute("districtName"));
-                reportParams.put("estimationNumber", estimationNotice.getEstimationNumber());
+                EstimationNumberGenerator estimationNoGen = beanResolver
+        				.getAutoNumberServiceFor(EstimationNumberGenerator.class);
+        		String estimationNumber = estimationNoGen.generateEstimationNumber();
+                reportParams.put("estimationNumber", estimationNumber);
                 reportParams.put("donationCharges", waterConnectionDetails.getDonationCharges());
                 FieldInspectionDetails inspectionDetails = waterConnectionDetails.getFieldInspectionDetails();
                 reportParams.put("estimationDate", toDefaultDateFormat(inspectionDetails.getCreatedDate()));
@@ -241,7 +244,7 @@ public class EstimationNoticeController {
                 }
 
                 reportOutput.setReportFormat(ReportFormat.PDF);
-                reportOutput.setReportName(estimationNotice.getEstimationNumber());
+                reportOutput.setReportName(estimationNumber);
             }
         }
         return reportAsResponseEntity(reportOutput);
