@@ -275,6 +275,7 @@ public class EstimationNoticeController {
 					&& waterConnectionDetails.getCreatedDate()
 							.compareTo(DateUtils
 									.toDateUsingDefaultPattern(waterConnectionDetailsService.getGOEffectiveDate())) >= 0
+					&& waterConnectionDetails.getUlbMaterial() != null
 					&& waterConnectionDetails.getExecutionDate() != null)
 				isNonMeteredAndNonBPL = true;
 
