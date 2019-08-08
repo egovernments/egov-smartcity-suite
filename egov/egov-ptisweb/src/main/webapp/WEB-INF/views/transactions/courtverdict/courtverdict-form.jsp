@@ -202,7 +202,7 @@
 													<spring:message code="lbl.cv.hlfyearcharg" />
 												</div>
 												<div class="col-xs-3 add-margin view-content">
-													<c:out value=" value="${wc.halfYearlyTax}"></c:out>
+													<c:out value="${wc.halfYearlyTax}"></c:out>
 												</div>
 											</div>
 											<div class="row add-border">
