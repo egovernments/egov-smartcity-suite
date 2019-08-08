@@ -103,8 +103,9 @@ public class ViewConnectionController {
         if (connectionDetails == null)
             connectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(applicationNumber);
 		
-        EstimationNotice estimationNotice = estimationNoticeService
-				.getNonHistoryEstimationNoticeForConnection(connectionDetails);
+		EstimationNotice estimationNotice = null;
+		if (connectionDetails != null)
+			estimationNotice = estimationNoticeService.getNonHistoryEstimationNoticeForConnection(connectionDetails);
         model.addAttribute("applicationDocList",
                 waterConnectionDetailsService.getApplicationDocForExceptClosureAndReConnection(connectionDetails));
         model.addAttribute("waterConnectionDetails", connectionDetails);

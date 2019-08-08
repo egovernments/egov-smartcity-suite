@@ -51,6 +51,7 @@
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infra.utils.*"/>
+	<import value="org.apache.commons.lang.StringEscapeUtils"/>
 	<parameter name="cityName" class="java.lang.String"/>
 	<parameter name="district" class="java.lang.String"/>
 	<parameter name="estimationNumber" class="java.lang.String"/>
@@ -166,7 +167,7 @@
 				<textElement textAlignment="Left" markup="styled">
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["House No : <style isBold=\"true\" pdfFontName=\"Times-Bold\"> "+$P{houseNo}+" </style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["House No : <style isBold=\"true\" pdfFontName=\"Times-Bold\"> "+StringEscapeUtils.escapeHtml($P{houseNo})+" </style>"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="10" y="178" width="269" height="14" uuid="6d6ca90d-c3f6-4a79-a768-6f5f8e9e19a3"/>
@@ -484,7 +485,7 @@
 				<textElement textAlignment="Left" markup="styled">
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Name and Address : <style isBold=\"true\" pdfFontName=\"Times-Bold\"> "+$P{applicantName}+"</style> , <style isBold=\"true\" pdfFontName=\"Times-Bold\">"+$P{address}+" </style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Name and Address : <style isBold=\"true\" pdfFontName=\"Times-Bold\"> "+$P{applicantName}+"</style> , <style isBold=\"true\" pdfFontName=\"Times-Bold\">"+StringEscapeUtils.escapeHtml($P{address})+" </style>"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="220" y="205" width="329" height="18" uuid="657a4566-6fa8-4860-86cb-ac10c836edb0"/>
