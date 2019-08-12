@@ -166,6 +166,10 @@ public class CollectionApplicationProperties {
         return environment.getProperty(serviceCode.concat(".reconstruct.receiptdetail.url"));
     } 
     
+    public String getReceiptCancelValidateUrl(final String serviceCode) {
+        return environment.getProperty(serviceCode.concat(".receipt.cancel.validate.url"));
+    } 
+    
     public String getLamsServiceUrl() {
         return environment.getProperty("egov.services.lams.hostname");
     }
