@@ -191,6 +191,7 @@ import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.PropertySurveyService;
 import org.egov.ptis.domain.service.reassign.ReassignService;
+import org.egov.ptis.domain.service.voucher.DemandVoucherService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -363,6 +364,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     
     @PersistenceContext
     private transient EntityManager entityManager;
+    
+    @Autowired
+    private DemandVoucherService demandVoucherService;
 
     public CreatePropertyAction() {
         super();
@@ -991,7 +995,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         basicPropertyService.applyAuditing(property.getState());
         String appConfigValue = getDemandVoucherAppConfigValue();
         if("Y".equalsIgnoreCase(appConfigValue)){
-            Map<String, Map<String, Object>> voucherData = propService.prepareDemandVoucherData(property, null, true);
+            Map<String, Map<String, Object>> voucherData = demandVoucherService.prepareDemandVoucherData(property, null, true);
             financialUtil.createVoucher(basicProp.getUpicNo(), voucherData, APPLICATION_TYPE_NEW_ASSESSENT);
         }
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);

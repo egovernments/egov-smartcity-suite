@@ -147,6 +147,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -204,6 +205,7 @@ import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.PropertySurveyService;
 import org.egov.ptis.domain.service.reassign.ReassignService;
+import org.egov.ptis.domain.service.voucher.DemandVoucherService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -402,9 +404,12 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
     @Autowired
     private transient FloorTypeRepository floorTypeRepository;
+    
     @Autowired
     private transient PropertySurveyService propertySurveyService;
     
+    @Autowired
+    private DemandVoucherService demandVoucherService;
 
     public ModifyPropertyAction() {
         super();
@@ -860,8 +865,12 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         
         String appConfigValue = getDemandVoucherAppConfigValue();
         if("Y".equalsIgnoreCase(appConfigValue)){
-            Map<String, Map<String, Object>> voucherData = propService.prepareDemandVoucherData(propertyModel, oldProperty, false);
-            financialUtil.createVoucher(basicProp.getUpicNo(), voucherData, APPLICATION_TYPE_ALTER_ASSESSENT);
+            try {
+                Map<String, Map<String, Object>> voucherData = demandVoucherService.prepareDemandVoucherData(propertyModel, oldProperty, false);
+                financialUtil.createVoucher(basicProp.getUpicNo(), voucherData, APPLICATION_TYPE_ALTER_ASSESSENT);
+            } catch (Exception e) {
+                throw new ApplicationRuntimeException("Error in demand voucher creation");
+            }
         }
         
         propService.updateIndexes(propertyModel, getApplicationType());

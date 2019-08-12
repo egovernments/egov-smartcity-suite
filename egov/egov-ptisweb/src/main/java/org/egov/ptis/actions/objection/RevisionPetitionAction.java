@@ -196,6 +196,7 @@ import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.SMSEmailService;
 import org.egov.ptis.domain.service.reassign.ReassignService;
 import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
+import org.egov.ptis.domain.service.voucher.DemandVoucherService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
@@ -332,6 +333,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private transient EntityManager entityManager;
     @Autowired
     private BoundaryService boundaryService;
+    
+    @Autowired
+    private DemandVoucherService demandVoucherService;
 
     public RevisionPetitionAction() {
 
@@ -784,7 +788,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
             String appConfigValue = getDemandVoucherAppConfigValue();
             if ("Y".equalsIgnoreCase(appConfigValue)) {
-                Map<String, Map<String, Object>> voucherData = propService.prepareDemandVoucherData(objection.getProperty(),
+                Map<String, Map<String, Object>> voucherData = demandVoucherService.prepareDemandVoucherData(objection.getProperty(),
                         oldProperty, false);
                 financialUtil.createVoucher(objection.getBasicProperty().getUpicNo(), voucherData,
                         APPLICATION_TYPE_REVISION_PETITION);
