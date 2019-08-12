@@ -864,13 +864,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             updateAddress();
         
         String appConfigValue = getDemandVoucherAppConfigValue();
-        if("Y".equalsIgnoreCase(appConfigValue)){
-            try {
-                Map<String, Map<String, Object>> voucherData = demandVoucherService.prepareDemandVoucherData(propertyModel, oldProperty, false);
-                financialUtil.createVoucher(basicProp.getUpicNo(), voucherData, APPLICATION_TYPE_ALTER_ASSESSENT);
-            } catch (Exception e) {
-                throw new ApplicationRuntimeException("Error in demand voucher creation");
-            }
+        if ("Y".equalsIgnoreCase(appConfigValue)) {
+            Map<String, Map<String, Object>> voucherData = demandVoucherService.prepareDemandVoucherData(propertyModel,
+                    oldProperty, false);
+            financialUtil.createVoucher(basicProp.getUpicNo(), voucherData, APPLICATION_TYPE_ALTER_ASSESSENT);
         }
         
         propService.updateIndexes(propertyModel, getApplicationType());
