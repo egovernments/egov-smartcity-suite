@@ -79,6 +79,7 @@ import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.collection.utils.CollectionsNumberGenerator;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.collection.utils.FinancialsUtil;
+import org.egov.collection.utils.MicroserviceBillingUtil;
 import org.egov.collection.utils.es.CollectionIndexUtils;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CFinancialYear;
@@ -147,6 +148,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
     @Autowired
     protected AssignmentService assignmentService;
+
+    @Autowired
+    private MicroserviceBillingUtil microserviceBillingUtil;
 
     public ReceiptHeaderService() {
         super(ReceiptHeader.class);
@@ -1348,13 +1352,16 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     }
 
     public void validateReceiptCancellation(String receiptNumber, String serviceCode, String consumerCode) {
-        if (!serviceCode.equals(CollectionConstants.SERVICECODE_LAMS)) {
+        ReceiptCancellationInfo receiptCancellationInfo = new ReceiptCancellationInfo();
+        if (CollectionConstants.SERVICECODE_LAMS.equals(serviceCode))
+            receiptCancellationInfo = microserviceBillingUtil.validateCancelReceipt(receiptNumber, consumerCode, serviceCode);
+        else {
             BillingIntegrationService billingService = getBillingServiceBean(serviceCode);
-            ReceiptCancellationInfo receiptCancellationInfo = billingService.validateCancelReceipt(receiptNumber, consumerCode);
-            if (!receiptCancellationInfo.getCancellationAllowed()) {
-                String validationMsg = receiptCancellationInfo.getValidationMessage();
-                throw new ValidationException(new ValidationError("validationMsg", validationMsg));
-            }
+            receiptCancellationInfo = billingService.validateCancelReceipt(receiptNumber, consumerCode);
+        }
+        if (!receiptCancellationInfo.getCancellationAllowed()) {
+            String validationMsg = receiptCancellationInfo.getValidationMessage();
+            throw new ValidationException(new ValidationError("validationMsg", validationMsg));
         }
     }
 
