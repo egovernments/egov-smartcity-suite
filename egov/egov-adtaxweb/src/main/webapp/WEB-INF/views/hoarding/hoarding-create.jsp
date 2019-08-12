@@ -57,6 +57,7 @@
 		<c:if test="${not empty message}">
 			<div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
 		</c:if>
+		<input type="hidden" name="citizenCreated" id="usertype" value="${citizenCreated}" />
 		<form:form id="advertisementform" name="advertisementform"  method="post" class="form-horizontal form-groups-bordered" 
 		modelAttribute="advertisementPermitDetail" commandName="advertisementPermitDetail" enctype="multipart/form-data">
 		<form:hidden path="previousapplicationid" value="${previousapplicationid.id}"/>

@@ -398,6 +398,9 @@ $(document).ready(function () {
     $('#locality').trigger('change');
     $('#revenueBoundryParent').trigger('change');
 
+    var citizenCreated=$('#usertype').val();
+    if(citizenCreated=="yes")
+    	$("#Forward").hide();
 });
 
 function DateValidation(startdate, enddate) {
