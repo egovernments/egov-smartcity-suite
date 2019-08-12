@@ -48,6 +48,18 @@
 
 package org.egov.infra.elasticsearch.service.es;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.config.mapper.BeanMapperConfiguration;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
@@ -85,16 +97,6 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
@@ -174,25 +176,25 @@ public class ApplicationDocumentService {
 
     private static final String TOTAL_BEYOND_SLA = "totalBeyondSLA";
 
-    private static final String TOTAL_WITHIN_SLA = "totalWithinSLA"; 
-    
+    private static final String TOTAL_WITHIN_SLA = "totalWithinSLA";
+
     private static final String MODULE_PROPERTY_TAX = "Property Tax";
-    
+
     private static final String MODULE_WATER_TAX = "Water Charges";
-    
+
     private static final String MODULE_TRADE_LICENSE = "Trade License";
-    
+
     private static final String MODULE_ADVERTISEMENT_TAX = "Advertisement Tax";
-    
+
     private static final String MODULE_MARRIAGE_REGISTRATION = "Marriage Registration";
-    
+
     private static final String MODULE_SEWERAGE_TAX = "Sewerage Tax";
-    
+
     private static final String SLA = "sla";
 
     private static final String REJECTED = "REJECTED";
     private static final String APPROVED = "APPROVED";
-    private static final String COLUMN_APPROVED="approved";
+    private static final String COLUMN_APPROVED = "approved";
     private final ApplicationDocumentRepository applicationDocumentRepository;
 
     @Autowired
@@ -923,10 +925,10 @@ public class ApplicationDocumentService {
     private void prepareMonthwiseDetails(Map<Integer, String> monthValuesMap, Map<String, Long> applications,
             Histogram dateaggs) {
         String[] dateArr;
-        Integer month,year;
+        Integer month, year;
         ValueCount countAggr;
         String monthName;
-        Map <String,Long> map = new LinkedHashMap<>();
+        Map<String, Long> map = new LinkedHashMap<>();
         for (Histogram.Bucket entry : dateaggs.getBuckets()) {
             dateArr = entry.getKeyAsString().split("T");
             year = Integer.valueOf(dateArr[0].split("-", 3)[0]);
@@ -937,6 +939,7 @@ public class ApplicationDocumentService {
         }
         applications.putAll(map);
     }
+
     private Aggregations getMonthwiseApplications(ApplicationIndexRequest applicationIndexRequest,
             Date fromDate, Date toDate, String status) {
         BoolQueryBuilder boolQuery = prepareWhereClause(applicationIndexRequest, fromDate, toDate);
@@ -1094,7 +1097,7 @@ public class ApplicationDocumentService {
             requiredFields = new String[2];
             requiredFields[0] = MODULE_NAME;
             requiredFields[1] = SLA;
-        } else if (OWNER_NAME.equalsIgnoreCase(aggregationField)){
+        } else if (OWNER_NAME.equalsIgnoreCase(aggregationField)) {
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(OWNER_NAME, value));
             requiredFields = new String[2];
             requiredFields[0] = CITY_NAME;
@@ -1276,7 +1279,8 @@ public class ApplicationDocumentService {
                 .setQuery(boolQuery).setSize(size)
                 .addSort(APPLICATION_DATE, SortOrder.DESC)
                 .setFetchSource(new String[] { APPLICATION_DATE, APPLICATION_NUMBER, APPLICATION_TYPE, "applicantName",
-                        "applicantAddress", "status", CHANNEL, SLA, MODULE_NAME, SLA_GAP, CITY_NAME, OWNER_NAME,"url",CITY_CODE }, null)
+                        "applicantAddress", "status", CHANNEL, SLA, MODULE_NAME, SLA_GAP, CITY_NAME, OWNER_NAME, "url",
+                        CITY_CODE }, null)
                 .execute().actionGet();
 
         for (SearchHit hit : response.getHits())
@@ -1294,7 +1298,9 @@ public class ApplicationDocumentService {
                 appInfo.setSource(details.get(CHANNEL).toString());
                 appInfo.setSla(details.get(SLA) == null ? 0 : (int) details.get(SLA));
                 appInfo.setServiceGroup(details.get(MODULE_NAME).toString());
-                appInfo.setAge(details.get(SLA_GAP) == null ? 0 : (int) details.get(SLA_GAP));
+                appInfo.setAge(
+                        (int) ChronoUnit.DAYS.between(LocalDate.now().minusDays(appInfo.getSla()),
+                                LocalDate.parse(appInfo.getAppDate())));
                 appInfo.setPendingWith(details.get(OWNER_NAME) == null ? "NA" : details.get(OWNER_NAME).toString());
                 appInfo.setUlbName(details.get(CITY_NAME).toString());
                 appInfo.setUrl(details.get("url").toString());
