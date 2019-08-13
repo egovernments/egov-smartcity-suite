@@ -1491,14 +1491,15 @@ public class WaterConnectionDetailsService {
 		for (int i = 0; i < jsonArray.length(); ++i) {
 			JSONObject jsonObj = jsonArray.getJSONObject(i);
 			WaterConnectionDetails connectionDetails = findBy(jsonObj.getLong("id"));
-			if (NEWCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode()) 
+			if ((NEWCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode())
+					|| ADDNLCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode()))
 					&& ConnectionType.NON_METERED.equals(connectionDetails.getConnectionType())
 					&& !CATEGORY_BPL.equals(connectionDetails.getCategory().getName())
-					&& connectionDetails.getCreatedDate().compareTo(DateUtils.toDateUsingDefaultPattern(getGOEffectiveDate())) >= 0
+					&& connectionDetails.getCreatedDate()
+							.compareTo(DateUtils.toDateUsingDefaultPattern(getGOEffectiveDate())) >= 0
 					&& connectionDetails.getUlbMaterial() == null) {
 				consumerCodes = consumerCodes.append(connectionDetails.getConnection().getConsumerCode()).append(",");
-			}
-			else if (connectionDetails != null && validateDonationDetails(connectionDetails)
+			} else if (connectionDetails != null && validateDonationDetails(connectionDetails)
 					&& isNotBlank(jsonObj.getString(EXECUTION_DATE))) {
 				connectionDetails
 						.setExecutionDate(DateUtils.toDateUsingDefaultPattern(jsonObj.getString(EXECUTION_DATE)));
@@ -1513,7 +1514,7 @@ public class WaterConnectionDetailsService {
 			} else
 				status = ERR_WATER_RATES_NOT_DEFINED;
 		}
-		if(StringUtils.isNotBlank(consumerCodes)) 
+		if (StringUtils.isNotBlank(consumerCodes))
 			status = MATERIAL_FLAGGING_NOT_DONE.concat("~").concat(consumerCodes.toString());
 
 		return status;

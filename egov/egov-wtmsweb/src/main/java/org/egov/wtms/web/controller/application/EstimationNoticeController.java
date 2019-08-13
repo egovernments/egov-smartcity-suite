@@ -55,6 +55,7 @@ import static org.egov.wtms.masters.entity.enums.ConnectionType.NON_METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CATEGORY_BPL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -269,7 +270,8 @@ public class EstimationNoticeController {
 						searchNoticeDetails.getApplicationNumber());
 		if (waterConnectionDetails != null) {
 			boolean isNonMeteredAndNonBPL = false;
-			if (NEWCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+			if ((NEWCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+					|| ADDNLCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
 					&& !CATEGORY_BPL.equals(waterConnectionDetails.getCategory().getName())
 					&& ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())
 					&& waterConnectionDetails.getCreatedDate()

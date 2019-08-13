@@ -54,6 +54,7 @@ import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REVENUE_WARD;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -96,15 +97,16 @@ public class WaterConnectionMaterialDemandController {
     private ConnectionDemandService connectionDemandService;
 
     @GetMapping(value = "/search")
-    public String searchApplications(final Model model) {
+	public String searchApplications(final Model model) {
 		List<ApplicationType> applicationTypes = new ArrayList<>();
 		applicationTypes.add(applicationTypeService.findByCode(NEWCONNECTION));
+		applicationTypes.add(applicationTypeService.findByCode(ADDNLCONNECTION));
 		model.addAttribute("waterApplicationDetails", new WaterConnExecutionDetails());
 		model.addAttribute("applicationTypeList", applicationTypes);
-        model.addAttribute("revenueWardList",
-                boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD, REVENUE_HIERARCHY_TYPE));
-        return "material-demand-search-form";
-    }
+		model.addAttribute("revenueWardList", boundaryService
+				.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD, REVENUE_HIERARCHY_TYPE));
+		return "material-demand-search-form";
+	}
 
     @PostMapping(value = "/search", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
