@@ -64,6 +64,9 @@ public class DCBReport {
 	private BigDecimal totalDmdTax;
 	private BigDecimal totalDmdPnlty;
 	private BigDecimal totalLpayPnlty;
+	private BigDecimal totalDmdVarTax;
+        private BigDecimal totalDmdVarPnlty;
+        private BigDecimal totalDmdVarLpayPnlty;
 	private BigDecimal totalColTax;
 	private BigDecimal totalColPnlty;
 	private BigDecimal totalColLpayPnlty;
@@ -181,10 +184,13 @@ public class DCBReport {
 				&& !getFieldNames().isEmpty() && !records.isEmpty()) {
 			totalDmdTax = BigDecimal.ZERO;
 			totalDmdPnlty = BigDecimal.ZERO;
+			totalDmdVarTax = BigDecimal.ZERO;
+			totalDmdVarPnlty = BigDecimal.ZERO;
 			totalColTax = BigDecimal.ZERO;
 			totalColPnlty = BigDecimal.ZERO;
 			totalRebate = BigDecimal.ZERO;
 			totalLpayPnlty = BigDecimal.ZERO;
+			totalDmdVarLpayPnlty = BigDecimal.ZERO;
 			totalColLpayPnlty = BigDecimal.ZERO;
 			totalAdvance = BigDecimal.ZERO;
 			for (Map.Entry<Installment, DCBRecord> record : records.entrySet()) {
@@ -193,6 +199,8 @@ public class DCBReport {
 						if (fieldName.equals(TAX)) {
 							totalDmdTax = totalDmdTax.add(record.getValue()
 									.getDemands().get(fieldName));
+							totalDmdVarTax = totalDmdVarTax.add(record.getValue()
+                                                                           .getDemandVariation().get(fieldName));
 							totalColTax = totalColTax.add(record.getValue()
 									.getCollections().get(fieldName));
 						}
@@ -204,6 +212,8 @@ public class DCBReport {
 						if (fieldName.equals(WTTAX)) {
                                                     totalDmdTax = totalDmdTax.add(record.getValue()
                                                                     .getDemands().get(fieldName));
+                                                    totalDmdVarTax = totalDmdVarTax.add(record.getValue()
+                                                                       .getDemandVariation().get(fieldName));
                                                     totalColTax = totalColTax.add(record.getValue()
                                                                     .getCollections().get(fieldName));
                                                     totalRebate = totalRebate.add(record.getValue()
@@ -212,12 +222,16 @@ public class DCBReport {
 						if (fieldName.equals(PENALTY)) {
 							totalDmdPnlty = totalDmdPnlty.add(record.getValue()
 									.getDemands().get(fieldName));
+							totalDmdVarPnlty = totalDmdVarPnlty.add(record.getValue()
+                                                                        .getDemandVariation().get(fieldName));
 							totalColPnlty = totalColPnlty.add(record.getValue()
 									.getCollections().get(fieldName));
 						}
 						if (fieldName.equals(FINES)) {
 							totalLpayPnlty = totalLpayPnlty.add(record
 									.getValue().getDemands().get(fieldName));
+							totalDmdVarLpayPnlty = totalDmdVarLpayPnlty.add(record
+                                                                               .getValue().getDemandVariation().get(fieldName));
 							totalColLpayPnlty = totalColLpayPnlty.add(record.getValue()
 									.getCollections().get(fieldName))
 									.subtract(record.getValue().getRebates().get(fieldName));
@@ -284,7 +298,31 @@ public class DCBReport {
 		this.totalLpayPnlty = totalLpayPnlty;
 	}
 
-	public BigDecimal getTotalColTax() {
+	public BigDecimal getTotalDmdVarTax() {
+            return totalDmdVarTax;
+	}
+
+	public void setTotalDmdVarTax(BigDecimal totalDmdVarTax) {
+            this.totalDmdVarTax = totalDmdVarTax;
+	}
+
+	public BigDecimal getTotalDmdVarPnlty() {
+	    return totalDmdVarPnlty;
+        }
+
+	public void setTotalDmdVarPnlty(BigDecimal totalDmdVarPnlty) {
+            this.totalDmdVarPnlty = totalDmdVarPnlty;
+        }
+
+        public BigDecimal getTotalDmdVarLpayPnlty() {
+            return totalDmdVarLpayPnlty;
+        }
+
+        public void setTotalDmdVarLpayPnlty(BigDecimal totalDmdVarLpayPnlty) {
+            this.totalDmdVarLpayPnlty = totalDmdVarLpayPnlty;
+        }
+
+        public BigDecimal getTotalColTax() {
 		return totalColTax;
 	}
 

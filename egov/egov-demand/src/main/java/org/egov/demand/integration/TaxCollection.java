@@ -597,7 +597,10 @@ public abstract class TaxCollection implements BillingIntegrationService {
         DemandDetailVariation demandDetailVariation = new DemandDetailVariation();
         demandDetailVariation.setDemandDetail(dmdDetails);
         demandDetailVariation.setDemandreasonMaster(demandGenericDAO.getDemandReasonMasterByCode(code, module()));
-        demandDetailVariation.setDramount(revisedAmount);
+        if(revisedAmount!=null && revisedAmount.compareTo(BigDecimal.ZERO)>0)
+            demandDetailVariation.setDramount(revisedAmount);
+        else
+            demandDetailVariation.setDramount(BigDecimal.ZERO);
         return demandDetailVariation;
     }
 

@@ -585,19 +585,20 @@ public class DemandGenericHibDao implements DemandGenericDao {
 		List list = new ArrayList();
 		if (egDemand != null && module != null) {
 			String query = " SELECT dmdres.ID_INSTALLMENT, " 
-			                + "  SUM(dmdDet.amount) as amount, "
-					+ "  SUM(dmdDet.amt_collected) as amt_collected, " 
-			                + "  master.id, master.category, SUM(dmdDet.amt_rebate) as amt_rebate "
-					+ "FROM eg_demand_details dmddet, " + "  eg_demand_reason dmdres, "
-					+ "  eg_demand_reason_master master, " + "  eg_reason_category cate "
-					+ "WHERE DMDDET.ID_DEMAND =:dmdId " 
-					+ "AND DMDDET.ID_DEMAND_REASON =dmdres.id "
-					+ "AND DMDRES.ID_DEMAND_REASON_MASTER=master.id "
-					+ "AND MASTER.CODE NOT  IN('BASE') " 
-					+ "AND master.module  =:moduleId "
-					+ "AND cate.id = master.category " 
-					+ "GROUP BY dmdres.ID_INSTALLMENT, master.id, master.category "
-					+ "ORDER BY dmdres.id_installment, master.category  ";
+		                + "  SUM(dmdDet.amount) as amount, "
+		                + "  SUM(dmdDet.amt_collected) as amt_collected, " 
+		                + "  master.id, master.category, SUM(dmdDet.amt_rebate) as amt_rebate, sum(dmdvar.dramount) as dmdvaramt "
+		                + " FROM eg_demand_details dmddet LEFT OUTER JOIN eg_demand_detail_variation dmdvar ON "   
+		                + " dmdvar.demand_detail = dmdDet.id, " + "  eg_demand_reason dmdres, "
+		                + " eg_demand_reason_master master, " + "  eg_reason_category cate "
+		                + "WHERE DMDDET.ID_DEMAND =:dmdId " 
+		                + "AND DMDDET.ID_DEMAND_REASON =dmdres.id "
+		                + "AND DMDRES.ID_DEMAND_REASON_MASTER=master.id "
+		                + "AND MASTER.CODE NOT  IN('BASE') " 
+		                + "AND master.module  =:moduleId "
+		                + "AND cate.id = master.category "
+		                + "GROUP BY dmdres.ID_INSTALLMENT, master.id, master.category "
+		                + "ORDER BY dmdres.id_installment, master.category";
 			Query qry = getCurrentSession().createSQLQuery(query)
 					.setLong("dmdId", egDemand.getId()).setLong("moduleId", module.getId());
 			list = qry.list();

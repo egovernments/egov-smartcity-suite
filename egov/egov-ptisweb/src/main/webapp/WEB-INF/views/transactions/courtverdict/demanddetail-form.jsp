@@ -97,7 +97,7 @@
 								<td class="greybox"><form:input id="revisedAmount" align="center" type="text"
 										style="width:80%"
 										path="demandDetailBeanList[${status.index }].revisedAmount"
-										onblur="return calculateAmount(this);" /></td>
+										/></td>
 								<td class="greybox"><form:input align="center" type="text"
 										style="width:80%"
 										path="demandDetailBeanList[${status.index }].actualCollection"
@@ -105,7 +105,7 @@
 								<td class="greybox"><form:input id="revisedCollection"
 										align="center" type="text" style="width:80%"
 										path="demandDetailBeanList[${status.index }].revisedCollection"
-										onblur="return calculateCollectionAmount(this);" /></td>
+										/></td>
 
 							</tr>
 						</c:forEach>

@@ -331,43 +331,7 @@ function calculatePlinthArea(length, breadth, rowIdx){
 	jQuery('#floorDetailsTable tbody tr:eq('+rowIdx+')')
 	.find('.builtuparea').attr('readonly', 'readonly');
 }
-function calculateAmount(obj) {
 
-	var table = document.getElementById("demandDetailsTable");
-	var rowobj = getRow(obj).rowIndex;
-
-	if (document.forms[0].revisedAmount[rowobj - 2] != undefined
-			&& document.forms[0].revisedAmount[rowobj - 2].value != undefined) {
-		for (var j = 0; j <= rowobj - 2; j++) {
-			if (document.forms[0].revisedAmount[j].value == "") {
-
-				bootbox
-						.alert("Please choose its previos Installments. Random selection not allowed.");
-				obj.value = "";
-				return false;
-			}
-		}
-	}
-
-}
-
-function calculateCollectionAmount(obj) {
-
-	var table = document.getElementById("demandDetailsTable");
-	var rowobj = getRow(obj).rowIndex;
-	
-	if (document.forms[0].revisedCollection[rowobj - 2] != undefined
-			&& document.forms[0].revisedCollection[rowobj - 2].value != undefined) {
-		for (var j = 0; j <= rowobj - 2; j++) {
-			if (document.forms[0].revisedCollection[j].value == "") {
-				bootbox
-						.alert("Please choose its previos Installments. Random selection not allowed.");
-				obj.value = "";
-				return false;
-			}
-		}
-	}
-}
 function changeHiddenPlotArea(obj){
 	
 	

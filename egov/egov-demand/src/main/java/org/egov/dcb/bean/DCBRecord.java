@@ -54,6 +54,7 @@ import java.util.Map;
 public class DCBRecord {
 
     private Map<String, BigDecimal> demands;
+    private Map<String, BigDecimal> demandVariation;
     private Map<String, BigDecimal> collections;
     private Map<String, BigDecimal> rebates;
     private Map<String, BigDecimal> balances;
@@ -63,8 +64,9 @@ public class DCBRecord {
      * @param demands 
      * @param collections
      */
-    public DCBRecord(Map<String, BigDecimal> demands, Map<String, BigDecimal> collections, Map<String, BigDecimal> rebates) {
+    public DCBRecord(Map<String, BigDecimal> demands, Map<String, BigDecimal> demandVariation, Map<String, BigDecimal> collections, Map<String, BigDecimal> rebates) {
         this.demands = demands;
+        this.demandVariation = demandVariation;
         this.collections = collections;
         this.rebates = rebates;
         balances = new HashMap<String, BigDecimal>();
@@ -73,6 +75,10 @@ public class DCBRecord {
 
     public Map<String, BigDecimal> getDemands() {
         return demands;
+    }
+    
+    public Map<String, BigDecimal> getDemandVariation() {
+        return demandVariation;
     }
 
     public Map<String, BigDecimal> getCollections() {
@@ -83,7 +89,7 @@ public class DCBRecord {
         Map<String, BigDecimal> dmd = getDemands();
         if (dmd != null && !dmd.isEmpty()) {
             for (Map.Entry<String, BigDecimal> entry : dmd.entrySet()) {
-                BigDecimal bal = (entry.getValue().subtract(getCollections().get(entry.getKey())));
+                BigDecimal bal = (entry.getValue().subtract(getDemandVariation().get(entry.getKey()).add(getCollections().get(entry.getKey()))));
                 if (balances.containsKey(entry.getKey())) {
                     balances.put(entry.getKey(), bal.add(balances.get(entry.getKey())));
                 } else {
@@ -102,7 +108,7 @@ public class DCBRecord {
     }
 
     public String toString() {
-        return "demands:" + getDemands() + ",collections:" + getCollections() +
+        return "demands:" + getDemands() + ",demandVariation:" + getDemandVariation() + ",collections:" + getCollections() +
         ",rebates:" + getRebates();
     }
 
