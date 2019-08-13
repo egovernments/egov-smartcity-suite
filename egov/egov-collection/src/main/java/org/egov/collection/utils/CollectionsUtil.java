@@ -56,10 +56,8 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
@@ -75,14 +73,10 @@ import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.BillReceiptInfoReq;
 import org.egov.collection.integration.models.BillReceiptReq;
-import org.egov.collection.integration.models.ReceiptAccountDetailsResponse;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
-import org.egov.collection.integration.models.ReconstructReceiptDetailsRequest;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.commons.Bankbranch;
-import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
-import org.egov.commons.CFunction;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
@@ -120,7 +114,6 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
@@ -218,6 +211,8 @@ public class CollectionsUtil {
 
     @Autowired
     private FunctionHibernateDAO functionDAO;
+    @Autowired
+    private MicroserviceBillingUtil microserviceBillingUtil;
 
     /**
      * Returns the Status object for given status code for a receipt
@@ -819,49 +814,28 @@ public class CollectionsUtil {
     }
 
     public CollectionIndex constructCollectionIndex(final ReceiptHeader receiptHeader) {
-        ReceiptAmountInfo receiptAmountInfo = new ReceiptAmountInfo();
-        final ServiceDetails billingService = receiptHeader.getService();
-
-        String instrumentType = "";
-        if (!receiptHeader.getReceiptInstrument().isEmpty())
-            instrumentType = receiptHeader.getReceiptInstrument().iterator().next().getInstrumentType().getType();
-
-        if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL)
-            try {
-                final Set<BillReceiptInfo> billReceipts = new HashSet<>(0);
-                final BillReceiptInfo billReceipt = new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
-                        persistenceService, null);
-                billReceipts.add(billReceipt);
-                if (billingService.getCode().equals(CollectionConstants.SERVICECODE_LAMS))
-                    receiptAmountInfo = updateReceiptDetailsAndGetReceiptAmountInfo(new BillReceiptReq(billReceipt),
-                            billingService.getCode());
-                else {
-                    final BillingIntegrationService billingServiceBean = (BillingIntegrationService) getBean(billingService
-                            .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
-                    receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(billReceipt);
-                }
-            } catch (final Exception e) {
-                final String errMsg = "Exception while constructing collection index for receipt number ["
-                        + receiptHeader.getReceiptnumber() + "]!";
-                LOGGER.error(errMsg, e);
-                throw new ApplicationRuntimeException(errMsg, e);
-            }
+        ReceiptAmountInfo receiptAmountInfo = getReceiptAmountBifurcation(receiptHeader);
         return CollectionIndex
                 .builder()
                 .withReceiptDate(receiptHeader.getReceiptdate())
                 .withReceiptnumber(receiptHeader.getReceiptnumber())
-                .withBillingservice(billingService.getName())
-                .withPaymentMode(instrumentType)
+                .withBillingservice(receiptHeader.getService().getName())
+                .withPaymentMode(receiptHeader.getReceiptInstrument().isEmpty() ? CollectionConstants.BLANK
+                        : receiptHeader.getReceiptInstrument().iterator().next().getInstrumentType().getType())
                 .withTotalamount(receiptHeader.getTotalAmount())
                 .withChannel(receiptHeader.getSource())
                 .withStatus(receiptHeader.getStatus().getDescription())
-                .withConsumerCode(receiptHeader.getConsumerCode() != null ? receiptHeader.getConsumerCode() : "")
-                .withBillNumber(receiptHeader.getReferencenumber() != null ? receiptHeader.getReferencenumber() : null)
+                .withConsumerCode(
+                        receiptHeader.getConsumerCode() == null ? CollectionConstants.BLANK : receiptHeader.getConsumerCode())
+                .withBillNumber(receiptHeader.getReferencenumber() == null ? CollectionConstants.BLANK
+                        : receiptHeader.getReferencenumber())
                 .withPaymentGateway(
-                        receiptHeader.getOnlinePayment() != null ? receiptHeader.getOnlinePayment().getService()
-                                .getName() : "")
-                .withConsumerName(receiptHeader.getPayeeName() != null ? receiptHeader.getPayeeName() : "")
-                .withReceiptCreator(receiptHeader.getCreatedBy() != null ? receiptHeader.getCreatedBy().getName() : "")
+                        receiptHeader.getOnlinePayment() == null ? CollectionConstants.BLANK
+                                : receiptHeader.getOnlinePayment().getService()
+                                        .getName())
+                .withConsumerName(receiptHeader.getPayeeName() == null ? CollectionConstants.BLANK : receiptHeader.getPayeeName())
+                .withReceiptCreator(
+                        receiptHeader.getCreatedBy() == null ? CollectionConstants.BLANK : receiptHeader.getCreatedBy().getName())
                 .withArrearAmount(receiptAmountInfo.getArrearsAmount())
                 .withAdvanceAmount(receiptAmountInfo.getAdvanceAmount())
                 .withCurrentAmount(receiptAmountInfo.getCurrentInstallmentAmount())
@@ -871,12 +845,45 @@ public class CollectionsUtil {
                 .withCurrentCess(receiptAmountInfo.getCurrentCess())
                 .withReductionAmount(receiptAmountInfo.getReductionAmount())
                 .withInstallmentFrom(
-                        receiptAmountInfo.getInstallmentFrom() != null ? receiptAmountInfo.getInstallmentFrom() : "")
+                        receiptAmountInfo.getInstallmentFrom() == null ? CollectionConstants.BLANK
+                                : receiptAmountInfo.getInstallmentFrom())
                 .withInstallmentTo(
-                        receiptAmountInfo.getInstallmentTo() != null ? receiptAmountInfo.getInstallmentTo() : "")
+                        receiptAmountInfo.getInstallmentTo() == null ? CollectionConstants.BLANK
+                                : receiptAmountInfo.getInstallmentTo())
                 .withRevenueWard(receiptAmountInfo.getRevenueWard())
-                .withConsumerType(receiptHeader.getConsumerType() != null ? receiptHeader.getConsumerType() : "")
-                .withConflict(receiptAmountInfo.getConflict() != null ? receiptAmountInfo.getConflict() : 0).build();
+                .withConsumerType(
+                        receiptHeader.getConsumerType() == null ? CollectionConstants.BLANK : receiptHeader.getConsumerType())
+                .withConflict(receiptAmountInfo.getConflict() == null ? 0 : receiptAmountInfo.getConflict()).build();
+    }
+
+    /**
+     * @param receiptHeader
+     * @param billingService
+     * @return
+     */
+    private ReceiptAmountInfo getReceiptAmountBifurcation(final ReceiptHeader receiptHeader) {
+        final ServiceDetails billingService = receiptHeader.getService();
+        ReceiptAmountInfo receiptAmountInfo = new ReceiptAmountInfo();
+        if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL)
+            try {
+                final BillReceiptInfo billReceipt = new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
+                        persistenceService, null);
+                if (CollectionConstants.SERVICECODE_LAMS.equals(billingService.getCode()))
+                    receiptAmountInfo = microserviceBillingUtil.updateReceiptDetailsAndGetReceiptAmountInfo(
+                            new BillReceiptReq(billReceipt),
+                            billingService.getCode());
+                else {
+                    final BillingIntegrationService billingServiceBean = (BillingIntegrationService) getBean(billingService
+                            .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
+                    receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(billReceipt);
+                }
+            } catch (final Exception e) {
+                final String errMsg = "Exception while getting receiptamount bifurcation for receipt number ["
+                        + receiptHeader.getReceiptnumber() + "]!";
+                LOGGER.error(errMsg, e);
+                throw new ApplicationRuntimeException(errMsg, e);
+            }
+        return receiptAmountInfo;
     }
 
     public Boolean checkVoucherCreation(final ReceiptHeader receiptHeader) {
@@ -910,57 +917,15 @@ public class CollectionsUtil {
     public List<ReceiptDetail> reconstructReceiptDetail(final ReceiptHeader receiptHeader,
             final List<ReceiptDetail> receiptDetailList) {
         List<ReceiptDetail> reconstructedReceiptDetail = Collections.EMPTY_LIST;
-        if (receiptHeader.getService().getCode().equals(CollectionConstants.SERVICECODE_LAMS)) {
-            reconstructedReceiptDetail = getReconstructReceiptDetailsMS(receiptHeader, receiptDetailList);
-            // Revert the code after complete integration.
-            if (reconstructedReceiptDetail != null && !reconstructedReceiptDetail.isEmpty())
-                for (ReceiptDetail receiptDetail : reconstructedReceiptDetail)
-                    LOGGER.error("RECEIPT DETAILS: " + receiptDetail.toString());
-            else
-                LOGGER.error("LAMS reconstructed receipt details empty.");
-        } else {
+        if (receiptHeader.getService().getCode().equals(CollectionConstants.SERVICECODE_LAMS))
+            reconstructedReceiptDetail = microserviceBillingUtil.getReconstructReceiptDetails(receiptHeader);
+        else {
             final BillingIntegrationService billingService = (BillingIntegrationService) getBean(receiptHeader.getService()
                     .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
             reconstructedReceiptDetail = billingService.reconstructReceiptDetail(receiptHeader.getReferencenumber(),
                     receiptHeader.getTotalAmount(), receiptDetailList);
         }
         return reconstructedReceiptDetail;
-    }
-
-    private List<ReceiptDetail> getReconstructReceiptDetailsMS(final ReceiptHeader receiptHeader,
-            final List<ReceiptDetail> receiptDetailList) {
-        final RestTemplate restTemplate = new RestTemplate();
-        // Prepare request
-        ReconstructReceiptDetailsRequest reconstructReceiptDetailsRequest = new ReconstructReceiptDetailsRequest();
-        reconstructReceiptDetailsRequest.setRequestInfo(microserviceUtils.createRequestInfo());
-        reconstructReceiptDetailsRequest.setTotalAmount(receiptHeader.getTotalAmount());
-        reconstructReceiptDetailsRequest.setBillId(receiptHeader.getReferencenumber());
-        reconstructReceiptDetailsRequest.setTenantId(microserviceUtils.getTanentId());
-
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("reconstruct receipt details - before calling LAMS");
-
-        final String url = collectionApplicationProperties.getLamsServiceUrl().concat(
-                collectionApplicationProperties
-                        .getReconstructReceiptDetailUrl(receiptHeader.getService().getCode().toLowerCase()));
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("reconstruct receipt details - url:" + url);
-        ReceiptAmountInfo receiptAmountInfo = null;
-        ReceiptAccountDetailsResponse receiptAccountDetailsResponse = restTemplate.postForObject(url,
-                reconstructReceiptDetailsRequest, ReceiptAccountDetailsResponse.class);
-        if (receiptAccountDetailsResponse == null)
-            return Collections.EMPTY_LIST;
-        // Setting chartofaccounts and function
-        else {
-            for (ReceiptDetail receiptDetail : receiptAccountDetailsResponse.getReceiptDetailsList()) {
-                final CChartOfAccounts account = chartOfAccountsHibernateDAO
-                        .getCChartOfAccountsByGlCode(receiptDetail.getAccounthead().getGlcode());
-                final CFunction function = functionDAO.getFunctionByCode(receiptDetail.getFunction().getCode());
-                receiptDetail.setAccounthead(account);
-                receiptDetail.setFunction(function);
-            }
-            return receiptAccountDetailsResponse.getReceiptDetailsList();
-        }
     }
 
     public Date getRemittanceVoucherDate(final Date receiptDate) {

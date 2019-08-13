@@ -1359,10 +1359,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             BillingIntegrationService billingService = getBillingServiceBean(serviceCode);
             receiptCancellationInfo = billingService.validateCancelReceipt(receiptNumber, consumerCode);
         }
-        if (!receiptCancellationInfo.getCancellationAllowed()) {
-            String validationMsg = receiptCancellationInfo.getValidationMessage();
-            throw new ValidationException(new ValidationError("validationMsg", validationMsg));
-        }
+        if (!receiptCancellationInfo.getCancellationAllowed())
+            throw new ValidationException(new ValidationError("validationMsg", receiptCancellationInfo.getValidationMessage()));
     }
 
     public static class ReceiptApproverSpec {

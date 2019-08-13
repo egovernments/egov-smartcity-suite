@@ -154,12 +154,15 @@ public class MicroserviceBillingUtil {
             return Collections.emptyList();
         // Setting chartofaccounts and function
         else {
-            for (ReceiptDetail receiptDetail : receiptAccountDetailsResponse.getReceiptDetailsList()) {
-                final CChartOfAccounts account = chartOfAccountsHibernateDAO
-                        .getCChartOfAccountsByGlCode(receiptDetail.getAccounthead().getGlcode());
-                final CFunction function = functionDAO.getFunctionByCode(receiptDetail.getFunction().getCode());
-                receiptDetail.setAccounthead(account);
-                receiptDetail.setFunction(function);
+            if (!receiptAccountDetailsResponse.getReceiptDetailsList().isEmpty()) {
+                final CFunction function = functionDAO
+                        .getFunctionByCode(receiptAccountDetailsResponse.getReceiptDetailsList().get(0).getFunction().getCode());
+                for (ReceiptDetail receiptDetail : receiptAccountDetailsResponse.getReceiptDetailsList()) {
+                    final CChartOfAccounts account = chartOfAccountsHibernateDAO
+                            .getCChartOfAccountsByGlCode(receiptDetail.getAccounthead().getGlcode());
+                    receiptDetail.setAccounthead(account);
+                    receiptDetail.setFunction(function);
+                }
             }
             return receiptAccountDetailsResponse.getReceiptDetailsList();
         }
