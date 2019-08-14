@@ -50,6 +50,7 @@
 <!-- 2017-01-11T15:38:59 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ValuationCertificate" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="80" bottomMargin="80" uuid="9da61367-4253-429a-bde9-ed4ef155fa49">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<import value="net.sf.jasperreports.engine.util.JRStringUtil"/>
 	<parameter name="cityName" class="java.lang.String"/>
 	<parameter name="noticeNumber" class="java.lang.String"/>
 	<parameter name="ownerName" class="java.lang.String"/>
@@ -109,7 +110,7 @@
 				<textElement textAlignment="Justified" verticalAlignment="Bottom" markup="styled">
 					<paragraph lineSpacingSize="1.5"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\tCertified that the House bearing D.No. <style forecolor=\"#000000\" isBold=\"true\">"+$P{doorNo}.trim()+"</style> , Assessment No. <style forecolor=\"#000000\" isBold=\"true\">"+$P{upicNo}.trim()+"</style> , situated at <style forecolor=\"#000000\" isBold=\"true\">"+$P{locality}.trim()+"</style> stands in the name of <style forecolor=\"#000000\" isBold=\"true\">"+$P{ownerName}.trim() +"</style> , as per the records of this Municipal Corporation and the value of the said house is approximately is Rs._________(Rupees "]]></textFieldExpression>
+				<textFieldExpression><![CDATA["\tCertified that the House bearing D.No. <style forecolor=\"#000000\" isBold=\"true\">"+$P{doorNo}.trim()+"</style> , Assessment No. <style forecolor=\"#000000\" isBold=\"true\">"+$P{upicNo}.trim()+"</style> , situated at <style forecolor=\"#000000\" isBold=\"true\">"+JRStringUtil.xmlEncode($P{locality}.trim())+"</style> stands in the name of <style forecolor=\"#000000\" isBold=\"true\">"+JRStringUtil.xmlEncode($P{ownerName}.trim()) +"</style> , as per the records of this Municipal Corporation and the value of the said house is approximately is Rs._________(Rupees "]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement x="37" y="88" width="484" height="1" uuid="e41eb601-06df-4257-9704-10b02c1b21be"/>
@@ -146,7 +147,7 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement x="37" y="251" width="213" height="87" uuid="5f0f9d8a-a04a-4281-aeeb-6d8ca162d9d7"/>
 				<textElement textAlignment="Justified" verticalAlignment="Top" markup="styled"/>
-				<textFieldExpression><![CDATA["Sri <style forecolor=\"#000000\" isBold=\"true\">"+$P{ownerName}.trim()+"</style> \nD.No. <style forecolor=\"#000000\" isBold=\"true\">"+$P{doorNo}.trim()+"</style> \nAssessment No. <style forecolor=\"#000000\" isBold=\"true\">"+$P{upicNo}.trim()+"</style> \nAddress. <style forecolor=\"#000000\" isBold=\"true\">"+$P{address}.trim()+"</style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Sri <style forecolor=\"#000000\" isBold=\"true\">"+JRStringUtil.xmlEncode($P{ownerName}.trim())+"</style> \nD.No. <style forecolor=\"#000000\" isBold=\"true\">"+$P{doorNo}.trim()+"</style> \nAssessment No. <style forecolor=\"#000000\" isBold=\"true\">"+$P{upicNo}.trim()+"</style> \nAddress. <style forecolor=\"#000000\" isBold=\"true\">"+JRStringUtil.xmlEncode($P{address}.trim())+"</style>"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="279" y="85" width="100" height="20" uuid="0f94ed5a-c446-462f-a25d-43b197197276"/>
