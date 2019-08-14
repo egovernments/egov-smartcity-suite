@@ -49,6 +49,7 @@ package org.egov.wtms.masters.service;
 
 import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.repository.ApplicationTypeRepository;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -57,13 +58,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CHANGEOFUSE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -117,18 +111,12 @@ public class ApplicationTypeService {
         return applicationTypeRepository.findByCode(code);
     }
 
-	public List<ApplicationType> findActiveApplicationTypesByCode() {
-		List<String> applicationCodes = getApplicationTypeCodes();
-		return applicationTypeRepository.findActiveApplicationTypesByCode(applicationCodes);
-	}
+    public List<ApplicationType> getActiveApplicationTypes() {
+        return applicationTypeRepository.findByActiveTrue();
+    }
 
-	private List<String> getApplicationTypeCodes() {
-		List<String> applicationCodes = new ArrayList<String>();
-		applicationCodes.add(NEWCONNECTION);
-		applicationCodes.add(ADDNLCONNECTION);
-		applicationCodes.add(CHANGEOFUSE);
-		applicationCodes.add(CLOSINGCONNECTION);
-		applicationCodes.add(RECONNECTION);
-		return applicationCodes;
-	}
+    public List<ApplicationType> findActiveApplicationsTypesByCodes() {
+        return applicationTypeRepository.findApplicationTypesByCodes(WaterTaxConstants.APPLICATION_TYPE_LIST);
+    }
+
 }

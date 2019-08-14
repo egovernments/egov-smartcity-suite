@@ -97,7 +97,7 @@ public class UpdateWaterConnectionExecutionController {
 	@GetMapping(value = "/search")
 	public String getSearchScreen(final Model model) {
 		model.addAttribute("executeWaterApplicationDetails", new WaterConnExecutionDetails());
-		model.addAttribute("applicationTypeList", applicationTypeService.findActiveApplicationTypesByCode());
+		model.addAttribute("applicationTypeList", applicationTypeService.findActiveApplicationsTypesByCodes());
 		model.addAttribute("revenueWardList", boundaryService
 				.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD, REVENUE_HIERARCHY_TYPE));
 		return "execute-update-search";
@@ -106,7 +106,7 @@ public class UpdateWaterConnectionExecutionController {
 	@GetMapping(value = "/search-form")
 	public String getSearchForm(final Model model) {
 		model.addAttribute("executeWaterApplicationDetails", new WaterConnExecutionDetails());
-		model.addAttribute("applicationTypeList", applicationTypeService.findActiveApplicationTypesByCode());
+		model.addAttribute("applicationTypeList", applicationTypeService.findActiveApplicationsTypesByCodes());
 		model.addAttribute("revenueWardList", boundaryService
 				.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD, REVENUE_HIERARCHY_TYPE));
 		return "execute-search-screen";
@@ -143,10 +143,11 @@ public class UpdateWaterConnectionExecutionController {
 	@ResponseBody
 	public String getSearchResult(@RequestBody final WaterConnectionExecutionResponse waterApplicationDetails) {
 		final List<WaterConnectionDetails> connectionDetailsList = new ArrayList<>();
-		final String validationStatus = waterConnectionDetailsService.validateInput(waterApplicationDetails, connectionDetailsList);
+		final String validationStatus = waterConnectionDetailsService.validateInput(waterApplicationDetails,
+				connectionDetailsList);
 		if (ERR_WATER_RATES_NOT_DEFINED.equalsIgnoreCase(validationStatus))
 			return ERR_WATER_RATES_NOT_DEFINED;
-		else if(validationStatus.startsWith(MATERIAL_FLAGGING_NOT_DONE))
+		else if (validationStatus.startsWith(MATERIAL_FLAGGING_NOT_DONE))
 			return validationStatus;
 		final Boolean updateStatus = waterConnectionDetailsService.updateStatus(connectionDetailsList);
 		return waterConnectionDetailsService.getResultStatus(waterApplicationDetails, validationStatus, updateStatus);
