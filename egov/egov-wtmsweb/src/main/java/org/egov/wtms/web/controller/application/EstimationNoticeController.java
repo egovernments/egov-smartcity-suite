@@ -282,7 +282,7 @@ public class EstimationNoticeController {
 				isNonMeteredAndNonBPL = true;
 
 			if (!isNonMeteredAndNonBPL) {
-				failureMessage = messageSource.getMessage("err.bpl.metered.period.connection", null,
+				failureMessage = messageSource.getMessage("err.validate.estimationnotice.generate", null,
 						Locale.getDefault());
 			} else {
 				BigDecimal estimationDues = waterEstimationChargesPaymentService

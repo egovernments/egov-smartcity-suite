@@ -97,7 +97,7 @@ public class UpdateWaterConnectionExecutionController {
 	@GetMapping(value = "/search")
 	public String getSearchScreen(final Model model) {
 		model.addAttribute("executeWaterApplicationDetails", new WaterConnExecutionDetails());
-		model.addAttribute("applicationTypeList", applicationTypeService.getActiveApplicationTypes());
+		model.addAttribute("applicationTypeList", applicationTypeService.findActiveApplicationTypesByCode());
 		model.addAttribute("revenueWardList", boundaryService
 				.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD, REVENUE_HIERARCHY_TYPE));
 		return "execute-update-search";
@@ -106,7 +106,7 @@ public class UpdateWaterConnectionExecutionController {
 	@GetMapping(value = "/search-form")
 	public String getSearchForm(final Model model) {
 		model.addAttribute("executeWaterApplicationDetails", new WaterConnExecutionDetails());
-		model.addAttribute("applicationTypeList", applicationTypeService.getActiveApplicationTypes());
+		model.addAttribute("applicationTypeList", applicationTypeService.findActiveApplicationTypesByCode());
 		model.addAttribute("revenueWardList", boundaryService
 				.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD, REVENUE_HIERARCHY_TYPE));
 		return "execute-search-screen";
