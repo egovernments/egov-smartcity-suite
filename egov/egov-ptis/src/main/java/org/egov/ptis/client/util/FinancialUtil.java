@@ -57,7 +57,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_SRC_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEPT_CODE_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.FUNCTION_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTIS_EG_MODULES_ID;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 
 import java.io.IOException;
@@ -206,7 +205,7 @@ public class FinancialUtil {
         headerdetails.put(VoucherConstant.VOUCHERNUMBER, VOUCHERNUMBER);
         headerdetails.put(VoucherConstant.VOUCHERDATE, new Date());
         headerdetails.put(VoucherConstant.STATUS, 0);
-        headerdetails.put(VoucherConstant.MODULEID, propertyTaxCommonUtil.getModuleIdByName());
+        headerdetails.put(VoucherConstant.MODULEID, moduleDao.getModuleByName(PTMODULENAME).getId());
         headerdetails.put(VoucherConstant.DEPARTMENTCODE, getDepartmentCode());
         headerdetails.put(VoucherConstant.FUNDCODE, getFundCode());
         headerdetails.put(VoucherConstant.SOURCEPATH, sourceURL);
@@ -223,6 +222,7 @@ public class FinancialUtil {
      *         for demand reason
      * @throws IOException
      */
+    @SuppressWarnings("unused")
     private Map<String, Map<String, BigDecimal>> prepareDemandForGlcode(
             Map<Installment, Map<String, BigDecimal>> amounts) {
 

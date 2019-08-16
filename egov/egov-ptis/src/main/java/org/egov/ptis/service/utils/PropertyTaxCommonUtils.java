@@ -874,16 +874,6 @@ public class PropertyTaxCommonUtils {
         return value != null ? value : BigDecimal.ZERO;
     }
 
-    public BigInteger getModuleIdByName() {
-        BigInteger id = BigInteger.ZERO;
-        String selectQuery = " select id from eg_modules where name =:name ";
-        final Query qry = getSession().createSQLQuery(selectQuery).setString("name", PropertyTaxConstants.FILESTORE_MODULE_NAME);
-        List<Object> list = qry.list();
-        if (!list.isEmpty())
-            id = (BigInteger) list.get(0);
-        return id;
-    }
-
     public boolean isUnderMutationWorkflow(final BasicProperty basicProperty) {
         boolean underWorkFlow = false;
         if (basicProperty.getPropertyMutations() != null)
