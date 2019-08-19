@@ -61,6 +61,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -197,13 +199,20 @@ public class FinancialUtil {
     private HashMap<String, Object> createHeaderDetails(String indexNumber, String transaction) {
         String description = "PTIS / " + indexNumber + " / " + transaction;
         String sourceURL = URL_FOR_DCB + indexNumber;
+        final SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        String dateString = format.format(new Date());
 
         HashMap<String, Object> headerdetails = new HashMap<>();
         headerdetails.put(VoucherConstant.VOUCHERNAME, VOUCHERNAME);
         headerdetails.put(VoucherConstant.VOUCHERTYPE, VOUCHERTYPE);
         headerdetails.put(VoucherConstant.DESCRIPTION, description);
         headerdetails.put(VoucherConstant.VOUCHERNUMBER, VOUCHERNUMBER);
-        headerdetails.put(VoucherConstant.VOUCHERDATE, new Date());
+        try {
+            headerdetails.put(VoucherConstant.VOUCHERDATE, format.parse(dateString));
+        } catch (final ParseException e) {
+            LOGGER.error("Exception while parsing voucher date", e);
+            throw new ApplicationRuntimeException(e.getMessage());
+        }
         headerdetails.put(VoucherConstant.STATUS, 0);
         headerdetails.put(VoucherConstant.MODULEID, moduleDao.getModuleByName(PTMODULENAME).getId());
         headerdetails.put(VoucherConstant.DEPARTMENTCODE, getDepartmentCode());
