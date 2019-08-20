@@ -53,11 +53,13 @@ import java.util.Set;
 import org.egov.collection.entity.ApproverRemitterMapping;
 import org.egov.infra.admin.master.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ApproverRemitterMappingRepository extends JpaRepository<ApproverRemitterMapping, Long> {
+public interface ApproverRemitterMappingRepository
+        extends JpaRepository<ApproverRemitterMapping, Long>, JpaSpecificationExecutor<ApproverRemitterMapping> {
     ApproverRemitterMapping findByApprover(User approver);
 
     List<ApproverRemitterMapping> findByApproverId(Long approverId);

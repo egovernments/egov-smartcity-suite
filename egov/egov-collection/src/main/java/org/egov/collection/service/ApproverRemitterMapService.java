@@ -47,15 +47,16 @@
  */
 package org.egov.collection.service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 
 import org.egov.collection.constants.CollectionConstants;
@@ -66,6 +67,7 @@ import org.egov.infra.admin.master.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -93,11 +95,11 @@ public class ApproverRemitterMapService {
 
     private static final String[] EMPTY_ARGS = {};
 
-    private boolean isValid(Long id) {
+    private static boolean isValid(Long id) {
         return id != null && id > 0;
     }
 
-    private boolean isValid(Boolean c) {
+    private static boolean isValid(Boolean c) {
         return c != null;
     }
 
@@ -122,39 +124,20 @@ public class ApproverRemitterMapService {
 
     public List<ApproverRemitterMapping> searchMappingBySpec(
             ApproverRemitterSpec searchSpec) {
+        return mappingRepository.findAll(searchApproveRemitterMap(searchSpec));
+    }
 
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<ApproverRemitterMapping> query = builder.createQuery(ApproverRemitterMapping.class);
-        Root root = query.from(ApproverRemitterMapping.class);
-        query.select(root);
-        List<Predicate> predicateList = new ArrayList<>(3);
-
-        if (isValid(searchSpec.isActive))
-            predicateList.add(builder.equal(root.get("isActive"), searchSpec.isActive));
-        if (isValid(searchSpec.approverId))
-            predicateList.add(builder.equal(root.get("approver").get("id"), searchSpec.approverId));
-        if (isValid(searchSpec.remitterId))
-            predicateList.add(builder.equal(root.get("remitter").get("id"), searchSpec.remitterId));
-
-        Predicate combinedPredicate;
-        switch (predicateList.size()) {
-        case 1:
-            combinedPredicate = predicateList.get(0);
-            break;
-        case 2:
-            combinedPredicate = builder.and(predicateList.get(0), predicateList.get(1));
-            break;
-        case 3:
-            combinedPredicate = builder.and(predicateList.get(0), predicateList.get(1), predicateList.get(2));
-            break;
-        default:
-            combinedPredicate = builder.conjunction();
-        }
-
-        query.where(combinedPredicate);
-
-        TypedQuery<ApproverRemitterMapping> typedQuery = entityManager.createQuery(query);
-        return typedQuery.getResultList();
+    public static Specification<ApproverRemitterMapping> searchApproveRemitterMap(final ApproverRemitterSpec searchSpec) {
+        return (root, query, builder) -> {
+            final Predicate predicate = builder.conjunction();
+            if (isValid(searchSpec.isActive))
+                predicate.getExpressions().add(builder.equal(root.get("isActive"), searchSpec.isActive));
+            if (isValid(searchSpec.approverId))
+                predicate.getExpressions().add(builder.equal(root.get("approver").get("id"), searchSpec.approverId));
+            if (isValid(searchSpec.remitterId))
+                predicate.getExpressions().add(builder.equal(root.get("remitter").get("id"), searchSpec.remitterId));
+            return predicate;
+        };
     }
 
     public boolean validateAndUpdateMapping(ApproverRemitterSpec mappingSpec, BindingResult bindingResult) {
@@ -273,14 +256,14 @@ public class ApproverRemitterMapService {
      */
     public Map<ApproverType, Set<User>> getCollectionAprovers() {
         Set<User> allApproverSet = userService.getUsersByRoleName(CollectionConstants.ROLE_COLLECTION_APPROVER);
-        Set<User> activelyMappedApproverSet = getActivelyMappedApprover();
+        Set<User> activelyMappedApprvSet = getActivelyMappedApprover();
         // after removal from allApproverSet contails only unmapped approvers
-        allApproverSet.removeAll(activelyMappedApproverSet);
+        allApproverSet.removeAll(activelyMappedApprvSet);
 
-        Map<ApproverType, Set<User>> approverMap = new EnumMap<>(ApproverType.class);
-        approverMap.put(ApproverType.ACTIVELY_MAPPED, activelyMappedApproverSet);
-        approverMap.put(ApproverType.UNMAPPED, allApproverSet);
-        return approverMap;
+        Map<ApproverType, Set<User>> result = new EnumMap<>(ApproverType.class);
+        result.put(ApproverType.ACTIVELY_MAPPED, activelyMappedApprvSet);
+        result.put(ApproverType.UNMAPPED, allApproverSet);
+        return result;
     }
 
     /**

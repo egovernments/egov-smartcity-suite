@@ -64,11 +64,14 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.Comparator;
+import java.util.Objects;
+
 @Entity
 @Table(name = "EGCL_APPROVER_REMITTER")
 @SequenceGenerator(name = ApproverRemitterMapping.SEQ_APPROVER_REMITTER, sequenceName = ApproverRemitterMapping.SEQ_APPROVER_REMITTER, allocationSize = 1)
 @JsonIgnoreProperties({ "createdBy", "lastModifiedBy" })
-public class ApproverRemitterMapping extends AbstractAuditable {
+public class ApproverRemitterMapping extends AbstractAuditable implements Comparator {
     public static final String SEQ_APPROVER_REMITTER = "SEQ_EGCL_APPROVER_REMITTER";
     private static final long serialVersionUID = 1L;
     @Id
@@ -124,16 +127,31 @@ public class ApproverRemitterMapping extends AbstractAuditable {
         this.isActive = isActive;
     }
 
+    /**
+     * @Deprecated As "Order is not defined for Mapping"
+     * @return 0 (less-than)
+     */
+    @Deprecated
+    @Override
+    public int compare(Object o1, Object o2) {
+        return -1;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
             return true;
+        boolean thisEffectivelyNull = getApprover() == null && getRemitter() == null;
+        if (o == null && thisEffectivelyNull)
+            return true;
+        else if (thisEffectivelyNull)
+            return false;
         if (!(o instanceof ApproverRemitterMapping))
             return false;
 
         ApproverRemitterMapping mapping = (ApproverRemitterMapping) o;
-
-        return getId() != null ? getId().equals(mapping.getId()) : mapping.getId() == null;
+        return Objects.equals(getId(), mapping.getId()) || (Objects.equals(getApprover(), mapping.getApprover())
+                && Objects.equals(getRemitter(), mapping.getRemitter()));
 
     }
 
