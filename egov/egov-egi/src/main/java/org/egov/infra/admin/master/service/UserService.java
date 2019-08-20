@@ -113,7 +113,7 @@ public class UserService {
         User currentUser = getCurrentUser();
         if (!currentUser.equals(user)) {
             String passwordResetMessage = messageSource.getMessage("msg.password.reset",
-                    new String[]{user.getName(), currentUser.getName(), getMunicipalityName()}, Locale.getDefault());
+                    new String[] { user.getName(), currentUser.getName(), getMunicipalityName() }, Locale.getDefault());
             notificationService.sendEmail(user.getEmailId(), "Password Reset", passwordResetMessage);
             notificationService.sendSMS(user.getMobileNumber(), passwordResetMessage);
         }
@@ -164,6 +164,10 @@ public class UserService {
         return userRepository.findUsersByRoleName(roleName);
     }
 
+    public Set<User> findUsersByRoles(List<String> roleNameList) {
+        return userRepository.findUsersByRoles(roleNameList);
+    }
+
     public List<User> getAllEmployeeNameLike(String name) {
         return userRepository.findByNameContainingIgnoreCaseAndTypeAndActiveTrue(name, UserType.EMPLOYEE);
     }
@@ -171,8 +175,8 @@ public class UserService {
     public List<User> getUsersByUsernameAndRolename(String userName, String roleName) {
         return userRepository.findUsersByUserAndRoleName(userName, roleName);
     }
-    
-    public List<User> findByMobileNumberAndType(String mobileNumber,UserType type) {
-        return userRepository.findByMobileNumberAndType(mobileNumber,type);
+
+    public List<User> findByMobileNumberAndType(String mobileNumber, UserType type) {
+        return userRepository.findByMobileNumberAndType(mobileNumber, type);
     }
 }

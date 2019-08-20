@@ -58,7 +58,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.egov.collection.config.properties.CollectionApplicationProperties;
@@ -1168,6 +1170,15 @@ public class CollectionsUtil {
             return Collections.singletonList(
                     new ValidationError("submitcollections.validation.invalid.approver", "Invalid approver selected"));
         }
+    }
+
+    public Set<User> getConfiguredRemitters() {
+        List<String> remitterRoleList = getAppConfigValues(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                CollectionConstants.APPCONFIG_VALUE_COLLECTION_REMITTER_ROLE).stream().map(c -> c.getValue())
+                        .collect(Collectors.toList());
+        if (remitterRoleList.isEmpty())
+            remitterRoleList.add(CollectionConstants.ROLE_COLLECTION_REMITTER);
+        return userService.findUsersByRoles(remitterRoleList);
     }
 
 }

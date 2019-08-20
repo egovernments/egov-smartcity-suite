@@ -60,8 +60,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ApproverRemitterMapping;
 import org.egov.collection.entity.ReceiptHeader;
-import org.egov.collection.service.ApproverRemitterMappingService;
+import org.egov.collection.service.ApproverRemitterMapService;
 import org.egov.collection.service.ReceiptHeaderService;
+import org.egov.collection.service.spec.ReceiptApproverSpec;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
@@ -189,7 +190,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     private DesignationService designationService;
 
     @Autowired
-    private ApproverRemitterMappingService approverRemitterMappingService;
+    private ApproverRemitterMapService approverRemitterMapService;
 
     private String inboxItemDetails;
 
@@ -620,7 +621,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
 
     private boolean validateApproverRemitterMap() {
         User currentUser = collectionsUtil.getLoggedInUser();
-        ApproverRemitterMapping remitterMapping = approverRemitterMappingService.findByApproverIdAndIsActive(currentUser.getId(),
+        ApproverRemitterMapping remitterMapping = approverRemitterMapService.findByApproverIdAndIsActive(currentUser.getId(),
                 true);
         if (remitterMapping == null) {
             addActionError(getText("approvecollections.validation.approverremitter.map", Arrays.asList(currentUser.getName())));
@@ -681,7 +682,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
             }
         }
 
-        ReceiptHeaderService.ReceiptApproverSpec receiptApproverSpec = new ReceiptHeaderService.ReceiptApproverSpec(
+        ReceiptApproverSpec receiptApproverSpec = new ReceiptApproverSpec(
                 positionId, approverId, approverDesignationId, approverDepartmentId, receiptHeaderList, remarks);
         getSession().put(CollectionConstants.SESSION_VAR_RECEIPT_IDS, receiptIds);
 
@@ -726,7 +727,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
             }
         }
 
-        ReceiptHeaderService.ReceiptApproverSpec receiptApproverSpec = new ReceiptHeaderService.ReceiptApproverSpec(
+        ReceiptApproverSpec receiptApproverSpec = new ReceiptApproverSpec(
                 positionId, approverId, approverDesignationId, approverDepartmentId, receiptHeaderList, remarks);
         getSession().put(CollectionConstants.SESSION_VAR_RECEIPT_IDS, receiptIds);
         return receiptHeaderService.performWorkflow(wfAction, receiptApproverSpec);

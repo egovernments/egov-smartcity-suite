@@ -70,7 +70,7 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ApproverRemitterMapping;
 import org.egov.collection.entity.CollectionBankRemittanceReport;
 import org.egov.collection.entity.ReceiptHeader;
-import org.egov.collection.service.ApproverRemitterMappingService;
+import org.egov.collection.service.ApproverRemitterMapService;
 import org.egov.collection.service.RemittanceServiceImpl;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.Bankaccount;
@@ -95,6 +95,7 @@ import org.springframework.beans.factory.annotation.Autowired;
         @Result(name = BankRemittanceAction.INDEX, location = "chequeRemittance-index.jsp") })
 @ParentPackage("egov")
 public class ChequeRemittanceAction extends BaseFormAction {
+    private static final String APPROVER_LIST = "approverList";
     protected static final String PRINT_BANK_CHALLAN = "printBankChallan";
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(ChequeRemittanceAction.class);
@@ -132,7 +133,7 @@ public class ChequeRemittanceAction extends BaseFormAction {
     @Autowired
     private transient BankaccountHibernateDAO bankaccountHibernateDAO;
     @Autowired
-    ApproverRemitterMappingService mappingService;
+    ApproverRemitterMapService approverRemitterMapService;
 
     private Double totalCashAmount;
     private Double totalChequeAmount;
@@ -190,7 +191,7 @@ public class ChequeRemittanceAction extends BaseFormAction {
         } else
             addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
         addDropdownData("financialYearList", financialYearDAO.getAllActivePostingAndNotClosedFinancialYears());
-        addDropdownData("approverList", mappingService.getApprovers(collectionsUtil.getLoggedInUser()));
+        addDropdownData(APPROVER_LIST, approverRemitterMapService.getApprovers(collectionsUtil.getLoggedInUser()));
     }
 
     @Action(value = "/receipts/chequeRemittance-listData")
@@ -212,10 +213,10 @@ public class ChequeRemittanceAction extends BaseFormAction {
 
         String approverIdList = CollectionConstants.BLANK;
         if (!isBankCollectionRemitter) {
-            if (getDropdownData().get("approverList").isEmpty())
+            if (getDropdownData().get(APPROVER_LIST).isEmpty())
                 addActionError(getText("remittance.noapprovermapped"));
             if (approverId == null || Integer.parseInt(approverId) < 0) {
-                approverIdList = ((List<ApproverRemitterMapping>) getDropdownData().get("approverList"))
+                approverIdList = ((List<ApproverRemitterMapping>) getDropdownData().get(APPROVER_LIST))
                         .stream()
                         .map(m -> m.getApprover().getId().toString())
                         .collect(Collectors.joining(CollectionConstants.SEPARATOR_COMMA));

@@ -100,7 +100,7 @@ table.result-table {
     }
 </script>
 
-<form:form modelAttribute="approverRemitterMappingSpec" method="post" role="form">
+<form:form modelAttribute="mapspec" method="post" role="form">
 
     <div class="formmainbox">
         <div class="subheadnew">
@@ -122,10 +122,10 @@ table.result-table {
                             <spring:message code="lbl.select.option" />
                         </form:option>
                         <optgroup label='<spring:message code="lbl.mapped.approver" />'>
-                            <form:options items="${activeMappedApproverList}" itemValue="id" itemLabel="name" />
+                            <form:options items="${activeApproverList}" itemValue="id" itemLabel="name" />
                         </optgroup>
                         <optgroup label='<spring:message code="lbl.free.approver" />'>
-                            <form:options items="${freeApproverList}" itemValue="id" itemLabel="name" />
+                            <form:options items="${unmappedApproverList}" itemValue="id" itemLabel="name" />
                         </optgroup>
                     </form:select>
                 </td>
@@ -172,8 +172,8 @@ table.result-table {
 </form:form>
 
 <%-- Search Result --%>
-<form:form modelAttribute="modifyRequest"
-    action="edit" method="post" role="form">
+<form:form
+    action="edit" method="get" role="form">
     <div>
         <c:if test='${pageContext.request.method == "POST"}'>
         <table class="result-table">
@@ -185,7 +185,7 @@ table.result-table {
                 <th class="bluebgheadtd" style="text-align: left;">
                     <spring:message code="lbl.sno" />
                 </th>
-                <th class="bluebgheadtd">
+                <th class="bluebgheadtd" style="text-align: left;">
                     <spring:message code="lbl.approver" />
                 </th>
                 <th class="bluebgheadtd" style="text-align: left;">
@@ -197,7 +197,7 @@ table.result-table {
             </tr>
             </thead>
             <tbody>
-                <c:if test='${empty approverRemitterMappingList}'>
+                <c:if test='${empty maplist}'>
                     <tr>
                         <c:if test='${mode == "MODIFY"}'>
                             <td colspan='5'>
@@ -211,12 +211,11 @@ table.result-table {
                         </td>
                     </tr>
                 </c:if>
-                <c:forEach items="${approverRemitterMappingList}" var="mapping" varStatus="iStatus">
+                <c:forEach items="${maplist}" var="mapping" varStatus="iStatus">
                     <tr>
                         <c:if test='${mode == "MODIFY"}'>
                             <td>
-                                <form:radiobutton path="selectedId" value="${mapping.id}" onchange="onSelectChange(${iStatus.index})"/>
-                                <form:hidden path="selectedRow" value="${iStatus.count}" />
+                                <input type="radio" name="selectedId" value="${mapping.id}" onchange="onSelectChange(${iStatus.index})"/>
                             </td>
                         </c:if>
                         <td><c:out value="${iStatus.count}" /></td>

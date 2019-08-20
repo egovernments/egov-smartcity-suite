@@ -47,30 +47,51 @@
  */
 package org.egov.collection.service;
 
+import java.util.*;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.validation.constraints.NotNull;
+
+import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ApproverRemitterMapping;
 import org.egov.collection.repository.ApproverRemitterMappingRepository;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
 @Transactional
 @Service
-public class ApproverRemitterMappingService {
+public class ApproverRemitterMapService {
+
+    public enum ApproverType {
+        UNMAPPED, ACTIVELY_MAPPED
+    }
+
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Autowired
-    UserService userService;
+    @Qualifier("parentMessageSource")
+    private MessageSource collMessageSource;
 
     @Autowired
-    ApproverRemitterMappingRepository mappingRepository;
+    private UserService userService;
+
+    @Autowired
+    private ApproverRemitterMappingRepository mappingRepository;
+
+    private static final String[] EMPTY_ARGS = {};
 
     private boolean isValid(Long id) {
         return id != null && id > 0;
@@ -82,11 +103,9 @@ public class ApproverRemitterMappingService {
 
     public ApproverRemitterMapping findActiveMappingByApprover(Long approverID) {
         List<ApproverRemitterMapping> activeMaps = mappingRepository.findByApproverIdAndIsActive(approverID, true);
-        for (ApproverRemitterMapping map : activeMaps) {
-            if (map.getIsActive()) {
+        for (ApproverRemitterMapping map : activeMaps)
+            if (map.getIsActive())
                 return map;
-            }
-        }
         return null;
     }
 
@@ -95,69 +114,82 @@ public class ApproverRemitterMappingService {
     }
 
     public ApproverRemitterMapping findByApproverIdAndIsActive(long approverID, Boolean isActive) {
-        for (ApproverRemitterMapping map : mappingRepository.findByApproverIdAndIsActive(approverID, isActive)) {
+        for (ApproverRemitterMapping map : mappingRepository.findByApproverIdAndIsActive(approverID, isActive))
             if (map.getIsActive())
                 return map;
-        }
         return null;
     }
 
     public List<ApproverRemitterMapping> searchMappingBySpec(
-            ApproverRemitterMappingService.ApproverRemitterMappingSpec searchSpec) {
-        if (isValid(searchSpec.approverId) && isValid(searchSpec.remitterId) && isValid(searchSpec.isActive)) {
-            ApproverRemitterMapping mapping = mappingRepository.findByApproverIdAndRemitterIdAndIsActive(
-                    searchSpec.approverId, searchSpec.remitterId, searchSpec.isActive);
-            return mapping == null ? Collections.emptyList() : Collections.singletonList(mapping);
-        } else if (isValid(searchSpec.remitterId) && isValid(searchSpec.isActive)) {
-            return mappingRepository.findByRemitterIdAndIsActive(
-                    searchSpec.remitterId, searchSpec.isActive);
-        } else if (isValid(searchSpec.approverId) && isValid(searchSpec.isActive)) {
-            return mappingRepository.findByApproverIdAndIsActive(
-                    searchSpec.approverId, searchSpec.isActive);
-        } else if (isValid(searchSpec.approverId) && isValid(searchSpec.remitterId)) {
-            ApproverRemitterMapping mapping = mappingRepository.findByApproverIdAndRemitterId(
-                    searchSpec.approverId, searchSpec.remitterId);
-            return mapping == null ? Collections.emptyList() : Collections.singletonList(mapping);
-        } else if (isValid(searchSpec.approverId)) {
-            return mappingRepository.findByApproverId(
-                    searchSpec.approverId);
-        } else if (isValid(searchSpec.remitterId)) {
-            return mappingRepository.findByRemitterId(
-                    searchSpec.remitterId);
-        } else if (isValid(searchSpec.isActive)) {
-            return mappingRepository.findByIsActive(
-                    searchSpec.isActive);
-        } else {
-            return mappingRepository.findAll();
+            ApproverRemitterSpec searchSpec) {
+
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<ApproverRemitterMapping> query = builder.createQuery(ApproverRemitterMapping.class);
+        Root r = query.from(ApproverRemitterMapping.class);
+        query.select(r);
+        List<Predicate> predicateList = new ArrayList<>(3);
+
+        if (isValid(searchSpec.isActive))
+            predicateList.add(builder.equal(r.get("isActive"), searchSpec.isActive));
+        if (isValid(searchSpec.approverId))
+            predicateList.add(builder.equal(r.get("approver").get("id"), searchSpec.approverId));
+        if (isValid(searchSpec.remitterId))
+            predicateList.add(builder.equal(r.get("remitter").get("id"), searchSpec.remitterId));
+
+        Predicate combinedPredicate;
+        switch (predicateList.size()) {
+        case 1:
+            combinedPredicate = predicateList.get(0);
+            break;
+        case 2:
+            combinedPredicate = builder.and(predicateList.get(0), predicateList.get(1));
+            break;
+        case 3:
+            combinedPredicate = builder.and(predicateList.get(0), predicateList.get(1), predicateList.get(2));
+            break;
+        default:
+            combinedPredicate = builder.conjunction();
         }
+
+        query.where(combinedPredicate);
+
+        TypedQuery<ApproverRemitterMapping> typedQuery = entityManager.createQuery(query);
+        return typedQuery.getResultList();
     }
 
-    public boolean validateAndUpdateMapping(ApproverRemitterMappingSpec mappingSpec, BindingResult bindingResult) {
+    public boolean validateAndUpdateMapping(ApproverRemitterSpec mappingSpec, BindingResult bindingResult) {
         ApproverRemitterMapping mapping;
         if (mappingSpec.id == null || (mapping = mappingRepository.findOne(mappingSpec.id)) == null) {
-            bindingResult.reject("mapping.404", "Mapping not found");
+            bindingResult.reject("mapping.404");
             return false;
         }
         validateMapRequest(mappingSpec.id, mappingSpec.approverId, mappingSpec.remitterId, mappingSpec.isActive, bindingResult);
+        mappingSpec.setApproverName(mapping.getApprover().getName());
         if (bindingResult.hasErrors())
             return false;
 
         User approver = userService.getUserById(mappingSpec.approverId);
         User remitter = userService.getUserById(mappingSpec.remitterId);
         if (approver == null) {
-            bindingResult.reject("validate.approver.404", "User for approver not found");
+            bindingResult.reject("validate.approver.404",
+                    collMessageSource.getMessage("validate.approver.404", EMPTY_ARGS, Locale.getDefault()));
             return false;
         }
         if (remitter == null) {
-            bindingResult.reject("validate.remitter.404", "User for remitter not found");
+            bindingResult.reject("validate.remitter.404",
+                    collMessageSource.getMessage("validate.remitter.404", EMPTY_ARGS, Locale.getDefault()));
             return false;
         }
 
+        updateMapping(mappingSpec, mapping, approver, remitter);
+        return true;
+    }
+
+    public void updateMapping(ApproverRemitterSpec mappingSpec, ApproverRemitterMapping mapping, User approver, User remitter) {
         mapping.setApprover(approver);
         mapping.setRemitter(remitter);
         mapping.setIsActive(mappingSpec.isActive);
         mappingRepository.save(mapping);
-        return true;
     }
 
     private void validateMapRequest(Long mapId, Long approverId, Long remitterId, Boolean isActive, BindingResult bindingResult) {
@@ -165,12 +197,14 @@ public class ApproverRemitterMappingService {
         ApproverRemitterMapping activeMap = null;
 
         if (approverId == null || approverId < 1) {
-            bindingResult.rejectValue("approverId", "validate.mapping.approver");
+            bindingResult.rejectValue("approverId", "validate.mapping.approver",
+                    collMessageSource.getMessage("validate.mapping.approver", EMPTY_ARGS, Locale.getDefault()));
             return;
         }
 
         if (remitterId == null || remitterId < 1) {
-            bindingResult.rejectValue("remitterId", "validate.mapping.remitter");
+            bindingResult.rejectValue("remitterId", "validate.mapping.remitter",
+                    collMessageSource.getMessage("validate.mapping.remitter", EMPTY_ARGS, Locale.getDefault()));
             return;
         }
 
@@ -181,28 +215,34 @@ public class ApproverRemitterMappingService {
                 sameMap = map;
         }
 
-        if ((mapId != null &&
-                ((isActive && activeMap != null && !mapId.equals(activeMap.getId()))
-                        || (!isActive && sameMap != null && !mapId.equals(sameMap.getId()))))
-                || (mapId == null && (sameMap != null || activeMap != null))) {
+        if (mapId != null &&
+                (sameMap != null && !mapId.equals(sameMap.getId())
+                        || isActive && activeMap != null && !mapId.equals(activeMap.getId()))
+                ||
+                mapId == null &&
+                        (sameMap != null || activeMap != null))
             bindingResult.reject("validate.mapping.exists",
-                    String.format("Mapping already exists"));
-        }
+                    collMessageSource.getMessage("validate.mapping.exists", EMPTY_ARGS, Locale.getDefault()));
     }
 
-    public boolean validateAndCreateMapping(ApproverRemitterMappingSpec spec, BindingResult bindingResult) {
+    public boolean validateAndCreateMapping(ApproverRemitterSpec spec, BindingResult bindingResult) {
         if (spec.getApproverIdList() == null || spec.getApproverIdList().isEmpty()) {
-            bindingResult.rejectValue("approverIdList", "validation.required", "Please select at least one approver");
+            bindingResult.rejectValue("approverIdList", "validate.mapping.approver");
             return false;
         }
 
-        for (Long approverId : spec.approverIdList) {
+        for (Long approverId : spec.approverIdList)
             validateMapRequest(null, approverId, spec.remitterId, spec.isActive, bindingResult);
-        }
 
         if (bindingResult.hasErrors())
             return false;
 
+        createMapping(spec);
+
+        return true;
+    }
+
+    private void createMapping(ApproverRemitterSpec spec) {
         List<ApproverRemitterMapping> newMappingList = new ArrayList<>(spec.approverIdList.size());
         for (Long approverId : spec.approverIdList) {
             ApproverRemitterMapping mapping = new ApproverRemitterMapping();
@@ -213,8 +253,6 @@ public class ApproverRemitterMappingService {
         }
 
         mappingRepository.save(newMappingList);
-
-        return true;
     }
 
     public ApproverRemitterMapping findById(Long mappingId) {
@@ -230,12 +268,27 @@ public class ApproverRemitterMappingService {
     }
 
     /**
+     * Return both mapped and unmapped set of approvers as a pair. The union of both set is complete set of Approvers.
+     * @return Pair of two User set, which are mapped and unmapped approvers
+     */
+    public Map<ApproverType, Set<User>> getCollectionAprovers() {
+        Set<User> allApproverSet = userService.getUsersByRoleName(CollectionConstants.ROLE_COLLECTION_APPROVER);
+        Set<User> activelyMappedApproverSet = getActivelyMappedApprover();
+        // after removal from allApproverSet contails only unmapped approvers
+        allApproverSet.removeAll(activelyMappedApproverSet);
+
+        Map<ApproverType, Set<User>> approverMap = new EnumMap<>(ApproverType.class);
+        approverMap.put(ApproverType.ACTIVELY_MAPPED, activelyMappedApproverSet);
+        approverMap.put(ApproverType.UNMAPPED, allApproverSet);
+        return approverMap;
+    }
+
+    /**
      * Lightweight POJO to pass the data between UI and backend
      */
-    public static class ApproverRemitterMappingSpec {
+    public static class ApproverRemitterSpec {
         private Long id; // mapping id
 
-        // @NotNull(message = "validate.mapping.approver")
         private Long approverId;
 
         private List<Long> approverIdList;
@@ -250,8 +303,8 @@ public class ApproverRemitterMappingService {
         private String approverName;
         private String remitterName;
 
-        public static ApproverRemitterMappingSpec of(ApproverRemitterMapping mapping) {
-            ApproverRemitterMappingSpec spec = new ApproverRemitterMappingSpec();
+        public static ApproverRemitterSpec of(ApproverRemitterMapping mapping) {
+            ApproverRemitterSpec spec = new ApproverRemitterSpec();
             spec.id = mapping.getId();
             spec.approverId = mapping.getApprover().getId();
             spec.remitterId = mapping.getRemitter().getId();

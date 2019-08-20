@@ -92,9 +92,9 @@ table {
 <script>
 
     var originalValue = {
-        approverId: '<c:out value="${approverRemitterMappingSpec.approverId}" />',
-        remitterId: '<c:out value="${approverRemitterMappingSpec.remitterId}" />',
-        isActive: '<c:out value="${approverRemitterMappingSpec.isActive}" />',
+        approverId: '<c:out value="${mapspec.approverId}" />',
+        remitterId: '<c:out value="${mapspec.remitterId}" />',
+        isActive: '<c:out value="${mapspec.isActive}" />',
         approverIdList: ''
     };
 	
@@ -112,6 +112,9 @@ table {
         jQuery("select").each(function(idx, element) {
         	var $element = $(element);
         	var val = $element.val();
+        	if(element.disabled) {
+        	    return;
+        	}
         	if(!val || val.length === 0 || (jQuery.isArray(val) && val.indexOf("") !== -1)) {
         		missingFields.push($element.parent().prev().text());
         	}
@@ -130,19 +133,15 @@ table {
     }
     function onSubmitUpdate(event) {
     	checkForm(event);
-    	var mappingID = $('mapping-id').val();
-    	$("the-form").attr("action", "edit/" + mappingID);
     }
 	function onSubmitCreate(event) {
 		checkForm(event);
-    	$("the-form").attr("action", "create");
+    	$("#the-form").attr("action", "create");
 	}
 
 </script>
 
-<form:form id="the-form" modelAttribute="approverRemitterMappingSpec" method="post" role="form">
-
-	<form:hidden id="mapping-id" path="id" value="${id}" />
+<form:form id="the-form" modelAttribute="mapspec" method="post" role="form">
 
     <div class="formmainbox">
         <div class="subheadnew">
@@ -154,7 +153,7 @@ table {
             </c:if>
         </div>
 
-        <spring:bind path="approverRemitterMappingSpec">
+        <spring:bind path="mapspec">
             <c:if test="${status.error == true}">
                 <div class="error-area">
                     <ul>
@@ -175,36 +174,37 @@ table {
                                 <spring:message code="lbl.select" />
                             </form:option>
                              <optgroup label='<spring:message code="lbl.free.approver" />'>
-                                <form:options items="${freeApproverList}" itemValue="id" itemLabel="name" />
+                                <form:options items="${unmappedApproverList}" itemValue="id" itemLabel="name" />
                              </optgroup>
                              <optgroup label='<spring:message code="lbl.mapped.approver" />' disabled="true">
-                                <form:options items="${activeMappedApproverList}" itemValue="id" itemLabel="name" />
+                                <form:options items="${activelyMappedApproverList}" itemValue="id" itemLabel="name" />
                              </optgroup>
                         </form:select>
                         <form:errors path="approverIdList" cssClass="error-msg"/>
                     </c:if>
 
                     <c:if test='${mode == "MODIFY"}'>
-                        <form:hidden path="approverId" value="${approverId}" />
+                    	<%-- <form:hidden path="mappingId" value="${id}" /> --%>
+                    	<input type="hidden" name="id" value="${mapspec.id}" />
+                    	<form:hidden path="approverId" value="${approverId}" />
                         <form:select path="approverId" value="${approverId}" disabled="true">
                             <form:option value="">
                                 <spring:message code="lbl.select.option" />
                             </form:option>
                              <optgroup label='<spring:message code="lbl.current.approver" />'>
-                                <form:option value="${approverRemitterMappingSpec.approverId}">
-                                    <c:out value="${approverRemitterMappingSpec.approverName}" />
+                                <form:option value="${mapspec.approverId}">
+                                    <c:out value="${mapspec.approverName}" />
                                 </form:option>
                              </optgroup>
                              <optgroup label='<spring:message code="lbl.free.approver" />'>
-                                <form:options items="${freeApproverList}" itemValue="id" itemLabel="name" />
+                                <form:options items="${unmappedApproverList}" itemValue="id" itemLabel="name" />
                              </optgroup>
                              <optgroup label='<spring:message code="lbl.mapped.approver" />' disabled="true">
-                                <form:options items="${activeMappedApproverList}" itemValue="id" itemLabel="name" />
+                                <form:options items="${activelyMappedApproverList}" itemValue="id" itemLabel="name" />
                              </optgroup>
                         </form:select>
                         <form:errors path="approverId" cssClass="error-msg"/>
                     </c:if>
-
                 </td>
                 <td class="bluebox"><spring:message code="lbl.remitter" /><span class="mandatory"></span></td>
                 <td class="bluebox">
@@ -243,7 +243,7 @@ table {
             <spring:message code="lbl.common.mandatoryfields" />
         </div>
         <br />
-    </div> <%-- .formmainbox --%>
+    </div> 
 
     <div class="buttonbottom">
     	<c:if test='${mode == "MODIFY"}'>
@@ -262,4 +262,4 @@ table {
         <input name="close" type="button" class="button"
             onclick="window.close()" value='<spring:message code="lbl.close" />' />
     </div>
-</form:form>
+</form:form>l

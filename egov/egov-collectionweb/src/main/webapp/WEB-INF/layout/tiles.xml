@@ -74,19 +74,19 @@
         <put-attribute name="body" value="/WEB-INF/views/citizen/reports/onlinePaymentReport-form.jsp"/>
     </definition>
 
-    <definition name="approverRemitterMapping-view" extends="base_layout">
+    <definition name="approverRemitterMap-view" extends="base_layout">
         <put-attribute name="page-title" value="title.approverRemitterMapping" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/master/approverRemitterMapping-view.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/approverRemitterMap-view.jsp"/>
     </definition>
 
-    <definition name="approverRemitterMapping-update" extends="base_layout">
+    <definition name="approverRemitterMap-update" extends="base_layout">
         <put-attribute name="page-title" value="title.approverRemitterMapping" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/master/approverRemitterMapping-update.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/approverRemitterMap-update.jsp"/>
     </definition>
 
-    <definition name="approverRemitterMapping-error" extends="base_layout">
+    <definition name="approverRemitterMap-error" extends="base_layout">
         <put-attribute name="page-title" value="title.approverRemitterMapping" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/master/approverRemitterMapping-error.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/approverRemitterMap-error.jsp"/>
     </definition>
 
 </tiles-definitions>

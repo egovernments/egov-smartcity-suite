@@ -68,7 +68,7 @@ import static org.hibernate.jpa.QueryHints.HINT_CACHEABLE;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>, RevisionRepository<User, Long, Integer> {
 
-    @QueryHints({@QueryHint(name = HINT_CACHEABLE, value = "true")})
+    @QueryHints({ @QueryHint(name = HINT_CACHEABLE, value = "true") })
     User findByUsername(String userName);
 
     List<User> findByNameContainingIgnoreCase(String userName);
@@ -89,6 +89,9 @@ public interface UserRepository extends JpaRepository<User, Long>, RevisionRepos
     @Query("select distinct usr from User usr, IN (usr.roles) role where role.name = :roleName ")
     Set<User> findUsersByRoleName(@Param("roleName") String roleName);
 
+    @Query("select distinct usr from User usr, IN (usr.roles) role where role.name IN (:roleNameList)")
+    Set<User> findUsersByRoles(@Param("roleNameList") List<String> roleNameList);
+    
     @Query("select distinct usr from User usr, IN (usr.roles) role where role.name = :roleName and usr.username = :usrName ")
     List<User> findUsersByUserAndRoleName(@Param("usrName") String userName, @Param("roleName") String roleName);
 
@@ -96,6 +99,6 @@ public interface UserRepository extends JpaRepository<User, Long>, RevisionRepos
     Integer getUserSerialNumberByName(@Param("name") final String name);
 
     User findByNameAndMobileNumberAndGender(String name, String mobileNumber, Gender gender);
-    
-    List<User> findByMobileNumberAndType(String mobileNumber,UserType type);
+
+    List<User> findByMobileNumberAndType(String mobileNumber, UserType type);
 }

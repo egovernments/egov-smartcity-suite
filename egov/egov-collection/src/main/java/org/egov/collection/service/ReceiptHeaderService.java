@@ -76,6 +76,7 @@ import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.BillReceiptReq;
 import org.egov.collection.integration.models.ReceiptCancellationInfo;
 import org.egov.collection.integration.services.BillingIntegrationService;
+import org.egov.collection.service.spec.ReceiptApproverSpec;
 import org.egov.collection.utils.CollectionsNumberGenerator;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.collection.utils.FinancialsUtil;
@@ -144,7 +145,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     protected SecurityUtils securityUtils;
 
     @Autowired
-    private ApproverRemitterMappingService remitterMappingService;
+    private ApproverRemitterMapService approverRemitterMapService;
 
     @Autowired
     protected AssignmentService assignmentService;
@@ -961,7 +962,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     @Transactional
     public void performWorkflowForApprove(final List<ReceiptHeader> receiptHeaderList, final String remarks) {
         User currentUser = collectionsUtil.getLoggedInUser();
-        ApproverRemitterMapping remitterMapping = remitterMappingService.findActiveMappingByApprover(currentUser.getId());
+        ApproverRemitterMapping remitterMapping = approverRemitterMapService.findActiveMappingByApprover(currentUser.getId());
         if (remitterMapping == null) {
             throw new ValidationException(new ValidationError(
                     "no.remitter.exists",
@@ -1363,23 +1364,4 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             throw new ValidationException(new ValidationError("validationMsg", receiptCancellationInfo.getValidationMessage()));
     }
 
-    public static class ReceiptApproverSpec {
-        Long positionID;
-        Long approverID;
-        Long designationID;
-        Long departmentID;
-        List<ReceiptHeader> receiptHeaderList;
-        String remarks;
-
-        public ReceiptApproverSpec(Long positionID, Long approverID, Long designationID, Long departmentID,
-                List<ReceiptHeader> receiptHeaderList,
-                String remarks) {
-            this.positionID = positionID;
-            this.approverID = approverID;
-            this.designationID = designationID;
-            this.departmentID = departmentID;
-            this.receiptHeaderList = receiptHeaderList;
-            this.remarks = remarks;
-        }
-    }
 }
