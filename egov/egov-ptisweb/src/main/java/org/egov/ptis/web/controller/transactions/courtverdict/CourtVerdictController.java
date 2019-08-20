@@ -55,6 +55,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CV_FORM;
 import static org.egov.ptis.constants.PropertyTaxConstants.CV_SUCCESS_FORM;
 import static org.egov.ptis.constants.PropertyTaxConstants.ENDORSEMENT_NOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOGGED_IN_USER;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.RE_ASSESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATE_TYPE;
@@ -62,7 +63,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.SUCCESS_MSG;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
 import static org.egov.ptis.constants.PropertyTaxConstants.UPDATE_DEMAND_DIRECTLY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_ACTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -83,7 +83,6 @@ import org.egov.ptis.bean.demand.DemandDetail;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
-import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.CourtVerdict;
@@ -115,8 +114,6 @@ public class CourtVerdictController extends GenericWorkFlowController {
     private EntityManager entityManager;
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
-    @Autowired
-    private PropertyDAO propertyDAO;
     @Autowired
     private PropertyService propertyService;
 
@@ -167,7 +164,6 @@ public class CourtVerdictController extends GenericWorkFlowController {
         User loggedInUser = securityUtils.getCurrentUser();
         propertyService.isCitizenPortalUser(loggedInUser);
         PropertyCourtCase propCourtCase = propCourtCaseService.getByAssessmentNo(assessmentNo);
-        List<PropertyImpl> props =propertyDAO.getAllProperties(courtVerdict.getBasicProperty());
         if (propCourtCase != null) {
             List<Map<String, String>> legalCaseDetails = propertyTaxCommonUtils.getLegalCaseDetails(
                     propCourtCase.getCaseNo(),
@@ -186,14 +182,6 @@ public class CourtVerdictController extends GenericWorkFlowController {
             model.addAttribute("wfPendingMsg",
                     "Could not do Court Verdict now, mark the property under court case");
             return TARGET_WORKFLOW_ERROR;
-        }
-        for (PropertyImpl prop : props) {
-            if (prop.getPropertyModifyReason().equalsIgnoreCase("COURTVERDICT")
-                    && (prop.getStatus().equals('A') || prop.getStatus().equals('H'))) {
-                model.addAttribute("wfPendingMsg",
-                        "Court Verdict is already completed for this property.");
-                return TARGET_WORKFLOW_ERROR;
-            }
         }
         if (basicProperty.isUnderWorkflow()
                 || courtVerdict.getCurrentState() != null) {

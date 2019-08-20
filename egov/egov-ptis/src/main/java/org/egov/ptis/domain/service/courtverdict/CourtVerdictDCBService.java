@@ -169,7 +169,7 @@ public class CourtVerdictDCBService extends TaxCollection {
                     isUpdateCollection = true;
 
                 if (isUpdateAmount) {
-                    DemandDetailVariation dmdVar = persistDemandDetailVariation(dmdDetails, dmdDetailBean.getRevisedAmount(),
+                    DemandDetailVariation dmdVar = persistDemandDetailVariation(dmdDetails, dmdDetailBean.getActualAmount().subtract(dmdDetailBean.getRevisedAmount()),
                             COURTCASE);
                     Set<DemandDetailVariation> variationSet = new HashSet<>();
                     variationSet.add(dmdVar);
