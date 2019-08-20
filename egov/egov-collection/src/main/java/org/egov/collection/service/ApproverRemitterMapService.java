@@ -125,16 +125,16 @@ public class ApproverRemitterMapService {
 
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<ApproverRemitterMapping> query = builder.createQuery(ApproverRemitterMapping.class);
-        Root r = query.from(ApproverRemitterMapping.class);
-        query.select(r);
+        Root root = query.from(ApproverRemitterMapping.class);
+        query.select(root);
         List<Predicate> predicateList = new ArrayList<>(3);
 
         if (isValid(searchSpec.isActive))
-            predicateList.add(builder.equal(r.get("isActive"), searchSpec.isActive));
+            predicateList.add(builder.equal(root.get("isActive"), searchSpec.isActive));
         if (isValid(searchSpec.approverId))
-            predicateList.add(builder.equal(r.get("approver").get("id"), searchSpec.approverId));
+            predicateList.add(builder.equal(root.get("approver").get("id"), searchSpec.approverId));
         if (isValid(searchSpec.remitterId))
-            predicateList.add(builder.equal(r.get("remitter").get("id"), searchSpec.remitterId));
+            predicateList.add(builder.equal(root.get("remitter").get("id"), searchSpec.remitterId));
 
         Predicate combinedPredicate;
         switch (predicateList.size()) {

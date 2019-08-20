@@ -684,7 +684,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     // TODO Implement separate API for Microservice billing services
                     final BillReceiptInfo billReceipt = new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
                             persistenceService, null);
-                    collectionsUtil.updateReceiptDetailsAndGetReceiptAmountInfo(new BillReceiptReq(billReceipt),
+                    microserviceBillingUtil.updateReceiptDetailsAndGetReceiptAmountInfo(new BillReceiptReq(billReceipt),
                             receiptHeader.getService().getCode());
                 } else
                     updateBillingSystemWithReceiptInfo(receiptHeader, null, null);

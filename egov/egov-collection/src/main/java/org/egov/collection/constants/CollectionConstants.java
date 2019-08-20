@@ -147,7 +147,6 @@ public final class CollectionConstants {
     public static final String MODULE_NAME_INSTRUMENTHEADER = "Instrument";
     public static final String MODULE_NAME_ONLINEPAYMENT = "OnlinePayment";
     public static final String MODULE_NAME_REMITTANCE = "Remittance";
-    public static final String MODULE_NAME_PROPERTYTAX = "Property Tax";
     public static final String MODULE_NAME_DISHONORCHEQUE = "DishonorCheque";
 
     // AppConfig Values

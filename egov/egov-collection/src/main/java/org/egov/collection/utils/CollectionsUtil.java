@@ -73,7 +73,6 @@ import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
-import org.egov.collection.integration.models.BillReceiptInfoReq;
 import org.egov.collection.integration.models.BillReceiptReq;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.collection.integration.services.BillingIntegrationService;
@@ -100,7 +99,6 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Location;
-import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -132,7 +130,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 public class CollectionsUtil {
@@ -435,7 +432,7 @@ public class CollectionsUtil {
     }
 
     public String getDesignationForThirdPartyUser() {
-        String designation = "";
+        String designation = CollectionConstants.BLANK;
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                 CollectionConstants.COLLECTION_DESIGNATIONFORCSCOPERATOR);
@@ -570,7 +567,7 @@ public class CollectionsUtil {
         if (appConfValues != null && !appConfValues.isEmpty())
             return appConfValues.get(0).getValue();
         else
-            return "";
+            return CollectionConstants.BLANK;
     }
 
     /**
@@ -704,42 +701,6 @@ public class CollectionsUtil {
         return departments;
     }
 
-    /**
-     * This method checks if the given glcode belongs to an account head representing an arrear account head (for Property Tax).
-     * The glcodes for such accounts are retrieved from App Config.
-     *
-     * @param glcode The Chart of Accounts Code
-     * @param description Description of the glcode
-     * @returna a <code>Boolean</code> indicating if the glcode is arrear account head
-     */
-    public boolean isPropertyTaxArrearAccountHead(final String glcode, final String description) {
-        final List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(
-                CollectionConstants.MODULE_NAME_PROPERTYTAX, "ISARREARACCOUNT");
-        final AppConfigValues penaltyGlCode = appConfigValuesService.getAppConfigValueByDate(
-                CollectionConstants.MODULE_NAME_PROPERTYTAX, "PTPENALTYGLCODE", new Date());
-        boolean retValue;
-        LOGGER.debug("isPropertyTaxArrearAccountHead glcode " + glcode + " description " + description);
-        if (penaltyGlCode != null && penaltyGlCode.getValue().equals(glcode)) {
-            final Module module = moduleService.getModuleByName(CollectionConstants.MODULE_NAME_PROPERTYTAX);
-            final String currInst = installmentHibDao.getInsatllmentByModuleForGivenDate(module, new Date())
-                    .getDescription();
-            if (currInst.equals(description.substring(16, description.length())))
-                retValue = false;
-            else
-                retValue = true;
-        } else {
-            final ArrayList<String> accValues = new ArrayList<>(0);
-            for (final AppConfigValues value : list)
-                accValues.add(value.getValue());
-            if (accValues.contains(glcode))
-                retValue = true;
-            else
-                retValue = false;
-        }
-
-        return retValue;
-    }
-
     public List<EmployeeView> getPositionBySearchParameters(final String beginsWith, final Integer desId,
             final Integer deptId, final Integer jurdId, final Integer roleId, final Date userDate,
             final Integer maxResults) throws NoSuchObjectException {
@@ -785,34 +746,6 @@ public class CollectionsUtil {
 
     public ReportOutput createReport(final ReportRequest reportRequest) {
         return reportService.createReport(reportRequest);
-    }
-
-    public ReceiptAmountInfo updateReceiptDetailsAndGetReceiptAmountInfo(final BillReceiptReq billReceipt,
-            final String serviceCode) {
-        final RestTemplate restTemplate = new RestTemplate();
-        billReceipt.setTenantId(microserviceUtils.getTanentId());
-        final BillReceiptInfoReq billReceiptInfoReq = new BillReceiptInfoReq();
-        billReceiptInfoReq.setBillReceiptInfo(billReceipt);
-        billReceiptInfoReq.setRequestInfo(microserviceUtils.createRequestInfo());
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("updateReceiptDetailsAndGetReceiptAmountInfo - before calling LAMS update");
-        final String url = collectionApplicationProperties.getLamsServiceUrl().concat(
-                collectionApplicationProperties.getUpdateDemandUrl(serviceCode.toLowerCase()));
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("updateReceiptDetailsAndGetReceiptAmountInfo - url" + url);
-        ReceiptAmountInfo receiptAmountInfo = null;
-        try {
-            receiptAmountInfo = restTemplate.postForObject(url, billReceiptInfoReq, ReceiptAmountInfo.class);
-
-        } catch (final Exception e) {
-            final String errMsg = "Exception while updateReceiptDetailsAndGetReceiptAmountInfo for bill number  ["
-                    + billReceipt.getBillReferenceNum() + "]!";
-            LOGGER.error(errMsg, e);
-            throw new ApplicationRuntimeException(errMsg, e);
-        }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("updateReceiptDetailsAndGetReceiptAmountInfo - response" + receiptAmountInfo);
-        return receiptAmountInfo;
     }
 
     public CollectionIndex constructCollectionIndex(final ReceiptHeader receiptHeader) {
@@ -1133,7 +1066,7 @@ public class CollectionsUtil {
             }
             return jurValuesId.toString();
         } else
-            return "";
+            return CollectionConstants.BLANK;
     }
 
     /**
@@ -1174,7 +1107,7 @@ public class CollectionsUtil {
 
     public Set<User> getConfiguredRemitters() {
         List<String> remitterRoleList = getAppConfigValues(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                CollectionConstants.APPCONFIG_VALUE_COLLECTION_REMITTER_ROLE).stream().map(c -> c.getValue())
+                CollectionConstants.APPCONFIG_VALUE_COLLECTION_REMITTER_ROLE).stream().map(appconfig -> appconfig.getValue())
                         .collect(Collectors.toList());
         if (remitterRoleList.isEmpty())
             remitterRoleList.add(CollectionConstants.ROLE_COLLECTION_REMITTER);

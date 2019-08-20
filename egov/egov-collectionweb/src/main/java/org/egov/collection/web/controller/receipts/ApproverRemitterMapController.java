@@ -56,6 +56,8 @@ import javax.validation.Valid;
 
 import org.egov.collection.entity.ApproverRemitterMapping;
 import org.egov.collection.service.ApproverRemitterMapService;
+import org.egov.collection.service.ApproverRemitterMapService.ApproverRemitterSpec;
+import org.egov.collection.service.ApproverRemitterMapService.ApproverType;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.infra.admin.master.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,8 +70,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import static org.egov.collection.service.ApproverRemitterMapService.*;
 
 @Controller
 @RequestMapping(path = "/receipts/approverRemitterMapping")
@@ -164,8 +164,8 @@ public class ApproverRemitterMapController {
 
     @PostMapping("/edit")
     public String edit(
-        @RequestParam("id") Long id,
-        @Valid @ModelAttribute(ATTR_MAP_SPEC) ApproverRemitterSpec approverRemitterSpec,
+            @RequestParam("id") Long id,
+            @Valid @ModelAttribute(ATTR_MAP_SPEC) ApproverRemitterSpec approverRemitterSpec,
             BindingResult bindingResult,
             Model model) {
         approverRemitterSpec.setId(id);
