@@ -177,7 +177,7 @@ table {
                                 <form:options items="${unmappedApproverList}" itemValue="id" itemLabel="name" />
                              </optgroup>
                              <optgroup label='<spring:message code="lbl.mapped.approver" />' disabled="true">
-                                <form:options items="${activelyMappedApproverList}" itemValue="id" itemLabel="name" />
+                                <form:options items="${activeApproverList}" itemValue="id" itemLabel="name" />
                              </optgroup>
                         </form:select>
                         <form:errors path="approverIdList" cssClass="error-msg"/>
@@ -200,7 +200,7 @@ table {
                                 <form:options items="${unmappedApproverList}" itemValue="id" itemLabel="name" />
                              </optgroup>
                              <optgroup label='<spring:message code="lbl.mapped.approver" />' disabled="true">
-                                <form:options items="${activelyMappedApproverList}" itemValue="id" itemLabel="name" />
+                                <form:options items="${activeApproverList}" itemValue="id" itemLabel="name" />
                              </optgroup>
                         </form:select>
                         <form:errors path="approverId" cssClass="error-msg"/>

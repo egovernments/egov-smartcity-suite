@@ -60,7 +60,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ApproverRemitterMappingRepository
         extends JpaRepository<ApproverRemitterMapping, Long>, JpaSpecificationExecutor<ApproverRemitterMapping> {
-    ApproverRemitterMapping findByApprover(User approver);
+
+    List<ApproverRemitterMapping> findByApprover(User approver);
 
     List<ApproverRemitterMapping> findByApproverId(Long approverId);
 

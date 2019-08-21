@@ -99,7 +99,7 @@ public class ApproverRemitterMapping extends AbstractAuditable implements Compar
     }
 
     @Override
-    protected void setId(Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -137,6 +137,12 @@ public class ApproverRemitterMapping extends AbstractAuditable implements Compar
         return -1;
     }
 
+    /**
+     * This equality check considers the following 1. Both are of same type. i.e. {@link ApproverRemitterMapping} 2. id of both
+     * mapping are same 3. approver & remitter are same 4. approver are identical and both are active mapping
+     * @param o the other object
+     * @return
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -150,8 +156,11 @@ public class ApproverRemitterMapping extends AbstractAuditable implements Compar
             return false;
 
         ApproverRemitterMapping mapping = (ApproverRemitterMapping) o;
-        return Objects.equals(getId(), mapping.getId()) || (Objects.equals(getApprover(), mapping.getApprover())
-                && Objects.equals(getRemitter(), mapping.getRemitter()));
+        return Objects.equals(getId(), mapping.getId()) ||
+                (Objects.equals(getApprover(), mapping.getApprover())
+                        && Objects.equals(getRemitter(), mapping.getRemitter()))
+                || (Objects.equals(getApprover(), mapping.getApprover()) && isActive
+                        && Objects.equals(getIsActive(), mapping.getIsActive()));
 
     }
 
