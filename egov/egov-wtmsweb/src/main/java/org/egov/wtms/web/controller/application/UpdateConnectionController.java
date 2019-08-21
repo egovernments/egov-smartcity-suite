@@ -256,7 +256,8 @@ public class UpdateConnectionController extends GenericConnectionController {
 			model.addAttribute(MESSAGE, MSG_WATER_CHARGES_DUE);
 			return NEWCONNECTION_EDIT;
 		} else if (CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
-				&& APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
+				&& (APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
+						|| APPLICATION_STATUS_FEEPAID.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))
 				&& waterEstimationChargesPaymentService.getEstimationDueAmount(waterConnectionDetails)
 						.compareTo(BigDecimal.ZERO) > 0 ? true : false) {
 			model.addAttribute(MESSAGE, MSG_WATER_ESTIMATION_CHARGES_DUE);
