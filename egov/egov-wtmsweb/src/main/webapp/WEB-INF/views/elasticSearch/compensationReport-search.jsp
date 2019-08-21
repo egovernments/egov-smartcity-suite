@@ -111,8 +111,8 @@
 								><spring:message code='lbl.search' /></button>
 								
 							<button class="btn btn-danger" type="reset" ><spring:message code="lbl.reset"/></button>
-							<a href="javascript:void(0);" id="closeComplaints"
-								class="btn btn-default" onclick="window.close()"><spring:message code='lbl.close' /></a>
+							<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()">
+									<spring:message code="lbl.close" /></a>
 						</div>
 			    	</div>
 				</form:form>
