@@ -99,8 +99,8 @@ public class ApproverRemitterMapService {
         return id != null && id > 0;
     }
 
-    private static boolean isValid(Boolean c) {
-        return c != null;
+    private static boolean isValid(Boolean isActive) {
+        return isActive != null;
     }
 
     public ApproverRemitterMapping findActiveMappingByApprover(Long approverID) {
@@ -253,8 +253,8 @@ public class ApproverRemitterMapService {
             ApproverRemitterMapping approverRemitterMapping = new ApproverRemitterMapping();
             approverRemitterMapping.setId(spec.id);
             approverRemitterMapping.setIsActive(spec.isActive);
-            approverRemitterMapping.setApprover(isValid(spec.approverId) ? userService.getUserById(spec.approverId) : null);
-            approverRemitterMapping.setRemitter(isValid(spec.remitterId) ? userService.getUserById(spec.remitterId) : null);
+            approverRemitterMapping.setApprover(userService.getUserById(spec.approverId));
+            approverRemitterMapping.setRemitter(userService.getUserById(spec.remitterId));
             return approverRemitterMapping;
         }
 

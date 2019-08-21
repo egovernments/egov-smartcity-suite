@@ -139,7 +139,7 @@ public class OnlineReceiptAction extends BaseFormAction {
     private Boolean callbackForApportioning;
     private String receiptNumber;
     private String consumerCode;
-    private String receiptResponse = "";
+    private String receiptResponse = CollectionConstants.BLANK;
     private ReceiptHeader receiptHeader;
     private String refNumber;
     private List<ServiceDetails> serviceDetailsList = new ArrayList<>(0);
@@ -158,6 +158,8 @@ public class OnlineReceiptAction extends BaseFormAction {
     private String payeeName;
     private List<ReceiptHeader> penidngTransaction = new ArrayList<>();
     private Long repayTransactionId;
+    private static final String REPAY_VALIDATION_KEY = "onlineReceipts.repay.validate";
+    private static final String VIEW_VALIDATION_KEY = "onlineReceipts.view.validate";
     @Autowired
     private ReconciliationService reconciliationService;
 
@@ -181,7 +183,7 @@ public class OnlineReceiptAction extends BaseFormAction {
         /**
          * initialise receipt info,persist receipt, create bill desk payment object and redirect to payment screen
          */
-        if ((callbackForApportioning != null && overrideAccountHeads != null) && callbackForApportioning && !overrideAccountHeads)
+        if (callbackForApportioning != null && overrideAccountHeads != null && callbackForApportioning && !overrideAccountHeads)
             apportionBillAmount();
         ServiceDetails paymentService = null;
         if (null != paymentServiceId && paymentServiceId > 0)
@@ -424,12 +426,12 @@ public class OnlineReceiptAction extends BaseFormAction {
         if (getRepayTransactionId() == null || penidngTransaction == null
                 || (getRepayTransactionId() != null && penidngTransaction
                         .stream().noneMatch(pendingReceipt -> pendingReceipt.getId().equals(getRepayTransactionId()))))
-            throw new ValidationException(Arrays.asList(new ValidationError("onlineReceipts.repay.validate",
-                    getText("onlineReceipts.repay.validate"))));
+            throw new ValidationException(Arrays.asList(new ValidationError(REPAY_VALIDATION_KEY,
+                    getText(REPAY_VALIDATION_KEY))));
         ReceiptHeader repayReceipt = receiptHeaderService.findById(getRepayTransactionId(), false);
         if (repayReceipt == null)
-            throw new ValidationException(Arrays.asList(new ValidationError("onlineReceipts.repay.validate",
-                    "onlineReceipts.repay.validate")));
+            throw new ValidationException(Arrays.asList(new ValidationError(REPAY_VALIDATION_KEY,
+                    REPAY_VALIDATION_KEY)));
         paymentResponse = collectionCommon.repayReconciliation(repayReceipt.getOnlinePayment().getService(),
                 repayReceipt.getOnlinePayment());
         if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
@@ -449,9 +451,9 @@ public class OnlineReceiptAction extends BaseFormAction {
     @Action(value = "/citizen/onlineReceipt-view")
     public String view() {
         if (getReceiptId() == null) {
-            LOGGER.error(getText("onlineReceipts.view.validate"));
-            throw new ValidationException(Arrays.asList(new ValidationError("onlineReceipts.view.validate",
-                    "onlineReceipts.view.validate")));
+            LOGGER.error(getText(VIEW_VALIDATION_KEY));
+            throw new ValidationException(Arrays.asList(new ValidationError(VIEW_VALIDATION_KEY,
+                    VIEW_VALIDATION_KEY)));
         } else {
             setReceipts(new ReceiptHeader[1]);
             receipts[0] = receiptHeaderService.findById(getReceiptId(), false);
@@ -477,8 +479,8 @@ public class OnlineReceiptAction extends BaseFormAction {
             setReceiptId(receiptHead.getId());
             return view();
         } else
-            throw new ValidationException(Arrays.asList(new ValidationError("onlineReceipts.view.validate",
-                    "onlineReceipts.view.validate")));
+            throw new ValidationException(Arrays.asList(new ValidationError(VIEW_VALIDATION_KEY,
+                    VIEW_VALIDATION_KEY)));
 
     }
 
@@ -885,7 +887,7 @@ public class OnlineReceiptAction extends BaseFormAction {
     }
 
     private void apportionBillAmount() {
-        if ((callbackForApportioning != null && overrideAccountHeads != null) && callbackForApportioning
+        if (callbackForApportioning != null && overrideAccountHeads != null && callbackForApportioning
                 && !overrideAccountHeads) {
             receiptDetailList = collectionCommon.apportionBillAmount(paymentAmount,
                     (ArrayList<ReceiptDetail>) getReceiptDetailList());
