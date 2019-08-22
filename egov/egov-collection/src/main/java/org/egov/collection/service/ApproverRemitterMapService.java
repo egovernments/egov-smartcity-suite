@@ -98,18 +98,6 @@ public class ApproverRemitterMapService {
         return isActive != null;
     }
 
-    /**
-     * Copy attributes (except primary key Id) from srcMap to dstMap and persist the dstMap
-     * @param dstMap destination map to be updated
-     * @param srcMap source map to copy attribute from
-     */
-    private void updateMapping(ApproverRemitterMapping dstMap, ApproverRemitterMapping srcMap) {
-        dstMap.setApprover(srcMap.getApprover());
-        dstMap.setRemitter(srcMap.getRemitter());
-        dstMap.setIsActive(srcMap.getIsActive());
-        mappingRepository.save(dstMap);
-    }
-
     public ApproverRemitterMapping findActiveMappingByApprover(Long approverID) {
         List<ApproverRemitterMapping> activeMaps = mappingRepository.findByApproverIdAndIsActive(approverID, true);
         for (ApproverRemitterMapping map : activeMaps)
@@ -170,23 +158,22 @@ public class ApproverRemitterMapService {
         }
     }
 
-    public boolean validateAndUpdateMapping(ApproverRemitterSpec mappingSpec, BindingResult bindingResult) {
-        // approverRemitterMap will be referenced in hibernate's persistence context, so updating is will update the record
-        ApproverRemitterMapping approverRemitterMap;
-        if (mappingSpec.id == null || (approverRemitterMap = mappingRepository.findOne(mappingSpec.id)) == null) {
+    public boolean validateAndUpdateMapping(ApproverRemitterSpec spec, BindingResult bindingResult) {
+        ApproverRemitterMapping approverRemitterMap = mappingRepository.findOne(spec.id);
+        if (spec.id == null || approverRemitterMap == null) {
             bindingResult.reject("mapping.404");
             return false;
         }
-        // We cannot save this tempApproverRemitterMap, as hibernate will try to insert new record instead of searching its persistence context using primary key.
-        ApproverRemitterMapping tempApproverRemitterMap = ApproverRemitterSpec.toEntity(mappingSpec, userService);
 
-        validateMapRequest(tempApproverRemitterMap, bindingResult);
+        ApproverRemitterSpec.copyToEntity(approverRemitterMap, spec, userService);
+
+        validateMapRequest(approverRemitterMap, bindingResult);
         if (bindingResult.hasErrors()) {
-            mappingSpec.setApproverName(tempApproverRemitterMap.getApprover().getName());
+            spec.setApproverName(approverRemitterMap.getApprover().getName());
             return false;
         }
 
-        updateMapping(approverRemitterMap, tempApproverRemitterMap);
+        mappingRepository.save(approverRemitterMap);
         return true;
     }
 
@@ -199,7 +186,7 @@ public class ApproverRemitterMapService {
         List<ApproverRemitterMapping> mappingList = new ArrayList<>(spec.approverIdList.size());
         for (Long approverId : spec.approverIdList) {
             spec.approverId = approverId;
-            ApproverRemitterMapping approverRemitterMap = ApproverRemitterSpec.toEntity(spec, userService);
+            ApproverRemitterMapping approverRemitterMap = ApproverRemitterSpec.copyToEntity(new ApproverRemitterMapping(), spec, userService);
             mappingList.add(approverRemitterMap);
             validateMapRequest(approverRemitterMap, bindingResult);
         }
@@ -266,13 +253,11 @@ public class ApproverRemitterMapService {
             return spec;
         }
 
-        public static ApproverRemitterMapping toEntity(ApproverRemitterSpec spec, UserService userService) {
-            ApproverRemitterMapping approverRemitterMapping = new ApproverRemitterMapping();
-            approverRemitterMapping.setId(spec.id);
-            approverRemitterMapping.setIsActive(spec.isActive);
-            approverRemitterMapping.setApprover(userService.getUserById(spec.approverId));
-            approverRemitterMapping.setRemitter(userService.getUserById(spec.remitterId));
-            return approverRemitterMapping;
+        public static ApproverRemitterMapping copyToEntity(ApproverRemitterMapping approverRemitterMap, ApproverRemitterSpec spec, UserService userService) {
+            approverRemitterMap.setIsActive(spec.isActive);
+            approverRemitterMap.setApprover(userService.getUserById(spec.approverId));
+            approverRemitterMap.setRemitter(userService.getUserById(spec.remitterId));
+            return approverRemitterMap;
         }
 
         public Long getId() {

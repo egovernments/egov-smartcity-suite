@@ -99,7 +99,7 @@ public class ApproverRemitterMapping extends AbstractAuditable implements Compar
     }
 
     @Override
-    public void setId(Long id) {
+    protected void setId(Long id) {
         this.id = id;
     }
 
@@ -129,7 +129,7 @@ public class ApproverRemitterMapping extends AbstractAuditable implements Compar
 
     /**
      * @Deprecated As "Order is not defined for Mapping"
-     * @return 0 (less-than)
+     * @return -1 (less-than)
      */
     @Deprecated
     @Override

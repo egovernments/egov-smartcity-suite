@@ -68,103 +68,46 @@
 							<div class="panel-title">
 								<strong><spring:message code="lbl.hdr.taxRates" /></strong>
 							</div>
-
+							
 						</div>
 						<div class="panel-body history-slide">
-							<div class="form-group col-sm-7 col-sm-offset-3">
+							<%-- <div
+								class="row hidden-xs visible-sm visible-md visible-lg view-content header-color">
+								<div class="col-sm-2 col-xs-6 add-margin">
+									<spring:message code="lbl.taxRates.value" />
+								</div>
+							</div> --%>
+							<div class="form-group col-sm-6 col-sm-offset-3">
 								<table class="table table-bordered table-hover">
 									<thead>
 										<tr>
-											<th>S.No</th>
-											<th class="text-center" colspan="2"><spring:message
-													code="lbl.propertytype.resd" /></th>
-											<th class="text-center" colspan="2"><spring:message
-													code="lbl.isResidential" /></th>
-										</tr>
-										<tr>
-											<th></th>
-											<th class="text-center"><spring:message
-													code="lbl.component" /></th>
-											<th class="text-center col-sm-3"><spring:message
-													code="lbl.percentage" /></th>
-											<th class="text-center"><spring:message
-													code="lbl.component" /></th>
-											<th class="text-center col-sm-3"><spring:message
-													code="lbl.percentage" /></th>
+										    <th >SI.No</th>
+											<th class="text-left">Tax Type</th>
+											<th class="text-right">Rate</th>
+											<th >Period</th>
 										</tr>
 									</thead>
 									<tbody>
-										<tr>
-											<c:set var="count" value="1" />
-											<c:set var="countResd" value="0" />
-											<c:set var="countNresd" value="0" />
-											<c:forEach var="taxRate"
-												items="${taxRatesForm.demandReasonDetails}"
-												varStatus="status">
-												<c:if test="${status.index % 2 == 0}">
-										
-										<tr>
-											<td><c:out value="${count}" /></td>
-											<c:set var="count" value="${count + 1}" />
-											</c:if>
-											<c:choose>
-												<c:when
-													test="${fn:endsWith(taxRate.getEgDemandReasonMaster().getReasonMaster(), 'Non Residential')}">
-													<td><c:out
-															value="${fn:substringBefore(taxRate.getEgDemandReasonMaster().getReasonMaster(), 'Non')}" /></td>
-													<c:set var="countNresd"
-														value="${taxRate.percentage + countNresd}" />
+									    <c:set var="count" value="1" />
+										<c:forEach var="taxRate" items="${taxRates}">
+											<tr>									   
+                                                    <td><c:out value="${count}" /></td>
+												<td><c:out value="${taxRate.key}" /></td>
+												<td class="text-right"><fmt:formatNumber
+														var="formattedRate" type="number" minFractionDigits="2"
+														maxFractionDigits="2" value="${taxRate.value}" /> <c:out
+														value="${formattedRate}" /></td>
+														<c:choose>
+														<c:when test="${taxRate.key!='Vacant Land Tax'}">
+												<td>HALF YEARLY</td>
+												
 												</c:when>
-												<c:otherwise>
-													<td><c:out
-															value="${fn:substringBefore(taxRate.getEgDemandReasonMaster().getReasonMaster(), 'Residential')}" /></td>
-													<c:set var="countResd"
-														value="${taxRate.percentage + countResd}" />
-												</c:otherwise>
-											</c:choose>
-											<td class="text-right"><fmt:formatNumber
-													var="formattedRate" type="number" minFractionDigits="2"
-													maxFractionDigits="2" value="${taxRate.percentage}" /> <c:out
-													value="${formattedRate}" /></td>
-											</c:forEach>
-										</tr>
-									</tbody>
-								</table>
-								
-								<table class="table table-bordered table-hover">
-								<tbody>
-								<tr>
-										<c:forEach var="cess" items="${VLT_LIB_DETAILS}" >
-											<tr>
-											<c:choose>
-											<c:when test="${cess.key == 'Library Cess'}">
-											<td><spring:message code="lbl.lib.cess" /></td>
-											</c:when>
-											<c:otherwise>
-											<td><spring:message code="lbl.vlt" /></td>
-											</c:otherwise>
-											</c:choose>
-											<td class="text-right"><fmt:formatNumber
-													var="formattedRate" type="number" minFractionDigits="2"
-													maxFractionDigits="2" value="${cess.value}" /><c:out value="${formattedRate}" /></td>
+												<c:otherwise><td>YEARLY</td></c:otherwise>
+												</c:choose>
+																						
 											</tr>
+											<c:set var="count" value="${count+1}" />
 										</c:forEach>
-										</tr>
-										<tr>
-											<td><spring:message code="lbl.total.resd.view" /></td>
-											<td class="text-right"><fmt:formatNumber
-													var="countResdRate" type="number" minFractionDigits="2"
-													maxFractionDigits="2" value="${countResd}" /> <c:out
-												value="${countResdRate}"  /></td>
-												</tr>
-												<tr>
-											<td><spring:message code="lbl.total.nresd.view" /></td>
-											<td class="text-right"><fmt:formatNumber
-													var="countNresdRate" type="number" minFractionDigits="2"
-													maxFractionDigits="2" value="${countNresd}" /> <c:out
-												value="${countNresdRate}"/></td>
-
-										</tr>
 									</tbody>
 								</table>
 							</div>
