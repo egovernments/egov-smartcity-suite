@@ -999,18 +999,18 @@ public class PropertyTaxCommonUtils {
         return sewerageConnDtls;
     }
     
-	public List<Map<String, String>> getLegalCaseDetails(final String caseNo, final HttpServletRequest request) {
-		final List<Map<String, String>> legalcaseDtls = new ArrayList<>();
-		String url = String.format(LCMS_LEGALCASE_DETAILS_RESTURL, WebUtils.extractRequestDomainURL(request, false));
-		URI targetUrl = UriComponentsBuilder.fromUriString(url).queryParam("caseNumber", caseNo).build().encode()
-				.toUri();
-		try{
-		legalcaseDtls.add(restMethod(targetUrl, request));
-		} catch (final JSONException e) {
-			LOGGER.error("Error in converting json array into json object " + e);
-		}
-		return legalcaseDtls;
-	}
+    public List<Map<String, String>> getLegalCaseDetails(final String caseNo, final HttpServletRequest request) {
+        final List<Map<String, String>> legalcaseDtls = new ArrayList<>();
+        String url = String.format(LCMS_LEGALCASE_DETAILS_RESTURL, WebUtils.extractRequestDomainURL(request, false));
+        URI targetUrl = UriComponentsBuilder.fromUriString(url).queryParam("caseNumber", caseNo).build().encode()
+                .toUri();
+        try {
+            legalcaseDtls.add(restMethod(targetUrl, request));
+        } catch (final JSONException e) {
+            LOGGER.error("Error in converting json array into json object " + e);
+        }
+        return legalcaseDtls;
+    }
     
     public Boolean validateEffectiveDate(final List<Floor> floorList) {
         Date firstFloorEffectiveDate = floorList.get(0).getOccupancyDate();
@@ -1022,61 +1022,63 @@ public class PropertyTaxCommonUtils {
     }
     
  
-	public List<Map<String, String>> getCouncilDeatils(final String resolutionNo,final String resolutionType,HttpServletRequest request) {
-       final List<Map<String, String>> councilConnDtls = new ArrayList<>();
-        String ulbCode = ApplicationThreadLocals.getCityCode();      
-        String resturl = String.format((COUNCIL_RESOLUTION_RESTURL),WebUtils.extractRequestDomainURL(request, false));
-        URI targetUrl= UriComponentsBuilder.fromUriString(resturl) 
-        		.queryParam("ulbCode", ulbCode).queryParam("resolutionNo", resolutionNo).queryParam("committeeType", resolutionType)
-                .build()                                                
-                .encode()                                           
+    public List<Map<String, String>> getCouncilDeatils(final String resolutionNo, final String resolutionType,
+            HttpServletRequest request) {
+        final List<Map<String, String>> councilConnDtls = new ArrayList<>();
+        String ulbCode = ApplicationThreadLocals.getCityCode();
+        String resturl = String.format((COUNCIL_RESOLUTION_RESTURL), WebUtils.extractRequestDomainURL(request, false));
+        URI targetUrl = UriComponentsBuilder.fromUriString(resturl)
+                .queryParam("ulbCode", ulbCode).queryParam("resolutionNo", resolutionNo)
+                .queryParam("committeeType", resolutionType)
+                .build()
+                .encode()
                 .toUri();
-        try{
-        councilConnDtls.add(restMethod(targetUrl, request));
+        try {
+            councilConnDtls.add(restMethod(targetUrl, request));
         } catch (final JSONException e) {
-			LOGGER.error("Error in converting json array into json object " + e);
-		}
+            LOGGER.error("Error in converting json array into json object " + e);
+        }
         return councilConnDtls;
     }
 	
-	@SuppressWarnings("rawtypes")
-	public Map<String, String> restMethod(URI url, final HttpServletRequest request) {
-		final Map<String, String> responseList = new HashMap<>();
-		RestTemplate restTemplate = new RestTemplate();
-		Cookie[] cookies = request.getCookies();
-		String cookie = "";
+    @SuppressWarnings("rawtypes")
+    public Map<String, String> restMethod(URI url, final HttpServletRequest request) {
+        final Map<String, String> responseList = new HashMap<>();
+        RestTemplate restTemplate = new RestTemplate();
+        Cookie[] cookies = request.getCookies();
+        String cookie = "";
 
-		for (int i = 0; i < cookies.length; i++) {
-			cookie = cookie + cookies[i].getName() + "=" + cookies[i].getValue() + ";";
-		}
+        for (int i = 0; i < cookies.length; i++) {
+            cookie = cookie + cookies[i].getName() + "=" + cookies[i].getValue() + ";";
+        }
 
-		final List<MediaType> mediaTypes = new ArrayList<MediaType>();
-		mediaTypes.add(MediaType.ALL);
+        final List<MediaType> mediaTypes = new ArrayList<MediaType>();
+        mediaTypes.add(MediaType.ALL);
 
-		HttpHeaders requestHeaders = new HttpHeaders();
-		requestHeaders.set(HttpHeaders.COOKIE, cookie);
-		requestHeaders.setPragma("no-cache");
-		requestHeaders.setConnection("keep-alive");
-		requestHeaders.setCacheControl("no-cache");
-		requestHeaders.setAccept(mediaTypes);
-		requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.set(HttpHeaders.COOKIE, cookie);
+        requestHeaders.setPragma("no-cache");
+        requestHeaders.setConnection("keep-alive");
+        requestHeaders.setCacheControl("no-cache");
+        requestHeaders.setAccept(mediaTypes);
+        requestHeaders.setContentType(MediaType.APPLICATION_JSON);
 
-		final HttpEntity<?> requestEntity = new HttpEntity<>(requestHeaders);
+        final HttpEntity<?> requestEntity = new HttpEntity<>(requestHeaders);
 
-		ResponseEntity<LinkedHashMap> result = restTemplate.exchange(url, HttpMethod.GET, requestEntity,
-				LinkedHashMap.class);
+        ResponseEntity<LinkedHashMap> result = restTemplate.exchange(url, HttpMethod.GET, requestEntity,
+                LinkedHashMap.class);
 
-		JSONObject jsonObj = null;
-		try {
-			jsonObj = new JSONObject(result.getBody());
-		} catch (final JSONException e1) {
-			LOGGER.error("Error in converting string into json array " + e1);
-		}
-		for (String key : jsonObj.keySet()) {
+        JSONObject jsonObj = null;
+        try {
+            jsonObj = new JSONObject(result.getBody());
+        } catch (final JSONException e1) {
+            LOGGER.error("Error in converting string into json array " + e1);
+        }
+        for (String key : jsonObj.keySet()) {
 
-			responseList.put(key, jsonObj.get(key).toString());
+            responseList.put(key, jsonObj.get(key).toString());
 
-		}
-		return responseList;
-	}
+        }
+        return responseList;
+    }
 }

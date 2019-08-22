@@ -60,193 +60,193 @@ import org.egov.ptis.bean.demand.DemandDetail;
 
 public class WriteOff extends StateAware<Position> {
 
-	private static final long serialVersionUID = 8839183407077692372L;
+    private static final long serialVersionUID = 8839183407077692372L;
 
-	public static final String SEQ_WRITEOFF = "SEQ_EGPT_WRITE_OFF";
+    public static final String SEQ_WRITEOFF = "SEQ_EGPT_WRITE_OFF";
 
-	@Id
-	@GeneratedValue(generator = SEQ_WRITEOFF, strategy = GenerationType.SEQUENCE)
-	public Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_WRITEOFF, strategy = GenerationType.SEQUENCE)
+    public Long id;
 
-	@ManyToOne(targetEntity = PropertyImpl.class, cascade = CascadeType.ALL)
-	@NotNull
-	@JoinColumn(name = "property")
-	private PropertyImpl property;
+    @ManyToOne(targetEntity = PropertyImpl.class, cascade = CascadeType.ALL)
+    @NotNull
+    @JoinColumn(name = "property")
+    private PropertyImpl property;
 
-	@ManyToOne(targetEntity = BasicPropertyImpl.class, cascade = CascadeType.ALL)
-	@NotNull
-	@JoinColumn(name = "basicproperty", nullable = false)
-	private BasicPropertyImpl basicProperty;
+    @ManyToOne(targetEntity = BasicPropertyImpl.class, cascade = CascadeType.ALL)
+    @NotNull
+    @JoinColumn(name = "basicproperty", nullable = false)
+    private BasicPropertyImpl basicProperty;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinTable(name = "egpt_write_off_docs", joinColumns = @JoinColumn(name = "writeOff"), inverseJoinColumns = @JoinColumn(name = "document"))
-	private List<Document> documents = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "egpt_write_off_docs", joinColumns = @JoinColumn(name = "writeOff"), inverseJoinColumns = @JoinColumn(name = "document"))
+    private List<Document> documents = new ArrayList<>();
 
-	@NotNull
-	@ManyToOne(targetEntity = PropertyMutationMaster.class, cascade = CascadeType.ALL)
-	@JoinColumn(name = "mutation_master_id")
-	private PropertyMutationMaster writeOffType;
+    @NotNull
+    @ManyToOne(targetEntity = PropertyMutationMaster.class, cascade = CascadeType.ALL)
+    @JoinColumn(name = "mutation_master_id")
+    private PropertyMutationMaster writeOffType;
 
-	@ManyToOne(targetEntity = WriteOffReasons.class, cascade = CascadeType.ALL)
-	@NotNull
-	@JoinColumn(name = "id_writeoff_reason")
-	private WriteOffReasons writeOffReasons;
+    @ManyToOne(targetEntity = WriteOffReasons.class, cascade = CascadeType.ALL)
+    @NotNull
+    @JoinColumn(name = "id_writeoff_reason")
+    private WriteOffReasons writeOffReasons;
 
-	@Transient
-	private transient List<DemandDetail> demandDetailBeanList = new ArrayList<>();
+    @Transient
+    private transient List<DemandDetail> demandDetailBeanList = new ArrayList<>();
 
-	@Column(name = "applicationno")
-	private String applicationNumber;
+    @Column(name = "applicationno")
+    private String applicationNumber;
 
-	@Column(name = "resolutionNo")
-	private String resolutionNo;
+    @Column(name = "resolutionNo")
+    private String resolutionNo;
 
-	@Column(name = "resolutionDate")
-	private String resolutionDate;
+    @Column(name = "resolutionDate")
+    private String resolutionDate;
 
-	@Column(name = "deactivate")
-	private Boolean propertyDeactivateFlag;
+    @Column(name = "deactivate")
+    private Boolean propertyDeactivateFlag;
 
-	@Column(name = "resolutionType")
-	private String resolutionType;
+    @Column(name = "resolutionType")
+    private String resolutionType;
 
-	@Column(name = "fromInstallment")
-	private String fromInstallment;
+    @Column(name = "fromInstallment")
+    private String fromInstallment;
 
-	@Column(name = "toInstallment")
-	private String toInstallment;
+    @Column(name = "toInstallment")
+    private String toInstallment;
 
-	@Column(name = "comments")
-	private String comments;
+    @Column(name = "comments")
+    private String comments;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public PropertyImpl getProperty() {
-		return property;
-	}
+    public PropertyImpl getProperty() {
+        return property;
+    }
 
-	public void setProperty(PropertyImpl property) {
-		this.property = property;
-	}
+    public void setProperty(PropertyImpl property) {
+        this.property = property;
+    }
 
-	public BasicPropertyImpl getBasicProperty() {
-		return basicProperty;
-	}
+    public BasicPropertyImpl getBasicProperty() {
+        return basicProperty;
+    }
 
-	public void setBasicProperty(BasicPropertyImpl basicProperty) {
-		this.basicProperty = basicProperty;
-	}
+    public void setBasicProperty(BasicPropertyImpl basicProperty) {
+        this.basicProperty = basicProperty;
+    }
 
-	public String getApplicationNumber() {
-		return applicationNumber;
-	}
+    public String getApplicationNumber() {
+        return applicationNumber;
+    }
 
-	public void setApplicationNumber(String applicationNumber) {
-		this.applicationNumber = applicationNumber;
-	}
+    public void setApplicationNumber(String applicationNumber) {
+        this.applicationNumber = applicationNumber;
+    }
 
-	public String getResolutionNo() {
-		return resolutionNo;
-	}
+    public String getResolutionNo() {
+        return resolutionNo;
+    }
 
-	public void setResolutionNo(String resolutionNo) {
-		this.resolutionNo = resolutionNo;
-	}
+    public void setResolutionNo(String resolutionNo) {
+        this.resolutionNo = resolutionNo;
+    }
 
-	public String getResolutionDate() {
-		return resolutionDate;
-	}
+    public String getResolutionDate() {
+        return resolutionDate;
+    }
 
-	public void setResolutionDate(String resolutionDate) {
-		this.resolutionDate = resolutionDate;
-	}
+    public void setResolutionDate(String resolutionDate) {
+        this.resolutionDate = resolutionDate;
+    }
 
-	public List<DemandDetail> getDemandDetailBeanList() {
-		return demandDetailBeanList;
-	}
+    public List<DemandDetail> getDemandDetailBeanList() {
+        return demandDetailBeanList;
+    }
 
-	public void setDemandDetailBeanList(List<DemandDetail> demandDetailBeanList) {
-		this.demandDetailBeanList = demandDetailBeanList;
-	}
+    public void setDemandDetailBeanList(List<DemandDetail> demandDetailBeanList) {
+        this.demandDetailBeanList = demandDetailBeanList;
+    }
 
-	public Boolean getPropertyDeactivateFlag() {
-		return propertyDeactivateFlag;
-	}
+    public Boolean getPropertyDeactivateFlag() {
+        return propertyDeactivateFlag;
+    }
 
-	public void setPropertyDeactivateFlag(Boolean propertyDeactivateFlag) {
-		this.propertyDeactivateFlag = propertyDeactivateFlag;
-	}
+    public void setPropertyDeactivateFlag(Boolean propertyDeactivateFlag) {
+        this.propertyDeactivateFlag = propertyDeactivateFlag;
+    }
 
-	public WriteOffReasons getWriteOffReasons() {
-		return writeOffReasons;
-	}
+    public WriteOffReasons getWriteOffReasons() {
+        return writeOffReasons;
+    }
 
-	public void setWriteOffReasons(WriteOffReasons writeOffReasons) {
-		this.writeOffReasons = writeOffReasons;
-	}
+    public void setWriteOffReasons(WriteOffReasons writeOffReasons) {
+        this.writeOffReasons = writeOffReasons;
+    }
 
-	public Position getPositionById(Long approvalPosition) {
-		return null;
-	}
+    public Position getPositionById(Long approvalPosition) {
+        return null;
+    }
 
-	public List<Document> getDocuments() {
-		return documents;
-	}
+    public List<Document> getDocuments() {
+        return documents;
+    }
 
-	public void setDocuments(List<Document> documents) {
-		this.documents = documents;
-	}
+    public void setDocuments(List<Document> documents) {
+        this.documents = documents;
+    }
 
-	public String getResolutionType() {
-		return resolutionType;
-	}
+    public String getResolutionType() {
+        return resolutionType;
+    }
 
-	public void setResolutionType(String resolutionType) {
-		this.resolutionType = resolutionType;
-	}
+    public void setResolutionType(String resolutionType) {
+        this.resolutionType = resolutionType;
+    }
 
-	public String getFromInstallment() {
-		return fromInstallment;
-	}
+    public String getFromInstallment() {
+        return fromInstallment;
+    }
 
-	public void setFromInstallment(String fromInstallment) {
-		this.fromInstallment = fromInstallment;
-	}
+    public void setFromInstallment(String fromInstallment) {
+        this.fromInstallment = fromInstallment;
+    }
 
-	public String getToInstallment() {
-		return toInstallment;
-	}
+    public String getToInstallment() {
+        return toInstallment;
+    }
 
-	public void setToInstallment(String toInstallment) {
-		this.toInstallment = toInstallment;
-	}
+    public void setToInstallment(String toInstallment) {
+        this.toInstallment = toInstallment;
+    }
 
-	public PropertyMutationMaster getWriteOffType() {
-		return writeOffType;
-	}
+    public PropertyMutationMaster getWriteOffType() {
+        return writeOffType;
+    }
 
-	public void setWriteOffType(PropertyMutationMaster writeOffType) {
-		this.writeOffType = writeOffType;
-	}
+    public void setWriteOffType(PropertyMutationMaster writeOffType) {
+        this.writeOffType = writeOffType;
+    }
 
-	public String getComments() {
-		return comments;
-	}
+    public String getComments() {
+        return comments;
+    }
 
-	public void setComments(String comments) {
-		this.comments = comments;
-	}
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
 
-	@Override
-	public String getStateDetails() {
-		return "Write Off" + " - " + this.getBasicProperty().getUpicNo();
-	}
+    @Override
+    public String getStateDetails() {
+        return "Write Off" + " - " + this.getBasicProperty().getUpicNo();
+    }
 }

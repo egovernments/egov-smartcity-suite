@@ -61,6 +61,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -68,6 +69,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
+import org.egov.demand.model.DemandDetailVariation;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -79,6 +82,7 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.ptis.bean.demand.DemandDetail;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -105,155 +109,152 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = { "/writeoff" })
 public class WriteOffAcknowledgmentController {
 
-	@Autowired
-	private WriteOffService writeOffService;
-	@Autowired
-	private NoticeService noticeService;
-	@Autowired
-	private PropertyTaxCommonUtils propertyTaxCommonUtils;
-	@Autowired
-	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
-	@Autowired
-	private ReportService reportService;
-	@Autowired
-	private FileStoreService fileStoreService;
-	@Autowired
-	private UserService userService;
-	@Autowired
-	private SecurityUtils securityUtils;
-	@PersistenceContext
-	EntityManager entityManager;
-	
-	public static final String SAMPLE_FILE = "WO Proceedings/";
-	public static final String WO_SPECIALNOTICE_TEMPLATE = "mainWriteOffProceedings";
+    @Autowired
+    private WriteOffService writeOffService;
+    @Autowired
+    private NoticeService noticeService;
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    @Autowired
+    private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
+    @Autowired
+    private ReportService reportService;
+    @Autowired
+    private FileStoreService fileStoreService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private SecurityUtils securityUtils;
+    @PersistenceContext
+    EntityManager entityManager;
 
-	@RequestMapping(value = "/generatenotice", method = RequestMethod.GET)
-	public String generateSpecialNotice(final Model model, final HttpServletRequest request,
-			final HttpSession session) {
-		ReportOutput reportOutput;
-		String fileStoreIds = null;
-		String assessmentno = request.getParameter("assessmentno");
-		String workFlowAction = request.getParameter("actionType");
-		String appoverUser = request.getParameter("approverUser");
-		String ulbCode;
-		boolean digitalSignEnabled;
-		String noticeNo;
-		ulbCode = ApplicationThreadLocals.getCityCode();
-		digitalSignEnabled = propertyTaxCommonUtils.isDigitalSignatureEnabled();
-		final WriteOff writeOff = writeOffService.getLatestSpecialNoticeGeneratedWriteOff(assessmentno);
-		final PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_WRITEOFFROCEEDINGS,
-				writeOff.getApplicationNumber());
-		InputStream noticePdf = null;
-		if (WFLOW_ACTION_STEP_SIGN.equals(workFlowAction) && notice == null) {
-			noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(NOTICE_TYPE_WRITEOFFROCEEDINGS);
-			reportOutput = generateReport(writeOff, request, appoverUser, noticeNo);
-			if (reportOutput != null && reportOutput.getReportOutputData() != null)
-				noticePdf = new ByteArrayInputStream(reportOutput.getReportOutputData());
-			final PtNotice savedNotice = noticeService.saveNotice(writeOff.getApplicationNumber(), noticeNo,
-					NOTICE_TYPE_WOPROCEEDINGS, writeOff.getBasicProperty(), noticePdf);
-			fileStoreIds = savedNotice.getFileStore().getFileStoreId();
-		} else if (workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_PREVIEW)) {
+    public static final String SAMPLE_FILE = "WO Proceedings/";
+    public static final String WO_SPECIALNOTICE_TEMPLATE = "mainWriteOffProceedings";
 
-			return "redirect:/writeoff/generatenotice/preview/" + assessmentno + "?approver=" + appoverUser;
-		}
-		model.addAttribute("ulbCode", ulbCode);
-		model.addAttribute("fileStoreIds", fileStoreIds);
-		model.addAttribute("digitalSignEnabled", digitalSignEnabled);
-		if (WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction))
-			return "writeoff-dig-sign";
+    @RequestMapping(value = "/generatenotice", method = RequestMethod.GET)
+    public String generateSpecialNotice(final Model model, final HttpServletRequest request,
+            final HttpSession session) {
+        ReportOutput reportOutput;
+        String fileStoreIds = null;
+        String assessmentno = request.getParameter("assessmentno");
+        String workFlowAction = request.getParameter("actionType");
+        String appoverUser = request.getParameter("approverUser");
+        String ulbCode;
+        boolean digitalSignEnabled;
+        String noticeNo;
+        ulbCode = ApplicationThreadLocals.getCityCode();
+        digitalSignEnabled = propertyTaxCommonUtils.isDigitalSignatureEnabled();
+        final WriteOff writeOff = writeOffService.getLatestSpecialNoticeGeneratedWriteOff(assessmentno);
+        final PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_WRITEOFFROCEEDINGS,
+                writeOff.getApplicationNumber());
+        InputStream noticePdf = null;
+        if (WFLOW_ACTION_STEP_SIGN.equals(workFlowAction) && notice == null) {
+            noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(NOTICE_TYPE_WRITEOFFROCEEDINGS);
+            reportOutput = generateReport(writeOff, request, appoverUser, noticeNo);
+            if (reportOutput != null && reportOutput.getReportOutputData() != null)
+                noticePdf = new ByteArrayInputStream(reportOutput.getReportOutputData());
+            final PtNotice savedNotice = noticeService.saveNotice(writeOff.getApplicationNumber(), noticeNo,
+                    NOTICE_TYPE_WOPROCEEDINGS, writeOff.getBasicProperty(), noticePdf);
+            fileStoreIds = savedNotice.getFileStore().getFileStoreId();
+        } else if (workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_PREVIEW)) {
 
-		else
-			return "redirect:/writeoff/generatenotice/proceedings/" + assessmentno + "?workFlowAction="
-					+ workFlowAction;
-	}
+            return "redirect:/writeoff/generatenotice/preview/" + assessmentno + "?approver=" + appoverUser;
+        }
+        model.addAttribute("ulbCode", ulbCode);
+        model.addAttribute("fileStoreIds", fileStoreIds);
+        model.addAttribute("digitalSignEnabled", digitalSignEnabled);
+        if (WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction))
+            return "writeoff-dig-sign";
 
-	@RequestMapping(value = { "/generatenotice/preview/{assessmentNo}",
-			"/generatenotice/proceedings/{assessmentNo}" }, method = RequestMethod.GET)
-	@ResponseBody
-	public ResponseEntity<byte[]> generateNotice(final Model model, final HttpServletRequest request,
-			@PathVariable final String assessmentNo) {
-		ReportOutput noticeOutput = new ReportOutput();
-		String fileName;
-		String approverName = request.getParameter("approver");
-		final WriteOff writeOff = writeOffService.getLatestSpecialNoticeGeneratedWriteOff(assessmentNo);
-		final PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_WRITEOFFROCEEDINGS,
-				writeOff.getApplicationNumber());
-		if (notice != null) {
-			final FileStoreMapper fsm = notice.getFileStore();
-			final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
-			byte[] bFile;
-			try {
-				bFile = FileUtils.readFileToByteArray(file);
-			} catch (final IOException e) {
+        else
+            return "redirect:/writeoff/generatenotice/proceedings/" + assessmentno + "?workFlowAction="
+                    + workFlowAction;
+    }
 
-				throw new ApplicationRuntimeException("Exception while generating Write Off Notcie : " + e);
-			}
-			noticeOutput.setReportOutputData(bFile);
-			noticeOutput.setReportFormat(ReportFormat.PDF);
-			fileName = notice.getNoticeNo();
-		} else {
-			noticeOutput = generateReport(writeOff, request, approverName, null);
-			fileName = SAMPLE_FILE.concat(assessmentNo);
-		}
-		final HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.parseMediaType("application/pdf"));
-		headers.add("content-disposition", "inline;filename=" + fileName + ".pdf");
-		return new ResponseEntity<>(noticeOutput.getReportOutputData(), headers, HttpStatus.CREATED);
-	}
+    @RequestMapping(value = { "/generatenotice/preview/{assessmentNo}",
+            "/generatenotice/proceedings/{assessmentNo}" }, method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<byte[]> generateNotice(final Model model, final HttpServletRequest request,
+            @PathVariable final String assessmentNo) {
+        ReportOutput noticeOutput = new ReportOutput();
+        String fileName;
+        String approverName = request.getParameter("approver");
+        final WriteOff writeOff = writeOffService.getLatestSpecialNoticeGeneratedWriteOff(assessmentNo);
+        final PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_WRITEOFFROCEEDINGS,
+                writeOff.getApplicationNumber());
+        if (notice != null) {
+            final FileStoreMapper fsm = notice.getFileStore();
+            final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
+            byte[] bFile;
+            try {
+                bFile = FileUtils.readFileToByteArray(file);
+            } catch (final IOException e) {
 
-	public ReportOutput generateReport(final WriteOff writeOff, final HttpServletRequest request,
-			final String approvedUser, final String noticeNo) {
-		ReportOutput reportOutput = null;
-		if (writeOff != null) {
-			reportOutput = reportService
-					.createReport(generateWriteOffReportRequest(writeOff, noticeNo, request, approvedUser));
-		}
-		return reportOutput;
-	}
+                throw new ApplicationRuntimeException("Exception while generating Write Off Notcie : " + e);
+            }
+            noticeOutput.setReportOutputData(bFile);
+            noticeOutput.setReportFormat(ReportFormat.PDF);
+            fileName = notice.getNoticeNo();
+        } else {
+            noticeOutput = generateReport(writeOff, request, approverName, null);
+            fileName = SAMPLE_FILE.concat(assessmentNo);
+        }
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        headers.add("content-disposition", "inline;filename=" + fileName + ".pdf");
+        return new ResponseEntity<>(noticeOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+    }
 
-	public ReportRequest generateWriteOffReportRequest(WriteOff writeOff, String noticeNo, HttpServletRequest request,
-			final String approvedUser) {
-		ReportRequest reportInput = null;
-		if (writeOff != null) {
-			final BasicPropertyImpl basicProperty = writeOff.getBasicProperty();
-			final Map<String, Object> reportParams = new HashMap<>();
-			final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-			final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
-			final Address ownerAddress = basicProperty.getAddress();
-			final PropertyID propertyId = basicProperty.getPropertyID();
-			reportParams.put("cityName", cityName);
-			reportParams.put("userSignature", securityUtils.getCurrentUser().getSignature() != null
-					? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : "");
-			reportParams.put("loggedInUsername", approvedUser);
-			reportParams.put("approvedDate", formatter.format(writeOff.getState().getCreatedDate()));
-			reportParams.put("approverName", userService.getUserById(ApplicationThreadLocals.getUserId()).getName());
-			reportParams.put("applicationDate", formatter.format(writeOff.getCreatedDate()));
-			reportParams.put("currentDate", formatter.format(new Date()));
-			reportParams.put("noticeNo", (noticeNo!=null)?noticeNo:"");
-			reportParams.put("ownerName", basicProperty.getFullOwnerName());
-			reportParams.put("houseNo", ownerAddress.getHouseNoBldgApt());
-			reportParams.put("assessmentNo", basicProperty.getUpicNo());
-			reportParams.put("revenueWard", propertyId.getWard().getLocalName());
-			reportParams.put("locality", propertyId.getLocality().getName());
-			reportParams.put("resolutionType", writeOff.getResolutionType());
-			reportParams.put("resolutionNo", writeOff.getResolutionNo());
-			reportParams.put("resolutionDate", writeOff.getResolutionDate());
-			reportParams.put("fromInstallment", writeOff.getFromInstallment());
-			reportParams.put("toInstallment", writeOff.getToInstallment());
-			reportParams.put("writeoffType", writeOff.getWriteOffType().getMutationDesc());
-			reportParams.put("writeOffDemand", "350");
-			reportParams.put("writeOffInterest", "50");
-			reportParams.put("totalAmount", "1000");
-			reportInput = new ReportRequest(WO_SPECIALNOTICE_TEMPLATE, writeOff, reportParams);
-		}
-		if (reportInput != null) {
-			reportInput.setPrintDialogOnOpenReport(true);
-			reportInput.setReportFormat(ReportFormat.PDF);
-		}
-		return reportInput;
-	}
-	
-	
-	
+    public ReportOutput generateReport(final WriteOff writeOff, final HttpServletRequest request,
+            final String approvedUser, final String noticeNo) {
+        ReportOutput reportOutput = null;
+        if (writeOff != null) {
+            reportOutput = reportService
+                    .createReport(generateWriteOffReportRequest(writeOff, noticeNo, request, approvedUser));
+        }
+        return reportOutput;
+    }
+
+    public ReportRequest generateWriteOffReportRequest(WriteOff writeOff, String noticeNo, HttpServletRequest request,
+            final String approvedUser) {
+        ReportRequest reportInput = null;
+        if (writeOff != null) {
+            final BasicPropertyImpl basicProperty = writeOff.getBasicProperty();
+            final Map<String, Object> reportParams = new HashMap<>();
+            final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
+            final Address ownerAddress = basicProperty.getAddress();
+            final PropertyID propertyId = basicProperty.getPropertyID();
+            reportParams.put("cityName", cityName);
+            reportParams.put("userSignature", securityUtils.getCurrentUser().getSignature() != null
+                    ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : "");
+            reportParams.put("loggedInUsername", approvedUser);
+            reportParams.put("approvedDate", formatter.format(writeOff.getState().getCreatedDate()));
+            reportParams.put("approverName", userService.getUserById(ApplicationThreadLocals.getUserId()).getName());
+            reportParams.put("applicationDate", formatter.format(writeOff.getCreatedDate()));
+            reportParams.put("currentDate", formatter.format(new Date()));
+            reportParams.put("noticeNo", (noticeNo != null) ? noticeNo : "");
+            reportParams.put("ownerName", basicProperty.getFullOwnerName());
+            reportParams.put("houseNo", ownerAddress.getHouseNoBldgApt());
+            reportParams.put("assessmentNo", basicProperty.getUpicNo());
+            reportParams.put("revenueWard", propertyId.getWard().getLocalName());
+            reportParams.put("locality", propertyId.getLocality().getName());
+            reportParams.put("resolutionType", writeOff.getResolutionType());
+            reportParams.put("resolutionNo", writeOff.getResolutionNo());
+            reportParams.put("resolutionDate", writeOff.getResolutionDate());
+            reportParams.put("fromInstallment", writeOff.getFromInstallment());
+            reportParams.put("toInstallment", writeOff.getToInstallment());
+            reportParams.put("writeoffType", writeOff.getWriteOffType().getMutationDesc());
+            reportParams.put("writeOffDemand", "350");
+            reportParams.put("writeOffInterest", "50");
+            reportParams.put("totalAmount", "1000");
+            reportInput = new ReportRequest(WO_SPECIALNOTICE_TEMPLATE, writeOff, reportParams);
+        }
+        if (reportInput != null) {
+            reportInput.setPrintDialogOnOpenReport(true);
+            reportInput.setReportFormat(ReportFormat.PDF);
+        }
+        return reportInput;
+    }
 
 }

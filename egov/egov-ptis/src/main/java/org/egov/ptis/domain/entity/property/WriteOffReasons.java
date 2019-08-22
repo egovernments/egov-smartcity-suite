@@ -10,87 +10,88 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = WriteOffReasons.SEQ_WRITE_OFF_REASON, sequenceName = WriteOffReasons.SEQ_WRITE_OFF_REASON, allocationSize = 1)
 public class WriteOffReasons implements Serializable {
 
-	/**
-	* 
-	*/
-	private static final long serialVersionUID = 1L;
+    /**
+    * 
+    */
+    private static final long serialVersionUID = 1L;
 
-	public static final String SEQ_WRITE_OFF_REASON = "SEQ_WRITE_OFF_REASON";
+    public static final String SEQ_WRITE_OFF_REASON = "SEQ_WRITE_OFF_REASON";
 
-	@Id
-	@GeneratedValue(generator = SEQ_WRITE_OFF_REASON, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_WRITE_OFF_REASON, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@Column(name = "name")
-	private String name;
+    @Column(name = "name")
+    private String name;
 
-	@Column(name = "type")
-	private String type;
-	
-	@Column(name = "isactive")
-	private boolean isActive;
-	
-	@Column(name = "code")
-	private String code ;
-	
-	@Column(name = "order_id")
-	private String orderId;
-	
-	@Column(name = "description")
-	private String description;
-	
-	public String getCode() {
-		return code;
-	}
+    @Column(name = "type")
+    private String type;
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    @Column(name = "isactive")
+    private boolean isActive;
 
-	public String getOrderId() {
-		return orderId;
-	}
+    @Column(name = "code")
+    private String code;
 
-	public void setOrderId(String orderId) {
-		this.orderId = orderId;
-	}
+    @Column(name = "order_id")
+    private String orderId;
 
-	public String getName() {
-		return name;
-	}
+    @Column(name = "description")
+    private String description;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public String getOrderId() {
+        return orderId;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
 
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public boolean isActive() {
-		return isActive;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setActive(boolean isActive) {
-		this.isActive = isActive;
-	}
-	public String getDescription() {
-		return description;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }
