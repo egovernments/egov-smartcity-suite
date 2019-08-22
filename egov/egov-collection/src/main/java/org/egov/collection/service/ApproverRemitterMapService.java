@@ -47,12 +47,7 @@
  */
 package org.egov.collection.service;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -103,6 +98,18 @@ public class ApproverRemitterMapService {
         return isActive != null;
     }
 
+    /**
+     * Copy attributes (except primary key Id) from srcMap to dstMap and persist the dstMap
+     * @param dstMap destination map to be updated
+     * @param srcMap source map to copy attribute from
+     */
+    private void updateMapping(ApproverRemitterMapping dstMap, ApproverRemitterMapping srcMap) {
+        dstMap.setApprover(srcMap.getApprover());
+        dstMap.setRemitter(srcMap.getRemitter());
+        dstMap.setIsActive(srcMap.getIsActive());
+        mappingRepository.save(dstMap);
+    }
+
     public ApproverRemitterMapping findActiveMappingByApprover(Long approverID) {
         List<ApproverRemitterMapping> activeMaps = mappingRepository.findByApproverIdAndIsActive(approverID, true);
         for (ApproverRemitterMapping map : activeMaps)
@@ -123,7 +130,7 @@ public class ApproverRemitterMapService {
     }
 
     public List<ApproverRemitterMapping> searchMappingBySpec(
-            ApproverRemitterSpec searchSpec) {
+        ApproverRemitterSpec searchSpec) {
         return mappingRepository.findAll(searchApproveRemitterMap(searchSpec));
     }
 
@@ -143,33 +150,43 @@ public class ApproverRemitterMapService {
     private void validateMapRequest(ApproverRemitterMapping approverRemitterMap, BindingResult bindingResult) {
         if (approverRemitterMap.getApprover() == null) {
             bindingResult.reject("validate.approver.404",
-                    collMessageSource.getMessage("validate.approver.404", EMPTY_ARGS, Locale.getDefault()));
+                collMessageSource.getMessage("validate.approver.404", EMPTY_ARGS, Locale.getDefault()));
             return;
         }
         if (approverRemitterMap.getRemitter() == null) {
             bindingResult.reject("validate.remitter.404",
-                    collMessageSource.getMessage("validate.remitter.404", EMPTY_ARGS, Locale.getDefault()));
+                collMessageSource.getMessage("validate.remitter.404", EMPTY_ARGS, Locale.getDefault()));
             return;
         }
 
-        for (ApproverRemitterMapping map : mappingRepository.findByApprover(approverRemitterMap.getApprover()))
-            if (map.equals(approverRemitterMap))
+        for (ApproverRemitterMapping map : mappingRepository.findByApprover(approverRemitterMap.getApprover())) {
+            // If both Id exists and are equal then mode == MODIFY
+            // Skip all map for which id's are same ( for equivalence relation check )
+            if (!Objects.equals(map.getId(), approverRemitterMap.getId()) && map.equals(approverRemitterMap)) {
                 bindingResult.reject("validate.mapping.exists",
-                        collMessageSource.getMessage("validate.mapping.exists", EMPTY_ARGS, Locale.getDefault()));
+                    collMessageSource.getMessage("validate.mapping.exists", EMPTY_ARGS, Locale.getDefault()));
+                break;
+            }
+        }
     }
 
     public boolean validateAndUpdateMapping(ApproverRemitterSpec mappingSpec, BindingResult bindingResult) {
-        if (mappingSpec.id == null || (mappingRepository.findOne(mappingSpec.id)) == null) {
+        // approverRemitterMap will be referenced in hibernate's persistence context, so updating is will update the record
+        ApproverRemitterMapping approverRemitterMap;
+        if (mappingSpec.id == null || (approverRemitterMap = mappingRepository.findOne(mappingSpec.id)) == null) {
             bindingResult.reject("mapping.404");
             return false;
         }
-        ApproverRemitterMapping approverRemitterMap = ApproverRemitterSpec.toEntity(mappingSpec, userService);
-        validateMapRequest(approverRemitterMap, bindingResult);
+        // We cannot save this tempApproverRemitterMap, as hibernate will try to insert new record instead of searching its persistence context using primary key.
+        ApproverRemitterMapping tempApproverRemitterMap = ApproverRemitterSpec.toEntity(mappingSpec, userService);
+
+        validateMapRequest(tempApproverRemitterMap, bindingResult);
         if (bindingResult.hasErrors()) {
-            mappingSpec.setApproverName(approverRemitterMap.getApprover().getName());
+            mappingSpec.setApproverName(tempApproverRemitterMap.getApprover().getName());
             return false;
         }
-        mappingRepository.save(approverRemitterMap);
+
+        updateMapping(approverRemitterMap, tempApproverRemitterMap);
         return true;
     }
 
@@ -317,13 +334,13 @@ public class ApproverRemitterMapService {
         @Override
         public String toString() {
             return "ApproverRemitterMappingSpec{" +
-                    "id=" + id +
-                    ", approverId=" + approverId +
-                    ", remitterId=" + remitterId +
-                    ", isActive=" + isActive +
-                    ", *approverName='" + approverName + '\'' +
-                    ", *remitterName='" + remitterName + '\'' +
-                    '}';
+                "id=" + id +
+                ", approverId=" + approverId +
+                ", remitterId=" + remitterId +
+                ", isActive=" + isActive +
+                ", *approverName='" + approverName + '\'' +
+                ", *remitterName='" + remitterName + '\'' +
+                '}';
         }
     }
 }

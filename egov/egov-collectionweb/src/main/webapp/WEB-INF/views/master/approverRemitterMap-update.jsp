@@ -262,4 +262,4 @@ table {
         <input name="close" type="button" class="button"
             onclick="window.close()" value='<spring:message code="lbl.close" />' />
     </div>
-</form:form>l
+</form:form>
