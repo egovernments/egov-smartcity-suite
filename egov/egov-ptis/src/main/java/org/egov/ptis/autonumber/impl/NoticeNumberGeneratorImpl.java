@@ -47,6 +47,8 @@
  */
 package org.egov.ptis.autonumber.impl;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_WRITEOFFROCEEDINGS;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
@@ -98,6 +100,8 @@ public class NoticeNumberGeneratorImpl implements NoticeNumberGenerator {
                 noticeTypeCode = "EN";
             else if (PropertyTaxConstants.NOTICE_TYPE_SURVEY_COMPARISON.equalsIgnoreCase(noticeType))
                 noticeTypeCode = "CN";
+            else if (PropertyTaxConstants.NOTICE_TYPE_WRITEOFFROCEEDINGS.equalsIgnoreCase(noticeType))
+                noticeTypeCode = "WO";
             noticeNumber = String.format("%s/%s%06d", noticeTypeCode, ApplicationThreadLocals.getCityCode(),
                     genericSequenceNumberGenerator.getNextSequence(SEQ_EGPT_NOTICE_NUMBER));
         }

@@ -2402,6 +2402,9 @@ public class PropertyService {
         else if (APPLICATION_TYPE_BIFURCATE_ASSESSENT.equals(applicationType))
             sla = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "BIFURCATION")
                     .getResolutionTime().intValue();
+        else if (APPLICATION_TYPE_WRITE_OFF.equals(applicationType))
+            sla = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "WRITEOFF")
+                    .getResolutionTime().intValue();
         return sla;
     }
 

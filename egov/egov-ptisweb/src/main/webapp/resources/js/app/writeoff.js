@@ -45,19 +45,165 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-$(document).ready(function() {
-	//toggleOtherReason();
+$( document ).ready(function() {
+    $("#viewlink").hide();
+
+	 var frominstallment;
+	 var toinstallment;
+	 instString = $("#instString").val();
+$("writeOffType").change(function()
+	           {
+	$("#demandDetailsTable").removeAttr('style');
+	  instString.split(",").forEach((val,index)=> {
+		  var queryIdentifier = ".row-"+val;
+		  $(queryIdentifier).removeAttr('style');
+
+	  });
+	           });
+	           
+	 
+	       $("#frominstallments").change(function()
+	           {
+	    
+	    	   getselectedinstallments(); });
+$("#toinstallments").change(function()
+          {
+	 getselectedinstallments();
+          }); 
 });
 
-function checkboxenable() {
-	var enable = jQuery('#fullwriteoffcheckbox').val('');
-	alert(enable);
+function getselectedinstallments(val){
+	   
+	  fromVal = $("#frominstallments").val();
+	  toVal = $("#toinstallments").val();
+	  instString = $("#instString").val();
+	  
+	  if(fromVal && toVal){
+		  var fromValIndex = instString.split(",").indexOf(fromVal);
+		  var toValIndex = instString.split(",").indexOf(toVal);
+		  $("#demandDetailsTable").attr('style', 'display:none;');
+		  instString.split(",").forEach((val,index)=> {
+			  var queryIdentifier = ".row-"+val;
+			  $(queryIdentifier).attr('style', 'display:none;');
+
+		  });
+		  
+		  if(fromValIndex > toValIndex)
+			return alert("To Installment cannot be greater than From Installment");
+		   $("#demandDetailsTable").removeAttr('style');		  
+		  instString.split(",").forEach((val,index)=> {
+			  if(fromValIndex <= index && index <= toValIndex){
+			  var queryIdentifier = ".row-"+val;
+			  $(queryIdentifier).removeAttr('style');
+			  }
+		  });
+	  }
 }
-/*function toggleOtherReason() {
- var obj = jQuery('#writeOffReason')[0];
- if (obj.value == 'Other reasons') {
- jQuery('#otherReasonDiv').show();
- } else {
- jQuery('#otherReasonDiv').hide();
- }
- }*/
+
+	
+	var fullwriteoffreasons = false;
+	function enablecheckbox() {
+		var writeofftypes = $( "#writeOffType option:selected" ).text();
+		if (writeofftypes == 'Full Writeoff') {
+			document.getElementById("check").style.display = "block";
+			$("#frominstallments").attr('disabled', true);
+			$("#toinstallments").attr('disabled', true);
+			$("#frominstallments").val('');
+			$("#toinstallments").val('');
+			$("#demandDetailsTable").removeAttr('style');
+			for(var i=0; i < $(".demandDetailBeanList").length; i++){
+				 
+				var actualCollection = '#demandDetailBeanList'+ i + 'actualCollection';
+				var actualAmount = '#demandDetailBeanList'+ i + 'actualAmount';
+				var revisedAmount = '#demandDetailBeanList'+ i + 'revisedAmount';
+				
+				console.log( "val ", $(actualAmount).val() , $(actualCollection).val());
+				
+				$(revisedAmount).val($(actualAmount).val() - $(actualCollection).val());
+			}
+			
+		} else {
+			document.getElementById("check").style.display = "none";
+			$("#frominstallments").attr('disabled', false);
+			$("#toinstallments").attr('disabled', false);
+			
+		}
+	}
+	
+	function displayreasons(){
+			var reasontype = $( "#writeOffType option:selected" ).text();
+			jQuery.ajax({
+				url: "/ptis/common/getwriteoffreason",
+				dataType: "json",
+		        type: "GET",
+		        data:{"typevalue":reasontype},
+				success: function (response) {
+						jQuery('#reasons').prop("disabled", false); 
+						jQuery('#reasons').html("");
+						var select = jQuery(this).find("#reasons");
+						select.empty();
+						jQuery('#reasons').append(
+								jQuery('<option>').text('Select').attr('value', ""));
+					jQuery.each(response, function(index, reason) {
+						jQuery('#reasons').append(
+								"<option value='" + reason.code + "'>" + reason.name
+										+ "</option>");
+					});
+				}, 
+				error: function () {
+				}
+			});
+
+	}
+	
+	function getcouncilrequest(){
+		var resolutiontype = jQuery('#resolutionType').val();
+		var resolutionNo = jQuery('#resolutionNo').val();
+		if(resolutiontype!=null && resolutionNo!=null && resolutionNo!=undefined && resolutiontype!=undefined){
+		jQuery.ajax({
+			url: "/ptis/common/getcouncildetails",
+			dataType: 'json',
+	        type: "GET",
+	        data:{"resolutionType":resolutiontype,"resolutionNo":resolutionNo},
+			success: function (response) {
+					   for (var i=0;i<response.length;i++) {
+					      $("#resolutionDate").val(response[i].resolutionDate);
+					      $("#councilurl").val(response[i].councilResolutionUrl);
+					}
+					   $("#viewlink").show();			}, 
+			error: function(){
+				bootbox
+				.alert("Resolution deatilsa are not correct.");
+			} 				
+			
+		});
+		}
+	}
+
+		
+		function calculateCollectionAmount(obj) {
+
+			var table = document.getElementById("demandDetailsTable");
+			var rowobj = getRow(obj).rowIndex;
+			
+			if (document.forms[0].revisedCollection[rowobj - 2] != undefined
+					&& document.forms[0].revisedCollection[rowobj - 2].value != undefined) {
+				for (var j = 0; j <= rowobj - 2; j++) {
+					if (document.forms[0].revisedCollection[j].value == "") {
+						bootbox
+								.alert("Please choose its previos Installments. Random selection not allowed.");
+						obj.value = "";
+						return false;
+					}
+				}
+			}
+		}
+		
+
+	
+	function openurl()
+	{
+		
+		urlvalue =jQuery('#councilurl').val();
+	  var win=openInNewTab(urlvalue,'_blank');
+	}

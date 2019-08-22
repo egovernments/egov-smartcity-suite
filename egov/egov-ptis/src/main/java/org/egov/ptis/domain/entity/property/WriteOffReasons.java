@@ -1,13 +1,14 @@
 package org.egov.ptis.domain.entity.property;
 
+import java.io.Serializable;
+
 import javax.persistence.*;
-import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egpt_writeoff_reason")
 @SequenceGenerator(name = WriteOffReasons.SEQ_WRITE_OFF_REASON, sequenceName = WriteOffReasons.SEQ_WRITE_OFF_REASON, allocationSize = 1)
-public class WriteOffReasons extends AbstractAuditable {
+public class WriteOffReasons implements Serializable {
 
 	/**
 	* 
@@ -20,14 +21,23 @@ public class WriteOffReasons extends AbstractAuditable {
 	@GeneratedValue(generator = SEQ_WRITE_OFF_REASON, strategy = GenerationType.SEQUENCE)
 	private Long id;
 
-	@SafeHtml
+	@Column(name = "name")
 	private String name;
 
-	@SafeHtml
+	@Column(name = "type")
 	private String type;
+	
+	@Column(name = "isactive")
 	private boolean isActive;
-	private String code = null;
-	private String orderId = null;
+	
+	@Column(name = "code")
+	private String code ;
+	
+	@Column(name = "order_id")
+	private String orderId;
+	
+	@Column(name = "description")
+	private String description;
 	
 	public String getCode() {
 		return code;
@@ -61,12 +71,10 @@ public class WriteOffReasons extends AbstractAuditable {
 		this.type = type;
 	}
 
-	@Override
 	public Long getId() {
 		return id;
 	}
 
-	@Override
 	public void setId(final Long id) {
 		this.id = id;
 	}
@@ -78,5 +86,11 @@ public class WriteOffReasons extends AbstractAuditable {
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
 	}
+	public String getDescription() {
+		return description;
+	}
 
+	public void setDescription(String description) {
+		this.description = description;
+	}
 }

@@ -178,7 +178,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
                 "${meesevaApplicationNumber}", "applicationType", "${applicationType}",
                 "modifyRsn", "AMALG" }),
         @Result(name = APPLICATION_TYPE_MARKASCOURTCASE, type = "redirect", location = "../markascourtcase/${assessmentNum}"),
-        @Result(name = APPLICATION_TYPE_WRITE_OFF, type = "redirect", location = "../writeOff/viewForm/${assessmentNum}")})
+        @Result(name = APPLICATION_TYPE_WRITE_OFF, type = "redirect", location = "../writeoff/viewform/${assessmentNum}")})
 
 public class SearchPropertyAction extends SearchFormAction {
     private static final String ADDRESS = "address";
@@ -1135,7 +1135,7 @@ public class SearchPropertyAction extends SearchFormAction {
 			return commonForm();
 	}
     
-    @Action(value = "/search/searchproperty-writeOff")
+    @Action(value = "/search/searchproperty-writeoff")
     public String writeOff() {
         setApplicationType(APPLICATION_TYPE_WRITE_OFF);
         return commonForm();

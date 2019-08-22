@@ -51,8 +51,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_MIXED;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 
 import java.math.BigDecimal;
@@ -63,6 +63,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
@@ -71,8 +73,11 @@ import org.egov.ptis.domain.entity.property.AmalgamatedPropInfo;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
+import org.egov.ptis.domain.entity.property.WriteOffReasons;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.writeOff.WriteOffService;
 import org.egov.ptis.master.service.PropertyUsageService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -96,7 +101,10 @@ public class AjaxCommonController {
 
     @Autowired
 	private PropertyTypeMasterDAO propTyprMasterDAO;
-
+    @Autowired
+    private WriteOffService writeOffService;
+    @Autowired
+	private PropertyTaxCommonUtils propertyTaxCommonUtils;
     /**
      * Provides the details of the property for amalgamation
      * @param assessmentNo
@@ -200,4 +208,20 @@ public class AjaxCommonController {
         
         return propTypeCategoryMap;
     }
+    
+	@RequestMapping(value = "/getwriteoffreason", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<WriteOffReasons> getreasons(@RequestParam("typevalue") final String typevalue) {
+		return writeOffService.getAllwriteoffMastersByType(typevalue);
+
+	}
+
+	@RequestMapping(value = "/getcouncildetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<Map<String, String>> getCouncilDetails(@RequestParam("resolutionNo") final String resolutionNo,
+			@RequestParam("resolutionType") final String resolutionType, HttpServletRequest request) {
+		 return propertyTaxCommonUtils.getCouncilDeatils(resolutionNo, resolutionType, request);
+	}
+	
+    
 }

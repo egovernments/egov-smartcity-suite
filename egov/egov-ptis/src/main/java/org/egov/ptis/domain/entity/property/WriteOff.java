@@ -47,8 +47,6 @@
  */
 package org.egov.ptis.domain.entity.property;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import java.util.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -62,7 +60,7 @@ import org.egov.ptis.bean.demand.DemandDetail;
 
 public class WriteOff extends StateAware<Position> {
 
-	private static final long serialVersionUID = 6700204182767909671L;
+	private static final long serialVersionUID = 8839183407077692372L;
 
 	public static final String SEQ_WRITEOFF = "SEQ_EGPT_WRITE_OFF";
 
@@ -72,49 +70,61 @@ public class WriteOff extends StateAware<Position> {
 
 	@ManyToOne(targetEntity = PropertyImpl.class, cascade = CascadeType.ALL)
 	@NotNull
-	@JoinColumn(name = "property_id")
+	@JoinColumn(name = "property")
 	private PropertyImpl property;
 
 	@ManyToOne(targetEntity = BasicPropertyImpl.class, cascade = CascadeType.ALL)
 	@NotNull
-	@JoinColumn(name = "basicproperty_id", nullable = false)
+	@JoinColumn(name = "basicproperty", nullable = false)
 	private BasicPropertyImpl basicProperty;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(name = "egpt_write_off_docs", joinColumns = @JoinColumn(name = "writeOff"), inverseJoinColumns = @JoinColumn(name = "document"))
 	private List<Document> documents = new ArrayList<>();
 
-	@Column(name = "status")
-	private Character status;
+	@NotNull
+	@ManyToOne(targetEntity = PropertyMutationMaster.class, cascade = CascadeType.ALL)
+	@JoinColumn(name = "mutation_master_id")
+	private PropertyMutationMaster writeOffType;
 
-	@Column(name = "source")
-	private String source;
-
-	@Column(name = "applicationno")
-	private String applicationNumber;
-
-	@Column(name = "type")
-	private String writeOffType;
-
-	@Column(name = "reason")
-	private String WriteOffReason;
-
-	private String resolutionNo;
-
-	private String resolutionDate;
-
-	@Column(name = "deactivate")
-	private Boolean propertydeactivateFlag;
-
+	@ManyToOne(targetEntity = WriteOffReasons.class, cascade = CascadeType.ALL)
+	@NotNull
+	@JoinColumn(name = "id_writeoff_reason")
 	private WriteOffReasons writeOffReasons;
 
 	@Transient
 	private transient List<DemandDetail> demandDetailBeanList = new ArrayList<>();
 
+	@Column(name = "applicationno")
+	private String applicationNumber;
+
+	@Column(name = "resolutionNo")
+	private String resolutionNo;
+
+	@Column(name = "resolutionDate")
+	private String resolutionDate;
+
+	@Column(name = "deactivate")
+	private Boolean propertyDeactivateFlag;
+
+	@Column(name = "resolutionType")
+	private String resolutionType;
+
+	@Column(name = "fromInstallment")
+	private String fromInstallment;
+
+	@Column(name = "toInstallment")
+	private String toInstallment;
+
+	@Column(name = "comments")
+	private String comments;
+
+	@Override
 	public Long getId() {
 		return id;
 	}
 
+	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -135,36 +145,12 @@ public class WriteOff extends StateAware<Position> {
 		this.basicProperty = basicProperty;
 	}
 
-	public Character getStatus() {
-		return status;
-	}
-
-	public void setStatus(Character status) {
-		this.status = status;
-	}
-
-	public String getSource() {
-		return source;
-	}
-
-	public void setSource(String source) {
-		this.source = source;
-	}
-
 	public String getApplicationNumber() {
 		return applicationNumber;
 	}
 
 	public void setApplicationNumber(String applicationNumber) {
 		this.applicationNumber = applicationNumber;
-	}
-
-	public String getWriteOffReason() {
-		return WriteOffReason;
-	}
-
-	public void setWriteOffReason(String writeOffReason) {
-		WriteOffReason = writeOffReason;
 	}
 
 	public String getResolutionNo() {
@@ -183,33 +169,6 @@ public class WriteOff extends StateAware<Position> {
 		this.resolutionDate = resolutionDate;
 	}
 
-	public String getWriteOffType() {
-		return writeOffType;
-	}
-
-	public void setWriteOffType(String writeOffType) {
-		this.writeOffType = writeOffType;
-	}
-
-	@Override
-	public String getStateDetails() {
-		final StringBuilder stateDetails = new StringBuilder();
-		BasicProperty basicPropertyObj = getBasicProperty();
-
-		String upicNo = EMPTY;
-		String applicationNo = EMPTY;
-
-		if (isNotBlank(basicPropertyObj.getUpicNo())) {
-			upicNo = basicPropertyObj.getUpicNo();
-		}
-		if (isNotBlank(getApplicationNumber())) {
-			applicationNo = getApplicationNumber();
-		}
-
-		stateDetails.append(upicNo.isEmpty() ? applicationNo : upicNo).append(", ");
-		return stateDetails.toString();
-	}
-
 	public List<DemandDetail> getDemandDetailBeanList() {
 		return demandDetailBeanList;
 	}
@@ -218,12 +177,12 @@ public class WriteOff extends StateAware<Position> {
 		this.demandDetailBeanList = demandDetailBeanList;
 	}
 
-	public Boolean getPropertydeactivateFlag() {
-		return propertydeactivateFlag;
+	public Boolean getPropertyDeactivateFlag() {
+		return propertyDeactivateFlag;
 	}
 
-	public void setPropertydeactivateFlag(Boolean propertydeactivateFlag) {
-		this.propertydeactivateFlag = propertydeactivateFlag;
+	public void setPropertyDeactivateFlag(Boolean propertyDeactivateFlag) {
+		this.propertyDeactivateFlag = propertyDeactivateFlag;
 	}
 
 	public WriteOffReasons getWriteOffReasons() {
@@ -235,8 +194,59 @@ public class WriteOff extends StateAware<Position> {
 	}
 
 	public Position getPositionById(Long approvalPosition) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
+	public List<Document> getDocuments() {
+		return documents;
+	}
+
+	public void setDocuments(List<Document> documents) {
+		this.documents = documents;
+	}
+
+	public String getResolutionType() {
+		return resolutionType;
+	}
+
+	public void setResolutionType(String resolutionType) {
+		this.resolutionType = resolutionType;
+	}
+
+	public String getFromInstallment() {
+		return fromInstallment;
+	}
+
+	public void setFromInstallment(String fromInstallment) {
+		this.fromInstallment = fromInstallment;
+	}
+
+	public String getToInstallment() {
+		return toInstallment;
+	}
+
+	public void setToInstallment(String toInstallment) {
+		this.toInstallment = toInstallment;
+	}
+
+	public PropertyMutationMaster getWriteOffType() {
+		return writeOffType;
+	}
+
+	public void setWriteOffType(PropertyMutationMaster writeOffType) {
+		this.writeOffType = writeOffType;
+	}
+
+	public String getComments() {
+		return comments;
+	}
+
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
+
+	@Override
+	public String getStateDetails() {
+		return "Write Off" + " - " + this.getBasicProperty().getUpicNo();
+	}
 }

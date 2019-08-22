@@ -63,8 +63,10 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.entity.property.VacancyRemissionApproval;
+import org.egov.ptis.domain.entity.property.WriteOff;
 import org.egov.ptis.domain.entity.property.view.SurveyBean;
 import org.egov.ptis.domain.repository.vacancyremission.VacancyRemissionApprovalRepository;
+import org.egov.ptis.domain.repository.writeOff.WriteOffRepository;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.PropertySurveyService;
@@ -171,6 +173,8 @@ public class DigitalSignatureWorkflowController {
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
     @Autowired
     private PropertySurveyService propertySurveyService;
+    @Autowired
+    private WriteOffRepository writeOffRepository;
 
     @RequestMapping(value = "/propertyTax/transitionWorkflow")
     public String transitionWorkflow(final HttpServletRequest request, final Model model) {
@@ -210,19 +214,30 @@ public class DigitalSignatureWorkflowController {
         propertyTaxCommonUtils.buildMailAndSMS(property);
     }
 
-    private void updateOthers(final String applicationNumber) {
-        final RevisionPetition revisionPetition = getRevisionPetitionByApplicationNo(applicationNumber);
-        if (revisionPetition != null)
-            updateRevisionPetition(revisionPetition);
-        else {
-            final PropertyMutation propertyMutation = getPropertyMutationByApplicationNo(applicationNumber);
-            if (propertyMutation != null)
-                updatePropertyMutation(propertyMutation);
-            else
-                updateVacanyRemission(applicationNumber);
-        }
-    }
-
+	private void updateOthers(final String applicationNumber) {
+		final RevisionPetition revisionPetition = getRevisionPetitionByApplicationNo(applicationNumber);
+		final WriteOff writeOff = getWriteOffByApplicationNo(applicationNumber);
+		if (revisionPetition != null)
+			updateRevisionPetition(revisionPetition);
+		else {
+			final PropertyMutation propertyMutation = getPropertyMutationByApplicationNo(applicationNumber);
+			if (propertyMutation != null)
+				updatePropertyMutation(propertyMutation);
+			else if (writeOff != null) {
+				updateWriteOff(writeOff);
+			} else
+				updateVacanyRemission(applicationNumber);
+		}
+	}
+    
+	@SuppressWarnings("deprecation")
+	private void updateWriteOff(final WriteOff writeOff) {
+		final BasicProperty basicProperty = writeOff.getBasicProperty();
+		transition(writeOff);
+		writeOffRepository.save(writeOff);
+		basicPropertyService.persist(basicProperty);
+	}
+    
     private void updateRevisionPetition(final RevisionPetition revisionPetition) {
         transition(revisionPetition);
         propertyService.updateIndexes(revisionPetition, "RP".equalsIgnoreCase(revisionPetition.getType())
@@ -287,6 +302,12 @@ public class DigitalSignatureWorkflowController {
                 .setParameter(APPLICATION_NO, applicationNumber).uniqueResult();
     }
 
+    private WriteOff getWriteOffByApplicationNo(final String applicationNumber) {
+        return (WriteOff) getCurrentSession()
+                .createQuery("from WriteOff where applicationNo = :applicationNo")
+                .setParameter(APPLICATION_NO, applicationNumber).uniqueResult();
+    }
+    
     private Map<String, String> getApplicationTypes() {
         final Map<String, String> applicationTypes = new HashMap<>();
         applicationTypes.put(CREATE, APPLICATION_TYPE_NEW_ASSESSENT);
@@ -331,7 +352,15 @@ public class DigitalSignatureWorkflowController {
                 .withNextAction(null);
         vacancyRemission.getBasicProperty().setUnderWorkflow(false);
     }
-
+    
+	private void transition(final WriteOff writeOff) {
+		writeOff.transition().end().withOwner(writeOff.getCurrentState().getOwnerPosition()).withNextAction(null);
+		writeOff.getBasicProperty().setUnderWorkflow(false);
+		if (writeOff.getPropertyDeactivateFlag()) {
+			writeOff.getBasicProperty().setActive(false);
+		}
+	}
+    
     private Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }

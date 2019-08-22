@@ -398,11 +398,11 @@
 			value="/WEB-INF/views/reports/ulbWiseCollectionReport-form.jsp" />
 	</definition>
 
-	<definition name="writeOff-form" extends="base_layout">
+	<definition name="writeoff-form" extends="base_layout">
 		<put-attribute name="page-title" value="lbl.writeOff.title"
 			cascade="true" />
 		<put-attribute name="body"
-			value="/WEB-INF/views/transactions/writeOff/writeOff-form.jsp" />
+			value="/WEB-INF/views/transactions/writeOff/writeoff-form.jsp" />
 	</definition>
 
 	<definition name="ownerdetails-form" extends="base_layout">
@@ -849,5 +849,23 @@
 			cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/reports/vltdcbreport-form.jsp" />
+	</definition>
+	<definition name="writeoff-success" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.writeOff.title"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/transactions/writeOff/writeoff-success.jsp" />
+	</definition>
+	<definition name="writeoff-view" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.writeOff.title"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/transactions/writeOff/writeoff-view.jsp" />
+	</definition>
+	<definition name="writeoff-dig-sign" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.writeOff.title"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/transactions/writeOff/writeoff-digitalsignatureredirection.jsp" />
 	</definition>
 </tiles-definitions> 
