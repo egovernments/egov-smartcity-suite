@@ -54,6 +54,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -179,7 +180,13 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
     public EgBillregister transitionWorkFlow(final EgBillregister billregister, WorkflowBean workflowBean) {
         final DateTime currentDate = new DateTime();
         final User user = securityUtils.getCurrentUser();
-        final Assignment userAssignment = assignmentService.findByEmployeeAndGivenDate(user.getId(), new Date()).get(0);
+        Assignment userAssignment=null;
+        final List<Assignment> assignments = assignmentService.findByEmployeeAndGivenDate(user.getId(), new Date());
+        if(assignments.isEmpty()) {
+        	throw new ApplicationRuntimeException("User assignment got expired");
+        }else {
+        	userAssignment = assignments.get(0); 
+        }
         Position pos = null;
         Assignment wfInitiator = null;
         if (null != billregister.getId())
