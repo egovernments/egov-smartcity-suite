@@ -165,11 +165,16 @@ public class ApproverRemitterMapService {
             return false;
         }
 
+        ApproverRemitterMapping oldMap = mappingRepository.findOne(spec.id);
         ApproverRemitterSpec.copyToEntity(approverRemitterMap, spec, userService);
 
         validateMapRequest(approverRemitterMap, bindingResult);
         if (bindingResult.hasErrors()) {
-            entityManager.detach(approverRemitterMap);
+//            entityManager.detach(approverRemitterMap); // Even detatching not working
+            approverRemitterMap.setIsActive(oldMap.getIsActive());
+            approverRemitterMap.setApprover(oldMap.getApprover());
+            approverRemitterMap.setRemitter(oldMap.getRemitter());
+            
             spec.setApproverName(approverRemitterMap.getApprover().getName());
             return false;
         }
