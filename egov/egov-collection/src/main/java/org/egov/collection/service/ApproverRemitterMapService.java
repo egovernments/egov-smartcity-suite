@@ -64,6 +64,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 
@@ -158,6 +159,7 @@ public class ApproverRemitterMapService {
         }
     }
 
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public boolean validateAndUpdateMapping(ApproverRemitterSpec spec, BindingResult bindingResult) {
         ApproverRemitterMapping approverRemitterMap = mappingRepository.findOne(spec.id);
         if (spec.id == null || approverRemitterMap == null) {
@@ -165,16 +167,10 @@ public class ApproverRemitterMapService {
             return false;
         }
 
-        ApproverRemitterMapping oldMap = mappingRepository.findOne(spec.id);
         ApproverRemitterSpec.copyToEntity(approverRemitterMap, spec, userService);
 
         validateMapRequest(approverRemitterMap, bindingResult);
         if (bindingResult.hasErrors()) {
-//            entityManager.detach(approverRemitterMap); // Even detatching not working
-            approverRemitterMap.setIsActive(oldMap.getIsActive());
-            approverRemitterMap.setApprover(oldMap.getApprover());
-            approverRemitterMap.setRemitter(oldMap.getRemitter());
-            
             spec.setApproverName(approverRemitterMap.getApprover().getName());
             return false;
         }
