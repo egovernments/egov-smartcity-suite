@@ -421,7 +421,7 @@ public class WriteOffService {
 	}
 
 	@SuppressWarnings("deprecation")
-	public void updateDemandDetail(WriteOff writeOff, String[] writeOffType) {
+	public void updateDemandDetails(WriteOff writeOff, String[] writeOffType) {
 
 		Set<EgDemandDetails> demandDetails = propertyService.getCurrrentDemand(writeOff.getProperty())
 				.getEgDemandDetails();

@@ -104,7 +104,7 @@ function getselectedinstallments(val){
 	var fullwriteoffreasons = false;
 	function enablecheckbox() {
 		var writeofftypes = $( "#writeOffType option:selected" ).text();
-		if (writeofftypes == 'Full Writeoff') {
+		if (writeofftypes == 'Full WriteOff') {
 			document.getElementById("check").style.display = "block";
 			$("#frominstallments").attr('disabled', true);
 			$("#toinstallments").attr('disabled', true);

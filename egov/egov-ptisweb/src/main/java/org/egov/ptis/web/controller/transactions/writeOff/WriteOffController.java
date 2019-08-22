@@ -91,7 +91,6 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.WriteOff;
 import org.egov.ptis.domain.entity.property.WriteOffReasons;
-import org.egov.ptis.domain.service.writeOff.WriteOffDCBService;
 import org.egov.ptis.domain.service.writeOff.WriteOffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -135,8 +134,6 @@ public class WriteOffController extends GenericWorkFlowController {
 	private FileStoreService fileStoreService;
 	@Autowired
 	private PropertyTaxUtil propertyTaxUtil;
-	@Autowired
-	private WriteOffDCBService writeOffDCBService;
 	@Autowired
 	private PtDemandDao ptDemandDAO;
 	@Autowired
@@ -183,8 +180,8 @@ public class WriteOffController extends GenericWorkFlowController {
 				.getEgDemandDetails();
 		List<EgDemandDetails> dmndDetails = new ArrayList<>(demandDetails);
 		if (!dmndDetails.isEmpty())
-			dmndDetails = writeOffDCBService.sortDemandDetails(dmndDetails);
-		List<DemandDetail> demandDetailBeanList = writeOffDCBService.setDemandBeanList(dmndDetails);
+			dmndDetails = writeOffService.sortDemandDetails(dmndDetails);
+		List<DemandDetail> demandDetailBeanList = writeOffService.setDemandBeanList(dmndDetails);
 		writeOff.setDemandDetailBeanList(demandDetailBeanList);
 		model.addAttribute("installments", installmentList);
 		model.addAttribute("dmndDetails", demandDetailBeanList);
@@ -236,7 +233,7 @@ public class WriteOffController extends GenericWorkFlowController {
 		writeOffService.saveProperty(writeOff);
 		writeOff.getBasicProperty().addProperty(writeOff.getProperty());
 		writeOffService.setPtDemandSet(writeOff);
-		writeOffDCBService.updateDemandDetails(writeOff, getWriteOffTypes());
+		writeOffService.updateDemandDetails(writeOff, getWriteOffTypes());
 		writeOffService.saveWriteOff(writeOff, approvalPosition, approvalComent, null, workFlowAction);
 		final String successMsg = "write Off Saved Successfully in the System and forwarded to : "
 				+ propertyTaxUtil.getApproverUserName(writeOff.getState().getOwnerPosition().getId())
