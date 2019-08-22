@@ -169,6 +169,7 @@ public class ApproverRemitterMapService {
 
         validateMapRequest(approverRemitterMap, bindingResult);
         if (bindingResult.hasErrors()) {
+            entityManager.detach(approverRemitterMap);
             spec.setApproverName(approverRemitterMap.getApprover().getName());
             return false;
         }
