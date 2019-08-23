@@ -124,6 +124,7 @@ public class WriteOffController extends GenericWorkFlowController {
 	private static final String WF_ACTION = "workFlowAction";
 	private static final String APPROVAL_POSITION = "approvalPosition";
 	private static final String WRITEOFF_REASONS = "reasons";
+	private static final String ERROR_MSG ="errorMsg";
 	@PersistenceContext
 	private EntityManager entityManager;
 	@Autowired
@@ -171,7 +172,7 @@ public class WriteOffController extends GenericWorkFlowController {
 		model.addAttribute(PROPERTY, property);
 		model.addAttribute(CURRENT_STATE, CREATED);
 		model.addAttribute(STATE_TYPE, writeOff.getClass().getSimpleName());
-		model.addAttribute(ENDORSEMENT_NOTICE, null);
+		model.addAttribute(ENDORSEMENT_NOTICE, new ArrayList<>());
 		model.addAttribute("fromInstallments", installmentList);
 		model.addAttribute("toInstallments", installmentList);
 		writeOffService.addModelAttributes(model, writeOff.getBasicProperty().getUpicNo(), request, installmentList);
@@ -224,6 +225,10 @@ public class WriteOffController extends GenericWorkFlowController {
 		if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
 			approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
 		errorMessages = writeOffService.validate(writeOff);
+		if(!errorMessages.isEmpty()){
+		model.addAttribute(ERROR_MSG, errorMessages);
+		return WO_FORM;
+		}
 		if (!writeOff.getDocuments().isEmpty()) {
 			documents.addAll(writeOff.getDocuments());
 			writeOff.getDocuments().clear();
@@ -233,13 +238,13 @@ public class WriteOffController extends GenericWorkFlowController {
 		writeOffService.saveProperty(writeOff);
 		writeOff.getBasicProperty().addProperty(writeOff.getProperty());
 		writeOffService.setPtDemandSet(writeOff);
-		writeOffService.updateDemandDetails(writeOff, getWriteOffTypes());
+		writeOffService.updateDemandDetails(writeOff);
 		writeOffService.saveWriteOff(writeOff, approvalPosition, approvalComent, null, workFlowAction);
 		final String successMsg = "write Off Saved Successfully in the System and forwarded to : "
 				+ propertyTaxUtil.getApproverUserName(writeOff.getState().getOwnerPosition().getId())
 				+ " with application number : " + writeOff.getApplicationNumber();
 		LOGGER.error("Write off saved successfully");
-		model.addAttribute("errorMsg", errorMessages);
+		model.addAttribute(ERROR_MSG, errorMessages);
 		model.addAttribute("successMessage", successMsg);
 		model.addAttribute("showAckBtn", Boolean.TRUE);
 		model.addAttribute("propertyId", assessmentNo);

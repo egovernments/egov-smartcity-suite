@@ -1815,7 +1815,6 @@ public interface PropertyTaxConstants {
 	public static final String WO_SUCCESS_FORM = "writeoff-success";
 	public static final String WO_FORM = "writeoff-form";
 	public static final String WO_VIEW = "writeoff-view";
-	public static final String WFLOW_ACTION_NAME_WRITE_OFF = "WriteOff";
 	public static final String WRITE_OFF = "WRITE_OFF";
 	public static final String WRITEOFF_CODE = "WRITEOFF";
 	public static final String WRITEOFF = "WriteOff";

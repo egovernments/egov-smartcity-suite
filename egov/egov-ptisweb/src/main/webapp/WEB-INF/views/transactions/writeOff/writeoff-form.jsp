@@ -98,7 +98,7 @@ div.floors-tbl-freeze-column-div {
 </head>
 <body>
 
-	<%-- <c:if test="${not empty errorMsg}">
+	<c:if test="${not empty errorMsg}">
 		<div class="alert alert-danger" role="alert">
 			<c:forEach var="error" items="${errorMsg}" varStatus="status">
 				<spring:message code="${error.value}" />
@@ -106,7 +106,7 @@ div.floors-tbl-freeze-column-div {
 			</c:forEach>
 		</div>
 	</c:if>
- --%>
+
 	<form:form method="post" id="writeOffForm" commandName="writeOff"
 		theme="simple" enctype="multipart/form-data" modelAttribute="writeOff">
 		<form:hidden path="" name="loggedUserIsEmployee"
@@ -305,7 +305,7 @@ div.floors-tbl-freeze-column-div {
 										<div class="col-xs-2 add-margin view-content">
 											<form:select path="" id="writeOffType" name="type"
 												cssClass="form-control"
-												onchange="enablecheckbox();displayreasons();">
+												onchange="enablecheckbox();displayreasons();" required="required">
 												<form:option value="">
 													<spring:message code="lbl.select" />
 												</form:option>
@@ -318,12 +318,12 @@ div.floors-tbl-freeze-column-div {
 										</div>
 										<div class="col-xs-3 add-margin view-content">
 											<form:select id="reasons" path="" name="reasons"
-												cssClass="form-control" style="width: 80%">
+												cssClass="form-control" style="width: 80%" required="required">
 												<form:option value="">
 													<spring:message code="lbl.select" />
 												
 												<form:options items="${writeOffReasons}" itemValue="code" 
-													itemLabel="name" />
+													itemLabel="name"  />
 													</form:option>
 			
 											</form:select>
@@ -359,7 +359,7 @@ div.floors-tbl-freeze-column-div {
 										<div class="col-xs-2 add-margin view-content">
 											<form:select cssClass="form-control" path="resolutionType"
 												id="resolutionType" name="resolutionType"
-												cssStyle="width: 100%" >
+												cssStyle="width: 100%" required="required" >
 												<form:option value="">Select</form:option>
 												<form:option value="MPI. Council">Council</form:option>
 												<form:option value="Standing Committee">Standing Committee</form:option>
@@ -372,7 +372,7 @@ div.floors-tbl-freeze-column-div {
 											<form:input id="resolutionNo" path="resolutionNo" type="text"
 												value="${resolutionNo}" cssClass="form-control"
 												autocomplete="off" 
-												onchange="getcouncilrequest()" />
+												onchange="getcouncilrequest()" required="required" />
 										</div>
 										<div class="col-xs-2 add-margin postion">
 											<spring:message code="lbl.resolution.date" />
@@ -383,8 +383,7 @@ div.floors-tbl-freeze-column-div {
 												 />
 										</div>
 										<div class="col-xs-3 add-margin" id="viewlink">
-											<%-- <%@ include file="{url}"%> --%>
-											<a id="link" href="" onclick="openurl();">Council
+											<a id="link" href="#" onclick="openurl()return false;" target="_blank">Council
 												management verification link</a>
 										</div>
 									</div>
@@ -420,6 +419,7 @@ div.floors-tbl-freeze-column-div {
 						<jsp:include page="/WEB-INF/views/common/commonWorkflowMatrix.jsp" />
 					</div>
 				</div>
+				
 			<div id="loadingMask" style="display: none">
 				<p align="center">
 					<img src="/ptis/resources/erp2/images/bar_loader.gif"> <span

@@ -61,6 +61,7 @@ import org.egov.ptis.domain.entity.property.Amalgamation;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
+import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.entity.property.VacancyRemissionApproval;
 import org.egov.ptis.domain.entity.property.WriteOff;
@@ -88,6 +89,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -357,6 +359,12 @@ public class DigitalSignatureWorkflowController {
 		writeOff.transition().end().withOwner(writeOff.getCurrentState().getOwnerPosition()).withNextAction(null);
 		writeOff.getBasicProperty().setUnderWorkflow(false);
 		if (writeOff.getPropertyDeactivateFlag()) {
+		    PropertyStatusValues propStatusValues = propertyService.createPropStatVal(writeOff.getBasicProperty(),
+                            PropertyTaxConstants.PROP_DEACT_RSN, null, null, null, null, null);
+		    writeOff.getBasicProperty().setActive(false);
+		    writeOff.getBasicProperty().setModifiedDate(new Date());
+		    writeOff.getBasicProperty().addPropertyStatusValues(propStatusValues);
+                    basicPropertyService.persist(writeOff.getBasicProperty());
 			writeOff.getBasicProperty().setActive(false);
 		}
 	}

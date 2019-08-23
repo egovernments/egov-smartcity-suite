@@ -45,42 +45,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   --%>
-<script text='javascript/text'>
-$(document).ready(function()
-	     {
-	getselectedinstallments();
-	     });
-	  function getselectedinstallments(val){
-	  fromVal = "${writeOff.fromInstallment}";
-	  
-	  toVal = "${writeOff.toInstallment}";
-	 
-	instString = $("#instString").val();
-	  if(fromVal && toVal){
-		  var fromValIndex = instString.split(",").indexOf(fromVal);
-		  var toValIndex = instString.split(",").indexOf(toVal);
-		/*   $("#demandDetailsTable").attr('style', 'display:none;');
-		   instString.split(",").forEach((val,index)=> {
-			  var queryIdentifier = ".row-"+val;
-			  $(queryIdentifier).attr('style', 'display:none;');
-
-		  }); */ 	  
-		  /* if(fromValIndex > toValIndex)
-			return alert("To Installment cannot be greater than From Installment");
-		   $("#demandDetailsTable").removeAttr('style'); */	
-		 //  $("#demandDetailsTable").attr('style', 'display:none;');
-		  instString.split(",").forEach((val,index)=> {
-			  if(fromValIndex <= index && index <= toValIndex){
-				//  alert("valeu is "+val);
-			  var queryIdentifier = ".row-"+val;
-			//  alert("query identifie is "+queryIdentifier);
-			  $(queryIdentifier).removeAttr('style', 'display:none;');
-			  }
-		  });
-	  }
-	  }
-	   
-		  </script>
+  
 
 <div class="row">
 	<div class="col-md-12">
@@ -119,9 +84,9 @@ $(document).ready(function()
 			<div class="panel-body">
 				<div align="center"
 					class="overflow-x-scroll floors-tbl-freeze-column-div">
-					<table class="table table-bordered" width="100%" id="demandDetails" >
+					<table class="table table-bordered" width="100%" id="demandDetailsTable" >
 						<tr>
-							<th class="bluebgheadtd"><spring:message
+						<th class="bluebgheadtd"><spring:message
 									code="lbl.writeOff.instalmnt" /></th>
 							<th class="bluebgheadtd">Tax Name</th>
 							<th class="bluebgheadtd"><spring:message
@@ -129,13 +94,14 @@ $(document).ready(function()
 							<th class="bluebgheadtd"><spring:message
 									code="lbl.writeoff.dmd" /></th>
 							<th class="bluebgheadtd"><spring:message
-									code="lbl.collection" /></th>
+									code="lbl.cv.collection" /></th>
+
 						</tr>
-						
-							<c:forEach items="${demandDetailList}" var="demandDetails"
-							varStatus="status">
+						<c:forEach items="${demandDetailList}" var="demandDetails"
+							varStatus="status" >
+
 							<tr class="row-${demandDetails.installment.description}" 
-									value="status" style="display: none;">
+									value="status" >
 								<td class="greybox"><form:hidden
 										path="demandDetailBeanList[${status.index }].installment.id" />
 									<c:if
@@ -145,7 +111,8 @@ $(document).ready(function()
 										test="${demandDetailList[status.index].installment.id != demandDetailList[status.index-1].installment.id}">
 
 										<c:out value="${demandDetails.installment}"></c:out>
-					</c:if></td>
+
+									</c:if></td>
 								<td class="greybox"><form:hidden
 										path="demandDetailBeanList[${status.index }].reasonMaster" />
 									<c:out value="${demandDetails.reasonMaster}"></c:out></td>
@@ -158,6 +125,7 @@ $(document).ready(function()
 								<td class="greybox"><c:out
 										value="${demandDetails.actualCollection}">
 									</c:out></td>
+								
 
 							</tr>
 						</c:forEach>

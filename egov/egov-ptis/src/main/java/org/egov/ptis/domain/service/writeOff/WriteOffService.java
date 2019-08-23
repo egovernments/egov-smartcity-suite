@@ -1,13 +1,10 @@
 package org.egov.ptis.domain.service.writeOff;
 
 import static java.lang.Boolean.FALSE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.ACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_WRITE_OFF;
-import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESIGNATIONS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_DETAIL_LIST;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEPUTY_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.FULL_WRITEOFF;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_WRITE_OFF;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
@@ -25,8 +22,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WRITEOFF_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WRITE_OFF;
-import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.ACTIVE;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -166,8 +161,6 @@ public class WriteOffService {
         List<Map<String, Object>> wcDetails = propertyService.getWCDetails(assessmentNo, request);
         for (Installment inst : installmentList)
             instString = instString.append(inst.getDescription() + ",");
-        model.addAttribute("hasActiveWC", checkActiveWC(wcDetails));
-        model.addAttribute("hasActiveSewage", checkActiveSewage(sewConnDetails));
         model.addAttribute("instString", instString);
         model.addAttribute("wcDetails", wcDetails);
         model.addAttribute("sewConnDetails", sewConnDetails);
@@ -270,21 +263,19 @@ public class WriteOffService {
 
             }
 
-            else if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction)
-                    && (approverDesignation.equalsIgnoreCase(ASSISTANT_COMMISSIONER_DESIGN)
-                            || approverDesignation.equalsIgnoreCase(DEPUTY_COMMISSIONER_DESIGN)
-                            || approverDesignation.equalsIgnoreCase(ADDITIONAL_COMMISSIONER_DESIGN)
-                            || approverDesignation.equalsIgnoreCase(ZONAL_COMMISSIONER_DESIGN)
-                            || approverDesignation.equalsIgnoreCase(COMMISSIONER_DESGN))) {
+            else if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction)) {
+                wfmatrix = propertyWorkflowService.getWfMatrix(writeOff.getStateType(), null, null, additionalRule,
+                        writeOff.getCurrentState().getValue(), writeOff.getCurrentState().getNextAction(), null,
+                        loggedInUserDesignation);
                 writeOff.getProperty().setStatus(STATUS_ISACTIVE);
                 writeOff.getBasicProperty().getActiveProperty().setStatus(STATUS_ISHISTORY);
                 writeOff.getBasicProperty().addProperty(writeOff.getProperty());
-
                 if (writeOff.getProperty().getStatus().equals(STATUS_ISACTIVE))
                     nextAction = WF_STATE_DIGITAL_SIGNATURE_PENDING;
                 propertyService.copyCollection(writeOff.getBasicProperty().getActiveProperty(), writeOff.getProperty());
-                writeOff.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent).withStateValue(null).withDateInfo(new Date()).withOwner(pos)
+                writeOff.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
+                        .withOwner(pos)
                         .withNextAction(nextAction).withNatureOfTask(NATURE_WRITE_OFF)
                         .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
                         .withSLA(propertyService.getSlaValue(APPLICATION_TYPE_WRITE_OFF));
@@ -294,6 +285,11 @@ public class WriteOffService {
                 wfmatrix = propertyWorkflowService.getWfMatrix(writeOff.getStateType(), null, null, additionalRule,
                         writeOff.getCurrentState().getValue(), writeOff.getCurrentState().getNextAction(), null,
                         loggedInUserDesignation);
+                if (wfmatrix.getNextAction().contains(WF_STATE_DIGITAL_SIGNATURE_PENDING)) {
+                    writeOff.getProperty().setStatus(STATUS_ISACTIVE);
+                    writeOff.getBasicProperty().getActiveProperty().setStatus(STATUS_ISHISTORY);
+                    writeOff.getBasicProperty().addProperty(writeOff.getProperty());
+                }
                 writeOff.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos)
@@ -354,13 +350,13 @@ public class WriteOffService {
 
     public Map<String, String> validate(WriteOff writeOff) {
         HashMap<String, String> errorMessages = new HashMap<>();
-        if (StringUtils.isBlank(writeOff.getWriteOffType().getMutationDesc()))
+        if (writeOff.getWriteOffType().getMutationDesc() == null)
             errorMessages.put("writeOffType", "writeOffType.required");
-        else if (writeOff.getWriteOffReasons() == null)
+        else if (writeOff.getWriteOffReasons().getName() == null)
             errorMessages.put("reasons", "writeOff.reasons.required");
-        else if (StringUtils.isBlank(writeOff.getResolutionNo()))
+        else if (writeOff.getResolutionNo() == null)
             errorMessages.put("resolutionNo", "writeOff.resolutionno.required");
-        else if (StringUtils.isBlank(writeOff.getResolutionType()))
+        else if (writeOff.getResolutionType() == null)
             errorMessages.put("resolutionType", "writeOff.resolutiontype.required");
         return errorMessages;
     }
@@ -421,7 +417,7 @@ public class WriteOffService {
     }
 
     @SuppressWarnings("deprecation")
-    public void updateDemandDetails(WriteOff writeOff, String[] writeOffType) {
+    public void updateDemandDetails(WriteOff writeOff) {
 
         Set<EgDemandDetails> demandDetails = propertyService.getCurrrentDemand(writeOff.getProperty())
                 .getEgDemandDetails();
@@ -429,26 +425,19 @@ public class WriteOffService {
         for (final EgDemandDetails dmdDetails : demandDetails)
             for (final DemandDetail dmdDetailBean : writeOff.getDemandDetailBeanList()) {
                 Boolean isUpdateAmount = Boolean.FALSE;
-                Boolean isUpdateCollection = Boolean.FALSE;
                 dmdDetailBean.setInstallment(installmentDao.findById(dmdDetailBean.getInstallment().getId(), false));
-                if (dmdDetailBean.getRevisedAmount() != null
-                        && dmdDetailBean.getInstallment()
-                                .equals(dmdDetails.getEgDemandReason().getEgInstallmentMaster())
-                        && dmdDetails.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
-                                .equalsIgnoreCase(dmdDetailBean.getReasonMaster()))
-                    isUpdateAmount = true;
-
-                if (dmdDetailBean.getRevisedCollection() != null
-                        && dmdDetails.getEgDemand().getEgInstallmentMaster()
-                                .equals(propertyTaxCommonUtils.getCurrentInstallment())
-                        && dmdDetails.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
-                                .equalsIgnoreCase(dmdDetailBean.getReasonMaster())
-                        && dmdDetails.getEgDemandReason().getEgInstallmentMaster()
-                                .equals(dmdDetailBean.getInstallment()))
-                    isUpdateCollection = true;
-
+                if (dmdDetailBean.getRevisedAmount() != BigDecimal.ZERO
+                        && dmdDetailBean.getRevisedAmount().compareTo(BigDecimal.ZERO) == 1) {
+                    if (dmdDetailBean.getRevisedAmount() != null
+                            && dmdDetailBean.getInstallment()
+                                    .equals(dmdDetails.getEgDemandReason().getEgInstallmentMaster())
+                            && dmdDetails.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
+                                    .equalsIgnoreCase(dmdDetailBean.getReasonMaster()))
+                        isUpdateAmount = true;
+                }
                 if (isUpdateAmount) {
-                    if (writeOff.getWriteOffType().getMutationDesc() == FULL_WRITEOFF) {
+
+                    if (writeOff.getWriteOffType().getMutationDesc().equalsIgnoreCase(FULL_WRITEOFF)) {
                         dmdVar = persistDemandDetailVariation(dmdDetails, dmdDetailBean.getActualAmount(), WRITE_OFF);
                     } else {
                         dmdVar = persistDemandDetailVariation(dmdDetails, dmdDetailBean.getRevisedAmount(), WRITE_OFF);
@@ -457,11 +446,7 @@ public class WriteOffService {
                     variationSet.add(dmdVar);
                     dmdDetails.setDemandDetailVariation(variationSet);
                 }
-                if (isUpdateCollection)
-                    dmdDetails.setAmtCollected(dmdDetailBean.getRevisedCollection() != null
-                            ? dmdDetailBean.getRevisedCollection() : BigDecimal.ZERO);
-
-                if (isUpdateAmount || isUpdateCollection) {
+                if (isUpdateAmount) {
                     dmdDetails.setModifiedDate(new Date());
                     break;
                 }
@@ -474,8 +459,7 @@ public class WriteOffService {
         } else {
             List<Ptdemand> currPtdemand = getCurrPtDemand(writeOff);
             if (currPtdemand != null) {
-                final Ptdemand ptdemand;
-                ptdemand = (Ptdemand) currPtdemand.get(0).clone();
+                final Ptdemand ptdemand = (Ptdemand) currPtdemand.get(0).clone();
                 ptdemand.setBaseDemand(getTotalDemand(demandDetails));
                 ptdemand.setEgDemandDetails(demandDetails);
                 ptdemand.setEgptProperty(writeOff.getProperty());
@@ -665,5 +649,5 @@ public class WriteOffService {
         return connStatus;
 
     }
-    
+
 }

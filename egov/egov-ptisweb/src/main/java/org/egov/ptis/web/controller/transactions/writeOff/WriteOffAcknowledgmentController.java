@@ -51,15 +51,19 @@ package org.egov.ptis.web.controller.transactions.writeOff;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_WOPROCEEDINGS;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_WRITEOFFROCEEDINGS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_PENALTY_FINES;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -86,6 +90,7 @@ import org.egov.ptis.bean.demand.DemandDetail;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.entity.property.WriteOff;
@@ -127,6 +132,8 @@ public class WriteOffAcknowledgmentController {
     private SecurityUtils securityUtils;
     @PersistenceContext
     EntityManager entityManager;
+    @Autowired
+    private PtDemandDao ptDemandDAO;
 
     public static final String SAMPLE_FILE = "WO Proceedings/";
     public static final String WO_SPECIALNOTICE_TEMPLATE = "mainWriteOffProceedings";
@@ -218,6 +225,9 @@ public class WriteOffAcknowledgmentController {
     public ReportRequest generateWriteOffReportRequest(WriteOff writeOff, String noticeNo, HttpServletRequest request,
             final String approvedUser) {
         ReportRequest reportInput = null;
+        BigDecimal writeoffInterset=BigDecimal.ZERO;
+        BigDecimal writeoffAmount=BigDecimal.ZERO;
+        BigDecimal totalAmount = BigDecimal.ZERO;
         if (writeOff != null) {
             final BasicPropertyImpl basicProperty = writeOff.getBasicProperty();
             final Map<String, Object> reportParams = new HashMap<>();
@@ -245,9 +255,24 @@ public class WriteOffAcknowledgmentController {
             reportParams.put("fromInstallment", writeOff.getFromInstallment());
             reportParams.put("toInstallment", writeOff.getToInstallment());
             reportParams.put("writeoffType", writeOff.getWriteOffType().getMutationDesc());
-            reportParams.put("writeOffDemand", "350");
-            reportParams.put("writeOffInterest", "50");
-            reportParams.put("totalAmount", "1000");
+            Set<EgDemandDetails> newDemandDetails = (ptDemandDAO.getNonHistoryCurrDmdForProperty(writeOff.getProperty()))
+                    .getEgDemandDetails();
+
+            List<EgDemandDetails> newDmndDetails = new ArrayList<>(newDemandDetails);
+            for (EgDemandDetails demand : newDmndDetails) {
+                List<DemandDetailVariation> variation = new ArrayList<>(demand.getDemandDetailVariation());
+                for (DemandDetailVariation demandDetailVariation : variation) {
+                    if ((demandDetailVariation.getDemandDetail().getEgDemandReason().getEgDemandReasonMaster().getReasonMaster())
+                            .equalsIgnoreCase(DEMANDRSN_STR_PENALTY_FINES)) {
+                        writeoffInterset = writeoffInterset.add(demandDetailVariation.getDramount());
+                    } else
+                        writeoffAmount = writeoffAmount.add(demandDetailVariation.getDramount());
+                }
+            }
+            totalAmount = writeoffAmount.add(writeoffInterset);
+            reportParams.put("writeOffDemand", writeoffAmount.toString());
+            reportParams.put("writeOffInterest", writeoffInterset.toString());
+            reportParams.put("totalAmount", totalAmount.toString());
             reportInput = new ReportRequest(WO_SPECIALNOTICE_TEMPLATE, writeOff, reportParams);
         }
         if (reportInput != null) {

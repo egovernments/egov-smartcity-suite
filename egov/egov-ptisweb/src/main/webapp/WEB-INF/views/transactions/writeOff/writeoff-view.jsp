@@ -306,7 +306,7 @@ div.floors-tbl-freeze-column-div {
 										<div class="col-xs-2 add-margin view-content">
 											<c:out value="${writeOff.writeOffType.mutationDesc}"></c:out>
 										</div>
-										<div class="col-xs-2 add-margin" style="padding-left: 100px;">
+										<div class="col-xs-3 add-margin" style="padding-left: 100px;">
 											<spring:message code="lbl.writeOff.reasons" />
 										</div>
 										<div class="col-xs-3 add-margin view-content">
@@ -372,25 +372,24 @@ div.floors-tbl-freeze-column-div {
 						</div>
 
 					</div>
-				</div>
-				<div id="demanddetails" class="tab-pane fade">
-					<%@ include
-						file="../../transactions/writeOff/Writeoff-demand-details-edit.jsp"%>
+				</div>			
+			<div id="demanddetails" class="tab-pane fade">
+					<%@ include file="Writeoff-demand-details-edit.jsp"%>
 				</div>
 			</div>
-				<c:choose>
-			<c:when test="${state != null}">
+			<c:if test="${state != null}">
 				<tr>
 					<jsp:include page="../../common/workflowHistoryView.jsp" />
 				<tr>
-			</c:when>
-			</c:choose>
+			</c:if>
 			<c:choose>
-			<c:when test="${currentDesignation != 'Commissioner'}">
-            <%-- <c:when test="${!fn:containsIgnoreCase(userDesignationList, designation)}"> --%>
+            <c:when test="${!fn:containsIgnoreCase(userDesignationList, designation)}">
 			<jsp:include page="../../common/commonWorkflowMatrix.jsp"/>
 			</c:when>
 			<c:otherwise>
+			<c:if test="${!endorsementNotices.isEmpty() && currentDesignation == 'Commissioner'}"> 
+ 			<jsp:include page="/WEB-INF/views/common/endorsement_history.jsp"/>
+			</c:if>
 			<div class="row">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.comments"/></label>
 					<div class="col-sm-8 add-margin">
@@ -398,7 +397,10 @@ div.floors-tbl-freeze-column-div {
 					</div>
 				</div></c:otherwise> 
 			</c:choose> 
-	 	    <jsp:include page="../../common/commonWorkflowMatrix-button.jsp"/>
+	 	    </tr><jsp:include page="../../common/commonWorkflowMatrix-button.jsp"/>
+	 	    </div>
+	 	   
+			
 	</form:form>
 	<script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 </body>

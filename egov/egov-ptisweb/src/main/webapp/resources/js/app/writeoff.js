@@ -50,6 +50,7 @@ $( document ).ready(function() {
 
 	 var frominstallment;
 	 var toinstallment;
+	 frominstallment = $("#frominstallments").val();
 	 instString = $("#instString").val();
 $("writeOffType").change(function()
 	           {
@@ -111,21 +112,35 @@ function getselectedinstallments(val){
 			$("#frominstallments").val('');
 			$("#toinstallments").val('');
 			$("#demandDetailsTable").removeAttr('style');
+			$("#demandDetailsTable").removeAttr('style');
+			  instString.split(",").forEach((val,index)=> {
+				  var queryIdentifier = ".row-"+val;
+				  $(queryIdentifier).removeAttr('style');
+
+			  });
 			for(var i=0; i < $(".demandDetailBeanList").length; i++){
 				 
-				var actualCollection = '#demandDetailBeanList'+ i + 'actualCollection';
-				var actualAmount = '#demandDetailBeanList'+ i + 'actualAmount';
-				var revisedAmount = '#demandDetailBeanList'+ i + 'revisedAmount';
-				
-				console.log( "val ", $(actualAmount).val() , $(actualCollection).val());
-				
-				$(revisedAmount).val($(actualAmount).val() - $(actualCollection).val());
+				var actualCollection = 'demandDetailBeanList'+ i + '.actualCollection';
+				var actualAmount = 'demandDetailBeanList'+ i + '.actualAmount';
+				var revisedAmount = 'demandDetailBeanList'+ i + '.revisedAmount';
+			
+			document.getElementById(revisedAmount).value = document.getElementById(actualAmount).value - document.getElementById(actualCollection).value
+			if(document.getElementById(revisedAmount).value==document.getElementById(actualAmount).value){
+			document.getElementById(revisedAmount).disabled = true;
+			}
 			}
 			
 		} else {
 			document.getElementById("check").style.display = "none";
 			$("#frominstallments").attr('disabled', false);
 			$("#toinstallments").attr('disabled', false);
+			for(var i=0; i < $(".demandDetailBeanList").length; i++){
+
+				var revisedAmount = 'demandDetailBeanList'+ i + '.revisedAmount';
+			
+			document.getElementById(revisedAmount).value = '';
+			
+			}
 			
 		}
 	}
@@ -159,51 +174,35 @@ function getselectedinstallments(val){
 	function getcouncilrequest(){
 		var resolutiontype = jQuery('#resolutionType').val();
 		var resolutionNo = jQuery('#resolutionNo').val();
+		var errormessage;
 		if(resolutiontype!=null && resolutionNo!=null && resolutionNo!=undefined && resolutiontype!=undefined){
 		jQuery.ajax({
 			url: "/ptis/common/getcouncildetails",
 			dataType: 'json',
 	        type: "GET",
+	        async : false,
 	        data:{"resolutionType":resolutiontype,"resolutionNo":resolutionNo},
 			success: function (response) {
 					   for (var i=0;i<response.length;i++) {
 					      $("#resolutionDate").val(response[i].resolutionDate);
-					      $("#councilurl").val(response[i].councilResolutionUrl);
+					      $("#link").val(response[i].councilResolutionUrl);
+					      errormessage = response[i].errorMessage;
+					      if(errormessage == null)
+					    	  $("#viewlink").show();
 					}
-					   $("#viewlink").show();			}, 
+					  			}, 
 			error: function(){
-				bootbox
-				.alert("Resolution deatilsa are not correct.");
+				if(errormessage!=null)
+				bootbox.alert(errormessage.value);
 			} 				
 			
 		});
 		}
 	}
 
-		
-		function calculateCollectionAmount(obj) {
-
-			var table = document.getElementById("demandDetailsTable");
-			var rowobj = getRow(obj).rowIndex;
-			
-			if (document.forms[0].revisedCollection[rowobj - 2] != undefined
-					&& document.forms[0].revisedCollection[rowobj - 2].value != undefined) {
-				for (var j = 0; j <= rowobj - 2; j++) {
-					if (document.forms[0].revisedCollection[j].value == "") {
-						bootbox
-								.alert("Please choose its previos Installments. Random selection not allowed.");
-						obj.value = "";
-						return false;
-					}
-				}
-			}
-		}
-		
-
+	$('a#link').click(function(){ urlvalue =jQuery('#councilurl').val();
+	window.open(urlvalue); 
+	window.focus();
+	})
 	
-	function openurl()
-	{
 		
-		urlvalue =jQuery('#councilurl').val();
-	  var win=openInNewTab(urlvalue,'_blank');
-	}

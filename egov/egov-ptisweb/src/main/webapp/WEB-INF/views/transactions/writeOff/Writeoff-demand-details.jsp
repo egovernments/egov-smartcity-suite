@@ -129,21 +129,15 @@
 											path="demandDetailBeanList[${status.index }].reasonMaster" />
 										<c:out value="${demandDetails.reasonMaster}"></c:out></td>
 									<td class="greybox" ><form:input align="center" type="text" class="demandDetailBeanList"
-											style="width:80%"
+											style="width:80%" id="demandDetailBeanList${status.index}.actualAmount"
 											path="demandDetailBeanList[${status.index }].actualAmount"
 											value="${demandDetails.actualAmount}" readonly="true" /></td>
-									<%-- if(${demandDetails.actualAmount}==${demandDetails.revisedAmount}){ --%>
-									<td class="greybox"><form:input id="demandDetailBeanList${status.index }.revisedAmount"
+									<td class="greybox"><form:input id="demandDetailBeanList${status.index}.revisedAmount"
 											align="center" type="text" style="width:80%"
 											path="demandDetailBeanList[${status.index }].revisedAmount"
 											 /></td>
-									<%--} else{
-											<td class="greybox"><form:input id="revisedAmount"
-											align="center" type="text" style="width:80%"
-											path="demandDetailBeanList[${status.index }].revisedAmount"
-											onblur="return calculateAmount(this);" /></td>} --%>
 									<td class="greybox"><form:input align="center" type="text"
-											style="width:80%"
+											style="width:80%" id="demandDetailBeanList${status.index}.actualCollection"
 											path="demandDetailBeanList[${status.index }].actualCollection"
 											value="${demandDetails.actualCollection}" readonly="readonly"
 											disabled="true" /></td>
