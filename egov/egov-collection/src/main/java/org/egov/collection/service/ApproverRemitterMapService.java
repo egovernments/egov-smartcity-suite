@@ -176,7 +176,7 @@ public class ApproverRemitterMapService {
                 validateHelper(spec, approverRemitterMap, bindingResult);
             }
         }
-        return bindingResult.hasErrors();
+        return !bindingResult.hasErrors();
     }
 
     @Transactional
