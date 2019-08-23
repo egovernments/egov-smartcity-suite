@@ -68,16 +68,13 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 
-@Transactional
+@Transactional(readOnly = true)
 @Service
 public class ApproverRemitterMapService {
 
     public enum ApproverType {
         UNMAPPED, ACTIVELY_MAPPED
     }
-
-    @PersistenceContext
-    EntityManager entityManager;
 
     @Autowired
     @Qualifier("parentMessageSource")
@@ -136,7 +133,7 @@ public class ApproverRemitterMapService {
         };
     }
 
-    private void validateMapRequest(ApproverRemitterMapping approverRemitterMap, BindingResult bindingResult) {
+    private void validateMapObject(ApproverRemitterMapping approverRemitterMap, BindingResult bindingResult) {
         if (approverRemitterMap.getApprover() == null) {
             bindingResult.reject("validate.approver.404",
                 collMessageSource.getMessage("validate.approver.404", EMPTY_ARGS, Locale.getDefault()));
@@ -159,43 +156,45 @@ public class ApproverRemitterMapService {
         }
     }
 
-    @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    public boolean validateAndUpdateMapping(ApproverRemitterSpec spec, BindingResult bindingResult) {
-        ApproverRemitterMapping approverRemitterMap = mappingRepository.findOne(spec.id);
-        if (spec.id == null || approverRemitterMap == null) {
+    private void validateHelper(ApproverRemitterSpec spec, ApproverRemitterMapping approverRemitterMap, BindingResult bindingResult) {
+        ApproverRemitterSpec.copyToEntity(approverRemitterMap, spec, userService);
+        validateMapObject(approverRemitterMap, bindingResult);
+    }
+
+    public boolean validate(ApproverRemitterSpec spec, BindingResult bindingResult) {
+        ApproverRemitterMapping approverRemitterMap = spec.id == null ? new ApproverRemitterMapping() : mappingRepository.findOne(spec.id);
+        if (approverRemitterMap == null) {
             bindingResult.reject("mapping.404");
             return false;
         }
 
-        ApproverRemitterSpec.copyToEntity(approverRemitterMap, spec, userService);
-
-        validateMapRequest(approverRemitterMap, bindingResult);
-        if (bindingResult.hasErrors()) {
-            spec.setApproverName(approverRemitterMap.getApprover().getName());
-            return false;
+        if(spec.approverIdList == null) {
+            validateHelper(spec, approverRemitterMap, bindingResult);
+        } else {
+            for (Long approverId: spec.approverIdList) {
+                spec.approverId = approverId;
+                validateHelper(spec, approverRemitterMap, bindingResult);
+            }
         }
-
-        mappingRepository.save(approverRemitterMap);
-        return true;
+        return bindingResult.hasErrors();
     }
 
-    public boolean validateAndCreateMapping(ApproverRemitterSpec spec, BindingResult bindingResult) {
-        if (spec.getApproverIdList() == null || spec.getApproverIdList().isEmpty()) {
-            bindingResult.rejectValue("approverIdList", "validate.mapping.approver");
-            return false;
-        }
+    @Transactional
+    public void update(ApproverRemitterSpec spec) {
+        ApproverRemitterMapping approverRemitterMap = mappingRepository.findOne(spec.id);
+        ApproverRemitterSpec.copyToEntity(approverRemitterMap, spec, userService);
+        mappingRepository.save(approverRemitterMap);
+    }
 
+    @Transactional
+    public void create(ApproverRemitterSpec spec) {
         List<ApproverRemitterMapping> mappingList = new ArrayList<>(spec.approverIdList.size());
-        for (Long approverId : spec.approverIdList) {
+        for (Long approverId: spec.approverIdList) {
             spec.approverId = approverId;
             ApproverRemitterMapping approverRemitterMap = ApproverRemitterSpec.copyToEntity(new ApproverRemitterMapping(), spec, userService);
             mappingList.add(approverRemitterMap);
-            validateMapRequest(approverRemitterMap, bindingResult);
         }
-        if (bindingResult.hasErrors())
-            return false;
         mappingRepository.save(mappingList);
-        return true;
     }
 
     public ApproverRemitterMapping findById(Long mappingId) {

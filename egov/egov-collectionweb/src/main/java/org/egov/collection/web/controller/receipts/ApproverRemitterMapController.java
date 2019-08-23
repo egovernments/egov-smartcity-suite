@@ -171,9 +171,11 @@ public class ApproverRemitterMapController {
         approverRemitterSpec.setId(id);
         populateViewModel(model, approverRemitterSpec);
         model.addAttribute(ATTR_MODE, Mode.MODIFY);
-        if (!bindingResult.hasErrors() && approverRemitterService.validateAndUpdateMapping(approverRemitterSpec, bindingResult))
+        if (!bindingResult.hasErrors() && approverRemitterService.validate(approverRemitterSpec, bindingResult)) {
+            approverRemitterService.update(approverRemitterSpec);
             model.addAttribute(ATTR_SUCCESS_MSG,
-                    messageSource.getMessage("msg.mapping.update.successful", EMPTY_ARGS, Locale.getDefault()));
+                messageSource.getMessage("msg.mapping.update.successful", EMPTY_ARGS, Locale.getDefault()));
+        }
         return bindingResult.hasErrors() ? VIEW_UPDATE : VIEW_ERROR;
     }
 
@@ -191,9 +193,11 @@ public class ApproverRemitterMapController {
             Model model) {
         model.addAttribute(ATTR_MODE, Mode.CREATE);
         populateViewModel(model, approverRemitterSpec);
-        if (!bindingResult.hasErrors() && approverRemitterService.validateAndCreateMapping(approverRemitterSpec, bindingResult))
+        if (!bindingResult.hasErrors() && approverRemitterService.validate(approverRemitterSpec, bindingResult)) {
+            approverRemitterService.create(approverRemitterSpec);
             model.addAttribute(ATTR_SUCCESS_MSG,
-                    messageSource.getMessage("msg.mapping.create.successful", EMPTY_ARGS, Locale.getDefault()));
+                messageSource.getMessage("msg.mapping.create.successful", EMPTY_ARGS, Locale.getDefault()));
+        }
         return bindingResult.hasErrors() ? VIEW_UPDATE : VIEW_ERROR;
     }
 }
