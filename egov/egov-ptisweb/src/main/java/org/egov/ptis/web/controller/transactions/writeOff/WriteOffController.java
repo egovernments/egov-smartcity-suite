@@ -173,8 +173,6 @@ public class WriteOffController extends GenericWorkFlowController {
 		model.addAttribute(CURRENT_STATE, CREATED);
 		model.addAttribute(STATE_TYPE, writeOff.getClass().getSimpleName());
 		model.addAttribute(ENDORSEMENT_NOTICE, new ArrayList<>());
-		model.addAttribute("fromInstallments", installmentList);
-		model.addAttribute("toInstallments", installmentList);
 		writeOffService.addModelAttributes(model, writeOff.getBasicProperty().getUpicNo(), request, installmentList);
 		model.addAttribute("type", writeOffService.getwriteTypes());
 		Set<EgDemandDetails> demandDetails = (ptDemandDAO.getNonHistoryCurrDmdForProperty(basicProperty.getProperty()))
@@ -184,7 +182,6 @@ public class WriteOffController extends GenericWorkFlowController {
 			dmndDetails = writeOffService.sortDemandDetails(dmndDetails);
 		List<DemandDetail> demandDetailBeanList = writeOffService.setDemandBeanList(dmndDetails);
 		writeOff.setDemandDetailBeanList(demandDetailBeanList);
-		model.addAttribute("installments", installmentList);
 		model.addAttribute("dmndDetails", demandDetailBeanList);
 		prepareWorkflow(model, writeOff, new WorkflowContainer());
 		return WO_FORM;

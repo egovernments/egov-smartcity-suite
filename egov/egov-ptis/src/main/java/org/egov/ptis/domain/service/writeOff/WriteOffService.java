@@ -85,6 +85,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.ENDORSEMENT_NOTICE;
 
 @Service
 @Transactional(readOnly = true)
@@ -130,10 +132,14 @@ public class WriteOffService {
     @Autowired
     private ModuleService moduleDao;
     @Autowired
-    private DemandGenericDao demandGenericDAO;;
+    private DemandGenericDao demandGenericDAO;
 
     Property property = null;
     private static final Logger LOGGER = Logger.getLogger(WriteOffService.class);
+    private static final String CURRENT_STATE = "currentState";
+    private static final String STATE_TYPE = "stateType";
+    private static final String PROPERTY = "property";
+    private static final String CREATED = "Created";
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -161,9 +167,30 @@ public class WriteOffService {
         List<Map<String, Object>> wcDetails = propertyService.getWCDetails(assessmentNo, request);
         for (Installment inst : installmentList)
             instString = instString.append(inst.getDescription() + ",");
+        model.addAttribute("installments", installmentList);
+        model.addAttribute("fromInstallments", installmentList);
+        model.addAttribute("toInstallments", installmentList);
         model.addAttribute("instString", instString);
         model.addAttribute("wcDetails", wcDetails);
         model.addAttribute("sewConnDetails", sewConnDetails);
+    }
+    
+    public void addModelAttributesupdate(final Model model, WriteOff writeOff) {
+        Set<EgDemandDetails> demandDetails = (ptDemandDAO
+                .getNonHistoryCurrDmdForProperty(writeOff.getBasicProperty().getProperty()))
+                        .getEgDemandDetails();
+        List<EgDemandDetails> dmndDetails = new ArrayList<>(demandDetails);
+        if (!dmndDetails.isEmpty())
+            dmndDetails = sortDemandDetails(dmndDetails);
+        List<DemandDetail> demandDetailBeanList = setDemandBeanList(dmndDetails);
+        writeOff.setDemandDetailBeanList(demandDetailBeanList);
+        model.addAttribute("dmndDetails", demandDetailBeanList);
+        model.addAttribute("type", getwriteTypes());
+        model.addAttribute(PROPERTY, writeOff.getProperty());
+        model.addAttribute(CURRENT_STATE, CREATED);
+        model.addAttribute(STATE_TYPE, writeOff.getClass().getSimpleName());
+        model.addAttribute(ENDORSEMENT_NOTICE, new ArrayList<>());
+
     }
 
     @Transactional
@@ -211,8 +238,7 @@ public class WriteOffService {
         if (writeOff.getState() != null)
             loggedInUserDesignation = getLoggedInUserDesignation(writeOff.getCurrentState().getOwnerPosition().getId(),
                     securityUtils.getCurrentUser());
-        if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workFlowAction)
-                && (COMMISSIONER_DESIGNATIONS.contains(approverDesignation))) {
+        if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workFlowAction)) {
 
             final String designation = approverDesignation.split(" ")[0];
             nextAction = getWorkflowNextAction(designation);
@@ -426,8 +452,7 @@ public class WriteOffService {
             for (final DemandDetail dmdDetailBean : writeOff.getDemandDetailBeanList()) {
                 Boolean isUpdateAmount = Boolean.FALSE;
                 dmdDetailBean.setInstallment(installmentDao.findById(dmdDetailBean.getInstallment().getId(), false));
-                if (dmdDetailBean.getRevisedAmount() != BigDecimal.ZERO
-                        && dmdDetailBean.getRevisedAmount().compareTo(BigDecimal.ZERO) == 1) {
+                if (dmdDetailBean.getRevisedAmount() != BigDecimal.ZERO) {
                     if (dmdDetailBean.getRevisedAmount() != null
                             && dmdDetailBean.getInstallment()
                                     .equals(dmdDetails.getEgDemandReason().getEgInstallmentMaster())
@@ -439,6 +464,7 @@ public class WriteOffService {
 
                     if (writeOff.getWriteOffType().getMutationDesc().equalsIgnoreCase(FULL_WRITEOFF)) {
                         dmdVar = persistDemandDetailVariation(dmdDetails, dmdDetailBean.getActualAmount(), WRITE_OFF);
+                        writeOff.setToInstallment(dmdDetailBean.getInstallment().getDescription());
                     } else {
                         dmdVar = persistDemandDetailVariation(dmdDetails, dmdDetailBean.getRevisedAmount(), WRITE_OFF);
                     }

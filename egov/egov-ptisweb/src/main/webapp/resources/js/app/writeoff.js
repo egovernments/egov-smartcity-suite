@@ -112,7 +112,6 @@ function getselectedinstallments(val){
 			$("#frominstallments").val('');
 			$("#toinstallments").val('');
 			$("#demandDetailsTable").removeAttr('style');
-			$("#demandDetailsTable").removeAttr('style');
 			  instString.split(",").forEach((val,index)=> {
 				  var queryIdentifier = ".row-"+val;
 				  $(queryIdentifier).removeAttr('style');
@@ -125,7 +124,9 @@ function getselectedinstallments(val){
 				var revisedAmount = 'demandDetailBeanList'+ i + '.revisedAmount';
 			
 			document.getElementById(revisedAmount).value = document.getElementById(actualAmount).value - document.getElementById(actualCollection).value
-			if(document.getElementById(revisedAmount).value==document.getElementById(actualAmount).value){
+			var collectionAmount = document.getElementById(actualCollection).value;
+			var actualAmount = document.getElementById(actualAmount).value;
+			if(actualAmount == collectionAmount){
 			document.getElementById(revisedAmount).disabled = true;
 			}
 			}

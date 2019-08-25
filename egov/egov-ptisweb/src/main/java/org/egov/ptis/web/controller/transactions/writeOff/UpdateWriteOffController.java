@@ -54,6 +54,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_DETAIL_LIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.ENDORSEMENT_NOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_WRITEOFFROCEEDINGS;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.SUCCESS_MSG;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
@@ -125,9 +126,6 @@ public class UpdateWriteOffController extends GenericWorkFlowController {
         String currentDesg = writeOffService.getLoggedInUserDesignation(
                 writeOff.getCurrentState().getOwnerPosition().getId(), securityUtils.getCurrentUser());
         final String nextAction = writeOff.getState().getNextAction();
-        if (!writeOff.getDocuments().isEmpty())
-            model.addAttribute("attachedDocuments", writeOff.getDocuments());
-        model.addAttribute("userDesignation", currentDesg);
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         workflowContainer.setPendingActions(nextAction);
         List<Installment> installmentList = propertyTaxUtil.getInstallments(basicProperty.getActiveProperty());
@@ -136,6 +134,9 @@ public class UpdateWriteOffController extends GenericWorkFlowController {
             writeOffService.addDemandDetails(writeOff);
             model.addAttribute("demandDetailList", writeOff.getDemandDetailBeanList());
             writeOffService.addModelAttributes(model, basicProperty.getUpicNo(), request, installmentList);
+            writeOffService.addModelAttributesupdate(model, writeOff);
+            if (!writeOff.getDocuments().isEmpty())
+                model.addAttribute("attachedDocuments", writeOff.getDocuments());
             model.addAttribute("currentDesignation", currentDesg);
             model.addAttribute("userDesignationList", userDesignationList);
             model.addAttribute("designation", COMMISSIONER_DESGN);
@@ -145,8 +146,11 @@ public class UpdateWriteOffController extends GenericWorkFlowController {
         } else {
             writeOffService.addModelAttributes(model, basicProperty.getUpicNo(), request, installmentList);
             model.addAttribute("userDesignationList", userDesignationList);
+            writeOffService.addModelAttributesupdate(model, writeOff);
             model.addAttribute("designation", COMMISSIONER_DESGN);
+            model.addAttribute("currentDesignation", currentDesg);
             workflowContainer.setCurrentDesignation(currentDesg);
+            model.addAttribute("dmndDetails", writeOff.getDemandDetailBeanList());
             prepareWorkflow(model, writeOff, new WorkflowContainer());
             target = WO_FORM;
         }
