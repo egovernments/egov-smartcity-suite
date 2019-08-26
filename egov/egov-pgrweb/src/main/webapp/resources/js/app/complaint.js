@@ -160,7 +160,7 @@ $(document).ready(
             $('#lat, #lng').val(0.0);
         });
 
-        $(":input").inputmask();
+        $(":input:not([data-nomask])").inputmask();
 
         $('.freq-ct').click(function () {
             try {

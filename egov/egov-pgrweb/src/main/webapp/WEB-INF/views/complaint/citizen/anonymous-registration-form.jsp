@@ -77,7 +77,7 @@
 						<div class="col-sm-2 add-margin">
 							<div class="input-group">
 								<span class="input-group-addon">+91</span>
-								  	<form:input path="complainant.mobile" class="form-control is_valid_number" maxlength="10" data-inputmask="'mask': '9999999999'" id="mob-no" placeholder="Mobile Number" required="required"/>
+								  	<form:input path="complainant.mobile" class="form-control is_valid_number" maxlength="10" type="tel" data-nomask="true" data-inputmask="'mask': '9999999999'" id="mob-no" placeholder="Mobile Number" required="required"/>
 							</div>
 							<form:errors path="complainant.mobile" cssClass="add-margin error-msg"/>
 						</div>
@@ -292,6 +292,21 @@
 <script src="<cdn:url  value='/resources/js/app/fileuploadndmaps.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script src="<cdn:url  value='/resources/js/app/complaint.js?rnd=${app_release_no}'/>"></script>
+<script>
+    var inputPhone = jQuery('[data-nomask]');
+
+    var PHONE_REGEX = /^[0-9]+$/;
+    var currentPhone = inputPhone.val();
+    function handlePhoneChange(event) {
+        if (PHONE_REGEX.test(inputPhone.val())){
+            currentPhone = inputPhone.val();
+        } else {
+            inputPhone.val(currentPhone);
+        }
+    }
+    inputPhone.on('change', handlePhoneChange);
+    inputPhone.on('keyup', handlePhoneChange);
+</script>
 <style>
 .or-spacer {
   margin: 17px auto 12px auto;
