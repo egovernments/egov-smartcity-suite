@@ -298,7 +298,8 @@
     var PHONE_REGEX = /^[0-9]+$/;
     var currentPhone = inputPhone.val();
     function handlePhoneChange(event) {
-        if (PHONE_REGEX.test(inputPhone.val())){
+        var value = inputPhone.val(); 
+        if (value.length === 0 || PHONE_REGEX.test(value)){
             currentPhone = inputPhone.val();
         } else {
             inputPhone.val(currentPhone);
