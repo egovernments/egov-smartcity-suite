@@ -377,6 +377,34 @@ function checkForCurrentDate(obj)
    }
 }
 
+function calculateCollectionTotal(){
+	var collectiontotal=0
+	var chequetable=document.getElementById('chequegrid');
+	var chequetablelen =chequetable.rows.length;
+	
+	for(var m=0;m<chequetablelen;m++){
+		if(getControlInBranch(chequetable.rows[m],'instrumentChequeAmount')!=null){
+			chequeamount=parseInt(getControlInBranch(chequetable.rows[m],'instrumentChequeAmount').value);
+			chequeamount = isNaN(chequeamount)?0:chequeamount;
+			collectiontotal=collectiontotal+chequeamount;
+		}
+	}//end of for loop
+
+	cashamount=parseInt(document.getElementById("instrHeaderCash.instrumentAmount").value);     
+	cashamount = isNaN(cashamount)?0:cashamount;
+	collectiontotal=collectiontotal+cashamount;
+	
+	cardamount=parseInt(document.getElementById("instrHeaderCard.instrumentAmount").value);
+	cardamount = isNaN(cardamount)?0:cardamount;
+	collectiontotal=collectiontotal+cardamount;
+	
+	bankamount=parseInt(document.getElementById("instrHeaderBank.instrumentAmount").value);
+	bankamount = isNaN(bankamount)?0:bankamount;
+	collectiontotal=collectiontotal+bankamount;
+
+	return collectiontotal;
+}
+
 function onBodyLoad()
 {
 	<s:if test='%{model.id!=null && model.status.code=="PENDING" && model.challan.status.code=="VALIDATED"}'>
@@ -599,8 +627,9 @@ function validate()
 				name="bankAllowed" />
 			<s:hidden label="ddAllowed" id="ddAllowed" value="%{ddAllowed}"
 				name="ddAllowed" />
-			<s:hidden label="onlineAllowed" id="onlineAllowed" value="%{onlineAllowed}" name="onlineAllowed"/>
-				
+			<s:hidden label="onlineAllowed" id="onlineAllowed"
+				value="%{onlineAllowed}" name="onlineAllowed" />
+
 			<s:hidden id="receiptId" name="receiptId" value='%{model.id}' />
 
 			<div class="subheadnew">
@@ -687,12 +716,23 @@ function validate()
 										<s:text name="billreceipt.payment.totalamt.received" />
 										<span> <input
 											style="border: 0px; background-color: #FFFFCC; font-weight: bold;"
-											type="label" name="totalamountdisplay"
-											id="totalamountdisplay" readonly="readonly">
+											type="text" name="totalamountdisplay" id="totalamountdisplay"
+											readonly="readonly">
 										</span>
-									</div> <s:hidden label="totalAmountToBeCollected"
-										name="totalAmountToBeCollected"
-										value="%{totalAmountToBeCollected}" />
+									</div> <s:hidden label="totalAmntToBeCollected"
+										name="totalAmntToBeCollected"
+										value="%{totalAmntToBeCollected}" /> <s:hidden
+										label="partPaymentAllowed" id="partPaymentAllowed"
+										value="%{partPaymentAllowed}" name="partPaymentAllowed" /> <s:hidden
+										label="overrideAccountHeads" id="overrideAccountHeads"
+										value="%{overrideAccountHeads}" name="overrideAccountHeads" />
+									<s:hidden label="totalNoOfAccounts" id="totalNoOfAccounts"
+										value="%{totalNoOfAccounts}" name="totalNoOfAccounts" />
+										<s:hidden label="callbackForApportioning" id="callbackForApportioning" value="%{callbackForApportioning}" name="callbackForApportioning"/>
+		
+
+
+
 								</td>
 							</tr>
 							<tr>
