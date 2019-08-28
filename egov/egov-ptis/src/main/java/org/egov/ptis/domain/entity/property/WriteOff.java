@@ -82,18 +82,19 @@ public class WriteOff extends StateAware<Position> {
     @JoinTable(name = "egpt_write_off_docs", joinColumns = @JoinColumn(name = "writeOff"), inverseJoinColumns = @JoinColumn(name = "document"))
     private List<Document> documents = new ArrayList<>();
 
-    @NotNull
     @ManyToOne(targetEntity = PropertyMutationMaster.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "mutation_master_id")
     private PropertyMutationMaster writeOffType;
 
     @ManyToOne(targetEntity = WriteOffReasons.class, cascade = CascadeType.ALL)
-    @NotNull
     @JoinColumn(name = "id_writeoff_reason")
     private WriteOffReasons writeOffReasons;
 
     @Transient
     private transient List<DemandDetail> demandDetailBeanList = new ArrayList<>();
+    @Transient
+    private transient List<Document> writeoffDocumentsProxy = new ArrayList<>();
+    
 
     @Column(name = "applicationno")
     private String applicationNumber;
@@ -248,5 +249,13 @@ public class WriteOff extends StateAware<Position> {
     @Override
     public String getStateDetails() {
         return "Write Off" + " - " + this.getBasicProperty().getUpicNo();
+    }
+    
+    public List<Document> getWriteoffDocumentsProxy() {
+        return writeoffDocumentsProxy;
+    }
+
+    public void setWriteoffDocumentsProxy(List<Document> writeoffDocumentsProxy) {
+        this.writeoffDocumentsProxy = writeoffDocumentsProxy;
     }
 }

@@ -98,15 +98,6 @@ div.floors-tbl-freeze-column-div {
 </head>
 <body>
 
-	<%-- <c:if test="${not empty errorMsg}">
-		<div class="alert alert-danger" role="alert">
-			<c:forEach var="error" items="${errorMsg}" varStatus="status">
-				<spring:message code="${error.value}" />
-				<br />
-			</c:forEach>
-		</div>
-	</c:if>
- --%>
 	<form:form method="post" id="writeOffForm" commandName="writeOff"
 		theme="simple" enctype="multipart/form-data" modelAttribute="writeOff">
 		<form:hidden path="" name="loggedUserIsEmployee"
@@ -114,6 +105,7 @@ div.floors-tbl-freeze-column-div {
 			<form:hidden path="" id="workFlowAction" name="workFlowAction" />
 			<form:hidden path="propertyDeactivateFlag" name="propertyDeactivateFlag"
 			id="propertyDeactivateFlag" value="${propertyDeactivateFlag}" />
+			<input type="hidden" id="attachedDocuments"  value="${attachedDocuments}" />
 		<div class="panel-heading">
 			<ul class="nav nav-tabs" id="tabs">
 				<li class="First Active"><a data-toggle="tab"
@@ -382,21 +374,26 @@ div.floors-tbl-freeze-column-div {
 					<jsp:include page="../../common/workflowHistoryView.jsp" />
 				<tr>
 			</c:if>
-			<c:choose>
-            <c:when test="${!fn:containsIgnoreCase(userDesignationList, designation)}">
-			<jsp:include page="../../common/commonWorkflowMatrix.jsp"/>
-			</c:when>
-			<c:otherwise>
-			<c:if test="${!endorsementNotices.isEmpty() && currentDesignation == 'Commissioner'}"> 
- 			<jsp:include page="/WEB-INF/views/common/endorsement_history.jsp"/>
+			<c:if test="${currentDesignation != 'Commissioner'}">
+			<jsp:include page="/WEB-INF/views/common/commonWorkflowMatrix.jsp"/>
 			</c:if>
-			<div class="row">
-					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.comments"/></label>
-					<div class="col-sm-8 add-margin">
-						<form:textarea class="form-control" path=""  id="approvalComent" name="approvalComent" />
+			<c:if test="${currentDesignation == 'Commissioner'}">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="row">
+							<label class="col-sm-3 control-label text-right"><spring:message
+									code="lbl.comments" /></label>
+							<div class="col-sm-6 add-margin">
+								<form:textarea class="form-control" path="" id="approvalComent"
+									name="approvalComent" maxlength="1024" />
+								<small class="error-msg" style="float: right;"> <spring:message
+										code="lbl.comments.maxlength" />
+								</small>
+							</div>
+						</div>
 					</div>
-				</div></c:otherwise> 
-			</c:choose> 
+				</div>
+			</c:if>
 	 	    </tr><jsp:include page="../../common/commonWorkflowMatrix-button.jsp"/>
 	 	    </div>
 	 	   

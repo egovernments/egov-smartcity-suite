@@ -248,10 +248,11 @@
 									<th class="bluebgheadtd" width="20%" align="center" colspan="3">
 										<s:text name="Demand" />
 									</th>
-									<s:if test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT')}">
-									<th class="bluebgheadtd" width="10%" align="center" colspan="3">
-										<s:text name="Covered by Court Case/Write Off" />
-									</th>
+									<s:if
+										test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT') || basicProperty.activeProperty.propertyModifyReason.equals('WRITE_OFF') }">
+										<th class="bluebgheadtd" width="10%" align="center"
+											colspan="3"><s:text
+												name="Covered by Court Case/Write Off" /></th>
 									</s:if>
 									<th class="bluebgheadtd" width="20%" align="center" colspan="3">
 										<s:text name="Collection" />

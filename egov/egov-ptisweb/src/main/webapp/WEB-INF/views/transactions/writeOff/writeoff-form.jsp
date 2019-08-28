@@ -98,14 +98,13 @@ div.floors-tbl-freeze-column-div {
 </head>
 <body>
 
-	<c:if test="${not empty errorMsg}">
-		<div class="alert alert-danger" role="alert">
-			<c:forEach var="error" items="${errorMsg}" varStatus="status">
-				<spring:message code="${error.value}" />
-				<br />
-			</c:forEach>
-		</div>
-	</c:if>
+	<c:if test="${errorMsg != ''}">
+ 	<div class="panel-heading">
+				<div class="add-margin error-msg" style="text-align:center;">
+					<strong><c:out value="${errorMsg}"/></strong>
+				</div>
+	</div>
+</c:if>
 
 	<form:form method="post" id="writeOffForm" commandName="writeOff"
 		theme="simple" enctype="multipart/form-data" modelAttribute="writeOff">
@@ -301,7 +300,20 @@ div.floors-tbl-freeze-column-div {
 										<div class="col-xs-2 add-margin">
 											<spring:message code="lbl.writeOffTypes" />
 										</div>
-
+										<c:if test="${writeOff.getState().getValue()=='Rejected'}">
+										<div class="col-xs-2 add-margin view-content">
+											<form:select path="" id="writeOffType" name="type"
+												cssClass="form-control"
+												onchange="enablecheckbox();displayreasons();" required="required" >
+												<form:option value="">
+													<spring:message code="lbl.select" />
+												</form:option>
+												<form:options items="${type}" itemValue="code"
+													itemLabel="mutationDesc" />
+											</form:select>
+										</div>
+										</c:if>
+										<c:if test="${writeOff.getState().getValue()!='Rejected'}">
 										<div class="col-xs-2 add-margin view-content">
 											<form:select path="" id="writeOffType" name="type"
 												cssClass="form-control"
@@ -312,22 +324,38 @@ div.floors-tbl-freeze-column-div {
 												<form:options items="${type}" itemValue="code"
 													itemLabel="mutationDesc" />
 											</form:select>
+											<form:errors path="writeOffType.mutationDesc" cssClass="add-margin error-msg" />
+											
 										</div>
+										</c:if>
 										<div class="col-xs-2 add-margin" style="padding-left: 100px;">
 											<spring:message code="lbl.writeOff.reasons" />
 										</div>
+										<c:if test="${writeOff.getState().getValue()=='Rejected'}">
 										<div class="col-xs-3 add-margin view-content">
 											<form:select id="reasons" path="" name="reasons"
-												cssClass="form-control" style="width: 80%" required="required">
+												cssClass="form-control" style="width: 80%" required="required" >
 												<form:option value="">
 													<spring:message code="lbl.select" />
-												
-												<form:options items="${writeOffReasons}" itemValue="code" 
-													itemLabel="name"  />
-													</form:option>
-			
+												</form:option>
+												<form:options items="${reasonsList}" itemValue="code" 
+													itemLabel="name" />
 											</form:select>
 										</div>
+										</c:if>
+										<c:if test="${writeOff.getState().getValue()!='Rejected'}">
+										<div class="col-xs-3 add-margin view-content">
+											<form:select id="reasons" path="" name="reasons"
+												cssClass="form-control" style="width: 80%"  required="required">
+												<form:option value="">
+													<spring:message code="lbl.select" />
+												</form:option>
+												<form:options items="${writeOffReasons}" itemValue="code" 
+												itemLabel="name" />
+											</form:select>
+											<form:errors path="writeOffReasons.name" cssClass="add-margin error-msg" />
+										</div>
+										</c:if>
 									</div>
 									<div id="check" style="display: none;">
 										<spring:message code="lbl.writeoff.deactivation.checkbox" />
@@ -359,20 +387,22 @@ div.floors-tbl-freeze-column-div {
 										<div class="col-xs-2 add-margin view-content">
 											<form:select cssClass="form-control" path="resolutionType"
 												id="resolutionType" name="resolutionType"
-												cssStyle="width: 100%" required="required" >
+												cssStyle="width: 100%"  >
 												<form:option value="">Select</form:option>
 												<form:option value="MPI. Council">Council</form:option>
 												<form:option value="Standing Committee">Standing Committee</form:option>
 											</form:select>
+											<form:errors path="resolutionType" cssClass="add-margin error-msg" />
 										</div>
 										<div class="col-xs-2 add-margin postion">
 											<spring:message code="lbl.resolution.no" />
 										</div>
-										<div class="col-xs-2 add-margin">
+										<div class="col-xs-2 add-margin view-content">
 											<form:input id="resolutionNo" path="resolutionNo" type="text"
 												value="${resolutionNo}" cssClass="form-control"
 												autocomplete="off" 
-												onchange="getcouncilrequest()" required="required" />
+												onchange="getcouncilrequest()"  />
+												<form:errors path="resolutionNo" cssClass="add-margin error-msg" />
 										</div>
 										<div class="col-xs-2 add-margin postion">
 											<spring:message code="lbl.resolution.date" />
@@ -383,7 +413,7 @@ div.floors-tbl-freeze-column-div {
 												 />
 										</div>
 										<div class="col-xs-3 add-margin" id="viewlink">
-											<a id="link" href="#" onclick="openurl()return false;" target="_blank">Council
+											<a id="url" href="#"  target="_blank">Council
 												management verification link</a>
 										</div>
 									</div>
@@ -395,14 +425,11 @@ div.floors-tbl-freeze-column-div {
 
 					<div class="panel panel-primary">
 						<div class="panel-body custom-form">
-							<!-- <div class="panel-body custom-form"> -->
-							<%@ include file="/WEB-INF/jsp/common/documents-upload.jsp"%>
-							<!-- </div> -->
+							<%@ include file="../../transactions/writeOff/writeoff-document-upload.jsp"%>
 						</div>
 
 					</div>
 				</div>
-				
 					<div id="demanddetails" class="tab-pane fade">
 						<%@ include
 							file="../../transactions/writeOff/Writeoff-demand-details.jsp"%>

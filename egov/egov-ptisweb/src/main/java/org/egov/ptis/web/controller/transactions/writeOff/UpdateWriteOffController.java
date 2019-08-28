@@ -50,11 +50,8 @@ package org.egov.ptis.web.controller.transactions.writeOff;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.APPROVAL_COMMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPROVAL_POSITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_DETAIL_LIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.ENDORSEMENT_NOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_WRITEOFFROCEEDINGS;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.SUCCESS_MSG;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
@@ -81,7 +78,9 @@ import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.WriteOff;
 import org.egov.ptis.domain.service.writeOff.WriteOffService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
@@ -100,7 +99,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/writeoff/update/{id}")
 public class UpdateWriteOffController extends GenericWorkFlowController {
-
+    private String WRITOFF_DOC = "attachedDocuments" ;
     @Autowired
     private WriteOffService writeOffService;
     @Autowired
@@ -115,42 +114,46 @@ public class UpdateWriteOffController extends GenericWorkFlowController {
         return writeOffService.getWriteOffById(id);
 
     }
-
+    
+    @ModelAttribute("documentsList")
+    public List<DocumentType> documentsList(@ModelAttribute final WriteOff writeOff) {
+            return writeOffService.getDocuments(TransactionType.WRITEOFF);
+    }
+    
     @GetMapping
     public String view(@ModelAttribute WriteOff writeOff, Model model, HttpServletRequest request) {
         String target = null;
         String currState = writeOff.getState().getValue();
         BasicProperty basicProperty = writeOff.getBasicProperty();
-        final String userDesignationList = propertyTaxCommonUtils
-                .getAllDesignationsForUser(securityUtils.getCurrentUser().getId());
         String currentDesg = writeOffService.getLoggedInUserDesignation(
                 writeOff.getCurrentState().getOwnerPosition().getId(), securityUtils.getCurrentUser());
-        final String nextAction = writeOff.getState().getNextAction();
         final WorkflowContainer workflowContainer = new WorkflowContainer();
-        workflowContainer.setPendingActions(nextAction);
         List<Installment> installmentList = propertyTaxUtil.getInstallments(basicProperty.getActiveProperty());
         model.addAttribute(ENDORSEMENT_NOTICE, new ArrayList<>());
+        model.addAttribute(WRITOFF_DOC, "");
         if (!currState.endsWith(WF_STATE_REJECTED)) {
             writeOffService.addDemandDetails(writeOff);
-            model.addAttribute("demandDetailList", writeOff.getDemandDetailBeanList());
-            writeOffService.addModelAttributes(model, basicProperty.getUpicNo(), request, installmentList);
             writeOffService.addModelAttributesupdate(model, writeOff);
+            writeOffService.addModelAttributes(model, basicProperty.getUpicNo(), request, installmentList);
             if (!writeOff.getDocuments().isEmpty())
                 model.addAttribute("attachedDocuments", writeOff.getDocuments());
+            model.addAttribute("demandDetailList", writeOff.getDemandDetailBeanList());
             model.addAttribute("currentDesignation", currentDesg);
-            model.addAttribute("userDesignationList", userDesignationList);
-            model.addAttribute("designation", COMMISSIONER_DESGN);
             workflowContainer.setCurrentDesignation(currentDesg);
             prepareWorkflow(model, writeOff, workflowContainer);
             target = WO_VIEW;
         } else {
-            writeOffService.addModelAttributes(model, basicProperty.getUpicNo(), request, installmentList);
-            model.addAttribute("userDesignationList", userDesignationList);
+            writeOffService.addDemandDetails(writeOff);
             writeOffService.addModelAttributesupdate(model, writeOff);
-            model.addAttribute("designation", COMMISSIONER_DESGN);
+            writeOffService.addModelAttributes(model, basicProperty.getUpicNo(), request, installmentList);
+            if (!writeOff.getDocuments().isEmpty()){
+                writeOff.setWriteoffDocumentsProxy(writeOff.getDocuments());
+                model.addAttribute(WRITOFF_DOC, writeOff.getWriteoffDocumentsProxy());
+            }
+            model.addAttribute("dmndDetails", writeOff.getDemandDetailBeanList());
             model.addAttribute("currentDesignation", currentDesg);
             workflowContainer.setCurrentDesignation(currentDesg);
-            model.addAttribute("dmndDetails", writeOff.getDemandDetailBeanList());
+            model.addAttribute("demandDetailList", writeOff.getDemandDetailBeanList());
             prepareWorkflow(model, writeOff, new WorkflowContainer());
             target = WO_FORM;
         }
@@ -212,6 +215,16 @@ public class UpdateWriteOffController extends GenericWorkFlowController {
                 model.addAttribute(SUCCESS_MSG, successMessage);
 
                 target = WO_SUCCESS_FORM;
+            } else {
+
+                writeOffService.saveWriteOff(writeOff, approvalPosition, approvalComent, null, workFlowAction);
+                successMessage = "write Off Saved Successfully in the System and forwarded to : "
+                        + propertyTaxUtil.getApproverUserName(writeOff.getState().getOwnerPosition().getId())
+                        + " with application number " + writeOff.getApplicationNumber();
+                model.addAttribute(SUCCESS_MSG, successMessage);
+
+                target = WO_SUCCESS_FORM;
+
             }
         }
         return target;

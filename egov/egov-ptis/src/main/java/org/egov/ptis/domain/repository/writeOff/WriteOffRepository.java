@@ -17,4 +17,9 @@ public interface WriteOffRepository extends JpaRepository<WriteOff, Long> {
 
     @Query("select DT from DocumentType DT where DT.name=:name")
     public DocumentType findDocumentTypeByName(@Param("name") String name);
+    
+    @Query("select wo from WriteOff wo where wo.resolutionType=:resolutionType and wo.resolutionNo=:resolutionNo and wo.basicProperty.upicNo=:upicNo order by wo.id desc ")
+    List<WriteOff> findCouncilTypeAndNo(@Param("resolutionType") String type, @Param("resolutionNo") String number,
+            @Param("upicNo") String name);
+
 }

@@ -50,6 +50,7 @@ $( document ).ready(function() {
 
 	 var frominstallment;
 	 var toinstallment;
+	 var urlvalue;
 	 frominstallment = $("#frominstallments").val();
 	 instString = $("#instString").val();
 $("writeOffType").change(function()
@@ -181,19 +182,23 @@ function getselectedinstallments(val){
 			url: "/ptis/common/getcouncildetails",
 			dataType: 'json',
 	        type: "GET",
-	        async : false,
+	       async : false,
 	        data:{"resolutionType":resolutiontype,"resolutionNo":resolutionNo},
 			success: function (response) {
 					   for (var i=0;i<response.length;i++) {
 					      $("#resolutionDate").val(response[i].resolutionDate);
-					      $("#link").val(response[i].councilResolutionUrl);
+					      urlvalue = response[i].councilResolutionUrl;
 					      errormessage = response[i].errorMessage;
-					      if(errormessage == null)
+					      if(errormessage == null){
+					    	  $("#url"). attr("href",urlvalue);
 					    	  $("#viewlink").show();
+					      }else{
+					      $("#viewlink").hide();
+					      }
 					}
 					  			}, 
 			error: function(){
-				if(errormessage!=null)
+				if(errormessage.value!=null)
 				bootbox.alert(errormessage.value);
 			} 				
 			
@@ -201,9 +206,10 @@ function getselectedinstallments(val){
 		}
 	}
 
-	$('a#link').click(function(){ urlvalue =jQuery('#councilurl').val();
-	window.open(urlvalue); 
+	$('#url').click(function(event){ 
+	window.open(urlvalue,_blank); 
 	window.focus();
 	})
+	
 	
 		
