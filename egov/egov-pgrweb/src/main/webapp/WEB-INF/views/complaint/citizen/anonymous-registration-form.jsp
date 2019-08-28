@@ -293,24 +293,19 @@
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script src="<cdn:url  value='/resources/js/app/complaint.js?rnd=${app_release_no}'/>"></script>
 <script>
-    var inputPhone = jQuery('[data-nomask]');
-
+    var $inputPhone = jQuery('[data-nomask]');
     var PHONE_REGEX = /^[0-9]+$/;
     var currentPhone = inputPhone.val();
     function handlePhoneChange(event) {
-
         var value = inputPhone.val(); 
         if (value.length === 0 || PHONE_REGEX.test(value)){
-
-
-
-            currentPhone = inputPhone.val();
+            currentPhone = $inputPhone.val();
         } else {
-            inputPhone.val(currentPhone);
+            $inputPhone.val(currentPhone);
         }
     }
-    inputPhone.on('change', handlePhoneChange);
-    inputPhone.on('keyup', handlePhoneChange);
+    $inputPhone.on('change', handlePhoneChange);
+    $inputPhone.on('keyup', handlePhoneChange);
 </script>
 <style>
 .or-spacer {
