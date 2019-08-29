@@ -302,7 +302,7 @@ div.floors-tbl-freeze-column-div {
 										</div>
 										<c:if test="${writeOff.getState().getValue()=='Rejected'}">
 										<div class="col-xs-2 add-margin view-content">
-											<form:select path="" id="writeOffType" name="type"
+											<form:select path="writeOffType.code" id="writeOffType" 
 												cssClass="form-control"
 												onchange="enablecheckbox();displayreasons();" required="required" >
 												<form:option value="">
@@ -315,7 +315,7 @@ div.floors-tbl-freeze-column-div {
 										</c:if>
 										<c:if test="${writeOff.getState().getValue()!='Rejected'}">
 										<div class="col-xs-2 add-margin view-content">
-											<form:select path="" id="writeOffType" name="type"
+											<form:select path="writeOffType.code" id="writeOffType" 
 												cssClass="form-control"
 												onchange="enablecheckbox();displayreasons();" required="required">
 												<form:option value="">
@@ -333,7 +333,7 @@ div.floors-tbl-freeze-column-div {
 										</div>
 										<c:if test="${writeOff.getState().getValue()=='Rejected'}">
 										<div class="col-xs-3 add-margin view-content">
-											<form:select id="reasons" path="" name="reasons"
+											<form:select id="reasons" path="writeOffReasons.name" name="reasons"
 												cssClass="form-control" style="width: 80%" required="required" >
 												<form:option value="">
 													<spring:message code="lbl.select" />
@@ -345,7 +345,7 @@ div.floors-tbl-freeze-column-div {
 										</c:if>
 										<c:if test="${writeOff.getState().getValue()!='Rejected'}">
 										<div class="col-xs-3 add-margin view-content">
-											<form:select id="reasons" path="" name="reasons"
+											<form:select id="reasons" path="writeOffReasons.name" 
 												cssClass="form-control" style="width: 80%"  required="required">
 												<form:option value="">
 													<spring:message code="lbl.select" />

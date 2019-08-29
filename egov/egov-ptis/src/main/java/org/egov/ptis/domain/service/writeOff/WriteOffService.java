@@ -450,20 +450,21 @@ public class WriteOffService extends GenericWorkFlowController {
         Set<EgDemandDetails> demandDetails = propertyService.getCurrrentDemand(writeOff.getProperty())
                 .getEgDemandDetails();
         DemandDetailVariation dmdVar = null;
-        List<String> dmdInstallment = null;
-        for (final EgDemandDetails dmdDetails : demandDetails)
+        List<Installment> install = new ArrayList<>();
+        for (final EgDemandDetails dmdDetails : demandDetails){
             for (final DemandDetail dmdDetailBean : writeOff.getDemandDetailBeanList()) {
                 Boolean isUpdateAmount = Boolean.FALSE;
                 dmdDetailBean.setInstallment(installmentDao.findById(dmdDetailBean.getInstallment().getId(), false));
-
+                if(dmdDetails.getEgDemandReason().getEgInstallmentMaster().getId().equals(dmdDetailBean.getInstallment().getId())){
                 if (dmdDetailBean.getRevisedAmount() != BigDecimal.ZERO) {
                     if (dmdDetailBean.getRevisedAmount() != null
-                            && dmdDetailBean.getInstallment()
-                                    .equals(dmdDetails.getEgDemandReason().getEgInstallmentMaster())
                             && dmdDetails.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
                                     .equalsIgnoreCase(dmdDetailBean.getReasonMaster())) {
-                        dmdInstallment = Arrays.asList(dmdDetailBean.getInstallment().getDescription());
+                        install.add(dmdDetailBean.getInstallment());
                         isUpdateAmount = true;
+                        }
+                     
+                        
                     }
                 }
                 if (isUpdateAmount) {
@@ -481,11 +482,12 @@ public class WriteOffService extends GenericWorkFlowController {
                     dmdDetails.setModifiedDate(new Date());
                     break;
                 }
+               
             }
-
+        }
         if (writeOff.getWriteOffType().getMutationDesc().equalsIgnoreCase(FULL_WRITEOFF)) {
-            Collections.sort(dmdInstallment);
-            writeOff.setFromInstallment(dmdInstallment.get(0));
+            install.sort(Comparator.comparing(Installment::getId));
+            writeOff.setFromInstallment(install.get(0).getDescription());
             DemandDetail maxInstallment = writeOff.getDemandDetailBeanList().get(writeOff.getDemandDetailBeanList().size() - 1);
             writeOff.setToInstallment(maxInstallment.getInstallment().getDescription());
 

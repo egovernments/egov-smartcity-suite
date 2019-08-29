@@ -150,7 +150,6 @@ public class WriteOffController extends GenericWorkFlowController {
 	private WriteOffRepository writeOffRepo;
 	@Autowired
 	private PropertyService propertyService;
-	private String[] writeOffTypes;
 
 	@ModelAttribute("writeOff")
 	public WriteOff writeOff(@PathVariable("assessmentNo") String assessmentNo) {
@@ -201,7 +200,7 @@ public class WriteOffController extends GenericWorkFlowController {
         }
         if (balance.compareTo(BigDecimal.ZERO) == 0) {
             model.addAttribute(ENDORSEMENT_NOTICE, new ArrayList<>());
-            model.addAttribute(ERROR_MSG, "WriteOff is not Applicalble,there is no demand due for the given property.");
+            model.addAttribute(ERROR_MSG, "writeoff.no.due");
             return PROPERTY_VALIDATION_FOR_SPRING;
         }
         List<DemandDetail> demandDetailBeanList = writeOffService.setDemandBeanList(dmndDetails);
@@ -219,8 +218,6 @@ public class WriteOffController extends GenericWorkFlowController {
         String target = null;
         Long approvalPosition = 0l;
         String approvalComent = "";
-        String[] writeOffTypes = null;
-        String reason = null;
         String errorMessages = null;
         final List<Document> documents = new ArrayList<>();
         if (request.getParameterValues("checkbox") != null && request.getParameterValues("checkbox").length > 0) {
@@ -228,13 +225,7 @@ public class WriteOffController extends GenericWorkFlowController {
         } else {
             writeOff.setPropertyDeactivateFlag(false);
         }
-        if (request.getParameter("type") != null) {
-            writeOffTypes = request.getParameterValues("type");
-        }
-        if ((request.getParameter(WRITEOFF_REASONS) != null) && !request.getParameter(WRITEOFF_REASONS).equals("")) {
-            reason = (request.getParameter(WRITEOFF_REASONS));
-        }
-        if (writeOff.getPropertyDeactivateFlag() && writeOffTypes[0].equalsIgnoreCase(FULL_WRITEOFF)) {
+        if (writeOff.getPropertyDeactivateFlag() && writeOff.getWriteOffType().getCode().equals("FULL WRITEOFF")) {
             errorMessages = validateWCSewconnection(writeOff, request);
             if (!errorMessages.isEmpty()) {
                 model.addAttribute(ERROR_MSG, errorMessages);
@@ -242,13 +233,13 @@ public class WriteOffController extends GenericWorkFlowController {
                 return WO_FORM;
             }
         }
-        resultBinder = validate(writeOff, resultBinder, writeOffTypes, reason);
+        resultBinder = validate(writeOff, resultBinder);
         if (resultBinder != null && resultBinder.hasErrors())
             return WO_FORM;
         final PropertyMutationMaster propMutMstr = propertyMutationMasterHibDAO
-                .getPropertyMutationMasterByCode(writeOffTypes[0]);
+                .getPropertyMutationMasterByCode(writeOff.getWriteOffType().getCode());
         writeOff.setWriteOffType(propMutMstr);
-        List<WriteOffReasons> woreasons = writeOffService.getAllwriteoffMastersByName(reason);
+        List<WriteOffReasons> woreasons = writeOffService.getAllwriteoffMastersByName(writeOff.getWriteOffReasons().getName());
         writeOff.setWriteOffReasons(woreasons.get(0));
         if (request.getParameter(APPROVAL_COMMENT) != null)
             approvalComent = request.getParameter(APPROVAL_COMMENT);
@@ -313,10 +304,10 @@ public class WriteOffController extends GenericWorkFlowController {
 			return Collections.emptySet();
 	}
 	
-    private BindingResult validate(final WriteOff writeOff, final BindingResult errors, String[] writeOffTypes, String reason) {
-        if (StringUtils.isBlank(writeOffTypes[0]))
+    private BindingResult validate(final WriteOff writeOff, final BindingResult errors) {
+        if (StringUtils.isBlank(writeOff.getWriteOffType().getCode()))
             errors.rejectValue("writeOffType.mutationDesc", "writeoff.type");
-        if (StringUtils.isBlank(reason))
+        if (StringUtils.isBlank(writeOff.getWriteOffReasons().getName()))
             errors.rejectValue("writeOffReasons.name", "writeoff.reason");
         if (StringUtils.isBlank(writeOff.getResolutionNo()))
             errors.rejectValue("resolutionNo", "writeoff.resolution.type");
@@ -332,17 +323,9 @@ public class WriteOffController extends GenericWorkFlowController {
                 request);
         hasActiveWC = writeOffService.checkActiveWC(activeWCDetails);
         if (hasActiveWC) {
-            error = "Active Water Connections are there For this Property.";
+            error = "Water Connections are active cannot deactivate the property.";
         }
         return error;
-    }
-
-    public String[] getWriteOffTypes() {
-        return writeOffTypes;
-    }
-
-    public void setWriteOffTypes(String[] writeOffTypes) {
-        this.writeOffTypes = writeOffTypes;
     }
 
 }

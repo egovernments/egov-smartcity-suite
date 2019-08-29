@@ -198,8 +198,8 @@ function getselectedinstallments(val){
 					}
 					  			}, 
 			error: function(){
-				if(errormessage.value!=null)
-				bootbox.alert(errormessage.value);
+				if(errormessage!=null)
+				bootbox.alert(errormessage);
 			} 				
 			
 		});
