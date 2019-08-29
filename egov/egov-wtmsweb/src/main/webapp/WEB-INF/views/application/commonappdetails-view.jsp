@@ -167,24 +167,31 @@
 				</c:choose>
 			</div>
 		</div>
-		<c:if test="${!citizenRole }" >
+	<c:if test="${!citizenRole }">
 		<div class="row add-border">
-			<div class="col-xs-3 add-margin"><spring:message code="lbl.entered.through"/></div>
+			<div class="col-xs-3 add-margin">
+				<spring:message code="lbl.entered.through" />
+			</div>
+			<div class="col-xs-3 add-margin view-content">
 				<c:choose>
-				<c:when test="${not empty waterConnectionDetails.connectionReason}">
-					<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.connectionReason}" /></div>
-				</c:when>
-				<c:otherwise>
-					<c:choose>
-						<c:when test="${waterConnectionDetails.legacy==true}">
-							<div class="col-xs-3 add-margin view-content"><spring:message code='lbl.dataentry'/></div>
-						</c:when>
-						<c:otherwise><div class="col-xs-3 add-margin view-content"><spring:message code='lbl.system'/></div></c:otherwise>
-					</c:choose>
-				</c:otherwise>
-			</c:choose>	
-		</div>	
-		</c:if>
-		
-	</div>
+					<c:when
+						test="${waterConnectionDetails.legacy==true && waterConnectionDetails.state == null}">
+						<c:choose>
+							<c:when test="${not empty waterConnectionDetails.connectionReason && waterConnectionDetails.connectionReason=='Migrated Connection'}">
+								<spring:message code='lbl.migratedconnection' />
+							</c:when>
+							<c:otherwise>
+								<spring:message code='lbl.dataentry' />
+							</c:otherwise>
+						</c:choose>
+					</c:when>
+					<c:otherwise>
+						<spring:message code='lbl.system' />
+					</c:otherwise>
+				</c:choose>
+			</div>
+		</div>
+	</c:if>
+
+</div>
 
