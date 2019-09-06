@@ -214,7 +214,7 @@ public class ProjectCodeService extends PersistenceService<ProjectCode, Long> im
     }
 
     public ProjectCode findActiveProjectCodeByCode(final String code) {
-        return find("from ProjectCode as p where active=true and upper(p.code) = ?", code.toUpperCase());
+        return find("from ProjectCode as p where active=true and upper(p.code) = ?1", code.toUpperCase());
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
