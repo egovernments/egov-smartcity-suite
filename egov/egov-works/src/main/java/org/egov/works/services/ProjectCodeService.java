@@ -100,8 +100,7 @@ public class ProjectCodeService extends PersistenceService<ProjectCode, Long> im
             final Integer accountDetailTypeId) {
         final Integer pageSize = maxRecords > 0 ? maxRecords : null;
         final String param = "%" + filterKey.toUpperCase() + "%";
-        final String qry = "select distinct pc from ProjectCode pc " + "where active=true and upper(pc.code) like ? "
-                + "order by code";
+        final String qry = "select distinct pc from ProjectCode pc where active=true and upper(pc.code) like ?1 order by code";
         return findPageBy(qry, 0, pageSize, param).getList();
     }
 
@@ -112,7 +111,7 @@ public class ProjectCodeService extends PersistenceService<ProjectCode, Long> im
             throw new ValidationException(Arrays.asList(new ValidationError("projectcode.invalid",
                     "Invalid Account Detail Key")));
 
-        final ProjectCode projectCode = find("from ProjectCode where id=?", accountDetailKey.longValue());
+        final ProjectCode projectCode = find("from ProjectCode where id=?1", accountDetailKey.longValue());
 
         if (projectCode == null)
             throw new ValidationException(Arrays.asList(new ValidationError("projectcode.doesnt.exist",
@@ -138,50 +137,53 @@ public class ProjectCodeService extends PersistenceService<ProjectCode, Long> im
 
     public List<ProjectCode> getAllActiveProjectCodes(final int fundId, final Long functionId, final int functionaryId,
             final int fieldId, final int deptId) {
-        String projectCodeQry = null;
+        StringBuffer projectCodeQry = new StringBuffer();
         final List<Object> paramList = new ArrayList<Object>();
         Object[] params;
 
-        projectCodeQry = "select pc from ProjectCode pc where pc in (select ae.projectCode from AbstractEstimate as ae inner join ae.financialDetails as fd where ae.state.value not in('CANCELLED')";
+        projectCodeQry.append("select pc ")
+                .append("from ProjectCode pc ")
+                .append("where pc in (select ae.projectCode from AbstractEstimate as ae inner join ae.financialDetails as fd where ae.state.value not in('CANCELLED')");
 
+        int index = 1;
         if (fundId != 0) {
-            projectCodeQry = projectCodeQry + " and fd.fund.id= ?";
+            projectCodeQry.append(" and fd.fund.id= ?").append(index++);
             paramList.add(fundId);
         }
 
         if (functionId != 0) {
-            projectCodeQry = projectCodeQry + " and fd.function.id= ?";
+            projectCodeQry.append(" and fd.function.id= ?").append(index++);
             paramList.add(functionId);
         }
 
         if (functionaryId != 0) {
-            projectCodeQry = projectCodeQry + " and fd.functionary.id= ?";
+            projectCodeQry.append(" and fd.functionary.id= ?").append(index++);
             paramList.add(functionaryId);
         }
 
         if (fieldId != 0) {
-            projectCodeQry = projectCodeQry + " and ae.ward.id= ?";
+            projectCodeQry.append(" and ae.ward.id= ?").append(index++);
             paramList.add(fieldId);
         }
 
         if (deptId != 0) {
-            projectCodeQry = projectCodeQry + " and ae.executingDepartment.id= ?";
+            projectCodeQry.append(" and ae.executingDepartment.id= ?").append(index++);
             paramList.add(deptId);
         }
-        projectCodeQry = projectCodeQry + ")";
+        projectCodeQry.append(")");
 
         if (paramList.isEmpty())
-            return findAllBy(projectCodeQry);
+            return findAllBy(projectCodeQry.toString());
         else {
             params = new Object[paramList.size()];
             params = paramList.toArray(params);
-            return findAllBy(projectCodeQry, params);
+            return findAllBy(projectCodeQry.toString(), params);
         }
     }
 
     public List getAssetListByProjectCode(final Long projectCodeId) throws NoSuchObjectException {
         final List<String> assetCodeList = new ArrayList<String>();
-        final ProjectCode pc = find("from ProjectCode where id=?", projectCodeId);
+        final ProjectCode pc = find("from ProjectCode where id=?1", projectCodeId);
         if (pc == null)
             throw new NoSuchObjectException("projectcode.notfound");
         final List<AssetsForEstimate> assetsForEstimateList = assetsForEstimateService.findAllByNamedQuery(
@@ -209,8 +211,8 @@ public class ProjectCodeService extends PersistenceService<ProjectCode, Long> im
     }
 
     public ProjectCode findByCode(final String code) {
-        final String query = "from ProjectCode as p where upper(p.code) = '" + code.toUpperCase() + "'";
-        return find(query);
+        final String query = "from ProjectCode as p where upper(p.code) = ?1";
+        return find(query, code.toUpperCase());
     }
 
     public ProjectCode findActiveProjectCodeByCode(final String code) {
