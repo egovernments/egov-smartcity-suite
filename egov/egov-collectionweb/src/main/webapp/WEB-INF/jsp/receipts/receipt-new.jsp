@@ -1246,7 +1246,10 @@ function showHideMandataryMark(obj){
          <tr>
            <td class="bluebox">&nbsp;</td>
            <td class="bluebox"><s:text name="billreceipt.counter.operator"/>&nbsp;&nbsp;&nbsp; <b><s:property value="%{receiptCreatedByCounterOperator.name}"/> </b></td>
-           <td class="bluebox"><s:text name="billreceipt.service"/>&nbsp;&nbsp;&nbsp; <b><s:property value="%{serviceName}"/></b></td>
+           <s:if test="%{!isBillSourcemisc()}"> 
+         	  	<td class="bluebox"><s:text name="billreceipt.service"/>&nbsp;&nbsp;&nbsp; <b><s:property value="%{serviceName}"/></b></td>
+           </s:if>
+           <s:else> <td class="bluebox">&nbsp;</td></s:else>
           </tr>
 
           <tr>
