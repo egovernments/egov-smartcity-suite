@@ -1075,10 +1075,12 @@ public class PropertyTaxCommonUtils {
         String ulbCode = ApplicationThreadLocals.getCityCode();      
         String resturl = String.format((COUNCIL_RESOLUTION_RESTURL),WebUtils.extractRequestDomainURL(request, false));
         URI targetUrl= UriComponentsBuilder.fromUriString(resturl) 
-                        .queryParam("ulbCode", ulbCode).queryParam("resolutionNo", resolutionNo).queryParam("committeeType", resolutionType)
+                        .queryParam("resolutionNo", resolutionNo).queryParam("committeeType", resolutionType)
                 .build()                                                
                 .encode()                                           
                 .toUri();
+        System.out.println("url is **************** "+targetUrl.toString());
+        LOGGER.error("url is ***** " + targetUrl.toString());
         JSONArray jsonArr = null;
         final ArrayList<String> nameList = new ArrayList<>();
         Cookie[] cookies = request.getCookies();
