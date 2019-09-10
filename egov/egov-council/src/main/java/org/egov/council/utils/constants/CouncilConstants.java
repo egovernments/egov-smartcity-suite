@@ -151,4 +151,6 @@ public class CouncilConstants {
 
     public static final List<String> CATEGORY = Collections.unmodifiableList(
             Arrays.asList("Special knowledge", "Minority"));
+    
+    public static final String COUNCIL_RESOLUTION_DETAILS_URL = "/council/councilmom/view/%d";
 }

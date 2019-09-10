@@ -45,7 +45,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.restapi.model;
+package org.egov.council.entity;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -64,8 +64,8 @@ public class CouncilResolutionsResponse {
     private String status;
     private BigDecimal sanctionAmount;
     private String gistOfPreamble;
-    
-    @JsonFormat(pattern="dd/MM/yyyy")
+
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private Date resolutionDate;
     private String councilResolutionUrl;
     private String errorMessage;
@@ -151,27 +151,27 @@ public class CouncilResolutionsResponse {
     }
 
     public String getCouncilResolutionUrl() {
-		return councilResolutionUrl;
-	}
+        return councilResolutionUrl;
+    }
 
-	public void setCouncilResolutionUrl(String councilResolutionUrl) {
-		this.councilResolutionUrl = councilResolutionUrl;
-	}
+    public void setCouncilResolutionUrl(String councilResolutionUrl) {
+        this.councilResolutionUrl = councilResolutionUrl;
+    }
 
-	public Date getResolutionDate() {
-		return resolutionDate;
-	}
+    public Date getResolutionDate() {
+        return resolutionDate;
+    }
 
-	public void setResolutionDate(Date resolutionDate) {
-		this.resolutionDate = resolutionDate;
-	}
+    public void setResolutionDate(Date resolutionDate) {
+        this.resolutionDate = resolutionDate;
+    }
 
-	public String getErrorMessage() {
-		return errorMessage;
-	}
+    public String getErrorMessage() {
+        return errorMessage;
+    }
 
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-	}
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
 
 }
