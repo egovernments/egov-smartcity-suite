@@ -561,9 +561,13 @@ public class MarriageRegistrationService {
             requestObjectMap.add("ApplicationKey", marriageMessageSource.getMessage("mrs.cpk.apikey", null, null));
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
             HttpEntity<MultiValueMap<String, Object>> requestObj = new HttpEntity<>(requestObjectMap, headers);
-            restTemplate.postForObject(CPK_END_POINT_URL +
-                    marriageRegistration.getApplicationNo(),
-                    requestObj, String.class);
+            try {
+                restTemplate.postForObject(CPK_END_POINT_URL +
+                        marriageRegistration.getApplicationNo(),
+                        requestObj, String.class);
+            } catch (Exception e) {
+                LOG.error("Error occured while sending certificate --------- " + e.getMessage());
+            }
         }
     }
 
