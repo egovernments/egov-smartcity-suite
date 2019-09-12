@@ -84,7 +84,7 @@ public class DocumentNamesMasterController {
     public String viewForm(final Model model) {
         DocumentNames documentNames = new DocumentNames();
         model.addAttribute("documentNames", documentNames);
-        model.addAttribute("applicationTypes", applicationTypeService.findAll());
+        model.addAttribute("applicationTypes", applicationTypeService.getActiveApplicationTypes());
         model.addAttribute("reqAttr", "false");
         model.addAttribute("mode", "create");
         return "document-name-master";
@@ -94,7 +94,7 @@ public class DocumentNamesMasterController {
     public String createDocumentNamesData(@Valid @ModelAttribute final DocumentNames documentNames,
             final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model) {
         if (errors.hasErrors()) {
-            model.addAttribute("applicationTypes", applicationTypeService.findAll());
+            model.addAttribute("applicationTypes", applicationTypeService.getActiveApplicationTypes());
             return "document-name-master";
         } else
             documentNamesService.createDocumentName(documentNames);
@@ -122,7 +122,7 @@ public class DocumentNamesMasterController {
     public String getDocumentNamesMasterDetails(final Model model, @PathVariable final String documentNameId) {
         final DocumentNames documentNames = documentNamesService.findOne(Long.parseLong(documentNameId));
         model.addAttribute("documentNames", documentNames);
-        model.addAttribute("applicationTypes", applicationTypeService.findAll());
+        model.addAttribute("applicationTypes", applicationTypeService.getActiveApplicationTypes());
         model.addAttribute("reqAttr", "true");
         return "document-name-master";
     }
@@ -132,7 +132,7 @@ public class DocumentNamesMasterController {
             final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model,
             @PathVariable final long documentNameId) {
         if (errors.hasErrors()) {
-            model.addAttribute("applicationTypes", applicationTypeService.findAll());
+            model.addAttribute("applicationTypes", applicationTypeService.getActiveApplicationTypes());
             return "document-name-master";
         } else
             documentNamesService.updateDocumentName(documentNames);
