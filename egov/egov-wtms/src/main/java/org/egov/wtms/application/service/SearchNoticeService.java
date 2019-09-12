@@ -251,7 +251,7 @@ public class SearchNoticeService {
             whereQuery.append(" applicationtype.code!=:reglnApplicationType and ");
 
         if (PROCEEDING_FOR_CLOSER_OF_CONNECTION.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
-            whereQuery.append(" connectionStatus=:closureStatus and status=:status and ");
+            whereQuery.append(" connectionStatus=:closureStatus and statusid=:status and ");
 
         if (isNotBlank(searchNoticeDetails.getHscNo()))
             whereQuery.append(" connection.consumercode=:consumerCode and ");
