@@ -50,7 +50,11 @@ package org.egov.wtms.application.service;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ESTIMATION_NOTICE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULETYPE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PROCEEDING_FOR_CLOSER_OF_CONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PROCEEDING_FOR_RECONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARISATION_DEMAND_NOTE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
 
@@ -64,6 +68,7 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.EgwStatus;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
@@ -73,6 +78,7 @@ import org.egov.wtms.application.entity.SearchNoticeDetails;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.PropertyExtnUtils;
+import org.egov.wtms.utils.WaterTaxUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -102,11 +108,15 @@ public class SearchNoticeService {
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
 
+    @Autowired
+    private WaterTaxUtils waterTaxUtils;
+
     private static final Logger LOGGER = Logger.getLogger(SearchNoticeService.class);
 
     @ReadOnly
     @SuppressWarnings("unchecked")
-    public List<SearchNoticeDetails> getBillReportDetails(final SearchNoticeDetails searchNoticeDetails, CFinancialYear financialYear) {
+    public List<SearchNoticeDetails> getBillReportDetails(final SearchNoticeDetails searchNoticeDetails,
+            CFinancialYear financialYear) {
         final long startTime = System.currentTimeMillis();
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
@@ -140,8 +150,9 @@ public class SearchNoticeService {
             queryStr.append(" and dcbinfo.applicationtype =:applicationType");
         if (isNotBlank(searchNoticeDetails.getPropertyType()))
             queryStr.append(" and dcbinfo.propertytype =:propertyType");
-        if(financialYear != null)
-        	queryStr.append(" and cast(bill.create_date as date) between cast(:financialStartDate as date) and cast(:financialEndDate as date)");
+        if (financialYear != null)
+            queryStr.append(
+                    " and cast(bill.create_date as date) between cast(:financialStartDate as date) and cast(:financialEndDate as date)");
 
         final Query query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
         setSearchQueryParameters(searchNoticeDetails, null, null, query, financialYear);
@@ -159,7 +170,8 @@ public class SearchNoticeService {
 
     @ReadOnly
     @SuppressWarnings("unchecked")
-    public List<SearchNoticeDetails> getSearchResultList(final SearchNoticeDetails searchNoticeDetails, CFinancialYear financialYear) {
+    public List<SearchNoticeDetails> getSearchResultList(final SearchNoticeDetails searchNoticeDetails,
+            CFinancialYear financialYear) {
         StringBuilder selectQuery = new StringBuilder(1000);
         StringBuilder fromQuery = new StringBuilder(1000);
         StringBuilder whereQuery = new StringBuilder(600);
@@ -168,21 +180,21 @@ public class SearchNoticeService {
                 .append("connection.consumercode as hscNo, connectionaddress.ownername as ownerName, connection.propertyIdentifier as assessmentNo, ")
                 .append("conndetails.workordernumber as workOrderNumber, conndetails.workorderdate as workOrderDate, connectionaddress.doornumber as houseNumber, ")
                 .append(" connectionaddress.locality as locality, conndetails.connectiontype as connectiontype ");
-        if (ESTIMATION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()) 
-        		|| REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
-        	selectQuery.append(", en.estimationnumber as estimationNumber, en.estimationnoticedate as estimationDate");
-        else 
-        	selectQuery.append(", CAST(NULL AS character varying) as estimationNumber, CAST(NULL AS date) as estimationDate");
+        if (ESTIMATION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType())
+                || REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
+            selectQuery.append(", en.estimationnumber as estimationNumber, en.estimationnoticedate as estimationDate");
+        else
+            selectQuery.append(", CAST(NULL AS character varying) as estimationNumber, CAST(NULL AS date) as estimationDate");
 
         fromQuery.append(" from egwtr_connection connection INNER JOIN egwtr_connectiondetails conndetails on ")
                 .append("connection.id=conndetails.connection INNER JOIN egwtr_connection_address connectionaddress on ")
                 .append("connectionaddress.connectiondetailsid=conndetails.id INNER JOIN ")
                 .append("egwtr_property_type propertytype on conndetails.propertytype=propertytype.id INNER JOIN ")
                 .append("egwtr_application_type applicationtype on conndetails.applicationtype=applicationtype.id ");
-        if (ESTIMATION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()) 
-        		|| REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
-        	fromQuery.append(" INNER JOIN egwtr_estimation_notice en on conndetails.id = en.CONNECTIONDETAILS ");
-        	
+        if (ESTIMATION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType())
+                || REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
+            fromQuery.append(" INNER JOIN egwtr_estimation_notice en on conndetails.id = en.CONNECTIONDETAILS ");
+
         whereQuery.append(" where ");
         if (isNotBlank(searchNoticeDetails.getRevenueWard()) && isNotBlank(searchNoticeDetails.getZone())) {
             fromQuery.append(" INNER JOIN eg_boundary wardboundary on connectionaddress.revenueward=wardboundary.id ");
@@ -211,20 +223,20 @@ public class SearchNoticeService {
         if (isNotBlank(searchNoticeDetails.getFromDate())) {
             dateArray = searchNoticeDetails.getFromDate().split("/");
             formattedFromDate = dateArray[2] + "-" + dateArray[1] + "-" + dateArray[0];
-            if (ESTIMATION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()) 
-            		|| REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
-            	whereQuery.append(" en.estimationnoticedate >=(cast(:formattedFromDate as date)) and ");
+            if (ESTIMATION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType())
+                    || REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
+                whereQuery.append(" en.estimationnoticedate >=(cast(:formattedFromDate as date)) and ");
             else
-            	whereQuery.append(" conndetails.workorderdate >=(cast(:formattedFromDate as date)) and ");
+                whereQuery.append(" conndetails.workorderdate >=(cast(:formattedFromDate as date)) and ");
         }
         if (isNotBlank(searchNoticeDetails.getToDate())) {
             dateArray = searchNoticeDetails.getToDate().split("/");
             formattedToDate = dateArray[2] + "-" + dateArray[1] + "-" + dateArray[0];
-            if (ESTIMATION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()) 
-            		|| REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
-            	whereQuery.append(" en.estimationnoticedate >=(cast(:formattedToDate as date)) and ");
+            if (ESTIMATION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType())
+                    || REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
+                whereQuery.append(" en.estimationnoticedate >=(cast(:formattedToDate as date)) and ");
             else
-            	whereQuery.append(" conndetails.workorderdate <=(cast(:formattedToDate as date)) and ");
+                whereQuery.append(" conndetails.workorderdate <=(cast(:formattedToDate as date)) and ");
         }
 
         if (isNotBlank(searchNoticeDetails.getApplicationType()))
@@ -238,27 +250,45 @@ public class SearchNoticeService {
         else
             whereQuery.append(" applicationtype.code!=:reglnApplicationType and ");
 
+        if (PROCEEDING_FOR_CLOSER_OF_CONNECTION.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
+            whereQuery.append(" connectionStatus=:closureStatus and status=:status and ");
+
         if (isNotBlank(searchNoticeDetails.getHscNo()))
             whereQuery.append(" connection.consumercode=:consumerCode and ");
 
         if (isNotBlank(searchNoticeDetails.getAssessmentNo()))
             whereQuery.append(" connection.propertyIdentifier=:assessmentNumber and ");
-        
-        if(financialYear != null)
-        {
-        	if (ESTIMATION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()) 
-            		|| REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
-        		whereQuery.append(" cast(en.estimationnoticedate as date) between cast(:financialStartDate as date) and cast(:financialEndDate as date) and en.ishistory = false and ");
-        	else 
-        		whereQuery.append(" cast(conndetails.workorderdate as date) between cast(:financialStartDate as date) and cast(:financialEndDate as date) and ");
+
+        if (financialYear != null) {
+            if (ESTIMATION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType())
+                    || REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
+                whereQuery.append(
+                        " cast(en.estimationnoticedate as date) between cast(:financialStartDate as date) and cast(:financialEndDate as date) and en.ishistory = false and ");
+            else if (PROCEEDING_FOR_CLOSER_OF_CONNECTION.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
+                whereQuery.append(
+                        " cast(conndetails.closeapprovaldate as date) between cast(:financialStartDate as date) and cast(:financialEndDate as date) and ");
+            else if (PROCEEDING_FOR_RECONNECTION.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
+                whereQuery.append(
+                        " cast(conndetails.reconnectionapprovaldate as date) between cast(:financialStartDate as date) and cast(:financialEndDate as date) and ");
+            else
+                whereQuery.append(
+                        " cast(conndetails.workorderdate as date) between cast(:financialStartDate as date) and cast(:financialEndDate as date) and ");
         }
-        
+
         whereQuery.append("conndetails.connectionstatus!=:connectionStatus");
         Query query = entityManager.unwrap(Session.class)
                 .createSQLQuery(selectQuery.append(fromQuery).append(whereQuery).toString());
         setSearchQueryParameters(searchNoticeDetails, formattedFromDate, formattedToDate, query, financialYear);
         query.setParameter("reglnApplicationType", REGULARIZE_CONNECTION);
+        if (PROCEEDING_FOR_CLOSER_OF_CONNECTION.equalsIgnoreCase(searchNoticeDetails.getNoticeType())) {
+            query.setParameter("closureStatus", ConnectionStatus.CLOSED.toString());
+            EgwStatus closureSanctionedStatus = waterTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_CLOSERSANCTIONED,
+                    MODULETYPE);
+            if (closureSanctionedStatus != null)
+                query.setParameter("status", closureSanctionedStatus.getId());
+        }
         query.setParameter("connectionStatus", INACTIVE);
+
         List<Object[]> objectList = query.list();
         return getSearchNoticeList(objectList);
     }
@@ -285,9 +315,9 @@ public class SearchNoticeService {
             query.setParameter(HOUSENUMBER, searchNoticeDetails.getHouseNumber());
         if (isNotBlank(searchNoticeDetails.getAssessmentNo()))
             query.setParameter(ASSESSMENT_NUMBER, searchNoticeDetails.getAssessmentNo());
-        if (financialYear != null){
-        	query.setParameter("financialStartDate", financialYear.getStartingDate());
-        	query.setParameter("financialEndDate", financialYear.getEndingDate());
+        if (financialYear != null) {
+            query.setParameter("financialStartDate", financialYear.getStartingDate());
+            query.setParameter("financialEndDate", financialYear.getEndingDate());
         }
         return query;
     }
@@ -397,8 +427,9 @@ public class SearchNoticeService {
             queryStr.append(" and dcbinfo.applicationtype =:applicationType");
         if (isNotBlank(searchNoticeDetails.getPropertyType()))
             queryStr.append(" and dcbinfo.propertytype =:propertyType");
-        if(financialYear != null)
-        	queryStr.append(" and cast(bill.create_date as date) between cast(:financialStartDate as date) and cast(:financialEndDate as date)");
+        if (financialYear != null)
+            queryStr.append(
+                    " and cast(bill.create_date as date) between cast(:financialStartDate as date) and cast(:financialEndDate as date)");
         Query query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
         setSearchQueryParameters(searchNoticeDetails, null, null, query, financialYear);
         if (LOGGER.isDebugEnabled())
@@ -408,24 +439,24 @@ public class SearchNoticeService {
 
     public SearchNoticeDetails buildNoticeDetails(final WaterConnectionDetails waterConnectionDetails) {
         SearchNoticeDetails noticeDetails = new SearchNoticeDetails();
-            AssessmentDetails assessmentDetails = null;
-            if (waterConnectionDetails.getConnection().getPropertyIdentifier() != null)
-                assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
-                		waterConnectionDetails.getConnection().getPropertyIdentifier(),
-                        PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
-            if (assessmentDetails != null) {
-                noticeDetails.setAssessmentNo(waterConnectionDetails.getConnection().getPropertyIdentifier());
-                noticeDetails.setHscNo(waterConnectionDetails.getConnection().getConsumerCode());
-                noticeDetails.setConnectionType(waterConnectionDetails.getConnectionType().name());
-                noticeDetails.setHouseNumber(assessmentDetails.getHouseNo());
-                Iterator<OwnerName> nameIterator = assessmentDetails.getOwnerNames().iterator();
-                OwnerName ownerName = null;
-                if (nameIterator != null && nameIterator.hasNext())
-                    ownerName = nameIterator.next();
-                noticeDetails.setOwnerName(ownerName == null ? "N/A" : ownerName.getOwnerName());
-                noticeDetails.setLocality(assessmentDetails.getBoundaryDetails().getLocalityName());
-            }
+        AssessmentDetails assessmentDetails = null;
+        if (waterConnectionDetails.getConnection().getPropertyIdentifier() != null)
+            assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
+                    waterConnectionDetails.getConnection().getPropertyIdentifier(),
+                    PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
+        if (assessmentDetails != null) {
+            noticeDetails.setAssessmentNo(waterConnectionDetails.getConnection().getPropertyIdentifier());
+            noticeDetails.setHscNo(waterConnectionDetails.getConnection().getConsumerCode());
+            noticeDetails.setConnectionType(waterConnectionDetails.getConnectionType().name());
+            noticeDetails.setHouseNumber(assessmentDetails.getHouseNo());
+            Iterator<OwnerName> nameIterator = assessmentDetails.getOwnerNames().iterator();
+            OwnerName ownerName = null;
+            if (nameIterator != null && nameIterator.hasNext())
+                ownerName = nameIterator.next();
+            noticeDetails.setOwnerName(ownerName == null ? "N/A" : ownerName.getOwnerName());
+            noticeDetails.setLocality(assessmentDetails.getBoundaryDetails().getLocalityName());
+        }
         return noticeDetails;
     }
-    
+
 }

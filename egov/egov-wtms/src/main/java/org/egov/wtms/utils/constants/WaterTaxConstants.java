@@ -469,6 +469,8 @@ public class WaterTaxConstants {
     public static final String CREATE = "Create";
     public static final String DELETE = "Delete";
     public static final String WCMS_ESTIMATIONNOTICE_GO159_EFFECTIVEDATE = "WCMS_ESTIMATIONNOTICE_GO159_EFFECTIVEDATE";
+    public static final String PROCEEDING_FOR_CLOSER_OF_CONNECTION = "Proceeding for Closure of Connection";
+    public static final String PROCEEDING_FOR_RECONNECTION = "Proceeding for Re-connection";
 
     public static final List<String> APPLICATION_TYPE_LIST = new ArrayList<String>() {
         private static final long serialVersionUID = 1L;

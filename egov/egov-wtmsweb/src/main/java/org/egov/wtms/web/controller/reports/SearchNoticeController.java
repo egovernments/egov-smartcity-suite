@@ -56,6 +56,8 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.ESTIMATION_NOTICE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARISATION_DEMAND_NOTE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PROCEEDING_FOR_CLOSER_OF_CONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PROCEEDING_FOR_RECONNECTION;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -79,6 +81,7 @@ import javax.validation.ValidationException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
@@ -120,440 +123,456 @@ import com.lowagie.text.pdf.PdfWriter;
 @RequestMapping("/report/notice/search")
 public class SearchNoticeController {
 
-    private static final String REVENUEWARD = "revenueWard";
-    private static final String APPLICATION_TYPE = "applicationType";
-    private static final String PROPERTY_TYPE = "propertyType";
-    private static final String CONNECTION_TYPE = "connectionType";
-    private static final String ASSESSMENT_NUMBER = "assessmentNumber";
-    private static final String HOUSE_NUMBER = "houseNumber";
-    private static final String EXCEPTION_IN_ADDFILESTOZIP = "Exception in addFilesToZip : ";
-    private static final String NOTICE_TYPE = "noticeType";
-    private static final String FROMDATE = "fromDate";
-    private static final String TODATE = "toDate";
-    private static final String SANCTION_ORDER = "Sanction Order";
-    private static final String DEMAND_BILL = "Demand Bill";
+	private static final String REVENUEWARD = "revenueWard";
+	private static final String APPLICATION_TYPE = "applicationType";
+	private static final String PROPERTY_TYPE = "propertyType";
+	private static final String CONNECTION_TYPE = "connectionType";
+	private static final String ASSESSMENT_NUMBER = "assessmentNumber";
+	private static final String HOUSE_NUMBER = "houseNumber";
+	private static final String EXCEPTION_IN_ADDFILESTOZIP = "Exception in addFilesToZip : ";
+	private static final String NOTICE_TYPE = "noticeType";
+	private static final String FROMDATE = "fromDate";
+	private static final String TODATE = "toDate";
+	private static final String SANCTION_ORDER = "Sanction Order";
+	private static final String DEMAND_BILL = "Demand Bill";
 
-    @Autowired
-    private PropertyTypeService propertyTypeService;
+	@Autowired
+	private PropertyTypeService propertyTypeService;
 
-    @Autowired
-    private ApplicationTypeService applicationTypeService;
+	@Autowired
+	private ApplicationTypeService applicationTypeService;
 
-    @Autowired
-    @Qualifier("fileStoreService")
-    protected FileStoreService fileStoreService;
+	@Autowired
+	@Qualifier("fileStoreService")
+	protected FileStoreService fileStoreService;
 
-    @Autowired
-    private SearchNoticeService searchNoticeService;
+	@Autowired
+	private SearchNoticeService searchNoticeService;
 
-    @Autowired
-    private BoundaryService boundaryService;
+	@Autowired
+	private BoundaryService boundaryService;
 
-    @Autowired
-    private WaterConnectionDetailsService waterConnectionDetailsService;
+	@Autowired
+	private WaterConnectionDetailsService waterConnectionDetailsService;
 
-    @Autowired
-    private FileStoreMapperRepository fileStoreMapperRepository;
-    
-    @Autowired
-    private FinancialYearDAO financialYearDAO;
+	@Autowired
+	private FileStoreMapperRepository fileStoreMapperRepository;
 
-    @Autowired
-    private EstimationNoticeService estimationNoticeService;
-    
-    private static final Logger LOGGER = Logger.getLogger(SearchNoticeController.class);
+	@Autowired
+	private FinancialYearDAO financialYearDAO;
 
-    @RequestMapping(method = GET)
-    public String search(final Model model) {
+	@Autowired
+	private EstimationNoticeService estimationNoticeService;
 
-        return "searchnotice-report";
-    }
+	private static final Logger LOGGER = Logger.getLogger(SearchNoticeController.class);
 
-    @ModelAttribute
-    public SearchNoticeDetails reportModel() {
-        return new SearchNoticeDetails();
-    }
+	@RequestMapping(method = GET)
+	public String search(final Model model) {
 
-    @ModelAttribute("zones")
-    public List<Boundary> zones() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE, REVENUE_HIERARCHY_TYPE);
-    }
+		return "searchnotice-report";
+	}
 
-    public @ModelAttribute("revenueWards") List<Boundary> revenueWardList() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WaterTaxConstants.REVENUE_WARD,
-                REVENUE_HIERARCHY_TYPE);
-    }
+	@ModelAttribute
+	public SearchNoticeDetails reportModel() {
+		return new SearchNoticeDetails();
+	}
 
-    public @ModelAttribute("connectionTypes") Map<String, String> connectionTypes() {
-        return waterConnectionDetailsService.getNonMeteredConnectionTypesMap();
-    }
+	@ModelAttribute("zones")
+	public List<Boundary> zones() {
+		return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE, REVENUE_HIERARCHY_TYPE);
+	}
 
-    public @ModelAttribute("propertyTypes") List<PropertyType> propertyTypes() {
-        return propertyTypeService.getAllActivePropertyTypes();
-    }
+	public @ModelAttribute("revenueWards") List<Boundary> revenueWardList() {
+		return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WaterTaxConstants.REVENUE_WARD,
+				REVENUE_HIERARCHY_TYPE);
+	}
 
-    public @ModelAttribute("applicationTypes") List<ApplicationType> applicationTypes() {
-        return applicationTypeService.findAll();
-    }
-    
-    public @ModelAttribute("financialYears") List<CFinancialYear> financialYears(){
-    	return financialYearDAO.getAllActivePostingFinancialYear();
-    }
+	public @ModelAttribute("connectionTypes") Map<String, String> connectionTypes() {
+		return waterConnectionDetailsService.getNonMeteredConnectionTypesMap();
+	}
 
-    @ModelAttribute("noticetypeList")
-    public List<String> getNoticeTypes() {
-        final List<String> noticeList = new ArrayList<>();
-        noticeList.add(DEMAND_BILL);
-        noticeList.add(SANCTION_ORDER);
-        noticeList.add(REGULARISATION_DEMAND_NOTE);
-        noticeList.add(ESTIMATION_NOTICE);
-        return noticeList;
-    }
+	public @ModelAttribute("propertyTypes") List<PropertyType> propertyTypes() {
+		return propertyTypeService.getAllActivePropertyTypes();
+	}
 
-    @RequestMapping(value = "/result", method = POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public void searchResult(final SearchNoticeDetails searchNoticeDetails,
-            final HttpServletRequest request, final HttpServletResponse response) throws IOException {
-        String result = null;
-        CFinancialYear financialYear = null;
-        List<SearchNoticeDetails> generateConnectionBillList = new ArrayList<>();
-        final SearchNoticeDetails noticeDetails = build(searchNoticeDetails, request);
-        if(searchNoticeDetails.getFinancialYear() != null)
-        	financialYear = financialYearDAO.getFinancialYearById(searchNoticeDetails.getFinancialYear());
-        if (request.getParameter(NOTICE_TYPE) != null)
-            if (DEMAND_BILL.equals(request.getParameter(NOTICE_TYPE)))
-                generateConnectionBillList = searchNoticeService.getBillReportDetails(noticeDetails, financialYear);
-            else if (SANCTION_ORDER.equals(request.getParameter(NOTICE_TYPE)))
-                generateConnectionBillList = searchNoticeService.getSearchResultList(noticeDetails, financialYear);
-            else if (REGULARISATION_DEMAND_NOTE.equals(request.getParameter(NOTICE_TYPE))
-            		|| ESTIMATION_NOTICE.equalsIgnoreCase(request.getParameter(NOTICE_TYPE)))
-                generateConnectionBillList = searchNoticeService.getSearchResultList(noticeDetails, financialYear);
+	public @ModelAttribute("applicationTypes") List<ApplicationType> applicationTypes() {
+		return applicationTypeService.getActiveApplicationTypes();
+	}
 
-        long foundRows = 0;
-        if (DEMAND_BILL.equals(request.getParameter(NOTICE_TYPE)))
-            foundRows = searchNoticeService.getTotalCountofBills(noticeDetails, financialYear);
+	public @ModelAttribute("financialYears") List<CFinancialYear> financialYears() {
+		return financialYearDAO.getAllActivePostingFinancialYear();
+	}
 
-        final int count = generateConnectionBillList.size();
-        LOGGER.info("Total count of records-->" + Long.valueOf(count));
-        result = new StringBuilder("{ \"draw\":").append(request.getParameter("draw")).append(", \"recordsTotal\":")
-                .append(foundRows).append(", \"recordsFiltered\":").append(foundRows).append(", \"data\":")
-                .append(toJSON(generateConnectionBillList, SearchNoticeDetails.class,
-                        SearchNoticeAdaptor.class))
-                .append(", \"recordsCount\":").append(Long.valueOf(count)).append("}").toString();
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        IOUtils.write(result, response.getWriter());
+	@ModelAttribute("noticetypeList")
+	public List<String> getNoticeTypes() {
+		final List<String> noticeList = new ArrayList<>();
+		noticeList.add(DEMAND_BILL);
+		noticeList.add(SANCTION_ORDER);
+		noticeList.add(REGULARISATION_DEMAND_NOTE);
+		noticeList.add(ESTIMATION_NOTICE);
+		noticeList.add(PROCEEDING_FOR_CLOSER_OF_CONNECTION);
+		noticeList.add(PROCEEDING_FOR_RECONNECTION);
+		return noticeList;
+	}
 
-    }
+	@RequestMapping(value = "/result", method = POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public void searchResult(final SearchNoticeDetails searchNoticeDetails, final HttpServletRequest request,
+			final HttpServletResponse response) throws IOException {
+		String result = null;
+		CFinancialYear financialYear = null;
+		List<SearchNoticeDetails> generateConnectionBillList = new ArrayList<>();
+		final SearchNoticeDetails noticeDetails = build(searchNoticeDetails, request);
+		if (searchNoticeDetails.getFinancialYear() != null)
+			financialYear = financialYearDAO.getFinancialYearById(searchNoticeDetails.getFinancialYear());
+		if (request.getParameter(NOTICE_TYPE) != null)
+			if (DEMAND_BILL.equals(request.getParameter(NOTICE_TYPE)))
+				generateConnectionBillList = searchNoticeService.getBillReportDetails(noticeDetails, financialYear);
+			else if (SANCTION_ORDER.equals(request.getParameter(NOTICE_TYPE))
+					|| PROCEEDING_FOR_CLOSER_OF_CONNECTION.equalsIgnoreCase(request.getParameter(NOTICE_TYPE))
+					|| PROCEEDING_FOR_RECONNECTION.equalsIgnoreCase(request.getParameter(NOTICE_TYPE)))
+				generateConnectionBillList = searchNoticeService.getSearchResultList(noticeDetails, financialYear);
+			else if (REGULARISATION_DEMAND_NOTE.equals(request.getParameter(NOTICE_TYPE))
+					|| ESTIMATION_NOTICE.equalsIgnoreCase(request.getParameter(NOTICE_TYPE)))
+				generateConnectionBillList = searchNoticeService.getSearchResultList(noticeDetails, financialYear);
 
-    public SearchNoticeDetails build(final SearchNoticeDetails searchNoticeDetails,
-            final HttpServletRequest request) {
-        searchNoticeDetails.setZone(request.getParameter("zone"));
-        searchNoticeDetails.setRevenueWard(request.getParameter(REVENUEWARD));
-        searchNoticeDetails.setPropertyType(request.getParameter(PROPERTY_TYPE));
-        searchNoticeDetails.setApplicationType(request.getParameter(APPLICATION_TYPE));
-        searchNoticeDetails.setConnectionType(request.getParameter(CONNECTION_TYPE));
-        searchNoticeDetails.setHscNo(request.getParameter(WATERCHARGES_CONSUMERCODE));
-        searchNoticeDetails.setHouseNumber(request.getParameter(HOUSE_NUMBER));
-        searchNoticeDetails.setAssessmentNo(request.getParameter(ASSESSMENT_NUMBER));
-        searchNoticeDetails.setFromDate(request.getParameter(FROMDATE));
-        searchNoticeDetails.setToDate(request.getParameter(TODATE));
-        return searchNoticeDetails;
-    }
+		long foundRows = 0;
+		if (DEMAND_BILL.equals(request.getParameter(NOTICE_TYPE)))
+			foundRows = searchNoticeService.getTotalCountofBills(noticeDetails, financialYear);
 
-    @RequestMapping(value = "/result", method = GET)
-    public void getBillBySearchParameter(final HttpServletRequest request, final HttpServletResponse response,
-            @RequestParam("consumerCode") final String consumerCode, @RequestParam(NOTICE_TYPE) final String noticeType,
-            @RequestParam("billNo") final String billNo, @RequestParam("workOrderNumber") final String workOrderNumber) {
-        List<Long> waterChargesDocumentslist;
-        final List<String> waterChargesFileStoreId = new ArrayList<>();
-        final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(consumerCode);
-    	EstimationNotice estimationNotice = estimationNoticeService.getNonHistoryEstimationNoticeForConnection(waterConnectionDetails);
-        if (SANCTION_ORDER.equals(noticeType)) {
-            if (waterConnectionDetails != null)
-                waterChargesFileStoreId.add(waterConnectionDetails.getFileStore() != null
-                        ? waterConnectionDetails.getFileStore().getFileStoreId() : null);
-        } else if ((REGULARISATION_DEMAND_NOTE.equals(noticeType) || ESTIMATION_NOTICE.equalsIgnoreCase(request.getParameter(NOTICE_TYPE))) 
-        		&& estimationNotice != null && estimationNotice.getEstimationNoticeFileStore() != null)
-            waterChargesFileStoreId.add(estimationNotice.getEstimationNoticeFileStore().getFileStoreId());
-        else {
-            waterChargesDocumentslist = searchNoticeService.getDocuments(consumerCode,
-                    waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode).getApplicationType()
-                            .getName());
-            waterChargesFileStoreId.add(waterChargesDocumentslist.get(0) + "");
-        }
-        getDemandBillByFileStoreId(waterChargesFileStoreId, consumerCode, response);
-    }
+		final int count = generateConnectionBillList.size();
+		LOGGER.info("Total count of records-->" + Long.valueOf(count));
+		result = new StringBuilder("{ \"draw\":").append(request.getParameter("draw")).append(", \"recordsTotal\":")
+				.append(foundRows).append(", \"recordsFiltered\":").append(foundRows).append(", \"data\":")
+				.append(toJSON(generateConnectionBillList, SearchNoticeDetails.class, SearchNoticeAdaptor.class))
+				.append(", \"recordsCount\":").append(Long.valueOf(count)).append("}").toString();
+		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+		IOUtils.write(result, response.getWriter());
 
-    @RequestMapping(value = "/mergeAndDownload", method = GET)
-    public String mergeAndDownload(final SearchNoticeDetails searchNoticeDetails, final HttpServletRequest request,
-            final HttpServletResponse response) {
-        final long startTime = System.currentTimeMillis();
-        final String noticeType = request.getParameter(NOTICE_TYPE);
-        CFinancialYear financialYear = null;
-        if(searchNoticeDetails.getFinancialYear() != null)
-        	financialYear = financialYearDAO.getFinancialYearById(searchNoticeDetails.getFinancialYear());
-        List<SearchNoticeDetails> searchResultList;
-        if (noticeType != null && DEMAND_BILL.equalsIgnoreCase(noticeType))
-            searchResultList = searchNoticeService
-                    .getBillReportDetails(searchNoticeDetails, financialYear);
-        else
-            searchResultList = searchNoticeService
-                    .getSearchResultList(searchNoticeDetails, financialYear);
+	}
 
-        mergeAndDownloadNotice(searchResultList, response);
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Number of Bills : "
-                    + (searchResultList != null ? searchResultList.size() : ZERO));
+	public SearchNoticeDetails build(final SearchNoticeDetails searchNoticeDetails, final HttpServletRequest request) {
+		searchNoticeDetails.setZone(request.getParameter("zone"));
+		searchNoticeDetails.setRevenueWard(request.getParameter(REVENUEWARD));
+		searchNoticeDetails.setPropertyType(request.getParameter(PROPERTY_TYPE));
+		searchNoticeDetails.setApplicationType(request.getParameter(APPLICATION_TYPE));
+		searchNoticeDetails.setConnectionType(request.getParameter(CONNECTION_TYPE));
+		searchNoticeDetails.setHscNo(request.getParameter(WATERCHARGES_CONSUMERCODE));
+		searchNoticeDetails.setHouseNumber(request.getParameter(HOUSE_NUMBER));
+		searchNoticeDetails.setAssessmentNo(request.getParameter(ASSESSMENT_NUMBER));
+		searchNoticeDetails.setFromDate(request.getParameter(FROMDATE));
+		searchNoticeDetails.setToDate(request.getParameter(TODATE));
+		return searchNoticeDetails;
+	}
 
-        final long endTime = System.currentTimeMillis();
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("GenerateBill | mergeAndDownload | Time taken(ms) " + (endTime - startTime));
-            LOGGER.debug("Exit from mergeAndDownload method");
-        }
-        return null;
-    }
+	@RequestMapping(value = "/result", method = GET)
+	public void getBillBySearchParameter(final HttpServletRequest request, final HttpServletResponse response,
+			@RequestParam("consumerCode") final String consumerCode, @RequestParam(NOTICE_TYPE) final String noticeType,
+			@RequestParam("billNo") final String billNo,
+			@RequestParam("workOrderNumber") final String workOrderNumber) {
+		List<Long> waterChargesDocumentslist;
+		final List<String> waterChargesFileStoreId = new ArrayList<>();
+		final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(consumerCode, noticeType);
+		EstimationNotice estimationNotice = estimationNoticeService
+				.getNonHistoryEstimationNoticeForConnection(waterConnectionDetails);
+		if (waterConnectionDetails != null) {
+			if (SANCTION_ORDER.equals(noticeType))
+				waterChargesFileStoreId.add(waterConnectionDetails.getFileStore() != null
+						? waterConnectionDetails.getFileStore().getFileStoreId()
+						: null);
+			else if ((PROCEEDING_FOR_CLOSER_OF_CONNECTION.equals(noticeType)) && waterConnectionDetails != null)
+				waterChargesFileStoreId.add(waterConnectionDetails.getClosureFileStore() != null
+						? waterConnectionDetails.getClosureFileStore().getFileStoreId()
+						: null);
+			else if ((PROCEEDING_FOR_RECONNECTION.equals(noticeType)) && waterConnectionDetails != null)
+				waterChargesFileStoreId.add(waterConnectionDetails.getReconnectionFileStore() != null
+						? waterConnectionDetails.getReconnectionFileStore().getFileStoreId()
+						: null);
+		} else if ((REGULARISATION_DEMAND_NOTE.equals(noticeType)
+				|| ESTIMATION_NOTICE.equalsIgnoreCase(request.getParameter(NOTICE_TYPE))) && estimationNotice != null
+				&& estimationNotice.getEstimationNoticeFileStore() != null)
+			waterChargesFileStoreId.add(estimationNotice.getEstimationNoticeFileStore().getFileStoreId());
+		else {
+			waterChargesDocumentslist = searchNoticeService.getDocuments(consumerCode, waterConnectionDetailsService
+					.findByApplicationNumberOrConsumerCode(consumerCode).getApplicationType().getName());
+			waterChargesFileStoreId.add(waterChargesDocumentslist.get(0) + "");
+		}
+		getNoticeByFileStoreId(waterChargesFileStoreId, consumerCode, response);
+	}
 
-    private HttpServletResponse getServletResponse(final HttpServletResponse response, final List<InputStream> pdfs,
-            final String filename) {
-        try {
-            final ByteArrayOutputStream output = new ByteArrayOutputStream();
-            final byte[] data = concatPDFs(pdfs, output);
-            response.setHeader(WaterTaxConstants.CONTENT_DISPOSITION, "attachment;filename=" + filename + ".pdf");
-            response.setContentType("application/pdf");
-            response.setContentLength(data.length);
-            response.getOutputStream().write(data);
-            return response;
-        } catch (final IOException e) {
-            throw new ValidationException(e.getMessage());
-        }
-    }
+	@RequestMapping(value = "/mergeAndDownload", method = GET)
+	public String mergeAndDownload(final SearchNoticeDetails searchNoticeDetails, final HttpServletRequest request,
+			final HttpServletResponse response) {
+		final long startTime = System.currentTimeMillis();
+		final String noticeType = request.getParameter(NOTICE_TYPE);
+		CFinancialYear financialYear = null;
+		if (searchNoticeDetails.getFinancialYear() != null)
+			financialYear = financialYearDAO.getFinancialYearById(searchNoticeDetails.getFinancialYear());
+		List<SearchNoticeDetails> searchResultList;
+		if (noticeType != null && DEMAND_BILL.equalsIgnoreCase(noticeType))
+			searchResultList = searchNoticeService.getBillReportDetails(searchNoticeDetails, financialYear);
+		else
+			searchResultList = searchNoticeService.getSearchResultList(searchNoticeDetails, financialYear);
 
-    private byte[] concatPDFs(final List<InputStream> streamOfPDFFiles, final ByteArrayOutputStream outputStream) {
+		mergeAndDownloadNotice(searchResultList, response);
+		if (LOGGER.isDebugEnabled())
+			LOGGER.debug("Number of Bills : " + (searchResultList != null ? searchResultList.size() : ZERO));
 
-        Document document = null;
-        try {
-            final List<InputStream> pdfs = streamOfPDFFiles;
-            final List<PdfReader> readers = new ArrayList<>();
-            final Iterator<InputStream> iteratorPDFs = pdfs.iterator();
+		final long endTime = System.currentTimeMillis();
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("GenerateBill | mergeAndDownload | Time taken(ms) " + (endTime - startTime));
+			LOGGER.debug("Exit from mergeAndDownload method");
+		}
+		return null;
+	}
 
-            // Create Readers for the pdfs.
-            while (iteratorPDFs.hasNext()) {
-                final InputStream pdf = iteratorPDFs.next();
-                final PdfReader pdfReader = new PdfReader(pdf);
-                readers.add(pdfReader);
-                if (null == document)
-                    document = new Document(pdfReader.getPageSize(1));
-            }
-            // Create a writer for the outputstream
-            final PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+	private HttpServletResponse getServletResponse(final HttpServletResponse response, final List<InputStream> pdfs,
+			final String filename) {
+		try {
+			final ByteArrayOutputStream output = new ByteArrayOutputStream();
+			final byte[] data = concatPDFs(pdfs, output);
+			response.setHeader(WaterTaxConstants.CONTENT_DISPOSITION, "attachment;filename=" + filename + ".pdf");
+			response.setContentType("application/pdf");
+			response.setContentLength(data.length);
+			response.getOutputStream().write(data);
+			return response;
+		} catch (final IOException e) {
+			throw new ValidationException(e.getMessage());
+		}
+	}
 
-            document.open();
-            final PdfContentByte cb = writer.getDirectContent(); // Holds the
-            // PDF
-            // data
+	private byte[] concatPDFs(final List<InputStream> streamOfPDFFiles, final ByteArrayOutputStream outputStream) {
 
-            PdfImportedPage page;
-            int pageOfCurrentReaderPDF = 0;
-            final Iterator<PdfReader> iteratorPDFReader = readers.iterator();
+		Document document = null;
+		try {
+			final List<InputStream> pdfs = streamOfPDFFiles;
+			final List<PdfReader> readers = new ArrayList<>();
+			final Iterator<InputStream> iteratorPDFs = pdfs.iterator();
 
-            // Loop through the PDF files and add to the output.
-            while (iteratorPDFReader.hasNext()) {
-                final PdfReader pdfReader = iteratorPDFReader.next();
+			// Create Readers for the pdfs.
+			while (iteratorPDFs.hasNext()) {
+				final InputStream pdf = iteratorPDFs.next();
+				final PdfReader pdfReader = new PdfReader(pdf);
+				readers.add(pdfReader);
+				if (null == document)
+					document = new Document(pdfReader.getPageSize(1));
+			}
+			// Create a writer for the outputstream
+			final PdfWriter writer = PdfWriter.getInstance(document, outputStream);
 
-                // Create a new page in the target for each source page.
-                while (pageOfCurrentReaderPDF < pdfReader.getNumberOfPages()) {
-                    document.newPage();
-                    pageOfCurrentReaderPDF++;
-                    page = writer.getImportedPage(pdfReader, pageOfCurrentReaderPDF);
-                    cb.addTemplate(page, 0, 0);
-                }
-                pageOfCurrentReaderPDF = 0;
-            }
-            outputStream.flush();
-            document.close();
-            outputStream.close();
+			document.open();
+			final PdfContentByte cb = writer.getDirectContent(); // Holds the
+			// PDF
+			// data
 
-        } catch (final Exception e) {
+			PdfImportedPage page;
+			int pageOfCurrentReaderPDF = 0;
+			final Iterator<PdfReader> iteratorPDFReader = readers.iterator();
 
-            LOGGER.error("Exception in concat PDFs : ", e);
-        } finally {
-            if (document.isOpen())
-                document.close();
-            try {
-                if (outputStream != null)
-                    outputStream.close();
-            } catch (final IOException ioe) {
-                LOGGER.error("Exception in concat PDFs : ", ioe);
-            }
-        }
+			// Loop through the PDF files and add to the output.
+			while (iteratorPDFReader.hasNext()) {
+				final PdfReader pdfReader = iteratorPDFReader.next();
 
-        return outputStream != null ? outputStream.toByteArray() : null;
-    }
+				// Create a new page in the target for each source page.
+				while (pageOfCurrentReaderPDF < pdfReader.getNumberOfPages()) {
+					document.newPage();
+					pageOfCurrentReaderPDF++;
+					page = writer.getImportedPage(pdfReader, pageOfCurrentReaderPDF);
+					cb.addTemplate(page, 0, 0);
+				}
+				pageOfCurrentReaderPDF = 0;
+			}
+			outputStream.flush();
+			document.close();
+			outputStream.close();
 
-    @RequestMapping(value = "/zipAndDownload", method = GET)
-    public String zipAndDownload(final SearchNoticeDetails searchNoticeDetails, final HttpServletRequest request,
-            final HttpServletResponse response)
-            throws IOException {
-        final String noticeType = request.getParameter(NOTICE_TYPE);
-        CFinancialYear financialYear = null;
-        if(searchNoticeDetails.getFinancialYear() != null)
-        	financialYear = financialYearDAO.getFinancialYearById(searchNoticeDetails.getFinancialYear());
-        final long startTime = System.currentTimeMillis();
-        List<SearchNoticeDetails> noticeList;
-        if (DEMAND_BILL.equalsIgnoreCase(noticeType))
-            noticeList = searchNoticeService
-                    .getBillReportDetails(searchNoticeDetails, financialYear);
-        else
-            noticeList = searchNoticeService.getSearchResultList(searchNoticeDetails, financialYear);
+		} catch (final Exception e) {
 
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Number of Bills : "
-                    + (noticeList != null ? noticeList.size() : ZERO));
-        try {
-            zipAndDownloadNotice(noticeList, response);
-        } catch (final IOException e) {
-            LOGGER.error("Exception in Zip and Download : ", e);
-        }
-        final long endTime = System.currentTimeMillis();
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("GenerateBill | zipAndDownload | Time taken(ms) " + (endTime - startTime));
-            LOGGER.debug("Exit from zipAndDownload method");
-        }
+			LOGGER.error("Exception in concat PDFs : ", e);
+		} finally {
+			if (document.isOpen())
+				document.close();
+			try {
+				if (outputStream != null)
+					outputStream.close();
+			} catch (final IOException ioe) {
+				LOGGER.error("Exception in concat PDFs : ", ioe);
+			}
+		}
 
-        return null;
-    }
+		return outputStream != null ? outputStream.toByteArray() : null;
+	}
 
-    public void zipAndDownloadNotice(final List<SearchNoticeDetails> noticeList, final HttpServletResponse response)
-            throws IOException {
+	@RequestMapping(value = "/zipAndDownload", method = GET)
+	public String zipAndDownload(final SearchNoticeDetails searchNoticeDetails, final HttpServletRequest request,
+			final HttpServletResponse response) throws IOException {
+		final String noticeType = request.getParameter(NOTICE_TYPE);
+		CFinancialYear financialYear = null;
+		if (searchNoticeDetails.getFinancialYear() != null)
+			financialYear = financialYearDAO.getFinancialYearById(searchNoticeDetails.getFinancialYear());
+		final long startTime = System.currentTimeMillis();
+		List<SearchNoticeDetails> noticeList;
+		if (DEMAND_BILL.equalsIgnoreCase(noticeType))
+			noticeList = searchNoticeService.getBillReportDetails(searchNoticeDetails, financialYear);
+		else
+			noticeList = searchNoticeService.getSearchResultList(searchNoticeDetails, financialYear);
 
-        ZipOutputStream zipOutputStream = null;
-        if (noticeList != null && !noticeList.isEmpty()) {
+		if (LOGGER.isDebugEnabled())
+			LOGGER.debug("Number of Bills : " + (noticeList != null ? noticeList.size() : ZERO));
+		try {
+			zipAndDownloadNotice(noticeList, response);
+		} catch (final IOException e) {
+			LOGGER.error("Exception in Zip and Download : ", e);
+		}
+		final long endTime = System.currentTimeMillis();
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("GenerateBill | zipAndDownload | Time taken(ms) " + (endTime - startTime));
+			LOGGER.debug("Exit from zipAndDownload method");
+		}
 
-            zipOutputStream = new ZipOutputStream(response.getOutputStream());
-            response.setHeader(WaterTaxConstants.CONTENT_DISPOSITION, "attachment;filename=" + "ZippedNoticeList" + ".zip");
-            response.setContentType("application/zip");
-        }
+		return null;
+	}
 
-        for (final SearchNoticeDetails noticeDetail : noticeList)
-            try {
-                final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(noticeDetail.getHscNo());
-            	EstimationNotice estimationNotice = estimationNoticeService.getNonHistoryEstimationNoticeForConnection(waterConnectionDetails);
-                if (waterConnectionDetails != null && waterConnectionDetails.getFileStore() != null) {
-                    String fileStoreId = null;
-                    if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) 
-                    		&& estimationNotice != null && estimationNotice.getEstimationNoticeFileStore() != null)
-                        fileStoreId = estimationNotice.getEstimationNoticeFileStore().getFileStoreId();
-                    else if (waterConnectionDetails.getFileStore() != null)
-                        fileStoreId = waterConnectionDetails.getFileStore().getFileStoreId();
-                    final FileStoreMapper fsm = fileStoreMapperRepository
-                            .findByFileStoreId(fileStoreId);
-                    final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
-                    final byte[] bFile = FileUtils.readFileToByteArray(file);
-                    zipOutputStream = addFilesToZip(new ByteArrayInputStream(bFile), file.getName(),
-                            zipOutputStream);
-                }
-            } catch (final Exception e) {
-                LOGGER.error("zipAndDownload : Getting demand notice failed ", e);
-                continue;
-            }
-        if (zipOutputStream != null) {
-            zipOutputStream.closeEntry();
-            zipOutputStream.close();
-        }
+	public void zipAndDownloadNotice(final List<SearchNoticeDetails> noticeList, final HttpServletResponse response)
+			throws IOException {
 
-    }
+		ZipOutputStream zipOutputStream = null;
+		if (noticeList != null && !noticeList.isEmpty()) {
 
-    public void mergeAndDownloadNotice(final List<SearchNoticeDetails> searchResultList, final HttpServletResponse response) {
-        final List<InputStream> pdfs = new ArrayList<>();
-        for (final SearchNoticeDetails noticeDetail : searchResultList)
-                try {
-                    final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(noticeDetail.getHscNo());
-                	EstimationNotice estimationNotice = estimationNoticeService.getNonHistoryEstimationNoticeForConnection(waterConnectionDetails);
-                    if (waterConnectionDetails != null) {
-                        String fileStoreId = null;
-                        if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) 
-                        		&& estimationNotice != null && estimationNotice.getEstimationNoticeFileStore() != null)
-                            fileStoreId = estimationNotice.getEstimationNoticeFileStore().getFileStoreId();
-                        else if (waterConnectionDetails.getFileStore() != null)
-                            fileStoreId = waterConnectionDetails.getFileStore().getFileStoreId();
-                        final FileStoreMapper fsm = fileStoreMapperRepository
-                                .findByFileStoreId(fileStoreId);
-                        final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
-                        final byte[] bFile = FileUtils.readFileToByteArray(file);
-                        pdfs.add(new ByteArrayInputStream(bFile));
-                    }
-                } catch (final Exception e) {
-                    LOGGER.debug("Entered into executeJob" + e);
-                    continue;
-                }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Number of pdfs : " + (pdfs != null ? pdfs.size() : ZERO));
+			zipOutputStream = new ZipOutputStream(response.getOutputStream());
+			response.setHeader(WaterTaxConstants.CONTENT_DISPOSITION,
+					"attachment;filename=" + "ZippedNoticeList" + ".zip");
+			response.setContentType("application/zip");
+		}
 
-        if (!pdfs.isEmpty())
-            getServletResponse(response, pdfs, "MergedNoticeList");
-        else
-            throw new ValidationException("err.demand.notice");
-    }
+		for (final SearchNoticeDetails noticeDetail : noticeList)
+			try {
+				final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(noticeDetail.getHscNo(),
+						StringUtils.EMPTY);
+				EstimationNotice estimationNotice = estimationNoticeService
+						.getNonHistoryEstimationNoticeForConnection(waterConnectionDetails);
+				if (waterConnectionDetails != null && waterConnectionDetails.getFileStore() != null) {
+					String fileStoreId = null;
+					if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+							&& estimationNotice != null && estimationNotice.getEstimationNoticeFileStore() != null)
+						fileStoreId = estimationNotice.getEstimationNoticeFileStore().getFileStoreId();
+					else if (waterConnectionDetails.getFileStore() != null)
+						fileStoreId = waterConnectionDetails.getFileStore().getFileStoreId();
+					final FileStoreMapper fsm = fileStoreMapperRepository.findByFileStoreId(fileStoreId);
+					final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
+					final byte[] bFile = FileUtils.readFileToByteArray(file);
+					zipOutputStream = addFilesToZip(new ByteArrayInputStream(bFile), file.getName(), zipOutputStream);
+				}
+			} catch (final Exception e) {
+				LOGGER.error("zipAndDownload : Getting demand notice failed ", e);
+				continue;
+			}
+		if (zipOutputStream != null) {
+			zipOutputStream.closeEntry();
+			zipOutputStream.close();
+		}
 
-    private ZipOutputStream addFilesToZip(final InputStream inputStream, final String noticeNo,
-            final ZipOutputStream out) {
-        final byte[] buffer = new byte[1024];
-        try {
-            out.setLevel(Deflater.DEFAULT_COMPRESSION);
-            out.putNextEntry(new ZipEntry(noticeNo.replaceAll("/", "_")));
-            int len;
-            while ((len = inputStream.read(buffer)) > 0)
-                out.write(buffer, 0, len);
-            inputStream.close();
+	}
 
-        } catch (final IllegalArgumentException iae) {
-            LOGGER.error(EXCEPTION_IN_ADDFILESTOZIP, iae);
-        } catch (final FileNotFoundException fnfe) {
-            LOGGER.error(EXCEPTION_IN_ADDFILESTOZIP, fnfe);
-        } catch (final IOException ioe) {
-            LOGGER.error(EXCEPTION_IN_ADDFILESTOZIP, ioe);
-        }
-        return out;
-    }
+	public void mergeAndDownloadNotice(final List<SearchNoticeDetails> searchResultList,
+			final HttpServletResponse response) {
+		final List<InputStream> pdfs = new ArrayList<>();
+		for (final SearchNoticeDetails noticeDetail : searchResultList)
+			try {
+				final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(noticeDetail.getHscNo(),
+						StringUtils.EMPTY);
+				EstimationNotice estimationNotice = estimationNoticeService
+						.getNonHistoryEstimationNoticeForConnection(waterConnectionDetails);
+				if (waterConnectionDetails != null) {
+					String fileStoreId = null;
+					if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+							&& estimationNotice != null && estimationNotice.getEstimationNoticeFileStore() != null)
+						fileStoreId = estimationNotice.getEstimationNoticeFileStore().getFileStoreId();
+					else if (waterConnectionDetails.getFileStore() != null)
+						fileStoreId = waterConnectionDetails.getFileStore().getFileStoreId();
+					final FileStoreMapper fsm = fileStoreMapperRepository.findByFileStoreId(fileStoreId);
+					final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
+					final byte[] bFile = FileUtils.readFileToByteArray(file);
+					pdfs.add(new ByteArrayInputStream(bFile));
+				}
+			} catch (final Exception e) {
+				LOGGER.debug("Entered into executeJob" + e);
+				continue;
+			}
+		if (LOGGER.isDebugEnabled())
+			LOGGER.debug("Number of pdfs : " + (pdfs != null ? pdfs.size() : ZERO));
 
-    public void getDemandBillByFileStoreId(final List<String> waterChargesFileStoreId, final String consumerCode,
-            final HttpServletResponse response) {
-        if (!waterChargesFileStoreId.isEmpty() && waterChargesFileStoreId.get(0) != null)
-            try {
-                final FileStoreMapper fsm = fileStoreMapperRepository
-                        .findByFileStoreId(waterChargesFileStoreId.get(0) + "");
-                final List<InputStream> pdfs = new ArrayList<>();
-                final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
-                final byte[] bFile = FileUtils.readFileToByteArray(file);
-                pdfs.add(new ByteArrayInputStream(bFile));
-                getServletResponse(response, pdfs, consumerCode);
-            } catch (final Exception e) {
-                throw new ValidationException(e.getMessage());
-            }
-        else
-            throw new ValidationException("err.demand.notice");
-    }
+		if (!pdfs.isEmpty())
+			getServletResponse(response, pdfs, "MergedNoticeList");
+		else
+			throw new ValidationException("err.demand.notice");
+	}
 
-    public WaterConnectionDetails getWaterConnectionDetails(final String consumerCode) {
-        WaterConnectionDetails waterConnectionDetails = null;
-        if (consumerCode != null) {
-            waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerCode,
-                    ConnectionStatus.INPROGRESS);
-            if (waterConnectionDetails == null)
-                waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerCode,
-                        ConnectionStatus.ACTIVE);
-            if (waterConnectionDetails != null
-                    && (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID) ||
-                            waterConnectionDetails.getStatus().getCode()
-                                    .equals(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN)
-                            ||
-                            waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPROVED) ||
-                            waterConnectionDetails.getStatus().getCode()
-                                    .equals(WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING)
-                            ||
-                            waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED)))
-                return waterConnectionDetails;
-        }
-        return null;
-    }
+	private ZipOutputStream addFilesToZip(final InputStream inputStream, final String noticeNo,
+			final ZipOutputStream out) {
+		final byte[] buffer = new byte[1024];
+		try {
+			out.setLevel(Deflater.DEFAULT_COMPRESSION);
+			out.putNextEntry(new ZipEntry(noticeNo.replaceAll("/", "_")));
+			int len;
+			while ((len = inputStream.read(buffer)) > 0)
+				out.write(buffer, 0, len);
+			inputStream.close();
+
+		} catch (final IllegalArgumentException iae) {
+			LOGGER.error(EXCEPTION_IN_ADDFILESTOZIP, iae);
+		} catch (final FileNotFoundException fnfe) {
+			LOGGER.error(EXCEPTION_IN_ADDFILESTOZIP, fnfe);
+		} catch (final IOException ioe) {
+			LOGGER.error(EXCEPTION_IN_ADDFILESTOZIP, ioe);
+		}
+		return out;
+	}
+
+	public void getNoticeByFileStoreId(final List<String> waterChargesFileStoreId, final String consumerCode,
+			final HttpServletResponse response) {
+		if (!waterChargesFileStoreId.isEmpty() && waterChargesFileStoreId.get(0) != null)
+			try {
+				final FileStoreMapper fsm = fileStoreMapperRepository
+						.findByFileStoreId(waterChargesFileStoreId.get(0) + "");
+				final List<InputStream> pdfs = new ArrayList<>();
+				final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
+				final byte[] bFile = FileUtils.readFileToByteArray(file);
+				pdfs.add(new ByteArrayInputStream(bFile));
+				getServletResponse(response, pdfs, consumerCode);
+			} catch (final Exception e) {
+				throw new ValidationException(e.getMessage());
+			}
+		else
+			throw new ValidationException("err.demand.notice");
+	}
+
+	public WaterConnectionDetails getWaterConnectionDetails(final String consumerCode, String noticeType) {
+		WaterConnectionDetails waterConnectionDetails = null;
+		if (consumerCode != null) {
+			waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerCode,
+					ConnectionStatus.INPROGRESS);
+			if (waterConnectionDetails == null)
+				waterConnectionDetails = waterConnectionDetailsService
+						.findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.ACTIVE);
+			if (waterConnectionDetails == null)
+				waterConnectionDetails = waterConnectionDetailsService
+						.findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.CLOSED);
+			if (waterConnectionDetails != null && (waterConnectionDetails.getStatus().getCode()
+					.equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)
+					|| waterConnectionDetails.getStatus().getCode()
+							.equals(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN)
+					|| waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPROVED)
+					|| waterConnectionDetails.getStatus().getCode()
+							.equals(WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING)
+					|| waterConnectionDetails.getStatus().getCode()
+							.equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED)
+					|| (StringUtils.isNotBlank(noticeType) && ((PROCEEDING_FOR_RECONNECTION.equals(noticeType)
+							&& ConnectionStatus.ACTIVE.equals(waterConnectionDetails.getConnectionStatus()))
+							|| (PROCEEDING_FOR_CLOSER_OF_CONNECTION.equals(noticeType)
+									&& ConnectionStatus.CLOSED.equals(waterConnectionDetails.getConnectionStatus()))))))
+				return waterConnectionDetails;
+		}
+		return null;
+	}
 }

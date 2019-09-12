@@ -48,7 +48,7 @@
 jQuery(document).ready(function() {
 	$('#report-footer').hide();
 	jQuery('#searchid').click(function(e) {
-		if($('#waterSearchRequestForm').valid() && validategeneratebill())
+		if($('#waterSearchRequestForm').valid() && validatedate() && validategeneratebill())
 		loadingReport();
 	});
 	
@@ -68,18 +68,25 @@ jQuery(document).ready(function() {
 	
 	
 jQuery('#mergeid').click(function(e) {
-	if(validategeneratebill())
+	if(validategeneratebill() && validatedate())
 	merge();
 });
 
 
 jQuery('#zipid').click(function(e) {
-	if(validategeneratebill())
+	if(validategeneratebill() && validatedate())
 	zipanddownload();
 });
 
 });
 
+function validatedate() {
+	if ($("#fromDate").val() == "" && $("#toDate").val() != "") {
+		bootbox.alert('Please enter From Date');
+		return false;
+	}
+	return true;
+}
 
 
 function validategeneratebill()
