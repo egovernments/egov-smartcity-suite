@@ -26,19 +26,18 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITAL_SIGNATURE_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WO_FORM;
 import static org.egov.ptis.constants.PropertyTaxConstants.WRITEOFF_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WRITE_OFF;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -58,6 +57,7 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
+import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
@@ -69,6 +69,7 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.bean.demand.DemandDetail;
+import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterHibDAO;
@@ -94,6 +95,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
 @Service
 @Transactional(readOnly = true)
@@ -142,6 +144,8 @@ public class WriteOffService extends GenericWorkFlowController {
     private DemandGenericDao demandGenericDAO;
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
+    @Autowired
+    private PTBillServiceImpl ptBillServiceImpl;
 
     Property property = null;
     private static final Logger LOGGER = Logger.getLogger(WriteOffService.class);
@@ -304,6 +308,7 @@ public class WriteOffService extends GenericWorkFlowController {
                         loggedInUserDesignation);
                 writeOff.getProperty().setStatus(STATUS_ISACTIVE);
                 writeOff.getBasicProperty().getActiveProperty().setStatus(STATUS_ISHISTORY);
+                propertyService.copyCollection(writeOff.getBasicProperty().getActiveProperty(), writeOff.getProperty());
                 writeOff.getBasicProperty().addProperty(writeOff.getProperty());
                 nextAction = WF_STATE_DIGITAL_SIGNATURE_PENDING;
                 writeOff.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
@@ -383,9 +388,9 @@ public class WriteOffService extends GenericWorkFlowController {
     }
 
     @SuppressWarnings("unchecked")
-    public List<WriteOffReasons> getAllwriteoffMastersByName(String code) {
-        Query qry = getCurrentSession().createQuery("from WriteOffReasons WO where WO.code = :code");
-        qry.setString("code", code);
+    public List<WriteOffReasons> getAllwriteoffMastersByName(Long id) {
+        Query qry = getCurrentSession().createQuery("from WriteOffReasons WO where WO.id = :id");
+        qry.setLong("id", id);
          return qry.list();
     }
 
@@ -451,26 +456,28 @@ public class WriteOffService extends GenericWorkFlowController {
                 .getEgDemandDetails();
         DemandDetailVariation dmdVar = null;
         List<Installment> install = new ArrayList<>();
-        for (final EgDemandDetails dmdDetails : demandDetails){
+        for (final EgDemandDetails dmdDetails : demandDetails) {
             for (final DemandDetail dmdDetailBean : writeOff.getDemandDetailBeanList()) {
                 Boolean isUpdateAmount = Boolean.FALSE;
                 dmdDetailBean.setInstallment(installmentDao.findById(dmdDetailBean.getInstallment().getId(), false));
-                if(dmdDetails.getEgDemandReason().getEgInstallmentMaster().getId().equals(dmdDetailBean.getInstallment().getId())){
-                if (dmdDetailBean.getRevisedAmount() != BigDecimal.ZERO) {
-                    if (dmdDetailBean.getRevisedAmount() != null
-                            && dmdDetails.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
-                                    .equalsIgnoreCase(dmdDetailBean.getReasonMaster())) {
-                        install.add(dmdDetailBean.getInstallment());
-                        isUpdateAmount = true;
+                if (dmdDetails.getEgDemandReason().getEgInstallmentMaster().getId()
+                        .equals(dmdDetailBean.getInstallment().getId())) {
+                    if (dmdDetailBean.getRevisedAmount() != null) {
+                        if (dmdDetailBean.getRevisedAmount() != null
+                                && dmdDetailBean.getRevisedAmount().compareTo(BigDecimal.ZERO) > 0
+                                && dmdDetails.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
+                                        .equalsIgnoreCase(dmdDetailBean.getReasonMaster())) {
+                            install.add(dmdDetailBean.getInstallment());
+                            isUpdateAmount = true;
                         }
-                     
-                        
+
                     }
                 }
                 if (isUpdateAmount) {
-
+                    BigDecimal balance = dmdDetailBean.getActualAmount().subtract(
+                            dmdDetailBean.getActualCollection() != null ? dmdDetailBean.getActualCollection() : BigDecimal.ZERO);
                     if (writeOff.getWriteOffType().getMutationDesc().equalsIgnoreCase(FULL_WRITEOFF)) {
-                        dmdVar = persistDemandDetailVariation(dmdDetails, dmdDetailBean.getActualAmount(), WRITE_OFF);
+                        dmdVar = persistDemandDetailVariation(dmdDetails, balance, WRITE_OFF);
                     } else {
                         dmdVar = persistDemandDetailVariation(dmdDetails, dmdDetailBean.getRevisedAmount(), WRITE_OFF);
                     }
@@ -482,7 +489,7 @@ public class WriteOffService extends GenericWorkFlowController {
                     dmdDetails.setModifiedDate(new Date());
                     break;
                 }
-               
+
             }
         }
         if (writeOff.getWriteOffType().getMutationDesc().equalsIgnoreCase(FULL_WRITEOFF)) {
@@ -493,9 +500,9 @@ public class WriteOffService extends GenericWorkFlowController {
 
         }
         if (writeOff.getState() != null) {
-            for (Iterator<Ptdemand> iterator = writeOff.getProperty().getPtDemandSet().iterator(); iterator
-                    .hasNext();) {
-                iterator.next().setEgDemandDetails(demandDetails);
+            for (Ptdemand ptdemand : writeOff.getProperty().getPtDemandSet()) {
+
+                ptdemand.setEgDemandDetails(demandDetails);
             }
         } else {
             List<Ptdemand> currPtdemand = getCurrPtDemand(writeOff);
@@ -510,6 +517,7 @@ public class WriteOffService extends GenericWorkFlowController {
                 writeOff.getProperty().getPtDemandSet().add(ptdemand);
             }
         }
+
     }
 
     public DemandDetailVariation persistDemandDetailVariation(EgDemandDetails dmdDetails, BigDecimal revisedAmount,
@@ -517,11 +525,12 @@ public class WriteOffService extends GenericWorkFlowController {
         DemandDetailVariation demandDetailVariation = new DemandDetailVariation();
         demandDetailVariation.setDemandDetail(dmdDetails);
         demandDetailVariation.setDemandreasonMaster(demandGenericDAO.getDemandReasonMasterByCode(code, module()));
-        if (revisedAmount != null && revisedAmount.compareTo(BigDecimal.ZERO) > 0)
+        if(revisedAmount!=null && revisedAmount.compareTo(BigDecimal.ZERO)>0)
             demandDetailVariation.setDramount(revisedAmount);
         else
             demandDetailVariation.setDramount(BigDecimal.ZERO);
         return demandDetailVariation;
+        
     }
 
     public List<EgDemandDetails> sortDemandDetails(List<EgDemandDetails> demandDetails) {
@@ -691,4 +700,102 @@ public class WriteOffService extends GenericWorkFlowController {
 
     }
     
+    public boolean checkValidCouncil(List<Map<String, String>> councilDetails) {
+        boolean status = false;
+        for (Map<String, String> errormessage : councilDetails) {
+            for (String errors : errormessage.values()) {
+                if (errors.toString().isEmpty()) {
+                    status = true;
+                }
+            }
+        }
+        return status;
+
     }
+    
+    public Map<String, String> displayValidation(final WriteOff writeOff, final HttpServletRequest request, Model model) {
+        Map<String, String> errorMessages = new HashMap<>();
+        if (writeOff.getPropertyDeactivateFlag() && writeOff.getWriteOffType().getCode().equals("FULL WRITEOFF")) {
+            errorMessages = validateWCSewconnection(writeOff, request);
+        }
+        if (errorMessages.isEmpty() && writeOff.getState() == null) {
+            List<WriteOff> councilresult = writeOffRepo.findCouncilTypeAndNo(writeOff.getResolutionType(),
+                    writeOff.getResolutionNo(),
+                    writeOff.getBasicProperty().getUpicNo());
+            if (councilresult != null && !councilresult.isEmpty())
+                errorMessages.put("resolutionError", "writeoff.resolution.error");
+        }
+        return errorMessages;
+    }
+
+    public BindingResult validate(final WriteOff writeOff, final BindingResult errors) {
+        if (StringUtils.isBlank(writeOff.getWriteOffType().getCode()))
+            errors.rejectValue("writeOffType.mutationDesc", "writeoff.type");
+        if (StringUtils.isBlank(writeOff.getWriteOffReasons().getName()))
+            errors.rejectValue("writeOffReasons.name", "writeoff.reason");
+        if (StringUtils.isBlank(writeOff.getResolutionNo()) || null == writeOff.getResolutionNo())
+            errors.rejectValue("resolutionNo", "writeoff.resolution.no");
+        if (StringUtils.isBlank(writeOff.getResolutionType()) || null == writeOff.getResolutionType())
+            errors.rejectValue("resolutionType", "writeoff.resolution.type");
+        return errors;
+    }
+    
+    public Map<String, String> validateWCSewconnection(WriteOff writeOff, final HttpServletRequest request) {
+        boolean hasActiveWC;
+        boolean hasActiveSwg;
+        boolean hasActiveCouncil;
+        Map<String, String> errorMessages = new HashMap<>();
+        List<Map<String, Object>> activeWCDetails = propertyService.getWCDetails(writeOff.getBasicProperty().getUpicNo(),
+                request);
+        hasActiveWC = checkActiveWC(activeWCDetails);
+        if (hasActiveWC) {
+            errorMessages.put("active.error", "writeoff.wc.error");
+            return errorMessages;
+        }
+        hasActiveSwg = checkActiveSewage(propertyTaxCommonUtils
+                .getSewConnDetails(writeOff.getBasicProperty().getUpicNo(), request));
+        if (hasActiveSwg) {
+            errorMessages.put("active.error", "writeoff.Swg.error");
+            return errorMessages;
+        }
+        hasActiveCouncil = checkValidCouncil(
+                propertyTaxCommonUtils.getCouncilDeatils(writeOff.getResolutionNo(), writeOff.getResolutionType(), request));
+        if (hasActiveCouncil) {
+            errorMessages.put("active.error", "writeoff.council.error");
+            return errorMessages;
+        }
+        return errorMessages;
+    }
+
+    public String displayErrors(WriteOff writeOff, Model model, Map<String, String> errorMessages,
+            HttpServletRequest request) {
+        User loggedInUser = securityUtils.getCurrentUser();
+        model.addAttribute(ERROR_MSG, errorMessages);
+        model.addAttribute("writeOff", writeOff);
+        List<Installment> installmentList = propertyTaxUtil.getInstallments(writeOff.getBasicProperty().getActiveProperty());
+        Set<EgDemandDetails> demandDetails = (ptDemandDAO
+                .getNonHistoryCurrDmdForProperty(writeOff.getBasicProperty().getProperty()))
+                        .getEgDemandDetails();
+        List<EgDemandDetails> dmndDetails = new ArrayList<>(demandDetails);
+        if (!dmndDetails.isEmpty())
+            dmndDetails = sortDemandDetails(dmndDetails);
+        List<DemandDetail> demandDetailBeanList = setDemandBeanList(dmndDetails);
+        writeOff.setDemandDetailBeanList(demandDetailBeanList);
+        model.addAttribute("dmndDetails", writeOff.getDemandDetailBeanList());
+        model.addAttribute("type", propertyMutationMasterHibDAO
+                .getAllPropertyMutationMastersByType(WRITEOFF_CODE));
+        model.addAttribute(PROPERTY, writeOff.getProperty());
+        model.addAttribute("reasonsList", getAllwriteoffMastersByType(writeOff.getWriteOffType().getMutationDesc()));
+        model.addAttribute(CURRENT_STATE, CREATED);
+        model.addAttribute(ENDORSEMENT_NOTICE, new ArrayList<>());
+        model.addAttribute(STATE_TYPE, writeOff.getClass().getSimpleName());
+        model.addAttribute(LOGGED_IN_USER, propertyService.isEmployee(loggedInUser));
+        addModelAttributes(model, writeOff.getBasicProperty().getUpicNo(), request, installmentList);
+        model.addAttribute("fromInstallment", writeOff.getFromInstallment());
+        model.addAttribute("toInstallment", writeOff.getToInstallment());
+        prepareWorkflow(model, writeOff, new WorkflowContainer());
+
+        return WO_FORM;
+    }
+
+}

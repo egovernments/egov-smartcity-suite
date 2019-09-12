@@ -98,12 +98,13 @@ div.floors-tbl-freeze-column-div {
 </head>
 <body>
 
-	<c:if test="${errorMsg != ''}">
- 	<div class="panel-heading">
-				<div class="add-margin error-msg" style="text-align:center;">
-					<strong><c:out value="${errorMsg}"/></strong>
-				</div>
-	</div>
+	<c:if test="${not empty errorMsg}">
+ 	<div class="alert alert-danger" role="alert">
+			<c:forEach var="error" items="${errorMsg}" varStatus="status">
+				<spring:message code="${error.value}" />
+				<br />
+			</c:forEach>
+		</div>
 </c:if>
 
 	<form:form method="post" id="writeOffForm" commandName="writeOff"
@@ -112,6 +113,10 @@ div.floors-tbl-freeze-column-div {
 			id="loggedUserIsEmployee" value="${loggedUserIsEmployee}" />
 		<form:hidden path="" name="instString" id="instString"
 			value="${instString}" />
+			<form:hidden path="" name="state" id="state"
+			value="${writeOff.getState().getValue()}" />
+			<form:hidden path="" name="propertyDeactivateFlag"
+			id="propertyDeactivateFlag" value="${propertyDeactivateFlag}" />
 			<div class="panel-heading">
 			<ul class="nav nav-tabs" id="tabs">
 				<li class="First Active"><a data-toggle="tab"
@@ -304,7 +309,7 @@ div.floors-tbl-freeze-column-div {
 										<div class="col-xs-2 add-margin view-content">
 											<form:select path="writeOffType.code" id="writeOffType" 
 												cssClass="form-control"
-												onchange="enablecheckbox();displayreasons();" required="required" >
+												onchange="enablecheckbox();displayreasons();"  >
 												<form:option value="">
 													<spring:message code="lbl.select" />
 												</form:option>
@@ -317,7 +322,7 @@ div.floors-tbl-freeze-column-div {
 										<div class="col-xs-2 add-margin view-content">
 											<form:select path="writeOffType.code" id="writeOffType" 
 												cssClass="form-control"
-												onchange="enablecheckbox();displayreasons();" required="required">
+												onchange="enablecheckbox();displayreasons();">
 												<form:option value="">
 													<spring:message code="lbl.select" />
 												</form:option>
@@ -333,12 +338,12 @@ div.floors-tbl-freeze-column-div {
 										</div>
 										<c:if test="${writeOff.getState().getValue()=='Rejected'}">
 										<div class="col-xs-3 add-margin view-content">
-											<form:select id="reasons" path="writeOffReasons.name" name="reasons"
-												cssClass="form-control" style="width: 80%" required="required" >
+											<form:select id="reasons" path="writeOffReasons.name"
+												cssClass="form-control" style="width: 80%"  >
 												<form:option value="">
 													<spring:message code="lbl.select" />
 												</form:option>
-												<form:options items="${reasonsList}" itemValue="code" 
+												<form:options items="${reasonsList}" itemValue="id" 
 													itemLabel="name" />
 											</form:select>
 										</div>
@@ -346,11 +351,11 @@ div.floors-tbl-freeze-column-div {
 										<c:if test="${writeOff.getState().getValue()!='Rejected'}">
 										<div class="col-xs-3 add-margin view-content">
 											<form:select id="reasons" path="writeOffReasons.name" 
-												cssClass="form-control" style="width: 80%"  required="required">
+												cssClass="form-control" style="width: 80%"  >
 												<form:option value="">
 													<spring:message code="lbl.select" />
 												</form:option>
-												<form:options items="${writeOffReasons}" itemValue="code" 
+												<form:options items="${writeOffReasons}" itemValue="id" 
 												itemLabel="name" />
 											</form:select>
 											<form:errors path="writeOffReasons.name" cssClass="add-margin error-msg" />
@@ -362,7 +367,6 @@ div.floors-tbl-freeze-column-div {
 										<input type="checkbox" id="fullwriteoffcheckbox"
 											class="check_box" name="checkbox">
 									</div>
-
 								</div>
 
 							</div>

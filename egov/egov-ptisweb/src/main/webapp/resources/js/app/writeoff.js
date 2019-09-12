@@ -51,8 +51,16 @@ $( document ).ready(function() {
 	 var frominstallment;
 	 var toinstallment;
 	 var urlvalue;
-	 frominstallment = $("#frominstallments").val();
 	 instString = $("#instString").val();
+	 var statevalue = $("#state").val();
+	 var typevalue = $( "#writeOffType option:selected" ).text();
+		if (typevalue == 'Full WriteOff' && statevalue == 'Rejected') {
+			var flagvalue = $("#propertyDeactivateFlag").val();
+			$("#frominstallments").attr('disabled', true);
+			$("#toinstallments").attr('disabled', true);
+			if(flagvalue==true)
+			document.getElementById("check").style.display = "block";
+		}
 $("writeOffType").change(function()
 	           {
 	$("#demandDetailsTable").removeAttr('style');
@@ -124,7 +132,7 @@ function getselectedinstallments(val){
 				var actualAmount = 'demandDetailBeanList'+ i + '.actualAmount';
 				var revisedAmount = 'demandDetailBeanList'+ i + '.revisedAmount';
 			
-			document.getElementById(revisedAmount).value = document.getElementById(actualAmount).value - document.getElementById(actualCollection).value
+			document.getElementById(revisedAmount).value = document.getElementById(actualAmount).value - document.getElementById(actualCollection).value;
 			var collectionAmount = document.getElementById(actualCollection).value;
 			var actualAmount = document.getElementById(actualAmount).value;
 			if(actualAmount == collectionAmount){
@@ -137,9 +145,15 @@ function getselectedinstallments(val){
 			$("#frominstallments").attr('disabled', false);
 			$("#toinstallments").attr('disabled', false);
 			for(var i=0; i < $(".demandDetailBeanList").length; i++){
-
+				var actualAmount = 'demandDetailBeanList'+ i + '.actualAmount';
 				var revisedAmount = 'demandDetailBeanList'+ i + '.revisedAmount';
-			
+				var actualCollection = 'demandDetailBeanList'+ i + '.actualCollection';
+				var collectionAmount = document.getElementById(actualCollection).value;
+				var actualAmount = document.getElementById(actualAmount).value;
+				console.log("dattab   "+actualCollection)
+				if(actualAmount == collectionAmount){
+					document.getElementById(revisedAmount).disabled = true;
+					}else
 			document.getElementById(revisedAmount).value = '';
 			
 			}
@@ -163,7 +177,7 @@ function getselectedinstallments(val){
 								jQuery('<option>').text('Select').attr('value', ""));
 					jQuery.each(response, function(index, reason) {
 						jQuery('#reasons').append(
-								"<option value='" + reason.code + "'>" + reason.name
+								"<option value='" + reason.id + "'>" + reason.name
 										+ "</option>");
 					});
 				}, 
@@ -177,6 +191,7 @@ function getselectedinstallments(val){
 		var resolutiontype = jQuery('#resolutionType').val();
 		var resolutionNo = jQuery('#resolutionNo').val();
 		var errormessage;
+		var resolutionDate;
 		if(resolutiontype!=null && resolutionNo!=null && resolutionNo!=undefined && resolutiontype!=undefined){
 		jQuery.ajax({
 			url: "/ptis/common/getcouncildetails",
@@ -187,16 +202,21 @@ function getselectedinstallments(val){
 			success: function (response) {
 					   for (var i=0;i<response.length;i++) {
 					      $("#resolutionDate").val(response[i].resolutionDate);
+					      resolutionDate = response[i].resolutionDate;
 					      urlvalue = response[i].councilResolutionUrl;
 					      errormessage = response[i].errorMessage;
-					      if(errormessage == null){
+					      if(urlvalue != null){
 					    	  $("#url"). attr("href",urlvalue);
 					    	  $("#viewlink").show();
-					      }else{
-					      $("#viewlink").hide();
 					      }
 					}
-					  			}, 
+					   if(errormessage != null){
+							   if(resolutionDate==null)
+						  $("#resolutionDate").val("");
+							      $("#viewlink").hide();
+							      bootbox.alert(errormessage);
+							   }
+					   }, 
 			error: function(){
 				if(errormessage!=null)
 				bootbox.alert(errormessage);

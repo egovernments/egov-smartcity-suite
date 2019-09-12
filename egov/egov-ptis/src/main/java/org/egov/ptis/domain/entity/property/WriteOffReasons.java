@@ -34,7 +34,7 @@ public class WriteOffReasons implements Serializable {
     private String code;
 
     @Column(name = "order_id")
-    private String orderId;
+    private Integer orderId;
 
     @Column(name = "description")
     private String description;
@@ -47,11 +47,11 @@ public class WriteOffReasons implements Serializable {
         this.code = code;
     }
 
-    public String getOrderId() {
+    public Integer getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(String orderId) {
+    public void setOrderId(Integer orderId) {
         this.orderId = orderId;
     }
 

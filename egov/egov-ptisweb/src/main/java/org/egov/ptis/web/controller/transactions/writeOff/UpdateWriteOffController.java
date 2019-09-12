@@ -50,7 +50,6 @@ package org.egov.ptis.web.controller.transactions.writeOff;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.APPROVAL_COMMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPROVAL_POSITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.ENDORSEMENT_NOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_WRITEOFFROCEEDINGS;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.SUCCESS_MSG;
@@ -65,7 +64,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WO_FORM;
 import static org.egov.ptis.constants.PropertyTaxConstants.WO_SUCCESS_FORM;
 import static org.egov.ptis.constants.PropertyTaxConstants.WO_VIEW;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,10 +76,13 @@ import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.domain.dao.property.PropertyMutationMasterHibDAO;
 import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.DocumentType;
+import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.WriteOff;
+import org.egov.ptis.domain.entity.property.WriteOffReasons;
 import org.egov.ptis.domain.service.writeOff.WriteOffService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,6 +109,8 @@ public class UpdateWriteOffController extends GenericWorkFlowController {
     private PropertyTaxUtil propertyTaxUtil;
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    @Autowired
+    private PropertyMutationMasterHibDAO propertyMutationMasterHibDAO;
 
     @ModelAttribute
     public WriteOff writeOffModel(@PathVariable Long id) {
@@ -129,7 +132,6 @@ public class UpdateWriteOffController extends GenericWorkFlowController {
                 writeOff.getCurrentState().getOwnerPosition().getId(), securityUtils.getCurrentUser());
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         List<Installment> installmentList = propertyTaxUtil.getInstallments(basicProperty.getActiveProperty());
-        model.addAttribute(ENDORSEMENT_NOTICE, new ArrayList<>());
         model.addAttribute(WRITOFF_DOC, "");
         if (!currState.endsWith(WF_STATE_REJECTED)) {
             writeOffService.addDemandDetails(writeOff);
@@ -167,7 +169,7 @@ public class UpdateWriteOffController extends GenericWorkFlowController {
             @RequestParam String workFlowAction) {
         Long approvalPosition = 0l;
         String approvalComent = "";
-        String target = null;
+        String target = "";
         Map<String, String> errorMessages = new HashMap<>();
         User loggedInUser = securityUtils.getCurrentUser();
         String successMessage = null;
@@ -176,8 +178,11 @@ public class UpdateWriteOffController extends GenericWorkFlowController {
         propertyTaxCommonUtils.setSourceOfProperty(loggedInUser, false);
         String value = request.getParameter("propertyDeactivateFlag");
         writeOff.setPropertyDeactivateFlag(Boolean.valueOf(value));
-        if (errorMessages.isEmpty()) {
-
+            if (request.getParameterValues("checkbox") != null && request.getParameterValues("checkbox").length > 0) {
+                writeOff.setPropertyDeactivateFlag(true);
+            } else {
+                writeOff.setPropertyDeactivateFlag(false);
+            }
             if (request.getParameter(APPROVAL_COMMENT) != null)
                 approvalComent = request.getParameter(APPROVAL_COMMENT);
             if (request.getParameter(WF_ACTION) != null)
@@ -201,7 +206,7 @@ public class UpdateWriteOffController extends GenericWorkFlowController {
 
                 target = WO_SUCCESS_FORM;
             } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
-
+                
                 writeOffService.saveWriteOff(writeOff, approvalPosition, approvalComent, null, workFlowAction);
                 if (currentDesg.contains(REVENUE_OFFICER_DESGN))
                     successMessage = "Write Off is completely rejected by :"
@@ -216,16 +221,34 @@ public class UpdateWriteOffController extends GenericWorkFlowController {
 
                 target = WO_SUCCESS_FORM;
             } else {
-
-                writeOffService.saveWriteOff(writeOff, approvalPosition, approvalComent, null, workFlowAction);
-                successMessage = "write Off Saved Successfully in the System and forwarded to : "
-                        + propertyTaxUtil.getApproverUserName(writeOff.getState().getOwnerPosition().getId())
-                        + " with application number " + writeOff.getApplicationNumber();
-                model.addAttribute(SUCCESS_MSG, successMessage);
-
-                target = WO_SUCCESS_FORM;
-
+            if (currentDesg.contains(REVENUE_OFFICER_DESGN)) {
+                if (writeOff.getWriteOffType().getCode() != null) {
+                    final PropertyMutationMaster propMutMstr = propertyMutationMasterHibDAO
+                            .getPropertyMutationMasterByCode(writeOff.getWriteOffType().getCode());
+                    writeOff.setWriteOffType(propMutMstr);
+                }
+                if (writeOff.getWriteOffReasons().getId() != null) {
+                    List<WriteOffReasons> woreasons = writeOffService
+                            .getAllwriteoffMastersByName(writeOff.getWriteOffReasons().getId());
+                    writeOff.setWriteOffReasons(woreasons.get(0));
+                }
+                resultBinder = writeOffService.validate(writeOff, resultBinder);
+                errorMessages = writeOffService.displayValidation(writeOff, request, model);
+                if ((resultBinder != null && resultBinder.hasErrors()) || !errorMessages.isEmpty()) {
+                    target = writeOffService.displayErrors(writeOff, model, errorMessages, request);
+                    return target;
+                }
+                writeOffService.saveProperty(writeOff);
+                writeOff.getBasicProperty().addProperty(writeOff.getProperty());
             }
+            writeOffService.saveWriteOff(writeOff, approvalPosition, approvalComent, null, workFlowAction);
+            successMessage = "write Off Saved Successfully in the System and forwarded to : "
+                    + propertyTaxUtil.getApproverUserName(writeOff.getState().getOwnerPosition().getId())
+                    + " with application number " + writeOff.getApplicationNumber();
+            model.addAttribute(SUCCESS_MSG, successMessage);
+
+            target = WO_SUCCESS_FORM;
+
         }
         return target;
     }

@@ -71,7 +71,7 @@
 									<form:option value="">
 										<spring:message code="lbl.select" />
 									</form:option>
-									<form:options items="${installments}" />
+									<form:options items="${fromInstallment}" />
 								</form:select>
 							</div>
 							<div class="col-xs-2 add-margin postion">
@@ -83,7 +83,7 @@
 									<form:option value="">
 										<spring:message code="lbl.select" />
 									</form:option>
-									<form:options items="${installments}" />
+									<form:options items="${toInstallment}" />
 								</form:select>
 							</div>
 						</div>

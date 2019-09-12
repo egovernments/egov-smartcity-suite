@@ -59,6 +59,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -207,7 +208,6 @@ public class WriteOffController extends GenericWorkFlowController {
         writeOff.setDemandDetailBeanList(demandDetailBeanList);
         model.addAttribute("dmndDetails", demandDetailBeanList);
         prepareWorkflow(model, writeOff, new WorkflowContainer());
-        model.addAttribute(WRITOFF_DOC, "");
         return WO_FORM;
     }
 
@@ -215,47 +215,38 @@ public class WriteOffController extends GenericWorkFlowController {
     public String save(@ModelAttribute("writeOff") @Valid WriteOff writeOff, BindingResult resultBinder,
             final RedirectAttributes redirectAttributes, final Model model, final HttpServletRequest request,
             @RequestParam String workFlowAction, @PathVariable String assessmentNo) {
-        String target = null;
+        String target = "";
         Long approvalPosition = 0l;
         String approvalComent = "";
-        String errorMessages = null;
         final List<Document> documents = new ArrayList<>();
+        Map<String, String> errorMessages = new HashMap<>();
         if (request.getParameterValues("checkbox") != null && request.getParameterValues("checkbox").length > 0) {
             writeOff.setPropertyDeactivateFlag(true);
         } else {
             writeOff.setPropertyDeactivateFlag(false);
         }
-        if (writeOff.getPropertyDeactivateFlag() && writeOff.getWriteOffType().getCode().equals("FULL WRITEOFF")) {
-            errorMessages = validateWCSewconnection(writeOff, request);
-            if (!errorMessages.isEmpty()) {
-                model.addAttribute(ERROR_MSG, errorMessages);
-                model.addAttribute(ENDORSEMENT_NOTICE, new ArrayList<>());
-                return WO_FORM;
-            }
+        if (writeOff.getWriteOffType().getCode() != null) {
+            final PropertyMutationMaster propMutMstr = propertyMutationMasterHibDAO
+                    .getPropertyMutationMasterByCode(writeOff.getWriteOffType().getCode());
+            writeOff.setWriteOffType(propMutMstr);
         }
-        resultBinder = validate(writeOff, resultBinder);
-        if (resultBinder != null && resultBinder.hasErrors())
-            return WO_FORM;
-        final PropertyMutationMaster propMutMstr = propertyMutationMasterHibDAO
-                .getPropertyMutationMasterByCode(writeOff.getWriteOffType().getCode());
-        writeOff.setWriteOffType(propMutMstr);
-        List<WriteOffReasons> woreasons = writeOffService.getAllwriteoffMastersByName(writeOff.getWriteOffReasons().getName());
-        writeOff.setWriteOffReasons(woreasons.get(0));
+        if (writeOff.getWriteOffReasons().getName() != null) {
+            List<WriteOffReasons> woreasons = writeOffService.getAllwriteoffMastersByName(writeOff.getWriteOffReasons().getId());
+            writeOff.setWriteOffReasons(woreasons.get(0));
+        }
+        resultBinder = writeOffService.validate(writeOff, resultBinder);
+        errorMessages = writeOffService.displayValidation(writeOff, request, model);
+        if ((resultBinder != null && resultBinder.hasErrors()) || !errorMessages.isEmpty()) {
+            target = writeOffService.displayErrors(writeOff, model, errorMessages, request);
+            return target;
+        }
+
         if (request.getParameter(APPROVAL_COMMENT) != null)
             approvalComent = request.getParameter(APPROVAL_COMMENT);
         if (request.getParameter(WF_ACTION) != null)
             workFlowAction = request.getParameter(WF_ACTION);
         if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
             approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
-
-        List<WriteOff> councilresult = writeOffRepo.findCouncilTypeAndNo(writeOff.getResolutionType(), writeOff.getResolutionNo(),
-                writeOff.getBasicProperty().getUpicNo());
-        if (councilresult != null && !councilresult.isEmpty()) {
-            model.addAttribute(ERROR_MSG,
-                    "Could not do Write-off now, Resolution type and resolution no already exist for the given Assessments.");
-            model.addAttribute(ENDORSEMENT_NOTICE, new ArrayList<>());
-            return WO_FORM;
-        }
         if (!writeOff.getDocuments().isEmpty()) {
             documents.addAll(writeOff.getDocuments());
             writeOff.getDocuments().clear();
@@ -263,9 +254,8 @@ public class WriteOffController extends GenericWorkFlowController {
             processAndStoreApplicationDocuments(writeOff);
         }
         writeOffService.saveProperty(writeOff);
-        writeOff.getBasicProperty().addProperty(writeOff.getProperty());
-        writeOffService.setPtDemandSet(writeOff);
         writeOffService.updateDemandDetails(writeOff);
+        writeOff.getBasicProperty().addProperty(writeOff.getProperty());
         writeOffService.saveWriteOff(writeOff, approvalPosition, approvalComent, null, workFlowAction);
         final String successMsg = "write Off Saved Successfully in the System and forwarded to : "
                 + propertyTaxUtil.getApproverUserName(writeOff.getState().getOwnerPosition().getId())
@@ -276,7 +266,6 @@ public class WriteOffController extends GenericWorkFlowController {
         model.addAttribute("propertyId", assessmentNo);
         model.addAttribute(ENDORSEMENT_NOTICE, new ArrayList<>());
         target = WO_SUCCESS_FORM;
-
         return target;
     }
 
@@ -304,28 +293,5 @@ public class WriteOffController extends GenericWorkFlowController {
 			return Collections.emptySet();
 	}
 	
-    private BindingResult validate(final WriteOff writeOff, final BindingResult errors) {
-        if (StringUtils.isBlank(writeOff.getWriteOffType().getCode()))
-            errors.rejectValue("writeOffType.mutationDesc", "writeoff.type");
-        if (StringUtils.isBlank(writeOff.getWriteOffReasons().getName()))
-            errors.rejectValue("writeOffReasons.name", "writeoff.reason");
-        if (StringUtils.isBlank(writeOff.getResolutionNo()))
-            errors.rejectValue("resolutionNo", "writeoff.resolution.type");
-        if (StringUtils.isBlank(writeOff.getResolutionType()))
-            errors.rejectValue("resolutionType", "writeoff.resolution.no");
-        return errors;
-    }
-
-    public String validateWCSewconnection(WriteOff writeOff, final HttpServletRequest request) {
-        boolean hasActiveWC;
-        String error = null;
-        List<Map<String, Object>> activeWCDetails = propertyService.getWCDetails(writeOff.getBasicProperty().getUpicNo(),
-                request);
-        hasActiveWC = writeOffService.checkActiveWC(activeWCDetails);
-        if (hasActiveWC) {
-            error = "Water Connections are active cannot deactivate the property.";
-        }
-        return error;
-    }
 
 }
