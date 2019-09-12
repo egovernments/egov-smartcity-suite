@@ -117,9 +117,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_PRINT
 import static org.egov.ptis.constants.PropertyTaxConstants.WRITE_OFF;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -185,7 +186,6 @@ import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.service.DemandBill.DemandBillService;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -937,16 +937,6 @@ public class PropertyTaxCommonUtils {
         return value != null ? value : BigDecimal.ZERO;
     }
 
-    public BigInteger getModuleIdByName() {
-        BigInteger id = BigInteger.ZERO;
-        String selectQuery = " select id from eg_modules where name =:name ";
-        final Query qry = getSession().createSQLQuery(selectQuery).setString("name", PropertyTaxConstants.FILESTORE_MODULE_NAME);
-        List<Object> list = qry.list();
-        if (!list.isEmpty())
-            id = (BigInteger) list.get(0);
-        return id;
-    }
-
     public boolean isUnderMutationWorkflow(final BasicProperty basicProperty) {
         boolean underWorkFlow = false;
         if (basicProperty.getPropertyMutations() != null)
@@ -1065,64 +1055,31 @@ public class PropertyTaxCommonUtils {
 
     }
     
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-        public List<Map<String, String>> getCouncilDeatils(final String resolutionNo,final String resolutionType,HttpServletRequest request) {
-       final List<Map<String, String>> councilDetails = new ArrayList<>();
-       RestTemplate restTemplate = new RestTemplate();
-        final String url = request.getRequestURL().toString();
-        final String uri = request.getRequestURI();
-        final String host = url.substring(0, url.indexOf(uri));
-        String ulbCode = ApplicationThreadLocals.getCityCode();      
-        String resturl = String.format((COUNCIL_RESOLUTION_RESTURL),WebUtils.extractRequestDomainURL(request, false));
-        URI targetUrl= UriComponentsBuilder.fromUriString(resturl) 
-                        .queryParam("resolutionNo", resolutionNo).queryParam("committeeType", resolutionType)
-                .build()                                                
-                .encode()                                           
-                .toUri();
-        System.out.println("url is **************** "+targetUrl.toString());
-        LOGGER.error("url is ***** " + targetUrl.toString());
-        JSONArray jsonArr = null;
-        final ArrayList<String> nameList = new ArrayList<>();
-        Cookie[] cookies = request.getCookies();
-        String cookie = "";
-        
-        for (int i = 0; i < cookies.length; i++) {
-            cookie = cookie + cookies[i].getName()+ "="+cookies[i].getValue()+";";
-        }
-        
-        final List<MediaType> mediaTypes = new ArrayList<MediaType>();
-        mediaTypes.add(MediaType.ALL);
 
-                
-        HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.set(HttpHeaders.COOKIE, cookie);
-        requestHeaders.setPragma("no-cache");
-        requestHeaders.setConnection("keep-alive");
-        requestHeaders.setCacheControl("no-cache");
-        requestHeaders.setAccept(mediaTypes);
-        requestHeaders.setContentType(MediaType.APPLICATION_JSON);
-
-        final HttpEntity requestEntity = new HttpEntity<>(requestHeaders);
-        
-        ResponseEntity<LinkedHashMap> result = restTemplate.exchange(targetUrl, HttpMethod.GET, requestEntity, LinkedHashMap.class);
-        JSONObject jsonObj = null;
+    public List<Map<String, String>> getCouncilDeatils(final String resolutionNo,final String resolutionType,HttpServletRequest request) {
+        final List<Map<String, String>> councilDetails = new ArrayList<>();
+        StringBuilder builder = new StringBuilder();
         try {
-            jsonObj = new JSONObject(result.getBody());
-        } catch (final JSONException e1) {
-            LOGGER.error("Error in converting string into json array " + e1);
+            builder = builder.append("resolutionNo=").append(URLEncoder.encode(resolutionNo, "UTF-8")).append("&committeeType=").append(URLEncoder.encode(resolutionType, "UTF-8"));
+        } catch (UnsupportedEncodingException e2) {
+            LOGGER.error("Error while encoding the parameters " + e2);
         }
-
-        try {
-            final Map<String, String> newMap = new HashMap<>();
-            for (String key : jsonObj.keySet()) {
-               
-                newMap.put(key, jsonObj.get(key).toString());
-
-            }
-            councilDetails.add(newMap);
-        } catch (final JSONException e) {
-            LOGGER.error("Error in converting json array into json object " + e);
-        }
-        return councilDetails;
+        String urlvalue = builder.toString();
+        String resturl = null;
+         resturl = String.format((COUNCIL_RESOLUTION_RESTURL),WebUtils.extractRequestDomainURL(request, false),urlvalue);
+      String dtls = simpleRestClient.getRESTResponse(resturl);
+      JSONObject jsonObject = new JSONObject(dtls);
+     try {
+        
+         final Map<String, String> newMap = new HashMap<>();
+         for (String key : jsonObject.keySet()) {
+             newMap.put(key, jsonObject.get(key).toString());
+             councilDetails.add(newMap);
+         }
+     } catch (final JSONException e1) {
+         LOGGER.error("Error in converting string into json array " + e1);
+     }
+  
+     return councilDetails;
     }
 }
