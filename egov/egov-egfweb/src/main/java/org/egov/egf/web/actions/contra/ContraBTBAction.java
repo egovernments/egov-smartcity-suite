@@ -243,6 +243,9 @@ public class ContraBTBAction extends BaseVoucherAction {
             LOGGER.debug("Starting Bank to Bank Transfer ...");
         try {
             getHibObjectsFromContraBean();
+            if(contraBean.getAmount().floatValue() < 0.0) {
+            	throw new ApplicationRuntimeException("Please provide correct amount");
+            }
             if (egovCommon.isShowChequeNumber())
                 if (contraBean.getModeOfCollection().equals(MDC_CHEQUE))
                     validateChqNumber(contraBean.getChequeNumber(), contraVoucher.getFromBankAccountId().getId(), voucherHeader);
