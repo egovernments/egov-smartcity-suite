@@ -1,13 +1,20 @@
 {
 	"resources": [
 		{
-			"url": "/v1.0/property/**"
+			"url": "/v1.0/property/**",
+			"roles": "hasAnyRole('third party operator')"
 		},
 		{
-			"url": "/v1.0/watercharges/**"
+			"url": "/v1.0/watercharges/**",
+			"roles": "hasAnyRole('third party operator')"
 		},
 		{
-			"url": "/v1.0/egf/**"
+			"url": "/v1.0/egf/**",
+			"roles": "hasAnyRole('third party operator')"
+		},
+		{
+			"url": "/v1.0/license/**",
+			"roles": "hasAnyRole('third party operator')"
 		}
 	]
 }

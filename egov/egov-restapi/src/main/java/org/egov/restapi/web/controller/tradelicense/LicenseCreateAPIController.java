@@ -58,6 +58,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -84,11 +85,27 @@ public class LicenseCreateAPIController {
     private LicenseCreateAPIValidator licenseCreateAPIValidator;
 
     @PostMapping("license/create")
-    public LicenseCreateResponse createLicense(@Valid @RequestBody LicenseCreateRequest licenseCreateRequest, BindingResult binding) {
+    public LicenseCreateResponse createLicense(@Valid @RequestBody LicenseCreateRequest licenseCreateRequest,
+            BindingResult binding) {
+        return create(licenseCreateRequest, binding);
+    }
+
+    @PostMapping("v1.0/license/create")
+    public LicenseCreateResponse createSecuredLicense(@Valid @RequestBody LicenseCreateRequest licenseCreateRequest,
+            BindingResult binding, OAuth2Authentication authentication) {
+        return create(licenseCreateRequest, binding);
+    }
+    
+    /**
+     * @param licenseCreateRequest
+     * @param binding
+     * @return
+     */
+    public LicenseCreateResponse create(LicenseCreateRequest licenseCreateRequest, BindingResult binding) {
         if (binding.hasErrors()) {
             return convertBindingErrorToResponse(binding);
         } else {
-            //Do business validation
+            // Do business validation
             licenseCreateAPIValidator.validate(licenseCreateRequest, binding);
             if (binding.hasErrors())
                 return convertBindingErrorToResponse(binding);
