@@ -1,0 +1,1 @@
+INSERT INTO eg_role (id, name, description, createddate, createdby, lastmodifiedby, lastmodifieddate, version, internal) VALUES (nextval('SEQ_EG_ROLE'), 'third party operator', 'Third party Operator',  now(), 1, 1,  now(), 0, true);
