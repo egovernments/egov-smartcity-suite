@@ -198,6 +198,20 @@ public class CreateBillController {
 
     @RequestMapping(value = "/egf/billpaymentdetails", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getBillAndPaymentDetails(final HttpServletResponse response, String billNo, String cityCode) {
+        return billAndPaymentDetails(response, billNo);
+    }
+    
+    @RequestMapping(value = "/v1.0/egf/billpaymentdetails", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getSecuredBillAndPaymentDetails(final HttpServletResponse response, String billNo, String cityCode) {
+        return billAndPaymentDetails(response, billNo);
+    }
+
+    /**
+     * @param response
+     * @param billNo
+     * @return
+     */
+    public String billAndPaymentDetails(final HttpServletResponse response, String billNo) {
         RestErrors restErrors;
         try {
             if (StringUtils.isEmpty(billNo)) {
@@ -217,7 +231,7 @@ public class CreateBillController {
                 return JsonConvertor.convert(restErrors);
             }
 
-            if (!egBillregister.getStatus().getCode().contentEquals("Approved")) {
+            if (!egBillregister.getStatus().getCode().contentEquals("APPROVED")) {
                 restErrors = new RestErrors();
                 restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_BILL_STATUS);
                 restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_BILL_STATUS);

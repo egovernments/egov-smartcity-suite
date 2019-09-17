@@ -32,7 +32,7 @@ public class BillAndPaymentDetailsHibernateDAO implements BillAndPaymentDetailsD
                 .append(" mbd.billnumber = :billNo AND egbr.status.code = :billStatus");
         Query query = getCurrentSession().createQuery(queryString.toString())
                 .setParameter("billNo", billNo, StringType.INSTANCE)
-                .setParameter("billStatus", "Approved", StringType.INSTANCE);
+                .setParameter("billStatus", "APPROVED", StringType.INSTANCE);
         return query.setResultTransformer(Transformers.aliasToBean(BillPaymentDetails.class)).list();
     }
 

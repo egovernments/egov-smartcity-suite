@@ -5,6 +5,9 @@
 		},
 		{
 			"url": "/v1.0/watercharges/**"
+		},
+		{
+			"url": "/v1.0/egf/**"
 		}
 	]
 }
