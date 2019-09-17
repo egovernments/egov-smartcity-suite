@@ -1041,24 +1041,21 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     public String getReceiptHeaderforDishonor(final Long mode, final Long bankAccId, final Long bankId,
             final String chequeDDNo, final String chqueDDDate) {
         final StringBuilder sb = new StringBuilder();
-        sb.append("FROM egcl_collectionheader rpt,egcl_collectioninstrument ci,egf_instrumentheader ih,egw_status status,bank b,"
-                + "bankbranch bb,bankaccount ba WHERE rpt.id = ci.collectionheader AND ci.instrumentheader = ih.id AND status.id = ih.id_status "
-                + "AND b.id = bb.bankid AND bb.id = ba.branchid AND ba.id = ih.bankaccountid AND ih.instrumenttype = '"
-                + mode
-                + "' AND ((ih.ispaycheque ='0' AND status.moduletype ='"
-                + CollectionConstants.MODULE_NAME_INSTRUMENTHEADER
-                + "'"
-                + "AND status.description = '"
-                + CollectionConstants.INSTRUMENT_DEPOSITED_STATUS + "'))");
+        sb.append("FROM egcl_collectionheader rpt,egcl_collectioninstrument ci,egf_instrumentheader ih,egw_status status,bank b,")
+                .append("bankbranch bb,bankaccount ba WHERE rpt.id = ci.collectionheader AND ci.instrumentheader = ih.id AND status.id = ih.id_status ")
+                .append("AND b.id = bb.bankid AND bb.id = ba.branchid AND ba.id = ih.bankaccountid AND ih.instrumenttype = '")
+                .append(mode).append("' AND ((ih.ispaycheque ='0' AND status.moduletype ='")
+                .append(CollectionConstants.MODULE_NAME_INSTRUMENTHEADER).append("' AND status.description = '")
+                .append(CollectionConstants.INSTRUMENT_DEPOSITED_STATUS + "'))");
 
         if (bankAccId != null && bankAccId != -1)
-            sb.append(" AND ih.bankaccountid=" + bankAccId + BLANK);
+            sb.append(" AND ih.bankaccountid=").append(bankAccId).append(BLANK);
         if ((bankAccId == null || bankAccId == -1) && bankId != null && bankId != 0)
-            sb.append(" AND ih.bankid=" + bankId + BLANK);
+            sb.append(" AND ih.bankid=").append(bankId).append(BLANK);
         if (!BLANK.equals(chequeDDNo) && chequeDDNo != null)
-            sb.append(" AND ih.instrumentnumber=trim('" + chequeDDNo + "') ");
+            sb.append(" AND ih.instrumentnumber=trim('").append(chequeDDNo).append("') ");
         if (!BLANK.equals(chqueDDDate) && chqueDDDate != null)
-            sb.append(" AND ih.instrumentdate = '" + chqueDDDate + "' ");
+            sb.append(" AND ih.instrumentdate = '").append(chqueDDDate).append("' ");
 
         return sb.toString();
     }
