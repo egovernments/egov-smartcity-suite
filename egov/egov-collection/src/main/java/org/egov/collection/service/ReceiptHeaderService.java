@@ -110,6 +110,7 @@ import org.hibernate.Query;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import static org.egov.collection.constants.CollectionConstants.BLANK;
 
 /**
  * Provides services related to receipt header
@@ -197,7 +198,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         final boolean allWfAction = wfAction == null || wfAction.equals(CollectionConstants.ALL);
         final boolean allUserName = userName == null || userName.equals(CollectionConstants.ALL);
         final boolean allDate = receiptDate == null || receiptDate.equals(CollectionConstants.ALL);
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat formatter = new SimpleDateFormat(CollectionConstants.DATE_FORMAT_DDMMYYYY);
         Date rcptDate = null;
         try {
             rcptDate = formatter.parse(receiptDate);
@@ -298,7 +299,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 headerdetails.put(VoucherConstant.VOUCHERTYPE, CollectionConstants.FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE);
             }
         headerdetails.put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
-        final SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat format = new SimpleDateFormat(CollectionConstants.DATE_FORMAT_DDMMYYYY);
         try {
             String dateString;
             if (receiptHeader.getVoucherDate() == null) {
@@ -680,14 +681,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     && !receiptHeader.getState().getValue().equals(CollectionConstants.WF_STATE_END))
                 endReceiptWorkFlowOnCancellation(receiptHeader);
             if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL)
-                if (receiptHeader.getService().getCode().equals(CollectionConstants.SERVICECODE_LAMS)) {
-                    // TODO Implement separate API for Microservice billing services
-                    final BillReceiptInfo billReceipt = new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
-                            persistenceService, null);
-                    microserviceBillingUtil.updateReceiptDetailsAndGetReceiptAmountInfo(new BillReceiptReq(billReceipt),
-                            receiptHeader.getService().getCode());
-                } else
-                    updateBillingSystemWithReceiptInfo(receiptHeader, null, null);
+                updateBillingSystemWithReceiptInfo(receiptHeader, null, null);
         }
         return super.persist(receiptHeader);
     }
@@ -1058,12 +1052,12 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 + CollectionConstants.INSTRUMENT_DEPOSITED_STATUS + "'))");
 
         if (bankAccId != null && bankAccId != -1)
-            sb.append(" AND ih.bankaccountid=" + bankAccId + "");
+            sb.append(" AND ih.bankaccountid=" + bankAccId + BLANK);
         if ((bankAccId == null || bankAccId == -1) && bankId != null && bankId != 0)
-            sb.append(" AND ih.bankid=" + bankId + "");
-        if (!"".equals(chequeDDNo) && chequeDDNo != null)
+            sb.append(" AND ih.bankid=" + bankId + BLANK);
+        if (!BLANK.equals(chequeDDNo) && chequeDDNo != null)
             sb.append(" AND ih.instrumentnumber=trim('" + chequeDDNo + "') ");
-        if (!"".equals(chqueDDDate) && chqueDDDate != null)
+        if (!BLANK.equals(chqueDDDate) && chqueDDDate != null)
             sb.append(" AND ih.instrumentdate = '" + chqueDDDate + "' ");
 
         return sb.toString();
@@ -1111,7 +1105,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     }// end of method
 
     public Date getDataEntryCutOffDate() {
-        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat sdf = new SimpleDateFormat(CollectionConstants.DATE_FORMAT_DDMMYYYY);
         Date cutOffDate = null;
         try {
             cutOffDate = sdf.parse(collectionsUtil.getAppConfigValue(
@@ -1139,11 +1133,28 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         LOGGER.info("$$$$$$ Update Billing system for Service Code :"
                 + receiptHeader.getService().getCode()
                 + (receiptHeader.getConsumerCode() != null ? " and consumer code: " + receiptHeader.getConsumerCode()
-                        : ""));
+                        : BLANK));
         final Set<BillReceiptInfo> billReceipts = new HashSet<>(0);
-        billReceipts.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService,
-                bouncedInstrumentInfo));
+        final BillReceiptInfo billReceipt = new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
+                persistenceService, bouncedInstrumentInfo);
+        billReceipts.add(billReceipt);
 
+        // Instrument bounce and receipt cancel update LAMS demand
+        if (CollectionConstants.SERVICECODE_LAMS.equals(receiptHeader.getService().getCode())
+                && receiptHeader.getStatus() != null
+                && (CollectionConstants.RECEIPT_STATUS_CODE_INSTRUMENT_BOUNCED.equals(receiptHeader.getStatus().getCode()) ||
+                        CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED.equals(receiptHeader.getStatus().getCode()))) {
+            try {
+                // TODO receipt details bifurcation data not required while instrument bounce and cancel receipt
+                microserviceBillingUtil.updateReceiptDetailsAndGetReceiptAmountInfo(new BillReceiptReq(billReceipt),
+                        receiptHeader.getService().getCode());
+            } catch (final Exception e) {
+                final String errMsg = "Exception while updating billing system on receipt cancel/instrument bounce for bill number  ["
+                        + billReceipt.getBillReferenceNum() + "]!";
+                LOGGER.error(errMsg, e);
+                throw new ApplicationRuntimeException(errMsg, e);
+            }
+        }
         if (receiptHeader.getService().getCode().equals(CollectionConstants.SERVICECODE_LAMS)
                 || updateBillingSystem(receiptHeader.getService(), billReceipts, billingService)) {
             receiptHeader.setIsReconciled(true);
@@ -1154,7 +1165,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         LOGGER.info("$$$$$$ Billing system updated for Service Code :"
                 + receiptHeader.getService().getCode()
                 + (receiptHeader.getConsumerCode() != null ? " and consumer code: " + receiptHeader.getConsumerCode()
-                        : ""));
+                        : BLANK));
     }
 
     @Transactional

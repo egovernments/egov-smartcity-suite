@@ -615,6 +615,7 @@ public final class CollectionConstants {
     public static final Integer QUARTZ_ATOM_RECONCILE_BULK_JOBS = 5;
 
     public static final String DATE_FORMAT_YYYYMMDD = "yyyy-MM-dd";
+    public static final String DATE_FORMAT_DDMMYYYY = "dd/MM/yyyy";
     public static final SimpleDateFormat DATEFORMATTER_YYYY_MM_DD = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
 
     public static final String DASHBOARD_GROUPING_DISTRICTWISE = "district";
