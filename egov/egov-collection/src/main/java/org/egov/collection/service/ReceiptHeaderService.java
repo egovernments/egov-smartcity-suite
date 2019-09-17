@@ -1046,7 +1046,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 .append("AND b.id = bb.bankid AND bb.id = ba.branchid AND ba.id = ih.bankaccountid AND ih.instrumenttype = '")
                 .append(mode).append("' AND ((ih.ispaycheque ='0' AND status.moduletype ='")
                 .append(CollectionConstants.MODULE_NAME_INSTRUMENTHEADER).append("' AND status.description = '")
-                .append(CollectionConstants.INSTRUMENT_DEPOSITED_STATUS + "'))");
+                .append(CollectionConstants.INSTRUMENT_DEPOSITED_STATUS).append("'))");
 
         if (bankAccId != null && bankAccId != -1)
             sb.append(" AND ih.bankaccountid=").append(bankAccId).append(BLANK);
