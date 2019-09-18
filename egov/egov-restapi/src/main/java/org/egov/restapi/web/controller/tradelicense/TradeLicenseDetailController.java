@@ -56,7 +56,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -65,15 +64,27 @@ import java.util.stream.Collectors;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
-@RequestMapping("/tradelicense")
 public class TradeLicenseDetailController {
 
     @Autowired
     @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
 
-    @GetMapping(value = "/details", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/tradelicense/details", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public List<TradeLicenseDetailResponse> tradeLicenseDetails(TradeLicenseDetailRequest request) {
+        return licenseDetails(request);
+    }
+
+    @GetMapping(value = "/v1.0/license/details", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public List<TradeLicenseDetailResponse> securedTradeLicenseDetails(TradeLicenseDetailRequest request) {
+        return licenseDetails(request);
+    }
+
+    /**
+     * @param request
+     * @return
+     */
+    public List<TradeLicenseDetailResponse> licenseDetails(TradeLicenseDetailRequest request) {
         return tradeLicenseService.getLicenses(request.tradeLicenseLike())
                 .parallelStream()
                 .map(TradeLicenseDetailResponse::new)
