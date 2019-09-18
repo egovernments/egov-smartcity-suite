@@ -154,7 +154,7 @@ public class EditCollectionController {
                 final Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
                 final String reasonMaster = demandDetail.getEgDemandReason().getEgDemandReasonMaster()
                         .getReasonMaster();
-                final DemandDetail dmdDtl = createDemandDetailBean(installment, reasonMaster, demandDetail.getAmount(),
+                final DemandDetail dmdDtl = createDemandDetailBean(installment, reasonMaster, propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail),
                         demandDetail.getAmtCollected());
                 demandDetailBeans.add(dmdDtl);
             }

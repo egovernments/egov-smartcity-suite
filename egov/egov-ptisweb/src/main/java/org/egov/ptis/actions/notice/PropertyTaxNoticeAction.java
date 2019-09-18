@@ -790,30 +790,30 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 					.equals(propertyTaxCommonUtils.getCurrentPeriodInstallment())) {
 				if (!demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
 						.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES))
-					totalTax = totalTax.add(demandDetail.getAmount());
+					totalTax = totalTax.add(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
 				if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
 						.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_TAX))
-					propertyTax = propertyTax.add(demandDetail.getAmount());
+					propertyTax = propertyTax.add(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
 				if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
 						.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS)) {
 					if (noticeMode.equalsIgnoreCase(CREATE))
-						infoBean.setNewLibraryCess(demandDetail.getAmount());
+						infoBean.setNewLibraryCess(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
 					if (noticeMode.equalsIgnoreCase(MODIFY) || noticeMode.equalsIgnoreCase(TAXEXEMPT)
 							|| noticeMode.equalsIgnoreCase(DEMOLITION))
-						infoBean.setRevLibraryCess(demandDetail.getAmount());
+						infoBean.setRevLibraryCess(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
 				}
 
 				if (NON_VACANT_TAX_DEMAND_CODES.contains(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
 						|| demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
 								.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX))
-					propertyTax = propertyTax.add(demandDetail.getAmount());
+					propertyTax = propertyTax.add(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
 				if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
 						.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY)) {
 					if (noticeMode.equalsIgnoreCase(CREATE))
-						infoBean.setNewUCPenalty(demandDetail.getAmount());
+						infoBean.setNewUCPenalty(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
 					if (noticeMode.equalsIgnoreCase(MODIFY) || noticeMode.equalsIgnoreCase(TAXEXEMPT)
 							|| noticeMode.equalsIgnoreCase(DEMOLITION))
-						infoBean.setRevUCPenalty(demandDetail.getAmount());
+						infoBean.setRevUCPenalty(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
 				}
 			}
 		if (noticeMode.equalsIgnoreCase(CREATE)) {
@@ -837,20 +837,20 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 					.equals(propertyTaxCommonUtils.getCurrentPeriodInstallment())) {
 				if (!demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
 						.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES))
-					totalTax = totalTax.add(demandDetail.getAmount());
+					totalTax = totalTax.add(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
 				if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
 						.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_TAX))
-					propertyTax = propertyTax.add(demandDetail.getAmount());
+					propertyTax = propertyTax.add(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
 				if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
 						.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS))
-					infoBean.setExistingLibraryCess(demandDetail.getAmount());
+					infoBean.setExistingLibraryCess(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
 				if (NON_VACANT_TAX_DEMAND_CODES.contains(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
 						|| demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
 								.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX))
-					propertyTax = propertyTax.add(demandDetail.getAmount());
+					propertyTax = propertyTax.add(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
 				if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
 						.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY))
-					infoBean.setExistingUCPenalty(demandDetail.getAmount());
+					infoBean.setExistingUCPenalty(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
 			}
 		infoBean.setExistingTotalTax(totalTax);
 		infoBean.setExistingPropertyTax(propertyTax);

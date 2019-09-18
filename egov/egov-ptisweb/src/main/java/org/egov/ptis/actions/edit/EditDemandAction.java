@@ -429,13 +429,13 @@ public class EditDemandAction extends BaseFormAction {
                 if (newMap.get(dd.getEgDemandReason().getEgInstallmentMaster()) == null) {
                     final Map<String, Map<String, Object>> rsns = new LinkedHashMap<>();
                     final Map<String, Object> dtls = new HashMap<>();
-                    dtls.put(AMOUNT, dd.getAmount());
+                    dtls.put(AMOUNT, propertyTaxCommonUtils.getTotalDemandVariationAmount(dd));
                     dtls.put(COLLECTION, dd.getAmtCollected());
                     dtls.put(IS_NEW, false);
                     rsns.put(dd.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(), dtls);
                     newMap.put(dd.getEgDemandReason().getEgInstallmentMaster(), rsns);
                 } else if (newMap.get(dd.getEgDemandReason().getEgInstallmentMaster()) != null
-                        && dd.getAmount().compareTo(BigDecimal.ZERO) == 0) {
+                        && propertyTaxCommonUtils.getTotalDemandVariationAmount(dd).compareTo(BigDecimal.ZERO) == 0) {
                     final Map<String, Object> dtls = new HashMap<>();
                     dtls.put(AMOUNT, BigDecimal.ZERO);
                     dtls.put(COLLECTION, BigDecimal.ZERO);
@@ -444,10 +444,10 @@ public class EditDemandAction extends BaseFormAction {
                             .put(dd.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(), dtls);
 
                 } else if (newMap.get(dd.getEgDemandReason().getEgInstallmentMaster()) != null
-                        && dd.getAmount().compareTo(BigDecimal.ZERO) != 0) {
+                        && propertyTaxCommonUtils.getTotalDemandVariationAmount(dd).compareTo(BigDecimal.ZERO) != 0) {
                     final Map<String, Map<String, Object>> rsns = new LinkedHashMap<>();
                     final Map<String, Object> dtls = new HashMap<>();
-                    dtls.put(AMOUNT, dd.getAmount());
+                    dtls.put(AMOUNT, propertyTaxCommonUtils.getTotalDemandVariationAmount(dd));
                     dtls.put(COLLECTION, dd.getAmtCollected());
                     dtls.put(IS_NEW, false);
                     rsns.put(dd.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(), dtls);
@@ -598,13 +598,13 @@ public class EditDemandAction extends BaseFormAction {
 
                         egDemandDtls = propService.createDemandDetails(dmdDetail.getActualAmount(),
                                 dmdDetail.getActualCollection(), egDmdRsn, dmdDetail.getInstallment());
-                        totalDmd = totalDmd.add(egDemandDtls.getAmount());
+                        totalDmd = totalDmd.add(propertyTaxCommonUtils.getTotalDemandVariationAmount(egDemandDtls));
                     }
 
                 if (dmdDtlsWithZeroAmt.isEmpty()) {
                     egDemandDtls = propService.createDemandDetails(dmdDetail.getActualAmount(),
                             dmdDetail.getActualCollection(), egDmdRsn, dmdDetail.getInstallment());
-                    totalDmd = totalDmd.add(egDemandDtls.getAmount());
+                    totalDmd = totalDmd.add(propertyTaxCommonUtils.getTotalDemandVariationAmount(egDemandDtls));
 
                 }
                 logAudit(dmdDetail);
@@ -674,7 +674,7 @@ public class EditDemandAction extends BaseFormAction {
                 final EgDemandDetails newDmndDtls = propService
                         .getEgDemandDetailsForReason(demandDetailsSetByInstallment.get(inst), rsn);
                 if (newDmndDtls != null && newDmndDtls.getAmtCollected() != null) {
-                    final BigDecimal extraCollAmt = newDmndDtls.getAmtCollected().subtract(newDmndDtls.getAmount());
+                    final BigDecimal extraCollAmt = newDmndDtls.getAmtCollected().subtract(propertyTaxCommonUtils.getTotalDemandVariationAmount(newDmndDtls));
                     // If there is extraColl then add to map
                     if (extraCollAmt.compareTo(BigDecimal.ZERO) > 0) {
                         dmdRsnAmt.put(newDmndDtls.getEgDemandReason().getEgDemandReasonMaster().getCode(),

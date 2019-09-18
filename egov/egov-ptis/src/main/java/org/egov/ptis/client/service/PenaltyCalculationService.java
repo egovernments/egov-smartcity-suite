@@ -203,8 +203,8 @@ public class PenaltyCalculationService {
                     } else {
 
                         if (penaltyDemandDetail.getAmtCollected().compareTo(BigDecimal.ZERO) > 0) {
-                            balancePenalty = penaltyDemandDetail.getAmount().subtract(
-                                    penaltyDemandDetail.getAmtCollected());
+                            balancePenalty = (propertyTaxCommonUtils.getTotalDemandVariationAmount(penaltyDemandDetail))
+                                    .subtract(penaltyDemandDetail.getAmtCollected());
                         }
 
                         if (installmentLatestCollectionDate.getMonthOfYear() == today.getMonthOfYear()
@@ -762,7 +762,8 @@ public class PenaltyCalculationService {
         for (final EgDemandDetails dmdDet : currentDemand.getEgDemandDetails()) {
             if (dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode()
                     .equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES)
-                    && dmdDet.getAmount().compareTo(BigDecimal.ZERO) > 0)
+                    && (propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDet))
+                    .compareTo(BigDecimal.ZERO) > 0)
                 installmentWisePenaltyDemandDetails.put(dmdDet.getEgDemandReason().getEgInstallmentMaster(), dmdDet);
         }
         return installmentWisePenaltyDemandDetails;

@@ -245,12 +245,12 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
             for (final EgDemandDetails dmdDtls : currPtDmd.getEgDemandDetails())
                 if (dmdDtls.getInstallmentStartDate().equals(effectiveInstall.getFromDate())
                         || dmdDtls.getInstallmentStartDate().after(effectiveInstall.getFromDate()))
-                    if (dmdDtls.getAmount().compareTo(totalColl) >= 0) {
+                    if (propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDtls).compareTo(totalColl) >= 0) {
                         dmdDtls.setAmtCollected(totalColl);
                         totalColl = BigDecimal.ZERO;
                     } else {
-                        dmdDtls.setAmtCollected(dmdDtls.getAmount());
-                        totalColl = totalColl.subtract(dmdDtls.getAmount());
+                        dmdDtls.setAmtCollected(propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDtls));
+                        totalColl = totalColl.subtract(propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDtls));
                     }
             if (totalColl.compareTo(BigDecimal.ZERO) > 0) {
                 EgDemandDetails newDtls;

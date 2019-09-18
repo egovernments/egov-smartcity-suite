@@ -75,6 +75,7 @@ import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.service.mobile.MobilePaymentService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -98,6 +99,9 @@ public class MobilePaymentController {
 
     @Autowired
     private MobilePaymentService mobilePaymentService;
+    
+    @Autowired
+    PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     /**
      * API to process payments from Mobile App
@@ -140,10 +144,10 @@ public class MobilePaymentController {
                 }
                 if (currentPtdemand != null)
                     for (final EgDemandDetails demandDetails : currentPtdemand.getEgDemandDetails())
-                        if (demandDetails.getAmount().subtract(demandDetails.getAmtCollected())
+                        if (propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetails).subtract(demandDetails.getAmtCollected())
                                 .compareTo(BigDecimal.ZERO) > 0)
                             totalTaxDue = totalTaxDue
-                                    .add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()));
+                                    .add(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetails).subtract(demandDetails.getAmtCollected()));
                 if (amountToBePaid.compareTo(totalTaxDue) > 0) {
                     model.addAttribute(ERROR_MSG, THIRD_PARTY_DEMAND_AMOUNT_GREATER_MSG);
                     return PROPERTY_VALIDATION;

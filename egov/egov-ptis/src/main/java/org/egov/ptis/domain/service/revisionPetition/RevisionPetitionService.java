@@ -673,18 +673,18 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
         for (final EgDemandDetails demandDetail : currDemand.getEgDemandDetails())
             if (demandDetail.getEgDemandReason().getEgInstallmentMaster()
                     .equals(propertyTaxCommonUtils.getCurrentPeriodInstallment())) {
-                totalTax = totalTax.add(demandDetail.getAmount());
+                totalTax = totalTax.add(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
 
                 if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                         .equalsIgnoreCase(DEMANDRSN_CODE_EDUCATIONAL_TAX))
-                    propertyTax = propertyTax.add(demandDetail.getAmount());
+                    propertyTax = propertyTax.add(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
                 setLibraryCess(infoBean, propertyType, demandDetail);
 
                 if (NON_VACANT_TAX_DEMAND_CODES
                         .contains(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
                         || demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                                 .equalsIgnoreCase(DEMANDRSN_CODE_VACANT_TAX))
-                    propertyTax = propertyTax.add(demandDetail.getAmount());
+                    propertyTax = propertyTax.add(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
                 setUCPenalty(infoBean, propertyType, demandDetail);
             }
         setTotalTax(infoBean, totalTax, propertyTax, propertyType);
@@ -707,9 +707,9 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
         if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                 .equalsIgnoreCase(DEMANDRSN_CODE_LIBRARY_CESS)) {
             if (propertyType.equalsIgnoreCase(CURRENT))
-                infoBean.setRevLibraryCess(demandDetail.getAmount());
+                infoBean.setRevLibraryCess(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
             if (propertyType.equalsIgnoreCase(HISTORY))
-                infoBean.setExistingLibraryCess(demandDetail.getAmount());
+                infoBean.setExistingLibraryCess(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
         }
     }
 
@@ -718,9 +718,9 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
         if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                 .equalsIgnoreCase(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY)) {
             if (propertyType.equalsIgnoreCase(CURRENT))
-                infoBean.setRevUCPenalty(demandDetail.getAmount());
+                infoBean.setRevUCPenalty(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
             if (propertyType.equalsIgnoreCase(HISTORY))
-                infoBean.setExistingUCPenalty(demandDetail.getAmount());
+                infoBean.setExistingUCPenalty(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
         }
     }
 
@@ -1142,7 +1142,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                 final EgDemandDetails newDmndDtls = propertyService
                         .getEgDemandDetailsForReason(demandDetailsSetByInstallment.get(inst), rsn);
                 if (newDmndDtls != null && newDmndDtls.getAmtCollected() != null) {
-                    final BigDecimal extraCollAmt = newDmndDtls.getAmtCollected().subtract(newDmndDtls.getAmount());
+                    final BigDecimal extraCollAmt = newDmndDtls.getAmtCollected().subtract(propertyTaxCommonUtils.getTotalDemandVariationAmount(newDmndDtls));
                     // If there is extraColl then add to map
                     if (extraCollAmt.compareTo(BigDecimal.ZERO) > 0) {
                         dmdRsnAmt.put(newDmndDtls.getEgDemandReason().getEgDemandReasonMaster().getCode(),

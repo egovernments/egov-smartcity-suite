@@ -314,7 +314,7 @@ public class PropertyTaxCollection extends TaxCollection {
         if (penaltyDmdDet == null)
             dmdDet = ptBillServiceImpl.insertDemandDetails(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY, chqBouncePenalty, currInstallment);
         else {
-            BigDecimal existDmdDetAmt = penaltyDmdDet.getAmount();
+            BigDecimal existDmdDetAmt = propertyTaxCommonUtils.getTotalDemandVariationAmount(penaltyDmdDet);
             if (existDmdDetAmt == null)
                 existDmdDetAmt = ZERO;
             penaltyDmdDet.setAmount(existDmdDetAmt.add(chqBouncePenalty));
@@ -327,7 +327,7 @@ public class PropertyTaxCollection extends TaxCollection {
         demand.setAmtCollected(demand.getAmtCollected().subtract(billRcptInfo.getTotalAmount()));
         BigDecimal baseDemand = demand.getBaseDemand();
         if (baseDemand == null)
-            baseDemand = demand.getEgDemandDetails().stream().map(EgDemandDetails::getAmount).reduce(ZERO, BigDecimal::add);
+            baseDemand = demand.getEgDemandDetails().stream().map(EgDemandDetails->propertyTaxCommonUtils.getTotalDemandVariationAmount(EgDemandDetails)).reduce(ZERO, BigDecimal::add);
         demand.setBaseDemand(baseDemand.add(chqBouncePenalty));
         demand.setStatus(DMD_STATUS_CHEQUE_BOUNCED);
         demand.addEgDemandDetails(dmdDet);
@@ -384,15 +384,15 @@ public class PropertyTaxCollection extends TaxCollection {
             if (!(demandReasonMasterCode.equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES)
                     || demandReasonMasterCode.equalsIgnoreCase(DEMANDRSN_CODE_ADVANCE))) {
                 BigDecimal amountPending;
-                amountPending = dmdDtls.getAmount().subtract(dmdDtls.getAmtCollected());
+                amountPending = propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDtls).subtract(dmdDtls.getAmtCollected());
                 restAmountToBePaid = restAmountToBePaid.add(amountPending);
             }
 
             if (demandReasonMasterCode.equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES)) {
                 allPenaltyDemands.add(dmdDtls);
-                penaltyAmount = penaltyAmount.add(dmdDtls.getAmount());
+                penaltyAmount = penaltyAmount.add(propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDtls));
             }
-            if (dmdDtls.getAmount().compareTo(BigDecimal.ZERO) > 0
+            if (propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDtls).compareTo(BigDecimal.ZERO) > 0
                     || demandReasonMasterCode.equalsIgnoreCase(DEMANDRSN_CODE_ADVANCE)) {
 
                 dmdRsn = dmdDtls.getEgDemandReason();
@@ -484,10 +484,10 @@ public class PropertyTaxCollection extends TaxCollection {
         if (canWaiveOff)
             for (EgDemandDetails egdd : allPenaltyDemands) {
 
-                BigDecimal amtRebate = egdd.getAmount().subtract(egdd.getAmtCollected());
+                BigDecimal amtRebate = propertyTaxCommonUtils.getTotalDemandVariationAmount(egdd).subtract(egdd.getAmtCollected());
                 if (amtRebate.compareTo(ZERO) == 1) {
                     egdd.setAmtRebate(amtRebate);
-                    egdd.setAmtCollected(egdd.getAmount());
+                    egdd.setAmtCollected(propertyTaxCommonUtils.getTotalDemandVariationAmount(egdd));
                     demanddetailsDao.update(egdd);
                 }
             }

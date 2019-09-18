@@ -184,7 +184,8 @@ public class PTBillServiceImpl extends BillServiceInterface {
                 .generateOrderForDemandDetails(ptDemand.getEgDemandDetails(), billable, advanceInstallments);
 
         for (final EgDemandDetails demandDetail : ptDemand.getEgDemandDetails()) {
-            balance = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
+            balance = (propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail))
+                      .subtract(demandDetail.getAmtCollected());
             reason = demandDetail.getEgDemandReason();
             installment = reason.getEgInstallmentMaster();
             reasonMasterCode = reason.getEgDemandReasonMaster().getCode();
@@ -194,7 +195,8 @@ public class PTBillServiceImpl extends BillServiceInterface {
                 if (isNotPenalty(reasonMasterCode)) {
                     key = installmentDate.getMonthOfYear() + "/" + installmentDate.getYear() + "-" + reasonMasterCode;
                     billDetailBean = new BillDetailBean(installment, orderMap.get(key), key,
-                            demandDetail.getAmount().subtract(demandDetail.getAmtCollected()),
+                            (propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail))
+                            .subtract(demandDetail.getAmtCollected()),
                             demandDetail.getEgDemandReason().getGlcodeId().getGlcode(),
                             reason.getEgDemandReasonMaster().getReasonMaster(), Integer.valueOf(1),
                             definePurpose(demandDetail));
@@ -213,7 +215,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
         for (EgDemandDetails dmdDet : ptDemand.getEgDemandDetails()) {
             if (isDmdForCurrYrSecHalf(currInstallments, dmdDet)
                     && !dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES)) {
-                currentInstDemand = currentInstDemand.add(dmdDet.getAmount());
+                currentInstDemand = currentInstDemand.add(propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDet));
             }
         }
         // Advance Bill details only if current tax is greater than zero.
@@ -339,7 +341,8 @@ public class PTBillServiceImpl extends BillServiceInterface {
             if (penDmdDtls == null && thereIsPenalty)
                 insertPenDmdDetail = insertPenaltyDmdDetail(installment, penalty);
             else if (penDmdDtls != null)
-                penalty = penDmdDtls.getAmount().subtract(penDmdDtls.getAmtCollected());
+                penalty = (propertyTaxCommonUtils.getTotalDemandVariationAmount(penDmdDtls))
+                        .subtract(penDmdDtls.getAmtCollected());
             if (thereIsPenalty) {
                 key = installmentDate.getMonthOfYear() + "/" + installmentDate.getYear() + "-"
                         + DEMANDRSN_CODE_PENALTY_FINES;

@@ -381,7 +381,7 @@ public class AddDemandAction extends BaseFormAction {
                     } else
                         installmentDemandReason.get(installment).add(reasonMaster);
 
-                    final DemandDetail dmdDtl = createDemandDetailBean(installment, reasonMaster, demandDetail.getAmount(),
+                    final DemandDetail dmdDtl = createDemandDetailBean(installment, reasonMaster, propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail),
                             demandDetail.getAmtCollected(), false);
                     demandDetailBeanList.add(dmdDtl);
                 }
@@ -494,14 +494,14 @@ public class AddDemandAction extends BaseFormAction {
                     } else if (dmdDetail.getActualAmount().compareTo(BigDecimal.ZERO) != 0 && dmdDetail.getIsNew()) {
                         egDemandDtls = propService.createDemandDetails(dmdDetail.getActualAmount(),
                                 dmdDetail.getActualCollection(), egDmdRsn, dmdDetail.getInstallment());
-                        totalDmd = totalDmd.add(egDemandDtls.getAmount());
+                        totalDmd = totalDmd.add(propertyTaxCommonUtils.getTotalDemandVariationAmount(egDemandDtls));
                     }
 
                 if (dmdDtlsWithZeroAmt.isEmpty() && dmdDetail.getActualAmount().compareTo(BigDecimal.ZERO) != 0
                         && dmdDetail.getIsNew()) {
                     egDemandDtls = propService.createDemandDetails(dmdDetail.getActualAmount(),
                             dmdDetail.getActualCollection(), egDmdRsn, dmdDetail.getInstallment());
-                    totalDmd = totalDmd.add(egDemandDtls.getAmount());
+                    totalDmd = totalDmd.add(propertyTaxCommonUtils.getTotalDemandVariationAmount(egDemandDtls));
                 }
                 logAudit(dmdDetail);
                 final List<EgDemandDetails> dmdDtl = new ArrayList<>();
@@ -571,7 +571,7 @@ public class AddDemandAction extends BaseFormAction {
                 final EgDemandDetails newDmndDtls = propService
                         .getEgDemandDetailsForReason(demandDetailsSetByInstallment.get(inst), rsn);
                 if (newDmndDtls != null && newDmndDtls.getAmtCollected() != null) {
-                    final BigDecimal extraCollAmt = newDmndDtls.getAmtCollected().subtract(newDmndDtls.getAmount());
+                    final BigDecimal extraCollAmt = newDmndDtls.getAmtCollected().subtract(propertyTaxCommonUtils.getTotalDemandVariationAmount(newDmndDtls));
                     // If there is extraColl then add to map
                     if (extraCollAmt.compareTo(BigDecimal.ZERO) > 0) {
                         dmdRsnAmt.put(newDmndDtls.getEgDemandReason().getEgDemandReasonMaster().getCode(),

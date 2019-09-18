@@ -835,7 +835,7 @@ public class PropertyService {
                 final EgDemandDetails newDmndDtls = getEgDemandDetailsForReason(demandDetailsSetByInstallment.get(inst),
                         rsn);
                 if (newDmndDtls != null && newDmndDtls.getAmtCollected() != null) {
-                    final BigDecimal extraCollAmt = newDmndDtls.getAmtCollected().subtract(newDmndDtls.getAmount());
+                    final BigDecimal extraCollAmt = newDmndDtls.getAmtCollected().subtract(propertyTaxCommonUtils.getTotalDemandVariationAmount(newDmndDtls));
                     // If there is extraColl then add to map
                     if (extraCollAmt.compareTo(BigDecimal.ZERO) > 0) {
                         dmdRsnAmt.put(newDmndDtls.getEgDemandReason().getEgDemandReasonMaster().getCode(),
@@ -1197,7 +1197,7 @@ public class PropertyService {
             // This part of code handles the adjustment of extra collections
             // when there is decrease in tax during property modification.
 
-            final BigDecimal extraCollAmt = newDmndDtls.getAmtCollected().subtract(newDmndDtls.getAmount());
+            final BigDecimal extraCollAmt = newDmndDtls.getAmtCollected().subtract(propertyTaxCommonUtils.getTotalDemandVariationAmount(newDmndDtls));
             // If there is extraColl then add to map
             if (extraCollAmt.compareTo(BigDecimal.ZERO) > 0) {
                 dmdRsnAmt.put(rsn, extraCollAmt);
@@ -1819,7 +1819,7 @@ public class PropertyService {
                             && !dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode()
                             .equalsIgnoreCase(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY))
                         rsnWiseDmd.put(dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode(),
-                                dmdDet.getAmount());
+                                propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDet));
                 instWiseDmd.put(inst, rsnWiseDmd);
             }
         LOGGER.debug("Exiting from prepareRsnWiseDemandForOldProp");
@@ -1910,7 +1910,7 @@ public class PropertyService {
                             newDemandDetailsByInstallment.get(installment), demandReason);
 
                     if (newDemandDetail != null) {
-                        balanceDemand = newDemandDetail.getAmount().subtract(newDemandDetail.getAmtCollected());
+                        balanceDemand = propertyTaxCommonUtils.getTotalDemandVariationAmount(newDemandDetail).subtract(newDemandDetail.getAmtCollected());
 
                         if (balanceDemand.compareTo(BigDecimal.ZERO) > 0 && collection.compareTo(BigDecimal.ZERO) > 0)
                             if (collection.compareTo(balanceDemand) <= 0) {
@@ -3489,7 +3489,7 @@ public class PropertyService {
             for (final String demandReason : DEMAND_REASONS) {
                 final EgDemandDetails demandDetails = getEgDemandDetailsForReason(demandDetailsSet, demandReason);
                 if (demandDetails != null) {
-                    final BigDecimal balance = demandDetails.getAmount().subtract(demandDetails.getAmtCollected());
+                    final BigDecimal balance = propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetails).subtract(demandDetails.getAmtCollected());
                     if (balance.compareTo(BigDecimal.ZERO) > 0)
                         if (excessPenalty.compareTo(BigDecimal.ZERO) > 0 && excessPenalty.compareTo(balance) <= 0) {
                             demandDetails.setAmtCollected(demandDetails.getAmtCollected().add(excessPenalty));
@@ -3531,10 +3531,10 @@ public class PropertyService {
             if (!demandReasonExcludeList.contains(demandReason)) {
                 installment = dmdDet.getEgDemandReason().getEgInstallmentMaster();
                 if (installmentWiseDemand.get(installment) == null)
-                    installmentWiseDemand.put(installment, dmdDet.getAmount());
+                    installmentWiseDemand.put(installment, propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDet));
                 else
                     installmentWiseDemand.put(installment,
-                            installmentWiseDemand.get(installment).add(dmdDet.getAmount()));
+                            installmentWiseDemand.get(installment).add(propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDet)));
 
             }
         }
@@ -4106,14 +4106,14 @@ public class PropertyService {
         if (newDemandDetail != null) {
             newDemandDetail.setAmtCollected(ZERO);
             if (remaining.compareTo(BigDecimal.ZERO) > 0) {
-                if (remaining.compareTo(newDemandDetail.getAmount()) <= 0) {
+                if (remaining.compareTo(propertyTaxCommonUtils.getTotalDemandVariationAmount(newDemandDetail)) <= 0) {
                     newDemandDetail.setAmtCollected(remaining);
                     newDemandDetail.setModifiedDate(new Date());
                     remaining = BigDecimal.ZERO;
                 } else {
-                    newDemandDetail.setAmtCollected(newDemandDetail.getAmount());
+                    newDemandDetail.setAmtCollected(propertyTaxCommonUtils.getTotalDemandVariationAmount(newDemandDetail));
                     newDemandDetail.setModifiedDate(new Date());
-                    remaining = remaining.subtract(newDemandDetail.getAmount());
+                    remaining = remaining.subtract(propertyTaxCommonUtils.getTotalDemandVariationAmount(newDemandDetail));
                 }
             }
         }
@@ -4403,7 +4403,7 @@ public class PropertyService {
             if (installment.getFromDate().equals(demandDetails.getInstallmentStartDate()) &&
                     !DEMANDRSN_CODE_UNAUTHORIZED_PENALTY
                             .equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
-                halfYearlyTax = halfYearlyTax.add(demandDetails.getAmount());
+                halfYearlyTax = halfYearlyTax.add(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetails));
         }
         return halfYearlyTax;
     }
@@ -4432,7 +4432,7 @@ public class PropertyService {
                     demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
                     && !DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY.equalsIgnoreCase(
                     demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
-                totalTax = totalTax.add(demandDetail.getAmount());
+                totalTax = totalTax.add(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
         }
         return totalTax;
     }

@@ -373,7 +373,7 @@ public class VacancyRemissionService {
                 final EgDemandDetails dmdDet = propertyService.getEgDemandDetailsForReason(
                         effectiveInstDemandDetails, demandReason);
                 if (dmdDet != null) {
-                    dmdDet.setAmount(dmdDet.getAmount().divide(new BigDecimal("2")).setScale(0,
+                    dmdDet.setAmount(propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDet).divide(new BigDecimal("2")).setScale(0,
                             BigDecimal.ROUND_HALF_UP));
                     excess = adjustCollection(excess, dmdDet);
                 }
@@ -386,10 +386,10 @@ public class VacancyRemissionService {
     }
 
     private BigDecimal adjustCollection(BigDecimal excess, final EgDemandDetails dmdDet) {
-        if (dmdDet.getAmtCollected().compareTo(dmdDet.getAmount()) > 0) {
+        if (dmdDet.getAmtCollected().compareTo(propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDet)) > 0) {
             excess = excess
-                    .add(dmdDet.getAmtCollected().subtract(dmdDet.getAmount()));
-            dmdDet.setAmtCollected(dmdDet.getAmount());
+                    .add(dmdDet.getAmtCollected().subtract(propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDet)));
+            dmdDet.setAmtCollected(propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDet));
         } else if (excess.compareTo(BigDecimal.ZERO) > 0) {
             excess = adjustExcessToCollection(excess, dmdDet);
         }
@@ -397,9 +397,9 @@ public class VacancyRemissionService {
     }
 
     private BigDecimal adjustExcessToCollection(BigDecimal excess, final EgDemandDetails dmdDet) {
-        if (excess.compareTo((dmdDet.getAmount().subtract(dmdDet.getAmtCollected()))) > 0) {
-            excess = excess.subtract(dmdDet.getAmount().subtract(dmdDet.getAmtCollected()));
-            dmdDet.setAmtCollected(dmdDet.getAmount());
+        if (excess.compareTo((propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDet).subtract(dmdDet.getAmtCollected()))) > 0) {
+            excess = excess.subtract(propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDet).subtract(dmdDet.getAmtCollected()));
+            dmdDet.setAmtCollected(propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDet));
         } else {
             dmdDet.setAmtCollected(dmdDet.getAmtCollected().add(excess));
             excess = BigDecimal.ZERO;
@@ -821,7 +821,7 @@ public class VacancyRemissionService {
         if(currPtDemand!=null)
         for (final EgDemandDetails dmdDet : currPtDemand.getEgDemandDetails())
             if (dmdDet.getInstallmentStartDate().equals(installmentHalf.getFromDate()) && !DEMANDRSN_CODE_PENALTY_FINES.equals(dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode())){
-                newTax = newTax.add(dmdDet.getAmount().divide(new BigDecimal("2")).setScale(0,
+                newTax = newTax.add(propertyTaxCommonUtils.getTotalDemandVariationAmount(dmdDet).divide(new BigDecimal("2")).setScale(0,
                         BigDecimal.ROUND_HALF_UP));
             }
         return newTax;

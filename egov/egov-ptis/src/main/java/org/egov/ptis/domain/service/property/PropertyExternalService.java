@@ -189,6 +189,7 @@ import org.egov.ptis.master.service.RoofTypeService;
 import org.egov.ptis.master.service.StructureClassificationService;
 import org.egov.ptis.master.service.WallTypeService;
 import org.egov.ptis.master.service.WoodTypeService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -275,6 +276,9 @@ public class PropertyExternalService {
     @Autowired
     PropertyTaxUtil propertyTaxUtil;
 
+    @Autowired
+    PropertyTaxCommonUtils propertyTaxCommonUtils;
+    
     @Autowired
     private SimpleRestClient simpleRestClient;
 
@@ -1815,9 +1819,9 @@ public class PropertyExternalService {
                     BigDecimal totalTaxDue = BigDecimal.ZERO;
                     if (currentPtdemand != null)
                         for (EgDemandDetails demandDetails : currentPtdemand.getEgDemandDetails())
-                            if (demandDetails.getAmount().compareTo(demandDetails.getAmtCollected()) > 0)
+                            if (propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetails).compareTo(demandDetails.getAmtCollected()) > 0)
                                 totalTaxDue = totalTaxDue
-                                        .add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()));
+                                        .add(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetails).subtract(demandDetails.getAmtCollected()));
                     assessmentDetails.setTotalTaxDue(totalTaxDue);
                 }
             }
@@ -2397,7 +2401,7 @@ public class PropertyExternalService {
                                             demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
                                     && !PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY.equalsIgnoreCase(
                                             demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
-                        activeTax = activeTax.add(demandDetail.getAmount());
+                        activeTax = activeTax.add(propertyTaxCommonUtils.getTotalDemandVariationAmount(demandDetail));
                 surveyBean.setSystemTax(activeTax);
             }
             surveyService.updateSurveyIndex(APPLICATION_TYPE_ALTER_ASSESSENT, surveyBean);

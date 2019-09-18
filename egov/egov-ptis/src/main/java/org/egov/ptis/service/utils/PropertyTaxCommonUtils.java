@@ -143,6 +143,8 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.commons.entity.Source;
+import org.egov.demand.model.DemandDetailVariation;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
@@ -1081,5 +1083,15 @@ public class PropertyTaxCommonUtils {
      }
   
      return councilDetails;
+    }
+
+    public BigDecimal getTotalDemandVariationAmount(EgDemandDetails demandDetail) {
+
+        BigDecimal totalDemandVariationAmt = BigDecimal.ZERO;
+        for (DemandDetailVariation demandDeatilVariation : demandDetail.getDemandDetailVariation())
+            totalDemandVariationAmt = totalDemandVariationAmt.add(demandDeatilVariation.getDramount());
+
+        return demandDetail.getAmount().subtract(totalDemandVariationAmt);
+
     }
 }
