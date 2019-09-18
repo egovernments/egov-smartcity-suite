@@ -70,6 +70,7 @@ import org.egov.restapi.model.PropertyTransferDetails;
 import org.egov.restapi.util.JsonConvertor;
 import org.egov.restapi.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -86,74 +87,74 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RestController
 public class PropertyTitleTransferService {
 
-	@Autowired
-	private ValidationUtil validationUtil;
-	
-	@Autowired
+    @Autowired
+    private ValidationUtil validationUtil;
+
+    @Autowired
     private PropertyExternalService propertyExternalService;
-	
-	@Autowired
-	private PropertyTransferService transferOwnerService;
-	 
-	/**
-	 * Initiates property transfer
-	 * @param titleTransferDetails
-	 * @return
-	 * @throws IOException
-	 * @throws ParseException
-	 */
-	@RequestMapping(value = "/property/titletransfer", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+
+    @Autowired
+    private PropertyTransferService transferOwnerService;
+
+    /**
+     * Initiates property transfer
+     * @param titleTransferDetails
+     * @return
+     * @throws IOException
+     * @throws ParseException
+     */
+    @RequestMapping(value = "/property/titletransfer", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String transferProperty(@RequestBody String titleTransferDetails)
             throws IOException, ParseException {
-		String responseJson;
-		ApplicationThreadLocals.setUserId(2L);
-		
-		PropertyTransferDetails propertyTransferDetails = (PropertyTransferDetails) getObjectFromJSONRequest(
-				titleTransferDetails, PropertyTransferDetails.class);
-		
-		ErrorDetails errorDetails = validationUtil.validatePropertyTransferRequest(propertyTransferDetails);
-		if (errorDetails != null) {
+        String responseJson;
+        ApplicationThreadLocals.setUserId(2L);
+
+        PropertyTransferDetails propertyTransferDetails = (PropertyTransferDetails) getObjectFromJSONRequest(
+                titleTransferDetails, PropertyTransferDetails.class);
+
+        ErrorDetails errorDetails = validationUtil.validatePropertyTransferRequest(propertyTransferDetails);
+        if (errorDetails != null) {
             responseJson = JsonConvertor.convert(errorDetails);
         } else {
-        	String assessmentNo = propertyTransferDetails.getAssessmentNo();
-        	String mutationReasonCode = propertyTransferDetails.getMutationReasonCode();
-        	String deedNo = propertyTransferDetails.getDeedNo();
-        	String deedDate = propertyTransferDetails.getDeedDate();
-        	List<OwnerDetails> ownerDetailsList = getOwnerDetails(propertyTransferDetails.getOwnerDetails());
+            String assessmentNo = propertyTransferDetails.getAssessmentNo();
+            String mutationReasonCode = propertyTransferDetails.getMutationReasonCode();
+            String deedNo = propertyTransferDetails.getDeedNo();
+            String deedDate = propertyTransferDetails.getDeedDate();
+            List<OwnerDetails> ownerDetailsList = getOwnerDetails(propertyTransferDetails.getOwnerDetails());
 
-        	NewPropertyDetails newPropertyDetails = transferOwnerService.createPropertyMutation(assessmentNo, mutationReasonCode,
-        			deedNo, deedDate, ownerDetailsList);
-        	
-        	responseJson = JsonConvertor.convert(newPropertyDetails);
+            NewPropertyDetails newPropertyDetails = transferOwnerService.createPropertyMutation(assessmentNo, mutationReasonCode,
+                    deedNo, deedDate, ownerDetailsList);
+
+            responseJson = JsonConvertor.convert(newPropertyDetails);
         }
-		
-		return responseJson;
-	}
-	
-	/**
-	 * Prepares list of OwnerDetails from OwnerInformation
-	 * @param ownerInfoList
-	 * @return
-	 */
-	private List<OwnerDetails> getOwnerDetails(List<OwnerInformation> ownerInfoList){
-		List<OwnerDetails> ownerDetailsList = new ArrayList<>();
-		OwnerDetails ownerDetails ;
-		for(OwnerInformation ownerInfo : ownerInfoList){
-			ownerDetails = new OwnerDetails();
-			ownerDetails.setAadhaarNo(ownerInfo.getAadhaarNo());
-			ownerDetails.setSalutationCode(ownerInfo.getSalutationCode());
-			ownerDetails.setName(ownerInfo.getName());
-			ownerDetails.setGender(ownerInfo.getGender());
-			ownerDetails.setMobileNumber(ownerInfo.getMobileNumber());
-			ownerDetails.setEmailId(ownerInfo.getEmailId());
-			ownerDetails.setGuardianRelation(ownerInfo.getGuardianRelation());
-			ownerDetails.setGuardian(ownerInfo.getGuardian());
-			ownerDetailsList.add(ownerDetails);
-		}
-		return ownerDetailsList;
-	}
-	
-	 /**
+
+        return responseJson;
+    }
+
+    /**
+     * Prepares list of OwnerDetails from OwnerInformation
+     * @param ownerInfoList
+     * @return
+     */
+    private List<OwnerDetails> getOwnerDetails(List<OwnerInformation> ownerInfoList) {
+        List<OwnerDetails> ownerDetailsList = new ArrayList<>();
+        OwnerDetails ownerDetails;
+        for (OwnerInformation ownerInfo : ownerInfoList) {
+            ownerDetails = new OwnerDetails();
+            ownerDetails.setAadhaarNo(ownerInfo.getAadhaarNo());
+            ownerDetails.setSalutationCode(ownerInfo.getSalutationCode());
+            ownerDetails.setName(ownerInfo.getName());
+            ownerDetails.setGender(ownerInfo.getGender());
+            ownerDetails.setMobileNumber(ownerInfo.getMobileNumber());
+            ownerDetails.setEmailId(ownerInfo.getEmailId());
+            ownerDetails.setGuardianRelation(ownerInfo.getGuardianRelation());
+            ownerDetails.setGuardian(ownerInfo.getGuardian());
+            ownerDetailsList.add(ownerDetails);
+        }
+        return ownerDetailsList;
+    }
+
+    /**
      * This method loads the assessment details.
      * 
      * @param assessmentNumber - assessment number i.e. property id
@@ -161,23 +162,47 @@ public class PropertyTitleTransferService {
      * @throws IOException
      */
     @RequestMapping(value = "/property/assessmentdetails", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public String fetchAssessmentDetails(@RequestBody String assessmentRequest,final HttpServletRequest request)
+    public String fetchAssessmentDetails(@RequestBody String assessmentRequest, final HttpServletRequest request)
             throws IOException {
+        return assessmentDetails(assessmentRequest, request);
+    }
+    
+    /**
+     * This method loads the assessment details.
+     * 
+     * @param assessmentNumber - assessment number i.e. property id
+     * @return
+     * @throws IOException
+     */
+    @RequestMapping(value = "/v1.0/property/assessmentdetails", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public String securedFetchAssessmentDetails(@RequestBody String assessmentRequest, final HttpServletRequest request, OAuth2Authentication auth2Authentication)
+            throws IOException {
+        return assessmentDetails(assessmentRequest, request);
+    }
+
+    /**
+     * @param assessmentRequest
+     * @param request
+     * @return
+     * @throws IOException
+     */
+    public String assessmentDetails(String assessmentRequest, final HttpServletRequest request) throws IOException {
         AssessmentRequest assessmentReq = (AssessmentRequest) getObjectFromJSONRequest(assessmentRequest,
                 AssessmentRequest.class);
         String responseJson;
-        
+
         ErrorDetails errorDetails = validationUtil.validateAssessmentDetailsRequest(assessmentReq);
         if (errorDetails != null) {
             responseJson = getJSONResponse(errorDetails);
         } else {
             RestAssessmentDetails assessmentDetails = propertyExternalService
-                    .fetchAssessmentDetails(assessmentReq.getAssessmentNo(),assessmentReq.getMarketValue(),assessmentReq.getRegistrationValue(),request);
+                    .fetchAssessmentDetails(assessmentReq.getAssessmentNo(), assessmentReq.getMarketValue(),
+                            assessmentReq.getRegistrationValue(), request);
             responseJson = getJSONResponse(assessmentDetails);
         }
         return responseJson;
     }
-    
+
     /**
      * This method is used to pay the mutation fee
      * 
@@ -194,16 +219,16 @@ public class PropertyTitleTransferService {
             PayPropertyTaxDetails payPropTaxDetails = (PayPropertyTaxDetails) getObjectFromJSONRequest(
                     payPropertyTaxDetails, PayPropertyTaxDetails.class);
 
-            ErrorDetails errorDetails = validationUtil.validatePaymentDetails(payPropTaxDetails,true, "");
+            ErrorDetails errorDetails = validationUtil.validatePaymentDetails(payPropTaxDetails, true, "");
             if (null != errorDetails) {
                 responseJson = getJSONResponse(errorDetails);
             } else {
-            	if(StringUtils.isNotBlank(source))
-            		payPropTaxDetails.setSource(source);
-            	else
-	                payPropTaxDetails.setSource(request.getSession().getAttribute("source") != null ? request.getSession()
-	                        .getAttribute("source").toString()
-	                        : "");
+                if (StringUtils.isNotBlank(source))
+                    payPropTaxDetails.setSource(source);
+                else
+                    payPropTaxDetails.setSource(request.getSession().getAttribute("source") != null ? request.getSession()
+                            .getAttribute("source").toString()
+                            : "");
                 ReceiptDetails receiptDetails = propertyExternalService.payMutationFee(payPropTaxDetails);
                 responseJson = getJSONResponse(receiptDetails);
             }
@@ -212,8 +237,7 @@ public class PropertyTitleTransferService {
             List<ErrorDetails> errorList = new ArrayList<>(0);
 
             List<ValidationError> errors = e.getErrors();
-            for (ValidationError ve : errors)
-            {
+            for (ValidationError ve : errors) {
                 ErrorDetails er = new ErrorDetails();
                 er.setErrorCode(ve.getKey());
                 er.setErrorMessage(ve.getMessage());
@@ -231,8 +255,8 @@ public class PropertyTitleTransferService {
         }
         return responseJson;
     }
-    
-	/**
+
+    /**
      * This method is used to get POJO object from JSON request.
      * 
      * @param jsonString - request JSON string
@@ -247,7 +271,7 @@ public class PropertyTitleTransferService {
         mapper.setDateFormat(ChequePayment.CHEQUE_DATE_FORMAT);
         return mapper.readValue(jsonString, cls);
     }
-    
+
     /**
      * This method is used to prepare jSON response.
      * 
@@ -261,5 +285,5 @@ public class PropertyTitleTransferService {
         String jsonResponse = objectMapper.writeValueAsString(obj);
         return jsonResponse;
     }
-    
+
 }

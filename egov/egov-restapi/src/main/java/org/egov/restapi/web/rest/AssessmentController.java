@@ -112,18 +112,18 @@ import org.springframework.web.bind.annotation.RestController;
  *
  */
 @RestController
-@Scope(scopeName=ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class AssessmentController {
 
     @Autowired
     private TokenServiceUtils tokenServiceUtils;
-    
+
     @Autowired
     private PropertyExternalService propertyExternalService;
-    
+
     @Autowired
     private ValidationUtil validationUtil;
-    
+
     @Autowired
     private PropertyTaxReportService propertyTaxReportService;
 
@@ -139,7 +139,7 @@ public class AssessmentController {
             throws IOException {
         return getPropertyTaxDetails(assessmentRequest);
     }
-    
+
     /**
      * This method is used to pay the property tax.
      * 
@@ -186,7 +186,7 @@ public class AssessmentController {
         }
         return responseJson;
     }
-    
+
     /**
      * This method is used for handling user request for assessment details.
      * 
@@ -232,16 +232,14 @@ public class AssessmentController {
                 ErrorDetails errorDetails = getInvalidCredentialsErrorDetails();
                 propertyTaxDetails.setErrorDetails(errorDetails);
             }
-            if (propertyTaxDetails.getOwnerDetails() == null)
-            {
+            if (propertyTaxDetails.getOwnerDetails() == null) {
                 propertyTaxDetails.setOwnerDetails(new ArrayList<OwnerDetails>(0));
             }
             if (propertyTaxDetails.getLocalityName() == null)
                 propertyTaxDetails.setLocalityName("");
             if (propertyTaxDetails.getPropertyAddress() == null)
                 propertyTaxDetails.setPropertyAddress("");
-            if (propertyTaxDetails.getTaxDetails() == null)
-            {
+            if (propertyTaxDetails.getTaxDetails() == null) {
                 RestPropertyTaxDetails ar = new RestPropertyTaxDetails();
                 List taxDetails = new ArrayList<RestPropertyTaxDetails>(0);
                 taxDetails.add(ar);
@@ -293,8 +291,10 @@ public class AssessmentController {
                     return JsonConvertor.convert(errors);
                 }
             }
-            if (!StringUtils.isBlank(assessmentNo) || !StringUtils.isBlank(ownerName) || !StringUtils.isBlank(mobileNumber) || !StringUtils.isBlank(doorNo)) {
-                propertyTaxDetailsList = propertyExternalService.getPropertyTaxDetails(assessmentNo, ownerName, mobileNumber, category, doorNo);
+            if (!StringUtils.isBlank(assessmentNo) || !StringUtils.isBlank(ownerName) || !StringUtils.isBlank(mobileNumber)
+                    || !StringUtils.isBlank(doorNo)) {
+                propertyTaxDetailsList = propertyExternalService.getPropertyTaxDetails(assessmentNo, ownerName, mobileNumber,
+                        category, doorNo);
             } else {
                 ErrorDetails errorDetails = getInvalidCredentialsErrorDetails();
                 PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
@@ -316,11 +316,11 @@ public class AssessmentController {
                     taxDetails.add(ar);
                     propertyTaxDetails.setTaxDetails(taxDetails);
                 }
-                if(propertyTaxDetails.getErrorDetails() == null){
-                	ErrorDetails errorDetails = new ErrorDetails();
-                	errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
+                if (propertyTaxDetails.getErrorDetails() == null) {
+                    ErrorDetails errorDetails = new ErrorDetails();
+                    errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
                     errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
-                	propertyTaxDetails.setErrorDetails(errorDetails);
+                    propertyTaxDetails.setErrorDetails(errorDetails);
                 }
             }
         } catch (Exception e) {
@@ -375,8 +375,8 @@ public class AssessmentController {
             responseJson = new String();
             PayPropertyTaxDetails payPropTaxDetails = (PayPropertyTaxDetails) getObjectFromJSONRequest(
                     payPropertyTaxDetails, PayPropertyTaxDetails.class);
-			String propertyType = propertyExternalService.getPropertyType(payPropTaxDetails.getAssessmentNo());
-			ErrorDetails errorDetails = validationUtil.validatePaymentDetails(payPropTaxDetails, false, propertyType);
+            String propertyType = propertyExternalService.getPropertyType(payPropTaxDetails.getAssessmentNo());
+            ErrorDetails errorDetails = validationUtil.validatePaymentDetails(payPropTaxDetails, false, propertyType);
             if (null != errorDetails) {
                 responseJson = JsonConvertor.convert(errorDetails);
             } else {
@@ -391,8 +391,7 @@ public class AssessmentController {
             List<ErrorDetails> errorList = new ArrayList<ErrorDetails>(0);
 
             List<ValidationError> errors = e.getErrors();
-            for (ValidationError ve : errors)
-            {
+            for (ValidationError ve : errors) {
                 ErrorDetails er = new ErrorDetails();
                 er.setErrorCode(ve.getKey());
                 er.setErrorMessage(ve.getMessage());
@@ -515,8 +514,9 @@ public class AssessmentController {
      */
     @RequestMapping(value = "/property/localities", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     public String getLocalities() throws IOException {
-        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getBoundariesByBoundaryTypeAndHierarchyType(
-        		PropertyTaxConstants.LOCALITY, PropertyTaxConstants.LOCATION_HIERARCHY_TYPE);
+        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService
+                .getBoundariesByBoundaryTypeAndHierarchyType(
+                        PropertyTaxConstants.LOCALITY, PropertyTaxConstants.LOCATION_HIERARCHY_TYPE);
         return getJSONResponse(mstrCodeNamePairDetailsList);
     }
 
@@ -544,8 +544,9 @@ public class AssessmentController {
      */
     @RequestMapping(value = "/property/electionWards", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     public String getElectionWards() throws IOException {
-        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getBoundariesByBoundaryTypeAndHierarchyType(
-        		WARD, ADMIN_HIERARCHY_TYPE);
+        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService
+                .getBoundariesByBoundaryTypeAndHierarchyType(
+                        WARD, ADMIN_HIERARCHY_TYPE);
         return getJSONResponse(mstrCodeNamePairDetailsList);
     }
 
@@ -709,14 +710,14 @@ public class AssessmentController {
 
     /**
      * This method provides ward-wise property details
-     * @throws IOException 
+     * @throws IOException
      */
     @RequestMapping(value = "/property/wardWisePropertyDetails", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     public List<AssessmentInfo> getWardWisePropertyDetails(AssessmentRequest assessmentRequest) throws IOException {
         return propertyExternalService.getPropertyDetailsForWard(assessmentRequest.getUlbCode(), assessmentRequest.getWardNum(),
                 assessmentRequest.getAssessmentNo(), assessmentRequest.getDoorNo(), assessmentRequest.getOldAssessmentNo());
     }
-    
+
     /**
      * This method is used to prepare jSON response.
      * 
@@ -788,10 +789,10 @@ public class AssessmentController {
      * @throws IOException
      */
     @RequestMapping(value = "/property/taxDues", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
-    public AssessmentDetails getDCBDetails(@RequestBody AssessmentRequest assessmentRequest, final HttpServletRequest request){
+    public AssessmentDetails getDCBDetails(@RequestBody AssessmentRequest assessmentRequest, final HttpServletRequest request) {
         AssessmentDetails assessmentDetails;
         ErrorDetails errorDetails = validationUtil.validateAssessmentDetailsRequest(assessmentRequest);
-        if(errorDetails != null){
+        if (errorDetails != null) {
             assessmentDetails = new AssessmentDetails();
             assessmentDetails.setErrorDetails(errorDetails);
         } else {
@@ -806,13 +807,34 @@ public class AssessmentController {
     }
 
     /**
-     * This method calculates the ARV and taxes for the given calculation parameters of a property 
+     * This method calculates the ARV and taxes for the given calculation parameters of a property
      * @param taxCalculatorRequest
      * @return TaxCalculatorResponse
      * @throws ParseException
      */
     @RequestMapping(value = "/property/calculateTax", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
     public TaxCalculatorResponse calculateTaxes(@RequestBody TaxCalculatorRequest taxCalculatorRequest) throws ParseException {
+        return calculate(taxCalculatorRequest);
+    }
+
+    /**
+     * This method calculates the ARV and taxes for the given calculation parameters of a property
+     * @param taxCalculatorRequest
+     * @return TaxCalculatorResponse
+     * @throws ParseException
+     */
+    @RequestMapping(value = "/v1.0/property/calculateTax", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
+    public TaxCalculatorResponse securedCalculateTaxes(@RequestBody TaxCalculatorRequest taxCalculatorRequest,
+            OAuth2Authentication authentication) throws ParseException {
+        return calculate(taxCalculatorRequest);
+    }
+
+    /**
+     * @param taxCalculatorRequest
+     * @return
+     * @throws ParseException
+     */
+    public TaxCalculatorResponse calculate(TaxCalculatorRequest taxCalculatorRequest) throws ParseException {
         TaxCalculatorResponse taxCalculatorResponse;
         ErrorDetails errorDetails = validationUtil.validateTaxCalculatorRequest(taxCalculatorRequest);
         if (errorDetails != null && StringUtils.isNotBlank(errorDetails.getErrorCode())) {
@@ -843,9 +865,15 @@ public class AssessmentController {
         mapper.setDateFormat(ChequePayment.CHEQUE_DATE_FORMAT);
         return mapper.readValue(jsonString, cls);
     }
-    
+
     @PostMapping(value = "/property/taxDefaulters", produces = APPLICATION_JSON_VALUE)
     public DefaultersResultForNotification getPropertyTaxDefaulters(@RequestBody TaxDefaultersRequest defaultersRequest,
+            final HttpServletRequest request) {
+        return propertyTaxReportService.getResultList(defaultersRequest);
+    }
+    
+    @PostMapping(value = "/v1.0/property/taxDefaulters", produces = APPLICATION_JSON_VALUE)
+    public DefaultersResultForNotification getSecuredPropertyTaxDefaulters(@RequestBody TaxDefaultersRequest defaultersRequest,
             final HttpServletRequest request) {
         return propertyTaxReportService.getResultList(defaultersRequest);
     }

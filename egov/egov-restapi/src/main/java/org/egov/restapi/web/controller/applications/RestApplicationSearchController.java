@@ -61,6 +61,7 @@ import org.egov.search.elasticsearch.service.ApplicationIndexService;
 import org.egov.restapi.web.contracts.applications.ApplicationSearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -69,39 +70,54 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class RestApplicationSearchController {
 
-	@Autowired
-	private ApplicationIndexService applicationIndexService;
+    @Autowired
+    private ApplicationIndexService applicationIndexService;
 
-	@Autowired
+    @Autowired
     private UserService userService;
 
-	@RequestMapping(value = "/application/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<ApplicationSearchResponse> fetchApplicationsForUser(@RequestParam String ulbCode, @RequestParam Long userId,
-			@RequestParam ApprovalStatus status) {
-		List<ApprovalStatus> approvalStatuses;
-		List<ApplicationSearchResponse> responseList = new ArrayList<>();
+    @RequestMapping(value = "/application/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ApplicationSearchResponse> fetchApplicationsForUser(@RequestParam String ulbCode, @RequestParam Long userId,
+            @RequestParam ApprovalStatus status) {
+        return fetch(userId, status);
+    }
 
-		User user = userService.getUserById(userId);
-		if (status != null)
-			approvalStatuses = Arrays.asList(status);
-		else
-			approvalStatuses = Arrays.asList(ApprovalStatus.values());
+    @RequestMapping(value = "/v1.0/application/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ApplicationSearchResponse> securedFetchAplicationsForUser(@RequestParam String ulbCode, @RequestParam Long userId,
+            @RequestParam ApprovalStatus status, OAuth2Authentication auth2Authentication) {
+        return fetch(userId, status);
+    }
 
-		List<ApplicationIndex> applications = applicationIndexService.findAllByCityNameAndCreatedByAndApprovalStatus(user,
-				approvalStatuses);
+    /**
+     * @param userId
+     * @param status
+     * @return
+     */
+    public List<ApplicationSearchResponse> fetch(Long userId, ApprovalStatus status) {
+        List<ApprovalStatus> approvalStatuses;
+        List<ApplicationSearchResponse> responseList = new ArrayList<>();
 
-		ApplicationSearchResponse searchResponse;
-		for (ApplicationIndex application : applications) {
-			searchResponse = new ApplicationSearchResponse(application.getModuleName(), application.getApplicationNumber(),
-					application.getApplicationDate(), application.getApplicationType(), application.getApplicantName(),
-					application.getApplicantAddress(), application.getDisposalDate(), application.getStatus(),
-					application.getConsumerCode(), application.getMobileNumber(), application.getOwnerName(),
-					application.getAadharNumber(), application.getApproved().name(), application.getChannel(),
-					application.getCityCode(), application.getCityName());
-			responseList.add(searchResponse);
-		}
-		if(!responseList.isEmpty()){
-			Collections.sort(responseList, new Comparator<ApplicationSearchResponse>() {
+        User user = userService.getUserById(userId);
+        if (status != null)
+            approvalStatuses = Arrays.asList(status);
+        else
+            approvalStatuses = Arrays.asList(ApprovalStatus.values());
+
+        List<ApplicationIndex> applications = applicationIndexService.findAllByCityNameAndCreatedByAndApprovalStatus(user,
+                approvalStatuses);
+
+        ApplicationSearchResponse searchResponse;
+        for (ApplicationIndex application : applications) {
+            searchResponse = new ApplicationSearchResponse(application.getModuleName(), application.getApplicationNumber(),
+                    application.getApplicationDate(), application.getApplicationType(), application.getApplicantName(),
+                    application.getApplicantAddress(), application.getDisposalDate(), application.getStatus(),
+                    application.getConsumerCode(), application.getMobileNumber(), application.getOwnerName(),
+                    application.getAadharNumber(), application.getApproved().name(), application.getChannel(),
+                    application.getCityCode(), application.getCityName());
+            responseList.add(searchResponse);
+        }
+        if (!responseList.isEmpty()) {
+            Collections.sort(responseList, new Comparator<ApplicationSearchResponse>() {
                 @Override
                 public int compare(ApplicationSearchResponse response1, ApplicationSearchResponse response2) {
                     if (response1.getApplicationDate() != null && response2.getApplicationDate() != null)
@@ -109,8 +125,8 @@ public class RestApplicationSearchController {
                     return 0;
                 }
             });
-		}
+        }
 
-		return responseList;
-	}
+        return responseList;
+    }
 }

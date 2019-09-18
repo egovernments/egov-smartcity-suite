@@ -47,6 +47,11 @@
  */
 package org.egov.restapi.web.rest;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+import java.io.IOException;
+import java.text.ParseException;
+
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -68,33 +73,27 @@ import org.egov.restapi.model.SurroundingBoundaryDetails;
 import org.egov.restapi.model.VacantLandDetails;
 import org.egov.restapi.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.text.ParseException;
-
-import static org.egov.restapi.constants.RestApiConstants.PROPERTY_UNDERWORKFLOW_CODE;
-import static org.egov.restapi.constants.RestApiConstants.PROPERTY_UNDERWORKFLOW_REQ_MSG;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-
 @RestController
 public class UpdateAssessmentController {
-	
-	private static final String NO_APPROVAL = "No Approval";
 
-	@Autowired
-	private ValidationUtil validationUtil;
-	
-	@Autowired
+    private static final String NO_APPROVAL = "No Approval";
+
+    @Autowired
+    private ValidationUtil validationUtil;
+
+    @Autowired
     private PropertyExternalService propertyExternalService;
-	
-	@Autowired
-	private LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepo;
-	
-	/**
+
+    @Autowired
+    private LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepo;
+
+    /**
      * This method is used to modify property.
      * 
      * @param createPropertyDetails - Property details request
@@ -102,115 +101,142 @@ public class UpdateAssessmentController {
      * @throws IOException
      * @throws ParseException
      */
-	@RequestMapping(value = "/property/updateProperty", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-	public NewPropertyDetails updateProperty(@RequestBody String createPropertyDetails)
-			throws IOException, ParseException {
-		ApplicationThreadLocals.setUserId(2L);
-		NewPropertyDetails newPropertyDetails;
-		CreatePropertyDetails createPropDetails = (CreatePropertyDetails) getObjectFromJSONRequest(createPropertyDetails, CreatePropertyDetails.class);
-		//Commenting the validation to restrict the API
-		//uncomment when required
-		//ErrorDetails errorDetails = validationUtil.validateUpdateRequest(createPropDetails, PropertyTaxConstants.PROPERTY_MODE_MODIFY);
-		//Creating one error and returning, please remove when need API
-		ErrorDetails errorDetails = new ErrorDetails();
-		errorDetails.setErrorCode(RestApiConstants.API_DISABLED);
-                errorDetails.setErrorMessage(RestApiConstants.API_DISABLED_CODE);
-		if (errorDetails != null && errorDetails.getErrorCode() != null) {
-			newPropertyDetails = new NewPropertyDetails();
-			newPropertyDetails.setReferenceId(createPropDetails.getReferenceId());
-			newPropertyDetails.setApplicationNo("-1");
-			newPropertyDetails.setErrorDetails(errorDetails);
-	    } else {
-	     	ViewPropertyDetails viewPropertyDetails = setRequestParameters(createPropDetails);
-	     	newPropertyDetails = propertyExternalService.updateProperty(viewPropertyDetails);
-	    }
+    @RequestMapping(value = "/property/updateProperty", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public NewPropertyDetails updateProperty(@RequestBody String createPropertyDetails)
+            throws IOException, ParseException {
+        return update(createPropertyDetails);
+    }
+
+    /**
+     * This method is used to modify property.
+     * 
+     * @param createPropertyDetails - Property details request
+     * @return
+     * @throws IOException
+     * @throws ParseException
+     */
+    @RequestMapping(value = "/v1.0/property/updateProperty", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public NewPropertyDetails securedUpdateProperty(@RequestBody String createPropertyDetails,
+            OAuth2Authentication authentication)
+            throws IOException, ParseException {
+        return update(createPropertyDetails);
+    }
+
+    /**
+     * @param createPropertyDetails
+     * @return
+     * @throws IOException
+     * @throws ParseException
+     */
+    public NewPropertyDetails update(String createPropertyDetails) throws IOException, ParseException {
+        ApplicationThreadLocals.setUserId(2L);
+        NewPropertyDetails newPropertyDetails;
+        CreatePropertyDetails createPropDetails = (CreatePropertyDetails) getObjectFromJSONRequest(createPropertyDetails,
+                CreatePropertyDetails.class);
+        // Commenting the validation to restrict the API
+        // uncomment when required
+        // ErrorDetails errorDetails = validationUtil.validateUpdateRequest(createPropDetails,
+        // PropertyTaxConstants.PROPERTY_MODE_MODIFY);
+        // Creating one error and returning, please remove when need API
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setErrorCode(RestApiConstants.API_DISABLED);
+        errorDetails.setErrorMessage(RestApiConstants.API_DISABLED_CODE);
+        if (errorDetails != null && errorDetails.getErrorCode() != null) {
+            newPropertyDetails = new NewPropertyDetails();
+            newPropertyDetails.setReferenceId(createPropDetails.getReferenceId());
+            newPropertyDetails.setApplicationNo("-1");
+            newPropertyDetails.setErrorDetails(errorDetails);
+        } else {
+            ViewPropertyDetails viewPropertyDetails = setRequestParameters(createPropDetails);
+            newPropertyDetails = propertyExternalService.updateProperty(viewPropertyDetails);
+        }
         return newPropertyDetails;
-	}
-	
-	/**
-	 * Prepares the ViewPropertyDetails bean for modification
-	 * @param createPropDetails
-	 * @return
-	 */
-	public ViewPropertyDetails setRequestParameters(CreatePropertyDetails createPropDetails){
-    	ViewPropertyDetails viewPropertyDetails = new ViewPropertyDetails();
-    	viewPropertyDetails.setAssessmentNumber(createPropDetails.getAssessmentNumber());
-    	viewPropertyDetails.setPropertyTypeMaster(createPropDetails.getPropertyTypeMasterCode());
-    	viewPropertyDetails.setCategory(createPropDetails.getCategoryCode());
-    	
-    	AssessmentsDetails assessmentDetails = createPropDetails.getAssessmentDetails();
-		if (assessmentDetails != null) {
-			viewPropertyDetails.setMutationReason(assessmentDetails.getMutationReasonCode());
-			viewPropertyDetails.setExtentOfSite(assessmentDetails.getExtentOfSite());
-			viewPropertyDetails.setOccupancyCertificationNo(assessmentDetails.getOccupancyCertificationNo());
-			viewPropertyDetails.setOccupancyCertificationDate(assessmentDetails.getOccupancyCertificationDate());
-			viewPropertyDetails.setExtentAppartenauntLand(assessmentDetails.getExtentAppartenauntLand());
-		}
-    	//Amenities Details
-		AmenitiesDetails amenities = createPropDetails.getAmenitiesDetails();
-		if (amenities != null) {
-			viewPropertyDetails.setHasLift(amenities.hasLift());
-			viewPropertyDetails.setHasToilet(amenities.hasToilet());
-			viewPropertyDetails.setHasWaterTap(amenities.hasWaterTap());
-			viewPropertyDetails.setHasElectricity(amenities.hasElectricity());
-			viewPropertyDetails.setHasAttachedBathroom(amenities.hasAttachedBathroom());
-			viewPropertyDetails.setHasWaterHarvesting(amenities.hasWaterHarvesting());
-			viewPropertyDetails.setHasCableConnection(amenities.hasCableConnection());
-		} else {
-			viewPropertyDetails.setHasLift(false);
-			viewPropertyDetails.setHasToilet(false);
-			viewPropertyDetails.setHasWaterTap(false);
-			viewPropertyDetails.setHasElectricity(false);
-			viewPropertyDetails.setHasAttachedBathroom(false);
-			viewPropertyDetails.setHasWaterHarvesting(false);
-			viewPropertyDetails.setHasCableConnection(false);
-		}
-    	//Construction Type Details
-		ConstructionTypeDetails constructionTypeDetails = createPropDetails.getConstructionTypeDetails();
-		if (constructionTypeDetails != null) {
-			viewPropertyDetails.setFloorType(constructionTypeDetails.getFloorTypeId());
-			viewPropertyDetails.setRoofType(constructionTypeDetails.getRoofTypeId());
-			viewPropertyDetails.setWallType(constructionTypeDetails.getWallTypeId());
-			viewPropertyDetails.setWoodType(constructionTypeDetails.getWoodTypeId());
-		} else {
-			viewPropertyDetails.setFloorType(null);
-			viewPropertyDetails.setRoofType(null);
-			viewPropertyDetails.setWallType(null);
-			viewPropertyDetails.setWoodType(null);
-		}
-    	if(createPropDetails.getPropertyTypeMasterCode().equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)){
-    		VacantLandDetails vacantLandDetails = createPropDetails.getVacantLandDetails();
-    		viewPropertyDetails.setSurveyNumber(vacantLandDetails.getSurveyNumber());
-    		viewPropertyDetails.setPattaNumber(vacantLandDetails.getPattaNumber());
-    		viewPropertyDetails.setVacantLandArea(vacantLandDetails.getVacantLandArea());
-    		viewPropertyDetails.setMarketValue(vacantLandDetails.getMarketValue());
-    		viewPropertyDetails.setCurrentCapitalValue(vacantLandDetails.getCurrentCapitalValue());
-    		viewPropertyDetails.setEffectiveDate(vacantLandDetails.getEffectiveDate());
-    		viewPropertyDetails.setVlPlotArea(vacantLandDetails.getVacantLandPlot());
-    		viewPropertyDetails.setLaAuthority(vacantLandDetails.getLayoutApprovalAuthority());
-			if (!NO_APPROVAL.equals(
-					layoutApprovalAuthorityRepo.findOne(vacantLandDetails.getLayoutApprovalAuthority()).getName())) {
-				viewPropertyDetails.setLpNo(vacantLandDetails.getLayoutPermitNumber());
-				viewPropertyDetails.setLpDate(vacantLandDetails.getLayoutPermitDate());
-			}
-    		//Surrounding Boundary Details
-    		SurroundingBoundaryDetails surroundingBoundaryDetails = createPropDetails.getSurroundingBoundaryDetails();
-    		viewPropertyDetails.setNorthBoundary(surroundingBoundaryDetails.getNorthBoundary());
-    		viewPropertyDetails.setSouthBoundary(surroundingBoundaryDetails.getSouthBoundary());
-    		viewPropertyDetails.setEastBoundary(surroundingBoundaryDetails.getEastBoundary());
-    		viewPropertyDetails.setWestBoundary(surroundingBoundaryDetails.getWestBoundary());
-    	} else {
-    		viewPropertyDetails.setFloorDetails(createPropDetails.getFloorDetails());
-    		viewPropertyDetails.setEffectiveDate(createPropDetails.getFloorDetails().get(0).getOccupancyDate());
-    	}
+    }
+
+    /**
+     * Prepares the ViewPropertyDetails bean for modification
+     * @param createPropDetails
+     * @return
+     */
+    public ViewPropertyDetails setRequestParameters(CreatePropertyDetails createPropDetails) {
+        ViewPropertyDetails viewPropertyDetails = new ViewPropertyDetails();
+        viewPropertyDetails.setAssessmentNumber(createPropDetails.getAssessmentNumber());
+        viewPropertyDetails.setPropertyTypeMaster(createPropDetails.getPropertyTypeMasterCode());
+        viewPropertyDetails.setCategory(createPropDetails.getCategoryCode());
+
+        AssessmentsDetails assessmentDetails = createPropDetails.getAssessmentDetails();
+        if (assessmentDetails != null) {
+            viewPropertyDetails.setMutationReason(assessmentDetails.getMutationReasonCode());
+            viewPropertyDetails.setExtentOfSite(assessmentDetails.getExtentOfSite());
+            viewPropertyDetails.setOccupancyCertificationNo(assessmentDetails.getOccupancyCertificationNo());
+            viewPropertyDetails.setOccupancyCertificationDate(assessmentDetails.getOccupancyCertificationDate());
+            viewPropertyDetails.setExtentAppartenauntLand(assessmentDetails.getExtentAppartenauntLand());
+        }
+        // Amenities Details
+        AmenitiesDetails amenities = createPropDetails.getAmenitiesDetails();
+        if (amenities != null) {
+            viewPropertyDetails.setHasLift(amenities.hasLift());
+            viewPropertyDetails.setHasToilet(amenities.hasToilet());
+            viewPropertyDetails.setHasWaterTap(amenities.hasWaterTap());
+            viewPropertyDetails.setHasElectricity(amenities.hasElectricity());
+            viewPropertyDetails.setHasAttachedBathroom(amenities.hasAttachedBathroom());
+            viewPropertyDetails.setHasWaterHarvesting(amenities.hasWaterHarvesting());
+            viewPropertyDetails.setHasCableConnection(amenities.hasCableConnection());
+        } else {
+            viewPropertyDetails.setHasLift(false);
+            viewPropertyDetails.setHasToilet(false);
+            viewPropertyDetails.setHasWaterTap(false);
+            viewPropertyDetails.setHasElectricity(false);
+            viewPropertyDetails.setHasAttachedBathroom(false);
+            viewPropertyDetails.setHasWaterHarvesting(false);
+            viewPropertyDetails.setHasCableConnection(false);
+        }
+        // Construction Type Details
+        ConstructionTypeDetails constructionTypeDetails = createPropDetails.getConstructionTypeDetails();
+        if (constructionTypeDetails != null) {
+            viewPropertyDetails.setFloorType(constructionTypeDetails.getFloorTypeId());
+            viewPropertyDetails.setRoofType(constructionTypeDetails.getRoofTypeId());
+            viewPropertyDetails.setWallType(constructionTypeDetails.getWallTypeId());
+            viewPropertyDetails.setWoodType(constructionTypeDetails.getWoodTypeId());
+        } else {
+            viewPropertyDetails.setFloorType(null);
+            viewPropertyDetails.setRoofType(null);
+            viewPropertyDetails.setWallType(null);
+            viewPropertyDetails.setWoodType(null);
+        }
+        if (createPropDetails.getPropertyTypeMasterCode().equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)) {
+            VacantLandDetails vacantLandDetails = createPropDetails.getVacantLandDetails();
+            viewPropertyDetails.setSurveyNumber(vacantLandDetails.getSurveyNumber());
+            viewPropertyDetails.setPattaNumber(vacantLandDetails.getPattaNumber());
+            viewPropertyDetails.setVacantLandArea(vacantLandDetails.getVacantLandArea());
+            viewPropertyDetails.setMarketValue(vacantLandDetails.getMarketValue());
+            viewPropertyDetails.setCurrentCapitalValue(vacantLandDetails.getCurrentCapitalValue());
+            viewPropertyDetails.setEffectiveDate(vacantLandDetails.getEffectiveDate());
+            viewPropertyDetails.setVlPlotArea(vacantLandDetails.getVacantLandPlot());
+            viewPropertyDetails.setLaAuthority(vacantLandDetails.getLayoutApprovalAuthority());
+            if (!NO_APPROVAL.equals(
+                    layoutApprovalAuthorityRepo.findOne(vacantLandDetails.getLayoutApprovalAuthority()).getName())) {
+                viewPropertyDetails.setLpNo(vacantLandDetails.getLayoutPermitNumber());
+                viewPropertyDetails.setLpDate(vacantLandDetails.getLayoutPermitDate());
+            }
+            // Surrounding Boundary Details
+            SurroundingBoundaryDetails surroundingBoundaryDetails = createPropDetails.getSurroundingBoundaryDetails();
+            viewPropertyDetails.setNorthBoundary(surroundingBoundaryDetails.getNorthBoundary());
+            viewPropertyDetails.setSouthBoundary(surroundingBoundaryDetails.getSouthBoundary());
+            viewPropertyDetails.setEastBoundary(surroundingBoundaryDetails.getEastBoundary());
+            viewPropertyDetails.setWestBoundary(surroundingBoundaryDetails.getWestBoundary());
+        } else {
+            viewPropertyDetails.setFloorDetails(createPropDetails.getFloorDetails());
+            viewPropertyDetails.setEffectiveDate(createPropDetails.getFloorDetails().get(0).getOccupancyDate());
+        }
         viewPropertyDetails.setParcelId(createPropDetails.getParcelId());
         viewPropertyDetails.setReferenceId(createPropDetails.getReferenceId());
         viewPropertyDetails.setLatitude(createPropDetails.getLatitude());
         viewPropertyDetails.setLongitude(createPropDetails.getLongitude());
-    	return viewPropertyDetails;
+        return viewPropertyDetails;
     }
 
-	/**
+    /**
      * This method is used to get POJO object from JSON request.
      * 
      * @param jsonString - request JSON string
@@ -225,5 +251,5 @@ public class UpdateAssessmentController {
         mapper.setDateFormat(ChequePayment.CHEQUE_DATE_FORMAT);
         return mapper.readValue(jsonString, cls);
     }
-    
+
 }

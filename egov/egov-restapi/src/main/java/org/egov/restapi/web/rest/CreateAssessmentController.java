@@ -76,7 +76,7 @@ import org.egov.restapi.model.SurroundingBoundaryDetails;
 import org.egov.restapi.model.VacantLandDetails;
 import org.egov.restapi.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.BindingResult;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -110,6 +110,31 @@ public class CreateAssessmentController {
     @RequestMapping(value = "/property/createProperty", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public NewPropertyDetails createProperty(@RequestBody String createPropertyDetails)
             throws IOException, ParseException {
+        return create(createPropertyDetails);
+    }
+
+    /**
+     * This method is used to create property.
+     * 
+     * @param createPropertyDetails - Property details request
+     * @return
+     * @throws IOException
+     * @throws ParseException
+     */
+
+    @RequestMapping(value = "/v1.0/property/createProperty", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public NewPropertyDetails securedCreateProperty(@RequestBody String createPropertyDetails, OAuth2Authentication authentication)
+            throws IOException, ParseException {
+        return create(createPropertyDetails);
+    }
+    
+    /**
+     * @param createPropertyDetails
+     * @return
+     * @throws IOException
+     * @throws ParseException
+     */
+    public NewPropertyDetails create(String createPropertyDetails) throws IOException, ParseException {
         ApplicationThreadLocals.setUserId(2L);
         CreatePropertyDetails createPropDetails = (CreatePropertyDetails) getObjectFromJSONRequest(createPropertyDetails,
                 CreatePropertyDetails.class);
