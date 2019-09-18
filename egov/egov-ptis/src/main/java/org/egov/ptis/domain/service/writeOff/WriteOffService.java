@@ -5,7 +5,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_WRITE_OFF;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESIGNATIONS;
-import static org.egov.ptis.constants.PropertyTaxConstants.ENDORSEMENT_NOTICE;
+import static org.egov.ptis.constants.PropertyTaxConstants.COUNCIL_ERROR;
 import static org.egov.ptis.constants.PropertyTaxConstants.FULL_WRITEOFF;
 import static org.egov.ptis.constants.PropertyTaxConstants.HISTORY_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOGGED_IN_USER;
@@ -69,24 +69,23 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.bean.demand.DemandDetail;
-import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterHibDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.enums.TransactionType;
+import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.WriteOff;
-import org.egov.ptis.domain.entity.property.WriteOffReasons;
 import org.egov.ptis.domain.repository.master.structureclassification.StructureClassificationRepository;
+import org.egov.ptis.domain.repository.writeOff.WriteOffReasonRepository;
 import org.egov.ptis.domain.repository.writeOff.WriteOffRepository;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.master.service.PropertyUsageService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,6 +95,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
@@ -145,21 +145,20 @@ public class WriteOffService extends GenericWorkFlowController {
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
     @Autowired
-    private PTBillServiceImpl ptBillServiceImpl;
-
+    private WriteOffReasonRepository writeOffReasonRepository;
     Property property = null;
     private static final Logger LOGGER = Logger.getLogger(WriteOffService.class);
     private static final String CURRENT_STATE = "currentState";
     private static final String STATE_TYPE = "stateType";
     private static final String PROPERTY = "property";
     private static final String CREATED = "Created";
-    private static final String ERROR_MSG ="errorMsg";
-    
+    private static final String ERROR_MSG = "errorMsg";
+    private static final String ERROR = "error";
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
-    
+
     public List<DocumentType> getDocuments(final TransactionType transactionType) {
         return propService.getDocumentTypesForTransactionType(transactionType);
     }
@@ -174,6 +173,8 @@ public class WriteOffService extends GenericWorkFlowController {
         List<Map<String, Object>> sewConnDetails = propertyTaxCommonUtils
                 .getSewConnDetails(assessmentNo, request);
         List<Map<String, Object>> wcDetails = propertyService.getWCDetails(assessmentNo, request);
+        boolean hasActiveSwg = checkActiveSewage(propertyTaxCommonUtils
+                .getSewConnDetails(assessmentNo, request));
         for (Installment inst : installmentList)
             instString = instString.append(inst.getDescription() + ",");
         model.addAttribute("installments", installmentList);
@@ -182,6 +183,7 @@ public class WriteOffService extends GenericWorkFlowController {
         model.addAttribute("instString", instString);
         model.addAttribute("wcDetails", wcDetails);
         model.addAttribute("sewConnDetails", sewConnDetails);
+        model.addAttribute("hasActiveSwg", hasActiveSwg);
     }
 
     public void addModelAttributesupdate(final Model model, WriteOff writeOff) {
@@ -189,14 +191,14 @@ public class WriteOffService extends GenericWorkFlowController {
         User loggedInUser = securityUtils.getCurrentUser();
         model.addAttribute("type", propertyMutationMasterHibDAO
                 .getAllPropertyMutationMastersByType(WRITEOFF_CODE));
-        model.addAttribute("reasonsList", getAllwriteoffMastersByType(writeOff.getWriteOffType().getMutationDesc()));
+        model.addAttribute("reasonsList",
+                writeOffReasonRepository.findByTypeOrderByIdAsc(writeOff.getWriteOffType().getMutationDesc()));
         model.addAttribute(PROPERTY, writeOff.getProperty());
         model.addAttribute(CURRENT_STATE, writeOff.getCurrentState().getValue());
         model.addAttribute(STATE_TYPE, writeOff.getClass().getSimpleName());
         model.addAttribute(STATE_AWARE_ID, writeOff.getId());
-        model.addAttribute(ENDORSEMENT_NOTICE, new ArrayList<>());
         model.addAttribute("writeOff", writeOff);
-        model.addAttribute(TRANSACTION_TYPE,APPLICATION_TYPE_WRITE_OFF);
+        model.addAttribute(TRANSACTION_TYPE, APPLICATION_TYPE_WRITE_OFF);
         model.addAttribute(LOGGED_IN_USER, propertyService.isEmployee(loggedInUser));
         if (writeOff.getId() != null && writeOff.getState() != null) {
             historyMap = propertyService.populateHistory(writeOff);
@@ -243,7 +245,6 @@ public class WriteOffService extends GenericWorkFlowController {
             currentState = null;
             if (null != approvalPosition && approvalPosition != 0) {
                 assignment = assignmentService.getAssignmentsForPosition(approvalPosition, new Date()).get(0);
-                assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
                 approverDesignation = assignment.getDesignation().getName();
             }
         }
@@ -287,9 +288,9 @@ public class WriteOffService extends GenericWorkFlowController {
         }
 
         else {
-            if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction)) {
+            if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
                 pos = writeOff.getCurrentState().getOwnerPosition();
-            } else if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
+            else if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
                 pos = positionMasterService.getPositionById(approvalPosition);
             if (null == writeOff.getState()) {
                 wfmatrix = propertyWorkflowService.getWfMatrix(writeOff.getStateType(), null, null, additionalRule,
@@ -379,23 +380,7 @@ public class WriteOffService extends GenericWorkFlowController {
         return nextAction;
     }
 
-    @SuppressWarnings("unchecked")
-    public List<WriteOffReasons> getAllwriteoffMastersByType(String type) {
-        Query qry = getCurrentSession()
-                .createQuery("from WriteOffReasons WO where WO.type = :type order by WO.orderId");
-        qry.setString("type", type);
-        return qry.list();
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<WriteOffReasons> getAllwriteoffMastersByName(Long id) {
-        Query qry = getCurrentSession().createQuery("from WriteOffReasons WO where WO.id = :id");
-        qry.setLong("id", id);
-         return qry.list();
-    }
-
-    @SuppressWarnings("deprecation")
-    public WriteOff saveProperty(WriteOff writeOff) {
+    public void updateProperty(WriteOff writeOff) {
         final Character status = STATUS_WORKFLOW;
         PropertyImpl newProperty;
         newProperty = writeOff.getProperty();
@@ -407,11 +392,9 @@ public class WriteOffService extends GenericWorkFlowController {
         newProperty.setEffectiveDate(new Date());
         writeOff.setProperty(newProperty);
         writeOff.setApplicationNumber(applicationNo.generate());
-        return writeOff;
 
     }
 
-    @SuppressWarnings("deprecation")
     public void setPtDemandSet(WriteOff writeOff) {
         Ptdemand ptdemand;
         List<Ptdemand> currPtdemand = getCurrPtDemand(writeOff);
@@ -449,62 +432,48 @@ public class WriteOffService extends GenericWorkFlowController {
         return writeOff;
     }
 
-    @SuppressWarnings("deprecation")
     public void updateDemandDetails(WriteOff writeOff) {
 
         Set<EgDemandDetails> demandDetails = propertyService.getCurrrentDemand(writeOff.getProperty())
                 .getEgDemandDetails();
         DemandDetailVariation dmdVar = null;
         List<Installment> install = new ArrayList<>();
-        for (final EgDemandDetails dmdDetails : demandDetails) {
+        for (final EgDemandDetails dmdDetails : demandDetails)
             for (final DemandDetail dmdDetailBean : writeOff.getDemandDetailBeanList()) {
                 Boolean isUpdateAmount = Boolean.FALSE;
                 dmdDetailBean.setInstallment(installmentDao.findById(dmdDetailBean.getInstallment().getId(), false));
                 if (dmdDetails.getEgDemandReason().getEgInstallmentMaster().getId()
-                        .equals(dmdDetailBean.getInstallment().getId())) {
-                    if (dmdDetailBean.getRevisedAmount() != null) {
-                        if (dmdDetailBean.getRevisedAmount() != null
-                                && dmdDetailBean.getRevisedAmount().compareTo(BigDecimal.ZERO) > 0
-                                && dmdDetails.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
-                                        .equalsIgnoreCase(dmdDetailBean.getReasonMaster())) {
-                            install.add(dmdDetailBean.getInstallment());
-                            isUpdateAmount = true;
-                        }
-
+                        .equals(dmdDetailBean.getInstallment().getId()))
+                    if (dmdDetailBean.getRevisedAmount() != null
+                            && dmdDetailBean.getRevisedAmount().compareTo(BigDecimal.ZERO) > 0
+                            && dmdDetails.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
+                                    .equalsIgnoreCase(dmdDetailBean.getReasonMaster())) {
+                        install.add(dmdDetailBean.getInstallment());
+                        isUpdateAmount = true;
                     }
-                }
                 if (isUpdateAmount) {
                     BigDecimal balance = dmdDetailBean.getActualAmount().subtract(
                             dmdDetailBean.getActualCollection() != null ? dmdDetailBean.getActualCollection() : BigDecimal.ZERO);
-                    if (writeOff.getWriteOffType().getMutationDesc().equalsIgnoreCase(FULL_WRITEOFF)) {
+                    if (writeOff.getWriteOffType().getMutationDesc().equalsIgnoreCase(FULL_WRITEOFF))
                         dmdVar = persistDemandDetailVariation(dmdDetails, balance, WRITE_OFF);
-                    } else {
+                    else
                         dmdVar = persistDemandDetailVariation(dmdDetails, dmdDetailBean.getRevisedAmount(), WRITE_OFF);
-                    }
                     Set<DemandDetailVariation> variationSet = new HashSet<>();
                     variationSet.add(dmdVar);
                     dmdDetails.setDemandDetailVariation(variationSet);
-                }
-                if (isUpdateAmount) {
                     dmdDetails.setModifiedDate(new Date());
-                    break;
                 }
-
             }
-        }
         if (writeOff.getWriteOffType().getMutationDesc().equalsIgnoreCase(FULL_WRITEOFF)) {
             install.sort(Comparator.comparing(Installment::getId));
             writeOff.setFromInstallment(install.get(0).getDescription());
             DemandDetail maxInstallment = writeOff.getDemandDetailBeanList().get(writeOff.getDemandDetailBeanList().size() - 1);
             writeOff.setToInstallment(maxInstallment.getInstallment().getDescription());
-
         }
-        if (writeOff.getState() != null) {
-            for (Ptdemand ptdemand : writeOff.getProperty().getPtDemandSet()) {
-
+        if (writeOff.getState() != null)
+            for (Ptdemand ptdemand : writeOff.getProperty().getPtDemandSet())
                 ptdemand.setEgDemandDetails(demandDetails);
-            }
-        } else {
+        else {
             List<Ptdemand> currPtdemand = getCurrPtDemand(writeOff);
             if (currPtdemand != null) {
                 final Ptdemand ptdemand = (Ptdemand) currPtdemand.get(0).clone();
@@ -524,13 +493,13 @@ public class WriteOffService extends GenericWorkFlowController {
             String code) {
         DemandDetailVariation demandDetailVariation = new DemandDetailVariation();
         demandDetailVariation.setDemandDetail(dmdDetails);
-        demandDetailVariation.setDemandreasonMaster(demandGenericDAO.getDemandReasonMasterByCode(code, module()));
-        if(revisedAmount!=null && revisedAmount.compareTo(BigDecimal.ZERO)>0)
+        demandDetailVariation.setDemandreasonMaster(demandGenericDAO.getDemandReasonMasterByCode(code, getModuleByName()));
+        if (revisedAmount != null && revisedAmount.compareTo(BigDecimal.ZERO) > 0)
             demandDetailVariation.setDramount(revisedAmount);
         else
             demandDetailVariation.setDramount(BigDecimal.ZERO);
         return demandDetailVariation;
-        
+
     }
 
     public List<EgDemandDetails> sortDemandDetails(List<EgDemandDetails> demandDetails) {
@@ -548,18 +517,18 @@ public class WriteOffService extends GenericWorkFlowController {
         for (final EgDemandDetails demandDetail : demandDetails) {
             final Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
             final String reasonMaster = demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster();
-            final DemandDetail dmdDtl = createDemandDetailBean(installment, reasonMaster, demandDetail.getAmount(),
+            final DemandDetail dmdDtl = setDemandDetailBean(installment, reasonMaster, demandDetail.getAmount(),
                     demandDetail.getAmtCollected());
             demandDetailList.add(dmdDtl);
         }
         return demandDetailList;
     }
 
-    private DemandDetail createDemandDetailBean(final Installment installment, final String reasonMaster,
+    private DemandDetail setDemandDetailBean(final Installment installment, final String reasonMaster,
             final BigDecimal amount, final BigDecimal amountCollected) {
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Entered into createDemandDetailBean");
-            LOGGER.debug("createDemandDetailBean - installment=" + installment + ", reasonMaster=" + reasonMaster
+            LOGGER.debug("Entered into setDemandDetailBean");
+            LOGGER.debug("setDemandDetailBean - installment=" + installment + ", reasonMaster=" + reasonMaster
                     + ", amount=" + amount + ", amountCollected=" + amountCollected);
         }
 
@@ -572,15 +541,14 @@ public class WriteOffService extends GenericWorkFlowController {
         return demandDetail;
     }
 
-    protected Module module() {
+    protected Module getModuleByName() {
         return moduleDao.getModuleByName(PTMODULENAME);
     }
 
     private BigDecimal getTotalDemand(Set<EgDemandDetails> dmndDetails) {
         BigDecimal totalDmd = BigDecimal.ZERO;
-        for (EgDemandDetails newDemandDetails : dmndDetails) {
+        for (EgDemandDetails newDemandDetails : dmndDetails)
             totalDmd = totalDmd.add(newDemandDetails.getAmount());
-        }
         return totalDmd;
     }
 
@@ -598,7 +566,7 @@ public class WriteOffService extends GenericWorkFlowController {
 
         int i = 0;
         for (final EgDemandDetails demandDetail : newDmndDetails) {
-            for (final EgDemandDetails oldDemandDetail : oldDmndDetails) {
+            for (final EgDemandDetails oldDemandDetail : oldDmndDetails)
                 if (oldDemandDetail.getEgDemandReason().getEgInstallmentMaster()
                         .equals(demandDetail.getEgDemandReason().getEgInstallmentMaster())
                         && oldDemandDetail.getEgDemandReason().getEgDemandReasonMaster()
@@ -607,23 +575,22 @@ public class WriteOffService extends GenericWorkFlowController {
                     final String reasonMaster = demandDetail.getEgDemandReason().getEgDemandReasonMaster()
                             .getReasonMaster();
                     BigDecimal revisedAmount = BigDecimal.ZERO;
-                    for (DemandDetailVariation demandDetailVariation : demandDetail.getDemandDetailVariation()) {
+                    for (DemandDetailVariation demandDetailVariation : demandDetail.getDemandDetailVariation())
                         if (demandDetailVariation.getDemandDetail().getId().equals(demandDetail.getId())
                                 && demandDetailVariation.getDramount().compareTo(BigDecimal.ZERO) >= 0) {
-                            revisedAmount = demandDetailVariation.getDramount();
+                            revisedAmount = demandDetailVariation.getDramount().setScale(0, BigDecimal.ROUND_DOWN);
                             break;
                         }
-                    }
 
                     final BigDecimal revisedCollection = demandDetail.getAmtCollected();
                     final DemandDetail dmdDtl = createDemandDetailBean(installment, reasonMaster,
-                            oldDemandDetail.getAmount(), revisedAmount, oldDemandDetail.getAmtCollected(),
+                            oldDemandDetail.getAmount().setScale(0, BigDecimal.ROUND_DOWN), revisedAmount,
+                            oldDemandDetail.getAmtCollected().setScale(0, BigDecimal.ROUND_DOWN),
                             revisedCollection);
                     demandDetailList.add(i, dmdDtl);
 
                     break;
                 }
-            }
             i++;
         }
         return demandDetailList;
@@ -648,12 +615,12 @@ public class WriteOffService extends GenericWorkFlowController {
         demandDetail.setIsCollectionEditable(true);
         return demandDetail;
     }
-   
+
     public List<DemandDetail> getDemandDetails(WriteOff writeOff) {
-        Set<EgDemandDetails> newDemandDetails = (ptDemandDAO.getNonHistoryCurrDmdForProperty(writeOff.getProperty()))
+        Set<EgDemandDetails> newDemandDetails = ptDemandDAO.getNonHistoryCurrDmdForProperty(writeOff.getProperty())
                 .getEgDemandDetails();
-        Set<EgDemandDetails> oldDemandDetails = (ptDemandDAO
-                .getNonHistoryCurrDmdForProperty(writeOff.getBasicProperty().getProperty())).getEgDemandDetails();
+        Set<EgDemandDetails> oldDemandDetails = ptDemandDAO
+                .getNonHistoryCurrDmdForProperty(writeOff.getBasicProperty().getProperty()).getEgDemandDetails();
         List<EgDemandDetails> newDmndDetails = new ArrayList<>(newDemandDetails);
         List<EgDemandDetails> oldDmndDetails = new ArrayList<>(oldDemandDetails);
 
@@ -676,48 +643,45 @@ public class WriteOffService extends GenericWorkFlowController {
 
     public boolean checkActiveWC(List<Map<String, Object>> wcDetails) {
         boolean connStatus = false;
-        for (Map<String, Object> status : wcDetails) {
-            for (Object state : status.values()) {
-                if (ACTIVE.equalsIgnoreCase(state.toString())) {
+        for (Map<String, Object> status : wcDetails)
+            for (Object state : status.values())
+                if (ACTIVE.equalsIgnoreCase(state.toString()))
                     connStatus = true;
-                }
-            }
-        }
         return connStatus;
 
     }
 
     public boolean checkActiveSewage(List<Map<String, Object>> sewConnDetails) {
-        boolean connStatus = false;
-        for (Map<String, Object> error : sewConnDetails) {
-            for (Object errors : error.values()) {
-                if (errors.toString().isEmpty()) {
-                    connStatus = true;
+        boolean connStatus = true;
+        for (Map<String, Object> error : sewConnDetails)
+            for (Object errors : error.values())
+                if (errors.toString().contains("does not exist")) {
+                    connStatus = false;
+                    break;
                 }
-            }
-        }
         return connStatus;
 
     }
-    
+
     public boolean checkValidCouncil(List<Map<String, String>> councilDetails) {
-        boolean status = false;
-        for (Map<String, String> errormessage : councilDetails) {
-            for (String errors : errormessage.values()) {
-                if (errors.toString().isEmpty()) {
-                    status = true;
+        boolean status = true;
+        for (Map<String, String> errormessage : councilDetails)
+            for (String error : errormessage.values())
+                if (COUNCIL_ERROR.equalsIgnoreCase(error)) {
+                    status = false;
+                    break;
                 }
-            }
-        }
         return status;
 
     }
-    
-    public Map<String, String> displayValidation(final WriteOff writeOff, final HttpServletRequest request, Model model) {
+
+    public Map<String, String> displayValidation(final WriteOff writeOff, final HttpServletRequest request) {
         Map<String, String> errorMessages = new HashMap<>();
-        if (writeOff.getPropertyDeactivateFlag() && writeOff.getWriteOffType().getCode().equals("FULL WRITEOFF")) {
+        if (writeOff.getPropertyDeactivateFlag() && writeOff.getWriteOffType().getCode().equals("FULL WRITEOFF"))
             errorMessages = validateWCSewconnection(writeOff, request);
-        }
+
+        if (errorMessages.isEmpty())
+            errorMessages = validateCouncil(writeOff, request);
         if (errorMessages.isEmpty() && writeOff.getState() == null) {
             List<WriteOff> councilresult = writeOffRepo.findCouncilTypeAndNo(writeOff.getResolutionType(),
                     writeOff.getResolutionNo(),
@@ -729,41 +693,41 @@ public class WriteOffService extends GenericWorkFlowController {
     }
 
     public BindingResult validate(final WriteOff writeOff, final BindingResult errors) {
-        if (StringUtils.isBlank(writeOff.getWriteOffType().getCode()))
+        if (!StringUtils.isNotBlank(writeOff.getWriteOffType().getCode()))
             errors.rejectValue("writeOffType.mutationDesc", "writeoff.type");
-        if (StringUtils.isBlank(writeOff.getWriteOffReasons().getName()))
+        if (!StringUtils.isNotBlank(writeOff.getWriteOffReasons().getCode()))
             errors.rejectValue("writeOffReasons.name", "writeoff.reason");
-        if (StringUtils.isBlank(writeOff.getResolutionNo()) || null == writeOff.getResolutionNo())
+        if (!StringUtils.isNotBlank(writeOff.getResolutionNo()))
             errors.rejectValue("resolutionNo", "writeoff.resolution.no");
-        if (StringUtils.isBlank(writeOff.getResolutionType()) || null == writeOff.getResolutionType())
+        if (!StringUtils.isNotBlank(writeOff.getResolutionType()))
             errors.rejectValue("resolutionType", "writeoff.resolution.type");
         return errors;
     }
-    
+
     public Map<String, String> validateWCSewconnection(WriteOff writeOff, final HttpServletRequest request) {
-        boolean hasActiveWC;
-        boolean hasActiveSwg;
-        boolean hasActiveCouncil;
         Map<String, String> errorMessages = new HashMap<>();
         List<Map<String, Object>> activeWCDetails = propertyService.getWCDetails(writeOff.getBasicProperty().getUpicNo(),
                 request);
-        hasActiveWC = checkActiveWC(activeWCDetails);
+        boolean hasActiveWC = checkActiveWC(activeWCDetails);
         if (hasActiveWC) {
-            errorMessages.put("active.error", "writeoff.wc.error");
+            errorMessages.put(ERROR, "writeoff.wc.error");
             return errorMessages;
         }
-        hasActiveSwg = checkActiveSewage(propertyTaxCommonUtils
+        boolean hasActiveSwg = checkActiveSewage(propertyTaxCommonUtils
                 .getSewConnDetails(writeOff.getBasicProperty().getUpicNo(), request));
         if (hasActiveSwg) {
-            errorMessages.put("active.error", "writeoff.Swg.error");
+            errorMessages.put(ERROR, "writeoff.Swg.error");
             return errorMessages;
         }
-        hasActiveCouncil = checkValidCouncil(
-                propertyTaxCommonUtils.getCouncilDeatils(writeOff.getResolutionNo(), writeOff.getResolutionType(), request));
-        if (hasActiveCouncil) {
-            errorMessages.put("active.error", "writeoff.council.error");
-            return errorMessages;
-        }
+        return errorMessages;
+    }
+
+    public Map<String, String> validateCouncil(WriteOff writeOff, final HttpServletRequest request) {
+        Map<String, String> errorMessages = new HashMap<>();
+        boolean hasActiveCouncil = checkValidCouncil(
+                propertyTaxCommonUtils.getCouncilDetails(writeOff.getResolutionNo(), writeOff.getResolutionType(), request));
+        if (!hasActiveCouncil)
+            errorMessages.put(ERROR, "writeoff.council.error");
         return errorMessages;
     }
 
@@ -771,31 +735,40 @@ public class WriteOffService extends GenericWorkFlowController {
             HttpServletRequest request) {
         User loggedInUser = securityUtils.getCurrentUser();
         model.addAttribute(ERROR_MSG, errorMessages);
-        model.addAttribute("writeOff", writeOff);
         List<Installment> installmentList = propertyTaxUtil.getInstallments(writeOff.getBasicProperty().getActiveProperty());
-        Set<EgDemandDetails> demandDetails = (ptDemandDAO
-                .getNonHistoryCurrDmdForProperty(writeOff.getBasicProperty().getProperty()))
-                        .getEgDemandDetails();
-        List<EgDemandDetails> dmndDetails = new ArrayList<>(demandDetails);
-        if (!dmndDetails.isEmpty())
-            dmndDetails = sortDemandDetails(dmndDetails);
-        List<DemandDetail> demandDetailBeanList = setDemandBeanList(dmndDetails);
-        writeOff.setDemandDetailBeanList(demandDetailBeanList);
+        writeOff.setDemandDetailBeanList(demandDisplay(writeOff));
         model.addAttribute("dmndDetails", writeOff.getDemandDetailBeanList());
         model.addAttribute("type", propertyMutationMasterHibDAO
                 .getAllPropertyMutationMastersByType(WRITEOFF_CODE));
         model.addAttribute(PROPERTY, writeOff.getProperty());
-        model.addAttribute("reasonsList", getAllwriteoffMastersByType(writeOff.getWriteOffType().getMutationDesc()));
+        model.addAttribute("reasonsList",
+                writeOffReasonRepository.findByTypeOrderByIdAsc(writeOff.getWriteOffType().getMutationDesc()));
         model.addAttribute(CURRENT_STATE, CREATED);
-        model.addAttribute(ENDORSEMENT_NOTICE, new ArrayList<>());
         model.addAttribute(STATE_TYPE, writeOff.getClass().getSimpleName());
         model.addAttribute(LOGGED_IN_USER, propertyService.isEmployee(loggedInUser));
         addModelAttributes(model, writeOff.getBasicProperty().getUpicNo(), request, installmentList);
         model.addAttribute("fromInstallment", writeOff.getFromInstallment());
         model.addAttribute("toInstallment", writeOff.getToInstallment());
         prepareWorkflow(model, writeOff, new WorkflowContainer());
-
+        if (!writeOff.getWriteoffDocumentsProxy().isEmpty())
+            model.addAttribute("attachedDocuments", writeOff.getWriteoffDocumentsProxy());
+        model.addAttribute("writeOff", writeOff);
         return WO_FORM;
     }
 
+    public List<DemandDetail> demandDisplay(WriteOff writeOff) {
+        List<DemandDetail> demandDetailBeanList = new ArrayList<>();
+        for (final DemandDetail demandDetailBean : writeOff.getDemandDetailBeanList()) {
+            demandDetailBean.setInstallment(installmentDao.findById(demandDetailBean.getInstallment().getId(), false));
+            final DemandDetail dmdDtl = createDemandDetailBean(demandDetailBean.getInstallment(),
+                    demandDetailBean.getReasonMaster(),
+                    demandDetailBean.getActualAmount().setScale(0, BigDecimal.ROUND_DOWN),
+                    demandDetailBean.getRevisedAmount() != null
+                            ? demandDetailBean.getRevisedAmount().setScale(0, BigDecimal.ROUND_DOWN) : BigDecimal.ZERO,
+                    demandDetailBean.getActualCollection().setScale(0, BigDecimal.ROUND_DOWN),
+                    BigDecimal.ZERO);
+            demandDetailBeanList.add(dmdDtl);
+        }
+        return demandDetailBeanList;
+    }
 }

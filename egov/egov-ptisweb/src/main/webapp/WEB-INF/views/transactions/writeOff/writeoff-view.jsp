@@ -236,7 +236,7 @@ div.floors-tbl-freeze-column-div {
 										<spring:message code="lbl.cv.sewdetails" />
 									</div>
 								</div>
-								<c:if test="${not empty sewConnDetails}">
+								<c:if test="${hasActiveSwg == true}">
 									<c:forEach items="${sewConnDetails}" var="sc">
 										<div class="panel-body">
 											<div class="row add-border">
@@ -270,7 +270,7 @@ div.floors-tbl-freeze-column-div {
 										</div>
 									</c:forEach>
 								</c:if>
-								<c:if test="${empty sewConnDetails}">
+								<c:if test="${hasActiveSwg == false}">
 									<div class="row add-border">
 										<div class="col-xs-3">*No Sewerage Connection Details</div>
 									</div>

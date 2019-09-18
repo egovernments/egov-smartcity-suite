@@ -286,22 +286,23 @@
 											<span class="bold"><s:text name="ltPmtPenalty" /> </span>
 										</div>
 									</td>
-									<s:if test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT')}">
-									<td class="blueborderfortd">
-										<div align="center">
-											<span class="bold"><s:text name="Tax" /> </span>
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="center">
-											<span class="bold"><s:text name="chkBncPenalty" /> </span>
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="center">
-											<span class="bold"><s:text name="ltPmtPenalty" /> </span>
-										</div>
-									</td>
+									<s:if
+										test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT') || basicProperty.activeProperty.propertyModifyReason.equals('WRITE_OFF')}">
+										<td class="blueborderfortd">
+											<div align="center">
+												<span class="bold"><s:text name="Tax" /> </span>
+											</div>
+										</td>
+										<td class="blueborderfortd">
+											<div align="center">
+												<span class="bold"><s:text name="chkBncPenalty" /> </span>
+											</div>
+										</td>
+										<td class="blueborderfortd">
+											<div align="center">
+												<span class="bold"><s:text name="ltPmtPenalty" /> </span>
+											</div>
+										</td>
 									</s:if>
 									<td class="blueborderfortd">
 										<div align="center">
@@ -364,19 +365,21 @@
 												</td>
 											</c:if>
 										</s:iterator>
-										<s:if test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT')}">
-										<s:iterator value="dcbReport.getFieldNames()" var="fieldnames">
-											<c:if
-												test="${fieldnames != 'Advance Collection' && fieldnames != 'Fines' && fieldnames != 'Early Payment Rebate'}">
-												<td class="blueborderfortd">
-													<div align="right">
-														<s:text name="format.money">
-															<s:param value="value.getDemandVariation()[#fieldnames]" />
-														</s:text>
-													</div>
-												</td>
-											</c:if>
-										</s:iterator>
+										<s:if
+											test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT') || basicProperty.activeProperty.propertyModifyReason.equals('WRITE_OFF')}">
+											<s:iterator value="dcbReport.getFieldNames()"
+												var="fieldnames">
+												<c:if
+													test="${fieldnames != 'Advance Collection' && fieldnames != 'Fines' && fieldnames != 'Early Payment Rebate'}">
+													<td class="blueborderfortd">
+														<div align="right">
+															<s:text name="format.money">
+																<s:param value="value.getDemandVariation()[#fieldnames]" />
+															</s:text>
+														</div>
+													</td>
+												</c:if>
+											</s:iterator>
 										</s:if>
 										<s:set value="0" var="rebate_waiver" />
 										<s:set value="0" var="waiver" />
@@ -479,40 +482,47 @@
 											<s:else><span class="bold">0</s:else>
 										</div>
 									</td>
-									<s:if test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT')}">
-									<td class="blueborderfortd">
-										<div align="right">
-											<s:if test="%{dcbReport.getTotalDmdTax() != null}">
-												<span class="bold"> <s:text name="format.money">
-														<s:param value="dcbReport.getTotalDmdVarTax()" />
-													</s:text>
-												</span>
-											</s:if>
-											<s:else><span class="bold">0</s:else>
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="right">
-											<s:if test="%{dcbReport.getTotalDmdPnlty() != null}">
-												<span class="bold"> <s:text name="format.money">
-														<s:param value="dcbReport.getTotalDmdVarPnlty()" />
-													</s:text>
-												</span>
-											</s:if>
-											<s:else><span class="bold">0</s:else>
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="right">
-											<s:if test="%{dcbReport.getTotalLpayPnlty() != null}">
-												<span class="bold"> <s:text name="format.money">
-														<s:param value="dcbReport.getTotalDmdVarLpayPnlty()" />
-													</s:text>
-												</span>
-											</s:if>
-											<s:else><span class="bold">0</s:else>
-										</div>
-									</td>
+									<s:if
+										test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT') || basicProperty.activeProperty.propertyModifyReason.equals('WRITE_OFF')}">
+										<td class="blueborderfortd">
+											<div align="right">
+												<s:if test="%{dcbReport.getTotalDmdTax() != null}">
+													<span class="bold"> <s:text name="format.money">
+															<s:param value="dcbReport.getTotalDmdVarTax()" />
+														</s:text>
+													</span>
+												</s:if>
+												<s:else>
+													<span class="bold">0
+												</s:else>
+											</div>
+										</td>
+										<td class="blueborderfortd">
+											<div align="right">
+												<s:if test="%{dcbReport.getTotalDmdPnlty() != null}">
+													<span class="bold"> <s:text name="format.money">
+															<s:param value="dcbReport.getTotalDmdVarPnlty()" />
+														</s:text>
+													</span>
+												</s:if>
+												<s:else>
+													<span class="bold">0
+												</s:else>
+											</div>
+										</td>
+										<td class="blueborderfortd">
+											<div align="right">
+												<s:if test="%{dcbReport.getTotalLpayPnlty() != null}">
+													<span class="bold"> <s:text name="format.money">
+															<s:param value="dcbReport.getTotalDmdVarLpayPnlty()" />
+														</s:text>
+													</span>
+												</s:if>
+												<s:else>
+													<span class="bold">0
+												</s:else>
+											</div>
+										</td>
 									</s:if>
 									<td class="blueborderfortd">
 										<div align="right">
@@ -581,16 +591,17 @@
 									<td class="blueborderfortd">
 										<div align="center">&nbsp;</div>
 									</td>
-									<s:if test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT')}">
-									<td class="blueborderfortd">
-										<div align="center">&nbsp;</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="center">&nbsp;</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="center">&nbsp;</div>
-									</td>
+									<s:if
+										test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT') || basicProperty.activeProperty.propertyModifyReason.equals('WRITE_OFF')}">
+										<td class="blueborderfortd">
+											<div align="center">&nbsp;</div>
+										</td>
+										<td class="blueborderfortd">
+											<div align="center">&nbsp;</div>
+										</td>
+										<td class="blueborderfortd">
+											<div align="center">&nbsp;</div>
+										</td>
 									</s:if>
 									<td class="blueborderfortd">
 										<div align="center">&nbsp;</div>
@@ -639,16 +650,17 @@
 										<td class="blueborderfortd">
 											<div align="center">&nbsp;</div>
 										</td>
-										<s:if test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT')}">
-										<td class="blueborderfortd">
-											<div align="center">&nbsp;</div>
-										</td>
-										<td class="blueborderfortd">
-											<div align="center">&nbsp;</div>
-										</td>
-										<td class="blueborderfortd">
-											<div align="center">&nbsp;</div>
-										</td>
+										<s:if
+											test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT') || basicProperty.activeProperty.propertyModifyReason.equals('WRITE_OFF')}">
+											<td class="blueborderfortd">
+												<div align="center">&nbsp;</div>
+											</td>
+											<td class="blueborderfortd">
+												<div align="center">&nbsp;</div>
+											</td>
+											<td class="blueborderfortd">
+												<div align="center">&nbsp;</div>
+											</td>
 										</s:if>
 										<td class="blueborderfortd">
 											<div align="center">&nbsp;</div>
@@ -689,16 +701,17 @@
 									<td class="blueborderfortd">
 										<div align="center">&nbsp;</div>
 									</td>
-									<s:if test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT')}">
-									<td class="blueborderfortd">
-										<div align="center">&nbsp;</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="center">&nbsp;</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="center">&nbsp;</div>
-									</td>
+									<s:if
+										test="%{basicProperty.activeProperty.propertyModifyReason.equals('COURTVERDICT') || basicProperty.activeProperty.propertyModifyReason.equals('WRITE_OFF')}">
+										<td class="blueborderfortd">
+											<div align="center">&nbsp;</div>
+										</td>
+										<td class="blueborderfortd">
+											<div align="center">&nbsp;</div>
+										</td>
+										<td class="blueborderfortd">
+											<div align="center">&nbsp;</div>
+										</td>
 									</s:if>
 									<td class="blueborderfortd">
 										<div align="center">&nbsp;</div>

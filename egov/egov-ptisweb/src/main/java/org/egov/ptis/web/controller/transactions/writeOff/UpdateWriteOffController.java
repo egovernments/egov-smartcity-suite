@@ -64,6 +64,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WO_FORM;
 import static org.egov.ptis.constants.PropertyTaxConstants.WO_SUCCESS_FORM;
 import static org.egov.ptis.constants.PropertyTaxConstants.WO_VIEW;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,10 +80,13 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterHibDAO;
 import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.WriteOff;
 import org.egov.ptis.domain.entity.property.WriteOffReasons;
+import org.egov.ptis.domain.repository.writeOff.WriteOffReasonRepository;
+import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.writeOff.WriteOffService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,12 +99,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/writeoff/update/{id}")
 public class UpdateWriteOffController extends GenericWorkFlowController {
-    private String WRITOFF_DOC = "attachedDocuments" ;
+    private static final String WRITOFF_DOC = "attachedDocuments";
     @Autowired
     private WriteOffService writeOffService;
     @Autowired
@@ -111,18 +116,22 @@ public class UpdateWriteOffController extends GenericWorkFlowController {
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
     @Autowired
     private PropertyMutationMasterHibDAO propertyMutationMasterHibDAO;
+    @Autowired
+    private WriteOffReasonRepository writeOffReasonRepository;
+    @Autowired
+    private PropertyService propertyService;
 
     @ModelAttribute
     public WriteOff writeOffModel(@PathVariable Long id) {
         return writeOffService.getWriteOffById(id);
 
     }
-    
+
     @ModelAttribute("documentsList")
     public List<DocumentType> documentsList(@ModelAttribute final WriteOff writeOff) {
-            return writeOffService.getDocuments(TransactionType.WRITEOFF);
+        return writeOffService.getDocuments(TransactionType.WRITEOFF);
     }
-    
+
     @GetMapping
     public String view(@ModelAttribute WriteOff writeOff, Model model, HttpServletRequest request) {
         String target = null;
@@ -138,7 +147,8 @@ public class UpdateWriteOffController extends GenericWorkFlowController {
             writeOffService.addModelAttributesupdate(model, writeOff);
             writeOffService.addModelAttributes(model, basicProperty.getUpicNo(), request, installmentList);
             if (!writeOff.getDocuments().isEmpty())
-                model.addAttribute("attachedDocuments", writeOff.getDocuments());
+                writeOff.setWriteoffDocumentsProxy(writeOff.getDocuments());
+            model.addAttribute(WRITOFF_DOC, writeOff.getWriteoffDocumentsProxy());
             model.addAttribute("demandDetailList", writeOff.getDemandDetailBeanList());
             model.addAttribute("currentDesignation", currentDesg);
             workflowContainer.setCurrentDesignation(currentDesg);
@@ -148,7 +158,7 @@ public class UpdateWriteOffController extends GenericWorkFlowController {
             writeOffService.addDemandDetails(writeOff);
             writeOffService.addModelAttributesupdate(model, writeOff);
             writeOffService.addModelAttributes(model, basicProperty.getUpicNo(), request, installmentList);
-            if (!writeOff.getDocuments().isEmpty()){
+            if (!writeOff.getDocuments().isEmpty()) {
                 writeOff.setWriteoffDocumentsProxy(writeOff.getDocuments());
                 model.addAttribute(WRITOFF_DOC, writeOff.getWriteoffDocumentsProxy());
             }
@@ -164,13 +174,14 @@ public class UpdateWriteOffController extends GenericWorkFlowController {
     }
 
     @PostMapping
-    public String saveWriteOff(@ModelAttribute("writeOff") WriteOff writeOff, BindingResult resultBinder,
+    public String wfApproveReject(@ModelAttribute("writeOff") WriteOff writeOff, BindingResult resultBinder,
             final RedirectAttributes redirectAttributes, final Model model, final HttpServletRequest request,
             @RequestParam String workFlowAction) {
         Long approvalPosition = 0l;
         String approvalComent = "";
         String target = "";
         Map<String, String> errorMessages = new HashMap<>();
+        new ArrayList<>();
         User loggedInUser = securityUtils.getCurrentUser();
         String successMessage = null;
         String currentDesg = writeOffService.getLoggedInUserDesignation(
@@ -178,67 +189,68 @@ public class UpdateWriteOffController extends GenericWorkFlowController {
         propertyTaxCommonUtils.setSourceOfProperty(loggedInUser, false);
         String value = request.getParameter("propertyDeactivateFlag");
         writeOff.setPropertyDeactivateFlag(Boolean.valueOf(value));
-            if (request.getParameterValues("checkbox") != null && request.getParameterValues("checkbox").length > 0) {
-                writeOff.setPropertyDeactivateFlag(true);
-            } else {
-                writeOff.setPropertyDeactivateFlag(false);
-            }
-            if (request.getParameter(APPROVAL_COMMENT) != null)
-                approvalComent = request.getParameter(APPROVAL_COMMENT);
-            if (request.getParameter(WF_ACTION) != null)
-                workFlowAction = request.getParameter(WF_ACTION);
-            if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
-                approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
-            if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE)
-                    || WFLOW_ACTION_STEP_PREVIEW.equalsIgnoreCase(workFlowAction)
-                    || WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction)) {
-                return "redirect:/writeoff/generatenotice?assessmentno=" + writeOff.getBasicProperty().getUpicNo()
-                        + "&noticeType=" + NOTICE_TYPE_WRITEOFFROCEEDINGS + "&noticeMode="
-                        + NOTICE_TYPE_WRITEOFFROCEEDINGS + "&actionType=" + workFlowAction + "&approverUser="
-                        + loggedInUser.getName();
-            } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
-                writeOffService.saveWriteOff(writeOff, approvalPosition, approvalComent, null, workFlowAction);
+        if (request.getParameterValues("checkbox") != null && request.getParameterValues("checkbox").length > 0)
+            writeOff.setPropertyDeactivateFlag(true);
+        else
+            writeOff.setPropertyDeactivateFlag(false);
+        if (request.getParameter(APPROVAL_COMMENT) != null)
+            approvalComent = request.getParameter(APPROVAL_COMMENT);
+        if (request.getParameter(WF_ACTION) != null)
+            workFlowAction = request.getParameter(WF_ACTION);
+        if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
+            approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
+        if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE)
+                || WFLOW_ACTION_STEP_PREVIEW.equalsIgnoreCase(workFlowAction)
+                || WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction))
+            return "redirect:/writeoff/generatenotice?assessmentno=" + writeOff.getBasicProperty().getUpicNo()
+                    + "&noticeType=" + NOTICE_TYPE_WRITEOFFROCEEDINGS + "&noticeMode="
+                    + NOTICE_TYPE_WRITEOFFROCEEDINGS + "&actionType=" + workFlowAction + "&approverUser="
+                    + loggedInUser.getName();
+        else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
+            writeOffService.saveWriteOff(writeOff, approvalPosition, approvalComent, null, workFlowAction);
 
-                successMessage = "Write Off is approved Successfully by : "
+            successMessage = "Write Off is approved Successfully by : "
+                    + propertyTaxUtil.getApproverUserName(writeOff.getState().getOwnerPosition().getId())
+                    + " with application number : " + writeOff.getApplicationNumber();
+            model.addAttribute(SUCCESS_MSG, successMessage);
+
+            target = WO_SUCCESS_FORM;
+        } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
+
+            writeOffService.saveWriteOff(writeOff, approvalPosition, approvalComent, null, workFlowAction);
+            if (currentDesg.contains(REVENUE_OFFICER_DESGN))
+                successMessage = "Write Off is completely rejected by :"
                         + propertyTaxUtil.getApproverUserName(writeOff.getState().getOwnerPosition().getId())
-                        + " with application number : " + writeOff.getApplicationNumber();
-                model.addAttribute(SUCCESS_MSG, successMessage);
+                        + " with application number " + writeOff.getApplicationNumber();
+            else
+                successMessage = "Write Off rejected and forwarded to :"
+                        + propertyTaxUtil.getApproverUserName(writeOff.getState().getOwnerPosition().getId())
+                        + " with application number " + writeOff.getApplicationNumber();
 
-                target = WO_SUCCESS_FORM;
-            } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
-                
-                writeOffService.saveWriteOff(writeOff, approvalPosition, approvalComent, null, workFlowAction);
-                if (currentDesg.contains(REVENUE_OFFICER_DESGN))
-                    successMessage = "Write Off is completely rejected by :"
-                            + propertyTaxUtil.getApproverUserName(writeOff.getState().getOwnerPosition().getId())
-                            + " with application number " + writeOff.getApplicationNumber();
-                else
-                    successMessage = "Write Off rejected and forwarded to :"
-                            + propertyTaxUtil.getApproverUserName(writeOff.getState().getOwnerPosition().getId())
-                            + " with application number " + writeOff.getApplicationNumber();
+            model.addAttribute(SUCCESS_MSG, successMessage);
 
-                model.addAttribute(SUCCESS_MSG, successMessage);
-
-                target = WO_SUCCESS_FORM;
-            } else {
+            target = WO_SUCCESS_FORM;
+        } else {
             if (currentDesg.contains(REVENUE_OFFICER_DESGN)) {
-                if (writeOff.getWriteOffType().getCode() != null) {
+                if (writeOff.getWriteOffType()!=null && !writeOff.getWriteOffType().getCode().isEmpty()) {
                     final PropertyMutationMaster propMutMstr = propertyMutationMasterHibDAO
                             .getPropertyMutationMasterByCode(writeOff.getWriteOffType().getCode());
                     writeOff.setWriteOffType(propMutMstr);
                 }
-                if (writeOff.getWriteOffReasons().getId() != null) {
-                    List<WriteOffReasons> woreasons = writeOffService
-                            .getAllwriteoffMastersByName(writeOff.getWriteOffReasons().getId());
-                    writeOff.setWriteOffReasons(woreasons.get(0));
+                if (writeOff.getWriteOffReasons()!=null && !writeOff.getWriteOffReasons().getName().isEmpty()) {
+                    final WriteOffReasons writeOffReasons = writeOffReasonRepository
+                            .findByCode(writeOff.getWriteOffReasons().getCode());
+                    writeOff.setWriteOffReasons(writeOffReasons);
                 }
-                resultBinder = writeOffService.validate(writeOff, resultBinder);
-                errorMessages = writeOffService.displayValidation(writeOff, request, model);
-                if ((resultBinder != null && resultBinder.hasErrors()) || !errorMessages.isEmpty()) {
+                if (!resultBinder.hasErrors())
+                    resultBinder = writeOffService.validate(writeOff, resultBinder);
+                errorMessages = writeOffService.displayValidation(writeOff, request);
+                if (resultBinder != null && resultBinder.hasErrors() || !errorMessages.isEmpty()) {
                     target = writeOffService.displayErrors(writeOff, model, errorMessages, request);
                     return target;
                 }
-                writeOffService.saveProperty(writeOff);
+                processAndStoreApplicationDocuments(writeOff);
+                writeOffService.updateProperty(writeOff);
                 writeOff.getBasicProperty().addProperty(writeOff.getProperty());
             }
             writeOffService.saveWriteOff(writeOff, approvalPosition, approvalComent, null, workFlowAction);
@@ -248,9 +260,26 @@ public class UpdateWriteOffController extends GenericWorkFlowController {
             model.addAttribute(SUCCESS_MSG, successMessage);
 
             target = WO_SUCCESS_FORM;
-
         }
         return target;
     }
 
+    public void processAndStoreApplicationDocuments(final WriteOff writeoff) {
+        for (final Document applicationDocument : writeoff.getWriteoffDocumentsProxy())
+            if (!writeoff.getWriteoffDocumentsProxy().isEmpty())
+                replaceDoc(writeoff, applicationDocument);
+        for (final Document applicationDocument : writeoff.getWriteoffDocumentsProxy())
+            if (applicationDocument.getFile() != null) {
+                applicationDocument.setType(writeOffService.getDocType(applicationDocument.getType().getName()));
+                applicationDocument.setFiles(propertyService.addToFileStore(applicationDocument.getFile()));
+            }
+    }
+
+    private void replaceDoc(final WriteOff writeoff, final Document applicationDocument) {
+        for (MultipartFile mp : applicationDocument.getFile())
+            if (mp.getSize() != 0)
+                for (Document document : writeoff.getDocuments())
+                    if (document.getType().getName().equals(applicationDocument.getType().getName()))
+                        document.setFiles(propertyService.addToFileStore(applicationDocument.getFile()));
+    }
 }

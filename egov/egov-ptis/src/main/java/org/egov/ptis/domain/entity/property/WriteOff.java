@@ -47,9 +47,25 @@
  */
 package org.egov.ptis.domain.entity.property;
 
-import java.util.*;
-import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.bean.demand.DemandDetail;
@@ -94,7 +110,6 @@ public class WriteOff extends StateAware<Position> {
     private transient List<DemandDetail> demandDetailBeanList = new ArrayList<>();
     @Transient
     private transient List<Document> writeoffDocumentsProxy = new ArrayList<>();
-    
 
     @Column(name = "applicationno")
     private String applicationNumber;
@@ -106,7 +121,7 @@ public class WriteOff extends StateAware<Position> {
     private String resolutionDate;
 
     @Column(name = "deactivate")
-    private Boolean propertyDeactivateFlag;
+    private Boolean propertyDeactivateFlag =false;
 
     @Column(name = "resolutionType")
     private String resolutionType;
@@ -250,7 +265,7 @@ public class WriteOff extends StateAware<Position> {
     public String getStateDetails() {
         return "Write Off" + " - " + this.getBasicProperty().getUpicNo();
     }
-    
+
     public List<Document> getWriteoffDocumentsProxy() {
         return writeoffDocumentsProxy;
     }

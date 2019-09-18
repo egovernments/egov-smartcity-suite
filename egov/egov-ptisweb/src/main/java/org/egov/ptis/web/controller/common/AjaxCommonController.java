@@ -68,14 +68,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
-import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.property.AmalgamatedPropInfo;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.WriteOffReasons;
+import org.egov.ptis.domain.repository.writeOff.WriteOffReasonRepository;
 import org.egov.ptis.domain.service.property.PropertyService;
-import org.egov.ptis.domain.service.writeOff.WriteOffService;
 import org.egov.ptis.master.service.PropertyUsageService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,13 +97,11 @@ public class AjaxCommonController {
 
     @Autowired
     private PropertyUsageService propertyUsageService;
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    @Autowired
+    private WriteOffReasonRepository writeOffReasonRepository;
 
-    @Autowired
-	private PropertyTypeMasterDAO propTyprMasterDAO;
-    @Autowired
-    private WriteOffService writeOffService;
-    @Autowired
-	private PropertyTaxCommonUtils propertyTaxCommonUtils;
     /**
      * Provides the details of the property for amalgamation
      * @param assessmentNo
@@ -112,7 +109,8 @@ public class AjaxCommonController {
      */
     @RequestMapping(value = "/amalgamation/getamalgamatedpropdetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public AmalgamatedPropInfo getAmalgamatedPropertyDetails(@RequestParam("assessmentNo") final String assessmentNo,@RequestParam("retainerAssessmentNo") final String retainerAssessmentNo) {
+    public AmalgamatedPropInfo getAmalgamatedPropertyDetails(@RequestParam("assessmentNo") final String assessmentNo,
+            @RequestParam("retainerAssessmentNo") final String retainerAssessmentNo) {
         final AmalgamatedPropInfo amalgamatedProp = new AmalgamatedPropInfo();
         amalgamatedProp.setValidationMsg("");
         final BasicProperty basicProp = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
@@ -123,20 +121,19 @@ public class AjaxCommonController {
         String retainerPropType = retainerBasicProp.getProperty().getPropertyDetail().getPropertyTypeMaster().getType();
         if (basicProp == null)
             amalgamatedProp.setValidationMsg("Assessment does not exist!");
+        else if (basicProp.isUnderWorkflow())
+            amalgamatedProp.setValidationMsg("Assessment: " + basicProp.getUpicNo() + " is under workflow!");
+        else if (retainerPropType.equals(OWNERSHIP_TYPE_VAC_LAND_STR) && !amalgPropType.equals(OWNERSHIP_TYPE_VAC_LAND_STR)
+                || !retainerPropType.equals(OWNERSHIP_TYPE_VAC_LAND_STR)
+                        && amalgPropType.equals(OWNERSHIP_TYPE_VAC_LAND_STR))
+            amalgamatedProp.setValidationMsg("Vacant Land cannot be amalgamated with Non Vacant Land");
         else {
-            if (basicProp.isUnderWorkflow())
-                amalgamatedProp.setValidationMsg("Assessment: " + basicProp.getUpicNo() + " is under workflow!");
-            else if ((retainerPropType.equals(OWNERSHIP_TYPE_VAC_LAND_STR) && !amalgPropType.equals(OWNERSHIP_TYPE_VAC_LAND_STR)) || (!retainerPropType.equals(OWNERSHIP_TYPE_VAC_LAND_STR) && amalgPropType.equals(OWNERSHIP_TYPE_VAC_LAND_STR)))
-                amalgamatedProp.setValidationMsg("Vacant Land cannot be amalgamated with Non Vacant Land");
-            else {
-                final BigDecimal totalDue = propService.getTotalPropertyTaxDue(basicProp);
-                final boolean hasDues = totalDue.compareTo(BigDecimal.ZERO) > 0 ? true : false;
-                if (hasDues)
-                    amalgamatedProp.setValidationMsg("This property has dues!");
-                else {
-                    getChildPropertyDetails(assessmentNo, amalgamatedProp, basicProp, totalDue);
-                }
-            }
+            final BigDecimal totalDue = propService.getTotalPropertyTaxDue(basicProp);
+            final boolean hasDues = totalDue.compareTo(BigDecimal.ZERO) > 0 ? true : false;
+            if (hasDues)
+                amalgamatedProp.setValidationMsg("This property has dues!");
+            else
+                getChildPropertyDetails(assessmentNo, amalgamatedProp, basicProp, totalDue);
         }
         return amalgamatedProp;
     }
@@ -199,29 +196,28 @@ public class AjaxCommonController {
     @RequestMapping(value = "/getcategorybypropertytype", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Map<String, String> getCategoryByPropertyType(@RequestParam("propType") final String propType) {
-    	Map<String, String> propTypeCategoryMap = new TreeMap<>();
-        
+        Map<String, String> propTypeCategoryMap = new TreeMap<>();
+
         if (propType.equals(OWNERSHIP_TYPE_VAC_LAND))
-            propTypeCategoryMap.putAll(VAC_LAND_PROPERTY_TYPE_CATEGORY); 
-        else 
+            propTypeCategoryMap.putAll(VAC_LAND_PROPERTY_TYPE_CATEGORY);
+        else
             propTypeCategoryMap.putAll(NON_VAC_LAND_PROPERTY_TYPE_CATEGORY);
-        
+
         return propTypeCategoryMap;
     }
-    
-	@RequestMapping(value = "/getwriteoffreason", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public List<WriteOffReasons> getreasons(@RequestParam("typevalue") final String typevalue) {
-		return writeOffService.getAllwriteoffMastersByType(typevalue);
 
-	}
+    @RequestMapping(value = "/getwriteoffreason", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<WriteOffReasons> getreasons(@RequestParam("typevalue") final String typevalue) {
+        return writeOffReasonRepository.findByTypeOrderByIdAsc(typevalue);
 
-	@RequestMapping(value = "/getcouncildetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public List<Map<String, String>> getCouncilDetails(@RequestParam("resolutionNo") final String resolutionNo,
-			@RequestParam("resolutionType") final String resolutionType, HttpServletRequest request) {
-		 return propertyTaxCommonUtils.getCouncilDeatils(resolutionNo, resolutionType, request);
-	}
-	
-    
+    }
+
+    @RequestMapping(value = "/getcouncildetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<Map<String, String>> getCouncilDetails(@RequestParam("resolutionNo") final String resolutionNo,
+            @RequestParam("resolutionType") final String resolutionType, HttpServletRequest request) {
+        return propertyTaxCommonUtils.getCouncilDetails(resolutionNo, resolutionType, request);
+    }
+
 }

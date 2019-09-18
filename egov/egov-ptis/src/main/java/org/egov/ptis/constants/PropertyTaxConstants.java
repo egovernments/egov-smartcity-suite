@@ -1822,5 +1822,6 @@ public interface PropertyTaxConstants {
 	public static final String WO_SPECIALNOTICE_TEMPLATE = "mainWriteOffProceedings";
 	public static final String NOTICE_TYPE_WOPROCEEDINGS = "WO Proceedings";
 	public static final String ACTIVE = "ACTIVE";
+	public static final String COUNCIL_ERROR = "COUNCIL RESOLUTION DOES NOT EXIST";
 
 }

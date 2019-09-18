@@ -51,92 +51,114 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-<c:choose>
-	<c:when test="${!documentsList.isEmpty()}">
 
-		<div class="form-group col-sm-12 view-content header-color hidden-xs">
-			<table class="tablebottom doctable" width="100%" border="0"
-				cellpadding="0" cellspacing="0">
-				<th class="bluebgheadtd">
-					<div class="col-sm-3 text-center">
-						<spring:message code="lbl.sno" />
-					</div>
-					<div class="col-sm-3 text-center">
-						<spring:message code="lbl.documentname" />
-					</div>
-					<div class="col-sm-3 text-center">
-						<spring:message code="lbl.document.upload" />
-						(<span class="mandatory"></span> )
-					</div>
-				</td>
-				</th>
-			</table>
-		</div>
-		<c:forEach var="docs" items="${documentsList}" varStatus="status">
+<div class="form-group col-sm-12 view-content header-color hidden-xs">
+	<table class="tablebottom doctable" width="100%" border="0"
+		cellpadding="0" cellspacing="0">
+		<th class="bluebgheadtd">
+			<div class="col-sm-3 text-center">
+				<spring:message code="lbl.sno" />
+			</div>
+			<div class="col-sm-3 text-center">
+				<spring:message code="lbl.documentname" />
+			</div>
+			<div class="col-sm-3 text-center">
+				<spring:message code="lbl.document.upload" />
+				(<span class="mandatory"></span> )
+			</div>
+		</td>
+		</th>
+	</table>
+</div>
+<c:set var="index" value="0"></c:set>
+<c:forEach var="docs" items="${documentsList}" varStatus="status">
 
-			<div class="form-group">
-				<table class="tablebottom doctable" width="100%" border="0"
-					cellpadding="0" cellspacing="0" id="uploadertbl">
-					<tr>
-						<td>
-							<div class="col-sm-3 add-margin check-text text-center">
-								<c:choose>
-									<c:when test="${docs.mandatory}">
-										<input type="checkbox" checked disabled>&nbsp;<c:out
-											value="${status.index + 1}" />
-									</c:when>
-									<c:otherwise>
-										<input type="checkbox" disabled>&nbsp;<c:out
-											value="${status.index + 1}" />
-									</c:otherwise>
-								</c:choose>
-							</div>
-							<div class="col-sm-3 add-margin check-text text-center">
-								<c:choose>
-									<c:when test="${docs.mandatory}">
-										<input type="checkbox" id="check${status.index}" checked
-											disabled>&nbsp;<c:out value="${docs.name}" />
-									</c:when>
-									<c:otherwise>
-										<input type="checkbox" id="check${status.index}" disabled>&nbsp;<c:out
-											value="${docs.name}" />
-									</c:otherwise>
-								</c:choose>
-								<form:hidden id="documents${status.index}.type.id"
-									path="documents[${status.index}].type.id" value="${docs.id}" />
-								<form:hidden id="documents${status.index}.type.name"
-									path="documents[${status.index}].type.name"
+	<div class="form-group">
+		<table class="tablebottom doctable" width="100%" border="0"
+			cellpadding="0" cellspacing="0" id="uploadertbl">
+			<tr>
+				<td>
+					<div class="col-sm-3 add-margin check-text text-center">
+						<c:choose>
+							<c:when test="${docs.mandatory}">
+								<input type="checkbox" checked disabled>&nbsp;<c:out
+									value="${index + 1}" />
+							</c:when>
+							<c:otherwise>
+								<input type="checkbox" disabled>&nbsp;<c:out
+									value="${index + 1}" />
+							</c:otherwise>
+						</c:choose>
+					</div>
+					<div class="col-sm-3 add-margin check-text text-center">
+						<c:choose>
+							<c:when test="${docs.mandatory}">
+								<input type="checkbox" id="check${index}" checked disabled>&nbsp;<c:out
 									value="${docs.name}" />
-							</div>
-							<div class="col-sm-3 add-margin text-center">
+							</c:when>
+							<c:otherwise>
+								<input type="checkbox" id="check${index}" disabled>&nbsp;<c:out
+									value="${docs.name}" />
+							</c:otherwise>
+						</c:choose>
+						<form:hidden id="writeoffDocumentsProxy${index}.type.id"
+							path="writeoffDocumentsProxy[${index}].type.id"
+							value="${docs.id}" />
+						<form:hidden id="writeoffDocumentsProxy${index}.type.name"
+							path="writeoffDocumentsProxy[${index}].type.name"
+							value="${docs.name}" />
+					</div>
+					<div class="col-sm-3 add-margin text-center">
+						<c:choose>
+							<c:when test="${attachedDocuments.isEmpty()}">
 								<c:choose>
-
 									<c:when test="${docs.mandatory}">
-										<input type="file" id="file${status.index}"
-											data-idx="${status.index}"
-											name="documents[${status.index}].file"
+										<input type="file" id="file${index}" data-idx="${index}"
+											name="writeoffDocumentsProxy[${index}].file"
 											class="file-ellipsis upload-file" required="true">
 									</c:when>
 									<c:otherwise>
-										<input type="file" id="file${status.index}"
-											name="documents[${status.index}].file"
+										<input type="file" id="file${index}"
+											name="writeoffDocumentsProxy[${index}].file"
 											class="file-ellipsis upload-file">
 									</c:otherwise>
 								</c:choose>
-								<form:errors path="documents[${status.index}].file"
-									cssClass="add-margin error-msg" />
-								<div class="add-margin error-msg text-left">
-									<spring:message code="lbl.document.size" />
-									<font size="1"> </font>
-								</div>
-							</div>
-						</td>
-					</tr>
-				</table>
-			</div>
-		</c:forEach>
-	</c:when>
-</c:choose>
+							</c:when>
+							<c:otherwise>
+								<c:choose>
+									<c:when test="${!attachedDocuments[index].files.isEmpty()}">
+										<c:forEach items="${attachedDocuments[index].files}"
+											var="file">
+
+											<input type="file" id="file${index}"
+												name="writeoffDocumentsProxy[${index}].file"
+												class="file-ellipsis upload-file">
+											<a
+												href="javascript:viewDocument('<c:out value="${file.fileStoreId}"/>')">
+												<c:out value="${file.fileName}" />
+											</a>
+										</c:forEach>
+									</c:when>
+									<c:otherwise>
+										<input type="file" id="file${index}"
+											name="writeoffDocumentsProxy[${index}].file"
+											class="file-ellipsis upload-file">
+									</c:otherwise>
+								</c:choose>
+							</c:otherwise>
+						</c:choose>
+						<form:errors path="writeoffDocumentsProxy[${index}].file"
+							cssClass="add-margin error-msg" />
+						<div class="add-margin error-msg text-left">
+							<spring:message code="lbl.document.size" />
+							<font size="1"> </font>
+						</div>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+</c:forEach>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/js/app/documentsupload.js'/>">
 	</script>

@@ -56,6 +56,7 @@
 <head>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/js/app/writeoff.js'/>">
+	
 </script>
 
 <style>
@@ -99,13 +100,13 @@ div.floors-tbl-freeze-column-div {
 <body>
 
 	<c:if test="${not empty errorMsg}">
- 	<div class="alert alert-danger" role="alert">
+		<div class="alert alert-danger" role="alert">
 			<c:forEach var="error" items="${errorMsg}" varStatus="status">
 				<spring:message code="${error.value}" />
 				<br />
 			</c:forEach>
 		</div>
-</c:if>
+	</c:if>
 
 	<form:form method="post" id="writeOffForm" commandName="writeOff"
 		theme="simple" enctype="multipart/form-data" modelAttribute="writeOff">
@@ -113,11 +114,11 @@ div.floors-tbl-freeze-column-div {
 			id="loggedUserIsEmployee" value="${loggedUserIsEmployee}" />
 		<form:hidden path="" name="instString" id="instString"
 			value="${instString}" />
-			<form:hidden path="" name="state" id="state"
+		<form:hidden path="" name="state" id="state"
 			value="${writeOff.getState().getValue()}" />
-			<form:hidden path="" name="propertyDeactivateFlag"
+		<form:hidden path="" name="propertyDeactivateFlag"
 			id="propertyDeactivateFlag" value="${propertyDeactivateFlag}" />
-			<div class="panel-heading">
+		<div class="panel-heading">
 			<ul class="nav nav-tabs" id="tabs">
 				<li class="First Active"><a data-toggle="tab"
 					href="#writeoffdetails" data-tabidx="0" aria-expanded="true"><spring:message
@@ -247,7 +248,7 @@ div.floors-tbl-freeze-column-div {
 										<spring:message code="lbl.cv.sewdetails" />
 									</div>
 								</div>
-								<c:if test="${not empty sewConnDetails}">
+								<c:if test="${hasActiveSwg == true}">
 									<c:forEach items="${sewConnDetails}" var="sc">
 										<div class="panel-body">
 											<div class="row add-border">
@@ -281,7 +282,7 @@ div.floors-tbl-freeze-column-div {
 										</div>
 									</c:forEach>
 								</c:if>
-								<c:if test="${empty sewConnDetails}">
+								<c:if test="${hasActiveSwg == false}">
 									<div class="row add-border">
 										<div class="col-xs-3">*No Sewerage Connection Details</div>
 									</div>
@@ -305,22 +306,8 @@ div.floors-tbl-freeze-column-div {
 										<div class="col-xs-2 add-margin">
 											<spring:message code="lbl.writeOffTypes" />
 										</div>
-										<c:if test="${writeOff.getState().getValue()=='Rejected'}">
 										<div class="col-xs-2 add-margin view-content">
-											<form:select path="writeOffType.code" id="writeOffType" 
-												cssClass="form-control"
-												onchange="enablecheckbox();displayreasons();"  >
-												<form:option value="">
-													<spring:message code="lbl.select" />
-												</form:option>
-												<form:options items="${type}" itemValue="code"
-													itemLabel="mutationDesc" />
-											</form:select>
-										</div>
-										</c:if>
-										<c:if test="${writeOff.getState().getValue()!='Rejected'}">
-										<div class="col-xs-2 add-margin view-content">
-											<form:select path="writeOffType.code" id="writeOffType" 
+											<form:select path="writeOffType.code" id="writeOffType"
 												cssClass="form-control"
 												onchange="enablecheckbox();displayreasons();">
 												<form:option value="">
@@ -329,44 +316,39 @@ div.floors-tbl-freeze-column-div {
 												<form:options items="${type}" itemValue="code"
 													itemLabel="mutationDesc" />
 											</form:select>
-											<form:errors path="writeOffType.mutationDesc" cssClass="add-margin error-msg" />
-											
+											<form:errors path="writeOffType.mutationDesc"
+												cssClass="add-margin error-msg" />
 										</div>
-										</c:if>
 										<div class="col-xs-2 add-margin" style="padding-left: 100px;">
 											<spring:message code="lbl.writeOff.reasons" />
 										</div>
-										<c:if test="${writeOff.getState().getValue()=='Rejected'}">
 										<div class="col-xs-3 add-margin view-content">
-											<form:select id="reasons" path="writeOffReasons.name"
-												cssClass="form-control" style="width: 80%"  >
+											<form:select id="reasons" path="writeOffReasons.code"
+												cssClass="form-control" style="width: 80%">
 												<form:option value="">
 													<spring:message code="lbl.select" />
 												</form:option>
-												<form:options items="${reasonsList}" itemValue="id" 
+												<form:options items="${reasonsList}" itemValue="code"
 													itemLabel="name" />
 											</form:select>
+											<form:errors path="writeOffReasons.name"
+												cssClass="add-margin error-msg" />
 										</div>
-										</c:if>
-										<c:if test="${writeOff.getState().getValue()!='Rejected'}">
-										<div class="col-xs-3 add-margin view-content">
-											<form:select id="reasons" path="writeOffReasons.name" 
-												cssClass="form-control" style="width: 80%"  >
-												<form:option value="">
-													<spring:message code="lbl.select" />
-												</form:option>
-												<form:options items="${writeOffReasons}" itemValue="id" 
-												itemLabel="name" />
-											</form:select>
-											<form:errors path="writeOffReasons.name" cssClass="add-margin error-msg" />
+									</div>
+									<c:if test="${writeOff.propertyDeactivateFlag == false}">
+										<div id="check" style="display: none;">
+											<spring:message code="lbl.writeoff.deactivation.checkbox" />
+											<input type="checkbox" id="fullwriteoffcheckbox"
+												class="check_box" name="checkbox">
 										</div>
-										</c:if>
-									</div>
-									<div id="check" style="display: none;">
-										<spring:message code="lbl.writeoff.deactivation.checkbox" />
-										<input type="checkbox" id="fullwriteoffcheckbox"
-											class="check_box" name="checkbox">
-									</div>
+									</c:if>
+									<c:if test="${writeOff.propertyDeactivateFlag == true}">
+										<div id="selected" style="display: none;">
+											<spring:message code="lbl.writeoff.deactivation.checkbox" />
+											<input type="checkbox" id="fullwriteoffcheckbox"
+												class="check_box" name="checkbox" checked="checked">
+										</div>
+									</c:if>
 								</div>
 
 							</div>
@@ -391,12 +373,13 @@ div.floors-tbl-freeze-column-div {
 										<div class="col-xs-2 add-margin view-content">
 											<form:select cssClass="form-control" path="resolutionType"
 												id="resolutionType" name="resolutionType"
-												cssStyle="width: 100%"  >
+												cssStyle="width: 100%">
 												<form:option value="">Select</form:option>
 												<form:option value="MPI. Council">Council</form:option>
 												<form:option value="Standing Committee">Standing Committee</form:option>
 											</form:select>
-											<form:errors path="resolutionType" cssClass="add-margin error-msg" />
+											<form:errors path="resolutionType"
+												cssClass="add-margin error-msg" />
 										</div>
 										<div class="col-xs-2 add-margin postion">
 											<spring:message code="lbl.resolution.no" />
@@ -404,21 +387,20 @@ div.floors-tbl-freeze-column-div {
 										<div class="col-xs-2 add-margin view-content">
 											<form:input id="resolutionNo" path="resolutionNo" type="text"
 												value="${resolutionNo}" cssClass="form-control"
-												autocomplete="off" 
-												onchange="getcouncilrequest()"  />
-												<form:errors path="resolutionNo" cssClass="add-margin error-msg" />
+												onchange="getcouncilrequest()" />
+											<form:errors path="resolutionNo"
+												cssClass="add-margin error-msg" />
 										</div>
 										<div class="col-xs-2 add-margin postion">
 											<spring:message code="lbl.resolution.date" />
 										</div>
 										<div class="col-xs-2 add-margin">
 											<form:input id="resolutionDate" path="resolutionDate"
-												value="${resolutionDate}" cssClass="form-control"
-												 />
+												value="${resolutionDate}" cssClass="form-control" />
 										</div>
 										<div class="col-xs-3 add-margin" id="viewlink">
-											<a id="url" href="#"  target="_blank">Council
-												management verification link</a>
+											<a id="url" href="#" target="_blank">Council management
+												verification link</a>
 										</div>
 									</div>
 
@@ -429,28 +411,29 @@ div.floors-tbl-freeze-column-div {
 
 					<div class="panel panel-primary">
 						<div class="panel-body custom-form">
-							<%@ include file="../../transactions/writeOff/writeoff-document-upload.jsp"%>
+							<%@ include
+								file="../../transactions/writeOff/writeoff-document-upload.jsp"%>
 						</div>
 
 					</div>
 				</div>
-					<div id="demanddetails" class="tab-pane fade">
-						<%@ include
-							file="../../transactions/writeOff/Writeoff-demand-details.jsp"%>
-					</div>
-			
+				<div id="demanddetails" class="tab-pane fade">
+					<%@ include
+						file="../../transactions/writeOff/Writeoff-demand-details.jsp"%>
+				</div>
+
 			</div>
 			<c:if test="${state != null}">
 				<tr>
 					<jsp:include page="../../common/workflowHistoryView.jsp" />
 				<tr>
 			</c:if>
-				<div class="row">
-					<div class="col-md-12">
-						<jsp:include page="/WEB-INF/views/common/commonWorkflowMatrix.jsp" />
-					</div>
+			<div class="row">
+				<div class="col-md-12">
+					<jsp:include page="/WEB-INF/views/common/commonWorkflowMatrix.jsp" />
 				</div>
-				
+			</div>
+
 			<div id="loadingMask" style="display: none">
 				<p align="center">
 					<img src="/ptis/resources/erp2/images/bar_loader.gif"> <span

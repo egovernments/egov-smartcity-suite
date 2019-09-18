@@ -46,40 +46,34 @@
  *
  */
 $( document ).ready(function() {
-    $("#viewlink").hide();
-
-	 var frominstallment;
-	 var toinstallment;
-	 var urlvalue;
-	 instString = $("#instString").val();
-	 var statevalue = $("#state").val();
-	 var typevalue = $( "#writeOffType option:selected" ).text();
-		if (typevalue == 'Full WriteOff' && statevalue == 'Rejected') {
-			var flagvalue = $("#propertyDeactivateFlag").val();
-			$("#frominstallments").attr('disabled', true);
-			$("#toinstallments").attr('disabled', true);
-			if(flagvalue==true)
+	$("#viewlink").hide();
+	var frominstallment;
+	var toinstallment;
+	instString = $("#instString").val();
+	var statevalue = $("#state").val();
+	var typevalue = $( "#writeOffType option:selected" ).text();
+	if (typevalue == 'Full WriteOff' && statevalue == 'Rejected') {
+		var flagvalue = $("#propertyDeactivateFlag").val();
+		$("#frominstallments").attr('disabled', true);
+		$("#toinstallments").attr('disabled', true);
+		if(flagvalue==true)
 			document.getElementById("check").style.display = "block";
-		}
-$("writeOffType").change(function()
-	           {
-	$("#demandDetailsTable").removeAttr('style');
-	  instString.split(",").forEach((val,index)=> {
-		  var queryIdentifier = ".row-"+val;
-		  $(queryIdentifier).removeAttr('style');
-
-	  });
-	           });
-	           
-	 
-	       $("#frominstallments").change(function()
-	           {
-	    
-	    	   getselectedinstallments(); });
-$("#toinstallments").change(function()
-          {
-	 getselectedinstallments();
-          }); 
+	}
+	$("writeOffType").change(function()
+			{
+		$("#demandDetailsTable").removeAttr('style');
+		instString.split(",").forEach((val,index)=> {
+			var queryIdentifier = ".row-"+val;
+			$(queryIdentifier).removeAttr('style');
+		});
+			});
+	$("#frominstallments").change(function()
+			{
+		getselectedinstallments(); });
+	$("#toinstallments").change(function()
+			{
+		getselectedinstallments();
+			}); 
 });
 
 function getselectedinstallments(val){
@@ -87,7 +81,6 @@ function getselectedinstallments(val){
 	  fromVal = $("#frominstallments").val();
 	  toVal = $("#toinstallments").val();
 	  instString = $("#instString").val();
-	  
 	  if(fromVal && toVal){
 		  var fromValIndex = instString.split(",").indexOf(fromVal);
 		  var toValIndex = instString.split(",").indexOf(toVal);
@@ -97,9 +90,8 @@ function getselectedinstallments(val){
 			  $(queryIdentifier).attr('style', 'display:none;');
 
 		  });
-		  
 		  if(fromValIndex > toValIndex)
-			return alert("To Installment cannot be greater than From Installment");
+			return bootbox.alert("To Installment cannot be greater than From Installment");
 		   $("#demandDetailsTable").removeAttr('style');		  
 		  instString.split(",").forEach((val,index)=> {
 			  if(fromValIndex <= index && index <= toValIndex){
@@ -126,39 +118,38 @@ function getselectedinstallments(val){
 				  $(queryIdentifier).removeAttr('style');
 
 			  });
-			for(var i=0; i < $(".demandDetailBeanList").length; i++){
-				 
-				var actualCollection = 'demandDetailBeanList'+ i + '.actualCollection';
-				var actualAmount = 'demandDetailBeanList'+ i + '.actualAmount';
-				var revisedAmount = 'demandDetailBeanList'+ i + '.revisedAmount';
-			
-			document.getElementById(revisedAmount).value = document.getElementById(actualAmount).value - document.getElementById(actualCollection).value;
-			var collectionAmount = document.getElementById(actualCollection).value;
-			var actualAmount = document.getElementById(actualAmount).value;
-			if(actualAmount == collectionAmount){
-			document.getElementById(revisedAmount).disabled = true;
-			}
-			}
-			
-		} else {
+			  displaydemand();
+		}else {
 			document.getElementById("check").style.display = "none";
 			$("#frominstallments").attr('disabled', false);
 			$("#toinstallments").attr('disabled', false);
-			for(var i=0; i < $(".demandDetailBeanList").length; i++){
-				var actualAmount = 'demandDetailBeanList'+ i + '.actualAmount';
-				var revisedAmount = 'demandDetailBeanList'+ i + '.revisedAmount';
-				var actualCollection = 'demandDetailBeanList'+ i + '.actualCollection';
-				var collectionAmount = document.getElementById(actualCollection).value;
-				var actualAmount = document.getElementById(actualAmount).value;
-				console.log("dattab   "+actualCollection)
-				if(actualAmount == collectionAmount){
-					document.getElementById(revisedAmount).disabled = true;
-					}else
-			document.getElementById(revisedAmount).value = '';
-			
-			}
-			
+			displaydemand();
 		}
+	}
+	
+	function displaydemand()
+	{
+		var writeofftypes = $( "#writeOffType option:selected" ).text();
+		for(var i=0; i < $(".demandDetailBeanList").length; i++){
+		var actualCollection = 'demandDetailBeanList'+ i + '.actualCollection';
+		
+		var actualAmount = 'demandDetailBeanList'+ i + '.actualAmount';
+		var revisedAmount = 'demandDetailBeanList'+ i + '.revisedAmount';
+		var collectionvalue = document.getElementById('demandDetailBeanList'+ i + '.actualCollection').value;
+		var actualAmountValue = document.getElementById(actualAmount).value;
+		if(actualAmountValue == collectionvalue){
+			document.getElementById(revisedAmount).value = document.getElementById(actualAmount).value -
+			document.getElementById(actualCollection).value;
+		document.getElementById(revisedAmount).disabled = true;
+		}
+		 else 
+			 document.getElementById(revisedAmount).value = '';
+		if(writeofftypes  == 'Full WriteOff'){
+		document.getElementById(revisedAmount).value = document.getElementById(actualAmount).value -
+		document.getElementById(actualCollection).value;
+		}
+			
+	}
 	}
 	
 	function displayreasons(){
@@ -167,6 +158,7 @@ function getselectedinstallments(val){
 				url: "/ptis/common/getwriteoffreason",
 				dataType: "json",
 		        type: "GET",
+		        cache : false,
 		        data:{"typevalue":reasontype},
 				success: function (response) {
 						jQuery('#reasons').prop("disabled", false); 
@@ -177,7 +169,7 @@ function getselectedinstallments(val){
 								jQuery('<option>').text('Select').attr('value', ""));
 					jQuery.each(response, function(index, reason) {
 						jQuery('#reasons').append(
-								"<option value='" + reason.id + "'>" + reason.name
+								"<option value='" + reason.code + "'>" + reason.name
 										+ "</option>");
 					});
 				}, 
@@ -191,7 +183,7 @@ function getselectedinstallments(val){
 		var resolutiontype = jQuery('#resolutionType').val();
 		var resolutionNo = jQuery('#resolutionNo').val();
 		var errormessage;
-		var resolutionDate;
+		var urlvalue;
 		if(resolutiontype!=null && resolutionNo!=null && resolutionNo!=undefined && resolutiontype!=undefined){
 		jQuery.ajax({
 			url: "/ptis/common/getcouncildetails",
@@ -202,20 +194,17 @@ function getselectedinstallments(val){
 			success: function (response) {
 					   for (var i=0;i<response.length;i++) {
 					      $("#resolutionDate").val(response[i].resolutionDate);
-					      resolutionDate = response[i].resolutionDate;
 					      urlvalue = response[i].councilResolutionUrl;
 					      errormessage = response[i].errorMessage;
-					      if(urlvalue != null){
-					    	  $("#url"). attr("href",urlvalue);
-					    	  $("#viewlink").show();
-					      }
 					}
-					   if(errormessage != null){
-							   if(resolutionDate==null)
-						  $("#resolutionDate").val("");
-							      $("#viewlink").hide();
-							      bootbox.alert(errormessage);
-							   }
+					   if(errormessage=='COUNCIL RESOLUTION DOES NOT EXIST'){
+						   $("#resolutionDate").val("");
+						      $("#viewlink").hide();
+						      bootbox.alert(errormessage); 
+					      }else{
+					    	  $("#url"). attr("href",urlvalue);
+					    	  $("#viewlink").show();  
+					      }
 					   }, 
 			error: function(){
 				if(errormessage!=null)
@@ -231,5 +220,3 @@ function getselectedinstallments(val){
 	window.focus();
 	})
 	
-	
-		

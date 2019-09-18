@@ -47,7 +47,8 @@
   --%>
 
 <script text='javascript/text'>
-   </script>
+	
+</script>
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0"
@@ -71,7 +72,7 @@
 									<form:option value="">
 										<spring:message code="lbl.select" />
 									</form:option>
-									<form:options items="${fromInstallment}" />
+									<form:options items="${installments}" />
 								</form:select>
 							</div>
 							<div class="col-xs-2 add-margin postion">
@@ -83,7 +84,7 @@
 									<form:option value="">
 										<spring:message code="lbl.select" />
 									</form:option>
-									<form:options items="${toInstallment}" />
+									<form:options items="${installments}" />
 								</form:select>
 							</div>
 						</div>
@@ -123,24 +124,23 @@
 											<c:out value="${demandDetails.installment}"></c:out>
 
 										</c:if></td>
-
-
 									<td class="greybox"><form:hidden
 											path="demandDetailBeanList[${status.index }].reasonMaster" />
 										<c:out value="${demandDetails.reasonMaster}"></c:out></td>
-									<td class="greybox" ><form:input align="center" type="text" class="demandDetailBeanList"
-											style="width:80%" id="demandDetailBeanList${status.index}.actualAmount"
+									<td class="greybox"><form:input align="center"
+											type="text" class="demandDetailBeanList" style="width:80%"
+											id="demandDetailBeanList${status.index}.actualAmount"
 											path="demandDetailBeanList[${status.index }].actualAmount"
 											value="${demandDetails.actualAmount}" readonly="true" /></td>
-									<td class="greybox"><form:input id="demandDetailBeanList${status.index}.revisedAmount"
+									<td class="greybox"><form:input
+											id="demandDetailBeanList${status.index}.revisedAmount"
 											align="center" type="text" style="width:80%"
-											path="demandDetailBeanList[${status.index }].revisedAmount"
-											 /></td>
+											path="demandDetailBeanList[${status.index }].revisedAmount" onblur="checkPenaltyCollection(this)" /></td>
 									<td class="greybox"><form:input align="center" type="text"
-											style="width:80%" id="demandDetailBeanList${status.index}.actualCollection"
+											style="width:80%"
+											id="demandDetailBeanList${status.index}.actualCollection"
 											path="demandDetailBeanList[${status.index }].actualCollection"
-											value="${demandDetails.actualCollection}" readonly="readonly"
-											disabled="true" /></td>
+											value="${demandDetails.actualCollection}" readonly="true" /></td>
 								</tr>
 							</div>
 						</c:forEach>

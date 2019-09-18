@@ -2,16 +2,24 @@ package org.egov.ptis.domain.entity.property;
 
 import java.io.Serializable;
 
-import javax.persistence.*;
-import org.hibernate.validator.constraints.SafeHtml;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.Immutable;
 
 @Entity
+@Immutable
 @Table(name = "egpt_writeoff_reason")
 @SequenceGenerator(name = WriteOffReasons.SEQ_WRITE_OFF_REASON, sequenceName = WriteOffReasons.SEQ_WRITE_OFF_REASON, allocationSize = 1)
 public class WriteOffReasons implements Serializable {
 
     /**
-    * 
+    *
     */
     private static final long serialVersionUID = 1L;
 

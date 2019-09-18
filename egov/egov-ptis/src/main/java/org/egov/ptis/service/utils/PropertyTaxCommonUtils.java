@@ -200,7 +200,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-
 public class PropertyTaxCommonUtils {
     private static final Logger LOGGER = Logger.getLogger(PropertyTaxCommonUtils.class);
 
@@ -710,10 +709,9 @@ public class PropertyTaxCommonUtils {
 
     public List<Long> getPositionForUser(final Long userId) {
         List<Long> positionIds = new ArrayList<>();
-        if (userId != null && userId.intValue() != 0) {
+        if (userId != null && userId.intValue() != 0)
             for (Position position : positionMasterService.getPositionsForEmployee(ApplicationThreadLocals.getUserId()))
                 positionIds.add(position.getId());
-        }
         return positionIds;
     }
 
@@ -812,7 +810,7 @@ public class PropertyTaxCommonUtils {
         final javax.persistence.Query qry = entityManager
                 .createQuery("from PtNotice notice where applicationNumber=? and noticeType='Endorsement Notice'");
         qry.setParameter(1, applicationNo);
-        return (List<PtNotice>) qry.getResultList();
+        return qry.getResultList();
     }
 
     public Boolean getEndorsementGenerate(final Long userId, final State state) {
@@ -828,14 +826,14 @@ public class PropertyTaxCommonUtils {
 
     private Boolean isValidDesignationForEndorsement(String loggedInUserDesignation, State state) {
         return loggedInUserDesignation.equalsIgnoreCase(REVENUE_INSPECTOR_DESGN) ||
-                ((loggedInUserDesignation.equalsIgnoreCase(JUNIOR_ASSISTANT) ||
+                (loggedInUserDesignation.equalsIgnoreCase(JUNIOR_ASSISTANT) ||
                         loggedInUserDesignation.equalsIgnoreCase(SENIOR_ASSISTANT))
-                        && (state.getOwnerPosition() != null));
+                        && state.getOwnerPosition() != null;
     }
 
     private Boolean isPrintPendingAction(State state) {
-        return !(state.getNextAction()).equalsIgnoreCase(WF_STATE_NOTICE_PRINT_PENDING) &&
-                !(state.getNextAction()).equalsIgnoreCase(WFLOW_ACTION_STEP_PRINT_NOTICE);
+        return !state.getNextAction().equalsIgnoreCase(WF_STATE_NOTICE_PRINT_PENDING) &&
+                !state.getNextAction().equalsIgnoreCase(WFLOW_ACTION_STEP_PRINT_NOTICE);
     }
 
     public boolean isEndorsementEnabled() {
@@ -964,7 +962,7 @@ public class PropertyTaxCommonUtils {
         final String host = url.substring(0, url.indexOf(uri));
         final String stmsRestURL = String.format(STMS_TAXDUE_RESTURL, host, assessmentNo);
         final String dtls = simpleRestClient.getRESTResponse(stmsRestURL);
-        JSONObject jsonObj = null;
+        JSONObject jsonObj = new JSONObject() ;
         try {
             jsonObj = new JSONObject(dtls);
         } catch (final JSONException e1) {
@@ -973,48 +971,45 @@ public class PropertyTaxCommonUtils {
 
         try {
             final Map<String, Object> newMap = new HashMap<>();
-            for (String key : jsonObj.keySet()) {
+            for (String key : jsonObj.keySet())
                 if ("consumerCode".equals(key)) {
                     final Map<String, Object> ccMap = new HashMap<>();
-                    JSONObject ccObject = jsonObj.getJSONObject(key);
-                    ccObject.keySet().forEach(e -> {
-                        ccMap.put(e, ccObject.getString(e));
-                    });
-                    newMap.put(key, ccMap);
-
+                    if (!jsonObj.isNull(key)) {
+                        JSONObject ccObject = jsonObj.getJSONObject(key);
+                        ccObject.keySet().forEach(e -> {
+                            ccMap.put(e, ccObject.getString(e));
+                        });
+                        newMap.put(key, ccMap);
+                    } 
                 } else if (!"propertyID".equals(key))
                     newMap.put(key, jsonObj.get(key).toString().toLowerCase());
-
-            }
             sewerageConnDtls.add(newMap);
         } catch (final JSONException e) {
             LOGGER.error("Error in converting json array into json object " + e);
         }
         return sewerageConnDtls;
     }
-    
+
     public List<Map<String, String>> getLegalCaseDetails(final String caseNo, final HttpServletRequest request) {
         final List<Map<String, String>> legalcaseDtls = new ArrayList<>();
 
         RestTemplate restTemplate = new RestTemplate();
         String url = String.format(LCMS_LEGALCASE_DETAILS_RESTURL, WebUtils.extractRequestDomainURL(request, false));
-        URI targetUrl= UriComponentsBuilder.fromUriString(url)                           
-                .queryParam("caseNumber", caseNo)                               
-                .build()                                                
-                .encode()                                           
+        URI targetUrl = UriComponentsBuilder.fromUriString(url)
+                .queryParam("caseNumber", caseNo)
+                .build()
+                .encode()
                 .toUri();
 
         Cookie[] cookies = request.getCookies();
         String cookie = "";
-        
-        for (int i = 0; i < cookies.length; i++) {
-            cookie = cookie + cookies[i].getName()+ "="+cookies[i].getValue()+";";
-        }
-        
+
+        for (Cookie cookie2 : cookies)
+            cookie = cookie + cookie2.getName() + "=" + cookie2.getValue() + ";";
+
         final List<MediaType> mediaTypes = new ArrayList<MediaType>();
         mediaTypes.add(MediaType.ALL);
 
-                
         HttpHeaders requestHeaders = new HttpHeaders();
         requestHeaders.set(HttpHeaders.COOKIE, cookie);
         requestHeaders.setPragma("no-cache");
@@ -1024,9 +1019,10 @@ public class PropertyTaxCommonUtils {
         requestHeaders.setContentType(MediaType.APPLICATION_JSON);
 
         final HttpEntity requestEntity = new HttpEntity<>(requestHeaders);
-        
-        ResponseEntity<LinkedHashMap> result = restTemplate.exchange(targetUrl, HttpMethod.GET, requestEntity, LinkedHashMap.class);
-     
+
+        ResponseEntity<LinkedHashMap> result = restTemplate.exchange(targetUrl, HttpMethod.GET, requestEntity,
+                LinkedHashMap.class);
+
         JSONObject jsonObj = null;
         try {
             jsonObj = new JSONObject(result.getBody());
@@ -1036,18 +1032,15 @@ public class PropertyTaxCommonUtils {
 
         try {
             final Map<String, String> newMap = new HashMap<>();
-            for (String key : jsonObj.keySet()) {
-               
+            for (String key : jsonObj.keySet())
                 newMap.put(key, jsonObj.get(key).toString());
-
-            }
             legalcaseDtls.add(newMap);
         } catch (final JSONException e) {
             LOGGER.error("Error in converting json array into json object " + e);
         }
         return legalcaseDtls;
     }
-    
+
     public Boolean validateEffectiveDate(final List<Floor> floorList) {
         Date firstFloorEffectiveDate = floorList.get(0).getOccupancyDate();
         return floorList.stream()
@@ -1056,33 +1049,33 @@ public class PropertyTaxCommonUtils {
                 .allMatch(floor -> floor.getOccupancyDate().equals(firstFloorEffectiveDate));
 
     }
-    
 
-    public List<Map<String, String>> getCouncilDeatils(final String resolutionNo,final String resolutionType,HttpServletRequest request) {
+    public List<Map<String, String>> getCouncilDetails(final String resolutionNo, final String resolutionType,
+            HttpServletRequest request) {
         final List<Map<String, String>> councilDetails = new ArrayList<>();
         StringBuilder builder = new StringBuilder();
         try {
-            builder = builder.append("resolutionNo=").append(URLEncoder.encode(resolutionNo, "UTF-8")).append("&committeeType=").append(URLEncoder.encode(resolutionType, "UTF-8"));
+            builder = builder.append("resolutionNo=").append(URLEncoder.encode(resolutionNo, "UTF-8")).append("&committeeType=")
+                    .append(URLEncoder.encode(resolutionType, "UTF-8"));
         } catch (UnsupportedEncodingException e2) {
             LOGGER.error("Error while encoding the parameters " + e2);
         }
         String urlvalue = builder.toString();
         String resturl = null;
-         resturl = String.format((COUNCIL_RESOLUTION_RESTURL),WebUtils.extractRequestDomainURL(request, false),urlvalue);
-      String dtls = simpleRestClient.getRESTResponse(resturl);
-      JSONObject jsonObject = new JSONObject(dtls);
-     try {
-        
-         final Map<String, String> newMap = new HashMap<>();
-         for (String key : jsonObject.keySet()) {
-             newMap.put(key, jsonObject.get(key).toString());
-             councilDetails.add(newMap);
-         }
-     } catch (final JSONException e1) {
-         LOGGER.error("Error in converting string into json array " + e1);
-     }
-  
-     return councilDetails;
+        resturl = String.format(COUNCIL_RESOLUTION_RESTURL, WebUtils.extractRequestDomainURL(request, false), urlvalue);
+        String dtls = simpleRestClient.getRESTResponse(resturl);
+        JSONObject jsonObject = new JSONObject(dtls);
+        try {
+
+            final Map<String, String> newMap = new HashMap<>();
+            for (String key : jsonObject.keySet())
+                newMap.put(key, jsonObject.get(key).toString());
+            councilDetails.add(newMap);
+        } catch (final JSONException e1) {
+            LOGGER.error("Error in converting string into json array " + e1);
+        }
+
+        return councilDetails;
     }
 
     public BigDecimal getTotalDemandVariationAmount(EgDemandDetails demandDetail) {
