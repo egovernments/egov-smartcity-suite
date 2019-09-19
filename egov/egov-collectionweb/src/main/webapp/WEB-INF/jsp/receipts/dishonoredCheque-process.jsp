@@ -288,12 +288,17 @@
 	</s:if>
 	<s:form name="dishonorForm" action="dishonoredCheque" theme="simple"
 		validate="true">
-		<div style="color: green">
-			<s:actionmessage />
-		</div>
-		<div style="color: red">
-			<s:actionerror />
-		</div>
+		<s:if test="%{hasErrors()}">
+			<div class="errorstyle">
+				<s:actionerror />
+				<s:fielderror />
+			</div>
+		</s:if>
+		<s:if test="%{hasActionMessages()}">
+			<div class="messagestyle">
+				<s:actionmessage theme="simple" />
+			</div>
+		</s:if>
 		<div style="color: red">
 			<div class="errorstyle" style="display: none" id="errorDiv"></div>
 		</div>
