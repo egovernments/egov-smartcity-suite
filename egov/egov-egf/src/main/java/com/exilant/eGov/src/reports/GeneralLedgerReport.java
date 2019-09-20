@@ -152,7 +152,10 @@ public class GeneralLedgerReport {
         if(endDate1 == "" || endDate1.length() == 0) {
         	endDate1 = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
         }
-        isCurDate(endDate1);
+        Boolean isCurDte = isCurDate(endDate1);
+        if(isCurDte == false) {
+        	endDate1 = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+        }
         try {
             endDate = reportBean.getEndDate();
             if(endDate == "" || endDate.length() == 0) {
@@ -1200,7 +1203,7 @@ public class GeneralLedgerReport {
         return strbNumber;
     }
 
-    public void isCurDate(final String VDate) throws TaskFailedException {
+    public Boolean isCurDate(final String VDate) throws TaskFailedException {
 
         try {
             final String today = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
@@ -1212,9 +1215,12 @@ public class GeneralLedgerReport {
                             .parseInt(dt1[1]) ? 1 : Integer.parseInt(dt2[1]) < Integer.parseInt(dt1[1]) ? -1 : Integer
                                     .parseInt(dt2[0]) > Integer.parseInt(dt1[0]) ? 1 : Integer.parseInt(dt2[0]) < Integer
                                             .parseInt(dt1[0]) ? -1 : 0;
-                                    if (ret == -1)
-                                        throw taskExc;
-
+                                    if (ret == -1) {
+                                    	return false;
+                                        //throw taskExc;
+                                    }else {
+                                    	return true;
+                                    }
         } catch (final Exception ex) {
             LOGGER.error("Exception in isCurDate():" + ex, ex);
             throw new TaskFailedException("Date Should be within the today's date");
