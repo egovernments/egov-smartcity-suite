@@ -78,6 +78,10 @@ jQuery('#zipid').click(function(e) {
 	zipanddownload();
 });
 
+jQuery('#applicationType').change(function(e) {
+	populateNoticeType();
+});
+
 });
 
 function validatedate() {
@@ -321,6 +325,36 @@ function getColumnTitleForNumber() {
 	else if($('#noticetype').val()==="Regularisation Demand Note"
 		|| $('#noticetype').val()==="Estimation Notice")
 		return "Notice Number";
+}
+
+function populateNoticeType() {
+	if($('#applicationType').val() === "NEWCONNECTION" || $('#applicationType').val() === "ADDNLCONNECTION"){
+		$('#noticetype').find('option').remove();
+		$('#noticetype').append($("<option />").val('').text(''));
+		$('#noticetype').append($("<option />").val('Sanction Order').text('Sanction Order'));
+		$('#noticetype').append($("<option />").val('Estimation Notice').text('Estimation Notice'));
+	}
+	else if($('#applicationType').val() === "CHANGEOFUSE"){
+		$('#noticetype').find('option').remove();
+		$('#noticetype').append($("<option />").val('').text(''));
+		$('#noticetype').append($("<option />").val('Sanction Order').text('Sanction Order'));
+	}
+	else if($('#applicationType').val() === "CLOSINGCONNECTION"){
+		$('#noticetype').find('option').remove();
+		$('#noticetype').append($("<option />").val('').text(''));
+		$('#noticetype').append($("<option />").val('Proceeding for Closure of Connection').text('Proceeding for Closure of Connection'));
+	}
+	else if($('#applicationType').val() === "RECONNECTION"){
+		$('#noticetype').find('option').remove();
+		$('#noticetype').append($("<option />").val('').text(''));
+		$('#noticetype').append($("<option />").val('Proceeding for Re-connection').text('Proceeding for Re-connection'));
+	}
+	else if($('#applicationType').val() === "REGLZNCONNECTION"){
+		$('#noticetype').find('option').remove();
+		$('#noticetype').append($("<option />").val('').text(''));
+		$('#noticetype').append($("<option />").val('Regularisation Demand Note').text('Regularisation Demand Note'));
+	}
+		
 }
 
 function getColumnTitleForDate() {

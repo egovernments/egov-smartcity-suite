@@ -102,14 +102,14 @@
 					</div>
 					<div class="form-group">
 						<label for="field-1" class="col-md-4 control-label"><spring:message
-								code="lbl.applicationtype" /></label>
+								code="lbl.applicationtype" /><span class="mandatory"></span></label>
 						<div class="col-md-4 add-margin">
 							<form:select path="applicationType" name="applicationType"
 								data-first-option="false" id="applicationType"
-								cssClass="form-control">
+								cssClass="form-control" required="required">
 								<form:option value="">
 								</form:option>
-								<form:options items="${applicationTypes}" itemValue="name"
+								<form:options items="${applicationTypes}" itemValue="code"
 									itemLabel="name" />
 							</form:select>
 						</div>
@@ -123,8 +123,7 @@
 								cssClass="form-control" required="required">
 								<form:option value="">
 								</form:option>
-								<form:options items="${noticetypeList}" />
-							</form:select>
+								</form:select>
 						</div>
 					</div> 
 					<div class="form-group dateField">

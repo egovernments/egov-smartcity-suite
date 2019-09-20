@@ -134,7 +134,6 @@ public class SearchNoticeController {
 	private static final String FROMDATE = "fromDate";
 	private static final String TODATE = "toDate";
 	private static final String SANCTION_ORDER = "Sanction Order";
-	private static final String DEMAND_BILL = "Demand Bill";
 
 	@Autowired
 	private PropertyTypeService propertyTypeService;
@@ -203,18 +202,6 @@ public class SearchNoticeController {
 		return financialYearDAO.getAllActivePostingFinancialYear();
 	}
 
-	@ModelAttribute("noticetypeList")
-	public List<String> getNoticeTypes() {
-		final List<String> noticeList = new ArrayList<>();
-		noticeList.add(DEMAND_BILL);
-		noticeList.add(SANCTION_ORDER);
-		noticeList.add(REGULARISATION_DEMAND_NOTE);
-		noticeList.add(ESTIMATION_NOTICE);
-		noticeList.add(PROCEEDING_FOR_CLOSER_OF_CONNECTION);
-		noticeList.add(PROCEEDING_FOR_RECONNECTION);
-		return noticeList;
-	}
-
 	@RequestMapping(value = "/result", method = POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public void searchResult(final SearchNoticeDetails searchNoticeDetails, final HttpServletRequest request,
@@ -226,9 +213,7 @@ public class SearchNoticeController {
 		if (searchNoticeDetails.getFinancialYear() != null)
 			financialYear = financialYearDAO.getFinancialYearById(searchNoticeDetails.getFinancialYear());
 		if (request.getParameter(NOTICE_TYPE) != null)
-			if (DEMAND_BILL.equals(request.getParameter(NOTICE_TYPE)))
-				generateConnectionBillList = searchNoticeService.getBillReportDetails(noticeDetails, financialYear);
-			else if (SANCTION_ORDER.equals(request.getParameter(NOTICE_TYPE))
+			if (SANCTION_ORDER.equals(request.getParameter(NOTICE_TYPE))
 					|| PROCEEDING_FOR_CLOSER_OF_CONNECTION.equalsIgnoreCase(request.getParameter(NOTICE_TYPE))
 					|| PROCEEDING_FOR_RECONNECTION.equalsIgnoreCase(request.getParameter(NOTICE_TYPE)))
 				generateConnectionBillList = searchNoticeService.getSearchResultList(noticeDetails, financialYear);
@@ -237,8 +222,6 @@ public class SearchNoticeController {
 				generateConnectionBillList = searchNoticeService.getSearchResultList(noticeDetails, financialYear);
 
 		long foundRows = 0;
-		if (DEMAND_BILL.equals(request.getParameter(NOTICE_TYPE)))
-			foundRows = searchNoticeService.getTotalCountofBills(noticeDetails, financialYear);
 
 		final int count = generateConnectionBillList.size();
 		LOGGER.info("Total count of records-->" + Long.valueOf(count));
@@ -275,22 +258,20 @@ public class SearchNoticeController {
 		final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(consumerCode, noticeType);
 		EstimationNotice estimationNotice = estimationNoticeService
 				.getNonHistoryEstimationNoticeForConnection(waterConnectionDetails);
-		if (waterConnectionDetails != null) {
-			if (SANCTION_ORDER.equals(noticeType))
-				waterChargesFileStoreId.add(waterConnectionDetails.getFileStore() != null
-						? waterConnectionDetails.getFileStore().getFileStoreId()
-						: null);
-			else if ((PROCEEDING_FOR_CLOSER_OF_CONNECTION.equals(noticeType)) && waterConnectionDetails != null)
-				waterChargesFileStoreId.add(waterConnectionDetails.getClosureFileStore() != null
-						? waterConnectionDetails.getClosureFileStore().getFileStoreId()
-						: null);
-			else if ((PROCEEDING_FOR_RECONNECTION.equals(noticeType)) && waterConnectionDetails != null)
-				waterChargesFileStoreId.add(waterConnectionDetails.getReconnectionFileStore() != null
-						? waterConnectionDetails.getReconnectionFileStore().getFileStoreId()
-						: null);
-		} else if ((REGULARISATION_DEMAND_NOTE.equals(noticeType)
-				|| ESTIMATION_NOTICE.equalsIgnoreCase(request.getParameter(NOTICE_TYPE))) && estimationNotice != null
-				&& estimationNotice.getEstimationNoticeFileStore() != null)
+		if (SANCTION_ORDER.equals(noticeType) && waterConnectionDetails != null) {
+			waterChargesFileStoreId.add(waterConnectionDetails.getFileStore() != null
+					? waterConnectionDetails.getFileStore().getFileStoreId()
+					: null);
+		} else if (PROCEEDING_FOR_CLOSER_OF_CONNECTION.equals(noticeType) && waterConnectionDetails != null) {
+			waterChargesFileStoreId.add(waterConnectionDetails.getClosureFileStore() != null
+					? waterConnectionDetails.getClosureFileStore().getFileStoreId()
+					: null);
+		} else if (PROCEEDING_FOR_RECONNECTION.equals(noticeType) && waterConnectionDetails != null) {
+			waterChargesFileStoreId.add(waterConnectionDetails.getReconnectionFileStore() != null
+					? waterConnectionDetails.getReconnectionFileStore().getFileStoreId()
+					: null);
+		} else if (REGULARISATION_DEMAND_NOTE.equals(noticeType) || ESTIMATION_NOTICE.equals(noticeType)
+				&& estimationNotice != null && estimationNotice.getEstimationNoticeFileStore() != null)
 			waterChargesFileStoreId.add(estimationNotice.getEstimationNoticeFileStore().getFileStoreId());
 		else {
 			waterChargesDocumentslist = searchNoticeService.getDocuments(consumerCode, waterConnectionDetailsService
@@ -304,15 +285,11 @@ public class SearchNoticeController {
 	public String mergeAndDownload(final SearchNoticeDetails searchNoticeDetails, final HttpServletRequest request,
 			final HttpServletResponse response) {
 		final long startTime = System.currentTimeMillis();
-		final String noticeType = request.getParameter(NOTICE_TYPE);
 		CFinancialYear financialYear = null;
 		if (searchNoticeDetails.getFinancialYear() != null)
 			financialYear = financialYearDAO.getFinancialYearById(searchNoticeDetails.getFinancialYear());
 		List<SearchNoticeDetails> searchResultList;
-		if (noticeType != null && DEMAND_BILL.equalsIgnoreCase(noticeType))
-			searchResultList = searchNoticeService.getBillReportDetails(searchNoticeDetails, financialYear);
-		else
-			searchResultList = searchNoticeService.getSearchResultList(searchNoticeDetails, financialYear);
+		searchResultList = searchNoticeService.getSearchResultList(searchNoticeDetails, financialYear);
 
 		mergeAndDownloadNotice(searchResultList, response);
 		if (LOGGER.isDebugEnabled())
@@ -406,16 +383,12 @@ public class SearchNoticeController {
 	@RequestMapping(value = "/zipAndDownload", method = GET)
 	public String zipAndDownload(final SearchNoticeDetails searchNoticeDetails, final HttpServletRequest request,
 			final HttpServletResponse response) throws IOException {
-		final String noticeType = request.getParameter(NOTICE_TYPE);
 		CFinancialYear financialYear = null;
 		if (searchNoticeDetails.getFinancialYear() != null)
 			financialYear = financialYearDAO.getFinancialYearById(searchNoticeDetails.getFinancialYear());
 		final long startTime = System.currentTimeMillis();
 		List<SearchNoticeDetails> noticeList;
-		if (DEMAND_BILL.equalsIgnoreCase(noticeType))
-			noticeList = searchNoticeService.getBillReportDetails(searchNoticeDetails, financialYear);
-		else
-			noticeList = searchNoticeService.getSearchResultList(searchNoticeDetails, financialYear);
+		noticeList = searchNoticeService.getSearchResultList(searchNoticeDetails, financialYear);
 
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Number of Bills : " + (noticeList != null ? noticeList.size() : ZERO));
@@ -551,10 +524,10 @@ public class SearchNoticeController {
 		WaterConnectionDetails waterConnectionDetails = null;
 		if (consumerCode != null) {
 			waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerCode,
-					ConnectionStatus.INPROGRESS);
+					ConnectionStatus.ACTIVE);
 			if (waterConnectionDetails == null)
 				waterConnectionDetails = waterConnectionDetailsService
-						.findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.ACTIVE);
+						.findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.INPROGRESS);
 			if (waterConnectionDetails == null)
 				waterConnectionDetails = waterConnectionDetailsService
 						.findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.CLOSED);

@@ -57,16 +57,17 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.PROCEEDING_FOR_CLO
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PROCEEDING_FOR_RECONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARISATION_DEMAND_NOTE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.END;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATIONSTATUSCLOSED;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
@@ -81,7 +82,6 @@ import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -110,63 +110,6 @@ public class SearchNoticeService {
 
     @Autowired
     private WaterTaxUtils waterTaxUtils;
-
-    private static final Logger LOGGER = Logger.getLogger(SearchNoticeService.class);
-
-    @ReadOnly
-    @SuppressWarnings("unchecked")
-    public List<SearchNoticeDetails> getBillReportDetails(final SearchNoticeDetails searchNoticeDetails,
-            CFinancialYear financialYear) {
-        final long startTime = System.currentTimeMillis();
-        final StringBuilder queryStr = new StringBuilder();
-        queryStr.append(
-                "select distinct dcbinfo.hscno as \"hscNo\", dcbinfo.username as \"ownerName\",dcbinfo.propertyid as \"assessmentNo\",dcbinfo.demanddocumentnumber as \"fileStoreID\",");
-        queryStr.append(
-                "dcbinfo.houseno as \"houseNumber\" , localboundary.localname as \"locality\", dcbinfo.applicationtype as \"applicationType\" , ");
-        queryStr.append(
-                " dcbinfo.connectiontype as  \"connectionType\" , bill.bill_no as \"billNo\" , bill.issue_date as \"billDate\" from egwtr_mv_bill_view dcbinfo");
-        queryStr.append(
-                " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
-        queryStr.append(
-                " INNER JOIN eg_bill bill on dcbinfo.hscno = bill.consumer_id and dcbinfo.demand= bill.id_demand");
-        queryStr.append(" INNER JOIN eg_boundary zoneboundary on dcbinfo.zoneid = zoneboundary.id ");
-        queryStr.append(" where dcbinfo.connectionstatus = '" + ConnectionStatus.ACTIVE.toString() + "' ");
-        queryStr.append(" and bill.module_id = (select id from eg_module where name ='Water Tax Management')");
-        queryStr.append(" and bill.id_bill_type = (select id from eg_bill_type  where code ='MANUAL')");
-        queryStr.append(" and bill.is_cancelled ='N' ");
-        if (isNotBlank(searchNoticeDetails.getRevenueWard()))
-            queryStr.append(" and wardboundary.name =:ward");
-        if (isNotBlank(searchNoticeDetails.getZone()))
-            queryStr.append(" and zoneboundary.name =:zone");
-        if (isNotBlank(searchNoticeDetails.getHscNo()))
-            queryStr.append(" and dcbinfo.hscno =:consumerCode");
-        if (isNotBlank(searchNoticeDetails.getAssessmentNo()))
-            queryStr.append(" and dcbinfo.propertyid =:assessmentNumber");
-        if (isNotBlank(searchNoticeDetails.getHouseNumber()))
-            queryStr.append(" and dcbinfo.houseno =:houseNumber");
-        if (isNotBlank(searchNoticeDetails.getConnectionType()))
-            queryStr.append(" and dcbinfo.connectiontype =:connectionType");
-        if (isNotBlank(searchNoticeDetails.getApplicationType()))
-            queryStr.append(" and dcbinfo.applicationtype =:applicationType");
-        if (isNotBlank(searchNoticeDetails.getPropertyType()))
-            queryStr.append(" and dcbinfo.propertytype =:propertyType");
-        if (financialYear != null)
-            queryStr.append(
-                    " and cast(bill.create_date as date) between cast(:financialStartDate as date) and cast(:financialEndDate as date)");
-
-        final Query query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
-        setSearchQueryParameters(searchNoticeDetails, null, null, query, financialYear);
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("GenerateConnectionBill -- Search Result " + queryStr.toString());
-        query.setResultTransformer(new AliasToBeanResultTransformer(SearchNoticeDetails.class));
-        final long endTime = System.currentTimeMillis();
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("GenerateBill | SearchResult | Time taken(ms) " + (endTime - startTime));
-            LOGGER.debug("Exit from SearchResult method");
-        }
-
-        return query.list();
-    }
 
     @ReadOnly
     @SuppressWarnings("unchecked")
@@ -240,7 +183,7 @@ public class SearchNoticeService {
         }
 
         if (isNotBlank(searchNoticeDetails.getApplicationType()))
-            whereQuery.append(" applicationtype.name=:applicationType and ");
+            whereQuery.append(" applicationtype.code=:applicationType and ");
 
         if (isNotBlank(searchNoticeDetails.getConnectionType()))
             whereQuery.append(" conndetails.connectiontype=:connectionType and ");
@@ -248,7 +191,8 @@ public class SearchNoticeService {
         if (REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
             whereQuery.append(" applicationtype.code=:reglnApplicationType and ");
         else
-            whereQuery.append(" applicationtype.code!=:reglnApplicationType and ");
+            whereQuery.append(
+                    " applicationtype.code!=:reglnApplicationType and conndetails.state_id = (select id from eg_wf_states where value in (:stateValues) and status = 2 and id = conndetails.state_id) and ");
 
         if (PROCEEDING_FOR_CLOSER_OF_CONNECTION.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
             whereQuery.append(" connectionStatus=:closureStatus and statusid=:status and ");
@@ -280,6 +224,8 @@ public class SearchNoticeService {
                 .createSQLQuery(selectQuery.append(fromQuery).append(whereQuery).toString());
         setSearchQueryParameters(searchNoticeDetails, formattedFromDate, formattedToDate, query, financialYear);
         query.setParameter("reglnApplicationType", REGULARIZE_CONNECTION);
+        if (!REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
+            query.setParameterList("stateValues", Arrays.asList(END, APPLICATIONSTATUSCLOSED));
         if (PROCEEDING_FOR_CLOSER_OF_CONNECTION.equalsIgnoreCase(searchNoticeDetails.getNoticeType())) {
             query.setParameter("closureStatus", ConnectionStatus.CLOSED.toString());
             EgwStatus closureSanctionedStatus = waterTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_CLOSERSANCTIONED,
@@ -398,43 +344,6 @@ public class SearchNoticeService {
         if (isNotBlank(applicationType))
             query.setParameter(APPLICATION_TYPE, applicationType);
         return query.list();
-    }
-
-    public long getTotalCountofBills(final SearchNoticeDetails searchNoticeDetails, CFinancialYear financialYear) {
-
-        final StringBuilder queryStr = new StringBuilder();
-        queryStr.append("select count(distinct dcbinfo.hscno)  from egwtr_mv_bill_view dcbinfo"
-                + " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id"
-                + " INNER JOIN eg_bill bill on dcbinfo.hscno = bill.consumer_id and dcbinfo.demand= bill.id_demand"
-                + " INNER JOIN eg_boundary zoneboundary on dcbinfo.zoneid = zoneboundary.id ");
-        queryStr.append(" where dcbinfo.connectionstatus = '" + ConnectionStatus.ACTIVE.toString() + "' ");
-        queryStr.append(" and bill.module_id = (select id from eg_module where name ='Water Tax Management')");
-        queryStr.append(" and bill.id_bill_type = (select id from eg_bill_type  where code ='MANUAL')");
-        queryStr.append(" and bill.is_cancelled ='N' ");
-        if (isNotBlank(searchNoticeDetails.getRevenueWard()))
-            queryStr.append(" and wardboundary.name =:ward");
-        if (isNotBlank(searchNoticeDetails.getZone()))
-            queryStr.append(" and zoneboundary.name =:zone");
-        if (isNotBlank(searchNoticeDetails.getHscNo()))
-            queryStr.append(" and dcbinfo.hscno =:consumerCode");
-        if (isNotBlank(searchNoticeDetails.getAssessmentNo()))
-            queryStr.append(" and dcbinfo.propertyid =:assessmentNumber");
-        if (isNotBlank(searchNoticeDetails.getHouseNumber()))
-            queryStr.append(" and dcbinfo.houseno =:houseNumber");
-        if (isNotBlank(searchNoticeDetails.getConnectionType()))
-            queryStr.append(" and dcbinfo.connectiontype =:connectionType");
-        if (isNotBlank(searchNoticeDetails.getApplicationType()))
-            queryStr.append(" and dcbinfo.applicationtype =:applicationType");
-        if (isNotBlank(searchNoticeDetails.getPropertyType()))
-            queryStr.append(" and dcbinfo.propertytype =:propertyType");
-        if (financialYear != null)
-            queryStr.append(
-                    " and cast(bill.create_date as date) between cast(:financialStartDate as date) and cast(:financialEndDate as date)");
-        Query query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
-        setSearchQueryParameters(searchNoticeDetails, null, null, query, financialYear);
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("GenerateConnectionBill -- count Result " + queryStr.toString());
-        return ((BigInteger) query.uniqueResult()).longValue();
     }
 
     public SearchNoticeDetails buildNoticeDetails(final WaterConnectionDetails waterConnectionDetails) {
