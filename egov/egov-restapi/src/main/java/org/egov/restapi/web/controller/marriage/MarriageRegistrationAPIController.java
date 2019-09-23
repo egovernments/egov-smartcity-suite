@@ -78,6 +78,7 @@ import org.egov.restapi.web.contracts.marriageregistration.MarriageRegistrationR
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -87,7 +88,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 
 @RestController
 public class MarriageRegistrationAPIController {
@@ -106,11 +106,53 @@ public class MarriageRegistrationAPIController {
     private AssignmentService assignmentService;
     @Autowired
     private UserService userService;
-    
+
     @PostMapping("/marriageregistration/create")
     public MarriageRegistrationResponse createMarriageRegistration(
             @Valid @RequestBody MarriageRegistrationRequest marriageRegistrationRequest,
             BindingResult binding) {
+        return create(marriageRegistrationRequest, binding);
+    }
+
+    @PostMapping("/v1.0/marriageregistration/create")
+    public MarriageRegistrationResponse securedCreateMarriageRegistration(
+            @Valid @RequestBody MarriageRegistrationRequest marriageRegistrationRequest,
+            BindingResult binding, OAuth2Authentication authentication) {
+        return create(marriageRegistrationRequest, binding);
+    }
+
+    @RequestMapping(value = "/marriageregistration/getmarriagecertificate/{applicationNumber}", method = RequestMethod.GET)
+    public MarriageCertificateResponse getMarriageCertificate(
+            @PathVariable final String applicationNumber) {
+        return getCertificate(applicationNumber);
+
+    }
+
+    @RequestMapping(value = "/v1.0/marriageregistration/getmarriagecertificate/{applicationNumber}", method = RequestMethod.GET)
+    public MarriageCertificateResponse securedGetMarriageCertificate(
+            @PathVariable final String applicationNumber, OAuth2Authentication authentication) {
+        return getCertificate(applicationNumber);
+
+    }
+
+    @RequestMapping(value = "/marriageregistration/uploaddocuments/{applicationNo}", method = RequestMethod.POST)
+    public MarriageRegistrationResponse uploadSupportDocs(@PathVariable final String applicationNo,
+            MarriageDocumentUpload marriageDocumentUpload, BindingResult binding) {
+        return uploadDocs(applicationNo, marriageDocumentUpload, binding);
+    }
+
+    @RequestMapping(value = "/v1.0/marriageregistration/uploaddocuments/{applicationNo}", method = RequestMethod.POST)
+    public MarriageRegistrationResponse securedUploadSupportDocs(@PathVariable final String applicationNo,
+            MarriageDocumentUpload marriageDocumentUpload, BindingResult binding, OAuth2Authentication authentication) {
+        return uploadDocs(applicationNo, marriageDocumentUpload, binding);
+    }
+
+    /**
+     * @param marriageRegistrationRequest
+     * @param binding
+     * @return
+     */
+    public MarriageRegistrationResponse create(MarriageRegistrationRequest marriageRegistrationRequest, BindingResult binding) {
         marriageAPIValidator.validate(marriageRegistrationRequest, binding);
         if (binding.hasErrors()) {
             List<String> marriageRegistrationResponse = binding.getFieldErrors()
@@ -126,10 +168,12 @@ public class MarriageRegistrationAPIController {
                     "Marriage Application Created Successfully");
         }
     }
-    
-    @RequestMapping(value = "/marriageregistration/getmarriagecertificate/{applicationNumber}", method = RequestMethod.GET)
-    public MarriageCertificateResponse getMarriageCertificate(
-            @PathVariable final String applicationNumber) {
+
+    /**
+     * @param applicationNumber
+     * @return
+     */
+    public MarriageCertificateResponse getCertificate(final String applicationNumber) {
         final MarriageRegistration marriageRegistration = marriageRegistrationService.findByApplicationNo(applicationNumber);
         if (marriageRegistration == null)
             return new MarriageCertificateResponse(StringUtils.EMPTY,
@@ -138,7 +182,7 @@ public class MarriageRegistrationAPIController {
                 && marriageRegistration.getSource().equals(Source.CHPK.toString())) {
 
             MarriageCertificate marriageCertificate = marriageCertificateService.getGeneratedCertificate(marriageRegistration);
-            Assignment assignment=assignmentService
+            Assignment assignment = assignmentService
                     .getPrimaryAssignmentForUser(
                             userService.getUsersByNameLike(marriageRegistration.getRegistrarName()).get(0).getId());
 
@@ -146,7 +190,7 @@ public class MarriageRegistrationAPIController {
                     ApplicationThreadLocals.getDomainURL() + MRS_REGISTRATION_PRINTCERTFICATE + marriageCertificate.getId(),
                     marriageCertificate.getCertificateNo(),
                     DateUtils.getFormattedDate(marriageCertificate.getCertificateDate(), DATE_FORMAT),
-                    marriageRegistration.getRegistrarName(),  assignment == null ? "N/A" : assignment.getDesignation().getName(),
+                    marriageRegistration.getRegistrarName(), assignment == null ? "N/A" : assignment.getDesignation().getName(),
                     "Marriage Certificate sent Successfully");
         } else if (marriageRegistration.getStatus().getCode().equals(REJECTED)
                 && marriageRegistration.getSource().equals(Source.CHPK.toString())) {
@@ -157,12 +201,16 @@ public class MarriageRegistrationAPIController {
         } else
             return new MarriageCertificateResponse(marriageRegistration.getStatus().getDescription(),
                     "Marriage Certificate Not Generated this application");
-
     }
 
-    @RequestMapping(value = "/marriageregistration/uploaddocuments/{applicationNo}", method = RequestMethod.POST)
-    public MarriageRegistrationResponse uploadSupportDocs(@PathVariable final String applicationNo,
-            MarriageDocumentUpload marriageDocumentUpload, BindingResult binding) {
+    /**
+     * @param applicationNo
+     * @param marriageDocumentUpload
+     * @param binding
+     * @return
+     */
+    public MarriageRegistrationResponse uploadDocs(final String applicationNo, MarriageDocumentUpload marriageDocumentUpload,
+            BindingResult binding) {
         final MarriageRegistration marriageRegistration = marriageRegistrationService.findByApplicationNo(applicationNo);
         if (marriageRegistration == null)
             return new MarriageRegistrationResponse(false, applicationNo, HttpStatus.BAD_REQUEST.toString(),

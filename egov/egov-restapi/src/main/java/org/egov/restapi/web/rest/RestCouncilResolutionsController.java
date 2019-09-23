@@ -56,20 +56,25 @@ import org.egov.restapi.model.CouncilResolutionsResponse;
 import org.egov.restapi.model.RestErrors;
 import org.egov.restapi.service.CouncilResolutionsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/councilresolutions")
 public class RestCouncilResolutionsController {
 
     @Autowired
     private CouncilResolutionsService councilResolutionsService;
 
-    @GetMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/councilresolutions", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public List<CouncilResolutionsResponse> getCouncilResolutionsDetails(final CouncilMeetingRequest councilMeetingRequest) {
+        return councilResolutionsService.getResolutionsDetails(councilMeetingRequest);
+    }
+
+    @GetMapping(value = "/v1.0/council/resolutions", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public List<CouncilResolutionsResponse> securedGetCouncilResolutionsDetails(final CouncilMeetingRequest councilMeetingRequest,
+            OAuth2Authentication authentication) {
         return councilResolutionsService.getResolutionsDetails(councilMeetingRequest);
     }
 

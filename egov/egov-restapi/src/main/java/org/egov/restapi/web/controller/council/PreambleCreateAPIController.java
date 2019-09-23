@@ -81,6 +81,21 @@ public class PreambleCreateAPIController {
     @PostMapping("/preamble/create")
     public CouncilPreambleResponse createLicense(@Valid @RequestBody CouncilPreambleRequest councilPreambleRequest,
             BindingResult binding) {
+        return create(councilPreambleRequest, binding);
+    }
+    
+    @PostMapping("/v1.0/council/preamble/create")
+    public CouncilPreambleResponse securedCreateLicense(@Valid @RequestBody CouncilPreambleRequest councilPreambleRequest,
+            BindingResult binding) {
+        return create(councilPreambleRequest, binding);
+    }
+
+    /**
+     * @param councilPreambleRequest
+     * @param binding
+     * @return
+     */
+    public CouncilPreambleResponse create(CouncilPreambleRequest councilPreambleRequest, BindingResult binding) {
         preambleCreateAPIValidator.validate(councilPreambleRequest, binding);
         if (binding.hasErrors()) {
             List<String> preambleResponses = binding.getFieldErrors()

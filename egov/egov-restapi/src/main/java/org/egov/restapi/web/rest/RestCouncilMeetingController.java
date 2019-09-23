@@ -57,20 +57,34 @@ import org.egov.restapi.model.CouncilMeetingRequest;
 import org.egov.restapi.model.RestErrors;
 import org.egov.restapi.service.CouncilMeetingDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/councilmeeting")
 public class RestCouncilMeetingController {
 
     @Autowired
     private CouncilMeetingDetailService councilMeetingDetailService;
 
-    @GetMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/councilmeeting", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public List<CouncilMeetingDetails> getCouncilMeetingDetials(final CouncilMeetingRequest councilMeetingRequest) {
+        return getDetails(councilMeetingRequest);
+    }
+
+    @GetMapping(value = "/v1.0/council/meeting", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public List<CouncilMeetingDetails> securedGetCouncilMeetingDetials(final CouncilMeetingRequest councilMeetingRequest,
+            OAuth2Authentication auth2Authentication) {
+        return getDetails(councilMeetingRequest);
+    }
+
+    /**
+     * @param councilMeetingRequest
+     * @return
+     */
+    public List<CouncilMeetingDetails> getDetails(final CouncilMeetingRequest councilMeetingRequest) {
         final List<CouncilMeeting> councilMeetingList = councilMeetingDetailService.getMeetingDetails(
                 councilMeetingRequest.getMeetingNumber(),
                 councilMeetingRequest.getMeetingType(), councilMeetingRequest.getPreambleNo(),

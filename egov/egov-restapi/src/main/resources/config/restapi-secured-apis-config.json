@@ -19,6 +19,14 @@
 		{
 			"url": "/v1.0/application/search",
 			"roles": "hasAnyRole('third party operator')"
+		},
+		{
+			"url": "/v1.0/marriageregistration",
+			"roles": "hasAnyRole('third party operator')"
+		},
+		{
+			"url": "/v1.0/council",
+			"roles": "hasAnyRole('third party operator')"
 		}
 	]
 }
