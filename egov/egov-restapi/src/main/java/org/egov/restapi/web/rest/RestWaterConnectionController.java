@@ -88,6 +88,7 @@ import org.egov.wtms.masters.service.WaterSourceService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -164,6 +165,22 @@ public class RestWaterConnectionController {
     @RequestMapping(value = "/watercharges/regulariseconnection", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String createRegularisedConnection(@Valid @RequestBody final WaterChargesConnectionInfo waterChargesConnectionInfo)
             throws IOException {
+        return createConnection(waterChargesConnectionInfo);
+    }
+
+    @RequestMapping(value = "/v1.0/watercharges/regulariseconnection", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public String securedCreateRegularisedConnection(
+            @Valid @RequestBody final WaterChargesConnectionInfo waterChargesConnectionInfo, OAuth2Authentication authentication)
+            throws IOException {
+        return createConnection(waterChargesConnectionInfo);
+    }
+
+    /**
+     * @param waterChargesConnectionInfo
+     * @return
+     * @throws IOException
+     */
+    public String createConnection(final WaterChargesConnectionInfo waterChargesConnectionInfo) throws IOException {
         final WaterChargesRestApiResponse errorDetails = restWaterConnectionValidationService
                 .validatePropertyAssessmentNumber(waterChargesConnectionInfo.getPropertyId());
         if (errorDetails != null) {
@@ -204,6 +221,23 @@ public class RestWaterConnectionController {
     @RequestMapping(value = "/watercharges/changeofuse", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
     public String createChangeOfUsageConnection(@Valid @RequestBody final WaterChargesDetailInfo waterConnectionInfo)
             throws IOException {
+        return createChangeOfUsage(waterConnectionInfo);
+
+    }
+
+    @RequestMapping(value = "/v1.0/watercharges/changeofuse", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
+    public String secureeCreateChangeOfUsageConnection(@Valid @RequestBody final WaterChargesDetailInfo waterConnectionInfo,
+            OAuth2Authentication authentication)
+            throws IOException {
+        return createChangeOfUsage(waterConnectionInfo);
+    }
+
+    /**
+     * @param waterConnectionInfo
+     * @return
+     * @throws IOException
+     */
+    public String createChangeOfUsage(final WaterChargesDetailInfo waterConnectionInfo) throws IOException {
         WaterConnectionDetails waterConnectionDetails = null;
         Long approvalPosition = 0l;
         Position userPosition = null;
@@ -235,7 +269,6 @@ public class RestWaterConnectionController {
                 approvalPosition, WaterTaxConstants.APPLICATION_GIS_SYSTEM, waterConnectionDetails.getApplicationType().getCode(),
                 null);
         return waterConnectionDetails.getApplicationNumber();
-
     }
 
     private WaterConnectionDetails populateAndPersistWaterConnectionDetails(final WaterConnectionInfo waterConnectionInfo,
