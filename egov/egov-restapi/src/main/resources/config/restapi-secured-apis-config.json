@@ -17,19 +17,19 @@
 			"roles": "hasAnyRole('third party operator')"
 		},
 		{
-			"url": "/v1.0/application/search",
+			"url": "/v1.0/application/search/**",
 			"roles": "hasAnyRole('third party operator')"
 		},
 		{
-			"url": "/v1.0/marriageregistration",
+			"url": "/v1.0/marriageregistration/**",
 			"roles": "hasAnyRole('third party operator')"
 		},
 		{
-			"url": "/v1.0/council",
+			"url": "/v1.0/council/**",
 			"roles": "hasAnyRole('third party operator')"
 		},
 		{
-			"url": "/v1.0/complaint",
+			"url": "/v1.0/complaint/**",
 			"roles": "hasAnyRole('third party operator')"
 		}
 	]
