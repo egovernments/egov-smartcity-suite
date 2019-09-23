@@ -48,6 +48,11 @@
 
 package org.egov.restapi.web.controller.pgr.integration.ivrs;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+
 import org.egov.pgr.integration.ivrs.entity.contract.IVRSFeedbackUpdateRequest;
 import org.egov.pgr.integration.ivrs.entity.contract.IVRSFeedbackUpdateResponse;
 import org.egov.pgr.integration.ivrs.service.IVRSFeedbackService;
@@ -56,6 +61,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.ServletRequestBindingException;
@@ -65,10 +71,6 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 public class IVRSFeedbackUpdateAPIController {
@@ -87,7 +89,23 @@ public class IVRSFeedbackUpdateAPIController {
     }
 
     @PostMapping("complaint/ivrs/feedback/update")
-    public IVRSFeedbackUpdateResponse updateComplaint(@Valid @RequestBody IVRSFeedbackUpdateRequest updateRequest, BindingResult binding) {
+    public IVRSFeedbackUpdateResponse updateComplaint(@Valid @RequestBody IVRSFeedbackUpdateRequest updateRequest,
+            BindingResult binding) {
+        return update(updateRequest, binding);
+    }
+
+    @PostMapping("v1.0/complaint/ivrs/feedback/update")
+    public IVRSFeedbackUpdateResponse securedUpdateComplaint(@Valid @RequestBody IVRSFeedbackUpdateRequest updateRequest,
+            BindingResult binding, OAuth2Authentication authentication) {
+        return update(updateRequest, binding);
+    }
+
+    /**
+     * @param updateRequest
+     * @param binding
+     * @return
+     */
+    public IVRSFeedbackUpdateResponse update(IVRSFeedbackUpdateRequest updateRequest, BindingResult binding) {
         if (binding.hasErrors()) {
             List<String> complaintResponse = binding.getFieldErrors()
                     .stream()

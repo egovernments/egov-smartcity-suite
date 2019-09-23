@@ -27,6 +27,10 @@
 		{
 			"url": "/v1.0/council",
 			"roles": "hasAnyRole('third party operator')"
+		},
+		{
+			"url": "/v1.0/complaint",
+			"roles": "hasAnyRole('third party operator')"
 		}
 	]
 }
