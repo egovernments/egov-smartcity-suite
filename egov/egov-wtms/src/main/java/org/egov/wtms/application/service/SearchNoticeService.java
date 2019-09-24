@@ -219,7 +219,11 @@ public class SearchNoticeService {
                         " cast(conndetails.workorderdate as date) between cast(:financialStartDate as date) and cast(:financialEndDate as date) and ");
         }
 
-        whereQuery.append("conndetails.connectionstatus!=:connectionStatus");
+        if (ESTIMATION_NOTICE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
+            whereQuery.append(" conndetails.executiondate is not null and ");
+
+        whereQuery.append(" conndetails.connectionstatus!=:connectionStatus");
+
         Query query = entityManager.unwrap(Session.class)
                 .createSQLQuery(selectQuery.append(fromQuery).append(whereQuery).toString());
         setSearchQueryParameters(searchNoticeDetails, formattedFromDate, formattedToDate, query, financialYear);
